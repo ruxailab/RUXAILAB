@@ -8,7 +8,8 @@
               <v-card-title>Test</v-card-title>
               <v-card-text>
                 <v-text-field label="Title" v-model="test.title"></v-text-field>
-                <v-textarea label="Description" v-model="test.description"></v-textarea>
+                <v-text-field label="Type" v-model="test.type"></v-text-field>
+                <v-textarea label="Description" v-model="test.discription"></v-textarea>
               </v-card-text>
               <v-divider></v-divider>
               <v-card-title>Pre-test</v-card-title>
@@ -26,10 +27,10 @@
                   <v-icon>mdi-minus</v-icon>
                 </v-btn>
               </v-row>
-              <v-row v-for="n in qtdtask" v-bind:key="n">
+              <v-row v-for="task in tasks" v-bind:key="task.id">
                 <v-card-text>
                   <v-text-field label="Name" v-model="task.name"></v-text-field>
-                  <v-textarea label="Description" v-model="task.description"></v-textarea>
+                  <v-textarea label="Description" v-model="task.discription"></v-textarea>
                   <v-text-field label="Tip" v-model="task.tip"></v-text-field>
                   <v-text-field label="Post-test" v-model="task.postTest"></v-text-field>
                   <v-row align="center" cols="2">
@@ -45,7 +46,7 @@
               <v-card-text>
                 <v-text-field label="Form" v-model="postTest"></v-text-field>
               </v-card-text>
-              <v-btn class="mr-4" color="success">submit</v-btn>
+              <v-btn class="mr-4" color="success" @click="submit">submit</v-btn>
             </v-form>
           </v-col>
         </v-row>
@@ -59,31 +60,77 @@
 export default {
   data: () => ({
     qtdtask: 1,
-    test:{
-        title:'',
-        discription:''
+    test: {
+      title: "",
+      discription: "",
+      type: ""
     },
-    preTest:{
-        consent:'',
-        form:''
+    preTest: {
+      consent: "",
+      form: ""
     },
-    task:{
-        name:'',
-        decription:'',
-        tip:'',
-        postTest:'',
-        timer:false
-    },
-    postTest:''
+    tasks: [
+      {
+        id: 1,
+        name: "",
+        discription: "",
+        tip: "",
+        postTest: "",
+        timer: false
+      }
+    ],
+    postTest: "",
+    object: {
+      title: "",
+      type: "",
+      discription: "",
+      preTest: {
+        consent: "",
+        form: ""
+      },
+      tasks: [],
+      postTest: ""
+    }
   }),
-  methods:{
-      addTask:function(){
-        this.qtdtask++
-      },
-      removeTask:function(){
-          if(this.qtdtask>1)
-            this.qtdtask--
-      },
+  methods: {
+    addTask: function() {
+      this.qtdtask++;
+      this.tasks.push({
+        id: this.qtdtask,
+        name: "",
+        discription: "",
+        tip: "",
+        postTest: "",
+        timer: false
+      });
+    },
+    removeTask: function() {
+      if (this.tasks.length > 1) {
+        this.qtdtask--;
+        this.tasks.pop();
+      }
+    },
+    submit: function() {
+      //Make object test
+      this.object.title = this.test.title;
+      this.object.type = this.test.type;
+      this.object.discription = this.test.discription;
+
+      this.object.preTest.consent = this.preTest.consent;
+      this.object.preTest.form = this.preTest.form;
+
+      this.tasks.forEach(task => {
+        this.object.tasks.push(task);
+      });
+
+      this.object.postTest = this.postTest;
+
+      //Send db
+      this.$store.dispatch("createTest", {
+        collection: "test",
+        data: this.object
+      });
+    }
   }
 };
 </script>
