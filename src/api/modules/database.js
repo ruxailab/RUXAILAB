@@ -18,9 +18,11 @@ export default {
   // queryObjects: (payload) => {
   //
   // },
-  // getAllObjects: (payload) => {
-  //
-  // },
+  getAllObjects: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    return collectionRef.get()
+  },
   // arrayOperations: (payload) => {
   //
   // },
