@@ -17,7 +17,7 @@
                   </v-col>
                   <v-col>
                     <v-btn icon>
-                      <v-icon>mdi-delete</v-icon>
+                      <v-icon @click="deleteTest(test)">mdi-delete</v-icon>
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -33,15 +33,19 @@
 
 <script>
 export default {
-  data: () => ({
-  }),
+  data: () => ({}),
+  methods: {
+    deleteTest(item) {
+      this.$store.dispatch("deleteTest", item);
+    }
+  },
   computed: {
     tests() {
       return this.$store.getters.tests;
     }
   },
-  created(){
-      this.$store.dispatch("getTests",{doc:this.$route.params.tests})
+  created() {
+    this.$store.dispatch("getTests", { doc: this.$route.params.tests });
   }
 };
 </script>

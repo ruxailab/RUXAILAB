@@ -1,14 +1,16 @@
 import firebase from 'firebase'
 
 export default {
-  createObject: (payload) => {
+  createObject: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     return collectionRef.add(payload.data)
   },
-  // deleteObject: (payload) => {
-  //
-  // },
+  deleteObject: async (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    return collectionRef.doc(payload.id).delete()
+  },
   // updateObject: (payload) => {
   //
   // },
@@ -18,7 +20,7 @@ export default {
   // queryObjects: (payload) => {
   //
   // },
-  getAllObjects: (payload) => {
+  getAllObjects: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     return collectionRef.get()

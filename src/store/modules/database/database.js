@@ -2,9 +2,9 @@ import api from '@/api/index'
 
 export default {
   actions: {
-    createObject(_, payload) {
+    async createObject(_, payload) {
       try {
-        var docRef = api.database.createObject(payload)
+        var docRef = await api.database.createObject(payload)
         console.log("Document sucessfully created with ID: ", docRef)
         return docRef
       } catch (err) {
@@ -23,6 +23,15 @@ export default {
         return objects
       } catch (err) {
         console.error("Error getting document: ", err)
+      }
+    },
+    async deleteObject(_,payload){
+      try {
+        console.log(payload)
+        await api.database.deleteObject(payload)
+        console.log("Document successfully deleted!")
+      } catch (err) {
+        console.error("Error removing document: ", err)
       }
     }
   }

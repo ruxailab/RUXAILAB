@@ -34,6 +34,10 @@ export default {
       payload = Object.assign(payload,{collection:'test'})
       var tests = await dispatch('getAllObjects',payload)
       commit('setTests',tests)
+    },
+    deleteTest({dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      return dispatch('deleteObject',payload)
     }
   }
 
