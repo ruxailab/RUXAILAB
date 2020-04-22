@@ -1,22 +1,43 @@
 export default {
   state: {
-    test: null
+    test: null,
+    tests:null
   },
   mutations: {
-    test(state,payload){
+    setTest(state,payload){
       state.test=payload
     },
+    setTests(state,payload){
+      state.tests = payload
+    }
+  },
+  getters:{
+    tests(state){
+      return state.tests
+    }
   },
   actions:{
     createTest({dispatch,commit},payload){
         payload = Object.assign(payload,{collection:'test'})
         dispatch('createObject',payload)
         .then(() => {
-          commit('setAlert',{error: false, msg:'Test created!'})
+          commit()
+          console.log("Test created!")
+          //commit('setAlert',{error: false, msg:'Test created!'})
         })
         .catch(() => {
-          commit('setAlert',{error: true, msg:'Error to create test!'})
+          console.log("Error to create test!")
+          //commit('setAlert',{error: true, msg:'Error to create test!'})
         })
+    },
+    async getTests({commit,dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      var tests = await dispatch('getAllObjects',payload)
+      commit('setTests',tests)
+    },
+    deleteTest({dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      return dispatch('deleteObject',payload)
     }
   }
 
