@@ -27,6 +27,9 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-btn absolute dark fab bottom right>
+      <v-icon @click="changerouter()">mdi-plus</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
@@ -37,6 +40,9 @@ export default {
   methods: {
     deleteTest(item) {
       this.$store.dispatch("deleteTest", item);
+    },
+    changerouter(){
+      this.$router.push('/createtest')
     }
   },
   computed: {
