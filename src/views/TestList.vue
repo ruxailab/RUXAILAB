@@ -4,7 +4,7 @@
       <v-col cols="10">
         <v-card>
           <v-list>
-            <v-list-item v-for="test in tests" :key="test.id">
+            <v-list-item v-for="test in tests" :key="test.id" @click="openTest(test.id)">
               <v-list-item-content>
                 <v-list-item-title v-text="test.title"></v-list-item-title>
               </v-list-item-content>
@@ -43,11 +43,19 @@ export default {
     },
     changerouter(){
       this.$router.push('/createtest')
+    },
+    openTest(id){
+      this.$router.push('/testview/'+id)
     }
   },
   computed: {
     tests() {
       return this.$store.getters.tests;
+    }
+  },
+  watch:{
+    tests: function (){
+      this.$store.dispatch("getTest", { id: this.id });
     }
   },
   created() {

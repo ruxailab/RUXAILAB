@@ -14,9 +14,11 @@ export default {
   // updateObject: (payload) => {
   //
   // },
-  // getObject: (payload) => {
-  //
-  // },
+  getObject: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    return collectionRef.doc(payload.id).get()
+  },
   // queryObjects: (payload) => {
   //
   // },

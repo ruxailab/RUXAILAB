@@ -14,6 +14,9 @@ export default {
   getters:{
     tests(state){
       return state.tests
+    },
+    test(state){
+      return state.test
     }
   },
   actions:{
@@ -38,6 +41,11 @@ export default {
     deleteTest({dispatch},payload){
       payload = Object.assign(payload,{collection:'test'})
       return dispatch('deleteObject',payload)
+    },
+    async getTest({commit,dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      var test = await dispatch('getObject',payload)
+      commit('setTest',test)
     }
   }
 

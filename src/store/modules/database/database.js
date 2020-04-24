@@ -33,6 +33,15 @@ export default {
       } catch (err) {
         console.error("Error removing document: ", err)
       }
+    },
+    async getObject(_,payload){
+      try {
+        var doc = await api.database.getObject(payload)
+        const object = Object.assign({id:doc.id}, doc.data()) 
+        return object
+      } catch (err) {
+        console.error("Error getting document: ", err)
+      }
     }
   }
 }
