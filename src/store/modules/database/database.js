@@ -38,7 +38,6 @@ export default {
       try {
         var doc = await api.database.getObject(payload)
         const object = Object.assign({id:doc.id}, doc.data()) 
-        console.log('Object',object)
         return object
       } catch (err) {
         console.error("Error getting document: ", err)

@@ -53,6 +53,11 @@ export default {
       return this.$store.getters.tests;
     }
   },
+  watch:{
+    tests: function (){
+      this.$store.dispatch("getTest", { id: this.id });
+    }
+  },
   created() {
     this.$store.dispatch("getTests", { doc: this.$route.params.tests });
   }
