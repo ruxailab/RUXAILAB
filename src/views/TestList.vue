@@ -4,8 +4,8 @@
       <v-col cols="10">
         <v-card>
           <v-list>
-            <v-list-item v-for="test in tests" :key="test.id" @click="openTest(test.id)">
-              <v-list-item-content>
+            <v-list-item v-for="test in tests" :key="test.id">
+              <v-list-item-content @click="openTest(test.id)">
                 <v-list-item-title v-text="test.title"></v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
@@ -16,8 +16,8 @@
                     </v-btn>
                   </v-col>
                   <v-col>
-                    <v-btn icon>
-                      <v-icon @click="deleteTest(test)">mdi-delete</v-icon>
+                    <v-btn icon @click="deleteTest(test)">
+                      <v-icon>mdi-delete</v-icon>
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -27,8 +27,8 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-btn absolute dark fab bottom right>
-      <v-icon @click="changerouter()">mdi-plus</v-icon>
+    <v-btn absolute dark fab bottom right @click="changerouter()">
+      <v-icon >mdi-plus</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -40,6 +40,8 @@ export default {
   methods: {
     deleteTest(item) {
       this.$store.dispatch("deleteTest", item);
+      this.$store.dispatch("getTests", { doc: this.$route.params.tests });
+
     },
     changerouter(){
       this.$router.push('/createtest')
