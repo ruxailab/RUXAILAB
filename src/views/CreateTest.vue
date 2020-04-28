@@ -43,7 +43,7 @@
                       <v-card-title>Pre-test</v-card-title>
                       <v-card-text>
                         <v-text-field label="Consent" v-model="preTest.consent"></v-text-field>
-                        <v-text-field label="Form" v-model="preTest.form"></v-text-field>
+                        <v-text-field label="Form" v-model="preTest.form" :rules="formLinkRules"></v-text-field>
                       </v-card-text>
                     </v-col>
                   </v-row>
@@ -100,7 +100,7 @@
                     <v-col>
                       <v-card-title>Post-test</v-card-title>
                       <v-card-text>
-                        <v-text-field label="Form" v-model="postTest"></v-text-field>
+                        <v-text-field label="Form" v-model="postTest" :rules="formLinkRules"></v-text-field>
                       </v-card-text>
                     </v-col>
                   </v-row>
@@ -155,7 +155,10 @@ export default {
       },
       tasks: [],
       postTest: ""
-    }
+    },
+    formLinkRules: [
+      v => (v.indexOf("https://docs.google.com/forms/") == 0) || (v.indexOf("docs.google.com/forms/") == 0) || 'Link must be from google forms' //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
+    ]
   }),
   methods: {
     addTask: function() {
