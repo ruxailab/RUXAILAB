@@ -27,7 +27,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-btn absolute dark fab bottom right @click="changerouter()">
+    <v-btn  large dark fab  fixed bottom right @click="changerouter()">
       <v-icon >mdi-plus</v-icon>
     </v-btn>
   </v-container>
@@ -65,3 +65,4 @@ export default {
   }
 };
 </script>
+

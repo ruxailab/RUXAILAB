@@ -18,7 +18,7 @@
             <v-col cols="2">
               <v-card-text>
                 <v-card-title>{{n.title}}</v-card-title>
-                <v-card-text>{{n.discription}}</v-card-text>
+                <v-card-text>{{n.description}}</v-card-text>
               </v-card-text>
             </v-col>
             <v-col cols="12">
@@ -32,7 +32,7 @@
                 <v-card-title>{{n.task.name}}</v-card-title>
               </v-row>
               <v-row>
-                <v-card-text>{{n.task.discription}}</v-card-text>
+                <v-card-text>{{n.task.description}}</v-card-text>
               </v-row>
               <v-row>
                 <v-card-text>{{n.task.tip}}</v-card-text>
@@ -101,7 +101,7 @@ export default {
       this.steps.push({
         type: "start",
         title: this.test.title,
-        discription: this.test.discription
+        description: this.test.description
       });
 
       //PreTest
