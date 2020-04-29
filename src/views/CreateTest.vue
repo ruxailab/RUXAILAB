@@ -25,7 +25,7 @@
                   <v-row>
                     <v-col cols="12">
                       <v-card-text>
-                        <v-text-field label="Title" v-model="test.title"></v-text-field>
+                        <v-text-field label="Title" v-model="test.title" :rules="requiredRule"></v-text-field>
                         <v-text-field label="Type" v-model="test.type"></v-text-field>
                         <v-textarea label="Description" v-model="test.description"></v-textarea>
                       </v-card-text>
@@ -48,11 +48,13 @@
                           prepend-inner-icon="mdi-link-variant"
                           label="Consent"
                           v-model="preTest.consent"
+                          :rules="googleLinkRules"
                         ></v-text-field>
                         <v-text-field
                           prepend-inner-icon="mdi-link-variant"
                           label="Form"
                           v-model="preTest.form"
+                          :rules="googleLinkRules"
                         ></v-text-field>
                       </v-card-text>
                     </v-col>
@@ -88,7 +90,7 @@
                                 <v-card-text>
                                   <v-row justify="space-around">
                                     <v-col cols="5">
-                                      <v-text-field label="Name" v-model="task.name"></v-text-field>
+                                      <v-text-field label="Name" v-model="task.name" :rules="requiredRule"></v-text-field>
                                       <v-textarea label="Description" v-model="task.description"></v-textarea>
                                     </v-col>
                                     <v-col cols="5">
@@ -156,6 +158,7 @@
                           prepend-inner-icon="mdi-link-variant"
                           label="Form"
                           v-model="postTest"
+                          :rules="googleLinkRules"
                         ></v-text-field>
                       </v-card-text>
                     </v-col>
@@ -222,7 +225,13 @@ export default {
       { text: "Timer", value: "timer" },
       { text: "Actions", value: "actions", sortable: false }
     ],
-    dialog: false
+    dialog: false,
+    requiredRule: [
+      v => !!v || 'Field Required'
+    ],
+    googleLinkRules: [
+      v => v == "" || (v.indexOf("https://docs.google.com/forms/") == 0) || (v.indexOf("docs.google.com/forms/") == 0) || 'Google forms link required' //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
+    ]
   }),
   methods: {
     addTask: function() {
