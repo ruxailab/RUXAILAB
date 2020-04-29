@@ -22,7 +22,7 @@
                     <v-col cols="12">
                       <v-card-title>Test</v-card-title>
                       <v-card-text>
-                        <v-text-field label="Title" v-model="test.title"></v-text-field>
+                        <v-text-field label="Title" v-model="test.title" :rules="requiredRule"></v-text-field>
                         <v-text-field label="Type" v-model="test.type"></v-text-field>
                         <v-textarea label="Description" v-model="test.discription"></v-textarea>
                       </v-card-text>
@@ -42,8 +42,8 @@
                     <v-col>
                       <v-card-title>Pre-test</v-card-title>
                       <v-card-text>
-                        <v-text-field label="Consent" v-model="preTest.consent"></v-text-field>
-                        <v-text-field label="Form" v-model="preTest.form" :rules="formLinkRules"></v-text-field>
+                        <v-text-field label="Consent" v-model="preTest.consent" :rules="googleLinkRules"></v-text-field>
+                        <v-text-field label="Form" v-model="preTest.form" :rules="googleLinkRules"></v-text-field>
                       </v-card-text>
                     </v-col>
                   </v-row>
@@ -71,7 +71,7 @@
                         </v-row>
 
                         <v-card-text>
-                          <v-text-field label="Name" v-model="task.name"></v-text-field>
+                          <v-text-field label="Name" v-model="task.name" :rules="requiredRule"></v-text-field>
                           <v-textarea label="Description" v-model="task.discription"></v-textarea>
                           <v-text-field label="Tip" v-model="task.tip"></v-text-field>
                           <v-text-field label="Post-test" v-model="task.postTest"></v-text-field>
@@ -100,7 +100,7 @@
                     <v-col>
                       <v-card-title>Post-test</v-card-title>
                       <v-card-text>
-                        <v-text-field label="Form" v-model="postTest" :rules="formLinkRules"></v-text-field>
+                        <v-text-field label="Form" v-model="postTest" :rules="googleLinkRules"></v-text-field>
                       </v-card-text>
                     </v-col>
                   </v-row>
@@ -156,8 +156,11 @@ export default {
       tasks: [],
       postTest: ""
     },
-    formLinkRules: [
-      v => (v.indexOf("https://docs.google.com/forms/") == 0) || (v.indexOf("docs.google.com/forms/") == 0) || 'Link must be from google forms' //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
+    requiredRule: [
+      v => !!v || 'Field Required'
+    ],
+    googleLinkRules: [
+      v => v == "" || (v.indexOf("https://docs.google.com/forms/") == 0) || (v.indexOf("docs.google.com/forms/") == 0) || 'Google forms link required' //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
     ]
   }),
   methods: {
