@@ -1,68 +1,52 @@
-<template>
-  <v-stepper v-model="el">
-    <v-stepper-header>
-      <template v-for="(n,index) in steps">
-        <v-stepper-step
-          :key="`${index+1}-step`"
-          :complete="el > index"
-          :step="index+1"
-        >Task {{ index }}</v-stepper-step>
-
-        <v-divider v-if="index+1 !== steps.length" :key="index+1"></v-divider>
-      </template>
-    </v-stepper-header>
+<template >
+  <v-stepper v-model="el" alt-labels >
+    <v-row align="center">
+      <v-stepper-step step="1" editable>Task Description</v-stepper-step>
+      <v-divider></v-divider>
+      <v-stepper-step step="2" editable>Pre Test</v-stepper-step>
+      <v-divider></v-divider>
+      <v-stepper-step step="3" editable>Tasks</v-stepper-step>
+      <v-divider></v-divider>
+      <v-stepper-step step="4" editable>Post Test</v-stepper-step>
+    </v-row>
     <v-stepper-items>
-      <v-stepper-content v-for="(n, index) in steps" :key="`${index+1}-content`" :step="index+1">
-        <v-container  fluid>
-          <v-row v-if="n.type === 'start'" justify="center">
-            <v-col cols="2">
-              <v-card-text>
-                <v-card-title>{{n.title}}</v-card-title>
-                <v-card-text>{{n.description}}</v-card-text>
-              </v-card-text>
-            </v-col>
-            <v-col cols="12">
-              <v-btn color="primary" @click="nextStep(index+1)">Continue</v-btn>
-              <v-btn text>Cancel</v-btn>
-            </v-col>
-          </v-row>
-          <v-row v-if="n.type === 'task'" justify="center">
-            <v-col cols="1">
-              <v-row>
-                <v-card-title>{{n.task.name}}</v-card-title>
-              </v-row>
-              <v-row>
-                <v-card-text>{{n.task.description}}</v-card-text>
-              </v-row>
-              <v-row>
-                <v-card-text>{{n.task.tip}}</v-card-text>
-              </v-row>
-              <v-row v-if="n.task.timer">
-                <v-btn color="success">Start</v-btn>
-              </v-row>
-            </v-col>
-            <v-col cols="12">
-              <v-btn color="primary" @click="nextStep(index+1)">Continue</v-btn>
-              <v-btn text>Cancel</v-btn>
-            </v-col>
-          </v-row>
-          <v-row v-if="n.type === 'form'" justify="center">
-            <v-col cols="12">
-              <iframe
-                :src="n.form"
-                width="100%"
-                height="900"
-                frameborder="0"
-                marginheight="0"
-                marginwidth="0"
-              >Carregando…</iframe>
-            </v-col>
-            <v-col cols="12">
-              <v-btn color="primary" @click="nextStep(index+1)">Continue</v-btn>
-              <v-btn text>Cancel</v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
+      <v-stepper-content  step="1">
+        <v-row>
+          <v-col justify="center" align="center">
+            <h1>{{test.title}}</h1>
+            <h3>{{test.description}}</h3>
+          </v-col>
+        </v-row>
+      </v-stepper-content>
+      <v-stepper-content step="2">
+        <iframe
+          :src="test.preTest.form"
+          width="100%"
+          height="900"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+        >Carregando…</iframe>
+      </v-stepper-content>
+      <v-stepper-content step="3">
+        <v-row v-for="(task,i) in test.tasks" :key="i">
+          <v-card>
+            <v-card-title>{{task.name}}</v-card-title>
+            <v-card-text>{{task.description}}</v-card-text>
+            <v-card-text>{{task.tip}}</v-card-text>
+            <v-btn v-if="task.timer" color="success">Start</v-btn>
+          </v-card>
+        </v-row>
+      </v-stepper-content>
+      <v-stepper-content step="4">
+        <iframe
+          :src="test.postTest"
+          width="100%"
+          height="900"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+        >Carregando…</iframe>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -72,7 +56,7 @@
 export default {
   props: ["id"],
   data: () => ({
-    el: 0,
+    el: 1,
     steps: []
   }),
   watch: {
