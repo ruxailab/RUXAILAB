@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app>
+    <v-app-bar app dense>
         <v-icon left>mdi-alpha-r-circle</v-icon>
         <v-toolbar-title>Research Workflow</v-toolbar-title>
 
