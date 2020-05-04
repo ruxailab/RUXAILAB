@@ -1,44 +1,16 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <!-- aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
-      <!-- <v-col cols="10">
-        <v-card>
-          <v-list>
-            <v-list-item v-for="test in tests" :key="test.id">
-              <v-list-item-content @click="openTest(test.id)">
-                <v-list-item-title v-text="test.title"></v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-row>
-                  <v-col>
-                    <v-btn icon>
-                      <v-icon>mdi-lead-pencil</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col>
-                    <v-btn icon @click="deleteTest(test)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col> -->
-      <!-- aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -->
       <v-col cols="10">
         <v-card>
           <v-data-table
           :headers="headers"
           :items="tests"
           @click:row="openTest"
-          items-per-page="5"
+          :items-per-page="itemsPP"
           show-expand
-
+          :loading="loading"
           >
-            <!-- add loading and learn to show while being loaded -->
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title><b>Available Tests</b></v-toolbar-title>
@@ -53,20 +25,15 @@
               </td>
             </template>
 
-            <!-- <template v-slot:item.task="{ item }">
-              <v-layout justify-center>
-                <span> {{ item.tasks.length }}</span>
-              </v-layout>
-            </template> -->
-
             <template v-slot:item.type="{ item }"> <!-- item type -->
                 <v-layout justify-center>
                   <v-btn
                   v-if="item.type"
                   rounded
                   small
+                  elevation="1"
                   >
-                    {{ item.type }}
+                    <span style="font-size: 7pt">{{ item.type }}</span>
                   </v-btn>
                 </v-layout>
             </template>
@@ -90,8 +57,6 @@
                   <v-icon small>mdi-delete</v-icon>
                 </v-btn>
             </template>
-
-
           </v-data-table>
         </v-card>
       </v-col>
@@ -106,6 +71,7 @@
 <script>
 export default {
   data: () => ({
+    itemsPP: 5,
     headers: [
       {
         text: 'Title',
@@ -135,12 +101,15 @@ export default {
   },
   computed: {
     tests() {
-      return this.$store.getters.tests;
+      return this.$store.getters.tests || []; //retorna um array vazio qnd test for undefined ou null e permite data table renderizar
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   },
-  watch:{
-    tests: function (){
-      this.$store.dispatch("getTest", { id: this.id });
+  watch: {
+    loading() {
+      console.log('loading ' + this.loading)
     }
   },
   created() {
