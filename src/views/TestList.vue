@@ -2,7 +2,15 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-card>
+        <v-card>      
+          <v-text-field
+          class="mx-3 pt-5"
+          append-icon="mdi-magnify"
+          label="Search"
+          v-model="search"
+          >
+          </v-text-field>    
+          
           <v-data-table
           :headers="headers"
           :items="tests"
@@ -10,13 +18,16 @@
           :items-per-page="itemsPP"
           show-expand
           :loading="loading"
+          :search="search"
           >
-            <template v-slot:top>
+            <!-- <template v-slot:top>
               <v-toolbar flat>
-                <v-toolbar-title><b>Available Tests</b></v-toolbar-title>
+                <v-toolbar-title><b>Your Tests</b></v-toolbar-title>
               </v-toolbar>
-            </template>
+            </template> -->
             
+            
+
             <template v-slot:expanded-item="{ headers, item }"> <!-- expanded description -->
               <td :colspan="headers.length" class="pa-3">
                 <h2 class="mb-1">{{ item.title }}</h2>
@@ -72,6 +83,7 @@
 export default {
   data: () => ({
     itemsPP: 5,
+    search: '',
     headers: [
       {
         text: 'Title',
@@ -105,11 +117,6 @@ export default {
     },
     loading() {
       return this.$store.getters.loading;
-    }
-  },
-  watch: {
-    loading() {
-      console.log('loading ' + this.loading)
     }
   },
   created() {
