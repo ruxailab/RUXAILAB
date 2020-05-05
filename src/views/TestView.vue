@@ -1,5 +1,5 @@
 <template >
-  <v-stepper v-model="el" alt-labels >
+  <v-stepper v-model="el" alt-labels>
     <v-row align="center">
       <v-stepper-step step="1" editable>Task Description</v-stepper-step>
       <v-divider></v-divider>
@@ -10,7 +10,7 @@
       <v-stepper-step step="4" editable>Post Test</v-stepper-step>
     </v-row>
     <v-stepper-items>
-      <v-stepper-content  step="1">
+      <v-stepper-content step="1">
         <v-row>
           <v-col justify="center" align="center">
             <h1>{{test.title}}</h1>
@@ -20,6 +20,17 @@
       </v-stepper-content>
       <v-stepper-content step="2">
         <iframe
+          v-if="!preTest"
+          :src="test.preTest.consent"
+          width="100%"
+          height="900"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+        >Carregando…</iframe>
+
+        <iframe
+          v-else
           :src="test.preTest.form"
           width="100%"
           height="900"
@@ -29,13 +40,8 @@
         >Carregando…</iframe>
       </v-stepper-content>
       <v-stepper-content step="3">
-        <v-row v-for="(task,i) in test.tasks" :key="i">
-          <v-card>
-            <v-card-title>{{task.name}}</v-card-title>
-            <v-card-text>{{task.description}}</v-card-text>
-            <v-card-text>{{task.tip}}</v-card-text>
-            <v-btn v-if="task.timer" color="success">Start</v-btn>
-          </v-card>
+        <v-row class="fill-height" align="center" justify="center">
+          <v-btn color="success" @click="openPage">Start tasks</v-btn>
         </v-row>
       </v-stepper-content>
       <v-stepper-content step="4">
@@ -49,6 +55,36 @@
         >Carregando…</iframe>
       </v-stepper-content>
     </v-stepper-items>
+    <v-btn large fab fixed bottom left elevation="24" outlined @click="backStep()">
+      <v-icon>mdi-arrow-left-drop-circle</v-icon>
+    </v-btn>
+    <v-btn
+      large
+      dark
+      fab
+      fixed
+      bottom
+      right
+      elevation="24"
+      color="success"
+      @click="nextStep(test.preTest)"
+    >
+      <v-icon>mdi-arrow-right-drop-circle</v-icon>
+    </v-btn>
+    <v-btn
+      v-if="el === 4"
+      large
+      dark
+      fab
+      fixed
+      bottom
+      right
+      elevation="24"
+      color="success"
+      @click="$router.push('/')"
+    >
+      <v-icon>mdi-content-save-outline</v-icon>
+    </v-btn>
   </v-stepper>
 </template>
 
@@ -57,14 +93,10 @@ export default {
   props: ["id"],
   data: () => ({
     el: 1,
-    steps: []
+    steps: [],
+    preTest: null
   }),
   watch: {
-    steps(val) {
-      if (this.el > val) {
-        this.el = val;
-      }
-    },
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
@@ -73,12 +105,22 @@ export default {
   },
 
   methods: {
-    nextStep(n) {
-      if (n === this.steps.length) {
-        this.el = 1;
+    nextStep(preTest) {
+      if (
+        this.el === 2 &&
+        preTest.form !== null &&
+        preTest.form !== undefined
+      ) {
+        if (this.preTest) {
+          this.el += 1;
+          this.preTest = false;
+        } else this.preTest = true;
       } else {
-        this.el = n + 1;
+        if (this.el < 4) this.el += 1;
       }
+    },
+    backStep() {
+      if (this.el > 1) this.el -= 1;
     },
     mappingSteps() {
       //Test
@@ -114,6 +156,9 @@ export default {
 
       //PostTest
       this.steps.push({ type: "form", form: this.test.postTest });
+    },
+    openPage() {
+      window.open("/testview/" + this.id + "/tasksview");
     }
   },
   computed: {
