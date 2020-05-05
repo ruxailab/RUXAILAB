@@ -1,7 +1,8 @@
 export default {
   state: {
     test: null,
-    tests:null
+    tests:null,
+    loading: false
   },
   mutations: {
     setTest(state,payload){
@@ -9,6 +10,9 @@ export default {
     },
     setTests(state,payload){
       state.tests = payload
+    },
+    setLoading(state, payload) {
+      state.loading = payload;
     }
   },
   getters:{
@@ -17,6 +21,9 @@ export default {
     },
     test(state){
       return state.test
+    },
+    loading(state) {
+      return state.loading
     }
   },
   actions:{
@@ -35,8 +42,10 @@ export default {
     },
     async getTests({commit,dispatch},payload){
       payload = Object.assign(payload,{collection:'test'})
+      commit('setLoading', true);
       var tests = await dispatch('getAllObjects',payload)
       commit('setTests',tests)
+      commit('setLoading', false);
     },
     deleteTest({dispatch},payload){
       payload = Object.assign(payload,{collection:'test'})
