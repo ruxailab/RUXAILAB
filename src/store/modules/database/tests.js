@@ -22,6 +22,9 @@ export default {
     test(state){
       return state.test
     },
+    tasks(state){
+      return state.test.tasks
+    },
     loading(state) {
       return state.loading
     }
