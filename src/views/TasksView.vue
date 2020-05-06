@@ -99,8 +99,6 @@ export default {
   methods: {
     nextStep() {
       var postTest = this.tasks[this.e1-1].postTest
-      console.log("Index",this.e1-1)
-      console.log("PostTest",postTest)
       if (postTest !== null && postTest !== undefined) {
         if (this.postTest) {
           if (this.e1 < this.tasks.length) this.e1 += 1;

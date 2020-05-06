@@ -1,58 +1,69 @@
 <template >
   <v-stepper v-model="el" alt-labels>
     <v-row align="center">
-      <v-stepper-step step="1" editable>Task Description</v-stepper-step>
+      <template v-for="(step,n) in steps">
+        <v-stepper-step
+          :key="`${n+1}-step`"
+          :complete="el > n+1"
+          :step="n+1"
+          editable
+        >{{ step.key }}</v-stepper-step>
+        <v-divider v-if="n+1 !== steps.length" :key="n+1"></v-divider>
+      </template>
+      <!--<v-stepper-step step="1" editable>Task Description</v-stepper-step>
       <v-divider></v-divider>
       <v-stepper-step step="2" editable>Pre Test</v-stepper-step>
       <v-divider></v-divider>
       <v-stepper-step step="3" editable>Tasks</v-stepper-step>
       <v-divider></v-divider>
-      <v-stepper-step step="4" editable>Post Test</v-stepper-step>
+      <v-stepper-step step="4" editable>Post Test</v-stepper-step>-->
     </v-row>
     <v-stepper-items>
-      <v-stepper-content step="1">
-        <v-row>
-          <v-col justify="center" align="center">
-            <h1>{{test.title}}</h1>
-            <h3>{{test.description}}</h3>
-          </v-col>
-        </v-row>
-      </v-stepper-content>
-      <v-stepper-content step="2">
-        <iframe
-          v-if="!preTest"
-          :src="test.preTest.consent"
-          width="100%"
-          height="900"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-        >Carregando…</iframe>
+      <v-stepper-content v-for="(step,n) in steps" :key="`${n+1}-content`" :step="n+1">
+        <v-container v-if="step.key === 'Task Description'">
+          <v-row>
+            <v-col justify="center" align="center">
+              <h1>{{step.value.title}}</h1>
+              <h3>{{step.value.description}}</h3>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-if="step.key === 'Pre Test'">
+          <iframe
+            v-if="!preTest"
+            :src="step.value.consent"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
 
-        <iframe
-          v-else
-          :src="test.preTest.form"
-          width="100%"
-          height="900"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-        >Carregando…</iframe>
-      </v-stepper-content>
-      <v-stepper-content step="3">
-        <v-row class="fill-height" align="center" justify="center">
-          <v-btn color="success" @click="openPage">Start tasks</v-btn>
-        </v-row>
-      </v-stepper-content>
-      <v-stepper-content step="4">
-        <iframe
-          :src="test.postTest"
-          width="100%"
-          height="900"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-        >Carregando…</iframe>
+          <iframe
+            v-else
+            :src="step.value.form"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
+        </v-container>
+        <v-container v-if="step.key === 'Tasks'">
+          <v-row class="fill-height" align="center" justify="center">
+            <v-btn color="success" @click="openPage">Start tasks</v-btn>
+          </v-row>
+        </v-container>
+        <v-container v-if="step.key === 'Post Test'">
+          <iframe
+            :src="step.value"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
+        </v-container>
       </v-stepper-content>
     </v-stepper-items>
     <v-btn large fab fixed bottom left elevation="24" outlined @click="backStep()">
@@ -72,7 +83,7 @@
       <v-icon>mdi-arrow-right-drop-circle</v-icon>
     </v-btn>
     <v-btn
-      v-if="el === 4"
+      v-if="el === steps.length"
       large
       dark
       fab
@@ -92,7 +103,7 @@
 export default {
   props: ["id"],
   data: () => ({
-    el: 1,
+    el: 0,
     steps: [],
     preTest: null
   }),
@@ -125,37 +136,24 @@ export default {
     mappingSteps() {
       //Test
       this.steps.push({
-        type: "start",
-        title: this.test.title,
-        description: this.test.description
+        key: "Task Description",
+        value: {
+          title: this.test.title,
+          description: this.test.description
+        }
       });
-
       //PreTest
       if (this.test.preTest !== null && this.test.preTest !== undefined) {
-        if (
-          this.test.preTest.consent !== null &&
-          this.test.preTest.consent !== undefined
-        ) {
-          this.steps.push({ type: "form", form: this.test.preTest.consent });
-        }
-        if (
-          this.test.preTest.form !== null &&
-          this.test.preTest.form !== undefined
-        ) {
-          this.steps.push({ type: "form", form: this.test.preTest.form });
-        }
+        this.steps.push({ key: "Pre Test", value: this.test.preTest });
       }
-
       //Tasks
-      this.test.tasks.forEach(task => {
-        this.steps.push({ type: "task", task: task });
-        if (task.postTest !== null && task.postTest !== undefined) {
-          this.steps.push({ type: "form", form: task.postTest });
-        }
-      });
+      this.steps.push({ key: "Tasks", value: this.test.tasks });
 
       //PostTest
-      this.steps.push({ type: "form", form: this.test.postTest });
+      if (this.test.postTest !== null && this.test.postTest !== undefined) {
+        this.steps.push({ key: "Post Test", value: this.test.postTest });
+      }
+      console.log(this.steps);
     },
     openPage() {
       window.open("/testview/" + this.id + "/tasksview");

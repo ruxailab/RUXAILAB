@@ -254,14 +254,18 @@ export default {
       this.object.type = this.test.type;
       this.object.description = this.test.description;
 
-      this.object.preTest.consent = this.preTest.consent;
-      this.object.preTest.form = this.preTest.form;
+      this.object.preTest.consent = this.preTest.consent === "" ? null:this.preTest.consent;
+      this.object.preTest.form = this.preTest.form === "" ? null: this.preTest.form;
+
+      if(this.object.preTest.form === null && this.object.preTest.consent === null){
+        this.object.preTest = null
+      }
 
       this.tasks.forEach(task => {
         this.object.tasks.push(task);
       });
 
-      this.object.postTest = this.postTest;
+      this.object.postTest = this.postTest === "" ? null:this.postTest;
 
       //Send db
       this.$store.dispatch("createTest", {
