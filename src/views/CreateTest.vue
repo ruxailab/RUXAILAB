@@ -181,7 +181,7 @@
 <script>
 export default {
   data: () => ({
-    el: 3,
+    el: 1,
     editedItem: -1,
     test: {
       title: "",
