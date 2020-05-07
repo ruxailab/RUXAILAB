@@ -72,7 +72,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-btn  large dark fab  fixed bottom right @click="changerouter()">
+    <v-btn  large dark fab  fixed bottom right @click="createTest()">
       <v-icon >mdi-plus</v-icon>
     </v-btn>
   </v-container>
@@ -104,11 +104,15 @@ export default {
       this.$store.dispatch("getTests", { doc: this.$route.params.tests });
 
     },
-    changerouter(){
+    createTest(){
       this.$router.push('/createtest')
     },
     openTest(test){
-      this.$router.push('/testview/'+test.id)
+      if(!this.deleting && !this.editing)
+        this.$router.push('/testview/'+test.id)
+    },
+    editItem(item){
+      console.log(item)
     }
   },
   computed: {
@@ -120,7 +124,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("getTests", { doc: this.$route.params.tests });
+    if (!this.$store.test) this.$store.dispatch("getTests", { doc: this.$route.params.tests });
   }
 };
 </script>

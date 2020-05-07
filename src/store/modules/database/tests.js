@@ -55,9 +55,11 @@ export default {
       return dispatch('deleteObject',payload)
     },
     async getTest({commit,dispatch},payload){
+      commit('setLoading', true);
       payload = Object.assign(payload,{collection:'test'})
       var test = await dispatch('getObject',payload)
       commit('setTest',test)
+      commit('setLoading', false);
     }
   }
 
