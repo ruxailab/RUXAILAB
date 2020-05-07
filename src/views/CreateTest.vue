@@ -3,7 +3,7 @@
     <v-card>
       <v-stepper v-model="el" alt-labels non-linear>
         <v-stepper-header>
-          <v-stepper-step step="1" editable>Task Description</v-stepper-step>
+          <v-stepper-step step="1" editable>Test Description</v-stepper-step>
           <v-divider></v-divider>
           <v-stepper-step step="2" editable>
             Pre Test

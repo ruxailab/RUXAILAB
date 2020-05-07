@@ -19,7 +19,6 @@ export default {
         snapshot.forEach(doc => {
           objects.push(Object.assign({ id: doc.id }, doc.data()))
         })
-        console.log('Objects', objects)
         return objects
       } catch (err) {
         console.error("Error getting document: ", err)

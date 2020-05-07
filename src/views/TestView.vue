@@ -20,7 +20,7 @@
     </v-row>
     <v-stepper-items>
       <v-stepper-content v-for="(step,n) in steps" :key="`${n+1}-content`" :step="n+1">
-        <v-container v-if="step.key === 'Task Description'">
+        <v-container v-if="step.key === 'Test Description'">
           <v-row>
             <v-col justify="center" align="center">
               <h1>{{step.value.title}}</h1>
@@ -136,7 +136,7 @@ export default {
     mappingSteps() {
       //Test
       this.steps.push({
-        key: "Task Description",
+        key: "Test Description",
         value: {
           title: this.test.title,
           description: this.test.description
@@ -153,7 +153,6 @@ export default {
       if (this.test.postTest !== null && this.test.postTest !== undefined) {
         this.steps.push({ key: "Post Test", value: this.test.postTest });
       }
-      console.log(this.steps);
     },
     openPage() {
       window.open("/testview/" + this.id + "/tasksview");
@@ -165,7 +164,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("getTest", { id: this.id });
+    if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>

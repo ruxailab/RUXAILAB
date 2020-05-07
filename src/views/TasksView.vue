@@ -99,8 +99,7 @@ export default {
   data: () => ({
     e1: 0,
     postTest: false,
-    loading: true,
-    
+    loading: true
   }),
   methods: {
     nextStep() {
@@ -139,7 +138,7 @@ export default {
         return this.$store.getters.tasks;
       }
       return [];
-    },
+    }
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
