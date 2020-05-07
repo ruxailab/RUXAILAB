@@ -50,16 +50,19 @@
             </template>
 
             <template v-slot:item.edit="{ item }"> <!-- edit button -->
-              <v-btn 
-              icon
-              @click="editItem(item)"
-              small
-              >
-                <v-icon small>mdi-pencil</v-icon>
-              </v-btn>
+              <td @click.stop>
+                <v-btn 
+                icon
+                @click="editItem(item)"
+                small
+                >
+                  <v-icon small>mdi-pencil</v-icon>
+                </v-btn>
+              </td>
             </template>
 
             <template v-slot:item.delete="{ item }"> <!-- delete button -->
+              <td @click.stop>
                 <v-btn 
                 icon
                 @click="deleteTest(item)"
@@ -67,6 +70,7 @@
                 >
                   <v-icon small>mdi-delete</v-icon>
                 </v-btn>
+              </td>
             </template>
           </v-data-table>
         </v-card>
