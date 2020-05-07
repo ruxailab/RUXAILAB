@@ -1,5 +1,8 @@
 <template>
   <v-stepper v-model="e1">
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-stepper-header>
       <template v-for="(task,n) in tasks">
         <v-stepper-step
@@ -12,7 +15,7 @@
       </template>
     </v-stepper-header>
 
-    <v-stepper-items >
+    <v-stepper-items>
       <v-stepper-content v-for="(task,n) in tasks" :key="`${n+1}-content`" :step="n+1">
         <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
           <v-col cols="12">
@@ -57,7 +60,7 @@
       >
         <v-icon>mdi-arrow-left-drop-circle</v-icon>
       </v-btn>
-        <v-btn
+      <v-btn
         v-if="e1 === tasks.length"
         large
         dark
@@ -90,15 +93,18 @@
 </template>
 
 <script>
+const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 export default {
   props: ["id"],
   data: () => ({
-    e1:1,
-    postTest: false
+    e1: 0,
+    postTest: false,
+    loading: true,
+    
   }),
   methods: {
     nextStep() {
-      var postTest = this.tasks[this.e1-1].postTest
+      var postTest = this.tasks[this.e1 - 1].postTest;
       if (postTest !== null && postTest !== undefined) {
         if (this.postTest) {
           if (this.e1 < this.tasks.length) this.e1 += 1;
@@ -114,6 +120,17 @@ export default {
     },
     backStep() {
       if (this.e1 > 1) this.e1 -= 1;
+    },
+    async fetchUsers() {
+      //this.loading = true;
+      await pause(1000);
+      this.e1 = 1;
+      this.loading = false;
+    }
+  },
+  watch: {
+    tasks() {
+      this.fetchUsers();
     }
   },
   computed: {
