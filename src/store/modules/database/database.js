@@ -41,6 +41,15 @@ export default {
       } catch (err) {
         console.error("Error getting document: ", err)
       }
+    },
+    async updateObject(_,payload){
+      try {
+        var docRef = await api.database.updateObject(payload)
+        console.log("Document successfully updated: ", docRef)
+        return docRef
+      } catch (err) {
+        console.error("Error",err)
+      }
     }
   }
 }

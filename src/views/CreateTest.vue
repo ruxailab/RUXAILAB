@@ -2,7 +2,8 @@
   <v-container justify="center">
     <v-card>
       <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
-        Test registered successfully
+        <p v-if="id === null"> Test registered successfully </p>
+        <p v-else> Test updated successfully </p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
         </v-btn>
@@ -102,6 +103,62 @@ export default {
   }),
   methods: {
     submit() {
+      this.testAssembly();
+      if (this.id === null || this.id === undefined) {
+        this.snackbar = true;
+        //Send db
+        this.$store.dispatch("createTest", {
+          collection: "test",
+          data: this.object
+        });
+      } else {
+         this.snackbar = true;
+        this.$store.dispatch("updateTest", {
+          docId: this.id,
+          data: this.object
+        });
+      }
+    },
+    nextStep() {
+      if (this.el < 4) this.el = Number(this.el) + 1;
+    },
+    backStep() {
+      if (this.el > 1) this.el -= Number(this.el) - 1;
+    },
+    testLoad() {
+      //Load Test Description
+      this.test.title = this.testEdit.title;
+      this.test.type = this.testEdit.type;
+      this.test.description = this.testEdit.description;
+
+      //Load Pretest
+      if (
+        this.testEdit.preTest !== null &&
+        this.testEdit.preTest !== undefined
+      ) {
+        this.preTest.consent =
+          this.testEdit.preTest.consent === null ||
+          this.testEdit.preTest.consent === undefined
+            ? ""
+            : this.testEdit.preTest.consent;
+
+        this.preTest.form =
+          this.testEdit.preTest.form === null ||
+          this.testEdit.preTest.form === undefined
+            ? ""
+            : this.testEdit.preTest.form;
+      }
+
+      //Load Tasks
+      if (this.testEdit.tasks !== null && this.testEdit.tasks !== undefined)
+        this.testEdit.tasks.forEach(task => {
+          this.tasks.push(task);
+        });
+      //Load PostTest
+      this.postTest =
+        this.testEdit.postTest === null ? "" : this.testEdit.postTest;
+    },
+    testAssembly() {
       //Make object test
       this.object.title = this.test.title;
       this.object.type = this.test.type;
@@ -124,41 +181,6 @@ export default {
       });
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
-
-      this.snackbar = true;
-
-      //Send db
-      this.$store.dispatch("createTest", {
-        collection: "test",
-        data: this.object
-      });
-    },
-    nextStep() {
-      if (this.el < 4) this.el = Number(this.el) + 1;
-    },
-    backStep() {
-      if (this.el > 1) this.el -= Number(this.el) - 1;
-    },
-    testLoad() {
-      //Load Test Description
-      this.test.title = this.testEdit.title;
-      this.test.type = this.testEdit.type;
-      this.test.description = this.testEdit.description;
-
-      //Load Pretest
-      this.preTest.consent =
-        this.testEdit.preTest.consent === null
-          ? ""
-          : this.testEdit.preTest.consent;
-      this.preTest.form =
-        this.testEdit.preTest.form === null ? "" : this.testEdit.preTest.form;
-
-      //Load Tasks
-      this.tasks = this.testEdit.tasks === null ? "" : this.testEdit.tasks;
-
-      //Load PostTest
-      this.postTest =
-        this.testEdit.postTest === null ? "" : this.testEdit.postTest;
     }
   },
   watch: {

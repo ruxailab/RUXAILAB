@@ -39,7 +39,7 @@ export default {
           //commit('setAlert',{error: false, msg:'Test created!'})
         })
         .catch(() => {
-          console.log("Error to create test!")
+          console.error("Error to create test!")
           //commit('setAlert',{error: true, msg:'Error to create test!'})
         })
     },
@@ -60,6 +60,16 @@ export default {
       var test = await dispatch('getObject',payload)
       commit('setTest',test)
       commit('setLoading', false);
+    },
+    updateTest({dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      dispatch('updateObject',payload)
+      .then(()=>{
+        console.log("Test updated successfully ")
+      })
+      .catch(()=>{
+        console.error("Error to update")
+      })
     }
   }
 
