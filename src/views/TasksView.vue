@@ -51,56 +51,28 @@
           >Carregando…</iframe>
         </v-row>
       </v-stepper-content>
-      <v-btn
-        large
-        fab
-        fixed
-        bottom
-        left
-        elevation="24"
-        outlined
-        @click="backStep()"
-        v-if="e1 !== 1"
-      >
-        <v-icon>mdi-arrow-left-drop-circle</v-icon>
-      </v-btn>
-      <v-btn
-        v-if="e1 === tasks.length"
-        large
-        dark
-        fab
-        fixed
-        bottom
-        right
-        elevation="24"
-        color="success"
-        @click="nextStep()"
-      >
-        <v-icon>mdi-content-save-outline</v-icon>
-      </v-btn>
-      <v-btn
-        v-else
-        large
-        dark
-        fab
-        fixed
-        bottom
-        right
-        elevation="24"
-        color="success"
-        @click="nextStep()"
-      >
-        <v-icon>mdi-arrow-right-drop-circle</v-icon>
-      </v-btn>
+      <StepNavigation
+        :step="e1"
+        :size="tasks.length"
+        v-on:backStep="backStep()"
+        v-on:nextStep="nextStep()"
+        v-on:submit="nextStep()"
+      />
     </v-stepper-items>
   </v-stepper>
 </template>
 
 <script>
 import TipButton from '../components/atoms/TipButton'
+import StepNavigation from "../components/atoms/StepNavigation";
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export default {
   props: ["id"],
+  components: {
+    StepNavigation,
+    TipButton
+  },
   data: () => ({
     e1: 0,
     postTest: false,
@@ -111,19 +83,19 @@ export default {
       var postTest = this.tasks[this.e1 - 1].postTest;
       if (postTest !== null && postTest !== undefined) {
         if (this.postTest) {
-          if (this.e1 < this.tasks.length) this.e1 += 1;
+          if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
           else if (this.e1 === this.tasks.length) window.close();
           this.postTest = false;
         } else {
           this.postTest = true;
         }
       } else {
-        if (this.e1 < this.tasks.length) this.e1 += 1;
+        if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
         else if (this.e1 === this.tasks.length) window.close();
       }
     },
     backStep() {
-      if (this.e1 > 1) this.e1 -= 1;
+      if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
     },
     async fetchUsers() {
       //this.loading = true;
@@ -148,9 +120,6 @@ export default {
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   },
-  components: {
-    TipButton
-  }
 };
 </script>
 
