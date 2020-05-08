@@ -1,5 +1,5 @@
 <template>
-  <v-container justify="center">
+  <v-container>
     <v-card>
       <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
         <p v-if="id === null"> Test registered successfully </p>
@@ -198,7 +198,7 @@ export default {
     }
   },
   created() {
-    if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
+    if (!this.$store.test && this.id !== null && undefined) this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>

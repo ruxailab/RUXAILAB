@@ -37,7 +37,7 @@
             </template>
 
             <template v-slot:item.type="{ item }"> <!-- item type -->
-                <v-layout justify-center>
+                <v-layout justify="center">
                   <v-btn
                   v-if="item.type"
                   rounded

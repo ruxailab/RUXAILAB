@@ -4,7 +4,7 @@
       <v-data-table :headers="headers" :items="tasks" :items-per-page="5" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-row justify="end ">
+            <v-row justify="end">
               <v-btn color="success" dark @click="dialog = true">Add new task</v-btn>
               <FormDialog
                 :task="task"
