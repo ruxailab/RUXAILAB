@@ -27,7 +27,11 @@
               <p>{{task.description}}</p>
             </v-row>
             <v-spacer></v-spacer>
-            <v-row justify="center" v-if="task.tip !== null">Tip: {{task.tip}}</v-row>
+            <v-row justify="center" v-if="task.tip !== null">
+              <TipButton
+              :task="task"
+              ></TipButton>
+            </v-row>
             <v-spacer></v-spacer>
             <v-row justify="center">
               <v-btn v-if="task.timer === true" color="success">
@@ -93,6 +97,7 @@
 </template>
 
 <script>
+import TipButton from '../components/atoms/TipButton'
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 export default {
   props: ["id"],
@@ -142,6 +147,9 @@ export default {
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
+  },
+  components: {
+    TipButton
   }
 };
 </script>
