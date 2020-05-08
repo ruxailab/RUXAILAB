@@ -115,8 +115,8 @@ export default {
       if(!this.deleting && !this.editing)
         this.$router.push('/testview/'+test.id)
     },
-    editItem(item){
-      console.log(item)
+    editItem(test){
+       this.$router.push('/edittest/'+test.id)
     }
   },
   computed: {

@@ -1,41 +1,47 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import CreateTest from '../views/CreateTest.vue'
-import TestList from '../views/TestList.vue'
-import TestView from '../views/TestView.vue'
-import TasksView from '../views/TasksView.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import CreateTest from "../views/CreateTest.vue";
+import TestList from "../views/TestList.vue";
+import TestView from "../views/TestView.vue";
+import TasksView from "../views/TasksView.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-  const routes = [
+const routes = [
   {
-    path: '/',
-    name: 'TestList',
-    component: TestList
+    path: "/",
+    name: "TestList",
+    component: TestList,
   },
   {
-    path: '/createtest',
-    name: 'Create Test',
-    component: CreateTest
+    path: "/createtest",
+    name: "Create Test",
+    component: CreateTest,
   },
   {
-    path: '/testview/:id',
-    name: 'TestView',
+    path: "/edittest/:id",
+    name: "Edit Test",
     props: true,
-    component: TestView
+    component: CreateTest,
   },
   {
-    path: '/testview/:id/tasksview',
-    name: 'TasksView',
+    path: "/testview/:id",
+    name: "TestView",
     props: true,
-    component: TasksView
-  }
-]
+    component: TestView,
+  },
+  {
+    path: "/testview/:id/tasksview",
+    name: "TasksView",
+    props: true,
+    component: TasksView,
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

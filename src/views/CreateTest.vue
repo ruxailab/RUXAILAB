@@ -66,6 +66,7 @@ import ListTasks from "../components/molecules/ListTasks";
 import StepNavigation from "../components/atoms/StepNavigation";
 
 export default {
+  props: ["id"],
   components: {
     FormTestDescription,
     FormPreTest,
@@ -100,7 +101,7 @@ export default {
     }
   }),
   methods: {
-    submit: function() {
+    submit() {
       //Make object test
       this.object.title = this.test.title;
       this.object.type = this.test.type;
@@ -123,7 +124,7 @@ export default {
       });
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
-   
+
       this.snackbar = true;
 
       //Send db
@@ -131,20 +132,51 @@ export default {
         collection: "test",
         data: this.object
       });
-
     },
     nextStep() {
       if (this.el < 4) this.el = Number(this.el) + 1;
     },
     backStep() {
       if (this.el > 1) this.el -= Number(this.el) - 1;
+    },
+    testLoad() {
+      //Load Test Description
+      this.test.title = this.testEdit.title;
+      this.test.type = this.testEdit.type;
+      this.test.description = this.testEdit.description;
+
+      //Load Pretest
+      this.preTest.consent =
+        this.testEdit.preTest.consent === null
+          ? ""
+          : this.testEdit.preTest.consent;
+      this.preTest.form =
+        this.testEdit.preTest.form === null ? "" : this.testEdit.preTest.form;
+
+      //Load Tasks
+      this.tasks = this.testEdit.tasks === null ? "" : this.testEdit.tasks;
+
+      //Load PostTest
+      this.postTest =
+        this.testEdit.postTest === null ? "" : this.testEdit.postTest;
     }
   },
-  watch:{
-    snackbar(){
-      if(this.snackbar === false)
-        this.$router.push('/')
+  watch: {
+    snackbar() {
+      if (this.snackbar === false) this.$router.push("/");
+    },
+    testEdit: async function() {
+      if (this.testEdit !== null && this.testEdit !== undefined)
+        await this.testLoad();
     }
+  },
+  computed: {
+    testEdit() {
+      return this.$store.getters.test;
+    }
+  },
+  created() {
+    if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>
