@@ -77,19 +77,19 @@ export default {
       var postTest = this.tasks[this.e1 - 1].postTest;
       if (postTest !== null && postTest !== undefined) {
         if (this.postTest) {
-          if (this.e1 < this.tasks.length) this.e1 += 1;
+          if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
           else if (this.e1 === this.tasks.length) window.close();
           this.postTest = false;
         } else {
           this.postTest = true;
         }
       } else {
-        if (this.e1 < this.tasks.length) this.e1 += 1;
+        if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
         else if (this.e1 === this.tasks.length) window.close();
       }
     },
     backStep() {
-      if (this.e1 > 1) this.e1 -= 1;
+      if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
     },
     async fetchUsers() {
       //this.loading = true;

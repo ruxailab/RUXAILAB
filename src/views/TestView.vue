@@ -99,17 +99,17 @@ export default {
         preTest.form !== undefined
       ) {
         if (this.preTest) {
-          this.el += 1;
+          this.el = Number(this.el) + 1;
           this.preTest = false;
         } else this.preTest = true;
       } else {
-        if (this.el < 4) this.el += 1;
+        if (this.el < 4) this.el = Number(this.el) + 1;
         else this.$router.push('/')
 
       }
     },
     backStep() {
-      if (this.el > 1) this.el -= 1;
+      if (this.el > 1) this.el = Number(this.el) - 1;
     },
     mappingSteps() {
       //Test

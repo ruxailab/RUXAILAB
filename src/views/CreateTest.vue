@@ -1,6 +1,12 @@
 <template>
   <v-container justify="center">
     <v-card>
+      <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
+        Test registered successfully
+        <v-btn text @click="snackbar = false">
+          <v-icon>mdi-close-circle-outline</v-icon>
+        </v-btn>
+      </v-snackbar>
       <v-stepper v-model="el" alt-labels non-linear>
         <v-stepper-header>
           <v-stepper-step step="1" editable>Test Description</v-stepper-step>
@@ -69,6 +75,7 @@ export default {
   },
   data: () => ({
     el: 1,
+    snackbar: false,
     test: {
       title: "",
       description: "",
@@ -116,18 +123,27 @@ export default {
       });
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
+   
+      this.snackbar = true;
 
       //Send db
       this.$store.dispatch("createTest", {
         collection: "test",
         data: this.object
       });
+
     },
     nextStep() {
-      if (this.el < 4) this.el += 1;
+      if (this.el < 4) this.el = Number(this.el) + 1;
     },
     backStep() {
-      if (this.el > 1) this.el -= 1;
+      if (this.el > 1) this.el -= Number(this.el) - 1;
+    }
+  },
+  watch:{
+    snackbar(){
+      if(this.snackbar === false)
+        this.$router.push('/')
     }
   }
 };
