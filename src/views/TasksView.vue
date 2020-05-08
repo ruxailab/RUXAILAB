@@ -47,55 +47,26 @@
           >Carregando…</iframe>
         </v-row>
       </v-stepper-content>
-      <v-btn
-        large
-        fab
-        fixed
-        bottom
-        left
-        elevation="24"
-        outlined
-        @click="backStep()"
-        v-if="e1 !== 1"
-      >
-        <v-icon>mdi-arrow-left-drop-circle</v-icon>
-      </v-btn>
-      <v-btn
-        v-if="e1 === tasks.length"
-        large
-        dark
-        fab
-        fixed
-        bottom
-        right
-        elevation="24"
-        color="success"
-        @click="nextStep()"
-      >
-        <v-icon>mdi-content-save-outline</v-icon>
-      </v-btn>
-      <v-btn
-        v-else
-        large
-        dark
-        fab
-        fixed
-        bottom
-        right
-        elevation="24"
-        color="success"
-        @click="nextStep()"
-      >
-        <v-icon>mdi-arrow-right-drop-circle</v-icon>
-      </v-btn>
+      <StepNavigation
+        :step="e1"
+        :size="tasks.length"
+        v-on:backStep="backStep()"
+        v-on:nextStep="nextStep()"
+        v-on:submit="nextStep()"
+      />
     </v-stepper-items>
   </v-stepper>
 </template>
 
 <script>
+import StepNavigation from "../components/atoms/StepNavigation";
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export default {
   props: ["id"],
+  components: {
+    StepNavigation
+  },
   data: () => ({
     e1: 0,
     postTest: false,

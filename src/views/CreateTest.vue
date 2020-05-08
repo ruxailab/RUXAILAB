@@ -18,52 +18,33 @@
           </v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
-          <v-form>
-            <v-stepper-content step="1">
-              <v-container>
-                <v-row>
-                 <FormTestDescription :test="test"/>
-                  <v-col cols="12">
-                    <v-btn color="primary" @click="nextStep(1)">Next</v-btn>
-                    <v-btn text>Cancel</v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-stepper-content>
-            <v-stepper-content step="2">
-              <v-container>
-                <v-row>
-                  <FormPreTest :preTest="preTest"/>
-                  <v-col cols="12">
-                    <v-btn color="primary" @click="nextStep(2)">Next</v-btn>
-                    <v-btn text @click="backStep(2)">Back</v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-stepper-content>
-            <v-stepper-content step="3">
-              <v-container>
-               <ListTasks :tasks="tasks"/>
-                <v-row>
-                  <v-col>
-                    <v-btn color="primary" @click="nextStep(3)">Next</v-btn>
-                    <v-btn text @click="backStep(3)">Back</v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-stepper-content>
-            <v-stepper-content step="4">
-              <v-container>
-                <v-row>
-                  <FormPostTest :postTest="postTest"/>
-                  <v-col cols="12">
-                    <v-btn class="mr-4" color="success" @click="submit">submit</v-btn>
-                    <v-btn text @click="backStep(4)">Back</v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-stepper-content>
-          </v-form>
+          <v-stepper-content step="1">
+            <v-container>
+              <FormTestDescription :test="test" />
+            </v-container>
+          </v-stepper-content>
+          <v-stepper-content step="2">
+            <v-container>
+              <FormPreTest :preTest="preTest" />
+            </v-container>
+          </v-stepper-content>
+          <v-stepper-content step="3">
+            <v-container>
+              <ListTasks :tasks="tasks" />
+            </v-container>
+          </v-stepper-content>
+          <v-stepper-content step="4">
+            <v-container>
+              <FormPostTest :postTest="postTest" />
+            </v-container>
+          </v-stepper-content>
+          <StepNavigation
+            :step="el"
+            :size="4"
+            v-on:backStep="backStep()"
+            v-on:nextStep="nextStep()"
+            v-on:submit="submit()"
+          />
         </v-stepper-items>
       </v-stepper>
     </v-card>
@@ -72,18 +53,19 @@
 
 
 <script>
-import FormTestDescription from '../components/atoms/FormTestDescription'
-import FormPreTest from '../components/atoms/FormPreTest'
-import FormPostTest from '../components/atoms/FormPostTest'
-import ListTasks from '../components/molecules/ListTasks'
-
+import FormTestDescription from "../components/atoms/FormTestDescription";
+import FormPreTest from "../components/atoms/FormPreTest";
+import FormPostTest from "../components/atoms/FormPostTest";
+import ListTasks from "../components/molecules/ListTasks";
+import StepNavigation from "../components/atoms/StepNavigation";
 
 export default {
-  components:{
+  components: {
     FormTestDescription,
     FormPreTest,
     FormPostTest,
-    ListTasks
+    ListTasks,
+    StepNavigation
   },
   data: () => ({
     el: 1,
@@ -117,18 +99,23 @@ export default {
       this.object.type = this.test.type;
       this.object.description = this.test.description;
 
-      this.object.preTest.consent = this.preTest.consent === "" ? null:this.preTest.consent;
-      this.object.preTest.form = this.preTest.form === "" ? null: this.preTest.form;
+      this.object.preTest.consent =
+        this.preTest.consent === "" ? null : this.preTest.consent;
+      this.object.preTest.form =
+        this.preTest.form === "" ? null : this.preTest.form;
 
-      if(this.object.preTest.form === null && this.object.preTest.consent === null){
-        this.object.preTest = null
+      if (
+        this.object.preTest.form === null &&
+        this.object.preTest.consent === null
+      ) {
+        this.object.preTest = null;
       }
 
       this.tasks.forEach(task => {
         this.object.tasks.push(task);
       });
 
-      this.object.postTest = this.postTest === "" ? null:this.postTest;
+      this.object.postTest = this.postTest === "" ? null : this.postTest;
 
       //Send db
       this.$store.dispatch("createTest", {
@@ -136,11 +123,11 @@ export default {
         data: this.object
       });
     },
-    nextStep(n) {
-      this.el = n + 1;
+    nextStep() {
+      if (this.el < 4) this.el += 1;
     },
-    backStep(n) {
-      this.el = n - 1;
+    backStep() {
+      if (this.el > 1) this.el -= 1;
     }
   }
 };

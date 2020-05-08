@@ -1,14 +1,16 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-text-field
-        prepend-inner-icon="mdi-link-variant"
-        label="Form"
-        v-model="postTest"
-        :rules="googleLinkRules"
-      ></v-text-field>
-    </v-col>
-  </v-row>
+  <v-form>
+    <v-row>
+      <v-col>
+        <v-text-field
+          prepend-inner-icon="mdi-link-variant"
+          label="Form"
+          v-model="postTest"
+          :rules="googleLinkRules"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
 <script>

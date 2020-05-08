@@ -10,13 +10,6 @@
         >{{ step.key }}</v-stepper-step>
         <v-divider v-if="n+1 !== steps.length" :key="n+1"></v-divider>
       </template>
-      <!--<v-stepper-step step="1" editable>Task Description</v-stepper-step>
-      <v-divider></v-divider>
-      <v-stepper-step step="2" editable>Pre Test</v-stepper-step>
-      <v-divider></v-divider>
-      <v-stepper-step step="3" editable>Tasks</v-stepper-step>
-      <v-divider></v-divider>
-      <v-stepper-step step="4" editable>Post Test</v-stepper-step>-->
     </v-row>
     <v-stepper-items>
       <v-stepper-content v-for="(step,n) in steps" :key="`${n+1}-content`" :step="n+1">
@@ -65,43 +58,25 @@
           >Carregando…</iframe>
         </v-container>
       </v-stepper-content>
+      <StepNavigation
+        :step="el"
+        :size="steps.length"
+        v-on:backStep="backStep()"
+        v-on:nextStep="nextStep()"
+        v-on:submit="nextStep()"
+      />
     </v-stepper-items>
-    <v-btn large fab fixed bottom left elevation="24" outlined @click="backStep()">
-      <v-icon>mdi-arrow-left-drop-circle</v-icon>
-    </v-btn>
-    <v-btn
-      large
-      dark
-      fab
-      fixed
-      bottom
-      right
-      elevation="24"
-      color="success"
-      @click="nextStep(test.preTest)"
-    >
-      <v-icon>mdi-arrow-right-drop-circle</v-icon>
-    </v-btn>
-    <v-btn
-      v-if="el === steps.length"
-      large
-      dark
-      fab
-      fixed
-      bottom
-      right
-      elevation="24"
-      color="success"
-      @click="$router.push('/')"
-    >
-      <v-icon>mdi-content-save-outline</v-icon>
-    </v-btn>
   </v-stepper>
 </template>
 
 <script>
+import StepNavigation from "../components/atoms/StepNavigation";
+
 export default {
   props: ["id"],
+  components: {
+    StepNavigation
+  },
   data: () => ({
     el: 0,
     steps: [],
@@ -116,7 +91,8 @@ export default {
   },
 
   methods: {
-    nextStep(preTest) {
+    nextStep() {
+      var preTest = this.test.preTest
       if (
         this.el === 2 &&
         preTest.form !== null &&
@@ -128,6 +104,8 @@ export default {
         } else this.preTest = true;
       } else {
         if (this.el < 4) this.el += 1;
+        else this.$router.push('/')
+
       }
     },
     backStep() {
