@@ -98,7 +98,7 @@ export default {
         form: ""
       },
       tasks: [],
-      postTest: ""
+      postTest:""
     }
   }),
   methods: {

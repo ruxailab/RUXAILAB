@@ -65,6 +65,7 @@ export default {
       description: null,
       tip: null,
       postTest: null,
+      answer:null,
       timer: false
     }
   }),
@@ -90,6 +91,7 @@ export default {
         description: null,
         tip: null,
         postTest: null,
+        answer:null,
         timer: false
       };
     }
