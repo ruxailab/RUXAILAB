@@ -98,7 +98,8 @@ export default {
         form: ""
       },
       tasks: [],
-      postTest: ""
+      answer:"",
+      postTest:""
     }
   }),
   methods: {
