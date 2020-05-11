@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="dialog" width="70%">
+  <v-dialog v-model="dialog" width="70%" persistent
+>
     <v-card>
       <v-toolbar>
         <v-toolbar-title>New task</v-toolbar-title>
