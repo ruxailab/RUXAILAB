@@ -198,7 +198,7 @@ export default {
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && undefined) this.$store.dispatch("getTest", { id: this.id });
+    if (!this.$store.test && this.id !== null && this.id !==undefined) this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>
