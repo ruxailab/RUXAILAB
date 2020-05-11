@@ -17,39 +17,48 @@
 
     <v-stepper-items>
       <v-stepper-content v-for="(task,n) in tasks" :key="`${n+1}-content`" :step="n+1">
-        <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
-          <v-col cols="12">
-            <v-row justify="center">
-              <h1>{{task.name}}</h1>
-            </v-row>
-            <v-spacer></v-spacer>
-            <v-row justify="center">
-              <p>{{task.description}}</p>
-            </v-row>
-            <v-spacer></v-spacer>
-            <v-row justify="center" v-if="task.tip !== null">
-              <TipButton
-              :task="task"
-              ></TipButton>
-            </v-row>
-            <v-spacer></v-spacer>
-            <v-row justify="center">
-              <v-btn v-if="task.timer === true" color="success">
-                <v-icon left>mdi-timer</v-icon>Start
-              </v-btn>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row v-else class="fill-height" align="center" justify="center">
-          <iframe
-            :src="task.postTest"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-          >Carregando…</iframe>
-        </v-row>
+        <v-container>
+          <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
+            <v-col cols="12">
+              <v-row justify="center">
+                <h1>{{task.name}}</h1>
+              </v-row>
+              <v-spacer></v-spacer>
+              <v-row justify="end" v-if="task.tip !== null">
+                <TipButton :task="task"></TipButton>
+              </v-row>
+              <v-spacer></v-spacer>
+              <v-row justify="center">
+                <p class="paragraph">{{task.description}}</p>
+              </v-row>
+              <v-spacer></v-spacer>
+              <v-row justify="center">
+                <v-btn v-if="task.timer === true" color="success">
+                  <v-icon left>mdi-timer</v-icon>Start
+                </v-btn>
+              </v-row>
+              <v-spacer></v-spacer>
+              <v-row class="paragraph" justify="space-around">
+                <v-col v-if="task.answer === 'textArea' ">
+                  <v-textarea outlined label="answer"></v-textarea>
+                </v-col>
+                <v-col>
+                  <v-textarea outlined label="observation (optional)"></v-textarea>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row v-else class="fill-height" align="center" justify="center">
+            <iframe
+              :src="task.postTest"
+              width="100%"
+              height="900"
+              frameborder="0"
+              marginheight="0"
+              marginwidth="0"
+            >Carregando…</iframe>
+          </v-row>
+        </v-container>
       </v-stepper-content>
       <StepNavigation
         :step="e1"
@@ -63,7 +72,7 @@
 </template>
 
 <script>
-import TipButton from '../components/atoms/TipButton'
+import TipButton from "../components/atoms/TipButton";
 import StepNavigation from "../components/atoms/StepNavigation";
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -95,7 +104,8 @@ export default {
       }
     },
     backStep() {
-      if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
+      if (this.postTest) this.postTest = false;
+      else if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
     },
     async fetchUsers() {
       //this.loading = true;
@@ -119,9 +129,11 @@ export default {
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
-  },
+  }
 };
 </script>
-
 <style>
+.paragraph {
+  padding:50px;
+}
 </style>
