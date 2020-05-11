@@ -2,8 +2,8 @@
   <v-container>
     <v-card>
       <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
-        <p v-if="id === null"> Test registered successfully </p>
-        <p v-else> Test updated successfully </p>
+        <p v-if="id === null">Test registered successfully</p>
+        <p v-else>Test updated successfully</p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
         </v-btn>
@@ -17,7 +17,9 @@
             <small>Optional</small>
           </v-stepper-step>
           <v-divider></v-divider>
-          <v-stepper-step step="3" editable>Tasks</v-stepper-step>
+          <v-stepper-step v-if="test.type === 'User'" step="3" editable>Tasks</v-stepper-step>
+          <v-stepper-step v-else-if="test.type === 'Expert'" step="3" editable>Heuristic</v-stepper-step>
+          <v-stepper-step v-else step="3" editable>Select type</v-stepper-step>
           <v-divider></v-divider>
           <v-stepper-step step="4" editable>
             Post Test
@@ -36,9 +38,10 @@
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="3">
-            <v-container>
+            <v-container v-if="test.type === 'User'">
               <ListTasks :tasks="tasks" />
             </v-container>
+            <v-container v-if="test.type === 'Expert'">Expert Test</v-container>
           </v-stepper-content>
           <v-stepper-content step="4">
             <v-container>
@@ -98,7 +101,7 @@ export default {
         form: ""
       },
       tasks: [],
-      postTest:""
+      postTest: ""
     }
   }),
   methods: {
@@ -112,7 +115,7 @@ export default {
           data: this.object
         });
       } else {
-         this.snackbar = true;
+        this.snackbar = true;
         this.$store.dispatch("updateTest", {
           docId: this.id,
           data: this.object
@@ -198,7 +201,8 @@ export default {
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !==undefined) this.$store.dispatch("getTest", { id: this.id });
+    if (!this.$store.test && this.id !== null && this.id !== undefined)
+      this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>
