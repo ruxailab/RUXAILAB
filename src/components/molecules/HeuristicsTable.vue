@@ -54,7 +54,7 @@
 
 
 <script>
-import AddHeurBtn from './NewHeuristicButton'
+import AddHeurBtn from '../atoms/NewHeuristicButton'
 
 export default {
   data: () => ({
@@ -87,7 +87,7 @@ export default {
         }
         
         this.heuris = {
-            id: this.heuristics.length,
+            id: this.heuristics[this.heuristics.length-1].id + 1,
             title: '',
             questions: []
         }
@@ -100,7 +100,9 @@ export default {
     },
     editItem(item) {
         this.editIndex = this.heuristics.indexOf(item);
-        this.heuris = Object.assign({}, item);
+        this.heuris.id = this.heuristics[this.editIndex].id
+        this.heuris.title = this.heuristics[this.editIndex].title;
+        this.heuris.questions = Array.from(this.heuristics[this.editIndex].questions)
         this.dialog = true;
     }
   },
@@ -108,7 +110,7 @@ export default {
       dialog() {
           if(!this.dialog) {
               this.heuris = {
-                  id: this.heuristics.length,
+                  id: this.heuristics[this.heuristics.length-1].id + 1,
                   title: '',
                   questions: []
               }

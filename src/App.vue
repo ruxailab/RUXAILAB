@@ -4,8 +4,7 @@
     
   <v-content>
     <v-container fluid>
-      <!-- <router-view></router-view> -->
-      <Heuris/>
+      <router-view></router-view>
     </v-container>
   </v-content>
 
@@ -14,7 +13,6 @@
 
 <script>
 import Toolbar from './components/atoms/Toolbar';
-import Heuris from './components/HeuristicsTable'// delete
 
 export default {
   name: 'App',
@@ -22,8 +20,7 @@ export default {
     //
   }),
   components: {
-    Toolbar,
-    Heuris //delete and remove ,
+    Toolbar
   }
 };
 </script>
