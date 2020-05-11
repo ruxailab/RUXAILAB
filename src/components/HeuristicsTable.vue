@@ -82,7 +82,7 @@ export default {
             this.heuristics.push(this.heuris);
         }
         else {
-            this.heuristics[this.editIndex] = this.heuris;
+            Object.assign(this.heuristics[this.editIndex], this.heuris);
             this.editIndex = -1;
         }
         
@@ -96,13 +96,11 @@ export default {
         this.dialog = payload;
     },
     deleteItem(item) {
-        this.heuristics.splice(this.heuristics.indexOf(item), 1)
-        
+        this.heuristics.splice(this.heuristics.indexOf(item), 1)        
     },
     editItem(item) {
-        let index = this.heuristics.indexOf(item);
-        this.heuris = this.heuristics[index];
-        this.editIndex = index;
+        this.editIndex = this.heuristics.indexOf(item);
+        this.heuris = Object.assign({}, item);
         this.dialog = true;
     }
   },
