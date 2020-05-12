@@ -41,7 +41,9 @@
             <v-container v-if="test.type === 'User'">
               <ListTasks :tasks="tasks" />
             </v-container>
-            <v-container v-if="test.type === 'Expert'">Expert Test</v-container>
+            <v-container v-if="test.type === 'Expert'">
+              <Heuristic :heuristics="heuristics" />
+            </v-container>
           </v-stepper-content>
           <v-stepper-content step="4">
             <v-container>
@@ -68,6 +70,7 @@ import FormPreTest from "../components/atoms/FormPreTest";
 import FormPostTest from "../components/atoms/FormPostTest";
 import ListTasks from "../components/molecules/ListTasks";
 import StepNavigation from "../components/atoms/StepNavigation";
+import Heuristic from "../components/molecules/HeuristicsTable";
 
 export default {
   props: ["id"],
@@ -76,7 +79,8 @@ export default {
     FormPreTest,
     FormPostTest,
     ListTasks,
-    StepNavigation
+    StepNavigation,
+    Heuristic
   },
   data: () => ({
     el: 1,
@@ -91,6 +95,7 @@ export default {
       form: ""
     },
     tasks: [],
+    heuristics: [],
     postTest: "",
     object: {
       title: "",
@@ -101,6 +106,7 @@ export default {
         form: ""
       },
       tasks: [],
+      heuristics: [],
       postTest: ""
     }
   }),
@@ -179,9 +185,15 @@ export default {
         this.object.preTest = null;
       }
 
-      this.tasks.forEach(task => {
-        this.object.tasks.push(task);
-      });
+      if (this.test.type === "User") {
+        this.tasks.forEach(task => {
+          this.object.tasks.push(task);
+        });
+      } else if (this.test.type === "Expert") {
+        this.heuristics.forEach(item => {
+          this.object.heuristics.push(item);
+        });
+      }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
     }
