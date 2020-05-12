@@ -167,14 +167,15 @@ export default {
     },
     testAssembly() {
       //Make object test
-      this.object.title = this.test.title;
-      this.object.type = this.test.type;
-      this.object.description = this.test.description;
+      //Assigning test info
+      this.object = Object.assign(this.object, this.test);
 
+      //assigning pre-test info
       this.object.preTest.consent =
         this.preTest.consent === "" ? null : this.preTest.consent;
       this.object.preTest.form =
         this.preTest.form === "" ? null : this.preTest.form;
+      // this.object = Object.assign(this.object, this.preTest);
 
       if (
         this.object.preTest.form === null &&
@@ -183,6 +184,7 @@ export default {
         this.object.preTest = null;
       }
 
+      //assigning tasks/heuristics
       if (this.test.type === "User") {
         this.object.tasks = Array.from(this.tasks);
       } else if (this.test.type === "Expert") {
