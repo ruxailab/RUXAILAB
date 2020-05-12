@@ -105,8 +105,6 @@ export default {
         consent: "",
         form: ""
       },
-      tasks: [],
-      heuristics: [],
       postTest: ""
     }
   }),
@@ -186,13 +184,9 @@ export default {
       }
 
       if (this.test.type === "User") {
-        this.tasks.forEach(task => {
-          this.object.tasks.push(task);
-        });
+        this.object.tasks = Array.from(this.tasks);
       } else if (this.test.type === "Expert") {
-        this.heuristics.forEach(item => {
-          this.object.heuristics.push(item);
-        });
+        this.object.heuristics = Array.from(this.heuristics);
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
