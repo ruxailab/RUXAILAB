@@ -31,7 +31,7 @@ const routes = [
     component: TestView,
   },
   {
-    path: "/testview/:id/tasksview",
+    path: "/testview/:id/:type",
     name: "TasksView",
     props: true,
     component: TasksView,

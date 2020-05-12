@@ -4,65 +4,22 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-stepper-header>
-      <template v-for="(task,n) in tasks">
-        <v-stepper-step
-          :key="`${n+1}-step`"
-          :complete="e1 > n+1"
-          :step="n+1"
-          editable
-        >Task {{ n+1 }}</v-stepper-step>
-        <v-divider v-if="n+1 !== tasks.length" :key="n+1"></v-divider>
+      <template v-for="(item,n) in items">
+        <v-stepper-step :key="`${n+1}-step`" :complete="e1 > n+1" :step="n+1" editable>
+            <p v-if="type === 'User'">item {{ n+1 }}</p>
+            <p v-else-if="type === 'Expert'">{{item.title }}</p>
+        </v-stepper-step>
+        <v-divider v-if="n+1 !== items.length" :key="n+1"></v-divider>
       </template>
     </v-stepper-header>
-
     <v-stepper-items>
-      <v-stepper-content v-for="(task,n) in tasks" :key="`${n+1}-content`" :step="n+1">
-        <v-container>
-          <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
-            <v-col cols="12">
-              <v-row justify="center">
-                <h1>{{task.name}}</h1>
-              </v-row>
-              <v-spacer></v-spacer>
-              <v-row justify="end" v-if="task.tip !== null">
-                <TipButton :task="task"></TipButton>
-              </v-row>
-              <v-spacer></v-spacer>
-              <v-row justify="center">
-                <p class="paragraph">{{task.description}}</p>
-              </v-row>
-              <v-spacer></v-spacer>
-              <v-row justify="center">
-                <v-btn v-if="task.timer === true" color="success">
-                  <v-icon left>mdi-timer</v-icon>Start
-                </v-btn>
-              </v-row>
-              <v-spacer></v-spacer>
-              <v-row class="paragraph" justify="space-around">
-                <v-col v-if="task.answer === 'textArea' ">
-                  <v-textarea outlined label="answer"></v-textarea>
-                </v-col>
-                <v-col>
-                  <v-textarea outlined label="observation (optional)"></v-textarea>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row v-else class="fill-height" align="center" justify="center">
-            <iframe
-              :src="task.postTest"
-              width="100%"
-              height="900"
-              frameborder="0"
-              marginheight="0"
-              marginwidth="0"
-            >Carregando…</iframe>
-          </v-row>
-        </v-container>
+      <v-stepper-content v-for="(item,n) in items" :key="`${n+1}-content`" :step="n+1">
+        <ViewTask v-if="type === 'User'" :item="item"/>
+        <ViewHeuristic v-if="type === 'Expert'" :item="item"/>
       </v-stepper-content>
       <StepNavigation
         :step="e1"
-        :size="tasks.length"
+        :size="items.length"
         v-on:backStep="backStep()"
         v-on:nextStep="nextStep()"
         v-on:submit="nextStep()"
@@ -72,15 +29,19 @@
 </template>
 
 <script>
-import TipButton from "../components/atoms/TipButton";
+
 import StepNavigation from "../components/atoms/StepNavigation";
+import ViewTask from "../components/atoms/ViewTask"
+import ViewHeuristic from "../components/atoms/ViewHeuristic"
+
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default {
-  props: ["id"],
+  props: ["id", "type"],
   components: {
     StepNavigation,
-    TipButton
+    ViewTask,
+    ViewHeuristic
   },
   data: () => ({
     e1: 0,
@@ -89,40 +50,47 @@ export default {
   }),
   methods: {
     nextStep() {
-      var postTest = this.tasks[this.e1 - 1].postTest;
+      var postTest = this.items[this.e1 - 1].postTest;
       if (postTest !== null && postTest !== undefined) {
         if (this.postTest) {
-          if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
-          else if (this.e1 === this.tasks.length) window.close();
+          if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
+          else if (this.e1 === this.items.length) window.close();
           this.postTest = false;
         } else {
           this.postTest = true;
         }
       } else {
-        if (this.e1 < this.tasks.length) this.e1 = Number(this.e1) + 1;
-        else if (this.e1 === this.tasks.length) window.close();
+        if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
+        else if (this.e1 === this.items.length) window.close();
       }
     },
     backStep() {
       if (this.postTest) this.postTest = false;
       else if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
     },
-    async fetchUsers() {
-      //this.loading = true;
+    async fetch() {
       await pause(1000);
       this.e1 = 1;
       this.loading = false;
     }
   },
   watch: {
-    tasks() {
-      this.fetchUsers();
+    items() {
+      this.fetch();
     }
   },
   computed: {
-    tasks() {
+    items() {
+      const type = this.type;
       if (this.$store.getters.test) {
-        return this.$store.getters.tasks;
+        switch (type) {
+          case "User":
+            return this.$store.getters.items;
+          case "Expert":
+            return this.$store.getters.heuristics;
+          default:
+            return [];
+        }
       }
       return [];
     }
@@ -134,6 +102,6 @@ export default {
 </script>
 <style>
 .paragraph {
-  padding:50px;
+  padding: 50px;
 }
 </style>

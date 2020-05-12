@@ -25,6 +25,9 @@ export default {
     tasks(state){
       return state.test.tasks
     },
+    heuristics(state){
+      return state.test.heuristics
+    },
     loading(state) {
       return state.loading
     }

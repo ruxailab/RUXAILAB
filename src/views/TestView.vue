@@ -12,7 +12,7 @@
       </template>
     </v-row>
     <v-stepper-items>
-    {{test}}
+      {{test}}
       <v-stepper-content v-for="(step,n) in steps" :key="`${n+1}-content`" :step="n+1">
         <v-container v-if="step.key === 'Test Description'">
           <v-row>
@@ -45,7 +45,12 @@
         </v-container>
         <v-container v-if="step.key === 'Tasks'">
           <v-row class="fill-height" align="center" justify="center">
-            <v-btn color="success" @click="openPage">Start tasks</v-btn>
+            <v-btn color="success" @click="openPage(test.type)">Start Tasks</v-btn>
+          </v-row>
+        </v-container>
+        <v-container v-if="step.key === 'Heuristics'">
+          <v-row class="fill-height" align="center" justify="center">
+            <v-btn color="success" @click="openPage(test.type)">Start Heuristics</v-btn>
           </v-row>
         </v-container>
         <v-container v-if="step.key === 'Post Test'">
@@ -93,7 +98,7 @@ export default {
 
   methods: {
     nextStep() {
-      var preTest = this.test.preTest
+      var preTest = this.test.preTest;
       if (
         this.el === 2 &&
         preTest.form !== null &&
@@ -105,8 +110,7 @@ export default {
         } else this.preTest = true;
       } else {
         if (this.el < 4) this.el = Number(this.el) + 1;
-        else this.$router.push('/')
-
+        else this.$router.push("/");
       }
     },
     backStep() {
@@ -122,19 +126,27 @@ export default {
         }
       });
       //PreTest
-      if (this.test.preTest !== null && this.test.preTest !== undefined) {
+      if (this.validate(this.test.preTest)) 
         this.steps.push({ key: "Pre Test", value: this.test.preTest });
-      }
+      
       //Tasks
-      this.steps.push({ key: "Tasks", value: this.test.tasks });
+      if (this.validate(this.test.tasks))
+        this.steps.push({ key: "Tasks", value: this.test.tasks });
+
+      //Heuristics
+      if (this.validate(this.test.heuristics))
+        this.steps.push({ key: "Heuristics", value: this.test.heuristics });
 
       //PostTest
-      if (this.test.postTest !== null && this.test.postTest !== undefined) {
+      if (this.validate(this.test.postTest)) 
         this.steps.push({ key: "Post Test", value: this.test.postTest });
-      }
+      
     },
-    openPage() {
-      window.open("/testview/" + this.id + "/tasksview");
+    openPage(type) {
+      window.open(`/testview/${this.id}/${type}`);
+    },
+    validate(object) {
+      return object !== null && object !== undefined;
     }
   },
   computed: {
