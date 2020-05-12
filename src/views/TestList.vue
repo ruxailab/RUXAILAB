@@ -37,7 +37,6 @@
             </template>
 
             <template v-slot:item.type="{ item }"> <!-- item type -->
-                <v-layout justify="center">
                   <v-btn
                   v-if="item.type"
                   rounded
@@ -46,7 +45,6 @@
                   >
                     <span style="font-size: 7pt">{{ item.type }}</span>
                   </v-btn>
-                </v-layout>
             </template>
 
             <template v-slot:item.edit="{ item }"> <!-- edit button -->
