@@ -45,12 +45,12 @@
         </v-container>
         <v-container v-if="step.key === 'Tasks'">
           <v-row class="fill-height" align="center" justify="center">
-            <v-btn color="success" @click="openPage">Start tasks</v-btn>
+            <v-btn color="success" @click="openPage(test.type)">Start Tasks</v-btn>
           </v-row>
         </v-container>
         <v-container v-if="step.key === 'Heuristics'">
           <v-row class="fill-height" align="center" justify="center">
-            <v-btn color="success" @click="openPage">Start Heuristics</v-btn>
+            <v-btn color="success" @click="openPage(test.type)">Start Heuristics</v-btn>
           </v-row>
         </v-container>
         <v-container v-if="step.key === 'Post Test'">
@@ -142,8 +142,8 @@ export default {
         this.steps.push({ key: "Post Test", value: this.test.postTest });
       
     },
-    openPage() {
-      window.open("/testview/" + this.id + "/tasksview");
+    openPage(type) {
+      window.open(`/testview/${this.id}/${type}`);
     },
     validate(object) {
       return object !== null && object !== undefined;
