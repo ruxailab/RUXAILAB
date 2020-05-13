@@ -6,8 +6,6 @@
     <v-stepper-header>
       <template v-for="(item,n) in items">
         <v-stepper-step :key="`${n+1}-step`" :complete="e1 > n+1" :step="n+1" editable>
-            <p v-if="type === 'User'">item {{ n+1 }}</p>
-            <p v-else-if="type === 'Expert'">{{item.title }}</p>
         </v-stepper-step>
         <v-divider v-if="n+1 !== items.length" :key="n+1"></v-divider>
       </template>

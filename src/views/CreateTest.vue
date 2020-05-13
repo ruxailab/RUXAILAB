@@ -161,6 +161,13 @@ export default {
         this.testEdit.tasks.forEach(task => {
           this.tasks.push(task);
         });
+
+      //Load Tasks
+      if (this.testEdit.heuristics !== null && this.testEdit.heuristics !== undefined)
+        this.testEdit.heuristics.forEach(item => {
+          this.heuristics.push(item);
+        });
+
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;

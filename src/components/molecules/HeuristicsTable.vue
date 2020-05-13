@@ -37,12 +37,14 @@
 
             <template v-slot:item.actions="{ item }">
               <!-- table actions -->
-              <v-btn icon small class="mr-2" @click="editItem(item)">
-                <v-icon small>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn icon small @click="deleteItem(item)">
-                <v-icon small>mdi-delete</v-icon>
-              </v-btn>
+              <v-row>
+                <v-btn icon small class="mr-2" @click="editItem(item)">
+                  <v-icon small>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn icon small @click="deleteItem(item)">
+                  <v-icon small>mdi-delete</v-icon>
+                </v-btn>
+              </v-row>
             </template>
           </v-data-table>
         </v-card>
