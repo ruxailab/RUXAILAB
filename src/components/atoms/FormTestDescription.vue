@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form ref="form">
     <v-row>
       <v-col cols="12">
         <v-card-text>
@@ -8,10 +8,12 @@
             :items="types"
             v-model="test.type"
             label="Type"
+            :rules="requiredRule"
           ></v-overflow-btn>
           <v-textarea v-model="test.description" label="Description"></v-textarea>
         </v-card-text>
       </v-col>
+      <v-btn @click="valida()">aaaaaaaaaaaaa</v-btn>
     </v-row>
   </v-form>
 </template>
@@ -21,8 +23,15 @@ export default {
   props: ["test"],
   data: () => ({
     requiredRule: [v => !!v || "Field Required"],
-    types:['User','Expert']
-  })
+    types:['User','Expert'],
+  }),
+  methods: {
+    valida()
+    {
+      let valid = this.$refs.form.validate();
+      this.$emit('valForm', valid, 0);
+    }
+  }
 };
 </script>
 

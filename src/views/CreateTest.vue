@@ -29,12 +29,12 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <v-container>
-              <FormTestDescription :test="test" />
+              <FormTestDescription :test="test" @valForm="validate" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="2">
             <v-container>
-              <FormPreTest :preTest="preTest" />
+              <FormPreTest :preTest="preTest" @valForm="validate" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -106,7 +106,8 @@ export default {
         form: ""
       },
       postTest: ""
-    }
+    },
+    valids: [false, false, false, false]
   }),
   methods: {
     submit() {
@@ -192,6 +193,11 @@ export default {
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
+    },
+    validate(valid, index)
+    {
+      this.valids[index] = valid
+      console.log(this.valids);
     }
   },
   watch: {
