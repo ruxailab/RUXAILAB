@@ -29,12 +29,12 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <v-container>
-              <FormTestDescription :test="test" @valForm="validate" />
+              <FormTestDescription :test="test" @valForm="validate" ref="form1" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="2">
             <v-container>
-              <FormPreTest :preTest="preTest" @valForm="validate" />
+              <FormPreTest :preTest="preTest" @valForm="validate" ref="form2"/>
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -47,7 +47,7 @@
           </v-stepper-content>
           <v-stepper-content step="4">
             <v-container>
-              <FormPostTest :postTest="postTest" />
+              <FormPostTest :postTest="postTest" @valForm="validate" ref="form3"/>
             </v-container>
           </v-stepper-content>
           <StepNavigation
@@ -60,6 +60,7 @@
         </v-stepper-items>
       </v-stepper>
     </v-card>
+    <v-btn @click="validateAll()">general</v-btn>
   </v-container>
 </template>
 
@@ -107,7 +108,7 @@ export default {
       },
       postTest: ""
     },
-    valids: [false, false, false, false]
+    valids: [false, true, true]
   }),
   methods: {
     submit() {
@@ -194,10 +195,36 @@ export default {
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
     },
-    validate(valid, index)
-    {
+    validate(valid, index){
+      //Test-description index 0
+      //Pre-test index 1
+      //Post-test index 2
       this.valids[index] = valid
-      console.log(this.valids);
+      // console.log(this.valids);
+    },
+    validateAll(){
+      this.$refs.form1.valida();
+      this.$refs.form2.valida();
+      this.$refs.form3.valida();
+
+      let valid = true;
+      this.valids.forEach(item => {
+        if(item === false){
+          valid = false;
+        }
+      })
+
+      if(valid === false ||
+         (this.tasks.length === 0 && this.heuristics.length === 0)
+      ) {
+        console.log('invalid')
+      } else {
+        console.log('valid');
+      } 
+
+    },
+    log() {
+      console.log('valids ' + this.valids)
     }
   },
   watch: {

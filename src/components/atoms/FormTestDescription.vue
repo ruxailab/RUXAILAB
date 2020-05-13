@@ -13,7 +13,6 @@
           <v-textarea v-model="test.description" label="Description"></v-textarea>
         </v-card-text>
       </v-col>
-      <v-btn @click="valida()">aaaaaaaaaaaaa</v-btn>
     </v-row>
   </v-form>
 </template>
@@ -29,6 +28,7 @@ export default {
     valida()
     {
       let valid = this.$refs.form.validate();
+      console.log('valida 0 ' + valid);  
       this.$emit('valForm', valid, 0);
     }
   }
