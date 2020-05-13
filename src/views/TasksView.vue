@@ -14,7 +14,7 @@
     </v-stepper-header>
     <v-stepper-items>
       <v-stepper-content v-for="(item,n) in items" :key="`${n+1}-content`" :step="n+1">
-        <ViewTask v-if="type === 'User'" :item="item"/>
+        <ViewTask v-if="type === 'User'" :postTest="postTest" :item="item"/>
         <ViewHeuristic v-if="type === 'Expert'" :item="item"/>
       </v-stepper-content>
       <StepNavigation
@@ -82,7 +82,6 @@ export default {
   computed: {
     items() {
       const type = this.type;
-      console.log(this.$store.getters.test)
       if (this.$store.getters.test) {
         switch (type) {
           case "User":

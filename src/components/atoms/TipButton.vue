@@ -19,7 +19,7 @@
           class="headline grey lighten-2 text-center"
           primary-title
         >
-          {{ task.name }} - Tip
+          {{task.name}} - Tip
         </v-card-title>
         
         <v-card-text class="pa-3" style="text-align: center">

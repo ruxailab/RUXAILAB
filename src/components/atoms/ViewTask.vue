@@ -7,7 +7,7 @@
         </v-row>
         <v-spacer></v-spacer>
         <v-row justify="end" v-if="item.tip !== null">
-          <TipButton :item="item"></TipButton>
+          <TipButton :task="item"></TipButton>
         </v-row>
         <v-spacer></v-spacer>
         <v-row justify="center">
@@ -46,7 +46,7 @@
 <script>
 import TipButton from "../atoms/TipButton";
 export default {
-  props: ["item"],
+  props: ["item",'postTest'],
   components: {
     TipButton
   }
