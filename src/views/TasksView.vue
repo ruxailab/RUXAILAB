@@ -1,6 +1,6 @@
 <template>
   <v-stepper v-model="e1">
-    <v-overlay :value="loading">
+    <v-overlay :value="false">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-stepper-header>
@@ -82,10 +82,11 @@ export default {
   computed: {
     items() {
       const type = this.type;
+      console.log(this.$store.getters.test)
       if (this.$store.getters.test) {
         switch (type) {
           case "User":
-            return this.$store.getters.items;
+            return this.$store.getters.tasks;
           case "Expert":
             return this.$store.getters.heuristics;
           default:
