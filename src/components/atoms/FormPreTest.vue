@@ -1,5 +1,5 @@
 <template>
-<v-form>
+<v-form ref="form">
   <v-row>
     <v-col>
       <v-card-text>
@@ -32,7 +32,15 @@ export default {
         v.indexOf("docs.google.com/forms/") == 0 ||
         "Google forms link required" //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
     ]
-  })
+  }),
+  methods: {
+    valida()
+    {
+      let valid = this.$refs.form.validate();
+      console.log('valida 1 ' + valid);  
+      this.$emit('valForm', valid, 1);
+    }
+  }
 };
 </script>
 
