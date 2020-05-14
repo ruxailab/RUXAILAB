@@ -162,7 +162,7 @@ export default {
           this.tasks.push(task);
         });
 
-      //Load Tasks
+      //Load Heuristics
       if (this.testEdit.heuristics !== null && this.testEdit.heuristics !== undefined)
         this.testEdit.heuristics.forEach(item => {
           this.heuristics.push(item);
