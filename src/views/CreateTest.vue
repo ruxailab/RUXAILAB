@@ -1,9 +1,10 @@
 <template>
   <v-container>
     <v-card>
-      <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
-        <p v-if="id === null">Test registered successfully</p>
-        <p v-else>Test updated successfully</p>
+      <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
+        <!-- <p v-if="id === null">Test registered successfully</p>
+        <p v-else>Test updated successfully</p> -->
+        <p>{{ snackMsg }}</p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
         </v-btn>
@@ -29,12 +30,12 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <v-container>
-              <FormTestDescription :test="test" />
+              <FormTestDescription :test="test" @valForm="validate" ref="form1" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="2">
             <v-container>
-              <FormPreTest :preTest="preTest" />
+              <FormPreTest :preTest="preTest" @valForm="validate" ref="form2"/>
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -47,7 +48,7 @@
           </v-stepper-content>
           <v-stepper-content step="4">
             <v-container>
-              <FormPostTest :postTest="postTest" />
+              <FormPostTest :postTest="postTest" @valForm="validate" ref="form3"/>
             </v-container>
           </v-stepper-content>
           <StepNavigation
@@ -55,12 +56,12 @@
             :size="4"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
-            v-on:submit="submit()"
+            v-on:submit="validateAll()"
           />
         </v-stepper-items>
       </v-stepper>
     </v-card>
-  </v-container>
+    </v-container>
 </template>
 
 
@@ -85,6 +86,8 @@ export default {
   data: () => ({
     el: 1,
     snackbar: false,
+    snackMsg: '',
+    snackColor: '',
     test: {
       title: "",
       description: "",
@@ -106,20 +109,27 @@ export default {
         form: ""
       },
       postTest: ""
-    }
+    },
+    valids: [false, true, true]
   }),
   methods: {
     submit() {
       this.testAssembly();
       if (this.id === null || this.id === undefined) {
+        this.snackMsg = 'Test created succesfully';
+        this.snackColor = 'success'
         this.snackbar = true;
+        console.log('create');
         //Send db
         this.$store.dispatch("createTest", {
           collection: "test",
           data: this.object
         });
       } else {
+        this.snackMsg = 'Test updated succesfully';
+        this.snackColor = 'success'
         this.snackbar = true;
+        console.log('update');
         this.$store.dispatch("updateTest", {
           docId: this.id,
           data: this.object
@@ -192,11 +202,43 @@ export default {
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
+    },
+    validate(valid, index){
+      this.valids[index] = valid
+    },
+    validateAll(){
+      this.$refs.form1.valida();
+      this.$refs.form2.valida();
+      this.$refs.form3.valida();
+
+      let valid = true;
+      this.valids.forEach(item => {
+        if(item === false){
+          valid = false;
+        }
+      })
+
+      if(valid === false) {
+        this.snackMsg = 'Please fill all required fields correclty';
+        this.snackColor = 'red';
+        this.snackbar = 'true';
+      } else if (this.tasks.length === 0 && this.heuristics.length === 0) {
+        console.log('invalid, please create at least one thing');
+        this.snackMsg = 'Please create at least one ';
+        if(this.test.type === 'User') this.snackMsg += 'task';
+        else this.snackMsg += 'heuristic'
+        this.snackColor = 'red';
+        this.snackbar = 'true';
+      }else {
+        console.log('valid');
+        this.submit();
+      } 
+
     }
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false) this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)
