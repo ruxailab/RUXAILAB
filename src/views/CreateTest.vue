@@ -1,9 +1,10 @@
 <template>
   <v-container>
     <v-card>
-      <v-snackbar v-model="snackbar" color="success" top :timeout="2000">
-        <p v-if="id === null">Test registered successfully</p>
-        <p v-else>Test updated successfully</p>
+      <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
+        <!-- <p v-if="id === null">Test registered successfully</p>
+        <p v-else>Test updated successfully</p> -->
+        <p>{{ snackMsg }}</p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
         </v-btn>
@@ -86,6 +87,8 @@ export default {
   data: () => ({
     el: 1,
     snackbar: false,
+    snackMsg: '',
+    snackColor: '',
     test: {
       title: "",
       description: "",
@@ -114,14 +117,20 @@ export default {
     submit() {
       this.testAssembly();
       if (this.id === null || this.id === undefined) {
+        this.snackMsg = 'Test created succesfully';
+        this.snackColor = 'success'
         this.snackbar = true;
+        console.log('create');
         //Send db
         this.$store.dispatch("createTest", {
           collection: "test",
           data: this.object
         });
       } else {
+        this.snackMsg = 'Test updated succesfully';
+        this.snackColor = 'success'
         this.snackbar = true;
+        console.log('update');
         this.$store.dispatch("updateTest", {
           docId: this.id,
           data: this.object
@@ -196,11 +205,7 @@ export default {
       this.object.postTest = this.postTest === "" ? null : this.postTest;
     },
     validate(valid, index){
-      //Test-description index 0
-      //Pre-test index 1
-      //Post-test index 2
       this.valids[index] = valid
-      // console.log(this.valids);
     },
     validateAll(){
       this.$refs.form1.valida();
@@ -214,22 +219,27 @@ export default {
         }
       })
 
-      if(valid === false ||
-         (this.tasks.length === 0 && this.heuristics.length === 0)
-      ) {
-        console.log('invalid')
-      } else {
+      if(valid === false) {
+        this.snackMsg = 'Please fill all required fields correclty';
+        this.snackColor = 'red';
+        this.snackbar = 'true';
+      } else if (this.tasks.length === 0 && this.heuristics.length === 0) {
+        console.log('invalid, please create at least one thing');
+        this.snackMsg = 'Please create at least one ';
+        if(this.test.type === 'User') this.snackMsg += 'task';
+        else this.snackMsg += 'heuristic'
+        this.snackColor = 'red';
+        this.snackbar = 'true';
+      }else {
         console.log('valid');
+        this.submit();
       } 
 
-    },
-    log() {
-      console.log('valids ' + this.valids)
     }
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false) this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)
