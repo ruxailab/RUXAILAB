@@ -152,8 +152,7 @@ export default {
       // this.openDropdown()
     },
     openAnswer(test) {
-      // this.$router.push('')
-      alert('answers for test: ' + test.title);
+      this.$router.push('/answerview/' + test.id);
     }
   },
   computed: {
