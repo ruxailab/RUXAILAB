@@ -29,7 +29,13 @@ export default {
     var collectionRef = db.collection(payload.collection);
     return collectionRef.get();
   },
-  // arrayOperations: (payload) => {
-  //
-  // },
+  arrayOperations: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId)
+    return docRef.update({
+      answers: firebase.firestore.FieldValue.arrayUnion(payload.answer)
+    })
+
+  },
 };

@@ -1,6 +1,6 @@
 <template>
   <v-stepper v-model="e1">
-    {{heuristics}}
+    {{items}}
     <v-overlay :value="false">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
@@ -57,7 +57,8 @@ export default {
     question: {
       id: null,
       answer: null
-    }
+    },
+    object:{}
   }),
   methods: {
     nextStep() {
@@ -72,7 +73,10 @@ export default {
         }
       } else {
         if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
-        else if (this.e1 === this.items.length) window.close();
+        else if (this.e1 === this.items.length){
+          this.$store.dispatch('pushTestAnswer',{docId: this.id,answer:this.object})
+          //window.close();
+        } 
       }
     },
     backStep() {
@@ -101,6 +105,7 @@ export default {
           questions: []
         };
       });
+      this.object = Object.assign({}, this.heuristics)
     }
   },
   watch: {

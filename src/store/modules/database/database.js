@@ -50,6 +50,15 @@ export default {
       } catch (err) {
         console.error("Error",err)
       }
+    },
+    async pushObject(_,payload){
+      try {
+        var docRef = await api.database.arrayOperations(payload)
+        console.log("Document successfully inserted: ", docRef)
+        return docRef
+      } catch (err) {
+        console.error("Error",err)
+      }
     }
   }
 }

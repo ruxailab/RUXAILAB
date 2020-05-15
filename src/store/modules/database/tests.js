@@ -73,6 +73,17 @@ export default {
       .catch(()=>{
         console.error("Error to update")
       })
+    },
+    pushTestAnswer({dispatch},payload){
+      payload = Object.assign(payload,{collection:'test'})
+      dispatch('pushObject',payload)
+      .then(()=>{
+        console.log("Push successfully")
+      })
+      .catch((err)=>{
+        console.error("Error to push answer "+err)
+      })
+
     }
   }
 
