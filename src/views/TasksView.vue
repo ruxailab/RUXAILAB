@@ -1,6 +1,5 @@
 <template>
   <v-stepper v-model="e1">
-    {{items}}
     <v-overlay :value="false">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
@@ -105,7 +104,7 @@ export default {
           questions: []
         };
       });
-      this.object = Object.assign({}, this.heuristics)
+      this.object = Object.assign({},{heuristics:this.heuristics})
     }
   },
   watch: {

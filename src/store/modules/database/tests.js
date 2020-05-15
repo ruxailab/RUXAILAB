@@ -28,6 +28,9 @@ export default {
     heuristics(state){
       return state.test.heuristics
     },
+    answers(state){
+      return state.test.answers
+    },
     loading(state) {
       return state.loading
     }

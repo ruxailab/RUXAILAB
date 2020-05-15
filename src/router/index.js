@@ -4,6 +4,7 @@ import CreateTest from "../views/CreateTest.vue";
 import TestList from "../views/TestList.vue";
 import TestView from "../views/TestView.vue";
 import TasksView from "../views/TasksView.vue";
+import AnswerView from "../views/AnswerView.vue"
 
 Vue.use(VueRouter);
 
@@ -36,6 +37,12 @@ const routes = [
     props: true,
     component: TasksView,
   },
+  {
+    path: "/answerview/:id",
+    name: "Answer View",
+    props: true,
+    component: AnswerView
+  }
 ];
 
 const router = new VueRouter({
