@@ -2,8 +2,9 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-card>      
+        <v-card :ripple="false" @click="openDropdown">       
           <v-text-field
+          @click.stop
           class="mx-3 pt-5"
           append-icon="mdi-magnify"
           label="Search"
@@ -14,20 +15,12 @@
           <v-data-table
           :headers="headers"
           :items="tests"
-          @click:row="openTest"
+          @click:row="setTest"
           :items-per-page="itemsPP"
           show-expand
           :loading="loading"
           :search="search"
-          >
-            <!-- <template v-slot:top>
-              <v-toolbar flat>
-                <v-toolbar-title><b>Your Tests</b></v-toolbar-title>
-              </v-toolbar>
-            </template> -->
-            
-            
-
+          >         
             <template v-slot:expanded-item="{ headers, item }"> <!-- expanded description -->
               <td :colspan="headers.length" class="pa-3">
                 <h2 class="mb-1">{{ item.title }}</h2>
@@ -37,6 +30,7 @@
             </template>
 
             <template v-slot:item.type="{ item }"> <!-- item type -->
+              <td @click.stop style="cursor: default">
                   <v-btn
                   v-if="item.type"
                   rounded
@@ -45,10 +39,11 @@
                   >
                     <span style="font-size: 7pt">{{ item.type }}</span>
                   </v-btn>
+              </td>
             </template>
 
-            <template v-slot:item.edit="{ item }"> <!-- edit button -->
-              <td @click.stop>
+            <template v-slot:item.edit="{ item }" > <!-- edit button -->
+              <td @click.stop style="cursor: default">
                 <v-btn 
                 icon
                 @click="editItem(item)"
@@ -60,7 +55,7 @@
             </template>
 
             <template v-slot:item.delete="{ item }"> <!-- delete button -->
-              <td @click.stop>
+              <td @click.stop style="cursor: default">
                 <v-btn 
                 icon
                 @click="deleteTest(item)"
@@ -74,7 +69,26 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-btn  large dark fab  fixed bottom right @click="createTest()">
+
+    <v-menu 
+      v-model="showMenu"
+      :position-x="x"
+      :position-y="y"
+      absolute
+      offset-y
+    > 
+      <v-list>
+        <v-list-item @click="openTest(test)">
+          <v-list-item-title>Open Test</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item @click="openAnswer(test)">
+          <v-list-item-title>Open Answers</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
+    <v-btn  large dark fab  fixed bottom right @click="createTest()"> <!-- Add Button -->
       <v-icon >mdi-plus</v-icon>
     </v-btn>
   </v-container>
@@ -86,6 +100,10 @@ export default {
   data: () => ({
     itemsPP: 5,
     search: '',
+    showMenu: false,
+    x: 0,
+    y: 0,
+    test: {},
     headers: [
       {
         text: 'Title',
@@ -99,12 +117,25 @@ export default {
       {text: 'Delete', value: 'delete', align:'center',sortable: false},
       {text: '', value: 'data-table-expand'}
     ],
+    items: [
+      {title: 'Open Test'},
+      {title: 'Open Answers'}
+    ]
   }),
   methods: {
     deleteTest(item) {
       this.$store.dispatch("deleteTest", item);
       this.$store.dispatch("getTests", { doc: this.$route.params.tests });
 
+    },
+    openDropdown(e) {
+      e.preventDefault()
+      this.showMenu = false
+      this.x = e.clientX
+      this.y = e.clientY
+      this.$nextTick(() => {
+        this.showMenu = true
+      })
     },
     createTest(){
       this.$router.push('/createtest')
@@ -115,6 +146,14 @@ export default {
     },
     editItem(test){
        this.$router.push('/edittest/'+test.id)
+    },
+    setTest(test) {
+      this.test = Object.assign({}, test);
+      // this.openDropdown()
+    },
+    openAnswer(test) {
+      // this.$router.push('')
+      alert('answers for test: ' + test.title);
     }
   },
   computed: {
