@@ -85,7 +85,7 @@ export default {
   data: () => ({
     el: 0,
     steps: [],
-    preTest: null
+    preTest: null,
   }),
   watch: {
     test: async function() {

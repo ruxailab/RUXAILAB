@@ -108,7 +108,8 @@ export default {
         consent: "",
         form: ""
       },
-      postTest: ""
+      postTest: "",
+      answers:[]
     },
     valids: [false, true, true]
   }),
@@ -147,7 +148,7 @@ export default {
       this.test.title = this.testEdit.title;
       this.test.type = this.testEdit.type;
       this.test.description = this.testEdit.description;
-
+      
       //Load Pretest
       if (
         this.testEdit.preTest !== null &&
@@ -209,6 +210,7 @@ export default {
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
+
     },
     validate(valid, index){
       this.valids[index] = valid

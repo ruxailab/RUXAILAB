@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    {{item}}
+    {{heuris}}
     <v-row class="fill-height" align="center" justify="center">
       <v-col cols="12">
         <v-row justify="center">
@@ -10,7 +12,11 @@
           <v-col>
             <h3>{{i+1}}) {{question}}</h3>
             <v-spacer></v-spacer>
-            <v-overflow-btn :items="answers" label="respuestas/answers"></v-overflow-btn>
+            <v-overflow-btn
+              :items="options"
+              v-model="heuris.questions[i].answer"
+              label="respuestas/answers"
+            ></v-overflow-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -20,9 +26,9 @@
 
 <script>
 export default {
-  props: ["item"],
+  props: ['item','heuris'],
   data: () => ({
-    answers: [
+    options: [
       "Sí / Yes",
       "Ni Sí, ni No / Neither",
       "No",
