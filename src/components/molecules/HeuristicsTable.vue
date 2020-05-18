@@ -19,9 +19,8 @@
               </v-toolbar>
             </template>
 
-            <template v-slot:expanded-item="{ headers, item }">
-              <!-- questions list -->
-              <td :colspan="headers.length" class="pa-3">
+            <template v-slot:expanded-item="{ headers, item }"> <!-- questions list -->
+              <td :colspan="headers.length">
                 <h2 class="mb-1" style="text-align: center">{{ item.title }}</h2>
                 <div class="caption" v-if="item.questions.length > 0">
                   <v-list>
@@ -35,9 +34,8 @@
               </td>
             </template>
 
-            <template v-slot:item.actions="{ item }">
-              <!-- table actions -->
-              <v-row>
+            <template v-slot:item.actions="{ item }"> <!-- table actions -->
+              <v-row justify="end" class="pr-1">
                 <v-btn icon small class="mr-2" @click="editItem(item)">
                   <v-icon small>mdi-pencil</v-icon>
                 </v-btn>
