@@ -6,8 +6,13 @@
           <v-card-title class="justify-center">
             <h3>Sign-Up</h3>
           </v-card-title>
-          <v-form class="mx-3" v-model="valid" @submit.prevent="onSignUp">
-            <v-text-field label="E-mail"  :rules="emailRules" prepend-inner-icon="mdi-account-circle" v-model="email"></v-text-field>
+          <v-form class="mx-3" v-model="valid">
+            <v-text-field
+              label="E-mail"
+              :rules="emailRules"
+              prepend-inner-icon="mdi-account-circle"
+              v-model="email"
+            ></v-text-field>
 
             <v-text-field
               label="Password"
@@ -30,7 +35,7 @@
             ></v-text-field>
           </v-form>
           <v-card-actions class="justify-center">
-            <v-btn color="green lighten-1" rounded class="white--text" type="submit">Sign-Up</v-btn>
+            <v-btn color="green lighten-1" rounded class="white--text" @click="onSignUp">Sign-Up</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -45,23 +50,21 @@ export default {
     email: "",
     emailRules: [
       v => !!v || "Mandatory email",
-      v => /.@./.test(v || "Invalid email")
+      v => /.+@.+\..+/.test(v) || "Invalid email"
     ],
     password: "",
     passwordRules: [
       v => !!v || "Mandatory password",
-      v => v.length > 6 || "Password must be at least 6 characters"
+      v => v.length >= 6 || "Password must be at least 6 characters"
     ],
     confirmpassword: "",
     showPassword: false
   }),
   computed: {
     comparePassword() {
-      return () => 
-        (this.comparePassword == this.password &&
-          this.comparePassword != "") ||
-          "Different passwords";
-      
+      return () =>
+        (this.confirmpassword == this.password && this.confirmpassword != "") ||
+        "Different passwords";
     },
     user() {
       return this.$store.getters.user;
@@ -69,10 +72,11 @@ export default {
   },
   methods: {
     async onSignUp() {
-      await this.$store.dispatch("signup", {
-        email: this.email,
-        password: this.password
-      });
+      if (this.valid)
+        await this.$store.dispatch("signup", {
+          email: this.email,
+          password: this.password
+        });
     }
   }
 };
