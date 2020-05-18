@@ -27,7 +27,7 @@
                   <v-list>
                     <v-subheader>QUESTIONS:</v-subheader>
                     <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
-                      <v-list-item-content>{{n + 1}}) {{question}}</v-list-item-content>
+                      <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
                     </v-list-item>
                   </v-list>
                 </div>

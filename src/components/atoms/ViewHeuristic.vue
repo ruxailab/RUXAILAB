@@ -1,7 +1,5 @@
 <template>
   <v-container>
-    {{item}}
-    {{heuris}}
     <v-row class="fill-height" align="center" justify="center">
       <v-col cols="12">
         <v-row justify="center">
@@ -10,7 +8,7 @@
         <v-spacer></v-spacer>
         <v-row v-for="(question,i) in item.questions" :key="i" justify="center">
           <v-col>
-            <h3>{{i+1}}) {{question}}</h3>
+            <h3>{{i+1}}) {{question.text}}</h3>
             <v-spacer></v-spacer>
             <v-overflow-btn
               :items="options"
