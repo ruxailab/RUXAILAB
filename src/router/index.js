@@ -6,6 +6,7 @@ import TestView from "../views/TestView.vue";
 import TasksView from "../views/TasksView.vue";
 import AnswerView from "../views/AnswerView.vue";
 import SignIn from "../views/SignIn.vue"
+import SignUp from "../views/SignUp.vue"
 
 Vue.use(VueRouter);
 
@@ -48,6 +49,11 @@ const routes = [
     path: "/signin",
     name: "Sign In",
     component: SignIn
+  },
+  {
+    path: "/signup",
+    name: "Sign Up",
+    component: SignUp
   }
 ];
 
