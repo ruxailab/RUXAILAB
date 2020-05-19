@@ -2,16 +2,23 @@ import api from '@/api'
 
 export default {
     state:{
-        user: null
+        user: null,
+        errorMessage: null
     },
     getters:{
         user(state) {
             return state.user;
+        },
+        errorMessage(state) {
+            return state.errorMessage;
         }
     },
     mutations:{
         setUser(state, payload){
             state.user = payload
+        },
+        setError(state, payload) {
+            state.errorMessage = payload;
         }
     },
     actions:{
@@ -39,6 +46,7 @@ export default {
                 console.log('Signed in as ' + user.email);
             } catch(err) {
                 console.error('Error signing in: ' + err);
+                commit('setError', err);
             } finally { //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
                 commit('setLoading', false);
             }

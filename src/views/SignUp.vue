@@ -6,7 +6,7 @@
           <v-card-title class="justify-center">
             <h3>Sign-Up</h3>
           </v-card-title>
-          <v-form class="mx-3" v-model="valid">
+          <v-form class="mx-3" v-model="valid" @keyup.native.enter="onSignUp()">
             <v-text-field
               label="E-mail"
               :rules="emailRules"
