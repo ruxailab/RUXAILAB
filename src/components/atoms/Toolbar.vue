@@ -8,7 +8,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn text>
+        <v-btn text @click="moveSignIn()">
             <v-icon left>mdi-lock</v-icon>
             Sign-in
         </v-btn>
@@ -21,6 +21,9 @@ export default {
     methods: {
         moveHome(){
             this.$router.push('/')
+        },
+        moveSignIn(){
+            this.$router.push('/signin')
         }
     }
 }

@@ -37,6 +37,11 @@
           <v-card-actions class="justify-center">
             <v-btn color="green lighten-1" rounded class="white--text" @click="onSignUp">Sign-Up</v-btn>
           </v-card-actions>
+          <v-card-actions class="justify-center">
+            <p>
+              <a href="/signin">Have an account yet? Sign ip</a>
+            </p>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
