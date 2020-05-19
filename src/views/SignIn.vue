@@ -7,7 +7,7 @@
             <h3>Sign-In</h3>
           </v-card-title>
           <v-form class="mx-3">
-            <v-text-field label="E-mail" prepend-inner-icon="mdi-account-circle"></v-text-field>
+            <v-text-field label="E-mail" prepend-inner-icon="mdi-account-circle" v-model="email"></v-text-field>
 
             <v-text-field
               label="Password"
@@ -15,10 +15,11 @@
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPassword = !showPassword"
               :type="showPassword ? 'text' : 'password'"
+              v-model="password"
             ></v-text-field>
           </v-form>
           <v-card-actions class="justify-center">
-            <v-btn color="green lighten-1" rounded class="white--text">Sign-In</v-btn>
+            <v-btn color="green lighten-1" rounded class="white--text" @click="onSignIn()">Sign-In</v-btn>
           </v-card-actions>
           <v-card-actions class="justify-center">
             <p>
@@ -33,6 +34,18 @@
 
 <script>
 export default {
-  data: () => ({})
-};
+    data: () => ({
+        showPassword: false,
+        email: '',
+        password: ''
+    }),
+    methods: {
+        async onSignIn() {
+            await this.$store.dispatch("signin", {
+                email: this.email,
+                password: this.password
+            })
+        }
+    }
+}
 </script>
