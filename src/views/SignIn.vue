@@ -6,7 +6,7 @@
           <v-card-title class="justify-center">
             <h3>Sign-In</h3>
           </v-card-title>
-          <v-form class="mx-3">
+          <v-form class="mx-3" @keyup.native.enter="onSignIn()">
             <v-text-field label="E-mail" prepend-inner-icon="mdi-account-circle" v-model="email"></v-text-field>
 
             <v-text-field
@@ -19,7 +19,12 @@
             ></v-text-field>
           </v-form>
           <v-card-actions class="justify-center">
-            <v-btn color="green lighten-1" rounded class="white--text" @click="onSignIn()">Sign-In</v-btn>
+            <v-btn 
+            color="green lighten-1" 
+            rounded class="white--text" 
+            @click="onSignIn()"
+            :loading="loading"
+            >Sign-In</v-btn>
           </v-card-actions>
           <v-card-actions class="justify-center">
             <p>
@@ -46,6 +51,11 @@ export default {
                 password: this.password
             })
         }
+    },
+    computed: {
+      loading() {
+        return this.$store.getters.loading;
+      }
     }
 }
 </script>
