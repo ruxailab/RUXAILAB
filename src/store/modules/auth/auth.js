@@ -28,11 +28,9 @@ export default {
             commit('setLoading', true);
             try {
                 var user = await api.auth.signIn(payload);
-                // user = await api.database.getObject({collection: 'users', doc: user.uid}); //ainda nao tem na database
-                // console.log('user ', user);
-                // user = Object.assign({uid: user.uid}, user.data());
+                user = await api.database.getObject({collection: 'users', id: user.uid}); //ainda nao tem na database
+                user = Object.assign({uid: user.uid}, user.data());
                 commit('setUser', user);
-                console.log('Signed in as ' + user.email);
             } catch(err) {
                 console.error('Error signing in: ' + err);
             } finally { //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
