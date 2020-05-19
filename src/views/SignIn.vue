@@ -50,11 +50,17 @@ export default {
                 email: this.email,
                 password: this.password
             })
+            if(this.user) {
+              this.$router.push('/');
+            }
         }
     },
     computed: {
       loading() {
         return this.$store.getters.loading;
+      },
+      user() {
+        return this.$store.getters.user;
       }
     }
 }

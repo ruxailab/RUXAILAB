@@ -35,11 +35,17 @@
             ></v-text-field>
           </v-form>
           <v-card-actions class="justify-center">
-            <v-btn color="green lighten-1" rounded class="white--text" @click="onSignUp">Sign-Up</v-btn>
+            <v-btn 
+            color="green lighten-1" 
+            rounded 
+            class="white--text" 
+            @click="onSignUp()"
+            :loading="loading"
+            >Sign-Up</v-btn>
           </v-card-actions>
           <v-card-actions class="justify-center">
             <p>
-              <a href="/signin">Have an account yet? Sign ip</a>
+              <a href="/signin">Already have an account? Sign in</a>
             </p>
           </v-card-actions>
         </v-card>
@@ -73,6 +79,9 @@ export default {
     },
     user() {
       return this.$store.getters.user;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   },
   methods: {
@@ -82,6 +91,9 @@ export default {
           email: this.email,
           password: this.password
         });
+        if(this.user){
+          this.$router.push('/');
+        }
     }
   }
 };
