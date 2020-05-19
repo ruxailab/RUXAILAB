@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Snackbar/>
     <v-row align="center" justify="center">
       <v-col cols="6">
         <v-card :elevation="2">
@@ -55,6 +56,8 @@
 </template>
 
 <script>
+import Snackbar from '../components/atoms/Snackbar'
+
 export default {
   data: () => ({
     valid: true,
@@ -95,6 +98,9 @@ export default {
           this.$router.push('/');
         }
     }
+  },
+  components: {
+    Snackbar
   }
 };
 </script>
