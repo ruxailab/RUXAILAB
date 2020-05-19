@@ -14,7 +14,7 @@ export default {
         var auth = firebase.auth()
         return auth.currentUser
     },
-    logout:() =>{
+    singOut:() =>{
         var auth = firebase.auth()
         return auth.signOut()
     }

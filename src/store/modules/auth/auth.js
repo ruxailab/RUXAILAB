@@ -45,10 +45,11 @@ export default {
         },
         async logout({ commit }) {
             try {
-              await api.auth.singOut()
-              commit('setUser', null)
+              await api.auth.singOut();
+              console.log('Signed Out');
+              commit('setUser', null);
             } catch (err) {
-              console.error('Error logging out.',err)
+              console.error('Error logging out.',err);
             }
         }
     }

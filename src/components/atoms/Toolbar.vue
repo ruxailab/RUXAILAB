@@ -8,9 +8,14 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn text @click="moveSignIn()">
+        <v-btn text @click="moveSignIn()" v-if="!user">
             <v-icon left>mdi-lock</v-icon>
             Sign-in
+        </v-btn>
+
+        <v-btn text @click="signOut()" v-else>
+            <v-icon left>mdi-logout</v-icon>
+            Sign-out
         </v-btn>
     </v-app-bar>
 </template>
@@ -24,6 +29,14 @@ export default {
         },
         moveSignIn(){
             this.$router.push('/signin')
+        },
+        signOut() {
+            this.$store.dispatch('logout');
+        }
+    },
+    computed: {
+        user() {
+            return this.$store.getters.user;
         }
     }
 }
