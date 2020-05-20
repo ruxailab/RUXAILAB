@@ -7,6 +7,7 @@ import TasksView from "../views/TasksView.vue";
 import AnswerView from "../views/AnswerView.vue";
 import SignIn from "../views/SignIn.vue"
 import SignUp from "../views/SignUp.vue"
+import SuperAdmin from "../views/SuperAdmin.vue"
 
 Vue.use(VueRouter);
 
@@ -54,6 +55,11 @@ const routes = [
     path: "/signup",
     name: "Sign Up",
     component: SignUp
+  },
+  {
+    path: "/superadmin",
+    name: "Super Admin",
+    component: SuperAdmin
   }
 ];
 
