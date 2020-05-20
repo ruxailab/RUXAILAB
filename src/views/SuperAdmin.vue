@@ -68,13 +68,6 @@ export default {
       { text: "Access Level", value: "accessLevel", align: "center" },
       { text: "Actions", value: "actions", align: "center" }
     ],
-    users: [
-      {
-        uid: "nodnomdsoamfjandfn",
-        email: "test@test.com",
-        accessLevel: 0
-      }
-    ],
     editedIndex: -1,
     editedUser: {
       uid: "",
@@ -116,13 +109,19 @@ export default {
       this.close();
     }
   },
-  computed: {},
+  computed: {
+    users() {
+      return this.$store.state.users.users || [];
+    }
+  },
   watch: {
     dialog(val) {
       val || this.close();
     }
   },
-  created() {}
+  created() {
+    this.$store.dispatch('getUsers', {});
+  }
 };
 </script>
 
