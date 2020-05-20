@@ -10,10 +10,14 @@ admin.initializeApp();
 // });
 
 exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
+    const customClaims = {
+        accessLevel: 2
+    }
     try {
+        await admin.auth().setCustomUserClaims(user.uid,customClaims)
         admin.firestore().collection('users').doc(user.uid).set({
             email: user.email,
-            level: 0,
+            accessLevel: customClaims.accessLevel,
             tokens:[]
         })
     } catch (err) {

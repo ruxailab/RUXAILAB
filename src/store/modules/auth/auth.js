@@ -40,8 +40,10 @@ export default {
             commit('setLoading', true);
             try {
                 var user = await api.auth.signIn(payload);
+                console.log("User Auth",user)
                 user = await api.database.getObject({collection: 'users', id: user.uid}); //ainda nao tem na database
-                user = Object.assign({uid: user.uid}, user.data());
+                user = Object.assign({uid: user.id}, user.data());   
+                console.log("User DB",user)  
                 commit('setUser', user);
             } catch(err) {
                 console.error('Error signing in: ' + err);
