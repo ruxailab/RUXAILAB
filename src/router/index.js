@@ -1,66 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import CreateTest from "../views/CreateTest.vue";
-import TestList from "../views/TestList.vue";
-import TestView from "../views/TestView.vue";
-import TasksView from "../views/TasksView.vue";
-import AnswerView from "../views/AnswerView.vue";
-import SignIn from "../views/SignIn.vue"
-import SignUp from "../views/SignUp.vue"
-import SuperAdmin from "../views/SuperAdmin.vue"
-
+import Public from "@/router/modules/public.js"
+import Admin from "@/router/modules/admin.js"
+import SuperAdmin from "@/router/modules/superAdmin.js"
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: "/",
-    name: "TestList",
-    component: TestList,
-  },
-  {
-    path: "/createtest",
-    name: "Create Test",
-    component: CreateTest,
-  },
-  {
-    path: "/edittest/:id",
-    name: "Edit Test",
-    props: true,
-    component: CreateTest,
-  },
-  {
-    path: "/testview/:id",
-    name: "TestView",
-    props: true,
-    component: TestView,
-  },
-  {
-    path: "/testview/:id/:type",
-    name: "TasksView",
-    props: true,
-    component: TasksView,
-  },
-  {
-    path: "/answerview/:id",
-    name: "Answer View",
-    props: true,
-    component: AnswerView
-  },
-  {
-    path: "/signin",
-    name: "Sign In",
-    component: SignIn
-  },
-  {
-    path: "/signup",
-    name: "Sign Up",
-    component: SignUp
-  },
-  {
-    path: "/superadmin",
-    name: "Super Admin",
-    component: SuperAdmin
-  }
+  ...Public,
+  ...Admin,
+  ...SuperAdmin
 ];
 
 const router = new VueRouter({
