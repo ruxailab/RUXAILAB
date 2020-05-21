@@ -16,3 +16,19 @@ export async function autoSignIn(){
         })
     }
 }
+
+export function redirect() {
+    if(!store.state.auth.user) { //se nao tiver logado mandar pro signin
+        return "/signin";
+    }
+
+    let level = store.state.auth.user.accessLevel;
+
+    if(level == 0) {
+        return "/superadmin"
+    } else if(level == 1) {
+        return "/";
+    } else {
+        return "/homeviewquenaoexiste"
+    }
+}
