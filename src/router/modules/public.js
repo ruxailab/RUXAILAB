@@ -18,7 +18,6 @@ export default [
     meta:{authorize:[]},
     component: TasksView,
   },
-
   {
     path: "/signin",
     name: "Sign In",
