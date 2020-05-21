@@ -63,9 +63,9 @@ export default {
         align: "start",
         value: "id"
       },
-      { text: "E-mail", value: "email", align: "start" },
-      { text: "Access Level", value: "accessLevel", align: "start" },
-      { text: "Actions", value: "actions", align: "start" }
+      { text: "E-mail", value: "email", align: "center" },
+      { text: "Access Level", value: "accessLevel", align: "center" },
+      { text: "Actions", value: "actions", align: "end" }
     ],
     editedIndex: -1,
     editedUser: {
