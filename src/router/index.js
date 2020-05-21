@@ -3,8 +3,8 @@ import VueRouter from "vue-router";
 import Public from "@/router/modules/public.js";
 import Admin from "@/router/modules/admin.js";
 import SuperAdmin from "@/router/modules/superAdmin.js";
-//import { autoSignIn } from "@/router/tools.js";
-import store from "@/store/index.js"
+import { autoSignIn, redirect } from "@/router/tools.js";
+import store from "@/store/index.js";
 
 Vue.use(VueRouter);
 
@@ -18,22 +18,23 @@ const router = new VueRouter({
 
 router.beforeResolve(async (to, from, next) => {
   const { authorize } = to.meta;
-  //const signin = autoSignIn();
+  const signIn = autoSignIn();
+
+  
   if (authorize.length > 0 && to.path !== "/signin") {
-    //await signin
-    const user = store.state.auth.user
-    console.log(user)
-    
-    if(!user){  
-      return next('/signin')
+    await signIn;
+ 
+    const user = store.state.auth.user;
+
+    if (!user) {
+      return next(redirect());
     }
-    if(!authorize.includes(user.accessLevel)){
-      console.error("Numpodi")
+    if (!authorize.includes(user.accessLevel)) {
+      return next(redirect());
     }
-    next()
+    next();
   }
-  console.log("haaaa")
-  next()
+  next();
 });
 
 export default router;
