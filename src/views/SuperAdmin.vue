@@ -2,7 +2,7 @@
   <v-content>
     <v-row align="center" justify="center">
       <v-col cols="10">
-        <v-data-table :headers="headers" :items="users" class="elevation-1">
+        <v-data-table :headers="headers" :items="users" class="elevation-1" :loading="loading">
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-toolbar-title>Users</v-toolbar-title>
@@ -118,6 +118,9 @@ export default {
   computed: {
     users() {
       return this.$store.state.users.users || [];
+    },
+    loading() {
+      return this.$store.state.tests.loading;
     }
   },
   watch: {
@@ -126,7 +129,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getUsers', {});
+    if(!this.$store.state.users.user) this.$store.dispatch('getUsers', {});
   }
 };
 </script>
