@@ -129,7 +129,7 @@ export default {
     }
   },
   created() {
-    if(!this.$store.state.users.user) this.$store.dispatch('getUsers', {});
+    if(!this.$store.state.users.users) this.$store.dispatch('getUsers', {});
   }
 };
 </script>
