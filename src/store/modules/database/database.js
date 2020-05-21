@@ -59,6 +59,16 @@ export default {
       } catch (err) {
         console.error("Error",err)
       }
+    },
+    async callFunction(_,payload){
+      let response
+      try {
+        response = await api.functions.call(payload)
+        console.log("Response",response)
+      } catch (err) {
+        console.error('Error calling the function:  ',err)
+      }
+
     }
   }
 }

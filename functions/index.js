@@ -24,3 +24,16 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
         console.error("Error to create user in database ",err)
     }
 })
+
+exports.setUserRole = functions.https.onCall(async (data, context) => {
+    //if(context.auth.token.accessLevel!==0) return
+    console.log(`Data: ${data}, Context: ${context}`)
+    try {
+        //var _ = await admin.auth().setCustomUserClaims(data.uid,data.costomClaims)
+        return admin.firestore().collection("users").doc(data.uid).update({
+            accessLevel: data.customClaims.accessLevel
+        })
+    } catch (err) {
+        return err
+    }
+})

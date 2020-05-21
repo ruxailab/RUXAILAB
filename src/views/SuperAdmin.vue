@@ -8,9 +8,9 @@
               <v-toolbar-title>Users</v-toolbar-title>
             </v-toolbar>
           </template>
-          <template v-slot:item.actions="{ user }">
-            <v-icon small class="mr-2" @click="editUser(user)">mdi-pencil</v-icon>
-            <v-icon small click="">mdi-delete</v-icon>
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editUser(item)">mdi-pencil</v-icon>
+            <v-icon small click>mdi-delete</v-icon>
           </template>
         </v-data-table>
         <v-dialog v-model="dialog" max-width="500px">
@@ -18,12 +18,11 @@
             <v-card-title>
               <span class="headline">Edit User</span>
             </v-card-title>
-
             <v-card-text>
               <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field label="Id" :value="editedUser.uid" disabled outlined></v-text-field>
+                    <v-text-field label="Id" :value="editedUser.id" disabled outlined></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-text-field label="E-mail" :value="editedUser.email" disabled outlined></v-text-field>
@@ -44,7 +43,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="save(editedUser)">Save</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -62,11 +61,11 @@ export default {
       {
         text: "Id",
         align: "start",
-        value: "uid"
+        value: "id"
       },
-      { text: "E-mail", value: "email", align: "center" },
-      { text: "Access Level", value: "accessLevel", align: "center" },
-      { text: "Actions", value: "actions", align: "center" }
+      { text: "E-mail", value: "email", align: "start" },
+      { text: "Access Level", value: "accessLevel", align: "start" },
+      { text: "Actions", value: "actions", align: "start" }
     ],
     editedIndex: -1,
     editedUser: {
@@ -104,8 +103,15 @@ export default {
       });
     },
 
-    save() {
-      //implement users store
+    save(user) {
+      console.log(user)
+      let payload = {
+      uid: user.id,
+        customClaims: {
+          accessLevel: user.accessLevel,
+        }
+      }
+      this.$store.dispatch('updateLevel',payload)
       this.close();
     }
   },
