@@ -18,7 +18,9 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
         admin.firestore().collection('users').doc(user.uid).set({
             email: user.email,
             accessLevel: customClaims.accessLevel,
-            tokens:[]
+            myTests:[],
+            myCoops:[],
+
         })
     } catch (err) {
         console.error("Error to create user in database ",err)
