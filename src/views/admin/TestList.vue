@@ -9,7 +9,7 @@
             <v-tab @click.stop>Tests I colaborate with</v-tab>
 
             <v-tab-item>
-              <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
+              <TestsTable @setTest="setTest" :tests="myTests" :headers="headers" />
             </v-tab-item>
             <v-tab-item>
               <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
@@ -87,6 +87,12 @@ export default {
   computed: {
     tests() {
       return this.$store.getters.tests || []; //retorna um array vazio qnd test for undefined ou null e permite data table renderizar
+    },
+    myTests() {
+      return this.$store.state.tests.myTests || [];
+    },
+    loading() {
+      return this.$store.state.tests.loading;
     }
   },
   components: {
@@ -94,7 +100,13 @@ export default {
   },
   created() {
     if (!this.$store.test)
-      this.$store.dispatch("getTests", { doc: this.$route.params.tests });
+      this.$store
+        .dispatch("getTests", { doc: this.$route.params.tests })
+        .then(() => {
+          if (!this.$store.state.tests.myTests) {
+            this.$store.dispatch("getMyTests");
+          }
+        });
   }
 };
 </script>
