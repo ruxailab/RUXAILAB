@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import StepNavigation from "../components/atoms/StepNavigation";
-import ViewTask from "../components/atoms/ViewTask";
-import ViewHeuristic from "../components/atoms/ViewHeuristic";
+import StepNavigation from "@/components/atoms/StepNavigation";
+import ViewTask from "@/components/atoms/ViewTask";
+import ViewHeuristic from "@/components/atoms/ViewHeuristic";
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 

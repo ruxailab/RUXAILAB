@@ -1,6 +1,6 @@
-import CreateTest from "@/views/CreateTest.vue";
-import TestList from "@/views/TestList.vue";
-import AnswerView from "@/views/AnswerView.vue";
+import CreateTest from "@/views/admin/CreateTest.vue";
+import TestList from "@/views/admin/TestList.vue";
+import AnswerView from "@/views/admin/AnswerView.vue";
 
 export default [
   {

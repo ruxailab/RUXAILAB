@@ -1,7 +1,7 @@
-import TestView from "@/views/TestView.vue";
-import TasksView from "@/views/TasksView.vue";
-import SignIn from "@/views/SignIn.vue";
-import SignUp from "@/views/SignUp.vue";
+import TestView from "@/views/public/TestView.vue";
+import TasksView from "@/views/public/TasksView.vue";
+import SignIn from "@/views/public/SignIn.vue";
+import SignUp from "@/views/public/SignUp.vue";
 
 export default [
   {

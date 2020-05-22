@@ -1,4 +1,4 @@
-import SuperAdmin from "@/views/SuperAdmin.vue";
+import SuperAdmin from "@/views/superAdmin/SuperAdmin.vue";
 
 export default [
   {

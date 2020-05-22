@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import StepNavigation from "../components/atoms/StepNavigation";
+import StepNavigation from "@/components/atoms/StepNavigation";
 
 export default {
   props: ["id"],

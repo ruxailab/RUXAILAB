@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import Snackbar from '../components/atoms/Snackbar'
+import Snackbar from '@/components/atoms/Snackbar'
 
 export default {
     data: () => ({

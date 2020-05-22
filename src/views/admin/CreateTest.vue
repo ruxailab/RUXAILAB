@@ -66,12 +66,12 @@
 
 
 <script>
-import FormTestDescription from "../components/atoms/FormTestDescription";
-import FormPreTest from "../components/atoms/FormPreTest";
-import FormPostTest from "../components/atoms/FormPostTest";
-import ListTasks from "../components/molecules/ListTasks";
-import StepNavigation from "../components/atoms/StepNavigation";
-import Heuristic from "../components/molecules/HeuristicsTable";
+import FormTestDescription from "@/components/atoms/FormTestDescription";
+import FormPreTest from "@/components/atoms/FormPreTest";
+import FormPostTest from "@/components/atoms/FormPostTest";
+import ListTasks from "@/components/molecules/ListTasks";
+import StepNavigation from "@/components/atoms/StepNavigation";
+import Heuristic from "@/components/molecules/HeuristicsTable";
 
 export default {
   props: ["id"],
