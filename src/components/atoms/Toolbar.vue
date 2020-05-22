@@ -32,6 +32,7 @@ export default {
         },
         signOut() {
             this.$store.dispatch('logout');
+            this.$router.push('/signin')
         }
     },
     computed: {
