@@ -8,6 +8,9 @@
               <v-toolbar-title>Users</v-toolbar-title>
             </v-toolbar>
           </template>
+          <template v-slot:item.accessLevel="{ item }">
+            <p>{{level(item.accessLevel)}}</p>
+          </template>
           <template v-slot:item.actions="{ item }">
             <v-icon small class="mr-2" @click="editUser(item)">mdi-pencil</v-icon>
             <v-icon small click>mdi-delete</v-icon>
@@ -104,15 +107,28 @@ export default {
     },
 
     save(user) {
-      console.log(user)
+      console.log(user);
       let payload = {
-      uid: user.id,
+        uid: user.id,
         customClaims: {
-          accessLevel: user.accessLevel,
+          accessLevel: user.accessLevel
         }
-      }
-      this.$store.dispatch('updateLevel',{data:payload})
+      };
+      this.$store.dispatch("updateLevel", { data: payload });
       this.close();
+    },
+    level(lv) {
+      console.log(lv);
+
+      let text;
+      this.accessLevels.forEach(item => {
+        console.log(item);
+        if (item.level == lv) {
+          text = item.text;
+        }
+      });
+      console.log(text);
+      return text;
     }
   },
   computed: {
@@ -129,7 +145,7 @@ export default {
     }
   },
   created() {
-    if(!this.$store.state.users.users) this.$store.dispatch('getUsers', {});
+    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   }
 };
 </script>
