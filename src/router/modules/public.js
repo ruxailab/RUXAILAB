@@ -2,6 +2,7 @@ import TestView from "@/views/public/TestView.vue";
 import TasksView from "@/views/public/TasksView.vue";
 import SignIn from "@/views/public/SignIn.vue";
 import SignUp from "@/views/public/SignUp.vue";
+import Home from "@/views/public/Home.vue";
 
 export default [
   {
@@ -30,4 +31,10 @@ export default [
     meta:{authorize:[]},
     component: SignUp,
   },
+  {
+    path: "/home",
+    name: "Home",
+    meta:{authorize:[]},
+    component: Home
+  }
 ];
