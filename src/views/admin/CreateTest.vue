@@ -109,7 +109,9 @@ export default {
         form: ""
       },
       postTest: "",
-      answers:[]
+      admin:null,
+      answers:[],
+      coop:[]
     },
     valids: [false, true, true]
   }),
@@ -185,6 +187,12 @@ export default {
     },
     testAssembly() {
       //Make object test
+      //Assigning admin info
+      this.object.admin = {
+        id:this.user.uid,
+        email:this.user.email
+      }
+
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
 
@@ -257,6 +265,9 @@ export default {
   computed: {
     testEdit() {
       return this.$store.getters.test;
+    },
+    user(){
+      return this.$store.getters.user;
     }
   },
   created() {
