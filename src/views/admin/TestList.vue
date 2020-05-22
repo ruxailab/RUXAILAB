@@ -3,7 +3,18 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-card :ripple="false" @click="openDropdown">
-          <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
+          <v-tabs grow centered>
+            <v-tab @click.stop>My Tests</v-tab>
+
+            <v-tab @click.stop>Tests I colaborate with</v-tab>
+
+            <v-tab-item>
+              <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
+            </v-tab-item>
+            <v-tab-item>
+              <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
+            </v-tab-item>
+          </v-tabs>
         </v-card>
       </v-col>
     </v-row>
