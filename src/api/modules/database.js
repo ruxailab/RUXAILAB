@@ -29,14 +29,26 @@ export default {
     var collectionRef = db.collection(payload.collection);
     return collectionRef.get();
   },
-  arrayOperations: (payload) => {
+  pushArray: (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
-    
-    return docRef.update({ 
-        [payload.param]:firebase.firestore.FieldValue.arrayUnion(payload.element),
-      }
-    );
+
+    return docRef.update({
+      [payload.param]: firebase.firestore.FieldValue.arrayUnion(
+        payload.element
+      ),
+    });
+  },
+  removeArray: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
+
+    return docRef.update({
+      [payload.param]: firebase.firestore.FieldValue.arrayUnion(
+        payload.element
+      ),
+    });
   },
 };

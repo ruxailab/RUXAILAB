@@ -53,7 +53,7 @@ export default {
     },
     async pushObject(_,payload){
       try {
-        var docRef = await api.database.arrayOperations(payload)
+        var docRef = await api.database.pushArray(payload)
         console.log("Document successfully inserted: ", docRef)
         return docRef
       } catch (err) {

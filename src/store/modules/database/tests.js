@@ -40,18 +40,19 @@ export default {
     }
   },
   actions: {
-    createTest({ dispatch, commit }, payload) {
+    createTest({ dispatch}, payload) {
       payload = Object.assign(payload, { collection: 'test' })
-      dispatch('createObject', payload)
-        .then(() => {
-          commit()
+      let docRef = dispatch('createObject', payload)
+        .then((doc) => {
           console.log("Test created!")
+          return doc.id
           //commit('setAlert',{error: false, msg:'Test created!'})
         })
         .catch(() => {
           console.error("Error to create test!")
           //commit('setAlert',{error: true, msg:'Error to create test!'})
         })
+      return docRef
     },
     async getTests({ commit, dispatch }, payload) {
       payload = Object.assign(payload, { collection: 'test' })
