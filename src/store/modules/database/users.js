@@ -31,6 +31,17 @@ export default {
             .catch((err) => {
                 console.error("Error to push myTest ", err)
             })
+        },
+        async removeMyTest({dispatch},payload){
+            console.log(payload)
+            payload = Object.assign(payload, {collection:'users'})
+            dispatch('removeObject',payload)
+            .then(()=>{
+                console.log("Remove Successful")
+            })
+            .catch((err) => {
+                console.error("Error to remove myTest ", err)
+            })
         }
     }
 }

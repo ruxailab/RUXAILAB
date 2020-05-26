@@ -7,7 +7,7 @@
       label="Search"
       v-model="search"
     ></v-text-field>
-    
+
     <v-data-table
       :headers="headers"
       :items="tests"
@@ -64,7 +64,17 @@ export default {
   }),
   methods: {
     deleteTest(item) {
-      this.$store.dispatch("deleteTest", item);
+      this.$store.dispatch("deleteTest", item).then(() => {
+        this.$store.dispatch("removeMyTest", {
+          docId: this.user.uid,
+          element: {
+            id: item.id,
+            title: item.title,
+            type: item.type
+          },
+          param: "myTests"
+        });
+      });
       this.$store.dispatch("getTests", { doc: this.$route.params.tests });
     },
     openTest(test) {
@@ -78,6 +88,9 @@ export default {
   computed: {
     loading() {
       return this.$store.state.tests.loading;
+    },
+    user() {
+      return this.$store.getters.user;
     }
   }
 };

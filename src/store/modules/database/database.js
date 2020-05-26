@@ -60,6 +60,15 @@ export default {
         console.error("Error",err)
       }
     },
+    async removeObject(_,payload){
+      try {
+        var docRef = await api.database.removeArray(payload)
+        console.log("Document successfully removed: ", docRef)
+        return docRef
+      } catch (err) {
+        console.error("Error",err)
+      }
+    },
     async callFunction(_,payload){
       let response
       try {

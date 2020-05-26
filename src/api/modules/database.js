@@ -46,7 +46,7 @@ export default {
     var docRef = collectionRef.doc(payload.docId);
 
     return docRef.update({
-      [payload.param]: firebase.firestore.FieldValue.arrayUnion(
+      [payload.param]: firebase.firestore.FieldValue.arrayRemove(
         payload.element
       ),
     });
