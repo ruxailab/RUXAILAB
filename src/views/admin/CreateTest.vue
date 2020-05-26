@@ -26,6 +26,10 @@
             Post Test
             <small>Optional</small>
           </v-stepper-step>
+          <v-stepper-step step="5" editable>
+            Cooperation
+            <small>Optional</small>
+          </v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="1">
@@ -51,9 +55,14 @@
               <FormPostTest :postTest="postTest" @valForm="validate" ref="form3" />
             </v-container>
           </v-stepper-content>
+          <v-stepper-content step="5">
+            <v-container>
+              <FormCooperation/>
+            </v-container>
+          </v-stepper-content>
           <StepNavigation
             :step="el"
-            :size="4"
+            :size="5"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
             v-on:submit="validateAll()"
@@ -72,6 +81,7 @@ import FormPostTest from "@/components/atoms/FormPostTest";
 import ListTasks from "@/components/molecules/ListTasks";
 import StepNavigation from "@/components/atoms/StepNavigation";
 import Heuristic from "@/components/molecules/HeuristicsTable";
+import FormCooperation from "@/components/atoms/FormCooperation"
 
 export default {
   props: ["id"],
@@ -81,7 +91,8 @@ export default {
     FormPostTest,
     ListTasks,
     StepNavigation,
-    Heuristic
+    Heuristic,
+    FormCooperation
   },
   data: () => ({
     el: 1,
@@ -270,7 +281,7 @@ export default {
   },
   watch: {
     snackbar() {
-      //if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)
