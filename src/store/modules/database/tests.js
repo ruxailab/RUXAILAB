@@ -90,7 +90,6 @@ export default {
         .catch((err) => {
           console.error("Error to push answer " + err)
         })
-
     },
     async getMyTests({ rootState, state, commit }) {
       commit('setLoading', true);

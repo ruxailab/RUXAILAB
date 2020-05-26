@@ -127,7 +127,19 @@ export default {
         this.$store.dispatch("createTest", {
           collection: "test",
           data: this.object
-        });
+        })
+        .then(()=>{
+          console.log("Dispatch",this.$store.state.auth.user.uid)
+          this.$store.dispatch("pushMyTest",{
+            docId: this.user.uid,
+            element:{
+              id: "10000000",
+              title: this.object.title,
+              type: this.object.type
+            },
+            param:"myTests"
+          })
+        })
       } else {
         this.snackMsg = 'Test updated succesfully';
         this.snackColor = 'success'
@@ -255,7 +267,7 @@ export default {
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
+      //if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)

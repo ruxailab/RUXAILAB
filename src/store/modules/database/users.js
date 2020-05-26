@@ -20,6 +20,17 @@ export default {
             payload = Object.assign(payload,{function:'setUserRole'})
             await dispatch('callFunction',payload);
             dispatch('getUsers', {});
+        },
+        async pushMyTest({dispatch},payload){
+            console.log(payload)
+            payload = Object.assign(payload, {collection:'users'})
+            dispatch('pushObject',payload)
+            .then(()=>{
+                console.log("Push Successful")
+            })
+            .catch((err) => {
+                console.error("Error to push myTest ", err)
+            })
         }
     }
 }
