@@ -33,26 +33,10 @@ export default {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
-    console.log("Payload", payload);
-
     
-    var el = {};
-    console.log(docRef);
-    Object.defineProperty(el, payload.param, {
-      value: firebase.firestore.FieldValue.arrayUnion(payload.element),
-    });
-    console.log(el);
-   
-    if(payload.param === "answers"){
-      return docRef.update({
-        answers: firebase.firestore.FieldValue.arrayUnion(payload.element)
-      });
-    }
-    if(payload.param === "myTests"){
-      return docRef.update({
-        myTests: firebase.firestore.FieldValue.arrayUnion(payload.element)
-      });
-    }
- 
+    return docRef.update({ 
+        [payload.param]:firebase.firestore.FieldValue.arrayUnion(payload.element),
+      }
+    );
   },
 };
