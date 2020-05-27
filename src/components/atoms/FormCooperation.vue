@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-card class="mx-auto" tile>
-      {{invitations}}
       <v-row justify="center" align="center">
         <v-col cols="11">
           <v-menu offset-y>
@@ -77,8 +76,7 @@ export default {
       this.invitation.from.id = this.user.uid;
       this.invitation.from.email = this.user.email;
       this.invitations.push(this.invitation);
-
-      this.invitations = {
+      this.invitation = {
         to: {
           id: null,
           email: null

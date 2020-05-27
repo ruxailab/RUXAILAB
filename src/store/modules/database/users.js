@@ -29,7 +29,6 @@ export default {
       dispatch("getUsers", {});
     },
     async pushMyTest({ dispatch }, payload) {
-      console.log(payload);
       payload = Object.assign(payload, { collection: "users" });
       dispatch("pushObject", payload)
         .then(() => {
@@ -48,6 +47,16 @@ export default {
         })
         .catch((err) => {
           console.error("Error to remove myTest ", err);
+        });
+    },
+    async pushNotification({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "users" });
+      dispatch("pushObject", payload)
+        .then(() => {
+          console.log("Push Successful");
+        })
+        .catch((err) => {
+          console.error("Error to push myTest ", err);
         });
     },
   },

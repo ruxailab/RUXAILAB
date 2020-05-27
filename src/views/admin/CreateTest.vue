@@ -58,7 +58,7 @@
           </v-stepper-content>
           <v-stepper-content step="5">
             <v-container>
-              <FormCooperation :invitations="invitations" @push="pushInvitations" @remove="removeInvitations"  />
+              <FormCooperation :invitations="invitations" />
             </v-container>
           </v-stepper-content>
           <StepNavigation
@@ -151,6 +151,19 @@ export default {
                 type: this.object.type
               },
               param: "myTests"
+            });
+
+            this.invitations.forEach(item => {
+              (item.test.id = id), (item.test.title = this.object.title);
+            });
+
+            this.invitations.forEach(inv => {
+              console.log(inv)
+              this.$store.dispatch("pushNotification", {
+                docId: inv.to.id,
+                element: inv,
+                param: "notifications"
+              });
             });
           })
           .catch(err => {
