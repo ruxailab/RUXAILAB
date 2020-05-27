@@ -53,11 +53,21 @@ export default {
       payload = Object.assign(payload, { collection: "users" });
       dispatch("pushObject", payload)
         .then(() => {
-          console.log("Push Successful");
+          console.log("Push notification successful");
         })
         .catch((err) => {
-          console.error("Error to push myTest ", err);
+          console.error("Error to push notifications ", err);
         });
     },
+    async pushMyCoops({dispatch},payload){
+      payload = Object.assign(payload,{collection:"users",param:"myCooops"})
+      dispatch("pushObject", payload)
+        .then(() => {
+          console.log("Push myCoops successful");
+        })
+        .catch((err) => {
+          console.error("Error to push myCoops ", err);
+        });
+    }
   },
 };

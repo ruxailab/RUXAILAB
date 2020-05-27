@@ -3,100 +3,100 @@ export default {
     test: null,
     tests: null,
     myTests: null,
-    loading: false
+    loading: false,
   },
   mutations: {
     setTest(state, payload) {
-      state.test = payload
+      state.test = payload;
     },
     setTests(state, payload) {
-      state.tests = payload
+      state.tests = payload;
     },
     setLoading(state, payload) {
       state.loading = payload;
     },
     setMyTests(state, payload) {
       state.myTests = payload;
-    }
+    },
   },
   getters: {
     tests(state) {
-      return state.tests
+      return state.tests;
     },
     test(state) {
-      return state.test
+      return state.test;
     },
     tasks(state) {
-      return state.test.tasks
+      return state.test.tasks;
     },
     heuristics(state) {
-      return state.test.heuristics
+      return state.test.heuristics;
     },
     answers(state) {
-      return state.test.answers
+      return state.test.answers;
     },
     loading(state) {
-      return state.loading
-    }
+      return state.loading;
+    },
   },
   actions: {
-    createTest({ dispatch}, payload) {
-      payload = Object.assign(payload, { collection: 'test' })
-      let docRef = dispatch('createObject', payload)
+    createTest({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "test" });
+      let docRef = dispatch("createObject", payload)
         .then((doc) => {
-          console.log("Test created!")
-          return doc.id
+          console.log("Test created!");
+          return doc.id;
           //commit('setAlert',{error: false, msg:'Test created!'})
         })
         .catch(() => {
-          console.error("Error to create test!")
+          console.error("Error to create test!");
           //commit('setAlert',{error: true, msg:'Error to create test!'})
-        })
-      return docRef
+        });
+      return docRef;
     },
     async getTests({ commit, dispatch }, payload) {
-      payload = Object.assign(payload, { collection: 'test' })
-      commit('setLoading', true);
-      var tests = await dispatch('getAllObjects', payload)
-      commit('setTests', tests)
-      commit('setLoading', false);
+      payload = Object.assign(payload, { collection: "test" });
+      commit("setLoading", true);
+      var tests = await dispatch("getAllObjects", payload);
+      commit("setTests", tests);
+      commit("setLoading", false);
     },
     deleteTest({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: 'test' })
-      return dispatch('deleteObject', payload)
+      payload = Object.assign(payload, { collection: "test" });
+      return dispatch("deleteObject", payload);
     },
     async getTest({ commit, dispatch }, payload) {
-      commit('setLoading', true);
-      payload = Object.assign(payload, { collection: 'test' })
-      var test = await dispatch('getObject', payload)
-      commit('setTest', test)
-      commit('setLoading', false);
+      commit("setLoading", true);
+      payload = Object.assign(payload, { collection: "test" });
+      var test = await dispatch("getObject", payload);
+      commit("setTest", test);
+      commit("setLoading", false);
     },
     updateTest({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: 'test' })
-      dispatch('updateObject', payload)
+      payload = Object.assign(payload, { collection: "test" });
+      dispatch("updateObject", payload)
         .then(() => {
-          console.log("Test updated successfully ")
+          console.log("Test updated successfully ");
         })
         .catch(() => {
-          console.error("Error to update")
-        })
+          console.error("Error to update");
+        });
     },
     pushTestAnswer({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: 'test' })
-      dispatch('pushObject', payload)
+      payload = Object.assign(payload, { collection: "test" });
+      dispatch("pushObject", payload)
         .then(() => {
-          console.log("Push successfully")
+          console.log("Push successfully");
         })
         .catch((err) => {
-          console.error("Error to push answer " + err)
-        })
+          console.error("Error to push answer " + err);
+        });
     },
     async getMyTests({ rootState, state, commit }) {
-      commit('setLoading', true);
+      commit("setLoading", true);
       var myTests = [];
       let user = rootState.auth.user;
-      console.log('user ', user)
+      console.log("user ", user);
 
       state.tests.forEach((test) => {
         if (test.admin) {
@@ -105,10 +105,19 @@ export default {
           }
         }
       });
-      console.log('my tests ', myTests);
-      commit('setMyTests', myTests);
-      commit('setLoading', false);
-    }
-  }
-
-}
+      console.log("my tests ", myTests);
+      commit("setMyTests", myTests);
+      commit("setLoading", false);
+    },
+    async pushCoop({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "test", param: "coop" });
+      dispatch("pushObject", payload)
+        .then(() => {
+          console.log("Push coops successful");
+        })
+        .catch((err) => {
+          console.error("Error to push coops ", err);
+        });
+    },
+  },
+};

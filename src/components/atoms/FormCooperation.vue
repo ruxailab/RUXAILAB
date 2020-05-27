@@ -87,7 +87,8 @@ export default {
         },
         test: {
           id: null,
-          title: null
+          title: null,
+          type:null
         }
       };
     },

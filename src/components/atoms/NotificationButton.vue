@@ -9,17 +9,20 @@
     </v-btn>
 
     <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute max-width="300px" offset-y>
-        <!-- colocar titulozinho -->
+      <!-- colocar titulozinho -->
       <v-list v-if="user.notifications.length > 0">
-        <v-list-item @click="nothing()" v-for="(notification, n) in user.notifications" :key="n" style="cursor: default">
+        <v-list-item
+          @click="nothing()"
+          v-for="(notification, n) in user.notifications"
+          :key="n"
+          style="cursor: default"
+        >
           <v-row justify="center" class="mb-2">
             <v-col cols="12">
-              <v-list-item-title
-                class="text-wrap text-center"
-              >{{notification}}</v-list-item-title>
+              <v-list-item-title class="text-wrap text-center">{{notification}}</v-list-item-title>
             </v-col>
 
-            <v-btn small color="success" @click="joinTest()">Accept</v-btn>
+            <v-btn small color="success" @click="joinTest(notification)">Accept</v-btn>
             <v-btn small class="ml-2" color="error" @click="removeNotif()">Deny</v-btn>
           </v-row>
         </v-list-item>
@@ -51,13 +54,21 @@ export default {
         this.showMenu = true;
       });
     },
-    joinTest() {
-        console.log('Accept');
+    joinTest(item) {
+      console.log("Accept", item);
+      this.$store.dispatch("pushMyCoops", {
+        docId: this.user.uid,
+        element: item.test
+      });
+      this.$store.dispatch("pushCoop", {
+        docId: item.test.id,
+        element: item.to
+      });
     },
     removeNotif() {
-        console.log('Deny');
+      console.log("Deny");
     },
-    nothing() {}, //this function is here for menu styling only
+    nothing() {} //this function is here for menu styling only
   },
   computed: {
     user() {

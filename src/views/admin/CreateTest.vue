@@ -154,11 +154,13 @@ export default {
             });
 
             this.invitations.forEach(item => {
-              (item.test.id = id), (item.test.title = this.object.title);
+              item.test.id = id;
+              item.test.title = this.object.title;
+              item.test.type = this.object.type;
             });
 
             this.invitations.forEach(inv => {
-              console.log(inv)
+              console.log(inv);
               this.$store.dispatch("pushNotification", {
                 docId: inv.to.id,
                 element: inv,
