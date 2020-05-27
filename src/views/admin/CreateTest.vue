@@ -26,6 +26,7 @@
             Post Test
             <small>Optional</small>
           </v-stepper-step>
+          <v-divider></v-divider>
           <v-stepper-step step="5" editable>
             Cooperation
             <small>Optional</small>
@@ -57,7 +58,7 @@
           </v-stepper-content>
           <v-stepper-content step="5">
             <v-container>
-              <FormCooperation/>
+              <FormCooperation :invitations="invitations" @push="pushInvitations" @remove="removeInvitations"  />
             </v-container>
           </v-stepper-content>
           <StepNavigation
@@ -81,7 +82,7 @@ import FormPostTest from "@/components/atoms/FormPostTest";
 import ListTasks from "@/components/molecules/ListTasks";
 import StepNavigation from "@/components/atoms/StepNavigation";
 import Heuristic from "@/components/molecules/HeuristicsTable";
-import FormCooperation from "@/components/atoms/FormCooperation"
+import FormCooperation from "@/components/atoms/FormCooperation";
 
 export default {
   props: ["id"],
@@ -111,6 +112,7 @@ export default {
     tasks: [],
     heuristics: [],
     postTest: "",
+    invitations: [],
     object: {
       title: "",
       type: "",
@@ -135,20 +137,21 @@ export default {
         this.snackbar = true;
         console.log("create");
         //Send db
-      this.$store.dispatch("createTest", {
+        this.$store
+          .dispatch("createTest", {
             collection: "test",
             data: this.object
           })
           .then(id => {
-            this.$store.dispatch("pushMyTest",{
-            docId: this.user.uid,
-            element:{
-              id: id,
-              title: this.object.title,
-              type: this.object.type
-            },
-            param:"myTests"
-          })
+            this.$store.dispatch("pushMyTest", {
+              docId: this.user.uid,
+              element: {
+                id: id,
+                title: this.object.title,
+                type: this.object.type
+              },
+              param: "myTests"
+            });
           })
           .catch(err => {
             console.log("err", err);
@@ -277,11 +280,18 @@ export default {
         console.log("valid");
         this.submit();
       }
+    },
+    pushInvitations(item) {
+      this.invitations.push(item);
+    },
+    removeInvitations(item) {
+      this.invitations.splice(this.invitations.indexOf(item), 1);
     }
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == "success")
+        this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)

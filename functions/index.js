@@ -20,7 +20,7 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
             accessLevel: customClaims.accessLevel,
             myTests:[],
             myCoops:[],
-
+            notifications:[]
         })
     } catch (err) {
         console.error("Error to create user in database ",err)
