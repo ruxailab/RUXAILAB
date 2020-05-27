@@ -230,6 +230,8 @@ export default {
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
+      
+      this.invitations = this.testEdit.coop
     },
     testAssembly() {
       //Make object test
@@ -295,12 +297,6 @@ export default {
         console.log("valid");
         this.submit();
       }
-    },
-    pushInvitations(item) {
-      this.invitations.push(item);
-    },
-    removeInvitations(item) {
-      this.invitations.splice(this.invitations.indexOf(item), 1);
     }
   },
   watch: {

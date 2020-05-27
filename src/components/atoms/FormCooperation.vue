@@ -27,7 +27,7 @@
         <v-col>
           <v-list>
             <v-list-item-group>
-              <v-list-item v-for="(item, i) in selecteds" :key="i">
+              <v-list-item v-for="(item, i) in invitations" :key="i">
                 <v-list-item-icon>
                   <v-icon>mdi-account-circle</v-icon>
                 </v-list-item-icon>
@@ -69,7 +69,6 @@ export default {
   }),
   methods: {
     select(item) {
-      this.selecteds.push(item);
       this.seach = "";
       this.invitation.to.id = item.id;
       this.invitation.to.email = item.email;
@@ -97,7 +96,6 @@ export default {
         element.to.id = item.id;
       });
       this.invitations.splice(this.invitations.indexOf(rv), 1);
-      this.selecteds.splice(this.selecteds.indexOf(item), 1);
     }
   },
   computed: {
