@@ -9,7 +9,7 @@
             <v-tab @click.stop>Tests I colaborate with</v-tab>
 
             <v-tab-item>
-              <TestsTable @setTest="setTest" :tests="myTests" :headers="headers" />
+              <TestsTable @setTest="setTest" :tests="user.myTests" :headers="headers" />
             </v-tab-item>
             <v-tab-item>
               <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
@@ -88,8 +88,8 @@ export default {
     tests() {
       return this.$store.getters.tests || []; //retorna um array vazio qnd test for undefined ou null e permite data table renderizar
     },
-    myTests() {
-      return this.$store.state.tests.myTests || [];
+    user() {
+      return this.$store.state.auth.user;
     },
     loading() {
       return this.$store.state.tests.loading;
