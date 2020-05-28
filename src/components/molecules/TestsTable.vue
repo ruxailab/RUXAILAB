@@ -11,7 +11,7 @@
     <v-data-table
       :headers="headers"
       :items="tests"
-      @click:row="emmit('setTest', item)"
+      @click:row="setTest"
       :items-per-page="5"
       show-expand
       :loading="loading"
@@ -77,12 +77,11 @@ export default {
       });
       this.$store.dispatch("getTests", { doc: this.$route.params.tests });
     },
-    openTest(test) {
-      if (!this.deleting && !this.editing)
-        this.$router.push("/testview/" + test.id);
-    },
     editItem(test) {
       this.$router.push("/edittest/" + test.id);
+    },
+    setTest(item) {
+      this.$emit('setTest', item);
     }
   },
   computed: {

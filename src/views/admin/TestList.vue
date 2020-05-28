@@ -68,6 +68,7 @@ export default {
       this.$router.push("/createtest");
     },
     setTest(test) {
+      console.log('settest', test)
       this.test = Object.assign({}, test);
       // this.openDropdown()
     },
@@ -79,6 +80,10 @@ export default {
       this.$nextTick(() => {
         this.showMenu = true;
       });
+    },
+    openTest(test) {
+      if (!this.deleting && !this.editing)
+        this.$router.push("/testview/" + test.id);
     },
     openAnswer(test) {
       this.$router.push("/answerview/" + test.id);
