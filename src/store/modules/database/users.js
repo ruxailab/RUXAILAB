@@ -60,7 +60,7 @@ export default {
         });
     },
     async pushMyCoops({dispatch},payload){
-      payload = Object.assign(payload,{collection:"users",param:"myCooops"})
+      payload = Object.assign(payload,{collection:"users",param:"myCoops"})
       dispatch("pushObject", payload)
         .then(() => {
           console.log("Push myCoops successful");
@@ -80,5 +80,5 @@ export default {
         console.error('Error ', err);
       })
     }
-  },
+  }
 };

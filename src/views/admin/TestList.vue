@@ -99,7 +99,7 @@ export default {
     TestsTable
   },
   created() {
-    if (!this.$store.test)
+    if (!this.$store.test) {
       this.$store
         .dispatch("getTests", { doc: this.$route.params.tests })
         .then(() => {
@@ -107,6 +107,7 @@ export default {
             this.$store.dispatch("getMyTests");
           }
         });
+    }
   }
 };
 </script>

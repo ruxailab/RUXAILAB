@@ -51,4 +51,17 @@ export default {
       ),
     });
   },
+  observer: (payload,commit) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
+
+    docRef.onSnapshot({ includeMetadataChanges: true },async (docSnapshot) => {
+      console.log(`Received doc snapshot: ${docSnapshot}`);
+      let user = await docRef.get()
+      user = Object.assign({uid:payload.docId}, user.data()) 
+      console.log("User",user );
+      commit("setUser", user);
+    });
+  },
 };

@@ -37,7 +37,7 @@ export default {
         commit("setLoading", false);
       }
     },
-    async signin({ commit }, payload) {
+    async signin({ commit}, payload) {
       commit("setLoading", true);
       try {
         var user = await api.auth.signIn(payload);
@@ -46,6 +46,8 @@ export default {
           id: user.uid,
         });
         user = Object.assign({ uid: user.id }, user.data());
+
+        api.database.observer({docId:user.uid,collection:'users'},commit)
         commit("setUser", user);
       } catch (err) {
         console.error("Error signing in: " + err);
@@ -73,11 +75,15 @@ export default {
             id: user.uid,
           });
           user = Object.assign({ uid: user.id }, user.data());
+          api.database.observer({docId:user.uid,collection:'users'},commit)
           commit("setUser", user);
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
       }
     },
+    setUser({commit},user){
+      commit("setUser", user);
+    }
   },
 };
