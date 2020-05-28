@@ -54,15 +54,19 @@ export default {
         this.showMenu = true;
       });
     },
-    joinTest(item) {
+    async joinTest(item) {
       console.log("Accept", item);
-      this.$store.dispatch("pushMyCoops", {
+      await this.$store.dispatch("pushMyCoops", {
         docId: this.user.uid,
         element: item.test
       });
-      this.$store.dispatch("pushCoop", {
+      await this.$store.dispatch("pushCoop", {
         docId: item.test.id,
         element: item.to
+      });
+      this.$store.dispatch("removeNotification", {
+        docId: this.user.uid,
+        element: item
       });
     },
     removeNotification(notif) {
@@ -70,7 +74,7 @@ export default {
       this.$store.dispatch("removeNotification", {
         docId: this.user.uid,
         element: notif
-      })
+      });
     },
     nothing() {} //this function is here for menu styling only
   },
