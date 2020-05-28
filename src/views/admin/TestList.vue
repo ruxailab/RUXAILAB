@@ -12,7 +12,7 @@
               <TestsTable @setTest="setTest" :tests="user.myTests" :headers="headers" />
             </v-tab-item>
             <v-tab-item>
-              <TestsTable @setTest="setTest" :tests="tests" :headers="headers" />
+              <TestsTable @setTest="setTest" :tests="user.myCoops" :headers="headers" />
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -85,9 +85,6 @@ export default {
     }
   },
   computed: {
-    tests() {
-      return this.$store.getters.tests || []; //retorna um array vazio qnd test for undefined ou null e permite data table renderizar
-    },
     user() {
       return this.$store.state.auth.user;
     },
@@ -97,17 +94,6 @@ export default {
   },
   components: {
     TestsTable
-  },
-  created() {
-    if (!this.$store.test) {
-      this.$store
-        .dispatch("getTests", { doc: this.$route.params.tests })
-        .then(() => {
-          if (!this.$store.state.tests.myTests) {
-            this.$store.dispatch("getMyTests");
-          }
-        });
-    }
   }
 };
 </script>

@@ -92,23 +92,6 @@ export default {
           console.error("Error to push answer " + err);
         });
     },
-    async getMyTests({ rootState, state, commit }) {
-      commit("setLoading", true);
-      var myTests = [];
-      let user = rootState.auth.user;
-      console.log("user ", user);
-
-      state.tests.forEach((test) => {
-        if (test.admin) {
-          if ((test.admin.id || 0) == user.uid) {
-            myTests.push(Object.assign({}, test));
-          }
-        }
-      });
-      console.log("my tests ", myTests);
-      commit("setMyTests", myTests);
-      commit("setLoading", false);
-    },
     async pushCoop({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "test", param: "coop" });
       dispatch("pushObject", payload)
