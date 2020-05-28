@@ -19,7 +19,7 @@
         >
           <v-row justify="center" class="mb-2">
             <v-col cols="12">
-              <v-list-item-title class="text-wrap text-center">{{notification}}</v-list-item-title>
+              <v-list-item-title class="text-wrap text-center">{{notification.from.email}} has invited you to colaborate on his test: "{{notification.test.title}}"</v-list-item-title>
             </v-col>
 
             <v-btn small color="success" @click="joinTest(notification)">Accept</v-btn>
