@@ -4,7 +4,7 @@
       <v-row justify="center" align="center">
         <v-col cols="11">
           <v-menu offset-y>
-            <template v-slot:activator="{ on }">
+            <template class="red" v-slot:activator="{ on }">
               <v-text-field
                 v-on="on"
                 outlined
@@ -28,15 +28,28 @@
           <v-list>
             <v-list-item-group>
               <v-list-item v-for="(item, i) in invitations" :key="i">
-                <v-list-item-icon>
-                  <v-icon>mdi-account-circle</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="item.email"></v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon @click="deselect(item)">
-                  <v-icon>mdi-close</v-icon>
-                </v-list-item-icon>
+                <v-row align="center" justify="space-around">
+                  <v-col cols="2">
+                    <v-list-item-icon>
+                      <v-icon>mdi-account-circle</v-icon>
+                    </v-list-item-icon>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.to.email"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-list-item-content>
+                      <v-overflow-btn class="my-2" :items="accessLevel" label="Access Level"></v-overflow-btn>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-list-item-icon @click="deselect(item)">
+                      <v-icon>mdi-close</v-icon>
+                    </v-list-item-icon>
+                  </v-col>
+                </v-row>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -65,7 +78,8 @@ export default {
         id: null,
         title: null
       }
-    }
+    },
+    accessLevel: [0, 1, 2, 3]
   }),
   methods: {
     select(item) {
@@ -87,7 +101,7 @@ export default {
         test: {
           id: null,
           title: null,
-          type:null
+          type: null
         }
       };
     },
