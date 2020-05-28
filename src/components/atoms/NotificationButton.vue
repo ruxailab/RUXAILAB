@@ -23,7 +23,7 @@
             </v-col>
 
             <v-btn small color="success" @click="joinTest(notification)">Accept</v-btn>
-            <v-btn small class="ml-2" color="error" @click="removeNotif()">Deny</v-btn>
+            <v-btn small class="ml-2" color="error" @click="removeNotification(notification)">Deny</v-btn>
           </v-row>
         </v-list-item>
       </v-list>
@@ -65,8 +65,12 @@ export default {
         element: item.to
       });
     },
-    removeNotif() {
+    removeNotification(notif) {
       console.log("Deny");
+      this.$store.dispatch("removeNotification", {
+        docId: this.user.uid,
+        element: notif
+      })
     },
     nothing() {} //this function is here for menu styling only
   },

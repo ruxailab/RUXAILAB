@@ -68,6 +68,17 @@ export default {
         .catch((err) => {
           console.error("Error to push myCoops ", err);
         });
+    },
+    async removeNotification({dispatch}, payload) {
+      payload = Object.assign(payload, {collection: "users", param: "notifications"})
+
+      dispatch("removeObject", payload)
+      .then(() => {
+        console.log('Removed notification succesfully');
+      })
+      .catch((err) => {
+        console.error('Error ', err);
+      })
     }
   },
 };
