@@ -26,8 +26,8 @@
             Post Test
             <small>Optional</small>
           </v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step step="5" editable>
+          <v-divider v-if="accessLevel == 0" ></v-divider>
+          <v-stepper-step step="5" editable v-if="accessLevel == 0">
             Cooperation
             <small>Optional</small>
           </v-stepper-step>
@@ -56,14 +56,14 @@
               <FormPostTest :postTest="postTest" @valForm="validate" ref="form3" />
             </v-container>
           </v-stepper-content>
-          <v-stepper-content step="5">
+          <v-stepper-content step="5" v-if="accessLevel == 0">
             <v-container>
               <FormCooperation :invitations="invitations" />
             </v-container>
           </v-stepper-content>
           <StepNavigation
             :step="el"
-            :size="5"
+            :size="accessLevel == 0 ? 5 : 4"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
             v-on:submit="validateAll()"
@@ -97,6 +97,7 @@ export default {
   },
   data: () => ({
     el: 1,
+    accessLevel: null,
     snackbar: false,
     snackMsg: "",
     snackColor: "",
@@ -231,8 +232,18 @@ export default {
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
+
+      this.invitations = this.testEdit.coop;
+
+      //Getting user access level
+      this.testEdit.coop.forEach((coop) => {
+        // console.log('here')
+        if(coop.id === this.user.uid) {
+          this.accessLevel = coop.accessLevel;
+          console.log('AccessLevel', this.accessLevel)
+        }
+      })
       
-      this.invitations = this.testEdit.coop
     },
     testAssembly() {
       //Make object test
@@ -306,8 +317,10 @@ export default {
         this.$router.push("/");
     },
     testEdit: async function() {
-      if (this.testEdit !== null && this.testEdit !== undefined)
+      if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
+        // console.log("store", this.$store.state.tests.test.coop);
+      }
     }
   },
   computed: {
@@ -319,8 +332,9 @@ export default {
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined)
+    if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    }
   }
 };
 </script>
