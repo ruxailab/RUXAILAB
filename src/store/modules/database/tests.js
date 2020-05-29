@@ -35,6 +35,9 @@ export default {
     answers(state) {
       return state.test.answers;
     },
+    coops(state){
+      return state.test.coop;
+    },
     loading(state) {
       return state.loading;
     },

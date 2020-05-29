@@ -59,16 +59,6 @@ export default {
           console.error("Error to push notifications ", err);
         });
     },
-    async pushMyCoops({dispatch},payload){
-      payload = Object.assign(payload,{collection:"users",param:"myCoops"})
-      dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push myCoops successful");
-        })
-        .catch((err) => {
-          console.error("Error to push myCoops ", err);
-        });
-    },
     async removeNotification({dispatch}, payload) {
       payload = Object.assign(payload, {collection: "users", param: "notifications"})
 
@@ -79,6 +69,27 @@ export default {
       .catch((err) => {
         console.error('Error ', err);
       })
-    }
+    },
+    async pushMyCoops({dispatch},payload){
+      payload = Object.assign(payload,{collection:"users",param:"myCoops"})
+      dispatch("pushObject", payload)
+        .then(() => {
+          console.log("Push myCoops successful");
+        })
+        .catch((err) => {
+          console.error("Error to push myCoops ", err);
+        });
+    },
+    async removeMyCoops({dispatch}, payload) {
+      payload = Object.assign(payload, {collection: "users", param: "myCoops"})
+
+      dispatch("removeObject", payload)
+      .then(() => {
+        console.log('Removed from myCoop succesfully');
+      })
+      .catch((err) => {
+        console.error('Error to remove myCoop ', err);
+      })
+    },
   }
 };

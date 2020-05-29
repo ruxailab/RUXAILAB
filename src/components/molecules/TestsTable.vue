@@ -7,7 +7,6 @@
       label="Search"
       v-model="search"
     ></v-text-field>
-
     <v-data-table
       :headers="headers"
       :items="tests"
@@ -63,8 +62,11 @@ export default {
     search: ""
   }),
   methods: {
-    deleteTest(item) {
+    async deleteTest(item) {
+      await this.$store.dispatch("getTest", { id: item.id });
+      console.log(this.coops)
       this.$store.dispatch("deleteTest", item).then(() => {
+        //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
           docId: this.user.uid,
           element: {
@@ -74,14 +76,26 @@ export default {
           },
           param: "myTests"
         });
+        //Remove test from myCoops
+        this.coops.forEach(coop => {
+          console.log(coop)
+          this.$store.dispatch("removeMyCoops", {
+            docId: coop.id,
+            element: {
+              id: item.id,
+              title: item.title,
+              type: item.type
+            }
+          });
+        });
       });
-      this.$store.dispatch("getTests", { doc: this.$route.params.tests });
+      this.$store.dispatch("getTests", { doc: this.$route.params.tests })
     },
     editItem(test) {
       this.$router.push("/edittest/" + test.id);
     },
     setTest(item) {
-      this.$emit('setTest', item);
+      this.$emit("setTest", item);
     }
   },
   computed: {
@@ -90,6 +104,10 @@ export default {
     },
     user() {
       return this.$store.getters.user;
+    },
+    coops() {
+      if (this.$store.getters.test) return this.$store.getters.coops;
+      return [];
     }
   }
 };
