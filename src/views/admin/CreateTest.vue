@@ -186,10 +186,52 @@ export default {
         this.snackColor = "success";
         this.snackbar = true;
         console.log("update", this.object);
-        this.$store.dispatch("updateTest", {
-          docId: this.id,
-          data: this.object
-        });
+        this.$store
+          .dispatch("updateTest", {
+            docId: this.id,
+            data: this.object
+          })
+          .then(() => {
+            this.$store.dispatch("removeMyTest", {
+              docId: this.object.admin.id,
+              element: {
+                id: this.id,
+                title: this.testEdit.title,
+                type: this.testEdit.type
+              },
+              param: "myTests"
+            });
+
+            this.$store.dispatch("pushMyTest", {
+              docId: this.object.admin.id,
+              element: {
+                id: this.id,
+                title: this.object.title,
+                type: this.object.type
+              },
+              param: "myTests"
+            });
+
+            this.object.coop.forEach(coop => {
+              this.$store.dispatch("removeMyCoops", {
+                docId: coop.id,
+                element: {
+                  id: this.id,
+                  title: this.testEdit.title,
+                  type: this.testEdit.type
+                }
+              });
+
+              this.$store.dispatch("pushMyCoops", {
+                docId: coop.id,
+                element: {
+                  id: this.id,
+                  title: this.object.title,
+                  type: this.object.type
+                }
+              });
+            });
+          });
       }
     },
     nextStep() {
@@ -199,6 +241,12 @@ export default {
       if (this.el > 1) this.el -= Number(this.el) - 1;
     },
     testLoad() {
+      //Load admin
+      this.object.admin = {
+        id: this.testEdit.admin.id,
+        email: this.testEdit.admin.email
+      };
+
       //Load Test Description
       this.test.title = this.testEdit.title;
       this.test.type = this.testEdit.type;
@@ -246,10 +294,12 @@ export default {
     testAssembly() {
       //Make object test
       //Assigning admin info
-      this.object.admin = {
-        id: this.user.uid,
-        email: this.user.email
-      };
+
+      if (this.id === null || this.id === undefined)
+        this.object.admin = {
+          id: this.user.uid,
+          email: this.user.email
+        };
 
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
