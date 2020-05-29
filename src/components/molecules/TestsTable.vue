@@ -28,7 +28,7 @@
       <template v-slot:item.edit="{ item }">
         <!-- edit button -->
         <td @click.stop style="cursor: default">
-          <v-btn icon @click="editItem(item)" small>
+          <v-btn icon @click="editItem(item)" small :disabled="item.accessLevel <= 1 || item.accessLevel == null ? false : true">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </td>
@@ -37,7 +37,7 @@
       <template v-slot:item.delete="{ item }">
         <!-- delete button -->
         <td @click.stop style="cursor: default">
-          <v-btn icon @click="deleteTest(item)" small>
+          <v-btn icon @click="deleteTest(item)" small :disabled="item.accessLevel == 0 || item.accessLevel == null ? false : true">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </td>
