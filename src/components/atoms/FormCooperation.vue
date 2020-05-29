@@ -36,7 +36,7 @@
                   </v-col>
                   <v-col cols="4">
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.to.email"></v-list-item-title>
+                      <v-list-item-title v-text="item.email"></v-list-item-title>
                     </v-list-item-content>
                   </v-col>
                   <v-col cols="4">
@@ -66,56 +66,27 @@ export default {
     selecteds: [],
     seach: "",
     invitation: {
-      to: {
-        id: null,
-        email: null
-      },
-      from: {
-        id: null,
-        email: null
-      },
-      test: {
-        id: null,
-        title: null
-      }
+      id: null,
+      email: null
     },
     accessLevel: [0, 1, 2, 3]
   }),
   methods: {
     select(item) {
       this.seach = "";
-      this.invitation.to.id = item.id;
-      this.invitation.to.email = item.email;
-      this.invitation.from.id = this.user.uid;
-      this.invitation.from.email = this.user.email;
+      this.invitation.id = item.id;
+      this.invitation.email = item.email;
       this.invitations.push(this.invitation);
       this.invitation = {
-        to: {
-          id: null,
-          email: null
-        },
-        from: {
-          id: this.user.uid,
-          email: this.user.email
-        },
-        test: {
-          id: null,
-          title: null,
-          type: null
-        }
+        id: null,
+        email: null
       };
     },
     deselect(item) {
-      let rv = this.invitations.filter(element => {
-        element.to.id = item.id;
-      });
-      this.invitations.splice(this.invitations.indexOf(rv), 1);
+      this.invitations.splice(this.invitations.indexOf(item), 1);
     }
   },
   computed: {
-    user() {
-      return this.$store.getters.user;
-    },
     users() {
       if (this.$store.state.users.users) return this.$store.getters.admins;
       return [];

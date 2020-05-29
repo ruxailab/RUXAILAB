@@ -153,13 +153,23 @@ export default {
               param: "myTests"
             });
 
+            //Making invites
             this.invitations.forEach(item => {
-              item.test.id = id;
-              item.test.title = this.object.title;
-              item.test.type = this.object.type;
-            });
-
-            this.invitations.forEach(inv => {
+              let inv = {
+                to: {
+                  id: item.id,
+                  email: item.email
+                },
+                from: {
+                  id: this.user.uid,
+                  email: this.user.email
+                },
+                test: {
+                  id: id,
+                  title: this.object.title,
+                  type: this.object.type
+                }
+              };
               console.log(inv);
               this.$store.dispatch("pushNotification", {
                 docId: inv.to.id,
@@ -175,7 +185,7 @@ export default {
         this.snackMsg = "Test updated succesfully";
         this.snackColor = "success";
         this.snackbar = true;
-        console.log("update");
+        console.log("update", this.object);
         this.$store.dispatch("updateTest", {
           docId: this.id,
           data: this.object
@@ -230,8 +240,8 @@ export default {
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
-      
-      this.invitations = this.testEdit.coop
+
+      this.invitations = Array.from(this.testEdit.coop);
     },
     testAssembly() {
       //Make object test
@@ -266,6 +276,57 @@ export default {
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
+
+      //assigning cooperations
+      if (this.id !== null && this.id !== undefined) {
+        let removed = this.testEdit.coop.filter(
+          e => !this.invitations.includes(e)
+        );
+        let invite = this.invitations.filter(
+          e => !this.testEdit.coop.includes(e)
+        );
+
+        removed.forEach(item => {
+          this.$store.dispatch("removeMyCoops", {
+            docId: item.id,
+            element: {
+              id: this.id,
+              title: this.object.title,
+              type: this.object.type
+            }
+          });
+        });
+
+        invite.forEach(item => {
+          let inv = {
+            to: {
+              id: item.id,
+              email: item.email
+            },
+            from: {
+              id: this.user.uid,
+              email: this.user.email
+            },
+            test: {
+              id: this.id,
+              title: this.object.title,
+              type: this.object.type
+            }
+          };
+          console.log(inv);
+          this.$store.dispatch("pushNotification", {
+            docId: inv.to.id,
+            element: inv,
+            param: "notifications"
+          });
+        });
+
+        removed.forEach(item => {
+          this.testEdit.coop.splice(this.testEdit.coop.indexOf(item), 1);
+        });
+
+        this.object.coop = this.testEdit.coop;
+      }
     },
     validate(valid, index) {
       this.valids[index] = valid;
@@ -301,8 +362,8 @@ export default {
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false && this.snackColor == "success")
-        this.$router.push("/");
+      //if (this.snackbar === false && this.snackColor == "success")
+      //  this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined)
