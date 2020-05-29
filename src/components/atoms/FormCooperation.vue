@@ -41,7 +41,7 @@
                   </v-col>
                   <v-col cols="4">
                     <v-list-item-content>
-                      <v-overflow-btn class="my-2" :items="accessLevel" label="Access Level"></v-overflow-btn>
+                      <v-overflow-btn v-model="accessLevel[i]" class="my-2" :items="accessLevels" :label="accessLevels[accessLevels.length-1].toString()"></v-overflow-btn>
                     </v-list-item-content>
                   </v-col>
                   <v-col cols="1">
@@ -68,7 +68,8 @@ export default {
     invitation: {
       to: {
         id: null,
-        email: null
+        email: null,
+        accessLevel: null
       },
       from: {
         id: null,
@@ -79,13 +80,15 @@ export default {
         title: null
       }
     },
-    accessLevel: [0, 1, 2, 3]
+    accessLevels: [0, 1, 2],
+    accessLevel: []
   }),
   methods: {
     select(item) {
       this.seach = "";
       this.invitation.to.id = item.id;
       this.invitation.to.email = item.email;
+      this.invitation.to.accessLevel = this.accessLevels[this.accessLevels.length-1];
       this.invitation.from.id = this.user.uid;
       this.invitation.from.email = this.user.email;
       this.invitations.push(this.invitation);
@@ -126,6 +129,14 @@ export default {
         return this.users.filter(item => {
           return item.email.toLowerCase().includes(this.seach.toLowerCase());
         });
+    }
+  },
+  watch: {
+    accessLevel() {
+      this.accessLevel.forEach(item => {
+        this.invitations[this.accessLevel.indexOf(item)].to.accessLevel = item;
+      });
+      console.log(this.invitations);
     }
   },
   created() {

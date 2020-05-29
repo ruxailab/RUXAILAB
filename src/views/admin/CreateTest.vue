@@ -148,7 +148,8 @@ export default {
               element: {
                 id: id,
                 title: this.object.title,
-                type: this.object.type
+                type: this.object.type,
+                accessLevel: 0
               },
               param: "myTests"
             });
