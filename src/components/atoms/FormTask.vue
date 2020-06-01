@@ -3,11 +3,11 @@
     <v-row justify="space-around">
       <v-col cols="5">
         <v-text-field label="Name" v-model="task.name" :rules="requiredRule"></v-text-field>
-        <v-textarea label="Description" v-model="task.description"></v-textarea>
+        <v-textarea label="Description" v-model="task.description" :rules="requiredRule"></v-textarea>
         <v-text-field label="Tip" v-model="task.tip"></v-text-field>
       </v-col>
       <v-col cols="5">
-        <v-radio-group v-model="task.answer" label="Answer type:" :mandatory="false">
+        <v-radio-group v-model="task.answer" label="Answer type:" :mandatory="false" :rules="requiredRule">
           <v-radio label="No answer" value="null"></v-radio>
           <v-radio label="Text Area" value="textArea"></v-radio>
           <v-radio label="Post Test" value="form"></v-radio>
