@@ -221,7 +221,7 @@ export default {
       }
     },
     nextStep() {
-      if (this.el < 4) this.el = Number(this.el) + 1;
+      if (this.el < this.accessLevel == 0 || this.accessLevel == null ? 5 : 4) this.el = Number(this.el) + 1;
     },
     backStep() {
       if (this.el > 1) this.el -= Number(this.el) - 1;
