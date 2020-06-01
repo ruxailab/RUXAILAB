@@ -36,6 +36,9 @@ export default {
     valida() {
       let valid = this.$refs.form.validate();
       this.$emit("validate", valid);
+    },
+    resetVal() {
+      this.$refs.form.resetValidation();
     }
   }
 };

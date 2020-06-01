@@ -11,7 +11,7 @@
         <v-row justify="center">
           <v-col>
             <v-btn color="success" @click="validate()">Save</v-btn>
-            <v-btn color="error" text @click="$emit('closeDialog')">Cancel</v-btn>
+            <v-btn color="error" text @click="$emit('closeDialog'), reset()">Cancel</v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
@@ -36,7 +36,11 @@ export default {
       if (valid) {
         this.$emit("addTask");
         this.$emit("closeDialog");
+        this.reset();
       }
+    },
+    reset() {
+      this.$refs.form.resetVal();
     }
   }
 };
