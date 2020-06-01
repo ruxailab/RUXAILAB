@@ -58,18 +58,18 @@ export default {
         this.showMenu = true;
       });
     },
-    async joinTest(item) {
-      await this.$store.dispatch("pushMyCoops", {
-        docId: this.user.uid,
-        element: Object.assign(item.test, {accessLevel: item.to.accessLevel})
-      });
-      await this.$store.dispatch("pushCoop", {
-        docId: item.test.id,
-        element: item.to
-      });
+    joinTest(item) {
       this.$store.dispatch("removeNotification", {
         docId: this.user.uid,
         element: item
+      });
+      this.$store.dispatch("pushMyCoops", {
+        docId: this.user.uid,
+        element: Object.assign(item.test, {accessLevel: item.to.accessLevel})
+      });
+      this.$store.dispatch("pushCoop", {
+        docId: item.test.id,
+        element: item.to
       });
     },
     removeNotification(notif) {

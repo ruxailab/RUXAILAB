@@ -58,7 +58,6 @@ export default {
     },
     async removeNotification({dispatch}, payload) {
       payload = Object.assign(payload, {collection: "users", param: "notifications"})
-
       dispatch("removeObject", payload)
       .catch((err) => {
         console.error('Error ', err);
