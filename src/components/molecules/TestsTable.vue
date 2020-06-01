@@ -54,7 +54,7 @@ export default {
   methods: {
     async deleteTest(item) {
       await this.$store.dispatch("getTest", { id: item.id });
-      console.log(this.coops)
+      console.log("Coop",this.coops)
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
@@ -62,7 +62,8 @@ export default {
           element: {
             id: item.id,
             title: item.title,
-            type: item.type
+            type: item.type,
+            accessLevel: 0
           },
           param: "myTests"
         });
@@ -74,7 +75,8 @@ export default {
             element: {
               id: item.id,
               title: item.title,
-              type: item.type
+              type: item.type,
+              accessLevel: coop.accessLevel
             }
           });
         });
