@@ -12,8 +12,8 @@
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>Add new Heuristic</v-card-title>
 
-        <v-form>
-          <v-text-field label="Title" class="mx-3" v-model="heuris.title"></v-text-field>
+        <v-form ref="form">
+          <v-text-field label="Title" class="mx-3" v-model="heuris.title" :rules="nameRequired"></v-text-field>
 
           <v-row
             align="center"
@@ -23,7 +23,7 @@
             :key="i"
           >
             <v-col cols="11">
-              <v-text-field v-model="heuris.questions[i].text" :label="'Question ' + (i + 1)"></v-text-field>
+              <v-text-field v-model="heuris.questions[i].text" :label="'Question ' + (i + 1)" :rules="questionRequired"></v-text-field>
             </v-col>
 
             <v-col cols="1">
@@ -39,13 +39,13 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="$emit('dialog', false)" small color="red lighten-1 white--text">Cancel</v-btn>
-
           <v-btn
-            @click="$emit('dialog', false), $emit('addHeuris')"
+            @click="$emit('dialog', false), resetVal()"
             small
-            color="green lighten-1 white--text"
-          >Save</v-btn>
+            color="red lighten-1 white--text"
+          >Cancel</v-btn>
+
+          <v-btn @click="validate()" small color="green lighten-1 white--text">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -57,17 +57,33 @@ export default {
   props: ["heuris", "dialog"],
   data: () => ({
     id: 0,
+    nameRequired: [v => !!v || "Name is required"],
+    questionRequired: [v => !!v || "Question has to be filled"]
   }),
   methods: {
     addQuestion() {
-      if(this.heuris.questions.length > 0)
-         this.id = this.heuris.questions[this.heuris.questions.length -1].id + 1 
-      else
-        this.id = 0;
+      if (this.heuris.questions.length > 0)
+        this.id =
+          this.heuris.questions[this.heuris.questions.length - 1].id + 1;
+      else this.id = 0;
       this.heuris.questions.push({ id: this.id, text: "" });
     },
     removeQuestion(i) {
       this.heuris.questions.splice(i, 1);
+    },
+    validate() {
+      if (this.$refs.form.validate()) {
+        if (this.heuris.questions.length == 0) {
+          alert("Please add at least one question to your heuristic");
+        } else {
+          this.$emit("dialog", false);
+          this.$emit("addHeuris");
+          this.resetVal();
+        }
+      }
+    },
+    resetVal() {
+      this.$refs.form.resetValidation();
     }
   }
 };
