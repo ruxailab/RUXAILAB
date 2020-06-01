@@ -28,7 +28,6 @@ export default {
     valida()
     {
       let valid = this.$refs.form.validate();
-      console.log('valida 0 ' + valid);  
       this.$emit('valForm', valid, 0);
     }
   }

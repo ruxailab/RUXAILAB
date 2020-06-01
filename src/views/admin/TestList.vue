@@ -67,7 +67,6 @@ export default {
       this.$router.push("/createtest");
     },
     setTest(test) {
-      console.log('settest', test)
       this.test = Object.assign({}, test);
       this.openDropdown()
     },

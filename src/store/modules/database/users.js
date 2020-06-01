@@ -31,9 +31,6 @@ export default {
     async pushMyTest({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users" });
       dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push Successful");
-        })
         .catch((err) => {
           console.error("Error to push myTest ", err);
         });
@@ -41,20 +38,13 @@ export default {
     async updateMyTest({dispatch},payload){
       payload = Object.assign(payload,{collection:"users",param:"myTests"})
       dispatch("updateArrayObject", payload)
-        .then(() => {
-          console.log("Update myTests successful");
-        })
         .catch((err) => {
           console.error("Error to update myTests ", err);
         });
     },
     async removeMyTest({ dispatch }, payload) {
-      console.log(payload);
       payload = Object.assign(payload, { collection: "users" });
       dispatch("removeObject", payload)
-        .then(() => {
-          console.log("Remove Successful");
-        })
         .catch((err) => {
           console.error("Error to remove myTest ", err);
         });
@@ -62,9 +52,6 @@ export default {
     async pushNotification({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users" });
       dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push notification successful");
-        })
         .catch((err) => {
           console.error("Error to push notifications ", err);
         });
@@ -73,9 +60,6 @@ export default {
       payload = Object.assign(payload, {collection: "users", param: "notifications"})
 
       dispatch("removeObject", payload)
-      .then(() => {
-        console.log('Removed notification succesfully');
-      })
       .catch((err) => {
         console.error('Error ', err);
       })
@@ -83,9 +67,6 @@ export default {
     async pushMyCoops({dispatch},payload){
       payload = Object.assign(payload,{collection:"users",param:"myCoops"})
       dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push myCoops successful");
-        })
         .catch((err) => {
           console.error("Error to push myCoops ", err);
         });
@@ -93,9 +74,6 @@ export default {
     async updateMyCoops({dispatch},payload){
       payload = Object.assign(payload,{collection:"users",param:"myCoops"})
       dispatch("updateArrayObject", payload)
-        .then(() => {
-          console.log("Update myCoops successful");
-        })
         .catch((err) => {
           console.error("Error to update myCoops ", err);
         });
@@ -104,9 +82,6 @@ export default {
       payload = Object.assign(payload, {collection: "users", param: "myCoops"})
 
       dispatch("removeObject", payload)
-      .then(() => {
-        console.log('Removed from myCoop succesfully');
-      })
       .catch((err) => {
         console.error('Error to remove myCoop ', err);
       })

@@ -47,7 +47,6 @@ export default {
       payload = Object.assign(payload, { collection: "test" });
       let docRef = dispatch("createObject", payload)
         .then((doc) => {
-          console.log("Test created!");
           return doc.id;
           //commit('setAlert',{error: false, msg:'Test created!'})
         })
@@ -78,9 +77,6 @@ export default {
     updateTest({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "test" });
       dispatch("updateObject", payload)
-        .then(() => {
-          console.log("Test updated successfully ");
-        })
         .catch(() => {
           console.error("Error to update");
         });
@@ -88,9 +84,6 @@ export default {
     pushTestAnswer({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "test" });
       dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push successfully");
-        })
         .catch((err) => {
           console.error("Error to push answer " + err);
         });
@@ -98,9 +91,6 @@ export default {
     async pushCoop({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "test", param: "coop" });
       dispatch("pushObject", payload)
-        .then(() => {
-          console.log("Push coops successful");
-        })
         .catch((err) => {
           console.error("Error to push coops ", err);
         });

@@ -136,7 +136,6 @@ export default {
         this.snackMsg = "Test created succesfully";
         this.snackColor = "success";
         this.snackbar = true;
-        console.log("create");
         //Send db
         this.$store
           .dispatch("createTest", {
@@ -173,7 +172,6 @@ export default {
                   type: this.object.type
                 }
               };
-              console.log(inv);
               this.$store.dispatch("pushNotification", {
                 docId: inv.to.id,
                 element: inv,
@@ -182,13 +180,12 @@ export default {
             });
           })
           .catch(err => {
-            console.log("err", err);
+            console.error("Error", err);
           });
       } else {
         this.snackMsg = "Test updated succesfully";
         this.snackColor = "success";
         this.snackbar = true;
-        console.log("update", this.object);
 
         this.$store
           .dispatch("updateTest", {
@@ -279,10 +276,8 @@ export default {
 
       //Getting user access level
       this.testEdit.coop.forEach(coop => {
-        // console.log('here')
         if (coop.id === this.user.uid) {
           this.accessLevel = coop.accessLevel;
-          console.log("AccessLevel", this.accessLevel);
         }
       });
     },
@@ -331,9 +326,7 @@ export default {
           e => !this.testEdit.coop.includes(e)
         );
 
-        console.log("Removed", removed);
-        console.log("Invite", invite);
-        /* removed.forEach(item => {
+        removed.forEach(item => {
           this.$store.dispatch("removeMyCoops", {
             docId: item.id,
             element: {
@@ -362,7 +355,6 @@ export default {
               accessLevel: this.object.accessLevel
             }
           };
-          console.log(inv);
           this.$store.dispatch("pushNotification", {
             docId: inv.to.id,
             element: inv,
@@ -372,7 +364,7 @@ export default {
 
         removed.forEach(item => {
           this.testEdit.coop.splice(this.testEdit.coop.indexOf(item), 1);
-        });*/
+        });
 
         this.object.coop = this.testEdit.coop;
       }
@@ -397,14 +389,12 @@ export default {
         this.snackColor = "red";
         this.snackbar = "true";
       } else if (this.tasks.length === 0 && this.heuristics.length === 0) {
-        console.log("invalid, please create at least one thing");
         this.snackMsg = "Please create at least one ";
         if (this.test.type === "User") this.snackMsg += "task";
         else this.snackMsg += "heuristic";
         this.snackColor = "red";
         this.snackbar = "true";
       } else {
-        console.log("valid");
         this.submit();
       }
     }
@@ -417,7 +407,6 @@ export default {
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
-        // console.log("store", this.$store.state.tests.test.coop);
       }
     }
   },

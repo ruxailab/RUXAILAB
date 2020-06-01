@@ -60,10 +60,8 @@ export default {
     
     let element = user[payload.param].find(element => element.id == payload.element.id)
     let index = user[payload.param].indexOf(element)
-    console.log("El index",user[payload.param][index])
     
     user[payload.param][index] = payload.element
-    console.log("El index update",user[payload.param][index])
 
     return docRef.update({
       [payload.param]: user[payload.param]
@@ -75,11 +73,9 @@ export default {
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
 
-    docRef.onSnapshot({ includeMetadataChanges: true },async (docSnapshot) => {
-      console.log(`Received doc snapshot: ${docSnapshot}`);
+    docRef.onSnapshot({ includeMetadataChanges: true },async () => {
       let user = await docRef.get()
       user = Object.assign({uid:payload.docId}, user.data()) 
-      console.log("User",user );
       commit("setUser", user);
     });
   },

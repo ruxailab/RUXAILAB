@@ -115,7 +115,6 @@ export default {
       this.accessLevel.forEach(item => {
         this.invitations[this.accessLevel.indexOf(item)].accessLevel = item;
       });
-      console.log(this.invitations);
     }
   },
   created() {

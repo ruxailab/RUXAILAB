@@ -28,7 +28,6 @@ export default {
   methods: {
     valida() {
       let valid = this.$refs.form.validate();
-      console.log('valida 2 ' + valid);  
       this.$emit('valForm', valid, 2);      
     }
   }

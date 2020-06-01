@@ -5,7 +5,6 @@ export default {
     async createObject(_, payload) {
       try {
         var docRef = await api.database.createObject(payload);
-        console.log("Document sucessfully created with ID: ", docRef);
         return docRef;
       } catch (err) {
         console.error("Error", err);
@@ -26,9 +25,7 @@ export default {
     },
     async deleteObject(_, payload) {
       try {
-        console.log(payload);
         await api.database.deleteObject(payload);
-        console.log("Document successfully deleted!");
       } catch (err) {
         console.error("Error removing document: ", err);
       }
@@ -45,7 +42,6 @@ export default {
     async updateObject(_, payload) {
       try {
         var docRef = await api.database.updateObject(payload);
-        console.log("Document successfully updated: ", docRef);
         return docRef;
       } catch (err) {
         console.error("Error", err);
@@ -54,7 +50,6 @@ export default {
     async pushObject(_, payload) {
       try {
         var docRef = await api.database.pushArray(payload);
-        console.log("Document successfully inserted: ", docRef);
         return docRef;
       } catch (err) {
         console.error("Error", err);
@@ -63,7 +58,6 @@ export default {
     async removeObject(_, payload) {
       try {
         var docRef = await api.database.removeArray(payload);
-        console.log("Document successfully removed: ", docRef);
         return docRef;
       } catch (err) {
         console.error("Error", err);
@@ -72,17 +66,14 @@ export default {
     async updateArrayObject(_, payload) {
       try {
         var docRef = await api.database.updateArray(payload);
-        console.log("Document successfully updated: ", docRef);
         return docRef;
       } catch (err) {
         console.error("Error", err);
       }
     },
     async callFunction(_, payload) {
-      let response;
       try {
-        response = await api.functions.call(payload);
-        console.log("Response", response);
+        await api.functions.call(payload);
       } catch (err) {
         console.error("Error calling the function:  ", err);
       }

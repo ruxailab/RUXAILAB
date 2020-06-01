@@ -27,7 +27,6 @@ export default {
       try {
         await api.auth.signUp(payload);
         //await api.auth.logout()
-        console.log("User created :D! ihhaaa");
         commit("setUser", payload);
       } catch (err) {
         console.error("Error when creating user :(", err);
@@ -60,7 +59,6 @@ export default {
     async logout({ commit }) {
       try {
         await api.auth.singOut();
-        console.log("Signed Out");
         commit("setUser", null);
       } catch (err) {
         console.error("Error logging out.", err);

@@ -54,7 +54,6 @@ export default {
   methods: {
     async deleteTest(item) {
       await this.$store.dispatch("getTest", { id: item.id });
-      console.log("Coop",this.coops)
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
@@ -69,7 +68,6 @@ export default {
         });
         //Remove test from myCoops
         this.coops.forEach(coop => {
-          console.log(coop)
           this.$store.dispatch("removeMyCoops", {
             docId: coop.id,
             element: {

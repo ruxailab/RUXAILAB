@@ -59,7 +59,6 @@ export default {
       });
     },
     async joinTest(item) {
-      console.log("Accept", item);
       await this.$store.dispatch("pushMyCoops", {
         docId: this.user.uid,
         element: Object.assign(item.test, {accessLevel: item.to.accessLevel})
@@ -74,7 +73,6 @@ export default {
       });
     },
     removeNotification(notif) {
-      console.log("Deny");
       this.$store.dispatch("removeNotification", {
         docId: this.user.uid,
         element: notif
