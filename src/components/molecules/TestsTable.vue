@@ -57,7 +57,7 @@ export default {
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
-          docId: this.user.uid,
+          docId: this.test.admin.id,
           element: {
             id: item.id,
             title: item.title,
@@ -67,7 +67,7 @@ export default {
           param: "myTests"
         });
         //Remove test from myCoops
-        this.coops.forEach(coop => {
+        this.test.coop.forEach(coop => {
           this.$store.dispatch("removeMyCoops", {
             docId: coop.id,
             element: {
@@ -95,8 +95,8 @@ export default {
     user() {
       return this.$store.getters.user;
     },
-    coops() {
-      if (this.$store.getters.test) return this.$store.getters.coops;
+    test() {
+      if (this.$store.getters.test) return this.$store.getters.test;
       return [];
     }
   }
