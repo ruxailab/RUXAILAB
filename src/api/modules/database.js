@@ -51,8 +51,8 @@ export default {
       ),
     });
   },
-  updateArray:async (payload) => {
-    const db = firebase.firestore()
+  updateArray: async (payload) => {
+    const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
     let user = await docRef.get()
@@ -64,11 +64,10 @@ export default {
     user[payload.param][index] = payload.element
 
     return docRef.update({
-      [payload.param]: user[payload.param]
+      [payload.param]: user[payload.param],
     });
-
- },
-  observer: (payload,commit) => {
+  },
+  observer: (payload, commit) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);

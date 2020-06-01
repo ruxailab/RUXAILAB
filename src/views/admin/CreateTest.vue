@@ -218,7 +218,8 @@ export default {
       }
     },
     nextStep() {
-      if (this.el < this.accessLevel == 0 || this.accessLevel == null ? 5 : 4) this.el = Number(this.el) + 1;
+      if (this.el < this.accessLevel == 0 || this.accessLevel == null ? 5 : 4)
+        this.el = Number(this.el) + 1;
     },
     backStep() {
       if (this.el > 1) this.el -= Number(this.el) - 1;
@@ -352,7 +353,7 @@ export default {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
-              accessLevel: this.object.accessLevel
+              accessLevel: item.accessLevel
             }
           };
           this.$store.dispatch("pushNotification", {
@@ -401,14 +402,18 @@ export default {
   },
   watch: {
     snackbar() {
-      //if (this.snackbar === false && this.snackColor == "success")
-      //  this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == "success")
+        this.$router.push("/");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
       }
-    }
+    },
+    /*"test.type"() {
+      this.tasks = [];
+      this.heuristics = [];
+    }*/
   },
   computed: {
     testEdit() {
