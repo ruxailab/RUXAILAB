@@ -38,6 +38,16 @@ export default {
           console.error("Error to push myTest ", err);
         });
     },
+    async updateMyTest({dispatch},payload){
+      payload = Object.assign(payload,{collection:"users",param:"myTests"})
+      dispatch("updateArrayObject", payload)
+        .then(() => {
+          console.log("Update myTests successful");
+        })
+        .catch((err) => {
+          console.error("Error to update myTests ", err);
+        });
+    },
     async removeMyTest({ dispatch }, payload) {
       console.log(payload);
       payload = Object.assign(payload, { collection: "users" });
@@ -78,6 +88,16 @@ export default {
         })
         .catch((err) => {
           console.error("Error to push myCoops ", err);
+        });
+    },
+    async updateMyCoops({dispatch},payload){
+      payload = Object.assign(payload,{collection:"users",param:"myCoops"})
+      dispatch("updateArrayObject", payload)
+        .then(() => {
+          console.log("Update myCoops successful");
+        })
+        .catch((err) => {
+          console.error("Error to update myCoops ", err);
         });
     },
     async removeMyCoops({dispatch}, payload) {

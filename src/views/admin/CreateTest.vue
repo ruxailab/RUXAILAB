@@ -26,8 +26,8 @@
             Post Test
             <small>Optional</small>
           </v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step step="5" editable>
+          <v-divider v-if="accessLevel == 0 || accessLevel == null"></v-divider>
+          <v-stepper-step step="5" editable v-if="accessLevel == 0 || accessLevel == null">
             Cooperation
             <small>Optional</small>
           </v-stepper-step>
@@ -56,14 +56,14 @@
               <FormPostTest :postTest="postTest" @valForm="validate" ref="form3" />
             </v-container>
           </v-stepper-content>
-          <v-stepper-content step="5">
+          <v-stepper-content step="5" v-if="accessLevel == 0 || accessLevel == null">
             <v-container>
               <FormCooperation :invitations="invitations" />
             </v-container>
           </v-stepper-content>
           <StepNavigation
             :step="el"
-            :size="5"
+            :size="accessLevel == 0 || accessLevel == null ? 5 : 4"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
             v-on:submit="validateAll()"
@@ -97,6 +97,7 @@ export default {
   },
   data: () => ({
     el: 1,
+    accessLevel: null,
     snackbar: false,
     snackMsg: "",
     snackColor: "",
@@ -148,7 +149,8 @@ export default {
               element: {
                 id: id,
                 title: this.object.title,
-                type: this.object.type
+                type: this.object.type,
+                accessLevel: 0
               },
               param: "myTests"
             });
@@ -158,7 +160,8 @@ export default {
               let inv = {
                 to: {
                   id: item.id,
-                  email: item.email
+                  email: item.email,
+                  accessLevel: item.accessLevel
                 },
                 from: {
                   id: this.user.uid,
@@ -186,48 +189,31 @@ export default {
         this.snackColor = "success";
         this.snackbar = true;
         console.log("update", this.object);
+
         this.$store
           .dispatch("updateTest", {
             docId: this.id,
             data: this.object
           })
           .then(() => {
-            this.$store.dispatch("removeMyTest", {
-              docId: this.object.admin.id,
-              element: {
-                id: this.id,
-                title: this.testEdit.title,
-                type: this.testEdit.type
-              },
-              param: "myTests"
-            });
-
-            this.$store.dispatch("pushMyTest", {
+            this.$store.dispatch("updateMyTest", {
               docId: this.object.admin.id,
               element: {
                 id: this.id,
                 title: this.object.title,
-                type: this.object.type
-              },
-              param: "myTests"
+                type: this.object.type,
+                accessLevel: 0
+              }
             });
 
             this.object.coop.forEach(coop => {
-              this.$store.dispatch("removeMyCoops", {
-                docId: coop.id,
-                element: {
-                  id: this.id,
-                  title: this.testEdit.title,
-                  type: this.testEdit.type
-                }
-              });
-
-              this.$store.dispatch("pushMyCoops", {
+              this.$store.dispatch("updateMyCoops", {
                 docId: coop.id,
                 element: {
                   id: this.id,
                   title: this.object.title,
-                  type: this.object.type
+                  type: this.object.type,
+                  accessLevel: coop.accessLevel
                 }
               });
             });
@@ -290,6 +276,15 @@ export default {
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
 
       this.invitations = Array.from(this.testEdit.coop);
+
+      //Getting user access level
+      this.testEdit.coop.forEach(coop => {
+        // console.log('here')
+        if (coop.id === this.user.uid) {
+          this.accessLevel = coop.accessLevel;
+          console.log("AccessLevel", this.accessLevel);
+        }
+      });
     },
     testAssembly() {
       //Make object test
@@ -336,13 +331,16 @@ export default {
           e => !this.testEdit.coop.includes(e)
         );
 
-        removed.forEach(item => {
+        console.log("Removed", removed);
+        console.log("Invite", invite);
+        /* removed.forEach(item => {
           this.$store.dispatch("removeMyCoops", {
             docId: item.id,
             element: {
               id: this.id,
               title: this.object.title,
-              type: this.object.type
+              type: this.object.type,
+              accessLevel: this.object.accessLevel
             }
           });
         });
@@ -360,7 +358,8 @@ export default {
             test: {
               id: this.id,
               title: this.object.title,
-              type: this.object.type
+              type: this.object.type,
+              accessLevel: this.object.accessLevel
             }
           };
           console.log(inv);
@@ -373,7 +372,7 @@ export default {
 
         removed.forEach(item => {
           this.testEdit.coop.splice(this.testEdit.coop.indexOf(item), 1);
-        });
+        });*/
 
         this.object.coop = this.testEdit.coop;
       }
@@ -416,8 +415,10 @@ export default {
       //  this.$router.push("/");
     },
     testEdit: async function() {
-      if (this.testEdit !== null && this.testEdit !== undefined)
+      if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
+        // console.log("store", this.$store.state.tests.test.coop);
+      }
     }
   },
   computed: {
@@ -429,8 +430,9 @@ export default {
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined)
+    if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    }
   }
 };
 </script>

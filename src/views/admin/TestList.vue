@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-card :ripple="false" @click="openDropdown">
+        <v-card :ripple="false" @click="setEvent" style="cursor: default">
           <v-tabs grow centered>
             <v-tab @click.stop>My Tests</v-tab>
 
@@ -47,6 +47,7 @@ export default {
     showMenu: false,
     x: 0,
     y: 0,
+    e: null,
     test: {},
     headers: [
       {
@@ -55,11 +56,9 @@ export default {
         value: "title"
       },
       { text: "Id", value: "id", align: "center" },
-      { text: "Tasks", value: "tasks.length", align: "center" },
       { text: "Type", value: "type", align: "center" },
       { text: "Edit", value: "edit", align: "center", sortable: false },
       { text: "Delete", value: "delete", align: "center", sortable: false },
-      { text: "", value: "data-table-expand" }
     ],
     items: [{ title: "Open Test" }, { title: "Open Answers" }]
   }),
@@ -70,16 +69,17 @@ export default {
     setTest(test) {
       console.log('settest', test)
       this.test = Object.assign({}, test);
-      // this.openDropdown()
+      this.openDropdown()
     },
-    openDropdown(e) {
-      e.preventDefault();
+    openDropdown() {
+      this.e.preventDefault();
       this.showMenu = false;
-      this.x = e.clientX;
-      this.y = e.clientY;
+      this.x = this.e.clientX;
+      this.y = this.e.clientY;
       this.$nextTick(() => {
         this.showMenu = true;
       });
+      this.e = null;
     },
     openTest(test) {
       if (!this.deleting && !this.editing)
@@ -87,6 +87,9 @@ export default {
     },
     openAnswer(test) {
       this.$router.push("/answerview/" + test.id);
+    },
+    setEvent(e) {
+      this.e = e;
     }
   },
   computed: {

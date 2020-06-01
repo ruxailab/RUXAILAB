@@ -12,19 +12,9 @@
       :items="tests"
       @click:row="setTest"
       :items-per-page="5"
-      show-expand
       :loading="loading"
       :search="search"
     >
-      <template v-slot:expanded-item="{ headers, item }">
-        <!-- expanded description -->
-        <td :colspan="headers.length" class="pa-3">
-          <h2 class="mb-1">{{ item.title }}</h2>
-          <div class="caption" v-if="item.description">{{ item.description }}</div>
-          <div class="caption" v-else>Test has no description</div>
-        </td>
-      </template>
-
       <template v-slot:item.type="{ item }">
         <!-- item type -->
         <td @click.stop style="cursor: default">
@@ -37,7 +27,7 @@
       <template v-slot:item.edit="{ item }">
         <!-- edit button -->
         <td @click.stop style="cursor: default">
-          <v-btn icon @click="editItem(item)" small>
+          <v-btn icon @click="editItem(item)" small :disabled="item.accessLevel <= 1 || item.accessLevel == null ? false : true">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </td>
@@ -46,7 +36,7 @@
       <template v-slot:item.delete="{ item }">
         <!-- delete button -->
         <td @click.stop style="cursor: default">
-          <v-btn icon @click="deleteTest(item)" small>
+          <v-btn icon @click="deleteTest(item)" small :disabled="item.accessLevel == 0 || item.accessLevel == null ? false : true">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </td>

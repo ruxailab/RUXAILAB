@@ -51,6 +51,25 @@ export default {
       ),
     });
   },
+  updateArray:async (payload) => {
+    const db = firebase.firestore()
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
+    let user = await docRef.get()
+    user = Object.assign({uid:payload.docId}, user.data()) 
+    
+    let element = user[payload.param].find(element => element.id == payload.element.id)
+    let index = user[payload.param].indexOf(element)
+    console.log("El index",user[payload.param][index])
+    
+    user[payload.param][index] = payload.element
+    console.log("El index update",user[payload.param][index])
+
+    return docRef.update({
+      [payload.param]: user[payload.param]
+    });
+
+ },
   observer: (payload,commit) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);

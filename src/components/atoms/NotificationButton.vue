@@ -62,7 +62,7 @@ export default {
       console.log("Accept", item);
       await this.$store.dispatch("pushMyCoops", {
         docId: this.user.uid,
-        element: item.test
+        element: Object.assign(item.test, {accessLevel: item.to.accessLevel})
       });
       await this.$store.dispatch("pushCoop", {
         docId: item.test.id,
