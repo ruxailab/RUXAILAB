@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form ref="form">
     <v-row justify="space-around">
       <v-col cols="5">
         <v-text-field label="Name" v-model="task.name" :rules="requiredRule"></v-text-field>
@@ -31,6 +31,12 @@ export default {
     return {
       requiredRule: [v => !!v || "Field Required"]
     };
+  },
+  methods: {
+    valida() {
+      let valid = this.$refs.form.validate();
+      this.$emit("validate", valid);
+    }
   }
 };
 </script>
