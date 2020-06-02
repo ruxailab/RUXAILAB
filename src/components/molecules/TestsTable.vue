@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-text-field
-      @click.stop
       class="mx-3 pt-5"
       append-icon="mdi-magnify"
       label="Search"
@@ -10,36 +9,64 @@
     <v-data-table
       :headers="headers"
       :items="tests"
-      @click:row="setTest"
       :items-per-page="5"
       :loading="loading"
       :search="search"
     >
       <template v-slot:item.type="{ item }">
         <!-- item type -->
-        <td @click.stop style="cursor: default">
-          <v-btn v-if="item.type" rounded small elevation="1">
-            <span style="font-size: 7pt">{{ item.type }}</span>
-          </v-btn>
-        </td>
+        <v-btn v-if="item.type" rounded small elevation="1" style="cursor: default" :ripple="false">
+          <span style="font-size: 7pt">{{ item.type }}</span>
+        </v-btn>
       </template>
 
       <template v-slot:item.edit="{ item }">
         <!-- edit button -->
-        <td @click.stop style="cursor: default">
-          <v-btn icon @click="editItem(item)" small :disabled="item.accessLevel <= 1 || item.accessLevel == null ? false : true">
-            <v-icon small>mdi-pencil</v-icon>
-          </v-btn>
-        </td>
+        <v-btn
+          icon
+          @click="editItem(item)"
+          small
+          :disabled="item.accessLevel <= 1 || item.accessLevel == null ? false : true"
+        >
+          <v-icon small>mdi-pencil</v-icon>
+        </v-btn>
       </template>
 
       <template v-slot:item.delete="{ item }">
         <!-- delete button -->
-        <td @click.stop style="cursor: default">
-          <v-btn icon @click="deleteTest(item)" small :disabled="item.accessLevel == 0 || item.accessLevel == null ? false : true">
-            <v-icon small>mdi-delete</v-icon>
-          </v-btn>
-        </td>
+        <v-btn
+          icon
+          @click="deleteTest(item)"
+          small
+          :disabled="item.accessLevel == 0 || item.accessLevel == null ? false : true"
+        >
+          <v-icon small>mdi-delete</v-icon>
+        </v-btn>
+      </template>
+
+      <template v-slot:item.more="{ item }">
+        <!-- more button -->
+        <v-menu offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn icon small>
+              <v-icon small v-on="on">mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item @click="openTest(item)">
+              <v-list-item-title>Open Test</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item @click="openAnswer(item)">
+              <v-list-item-title>Open Answers</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item @click="openManager(item)">
+              <v-list-item-title>Open Manager</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-data-table>
   </div>
@@ -79,13 +106,24 @@ export default {
           });
         });
       });
-      this.$store.dispatch("getTests", { doc: this.$route.params.tests })
+      this.$store.dispatch("getTests", { doc: this.$route.params.tests });
     },
     editItem(test) {
       this.$router.push("/edittest/" + test.id);
     },
     setTest(item) {
       this.$emit("setTest", item);
+    },
+    openTest(test) {
+      if (!this.deleting && !this.editing)
+        this.$router.push("/testview/" + test.id);
+    },
+    openAnswer(test) {
+      this.$router.push("/answerview/" + test.id);
+    },
+    openManager(test){
+      alert("open manager for " + test.title);
+      // this.$router.push("/managerview/" + test.id);
     }
   },
   computed: {

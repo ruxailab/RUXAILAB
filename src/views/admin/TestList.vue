@@ -2,34 +2,22 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-card :ripple="false" @click="setEvent" style="cursor: default">
+        <v-card>
           <v-tabs grow centered>
-            <v-tab @click.stop>My Tests</v-tab>
+            <v-tab>My Tests</v-tab>
 
-            <v-tab @click.stop>Tests I colaborate with</v-tab>
+            <v-tab>Tests I colaborate with</v-tab>
 
             <v-tab-item>
-              <TestsTable @setTest="setTest" :tests="user.myTests" :headers="headers" />
+              <TestsTable :tests="user.myTests" :headers="headers" />
             </v-tab-item>
             <v-tab-item>
-              <TestsTable @setTest="setTest" :tests="user.myCoops" :headers="headers" />
+              <TestsTable :tests="user.myCoops" :headers="headers" />
             </v-tab-item>
           </v-tabs>
         </v-card>
       </v-col>
     </v-row>
-
-    <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
-      <v-list>
-        <v-list-item @click="openTest(test)">
-          <v-list-item-title>Open Test</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item @click="openAnswer(test)">
-          <v-list-item-title>Open Answers</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
 
     <v-btn large dark fab fixed bottom right @click="createTest()">
       <!-- Add Button -->
@@ -47,7 +35,6 @@ export default {
     showMenu: false,
     x: 0,
     y: 0,
-    e: null,
     test: {},
     headers: [
       {
@@ -59,36 +46,13 @@ export default {
       { text: "Type", value: "type", align: "center" },
       { text: "Edit", value: "edit", align: "center", sortable: false },
       { text: "Delete", value: "delete", align: "center", sortable: false },
+      { text: "More", value: "more", align: "center", sortable: false },
     ],
-    items: [{ title: "Open Test" }, { title: "Open Answers" }]
+    items: [{ title: "Open Test" }, { title: "Open Answers" }, {title: "Open Manager"}]
   }),
   methods: {
     createTest() {
       this.$router.push("/createtest");
-    },
-    setTest(test) {
-      this.test = Object.assign({}, test);
-      this.openDropdown()
-    },
-    openDropdown() {
-      this.e.preventDefault();
-      this.showMenu = false;
-      this.x = this.e.clientX;
-      this.y = this.e.clientY;
-      this.$nextTick(() => {
-        this.showMenu = true;
-      });
-      this.e = null;
-    },
-    openTest(test) {
-      if (!this.deleting && !this.editing)
-        this.$router.push("/testview/" + test.id);
-    },
-    openAnswer(test) {
-      this.$router.push("/answerview/" + test.id);
-    },
-    setEvent(e) {
-      this.e = e;
     }
   },
   computed: {
