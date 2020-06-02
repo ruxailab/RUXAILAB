@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-badge color="red" bottom overlap :content="user.notifications.length" :value="user.notifications.length">
+    <v-badge
+      color="red"
+      bottom
+      overlap
+      :content="user.notifications.length"
+      :value="user.notifications.length"
+    >
       <v-btn v-if="user.notifications.length == 0" small icon @click="openDropdown" class="mr-1">
         <v-icon small>mdi-bell-outline</v-icon>
       </v-btn>
@@ -22,8 +28,13 @@
           <v-row justify="center" class="mb-2">
             <v-col cols="12">
               <v-list-item-title
+              v-if="notification.to.accessLevel != 2"
                 class="text-wrap text-center"
               >{{notification.from.email}} has invited you to colaborate on his test: "{{notification.test.title}}"</v-list-item-title>
+               <v-list-item-title
+                v-else
+                class="text-wrap text-center"
+              >{{notification.from.email}} has invited you to reply test: "{{notification.test.title}}"</v-list-item-title>
             </v-col>
 
             <v-btn small color="success" @click="joinTest(notification)">Accept</v-btn>
@@ -65,7 +76,7 @@ export default {
       });
       this.$store.dispatch("pushMyCoops", {
         docId: this.user.uid,
-        element: Object.assign(item.test, {accessLevel: item.to.accessLevel})
+        element: Object.assign(item.test, { accessLevel: item.to.accessLevel })
       });
       this.$store.dispatch("pushCoop", {
         docId: item.test.id,

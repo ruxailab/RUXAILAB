@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="mx-auto" tile>
+    <v-card class="mx-auto" height="500px" tile>
       <v-row justify="center" align="center">
         <v-col cols="11">
           <v-menu offset-y>
@@ -40,7 +40,7 @@
                     </v-list-item-content>
                   </v-col>
                   <v-col cols="4">
-                    <v-list-item-content>
+                    <v-list-item-content v-if="type !=='tester'">
                       <v-overflow-btn
                         v-model="accessLevel[i]"
                         class="my-2"
@@ -66,7 +66,7 @@
 
 <script>
 export default {
-  props: ["invitations"],
+  props: ["invitations","type"],
   data: () => ({
     selecteds: [],
     seach: "",
