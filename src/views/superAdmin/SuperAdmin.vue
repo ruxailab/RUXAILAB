@@ -107,7 +107,6 @@ export default {
     },
 
     save(user) {
-      console.log(user);
       let payload = {
         uid: user.id,
         customClaims: {
@@ -118,16 +117,12 @@ export default {
       this.close();
     },
     level(lv) {
-      console.log(lv);
-
       let text;
       this.accessLevels.forEach(item => {
-        console.log(item);
         if (item.level == lv) {
           text = item.text;
         }
       });
-      console.log(text);
       return text;
     }
   },

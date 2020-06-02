@@ -108,7 +108,7 @@ export default {
   },
   watch: {
     dialog() {
-      if (!this.dialog) {
+      if (!this.dialog && this.heuristics.length > 0) {
         this.heuris = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
           title: "",

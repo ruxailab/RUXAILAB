@@ -27,7 +27,6 @@ export default {
       try {
         await api.auth.signUp(payload);
         //await api.auth.logout()
-        console.log("User created :D! ihhaaa");
         commit("setUser", payload);
       } catch (err) {
         console.error("Error when creating user :(", err);
@@ -37,7 +36,7 @@ export default {
         commit("setLoading", false);
       }
     },
-    async signin({ commit }, payload) {
+    async signin({ commit}, payload) {
       commit("setLoading", true);
       try {
         var user = await api.auth.signIn(payload);
@@ -46,6 +45,8 @@ export default {
           id: user.uid,
         });
         user = Object.assign({ uid: user.id }, user.data());
+
+        api.database.observer({docId:user.uid,collection:'users'},commit)
         commit("setUser", user);
       } catch (err) {
         console.error("Error signing in: " + err);
@@ -58,7 +59,6 @@ export default {
     async logout({ commit }) {
       try {
         await api.auth.singOut();
-        console.log("Signed Out");
         commit("setUser", null);
       } catch (err) {
         console.error("Error logging out.", err);
@@ -73,11 +73,15 @@ export default {
             id: user.uid,
           });
           user = Object.assign({ uid: user.id }, user.data());
+          api.database.observer({docId:user.uid,collection:'users'},commit)
           commit("setUser", user);
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
       }
     },
+    setUser({commit},user){
+      commit("setUser", user);
+    }
   },
 };

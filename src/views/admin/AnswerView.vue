@@ -69,11 +69,6 @@ export default {
       else return [];
     }
   },
-  watch: {
-    answers() {
-      console.log(this.answers);
-    }
-  },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   }

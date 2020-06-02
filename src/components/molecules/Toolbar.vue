@@ -8,6 +8,8 @@
 
         <v-spacer></v-spacer>
 
+        <NotificationBtn v-if="user" />
+
         <v-btn text @click="moveSignIn()" v-if="!user">
             <v-icon left>mdi-lock</v-icon>
             Sign-in
@@ -21,6 +23,8 @@
 </template>
 
 <script>
+import NotificationBtn from '../atoms/NotificationButton'
+
 export default {
     data: () => ({}),
     methods: {
@@ -39,6 +43,9 @@ export default {
         user() {
             return this.$store.getters.user;
         }
+    },
+    components: {
+        NotificationBtn
     }
 }
 </script>

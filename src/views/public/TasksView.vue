@@ -73,7 +73,7 @@ export default {
       } else {
         if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
         else if (this.e1 === this.items.length){
-          this.$store.dispatch('pushTestAnswer',{docId: this.id,answer:this.object})
+          this.$store.dispatch('pushTestAnswer',{docId: this.id,element:this.object,param:'answers'})
           //window.close();
         } 
       }

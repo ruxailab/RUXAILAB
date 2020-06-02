@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Toolbar from './components/atoms/Toolbar';
+import Toolbar from './components/molecules/Toolbar';
 
 export default {
   name: 'App',

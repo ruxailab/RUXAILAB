@@ -3,7 +3,7 @@
     <v-card>
       <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
         <!-- <p v-if="id === null">Test registered successfully</p>
-        <p v-else>Test updated successfully</p> -->
+        <p v-else>Test updated successfully</p>-->
         <p>{{ snackMsg }}</p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
@@ -26,6 +26,11 @@
             Post Test
             <small>Optional</small>
           </v-stepper-step>
+          <v-divider v-if="accessLevel == 0 || accessLevel == null"></v-divider>
+          <v-stepper-step step="5" editable v-if="accessLevel == 0 || accessLevel == null">
+            Cooperation
+            <small>Optional</small>
+          </v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="1">
@@ -35,7 +40,7 @@
           </v-stepper-content>
           <v-stepper-content step="2">
             <v-container>
-              <FormPreTest :preTest="preTest" @valForm="validate" ref="form2"/>
+              <FormPreTest :preTest="preTest" @valForm="validate" ref="form2" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -48,12 +53,17 @@
           </v-stepper-content>
           <v-stepper-content step="4">
             <v-container>
-              <FormPostTest :postTest="postTest" @valForm="validate" ref="form3"/>
+              <FormPostTest :postTest="postTest" @valForm="validate" ref="form3" />
+            </v-container>
+          </v-stepper-content>
+          <v-stepper-content step="5" v-if="accessLevel == 0 || accessLevel == null">
+            <v-container>
+              <FormCooperation :invitations="invitations" />
             </v-container>
           </v-stepper-content>
           <StepNavigation
             :step="el"
-            :size="4"
+            :size="accessLevel == 0 || accessLevel == null ? 5 : 4"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
             v-on:submit="validateAll()"
@@ -61,7 +71,7 @@
         </v-stepper-items>
       </v-stepper>
     </v-card>
-    </v-container>
+  </v-container>
 </template>
 
 
@@ -72,6 +82,7 @@ import FormPostTest from "@/components/atoms/FormPostTest";
 import ListTasks from "@/components/molecules/ListTasks";
 import StepNavigation from "@/components/atoms/StepNavigation";
 import Heuristic from "@/components/molecules/HeuristicsTable";
+import FormCooperation from "@/components/atoms/FormCooperation";
 
 export default {
   props: ["id"],
@@ -81,13 +92,15 @@ export default {
     FormPostTest,
     ListTasks,
     StepNavigation,
-    Heuristic
+    Heuristic,
+    FormCooperation
   },
   data: () => ({
     el: 1,
+    accessLevel: null,
     snackbar: false,
-    snackMsg: '',
-    snackColor: '',
+    snackMsg: "",
+    snackColor: "",
     test: {
       title: "",
       description: "",
@@ -100,6 +113,7 @@ export default {
     tasks: [],
     heuristics: [],
     postTest: "",
+    invitations: [],
     object: {
       title: "",
       type: "",
@@ -109,7 +123,9 @@ export default {
         form: ""
       },
       postTest: "",
-      answers:[]
+      admin: null,
+      answers: [],
+      coop: []
     },
     valids: [false, true, true]
   }),
@@ -117,38 +133,109 @@ export default {
     submit() {
       this.testAssembly();
       if (this.id === null || this.id === undefined) {
-        this.snackMsg = 'Test created succesfully';
-        this.snackColor = 'success'
+        this.snackMsg = "Test created succesfully";
+        this.snackColor = "success";
         this.snackbar = true;
-        console.log('create');
         //Send db
-        this.$store.dispatch("createTest", {
-          collection: "test",
-          data: this.object
-        });
+        this.$store
+          .dispatch("createTest", {
+            collection: "test",
+            data: this.object
+          })
+          .then(id => {
+            this.$store.dispatch("pushMyTest", {
+              docId: this.user.uid,
+              element: {
+                id: id,
+                title: this.object.title,
+                type: this.object.type,
+                accessLevel: 0
+              },
+              param: "myTests"
+            });
+
+            //Making invites
+            this.invitations.forEach(item => {
+              let inv = {
+                to: {
+                  id: item.id,
+                  email: item.email,
+                  accessLevel: item.accessLevel
+                },
+                from: {
+                  id: this.user.uid,
+                  email: this.user.email
+                },
+                test: {
+                  id: id,
+                  title: this.object.title,
+                  type: this.object.type
+                }
+              };
+              this.$store.dispatch("pushNotification", {
+                docId: inv.to.id,
+                element: inv,
+                param: "notifications"
+              });
+            });
+          })
+          .catch(err => {
+            console.error("Error", err);
+          });
       } else {
-        this.snackMsg = 'Test updated succesfully';
-        this.snackColor = 'success'
+        this.snackMsg = "Test updated succesfully";
+        this.snackColor = "success";
         this.snackbar = true;
-        console.log('update');
-        this.$store.dispatch("updateTest", {
-          docId: this.id,
-          data: this.object
-        });
+
+        this.$store
+          .dispatch("updateTest", {
+            docId: this.id,
+            data: this.object
+          })
+          .then(() => {
+            this.$store.dispatch("updateMyTest", {
+              docId: this.object.admin.id,
+              element: {
+                id: this.id,
+                title: this.object.title,
+                type: this.object.type,
+                accessLevel: 0
+              }
+            });
+
+            this.object.coop.forEach(coop => {
+              this.$store.dispatch("updateMyCoops", {
+                docId: coop.id,
+                element: {
+                  id: this.id,
+                  title: this.object.title,
+                  type: this.object.type,
+                  accessLevel: coop.accessLevel
+                }
+              });
+            });
+          });
       }
     },
     nextStep() {
-      if (this.el < 4) this.el = Number(this.el) + 1;
+      if (this.el < this.accessLevel == 0 || this.accessLevel == null ? 5 : 4)
+        this.el = Number(this.el) + 1;
     },
     backStep() {
       if (this.el > 1) this.el -= Number(this.el) - 1;
     },
     testLoad() {
+      //Load admin
+      this.object.admin = {
+        id: this.testEdit.admin.id,
+        email: this.testEdit.admin.email
+      };
+
       //Load Test Description
       this.test.title = this.testEdit.title;
       this.test.type = this.testEdit.type;
       this.test.description = this.testEdit.description;
-      
+
       //Load Pretest
       if (
         this.testEdit.preTest !== null &&
@@ -174,7 +261,10 @@ export default {
         });
 
       //Load Heuristics
-      if (this.testEdit.heuristics !== null && this.testEdit.heuristics !== undefined)
+      if (
+        this.testEdit.heuristics !== null &&
+        this.testEdit.heuristics !== undefined
+      )
         this.testEdit.heuristics.forEach(item => {
           this.heuristics.push(item);
         });
@@ -182,9 +272,26 @@ export default {
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
+
+      this.invitations = Array.from(this.testEdit.coop);
+
+      //Getting user access level
+      this.testEdit.coop.forEach(coop => {
+        if (coop.id === this.user.uid) {
+          this.accessLevel = coop.accessLevel;
+        }
+      });
     },
     testAssembly() {
       //Make object test
+      //Assigning admin info
+
+      if (this.id === null || this.id === undefined)
+        this.object.admin = {
+          id: this.user.uid,
+          email: this.user.email
+        };
+
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
 
@@ -211,57 +318,115 @@ export default {
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
 
+      //assigning cooperations
+      if (this.id !== null && this.id !== undefined) {
+        let removed = this.testEdit.coop.filter(
+          e => !this.invitations.includes(e)
+        );
+        let invite = this.invitations.filter(
+          e => !this.testEdit.coop.includes(e)
+        );
+
+        removed.forEach(item => {
+          this.$store.dispatch("removeMyCoops", {
+            docId: item.id,
+            element: {
+              id: this.id,
+              title: this.object.title,
+              type: this.object.type,
+              accessLevel: this.object.accessLevel
+            }
+          });
+        });
+
+        invite.forEach(item => {
+          let inv = {
+            to: {
+              id: item.id,
+              email: item.email
+            },
+            from: {
+              id: this.user.uid,
+              email: this.user.email
+            },
+            test: {
+              id: this.id,
+              title: this.object.title,
+              type: this.object.type,
+              accessLevel: item.accessLevel
+            }
+          };
+          this.$store.dispatch("pushNotification", {
+            docId: inv.to.id,
+            element: inv,
+            param: "notifications"
+          });
+        });
+
+        removed.forEach(item => {
+          this.testEdit.coop.splice(this.testEdit.coop.indexOf(item), 1);
+        });
+
+        this.object.coop = this.testEdit.coop;
+      }
     },
-    validate(valid, index){
-      this.valids[index] = valid
+    validate(valid, index) {
+      this.valids[index] = valid;
     },
-    validateAll(){
+    validateAll() {
       this.$refs.form1.valida();
       this.$refs.form2.valida();
       this.$refs.form3.valida();
 
       let valid = true;
       this.valids.forEach(item => {
-        if(item === false){
+        if (item === false) {
           valid = false;
         }
-      })
+      });
 
-      if(valid === false) {
-        this.snackMsg = 'Please fill all required fields correclty';
-        this.snackColor = 'red';
-        this.snackbar = 'true';
+      if (valid === false) {
+        this.snackMsg = "Please fill all required fields correclty";
+        this.snackColor = "red";
+        this.snackbar = "true";
       } else if (this.tasks.length === 0 && this.heuristics.length === 0) {
-        console.log('invalid, please create at least one thing');
-        this.snackMsg = 'Please create at least one ';
-        if(this.test.type === 'User') this.snackMsg += 'task';
-        else this.snackMsg += 'heuristic'
-        this.snackColor = 'red';
-        this.snackbar = 'true';
-      }else {
-        console.log('valid');
+        this.snackMsg = "Please create at least one ";
+        if (this.test.type === "User") this.snackMsg += "task";
+        else this.snackMsg += "heuristic";
+        this.snackColor = "red";
+        this.snackbar = "true";
+      } else {
         this.submit();
-      } 
-
+      }
     }
   },
   watch: {
     snackbar() {
-      if (this.snackbar === false && this.snackColor == 'success') this.$router.push("/");
+      if (this.snackbar === false && this.snackColor == "success")
+        this.$router.push("/");
     },
     testEdit: async function() {
-      if (this.testEdit !== null && this.testEdit !== undefined)
+      if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
-    }
+      }
+    },
+    /*"test.type"() {
+      this.tasks = [];
+      this.heuristics = [];
+    }*/
   },
   computed: {
     testEdit() {
       return this.$store.getters.test;
+    },
+    user() {
+      return this.$store.getters.user;
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined)
+    if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    }
   }
 };
 </script>
