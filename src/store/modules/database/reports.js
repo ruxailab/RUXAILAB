@@ -28,6 +28,12 @@ export default {
             .catch((err) => {
                 console.error('Error ', err);
             })
+        },
+        async getReports({ dispatch, commit }, payload) {
+            payload = Object.assign(payload, {collection: 'reports'});
+            
+            let reps = await dispatch('getObject', payload);
+            commit('setReports', reps);
         }
     }
 }

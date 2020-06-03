@@ -1,10 +1,9 @@
 <template>
   <v-container>
-  {{reports}}
     <v-row justify="center">
       <v-col cols="10">
         <v-card>
-          <v-data-table :headers="headers" :items="records" sort-by="calories" class="elevation-1">
+          <v-data-table :headers="headers" :items="reports.reports" sort-by="calories" class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-spacer></v-spacer>
@@ -125,7 +124,6 @@ export default {
 
     async save() {
       //Making invites
-      await this.$store.dispatch("getTest", { id: this.id });
       this.invitations.forEach(item => {
         let inv = {
           to: {
@@ -138,10 +136,10 @@ export default {
             email: this.user.email
           },
           test: {
-            id: this.id,
-            title: this.test.title,
-            type: this.test.type,
-            reports: this.test.reports
+            id: this.reports.test.id,
+            title: this.reports.test.title,
+            type: this.reports.test.type,
+            reports: this.id
           }
         };
         this.$store.dispatch("pushNotification", {
@@ -158,7 +156,7 @@ export default {
       return this.$store.state.auth.user;
     },
     reports() {
-      return this.$store.state.reports.reports;
+      return this.$store.state.reports.reports || [];
     },
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
