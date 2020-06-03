@@ -28,16 +28,16 @@
           <v-row justify="center" class="mb-2">
             <v-col cols="12">
               <v-list-item-title
-              v-if="notification.to.accessLevel != 2"
+                v-if="notification.to.accessLevel != 2"
                 class="text-wrap text-center"
               >{{notification.from.email}} has invited you to colaborate on his test: "{{notification.test.title}}"</v-list-item-title>
-               <v-list-item-title
+              <v-list-item-title
                 v-else
                 class="text-wrap text-center"
               >{{notification.from.email}} has invited you to reply test: "{{notification.test.title}}"</v-list-item-title>
             </v-col>
 
-            <v-btn small color="success" @click="joinTest(notification)">Accept</v-btn>
+            <v-btn small color="success" @click="acceptNotification(notification)">Accept</v-btn>
             <v-btn small class="ml-2" color="error" @click="removeNotification(notification)">Deny</v-btn>
           </v-row>
         </v-list-item>
@@ -69,19 +69,26 @@ export default {
         this.showMenu = true;
       });
     },
-    joinTest(item) {
+    acceptNotification(item) {
       this.$store.dispatch("removeNotification", {
         docId: this.user.uid,
         element: item
       });
-      this.$store.dispatch("pushMyCoops", {
-        docId: this.user.uid,
-        element: Object.assign(item.test, { accessLevel: item.to.accessLevel })
-      });
-      this.$store.dispatch("pushCoop", {
-        docId: item.test.id,
-        element: item.to
-      });
+      if (accessLevel < 2) {
+        //joinTest
+        this.$store.dispatch("pushMyCoops", {
+          docId: this.user.uid,
+          element: Object.assign(item.test, {
+            accessLevel: item.to.accessLevel
+          })
+        });
+        this.$store.dispatch("pushCoop", {
+          docId: item.test.id,
+          element: item.to
+        });
+      } else {
+        //answer
+      }
     },
     removeNotification(notif) {
       this.$store.dispatch("removeNotification", {
