@@ -1,5 +1,6 @@
 <template>
   <v-container>
+  {{reports}}
     <v-row justify="center">
       <v-col cols="10">
         <v-card>
@@ -99,19 +100,6 @@ export default {
       }
     }
   }),
-
-  computed: {
-    user() {
-      return this.$store.state.auth.user;
-    },
-    test() {
-      return this.$store.getters.test;
-    },
-    formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    }
-  },
-
   watch: {
     dialog(val) {
       val || this.close();
@@ -165,8 +153,23 @@ export default {
       this.close();
     }
   },
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
+    reports() {
+      return this.$store.state.reports.reports;
+    },
+    formTitle() {
+      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    }
+  },
 
-  created() {}
+  created() {
+    if (!this.$store.reports) {
+      this.$store.dispatch("getReports", { id: this.id });
+    }
+  }
 };
 </script>
 
