@@ -66,7 +66,7 @@
 
 <script>
 export default {
-  props: ["invitations","type"],
+  props: ["invitations", "type"],
   data: () => ({
     selecteds: [],
     seach: "",

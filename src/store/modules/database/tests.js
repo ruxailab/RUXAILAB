@@ -95,5 +95,13 @@ export default {
           console.error("Error to push coops ", err);
         });
     },
+    setReportID({dispatch},payload){
+      payload = Object.assign(payload,{collection:"test",
+      param:"reports"})
+      dispatch("setParamInObject",payload).
+      catch((err) => {
+        console.log("Error set report id ",err)
+      })
+    }
   },
 };

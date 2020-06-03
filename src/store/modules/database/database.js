@@ -78,5 +78,12 @@ export default {
         console.error("Error calling the function:  ", err);
       }
     },
+    async setParamInObject(_,payload){
+      try {
+        await api.database.setParam(payload)
+      } catch (err) {
+        console.error("Error", err )
+      }
+    }
   },
 };

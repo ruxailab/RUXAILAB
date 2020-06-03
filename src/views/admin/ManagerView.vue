@@ -7,18 +7,16 @@
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="800px">
+                <v-dialog v-model="dialog" color="white" max-width="600px">
                   <template v-slot:activator="{ on }">
                     <v-btn color="primary" v-on="on">
                       <v-icon>mdi-email</v-icon>
                     </v-btn>
                   </template>
                   <FormCooperation :invitations="invitations" type="tester" />
-                  <v-container>
-                    <v-spacer></v-spacer>
-                    <v-btn text @click="close">Cancel</v-btn>
-                    <v-btn text @click="save">Send</v-btn>
-                  </v-container>
+
+                  <v-btn text @click="close">Cancel</v-btn>
+                  <v-btn text @click="save">Send</v-btn>
                 </v-dialog>
               </v-toolbar>
             </template>

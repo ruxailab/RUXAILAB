@@ -55,13 +55,15 @@ export default {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
-    let user = await docRef.get()
-    user = Object.assign({uid:payload.docId}, user.data()) 
-    
-    let element = user[payload.param].find(element => element.id == payload.element.id)
-    let index = user[payload.param].indexOf(element)
-    
-    user[payload.param][index] = payload.element
+    let user = await docRef.get();
+    user = Object.assign({ uid: payload.docId }, user.data());
+
+    let element = user[payload.param].find(
+      (element) => element.id == payload.element.id
+    );
+    let index = user[payload.param].indexOf(element);
+
+    user[payload.param][index] = payload.element;
 
     return docRef.update({
       [payload.param]: user[payload.param],
@@ -72,10 +74,17 @@ export default {
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
 
-    docRef.onSnapshot({ includeMetadataChanges: true },async () => {
-      let user = await docRef.get()
-      user = Object.assign({uid:payload.docId}, user.data()) 
+    docRef.onSnapshot({ includeMetadataChanges: true }, async () => {
+      let user = await docRef.get();
+      user = Object.assign({ uid: payload.docId }, user.data());
       commit("setUser", user);
+    });
+  },
+  setParam: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    return collectionRef.doc(payload.docId).update({
+      [payload.param]:payload.data
     });
   },
 };

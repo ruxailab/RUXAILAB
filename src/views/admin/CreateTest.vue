@@ -124,7 +124,7 @@ export default {
       },
       postTest: "",
       admin: null,
-      answers: [],
+      answers: "",
       coop: []
     },
     valids: [false, true, true]
@@ -178,6 +178,24 @@ export default {
                 param: "notifications"
               });
             });
+
+            this.$store.dispatch("createReport", {
+              data: {
+                test: {
+                  id: id,
+                  title: this.object.title,
+                  type: this.object.type
+                },
+                reports:[]
+              }
+            })
+            .then(idReport => {
+              this.$store.dispatch("setReportID",{
+                docId: id,
+                data:idReport
+              })
+              //console.log(idReport)
+            })
           })
           .catch(err => {
             console.error("Error", err);
@@ -409,7 +427,7 @@ export default {
       if (this.testEdit !== null && this.testEdit !== undefined) {
         await this.testLoad();
       }
-    },
+    }
     /*"test.type"() {
       this.tasks = [];
       this.heuristics = [];
