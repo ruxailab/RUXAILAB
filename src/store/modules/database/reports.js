@@ -22,5 +22,12 @@ export default {
             })
             return docRef
         },
+        deleteReport({ dispatch }, payload) {
+            payload = Object.assign(payload, {collection: "reports"});
+            dispatch('deleteObject', payload)
+            .catch((err) => {
+                console.error('Error ', err);
+            })
+        }
     }
 }

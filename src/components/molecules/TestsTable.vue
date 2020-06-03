@@ -105,6 +105,9 @@ export default {
             }
           });
         });
+          console.log('item ', item);
+        //Remove report from collection
+        this.$store.dispatch('deleteReport', { id: item.reports });
       });
       this.$store.dispatch("getTests", { doc: this.$route.params.tests });
     },
