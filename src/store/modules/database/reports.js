@@ -34,6 +34,14 @@ export default {
             
             let reps = await dispatch('getObject', payload);
             commit('setReports', reps);
+        },
+        pushLog({ dispatch }, payload) {
+            payload = Object.assign(payload, {collection: 'reports', param: 'reports'});
+
+            dispatch('pushObject', payload)
+            .catch((err) => {
+                console.error('Error pushing log ', err);
+            })
         }
     }
 }

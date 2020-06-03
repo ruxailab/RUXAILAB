@@ -53,10 +53,10 @@ export default {
         align: "start",
         value: "id"
       },
-      { text: "Tester", value: "tester" },
-      { text: "Date_init", value: "log.date_init" },
+      { text: "Tester", value: "tester.email" },
+      { text: "Date_init", value: "log.date" },
       { text: "Progress", value: "log.progress" },
-      { text: "State", value: "log.state" },
+      { text: "State", value: "log.status" },
       { text: "Actions", value: "actions" }
     ],
     records: [

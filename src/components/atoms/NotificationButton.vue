@@ -88,13 +88,28 @@ export default {
         });
       } else {
         //answer
-        await this.$store.dispatch('getTest', {id: item.test.id});
+        await this.$store.dispatch("getTest", { id: item.test.id });
         // this.$store.dispatch("pushMyAnswers", {
         //   docId: this.user.uid,
         //   element: this.test
         // })
 
         //criar log
+        this.$store.dispatch("pushLog", {
+          docId: item.test.reports,
+          element: {
+            idAnswer: '',
+            log: {
+              date: new Date(),
+              progress: 0,
+              status: "In progress"
+            },
+            tester: {
+              uid: this.user.uid,
+              email: this.user.email
+            }
+          }
+        });
       }
     },
     removeNotification(notif) {
