@@ -69,12 +69,12 @@ export default {
         this.showMenu = true;
       });
     },
-    acceptNotification(item) {
+    async acceptNotification(item) {
       this.$store.dispatch("removeNotification", {
         docId: this.user.uid,
         element: item
       });
-      if (accessLevel < 2) {
+      if (item.to.accessLevel < 2) {
         //joinTest
         this.$store.dispatch("pushMyCoops", {
           docId: this.user.uid,
@@ -88,6 +88,13 @@ export default {
         });
       } else {
         //answer
+        await this.$store.dispatch('getTest', {id: item.test.id});
+        // this.$store.dispatch("pushMyAnswers", {
+        //   docId: this.user.uid,
+        //   element: this.test
+        // })
+
+        //criar log
       }
     },
     removeNotification(notif) {
@@ -101,6 +108,9 @@ export default {
   computed: {
     user() {
       return this.$store.state.auth.user;
+    },
+    test() {
+      return this.$store.state.tests.test;
     }
   }
 };

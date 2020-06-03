@@ -85,5 +85,13 @@ export default {
         console.error('Error to remove myCoop ', err);
       })
     },
+    async pushMyAnswers({ dispatch }, payload) {
+      payload = Object.assign(payload, {collection: 'users', param: 'myAnswers'});
+
+      dispatch('pushObject', payload)
+      .catch((err) => {
+        console.error('Error pushing answers: ', err);
+      })
+    }
   }
 };
