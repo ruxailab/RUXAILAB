@@ -7,7 +7,6 @@ export default {
     return collectionRef.add(payload.data);
   },
   deleteObject: async (payload) => {
-    console.log('api ', payload);
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     return collectionRef.doc(payload.id).delete();

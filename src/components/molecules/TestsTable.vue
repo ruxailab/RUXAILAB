@@ -89,6 +89,7 @@ export default {
             id: item.id,
             title: item.title,
             type: item.type,
+            reports: item.reports,
             accessLevel: 0
           },
           param: "myTests"
@@ -101,11 +102,12 @@ export default {
               id: item.id,
               title: item.title,
               type: item.type,
+              reports: item.reports,
               accessLevel: coop.accessLevel
             }
           });
         });
-          console.log('item ', item);
+          
         //Remove report from collection
         this.$store.dispatch('deleteReport', { id: item.reports });
       });

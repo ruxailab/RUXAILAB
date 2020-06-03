@@ -100,7 +100,7 @@ export default {
       param:"reports"})
       dispatch("setParamInObject",payload).
       catch((err) => {
-        console.log("Error set report id ",err)
+        console.error("Error set report id ",err)
       })
     }
   },

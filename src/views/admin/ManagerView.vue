@@ -152,7 +152,8 @@ export default {
           test: {
             id: this.id,
             title: this.test.title,
-            type: this.test.type
+            type: this.test.type,
+            reports: this.test.reports
           }
         };
         this.$store.dispatch("pushNotification", {

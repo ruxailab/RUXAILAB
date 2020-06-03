@@ -125,6 +125,7 @@ export default {
       postTest: "",
       admin: null,
       answers: "",
+      reports: "",
       coop: []
     },
     valids: [false, true, true]
@@ -143,59 +144,61 @@ export default {
             data: this.object
           })
           .then(id => {
-            this.$store.dispatch("pushMyTest", {
-              docId: this.user.uid,
-              element: {
-                id: id,
-                title: this.object.title,
-                type: this.object.type,
-                accessLevel: 0
-              },
-              param: "myTests"
-            });
-
-            //Making invites
-            this.invitations.forEach(item => {
-              let inv = {
-                to: {
-                  id: item.id,
-                  email: item.email,
-                  accessLevel: item.accessLevel
-                },
-                from: {
-                  id: this.user.uid,
-                  email: this.user.email
-                },
-                test: {
-                  id: id,
-                  title: this.object.title,
-                  type: this.object.type
+            this.$store
+              .dispatch("createReport", {
+                data: {
+                  test: {
+                    id: id,
+                    title: this.object.title,
+                    type: this.object.type
+                  },
+                  reports: []
                 }
-              };
-              this.$store.dispatch("pushNotification", {
-                docId: inv.to.id,
-                element: inv,
-                param: "notifications"
-              });
-            });
-
-            this.$store.dispatch("createReport", {
-              data: {
-                test: {
-                  id: id,
-                  title: this.object.title,
-                  type: this.object.type
-                },
-                reports:[]
-              }
-            })
-            .then(idReport => {
-              this.$store.dispatch("setReportID",{
-                docId: id,
-                data:idReport
               })
-              //console.log(idReport)
-            })
+              .then(idReport => {
+                this.$store.dispatch("setReportID", {
+                  docId: id,
+                  data: idReport
+                });
+
+                this.$store.dispatch("pushMyTest", {
+                  docId: this.user.uid,
+                  element: {
+                    id: id,
+                    title: this.object.title,
+                    type: this.object.type,
+                    reports: idReport,
+                    accessLevel: 0
+                  },
+                  param: "myTests"
+                });
+
+                //Making invites
+                this.invitations.forEach(item => {
+                  let inv = {
+                    to: {
+                      id: item.id,
+                      email: item.email,
+                      accessLevel: item.accessLevel
+                    },
+                    from: {
+                      id: this.user.uid,
+                      email: this.user.email
+                    },
+                    test: {
+                      id: id,
+                      title: this.object.title,
+                      type: this.object.type,
+                      reports: idReport,
+                    }
+                  };
+                  this.$store.dispatch("pushNotification", {
+                    docId: inv.to.id,
+                    element: inv,
+                    param: "notifications"
+                  });
+                });
+              });
           })
           .catch(err => {
             console.error("Error", err);
@@ -217,6 +220,7 @@ export default {
                 id: this.id,
                 title: this.object.title,
                 type: this.object.type,
+                reports: this.object.reports,
                 accessLevel: 0
               }
             });
@@ -228,6 +232,7 @@ export default {
                   id: this.id,
                   title: this.object.title,
                   type: this.object.type,
+                  reports: this.object.reports,
                   accessLevel: coop.accessLevel
                 }
               });
@@ -291,7 +296,11 @@ export default {
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
 
+      //Load Invitations
       this.invitations = Array.from(this.testEdit.coop);
+
+      //Load Reports
+      this.object.reports = this.testEdit.reports
 
       //Getting user access level
       this.testEdit.coop.forEach(coop => {
@@ -352,6 +361,7 @@ export default {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
+              reports: this.object.reports,
               accessLevel: this.object.accessLevel
             }
           });
@@ -361,7 +371,8 @@ export default {
           let inv = {
             to: {
               id: item.id,
-              email: item.email
+              email: item.email,
+              accessLevel: item.accessLevel
             },
             from: {
               id: this.user.uid,
@@ -371,7 +382,7 @@ export default {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
-              accessLevel: item.accessLevel
+              reports: this.object.reports
             }
           };
           this.$store.dispatch("pushNotification", {
