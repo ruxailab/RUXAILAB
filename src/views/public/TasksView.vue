@@ -14,7 +14,7 @@
         <ViewTask v-if="type === 'User'" :postTest="postTest" :item="item" />
         <ViewHeuristic
           v-if="type === 'Expert'"
-          :heuris="heuristics[n]"
+          :heuris="answersSheet.heuristics[n]"
           v-on:response="addHeuris(item.id,$event)"
           :item="item"
         />
@@ -47,17 +47,7 @@ export default {
   data: () => ({
     e1: 0,
     postTest: false,
-    loading: true,
-    heuristics: [],
-    heuris: {
-      id: null,
-      questions: []
-    },
-    question: {
-      id: null,
-      answer: null
-    },
-    object:{}
+    loading: true
   }),
   methods: {
     nextStep() {
@@ -72,10 +62,14 @@ export default {
         }
       } else {
         if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
-        else if (this.e1 === this.items.length){
-          this.$store.dispatch('pushTestAnswer',{docId: this.id,element:this.object,param:'answers'})
+        else if (this.e1 === this.items.length) {
+          this.$store.dispatch("pushTestAnswer", {
+            docId: this.id,
+            element: this.object,
+            param: "answers"
+          });
           //window.close();
-        } 
+        }
       }
     },
     backStep() {
@@ -86,31 +80,11 @@ export default {
       await pause(1000);
       this.e1 = 1;
       this.loading = false;
-    },
-    answerAssembly() {
-      this.items.forEach(item => {
-        this.heuris.id = item.id;
-        item.questions.forEach(q => {
-          this.question.id = q.id;
-          this.heuris.questions.push(Object.assign({},this.question));
-          this.question = { 
-            id: null,
-            answer: null
-          };
-        });
-        this.heuristics.push(Object.assign({}, this.heuris));
-        this.heuris = {
-          id: null,
-          questions: []
-        };
-      });
-      this.object = Object.assign({},{heuristics:this.heuristics})
     }
   },
   watch: {
     items() {
       this.fetch();
-      this.answerAssembly()
     }
   },
   computed: {
@@ -127,6 +101,16 @@ export default {
         }
       }
       return [];
+    },
+    user() {
+      return this.$store.state.auth.user;
+    },
+    answersSheet() {
+      if (!this.user) return [];
+      else {
+        let x = this.user.myAnswers.find(answer => answer.id == this.id);
+        return x.answersSheet;
+      }
     }
   },
   created() {

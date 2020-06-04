@@ -12,7 +12,7 @@
             <v-spacer></v-spacer>
             <v-overflow-btn
               :items="options"
-              v-model="heuris.questions[i].answer"
+              v-model="heuris.questions[i].res"
               label="respuestas/answers"
             ></v-overflow-btn>
           </v-col>
