@@ -12,12 +12,9 @@
     <v-stepper-items>
       <v-stepper-content v-for="(item,n) in items" :key="`${n+1}-content`" :step="n+1">
         <ViewTask v-if="type === 'User'" :postTest="postTest" :item="item" />
-        <ViewHeuristic
-          v-if="type === 'Expert'"
-          :heuris="answersSheet.heuristics[n]"
-          v-on:response="addHeuris(item.id,$event)"
+        <ViewHeuristic v-if="type === 'Expert' && answersSheet !== null && answersSheet !== undefined"
           :item="item"
-        />
+          :heuris="answersSheet.heuristics[n]" />
       </v-stepper-content>
       <StepNavigation
         :step="e1"
@@ -47,7 +44,8 @@ export default {
   data: () => ({
     e1: 0,
     postTest: false,
-    loading: true
+    loading: true,
+    answersSheet: null
   }),
   methods: {
     nextStep() {
@@ -85,6 +83,12 @@ export default {
   watch: {
     items() {
       this.fetch();
+    },
+    user() {
+      if (this.user !== null && this.user !== undefined) {
+        let x = this.user.myAnswers.find(answer => answer.id == this.id);
+        this.answersSheet = x.answersSheet;
+      }
     }
   },
   computed: {
@@ -104,13 +108,6 @@ export default {
     },
     user() {
       return this.$store.state.auth.user;
-    },
-    answersSheet() {
-      if (!this.user) return [];
-      else {
-        let x = this.user.myAnswers.find(answer => answer.id == this.id);
-        return x.answersSheet;
-      }
     }
   },
   created() {

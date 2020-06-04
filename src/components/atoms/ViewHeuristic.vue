@@ -2,6 +2,7 @@
   <v-container>
     <v-row class="fill-height" align="center" justify="center">
       <v-col cols="12">
+        {{heuris}}
         <v-row justify="center">
           <h1>{{item.title}}</h1>
         </v-row>
@@ -10,11 +11,7 @@
           <v-col>
             <h3>{{i+1}}) {{question.text}}</h3>
             <v-spacer></v-spacer>
-            <v-overflow-btn
-              :items="options"
-              v-model="heuris.questions[i].res"
-              label="respuestas/answers"
-            ></v-overflow-btn>
+            <v-overflow-btn :items="options" v-model="heuris.questions[i].res" label="respuestas/answers"></v-overflow-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -24,15 +21,27 @@
 
 <script>
 export default {
-  props: ['item','heuris'],
+  props: ["item", "heuris"],
   data: () => ({
+    lixo: null,
     options: [
       "Sí / Yes",
       "Ni Sí, ni No / Neither",
       "No",
       "No aplica-No es problema / Not applicable-It is not a problem"
     ]
-  })
+  }),
+  methods: {
+    resp(n) {
+      return this.heuris.length > 0 ? this.heuris.questions[n] : [];
+    }
+  },
+  computed: {
+    res(n) {
+      this.heuris.length > 0 ? this.heuris.questions[n] : null;
+      return [];
+    }
+  }
 };
 </script>
 
