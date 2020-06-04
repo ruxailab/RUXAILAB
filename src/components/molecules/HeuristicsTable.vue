@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container>   
     <v-row justify="center">
       <v-col cols="10">
         <v-card>
@@ -19,7 +19,8 @@
               </v-toolbar>
             </template>
 
-            <template v-slot:expanded-item="{ headers, item }"> <!-- questions list -->
+            <template v-slot:expanded-item="{ headers, item }">
+              <!-- questions list -->
               <td :colspan="headers.length">
                 <h2 class="mb-1" style="text-align: center">{{ item.title }}</h2>
                 <div class="caption" v-if="item.questions.length > 0">
@@ -34,7 +35,8 @@
               </td>
             </template>
 
-            <template v-slot:item.actions="{ item }"> <!-- table actions -->
+            <template v-slot:item.actions="{ item }">
+              <!-- table actions -->
               <v-row justify="end" class="pr-1">
                 <v-btn icon small class="mr-2" @click="editItem(item)">
                   <v-icon small>mdi-pencil</v-icon>
@@ -56,7 +58,7 @@
 import AddHeurBtn from "../atoms/NewHeuristicButton";
 
 export default {
-  props: ["heuristics"],
+  props: ["heuristics", "answersSheet"],
   data: () => ({
     headers: [
       {
@@ -69,6 +71,7 @@ export default {
     ],
     heuris: {
       id: 0,
+      total: 0,
       title: "",
       questions: []
     },
@@ -79,14 +82,31 @@ export default {
     updateHeuristics() {
       if (this.editIndex == -1) {
         this.heuristics.push(this.heuris);
+        this.answersSheet.heuristics.push(
+          Object.assign(
+            {},
+            {
+              id: this.heuris.id,
+              total: this.heuris.total,
+              questions: this.arrayQuestions
+            }
+          )
+        );
       } else {
         Object.assign(this.heuristics[this.editIndex], this.heuris);
+        Object.assign(this.answersSheet.heuristics[this.editIndex], {
+          id: this.heuris.id,
+          total: this.heuris.total,
+          questions: this.arrayQuestions
+        });
         this.editIndex = -1;
       }
-
+      this.heuristics.total = this.totalQuestions;
+      this.answersSheet.total = this.totalQuestions;
       this.heuris = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
         title: "",
+        total: 0,
         questions: []
       };
     },
@@ -103,6 +123,8 @@ export default {
       this.heuris.questions = Array.from(
         this.heuristics[this.editIndex].questions
       );
+       this.heuristics.total = this.totalQuestions;
+      this.answersSheet.total = this.totalQuestions;
       this.dialog = true;
     }
   },
@@ -115,6 +137,24 @@ export default {
           questions: []
         };
       }
+    }
+  },
+  computed: {
+    arrayQuestions() {
+      let array = Array.from(this.heuris.questions);
+      let aux = [];
+      console.log(array);
+      array.forEach(el => {
+        aux.push(Object.assign({}, { id: el.id, res: null }));
+      });
+      return aux;
+    },
+    totalQuestions() {
+      let result = 0;
+      this.heuristics.forEach(h => {
+        result += h.total;
+      });
+      return result;
     }
   },
   components: {

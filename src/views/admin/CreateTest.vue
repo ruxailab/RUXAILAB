@@ -48,7 +48,7 @@
               <ListTasks :tasks="tasks" />
             </v-container>
             <v-container v-if="test.type === 'Expert'">
-              <Heuristic :heuristics="heuristics" />
+              <Heuristic :heuristics="heuristics" :answersSheet="answersSheet" />
             </v-container>
           </v-stepper-content>
           <v-stepper-content step="4">
@@ -111,7 +111,12 @@ export default {
       form: ""
     },
     tasks: [],
-    heuristics: [],
+    heuristics:[],
+    answersSheet:{
+      total: 0,
+      progress:0,
+      heuristics:[]
+    },
     postTest: "",
     invitations: [],
     object: {
@@ -287,11 +292,12 @@ export default {
       if (
         this.testEdit.heuristics !== null &&
         this.testEdit.heuristics !== undefined
-      )
+      ){
         this.testEdit.heuristics.forEach(item => {
           this.heuristics.push(item);
         });
-
+        this.answersSheet = this.testEdit.answersSheet
+      }
       //Load PostTest
       this.postTest =
         this.testEdit.postTest === null ? "" : this.testEdit.postTest;
@@ -341,6 +347,7 @@ export default {
         this.object.tasks = Array.from(this.tasks);
       } else if (this.test.type === "Expert") {
         this.object.heuristics = Array.from(this.heuristics);
+        Object.assign(this.object,{answersSheet:this.answersSheet})
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;

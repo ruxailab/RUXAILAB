@@ -23,7 +23,11 @@
             :key="i"
           >
             <v-col cols="11">
-              <v-text-field v-model="heuris.questions[i].text" :label="'Question ' + (i + 1)" :rules="questionRequired"></v-text-field>
+              <v-text-field
+                v-model="heuris.questions[i].text"
+                :label="'Question ' + (i + 1)"
+                :rules="questionRequired"
+              ></v-text-field>
             </v-col>
 
             <v-col cols="1">
@@ -67,9 +71,11 @@ export default {
           this.heuris.questions[this.heuris.questions.length - 1].id + 1;
       else this.id = 0;
       this.heuris.questions.push({ id: this.id, text: "" });
+      this.heuris.total = this.heuris.questions.length;
     },
     removeQuestion(i) {
       this.heuris.questions.splice(i, 1);
+      this.heuris.total = this.heuris.questions.length;
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -85,6 +91,7 @@ export default {
     resetVal() {
       this.$refs.form.resetValidation();
     }
-  }
+  },
+  
 };
 </script>
