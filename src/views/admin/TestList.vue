@@ -5,14 +5,18 @@
         <v-card>
           <v-tabs grow centered>
             <v-tab>My Tests</v-tab>
-
             <v-tab>Tests I colaborate with</v-tab>
+            <v-tab>My Answers</v-tab>
 
             <v-tab-item>
               <TestsTable :tests="user.myTests" :headers="headers" />
             </v-tab-item>
             <v-tab-item>
               <TestsTable :tests="user.myCoops" :headers="headers" />
+            </v-tab-item>
+
+            <v-tab-item>
+              <TestsTable :tests="user.myAnswers" :headers="headers" />
             </v-tab-item>
           </v-tabs>
         </v-card>

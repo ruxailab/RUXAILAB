@@ -91,8 +91,8 @@ export default {
         await this.$store.dispatch("getTest", { id: item.test.id });
         this.$store.dispatch("pushMyAnswers", {
           docId: this.user.uid,
-          element: this.test.answersSheet
-        })
+          element: Object.assign(item.test, {answersSheet: this.test.answersSheet, accessLevel: 2})
+        });
 
         //criar log
         this.$store.dispatch("pushLog", {
