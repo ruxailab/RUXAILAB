@@ -89,16 +89,15 @@ export default {
       } else {
         //answer
         await this.$store.dispatch("getTest", { id: item.test.id });
-        // this.$store.dispatch("pushMyAnswers", {
-        //   docId: this.user.uid,
-        //   element: this.test
-        // })
+        this.$store.dispatch("pushMyAnswers", {
+          docId: this.user.uid,
+          element: this.test.answersSheet
+        })
 
         //criar log
         this.$store.dispatch("pushLog", {
           docId: item.test.reports,
           element: {
-            idAnswer: '',
             log: {
               date: new Date(),
               progress: 0,
