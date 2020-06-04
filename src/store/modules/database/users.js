@@ -92,6 +92,13 @@ export default {
       .catch((err) => {
         console.error('Error pushing answers: ', err);
       })
-    }
+    },
+    async updateMyAnswers({dispatch},payload){
+      payload = Object.assign(payload,{collection:"users",param:"myAnswers"})
+      dispatch("updateArrayObject", payload)
+        .catch((err) => {
+          console.error("Error to update myAnswers ", err);
+        });
+    },
   }
 };

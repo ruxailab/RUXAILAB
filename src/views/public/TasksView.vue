@@ -1,6 +1,6 @@
 <template>
   <v-stepper v-model="e1">
-    <v-overlay :value="false">
+    <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-stepper-header>
@@ -12,9 +12,11 @@
     <v-stepper-items>
       <v-stepper-content v-for="(item,n) in items" :key="`${n+1}-content`" :step="n+1">
         <ViewTask v-if="type === 'User'" :postTest="postTest" :item="item" />
-        <ViewHeuristic v-if="type === 'Expert' && answersSheet !== null && answersSheet !== undefined"
+        <ViewHeuristic
+          v-if="type === 'Expert' && answersSheet !== null && answersSheet !== undefined"
           :item="item"
-          :heuris="answersSheet.heuristics[n]" />
+          :heuris="answersSheet.heuristics[n]"
+        />
       </v-stepper-content>
       <StepNavigation
         :step="e1"
@@ -22,6 +24,7 @@
         v-on:backStep="backStep()"
         v-on:nextStep="nextStep()"
         v-on:submit="nextStep()"
+        v-on:save="save()"
       />
     </v-stepper-items>
   </v-stepper>
@@ -61,11 +64,6 @@ export default {
       } else {
         if (this.e1 < this.items.length) this.e1 = Number(this.e1) + 1;
         else if (this.e1 === this.items.length) {
-          this.$store.dispatch("pushTestAnswer", {
-            docId: this.id,
-            element: this.object,
-            param: "answers"
-          });
           //window.close();
         }
       }
@@ -73,6 +71,13 @@ export default {
     backStep() {
       if (this.postTest) this.postTest = false;
       else if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
+    },
+    save() {
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      this.$store.dispatch("updateMyAnswers", {
+        docId: this.user.uid,
+        element: newAnswer
+      });
     },
     async fetch() {
       await pause(1000);

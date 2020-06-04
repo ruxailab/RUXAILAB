@@ -2,7 +2,6 @@
   <v-container>
     <v-row class="fill-height" align="center" justify="center">
       <v-col cols="12">
-        {{heuris}}
         <v-row justify="center">
           <h1>{{item.title}}</h1>
         </v-row>
