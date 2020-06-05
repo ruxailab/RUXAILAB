@@ -3,7 +3,6 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-card>
-        {{reports.reports}}
           <v-data-table :headers="headers" :items="reports.reports" class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat color="white">

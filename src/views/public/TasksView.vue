@@ -19,7 +19,6 @@
           @progress="calcProgress"
         />
       </v-stepper-content>
-       {{answersSheet}}
       <StepNavigation
         :step="e1"
         :size="items.length"
