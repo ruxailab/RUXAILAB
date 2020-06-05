@@ -58,11 +58,11 @@
               <v-list-item-title>Open Test</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="openAnswer(item)">
+            <v-list-item @click="openAnswer(item)" v-if="item.accessLevel <= 1">
               <v-list-item-title>Open Answers</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="openManager(item)">
+            <v-list-item @click="openManager(item)" v-if="item.accessLevel <= 1">
               <v-list-item-title>Open Manager</v-list-item-title>
             </v-list-item>
           </v-list>
