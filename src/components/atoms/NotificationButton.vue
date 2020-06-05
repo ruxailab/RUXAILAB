@@ -91,7 +91,10 @@ export default {
         await this.$store.dispatch("getTest", { id: item.test.id });
         this.$store.dispatch("pushMyAnswers", {
           docId: this.user.uid,
-          element: Object.assign(item.test, {answersSheet: this.test.answersSheet, accessLevel: 2})
+          element: Object.assign(item.test, {
+            answersSheet: this.test.answersSheet,
+            accessLevel: 2
+          })
         });
 
         //criar log
@@ -103,10 +106,8 @@ export default {
               progress: 0,
               status: "In progress"
             },
-            tester: {
-              uid: this.user.uid,
-              email: this.user.email
-            }
+            uid: this.user.uid,
+            email: this.user.email
           }
         });
       }

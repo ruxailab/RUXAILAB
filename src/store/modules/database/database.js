@@ -71,6 +71,14 @@ export default {
         console.error("Error", err);
       }
     },
+    async updateArrayElement(_,payload){
+      try {
+        let docRef = await api.database.updateArrayElement(payload);
+        return docRef;
+      } catch (err) {
+        console.log("Error",err)
+      }
+    },
     async callFunction(_, payload) {
       try {
         await api.functions.call(payload);

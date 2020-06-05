@@ -10,7 +10,7 @@
           <v-col>
             <h3>{{i+1}}) {{question.text}}</h3>
             <v-spacer></v-spacer>
-            <v-overflow-btn :items="options" v-model="heuris.questions[i].res" label="respuestas/answers"></v-overflow-btn>
+            <v-overflow-btn :items="options" v-model="heuris.questions[i].res" @change="$emit('progress')"  label="respuestas/answers"></v-overflow-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -22,12 +22,11 @@
 export default {
   props: ["item", "heuris"],
   data: () => ({
-    lixo: null,
     options: [
       {text:"Sí / Yes",value:1},
       {text:"Ni Sí, ni No / Neither",value:.5},
       {text:"No",value:0},
-      {text:"No aplica-No es problema / Not applicable-It is not a problem",value:null}
+      {text:"No aplica-No es problema / Not applicable-It is not a problem",value:-1}
     ]
   }),
   methods: {

@@ -16,14 +16,16 @@
           v-if="type === 'Expert' && answersSheet !== null && answersSheet !== undefined"
           :item="item"
           :heuris="answersSheet.heuristics[n]"
+          @progress="calcProgress"
         />
       </v-stepper-content>
+       {{answersSheet}}
       <StepNavigation
         :step="e1"
         :size="items.length"
         v-on:backStep="backStep()"
         v-on:nextStep="nextStep()"
-        v-on:submit="nextStep()"
+        v-on:submit="submit()"
         v-on:save="save()"
       />
     </v-stepper-items>
@@ -68,6 +70,17 @@ export default {
         }
       }
     },
+    submit(){
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+
+      var log = {
+        data: new Date().toLocaleString('pt-BR'),
+        progress:this.answersSheet.progress,
+        state: this.answersSheet.progress != 100? 'In progress':'Completed'
+      }
+
+      this.$store.dispatch('updateLog',{docId:newAnswer.reports,elementId:this.user.uid ,element:log})
+    },
     backStep() {
       if (this.postTest) this.postTest = false;
       else if (this.e1 > 1) this.e1 = Number(this.e1) - 1;
@@ -83,6 +96,14 @@ export default {
       await pause(1000);
       this.e1 = 1;
       this.loading = false;
+    },
+    calcProgress(){
+      var qtd = 0
+      this.answersSheet.heuristics.forEach((h)=>{
+          qtd += h.questions.filter(q => q.res != null).length
+      })
+
+      this.answersSheet.progress = (qtd*100)/this.answersSheet.total
     }
   },
   watch: {
@@ -94,7 +115,7 @@ export default {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
       }
-    }
+    },
   },
   computed: {
     items() {

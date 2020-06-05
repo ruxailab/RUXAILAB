@@ -69,6 +69,20 @@ export default {
       [payload.param]: user[payload.param],
     });
   },
+  updateArrayElement:async (payload)=>{
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
+    let element = await docRef.get();
+    element  = Object.assign({ id: payload.docId }, element.data());
+    var obj = element[payload.field].find(el => el[payload.identifier] === payload.elementId)
+    obj[payload.param] = payload.element
+
+    return docRef.update({
+      [payload.field]: element[payload.field],
+    });
+
+  },
   observer: (payload, commit) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
