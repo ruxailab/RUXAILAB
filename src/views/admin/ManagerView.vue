@@ -26,6 +26,7 @@
                 {{item.tester.email}}
               </p>
             </template>
+
             <template v-slot:item.actions="{ item }">
               <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
               <v-icon small>mdi-delete</v-icon>
@@ -51,7 +52,7 @@ export default {
       {
         text: "Id",
         align: "start",
-        value: "id"
+        value: "tester.uid"
       },
       { text: "Tester", value: "tester.email" },
       { text: "Date_init", value: "log.date" },

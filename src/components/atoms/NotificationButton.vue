@@ -95,11 +95,12 @@ export default {
         });
 
         //criar log
+        let date = new Date()
         this.$store.dispatch("pushLog", {
           docId: item.test.reports,
           element: {
             log: {
-              date: new Date(),
+              date: date.toLocaleString('pt-BR'),
               progress: 0,
               status: "In progress"
             },
