@@ -24,10 +24,10 @@ export default {
   data: () => ({
     lixo: null,
     options: [
-      "Sí / Yes",
-      "Ni Sí, ni No / Neither",
-      "No",
-      "No aplica-No es problema / Not applicable-It is not a problem"
+      {text:"Sí / Yes",value:1},
+      {text:"Ni Sí, ni No / Neither",value:.5},
+      {text:"No",value:0},
+      {text:"No aplica-No es problema / Not applicable-It is not a problem",value:null}
     ]
   }),
   methods: {
