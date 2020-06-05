@@ -42,6 +42,13 @@ export default {
             .catch((err) => {
                 console.error('Error pushing log ', err);
             })
+        },
+        updateLog({dispatch},payload){
+            payload = Object.assign(payload,{collection:'reports',field:'reports',param:'log',identifier:'uid'})
+            dispatch('updateArrayElement',payload)
+            .catch((err)=>{
+                console.error('Error updating element',err)
+            })
         }
     }
 }
