@@ -3,7 +3,8 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-card>
-          <v-data-table :headers="headers" :items="reports.reports" sort-by="calories" class="elevation-1">
+        {{reports.reports}}
+          <v-data-table :headers="headers" :items="reports.reports" class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-spacer></v-spacer>
@@ -20,13 +21,6 @@
                 </v-dialog>
               </v-toolbar>
             </template>
-            <template v-slot:item.tester="{ item }">
-              <p>
-                {{item.tester.id}}
-                {{item.tester.email}}
-              </p>
-            </template>
-
             <template v-slot:item.actions="{ item }">
               <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
               <v-icon small>mdi-delete</v-icon>
@@ -52,9 +46,9 @@ export default {
       {
         text: "Id",
         align: "start",
-        value: "tester.uid"
+        value: "uid"
       },
-      { text: "Tester", value: "tester.email" },
+      { text: "Tester", value: "email" },
       { text: "Date_init", value: "log.date" },
       { text: "Progress", value: "log.progress" },
       { text: "State", value: "log.status" },

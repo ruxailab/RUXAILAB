@@ -25,7 +25,7 @@
         :size="items.length"
         v-on:backStep="backStep()"
         v-on:nextStep="nextStep()"
-        v-on:submit="submit()"
+        v-on:submit="submitLog()"
         v-on:save="save()"
       />
     </v-stepper-items>
@@ -70,15 +70,13 @@ export default {
         }
       }
     },
-    submit(){
+    submitLog(){
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
-
       var log = {
-        data: new Date().toLocaleString('pt-BR'),
+        date: new Date().toLocaleString('pt-BR'),
         progress:this.answersSheet.progress,
-        state: this.answersSheet.progress != 100? 'In progress':'Completed'
+        status: this.answersSheet.progress != 100? 'In progress':'Completed'
       }
-
       this.$store.dispatch('updateLog',{docId:newAnswer.reports,elementId:this.user.uid ,element:log})
     },
     backStep() {
@@ -91,6 +89,7 @@ export default {
         docId: this.user.uid,
         element: newAnswer
       });
+      this.submitLog()
     },
     async fetch() {
       await pause(1000);
