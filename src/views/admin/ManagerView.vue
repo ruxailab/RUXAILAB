@@ -7,17 +7,6 @@
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" color="white" max-width="600px">
-                  <template v-slot:activator="{ on }">
-                    <v-btn color="primary" v-on="on">
-                      <v-icon>mdi-email</v-icon>
-                    </v-btn>
-                  </template>
-                  <FormCooperation :invitations="invitations" type="tester" />
-
-                  <v-btn text @click="close">Cancel</v-btn>
-                  <v-btn text @click="save">Send</v-btn>
-                </v-dialog>
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -28,6 +17,18 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-dialog v-model="dialog" color="white" max-width="600px">
+      <template v-slot:activator="{ on }">
+        <v-btn large dark fab fixed bottom right color="primary" v-on="on">
+          <v-icon>mdi-email</v-icon>
+        </v-btn>
+      </template>
+      <FormCooperation :invitations="invitations" type="tester" />
+
+      <v-btn text @click="close">Cancel</v-btn>
+      <v-btn text @click="save">Send</v-btn>
+    </v-dialog>
   </v-container>
 </template>
 
