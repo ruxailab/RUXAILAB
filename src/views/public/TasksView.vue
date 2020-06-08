@@ -69,14 +69,30 @@ export default {
         }
       }
     },
-    submitLog(){
+    submitLog() {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
       var log = {
-        date: new Date().toLocaleString('pt-BR'),
-        progress:this.answersSheet.progress,
-        status: this.answersSheet.progress != 100? 'In progress':'Completed'
-      }
-      this.$store.dispatch('updateLog',{docId:newAnswer.reports,elementId:this.user.uid ,element:log})
+        date: new Date().toLocaleString("pt-BR"),
+        progress: this.answersSheet.progress,
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
+      };
+      this.$store
+        .dispatch("updateLog", {
+          docId: newAnswer.reports,
+          elementId: this.user.uid,
+          element: log
+        })
+        .then(() => {
+          console.log('newans', newAnswer)
+          this.$store.dispatch("pushAnswers", {
+            docId: newAnswer.answers,
+            element: {
+              uid: this.user.uid,
+              email: this.user.email,
+              answer: this.answersSheet
+            }
+          });
+        });
     },
     backStep() {
       if (this.postTest) this.postTest = false;
@@ -88,20 +104,20 @@ export default {
         docId: this.user.uid,
         element: newAnswer
       });
-      this.submitLog()
+      this.submitLog();
     },
     async fetch() {
       await pause(1000);
       this.e1 = 1;
       this.loading = false;
     },
-    calcProgress(){
-      var qtd = 0
-      this.answersSheet.heuristics.forEach((h)=>{
-          qtd += h.questions.filter(q => q.res != null).length
-      })
+    calcProgress() {
+      var qtd = 0;
+      this.answersSheet.heuristics.forEach(h => {
+        qtd += h.questions.filter(q => q.res != null).length;
+      });
 
-      this.answersSheet.progress = (qtd*100)/this.answersSheet.total
+      this.answersSheet.progress = (qtd * 100) / this.answersSheet.total;
     }
   },
   watch: {
@@ -113,7 +129,7 @@ export default {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
       }
-    },
+    }
   },
   computed: {
     items() {

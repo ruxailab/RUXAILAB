@@ -134,7 +134,8 @@ export default {
             id: this.reports.test.id,
             title: this.reports.test.title,
             type: this.reports.test.type,
-            reports: this.id
+            reports: this.id,
+            answers: this.reports.test.answers
           }
         };
         this.$store.dispatch("pushNotification", {

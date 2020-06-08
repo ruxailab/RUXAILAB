@@ -11,18 +11,27 @@ export default {
         }
     },
     actions: {
-        createAnswers( { dispatch }, payload) {
-            payload = Object.assign(payload, {collection: 'answers'});
+        createAnswers({ dispatch }, payload) {
+            payload = Object.assign(payload, { collection: 'answers' });
 
             let docId = dispatch("createObject", payload)
-            .then((doc) => {
-                return doc.id;
-            })
-            .catch((err) => {
-                console.error("Error ", err);
-            });
+                .then((doc) => {
+                    return doc.id;
+                })
+                .catch((err) => {
+                    console.error("Error ", err);
+                });
 
             return docId;
+        },
+        pushAnswers({ dispatch }, payload) {
+            console.log('answers', payload)
+            payload = Object.assign(payload, { collection: "answers", param: "answers" });
+
+            dispatch('pushObject', payload)
+                .catch((err) => {
+                    console.error('Error pushing log ', err);
+                })
         }
     }
 }

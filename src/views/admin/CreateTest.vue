@@ -151,37 +151,38 @@ export default {
           })
           .then(id => {
             this.$store
-              .dispatch("createReport", {
+              .dispatch("createAnswers", {
                 data: {
                   test: {
                     id: id,
                     title: this.object.title,
                     type: this.object.type
                   },
-                  reports: []
+                  answers: []
                 }
               })
-              .then(idReport => {
-                this.$store.dispatch("setReportID", {
+              .then(idAnswers => {
+                this.$store.dispatch("setAnswerID", {
                   docId: id,
-                  data: idReport
+                  data: idAnswers
                 });
 
                 this.$store
-                  .dispatch("createAnswers", {
+                  .dispatch("createReport", {
                     data: {
                       test: {
                         id: id,
                         title: this.object.title,
-                        type: this.object.type
+                        type: this.object.type,
+                        answers: idAnswers
                       },
-                      answers: []
+                      reports: []
                     }
                   })
-                  .then(idAnswers => {
-                    this.$store.dispatch("setAnswerID", {
+                  .then(idReport => {
+                    this.$store.dispatch("setReportID", {
                       docId: id,
-                      data: idAnswers
+                      data: idReport
                     });
 
                     this.$store.dispatch("pushMyTest", {
