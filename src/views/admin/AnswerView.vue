@@ -1,17 +1,30 @@
 <template>
   <div>
-    {{answers.answers}}
-    <v-data-table :headers="headers" :items="answers.answers">
-      <template v-slot:item.heuris="{item}">
-        <v-data-table
-        hide-default-footer
-        :headers="header(item.answer.heuristics)"
-        :items="item.answer.heuristics"
-        >
+    {{answers}}
+    <v-row>
+      <v-col cols="3">
+        <v-card>
+          <v-card-title>
+            <div class="caption">HEURISTICS</div>
+          </v-card-title>
 
-        </v-data-table>
-      </template>
-    </v-data-table>
+          <v-list>
+            <v-list-item
+              v-for="(heuris, i) in answers.answers[0].answer.heuristics"
+              :key="i"
+              @click="setHeuristic(i)"
+            >Heuristic {{i + 1}}</v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+
+      <v-col cols="9">
+        <v-card>
+          <v-card-title>Heuristics</v-card-title>
+          <v-data-table class="ma-2" :headers="headers" :items="items"></v-data-table>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -19,19 +32,40 @@
 export default {
   props: ["id"],
   data: () => ({
-    aux: null
+    aux: null,
+    heuristics: [],
+    headers: [],
+    items: []
   }),
   methods: {
-    header(heuris) {
-      let aux = []
-      console.log(heuris);
-      heuris.questions.forEach((question) => {
-        aux.push({
-          text: 'Q' + question.id,
-          value: 'question.res'
-        })
-      })
-      return aux;
+    setHeuristic(index) {
+      this.heuristics = [];
+      this.headers = [];
+      this.items = [];
+
+      this.answers.answers.forEach(answer => {
+        answer.answer.heuristics.forEach(heuris => {
+          if (heuris.id == index) {
+            this.heuristics.push(heuris);
+          }
+        });
+      });
+
+      this.headers.push({ text: "ID", value: "uid" });
+      this.heuristics[0].questions.forEach(question => {
+        this.headers.push({
+          text: "Question " + (question.id + 1).toString(),
+          value: ""
+        });
+      });
+
+      this.answers.answers.forEach(ans => {
+        this.items.push({
+          uid: ans.uid
+        });
+
+        // this.ans.
+      });
     }
   },
   computed: {
