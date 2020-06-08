@@ -85,11 +85,9 @@ export default {
         .then(() => {
           this.$store.dispatch("pushAnswers", {
             docId: newAnswer.answers,
-            element: {
+            element: Object.assign(this.answersSheet, {
               uid: this.user.uid,
-              email: this.user.email,
-              answer: this.answersSheet
-            }
+              email: this.user.email,})
           });
         });
     },
