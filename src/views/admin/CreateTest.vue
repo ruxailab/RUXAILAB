@@ -158,7 +158,8 @@ export default {
                     title: this.object.title,
                     type: this.object.type
                   },
-                  answers: []
+                  answers: [],
+                  answersSheet: this.answersSheet
                 }
               })
               .then(idAnswers => {
