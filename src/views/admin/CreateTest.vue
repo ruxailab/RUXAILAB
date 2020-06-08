@@ -64,6 +64,7 @@
           <StepNavigation
             :step="el"
             :size="accessLevel == 0 || accessLevel == null ? 5 : 4"
+            :create="true"
             v-on:backStep="backStep()"
             v-on:nextStep="nextStep()"
             v-on:submit="validateAll()"
