@@ -112,11 +112,11 @@ export default {
       form: ""
     },
     tasks: [],
-    heuristics:[],
-    answersSheet:{
+    heuristics: [],
+    answersSheet: {
       total: 0,
-      progress:0,
-      heuristics:[]
+      progress: 0,
+      heuristics: []
     },
     postTest: "",
     invitations: [],
@@ -167,43 +167,64 @@ export default {
                   data: idReport
                 });
 
-                this.$store.dispatch("pushMyTest", {
-                  docId: this.user.uid,
-                  element: {
-                    id: id,
-                    title: this.object.title,
-                    type: this.object.type,
-                    reports: idReport,
-                    accessLevel: 0
-                  },
-                  param: "myTests"
-                });
-
-                //Making invites
-                this.invitations.forEach(item => {
-                  let inv = {
-                    to: {
-                      id: item.id,
-                      email: item.email,
-                      accessLevel: item.accessLevel
-                    },
-                    from: {
-                      id: this.user.uid,
-                      email: this.user.email
-                    },
-                    test: {
-                      id: id,
-                      title: this.object.title,
-                      type: this.object.type,
-                      reports: idReport,
+                this.$store
+                  .dispatch("createAnswers", {
+                    data: {
+                      test: {
+                        id: id,
+                        title: this.object.title,
+                        type: this.object.type
+                      },
+                      answers: []
                     }
-                  };
-                  this.$store.dispatch("pushNotification", {
-                    docId: inv.to.id,
-                    element: inv,
-                    param: "notifications"
+                  })
+                  .then(idAnswers => {
+                    this.$store.dispatch("setAnswerID", {
+                      docId: id,
+                      data: idAnswers
+                    });
+
+                    this.$store.dispatch("pushMyTest", {
+                      docId: this.user.uid,
+                      element: {
+                        id: id,
+                        title: this.object.title,
+                        type: this.object.type,
+                        reports: idReport,
+                        answers: idAnswers,
+                        accessLevel: 0
+                      },
+                      param: "myTests"
+                    });
+
+                    //Making invites
+                    this.invitations.forEach(item => {
+                      let inv = {
+                        to: {
+                          id: item.id,
+                          email: item.email,
+                          accessLevel: item.accessLevel
+                        },
+                        from: {
+                          id: this.user.uid,
+                          email: this.user.email
+                        },
+                        test: {
+                          id: id,
+                          title: this.object.title,
+                          type: this.object.type,
+                          reports: idReport,
+                          answers: idAnswers
+                        }
+                      };
+
+                      this.$store.dispatch("pushNotification", {
+                        docId: inv.to.id,
+                        element: inv,
+                        param: "notifications"
+                      });
+                    });
                   });
-                });
               });
           })
           .catch(err => {
@@ -227,6 +248,7 @@ export default {
                 title: this.object.title,
                 type: this.object.type,
                 reports: this.object.reports,
+                answers: this.object.answers,
                 accessLevel: 0
               }
             });
@@ -239,6 +261,7 @@ export default {
                   title: this.object.title,
                   type: this.object.type,
                   reports: this.object.reports,
+                  answers: this.object.answers,
                   accessLevel: coop.accessLevel
                 }
               });
@@ -293,11 +316,11 @@ export default {
       if (
         this.testEdit.heuristics !== null &&
         this.testEdit.heuristics !== undefined
-      ){
+      ) {
         this.testEdit.heuristics.forEach(item => {
           this.heuristics.push(item);
         });
-        this.answersSheet = this.testEdit.answersSheet
+        this.answersSheet = this.testEdit.answersSheet;
       }
       //Load PostTest
       this.postTest =
@@ -307,7 +330,10 @@ export default {
       this.invitations = Array.from(this.testEdit.coop);
 
       //Load Reports
-      this.object.reports = this.testEdit.reports
+      this.object.reports = this.testEdit.reports;
+
+      //Load Answers
+      this.object.answers = this.testEdit.answers;
 
       //Getting user access level
       this.testEdit.coop.forEach(coop => {
@@ -348,7 +374,7 @@ export default {
         this.object.tasks = Array.from(this.tasks);
       } else if (this.test.type === "Expert") {
         this.object.heuristics = Array.from(this.heuristics);
-        Object.assign(this.object,{answersSheet:this.answersSheet})
+        Object.assign(this.object, { answersSheet: this.answersSheet });
       }
 
       this.object.postTest = this.postTest === "" ? null : this.postTest;
@@ -370,6 +396,7 @@ export default {
               title: this.object.title,
               type: this.object.type,
               reports: this.object.reports,
+              answers: this.object.answers,
               accessLevel: this.object.accessLevel
             }
           });
@@ -390,7 +417,8 @@ export default {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
-              reports: this.object.reports
+              reports: this.object.reports,
+              answers: this.object.answers
             }
           };
           this.$store.dispatch("pushNotification", {

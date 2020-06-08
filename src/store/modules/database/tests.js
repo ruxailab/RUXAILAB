@@ -102,6 +102,14 @@ export default {
       catch((err) => {
         console.error("Error set report id ",err)
       })
+    },
+    setAnswerID( { dispatch }, payload) {
+      payload = Object.assign(payload, {collection: "test", param: "answers"});
+
+      dispatch("setParamInObject", payload)
+      .catch((err) => {
+        console.error("Error ", err);
+      })
     }
   },
 };
