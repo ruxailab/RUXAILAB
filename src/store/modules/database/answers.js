@@ -31,6 +31,12 @@ export default {
                 .catch((err) => {
                     console.error('Error pushing log ', err);
                 })
+        },
+        async getAnswers({ dispatch, commit }, payload) {
+            payload = Object.assign(payload, {collection: 'answers'});
+
+            let ans = await dispatch("getObject", payload);
+            commit("setAnswers", ans);
         }
     }
 }

@@ -124,7 +124,7 @@ export default {
         this.$router.push("/testview/" + test.id);
     },
     openAnswer(test) {
-      this.$router.push("/answerview/" + test.id);
+      this.$router.push("/answerview/" + test.answers);
     },
     openManager(test){
       //alert("open manager for " + test.title);

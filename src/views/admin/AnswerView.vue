@@ -1,79 +1,74 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto">
-      <v-list>
-        <v-list-item>
-          <v-list-item-title>Answers</v-list-item-title>
-        </v-list-item>
+  <div>
+    {{answers.answers}}
+    <v-data-table :headers="headers" :items="answers.answers">
+      <template v-slot:item.heuris="{item}">
+        <v-data-table
+        hide-default-footer
+        :headers="header(item.answer.heuristics)"
+        :items="item.answer.heuristics"
+        >
 
-        <v-list-group v-for="(answer, i) in answers" :key="i" value="true">
-          <template v-slot:activator>
-            <v-list-item-title>Answer {{i+1}}</v-list-item-title>
-          </template>
-
-          <v-list-group no-action sub-group value="true">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>Heuristics</v-list-item-title>
-              </v-list-item-content>
-            </template>
-
-            <v-list-group v-for="(heuristic, i) in answer.heuristics" :key="i" sub-group no-action>
-              <template v-slot:activator>
-                <v-list-item-content>
-                  <v-list-item-title>Heuristic {{i+1}}</v-list-item-title>
-                </v-list-item-content>
-              </template>
-
-              <v-list-group
-                v-for="(question, i) in heuristic.questions"
-                :key="i"
-                sub-group
-                no-action
-              >
-                <template v-slot:activator>
-                  <v-list-item-content>
-                    <v-list-item-title>Question {{i+1}}</v-list-item-title>
-                  </v-list-item-content>
-                </template>
-                <v-list-item>
-                  <v-list-item-title>Answer = {{question.answer}}</v-list-item-title>
-                </v-list-item>
-              </v-list-group>
-            </v-list-group>
-          </v-list-group>
-        </v-list-group>
-      </v-list>
-    </v-card>
-  </v-container>
+        </v-data-table>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
 export default {
   props: ["id"],
   data: () => ({
-    admins: [
-      ["Management", "people_outline"],
-      ["Settings", "settings"]
-    ],
-    cruds: [
-      ["Create", "add"],
-      ["Read", "insert_drive_file"],
-      ["Update", "update"],
-      ["Delete", "delete"]
-    ]
+    aux: null
   }),
+  methods: {
+    header(heuris) {
+      let aux = []
+      console.log(heuris);
+      heuris.questions.forEach((question) => {
+        aux.push({
+          text: 'Q' + question.id,
+          value: 'question.res'
+        })
+      })
+      return aux;
+    }
+  },
   computed: {
     answers() {
-      if (this.$store.getters.test) return this.$store.getters.answers;
-      else return [];
+      return this.$store.state.answers.answers || [];
+    },
+    headers() {
+      let array = [];
+      array.push({
+        text: "ID",
+        align: "start",
+        value: "uid"
+      });
+
+      if (this.aux) {
+        this.aux.heuristics.forEach(heuris => {
+          array.push({
+            text: "Heuristics " + (heuris.id + 1).toString(),
+            value: "heuris"
+          });
+        });
+      }
+
+      return array;
+    }
+  },
+  watch: {
+    answers() {
+      if (this.answers) {
+        this.aux = this.answers.answers[0].answer;
+      }
     }
   },
   created() {
-    if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
+    if (!this.$store.state.answers.answers) {
+      this.$store.dispatch("getAnswers", { id: this.id });
+    }
   }
 };
 </script>
-
-<style>
-</style>
