@@ -25,7 +25,6 @@ export default {
             return docId;
         },
         pushAnswers({ dispatch }, payload) {
-            console.log('answers', payload)
             payload = Object.assign(payload, { collection: "answers", param: "answers" });
 
             dispatch('pushObject', payload)

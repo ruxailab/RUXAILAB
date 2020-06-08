@@ -49,9 +49,9 @@ export default {
         value: "uid"
       },
       { text: "Tester", value: "email" },
-      { text: "Date_init", value: "log.date" },
+      { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "log.progress" },
-      { text: "State", value: "log.status" },
+      { text: "Status", value: "log.status" },
       { text: "Actions", value: "actions" }
     ],
     records: [

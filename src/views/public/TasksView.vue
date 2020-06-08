@@ -83,7 +83,6 @@ export default {
           element: log
         })
         .then(() => {
-          console.log('newans', newAnswer)
           this.$store.dispatch("pushAnswers", {
             docId: newAnswer.answers,
             element: {
