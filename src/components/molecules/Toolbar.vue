@@ -7,7 +7,7 @@
         >Research Workflow</v-toolbar-title>
 
         <v-spacer></v-spacer>
-
+        <locale-changer></locale-changer>
         <NotificationBtn v-if="user" />
 
         <v-btn text @click="moveSignIn()" v-if="!user">
@@ -24,6 +24,7 @@
 
 <script>
 import NotificationBtn from '../atoms/NotificationButton'
+import LocaleChanger from '@/components/atoms/LocaleChanger'
 
 export default {
     data: () => ({}),
@@ -45,7 +46,8 @@ export default {
         }
     },
     components: {
-        NotificationBtn
+        NotificationBtn,
+        LocaleChanger
     }
 }
 </script>
