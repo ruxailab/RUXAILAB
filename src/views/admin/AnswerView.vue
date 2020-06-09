@@ -21,10 +21,13 @@
       </v-col>
 
       <v-col cols="9">
-        <v-card>
+        <v-card v-if="heurisSelected">
           <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
-          <v-data-table class="ma-2" :headers="headers" :items="items"></v-data-table>
+          <v-text-field class="mx-3" append-icon="mdi-magnify" label="Search" v-model="search"></v-text-field>
+          <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
         </v-card>
+
+        <h2 v-else class="ml-3">Please select a heuristic</h2>
       </v-col>
     </v-row>
   </div>
@@ -34,6 +37,7 @@
 export default {
   props: ["id"],
   data: () => ({
+    search: "",
     heurisSelected: null,
     headers: [],
     items: [],
@@ -55,10 +59,9 @@ export default {
         this.items.push(aux);
       });
     },
-    setHeaders(heuris,i) {
+    setHeaders(heuris, i) {
       let index = 0;
-      this.heurisSelected = i+1,
-      this.headers = [];
+      (this.heurisSelected = i + 1), (this.headers = []);
       this.headers.push({
         text: "ID",
         align: "start",
