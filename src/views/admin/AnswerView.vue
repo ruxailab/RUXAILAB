@@ -41,7 +41,6 @@ export default {
     heurisSelected: null,
     headers: [],
     items: [],
-    loading: true
   }),
   methods: {
     setItems(index) {
@@ -80,14 +79,12 @@ export default {
   computed: {
     answers() {
       return this.$store.state.answers.answers || [];
+    },
+    loading(){
+      return this.answers.length == 0
     }
   },
   watch: {
-    answers() {
-      if (this.answers) {
-        this.loading = false;
-      }
-    }
   },
   created() {
     if (!this.$store.state.answers.answers) {
