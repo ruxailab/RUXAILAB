@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{answers}}
+    {{items}}
     <v-row>
       <v-col cols="3">
         <v-card>
@@ -10,9 +10,9 @@
 
           <v-list>
             <v-list-item
-              v-for="(heuris, i) in answers.answers[0].answer.heuristics"
+              v-for="(heuris, i) in answers.answersSheet.heuristics"
               :key="i"
-              @click="setHeuristic(i)"
+              @click="setHeaders(heuris),setItems(i)"
             >Heuristic {{i + 1}}</v-list-item>
           </v-list>
         </v-card>
@@ -32,64 +32,46 @@
 export default {
   props: ["id"],
   data: () => ({
-    aux: null,
-    heuristics: [],
     headers: [],
     items: []
   }),
   methods: {
-    setHeuristic(index) {
-      this.heuristics = [];
-      this.headers = [];
+    setItems(index) {
       this.items = [];
 
+      let aux 
+
       this.answers.answers.forEach(answer => {
-        answer.answer.heuristics.forEach(heuris => {
-          if (heuris.id == index) {
-            this.heuristics.push(heuris);
-          }
-        });
+        aux = {
+          uid: null,
+          questions: []
+        };
+        aux.uid = answer.uid;
+        aux.questions = Array.from(answer.heuristics[index].questions);
+        this.items.push(aux);
+      });
+    },
+    setHeaders(heuris) {
+      let index = 0
+      this.headers = [];
+      this.headers.push({
+        text: "ID",
+        align: "start",
+        value: "uid"
       });
 
-      this.headers.push({ text: "ID", value: "uid" });
-      this.heuristics[0].questions.forEach(question => {
+      heuris.questions.forEach(question => {
         this.headers.push({
           text: "Question " + (question.id + 1).toString(),
-          value: ""
+          value: `questions[${index}].res`
         });
-      });
-
-      this.answers.answers.forEach(ans => {
-        this.items.push({
-          uid: ans.uid
-        });
-
-        // this.ans.
+        index++
       });
     }
   },
   computed: {
     answers() {
       return this.$store.state.answers.answers || [];
-    },
-    headers() {
-      let array = [];
-      array.push({
-        text: "ID",
-        align: "start",
-        value: "uid"
-      });
-
-      if (this.aux) {
-        this.aux.heuristics.forEach(heuris => {
-          array.push({
-            text: "Heuristics " + (heuris.id + 1).toString(),
-            value: "heuris"
-          });
-        });
-      }
-
-      return array;
     }
   },
   watch: {
