@@ -1,7 +1,9 @@
 <template>
   <div>
-    {{items}}
-    <v-row>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-row v-if="!loading">
       <v-col cols="3">
         <v-card>
           <v-card-title>
@@ -12,7 +14,7 @@
             <v-list-item
               v-for="(heuris, i) in answers.answersSheet.heuristics"
               :key="i"
-              @click="setHeaders(heuris),setItems(i)"
+              @click="setHeaders(heuris,i),setItems(i)"
             >Heuristic {{i + 1}}</v-list-item>
           </v-list>
         </v-card>
@@ -20,7 +22,7 @@
 
       <v-col cols="9">
         <v-card>
-          <v-card-title>Heuristics</v-card-title>
+          <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
           <v-data-table class="ma-2" :headers="headers" :items="items"></v-data-table>
         </v-card>
       </v-col>
@@ -32,14 +34,16 @@
 export default {
   props: ["id"],
   data: () => ({
+    heurisSelected: null,
     headers: [],
-    items: []
+    items: [],
+    loading: true
   }),
   methods: {
     setItems(index) {
       this.items = [];
 
-      let aux 
+      let aux;
 
       this.answers.answers.forEach(answer => {
         aux = {
@@ -51,8 +55,9 @@ export default {
         this.items.push(aux);
       });
     },
-    setHeaders(heuris) {
-      let index = 0
+    setHeaders(heuris,i) {
+      let index = 0;
+      this.heurisSelected = i+1,
       this.headers = [];
       this.headers.push({
         text: "ID",
@@ -65,7 +70,7 @@ export default {
           text: "Question " + (question.id + 1).toString(),
           value: `questions[${index}].res`
         });
-        index++
+        index++;
       });
     }
   },
@@ -77,7 +82,7 @@ export default {
   watch: {
     answers() {
       if (this.answers) {
-        this.aux = this.answers.answers[0].answer;
+        this.loading = false;
       }
     }
   },
