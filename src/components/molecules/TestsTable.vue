@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-text-field
-      class="mx-3 pt-5"
-      append-icon="mdi-magnify"
-      label="Search"
-      v-model="search"
-    ></v-text-field>
+    <v-text-field class="mx-3 pt-5" append-icon="mdi-magnify" label="Search" v-model="search"></v-text-field>
     <v-data-table
       :headers="headers"
       :items="tests"
@@ -81,6 +76,8 @@ export default {
   methods: {
     async deleteTest(item) {
       await this.$store.dispatch("getTest", { id: item.id });
+      await this.$store.dispatch("getAnswers", {id: item.answers});
+
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
@@ -114,6 +111,21 @@ export default {
         //Remove report from collection
         this.$store.dispatch('deleteReport', { id: item.reports });
 
+        //Remove all myAnswers
+        this.answers.answers.forEach((ans) => {
+          this.$store.dispatch("removeMyAnswers", {docId: ans.uid, 
+          element: {
+            id: item.id,
+            title: item.title,
+            type: item.type,
+            accessLevel: 2,
+            reports: item.reports,
+            answersSheet: ans.heuristics,
+            answers: item.answers
+          }
+          });
+        })
+
         //Remove all answers
         this.$store.dispatch('deleteAnswers', { id: item.answers });
       });
@@ -146,6 +158,9 @@ export default {
     test() {
       if (this.$store.getters.test) return this.$store.getters.test;
       return [];
+    },
+    answers() {
+      return this.$store.state.answers.answers;
     }
   }
 };
