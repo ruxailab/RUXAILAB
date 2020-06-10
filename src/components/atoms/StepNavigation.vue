@@ -32,7 +32,7 @@
         </v-tooltip>
         <v-tooltip left>
           <template v-slot:activator="{on}">
-            <v-btn dark fab elevation="24" color="secondary" v-on="on" @click="$emit('submit')">
+            <v-btn dark fab elevation="24" color="secondary" v-on="on" @click="$emit('submit'), $emit('save')">
               <v-icon>mdi-file-send</v-icon>
             </v-btn>
           </template>
