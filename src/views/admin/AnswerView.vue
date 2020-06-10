@@ -87,7 +87,7 @@ export default {
   watch: {
   },
   created() {
-    if (!this.$store.state.answers.answers) {
+    if (!this.$store.state.answers.answers || !this.$store.state.answers.answers.id !== this.id) {
       this.$store.dispatch("getAnswers", { id: this.id });
     }
   }
