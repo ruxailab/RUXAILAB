@@ -57,6 +57,7 @@ export default {
     },
     async removeObject(_, payload) {
       try {
+        console.log('bbbb', payload);
         var docRef = await api.database.removeArray(payload);
         return docRef;
       } catch (err) {

@@ -76,7 +76,7 @@ export default {
   methods: {
     async deleteTest(item) {
       await this.$store.dispatch("getTest", { id: item.id });
-      await this.$store.dispatch("getAnswers", {id: item.answers});
+      await this.$store.dispatch("getAnswers", { id: item.answers });
 
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
@@ -87,7 +87,7 @@ export default {
             title: item.title,
             type: item.type,
             reports: item.reports,
-            answers:item.answers,
+            answers: item.answers,
             accessLevel: 0
           },
           param: "myTests"
@@ -102,32 +102,42 @@ export default {
               title: item.title,
               type: item.type,
               reports: item.reports,
-              answers:item.answers,
+              answers: item.answers,
               accessLevel: coop.accessLevel
             }
           });
         });
-          
+
         //Remove report from collection
-        this.$store.dispatch('deleteReport', { id: item.reports });
+        this.$store.dispatch("deleteReport", { id: item.reports });
 
         //Remove all myAnswers
-        this.answers.answers.forEach((ans) => {
-          this.$store.dispatch("removeMyAnswers", {docId: ans.uid, 
-          element: {
-            id: item.id,
-            title: item.title,
-            type: item.type,
-            accessLevel: 2,
-            reports: item.reports,
-            answersSheet: ans.heuristics,
-            answers: item.answers
-          }
+        this.answers.answers.forEach(ans => {
+          this.$store.dispatch("removeMyAnswers", {
+            docId: ans.uid,
+            element: {
+              id: item.id,
+              title: item.title,
+              type: item.type,
+              accessLevel: 2,
+              reports: item.reports,
+              answersSheet: Object.assign(
+                {},
+                {
+                  heuristics: ans.heuristics,
+                  progress: ans.progress,
+                  total: ans.total,
+                  email: ans.email,
+                  uid: ans.uid
+                }
+              ),
+              answers: item.answers
+            }
           });
-        })
+        });
 
         //Remove all answers
-        this.$store.dispatch('deleteAnswers', { id: item.answers });
+        this.$store.dispatch("deleteAnswers", { id: item.answers });
       });
     },
     editItem(test) {
@@ -143,7 +153,7 @@ export default {
     openAnswer(test) {
       this.$router.push("/answerview/" + test.answers);
     },
-    openManager(test){
+    openManager(test) {
       //alert("open manager for " + test.title);
       this.$router.push("/managerview/" + test.reports);
     }

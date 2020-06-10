@@ -103,6 +103,7 @@ export default {
     removeMyAnswers({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users", param: "myAnswers" });
 
+      console.log('aaaaa', payload);
       dispatch("removeObject", payload)
         .catch((err) => {
           console.error('Error ', err);
