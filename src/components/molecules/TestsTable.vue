@@ -95,6 +95,7 @@ export default {
           },
           param: "myTests"
         });
+
         //Remove test from myCoops
         this.test.coop.forEach(coop => {
           this.$store.dispatch("removeMyCoops", {
@@ -112,8 +113,10 @@ export default {
           
         //Remove report from collection
         this.$store.dispatch('deleteReport', { id: item.reports });
+
+        //Remove all answers
+        this.$store.dispatch('deleteAnswers', { id: item.answers });
       });
-      this.$store.dispatch("getTests", { doc: this.$route.params.tests });
     },
     editItem(test) {
       this.$router.push("/edittest/" + test.id);

@@ -33,10 +33,18 @@ export default {
                 })
         },
         async getAnswers({ dispatch, commit }, payload) {
-            payload = Object.assign(payload, {collection: 'answers'});
+            payload = Object.assign(payload, { collection: 'answers' });
 
             let ans = await dispatch("getObject", payload);
             commit("setAnswers", ans);
+        },
+        deleteAnswers({ dispatch }, payload) {
+            payload = Object.assign(payload, { collection: 'answers'});
+
+            dispatch("deleteObject", payload)
+            .catch((err) => {
+                console.error("Error ", err);
+            })
         }
     }
 }
