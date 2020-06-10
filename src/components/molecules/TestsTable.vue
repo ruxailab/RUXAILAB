@@ -90,6 +90,7 @@ export default {
             title: item.title,
             type: item.type,
             reports: item.reports,
+            answers:item.answers,
             accessLevel: 0
           },
           param: "myTests"
@@ -103,6 +104,7 @@ export default {
               title: item.title,
               type: item.type,
               reports: item.reports,
+              answers:item.answers,
               accessLevel: coop.accessLevel
             }
           });
