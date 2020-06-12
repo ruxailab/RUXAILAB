@@ -30,84 +30,97 @@ export default {
     },
     async pushMyTest({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("pushObject", payload)
-        .catch((err) => {
-          console.error("Error to push myTest ", err);
-        });
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error to push myTest ", err);
+      });
     },
     async updateMyTest({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myTests" })
-      dispatch("updateArrayObject", payload)
-        .catch((err) => {
-          console.error("Error to update myTests ", err);
-        });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myTests",
+      });
+      dispatch("updateArrayObject", payload).catch((err) => {
+        console.error("Error to update myTests ", err);
+      });
     },
     async removeMyTest({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("removeObject", payload)
-        .catch((err) => {
-          console.error("Error to remove myTest ", err);
-        });
+      dispatch("removeObject", payload).catch((err) => {
+        console.error("Error to remove myTest ", err);
+      });
     },
     async pushNotification({ dispatch }, payload) {
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("pushObject", payload)
-        .catch((err) => {
-          console.error("Error to push notifications ", err);
-        });
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error to push notifications ", err);
+      });
     },
     async removeNotification({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "notifications" })
-      dispatch("removeObject", payload)
-        .catch((err) => {
-          console.error('Error ', err);
-        })
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "notifications",
+      });
+      dispatch("removeObject", payload).catch((err) => {
+        console.error("Error ", err);
+      });
     },
     async pushMyCoops({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myCoops" })
-      dispatch("pushObject", payload)
-        .catch((err) => {
-          console.error("Error to push myCoops ", err);
-        });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myCoops",
+      });
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error to push myCoops ", err);
+      });
     },
     async updateMyCoops({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myCoops" })
-      dispatch("updateArrayObject", payload)
-        .catch((err) => {
-          console.error("Error to update myCoops ", err);
-        });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myCoops",
+      });
+      dispatch("updateArrayObject", payload).catch((err) => {
+        console.error("Error to update myCoops ", err);
+      });
     },
     async removeMyCoops({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myCoops" })
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myCoops",
+      });
 
-      dispatch("removeObject", payload)
-        .catch((err) => {
-          console.error('Error to remove myCoop ', err);
-        })
+      dispatch("removeObject", payload).catch((err) => {
+        console.error("Error to remove myCoop ", err);
+      });
     },
     pushMyAnswers({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: 'users', param: 'myAnswers' });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myAnswers",
+      });
 
-      dispatch('pushObject', payload)
-        .catch((err) => {
-          console.error('Error pushing answers: ', err);
-        })
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error pushing answers: ", err);
+      });
     },
     async updateMyAnswers({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myAnswers" })
-      dispatch("updateArrayObject", payload)
-        .catch((err) => {
-          console.error("Error to update myAnswers ", err);
-        });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myAnswers",
+      });
+      dispatch("updateArrayObject", payload).catch((err) => {
+        console.error("Error to update myAnswers ", err);
+      });
     },
     removeMyAnswers({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "users", param: "myAnswers" });
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myAnswers",
+      });
 
-      console.log('aaaaa', payload);
-      dispatch("removeObject", payload)
-        .catch((err) => {
-          console.error('Error ', err);
-        })
-    }
-  }
+      console.log("aaaaa", payload);
+      dispatch("removeObject", payload).catch((err) => {
+        console.error("Error ", err);
+      });
+    },
+  },
 };

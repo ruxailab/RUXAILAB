@@ -53,10 +53,6 @@
               <v-list-item-title>Open Test</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="openAnswer(item)" v-if="item.accessLevel <= 1">
-              <v-list-item-title>Open Answers</v-list-item-title>
-            </v-list-item>
-
             <v-list-item @click="openManager(item)" v-if="item.accessLevel <= 1">
               <v-list-item-title>Open Manager</v-list-item-title>
             </v-list-item>
@@ -150,12 +146,10 @@ export default {
       if (!this.deleting && !this.editing)
         this.$router.push("/testview/" + test.id);
     },
-    openAnswer(test) {
-      this.$router.push("/answerview/" + test.answers);
-    },
     openManager(test) {
-      //alert("open manager for " + test.title);
-      this.$router.push("/managerview/" + test.reports);
+      this.$router.push({
+        path: "/managerview/" + test.id
+      });
     }
   },
   computed: {

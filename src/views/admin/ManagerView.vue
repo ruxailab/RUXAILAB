@@ -1,168 +1,77 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="10">
-        <v-card>
-          <v-data-table :headers="headers" :items="reports.reports" class="elevation-1">
-            <template v-slot:top>
-              <v-toolbar flat color="white">
-                <v-spacer></v-spacer>
-              </v-toolbar>
-            </template>
-            <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
-              <v-icon small>mdi-delete</v-icon>
-            </template>
-          </v-data-table>
-        </v-card>
+  <v-card>
+    <v-row>
+      <v-col cols="12">
+        <v-toolbar>
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-breadcrumbs large :items="items" divider="-"></v-breadcrumbs>
+        </v-toolbar>
+        <v-row justify="center" v-if="items.length < 2">
+          <h1>{{test.title}}</h1>
+        </v-row>
+        <router-view />
       </v-col>
     </v-row>
-
-    <v-dialog v-model="dialog" color="white" max-width="600px">
-      <template v-slot:activator="{ on }">
-        <v-btn large dark fab fixed bottom right color="primary" v-on="on">
-          <v-icon>mdi-email</v-icon>
-        </v-btn>
-      </template>
-      <FormCooperation :invitations="invitations" type="tester" />
-
-      <v-btn text @click="close">Cancel</v-btn>
-      <v-btn text @click="save">Send</v-btn>
-    </v-dialog>
-  </v-container>
+    <v-navigation-drawer v-model="drawer" absolute temporary>
+      <v-list nav dense>
+        <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+          <v-list-item @click="setReport()">
+            <v-list-item-title>Reports</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title @click="setAnswer()">Answers</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+  </v-card>
 </template>
 
 <script>
-import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
-  components: {
-    FormCooperation
-  },
   data: () => ({
-    invitations: [],
-    dialog: false,
-    headers: [
-      {
-        text: "Id",
-        align: "start",
-        value: "uid"
-      },
-      { text: "Tester", value: "email" },
-      { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "log.progress" },
-      { text: "Status", value: "log.status" },
-      { text: "Actions", value: "actions" }
-    ],
-    records: [
-      {
-        id: "101",
-        tester: {
-          id: "null",
-          email: "null@null.com"
-        },
-        log: {
-          date_init: "null",
-          progress: "null",
-          state: "null"
-        }
-      }
-    ],
-    editedIndex: -1,
-    editedRecord: {
-      id: null,
-      tester: {
-        id: null,
-        email: null
-      },
-      log: {
-        date_init: null,
-        progress: null,
-        state: null
-      }
-    },
-    defaultRecord: {
-      id: null,
-      tester: {
-        id: null,
-        email: null
-      },
-      log: {
-        date_init: null,
-        progress: null,
-        state: null
-      }
-    }
+    items: [],
+    drawer: false,
+    group: null,
+    test: null
   }),
-  watch: {
-    dialog(val) {
-      val || this.close();
-    }
-  },
   methods: {
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    deleteItem(item) {
-      const index = this.desserts.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
-    },
-
-    close() {
-      this.dialog = false;
-      this.invitations = [];
-    },
-
-    async save() {
-      //Making invites
-      this.invitations.forEach(item => {
-        let inv = {
-          to: {
-            id: item.id,
-            email: item.email,
-            accessLevel: item.accessLevel
-          },
-          from: {
-            id: this.user.uid,
-            email: this.user.email
-          },
-          test: {
-            id: this.reports.test.id,
-            title: this.reports.test.title,
-            type: this.reports.test.type,
-            reports: this.id,
-            answers: this.reports.test.answers
-          }
-        };
-        this.$store.dispatch("pushNotification", {
-          docId: inv.to.id,
-          element: inv,
-          param: "notifications"
-        });
+    setReport() {
+      if (this.items.length > 1) this.items.pop();
+      this.items.push({
+        text: "Report",
+        disabled: true,
+        href: `/reportview/${this.test.reports}`
       });
-      this.close();
+      this.$router.push("/reportview/" + this.test.reports);
+    },
+    setAnswer() {
+      if (this.items.length > 1) this.items.pop();
+      this.items.push({
+        text: "Answer",
+        disabled: true,
+        href: `/answerview/${this.test.answers}`
+      });
+      this.$router.push("/answerview/" + this.test.answers);
     }
   },
-  computed: {
-    user() {
-      return this.$store.state.auth.user;
-    },
-    reports() {
-      return this.$store.state.reports.reports || [];
-    },
-    formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+  watch: {
+    group() {
+      this.drawer = false;
     }
   },
 
   created() {
-    if (!this.$store.reports) {
-      this.$store.dispatch("getReports", { id: this.id });
-    }
+    this.test = Object.assign({},this.$store.state.auth.user.myTests.find(
+      test => (test.id == this.id)
+    ));
+
+    this.items.push({
+      text: "Test",
+      disabled: false,
+      href: `/managerView/${this.id}`
+    });
   }
 };
 </script>
