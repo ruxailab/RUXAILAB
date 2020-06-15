@@ -11,6 +11,7 @@
           </v-card-title>
 
           <v-list>
+            <v-list-item @click="renderGraph()">Statistics</v-list-item>
             <v-list-item
               v-for="(heuris, i) in answers.answersSheet.heuristics"
               :key="i"
@@ -19,12 +20,16 @@
           </v-list>
         </v-card>
       </v-col>
-
       <v-col cols="9">
         <v-card v-if="heurisSelected">
           <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
           <v-text-field class="mx-3" append-icon="mdi-magnify" label="Search" v-model="search"></v-text-field>
           <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
+        </v-card>
+
+        <v-card v-else-if="graphSelected">
+          GraphSelected
+          <BarChart />
         </v-card>
 
         <h2 v-else class="ml-3">Please select a heuristic</h2>
@@ -34,13 +39,18 @@
 </template>
 
 <script>
+import BarChart from "@/components/atoms/BarChart.vue";
 export default {
   props: ["id"],
+  components: {
+    BarChart
+  },
   data: () => ({
     search: "",
     heurisSelected: null,
+    graphSelected: null,
     headers: [],
-    items: [],
+    items: []
   }),
   methods: {
     setItems(index) {
@@ -74,20 +84,26 @@ export default {
         });
         index++;
       });
+    },
+    renderGraph() {
+      this.graphSelected = true;
+      this.heurisSelected = null
     }
   },
   computed: {
     answers() {
       return this.$store.state.answers.answers || [];
     },
-    loading(){
-      return this.answers.length == 0
+    loading() {
+      return this.answers.length == 0;
     }
   },
-  watch: {
-  },
+  watch: {},
   created() {
-    if (!this.$store.state.answers.answers || !this.$store.state.answers.answers.id !== this.id) {
+    if (
+      !this.$store.state.answers.answers ||
+      !this.$store.state.answers.answers.id !== this.id
+    ) {
       this.$store.dispatch("getAnswers", { id: this.id });
     }
   }
