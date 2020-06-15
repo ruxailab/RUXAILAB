@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app dark dense >
+    <v-app-bar app dark dense>
         <v-icon left @click="moveHome()">mdi-alpha-r-circle</v-icon>
         <v-toolbar-title 
         @click="moveHome()"
