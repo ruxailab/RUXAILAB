@@ -1,7 +1,7 @@
 <template>
   <section>
     <v-container style="display:contents">
-      <v-img src="https://i.ibb.co/pZPtsvC/background.png">
+      <v-img src="@/assets/introduction.svg">
         <v-container fluid>
           <!-- ver se prefere no meio ou em cima -> so add fill-height no container -->
           <v-row align="center" class="mb-5">

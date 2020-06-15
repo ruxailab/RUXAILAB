@@ -4,7 +4,6 @@
 
     <About />
 
-    <v-card height="1000px" class="mt-5" color="blue"></v-card>
   </div>
 </template>
 
