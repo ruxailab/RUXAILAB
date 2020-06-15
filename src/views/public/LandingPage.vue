@@ -9,7 +9,7 @@
 
 <script>
 import Intro from "@/components/atoms/Introduction";
-import About from "@/components/atoms/LandingAbout"
+import About from "@/components/molecules/LandingAbout"
 
 export default {
   data: () => ({}),
