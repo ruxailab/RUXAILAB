@@ -25,12 +25,22 @@
           <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
           <v-text-field class="mx-3" append-icon="mdi-magnify" label="Search" v-model="search"></v-text-field>
           <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
+
+          <v-row justify="space-around">
+            <v-col >
+              <v-card v-for="(item,i) in dataQuestions" :key="i">
+                <v-row justify="center">
+                  <v-col>
+                    <h3>{{item.question}}</h3>
+                    <QuestionChart :data="item.data" />
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card>
 
-        <v-card v-else-if="graphSelected">
-          GraphSelected
-          <BarChart />
-        </v-card>
+        <v-card v-else-if="graphSelected">GraphSelected</v-card>
 
         <h2 v-else class="ml-3">Please select a heuristic</h2>
       </v-col>
@@ -39,18 +49,20 @@
 </template>
 
 <script>
-import BarChart from "@/components/atoms/BarChart.vue";
+import QuestionChart from "@/components/atoms/QuestionChart.vue";
 export default {
   props: ["id"],
   components: {
-    BarChart
+    QuestionChart
   },
   data: () => ({
     search: "",
     heurisSelected: null,
     graphSelected: null,
     headers: [],
-    items: []
+    items: [],
+    graph: [],
+    dataQuestions: []
   }),
   methods: {
     setItems(index) {
@@ -67,6 +79,11 @@ export default {
         aux.questions = Array.from(answer.heuristics[index].questions);
         this.items.push(aux);
       });
+      let ids = [];
+      aux.questions.forEach(q => {
+        ids.push(q.id);
+      });
+      this.questionGraph(this.items, ids);
     },
     setHeaders(heuris, i) {
       let index = 0;
@@ -87,7 +104,30 @@ export default {
     },
     renderGraph() {
       this.graphSelected = true;
-      this.heurisSelected = null
+      this.heurisSelected = null;
+    },
+    questionGraph(data, ids) {
+      this.dataQuestions = []
+      var questionMap = new Map();
+      ids.forEach(id => {
+        let aux = [];
+        data.forEach(item => {
+          aux.push(item.questions.find(q => q.id == id).res);
+        });
+        questionMap.set(`Question ${id}`, aux);
+      });
+
+      let possibleAnswers = [1, 0.5, 0, -1, null];
+      for (var [key, value] of questionMap.entries()) {
+        let aux = [];
+        possibleAnswers.forEach(el => {
+          aux.push(value.filter(v => v == el).length);
+        });
+        this.dataQuestions.push({
+          question: key,
+          data: aux
+        });
+      }
     }
   },
   computed: {
