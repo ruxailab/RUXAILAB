@@ -31,8 +31,8 @@
 export default {
   data: () => ({
     icons: [
-      {icon: "mdi-facebook", linkTo: 'https://www.facebook.com'},
-      {icon: "mdi-twitter", linkTo: 'https://www.twitter.com'},
+      { icon: "mdi-facebook", linkTo: "https://www.facebook.com" },
+      { icon: "mdi-twitter", linkTo: "https://www.twitter.com" },
       { icon: "mdi-instagram", linkTo: "https://www.instagram.com/lgfacens/" }
     ]
   }),

@@ -1,13 +1,9 @@
 <template>
-  <div>
-    <v-container fluid class="background-blob">
-      <AboutTop />
-      
-      <AboutBottom />
-    </v-container>
+  <v-container fluid class="background-blob">
+    <AboutTop />
 
-    <Footer />
-  </div>
+    <AboutBottom />
+  </v-container>
 </template>
 
 <style scoped>
@@ -21,14 +17,12 @@
 <script>
 import AboutTop from "@/components/atoms/AboutTop";
 import AboutBottom from "@/components/atoms/AboutBottom";
-import Footer from "@/components/atoms/Footer";
 
 export default {
   data: () => ({}),
   components: {
     AboutTop,
-    AboutBottom,
-    Footer
+    AboutBottom
   }
 };
 </script>

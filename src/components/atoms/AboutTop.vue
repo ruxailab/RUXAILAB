@@ -3,7 +3,6 @@
     <v-col cols="12" sm="5">
       <v-img src="@/assets/aboutTop.png"></v-img>
     </v-col>
-    
     <v-col cols="12" sm="5">
       <h4 class="display-1 text-center mb-3">Quickly get feedback on your projects</h4>
       <h5
