@@ -3,6 +3,7 @@
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+
     <v-row v-if="!loading">
       <v-col cols="3">
         <v-card>
@@ -27,7 +28,7 @@
           <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
 
           <v-row justify="space-around">
-            <v-col >
+            <v-col>
               <v-card v-for="(item,i) in dataQuestions" :key="i">
                 <v-row justify="center">
                   <v-col>
@@ -41,7 +42,6 @@
         </v-card>
 
         <v-card v-else-if="graphSelected">GraphSelected</v-card>
-
         <h2 v-else class="ml-3">Please select a heuristic</h2>
       </v-col>
     </v-row>
@@ -107,7 +107,7 @@ export default {
       this.heurisSelected = null;
     },
     questionGraph(data, ids) {
-      this.dataQuestions = []
+      this.dataQuestions = [];
       var questionMap = new Map();
       ids.forEach(id => {
         let aux = [];
@@ -128,6 +128,34 @@ export default {
           data: aux
         });
       }
+    },
+    statistics() {
+      const answers = this.answers.answers;
+      const answersResults = new Map();
+      const heurisResults = new Map();
+      //Resusltado Total Test
+      const ResultTest = answers.reduce((total, answer) => {
+        let res = answer.heuristics.reduce((totalHeuris, heuris) => {
+          let res = heuris.questions.reduce((totalQuestions, question) => {
+            console.info(`${totalQuestions} total até o momento`);
+            console.log("Question", question);
+            return totalQuestions + question.res;
+          }, 0);
+          const collection = heurisResults.get(`heuristics ${heuris.id+1}`);
+          if (!collection) {
+            heurisResults.set(`heuristics ${heuris.id+1}`,res);
+          } else {
+            let aux = collection+res
+            heurisResults.set(`heuristics ${heuris.id+1}`,aux);
+          }
+          return totalHeuris + res;
+        }, 0);
+        answersResults.set(answer.uid, res);
+        return total + res;
+      }, 0);
+      console.log("ResultTest", ResultTest);
+      console.log("answersResults", answersResults);
+      console.log("heurisResults", heurisResults);
     }
   },
   computed: {
@@ -138,7 +166,13 @@ export default {
       return this.answers.length == 0;
     }
   },
-  watch: {},
+  watch: {
+    answers() {
+      if (this.answers !== null || this.answers.length > 0) {
+        this.statistics();
+      }
+    }
+  },
   created() {
     if (
       !this.$store.state.answers.answers ||
