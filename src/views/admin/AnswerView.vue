@@ -41,7 +41,69 @@
           </v-row>
         </v-card>
 
-        <v-card v-else-if="graphSelected">GraphSelected</v-card>
+        <v-card v-else-if="graphSelected">
+          <v-card-title>Statistics</v-card-title>
+          <v-row justify="space-around">
+            <v-col cols="4">
+              <v-card width="250">
+                <v-row justify="center">
+                  <v-card-title>Test's average</v-card-title>
+                  <v-card-text>
+                    <v-row align="center" justify="center">
+                      <p class="display-3">{{testData.average}}</p>
+                    </v-row>
+                  </v-card-text>
+                </v-row>
+                <v-list class="transparent">
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-title>Max</v-list-item-title>
+                    <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Min</v-list-item-title>
+                    <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-plus-minus</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Standard deviation</v-list-item-title>
+                    <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
+            <v-col cols="12">
+              <v-row justify="center">
+                <v-col cols="10">
+                  <v-card>
+                    <v-card-title>Heuristics Data</v-card-title>
+                    <v-row>
+                      <v-col cols="6">
+                        <BarChat :labels="labelsHeuris" :data="graphDataHeuris" />
+                      </v-col>
+                      <v-col cols="6">
+                        <v-data-table
+                          :headers="headersHeuris"
+                          :items="dataHeuris"
+                          :items-per-page="5"
+                          class="elevation-1"
+                        ></v-data-table>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
         <h2 v-else class="ml-3">Please select a heuristic</h2>
       </v-col>
     </v-row>
@@ -50,10 +112,12 @@
 
 <script>
 import QuestionChart from "@/components/atoms/QuestionChart.vue";
+import BarChat from "@/components/atoms/BarChat.vue";
 export default {
   props: ["id"],
   components: {
-    QuestionChart
+    QuestionChart,
+    BarChat
   },
   data: () => ({
     search: "",
@@ -61,8 +125,29 @@ export default {
     graphSelected: null,
     headers: [],
     items: [],
+    testData: {
+      average: null,
+      max: null,
+      min: null,
+      sd: null
+    },
     graph: [],
-    dataQuestions: []
+    dataQuestions: [],
+    headersHeuris: [
+      {
+        text: "Heuristics",
+        align: "start",
+        sortable: false,
+        value: "name"
+      },
+      { text: "Max", value: "max", align: "center" },
+      { text: "Min", value: "min", align: "center"  },
+      { text: "Standard deviation", value: "sd", align: "center"  },
+      { text: "Average", value: "average" , align: "center" }
+    ],
+    labelsHeuris: [],
+    dataHeuris: [],
+    graphDataHeuris: []
   }),
   methods: {
     setItems(index) {
@@ -133,29 +218,67 @@ export default {
       const answers = this.answers.answers;
       const answersResults = new Map();
       const heurisResults = new Map();
-      //Resusltado Total Test
+
+      //Total Test
       const ResultTest = answers.reduce((total, answer) => {
+        //Total Heuristics
         let res = answer.heuristics.reduce((totalHeuris, heuris) => {
+          //Total Questions
           let res = heuris.questions.reduce((totalQuestions, question) => {
-            console.info(`${totalQuestions} total até o momento`);
-            console.log("Question", question);
             return totalQuestions + question.res;
           }, 0);
-          const collection = heurisResults.get(`heuristics ${heuris.id+1}`);
+          const collection = heurisResults.get(`heuristics ${heuris.id + 1}`);
           if (!collection) {
-            heurisResults.set(`heuristics ${heuris.id+1}`,res);
+            heurisResults.set(`heuristics ${heuris.id + 1}`, [res]);
           } else {
-            let aux = collection+res
-            heurisResults.set(`heuristics ${heuris.id+1}`,aux);
+            collection.push(res);
           }
           return totalHeuris + res;
         }, 0);
         answersResults.set(answer.uid, res);
         return total + res;
       }, 0);
-      console.log("ResultTest", ResultTest);
-      console.log("answersResults", answersResults);
-      console.log("heurisResults", heurisResults);
+
+      // console.log("ResultTest", ResultTest);
+      // console.log("answersResults", answersResults);
+      // console.log("heurisResults", heurisResults);
+
+      //Set Data
+      this.testData = {
+        average: Math.fround(ResultTest / answers.length),
+        max: Math.max(...answersResults.values()),
+        min: Math.min(...answersResults.values()),
+        sd: this.standardDeviation([...answersResults.values()])
+      };
+
+      for (var [key, list] of heurisResults.entries()) {
+        this.dataHeuris.push({
+          name: key,
+          max: Math.max(...list),
+          min: Math.min(...list),
+          sd: this.standardDeviation(list),
+          average: list.reduce((total, value) => total + value / list.length, 0)
+        });
+      }
+
+      this.labelsHeuris = [...heurisResults.keys()];
+      this.graphDataHeuris = this.dataHeuris.map(list => {
+        return list.average;
+      });
+
+      console.log(this.dataHeuris);
+    },
+    standardDeviation(array) {
+      let average = array.reduce(
+        (total, value) => total + value / array.length,
+        0
+      );
+      return Math.sqrt(
+        array.reduce(
+          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
+          0
+        )
+      );
     }
   },
   computed: {

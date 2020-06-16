@@ -2,21 +2,15 @@
 import { Bar } from "vue-chartjs";
 
 export default {
+  props:['labels','data'],
   extends: Bar,
-  props:['data'],
   mounted() {
     this.renderChart(
       {
-        labels: [
-          "Yes",
-          "Neither",
-          "No",
-          "Not applicable-It is not a problem",
-          "Not answered"
-        ],
+        labels: this.labels,
         datasets: [
           {
-            label: "Quantity answers",
+            label: "Data One",
             backgroundColor: "#f87979",
             data: this.data
           }
