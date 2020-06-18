@@ -1,0 +1,9 @@
+{
+    "language":"Idioma",
+    "SIGNIN":{
+        "sign-in":"Registrarse",
+        "email":"Correo electrónico",
+        "password":"Contraseña",
+        "dont-have-account":"¿No tienes una cuenta? Regístrate"
+      }
+}

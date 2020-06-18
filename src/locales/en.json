@@ -1,0 +1,9 @@
+{
+  "language":"Language",
+  "SIGNIN":{
+    "sign-in":"Sign-In",
+    "email":"E-mail",
+    "password":"Password",
+    "dont-have-account":"Don't have an account yet? Sign up"
+  }
+}
