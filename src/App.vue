@@ -1,21 +1,20 @@
 <template>
   <v-app>
-   <Toolbar/>
-    
-  <v-content>
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-content>
+    <Toolbar />
 
+    <v-content>
+      <v-container fluid class="pa-0">
+        <router-view></router-view>
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
 <script>
-import Toolbar from './components/molecules/Toolbar';
+import Toolbar from "./components/molecules/Toolbar";
 
 export default {
-  name: 'App',
+  name: "App",
   data: () => ({
     //
   }),

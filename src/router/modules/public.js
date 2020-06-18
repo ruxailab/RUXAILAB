@@ -3,6 +3,7 @@ import TasksView from "@/views/public/TasksView.vue";
 import SignIn from "@/views/public/SignIn.vue";
 import SignUp from "@/views/public/SignUp.vue";
 import Home from "@/views/public/Home.vue";
+import LandingPage from "@/views/public/LandingPage.vue";
 
 export default [
   {
@@ -36,5 +37,11 @@ export default [
     name: "Home",
     meta:{authorize:[]},
     component: Home
+  },
+  {
+    path: "/landing",
+    name: "Landing",
+    meta:{authorize:[]},
+    component: LandingPage
   }
 ];
