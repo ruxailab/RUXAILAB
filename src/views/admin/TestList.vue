@@ -2,7 +2,7 @@
   <v-container style="display:contents">
     <v-row justify="center" class="fill-height background-orange background-img">
       <v-col cols="10">
-        <v-text-field label="Search" prepend-inner-icon="mdi-magnify" outlined></v-text-field>
+        <v-text-field label="Search" prepend-inner-icon="mdi-magnify" outlined v-model="search"></v-text-field>
         <v-tabs centered background-color="transparent" color="grey darken-2">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
@@ -10,35 +10,41 @@
         </v-tabs>
 
         <!-- My Tests -->
-        <!-- Coloquei varias vezes so pra ver como fica com scroll -->
-        <v-row justify="center" v-if="index == 0" class="grid">
-          <v-row v-for="n in 20" :key="n">
-            <v-col v-for="test in user.myTests" :key="test.id">
-              <CardTest :item="test"></CardTest>
-            </v-col>
-          </v-row>
+        <v-row v-if="index == 0" class="grid">
+          <v-col v-for="test in filteredMyTests" :key="test.id">
+            <CardTest :item="test"></CardTest>
+          </v-col>
 
+          <v-col v-if="filteredMyTests.length == 0">
+            <div class="text-center">No tests found.</div>
+          </v-col>
         </v-row>
 
         <!-- Tests I Colaborate With -->
         <v-row justify="center" v-if="index == 1" class="grid">
-          <v-col v-for="test in user.myCoops" :key="test.id">
+          <v-col v-for="test in filteredMyCoops" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
-          <v-col v-for="test in user.myCoops" :key="test.id">
-            <CardTest :item="test"></CardTest>
+
+          <v-col v-if="filteredMyCoops.length == 0">
+            <div class="text-center">No tests found.</div>
           </v-col>
         </v-row>
 
         <!-- My Answers -->
         <v-row justify="center" v-if="index == 2" class="grid">
-          <v-col v-for="test in user.myAnswers" :key="test.id">
+          <v-col v-for="test in filteredMyAnswers" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
-        </v-row>
-      </v-col>
 
-      <v-card></v-card>
+          <v-col v-if="filteredMyAnswers.length == 0">
+            <div class="text-center">No tests found.</div>
+          </v-col>
+        </v-row>
+
+        <div style="height: 100px"></div>
+        <!-- here to leave some empty space under the cards-->
+      </v-col>
     </v-row>
 
     <v-btn large dark fab fixed bottom right @click="createTest()">
@@ -58,6 +64,7 @@ export default {
     x: 0,
     y: 0,
     test: {},
+    search: "",
     index: 0,
     headers: [
       {
@@ -88,6 +95,26 @@ export default {
     },
     loading() {
       return this.$store.state.tests.loading;
+    },
+    filteredMyTests() {
+      return this.user.myTests.filter(test => {
+        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      });
+    },
+    filteredMyCoops() {
+      return this.user.myCoops.filter(test => {
+        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      });
+    },
+    filteredMyAnswers() {
+      return this.user.myAnswers.filter(test => {
+        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      });
+    }
+  },
+  watch: {
+    filteredMyTests() {
+      console.log(this.filteredMyTests);
     }
   },
   components: {
