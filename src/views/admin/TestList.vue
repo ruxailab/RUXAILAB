@@ -2,7 +2,7 @@
   <v-container style="display:contents">
     <v-row justify="center" class="fill-height background-orange background-img">
       <v-col cols="10">
-        <v-text-field class="mt-5" label="Search" prepend-inner-icon="mdi-magnify" outlined v-model="search"></v-text-field>
+        <v-text-field class="mt-5" label="Search" prepend-inner-icon="mdi-magnify" outlined color="grey darken-2" v-model="search"></v-text-field>
         <v-tabs background-color="transparent" color="black">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
