@@ -3,7 +3,7 @@
     <v-row justify="center" class="fill-height background-orange background-img">
       <v-col cols="10">
         <v-text-field label="Search" prepend-inner-icon="mdi-magnify" outlined v-model="search"></v-text-field>
-        <v-tabs centered background-color="transparent" color="grey darken-2">
+        <v-tabs background-color="transparent" color="black">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
           <v-tab @click="index = 2">My Answers</v-tab>
