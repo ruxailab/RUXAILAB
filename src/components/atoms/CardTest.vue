@@ -137,8 +137,8 @@ export default {
 .card {
   position: relative;
   overflow: hidden;
-  height: 300px;
-  width: 300px;
+  width: 250px;
+  height: 250px;
   border-radius: 29px;
   z-index: 2;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);

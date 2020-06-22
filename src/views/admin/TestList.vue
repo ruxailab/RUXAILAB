@@ -10,8 +10,8 @@
         </v-tabs>
 
         <!-- My Tests -->
-        <v-row v-if="index == 0" class="grid">
-          <v-col v-for="test in filteredMyTests" :key="test.id">
+        <v-row v-if="index == 0" class="grid" justify="start">
+          <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
 
@@ -21,8 +21,8 @@
         </v-row>
 
         <!-- Tests I Colaborate With -->
-        <v-row justify="center" v-if="index == 1" class="grid">
-          <v-col v-for="test in filteredMyCoops" :key="test.id">
+        <v-row justify="start" v-if="index == 1" class="grid">
+          <v-col  md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
 
@@ -32,8 +32,8 @@
         </v-row>
 
         <!-- My Answers -->
-        <v-row justify="center" v-if="index == 2" class="grid">
-          <v-col v-for="test in filteredMyAnswers" :key="test.id">
+        <v-row justify="start" v-if="index == 2" class="grid">
+          <v-col  md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
 
@@ -125,18 +125,11 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  height: 300px;
-  width: 300px;
-  border-radius: 29px;
-  background-image: url(/assets/cardTest.png);
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
-}
 .button {
   margin: 10px;
 }
 .grid {
-  margin-top: 60px;
+  margin-top: 100px;
 }
 .img {
   opacity: 0.6;
