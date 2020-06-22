@@ -2,7 +2,7 @@
   <v-container style="display:contents">
     <v-row justify="center" class="fill-height background-orange background-img">
       <v-col cols="10">
-        <v-text-field label="Search" prepend-inner-icon="mdi-magnify" outlined v-model="search"></v-text-field>
+        <v-text-field class="mt-5" label="Search" prepend-inner-icon="mdi-magnify" outlined v-model="search"></v-text-field>
         <v-tabs background-color="transparent" color="black">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
@@ -10,11 +10,10 @@
         </v-tabs>
 
         <!-- My Tests -->
-        <v-row v-if="index == 0" class="grid" justify="start">
+        <v-row v-if="index == 0" class="grid" justify="start" >
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
-
           <v-col v-if="filteredMyTests.length == 0">
             <div class="text-center">No tests found.</div>
           </v-col>
@@ -129,7 +128,7 @@ export default {
   margin: 10px;
 }
 .grid {
-  margin-top: 100px;
+  margin-top: 30px;
 }
 .img {
   opacity: 0.6;

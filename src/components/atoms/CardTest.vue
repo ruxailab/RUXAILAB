@@ -31,7 +31,7 @@
         </v-menu>
 
         <v-col cols="12" class="text" align-self="start">
-          <h1>{{item.title}}</h1>
+          <h3>{{item.title}}</h3>
         </v-col>
       </v-row>
     </v-container>
