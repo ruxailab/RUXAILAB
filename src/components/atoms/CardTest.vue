@@ -5,13 +5,21 @@
         <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
           <template v-slot:activator="{ on, attrs }">
             <v-col cols="2" class="button">
-              <v-btn icon v-bind="attrs" v-on="on">
+              <v-btn icon v-bind="attrs" v-on="on" >
                 <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
             </v-col>
           </template>
           <v-list>
-            <v-list-item @click="openManager(item)">
+          <v-list-item v-if="accessLevel == 2"  @click="openTest(item)">
+              <v-list-item-icon>
+                <v-icon>mdi-glasses</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Open Test</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="accessLevel < 2" @click="openManager(item)">
               <v-list-item-icon>
                 <v-icon>mdi-cog</v-icon>
               </v-list-item-icon>
@@ -19,7 +27,7 @@
                 <v-list-item-title>Manager</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item @click="deleteTest(item)">
+            <v-list-item v-if="accessLevel == 0" @click="deleteTest(item)">
               <v-list-item-icon>
                 <v-icon color="error">mdi-trash-can-outline</v-icon>
               </v-list-item-icon>
@@ -40,11 +48,14 @@
 
 <script>
 export default {
-  props: ["item"],
+  props: ["item", "accessLevel"],
   data: () => ({
     menu: false
   }),
   methods: {
+    openTest(test) {
+        this.$router.push("/testview/" + test.id);
+    },
     async deleteTest(item) {
       console.log(item);
       await this.$store.dispatch("getTest", { id: item.id });

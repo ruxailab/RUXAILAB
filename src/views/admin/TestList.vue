@@ -22,7 +22,7 @@
             <CardNewTest />
           </v-col>
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
-            <CardTest :item="test"></CardTest>
+            <CardTest :item="test" :accessLevel="0"></CardTest>
           </v-col>
           <v-col v-if="filteredMyTests.length == 0">
             <div class="text-center">No tests found.</div>
@@ -32,7 +32,7 @@
         <!-- Tests I Colaborate With -->
         <v-row justify="start" v-if="index == 1" class="grid mx-8">
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
-            <CardTest :item="test"></CardTest>
+            <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
           </v-col>
 
           <v-col v-if="filteredMyCoops.length == 0">
@@ -43,7 +43,7 @@
         <!-- My Answers -->
         <v-row justify="start" v-if="index == 2" class="grid mx-8">
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
-            <CardTest :item="test"></CardTest>
+            <CardTest :item="test" :accessLevel="2"></CardTest>
           </v-col>
 
           <v-col v-if="filteredMyAnswers.length == 0">
