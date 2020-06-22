@@ -2,7 +2,14 @@
   <v-container style="display:contents">
     <v-row justify="center" class="fill-height background-orange background-img">
       <v-col cols="10">
-        <v-text-field class="mt-5" label="Search" prepend-inner-icon="mdi-magnify" outlined color="grey darken-2" v-model="search"></v-text-field>
+        <v-text-field
+          class="mt-5"
+          label="Search"
+          prepend-inner-icon="mdi-magnify"
+          outlined
+          color="grey darken-2"
+          v-model="search"
+        ></v-text-field>
         <v-tabs background-color="transparent" color="black">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
@@ -10,7 +17,10 @@
         </v-tabs>
 
         <!-- My Tests -->
-        <v-row v-if="index == 0" class="grid" justify="start" >
+        <v-row v-if="index == 0" class="grid mx-8" justify="start">
+          <v-col md="4" sm="6" xs="12">
+            <CardNewTest />
+          </v-col>
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
@@ -20,8 +30,8 @@
         </v-row>
 
         <!-- Tests I Colaborate With -->
-        <v-row justify="start" v-if="index == 1" class="grid">
-          <v-col  md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
+        <v-row justify="start" v-if="index == 1" class="grid mx-8">
+          <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
 
@@ -31,8 +41,8 @@
         </v-row>
 
         <!-- My Answers -->
-        <v-row justify="start" v-if="index == 2" class="grid">
-          <v-col  md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
+        <v-row justify="start" v-if="index == 2" class="grid mx-8">
+          <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
 
@@ -45,11 +55,6 @@
         <!-- here to leave some empty space under the cards-->
       </v-col>
     </v-row>
-
-    <v-btn large dark fab fixed bottom right @click="createTest()">
-      <!-- Add Button -->
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
   </v-container>
 </template>
 
@@ -57,6 +62,8 @@
 <script>
 //import TestsTable from "@/components/molecules/TestsTable";
 import CardTest from "@/components/atoms/CardTest";
+import CardNewTest from "@/components/atoms/CardNewTest";
+
 export default {
   data: () => ({
     showMenu: false,
@@ -83,11 +90,6 @@ export default {
       { title: "Open Manager" }
     ]
   }),
-  methods: {
-    createTest() {
-      this.$router.push("/createtest");
-    }
-  },
   computed: {
     user() {
       return this.$store.state.auth.user;
@@ -118,7 +120,8 @@ export default {
   },
   components: {
     //TestsTable,
-    CardTest
+    CardTest,
+    CardNewTest
   }
 };
 </script>
