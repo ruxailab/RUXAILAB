@@ -16,7 +16,7 @@
             </v-tab-item>
 
             <v-tab-item>
-              <TestsTable :tests="user.myAnswers" :headers="headers" />
+              <TestsTable :tests="user.myAnswers" :headers="answerHeaders" />
             </v-tab-item>
           </v-tabs>
         </v-card>
@@ -50,6 +50,16 @@ export default {
       { text: "Type", value: "type", align: "center" },
       { text: "Edit", value: "edit", align: "center", sortable: false },
       { text: "Delete", value: "delete", align: "center", sortable: false },
+      { text: "More", value: "more", align: "center", sortable: false },
+    ],
+    answerHeaders: [
+      {
+        text: "Title",
+        align: "start",
+        value: "title"
+      },
+      { text: "Id", value: "id", align: "center" },
+      { text: "Type", value: "type", align: "center" },
       { text: "More", value: "more", align: "center", sortable: false },
     ],
     items: [{ title: "Open Test" }, { title: "Open Answers" }, {title: "Open Manager"}]
