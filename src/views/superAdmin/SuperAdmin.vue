@@ -9,7 +9,7 @@
             </v-toolbar>
           </template>
           <template v-slot:item.accessLevel="{ item }">
-            <p>{{level(item.accessLevel)}}</p>
+            <div>{{level(item.accessLevel)}}</div>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon small class="mr-2" @click="editUser(item)">mdi-pencil</v-icon>
