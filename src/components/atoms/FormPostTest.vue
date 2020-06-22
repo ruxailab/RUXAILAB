@@ -7,6 +7,7 @@
           label="Form"
           v-model="postTest"
           :rules="googleLinkRules"
+          outlined dense
         ></v-text-field>
       </v-col>
     </v-row>

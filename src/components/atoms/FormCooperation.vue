@@ -8,6 +8,7 @@
               <v-text-field
                 v-on="on"
                 outlined
+                dense
                 label="Email"
                 clearable
                 prepend-inner-icon="mdi-magnify"

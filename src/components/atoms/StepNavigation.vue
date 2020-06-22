@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-btn large fab fixed bottom left elevation="24" outlined @click="$emit('backStep')">
+    <v-btn v-if="step > 1" large fab fixed bottom left elevation="24" dark @click="$emit('backStep')">
       <v-icon>mdi-arrow-left-drop-circle</v-icon>
     </v-btn>
 

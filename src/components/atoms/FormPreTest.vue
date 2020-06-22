@@ -8,12 +8,14 @@
           label="Consent"
           v-model="preTest.consent"
           :rules="googleLinkRules"
+          outlined dense
         ></v-text-field>
         <v-text-field
           prepend-inner-icon="mdi-link-variant"
           label="Form"
           v-model="preTest.form"
           :rules="googleLinkRules"
+          outlined dense
         ></v-text-field>
       </v-card-text>
     </v-col>
