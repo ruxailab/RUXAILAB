@@ -2,21 +2,24 @@
   <v-card shaped class="card">
     <v-container>
       <v-row justify="center" align="center">
-          <v-col cols="12">
-          <v-img contain :src="require('../../assets/manager/' + imgName)">
-
-          </v-img>
-          </v-col>
+        <v-col cols="12">
+          <v-img contain :src="require('../../assets/manager/' + imgName)"></v-img>
+        </v-col>
       </v-row>
     </v-container>
+    <v-img src="../../assets/manager/bottomRectangle.svg" class="rectangle">
+      <v-row justify="center" align="center">
+        <div class="text">Preview</div>
+      </v-row>
+    </v-img>
   </v-card>
 </template>
 
 <script>
 export default {
-    props: ["imgName"],
-    data: () => ({})
-}
+  props: ["imgName"],
+  data: () => ({})
+};
 </script>
 
 <style scoped>
@@ -27,7 +30,16 @@ export default {
   height: 200px;
   margin: 20px;
   border-radius: 29px;
-  z-index: 2;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
+}
+.rectangle {
+  width: 330px;
+  height: 40px;
+  position: bottom;
+}
+.text {
+  font-family: Roboto;
+  font-size: 20px;
+  color: white;
 }
 </style>
