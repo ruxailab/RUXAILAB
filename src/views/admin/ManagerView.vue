@@ -46,7 +46,7 @@ export default {
       {
         title: "Cooperators",
         url: "Coops.svg",
-        path: `/coopsview/${this.test.id}`
+        path: `/cooperatorsview/${this.test.id}`
       },
       { title: "Edit", url: "Edit.svg", path: `/edittest/${this.test.id}` }
     ];
