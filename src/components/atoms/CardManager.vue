@@ -23,8 +23,9 @@ export default {
 .card {
   position: relative;
   overflow: hidden;
-  width: 300px;
-  height: 250px;
+  width: 250px;
+  height: 200px;
+  margin: 20px;
   border-radius: 29px;
   z-index: 2;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);

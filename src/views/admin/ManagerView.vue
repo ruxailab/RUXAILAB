@@ -1,6 +1,6 @@
 <template>
-  <div class="background">
-   <!-- <v-tabs v-model="tab" centered grow>
+  <div class="fill-height background">
+    <!-- <v-tabs v-model="tab" centered grow>
       <v-tab @click="setTest()">Test</v-tab>
       <v-tab @click="setReport()">Reports</v-tab>
       <v-tab @click="setAnswer()">Answer</v-tab>
@@ -19,13 +19,20 @@
         <router-view />
       </v-tab-item>
     </v-tabs-items>-->
-    <CardManager :imgName="'Preview.svg'" />
-    
+    <v-container>
+      <v-row class="fill-height" justify="center" align="center" dense>
+        <v-col cols="4" v-for="(card,index) in cards" :key="index">
+          <v-row justify="center">
+            <CardManager :imgName="card.url" />
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <script>
-import CardManager from '@/components/atoms/CardManager'
+import CardManager from "@/components/atoms/CardManager";
 
 export default {
   props: ["id"],
@@ -34,7 +41,14 @@ export default {
     drawer: false,
     group: null,
     test: null,
-    tab: null
+    tab: null,
+    cards: [
+      { url: "Preview.svg", path: "./local" },
+      { url: "Reports.svg", path: "./local" },
+      { url: "Answers.svg", path: "./local" },
+      { url: "Coops.svg", path: "./local" },
+      { url: "Edit.svg", path: "./local" }
+    ]
   }),
   methods: {
     setReport() {
@@ -97,10 +111,10 @@ export default {
   top: 0%;
   bottom: 0%;
 
-  background: url(../../assets/BackgroundShape.png),#DFDFDF;
+  background: url(../../assets/BackgroundShape.png), #dfdfdf;
   background-position: center;
   background-repeat: no-repeat;
+  background-origin: border-box;
   background-size: cover;
-  
 }
 </style>
