@@ -19,10 +19,13 @@
         <router-view />
       </v-tab-item>
     </v-tabs-items>-->
+    <CardManager />
   </div>
 </template>
 
 <script>
+import CardManager from '@/components/atoms/CardManager'
+
 export default {
   props: ["id"],
   data: () => ({
@@ -78,6 +81,9 @@ export default {
       disabled: false,
       href: `/managerView/${this.id}`
     });
+  },
+  components: {
+    CardManager
   }
 };
 </script>
