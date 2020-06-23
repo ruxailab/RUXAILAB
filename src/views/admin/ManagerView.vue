@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-tabs v-model="tab" centered grow>
+  <div class="background">
+   <!-- <v-tabs v-model="tab" centered grow>
       <v-tab @click="setTest()">Test</v-tab>
       <v-tab @click="setReport()">Reports</v-tab>
       <v-tab @click="setAnswer()">Answer</v-tab>
@@ -18,7 +18,7 @@
       <v-tab-item>
         <router-view />
       </v-tab-item>
-    </v-tabs-items>
+    </v-tabs-items>-->
   </div>
 </template>
 
@@ -83,4 +83,17 @@ export default {
 </script>
 
 <style>
+.background {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+
+  background: url(../../assets/BackgroundShape.png),#DFDFDF;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+}
 </style>
