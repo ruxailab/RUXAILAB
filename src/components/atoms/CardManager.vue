@@ -1,15 +1,15 @@
 <template>
-  <v-card shaped class="card">
+  <v-card shaped class="card" @click="toGo(item.path)">
     <v-container>
       <v-row justify="center" align="center">
         <v-col cols="12">
-          <v-img contain :src="require('../../assets/manager/' + imgName)"></v-img>
+          <v-img contain :src="require('../../assets/manager/' + item.url)"></v-img>
         </v-col>
       </v-row>
     </v-container>
     <v-img src="../../assets/manager/bottomRectangle.svg" class="rectangle">
       <v-row justify="center" align="center">
-        <div class="text">Preview</div>
+        <div class="text">{{item.title}}</div>
       </v-row>
     </v-img>
   </v-card>
@@ -17,8 +17,13 @@
 
 <script>
 export default {
-  props: ["imgName"],
-  data: () => ({})
+  props: ["item"],
+  data: () => ({}),
+  methods:{
+    toGo(path){
+      this.$router.push(path);
+    }
+  }
 };
 </script>
 
@@ -33,9 +38,11 @@ export default {
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
 }
 .rectangle {
-  width: 330px;
-  height: 40px;
-  position: bottom;
+  position: absolute;
+  bottom: 0%;
+  width: 100%;
+  height: 30px;
+  z-index: 2;
 }
 .text {
   font-family: Roboto;

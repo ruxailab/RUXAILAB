@@ -30,21 +30,19 @@ export default [
     meta: { authorize: [1] },
     component: ManagerView,
     props: true,
-    children: [
-      {
-        path: "/reportview/:id",
-        name: "Report View",
-        props: true,
-        meta: { authorize: [1] },
-        component: ReportView,
-      },
-      {
-        path: "/answerview/:id",
-        name: "Answer View",
-        props: true,
-        meta: { authorize: [1] },
-        component: AnswerView,
-      },
-    ],
+  },
+  {
+    path: "/reportview/:id",
+    name: "Report View",
+    props: true,
+    meta: { authorize: [1] },
+    component: ReportView,
+  },
+  {
+    path: "/answerview/:id",
+    name: "Answer View",
+    props: true,
+    meta: { authorize: [1] },
+    component: AnswerView,
   },
 ];

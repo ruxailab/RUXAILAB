@@ -23,7 +23,7 @@
       <v-row class="fill-height" justify="center" align="center" dense>
         <v-col cols="4" v-for="(card,index) in cards" :key="index">
           <v-row justify="center">
-            <CardManager :imgName="card.url" />
+            <CardManager :item="card" />
           </v-row>
         </v-col>
       </v-row>
@@ -42,13 +42,7 @@ export default {
     group: null,
     test: null,
     tab: null,
-    cards: [
-      { url: "Preview.svg", path: "./local" },
-      { url: "Reports.svg", path: "./local" },
-      { url: "Answers.svg", path: "./local" },
-      { url: "Coops.svg", path: "./local" },
-      { url: "Edit.svg", path: "./local" }
-    ]
+    cards: []
   }),
   methods: {
     setReport() {
@@ -96,6 +90,14 @@ export default {
       disabled: false,
       href: `/managerView/${this.id}`
     });
+
+    this.cards = [
+      { title:'Preview', url: "Preview.svg", path: `/testview/${this.test.id}` },
+      { title:'Reports',url: "Reports.svg", path: `/reportview/${this.test.reports}` },
+      { title:'Answers', url: "Answers.svg", path: `/answerview/${this.test.answers}` },
+      { title:'Cooperators', url: "Coops.svg", path: `/coopsview/${this.test.id}` },
+      { title:'Edit',url: "Edit.svg", path: `/edittest/${this.test.id}` }
+    ]
   },
   components: {
     CardManager

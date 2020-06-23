@@ -4,44 +4,51 @@ import SignIn from "@/views/public/SignIn.vue";
 import SignUp from "@/views/public/SignUp.vue";
 import Home from "@/views/public/Home.vue";
 import LandingPage from "@/views/public/LandingPage.vue";
+import PageNotFound from "@/views/public/PageNotFound.vue";
 
 export default [
   {
     path: "/testview/:id",
     name: "TestView",
     props: true,
-    meta:{authorize:[]},
+    meta: { authorize: [] },
     component: TestView,
   },
   {
     path: "/testview/:id/:type",
     name: "TasksView",
     props: true,
-    meta:{authorize:[]},
+    meta: { authorize: [] },
     component: TasksView,
   },
   {
     path: "/signin",
     name: "Sign In",
-    meta:{authorize:[]},
+    meta: { authorize: [] },
     component: SignIn,
   },
   {
     path: "/signup",
     name: "Sign Up",
-    meta:{authorize:[]},
+    meta: { authorize: [] },
     component: SignUp,
   },
   {
     path: "/home",
     name: "Home",
-    meta:{authorize:[]},
-    component: Home
+    meta: { authorize: [] },
+    component: Home,
   },
   {
     path: "/landing",
     name: "Landing",
-    meta:{authorize:[]},
-    component: LandingPage
-  }
+    meta: { authorize: [] },
+    component: LandingPage,
+  },
+  {
+    path: "*",
+    name: "pagenotfound",
+    meta: { authorize: [] },
+    component: PageNotFound,
+  },
 ];
