@@ -3,7 +3,7 @@
     <v-container>
       <v-row justify="center" align="center">
           <v-col cols="12">
-          <v-img contain :src="require('../../assets/' + imgName)">
+          <v-img contain :src="require('../../assets/manager/' + imgName)">
 
           </v-img>
           </v-col>
