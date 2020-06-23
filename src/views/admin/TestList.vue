@@ -11,7 +11,7 @@
               color="grey darken-2"
               v-model="search"
             ></v-text-field>
-            <v-tabs background-color="transparent" color="black">
+            <v-tabs background-color="transparent" color="black" class="tab-border-bottom">
               <v-tab @click="index = 0">My Tests</v-tab>
               <v-tab @click="index = 1">Tests I colaborate with</v-tab>
               <v-tab @click="index = 2">My Answers</v-tab>
@@ -56,9 +56,7 @@
             <!-- here to leave some empty space under the cards-->
           </v-col>
         </v-row>
-
-      </div>
-
+</div>
   </v-container>
 </template>
 
@@ -166,5 +164,8 @@ export default {
   background-position: right 0px bottom 0px;
   transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
 
+}
+.tab-border-bottom {
+  border-bottom: 1px solid black;
 }
 </style>

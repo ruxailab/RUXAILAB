@@ -34,6 +34,16 @@
           <h3>{{item.title}}</h3>
         </v-col>
       </v-row>
+
+      <v-row class="test" justify="start">
+        <v-col cols="2">
+          <v-icon x-large>mdi-account-circle</v-icon>
+        </v-col>
+        <v-col cols="6"></v-col>
+        <v-col cols="4">
+          <v-btn dark rounded :ripple="false">{{item.type}}</v-btn>
+        </v-col>
+      </v-row>
     </v-container>
   </v-card>
 </template>
@@ -135,28 +145,16 @@ export default {
 
 <style scoped>
 .card {
-  position: relative;
-  overflow: hidden;
-  width: 300px;
-  height: 250px;
-  border-radius: 29px;
-  z-index: 2;
+  max-width: 330px;
+  height: 200px;
+  border-radius: 3px;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
+  background-color: #fff;
+  border-bottom: 2px solid transparent;
+  margin: 0 16px 16px 0;
+
 }
-.card:before {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0.5;
-  z-index: -1;
-  background-image: url(../../assets/cardTest.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  transform: rotate(15deg);
-}
+
 .button {
   margin-right: 10px;
   margin-top: 10px;
@@ -164,5 +162,9 @@ export default {
 .text {
   margin-top: 0px;
   padding-top: 0px;
+}
+.test {
+  position: absolute;
+  bottom: 5%;
 }
 </style>
