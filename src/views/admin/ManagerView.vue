@@ -19,7 +19,8 @@
         <router-view />
       </v-tab-item>
     </v-tabs-items>-->
-    <CardManager />
+    <CardManager :imgName="'Preview.svg'" />
+    
   </div>
 </template>
 

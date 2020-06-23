@@ -1,14 +1,23 @@
 <template>
   <v-card shaped class="card">
     <v-container>
-      <v-row justify="end" align="center">
-        <v-col cols="12" class="text" align-self="start">
-          <h3>nhaha</h3>
-        </v-col>
+      <v-row justify="center" align="center">
+          <v-col cols="12">
+          <v-img contain :src="require('../../assets/' + imgName)">
+
+          </v-img>
+          </v-col>
       </v-row>
     </v-container>
   </v-card>
 </template>
+
+<script>
+export default {
+    props: ["imgName"],
+    data: () => ({})
+}
+</script>
 
 <style scoped>
 .card {
