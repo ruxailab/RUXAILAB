@@ -34,6 +34,16 @@
           <h3>{{item.title}}</h3>
         </v-col>
       </v-row>
+
+      <v-row class="test" justify="start">
+        <v-col cols="2">
+          <v-icon x-large>mdi-account-circle</v-icon>
+        </v-col>
+        <v-col cols="6"></v-col>
+        <v-col cols="4">
+          <v-btn dark rounded :ripple="false">{{item.type}}</v-btn>
+        </v-col>
+      </v-row>
     </v-container>
   </v-card>
 </template>
@@ -164,5 +174,9 @@ export default {
 .text {
   margin-top: 0px;
   padding-top: 0px;
+}
+.test {
+  position: absolute;
+  bottom: 5%;
 }
 </style>

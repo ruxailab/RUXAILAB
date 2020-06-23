@@ -1,7 +1,8 @@
 <template>
   <v-container style="display:contents">
+    <div style="height: 100px" class="blue"></div>
     <v-row justify="center" class="fill-height background-orange background-img">
-      <v-col cols="10">
+      <v-col cols="12">
         <v-text-field
           class="mt-5"
           label="Search"
@@ -10,7 +11,7 @@
           color="grey darken-2"
           v-model="search"
         ></v-text-field>
-        <v-tabs background-color="transparent" color="black">
+        <v-tabs background-color="transparent" color="black" class="tab-border-bottom">
           <v-tab @click="index = 0">My Tests</v-tab>
           <v-tab @click="index = 1">Tests I colaborate with</v-tab>
           <v-tab @click="index = 2">My Answers</v-tab>
@@ -51,7 +52,7 @@
           </v-col>
         </v-row>
 
-        <div style="height: 100px"></div>
+        
         <!-- here to leave some empty space under the cards-->
       </v-col>
     </v-row>
@@ -161,5 +162,8 @@ export default {
   margin-right: 30px;
   /* background-position: 150% 800%; */
   background-repeat: no-repeat;
+}
+.tab-border-bottom {
+  border-bottom: 1px solid black;
 }
 </style>
