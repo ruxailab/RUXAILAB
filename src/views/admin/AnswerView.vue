@@ -117,7 +117,7 @@ export default {
   props: ["id"],
   components: {
     QuestionChart,
-    BarChat
+    BarChat,
   },
   data: () => ({
     search: "",
