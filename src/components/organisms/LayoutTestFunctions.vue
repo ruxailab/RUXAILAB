@@ -1,26 +1,40 @@
 <template>
-  <v-container style="display:contents">
-    <v-row class="fill-height background" align="center">
-      <v-col>
-        <v-row justify="center">
-          <v-card shaped class="card">
-            <v-row class="header">
-              <v-card-title>Haaaaaa</v-card-title>
-            </v-row>
-            <v-row>
-              <v-col>
-                <router-view></router-view>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row class="fill-height background" justify="center" align="center" dense>
+    <v-card shaped class="card">
+      <v-row class="header" align="start">
+        <v-card-title>
+          <v-breadcrumbs dark style="position:absolute; top:0%;" :items="items" large></v-breadcrumbs>
+        </v-card-title>
+      </v-row>
+      <v-row dense>
+        <router-view></router-view>
+      </v-row>
+    </v-card>
+  </v-row>
 </template>
 
 <script>
-export default {};
+export default {
+  data: () => ({
+    items: [
+      {
+        text: "Home",
+        disabled: false,
+        href: "/"
+      },
+      {
+        text: "Manager",
+        disabled: true,
+        href: "/managerview/"
+      },
+      {
+        text: "Link 1",
+        disabled: true,
+        href: "breadcrumbs_link_1"
+      }
+    ]
+  })
+};
 </script>
 
 <style scoped>
@@ -35,20 +49,17 @@ export default {};
 .card {
   position: relative;
   overflow: hidden;
-  width: 900px;
-  height: 500px;
-  margin: 20px;
+  width: 80%;
+  height: 90%;
   border-radius: 29px;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
   background: #c4c4c4;
 }
 .header {
   position: relative;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 90%;
+  height: 60px;
 
   background: #444444;
 }
+
 </style>

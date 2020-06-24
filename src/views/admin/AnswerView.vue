@@ -1,113 +1,119 @@
-<template>
-  <div>
-    <v-overlay :value="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </v-overlay>
+<template >
+  <v-row class="container">
+    <v-col>
+      <v-overlay :value="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
+      <v-row v-if="!loading" dense justify="center">
+        <v-col cols="3">
+          <v-card class="scroll cardAnswers" height="450px" dense>
+            <v-card-title>
+              <div class="caption">HEURISTICS</div>
+            </v-card-title>
 
-    <v-row v-if="!loading">
-      <v-col cols="3">
-        <v-card>
-          <v-card-title>
-            <div class="caption">HEURISTICS</div>
-          </v-card-title>
+            <v-list class="cardAnswers">
+              <v-list-item @click="renderGraph()">Statistics</v-list-item>
+              <v-list-item
+                v-for="(heuris, i) in answers.answersSheet.heuristics"
+                :key="i"
+                @click="setHeaders(heuris,i),setItems(i)"
+              >Heuristic {{i + 1}}</v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="9">
+          <v-card v-if="heurisSelected" class="scroll cardAnswers" height="450px" dense >
+            <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
+            <v-row justify="center" dense>
+              <v-col class="mx-3">
+                <v-text-field
+                  class="mx-3"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  v-model="search"
+                ></v-text-field>
+                <v-data-table class="ma-2 cardAnswers" :headers="headers" :items="items" :search="search"></v-data-table>
 
-          <v-list>
-            <v-list-item @click="renderGraph()">Statistics</v-list-item>
-            <v-list-item
-              v-for="(heuris, i) in answers.answersSheet.heuristics"
-              :key="i"
-              @click="setHeaders(heuris,i),setItems(i)"
-            >Heuristic {{i + 1}}</v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col cols="9">
-        <v-card v-if="heurisSelected">
-          <v-card-title>Heuristics {{heurisSelected}}</v-card-title>
-          <v-text-field class="mx-3" append-icon="mdi-magnify" label="Search" v-model="search"></v-text-field>
-          <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
+                <v-card v-for="(item,i) in dataQuestions" :key="i" dense class="cardAnswers">
+                  <v-row justify="center">
+                    <v-col>
+                      <h3>{{item.question}}</h3>
+                      <QuestionChart :data="item.data" />
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card>
 
-          <v-row justify="space-around">
-            <v-col>
-              <v-card v-for="(item,i) in dataQuestions" :key="i">
+          <v-card v-else-if="graphSelected" class="scroll cardAnswers" height="450px">
+            <v-card-title>Statistics</v-card-title>
+            <v-row justify="space-around">
+              <v-col cols="4">
+                <v-card width="250">
+                  <v-row justify="center">
+                    <v-card-title>Test's average</v-card-title>
+                    <v-card-text>
+                      <v-row align="center" justify="center">
+                        <p class="display-3">{{testData.average}}</p>
+                      </v-row>
+                    </v-card-text>
+                  </v-row>
+                  <v-list class="transparent">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
+
+                      <v-list-item-title>Max</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Min</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-plus-minus</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Standard deviation</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-col>
+              <v-col cols="12">
                 <v-row justify="center">
-                  <v-col>
-                    <h3>{{item.question}}</h3>
-                    <QuestionChart :data="item.data" />
+                  <v-col cols="10">
+                    <v-card>
+                      <v-card-title>Heuristics Data</v-card-title>
+                      <v-row>
+                        <v-col cols="6">
+                          <BarChat :labels="labelsHeuris" :data="graphDataHeuris" />
+                        </v-col>
+                        <v-col cols="6">
+                          <v-data-table
+                            :headers="headersHeuris"
+                            :items="dataHeuris"
+                            :items-per-page="5"
+                            class="elevation-1"
+                          ></v-data-table>
+                        </v-col>
+                      </v-row>
+                    </v-card>
                   </v-col>
                 </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-card>
-
-        <v-card v-else-if="graphSelected">
-          <v-card-title>Statistics</v-card-title>
-          <v-row justify="space-around">
-            <v-col cols="4">
-              <v-card width="250">
-                <v-row justify="center">
-                  <v-card-title>Test's average</v-card-title>
-                  <v-card-text>
-                    <v-row align="center" justify="center">
-                      <p class="display-3">{{testData.average}}</p>
-                    </v-row>
-                  </v-card-text>
-                </v-row>
-                <v-list class="transparent">
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
-                    </v-list-item-icon>
-
-                    <v-list-item-title>Max</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Min</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-plus-minus</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Standard deviation</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-col>
-            <v-col cols="12">
-              <v-row justify="center">
-                <v-col cols="10">
-                  <v-card>
-                    <v-card-title>Heuristics Data</v-card-title>
-                    <v-row>
-                      <v-col cols="6">
-                        <BarChat :labels="labelsHeuris" :data="graphDataHeuris" />
-                      </v-col>
-                      <v-col cols="6">
-                        <v-data-table
-                          :headers="headersHeuris"
-                          :items="dataHeuris"
-                          :items-per-page="5"
-                          class="elevation-1"
-                        ></v-data-table>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card>
-        <h2 v-else class="ml-3">Please select a heuristic</h2>
-      </v-col>
-    </v-row>
-  </div>
+              </v-col>
+            </v-row>
+          </v-card>
+          <h2 v-else class="ml-3">Please select a heuristic</h2>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -117,7 +123,7 @@ export default {
   props: ["id"],
   components: {
     QuestionChart,
-    BarChat,
+    BarChat
   },
   data: () => ({
     search: "",
@@ -141,9 +147,9 @@ export default {
         value: "name"
       },
       { text: "Max", value: "max", align: "center" },
-      { text: "Min", value: "min", align: "center"  },
-      { text: "Standard deviation", value: "sd", align: "center"  },
-      { text: "Average", value: "average" , align: "center" }
+      { text: "Min", value: "min", align: "center" },
+      { text: "Standard deviation", value: "sd", align: "center" },
+      { text: "Average", value: "average", align: "center" }
     ],
     labelsHeuris: [],
     dataHeuris: [],
@@ -306,3 +312,40 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.cardAnswers {
+  background: #e6e4e4;
+  border-radius: 34px;
+}
+.container {
+  height: 400px;
+  padding: 0px;
+  margin: 0px;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #f9a826;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #f9a826;
+}
+</style>
