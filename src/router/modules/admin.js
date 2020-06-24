@@ -39,7 +39,7 @@ export default [
       },
     
       {
-        path: "/reportview/:id",
+        path: "reportview/:id",
         name: "Report View",
         props: true,
         meta: { authorize: [1] },

@@ -325,7 +325,7 @@ export default {
 .container {
   height: 400px;
   padding: 0px;
-  margin: 0px;
+  margin: 0px 10px 0px;
 }
 /* width */
 ::-webkit-scrollbar {

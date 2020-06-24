@@ -6,7 +6,7 @@
           <v-breadcrumbs dark style="position:absolute; top:0%;" :items="items" large></v-breadcrumbs>
         </v-card-title>
       </v-row>
-      <v-row dense>
+      <v-row>
         <router-view></router-view>
       </v-row>
     </v-card>
@@ -33,7 +33,10 @@ export default {
         href: "breadcrumbs_link_1"
       }
     ]
-  })
+  }),
+  created(){
+    console.log(this.$route.params.pathMatch )
+  }
 };
 </script>
 
