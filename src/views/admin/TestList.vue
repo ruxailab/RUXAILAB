@@ -25,9 +25,6 @@
           <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
             <CardTest :item="test"></CardTest>
           </v-col>
-          <v-col v-if="filteredMyTests.length == 0">
-            <div class="text-center">No tests found.</div>
-          </v-col>
         </v-row>
 
         <!-- Tests I Colaborate With -->
