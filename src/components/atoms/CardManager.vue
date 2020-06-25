@@ -40,9 +40,9 @@ export default {
 .rectangle {
   position: absolute;
   bottom: 0%;
-  width: 100%;
+  left: 0%;
+  right: 0%;
   height: 30px;
-  z-index: 2;
 }
 .text {
   font-family: Roboto;

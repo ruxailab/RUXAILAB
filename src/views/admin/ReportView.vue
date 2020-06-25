@@ -1,43 +1,43 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="10">
-        <v-card>
-          <v-data-table :headers="headers" :items="reports.reports" class="elevation-1">
-            <template v-slot:top>
-              <v-toolbar flat color="white">
-                <v-spacer></v-spacer>
-              </v-toolbar>
-            </template>
-            <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
-              <v-icon small>mdi-delete</v-icon>
-            </template>
-          </v-data-table>
-        </v-card>
+  <LayoutTestFunctions :testID="test.id">
+    <v-row class="container">
+      <v-col>
+        <v-data-table
+          class="cardReport"
+          :headers="headers"
+          :items="reports.reports"
+          :items-per-page="5"
+          height="420px"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
+            <v-icon small>mdi-delete</v-icon>
+          </template>
+        </v-data-table>
+
+        <v-dialog v-model="dialog" color="white" max-width="600px">
+          <template v-slot:activator="{ on }">
+            <v-btn large dark fab fixed bottom right color="primary" v-on="on">
+              <v-icon>mdi-email</v-icon>
+            </v-btn>
+          </template>
+          <FormCooperation :invitations="invitations" type="tester" />
+          <v-btn text @click="close">Cancel</v-btn>
+          <v-btn text @click="save">Send</v-btn>
+        </v-dialog>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="dialog" color="white" max-width="600px">
-      <template v-slot:activator="{ on }">
-        <v-btn large dark fab fixed bottom right color="primary" v-on="on">
-          <v-icon>mdi-email</v-icon>
-        </v-btn>
-      </template>
-      <FormCooperation :invitations="invitations" type="tester" />
-
-      <v-btn text @click="close">Cancel</v-btn>
-      <v-btn text @click="save">Send</v-btn>
-    </v-dialog>
-  </v-container>
+  </LayoutTestFunctions>
 </template>
 
 <script>
+import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
 import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
   components: {
-    FormCooperation
+    FormCooperation,
+    LayoutTestFunctions
   },
   data: () => ({
     invitations: [],
@@ -163,9 +163,32 @@ export default {
     if (!this.$store.reports) {
       this.$store.dispatch("getReports", { id: this.id });
     }
+    this.test = Object.assign(
+      {},
+      this.$store.state.auth.user.myTests.find(test => test.reports == this.id)
+    );
   }
 };
 </script>
 
-<style>
+<style scoped>
+.container {
+  position: relative;
+  padding: 0px;
+  margin: 0px;
+  top: 0%;
+  right: 0%;
+  left: 0%;
+  height: 500px;
+}
+.cardReport {
+  position: absolute;
+  padding: 0px 10px 0px;
+  margin: 0px;
+  top: 0%;
+  right: 0%;
+  left: 0%;
+  height: 500px;
+  background: #e6e4e4;
+}
 </style>

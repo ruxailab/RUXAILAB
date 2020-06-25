@@ -3,6 +3,8 @@ import TestList from "@/views/admin/TestList.vue";
 import AnswerView from "@/views/admin/AnswerView.vue";
 import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
+import CooperatorsView from "@/views/admin/CooperatorsView.vue";
+
 
 export default [
   {
@@ -14,13 +16,6 @@ export default [
   {
     path: "/createtest",
     name: "Create Test",
-    meta: { authorize: [1] },
-    component: CreateTest,
-  },
-  {
-    path: "/edittest/:id",
-    name: "Edit Test",
-    props: true,
     meta: { authorize: [1] },
     component: CreateTest,
   },
@@ -44,5 +39,19 @@ export default [
     props: true,
     meta: { authorize: [1] },
     component: AnswerView,
+  },
+  {
+    path: "/cooperatorsview/:id",
+    name: "Cooperators View",
+    props: true,
+    meta: { authorize: [1] },
+    component: CooperatorsView,
+  },
+  {
+    path: "/edittest/:id",
+    name: "Edit Test",
+    props: true,
+    meta: { authorize: [1] },
+    component: CreateTest,
   },
 ];
