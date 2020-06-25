@@ -7,7 +7,7 @@
         </v-card-title>
       </v-row>
       <v-row>
-        <router-view></router-view>
+        <slot></slot>
       </v-row>
     </v-card>
   </v-row>
@@ -15,27 +15,27 @@
 
 <script>
 export default {
-  data: () => ({
-    items: [
+  props: ["testID"],
+  data: () => ({}),
+  created() {
+    
+    this.items = [
       {
         text: "Home",
         disabled: false,
-        href: "/"
+        href: "/",
       },
       {
         text: "Manager",
-        disabled: true,
-        href: "/managerview/"
+        disabled: false,
+        href: `/managerview/${this.testID}`
       },
       {
         text: "Link 1",
         disabled: true,
         href: "breadcrumbs_link_1"
       }
-    ]
-  }),
-  created(){
-    console.log(this.$route.params.pathMatch )
+    ];
   }
 };
 </script>
@@ -64,5 +64,4 @@ export default {
 
   background: #444444;
 }
-
 </style>

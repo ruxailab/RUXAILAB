@@ -31,7 +31,7 @@ export default {
       {
         title: "Preview",
         url: "Preview.svg",
-        path: `/testview/${this.test.id}`
+        path: `/testview/${this.test.id}`,
       },
       {
         title: "Reports",
