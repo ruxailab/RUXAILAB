@@ -1,62 +1,56 @@
 <template>
   <v-container style="display:contents">
-      <div style="height: 300px" class="background-orange background-img">
-        <v-row justify="center" class="fill-height ">
-          <v-col cols="10">
-            <v-text-field
-              class="mt-5"
-              label="Search"
-              prepend-inner-icon="mdi-magnify"
-              outlined
-              color="grey darken-2"
-              v-model="search"
-            ></v-text-field>
-            <v-tabs background-color="transparent" color="black" class="tab-border-bottom">
-              <v-tab @click="index = 0">My Tests</v-tab>
-              <v-tab @click="index = 1">Tests I colaborate with</v-tab>
-              <v-tab @click="index = 2">My Answers</v-tab>
-            </v-tabs>
+    <div style="height: 300px" class="background-orange background-img">
+      <v-row justify="center" class="fill-height">
+        <v-col cols="10">
+          <v-text-field
+            class="mt-5"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            outlined
+            color="grey darken-2"
+            v-model="search"
+          ></v-text-field>
+          <v-tabs background-color="transparent" color="black" class="tab-border-bottom">
+            <v-tab @click="index = 0">My Tests</v-tab>
+            <v-tab @click="index = 1">Tests I colaborate with</v-tab>
+            <v-tab @click="index = 2">My Answers</v-tab>
+          </v-tabs>
 
-            <!-- My Tests -->
-            <v-row v-if="index == 0" class="grid mx-8" justify="start">
-              <v-col md="4" sm="6" xs="12">
-                <CardNewTest />
-              </v-col>
-              <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
-                <CardTest :item="test"></CardTest>
-              </v-col>
-              <v-col v-if="filteredMyTests.length == 0">
-                <div class="text-center">No tests found.</div>
-              </v-col>
-            </v-row>
+          <!-- My Tests -->
+          <v-row v-if="index == 0" class="grid mx-8" justify="start">
+            <v-col md="4" sm="6" xs="12">
+              <CardNewTest />
+            </v-col>
+            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
+              <CardTest :item="test"></CardTest>
+            </v-col>
+          </v-row>
 
-            <!-- Tests I Colaborate With -->
-            <v-row justify="start" v-if="index == 1" class="grid mx-8">
-              <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
-                <CardTest :item="test"></CardTest>
-              </v-col>
+          <!-- Tests I Colaborate With -->
+          <v-row justify="start" v-if="index == 1" class="grid mx-8">
+            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
+              <CardTest :item="test"></CardTest>
+            </v-col>
 
-              <v-col v-if="filteredMyCoops.length == 0">
-                <div class="text-center">No tests found.</div>
-              </v-col>
-            </v-row>
+            <v-col v-if="filteredMyCoops.length == 0">
+              <div class="text-center">No tests found.</div>
+            </v-col>
+          </v-row>
 
-            <!-- My Answers -->
-            <v-row justify="start" v-if="index == 2" class="grid mx-8">
-              <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
-                <CardTest :item="test"></CardTest>
-              </v-col>
+          <!-- My Answers -->
+          <v-row justify="start" v-if="index == 2" class="grid mx-8">
+            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
+              <CardTest :item="test"></CardTest>
+            </v-col>
 
-              <v-col v-if="filteredMyAnswers.length == 0">
-                <div class="text-center">No tests found.</div>
-              </v-col>
-            </v-row>
-
-
-            <!-- here to leave some empty space under the cards-->
-          </v-col>
-        </v-row>
-</div>
+            <v-col v-if="filteredMyAnswers.length == 0">
+              <div class="text-center">No tests found.</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
@@ -162,8 +156,7 @@ export default {
 
   background-size: 300px auto;
   background-position: right 0px bottom 0px;
-  transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
-
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tab-border-bottom {
   border-bottom: 1px solid black;
