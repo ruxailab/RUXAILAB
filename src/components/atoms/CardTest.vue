@@ -154,7 +154,6 @@ export default {
   background-color: #fff;
   border-bottom: 2px solid transparent;
   margin: 0 16px 16px 0;
-
 }
 .bottomStart {
   position: absolute;
