@@ -30,20 +30,17 @@
           </v-list-item>
         </div>
 
-        <v-list flat dense>
-          <v-list-item-group v-model="itemSelect" color="#ffffff">
-            <v-list-item v-for="item in items" :key="item.title" link>
+        <v-list flat dense >
+            <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n">
               <v-list-item-icon>
-                <v-icon color="#fca326">{{ item.icon }}</v-icon>
+                <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title
-                  :style="{'color':item==itemSelect?'#ffffff':'#fca326'}"
-                >{{ item.title }}</v-list-item-title>
+              
+                <v-list-item-title :style="index == item.id? 'color: white': 'color:#fca326'">{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-          </v-list-item-group>
         </v-list>
 
         <!-- <template v-slot:append> -->
@@ -110,7 +107,7 @@ export default {
   props: ["id"],
   data: () => ({
     drawer: true,
-
+    index: 0,
     loading: true,
     tests: [],
     mini: true
@@ -141,29 +138,35 @@ export default {
       {
         title: "Manager",
         icon: "mdi-cog",
-        path: `/managerview/${this.test.id}`
+        path: `/managerview/${this.test.id}`,
+        id: 0
       },
       {
         title: "Preview",
         icon: "mdi-file-eye",
-        path: `/testview/${this.test.id}`
+        path: `/testview/${this.test.id}`,
+        id: 1
       },
       {
         title: "Reports",
         icon: "mdi-book-multiple",
-        path: `/reportview/${this.test.reports}`
+        path: `/reportview/${this.test.reports}`,
+        id: 2
       },
       {
         title: "Answers",
         icon: "mdi-chart-bar",
-        path: `/answerview/${this.test.answers}`
+        path: `/answerview/${this.test.answers}`,
+        id: 3
       },
       {
         title: "Colaborators",
         icon: "mdi-account-group",
-        path: `/coopsview/${this.test.id}`
+        path: `/coopsview/${this.test.id}`,
+        id: 4
       },
-      { title: "Edit", icon: "mdi-pencil", path: `/edittest/${this.test.id}` }
+      { title: "Edit", icon: "mdi-pencil", path: `/edittest/${this.test.id}`, id: 5}
+        
     ];
 
     this.itemSelect = {
