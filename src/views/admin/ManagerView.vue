@@ -9,10 +9,6 @@
         color="#3F3D56"
       >
         <v-list-item class="px-2">
-          <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-          </v-list-item-avatar>
-
           <v-list-item-title>John Leider</v-list-item-title>
 
           <v-btn icon @click.stop="mini = !mini">
@@ -25,11 +21,11 @@
         <v-list dense>
           <v-list-item v-for="item in items" :key="item.title" link>
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon color="#fca326">{{ item.icon }}</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title style="color:#fca326" >{{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -61,9 +57,12 @@ export default {
   data: () => ({
     drawer: true,
     items: [
-      { title: "Home", icon: "mdi-home-city" },
-      { title: "My Account", icon: "mdi-account" },
-      { title: "Users", icon: "mdi-account-group-outline" }
+      { title: "Manager", icon: "mdi-cog" },
+      { title: "Preview", icon: "mdi-file-eye" },
+      { title: "Reports", icon: "mdi-book-multiple" },
+      { title: "Answers", icon: "mdi-chart-bar" },
+      { title: "Colaborators", icon: "mdi-account-group" },
+      { title: "Edit", icon: "mdi-pencil" },
     ],
     mini: true
   }),
