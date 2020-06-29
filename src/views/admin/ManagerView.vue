@@ -1,8 +1,8 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
-    <v-row class="background" dense>
+  <v-container class="pa-0 ma-0" fluid >
+    <v-row class="nav pa-0 ma-0" dense >
       <v-navigation-drawer
-        class="nav"
+        clipped
         v-model="drawer"
         :mini-variant.sync="mini"
         permanent
@@ -34,8 +34,9 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-col class="pa-0 ma-0">
+      <v-col class="background pa-0 ma-0">
         <div class="background-top"></div>
+        <div v-for="n in 100" :key="n">{{n}}</div>
       </v-col>
     </v-row>
   </v-container>
@@ -66,7 +67,12 @@ export default {
     ],
     mini: true
   }),
-
+  computed: {
+    width() {
+      if (this.mini) return "100%";
+      else return "75%";
+    }
+  },
   created() {
     this.test = Object.assign(
       {},
@@ -112,11 +118,15 @@ export default {
 .background {
   background-color: #e8eaf2;
   height: 100vh;
+  overflow: auto;
 }
 .nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  overflow-y: none;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.background::-webkit-scrollbar {
+  display: none;
 }
 </style>
