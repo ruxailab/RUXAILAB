@@ -3,29 +3,28 @@
     <v-row class="nav pa-0 ma-0" dense>
       <v-navigation-drawer
         clipped
+        height="100%"
         v-model="drawer"
         :mini-variant.sync="mini"
         permanent
         color="#3F3D56"
       >
-        <v-list-item class="px-2" v-if="!mini">
-          <v-overflow-btn
-            dark
-            dense
-            v-model="selectedTest"
-            @change="pushToTest()"
-            item-value="id"
-            item-text="title"
-            :items="tests"
-            :loading="loading"
-            :label="test.title"
-            background-color="#3F3D56"
-          ></v-overflow-btn>
-
-          <!-- <v-btn icon @click.stop="mini = !mini">
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>-->
-        </v-list-item>
+        <div>
+          <v-list-item class="px-2" v-if="!mini">
+            <v-overflow-btn
+              dark
+              dense
+              v-model="selectedTest"
+              @change="pushToTest()"
+              item-value="id"
+              item-text="title"
+              :items="tests"
+              :loading="loading"
+              :label="test.title"
+              background-color="#3F3D56"
+            ></v-overflow-btn>
+          </v-list-item>
+        </div>
 
         <v-list dense>
           <v-list-item v-for="item in items" :key="item.title" link>
@@ -38,7 +37,24 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
+
+        <!-- <template v-slot:append> -->
+          <div class="footer" v-if="!mini">
+            <v-spacer></v-spacer>
+            <v-btn icon @click.stop="mini = !mini" class="mr-2">
+              <v-icon color="white">mdi-chevron-left</v-icon>
+            </v-btn>
+          </div>
+ 
+          <div class="footer" v-else>
+            <v-spacer></v-spacer>
+            <v-btn icon @click.stop="mini = !mini" class="mr-3">
+              <v-icon color="white">mdi-chevron-right</v-icon>
+            </v-btn>
+          </div>
+        <!-- </template> -->
       </v-navigation-drawer>
+
       <v-col class="background pa-0 ma-0">
         <div class="background-top">
           <v-row class="pa-5 ma-0">
@@ -193,5 +209,15 @@ export default {
   text-align: center;
   text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
   color: #ffffff;
+}
+.footer {
+  background-color: #343344;
+  height: 8%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  position: absolute;
+  bottom: 49px;
 }
 </style>
