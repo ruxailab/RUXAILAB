@@ -26,16 +26,19 @@
           </v-list-item>
         </div>
 
-        <v-list dense>
-          <v-list-item v-for="item in items" :key="item.title" link>
-            <v-list-item-icon>
-              <v-icon color="#fca326">{{ item.icon }}</v-icon>
-            </v-list-item-icon>
+        <v-list flat dense >
+          <v-list-item-group v-model="itemSelect" color="#ffffff">
+            <v-list-item v-for="item in items" :key="item.title" link>
+              <v-list-item-icon>
+                <v-icon color="#fca326" >{{ item.icon }}</v-icon>
+              </v-list-item-icon>
 
-            <v-list-item-content>
-              <v-list-item-title style="color:#fca326">{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item-content>
+              
+                <v-list-item-title :style="{'color':item==itemSelect?'#ffffff':'#fca326'}">{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
         </v-list>
 
         <!-- <template v-slot:append> -->
@@ -102,14 +105,7 @@ export default {
   props: ["id"],
   data: () => ({
     drawer: true,
-    items: [
-      { title: "Manager", icon: "mdi-cog" },
-      { title: "Preview", icon: "mdi-file-eye" },
-      { title: "Reports", icon: "mdi-book-multiple" },
-      { title: "Answers", icon: "mdi-chart-bar" },
-      { title: "Colaborators", icon: "mdi-account-group" },
-      { title: "Edit", icon: "mdi-pencil" }
-    ],
+
     loading: true,
     tests: [],
     mini: true
@@ -144,29 +140,40 @@ export default {
     }
   },
   created() {
-    this.cards = [
+    this.items = [
+      {
+        title: "Manager",
+        icon: "mdi-cog",
+        path: `/managerview/${this.test.id}`
+      },
       {
         title: "Preview",
-        url: "Preview.svg",
+        icon: "mdi-file-eye",
         path: `/testview/${this.test.id}`
       },
       {
         title: "Reports",
-        url: "Reports.svg",
+        icon: "mdi-book-multiple",
         path: `/reportview/${this.test.reports}`
       },
       {
         title: "Answers",
-        url: "Answers.svg",
+        icon: "mdi-chart-bar",
         path: `/answerview/${this.test.answers}`
       },
       {
-        title: "Cooperators",
-        url: "Coops.svg",
+        title: "Colaborators",
+        icon: "mdi-account-group",
         path: `/coopsview/${this.test.id}`
       },
-      { title: "Edit", url: "Edit.svg", path: `/edittest/${this.test.id}` }
+      { title: "Edit", icon: "mdi-pencil", path: `/edittest/${this.test.id}` }
     ];
+
+    this.itemSelect = {
+      title: "Manager",
+      icon: "mdi-cog",
+      path: `/managerview/${this.test.id}`
+    };
   },
   components: {
     // CardManager
