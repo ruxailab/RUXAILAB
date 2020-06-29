@@ -3,14 +3,14 @@
     <v-row class="nav pa-0 ma-0" dense>
       <v-navigation-drawer
         clipped
-        height="100%"
         v-model="drawer"
         :mini-variant.sync="mini"
         permanent
         color="#3F3D56"
       >
-        <div>
-          <v-list-item class="px-2" v-if="!mini">
+        <div class="header" v-if="!mini">
+          <div class="idText">{{test.id}}</div>
+          <v-list-item>
             <v-overflow-btn
               dark
               dense
@@ -21,7 +21,7 @@
               :items="tests"
               :loading="loading"
               :label="test.title"
-              background-color="#3F3D56"
+              background-color="#343344"
             ></v-overflow-btn>
           </v-list-item>
         </div>
@@ -39,19 +39,19 @@
         </v-list>
 
         <!-- <template v-slot:append> -->
-          <div class="footer" v-if="!mini">
-            <v-spacer></v-spacer>
-            <v-btn icon @click.stop="mini = !mini" class="mr-2">
-              <v-icon color="white">mdi-chevron-left</v-icon>
-            </v-btn>
-          </div>
- 
-          <div class="footer" v-else>
-            <v-spacer></v-spacer>
-            <v-btn icon @click.stop="mini = !mini" class="mr-3">
-              <v-icon color="white">mdi-chevron-right</v-icon>
-            </v-btn>
-          </div>
+        <div class="footer" v-if="!mini">
+          <v-spacer></v-spacer>
+          <v-btn icon @click.stop="mini = !mini" class="mr-2">
+            <v-icon color="white">mdi-chevron-left</v-icon>
+          </v-btn>
+        </div>
+
+        <div class="footer" v-else>
+          <v-spacer></v-spacer>
+          <v-btn icon @click.stop="mini = !mini" class="mr-3">
+            <v-icon color="white">mdi-chevron-right</v-icon>
+          </v-btn>
+        </div>
         <!-- </template> -->
       </v-navigation-drawer>
 
@@ -219,5 +219,14 @@ export default {
 
   position: absolute;
   bottom: 49px;
+}
+.header {
+  background-color: #343344;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.idText {
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 12px;
+  margin-left: 23px;
 }
 </style>
