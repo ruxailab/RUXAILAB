@@ -9,33 +9,38 @@
         color="#3F3D56"
       >
         <div class="header" v-if="!mini">
-          <div class="idText">{{test.id}}</div>
           <v-list-item>
-            <v-overflow-btn
-              dark
-              dense
-              v-model="selectedTest"
-              @change="pushToTest()"
-              item-value="id"
-              item-text="title"
-              :items="tests"
-              :loading="loading"
-              :label="test.title"
-              background-color="#343344"
-            ></v-overflow-btn>
+            <v-row dense>
+              <v-col class="pa-0 ma-0">
+                <div class="idText">{{test.id}}</div>
+                <v-overflow-btn
+                  class="pa-0 ma-0"
+                  dark
+                  dense
+                  v-model="selectedTest"
+                  @change="pushToTest()"
+                  item-value="id"
+                  item-text="title"
+                  :items="myTests"
+                  :label="test.title"
+                  background-color="#343344"
+                ></v-overflow-btn>
+              </v-col>
+            </v-row>
           </v-list-item>
         </div>
 
-        <v-list flat dense >
+        <v-list flat dense>
           <v-list-item-group v-model="itemSelect" color="#ffffff">
             <v-list-item v-for="item in items" :key="item.title" link>
               <v-list-item-icon>
-                <v-icon color="#fca326" >{{ item.icon }}</v-icon>
+                <v-icon color="#fca326">{{ item.icon }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
-              
-                <v-list-item-title :style="{'color':item==itemSelect?'#ffffff':'#fca326'}">{{ item.title }}</v-list-item-title>
+                <v-list-item-title
+                  :style="{'color':item==itemSelect?'#ffffff':'#fca326'}"
+                >{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -127,14 +132,6 @@ export default {
     }
   },
   watch: {
-    myTests() {
-      if (this.myTests) {
-        (this.loading = false),
-          this.myTests.forEach(test => {
-            this.tests.push({ title: test.title, id: test.id });
-          });
-      }
-    },
     test() {
       this.selectedTest = this.test;
     }
@@ -234,6 +231,11 @@ export default {
 .idText {
   color: rgba(255, 255, 255, 0.28);
   font-size: 12px;
-  margin-left: 23px;
+  margin-left: 15px;
+  padding: 0px;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  align-items: flex-end;
+  
 }
 </style>
