@@ -40,8 +40,29 @@
         </v-list>
       </v-navigation-drawer>
       <v-col class="background pa-0 ma-0">
-        <div class="background-top"></div>
-        <div v-for="n in 100" :key="n">{{n}}</div>
+        <div class="background-top">
+          <v-row class="pa-5 ma-0">
+            <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
+          </v-row>
+        </div>
+        <div>
+          <v-container class="content">
+            <v-row justify="space-around">
+              <v-col cols="6" v-for="n in 2" :key="n">
+                <v-card height="300px">
+                  <v-card-title>INFO</v-card-title>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row justify="space-around">
+              <v-col cols="4" v-for="n in 3" :key="n">
+                <v-card height="300px">
+                  <v-card-title>INFO</v-card-title>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -79,16 +100,18 @@ export default {
   }),
   methods: {
     pushToTest() {
-      this.$router.push('/managerview/' + this.selectedTest)
+      this.$router.push("/managerview/" + this.selectedTest);
     }
   },
   computed: {
-    width() {
-      if (this.mini) return "100%";
-      else return "75%";
-    },
     myTests() {
       return this.$store.state.auth.user.myTests;
+    },
+    test() {
+      return Object.assign(
+        {},
+        this.$store.state.auth.user.myTests.find(test => test.id == this.id)
+      );
     }
   },
   watch: {
@@ -96,18 +119,15 @@ export default {
       if (this.myTests) {
         (this.loading = false),
           this.myTests.forEach(test => {
-            this.tests.push({ title: test.title, id: test.id});
+            this.tests.push({ title: test.title, id: test.id });
           });
       }
+    },
+    test() {
+      this.selectedTest = this.test;
     }
   },
   created() {
-    this.test = Object.assign(
-      {},
-      this.$store.state.auth.user.myTests.find(test => test.id == this.id)
-    );
-    this.selectedTest = this.test;
-
     this.cards = [
       {
         title: "Preview",
@@ -146,8 +166,8 @@ export default {
 }
 .background {
   background-color: #e8eaf2;
-  height: 100vh;
-  overflow: auto;
+  height: 100%;
+  overflow: scroll;
 }
 .nav {
   position: fixed;
@@ -157,5 +177,21 @@ export default {
 }
 .background::-webkit-scrollbar {
   display: none;
+}
+.content {
+  position: relative;
+  top: -100px;
+  width: 80%;
+}
+.testTitle {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 45px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
 }
 </style>
