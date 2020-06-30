@@ -1,11 +1,14 @@
 <template>
   <v-card shaped class="card">
     <v-container>
-      <v-row justify="end" align="center">
+      <v-row justify="end">
         <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
           <template v-slot:activator="{ on, attrs }">
-            <v-col cols="2" class="button">
-              <v-btn icon v-bind="attrs" v-on="on" >
+            <v-col cols="9" align-self="start">
+          <h3>{{item.title}}</h3>
+        </v-col>
+            <v-col cols="2" class="mr-2">
+              <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
             </v-col>
@@ -37,10 +40,19 @@
             </v-list-item>
           </v-list>
         </v-menu>
+      
+        
+      </v-row>
 
-        <v-col cols="12" class="text" align-self="start">
-          <h3>{{item.title}}</h3>
+      <v-row class="bottomStart">
+        <v-col>
+          <v-icon  x-large>mdi-account-circle</v-icon>
+          <div class="text-center caption">{{new Date().toDateString()}}</div>
         </v-col>
+      </v-row>
+
+      <v-row class="bottomEnd">
+        <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
       </v-row>
     </v-container>
   </v-card>
@@ -146,34 +158,22 @@ export default {
 
 <style scoped>
 .card {
-  position: relative;
-  overflow: hidden;
-  width: 300px;
-  height: 250px;
-  border-radius: 29px;
-  z-index: 2;
+  max-width: 330px;
+  height: 200px;
+  border-radius: 3px;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
+  background-color: #fff;
+  border-bottom: 2px solid transparent;
+  margin: 0 16px 16px 0;
 }
-.card:before {
-  content: " ";
-  display: block;
+.bottomStart {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0.5;
-  z-index: -1;
-  background-image: url(../../assets/cardTest.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  transform: rotate(15deg);
+  bottom: 0%;
+  left: 5%;
 }
-.button {
-  margin-right: 10px;
-  margin-top: 10px;
-}
-.text {
-  margin-top: 0px;
-  padding-top: 0px;
+.bottomEnd {
+  position: absolute;
+  bottom: 11%;
+  right: 8%;
 }
 </style>
