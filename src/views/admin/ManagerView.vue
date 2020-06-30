@@ -30,20 +30,21 @@
           </v-list-item>
         </div>
 
-        <v-list flat dense >
-            <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n">
-              <v-list-item-icon>
-                <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-              </v-list-item-icon>
+        <v-list flat dense>
+          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item.path)">
+            <v-list-item-icon>
+              <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+            </v-list-item-icon>
 
-              <v-list-item-content>
-              
-                <v-list-item-title :style="index == item.id? 'color: white': 'color:#fca326'">{{ item.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            <v-list-item-content>
+              <v-list-item-title
+                :style="index == item.id? 'color: white': 'color:#fca326'"
+              >{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
 
-        <!-- <template v-slot:append> -->
+       
         <div class="footer" v-if="!mini">
           <v-spacer></v-spacer>
           <v-btn icon @click.stop="mini = !mini" class="mr-2">
@@ -57,51 +58,42 @@
             <v-icon color="white">mdi-chevron-right</v-icon>
           </v-btn>
         </div>
-        <!-- </template> -->
+   
       </v-navigation-drawer>
 
       <v-col class="background pa-0 ma-0">
-        <div class="background-top">
-          <v-row class="pa-5 ma-0">
-            <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
-          </v-row>
-        </div>
-        <div>
-          <v-container class="content">
-            <v-row justify="space-around">
-              <v-col cols="6" v-for="n in 2" :key="n">
-                <v-card height="300px">
-                  <v-card-title>INFO</v-card-title>
-                </v-card>
-              </v-col>
+        <div v-if="index == 0">
+          <div class="background-top">
+            <v-row class="pa-5 ma-0">
+              <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
             </v-row>
-            <v-row justify="space-around">
-              <v-col cols="4" v-for="n in 3" :key="n">
-                <v-card height="300px">
-                  <v-card-title>INFO</v-card-title>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
+          </div>
+          <div>
+            <v-container class="content">
+              <v-row justify="space-around">
+                <v-col cols="6" v-for="n in 2" :key="n">
+                  <v-card height="300px">
+                    <v-card-title>INFO</v-card-title>
+                  </v-card>
+                </v-col>
+              </v-row>
+              <v-row justify="space-around">
+                <v-col cols="4" v-for="n in 3" :key="n">
+                  <v-card height="300px">
+                    <v-card-title>INFO</v-card-title>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </div>
         </div>
+        <router-view v-else></router-view>
       </v-col>
     </v-row>
   </v-container>
-  <!-- <div class="fill-height background">
-    <v-container>
-      <v-row class="fill-height" justify="center" align="center" dense>
-        <v-col cols="4" v-for="(card,index) in cards" :key="index">
-          <v-row justify="center">
-            <CardManager :item="card" />
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>-->
 </template>
 
 <script>
-// import CardManager from "@/components/atoms/CardManager";
 
 export default {
   props: ["id"],
@@ -115,6 +107,9 @@ export default {
   methods: {
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
+    },
+    go(path){
+      this.$router.push(path)
     }
   },
   computed: {
@@ -124,7 +119,7 @@ export default {
     test() {
       return Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find(test => test.id == this.id)
+        this.$store.state.auth.user.myTests.find(test => Object.values(test).includes(this.id))
       );
     }
   },
@@ -165,8 +160,12 @@ export default {
         path: `/coopsview/${this.test.id}`,
         id: 4
       },
-      { title: "Edit", icon: "mdi-pencil", path: `/edittest/${this.test.id}`, id: 5}
-        
+      {
+        title: "Edit",
+        icon: "mdi-pencil",
+        path: `/edittest/${this.test.id}`,
+        id: 5
+      }
     ];
 
     this.itemSelect = {
@@ -175,16 +174,13 @@ export default {
       path: `/managerview/${this.test.id}`
     };
   },
-  components: {
-    // CardManager
-  }
 };
 </script>
 
 <style>
 .background-top {
   background-color: #fca326;
-  height: 45%;
+  height: 45vh;
   width: 100%;
 }
 .background {
@@ -239,6 +235,5 @@ export default {
   margin-bottom: 0px;
   margin-top: 20px;
   align-items: flex-end;
-  
 }
 </style>
