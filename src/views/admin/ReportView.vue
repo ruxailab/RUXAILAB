@@ -4,7 +4,7 @@
       <v-col cols="12" class="titleView">Reports</v-col>
       <v-col cols="12" class="pb-0 mb-0">
         <v-row justify="end" dense>
-          <p class="subtitleView">Last Updated: Jun 30th 2020 - 10:46</p>
+          <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
         </v-row>
       </v-col>
     </v-row>
@@ -30,9 +30,14 @@
               <v-icon large>mdi-email</v-icon>
             </v-btn>
           </template>
-          <FormCooperation :invitations="invitations" type="tester" />
-          <v-btn text @click="close">Cancel</v-btn>
-          <v-btn text @click="save">Send</v-btn>
+
+          <v-card>
+            <v-container>
+              <FormCooperation class="cardReport" :invitations="invitations" type="tester" />
+              <v-btn text @click="close">Cancel</v-btn>
+              <v-btn text @click="save">Send</v-btn>
+            </v-container>
+          </v-card>
         </v-dialog>
       </v-col>
     </v-row>
@@ -206,6 +211,9 @@ export default {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
-  margin: 5px;
+  margin: 10px;
+}
+.cardReport {
+  box-shadow: 0px;
 }
 </style>
