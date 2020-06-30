@@ -185,7 +185,7 @@ export default {
 }
 .background {
   background-color: #e8eaf2;
-  height: 100%;
+  height: 94%;
   overflow: scroll;
 }
 .nav {

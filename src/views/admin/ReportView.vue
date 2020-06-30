@@ -1,9 +1,18 @@
 <template>
-  <LayoutTestFunctions :testID="test.id">
-    <v-row class="container">
-      <v-col>
+  <v-container>
+    <v-row justify="space-around">
+      <v-col cols="12" class="titleView">Reports</v-col>
+      <v-col cols="12" class="pb-0 mb-0">
+        <v-row justify="end" dense>
+          <p class="subtitleView">Last Updated: Jun 30th 2020 - 10:46</p>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
+    <v-row justify="center">
+      <v-col cols="10">
         <v-data-table
-          class="cardReport"
+          class="datatable"
           :headers="headers"
           :items="reports.reports"
           :items-per-page="5"
@@ -17,8 +26,8 @@
 
         <v-dialog v-model="dialog" color="white" max-width="600px">
           <template v-slot:activator="{ on }">
-            <v-btn large dark fab fixed bottom right color="primary" v-on="on">
-              <v-icon>mdi-email</v-icon>
+            <v-btn large dark fab fixed bottom right color="#F9A826" v-on="on">
+              <v-icon large>mdi-email</v-icon>
             </v-btn>
           </template>
           <FormCooperation :invitations="invitations" type="tester" />
@@ -27,17 +36,17 @@
         </v-dialog>
       </v-col>
     </v-row>
-  </LayoutTestFunctions>
+  </v-container>
 </template>
 
 <script>
-import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
+// import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
 import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
   components: {
-    FormCooperation,
-    LayoutTestFunctions
+    FormCooperation
+    // LayoutTestFunctions
   },
   data: () => ({
     invitations: [],
@@ -50,7 +59,7 @@ export default {
       },
       { text: "Tester", value: "email" },
       { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "log.progress" },
+      { text: "Progress", value: "log.progress", justify: "center" },
       { text: "Status", value: "log.status" },
       { text: "Actions", value: "actions" }
     ],
@@ -172,23 +181,31 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  position: relative;
-  padding: 0px;
-  margin: 0px;
-  top: 0%;
-  right: 0%;
-  left: 0%;
-  height: 500px;
+.titleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
 }
-.cardReport {
-  position: absolute;
-  padding: 0px 10px 0px;
-  margin: 0px;
-  top: 0%;
-  right: 0%;
-  left: 0%;
-  height: 500px;
-  background: #e6e4e4;
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.datatable {
+  background: #f5f7ff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 5px;
 }
 </style>

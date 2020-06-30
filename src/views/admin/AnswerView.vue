@@ -1,6 +1,5 @@
 <template >
-  <LayoutTestFunctions :testID="test.id">
-  
+ 
     <v-row class="container">
       <v-col>
         <v-overlay :value="loading">
@@ -121,11 +120,11 @@
         </v-row>
       </v-col>
     </v-row>
-  </LayoutTestFunctions>
+
 </template>
 
 <script>
-import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
+// import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
 import QuestionChart from "@/components/atoms/QuestionChart.vue";
 import BarChat from "@/components/atoms/BarChat.vue";
 export default {
@@ -133,7 +132,7 @@ export default {
   components: {
     QuestionChart,
     BarChat,
-    LayoutTestFunctions
+    // LayoutTestFunctions
   },
   data: () => ({
     search: "",
