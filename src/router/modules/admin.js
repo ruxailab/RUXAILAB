@@ -5,7 +5,6 @@ import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 
-
 export default [
   {
     path: "/",
@@ -25,20 +24,29 @@ export default [
     meta: { authorize: [1] },
     component: ManagerView,
     props: true,
-  },
-  {
-    path: "/reportview/:id",
-    name: "Report View",
-    props: true,
-    meta: { authorize: [1] },
-    component: ReportView,
-  },
-  {
-    path: "/answerview/:id",
-    name: "Answer View",
-    props: true,
-    meta: { authorize: [1] },
-    component: AnswerView,
+    children: [
+      {
+        path: "/reportview/:id",
+        name: "Report View",
+        props: true,
+        meta: { authorize: [1] },
+        component: ReportView,
+      },
+      {
+        path: "/answerview/:id",
+        name: "Answer View",
+        props: true,
+        meta: { authorize: [1] },
+        component: AnswerView,
+      },
+      {
+        path: "/edittest/:id",
+        name: "Edit Test",
+        props: true,
+        meta: { authorize: [1] },
+        component: CreateTest,
+      },
+    ],
   },
   {
     path: "/cooperatorsview/:id",
