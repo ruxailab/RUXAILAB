@@ -40,7 +40,7 @@ export default [
     component: Home,
   },
   {
-    path: "/landing",
+    path: "/",
     name: "Landing",
     meta: { authorize: [] },
     component: LandingPage,

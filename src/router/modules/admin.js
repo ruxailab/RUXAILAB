@@ -7,7 +7,7 @@ import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 
 export default [
   {
-    path: "/",
+    path: "/testslist",
     name: "TestList",
     meta: { authorize: [1] },
     component: TestList,

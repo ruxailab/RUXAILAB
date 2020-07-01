@@ -470,7 +470,7 @@ export default {
   watch: {
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
-        this.$router.push("/");
+        this.$router.push("/testslist");
     },
     testEdit: async function() {
       if (this.testEdit !== null && this.testEdit !== undefined) {

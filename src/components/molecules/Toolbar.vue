@@ -25,14 +25,14 @@ export default {
   data: () => ({}),
   methods: {
     moveHome() {
-      this.$router.push("/");
+      this.$router.push("/testslist");
     },
     moveSignIn() {
       this.$router.push("/signin");
     },
     async signOut() {
       this.$store.dispatch("logout").then(() => {
-        this.$router.push("/landing");
+        this.$router.push("/");
       });
     }
   },

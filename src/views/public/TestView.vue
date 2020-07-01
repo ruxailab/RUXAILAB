@@ -109,7 +109,7 @@ export default {
         } else this.preTest = true;
       } else {
         if (this.el < 4) this.el = Number(this.el) + 1;
-        else this.$router.push("/");
+        else this.$router.push("/testslist");
       }
     },
     backStep() {

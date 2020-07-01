@@ -122,7 +122,7 @@ export default {
       );
     },
     index(){
-      if(this.items && this.items > 0)
+      if(this.items)
         return this.items.indexOf(this.items.find(item => item.path.includes(this.$route.path)))
       return 0
     }

@@ -54,7 +54,7 @@ export default {
                 password: this.password
             })
             if(this.user) {
-              this.$router.push('/');
+              this.$router.push('/testslist');
             }
         }
     },
