@@ -67,11 +67,26 @@
             </v-col>
             <v-col cols="12" class="mt-3">
               <v-card-title class="subtitleView">Heuristics Data</v-card-title>
+
               <v-divider></v-divider>
+
+              <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+                <v-tab
+                  class="tab-text"
+                  style="text-transform: none !important"
+                  @click="ind = 0"
+                >Table</v-tab>
+                <v-tab
+                  class="tab-text"
+                  style="text-transform: none !important"
+                  @click="ind = 1"
+                >Graphic</v-tab>
+              </v-tabs>
+
               <v-row justify="center">
                 <v-col cols="10">
                   <v-row>
-                    <v-col cols="12">
+                    <v-col cols="12" v-if="ind == 0">
                       <v-data-table
                         :headers="headersHeuris"
                         :items="dataHeuris"
@@ -79,7 +94,7 @@
                         class="elevation-1 cardStyle"
                       ></v-data-table>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="12" v-if="ind == 1">
                       <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
                     </v-col>
                   </v-row>
@@ -88,8 +103,9 @@
             </v-col>
           </v-row>
         </v-card>
+
         <v-card v-if="index==1" class="dataCard">
-          <v-row dense justify="space-around" class="pa-0 ma-0">
+          <v-row dense justify="start" class="pa-0 ma-0">
             <v-col cols="2" class="pa-2 ma-0">
               <div class="subtitleView">HEURISTICS</div>
               <v-divider></v-divider>
@@ -164,6 +180,7 @@ export default {
   },
   data: () => ({
     index: 0,
+    ind: 0,
     open: false,
     search: "",
     heurisSelected: null,
@@ -399,6 +416,15 @@ export default {
 .cardAnswers {
   background: #e6e4e4;
   border-radius: 34px;
+}
+
+.tab-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: center;
+  color: #000000;
 }
 
 .container {
