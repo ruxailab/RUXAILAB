@@ -19,55 +19,64 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-card v-if="index==0" class="dataCard">
-          <v-card-title>Statistics</v-card-title>
+          <v-card-title class="subtitleView">Statistics</v-card-title>
+          <v-divider></v-divider>
           <v-row justify="space-around">
-            <v-col cols="4">
-              <v-card width="250">
-                <v-row justify="center">
-                  <v-card-title>Test's average</v-card-title>
-                  <v-card-text>
-                    <v-row align="center" justify="center">
-                      <p class="display-3">{{testData.average}}</p>
+            <v-col cols="10">
+              <v-card class="cardStyle">
+                <v-row justify="space-around">
+                  <v-col cols="4">
+                    <v-row justify="center">
+                      <v-card-title>Test's average</v-card-title>
+                      <v-card-text>
+                        <v-row align="center" justify="center">
+                          <p class="display-3">{{testData.average}}</p>
+                        </v-row>
+                      </v-card-text>
                     </v-row>
-                  </v-card-text>
-                </v-row>
-                <v-list class="transparent">
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
-                    </v-list-item-icon>
+                  </v-col>
+                  <v-divider vertical></v-divider>
+                  <v-col>
+                    <v-list class="transparent">
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                        </v-list-item-icon>
 
-                    <v-list-item-title>Max</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Min</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-plus-minus</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Standard deviation</v-list-item-title>
-                    <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
-                  </v-list-item>
-                </v-list>
+                        <v-list-item-title>Max</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Min</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-plus-minus</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Standard deviation</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                </v-row>
               </v-card>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="mt-3">
+              <v-card-title class="subtitleView">Heuristics Data</v-card-title>
+              <v-divider></v-divider>
               <v-row justify="center">
                 <v-col cols="10">
-                  <v-card-title>Heuristics Data</v-card-title>
                   <v-row>
                     <v-col cols="12">
                       <v-data-table
                         :headers="headersHeuris"
                         :items="dataHeuris"
                         :items-per-page="5"
-                        class="elevation-1"
+                        class="elevation-1 cardStyle"
                       ></v-data-table>
                     </v-col>
                     <v-col cols="12">
@@ -92,7 +101,7 @@
                 >Heuristic {{i + 1}}</v-list-item>
               </v-list>
             </v-col>
-            <v-divider vertical></v-divider>
+            <v-divider vertical inset style="height:530px"></v-divider>
             <v-col v-if="open" cols="2" class="pa-2 ma-0">
               <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
               <v-divider></v-divider>
@@ -105,8 +114,8 @@
                 >Question {{i + 1}}</v-list-item>
               </v-list>
             </v-col>
-            <v-divider v-if="open" vertical></v-divider>
-            <v-col cols="6">
+            <v-divider v-if="open" vertical inset></v-divider>
+            <v-col cols="7" class="pa-2 ma-0" style="width:100%">
               <div v-if="dataSelected != null">
                 <div class="subtitleView" v-if="dataSelected != -1">QUESTION {{dataSelected+1}}</div>
                 <div class="subtitleView" v-else>Data Table</div>
@@ -119,7 +128,12 @@
                       label="Search"
                       v-model="search"
                     ></v-text-field>
-                    <v-data-table class="ma-2" :headers="headers" :items="items" :search="search"></v-data-table>
+                    <v-data-table
+                      class="elevation-1 cardStyle"
+                      :headers="headers"
+                      :items="items"
+                      :search="search"
+                    ></v-data-table>
                   </v-col>
                   <v-col class="mx-3" v-else>
                     <v-row justify="center">
@@ -149,7 +163,7 @@ export default {
     BarChart
   },
   data: () => ({
-    index: 1,
+    index: 0,
     open: false,
     search: "",
     heurisSelected: null,
@@ -273,19 +287,21 @@ export default {
 
       //Set Data
       this.testData = {
-        average: Math.fround(ResultTest / answers.length),
-        max: Math.max(...answersResults.values()),
-        min: Math.min(...answersResults.values()),
-        sd: this.standardDeviation([...answersResults.values()])
+        average: Math.fround(ResultTest / answers.length).toFixed(2),
+        max: Math.max(...answersResults.values()).toFixed(2),
+        min: Math.min(...answersResults.values()).toFixed(2),
+        sd: this.standardDeviation([...answersResults.values()]).toFixed(2)
       };
 
       for (var [key, list] of heurisResults.entries()) {
         this.dataHeuris.push({
           name: key,
-          max: Math.max(...list),
-          min: Math.min(...list),
-          sd: this.standardDeviation(list),
-          average: list.reduce((total, value) => total + value / list.length, 0)
+          max: Math.max(...list).toFixed(2),
+          min: Math.min(...list).toFixed(2),
+          sd: this.standardDeviation(list).toFixed(2),
+          average: list
+            .reduce((total, value) => total + value / list.length, 0)
+            .toFixed(2)
         });
       }
 
@@ -367,16 +383,24 @@ export default {
   border-radius: 4px;
   margin: 10px;
   padding-bottom: 10px;
+  min-height: 550px;
 }
 
 .scroll {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.cardStyle {
+  background-color: transparent;
+  border: 0.2px solid rgba(0, 0, 0, 0.25);
+}
+
 .cardAnswers {
   background: #e6e4e4;
   border-radius: 34px;
 }
+
 .container {
   height: 400px;
   padding: 0px;
