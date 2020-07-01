@@ -44,7 +44,6 @@
           </v-list-item>
         </v-list>
 
-       
         <div class="footer" v-if="!mini">
           <v-spacer></v-spacer>
           <v-btn icon @click.stop="mini = !mini" class="mr-2">
@@ -58,7 +57,6 @@
             <v-icon color="white">mdi-chevron-right</v-icon>
           </v-btn>
         </div>
-   
       </v-navigation-drawer>
 
       <v-col class="background pa-0 ma-0">
@@ -94,7 +92,6 @@
 </template>
 
 <script>
-
 export default {
   props: ["id"],
   data: () => ({
@@ -108,8 +105,8 @@ export default {
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
     },
-    go(path){
-      this.$router.push(path)
+    go(path) {
+      this.$router.push(path);
     }
   },
   computed: {
@@ -119,13 +116,59 @@ export default {
     test() {
       return Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find(test => Object.values(test).includes(this.id))
+        this.$store.state.auth.user.myTests.find(test =>
+          Object.values(test).includes(this.id)
+        )
       );
     }
   },
   watch: {
     test() {
       this.selectedTest = this.test;
+      this.items = [
+        {
+          title: "Manager",
+          icon: "mdi-cog",
+          path: `/managerview/${this.test.id}`,
+          id: 0
+        },
+        {
+          title: "Preview",
+          icon: "mdi-file-eye",
+          path: `/testview/${this.test.id}`,
+          id: 1
+        },
+        {
+          title: "Reports",
+          icon: "mdi-book-multiple",
+          path: `/reportview/${this.test.reports}`,
+          id: 2
+        },
+        {
+          title: "Answers",
+          icon: "mdi-chart-bar",
+          path: `/answerview/${this.test.answers}`,
+          id: 3
+        },
+        {
+          title: "Colaborators",
+          icon: "mdi-account-group",
+          path: `/coopsview/${this.test.id}`,
+          id: 4
+        },
+        {
+          title: "Edit",
+          icon: "mdi-pencil",
+          path: `/edittest/${this.test.id}`,
+          id: 5
+        }
+      ];
+
+      this.itemSelect = {
+        title: "Manager",
+        icon: "mdi-cog",
+        path: `/managerview/${this.test.id}`
+      };
     }
   },
   created() {
@@ -173,7 +216,7 @@ export default {
       icon: "mdi-cog",
       path: `/managerview/${this.test.id}`
     };
-  },
+  }
 };
 </script>
 
