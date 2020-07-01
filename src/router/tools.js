@@ -20,7 +20,7 @@ export async function autoSignIn(){
 export function redirect() {
   if (!store.state.auth.user) {
     //se nao tiver logado mandar pro signin
-    return "/signin";
+    return "/landing";
   }
 
   let level = store.state.auth.user.accessLevel;
