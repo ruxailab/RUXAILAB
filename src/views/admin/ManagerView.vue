@@ -60,7 +60,7 @@
       </v-navigation-drawer>
 
       <v-col class="background pa-0 ma-0">
-        <div v-if="index == 0">
+        <div v-if="this.$route.path.includes('manager')">
           <div class="background-top">
             <v-row class="pa-5 ma-0">
               <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
@@ -96,7 +96,6 @@ export default {
   props: ["id"],
   data: () => ({
     drawer: true,
-    index: 0,
     loading: true,
     tests: [],
     mini: true
@@ -104,6 +103,7 @@ export default {
   methods: {
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
+      this.index = 0
     },
     go(path) {
       this.$router.push(path);
@@ -120,6 +120,11 @@ export default {
           Object.values(test).includes(this.id)
         )
       );
+    },
+    index(){
+      if(this.items && this.items > 0)
+        return this.items.indexOf(this.items.find(item => item.path.includes(this.$route.path)))
+      return 0
     }
   },
   watch: {
@@ -163,13 +168,8 @@ export default {
           id: 5
         }
       ];
-
-      this.itemSelect = {
-        title: "Manager",
-        icon: "mdi-cog",
-        path: `/managerview/${this.test.id}`
-      };
     }
+  
   },
   created() {
     this.items = [
