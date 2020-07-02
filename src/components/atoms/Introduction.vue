@@ -1,18 +1,18 @@
 <template>
   <section>
-    <v-container style="display:contents">
-      <v-img src="@/assets/introduction.svg">
-        <v-container fluid>
+    <v-container style="display:contents; background-color:#f4b700; height:300px" >
+      <v-img src="@/assets/introduction.svg" class="hidden-sm-and-down">
+        <v-container>
           <!-- ver se prefere no meio ou em cima -> so add fill-height no container -->
-          <v-row align="center" class="mb-5">
-            <v-col class="text-left" cols="12" sm="6">
-              <h1 class="display-3 font-weight-regular mb-4 white--text">Research Workflow</h1>
-              <h4 class="display-1 white--text mb-4">Researching has never been easier!</h4>
-              <h5
+          <v-row align="center" class="mb-10">
+            <v-col class="text-left " cols="12" sm="6">
+              <h1 class="display-3 font-weight-regular mb-4 white--text">UX Remote LAB</h1>
+              <h4 class="display-1 white--text mb-4">What about doing Usability Tests in remote?</h4>
+              <p
                 class="white--text mb-4"
                 style="width: 80%"
                 align="justify"
-              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h5>
+              >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
               <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
             </v-col>
           </v-row>
