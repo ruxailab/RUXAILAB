@@ -18,18 +18,18 @@
           </v-tabs>
 
           <!-- My Tests -->
-          <v-row v-if="index == 0" class="grid mx-8" justify="start">
-            <v-col md="4" sm="6" xs="12">
+          <v-row v-if="index == 0" :class="`grid mx-2`">
+            <v-col cols="12" sm="6" md="4">
               <CardNewTest />
             </v-col>
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
           </v-row>
 
           <!-- Tests I Colaborate With -->
-          <v-row justify="start" v-if="index == 1" class="grid mx-8">
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
+          <v-row justify="start" v-if="index == 1" class="grid mx-2">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
@@ -39,8 +39,8 @@
           </v-row>
 
           <!-- My Answers -->
-          <v-row justify="start" v-if="index == 2" class="grid mx-8">
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
+          <v-row justify="start" v-if="index == 2" class="grid mx-2">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
