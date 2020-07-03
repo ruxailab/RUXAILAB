@@ -57,7 +57,7 @@ export default {
     },
     async removeObject(_, payload) {
       try {
-        console.log('bbbb', payload);
+        console.log("bbbb", payload);
         var docRef = await api.database.removeArray(payload);
         return docRef;
       } catch (err) {
@@ -72,12 +72,12 @@ export default {
         console.error("Error", err);
       }
     },
-    async updateArrayElement(_,payload){
+    async updateArrayElement(_, payload) {
       try {
         let docRef = await api.database.updateArrayElement(payload);
         return docRef;
       } catch (err) {
-        console.log("Error",err)
+        console.log("Error", err);
       }
     },
     async callFunction(_, payload) {
@@ -87,12 +87,12 @@ export default {
         console.error("Error calling the function:  ", err);
       }
     },
-    async setParamInObject(_,payload){
+    async setParamInObject(_, payload) {
       try {
-        await api.database.setParam(payload)
+        await api.database.setParam(payload);
       } catch (err) {
-        console.error("Error", err )
+        console.error("Error", err);
       }
-    }
+    },
   },
 };
