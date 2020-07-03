@@ -25,7 +25,7 @@
           </v-tabs>
 
           <!-- Mobile Button -->
-          <v-select dense v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
+          <v-select dense outlined v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
 
           <!-- My Tests -->
           <v-row v-if="index == 0" :class="`grid mx-2`">
