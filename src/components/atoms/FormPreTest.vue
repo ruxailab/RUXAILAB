@@ -29,6 +29,7 @@ export default {
   data: () => ({
     googleLinkRules: [
       v =>
+        v == null ||
         v == "" ||
         v.indexOf("https://docs.google.com/forms/") == 0 ||
         v.indexOf("docs.google.com/forms/") == 0 ||

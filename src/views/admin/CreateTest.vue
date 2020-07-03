@@ -45,7 +45,7 @@
           </v-stepper-content>
           <v-stepper-content step="3">
             <v-container v-if="test.type === 'User'">
-              <ListTasks :tasks="tasks" />
+              <ListTasks  />
             </v-container>
             <v-container v-if="test.type === 'Expert'">
               <Heuristic :heuristics="heuristics" :answersSheet="answersSheet" />

@@ -1,4 +1,5 @@
 import CreateTest from "@/views/admin/CreateTest.vue";
+import EditTest from "@/views/admin/EditTest.vue";
 import TestList from "@/views/admin/TestList.vue";
 import AnswerView from "@/views/admin/AnswerView.vue";
 import ManagerView from "@/views/admin/ManagerView.vue";
@@ -44,7 +45,7 @@ export default [
         name: "Edit Test",
         props: true,
         meta: { authorize: [1] },
-        component: CreateTest,
+        component: EditTest,
       },
     ],
   },
@@ -55,11 +56,5 @@ export default [
     meta: { authorize: [1] },
     component: CooperatorsView,
   },
-  {
-    path: "/edittest/:id",
-    name: "Edit Test",
-    props: true,
-    meta: { authorize: [1] },
-    component: CreateTest,
-  },
+
 ];

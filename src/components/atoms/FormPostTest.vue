@@ -7,7 +7,8 @@
           label="Form"
           v-model="postTest"
           :rules="googleLinkRules"
-          outlined dense
+          outlined
+          dense
         ></v-text-field>
       </v-col>
     </v-row>
@@ -20,6 +21,7 @@ export default {
   data: () => ({
     googleLinkRules: [
       v =>
+        v == null ||
         v == "" ||
         v.indexOf("https://docs.google.com/forms/") == 0 ||
         v.indexOf("docs.google.com/forms/") == 0 ||
@@ -29,7 +31,7 @@ export default {
   methods: {
     valida() {
       let valid = this.$refs.form.validate();
-      this.$emit('valForm', valid, 2);      
+      this.$emit("valForm", valid, 2);
     }
   }
 };
