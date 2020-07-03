@@ -45,17 +45,28 @@
         </v-list>
 
         <div class="footer" v-if="!mini">
+          <v-btn icon @click.stop class="ml-3">
+            <v-icon color="white">mdi-cog</v-icon>
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn icon @click.stop="mini = !mini" class="mr-2">
             <v-icon color="white">mdi-chevron-left</v-icon>
           </v-btn>
         </div>
 
-        <div class="footer" v-else>
-          <v-spacer></v-spacer>
-          <v-btn icon @click.stop="mini = !mini" class="mr-3">
-            <v-icon color="white">mdi-chevron-right</v-icon>
-          </v-btn>
+        <div class="footer" style="height:16%" v-else>
+          <v-list class="mt-0 pa-0">
+            <v-list-item class="pt-0">
+              <v-list-item-icon @click.stop>
+                <v-icon color="white">mdi-cog</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-icon @click.stop="mini = !mini">
+                <v-icon color="white">mdi-chevron-right</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list>
         </div>
       </v-navigation-drawer>
 
@@ -103,7 +114,7 @@ export default {
   methods: {
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
-      this.index = 0
+      this.index = 0;
     },
     go(path) {
       this.$router.push(path);
@@ -121,10 +132,12 @@ export default {
         )
       );
     },
-    index(){
-      if(this.items)
-        return this.items.indexOf(this.items.find(item => item.path.includes(this.$route.path)))
-      return 0
+    index() {
+      if (this.items)
+        return this.items.indexOf(
+          this.items.find(item => item.path.includes(this.$route.path))
+        );
+      return 0;
     }
   },
   watch: {
@@ -133,87 +146,86 @@ export default {
       this.items = [
         {
           title: "Manager",
-          icon: "mdi-cog",
+          icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
           id: 0
+        },
+        {
+          title: "Test",
+          icon: "mdi-file-document-edit",
+          path: `/edittest/${this.test.id}`,
+          id: 1
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 1
+          id: 2
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 2
+          id: 3
         },
         {
           title: "Answers",
           icon: "mdi-chart-bar",
           path: `/answerview/${this.test.answers}`,
-          id: 3
+          id: 4
         },
         {
           title: "Colaborators",
           icon: "mdi-account-group",
           path: `/coopsview/${this.test.id}`,
-          id: 4
-        },
-        {
-          title: "Edit",
-          icon: "mdi-pencil",
-          path: `/edittest/${this.test.id}`,
           id: 5
         }
       ];
     }
-  
   },
   created() {
     this.items = [
       {
         title: "Manager",
-        icon: "mdi-cog",
+        icon: "mdi-home",
         path: `/managerview/${this.test.id}`,
         id: 0
+      },
+      {
+        title: "Test",
+        icon: "mdi-file-document-edit",
+        path: `/edittest/${this.test.id}`,
+        id: 1
       },
       {
         title: "Preview",
         icon: "mdi-file-eye",
         path: `/testview/${this.test.id}`,
-        id: 1
+        id: 2
       },
       {
         title: "Reports",
         icon: "mdi-book-multiple",
         path: `/reportview/${this.test.reports}`,
-        id: 2
+        id: 3
       },
       {
         title: "Answers",
         icon: "mdi-chart-bar",
         path: `/answerview/${this.test.answers}`,
-        id: 3
+        id: 4
       },
       {
         title: "Colaborators",
         icon: "mdi-account-group",
         path: `/coopsview/${this.test.id}`,
-        id: 4
-      },
-      {
-        title: "Edit",
-        icon: "mdi-pencil",
-        path: `/edittest/${this.test.id}`,
         id: 5
       }
     ];
 
     this.itemSelect = {
       title: "Manager",
-      icon: "mdi-cog",
+      icon: "mdi-home",
       path: `/managerview/${this.test.id}`
     };
   }
