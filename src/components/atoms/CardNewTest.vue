@@ -162,12 +162,18 @@ export default {
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
 
-      // //assigning pre-test info
+      //assigning pre-test info
       // this.object.preTest.consent =
       //   this.preTest.consent === "" ? null : this.preTest.consent;
       // this.object.preTest.form =
       //   this.preTest.form === "" ? null : this.preTest.form;
-      // // this.object = Object.assign(this.object, this.preTest);
+      this.object = Object.assign(this.object, {
+        preTest: {
+          consent: null,
+          form: null
+        }
+      });
+      // this.object = Object.assign(this.object, this.preTest);
 
       // if (
       //   this.object.preTest.form === null &&
@@ -176,15 +182,22 @@ export default {
       //   this.object.preTest = null;
       // }
 
-      // //assigning tasks/heuristics
-      // if (this.test.type === "User") {
-      //   this.object.tasks = Array.from(this.tasks);
-      // } else if (this.test.type === "Expert") {
-      //   this.object.heuristics = Array.from(this.heuristics);
-      //   Object.assign(this.object, { answersSheet: this.answersSheet });
-      // }
+      //assigning tasks/heuristics
+      if (this.test.type === "User") {
+        // this.object.tasks = Array.from(this.tasks);
+        this.object = Object.assign(this.object, { tasks: null });
+      } else if (this.test.type === "Expert") {
+        // this.object.heuristics = Array.from(this.heuristics);
+        // Object.assign(this.object, { answersSheet: this.answersSheet });
+        this.object = Object.assign(this.object, {
+          heuristics: null,
+          answersSheet: null
+        });
+      }
 
+      //assigning post test
       // this.object.postTest = this.postTest === "" ? null : this.postTest;
+      this.object = Object.assign(this.object, { postTest: null });
 
       // //assigning cooperations
       // if (this.id !== null && this.id !== undefined) {
@@ -241,7 +254,7 @@ export default {
 
       //   this.object.coop = this.testEdit.coop;
       // }
-
+      this.object = Object.assign(this.object, { coop: [] });
       console.log(this.object);
     }
   },
@@ -252,6 +265,7 @@ export default {
         description: "",
         type: ""
       };
+      this.object = {}
     }
   },
   computed: {
