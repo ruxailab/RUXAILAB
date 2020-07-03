@@ -3,7 +3,6 @@
     <v-container style="display:contents">
       <v-img src="@/assets/introduction.svg">
         <v-container fluid>
-          <!-- ver se prefere no meio ou em cima -> so add fill-height no container -->
           <v-row align="center" class="mb-5">
             <v-col class="text-left" cols="12" sm="6">
               <h1 class="display-3 font-weight-regular mb-4 white--text">Research Workflow</h1>
