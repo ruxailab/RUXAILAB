@@ -8,6 +8,7 @@
           label="Consent"
           v-model="preTest.consent"
           :rules="googleLinkRules"
+          @change="$emit('change')"
           outlined dense
         ></v-text-field>
         <v-text-field
@@ -15,6 +16,7 @@
           label="Form"
           v-model="preTest.form"
           :rules="googleLinkRules"
+          @change="$emit('change')"
           outlined dense
         ></v-text-field>
       </v-card-text>

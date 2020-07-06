@@ -37,7 +37,7 @@
                 <v-divider></v-divider>
                 <div class="caption" v-if="item.questions.length > 0">
                   <v-list color="transparent">
-                    <v-subheader >QUESTIONS:</v-subheader>
+                    <v-subheader>QUESTIONS:</v-subheader>
                     <v-col cols="10" class="pt-0">
                       <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
                         <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
@@ -150,6 +150,9 @@ export default {
           questions: []
         };
       }
+    },
+    heuristics() {
+      this.$emit("change");
     }
   },
   computed: {

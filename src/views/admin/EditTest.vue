@@ -18,25 +18,37 @@
       </v-col>
     </v-row>
     <v-divider></v-divider>
+    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826">
+      <v-icon large>mdi-content-save</v-icon>
+    </v-btn>
     <v-row justify="center">
+      {{change}}
+      ---------
+      {{object}}
       <v-col cols="10">
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
             <v-col cols="10">
-              <FormPreTest :preTest="object.preTest" @valForm="validate" ref="form2" />
+              <FormPreTest
+                :preTest="object.preTest"
+                @valForm="validate"
+                ref="form2"
+                @change="change = true"
+              />
             </v-col>
           </v-row>
         </v-card>
 
         <v-row justify="center" v-if="index==1">
           <v-col cols="12" class="pa-0">
-            <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" />
+            <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
             <Heuristic
               v-else-if="test.type === 'Expert'"
               :heuristics="object.heuristics"
               :answersSheet="object.answersSheet"
+              @change="change = true"
             />
           </v-col>
         </v-row>
@@ -45,7 +57,12 @@
           <v-divider></v-divider>
           <v-row justify="space-around">
             <v-col cols="10">
-              <FormPostTest :postTest="object.postTest" @valForm="validate" ref="form3" />
+              <FormPostTest
+                :postTest="object.postTest"
+                @valForm="validate"
+                ref="form3"
+                @change="change = true"
+              />
             </v-col>
           </v-row>
         </v-card>
@@ -66,7 +83,8 @@ export default {
   data: () => ({
     index: 0,
     object: {},
-    valids: [false, true, true]
+    valids: [false, true, true],
+    change: false
   }),
   methods: {
     testLoad() {

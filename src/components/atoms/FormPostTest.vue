@@ -8,6 +8,7 @@
           v-model="postTest"
           :rules="googleLinkRules"
           outlined
+          @change="$emit('change')"
           dense
         ></v-text-field>
       </v-col>
