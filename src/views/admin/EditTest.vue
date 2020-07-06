@@ -18,13 +18,11 @@
       </v-col>
     </v-row>
     <v-divider></v-divider>
-    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826">
+    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" @click=" submit()">
       <v-icon large>mdi-content-save</v-icon>
     </v-btn>
     <v-row justify="center">
-      {{change}}
-      ---------
-      {{object}}
+
       <v-col cols="10">
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
@@ -59,6 +57,7 @@
             <v-col cols="10">
               <FormPostTest
                 :postTest="object.postTest"
+                @input="object.postTest = $event"
                 @valForm="validate"
                 ref="form3"
                 @change="change = true"
@@ -146,6 +145,9 @@ export default {
     },
     validate(valid, index) {
       this.valids[index] = valid;
+    },
+    submit(){
+      console.log(this.object)
     }
   },
   watch: {

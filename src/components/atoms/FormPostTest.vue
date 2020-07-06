@@ -5,8 +5,8 @@
         <v-text-field
           prepend-inner-icon="mdi-link-variant"
           label="Form"
-          v-model="postTest"
           :rules="googleLinkRules"
+          v-model="propModel"
           outlined
           @change="$emit('change')"
           dense
@@ -29,6 +29,16 @@ export default {
         "Google forms link required" //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
     ]
   }),
+  computed: {
+    propModel: {
+      get() {
+        return this.postTest;
+      },
+      set(value) {
+        this.$emit("input", value);
+      }
+    }
+  },
   methods: {
     valida() {
       let valid = this.$refs.form.validate();
