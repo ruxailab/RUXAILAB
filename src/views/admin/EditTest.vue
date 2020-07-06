@@ -1,5 +1,11 @@
 <template>
   <v-container v-if="test">
+    <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
+      <p>{{ snackMsg }}</p>
+      <v-btn text @click="snackbar = false">
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Test Edit</v-col>
       <v-col cols="12" class="pa-0 pl-3 ma-0">
@@ -22,7 +28,6 @@
       <v-icon large>mdi-content-save</v-icon>
     </v-btn>
     <v-row justify="center">
-
       <v-col cols="10">
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
@@ -83,7 +88,10 @@ export default {
     index: 0,
     object: {},
     valids: [false, true, true],
-    change: false
+    change: false,
+    snackbar: false,
+    snackMsg: "",
+    snackColor: ""
   }),
   methods: {
     testLoad() {
@@ -146,8 +154,44 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid;
     },
-    submit(){
-      console.log(this.object)
+    submit() {
+  
+      this.snackMsg = "Test updated succesfully";
+      this.snackColor = "success";
+      this.snackbar = true;
+
+      this.$store
+        .dispatch("updateTest", {
+          docId: this.id,
+          data: this.object
+        })
+        .then(() => {
+          this.$store.dispatch("updateMyTest", {
+            docId: this.object.admin.id,
+            element: {
+              id: this.id,
+              title: this.object.title,
+              type: this.object.type,
+              reports: this.object.reports,
+              answers: this.object.answers,
+              accessLevel: 0
+            }
+          });
+
+          this.object.coop.forEach(coop => {
+            this.$store.dispatch("updateMyCoops", {
+              docId: coop.id,
+              element: {
+                id: this.id,
+                title: this.object.title,
+                type: this.object.type,
+                reports: this.object.reports,
+                answers: this.object.answers,
+                accessLevel: coop.accessLevel
+              }
+            });
+          });
+        });
     }
   },
   watch: {
@@ -155,6 +199,10 @@ export default {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign(this.object, this.test);
       }
+    },
+    snackbar() {
+      if (this.snackbar === false && this.snackColor == "success")
+        this.change=false
     }
   },
   computed: {
