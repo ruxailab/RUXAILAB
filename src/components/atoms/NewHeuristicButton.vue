@@ -2,7 +2,7 @@
   <div>
     <v-btn
       rounded
-      color="green "
+      color="#f9a826"
       class="white--text"
       small
       @click="$emit('dialog', true)"

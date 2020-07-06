@@ -1,56 +1,63 @@
 <template>
-  <v-container>   
-    <v-row justify="center">
-      <v-col cols="10">
-        <v-card>
-          <v-data-table :headers="headers" :items="heuristics" :items-per-page="5" show-expand>
-            <template v-slot:top>
-              <v-toolbar flat>
-                <v-toolbar-title>
-                  <b>Current Heuristics</b>
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
+  <v-row class="ma-0 pa-0">
+    <v-col class="pt-0">
+      <v-data-table
+        height="420px"
+        class="dataCard"
+        :headers="headers"
+        :items="heuristics"
+        :items-per-page="5"
+        show-expand
+      >
+        <template v-slot:top>
+          <v-row class>
+            <v-col class="ml-2 mb-1 pa-4 pb-0">
+              <p class="subtitleView">Current Heuristics</p>
+            </v-col>
+            <v-col class="mr-2 mb-1 pb-0 pa-4">
+              <v-row justify="end" class="ma-0 pa-0">
                 <AddHeurBtn
                   :heuris="heuris"
                   :dialog="dialog"
                   @addHeuris="updateHeuristics"
                   @dialog="changeDialog"
                 />
-              </v-toolbar>
-            </template>
-
-            <template v-slot:expanded-item="{ headers, item }">
-              <!-- questions list -->
-              <td :colspan="headers.length">
-                <h2 class="mb-1" style="text-align: center">{{ item.title }}</h2>
-                <div class="caption" v-if="item.questions.length > 0">
-                  <v-list>
-                    <v-subheader>QUESTIONS:</v-subheader>
-                    <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
-                      <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </div>
-                <div class="caption" v-else>Heuristics has no questions</div>
-              </td>
-            </template>
-
-            <template v-slot:item.actions="{ item }">
-              <!-- table actions -->
-              <v-row justify="end" class="pr-1">
-                <v-btn icon small class="mr-2" @click="editItem(item)">
-                  <v-icon small>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn icon small @click="deleteItem(item)">
-                  <v-icon small>mdi-delete</v-icon>
-                </v-btn>
               </v-row>
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+            </v-col>
+          </v-row>
+          <v-divider class="mb-4"></v-divider>
+        </template>
+
+        <template v-slot:expanded-item="{ headers, item }">
+          <!-- questions list -->
+          <td :colspan="headers.length">
+            <h2 class="mb-1" style="text-align: center">{{ item.title }}</h2>
+            <div class="caption" v-if="item.questions.length > 0">
+              <v-list>
+                <v-subheader>QUESTIONS:</v-subheader>
+                <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
+                  <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </div>
+            <div class="caption" v-else>Heuristics has no questions</div>
+          </td>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <!-- table actions -->
+          <v-row justify="end" class="pr-1">
+            <v-btn icon small class="mr-2" @click="editItem(item)">
+              <v-icon small>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn icon small @click="deleteItem(item)">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
+          </v-row>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-row>
 </template>
 
 
@@ -123,7 +130,7 @@ export default {
       this.heuris.questions = Array.from(
         this.heuristics[this.editIndex].questions
       );
-       this.heuristics.total = this.totalQuestions;
+      this.heuristics.total = this.totalQuestions;
       this.answersSheet.total = this.totalQuestions;
       this.dialog = true;
     }
@@ -162,3 +169,33 @@ export default {
   }
 };
 </script>
+
+
+<style scoped>
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.dataCard {
+  background: #f5f7ff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 10px;
+  padding-bottom: 10px;
+  min-height: 550px;
+}
+
+.datatable {
+  background: #f5f7ff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 10px;
+}
+</style>

@@ -60,10 +60,9 @@ export default {
       this.$router.push("/createtest");
     },
     async submit() {
-       
       await this.testAssembly(); // build Test
       let object = this.object;
-      let successful = true
+      let successful = true;
       this.snackMsg = "Test created succesfully";
       this.snackColor = "success";
       this.snackbar = true;
@@ -126,10 +125,10 @@ export default {
         })
         .catch(err => {
           console.error("Error", err);
-          successful = false
+          successful = false;
         });
 
-        if(successful) this.sendManager(this.testID)
+      if (successful) this.sendManager(this.testID);
     },
     testAssembly() {
       //Make object test
@@ -158,11 +157,15 @@ export default {
 
       //assigning tasks/heuristics
       if (this.test.type === "User") {
-        this.object = Object.assign(this.object, { tasks: null });
+        this.object = Object.assign(this.object, { tasks: [] });
       } else if (this.test.type === "Expert") {
         this.object = Object.assign(this.object, {
-          heuristics: null,
-          answersSheet: null
+          heuristics: [],
+          answersSheet: {
+            total: 0,
+            progress: 0,
+            heuristics: []
+          }
         });
       }
 

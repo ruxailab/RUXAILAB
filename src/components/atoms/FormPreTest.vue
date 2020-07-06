@@ -1,5 +1,5 @@
 <template>
-<v-form ref="form">
+<v-form ref="form" v-if="preTest">
   <v-row>
     <v-col>
       <v-card-text>

@@ -29,20 +29,17 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card v-if="index==1" class="dataCard">
-          <v-card-title class="subtitleView">Pre Test</v-card-title>
-          <v-divider></v-divider>
-          <v-row justify="space-around">
-            <v-col cols="10">
-              <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" />
-              <Heuristic
-                v-else-if="test.type === 'Expert'"
-                :heuristics="object.heuristics"
-                :answersSheet="object.answersSheet"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
+
+        <v-row justify="center" v-if="index==1">
+          <v-col cols="12" class="pa-0">
+            <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" />
+            <Heuristic
+              v-else-if="test.type === 'Expert'"
+              :heuristics="object.heuristics"
+              :answersSheet="object.answersSheet"
+            />
+          </v-col>
+        </v-row>
         <v-card v-if="index==2" class="dataCard">
           <v-card-title class="subtitleView">Post Test</v-card-title>
           <v-divider></v-divider>
@@ -155,7 +152,7 @@ export default {
   }
 };
 </script>
-''
+
 <style scoped>
 .titleView {
   font-family: Roboto;
