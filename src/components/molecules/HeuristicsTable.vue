@@ -31,16 +31,22 @@
         <template v-slot:expanded-item="{ headers, item }">
           <!-- questions list -->
           <td :colspan="headers.length">
-            <h2 class="mb-1" style="text-align: center">{{ item.title }}</h2>
-            <div class="caption" v-if="item.questions.length > 0">
-              <v-list>
-                <v-subheader>QUESTIONS:</v-subheader>
-                <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
-                  <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </div>
-            <div class="caption" v-else>Heuristics has no questions</div>
+            <v-row>
+              <v-col>
+                <h2 class="mb-1 pl-2 subtitleView">{{ item.title }}</h2>
+                <v-divider></v-divider>
+                <div class="caption" v-if="item.questions.length > 0">
+                  <v-list color="transparent">
+                    <v-subheader >QUESTIONS:</v-subheader>
+                    <v-col cols="10" class="pt-0">
+                      <v-list-item v-for="(question, n) in item.questions" :key="n" inactive>
+                        <v-list-item-content>{{n + 1}}) {{question.text}}</v-list-item-content>
+                      </v-list-item>
+                    </v-col>
+                  </v-list>
+                </div>
+              </v-col>
+            </v-row>
           </td>
         </template>
 
@@ -190,12 +196,5 @@ export default {
   margin: 10px;
   padding-bottom: 10px;
   min-height: 550px;
-}
-
-.datatable {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
 }
 </style>
