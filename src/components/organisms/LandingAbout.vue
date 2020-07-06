@@ -42,7 +42,7 @@
           align="justify"
           style="line-height: 1.6"
         >Help us to grou up this Open Source community and join us on gitlab! :)</p>
-        <v-row justify="left" class="hidden-sm-and-down">
+        <v-row class="hidden-sm-and-down">
           <v-btn outlined rounded class="mt-2">See the Code</v-btn>
         </v-row>
         <v-row justify="center" class="hidden-md-and-up">
