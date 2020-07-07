@@ -5,6 +5,8 @@ import AnswerView from "@/views/admin/AnswerView.vue";
 import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
+import SettingsView from "@/views/admin/SettingsView.vue";
+
 
 export default [
   {
@@ -46,6 +48,13 @@ export default [
         props: true,
         meta: { authorize: [1] },
         component: EditTest,
+      },
+      {
+        path: "/settingsview/:id",
+        name: "Settings View",
+        props: true,
+        meta: { authorize: [1] },
+        component: SettingsView,
       },
     ],
   },

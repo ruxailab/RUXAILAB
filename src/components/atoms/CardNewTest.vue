@@ -157,7 +157,10 @@ export default {
 
       //assigning tasks/heuristics
       if (this.test.type === "User") {
-        this.object = Object.assign(this.object, { tasks: [],answersSheet:null });
+        this.object = Object.assign(this.object, {
+          tasks: [],
+          answersSheet: null
+        });
       } else if (this.test.type === "Expert") {
         this.object = Object.assign(this.object, {
           heuristics: [],

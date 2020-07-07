@@ -4,21 +4,36 @@
       <v-col cols="12">
         <v-row justify="space-around">
           <v-col cols="5">
-            <v-text-field v-model="test.title" label="Title" :rules="requiredRule" counter="100" outlined dense></v-text-field>
+            <v-text-field
+              v-model="test.title"
+              label="Title"
+              :rules="requiredRule"
+              counter="100"
+              outlined
+              @input="$emit('change')"
+              dense
+            ></v-text-field>
             <v-overflow-btn
+              disabled
               :items="types"
               v-model="test.type"
               label="Type"
               :rules="requiredRule"
               dense
               outlined
+            
             ></v-overflow-btn>
           </v-col>
           <v-col cols="5">
-            <v-textarea v-model="test.description" label="Description" outlined dense></v-textarea>
+            <v-textarea
+              v-model="test.description"
+              label="Description"
+              outlined
+              dense
+              @input="$emit('change')"
+            ></v-textarea>
           </v-col>
         </v-row>
-        <v-card-text></v-card-text>
       </v-col>
     </v-row>
   </v-form>

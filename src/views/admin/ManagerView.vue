@@ -45,7 +45,7 @@
         </v-list>
 
         <div class="footer" v-if="!mini">
-          <v-btn icon @click.stop class="ml-3">
+          <v-btn icon @click="go(`/settingsview/${id}`)" class="ml-3">
             <v-icon color="white">mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -57,7 +57,7 @@
         <div class="footer" style="height:16%" v-else>
           <v-list class="mt-0 pa-0">
             <v-list-item class="pt-0">
-              <v-list-item-icon @click.stop>
+              <v-list-item-icon @click="go(`/settingsview/${id}`)">
                 <v-icon color="white">mdi-cog</v-icon>
               </v-list-item-icon>
             </v-list-item>

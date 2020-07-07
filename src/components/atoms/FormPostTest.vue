@@ -8,7 +8,7 @@
           :rules="googleLinkRules"
           v-model="propModel"
           outlined
-          @change="$emit('change')"
+          @input="$emit('change')"
           dense
         ></v-text-field>
       </v-col>
