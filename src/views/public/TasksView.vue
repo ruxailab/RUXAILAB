@@ -16,6 +16,7 @@
           v-if="type === 'Expert' && answersSheet !== null && answersSheet !== undefined"
           :item="item"
           :heuris="answersSheet.heuristics[n]"
+          :options="test.options"
           @progress="calcProgress"
         />
       </v-stepper-content>
@@ -145,7 +146,10 @@ export default {
     },
     user() {
       return this.$store.state.auth.user;
-    }
+    },
+    test() {
+      return this.$store.getters.test;
+    },
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
