@@ -1,19 +1,37 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-data-table :headers="headers" :items="tasks" :items-per-page="5" class="elevation-1">
+  <v-row class="ma-0 pa-0">
+    <v-col class="pt-0">
+      <v-data-table
+        height="420px"
+        class="dataCard"
+        :headers="headers"
+        :items="tasks"
+        :items-per-page="5"
+      >
         <template v-slot:top>
-          <v-toolbar flat color="white">
-            <v-row justify="end">
-              <v-btn color="success" dark @click="dialog = true">Add new task</v-btn>
-              <FormDialog
-                :task="task"
-                :dialog="dialog"
-                v-on:closeDialog="dialog = false"
-                v-on:addTask="addTask()"
-              />
-            </v-row>
-          </v-toolbar>
+          <v-row>
+            <v-col class="ml-2 mb-1 pa-4 pb-0">
+              <p class="subtitleView">Current Tasks</p>
+            </v-col>
+            <v-col class="mr-2 mb-1 pb-0 pa-4">
+              <v-row justify="end" class="ma-0 pa-0">
+                <v-btn
+                  rounded
+                  color="#f9a826"
+                  class="white--text"
+                  small
+                  @click="dialog = true"
+                >Add new task</v-btn>
+                <FormDialog
+                  :task="task"
+                  :dialog="dialog"
+                  v-on:closeDialog="dialog = false"
+                  v-on:addTask="addTask()"
+                />
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-divider class="mb-4"></v-divider>
         </template>
         <template v-slot:item.timer="{ item }">
           <v-simple-checkbox v-model="item.timer" disabled></v-simple-checkbox>
@@ -65,7 +83,7 @@ export default {
       description: null,
       tip: null,
       postTest: null,
-      answer:null,
+      answer: null,
       timer: false
     }
   }),
@@ -91,7 +109,7 @@ export default {
         description: null,
         tip: null,
         postTest: null,
-        answer:null,
+        answer: null,
         timer: false
       };
     }
@@ -105,5 +123,24 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.dataCard {
+  background-color: #f5f7ff !important;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 10px;
+  padding-bottom: 10px;
+  min-height: 550px;
+}
 </style>
