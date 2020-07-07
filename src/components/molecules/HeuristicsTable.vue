@@ -10,7 +10,7 @@
         show-expand
       >
         <template v-slot:top>
-          <v-row class>
+          <v-row>
             <v-col class="ml-2 mb-1 pa-4 pb-0">
               <p class="subtitleView">Current Heuristics</p>
             </v-col>

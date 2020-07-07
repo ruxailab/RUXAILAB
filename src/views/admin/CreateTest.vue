@@ -45,7 +45,7 @@
           </v-stepper-content>
           <v-stepper-content step="3">
             <v-container v-if="test.type === 'User'">
-              <ListTasks  />
+              <ListTasks />
             </v-container>
             <v-container v-if="test.type === 'Expert'">
               <Heuristic :heuristics="heuristics" :answersSheet="answersSheet" />
@@ -477,10 +477,6 @@ export default {
         await this.testLoad();
       }
     }
-    /*"test.type"() {
-      this.tasks = [];
-      this.heuristics = [];
-    }*/
   },
   computed: {
     testEdit() {
