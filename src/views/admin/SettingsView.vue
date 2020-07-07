@@ -22,6 +22,7 @@
             :test="object"
             @valForm="validate"
             ref="form1"
+            :lock="true"
             @change="change = true"
           />
         </v-card>

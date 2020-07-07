@@ -163,7 +163,8 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid;
     },
-    submit() {
+    async submit() {
+      await this.$store.dispatch("getAnswers", { id: this.test.answers });
       this.snackMsg = "Test updated succesfully";
       this.snackColor = "success";
       this.snackbar = true;
@@ -200,6 +201,12 @@ export default {
             });
           });
         });
+
+      this.answers.answersSheet = this.object.answersSheet
+      this.$store.dispatch("updateTestAnswer", {
+        docId: this.test.answers,
+        data: this.answers
+      });
     }
   },
   watch: {
@@ -219,6 +226,9 @@ export default {
     },
     user() {
       return this.$store.getters.user;
+    },
+    answers() {
+      return this.$store.state.answers.answers || [];
     }
   },
   created() {

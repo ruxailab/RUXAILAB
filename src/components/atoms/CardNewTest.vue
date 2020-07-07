@@ -23,7 +23,7 @@
         <v-container>
           <p class="titleView ma-2 pa-2">Create Test</p>
           <v-divider></v-divider>
-          <FormTestDescription :test="test" ref="form1" />
+          <FormTestDescription :test="test" ref="form1" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
             <v-spacer></v-spacer>
             <v-btn color="black" text @click="dialog = false">Cancel</v-btn>

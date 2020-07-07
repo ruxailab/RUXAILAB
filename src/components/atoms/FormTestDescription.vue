@@ -14,7 +14,7 @@
               dense
             ></v-text-field>
             <v-overflow-btn
-              disabled
+              :disabled="lock"
               :items="types"
               v-model="test.type"
               label="Type"
@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  props: ["test"],
+  props: ["test","lock"],
   data: () => ({
     requiredRule: [
       v => !!v || "Field Required",
