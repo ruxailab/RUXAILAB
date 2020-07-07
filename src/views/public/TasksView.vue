@@ -88,7 +88,8 @@ export default {
             docId: newAnswer.answers,
             element: Object.assign(this.answersSheet, {
               uid: this.user.uid,
-              email: this.user.email,})
+              email: this.user.email
+            })
           });
         });
     },
@@ -149,7 +150,7 @@ export default {
     },
     test() {
       return this.$store.getters.test;
-    },
+    }
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });

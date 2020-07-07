@@ -53,7 +53,10 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid;
     },
-    submit() {
+    async submit() {
+      await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      await this.$store.dispatch("getReports", { id: this.test.reports });
+
       this.snackMsg = "Test updated succesfully";
       this.snackColor = "success";
       this.snackbar = true;
@@ -89,6 +92,18 @@ export default {
               }
             });
           });
+
+          this.answers.test.title = this.object.title;
+          this.reports.test.title = this.object.title;
+          this.$store.dispatch("updateTestAnswer", {
+            docId: this.test.answers,
+            data: this.answers
+          });
+
+          this.$store.dispatch("updateTestReport", {
+            docId: this.test.reports,
+            data: this.reports
+          });
         });
     }
   },
@@ -109,6 +124,12 @@ export default {
     },
     user() {
       return this.$store.getters.user;
+    },
+    answers() {
+      return this.$store.state.answers.answers || [];
+    },
+    reports() {
+      return this.$store.state.reports.reports || [];
     }
   },
   created() {

@@ -1,50 +1,55 @@
 export default {
-    state: {
-        answers: null
+  state: {
+    answers: null,
+  },
+  getters: {},
+  mutations: {
+    setAnswers(state, payload) {
+      state.answers = payload;
     },
-    getters: {
+  },
+  actions: {
+    createAnswers({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "answers" });
 
+      let docId = dispatch("createObject", payload)
+        .then((doc) => {
+          return doc.id;
+        })
+        .catch((err) => {
+          console.error("Error ", err);
+        });
+
+      return docId;
     },
-    mutations: {
-        setAnswers(state, payload) {
-            state.answers = payload;
-        }
+    pushAnswers({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "answers",
+        param: "answers",
+      });
+
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error pushing log ", err);
+      });
     },
-    actions: {
-        createAnswers({ dispatch }, payload) {
-            payload = Object.assign(payload, { collection: 'answers' });
+    async getAnswers({ dispatch, commit }, payload) {
+      payload = Object.assign(payload, { collection: "answers" });
 
-            let docId = dispatch("createObject", payload)
-                .then((doc) => {
-                    return doc.id;
-                })
-                .catch((err) => {
-                    console.error("Error ", err);
-                });
+      let ans = await dispatch("getObject", payload);
+      commit("setAnswers", ans);
+    },
+    deleteAnswers({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "answers" });
 
-            return docId;
-        },
-        pushAnswers({ dispatch }, payload) {
-            payload = Object.assign(payload, { collection: "answers", param: "answers" });
-
-            dispatch('pushObject', payload)
-                .catch((err) => {
-                    console.error('Error pushing log ', err);
-                })
-        },
-        async getAnswers({ dispatch, commit }, payload) {
-            payload = Object.assign(payload, { collection: 'answers' });
-
-            let ans = await dispatch("getObject", payload);
-            commit("setAnswers", ans);
-        },
-        deleteAnswers({ dispatch }, payload) {
-            payload = Object.assign(payload, { collection: 'answers'});
-
-            dispatch("deleteObject", payload)
-            .catch((err) => {
-                console.error("Error ", err);
-            })
-        }
-    }
-}
+      dispatch("deleteObject", payload).catch((err) => {
+        console.error("Error ", err);
+      });
+    },
+    updateTestAnswer({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "answers" });
+      dispatch("updateObject", payload).catch(() => {
+        console.error("Error to update");
+      });
+    },
+  },
+};
