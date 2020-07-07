@@ -18,7 +18,8 @@
             <v-tab @click="index = 0">Pre Test</v-tab>
             <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
             <v-tab v-else-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
-            <v-tab @click="index = 2">Post Test</v-tab>
+            <v-tab @click="index = 2">Options</v-tab>
+            <v-tab @click="index = 3">Post Test</v-tab>
           </v-tabs>
         </v-row>
       </v-col>
@@ -55,7 +56,14 @@
             />
           </v-col>
         </v-row>
-        <v-card v-if="index==2" class="dataCard">
+
+        <v-row justify="center" v-if="index==2">
+          <v-col cols="12" class="pa-0">
+            <OptionsTable :options="object.options" @change="change = true" />
+          </v-col>
+        </v-row>
+
+        <v-card v-if="index==3" class="dataCard">
           <v-card-title class="subtitleView">Post Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
@@ -80,10 +88,11 @@ import FormPreTest from "@/components/atoms/FormPreTest";
 import FormPostTest from "@/components/atoms/FormPostTest";
 import ListTasks from "@/components/molecules/ListTasks";
 import Heuristic from "@/components/molecules/HeuristicsTable";
+import OptionsTable from "@/components/molecules/OptionsTable";
 
 export default {
   props: ["id"],
-  components: { FormPreTest, FormPostTest, ListTasks, Heuristic },
+  components: { FormPreTest, FormPostTest, ListTasks, Heuristic, OptionsTable },
   data: () => ({
     index: 0,
     object: {},
@@ -155,7 +164,6 @@ export default {
       this.valids[index] = valid;
     },
     submit() {
-  
       this.snackMsg = "Test updated succesfully";
       this.snackColor = "success";
       this.snackbar = true;
@@ -202,7 +210,7 @@ export default {
     },
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
-        this.change=false
+        this.change = false;
     }
   },
   computed: {

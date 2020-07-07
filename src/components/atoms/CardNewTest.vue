@@ -174,6 +174,8 @@ export default {
       this.object = Object.assign(this.object, { postTest: null });
 
       this.object = Object.assign(this.object, { coop: [] });
+
+      this.object = Object.assign(this.object, { options: [] });
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
