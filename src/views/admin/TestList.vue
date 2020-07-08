@@ -11,25 +11,35 @@
             color="grey darken-2"
             v-model="search"
           ></v-text-field>
-          <v-tabs background-color="transparent" color="black" class="tab-border-bottom">
+
+          <!-- Desktop Tabs -->
+          <v-tabs
+            v-model="index"
+            background-color="transparent"
+            color="black"
+            class="tab-border-bottom hidden-sm-and-down"
+          >
             <v-tab @click="index = 0">My Tests</v-tab>
             <v-tab @click="index = 1">Tests I colaborate with</v-tab>
             <v-tab @click="index = 2">My Answers</v-tab>
           </v-tabs>
 
+          <!-- Mobile Button -->
+          <v-select dense outlined v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
+
           <!-- My Tests -->
-          <v-row v-if="index == 0" class="grid mx-8" justify="start">
-            <v-col md="4" sm="6" xs="12">
+          <v-row v-if="index == 0" :class="`grid mx-2`">
+            <v-col cols="12" sm="6" md="4">
               <CardNewTest />
             </v-col>
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyTests" :key="test.id">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
           </v-row>
 
           <!-- Tests I Colaborate With -->
-          <v-row justify="start" v-if="index == 1" class="grid mx-8">
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyCoops" :key="test.id">
+          <v-row justify="start" v-if="index == 1" class="grid mx-2">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
@@ -39,8 +49,8 @@
           </v-row>
 
           <!-- My Answers -->
-          <v-row justify="start" v-if="index == 2" class="grid mx-8">
-            <v-col md="4" sm="6" xs="12" v-for="test in filteredMyAnswers" :key="test.id">
+          <v-row justify="start" v-if="index == 2" class="grid mx-2">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
@@ -63,6 +73,7 @@ import CardNewTest from "@/components/atoms/CardNewTest";
 export default {
   data: () => ({
     showMenu: false,
+    label: "My Tests",
     x: 0,
     y: 0,
     test: {},
@@ -84,6 +95,11 @@ export default {
       { title: "Open Test" },
       { title: "Open Answers" },
       { title: "Open Manager" }
+    ],
+    buttonItems: [
+      { text: "My Tests", value: 0 },
+      { text: "Tests I colaborate with", value: 1 },
+      { text: "My Answers", value: 2 }
     ]
   }),
   computed: {
@@ -110,8 +126,14 @@ export default {
     }
   },
   watch: {
-    filteredMyTests() {
-      console.log(this.filteredMyTests);
+    index() {
+      if (this.index == 0) {
+        this.label = "My Tests";
+      } else if (this.index == 1) {
+        this.label = "Tests I colaborate with";
+      } else {
+        this.label = "My Answers";
+      }
     }
   },
   components: {
@@ -160,5 +182,27 @@ export default {
 }
 .tab-border-bottom {
   border-bottom: 1px solid black;
+}
+
+@media screen and (max-width: 960px) {
+  /*sm */
+  .background-img:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url(../../assets/toDoTest.svg);
+    opacity: 70%;
+
+    /* background-position: 150% 800%; */
+    background-repeat: no-repeat;
+
+    background-size: 300px auto;
+    background-position: right 0px bottom 0px;
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 </style>

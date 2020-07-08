@@ -5,8 +5,8 @@
         <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
           <template v-slot:activator="{ on, attrs }">
             <v-col cols="9" align-self="start">
-          <h3>{{item.title}}</h3>
-        </v-col>
+              <h3>{{item.title}}</h3>
+            </v-col>
             <v-col cols="2" class="mr-2">
               <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon>mdi-dots-vertical</v-icon>
@@ -14,7 +14,7 @@
             </v-col>
           </template>
           <v-list>
-          <v-list-item v-if="accessLevel == 2"  @click="openTest(item)">
+            <v-list-item v-if="accessLevel == 2" @click="openTest(item)">
               <v-list-item-icon>
                 <v-icon>mdi-glasses</v-icon>
               </v-list-item-icon>
@@ -40,19 +40,36 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      
-        
       </v-row>
 
-      <v-row class="bottomStart">
-        <v-col>
-          <v-icon  x-large>mdi-account-circle</v-icon>
-          <div class="text-center caption">{{new Date().toDateString()}}</div>
-        </v-col>
+      <!-- Desktop/Tablet -->
+      <v-row align="center">
+      <div class="hidden-sm-and-down">
+        <v-row class="bottomStart">
+          <v-col>
+            <v-icon x-large>mdi-account-circle</v-icon>
+            <div class="text-center caption">{{new Date().toDateString()}}</div>
+          </v-col>
+        </v-row>
+
+        <v-row class="bottomEnd">
+          <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+        </v-row>
+      </div>
       </v-row>
 
-      <v-row class="bottomEnd">
-        <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+      <!-- Mobile -->
+      <v-row justify="center">
+        <div class="hidden-md-and-up bottomMobile">
+          <v-row class="ma-1" justify="space-between">
+            <v-icon x-large>mdi-account-circle</v-icon>
+            <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+          </v-row>
+
+          <v-row class="mt-2" justify="center">
+            <div class="text-center caption">{{new Date().toDateString()}}</div>
+          </v-row>
+        </div>
       </v-row>
     </v-container>
   </v-card>
@@ -66,7 +83,7 @@ export default {
   }),
   methods: {
     openTest(test) {
-        this.$router.push("/testview/" + test.id);
+      this.$router.push("/testview/" + test.id);
     },
     async deleteTest(item) {
       console.log(item);
@@ -176,4 +193,27 @@ export default {
   bottom: 11%;
   right: 8%;
 }
+.bottomMobile {
+  position: absolute;
+  bottom: 0%;
+  width: 80%;
+}
 </style>
+
+<!--
+@media screen and (max-width: 960px) {
+  /*sm */
+  .card {
+    height: 300px;
+    width: 250px;
+    justify-self: center;
+  }
+}
+
+@media screen and (max-width: 1264px) {
+  /*md */
+} 
+
+
+
+-->
