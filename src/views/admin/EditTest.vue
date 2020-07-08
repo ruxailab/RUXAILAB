@@ -1,6 +1,6 @@
 <template>
   <v-container v-if="test">
-    <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
+    <v-snackbar v-model="snackbar" :color="snackColor" top absolute :timeout="3000">
       <p>{{ snackMsg }}</p>
       <v-btn text @click="snackbar = false">
         <v-icon>mdi-close-circle-outline</v-icon>
@@ -25,7 +25,7 @@
       </v-col>
     </v-row>
     <v-divider></v-divider>
-    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" @click=" submit()">
+    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" @click=" validateAll()">
       <v-icon large>mdi-content-save</v-icon>
     </v-btn>
     <v-row justify="center">
@@ -38,7 +38,7 @@
               <FormPreTest
                 :preTest="object.preTest"
                 @valForm="validate"
-                ref="form2"
+                :valIndex="0"
                 @change="change = true"
               />
             </v-col>
@@ -59,7 +59,11 @@
 
         <v-row justify="center" v-if="index==2">
           <v-col cols="12" class="pa-0">
-            <OptionsTable :options="object.options" @change="change = true" />
+            <OptionsTable
+              :options="object.options"
+              @valForm="validate"
+              @change="change = true"
+            />
           </v-col>
         </v-row>
 
@@ -70,9 +74,9 @@
             <v-col cols="10">
               <FormPostTest
                 :postTest="object.postTest"
+                :valIndex="1"
                 @input="object.postTest = $event"
                 @valForm="validate"
-                ref="form3"
                 @change="change = true"
               />
             </v-col>
@@ -96,73 +100,13 @@ export default {
   data: () => ({
     index: 0,
     object: {},
-    valids: [false, true, true],
+    valids: [true, true],
     change: false,
     snackbar: false,
     snackMsg: "",
     snackColor: ""
   }),
   methods: {
-    testLoad() {
-      //   //Load admin
-      //   this.object.admin = {
-      //     id: this.testEdit.admin.id,
-      //     email: this.testEdit.admin.email
-      //   };
-      //   //Load Test Description
-      //   this.test.title = this.testEdit.title;
-      //   this.test.type = this.testEdit.type;
-      //   this.test.description = this.testEdit.description;
-      //   //Load Pretest
-      //   if (
-      //     this.testEdit.preTest !== null &&
-      //     this.testEdit.preTest !== undefined
-      //   ) {
-      //     this.preTest.consent =
-      //       this.testEdit.preTest.consent === null ||
-      //       this.testEdit.preTest.consent === undefined
-      //         ? ""
-      //         : this.testEdit.preTest.consent;
-      //     this.preTest.form =
-      //       this.testEdit.preTest.form === null ||
-      //       this.testEdit.preTest.form === undefined
-      //         ? ""
-      //         : this.testEdit.preTest.form;
-      //   }
-      //   //Load Tasks
-      //   if (this.testEdit.tasks !== null && this.testEdit.tasks !== undefined)
-      //     this.testEdit.tasks.forEach(task => {
-      //       this.tasks.push(task);
-      //     });
-      //   //Load Heuristics
-      //   if (
-      //     this.testEdit.heuristics !== null &&
-      //     this.testEdit.heuristics !== undefined
-      //   ) {
-      //     this.testEdit.heuristics.forEach(item => {
-      //       this.heuristics.push(item);
-      //     });
-      //     this.answersSheet = this.testEdit.answersSheet;
-      //   }
-      //   //Load PostTest
-      //   this.postTest =
-      //     this.testEdit.postTest === null ? "" : this.testEdit.postTest;
-      //   //Load Invitations
-      //   this.invitations = Array.from(this.testEdit.coop);
-      //   //Load Reports
-      //   this.object.reports = this.testEdit.reports;
-      //   //Load Answers
-      //   this.object.answers = this.testEdit.answers;
-      //   //Getting user access level
-      //   this.testEdit.coop.forEach(coop => {
-      //     if (coop.id === this.user.uid) {
-      //       this.accessLevel = coop.accessLevel;
-      //     }
-      //   });
-    },
-    validate(valid, index) {
-      this.valids[index] = valid;
-    },
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       this.snackMsg = "Test updated succesfully";
@@ -207,6 +151,26 @@ export default {
         docId: this.test.answers,
         data: this.answers
       });
+    },
+    validate(valid, index) {
+      this.valids[index] = valid;
+    },
+    validateAll() {
+      if (!this.valids[0]) {
+        this.snackMsg = "Please fill all fields in Pre Test correctly or leave them empty";
+        this.snackColor = "red";
+        this.snackbar = "true";
+      } else if (this.object.options.length == 1) {
+        this.snackMsg = "Please create at least 2 options or none at all";
+        this.snackColor = "red";
+        this.snackbar = "true";
+      } else if (!this.valids[1]) {
+        this.snackMsg = "Please fill all fields in Post Test correctly or leave them empty";
+        this.snackColor = "red";
+        this.snackbar = "true";
+      } else {
+        this.submit();
+      }
     }
   },
   watch: {

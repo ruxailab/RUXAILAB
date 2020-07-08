@@ -19,7 +19,7 @@ export async function autoSignIn(){
 
 export function redirect() {
   if (!store.state.auth.user) {
-    //se nao tiver logado mandar pro signin
+    //se nao tiver logado mandar pra landing page
     return "/";
   }
 

@@ -103,7 +103,6 @@ export default {
       }
     },
     options() {
-      console.log('options', this.options);
       this.$emit("change");
     }
   },

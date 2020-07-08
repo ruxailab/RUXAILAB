@@ -173,8 +173,11 @@ export default {
       }
 
       //assigning post test
-
-      this.object = Object.assign(this.object, { postTest: null });
+      this.object = Object.assign(this.object, {
+        postTest: {
+          form: null
+        }
+      });
 
       this.object = Object.assign(this.object, { coop: [] });
 

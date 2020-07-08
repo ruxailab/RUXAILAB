@@ -1,24 +1,66 @@
 <template>
   <section>
-    <v-container style="display:contents">
-      <v-img src="@/assets/introduction.svg">
-        <v-container fluid>
+    <!-- Desktop -->
+    <v-container
+      style="display:contents; background-color:#f4b700; height:300px"
+      class="hidden-sm-and-down"
+    >
+      <v-img src="@/assets/introductionDesktop.svg">
+        <v-container>
           <!-- ver se prefere no meio ou em cima -> so add fill-height no container -->
-          <v-row align="center" class="mb-5">
-            <v-col class="text-left" cols="12" sm="6">
-              <h1 class="display-3 font-weight-regular mb-4 white--text">Research Workflow</h1>
-              <h4 class="display-1 white--text mb-4">Researching has never been easier!</h4>
-              <h5
+          <v-row align="center" class="mb-10">
+            <v-col class="text-left" cols="12" md="6">
+              <h1 class="display-3 font-weight-regular mb-4 white--text">UX Remote LAB</h1>
+              <h4 class="display-1 white--text mb-4">What about doing Usability Tests in remote?</h4>
+              <p
                 class="white--text mb-4"
                 style="width: 80%"
                 align="justify"
-              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h5>
-              <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
+              >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
+              <v-btn
+                color="white"
+                outlined
+                rounded
+                class="mb-2"
+                @click="goTo('/signup')"
+              >Get started</v-btn>
             </v-col>
           </v-row>
         </v-container>
       </v-img>
     </v-container>
+
+    <!-- Mobile -->
+    <v-container class="hidden-md-and-up ma-0 pa-0">
+      <div style="background-color: #f4b700">
+        <div style="background-color: #f4b700">
+          <h1 class="display-3 font-weight-regular white--text text-center">UX Remote LAB</h1>
+        </div>
+        <v-img src="@/assets/introductionMobile.svg" class="mb-4"></v-img>
+        <div style="background-color: #f4b700" class="mx-1">
+          <h4
+            class="display-1 white--text mb-4 text-center"
+          >What about doing Usability Tests in remote?</h4>
+        </div>
+        <div style="background-color: #f4b700" class="mx-3">
+          <v-row justify="center">
+            <p
+              class="white--text mb-4 mx-4 text-center"
+            >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
+            <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
+          </v-row>
+
+          <!-- <v-row justify="center">
+            <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
+            </v-row> -->
+        </div>
+        <!-- div for margin at bottom -->
+        <div style="background-color: #f4b700; height: 40px"></div>
+      </div>
+
+      <div style="height: 10px"></div>
+    </v-container>
+
     <div class="svg-border-waves text-white">
       <svg
         class="wave"
@@ -53,7 +95,7 @@
             d="M1979,462-155,446V106C251.8,20.2,576.6,15.9,805,30c167.4,10.3,322.3,32.9,680,56,207,13.4,378,20.3,494,24"
           />
         </g>
-        <g class="b">
+        <g class="b hidden-sm-and-down">
           <path
             class="d"
             d="M1998,484H-243V100c445.8,26.8,794.2-4.1,1035-39,141-20.4,231.1-40.1,378-45,349.6-11.6,636.7,73.8,828,150"
@@ -92,13 +134,11 @@ section {
 
 <script>
 export default {
-    data: () => ({
-
-    }),
-    methods: {
-        goTo(path) {
-            this.$router.push(path)
-        }
+  data: () => ({}),
+  methods: {
+    goTo(path) {
+      this.$router.push(path);
     }
-}
+  }
+};
 </script>
