@@ -1,17 +1,15 @@
 <template>
   <div>
-    <Intro />
-
-    <About />
-
-    <Footer />
+    <Intro/>
+    <About/>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Intro from "@/components/atoms/Introduction";
-import About from "@/components/molecules/LandingAbout";
-import Footer from "@/components/atoms/Footer";
+import About from "@/components/organisms/LandingAbout";
+import Footer from "@/components/organisms/Footer";
 
 export default {
   data: () => ({}),
@@ -22,4 +20,3 @@ export default {
   }
 };
 </script>
-
