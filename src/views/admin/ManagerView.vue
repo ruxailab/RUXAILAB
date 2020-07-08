@@ -31,7 +31,7 @@
         </div>
 
         <v-list flat dense>
-          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item.path)">
+          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item)">
             <v-list-item-icon>
               <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
             </v-list-item-icon>
@@ -116,8 +116,10 @@ export default {
       this.$router.push("/managerview/" + this.selectedTest);
       this.index = 0;
     },
-    go(path) {
-      this.$router.push(path);
+    go(item) {
+      if (item.id == undefined) this.$router.push(item);
+      if (item.id == 2) window.open(item.path);
+      else this.$router.push(item.path);
     }
   },
   computed: {
@@ -177,7 +179,7 @@ export default {
         {
           title: "Colaborators",
           icon: "mdi-account-group",
-          path: `/coopsview/${this.test.id}`,
+          path: `/cooperatorsview/${this.test.id}`,
           id: 5
         }
       ];

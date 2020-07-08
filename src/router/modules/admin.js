@@ -7,7 +7,6 @@ import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 import SettingsView from "@/views/admin/SettingsView.vue";
 
-
 export default [
   {
     path: "/testslist",
@@ -65,5 +64,4 @@ export default [
     meta: { authorize: [1] },
     component: CooperatorsView,
   },
-
 ];
