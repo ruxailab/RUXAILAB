@@ -26,7 +26,7 @@
           <FormTestDescription :test="test" ref="form1" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
             <v-spacer></v-spacer>
-            <v-btn color="black" text @click="dialog = false, resetVal()">Cancel</v-btn>
+            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
             <v-btn color="#F9A826" @click="submit(),dialog = false">Create</v-btn>
           </v-card-actions>
         </v-container>
