@@ -1,18 +1,6 @@
 <template>
   <v-footer dark padless>
     <v-card flat tile class="gray lighten-3 white--text text-center"   style="width:100%">
-      <v-card-text>
-        <v-btn
-          v-for="icon in icons"
-          :key="icon"
-          class="mx-4 white--text d-none"
-          icon
-          @click="sendTo(icon.linkTo)"
-        >
-          <v-icon size="24px">{{ icon.icon }}</v-icon>
-        </v-btn>
-      </v-card-text>
-
       <v-card-text
         class="white--text pt-0"
 
