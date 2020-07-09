@@ -72,7 +72,7 @@
       />
     </v-stepper-items>
   </v-stepper>-->
-  <v-container class="pa-0 ma-0">
+  <v-container v-if="test" class="pa-0 ma-0">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -95,7 +95,7 @@
             <v-row dense>
               <v-col class="pa-0 ma-0">
                 <div class="idText">{{test.id}}</div>
-                <v-overflow-btn
+                <!--<v-overflow-btn
                   class="pa-0 ma-0"
                   dark
                   dense
@@ -106,23 +106,27 @@
                   :items="myTests"
                   :label="test.title"
                   background-color="#343344"
-                ></v-overflow-btn>
+                ></v-overflow-btn>-->
               </v-col>
             </v-row>
           </v-list-item>
         </div>
 
         <v-list flat dense>
-          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item)">
-            <v-list-item-icon>
-              <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-            </v-list-item-icon>
+          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n">
+            <v-template>
+              <v-row justify="center">
+                <v-list-item-icon>
+                  <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                </v-list-item-icon>
 
-            <v-list-item-content>
-              <v-list-item-title
-                :style="index == item.id? 'color: white': 'color:#fca326'"
-              >{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+                <v-list-item-content>
+                  <v-list-item-title
+                    :style="index ==n? 'color: white': 'color:#fca326'"
+                  >{{ item.title }}</v-list-item-title>
+                </v-list-item-content>
+              </v-row>
+            </v-template>
           </v-list-item>
         </v-list>
 
@@ -151,24 +155,61 @@
           </v-list>
         </div>
       </v-navigation-drawer>
+      <v-col class="backgroundTest pa-0 ma-0">
+        <v-container v-if="index==0">
+          <v-row justify="space-around">
+            <v-col cols="12" class="titleView">Pre Test</v-col>
+            <v-col cols="12" class="pa-0 pl-3 ma-0">
+              <v-row justify="end" dense>
+                <v-tabs
+                  background-color="transparent"
+                  color="#FCA326"
+                  class="tab-border-bottom pb-0 mb-0"
+                >
+                  <v-tab @click="idx = 0">Consent</v-tab>
+                  <v-tab @click="idx = 1">Form</v-tab>
+                </v-tabs>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
+          <v-row justify="center">
+            <v-col cols="10">
+              <v-card class="dataCard">
+                <iframe
+                  :src="items[index].value.consent"
+                  width="100%"
+                  height="900"
+                  frameborder="0"
+                  marginheight="0"
+                  marginwidth="0"
+                >Carregando…</iframe>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+
+        <p v-if="index!=null">{{items[index].value}}</p>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-// import StepNavigation from "@/components/atoms/StepNavigation";
+//mdi-checkbox-marked-circle-outline
+//mdi-checkbox-blank-circle-outline
+//mdi-menu-right
+//mdi-menu-down
 
 export default {
   props: ["id"],
-  // components: {
-  //   StepNavigation
-  // },
   data: () => ({
-    start: true,
-    el: 0,
-    steps: [],
-    preTest: null,
-    mini: true
+    drawer: true,
+    start: false, //change to true
+    mini: false,
+    index: null,
+    items: [],
+    idx: 0
   }),
   watch: {
     test: async function() {
@@ -178,52 +219,49 @@ export default {
     }
   },
   methods: {
-    nextStep() {
-      var preTest = this.test.preTest;
-      if (
-        this.el === 2 &&
-        preTest.form !== null &&
-        preTest.form !== undefined
-      ) {
-        if (this.preTest) {
-          this.el = Number(this.el) + 1;
-          this.preTest = false;
-        } else this.preTest = true;
-      } else {
-        if (this.el < 4) this.el = Number(this.el) + 1;
-        else this.$router.push("/testslist");
-      }
-    },
-    backStep() {
-      if (this.el > 1) this.el = Number(this.el) - 1;
-    },
     mappingSteps() {
-      //Test
-      this.steps.push({
-        key: "Test Description",
-        value: {
-          title: this.test.title,
-          description: this.test.description
-        }
-      });
       //PreTest
-      if (this.validate(this.test.preTest))
-        this.steps.push({ key: "Pre Test", value: this.test.preTest });
-
+      if (
+        this.validate(this.test.preTest.consent) &&
+        this.validate(this.test.preTest.form)
+      )
+        this.items.push({
+          title: "Pre Test",
+          icon: "mdi-checkbox-blank-circle-outline",
+          value: this.test.preTest,
+          id: 0
+        });
       //Tasks
       if (this.validate(this.test.tasks))
-        this.steps.push({ key: "Tasks", value: this.test.tasks });
+        this.items.push({
+          title: "Tasks",
+          icon: "mdi-checkbox-blank-circle-outline",
+          value: this.test.tasks,
+          id: 1
+        });
 
       //Heuristics
       if (this.validate(this.test.heuristics))
-        this.steps.push({ key: "Heuristics", value: this.test.heuristics });
+        this.items.push({
+          title: "Heuristics",
+          icon: "mdi-checkbox-blank-circle-outline",
+          value: this.test.heuristics.map(i => {
+            return {
+              title: i.title,
+              icon: "mdi-checkbox-blank-circle-outline"
+            };
+          }),
+          id: 2
+        });
 
       //PostTest
       if (this.validate(this.test.postTest))
-        this.steps.push({ key: "Post Test", value: this.test.postTest });
-    },
-    openPage(type) {
-      window.open(`/testview/${this.id}/${type}`);
+        this.items.push({
+          title: "Post Test",
+          icon: "mdi-checkbox-blank-circle-outline",
+          value: this.test.postTest,
+          id: 3
+        });
     },
     validate(object) {
       return object !== null && object !== undefined;
@@ -248,6 +286,13 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
+
+.backgroundTest {
+  background-color: #e8eaf2;
+  height: 94%;
+  overflow: scroll;
+}
+
 .titleView {
   font-family: Roboto;
   font-style: normal;
@@ -280,5 +325,34 @@ export default {
   background-size: contain;
   background-position: right 0px top -20px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.titleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.dataCard {
+  background: #f5f7ff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin: 10px;
+  padding-bottom: 10px;
+  min-height: 550px;
 }
 </style>
