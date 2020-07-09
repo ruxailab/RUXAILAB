@@ -18,7 +18,7 @@
             <v-tab @click="index = 0">Pre Test</v-tab>
             <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
             <v-tab v-else-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
-            <v-tab @click="index = 2">Options</v-tab>
+            <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
             <v-tab @click="index = 3">Post Test</v-tab>
           </v-tabs>
         </v-row>

@@ -10,7 +10,15 @@
       </v-col>
     </v-row>
     <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial v-if="answersSheet" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+      <v-speed-dial
+        v-if="answersSheet !== undefined && answersSheet !== null"
+        v-model="fab"
+        fixed
+        class="mr-3"
+        bottom
+        right
+        open-on-hover
+      >
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
             <v-icon v-if="fab">mdi-close</v-icon>
@@ -78,7 +86,9 @@
 
               <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i">
                 <v-list-item-icon>
-                  <v-icon :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'">{{ preTest.icon }}</v-icon>
+                  <v-icon
+                    :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'"
+                  >{{ preTest.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
@@ -162,7 +172,6 @@
         </div>
       </v-navigation-drawer>
       <v-col class="backgroundTest pa-0 ma-0">
-        {{index}}
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             :src="test.preTest.consent"
@@ -195,7 +204,7 @@
               <p class="subtitleView">{{i+1}}) {{question.text}}</p>
 
               <v-select
-                v-if="answersSheet !== null"
+                v-if="answersSheet !== undefined && answersSheet !== null"
                 class="mt-3"
                 :items="test.options"
                 @change="calcProgress()"
@@ -258,19 +267,18 @@ export default {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       this.el = 1;
-    },
-    user() {
       if (this.user !== null && this.user !== undefined) {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
       }
     },
+
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
 
         if (this.items.find(obj => obj.id == 0)) {
-          console.log('tem pretest');
+          console.log("tem pretest");
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
           console.log(this.preTestIndex);
