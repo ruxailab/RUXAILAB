@@ -113,21 +113,65 @@
         </div>
 
         <v-list flat dense>
-          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n">
-            <v-template>
-              <v-row justify="center">
+          <div v-for="(item,n) in items" :key="n">
+            <v-list-group class="list-group" @click="index = n" v-if="item.id == 0" :value="index == 0 ? true : false" color="white"  no-action>
+              <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                <v-icon :color="index == n ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+                <v-list-item-title
+                  :style="index ==n? 'color: white': 'color:#fca326'"
+                >{{ item.title }}</v-list-item-title>
+              </template>
+
+              <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i" link>
+                <v-list-item-icon>
+                  <v-icon :color="preTestIndex == i ? '#ffffff' : '#fca326'">{{ preTest.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
                   <v-list-item-title
-                    :style="index ==n? 'color: white': 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title>
+                    :style="preTestIndex == i ? 'color: white': 'color:#fca326'"
+                  >{{ preTest.title }}</v-list-item-title>
                 </v-list-item-content>
-              </v-row>
-            </v-template>
-          </v-list-item>
+              </v-list-item>
+            </v-list-group>
+
+            <v-list-group @click="index = n" v-else-if="item.id == 1" :value="index == 1 ? true : false" color="white" no-action>
+              <template v-slot:activator>
+                <v-list-item-icon>
+                <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+                <v-list-item-title
+                  :style="index ==n? 'color: white': 'color:#fca326'"
+                >{{ item.title }}</v-list-item-title>
+              </template>
+
+              <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
+                <v-list-item-icon>
+                  <v-icon :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title
+                    :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
+                  >{{ heuris.title }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
+
+            <v-list-item link @click="index = n" v-else>
+              <v-list-item-icon>
+                <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title
+                  :style="index ==n? 'color: white': 'color:#fca326'"
+                >{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
         </v-list>
 
         <div class="footer" v-if="!mini">
@@ -208,6 +252,8 @@ export default {
     start: false, //change to true
     mini: false,
     index: null,
+    heurisIndex: 0,
+    preTestIndex: 0,
     items: [],
     idx: 0
   }),
@@ -228,7 +274,14 @@ export default {
         this.items.push({
           title: "Pre Test",
           icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.preTest,
+          value: [{
+            title: "Consent",
+            icon: "mdi-checkbox-blank-circle-outline"
+          }, 
+          {
+            title: "Form",
+            icon: "mdi-checkbox-blank-circle-outline"
+          }],
           id: 0
         });
       //Tasks
@@ -251,7 +304,7 @@ export default {
               icon: "mdi-checkbox-blank-circle-outline"
             };
           }),
-          id: 2
+          id: 1
         });
 
       //PostTest
@@ -346,7 +399,6 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
 .dataCard {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -354,5 +406,8 @@ export default {
   margin: 10px;
   padding-bottom: 10px;
   min-height: 550px;
+}
+.list-group .v-icon {
+  color: white!important;
 }
 </style>
