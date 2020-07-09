@@ -1,85 +1,127 @@
 <template>
-  <v-card shaped class="card">
-    <v-container>
-      <v-row justify="end">
-        <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
-          <template v-slot:activator="{ on, attrs }">
-            <v-col cols="9" align-self="start">
-              <h3>{{item.title}}</h3>
-            </v-col>
-            <v-col cols="2" class="mr-2">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </v-col>
-          </template>
-          <v-list>
-            <v-list-item v-if="accessLevel == 2" @click="openTest(item)">
-              <v-list-item-icon>
-                <v-icon>mdi-glasses</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Open Test</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="accessLevel < 2" @click="openManager(item)">
-              <v-list-item-icon>
-                <v-icon>mdi-cog</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Manager</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="accessLevel == 0" @click="deleteTest(item)">
-              <v-list-item-icon>
-                <v-icon color="error">mdi-trash-can-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title color="red">Delete</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-row>
+  <div>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline error white--text"
+          primary-title
+        >
+          Are you sure you want to delete this test?
+        </v-card-title>
 
-      <!-- Desktop/Tablet -->
-      <v-row align="center">
-      <div class="hidden-sm-and-down">
-        <v-row class="bottomStart">
-          <v-col>
-            <v-icon x-large>mdi-account-circle</v-icon>
-            <div class="text-center caption">{{new Date().toDateString()}}</div>
-          </v-col>
+        <v-card-text>
+          Are you sure you want to delete your test "{{ item.title }}"? This action can't be undone
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="grey lighten-2"
+            text
+            @click="dialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            class="red white--text"
+            text
+            @click="deleteTest(item)"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-card shaped class="card">
+      <v-container>
+        <v-row justify="end">
+          <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
+            <template v-slot:activator="{ on, attrs }">
+              <v-col cols="9" align-self="start">
+                <h3>{{item.title}}</h3>
+              </v-col>
+              <v-col cols="2" class="mr-2">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </v-col>
+            </template>
+            <v-list>
+              <v-list-item v-if="accessLevel == 2" @click="openTest(item)">
+                <v-list-item-icon>
+                  <v-icon>mdi-glasses</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Open Test</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="accessLevel < 2" @click="openManager(item)">
+                <v-list-item-icon>
+                  <v-icon>mdi-cog</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Manager</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="accessLevel == 0" @click="dialog = true">
+                <v-list-item-icon>
+                  <v-icon color="error">mdi-trash-can-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title color="red">Delete</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-row>
 
-        <v-row class="bottomEnd">
-          <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+        <!-- Desktop/Tablet -->
+        <v-row align="center">
+          <div class="hidden-sm-and-down">
+            <v-row class="bottomStart">
+              <v-col>
+                <v-icon x-large>mdi-account-circle</v-icon>
+                <div class="text-center caption">{{new Date().toDateString()}}</div>
+              </v-col>
+            </v-row>
+
+            <v-row class="bottomEnd">
+              <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+            </v-row>
+          </div>
         </v-row>
-      </div>
-      </v-row>
 
-      <!-- Mobile -->
-      <v-row justify="center">
-        <div class="hidden-md-and-up bottomMobile">
-          <v-row class="ma-1" justify="space-between">
-            <v-icon x-large>mdi-account-circle</v-icon>
-            <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
-          </v-row>
+        <!-- Mobile -->
+        <v-row justify="center">
+          <div class="hidden-md-and-up bottomMobile">
+            <v-row class="ma-1" justify="space-between">
+              <v-icon x-large>mdi-account-circle</v-icon>
+              <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+            </v-row>
 
-          <v-row class="mt-2" justify="center">
-            <div class="text-center caption">{{new Date().toDateString()}}</div>
-          </v-row>
-        </div>
-      </v-row>
-    </v-container>
-  </v-card>
+            <v-row class="mt-2" justify="center">
+              <div class="text-center caption">{{new Date().toDateString()}}</div>
+            </v-row>
+          </div>
+        </v-row>
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script>
 export default {
   props: ["item", "accessLevel"],
   data: () => ({
-    menu: false
+    menu: false,
+    dialog: false
   }),
   methods: {
     openTest(test) {
