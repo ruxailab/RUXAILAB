@@ -218,9 +218,9 @@ export default {
         id: 4
       },
       {
-        title: "Colaborators",
+        title: "Cooperators",
         icon: "mdi-account-group",
-        path: `/coopsview/${this.test.id}`,
+        path: `/cooperatorsview/${this.test.id}`,
         id: 5
       }
     ];

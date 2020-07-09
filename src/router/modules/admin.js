@@ -55,13 +55,13 @@ export default [
         meta: { authorize: [1] },
         component: SettingsView,
       },
+      {
+        path: "/cooperatorsview/:id",
+        name: "Cooperators View",
+        props: true,
+        meta: { authorize: [1] },
+        component: CooperatorsView,
+      },
     ],
-  },
-  {
-    path: "/cooperatorsview/:id",
-    name: "Cooperators View",
-    props: true,
-    meta: { authorize: [1] },
-    component: CooperatorsView,
   },
 ];

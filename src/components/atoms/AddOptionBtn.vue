@@ -64,11 +64,11 @@ export default {
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        if (this.hasValue && !this.option.value) {
+        if (this.hasValue && this.option.value == null) {
           alert("Please enter a value for this option.");
         } else {
-          if(!this.hasValue) {
-            this.option.value = null
+          if (!this.hasValue) {
+            this.option.value = null;
           }
 
           this.$emit("dialog", false);
@@ -83,7 +83,7 @@ export default {
   },
   watch: {
     dialog() {
-      if(!this.dialog) {
+      if (!this.dialog) {
         this.hasValue = true;
       }
     }
