@@ -213,46 +213,46 @@
         </div>
       </v-navigation-drawer>
       <v-col class="backgroundTest pa-0 ma-0">
-        <v-container v-if="index==0">
-          <v-row justify="space-around">
-            <v-col cols="12" class="titleView">Pre Test</v-col>
-            <v-col cols="12" class="pa-0 pl-3 ma-0">
-              <v-row justify="end" dense>
-                <v-tabs
-                  background-color="transparent"
-                  color="#FCA326"
-                  class="tab-border-bottom pb-0 mb-0"
-                >
-                  <v-tab @click="idx = 0">Consent</v-tab>
-                  <v-tab @click="idx = 1">Form</v-tab>
-                </v-tabs>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-divider></v-divider>
-          <v-row justify="center">
-            <v-col cols="10">
-              <v-card class="dataCard">
-                <iframe
-                  :src="items[index].value.consent"
-                  width="100%"
-                  height="900"
-                  frameborder="0"
-                  marginheight="0"
-                  marginwidth="0"
-                >Carregando…</iframe>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
+        <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
+          <iframe
+            :src="test.preTest.consent"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
+        </ShowInfo>
+        <ShowInfo v-if="index==0 && preTestIndex == 1" title="Pre Test - Form">
+          <iframe
+            :src="test.preTest.form"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
+        </ShowInfo>
 
-        <p v-if="index!=null">{{items[index].value}}</p>
+        <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title"></ShowInfo>
+
+        <ShowInfo v-if="index==2 " title="Post Test">
+          <iframe
+            :src="test.postTest.form"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+          >Carregando…</iframe>
+        </ShowInfo>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import ShowInfo from "@/components/organisms/ShowInfo.vue";
 //mdi-checkbox-marked-circle-outline
 //mdi-checkbox-blank-circle-outline
 //mdi-menu-right
@@ -260,6 +260,9 @@
 
 export default {
   props: ["id"],
+  components: {
+    ShowInfo
+  },
   data: () => ({
     drawer: true,
     start: false, //change to true
@@ -364,6 +367,21 @@ export default {
   overflow: scroll;
 }
 
+.background:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url(../../assets/BackgroundTestView.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right 0px top -20px;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .titleView {
   font-family: Roboto;
   font-style: normal;
@@ -383,40 +401,6 @@ export default {
   align-items: flex-end;
   color: #ffffff;
 }
-.background-img:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-image: url(../../assets/BackgroundTestView.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right 0px top -20px;
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.titleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
-.subtitleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
 .dataCard {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -424,5 +408,12 @@ export default {
   margin: 10px;
   padding-bottom: 10px;
   min-height: 550px;
+}
+
+.nav {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>
