@@ -73,6 +73,25 @@
     </v-stepper-items>
   </v-stepper>-->
   <v-container v-if="test" class="pa-0 ma-0">
+    <!-- <v-btn class="mr-3" large dark fab fixed bottom right color="#F9A826">
+      <v-icon large>mdi-hammer-screwdriver</v-icon>
+    </v-btn>-->
+
+    <v-speed-dial v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+      <template v-slot:activator>
+        <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
+          <v-icon v-if="fab">mdi-close</v-icon>
+          <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
+        </v-btn>
+      </template>
+      <v-btn fab dark small color="#F9A826">
+        <v-icon>mdi-content-save</v-icon>
+      </v-btn>
+      <v-btn fab dark small color="#F9A826">
+        <v-icon>mdi-file-move</v-icon>
+      </v-btn>
+    </v-speed-dial>
+
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -294,7 +313,8 @@ export default {
     heurisIndex: 0,
     preTestIndex: 0,
     items: [],
-    idx: 0
+    idx: 0,
+    fab: false
   }),
   watch: {
     test: async function() {
@@ -439,7 +459,6 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
-
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
@@ -449,5 +468,8 @@ export default {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
+}
+.btn-fix:focus::before {
+  opacity: 0 !important;
 }
 </style>
