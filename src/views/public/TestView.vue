@@ -237,7 +237,7 @@ export default {
   },
   data: () => ({
     drawer: true,
-    start: false, //change to true
+    start: true, //change to true
     mini: false,
     index: 0,
     heurisIndex: 0,
