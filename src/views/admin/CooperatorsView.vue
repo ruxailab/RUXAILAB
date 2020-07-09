@@ -6,8 +6,11 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
+    <v-btn large dark fab fixed bottom right color="#F9A826" @click=" send()">
+      <v-icon large>mdi-email</v-icon>
+    </v-btn>
     <ShowInfo title="Cooperators">
-      <FormCooperation :invitations="invitations"/>
+      <FormCooperation :invitations="invitations" />
     </ShowInfo>
   </v-container>
 </template>
@@ -29,16 +32,13 @@ export default {
     snackbar: false,
     snackMsg: "",
     snackColor: "",
-    invitations: [],
+    invitations: []
   }),
   methods: {
     validate(valid, index) {
       this.valids[index] = valid;
     },
     async submit() {
-      await this.$store.dispatch("getAnswers", { id: this.test.answers });
-      await this.$store.dispatch("getReports", { id: this.test.reports });
-
       this.snackMsg = "Test updated succesfully";
       this.snackColor = "success";
       this.snackbar = true;
@@ -75,12 +75,61 @@ export default {
             });
           });
         });
+    },
+    send() {
+      let removed = this.object.coop.filter(e => !this.invitations.includes(e));
+      let invite = this.invitations.filter(e => !this.object.coop.includes(e));
+
+      removed.forEach(item => {
+        this.$store.dispatch("removeMyCoops", {
+          docId: item.id,
+          element: {
+            id: this.id,
+            title: this.object.title,
+            type: this.object.type,
+            reports: this.object.reports,
+            answers: this.object.answers,
+            accessLevel: this.object.accessLevel
+          }
+        });
+      });
+
+      invite.forEach(item => {
+        let inv = {
+          to: {
+            id: item.id,
+            email: item.email,
+            accessLevel: item.accessLevel
+          },
+          from: {
+            id: this.user.uid,
+            email: this.user.email
+          },
+          test: {
+            id: this.id,
+            title: this.object.title,
+            type: this.object.type,
+            reports: this.object.reports,
+            answers: this.object.answers
+          }
+        };
+        this.$store.dispatch("pushNotification", {
+          docId: inv.to.id,
+          element: inv,
+          param: "notifications"
+        });
+      });
+
+      removed.forEach(item => {
+        this.object.coop.splice(this.testEdit.coop.indexOf(item), 1);
+      });
     }
   },
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
+        this.invitations = Array.from(this.test.coop);
       }
     },
     snackbar() {
