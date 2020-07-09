@@ -114,17 +114,23 @@
 
         <v-list flat dense>
           <div v-for="(item,n) in items" :key="n">
-            <v-list-group class="list-group" @click="index = n" v-if="item.id == 0" :value="index == 0 ? true : false" color="white"  no-action>
+            <v-list-group
+              @click="index = n"
+              v-if="item.id == 0"
+              :value="index == 0 ? true : false"
+              no-action
+            >
+              <v-icon slot="appendIcon" :color="index == n ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                <v-icon :color="index == n ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-              </v-list-item-icon>
+                  <v-icon :color="index == n ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                </v-list-item-icon>
                 <v-list-item-title
                   :style="index ==n? 'color: white': 'color:#fca326'"
                 >{{ item.title }}</v-list-item-title>
               </template>
 
-              <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i" link>
+              <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i">
                 <v-list-item-icon>
                   <v-icon :color="preTestIndex == i ? '#ffffff' : '#fca326'">{{ preTest.icon }}</v-icon>
                 </v-list-item-icon>
@@ -137,11 +143,18 @@
               </v-list-item>
             </v-list-group>
 
-            <v-list-group @click="index = n" v-else-if="item.id == 1" :value="index == 1 ? true : false" color="white" no-action>
+            <v-list-group
+              @click="index = n"
+              v-else-if="item.id == 1"
+              :value="index == 1 ? true : false"
+              color="white"
+              no-action
+            >
+              <v-icon slot="appendIcon" :color="index == n ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-              </v-list-item-icon>
+                  <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                </v-list-item-icon>
                 <v-list-item-title
                   :style="index ==n? 'color: white': 'color:#fca326'"
                 >{{ item.title }}</v-list-item-title>
@@ -262,6 +275,9 @@ export default {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       this.el = 1;
+    },
+    preTestIndex() {
+      console.log(this.preTestIndex);
     }
   },
   methods: {
@@ -274,14 +290,16 @@ export default {
         this.items.push({
           title: "Pre Test",
           icon: "mdi-checkbox-blank-circle-outline",
-          value: [{
-            title: "Consent",
-            icon: "mdi-checkbox-blank-circle-outline"
-          }, 
-          {
-            title: "Form",
-            icon: "mdi-checkbox-blank-circle-outline"
-          }],
+          value: [
+            {
+              title: "Consent",
+              icon: "mdi-checkbox-blank-circle-outline"
+            },
+            {
+              title: "Form",
+              icon: "mdi-checkbox-blank-circle-outline"
+            }
+          ],
           id: 0
         });
       //Tasks
@@ -406,8 +424,5 @@ export default {
   margin: 10px;
   padding-bottom: 10px;
   min-height: 550px;
-}
-.list-group .v-icon {
-  color: white!important;
 }
 </style>
