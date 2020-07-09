@@ -78,12 +78,12 @@
 
               <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i">
                 <v-list-item-icon>
-                  <v-icon :color="preTestIndex == i ? '#ffffff' : '#fca326'">{{ preTest.icon }}</v-icon>
+                  <v-icon :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'">{{ preTest.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
                   <v-list-item-title
-                    :style="preTestIndex == i ? 'color: white': 'color:#fca326'"
+                    :style="preTestIndex == preTest.id ? 'color: white': 'color:#fca326'"
                   >{{ preTest.title }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -122,7 +122,7 @@
               </v-list-item>
             </v-list-group>
             <!--Post Test-->
-            <v-list-item  @click="index = item.id" v-else-if="item.id ==2">
+            <v-list-item @click="index = item.id" v-else-if="item.id ==2">
               <v-list-item-icon>
                 <v-icon :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
@@ -247,7 +247,7 @@ export default {
     mini: false,
     index: null,
     heurisIndex: 0,
-    preTestIndex: 0,
+    preTestIndex: null,
     items: [],
     idx: 0,
     fab: false,
@@ -265,34 +265,58 @@ export default {
         this.answersSheet = x.answersSheet;
       }
     },
-    items(){
-      if(this.items.length){
-        this.index = this.items[0].id
+    items() {
+      if (this.items.length) {
+        this.index = this.items[0].id;
+
+        if (this.items.find(obj => obj.id == 0)) {
+          console.log('tem pretest');
+          //se tiver preTest mexe no preTestIndex
+          this.preTestIndex = this.items[0].value[0].id;
+          console.log(this.preTestIndex);
+        }
       }
     }
   },
   methods: {
     mappingSteps() {
       //PreTest
-      if (
-        this.validate(this.test.preTest.consent) &&
-        this.validate(this.test.preTest.form)
-      )
+      if (this.validate(this.test.preTest.consent))
         this.items.push({
           title: "Pre Test",
           icon: "mdi-checkbox-blank-circle-outline",
           value: [
             {
               title: "Consent",
-              icon: "mdi-checkbox-blank-circle-outline"
-            },
-            {
-              title: "Form",
-              icon: "mdi-checkbox-blank-circle-outline"
+              icon: "mdi-checkbox-blank-circle-outline",
+              id: 0
             }
           ],
           id: 0
         });
+
+      if (this.validate(this.test.preTest.form)) {
+        if (this.items.length) {
+          this.items[0].value.push({
+            title: "Form",
+            icon: "mdi-checkbox-blank-circle-outline",
+            id: 1
+          });
+        } else {
+          this.items.push({
+            title: "Pre Test",
+            icon: "mdi-checkbox-blank-circle-outline",
+            value: [
+              {
+                title: "Form",
+                icon: "mdi-checkbox-blank-circle-outline",
+                id: 1
+              }
+            ],
+            id: 0
+          });
+        }
+      }
       //Tasks
       if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
         this.items.push({
@@ -303,7 +327,10 @@ export default {
         });
 
       //Heuristics
-      if (this.validate(this.test.heuristics) && this.test.heuristics.length !== 0 )
+      if (
+        this.validate(this.test.heuristics) &&
+        this.test.heuristics.length !== 0
+      )
         this.items.push({
           title: "Heuristics",
           icon: "mdi-checkbox-blank-circle-outline",
