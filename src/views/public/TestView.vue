@@ -1,6 +1,6 @@
 <template >
   <v-container v-if="test" class="pa-0 ma-0">
-    <v-speed-dial v-if="answersSheet" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+    <v-speed-dial v-if="answersSheet && !start" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
       <template v-slot:activator>
         <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
           <v-icon v-if="fab">mdi-close</v-icon>
@@ -18,7 +18,7 @@
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
-        <p align="justify" class="subtitleView">{{test.description}}</p>
+        <p align="justify" class="description">{{test.description}}</p>
         <v-row justify="center" class>
           <v-btn color="white" outlined rounded @click="start=!start">Start Test</v-btn>
         </v-row>
@@ -412,7 +412,7 @@ export default {
   align-items: center;
   color: #ffffff;
 }
-.subtitleView {
+.description{
   font-family: Roboto;
   font-style: normal;
   font-weight: 200;
