@@ -1,16 +1,16 @@
 <template >
   <v-container v-if="test" class="pa-0 ma-0">
-    <v-speed-dial v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+    <v-speed-dial v-if="answersSheet" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
       <template v-slot:activator>
         <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
           <v-icon v-if="fab">mdi-close</v-icon>
           <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
         </v-btn>
       </template>
-      <v-btn fab dark small color="#F9A826">
+      <v-btn @click="save()" fab dark small color="#F9A826">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
-      <v-btn fab dark small color="#F9A826">
+      <v-btn @click="submitLog(false)" fab dark small color="#F9A826">
         <v-icon>mdi-file-move</v-icon>
       </v-btn>
     </v-speed-dial>
@@ -191,7 +191,7 @@
                 v-if="answersSheet !== null"
                 class="mt-3"
                 :items="test.options"
-                @change="$emit('progress')"
+                @change="calcProgress()"
                 v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
                 label="Respuestas/Answers"
                 outlined
@@ -202,7 +202,7 @@
                 v-else
                 class="mt-3"
                 :items="test.options"
-                @change="$emit('progress')"
+                @change="calcProgress()"
                 v-model="test.answersSheet.heuristics[heurisIndex].questions[i].res"
                 label="Respuestas/Answers"
                 outlined
@@ -316,6 +316,46 @@ export default {
     },
     validate(object) {
       return object !== null && object !== undefined;
+    },
+    save() {
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      this.$store.dispatch("updateMyAnswers", {
+        docId: this.user.uid,
+        element: newAnswer
+      });
+      this.submitLog(true);
+    },
+    calcProgress() {
+      var qtd = 0;
+      this.answersSheet.heuristics.forEach(h => {
+        qtd += h.questions.filter(q => q.res != null).length;
+      });
+
+      this.answersSheet.progress = (qtd * 100) / this.answersSheet.total;
+    },
+    submitLog(save) {
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      var log = {
+        date: new Date().toLocaleString("pt-BR"),
+        progress: this.answersSheet.progress,
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
+      };
+      this.$store
+        .dispatch("updateLog", {
+          docId: newAnswer.reports,
+          elementId: this.user.uid,
+          element: log
+        })
+        .then(() => {
+          if (!save)
+            this.$store.dispatch("pushAnswers", {
+              docId: newAnswer.answers,
+              element: Object.assign(this.answersSheet, {
+                uid: this.user.uid,
+                email: this.user.email
+              })
+            });
+        });
     }
   },
   computed: {
