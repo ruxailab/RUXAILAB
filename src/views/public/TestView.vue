@@ -234,7 +234,30 @@
           >Carregando…</iframe>
         </ShowInfo>
 
-        <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title"></ShowInfo>
+        <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title">
+         
+          <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
+          <v-divider class="mb-5"></v-divider>
+          <v-row
+            v-for="(question,i) in test.heuristics[heurisIndex].questions"
+            :key="i"
+            justify="center"
+          >
+            <v-col cols="10">
+              <p class="subtitleView">{{i+1}}) {{question.text}}</p>
+
+              <v-select
+                class="mt-3"
+                :items="test.options"
+                @change="$emit('progress')"
+                v-model="test.answersSheet.heuristics[heurisIndex].questions[i].res"
+                label="Respuestas/Answers"
+                outlined
+                dense
+              ></v-select>
+            </v-col>
+          </v-row>
+        </ShowInfo>
 
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
@@ -415,5 +438,16 @@ export default {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+}
+
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 </style>
