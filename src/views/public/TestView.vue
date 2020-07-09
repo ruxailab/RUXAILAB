@@ -172,7 +172,7 @@
         </div>
       </v-navigation-drawer>
       <v-col class="backgroundTest pa-0 ma-0">
-        <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
+         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             :src="test.preTest.consent"
             width="100%"
@@ -192,7 +192,10 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
-        <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title">
+        <ShowInfo
+          v-if="index==1 && test.type === 'Expert'"
+          :title="test.heuristics[heurisIndex].title"
+        >
           <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
           <v-row
@@ -227,6 +230,10 @@
             </v-col>
           </v-row>
         </ShowInfo>
+        <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
+          <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
+          <v-divider class="mb-5"></v-divider>
+        </ShowInfo>
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
             :src="test.postTest.form"
@@ -252,7 +259,7 @@ export default {
   },
   data: () => ({
     drawer: true,
-    start: true, //change to true
+    start: false, //change to true
     mini: false,
     index: null,
     heurisIndex: 0,
@@ -266,22 +273,18 @@ export default {
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
-      this.el = 1;
       if (this.user !== null && this.user !== undefined) {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
       }
     },
-
     items() {
+      
       if (this.items.length) {
-        this.index = this.items[0].id;
-
+        this.index = this.items[0].id
         if (this.items.find(obj => obj.id == 0)) {
-          console.log("tem pretest");
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
-          console.log(this.preTestIndex);
         }
       }
     }
@@ -330,7 +333,12 @@ export default {
         this.items.push({
           title: "Tasks",
           icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.tasks,
+          value: this.test.tasks.map(i => {
+            return {
+              title: i.name,
+              icon: "mdi-checkbox-blank-circle-outline"
+            };
+          }),
           id: 1
         });
 
