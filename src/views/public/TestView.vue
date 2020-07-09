@@ -1,20 +1,5 @@
 <template >
   <v-container v-if="test" class="pa-0 ma-0">
-    <v-speed-dial v-if="answersSheet && !start" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
-      <template v-slot:activator>
-        <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
-          <v-icon v-if="fab">mdi-close</v-icon>
-          <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
-        </v-btn>
-      </template>
-      <v-btn @click="save()" fab dark small color="#F9A826">
-        <v-icon>mdi-content-save</v-icon>
-      </v-btn>
-      <v-btn @click="submitLog(false)" fab dark small color="#F9A826">
-        <v-icon>mdi-file-move</v-icon>
-      </v-btn>
-    </v-speed-dial>
-
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -25,6 +10,21 @@
       </v-col>
     </v-row>
     <v-row v-else class="nav pa-0 ma-0" dense>
+      <v-speed-dial v-if="answersSheet" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+        <template v-slot:activator>
+          <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
+            <v-icon v-if="fab">mdi-close</v-icon>
+            <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
+          </v-btn>
+        </template>
+        <v-btn @click="save()" fab dark small color="#F9A826">
+          <v-icon>mdi-content-save</v-icon>
+        </v-btn>
+        <v-btn @click="submitLog(false)" fab dark small color="#F9A826">
+          <v-icon>mdi-file-move</v-icon>
+        </v-btn>
+      </v-speed-dial>
+
       <v-navigation-drawer
         clipped
         v-model="drawer"
@@ -56,19 +56,23 @@
 
         <v-list flat dense>
           <div v-for="(item,n) in items" :key="n">
+            <!--Pre Test-->
             <v-list-group
-              @click="index = n"
+              @click="index = item.id"
               v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
             >
-              <v-icon slot="appendIcon" :color="index == n ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
+              <v-icon
+                slot="appendIcon"
+                :color="index == item.id ? '#ffffff' : '#fca326'"
+              >mdi-chevron-down</v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index == n ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
-                  :style="index ==n? 'color: white': 'color:#fca326'"
+                  :style="index ==item.id? 'color: white': 'color:#fca326'"
                 >{{ item.title }}</v-list-item-title>
               </template>
 
@@ -84,21 +88,24 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
-
+            <!--Heuris/Tasks-->
             <v-list-group
-              @click="index = n"
+              @click="index = item.id"
               v-else-if="item.id == 1"
               :value="index == 1 ? true : false"
               color="white"
               no-action
             >
-              <v-icon slot="appendIcon" :color="index == n ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
+              <v-icon
+                slot="appendIcon"
+                :color="index == item.id ? '#ffffff' : '#fca326'"
+              >mdi-chevron-down</v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                  <v-icon :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
-                  :style="index ==n? 'color: white': 'color:#fca326'"
+                  :style="index ==item.id? 'color: white': 'color:#fca326'"
                 >{{ item.title }}</v-list-item-title>
               </template>
 
@@ -114,15 +121,15 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
-
-            <v-list-item link @click="index = n" v-else>
+            <!--Post Test-->
+            <v-list-item  @click="index = item.id" v-else-if="item.id ==2">
               <v-list-item-icon>
-                <v-icon :color="index ==n? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                <v-icon :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
-                  :style="index ==n? 'color: white': 'color:#fca326'"
+                  :style="index ==item.id? 'color: white': 'color:#fca326'"
                 >{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -155,6 +162,7 @@
         </div>
       </v-navigation-drawer>
       <v-col class="backgroundTest pa-0 ma-0">
+        {{index}}
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             :src="test.preTest.consent"
@@ -175,7 +183,6 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
-
         <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title">
           <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
@@ -211,7 +218,6 @@
             </v-col>
           </v-row>
         </ShowInfo>
-
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
             :src="test.postTest.form"
@@ -239,7 +245,7 @@ export default {
     drawer: true,
     start: true, //change to true
     mini: false,
-    index: 0,
+    index: null,
     heurisIndex: 0,
     preTestIndex: 0,
     items: [],
@@ -257,6 +263,11 @@ export default {
       if (this.user !== null && this.user !== undefined) {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
+      }
+    },
+    items(){
+      if(this.items.length){
+        this.index = this.items[0].id
       }
     }
   },
@@ -283,7 +294,7 @@ export default {
           id: 0
         });
       //Tasks
-      if (this.validate(this.test.tasks))
+      if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
         this.items.push({
           title: "Tasks",
           icon: "mdi-checkbox-blank-circle-outline",
@@ -292,7 +303,7 @@ export default {
         });
 
       //Heuristics
-      if (this.validate(this.test.heuristics))
+      if (this.validate(this.test.heuristics) && this.test.heuristics.length !== 0 )
         this.items.push({
           title: "Heuristics",
           icon: "mdi-checkbox-blank-circle-outline",
@@ -306,16 +317,16 @@ export default {
         });
 
       //PostTest
-      if (this.validate(this.test.postTest))
+      if (this.validate(this.test.postTest.form))
         this.items.push({
           title: "Post Test",
           icon: "mdi-checkbox-blank-circle-outline",
           value: this.test.postTest,
-          id: 3
+          id: 2
         });
     },
     validate(object) {
-      return object !== null && object !== undefined;
+      return object !== null && object !== undefined && object !== "";
     },
     save() {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
@@ -412,7 +423,7 @@ export default {
   align-items: center;
   color: #ffffff;
 }
-.description{
+.description {
   font-family: Roboto;
   font-style: normal;
   font-weight: 200;
