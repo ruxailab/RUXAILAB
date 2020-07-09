@@ -119,6 +119,11 @@ export default {
       if (item !== " ") return true;
       return false;
     }
+  },
+  watch: {
+    tasks() {
+      this.$emit("change");
+    }
   }
 };
 </script>

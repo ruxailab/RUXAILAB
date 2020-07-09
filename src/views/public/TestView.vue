@@ -233,6 +233,7 @@
         <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
           <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
+          <ViewTask :item="test.tasks[heurisIndex]" />
         </ShowInfo>
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
@@ -251,11 +252,13 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
+import ViewTask from "@/components/atoms/ViewTask.vue";
 
 export default {
   props: ["id"],
   components: {
-    ShowInfo
+    ShowInfo,
+    ViewTask
   },
   data: () => ({
     drawer: true,
@@ -279,7 +282,6 @@ export default {
       }
     },
     items() {
-      
       if (this.items.length) {
         this.index = this.items[0].id
         if (this.items.find(obj => obj.id == 0)) {
