@@ -1,82 +1,5 @@
 <template >
-  <!--<v-stepper v-model="el" alt-labels>
-    <v-row align="center">
-      <template v-for="(step,n) in steps">
-        <v-stepper-step
-          :key="`${n+1}-step`"
-          :complete="el > n+1"
-          :step="n+1"
-          editable
-        >{{ step.key }}</v-stepper-step>
-        <v-divider v-if="n+1 !== steps.length" :key="n+1"></v-divider>
-      </template>
-    </v-row>
-    <v-stepper-items>
-      <v-stepper-content v-for="(step,n) in steps" :key="`${n+1}-content`" :step="n+1">
-        <v-container v-if="step.key === 'Test Description'">
-          <v-row>
-            <v-col justify="center" align="center">
-              <h1>{{step.value.title}}</h1>
-              <h3>{{step.value.description}}</h3>
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-container v-if="step.key === 'Pre Test'">
-          <iframe
-            v-if="!preTest"
-            :src="step.value.consent"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-          >Carregando…</iframe>
-
-          <iframe
-            v-else
-            :src="step.value.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-          >Carregando…</iframe>
-        </v-container>
-        <v-container v-if="step.key === 'Tasks'">
-          <v-row class="fill-height" align="center" justify="center">
-            <v-btn color="success" @click="openPage(test.type)">Start Tasks</v-btn>
-          </v-row>
-        </v-container>
-        <v-container v-if="step.key === 'Heuristics'">
-          <v-row class="fill-height" align="center" justify="center">
-            <v-btn color="success" @click="openPage(test.type)">Start Heuristics</v-btn>
-          </v-row>
-        </v-container>
-        <v-container v-if="step.key === 'Post Test'">
-          <iframe
-            :src="step.value"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-          >Carregando…</iframe>
-        </v-container>
-      </v-stepper-content>
-      <StepNavigation
-        :step="el"
-        :size="steps.length"
-        v-on:backStep="backStep()"
-        v-on:nextStep="nextStep()"
-        v-on:submit="nextStep()"
-      />
-    </v-stepper-items>
-  </v-stepper>-->
   <v-container v-if="test" class="pa-0 ma-0">
-    <!-- <v-btn class="mr-3" large dark fab fixed bottom right color="#F9A826">
-      <v-icon large>mdi-hammer-screwdriver</v-icon>
-    </v-btn>-->
-
     <v-speed-dial v-model="fab" fixed class="mr-3" bottom right open-on-hover>
       <template v-slot:activator>
         <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
@@ -254,7 +177,6 @@
         </ShowInfo>
 
         <ShowInfo v-if="index==1" :title="test.heuristics[heurisIndex].title">
-         
           <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
           <v-row
@@ -266,6 +188,18 @@
               <p class="subtitleView">{{i+1}}) {{question.text}}</p>
 
               <v-select
+                v-if="answersSheet !== null"
+                class="mt-3"
+                :items="test.options"
+                @change="$emit('progress')"
+                v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
+                label="Respuestas/Answers"
+                outlined
+                dense
+              ></v-select>
+
+              <v-select
+                v-else
                 class="mt-3"
                 :items="test.options"
                 @change="$emit('progress')"
@@ -295,10 +229,6 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-//mdi-checkbox-marked-circle-outline
-//mdi-checkbox-blank-circle-outline
-//mdi-menu-right
-//mdi-menu-down
 
 export default {
   props: ["id"],
@@ -309,12 +239,13 @@ export default {
     drawer: true,
     start: false, //change to true
     mini: false,
-    index: null,
+    index: 0,
     heurisIndex: 0,
     preTestIndex: 0,
     items: [],
     idx: 0,
-    fab: false
+    fab: false,
+    answersSheet: null
   }),
   watch: {
     test: async function() {
@@ -322,8 +253,11 @@ export default {
         await this.mappingSteps();
       this.el = 1;
     },
-    preTestIndex() {
-      console.log(this.preTestIndex);
+    user() {
+      if (this.user !== null && this.user !== undefined) {
+        let x = this.user.myAnswers.find(answer => answer.id == this.id);
+        this.answersSheet = x.answersSheet;
+      }
     }
   },
   methods: {
@@ -387,6 +321,9 @@ export default {
   computed: {
     test() {
       return this.$store.getters.test;
+    },
+    user() {
+      return this.$store.state.auth.user;
     }
   },
   created() {
