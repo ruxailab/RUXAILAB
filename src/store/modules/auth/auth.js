@@ -26,7 +26,6 @@ export default {
       commit("setLoading", true);
       try {
         await api.auth.signUp(payload);
-        //await api.auth.logout()
         commit("setUser", payload);
       } catch (err) {
         console.error("Error when creating user :(", err);

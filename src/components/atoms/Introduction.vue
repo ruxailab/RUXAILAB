@@ -7,7 +7,6 @@
     >
       <v-img src="@/assets/introductionDesktop.svg">
         <v-container>
-          <!-- ver se prefere no meio ou em cima -> so add fill-height no container -->
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
               <h1 class="display-3 font-weight-regular mb-4 white--text">UX Remote LAB</h1>
@@ -49,10 +48,6 @@
             >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
             <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
           </v-row>
-
-          <!-- <v-row justify="center">
-            <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
-            </v-row> -->
         </div>
         <!-- div for margin at bottom -->
         <div style="background-color: #f4b700; height: 40px"></div>

@@ -29,16 +29,6 @@ export default {
         "Google forms link required" //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
     ]
   }),
-  // computed: {
-  //   propModel: {
-  //     get() {
-  //       return this.postTest;
-  //     },
-  //     set(value) {
-  //       this.$emit("input", value);
-  //     }
-  //   }
-  // },
   watch: {
     "postTest.form"() {
       let valid = this.$refs.form.validate();

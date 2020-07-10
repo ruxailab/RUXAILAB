@@ -2,8 +2,6 @@
   <v-container>
     <v-card>
       <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
-        <!-- <p v-if="id === null">Test registered successfully</p>
-        <p v-else>Test updated successfully</p>-->
         <p>{{ snackMsg }}</p>
         <v-btn text @click="snackbar = false">
           <v-icon>mdi-close-circle-outline</v-icon>
@@ -362,7 +360,6 @@ export default {
         this.preTest.consent === "" ? null : this.preTest.consent;
       this.object.preTest.form =
         this.preTest.form === "" ? null : this.preTest.form;
-      // this.object = Object.assign(this.object, this.preTest);
 
       if (
         this.object.preTest.form === null &&

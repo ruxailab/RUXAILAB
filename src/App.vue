@@ -15,9 +15,7 @@ import Toolbar from "./components/molecules/Toolbar";
 
 export default {
   name: "App",
-  data: () => ({
-    //
-  }),
+  data: () => ({ }),
   components: {
     Toolbar
   }

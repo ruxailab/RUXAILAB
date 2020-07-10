@@ -28,7 +28,6 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
 })
 
 exports.setUserRole = functions.https.onCall(async (data, context) => {
-    //if(context.auth.token.accessLevel!==0) return
     try {
         var _ = await admin.auth().setCustomUserClaims(data.uid, data.customClaims)
 

@@ -21,9 +21,6 @@ export default {
     var collectionRef = db.collection(payload.collection);
     return collectionRef.doc(payload.id).get();
   },
-  // queryObjects: (payload) => {
-  //
-  // },
   getAllObjects: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);

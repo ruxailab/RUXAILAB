@@ -20,10 +20,6 @@
           align="justify"
           style="line-height: 1.6"
         >COVID-19 has shown to the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!</p>
-
-        <!-- <v-row justify="center">
-          <v-btn outlined rounded class="mt-2">Read More</v-btn>
-        </v-row>-->
       </v-col>
     </v-row>
 

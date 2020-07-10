@@ -17,7 +17,6 @@
     </v-badge>
 
     <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute max-width="300px" offset-y>
-      <!-- colocar titulozinho -->
       <v-list v-if="user.notifications.length > 0">
         <v-list-item
           @click="nothing()"

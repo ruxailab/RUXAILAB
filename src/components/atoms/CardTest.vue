@@ -240,21 +240,3 @@ export default {
   width: 80%;
 }
 </style>
-
-<!--
-@media screen and (max-width: 960px) {
-  /*sm */
-  .card {
-    height: 300px;
-    width: 250px;
-    justify-self: center;
-  }
-}
-
-@media screen and (max-width: 1264px) {
-  /*md */
-} 
-
-
-
--->
