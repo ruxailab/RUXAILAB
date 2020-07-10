@@ -57,7 +57,6 @@ export default {
     },
     async removeObject(_, payload) {
       try {
-        console.log("bbbb", payload);
         var docRef = await api.database.removeArray(payload);
         return docRef;
       } catch (err) {
@@ -77,7 +76,7 @@ export default {
         let docRef = await api.database.updateArrayElement(payload);
         return docRef;
       } catch (err) {
-        console.log("Error", err);
+        console.error("Error", err);
       }
     },
     async callFunction(_, payload) {

@@ -128,7 +128,6 @@ export default {
       this.$router.push("/testview/" + test.id);
     },
     async deleteTest(item) {
-      console.log(item);
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
 

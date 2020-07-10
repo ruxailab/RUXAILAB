@@ -41,7 +41,6 @@ export default {
     });
   },
   removeArray: (payload) => {
-    console.log('ccc', payload);
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);

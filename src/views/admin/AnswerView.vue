@@ -298,10 +298,6 @@ export default {
         return total + res;
       }, 0);
 
-      // console.log("ResultTest", ResultTest);
-      // console.log("answersResults", answersResults);
-      // console.log("heurisResults", heurisResults);
-
       //Set Data
       this.testData = {
         average: Math.fround(ResultTest / answers.length).toFixed(2),
@@ -326,8 +322,6 @@ export default {
       this.graphDataHeuris = this.dataHeuris.map(list => {
         return list.average;
       });
-
-      console.log(this.dataHeuris);
     },
     standardDeviation(array) {
       let average = array.reduce(

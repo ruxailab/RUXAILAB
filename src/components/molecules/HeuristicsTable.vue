@@ -159,7 +159,6 @@ export default {
     arrayQuestions() {
       let array = Array.from(this.heuris.questions);
       let aux = [];
-      console.log(array);
       array.forEach(el => {
         aux.push(Object.assign({}, { id: el.id, res: null }));
       });
