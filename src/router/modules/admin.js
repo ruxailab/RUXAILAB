@@ -1,6 +1,5 @@
-
-import EditTest from "@/views/admin/EditTest.vue";
-import TestList from "@/views/admin/TestList.vue";
+import EditTest from "@/views/admin/EditTestView.vue";
+import TestList from "@/views/admin/TestListView.vue";
 import AnswerView from "@/views/admin/AnswerView.vue";
 import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";

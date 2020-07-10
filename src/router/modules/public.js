@@ -1,9 +1,9 @@
 import TestView from "@/views/public/TestView.vue";
-import SignIn from "@/views/public/SignIn.vue";
-import SignUp from "@/views/public/SignUp.vue";
-import Home from "@/views/public/Home.vue";
-import LandingPage from "@/views/public/LandingPage.vue";
-import PageNotFound from "@/views/public/PageNotFound.vue";
+import SignIn from "@/views/public/SignInView.vue";
+import SignUp from "@/views/public/SignUpView.vue";
+import Home from "@/views/public/HomeView.vue";
+import LandingPage from "@/views/public/LandingPageView.vue";
+import PageNotFound from "@/views/public/PageNotFoundView.vue";
 
 export default [
   {
