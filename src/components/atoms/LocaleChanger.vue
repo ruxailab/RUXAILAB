@@ -27,7 +27,6 @@ export default {
   },
   watch: {
     lang: function(newValue) {
-      console.log("Changed", newValue);
       this.$i18n.locale = newValue;
     }
   }

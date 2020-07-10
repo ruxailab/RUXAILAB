@@ -128,7 +128,6 @@ export default {
       this.$router.push("/testview/" + test.id);
     },
     async deleteTest(item) {
-      console.log(item);
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
 
@@ -241,21 +240,3 @@ export default {
   width: 80%;
 }
 </style>
-
-<!--
-@media screen and (max-width: 960px) {
-  /*sm */
-  .card {
-    height: 300px;
-    width: 250px;
-    justify-self: center;
-  }
-}
-
-@media screen and (max-width: 1264px) {
-  /*md */
-} 
-
-
-
--->

@@ -45,13 +45,11 @@
 </template>
 
 <script>
-// import LayoutTestFunctions from "@/components/organisms/LayoutTestFunctions.vue";
 import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
   components: {
     FormCooperation
-    // LayoutTestFunctions
   },
   data: () => ({
     invitations: [],

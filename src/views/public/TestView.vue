@@ -45,18 +45,6 @@
             <v-row dense>
               <v-col class="pa-0 ma-0">
                 <div class="idText">{{test.id}}</div>
-                <!--<v-overflow-btn
-                  class="pa-0 ma-0"
-                  dark
-                  dense
-                  v-model="selectedTest"
-                  @change="pushToTest()"
-                  item-value="id"
-                  item-text="title"
-                  :items="myTests"
-                  :label="test.title"
-                  background-color="#343344"
-                ></v-overflow-btn>-->
               </v-col>
             </v-row>
           </v-list-item>

@@ -66,7 +66,6 @@
 
 
 <script>
-//import TestsTable from "@/components/molecules/TestsTable";
 import CardTest from "@/components/atoms/CardTest";
 import CardNewTest from "@/components/atoms/CardNewTest";
 
@@ -137,7 +136,6 @@ export default {
     }
   },
   components: {
-    //TestsTable,
     CardTest,
     CardNewTest
   }

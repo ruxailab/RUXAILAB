@@ -21,9 +21,6 @@ export default {
     var collectionRef = db.collection(payload.collection);
     return collectionRef.doc(payload.id).get();
   },
-  // queryObjects: (payload) => {
-  //
-  // },
   getAllObjects: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
@@ -41,7 +38,6 @@ export default {
     });
   },
   removeArray: (payload) => {
-    console.log('ccc', payload);
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);

@@ -1,9 +1,11 @@
 <template >
   <v-container>
+    <!-- Top/Title -->
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Answers</v-col>
       <v-col cols="12" class="pa-0 pl-3 ma-0">
         <v-row justify="end" dense>
+          <!-- Main Tabs -->
           <v-tabs
             background-color="transparent"
             color="#FCA326"
@@ -15,16 +17,24 @@
         </v-row>
       </v-col>
     </v-row>
+
     <v-divider></v-divider>
+
+    <!-- Main Tabs Content -->
     <v-row justify="center">
       <v-col cols="10">
+        <!-- Main Tab 1 -->
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Statistics</v-card-title>
+
           <v-divider></v-divider>
+
           <v-row justify="space-around">
+            <!-- Top Card -->
             <v-col cols="10">
               <v-card class="cardStyle">
                 <v-row justify="space-around">
+                <!-- Average -->
                   <v-col cols="4">
                     <v-row justify="center">
                       <v-card-title>Test's average</v-card-title>
@@ -35,7 +45,10 @@
                       </v-card-text>
                     </v-row>
                   </v-col>
+
                   <v-divider vertical></v-divider>
+
+                  <!-- Info -->
                   <v-col>
                     <v-list class="transparent">
                       <v-list-item>
@@ -65,11 +78,13 @@
                 </v-row>
               </v-card>
             </v-col>
+
             <v-col cols="12" class="mt-3">
               <v-card-title class="subtitleView">Heuristics Data</v-card-title>
 
               <v-divider></v-divider>
 
+              <!-- Bottom Tabs -->
               <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
                 <v-tab
                   class="tab-text"
@@ -83,9 +98,11 @@
                 >Graphic</v-tab>
               </v-tabs>
 
+              <!-- Bottom Tab Content -->
               <v-row justify="center">
                 <v-col cols="10">
                   <v-row>
+                    <!-- Bottom Tab 1 -->
                     <v-col cols="12" v-if="ind == 0">
                       <v-data-table
                         :headers="headersHeuris"
@@ -94,6 +111,8 @@
                         class="elevation-1 cardStyle"
                       ></v-data-table>
                     </v-col>
+
+                    <!-- Bottom Tab 2 -->
                     <v-col cols="12" v-if="ind == 1">
                       <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
                     </v-col>
@@ -104,8 +123,10 @@
           </v-row>
         </v-card>
 
+        <!-- Top Tab 2 -->
         <v-card v-if="index==1" class="dataCard">
           <v-row dense justify="start" class="pa-0 ma-0">
+            <!-- Left Column -->
             <v-col cols="2" class="pa-2 ma-0">
               <div class="subtitleView">HEURISTICS</div>
               <v-divider></v-divider>
@@ -117,7 +138,10 @@
                 >Heuristic {{i + 1}}</v-list-item>
               </v-list>
             </v-col>
+
             <v-divider vertical inset style="height:530px"></v-divider>
+
+            <!-- Middle Column -->
             <v-col v-if="open" cols="2" class="pa-2 ma-0">
               <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
               <v-divider></v-divider>
@@ -130,13 +154,19 @@
                 >Question {{i + 1}}</v-list-item>
               </v-list>
             </v-col>
+
             <v-divider v-if="open" vertical inset></v-divider>
+
+            <!-- Right Column -->
             <v-col cols="7" class="pa-2 ma-0" style="width:100%">
               <div v-if="dataSelected != null">
                 <div class="subtitleView" v-if="dataSelected != -1">QUESTION {{dataSelected+1}}</div>
                 <div class="subtitleView" v-else>Data Table</div>
+
                 <v-divider></v-divider>
+
                 <v-row justify="center" dense>
+                  <!-- Table -->
                   <v-col v-if="dataSelected == -1" class="ma-0 pa-0">
                     <v-text-field
                       class="mx-3"
@@ -144,6 +174,7 @@
                       label="Search"
                       v-model="search"
                     ></v-text-field>
+
                     <v-data-table
                       class="elevation-1 cardStyle"
                       :headers="headers"
@@ -151,6 +182,8 @@
                       :search="search"
                     ></v-data-table>
                   </v-col>
+
+                  <!-- Graph -->
                   <v-col class="mx-3" v-else>
                     <v-row justify="center">
                       <v-col>
@@ -172,6 +205,7 @@
 <script>
 import QuestionChart from "@/components/atoms/QuestionChart.vue";
 import BarChart from "@/components/atoms/BarChart.vue";
+
 export default {
   props: ["id"],
   components: {
@@ -298,10 +332,6 @@ export default {
         return total + res;
       }, 0);
 
-      // console.log("ResultTest", ResultTest);
-      // console.log("answersResults", answersResults);
-      // console.log("heurisResults", heurisResults);
-
       //Set Data
       this.testData = {
         average: Math.fround(ResultTest / answers.length).toFixed(2),
@@ -326,8 +356,6 @@ export default {
       this.graphDataHeuris = this.dataHeuris.map(list => {
         return list.average;
       });
-
-      console.log(this.dataHeuris);
     },
     standardDeviation(array) {
       let average = array.reduce(
