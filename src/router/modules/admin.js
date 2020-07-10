@@ -1,4 +1,4 @@
-import CreateTest from "@/views/admin/CreateTest.vue";
+
 import EditTest from "@/views/admin/EditTest.vue";
 import TestList from "@/views/admin/TestList.vue";
 import AnswerView from "@/views/admin/AnswerView.vue";
@@ -13,12 +13,6 @@ export default [
     name: "TestList",
     meta: { authorize: [1] },
     component: TestList,
-  },
-  {
-    path: "/createtest",
-    name: "Create Test",
-    meta: { authorize: [1] },
-    component: CreateTest,
   },
   {
     path: "/managerview/:id",
