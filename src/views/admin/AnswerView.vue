@@ -34,7 +34,7 @@
             <v-col cols="10">
               <v-card class="cardStyle">
                 <v-row justify="space-around">
-                <!-- Average -->
+                  <!-- Average -->
                   <v-col cols="4">
                     <v-row justify="center">
                       <v-card-title>Test's average</v-card-title>
@@ -134,8 +134,12 @@
                 <v-list-item
                   v-for="(heuris, i) in answers.answersSheet.heuristics"
                   :key="i"
-                  @click="setHeaders(heuris,i),setItems(i),open = 1,dataSelected=-1"
-                >Heuristic {{i + 1}}</v-list-item>
+                  @click="setHeaders(heuris,i),setItems(i),open = true,dataSelected=-1, questionIndex = -1"
+                >
+                  <v-list-item-title
+                    :style="i == heurisIndex ? 'color: #fca326': 'color:black'"
+                  >Heuristic {{i + 1}}</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-col>
 
@@ -146,12 +150,20 @@
               <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
               <v-divider></v-divider>
               <v-list color="transparent" dense>
-                <v-list-item @click="dataSelected = -1">Data Table</v-list-item>
+                <v-list-item @click="dataSelected = -1, questionIndex = -1">
+                  <v-list-item-title
+                    :style="dataSelected == -1? 'color: #fca326': 'color:black'"
+                  >Data Table</v-list-item-title>
+                </v-list-item>
                 <v-list-item
                   v-for="(question, i) in dataQuestions"
                   :key="i"
-                  @click="dataSelected = i"
-                >Question {{i + 1}}</v-list-item>
+                  @click="dataSelected = i, questionIndex = i"
+                >
+                  <v-list-item-title
+                    :style="i == questionIndex ? 'color: #fca326': 'color:black'"
+                  >Question {{i + 1}}</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-col>
 
@@ -214,6 +226,8 @@ export default {
   },
   data: () => ({
     index: 0,
+    heurisIndex: null,
+    questionIndex: null,
     ind: 0,
     open: false,
     search: "",
@@ -251,14 +265,19 @@ export default {
       this.items = [];
 
       let aux;
+      this.heurisIndex = index;
 
+      // answers.answersSheet.heuristics
       this.answers.answers.forEach(answer => {
         aux = {
           uid: null,
           questions: []
         };
         aux.uid = answer.uid;
-        aux.questions = Array.from(answer.heuristics[index].questions);
+
+        if(answer.heuristics[index])
+          aux.questions = Array.from(answer.heuristics[index].questions);
+
         this.items.push(aux);
       });
       let ids = [];
@@ -283,6 +302,7 @@ export default {
         });
         index++;
       });
+      console.info(this.headers);
     },
     questionGraph(data, ids) {
       this.dataQuestions = [];
@@ -290,7 +310,8 @@ export default {
       ids.forEach(id => {
         let aux = [];
         data.forEach(item => {
-          aux.push(item.questions.find(q => q.id == id).res);
+          if(item.questions.length)
+            aux.push(item.questions.find(q => q.id == id).res);
         });
         questionMap.set(`Question ${id}`, aux);
       });
@@ -460,5 +481,4 @@ export default {
   padding: 0px;
   margin: 0px 10px 0px;
 }
-
 </style>
