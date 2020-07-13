@@ -85,7 +85,7 @@ export default {
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
 
-    docRef.onSnapshot({ includeMetadataChanges: true }, async () => {
+    docRef.onSnapshot(async () => {
       let user = await docRef.get();
       user = Object.assign({ uid: payload.docId }, user.data());
       commit("setUser", user);
