@@ -21,7 +21,7 @@
                   @change="pushToTest()"
                   item-value="id"
                   item-text="title"
-                  :items="myTests"
+                  :items="testsList"
                   :label="test.title"
                   background-color="#343344"
                 ></v-overflow-btn>
@@ -30,7 +30,7 @@
           </v-list-item>
         </div>
 
-        <v-list flat dense>
+        <v-list flat dense v-if="items">
           <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item)">
             <v-list-item-icon>
               <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
@@ -75,6 +75,7 @@
           <div class="background-top">
             <v-row class="pa-5 ma-0">
               <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
+              {{test}}
             </v-row>
           </div>
           <div>
@@ -109,7 +110,8 @@ export default {
     drawer: true,
     loading: true,
     tests: [],
-    mini: true
+    mini: true,
+    isCoops: null
   }),
   methods: {
     pushToTest() {
@@ -120,19 +122,44 @@ export default {
       if (item.id == undefined) this.$router.push(item);
       if (item.id == 2) window.open(item.path);
       else this.$router.push(item.path);
+    },
+    setIsCoops(payload) {
+      this.isCoops = payload
     }
   },
   computed: {
-    myTests() {
-      return this.$store.state.auth.user.myTests;
+    testsList() {
+      if(!this.isCoops)
+        return this.$store.state.auth.user.myTests;
+      else 
+        return this.$store.state.auth.user.myCoops;
     },
     test() {
-      return Object.assign(
+      let test = Object.assign(
         {},
         this.$store.state.auth.user.myTests.find(test =>
           Object.values(test).includes(this.id)
         )
       );
+
+      if (!Object.keys(test).length) {
+        //se o objeto for vazio
+        test = Object.assign(
+          {},
+          this.$store.state.auth.user.myCoops.find(test =>
+            Object.values(test).includes(this.id)
+          )
+        );
+
+        if(Object.keys(test).length) {
+          //se nao for vazio entao é coops
+          this.setIsCoops(true)
+        }
+      } else {
+        this.setIsCoops(false)
+      }
+
+      return test;
     },
     index() {
       if (this.items)
@@ -140,12 +167,9 @@ export default {
           this.items.find(item => item.path.includes(this.$route.path))
         );
       return 0;
-    }
-  },
-  watch: {
-    test() {
-      this.selectedTest = this.test;
-      this.items = [
+    },
+    items() {
+      let items = [
         {
           title: "Manager",
           icon: "mdi-home",
@@ -175,56 +199,27 @@ export default {
           icon: "mdi-chart-bar",
           path: `/answerview/${this.test.answers}`,
           id: 4
-        },
-        {
+        }
+      ];
+      
+      if(this.test.accessLevel == 0) {
+        items.push({
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.id}`,
           id: 5
-        }
-      ];
+        })
+      }
+
+      return items
+    }
+  },
+  watch: {
+    test() {
+      this.selectedTest = this.test;
     }
   },
   created() {
-    this.items = [
-      {
-        title: "Manager",
-        icon: "mdi-home",
-        path: `/managerview/${this.test.id}`,
-        id: 0
-      },
-      {
-        title: "Test",
-        icon: "mdi-file-document-edit",
-        path: `/edittest/${this.test.id}`,
-        id: 1
-      },
-      {
-        title: "Preview",
-        icon: "mdi-file-eye",
-        path: `/testview/${this.test.id}`,
-        id: 2
-      },
-      {
-        title: "Reports",
-        icon: "mdi-book-multiple",
-        path: `/reportview/${this.test.reports}`,
-        id: 3
-      },
-      {
-        title: "Answers",
-        icon: "mdi-chart-bar",
-        path: `/answerview/${this.test.answers}`,
-        id: 4
-      },
-      {
-        title: "Cooperators",
-        icon: "mdi-account-group",
-        path: `/cooperatorsview/${this.test.id}`,
-        id: 5
-      }
-    ];
-
     this.itemSelect = {
       title: "Manager",
       icon: "mdi-home",
