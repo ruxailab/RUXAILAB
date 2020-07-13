@@ -75,7 +75,6 @@
           <div class="background-top">
             <v-row class="pa-5 ma-0">
               <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
-              {{test}}
             </v-row>
           </div>
           <div>
@@ -201,7 +200,7 @@ export default {
           id: 4
         }
       ];
-      
+
       if(this.test.accessLevel == 0) {
         items.push({
           title: "Cooperators",
