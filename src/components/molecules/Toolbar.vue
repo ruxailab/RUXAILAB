@@ -11,9 +11,20 @@
       <v-icon left>mdi-lock</v-icon>Sign-in
     </v-btn>
 
-    <v-btn text @click="signOut()" v-else>
-      <v-icon left>mdi-logout</v-icon>Sign-out
-    </v-btn>
+    <v-menu offset-y open-on-hover v-else>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
+          <v-icon dark>mdi-account-circle</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-btn text @click="signOut()">
+            <v-icon left>mdi-logout</v-icon>Sign-out
+          </v-btn>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-app-bar>
 </template>
 
