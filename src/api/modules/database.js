@@ -37,15 +37,21 @@ export default {
       ),
     });
   },
-  removeArray: (payload) => {
+  removeArray: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
+    let user = await docRef.get();
+    user = Object.assign({ uid: payload.docId }, user.data());
 
+    console.log("Payload", payload);
+    let itemDelete = user[payload.param].find(
+      (item) => item.id == payload.element.id
+    );
+    user[payload.param].splice(user[payload.param].indexOf(itemDelete), 1);
+    console.log(user[payload.param]);
     return docRef.update({
-      [payload.param]: firebase.firestore.FieldValue.arrayRemove(
-        payload.element
-      ),
+      [payload.param]: user[payload.param],
     });
   },
   updateArray: async (payload) => {
@@ -66,19 +72,20 @@ export default {
       [payload.param]: user[payload.param],
     });
   },
-  updateArrayElement:async (payload)=>{
+  updateArrayElement: async (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
     let element = await docRef.get();
-    element  = Object.assign({ id: payload.docId }, element.data());
-    var obj = element[payload.field].find(el => el[payload.identifier] === payload.elementId)
-    obj[payload.param] = payload.element
+    element = Object.assign({ id: payload.docId }, element.data());
+    var obj = element[payload.field].find(
+      (el) => el[payload.identifier] === payload.elementId
+    );
+    obj[payload.param] = payload.element;
 
     return docRef.update({
       [payload.field]: element[payload.field],
     });
-
   },
   observer: (payload, commit) => {
     const db = firebase.firestore();
@@ -95,7 +102,7 @@ export default {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     return collectionRef.doc(payload.docId).update({
-      [payload.param]:payload.data
+      [payload.param]: payload.data,
     });
   },
 };

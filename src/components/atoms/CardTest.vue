@@ -1,40 +1,20 @@
 <template>
   <div>
-    <v-dialog
-      v-model="dialog"
-      width="600"
-      persistent
-    >
+    <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
           class="headline error white--text"
           primary-title
-        >
-          Are you sure you want to delete this test?
-        </v-card-title>
+        >Are you sure you want to delete this test?</v-card-title>
 
-        <v-card-text>
-          Are you sure you want to delete your test "{{ item.title }}"? This action can't be undone
-        </v-card-text>
+        <v-card-text>Are you sure you want to delete your test "{{ item.title }}"? This action can't be undone</v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            class="grey lighten-2"
-            text
-            @click="dialog = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            class="red white--text"
-            text
-            @click="deleteTest(item)"
-          >
-            Delete
-          </v-btn>
+          <v-btn class="grey lighten-2" text @click="dialog = false">Cancel</v-btn>
+          <v-btn class="red white--text" text @click="deleteTest(item)">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -130,6 +110,7 @@ export default {
     async deleteTest(item) {
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
+      await this.$store.dispatch("getReports", { id: item.reports });
 
       this.$store.dispatch("deleteTest", item).then(() => {
         //Remove test from myTests
@@ -138,10 +119,7 @@ export default {
           element: {
             id: item.id,
             title: item.title,
-            type: item.type,
-            reports: item.reports,
-            answers: item.answers,
-            accessLevel: 0
+            type: item.type
           },
           param: "myTests"
         });
@@ -153,10 +131,7 @@ export default {
             element: {
               id: item.id,
               title: item.title,
-              type: item.type,
-              reports: item.reports,
-              answers: item.answers,
-              accessLevel: coop.accessLevel
+              type: item.type
             }
           });
         });
@@ -164,27 +139,15 @@ export default {
         //Remove report from collection
         this.$store.dispatch("deleteReport", { id: item.reports });
 
-        //Remove all myAnswers
-        this.answers.answers.forEach(ans => {
+        // Remove all myAnswers
+        console.log(this.reports);
+        this.reports.reports.forEach(rep => {
           this.$store.dispatch("removeMyAnswers", {
-            docId: ans.uid,
+            docId: rep.uid,
             element: {
               id: item.id,
               title: item.title,
-              type: item.type,
-              accessLevel: 2,
-              reports: item.reports,
-              answersSheet: Object.assign(
-                {},
-                {
-                  heuristics: ans.heuristics,
-                  progress: ans.progress,
-                  total: ans.total,
-                  email: ans.email,
-                  uid: ans.uid
-                }
-              ),
-              answers: item.answers
+              type: item.type
             }
           });
         });
@@ -209,6 +172,9 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers;
+    },
+    reports() {
+      return this.$store.state.reports.reports;
     }
   }
 };
