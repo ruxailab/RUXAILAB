@@ -23,11 +23,11 @@
         <v-container>
           <p class="titleView ma-2 pa-2">Create Test</p>
           <v-divider></v-divider>
-          <FormTestDescription :test="test" ref="form1" :lock="false" />
+          <FormTestDescription :test="test" ref="form" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
             <v-spacer></v-spacer>
             <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
-            <v-btn color="#F9A826" @click="submit(),dialog = false">Create</v-btn>
+            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
           </v-card-actions>
         </v-container>
       </v-card>
@@ -185,6 +185,11 @@ export default {
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
+    },
+    validate() {
+      if(this.$refs.form.valida()) {
+        this.submit()
+      }
     }
   },
   watch: {
@@ -195,6 +200,11 @@ export default {
         type: ""
       };
       this.object = {};
+
+      if(!this.dialog) {
+        this.$refs.form.resetVal();
+        this.dialog = false
+      }
     }
   },
   computed: {

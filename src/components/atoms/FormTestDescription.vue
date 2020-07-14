@@ -7,7 +7,7 @@
             <v-text-field
               v-model="test.title"
               label="Title"
-              :rules="requiredRule"
+              :rules="titleRequired"
               counter="100"
               outlined
               @input="$emit('change')"
@@ -18,7 +18,7 @@
               :items="types"
               v-model="test.type"
               label="Type"
-              :rules="requiredRule"
+              :rules="typeRequired"
               dense
               outlined
             
@@ -43,9 +43,12 @@
 export default {
   props: ["test","lock"],
   data: () => ({
-    requiredRule: [
+    titleRequired: [
       v => !!v || "Field Required",
       v => v.length <= 100 || "Max 100 characters"
+    ],
+    typeRequired: [
+      v => !!v || "Field Required"
     ],
     types: ["User", "Expert"]
   }),
@@ -53,6 +56,10 @@ export default {
     valida() {
       let valid = this.$refs.form.validate();
       this.$emit("valForm", valid, 0);
+      return valid;
+    },
+    resetVal() {
+      this.$refs.form.resetValidation();
     }
   }
 };
