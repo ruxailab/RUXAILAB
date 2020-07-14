@@ -25,7 +25,7 @@
             <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
           </v-btn>
         </template>
-        <v-btn @click="save()" fab dark small color="#F9A826">
+        <v-btn @click="submitLog(true)" fab dark small color="#F9A826">
           <v-icon>mdi-content-save</v-icon>
         </v-btn>
         <v-btn @click="submitLog(false)" fab dark small color="#F9A826">
@@ -42,9 +42,15 @@
       >
         <div class="header" v-if="!mini">
           <v-list-item>
-            <v-row dense>
-              <v-col class="pa-0 ma-0">
+            <v-row dense align="center" justify="space-around">
+              <v-col class="pa-0 ma-0" cols="8">
                 <div class="idText">{{test.id}}</div>
+                <div class="titleText">{{test.title}}</div>
+              </v-col>
+              <v-col>
+                <v-row justify="center">
+                  <v-progress-circular :value="answersSheet.progress" color="#fca326"></v-progress-circular>
+                </v-row>
               </v-col>
             </v-row>
           </v-list-item>
@@ -109,7 +115,14 @@
 
               <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
                 <v-list-item-icon>
-                  <v-icon :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
+                  <v-progress-circular
+                    v-if= "progress(answersSheet.heuristics[i])!=100"
+                    :value="progress(answersSheet.heuristics[i])"
+                    :size="24"
+                    :width="3"
+                    :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                  ></v-progress-circular>
+                   <v-icon v-else :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
@@ -160,7 +173,7 @@
         </div>
       </v-navigation-drawer>
       <v-col class="backgroundTest pa-0 ma-0">
-         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
+        <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             :src="test.preTest.consent"
             width="100%"
@@ -184,6 +197,7 @@
           v-if="index==1 && test.type === 'Expert'"
           :title="test.heuristics[heurisIndex].title"
         >
+          {{answersSheet.heuristics[heurisIndex]}}
           <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
           <v-row
@@ -258,7 +272,8 @@ export default {
     items: [],
     idx: 0,
     fab: false,
-    answersSheet: null
+    answersSheet: null,
+    res: 0
   }),
   watch: {
     test: async function() {
@@ -267,11 +282,13 @@ export default {
       if (this.user !== null && this.user !== undefined) {
         let x = this.user.myAnswers.find(answer => answer.id == this.id);
         this.answersSheet = x.answersSheet;
+      } else {
+        this.answersSheet = this.test.answersSheet;
       }
     },
     items() {
       if (this.items.length) {
-        this.index = this.items[0].id
+        this.index = this.items[0].id;
         if (this.items.find(obj => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
@@ -343,7 +360,7 @@ export default {
           value: this.test.heuristics.map(i => {
             return {
               title: i.title,
-              icon: "mdi-checkbox-blank-circle-outline"
+              icon: "mdi-checkbox-marked-circle-outline"
             };
           }),
           id: 1
@@ -361,18 +378,10 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== "";
     },
-    save() {
-      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
-      this.$store.dispatch("updateMyAnswers", {
-        docId: this.user.uid,
-        element: newAnswer
-      });
-      this.submitLog(true);
-    },
     calcProgress() {
       var qtd = 0;
       this.answersSheet.heuristics.forEach(h => {
-        qtd += h.questions.filter(q => q.res != null).length;
+        qtd += h.questions.filter(q => q.res !== "").length;
       });
 
       this.answersSheet.progress = (qtd * 100) / this.answersSheet.total;
@@ -400,6 +409,16 @@ export default {
               })
             });
         });
+
+      this.$store.dispatch("updateMyAnswers", {
+        docId: this.user.uid,
+        element: newAnswer
+      });
+    },
+    progress(item) {
+      return (
+        (item.questions.filter(q => q.res !== "").length * 100) / item.total
+      );
     }
   },
   computed: {
@@ -492,5 +511,14 @@ export default {
 }
 .btn-fix:focus::before {
   opacity: 0 !important;
+}
+.titleText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin-left: 15px;
+  padding: 10px;
+  padding-left: 0px;
+  padding-top: 0px;
+  align-items: flex-end;
 }
 </style>

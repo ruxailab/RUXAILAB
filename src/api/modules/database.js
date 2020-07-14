@@ -27,15 +27,15 @@ export default {
     return collectionRef.get();
   },
   pushArray: (payload) => {
-    const db = firebase.firestore();
-    var collectionRef = db.collection(payload.collection);
-    var docRef = collectionRef.doc(payload.docId);
+      const db = firebase.firestore();
+      var collectionRef = db.collection(payload.collection);
+      var docRef = collectionRef.doc(payload.docId);
 
-    return docRef.update({
-      [payload.param]: firebase.firestore.FieldValue.arrayUnion(
-        payload.element
-      ),
-    });
+      return docRef.update({
+        [payload.param]: firebase.firestore.FieldValue.arrayUnion(
+          payload.element
+        ),
+      });
   },
   removeArray: async (payload) => {
     const db = firebase.firestore();
