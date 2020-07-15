@@ -4,6 +4,7 @@
     color="red"
     :timeout="4000"
     top
+    absolute
     >
     {{errorMessage}}
     </v-snackbar>

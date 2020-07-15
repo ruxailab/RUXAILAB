@@ -1,37 +1,55 @@
 <template>
-  <div>
-    <Snackbar/>
-    <v-row align="center" justify="center">
-      <v-col cols="6">
-        <v-card :elevation="2">
-          <v-card-title class="justify-center">
-            <h3>{{$t('SIGNIN.sign-in')}}</h3>
-          </v-card-title>
-          <v-form class="mx-3" @keyup.native.enter="onSignIn()">
-            <v-text-field :label="$t('SIGNIN.email')" prepend-inner-icon="mdi-account-circle" v-model="email"></v-text-field>
+  <div class="background-grey">
+    <Snackbar />
+    <v-row justify="center" style="height: 90%" align="center">
+      <v-col cols="12" md="8">
+        <v-card color="#f5f7ff" class="mx-2">
+          <v-row>
+            <v-col cols="12" md="5" align-self="center">
+              <div class="card-title">{{$t('SIGNIN.sign-in')}}</div>
 
-            <v-text-field
-              :label="$t('SIGNIN.password')"
-              prepend-inner-icon="mdi-lock"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              @click:append="showPassword = !showPassword"
-              :type="showPassword ? 'text' : 'password'"
-              v-model="password"
-            ></v-text-field>
-          </v-form>
-          <v-card-actions class="justify-center">
-            <v-btn 
-            color="green lighten-1" 
-            rounded class="white--text" 
-            @click="onSignIn()"
-            :loading="loading"
-            >{{$t('SIGNIN.sign-in')}}</v-btn>
-          </v-card-actions>
-          <v-card-actions class="justify-center">
-            <p>
-              <a href="/signup">{{$t('SIGNIN.dont-have-account')}}</a>
-            </p>
-          </v-card-actions>
+              <div class="divider"></div>
+
+              <v-form class="mx-3" @keyup.native.enter="onSignIn()">
+                <v-text-field
+                  :label="$t('SIGNIN.email')"
+                  outlined
+                  prepend-inner-icon="mdi-account-circle"
+                  v-model="email"
+                  dense
+                ></v-text-field>
+
+                <v-text-field
+                  :label="$t('SIGNIN.password')"
+                  prepend-inner-icon="mdi-lock"
+                  outlined
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append="showPassword = !showPassword"
+                  :type="showPassword ? 'text' : 'password'"
+                  v-model="password"
+                  dense
+                ></v-text-field>
+              </v-form>
+              <v-card-actions class="justify-center mt-4">
+                <v-btn
+                  color="#F9A826"
+                  rounded
+                  class="white--text"
+                  @click="onSignIn()"
+                  :loading="loading"
+                >{{$t('SIGNIN.sign-in')}}</v-btn>
+              </v-card-actions>
+              <v-card-actions class="justify-center mt-1">
+                <p>
+                  <a style="color: #F9A826" href="/signup">{{$t('SIGNIN.dont-have-account')}}</a>
+                </p>
+              </v-card-actions>
+            </v-col>
+
+            <v-col cols="7" class="hidden-sm-and-down" align-self="center">
+              <v-img src="@/assets/signIn.svg"></v-img>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -39,35 +57,58 @@
 </template>
 
 <script>
-import Snackbar from '@/components/atoms/Snackbar'
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
-    data: () => ({
-        showPassword: false,
-        email: '',
-        password: ''
-    }),
-    methods: {
-        async onSignIn() {
-            await this.$store.dispatch("signin", {
-                email: this.email,
-                password: this.password
-            })
-            if(this.user) {
-              this.$router.push('/testslist');
-            }
-        }
-    },
-    computed: {
-      loading() {
-        return this.$store.getters.loading;
-      },
-      user() {
-        return this.$store.getters.user;
+  data: () => ({
+    showPassword: false,
+    email: "",
+    password: ""
+  }),
+  methods: {
+    async onSignIn() {
+      await this.$store.dispatch("signin", {
+        email: this.email,
+        password: this.password
+      });
+      if (this.user) {
+        this.$router.push("/testslist");
       }
-    },
-    components: {
-      Snackbar
     }
-}
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+    user() {
+      return this.$store.getters.user;
+    }
+  },
+  components: {
+    Snackbar
+  }
+};
 </script>
+
+<style scoped>
+.background-grey {
+  background-color: #e8eaf2;
+  height: 100vh;
+  align-content: center;
+}
+.card-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 56px;
+  margin-left: 12px;
+  margin-bottom: 20px;
+}
+.divider {
+  margin-bottom: 40px;
+  margin-left: 8px;
+  background: linear-gradient(90deg, #C4C4C4 ,rgba(196, 196, 196, 0))!important;
+  height: 0.5px;
+}
+</style>
