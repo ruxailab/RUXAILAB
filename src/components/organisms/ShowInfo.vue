@@ -18,7 +18,7 @@
     </v-row>
     <v-divider></v-divider>
     <v-row justify="center">
-      <v-col cols="10">
+      <v-col cols="12">
         <v-card class="dataCard">
           <slot></slot>
         </v-card>
@@ -38,7 +38,7 @@ export default {
   font-family: Roboto;
   font-style: normal;
   font-weight: 300;
-  font-size: 60px;
+  font-size: 40px;
   line-height: 70px;
   display: flex;
   align-items: center;

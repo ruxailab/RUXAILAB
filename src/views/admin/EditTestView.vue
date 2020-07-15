@@ -29,7 +29,7 @@
       <v-icon large>mdi-content-save</v-icon>
     </v-btn>
     <v-row justify="center">
-      <v-col cols="10">
+      <v-col cols="12">
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
           <v-divider></v-divider>
@@ -71,7 +71,7 @@
           <v-card-title class="subtitleView">Post Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
-            <v-col cols="10">
+            <v-col cols="12">
               <FormPostTest
                 :postTest="object.postTest"
                 :valIndex="1"

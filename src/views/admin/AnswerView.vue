@@ -22,7 +22,7 @@
 
     <!-- Main Tabs Content -->
     <v-row justify="center">
-      <v-col cols="10">
+      <v-col cols="12">
         <!-- Main Tab 1 -->
         <v-card v-if="index==0" class="dataCard">
           <v-card-title class="subtitleView">Statistics</v-card-title>

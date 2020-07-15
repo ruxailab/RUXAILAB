@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
-    <v-row>
-      <v-col>
+    <v-row class="mt-4" justify="center">
+      <v-col cols="10">
         <v-text-field
           prepend-inner-icon="mdi-link-variant"
           label="Form"

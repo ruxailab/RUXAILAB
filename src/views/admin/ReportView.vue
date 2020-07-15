@@ -10,7 +10,7 @@
     </v-row>
     <v-divider></v-divider>
     <v-row justify="center">
-      <v-col cols="10">
+      <v-col cols="12">
         <v-data-table
           class="datatable"
           :headers="headers"
