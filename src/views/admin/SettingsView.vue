@@ -11,7 +11,7 @@
     </v-row>
     <v-divider></v-divider>
     <v-row justify="center">
-      <v-col cols="10">
+      <v-col cols="12">
         <v-card class="dataCard">
           <v-col class="mb-1 pa-4 pb-1">
             <p class="subtitleView">Current Test</p>
