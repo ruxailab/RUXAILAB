@@ -49,7 +49,11 @@
               </v-col>
               <v-col>
                 <v-row justify="center">
-                  <v-progress-circular :value="answersSheet.progress" color="#fca326"></v-progress-circular>
+                  <v-progress-circular
+                    :value="answersSheet.progress"
+                    color="#fca326"
+                    :size="50"
+                  >{{answersSheet.progress}}</v-progress-circular>
                 </v-row>
               </v-col>
             </v-row>
@@ -106,7 +110,12 @@
               >mdi-chevron-down</v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                  <v-progress-circular
+                    v-if="answersSheet.progress != 100"
+                    :value="answersSheet.progress"
+                    :color="index == item.id ? '#ffffff' : '#fca326'"
+                  ></v-progress-circular>
+                  <v-icon v-else :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
                   :style="index ==item.id? 'color: white': 'color:#fca326'"
@@ -116,13 +125,13 @@
               <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
                 <v-list-item-icon>
                   <v-progress-circular
-                    v-if= "progress(answersSheet.heuristics[i])!=100"
+                    v-if="progress(answersSheet.heuristics[i])!=100"
                     :value="progress(answersSheet.heuristics[i])"
                     :size="24"
                     :width="3"
                     :color="heurisIndex == i ? '#ffffff' : '#fca326'"
                   ></v-progress-circular>
-                   <v-icon v-else :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
+                  <v-icon v-else :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
@@ -197,7 +206,6 @@
           v-if="index==1 && test.type === 'Expert'"
           :title="test.heuristics[heurisIndex].title"
         >
-          {{answersSheet.heuristics[heurisIndex]}}
           <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
           <v-divider class="mb-5"></v-divider>
           <v-row
@@ -356,7 +364,7 @@ export default {
       )
         this.items.push({
           title: "Heuristics",
-          icon: "mdi-checkbox-blank-circle-outline",
+          icon: "mdi-checkbox-marked-circle-outline",
           value: this.test.heuristics.map(i => {
             return {
               title: i.title,
@@ -384,7 +392,10 @@ export default {
         qtd += h.questions.filter(q => q.res !== "").length;
       });
 
-      this.answersSheet.progress = (qtd * 100) / this.answersSheet.total;
+      this.answersSheet.progress = (
+        (qtd * 100) /
+        this.answersSheet.total
+      ).toFixed(1);
     },
     submitLog(save) {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
@@ -419,6 +430,9 @@ export default {
       return (
         (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
+    },
+    print(string) {
+      console.log(string);
     }
   },
   computed: {
