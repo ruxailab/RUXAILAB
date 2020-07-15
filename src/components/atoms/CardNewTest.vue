@@ -108,18 +108,36 @@ export default {
                     docId: id,
                     data: idReport
                   });
-                  this.$store.dispatch("pushMyTest", {
-                    docId: this.user.uid,
-                    element: {
-                      id: id,
-                      title: object.title,
-                      type: object.type,
-                      reports: idReport,
-                      answers: idAnswers,
-                      accessLevel: 0
-                    },
-                    param: "myTests"
-                  });
+                  this.$store
+                    .dispatch("createCooperators", {
+                      data: {
+                        test: {
+                          id: id,
+                          title: object.title,
+                          type: object.type
+                        },
+                        cooperators: []
+                      }
+                    })
+                    .then(idCooperators => {
+                      this.$store.dispatch("setCooperatorsID", {
+                        docId: id,
+                        data: idCooperators
+                      });
+                      this.$store.dispatch("pushMyTest", {
+                        docId: this.user.uid,
+                        element: {
+                          id: id,
+                          title: object.title,
+                          type: object.type,
+                          reports: idReport,
+                          answers: idAnswers,
+                          cooperators: idCooperators,
+                          accessLevel: 0
+                        },
+                        param: "myTests"
+                      });
+                    });
                 });
             });
         })
@@ -179,16 +197,14 @@ export default {
         }
       });
 
-      this.object = Object.assign(this.object, { coop: [] });
-
       this.object = Object.assign(this.object, { options: [] });
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
     },
     validate() {
-      if(this.$refs.form.valida()) {
-        this.submit()
+      if (this.$refs.form.valida()) {
+        this.submit();
       }
     }
   },
@@ -201,9 +217,9 @@ export default {
       };
       this.object = {};
 
-      if(!this.dialog) {
+      if (!this.dialog) {
         this.$refs.form.resetVal();
-        this.dialog = false
+        this.dialog = false;
       }
     }
   },
