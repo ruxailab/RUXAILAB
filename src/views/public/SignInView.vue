@@ -3,7 +3,7 @@
     <Snackbar />
     <v-row justify="center" style="height: 90%" align="center">
       <v-col cols="12" md="8">
-        <v-card color="#f5f7ff">
+        <v-card color="#f5f7ff" class="mx-2">
           <v-row>
             <v-col cols="12" md="5" align-self="center">
               <div class="card-title">{{$t('SIGNIN.sign-in')}}</div>
@@ -46,7 +46,7 @@
               </v-card-actions>
             </v-col>
 
-            <v-col cols="7" class="hidden-sm-and-down">
+            <v-col cols="7" class="hidden-sm-and-down" align-self="center">
               <v-img src="@/assets/signIn.svg"></v-img>
             </v-col>
           </v-row>
