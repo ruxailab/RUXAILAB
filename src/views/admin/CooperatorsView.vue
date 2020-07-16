@@ -12,15 +12,55 @@
 
     <ShowInfo title="Cooperators">
       <v-autocomplete
-        v-model="usersSelect"
-        chips
-        multiple
-        :items="users"
+        v-model="userSelected"
+        :items="filteredUsers"
         item-text="email"
         return-object
         label="Select User"
         outlined
+        @input="pushToArray()"
       ></v-autocomplete>
+
+      <v-data-table :items="cooperatorsEdit" :headers="headers">
+        <!-- Invited -->
+        <template v-slot:item.invited="{ item }">
+          <v-icon color="green" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
+        </template>
+
+        <!-- Status -->
+        <template v-slot:item.status="{ item }">
+          <v-icon color="blue" v-if="item.status == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="green" v-else-if="item.status">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
+        </template>
+
+        <!-- Role -->
+        <template v-slot:item.accessLevel="{ item }">
+          <v-select v-model="item.accessLevel" return-object dense :items="roleOptions" :label="item.accessLevel.text" class="mt-3"></v-select>
+        </template>
+
+        <!-- More -->
+        <template v-slot:item.more="{ }">
+          <v-menu>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <!-- v-if="item.invited" -->
+              <v-list-item link>
+                <v-list-item-title>Cancel invitation</v-list-item-title>
+              </v-list-item>
+              <v-list-item link>
+                <v-list-item-title>Re-invite</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
       {{cooperatorsEdit}}
     </ShowInfo>
   </v-container>
@@ -42,9 +82,23 @@ export default {
     snackMsg: "",
     snackColor: "",
     cooperatorsEdit: [],
-    usersSelect: []
+    userSelected: {},
+    headers: [
+      { text: "Email", value: "email" },
+      { text: "Role", value: "accessLevel" },
+      { text: "Invited", value: "invited", justify: "center" },
+      { text: "Status", value: "status", justify: "center" },
+      { text: "More", value: "more", justify: "center", sortable: false }
+    ],
+    roleOptions: [
+      { text: "Researcher", value: 1 },
+      { text: "Co-Administrator", value: 0 }
+    ]
   }),
   methods: {
+    log() {
+      console.log("aaaaaa");
+    },
     validate(valid, index) {
       this.valids[index] = valid;
     },
@@ -89,6 +143,29 @@ export default {
         .then(() => {
           guest.invited = true;
         });
+    },
+    pushToArray() {
+      let hasObj = false;
+      let obj = {
+        id: this.userSelected.id,
+        email: this.userSelected.email,
+        invited: false,
+        status: null,
+        accessLevel: { text: "Researcher", value: 1 }
+      };
+      let index = 0;
+      
+      this.cooperatorsEdit.forEach(coop => {
+        if (coop.id === obj.id) {
+          alert("This user has already been added");
+          hasObj = true;
+          this.filteredUsers.splice(index, 1);
+          index++;
+        }
+      });
+
+      if(!hasObj) this.cooperatorsEdit.push(obj);
+      this.userSelected = {};
     }
   },
   watch: {
@@ -100,30 +177,12 @@ export default {
         }
       }
     },
-    objectUser() {
-      this.objectUser.forEach(item => {
-        if (!this.cooperatorsEdit.includes(item))
-          this.cooperatorsEdit.push(item);
-      });
-    },
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
     }
   },
   computed: {
-    objectUser() {
-      if (!this.usersSelect) return [];
-      return this.usersSelect.map(item => {
-        return {
-          id: item.id,
-          email: item.email,
-          invited: false,
-          status: null,
-          accessLevel: { text: "researcher", value: 1 }
-        };
-      });
-    },
     test() {
       return this.$store.getters.test;
     },
@@ -136,6 +195,20 @@ export default {
     users() {
       if (this.$store.state.users.users) return this.$store.getters.admins;
       return [];
+    },
+    filteredUsers() {
+      let hasUser = null;
+      let array = [];
+      this.users.forEach(user => {
+        hasUser = false;
+        this.cooperatorsEdit.forEach(coop => {
+          if(coop.id === user.id) {
+            hasUser = true
+          }
+        })
+        if(!hasUser) array.push(user); 
+      })
+      return array;
     }
   },
   created() {
