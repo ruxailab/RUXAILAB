@@ -6,7 +6,17 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-btn large dark fab fixed bottom right color="#F9A826" @click="submit()">
+    <v-btn
+      v-if="change"
+      large
+      dark
+      fab
+      fixed
+      bottom
+      right
+      color="#F9A826"
+      @click="submit(), change = false"
+    >
       <v-icon large>mdi-email</v-icon>
     </v-btn>
 
@@ -37,7 +47,15 @@
 
         <!-- Role -->
         <template v-slot:item.accessLevel="{ item }">
-          <v-select v-model="item.accessLevel" return-object dense :items="roleOptions" :label="item.accessLevel.text" class="mt-3"></v-select>
+          <v-select
+            @change="recordChange(item)"
+            v-model="item.accessLevel"
+            return-object
+            dense
+            :items="roleOptions"
+            :label="item.accessLevel.text"
+            class="mt-3"
+          ></v-select>
         </template>
 
         <!-- More -->
@@ -50,13 +68,16 @@
             </template>
 
             <v-list>
-              <v-list-item link v-if="item.invited && item.accepted == null">
+              <!-- v-if="item.invited && item.accepted == null" -->
+              <v-list-item link >
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
-              <v-list-item link v-if="item.invited && !item.accepted"> 
+              <!-- v-if="item.invited && !item.accepted" -->
+              <v-list-item link >
                 <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="removeCoop(item)" v-if="item.accepted">
+              <!-- v-if="item.accepted" -->
+              <v-list-item @click="removeCoop(item)" >
                 <v-list-item-title>Remove cooperator</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -84,6 +105,7 @@ export default {
     snackMsg: "",
     snackColor: "",
     cooperatorsEdit: [],
+    editedCoops: [],
     userSelected: {},
     headers: [
       { text: "Email", value: "email" },
@@ -111,7 +133,7 @@ export default {
           await this.send(guest);
           this.$store.dispatch("pushCooperators", {
             docId: this.id,
-            element: Object.assign({},guest)
+            element: Object.assign({}, guest)
           });
         }
       });
@@ -156,7 +178,7 @@ export default {
         accessLevel: { text: "Researcher", value: 1 }
       };
       let index = 0;
-      
+
       this.cooperatorsEdit.forEach(coop => {
         if (coop.id === obj.id) {
           alert("This user has already been added");
@@ -166,12 +188,22 @@ export default {
         }
       });
 
-      if(!hasObj) this.cooperatorsEdit.push(obj);
+      if (!hasObj) {
+        this.cooperatorsEdit.push(obj);
+        this.change = true;
+      }
       this.userSelected = {};
     },
     removeCoop(coop) {
-      let index = this.cooperatorsEdit.indexOf(coop)
+      let index = this.cooperatorsEdit.indexOf(coop);
       this.cooperatorsEdit.splice(index, 1);
+    },
+    recordChange(item) {
+      let index = this.cooperatorsEdit.indexOf(item);
+      this.change = true;
+      console.log(index);
+      this.editedCoops.push(item.id);
+      console.log(this.editedCoops)
     }
   },
   watch: {
@@ -186,6 +218,9 @@ export default {
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
+    },
+    change() {
+      console.log("change", this.change);
     }
   },
   computed: {
@@ -208,12 +243,14 @@ export default {
       this.users.forEach(user => {
         hasUser = false;
         this.cooperatorsEdit.forEach(coop => {
-          if(coop.id === user.id) {
-            hasUser = true
+          if (coop.id === user.id) {
+            hasUser = true;
           }
-        })
-        if(!hasUser) array.push(user); 
-      })
+        });
+        if (!hasUser) {
+          array.push(user);
+        }
+      });
       return array;
     }
   },
