@@ -28,5 +28,15 @@ export default {
       let coop = await dispatch("getObject", payload);
       commit("setCooperators", coop);
     },
+    pushCooperators({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "cooperators",
+        param: "cooperators",
+      });
+
+      dispatch("pushObject", payload).catch((err) => {
+        console.error("Error pushing", err);
+      });
+    },
   },
 };

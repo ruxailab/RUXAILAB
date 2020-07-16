@@ -6,7 +6,7 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-btn large dark fab fixed bottom right color="#F9A826" @click=" send()">
+    <v-btn large dark fab fixed bottom right color="#F9A826" @click="submit()">
       <v-icon large>mdi-email</v-icon>
     </v-btn>
 
@@ -22,7 +22,6 @@
         outlined
       ></v-autocomplete>
       {{cooperatorsEdit}}
-      {{objectUser}}
     </ShowInfo>
   </v-container>
 </template>
@@ -49,105 +48,63 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid;
     },
-    async submit() {
-      this.snackMsg = "Test updated succesfully";
-      this.snackColor = "success";
-      this.snackbar = true;
-
-      this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object
-        })
-        .then(() => {
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: {
-              id: this.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              accessLevel: 0
-            }
+    submit() {
+      this.cooperatorsEdit.forEach(async guest => {
+        //Invide new cooperators
+        if (!guest.invited) {
+          await this.send(guest);
+          this.$store.dispatch("pushCooperators", {
+            docId: this.id,
+            element: Object.assign({},guest)
           });
-
-          this.object.coop.forEach(coop => {
-            this.$store.dispatch("updateMyCoops", {
-              docId: coop.id,
-              element: {
-                id: this.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                accessLevel: coop.accessLevel
-              }
-            });
-          });
-        });
-    },
-    send() {
-      let removed = this.object.coop.filter(e => !this.invitations.includes(e));
-      let invite = this.invitations.filter(e => !this.object.coop.includes(e));
-
-      removed.forEach(item => {
-        this.$store.dispatch("removeMyCoops", {
-          docId: item.id,
-          element: {
-            id: this.id,
-            title: this.object.title,
-            type: this.object.type,
-            reports: this.object.reports,
-            answers: this.object.answers,
-            accessLevel: this.object.accessLevel
-          }
-        });
+        }
       });
-
-      invite.forEach(item => {
-        let inv = {
-          to: {
-            id: item.id,
-            email: item.email,
-            accessLevel: item.accessLevel
-          },
-          from: {
-            id: this.user.uid,
-            email: this.user.email
-          },
-          test: {
-            id: this.id,
-            title: this.object.title,
-            type: this.object.type,
-            reports: this.object.reports,
-            answers: this.object.answers
-          }
-        };
-        this.$store.dispatch("pushNotification", {
+    },
+    send(guest) {
+      let inv = {
+        to: {
+          id: guest.id,
+          email: guest.email,
+          accessLevel: guest.accessLevel.value
+        },
+        from: {
+          id: this.user.uid,
+          email: this.user.email
+        },
+        test: {
+          id: this.test.id,
+          title: this.test.title,
+          type: this.test.type,
+          reports: this.test.reports,
+          answers: this.test.answers,
+          cooperators: this.test.cooperators
+        }
+      };
+      this.$store
+        .dispatch("pushNotification", {
           docId: inv.to.id,
           element: inv,
           param: "notifications"
+        })
+        .then(() => {
+          guest.invited = true;
         });
-      });
-
-      removed.forEach(item => {
-        this.object.coop.splice(this.testEdit.coop.indexOf(item), 1);
-      });
     }
   },
   watch: {
-    cooperators: function() {
+    cooperators: async function() {
       if (this.cooperators !== null && this.cooperators !== undefined) {
         this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+        if (!this.$store.test) {
+          this.$store.dispatch("getTest", { id: this.cooperators.test.id });
+        }
       }
     },
     objectUser() {
-      if (this.objectUser)
-        this.objectUser.forEach(item => {
-          if (!this.cooperatorsEdit.includes(item.id))
-            this.cooperatorsEdit.push(item);
-        });
+      this.objectUser.forEach(item => {
+        if (!this.cooperatorsEdit.includes(item))
+          this.cooperatorsEdit.push(item);
+      });
     },
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
