@@ -28,10 +28,10 @@
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
-        <!-- Status -->
-        <template v-slot:item.status="{ item }">
-          <v-icon color="blue" v-if="item.status == null">mdi-checkbox-blank-circle-outline</v-icon>
-          <v-icon color="green" v-else-if="item.status">mdi-checkbox-marked-circle-outline</v-icon>
+        <!-- Accepted -->
+        <template v-slot:item.accepted="{ item }">
+          <v-icon color="blue" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="green" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
@@ -41,7 +41,7 @@
         </template>
 
         <!-- More -->
-        <template v-slot:item.more="{ }">
+        <template v-slot:item.more="{ item }">
           <v-menu>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
@@ -50,12 +50,14 @@
             </template>
 
             <v-list>
-              <!-- v-if="item.invited" -->
-              <v-list-item link>
+              <v-list-item link v-if="item.invited && item.accepted == null">
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
-              <v-list-item link>
+              <v-list-item link v-if="item.invited && !item.accepted"> 
                 <v-list-item-title>Re-invite</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="removeCoop(item)" v-if="item.accepted">
+                <v-list-item-title>Remove cooperator</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -87,7 +89,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
-      { text: "Status", value: "status", justify: "center" },
+      { text: "Accepted", value: "accepted", justify: "center" },
       { text: "More", value: "more", justify: "center", sortable: false }
     ],
     roleOptions: [
@@ -150,7 +152,7 @@ export default {
         id: this.userSelected.id,
         email: this.userSelected.email,
         invited: false,
-        status: null,
+        accepted: null,
         accessLevel: { text: "Researcher", value: 1 }
       };
       let index = 0;
@@ -166,6 +168,10 @@ export default {
 
       if(!hasObj) this.cooperatorsEdit.push(obj);
       this.userSelected = {};
+    },
+    removeCoop(coop) {
+      let index = this.cooperatorsEdit.indexOf(coop)
+      this.cooperatorsEdit.splice(index, 1);
     }
   },
   watch: {
