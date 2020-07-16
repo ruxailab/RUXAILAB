@@ -205,7 +205,7 @@ export default {
         items.push({
           title: "Cooperators",
           icon: "mdi-account-group",
-          path: `/cooperatorsview/${this.test.id}`,
+          path: `/cooperatorsview/${this.test.cooperators}`,
           id: 5
         })
       }

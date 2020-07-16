@@ -22,5 +22,11 @@ export default {
 
       return docId;
     },
+    async getCooperators({ dispatch, commit }, payload) {
+      payload = Object.assign(payload, { collection: "cooperators" });
+
+      let coop = await dispatch("getObject", payload);
+      commit("setCooperators", coop);
+    },
   },
 };

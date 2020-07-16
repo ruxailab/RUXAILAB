@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="test" class="ma-0 pa-0">
+  <v-container v-if="cooperators" class="ma-0 pa-0">
     <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
       <p>{{ snackMsg }}</p>
       <v-btn text @click="snackbar = false">
@@ -9,21 +9,35 @@
     <v-btn large dark fab fixed bottom right color="#F9A826" @click=" send()">
       <v-icon large>mdi-email</v-icon>
     </v-btn>
+
     <ShowInfo title="Cooperators">
-      <FormCooperation :invitations="invitations" />
+      <v-autocomplete
+        v-model="usersSelect"
+        chips
+        multiple
+        :items="users"
+        item-text="email"
+        item-value="{email,id}"
+        return-object
+        label="Select User"
+        outlined
+      ></v-autocomplete>
+      {{cooperatorsEdit}}
+      {{fields}}
     </ShowInfo>
   </v-container>
 </template>
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import FormCooperation from "@/components/atoms/FormCooperation.vue";
+// import FormCooperation from "@/components/atoms/FormCooperation.vue";
 
 export default {
   props: ["id"],
   components: {
-    ShowInfo,
-    FormCooperation
+    ShowInfo
+
+    // FormCooperation
   },
   data: () => ({
     object: null,
@@ -32,7 +46,8 @@ export default {
     snackbar: false,
     snackMsg: "",
     snackColor: "",
-    invitations: []
+    cooperatorsEdit: [],
+    usersSelect: []
   }),
   methods: {
     validate(valid, index) {
@@ -123,13 +138,15 @@ export default {
       removed.forEach(item => {
         this.object.coop.splice(this.testEdit.coop.indexOf(item), 1);
       });
+    },
+    invite(item) {
+      console.log("??", item);
     }
   },
   watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.object = await Object.assign({}, this.test);
-        this.invitations = Array.from(this.test.coop);
+    cooperators: function() {
+      if (this.cooperators !== null && this.cooperators !== undefined) {
+        this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
       }
     },
     snackbar() {
@@ -138,17 +155,37 @@ export default {
     }
   },
   computed: {
+    fields() {
+      if (!this.usersSelect) return [];
+
+      return this.usersSelect.map(item => {
+        return {
+          id: item.id,
+          email: item.email,
+          invited: false,
+          status:null,
+          accessLevel:{text:'researcher',value:1}
+        };
+      });
+    },
     test() {
       return this.$store.getters.test;
     },
     user() {
       return this.$store.getters.user;
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators || [];
+    },
+    users() {
+      if (this.$store.state.users.users) return this.$store.getters.admins;
+      return [];
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      this.$store.dispatch("getTest", { id: this.id });
-    }
+    if (!this.$store.state.cooperators.cooperators)
+      this.$store.dispatch("getCooperators", { id: this.id });
+    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   }
 };
 </script>
