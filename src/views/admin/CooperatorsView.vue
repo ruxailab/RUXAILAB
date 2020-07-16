@@ -140,14 +140,26 @@ export default {
         }
 
         if (this.editedCoops.includes(guest.id)) {
+          this.edit(guest);
+        }
+      });
+    },
+    edit(guest) {
+      this.$store
+        .dispatch("updateAccessLevel", {
+          docId: guest.id,
+          elementId: this.id,
+          element: guest.accessLevel.value,
+          param: "accessLevel"
+        })
+        .then(() => {
           this.$store.dispatch("updateCooperator", {
             docId: this.id,
             elementId: guest.id,
             element: guest.accessLevel,
             param: "accessLevel"
           });
-        }
-      });
+        });
     },
     send(guest) {
       let inv = {
@@ -214,7 +226,7 @@ export default {
     },
     removeCoop(coop) {
       this.deletedCoops.push(coop.id);
-      console.log("deleted ", this.deletedCoops)
+      console.log("deleted ", this.deletedCoops);
     },
     removeFromList(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
