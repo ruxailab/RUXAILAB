@@ -37,7 +37,12 @@
             </v-col>
 
             <v-btn small color="success" @click="acceptNotification(notification)">Accept</v-btn>
-            <v-btn small class="ml-2" color="error" @click="removeNotification(notification)">Deny</v-btn>
+            <v-btn
+              small
+              class="ml-2"
+              color="error"
+              @click="removeNotification(notification),denyNotification(notification)"
+            >Deny</v-btn>
           </v-row>
         </v-list-item>
       </v-list>
@@ -81,9 +86,11 @@ export default {
             accessLevel: item.to.accessLevel
           })
         });
-        this.$store.dispatch("pushCoop", {
-          docId: item.test.id,
-          element: item.to
+        this.$store.dispatch("updateCooperator", {
+          docId: item.test.cooperators,
+          elementId: item.to.id,
+          element: true,
+          param: "accepted"
         });
       } else {
         //answer
@@ -97,12 +104,12 @@ export default {
         });
 
         //criar log
-        let date = new Date()
+        let date = new Date();
         this.$store.dispatch("pushLog", {
           docId: item.test.reports,
           element: {
             log: {
-              date: date.toLocaleString('pt-BR'),
+              date: date.toLocaleString("pt-BR"),
               progress: 0,
               status: "In progress"
             },
@@ -111,6 +118,14 @@ export default {
           }
         });
       }
+    },
+    denyNotification(item) {
+      this.$store.dispatch("updateCooperator", {
+        docId: item.test.cooperators,
+        elementId: item.to.id,
+        element: false,
+        param: "accepted"
+      });
     },
     removeNotification(notif) {
       this.$store.dispatch("removeNotification", {

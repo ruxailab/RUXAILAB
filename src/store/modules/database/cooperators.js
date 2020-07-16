@@ -28,7 +28,7 @@ export default {
       let coop = await dispatch("getObject", payload);
       commit("setCooperators", coop);
     },
-    pushCooperators({ dispatch }, payload) {
+    pushCooperator({ dispatch }, payload) {
       payload = Object.assign(payload, {
         collection: "cooperators",
         param: "cooperators",
@@ -36,6 +36,16 @@ export default {
 
       dispatch("pushObject", payload).catch((err) => {
         console.error("Error pushing", err);
+      });
+    },
+    updateCooperator({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "cooperators",
+        field: "cooperators",
+        identifier: "id",
+      });
+      dispatch("updateArrayElement", payload).catch((err) => {
+        console.error("Error updating element", err);
       });
     },
   },

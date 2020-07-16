@@ -38,10 +38,10 @@
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
-        <!-- Status -->
-        <template v-slot:item.status="{ item }">
-          <v-icon color="blue" v-if="item.status == null">mdi-checkbox-blank-circle-outline</v-icon>
-          <v-icon color="green" v-else-if="item.status">mdi-checkbox-marked-circle-outline</v-icon>
+        <!-- Accepted -->
+        <template v-slot:item.accepted="{ item }">
+          <v-icon color="blue" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="green" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
@@ -112,7 +112,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
-      { text: "Status", value: "status", justify: "center" },
+      { text: "Accepted", value: "accepted", justify: "center" },
       { text: "More", value: "more", justify: "center", sortable: false }
     ],
     roleOptions: [
@@ -132,6 +132,15 @@ export default {
         //Invide new cooperators
         if (!guest.invited) {
           this.send(guest);
+        }
+
+        if (this.editedCoops.includes(guest.id)) {
+          this.$store.dispatch("updateCooperator", {
+            docId: this.id,
+            elementId: guest.id,
+            element: guest.accessLevel,
+            param: "accessLevel",
+          });
         }
       });
     },
@@ -163,7 +172,7 @@ export default {
         })
         .then(() => {
           guest.invited = true;
-          this.$store.dispatch("pushCooperators", {
+          this.$store.dispatch("pushCooperator", {
             docId: this.id,
             element: Object.assign({}, guest)
           });
@@ -175,7 +184,7 @@ export default {
         id: this.userSelected.id,
         email: this.userSelected.email,
         invited: false,
-        status: null,
+        accepted: null,
         accessLevel: { text: "Researcher", value: 1 }
       };
       let index = 0;
@@ -192,7 +201,8 @@ export default {
         this.cooperatorsEdit.push(obj);
         this.change = true;
 
-        if (this.deletedCoops.includes(obj.id)) //se add de novo remove do deleted
+        if (this.deletedCoops.includes(obj.id))
+          //se add de novo remove do deleted
           this.deletedCoops.splice(this.deletedCoops.indexOf(obj.id), 1);
       }
       this.userSelected = {};
