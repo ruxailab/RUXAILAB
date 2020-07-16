@@ -48,12 +48,14 @@
         <!-- Role -->
         <template v-slot:item.accessLevel="{ item }">
           <v-select
+          style="max-width: 200px"
             @change="recordChange(item)"
             v-model="item.accessLevel"
             return-object
             dense
             :items="roleOptions"
-            :label="item.accessLevel.text"
+            :v-text="item.accessLevel.text"
+            :disabled="!item.invited || item.accepted ? false : true"
             class="mt-3"
           ></v-select>
         </template>
@@ -214,7 +216,7 @@ export default {
     },
     recordChange(item) {
       this.change = true;
-      if (!this.editedCoops.includes(item.id)) this.editedCoops.push(item.id);
+      if (!this.editedCoops.includes(item.id) && item.accepted) this.editedCoops.push(item.id);
 
       console.log(this.editedCoops);
     }
