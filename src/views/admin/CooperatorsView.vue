@@ -17,27 +17,23 @@
         multiple
         :items="users"
         item-text="email"
-        item-value="{email,id}"
         return-object
         label="Select User"
         outlined
       ></v-autocomplete>
       {{cooperatorsEdit}}
-      {{fields}}
+      {{objectUser}}
     </ShowInfo>
   </v-container>
 </template>
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-// import FormCooperation from "@/components/atoms/FormCooperation.vue";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo
-
-    // FormCooperation
   },
   data: () => ({
     object: null,
@@ -138,9 +134,6 @@ export default {
       removed.forEach(item => {
         this.object.coop.splice(this.testEdit.coop.indexOf(item), 1);
       });
-    },
-    invite(item) {
-      console.log("??", item);
     }
   },
   watch: {
@@ -149,22 +142,28 @@ export default {
         this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
       }
     },
+    objectUser() {
+      if (this.objectUser)
+        this.objectUser.forEach(item => {
+          if (!this.cooperatorsEdit.includes(item.id))
+            this.cooperatorsEdit.push(item);
+        });
+    },
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
     }
   },
   computed: {
-    fields() {
+    objectUser() {
       if (!this.usersSelect) return [];
-
       return this.usersSelect.map(item => {
         return {
           id: item.id,
           email: item.email,
           invited: false,
-          status:null,
-          accessLevel:{text:'researcher',value:1}
+          status: null,
+          accessLevel: { text: "researcher", value: 1 }
         };
       });
     },
