@@ -48,7 +48,7 @@
         <!-- Role -->
         <template v-slot:item.accessLevel="{ item }">
           <v-select
-          style="max-width: 200px"
+            style="max-width: 200px"
             @change="recordChange(item)"
             v-model="item.accessLevel"
             return-object
@@ -70,16 +70,15 @@
             </template>
 
             <v-list>
-              <!-- v-if="item.invited && item.accepted == null" -->
-              <v-list-item link>
+              <v-list-item link v-if="item.invited && item.accepted == null">
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
-              <!-- v-if="item.invited && !item.accepted" -->
-              <v-list-item link>
+
+              <v-list-item link v-if="item.invited && !item.accepted">
                 <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
-              <!-- v-if="item.accepted" -->
-              <v-list-item @click="removeCoop(item)">
+
+              <v-list-item @click="removeCoop(item)" v-if="item.accepted">
                 <v-list-item-title>Remove cooperator</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -141,7 +140,7 @@ export default {
             docId: this.id,
             elementId: guest.id,
             element: guest.accessLevel,
-            param: "accessLevel",
+            param: "accessLevel"
           });
         }
       });
@@ -216,7 +215,8 @@ export default {
     },
     recordChange(item) {
       this.change = true;
-      if (!this.editedCoops.includes(item.id) && item.accepted) this.editedCoops.push(item.id);
+      if (!this.editedCoops.includes(item.id) && item.accepted)
+        this.editedCoops.push(item.id);
 
       console.log(this.editedCoops);
     }
