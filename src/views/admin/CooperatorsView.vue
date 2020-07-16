@@ -38,10 +38,10 @@
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
-        <!-- Accepted -->
-        <template v-slot:item.accepted="{ item }">
-          <v-icon color="blue" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
-          <v-icon color="green" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
+        <!-- Status -->
+        <template v-slot:item.status="{ item }">
+          <v-icon color="blue" v-if="item.status == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="green" v-else-if="item.status">mdi-checkbox-marked-circle-outline</v-icon>
           <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
@@ -59,7 +59,7 @@
         </template>
 
         <!-- More -->
-        <template v-slot:item.more="{ item }">
+        <template v-slot:item.more="{ }">
           <v-menu>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
@@ -111,7 +111,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
-      { text: "Accepted", value: "accepted", justify: "center" },
+      { text: "Status", value: "status", justify: "center" },
       { text: "More", value: "more", justify: "center", sortable: false }
     ],
     roleOptions: [
@@ -130,11 +130,7 @@ export default {
       this.cooperatorsEdit.forEach(async guest => {
         //Invide new cooperators
         if (!guest.invited) {
-          await this.send(guest);
-          this.$store.dispatch("pushCooperators", {
-            docId: this.id,
-            element: Object.assign({}, guest)
-          });
+          this.send(guest);
         }
       });
     },
@@ -166,6 +162,10 @@ export default {
         })
         .then(() => {
           guest.invited = true;
+          this.$store.dispatch("pushCooperators", {
+            docId: this.id,
+            element: Object.assign({}, guest)
+          });
         });
     },
     pushToArray() {
@@ -174,7 +174,7 @@ export default {
         id: this.userSelected.id,
         email: this.userSelected.email,
         invited: false,
-        accepted: null,
+        status: null,
         accessLevel: { text: "Researcher", value: 1 }
       };
       let index = 0;
@@ -247,9 +247,7 @@ export default {
             hasUser = true;
           }
         });
-        if (!hasUser) {
-          array.push(user);
-        }
+        if (!hasUser) array.push(user);
       });
       return array;
     }
