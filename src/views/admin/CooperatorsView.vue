@@ -70,16 +70,20 @@
             </template>
 
             <v-list>
-              <v-list-item link v-if="item.invited && item.accepted == null">
+              <v-list-item @click="removeFromList(item)" v-if="!item.invited">
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
 
-              <v-list-item link v-if="item.invited && !item.accepted">
+              <v-list-item link v-if="item.invited && item.accepted == false">
                 <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="removeCoop(item)" v-if="item.accepted">
                 <v-list-item-title>Remove cooperator</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item v-if="item.invited && item.accepted == null">
+                <v-list-item-title>No options yet</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -209,9 +213,12 @@ export default {
       this.userSelected = {};
     },
     removeCoop(coop) {
+      this.deletedCoops.push(coop.id);
+      console.log("deleted ", this.deletedCoops)
+    },
+    removeFromList(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
       this.cooperatorsEdit.splice(index, 1);
-      this.deletedCoops.push(coop.id);
     },
     recordChange(item) {
       this.change = true;
@@ -233,9 +240,6 @@ export default {
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
-    },
-    deletedCoops() {
-      console.log("deleted ", this.deletedCoops);
     }
   },
   computed: {
