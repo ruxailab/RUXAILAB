@@ -199,10 +199,9 @@ export default {
       this.cooperatorsEdit.splice(index, 1);
     },
     recordChange(item) {
-      let index = this.cooperatorsEdit.indexOf(item);
       this.change = true;
-      console.log(index);
-      this.editedCoops.push(item.id);
+      if(!this.editedCoops.includes(item.id)) this.editedCoops.push(item.id);
+
       console.log(this.editedCoops)
     }
   },
@@ -218,9 +217,6 @@ export default {
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
-    },
-    change() {
-      console.log("change", this.change);
     }
   },
   computed: {
