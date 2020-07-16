@@ -59,7 +59,7 @@
         </template>
 
         <!-- More -->
-        <template v-slot:item.more="{ }">
+        <template v-slot:item.more="{ item }">
           <v-menu>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
@@ -69,15 +69,15 @@
 
             <v-list>
               <!-- v-if="item.invited && item.accepted == null" -->
-              <v-list-item link >
+              <v-list-item link>
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
               <!-- v-if="item.invited && !item.accepted" -->
-              <v-list-item link >
+              <v-list-item link>
                 <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
               <!-- v-if="item.accepted" -->
-              <v-list-item @click="removeCoop(item)" >
+              <v-list-item @click="removeCoop(item)">
                 <v-list-item-title>Remove cooperator</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -106,6 +106,7 @@ export default {
     snackColor: "",
     cooperatorsEdit: [],
     editedCoops: [],
+    deletedCoops: [],
     userSelected: {},
     headers: [
       { text: "Email", value: "email" },
@@ -181,7 +182,6 @@ export default {
 
       this.cooperatorsEdit.forEach(coop => {
         if (coop.id === obj.id) {
-          alert("This user has already been added");
           hasObj = true;
           this.filteredUsers.splice(index, 1);
           index++;
@@ -191,18 +191,22 @@ export default {
       if (!hasObj) {
         this.cooperatorsEdit.push(obj);
         this.change = true;
+
+        if (this.deletedCoops.includes(obj.id)) //se add de novo remove do deleted
+          this.deletedCoops.splice(this.deletedCoops.indexOf(obj.id), 1);
       }
       this.userSelected = {};
     },
     removeCoop(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
       this.cooperatorsEdit.splice(index, 1);
+      this.deletedCoops.push(coop.id);
     },
     recordChange(item) {
       this.change = true;
-      if(!this.editedCoops.includes(item.id)) this.editedCoops.push(item.id);
+      if (!this.editedCoops.includes(item.id)) this.editedCoops.push(item.id);
 
-      console.log(this.editedCoops)
+      console.log(this.editedCoops);
     }
   },
   watch: {
@@ -217,6 +221,9 @@ export default {
     snackbar() {
       if (this.snackbar === false && this.snackColor == "success")
         this.change = false;
+    },
+    deletedCoops() {
+      console.log("deleted ", this.deletedCoops);
     }
   },
   computed: {
