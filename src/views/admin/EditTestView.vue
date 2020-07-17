@@ -127,6 +127,7 @@ export default {
               type: this.object.type,
               reports: this.object.reports,
               answers: this.object.answers,
+              cooperators: this.object.cooperators,
               accessLevel: 0
             }
           });
@@ -140,6 +141,7 @@ export default {
                 type: this.object.type,
                 reports: this.object.reports,
                 answers: this.object.answers,
+                cooperators: this.object.cooperators,
                 accessLevel: coop.accessLevel
               }
             });

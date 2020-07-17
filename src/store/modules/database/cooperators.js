@@ -57,5 +57,12 @@ export default {
         console.error("Error ", err);
       });
     },
+    deleteCooperators({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "cooperators" });
+
+      dispatch("deleteObject", payload).catch((err) => {
+        console.error("Error ", err);
+      });
+    },
   },
 };

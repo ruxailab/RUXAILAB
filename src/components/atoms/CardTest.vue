@@ -111,8 +111,12 @@ export default {
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
       await this.$store.dispatch("getReports", { id: item.reports });
+      await this.$store.dispatch("getCooperators", { id: item.cooperators });
+      
 
       this.$store.dispatch("deleteTest", item).then(() => {
+
+       
         //Remove test from myTests
         this.$store.dispatch("removeMyTest", {
           docId: this.test.admin.id,
@@ -124,23 +128,12 @@ export default {
           param: "myTests"
         });
 
-        //Remove test from myCoops
-        this.test.coop.forEach(coop => {
-          this.$store.dispatch("removeMyCoops", {
-            docId: coop.id,
-            element: {
-              id: item.id,
-              title: item.title,
-              type: item.type
-            }
-          });
-        });
-
+       
         //Remove report from collection
         this.$store.dispatch("deleteReport", { id: item.reports });
 
+      
         // Remove all myAnswers
-        console.log(this.reports);
         this.reports.reports.forEach(rep => {
           this.$store.dispatch("removeMyAnswers", {
             docId: rep.uid,
@@ -152,8 +145,24 @@ export default {
           });
         });
 
+      
         //Remove all answers
         this.$store.dispatch("deleteAnswers", { id: item.answers });
+
+        //Remove all myCoops
+        this.cooperators.cooperators.forEach(guest => {
+          this.$store.dispatch("removeMyCoops", {
+            docId: guest.id,
+            element: {
+              id: item.id,
+              title: item.title,
+              type: item.type
+            }
+          });
+        });
+
+        //Remove all Cooperators
+        this.$store.dispatch("deleteCooperators", { id: item.cooperators });
       });
     },
     openManager(test) {
@@ -171,10 +180,13 @@ export default {
       return [];
     },
     answers() {
-      return this.$store.state.answers.answers;
+      return this.$store.state.answers.answers || [];
     },
     reports() {
-      return this.$store.state.reports.reports;
+      return this.$store.state.reports.reports || [];
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators || [];
     }
   }
 };
