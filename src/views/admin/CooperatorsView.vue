@@ -6,7 +6,8 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-btn
+
+    <!-- <v-btn
       v-if="change"
       large
       dark
@@ -18,7 +19,7 @@
       @click="submit(), change = false"
     >
       <v-icon large>mdi-email</v-icon>
-    </v-btn>
+    </v-btn>-->
 
     <ShowInfo title="Cooperators">
       <v-autocomplete
@@ -26,28 +27,36 @@
         :items="filteredUsers"
         item-text="email"
         return-object
-        label="Select User"
-        outlined
+        label="Add cooperator"
         @input="pushToArray()"
+        dense
+        color="#fca326"
+        prepend-icon="mdi-account-multiple-plus"
+        class="mx-4 pt-4"
       ></v-autocomplete>
 
-      <v-data-table :items="cooperatorsEdit" :headers="headers">
-        <!-- Invited -->
-        <template v-slot:item.invited="{ item }">
-          <v-icon color="green" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
-          <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
-        </template>
-
-        <!-- Accepted -->
-        <template v-slot:item.accepted="{ item }">
-          <v-icon color="blue" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
-          <v-icon color="green" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
-          <v-icon color="red" v-else>mdi-close-circle-outline</v-icon>
+      <v-data-table
+        :items="cooperatorsEdit"
+        :headers="headers"
+        height="450px"
+        items-per-page="7"
+        items-per-page-text="7"
+        :footer-props="{ 
+          'items-per-page-options': [7]
+        }"
+      >
+        <!-- Email -->
+        <template v-slot:item.email="{ item }">
+          <v-row align="center">
+            <v-icon class="mr-2">mdi-account-circle</v-icon>
+            <div>{{item.email}}</div>
+          </v-row>
         </template>
 
         <!-- Role -->
         <template v-slot:item.accessLevel="{ item }">
           <v-select
+            color="#fca326"
             style="max-width: 200px"
             @change="recordChange(item)"
             v-model="item.accessLevel"
@@ -58,6 +67,19 @@
             :disabled="!item.invited || item.accepted ? false : true"
             class="mt-3"
           ></v-select>
+        </template>
+
+        <!-- Invited -->
+        <template v-slot:item.invited="{ item }">
+          <v-icon color="#8EB995" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+        </template>
+
+        <!-- Accepted -->
+        <template v-slot:item.accepted="{ item }">
+          <v-icon color="#F9A826" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="#8EB995" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
         </template>
 
         <!-- More -->
@@ -89,7 +111,6 @@
           </v-menu>
         </template>
       </v-data-table>
-      {{cooperatorsEdit}}
     </ShowInfo>
   </v-container>
 </template>
@@ -114,11 +135,11 @@ export default {
     deletedCoops: [],
     userSelected: {},
     headers: [
-      { text: "Email", value: "email" },
+      { text: "User", value: "email" },
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
       { text: "Accepted", value: "accepted", justify: "center" },
-      { text: "More", value: "more", justify: "center", sortable: false }
+      { text: "More", value: "more", sortable: false }
     ],
     roleOptions: [
       { text: "Researcher", value: 1 },
