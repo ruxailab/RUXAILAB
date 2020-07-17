@@ -32,11 +32,25 @@
           </template>
 
           <v-card>
-            <v-container>
-              <FormCooperation class="cardReport" :invitations="invitations" type="tester" />
+            <v-autocomplete
+              v-model="userSelected"
+              :items="filteredUsers || users"
+              item-text="email"
+              return-object
+              label="Select User"
+              outlined
+              @input="pushToArray()"
+            ></v-autocomplete>
+
+            <v-list>
+              <v-list-item>{{invitations}}</v-list-item>
+            </v-list>
+
+            <v-card-actions>
               <v-btn text @click="close">Cancel</v-btn>
-              <v-btn text @click="save">Send</v-btn>
-            </v-container>
+              <v-btn @click="save">Send</v-btn>
+            </v-card-actions>
+            <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
           </v-card>
         </v-dialog>
       </v-col>
@@ -45,14 +59,13 @@
 </template>
 
 <script>
-import FormCooperation from "@/components/atoms/FormCooperation";
+// import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
   components: {
-    FormCooperation
+    // FormCooperation
   },
   data: () => ({
-    invitations: [],
     dialog: false,
     headers: [
       {
@@ -104,7 +117,10 @@ export default {
         progress: null,
         state: null
       }
-    }
+    },
+    //Invide
+    userSelected: {},
+    invitations: []
   }),
   watch: {
     dialog(val) {
@@ -157,6 +173,17 @@ export default {
         });
       });
       this.close();
+    },
+
+    pushToArray() {
+      let obj = {
+        id: this.userSelected.id,
+        email: this.userSelected.email
+      };
+
+      this.invitations.push(obj);
+
+      this.userSelected = {};
     }
   },
   computed: {
@@ -168,6 +195,15 @@ export default {
     },
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    },
+    users() {
+      if (this.$store.state.users.users) return this.$store.getters.admins;
+      return [];
+    },
+    filteredUsers() {
+      return this.users.forEach(user =>
+        this.invitations.filters(inv => Object.values(inv).includes(user))
+      );
     }
   },
 
@@ -179,6 +215,7 @@ export default {
       {},
       this.$store.state.auth.user.myTests.find(test => test.reports == this.id)
     );
+    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   }
 };
 </script>
