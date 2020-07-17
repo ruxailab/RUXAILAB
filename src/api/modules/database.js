@@ -38,20 +38,22 @@ export default {
       });
   },
   removeArray: async (payload) => {
+    
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
-    let user = await docRef.get();
-    user = Object.assign({ uid: payload.docId }, user.data());
+    let doc = await docRef.get();
+    doc = Object.assign({ id: payload.docId }, doc.data());
 
-    console.log("Payload", payload);
-    let itemDelete = user[payload.param].find(
+    
+    let itemDelete = doc[payload.param].find(
       (item) => item.id == payload.element.id
     );
-    user[payload.param].splice(user[payload.param].indexOf(itemDelete), 1);
-    console.log(user[payload.param]);
+   
+    doc[payload.param].splice(doc[payload.param].indexOf(itemDelete), 1);
+  
     return docRef.update({
-      [payload.param]: user[payload.param],
+      [payload.param]: doc[payload.param],
     });
   },
   updateArray: async (payload) => {

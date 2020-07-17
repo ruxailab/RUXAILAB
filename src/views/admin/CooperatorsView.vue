@@ -142,7 +142,29 @@ export default {
         if (this.editedCoops.includes(guest.id)) {
           this.edit(guest);
         }
+
+        this.deletedCoops.forEach(guest => {
+          this.remove(guest);
+        });
       });
+    },
+    remove(guest) {
+      this.$store
+        .dispatch("removeMyCoops", {
+          docId: guest,
+          element: {
+            id: this.testID
+          }
+        })
+        .then(() => {
+          //Remove element array
+          this.$store.dispatch("removeCooperator", {
+            docId: this.id,
+            element: {
+              id: guest
+            }
+          });
+        });
     },
     edit(guest) {
       this.$store
@@ -226,7 +248,7 @@ export default {
     },
     removeCoop(coop) {
       this.deletedCoops.push(coop.id);
-      console.log("deleted ", this.deletedCoops);
+      this.change = true;
     },
     removeFromList(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
@@ -257,6 +279,11 @@ export default {
   computed: {
     test() {
       return this.$store.getters.test;
+    },
+    testID() {
+      return this.$store.state.auth.user.myTests.find(test =>
+        Object.values(test).includes(this.id)
+      ).id;
     },
     user() {
       return this.$store.getters.user;

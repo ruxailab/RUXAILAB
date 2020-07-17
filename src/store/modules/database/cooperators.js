@@ -48,5 +48,14 @@ export default {
         console.error("Error updating element", err);
       });
     },
+    removeCooperator({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "cooperators",
+        param: "cooperators",
+      });
+      dispatch("removeObject", payload).catch((err) => {
+        console.error("Error ", err);
+      });
+    },
   },
 };
