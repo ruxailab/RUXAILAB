@@ -21,6 +21,7 @@
                   :dialog="dialog"
                   @addHeuris="updateHeuristics"
                   @dialog="changeDialog"
+                  @change="emitChange()"
                 />
               </v-row>
             </v-col>
@@ -139,6 +140,9 @@ export default {
       this.heuristics.total = this.totalQuestions;
       this.answersSheet.total = this.totalQuestions;
       this.dialog = true;
+    },
+    emitChange() {
+      this.$emit("change");
     }
   },
   watch: {

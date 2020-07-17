@@ -87,6 +87,7 @@ export default {
         } else {
           this.$emit("dialog", false);
           this.$emit("addHeuris");
+          this.$emit("change");
           this.resetVal();
         }
       }
