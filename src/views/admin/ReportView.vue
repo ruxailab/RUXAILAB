@@ -31,24 +31,38 @@
             </v-btn>
           </template>
 
-          <v-card>
+          <v-card min-height="450px">
             <v-autocomplete
               v-model="userSelected"
-              :items="filteredUsers || users"
+              :items="filteredUsers"
               item-text="email"
               return-object
               label="Select User"
               outlined
               @input="pushToArray()"
+              class="mx-2 pt-3"
+              dense
+              color="#fca326"
+              prepend-icon="mdi-account-multiple-plus"
             ></v-autocomplete>
 
-            <v-list>
-              <v-list-item>{{invitations}}</v-list-item>
+            <v-list class="mx-2">
+              <v-list-item link v-for="(guest, n) in invitations" :key="n">
+                <v-row justify="center" align="center">
+                  <v-icon class="mr-2">mdi-account-circle</v-icon>
+                  <div>{{guest.email}}</div>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="removeFromInvitations(guest)">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-list-item>
             </v-list>
 
             <v-card-actions>
-              <v-btn text @click="close">Cancel</v-btn>
-              <v-btn @click="save">Send</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn class="white--text"  color="#F47C7C" @click="close">Cancel</v-btn>
+              <v-btn class="white--text" color="#8EB995" @click="save">Send</v-btn>
             </v-card-actions>
             <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
           </v-card>
@@ -184,6 +198,11 @@ export default {
       this.invitations.push(obj);
 
       this.userSelected = {};
+    },
+    removeFromInvitations(item) {
+      let index = this.invitations.indexOf(item);
+
+      this.invitations.splice(index, 1);
     }
   },
   computed: {
@@ -201,9 +220,27 @@ export default {
       return [];
     },
     filteredUsers() {
-      return this.users.forEach(user =>
-        this.invitations.filters(inv => Object.values(inv).includes(user))
-      );
+      let hasUser = null;
+      let array = [];
+      this.users.forEach(user => {
+        hasUser = false;
+        this.invitations.forEach(guest => {
+          if (guest.id === user.id) {
+            hasUser = true;
+          }
+        });
+
+        if (!hasUser)
+          //evita um foreach se ja tiver encontrado
+          this.reports.reports.forEach(guest => {
+            if (guest.uid === user.id) {
+              hasUser = true;
+            }
+          });
+
+        if (!hasUser) array.push(user);
+      });
+      return array;
     }
   },
 
