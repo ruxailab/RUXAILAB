@@ -216,27 +216,18 @@
             <v-col cols="10">
               <p class="subtitleView">{{i+1}}) {{question.text}}</p>
 
-              <v-select
-                v-if="answersSheet !== undefined && answersSheet !== null"
-                class="mt-3"
-                :items="test.options"
-                @change="calcProgress()"
-                v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
-                label="Respuestas/Answers"
-                outlined
-                dense
-              ></v-select>
-
-              <v-select
-                v-else
-                class="mt-3"
-                :items="test.options"
-                @change="calcProgress()"
-                v-model="test.answersSheet.heuristics[heurisIndex].questions[i].res"
-                label="Respuestas/Answers"
-                outlined
-                dense
-              ></v-select>
+              <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+                <v-select
+                  slot="answer"
+                  v-if="answersSheet !== undefined && answersSheet !== null"
+                  :items="test.options"
+                  @change="calcProgress()"
+                  v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
+                  label="Respuestas/Answers"
+                  outlined
+                  dense
+                ></v-select>
+              </AddCommentBtn>
             </v-col>
           </v-row>
         </ShowInfo>
@@ -263,16 +254,18 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
+import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
-    ViewTask
+    ViewTask,
+    AddCommentBtn
   },
   data: () => ({
     drawer: true,
-    start: true, //change to true
+    start: false, //change to true
     mini: false,
     index: null,
     heurisIndex: 0,
