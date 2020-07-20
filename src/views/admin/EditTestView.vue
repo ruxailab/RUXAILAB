@@ -165,6 +165,9 @@ export default {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign(this.object, this.test);
+
+        if(this.test.type === 'Expert') this.index = 1
+        else if(this.test.type === 'User') this.index = 0
       }
     },
     snackbar() {
