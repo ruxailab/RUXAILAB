@@ -109,7 +109,7 @@ export default {
           docId: item.test.reports,
           element: {
             log: {
-              date: date.toLocaleString("pt-BR"),
+              date: date.toLocaleString("en-US"),
               progress: 0,
               status: "In progress"
             },

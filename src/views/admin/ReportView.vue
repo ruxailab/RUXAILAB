@@ -22,6 +22,10 @@
             <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
             <v-icon small>mdi-delete</v-icon>
           </template>
+
+          <template v-slot:item.progress="{ item }">
+            <div>{{item.log.progress}}%</div>
+          </template>
         </v-data-table>
 
         <v-dialog v-model="dialog" color="white" max-width="600px">
@@ -58,10 +62,10 @@
                 </v-row>
               </v-list-item>
             </v-list>
-
+            
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn class="white--text"  color="#F47C7C" @click="close">Cancel</v-btn>
+              <v-btn class="white--text" color="#F47C7C" @click="close">Cancel</v-btn>
               <v-btn class="white--text" color="#8EB995" @click="save">Send</v-btn>
             </v-card-actions>
             <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
@@ -89,7 +93,7 @@ export default {
       },
       { text: "Tester", value: "email" },
       { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "log.progress", justify: "center" },
+      { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
       { text: "Actions", value: "actions" }
     ],
@@ -161,10 +165,11 @@ export default {
 
     async save() {
       //Making invites
+      let d = new Date();
       this.invitations.forEach(item => {
         let inv = {
           to: {
-            id: item.id,
+            id: item.uid,
             email: item.email,
             accessLevel: item.accessLevel
           },
@@ -181,18 +186,30 @@ export default {
           }
         };
         this.$store.dispatch("pushNotification", {
-          docId: inv.to.id,
+          docId: inv.to.uid,
           element: inv,
           param: "notifications"
-        });
+        })
+        .then(() => {
+          item.log.date = d.toLocaleString('en-US');
+          this.$store.dispatch("pushLog", {
+            docId: this.id,
+            element: item
+          })
+        })
       });
       this.close();
     },
 
     pushToArray() {
       let obj = {
-        id: this.userSelected.id,
-        email: this.userSelected.email
+        uid: this.userSelected.id,
+        email: this.userSelected.email,
+        log: {
+          date: null,
+          progress: 0,
+          status: "Invited"
+        }
       };
 
       this.invitations.push(obj);

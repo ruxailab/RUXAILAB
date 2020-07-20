@@ -400,7 +400,7 @@ export default {
     submitLog(save) {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
       var log = {
-        date: new Date().toLocaleString("pt-BR"),
+        date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
         status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
       };
