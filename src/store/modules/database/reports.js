@@ -59,5 +59,12 @@ export default {
         console.error("Error to update");
       });
     },
+    removeReport({ dispatch }, payload) {
+      payload = Object.assign(payload, {collection: "reports"});
+      dispatch("removeObject", payload)
+      .catch((err) => {
+        console.error(err);
+      })
+    }
   },
 };

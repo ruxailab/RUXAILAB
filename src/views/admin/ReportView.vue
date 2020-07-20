@@ -18,9 +18,21 @@
           :items-per-page="5"
           height="420px"
         >
-          <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
-            <v-icon small>mdi-delete</v-icon>
+          <template v-slot:item.more="{ item }">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-vertical</v-icon></v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="removeReport(item)">
+                  <v-list-item-title>Remove Report</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item v-if="item.log.status === 'Denied'">
+                  <v-list-item-title>Re-invite</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </template>
 
           <template v-slot:item.progress="{ item }">
@@ -95,7 +107,7 @@ export default {
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
-      { text: "Actions", value: "actions" }
+      { text: "More", value: "more" }
     ],
     records: [
       {
@@ -223,6 +235,16 @@ export default {
       let index = this.invitations.indexOf(item);
 
       this.invitations.splice(index, 1);
+    },
+    removeReport(report) {
+      console.log(report);
+      this.$store.dispatch("removeReport", {
+        docId: this.id,
+        element: {
+          id: report.uid
+        },
+        param:"reports"
+      })
     }
   },
   computed: {
@@ -245,7 +267,7 @@ export default {
       this.users.forEach(user => {
         hasUser = false;
         this.invitations.forEach(guest => {
-          if (guest.id === user.id) {
+          if (guest.uid === user.id) {
             hasUser = true;
           }
         });
