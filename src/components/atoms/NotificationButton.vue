@@ -103,29 +103,39 @@ export default {
           })
         });
 
-        //criar log
-        let date = new Date();
-        this.$store.dispatch("pushLog", {
+        //update log
+        var log = {
+          date: new Date().toLocaleString("en-US"),
+          progress: 0,
+          status: "In progress"
+        };
+        this.$store.dispatch("updateLog", {
           docId: item.test.reports,
-          element: {
-            log: {
-              date: date.toLocaleString("en-US"),
-              progress: 0,
-              status: "In progress"
-            },
-            uid: this.user.uid,
-            email: this.user.email
-          }
+          elementId: this.user.uid,
+          element: log
         });
       }
     },
     denyNotification(item) {
-      this.$store.dispatch("updateCooperator", {
-        docId: item.test.cooperators,
-        elementId: item.to.id,
-        element: false,
-        param: "accepted"
-      });
+      if (item.to.accessLevel < 2) {
+        this.$store.dispatch("updateCooperator", {
+          docId: item.test.cooperators,
+          elementId: item.to.id,
+          element: false,
+          param: "accepted"
+        });
+      } else {
+        var log = {
+          date: new Date().toLocaleString("en-US"),
+          progress: 0,
+          status: "Denied"
+        };
+        this.$store.dispatch("updateLog", {
+          docId: item.test.reports,
+          elementId: this.user.uid,
+          element: log
+        });
+      }
     },
     removeNotification(notif) {
       this.$store.dispatch("removeNotification", {
