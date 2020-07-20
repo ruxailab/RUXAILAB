@@ -15,11 +15,11 @@
             color="#FCA326"
             class="tab-border-bottom pb-0 mb-0"
           >
-            <v-tab @click="index = 0">Pre Test</v-tab>
+            <v-tab v-if="test.type === 'User'"  @click="index = 0">Pre Test</v-tab>
             <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
-            <v-tab v-else-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
+            <v-tab v-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
             <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
-            <v-tab @click="index = 3">Post Test</v-tab>
+            <v-tab v-if="test.type === 'User'"  @click="index = 3">Post Test</v-tab>
           </v-tabs>
         </v-row>
       </v-col>
@@ -132,20 +132,6 @@ export default {
             }
           });
 
-          this.object.coop.forEach(coop => {
-            this.$store.dispatch("updateMyCoops", {
-              docId: coop.id,
-              element: {
-                id: this.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                cooperators: this.object.cooperators,
-                accessLevel: coop.accessLevel
-              }
-            });
-          });
         });
 
       this.answers.answersSheet = this.object.answersSheet
@@ -158,15 +144,15 @@ export default {
       this.valids[index] = valid;
     },
     validateAll() {
-      if (!this.valids[0]) {
+      if (this.test.type === 'User' && !this.valids[0]) {
         this.snackMsg = "Please fill all fields in Pre Test correctly or leave them empty";
         this.snackColor = "red";
         this.snackbar = "true";
-      } else if (this.object.options.length == 1) {
+      } else if (this.test.type === 'Expert' && this.object.options.length == 1) {
         this.snackMsg = "Please create at least 2 options or none at all";
         this.snackColor = "red";
         this.snackbar = "true";
-      } else if (!this.valids[1]) {
+      } else if (this.test.type === 'User' && !this.valids[1]) {
         this.snackMsg = "Please fill all fields in Post Test correctly or leave them empty";
         this.snackColor = "red";
         this.snackbar = "true";

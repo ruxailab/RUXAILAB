@@ -164,20 +164,26 @@ export default {
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
 
-      //assigning pre-test info
-
-      this.object = Object.assign(this.object, {
-        preTest: {
-          consent: null,
-          form: null
-        }
-      });
-
       //assigning tasks/heuristics
       if (this.test.type === "User") {
+        //assigning pre-test info
+        this.object = Object.assign(this.object, {
+          preTest: {
+            consent: null,
+            form: null
+          }
+        });
+
         this.object = Object.assign(this.object, {
           tasks: [],
           answersSheet: null
+        });
+
+        //assigning post test
+        this.object = Object.assign(this.object, {
+          postTest: {
+            form: null
+          }
         });
       } else if (this.test.type === "Expert") {
         this.object = Object.assign(this.object, {
@@ -188,16 +194,9 @@ export default {
             heuristics: []
           }
         });
+
+        this.object = Object.assign(this.object, { options: [] });
       }
-
-      //assigning post test
-      this.object = Object.assign(this.object, {
-        postTest: {
-          form: null
-        }
-      });
-
-      this.object = Object.assign(this.object, { options: [] });
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);

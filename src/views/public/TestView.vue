@@ -47,7 +47,7 @@
                 <div class="idText">{{test.id}}</div>
                 <div class="titleText">{{test.title}}</div>
               </v-col>
-              <v-col>
+              <v-col v-if="test.type === 'Expert'">
                 <v-row justify="center">
                   <v-progress-circular
                     :value="answersSheet.progress"
@@ -111,7 +111,7 @@
               <template v-slot:activator>
                 <v-list-item-icon>
                   <v-progress-circular
-                    v-if="answersSheet.progress != 100"
+                    v-if="test.type === 'Expert' && answersSheet.progress != 100"
                     :value="answersSheet.progress"
                     :color="index == item.id ? '#ffffff' : '#fca326'"
                   ></v-progress-circular>
@@ -125,7 +125,7 @@
               <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
                 <v-list-item-icon>
                   <v-progress-circular
-                    v-if="progress(answersSheet.heuristics[i])!=100"
+                    v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
                     :value="progress(answersSheet.heuristics[i])"
                     :size="24"
                     :width="3"
@@ -306,82 +306,85 @@ export default {
   },
   methods: {
     mappingSteps() {
-      //PreTest
-      if (this.validate(this.test.preTest.consent))
-        this.items.push({
-          title: "Pre Test",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: [
-            {
-              title: "Consent",
-              icon: "mdi-checkbox-blank-circle-outline",
-              id: 0
-            }
-          ],
-          id: 0
-        });
-
-      if (this.validate(this.test.preTest.form)) {
-        if (this.items.length) {
-          this.items[0].value.push({
-            title: "Form",
-            icon: "mdi-checkbox-blank-circle-outline",
-            id: 1
-          });
-        } else {
+      if (this.test.type === "User") {
+        //PreTest
+        if (this.validate(this.test.preTest.consent))
           this.items.push({
             title: "Pre Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: [
               {
-                title: "Form",
+                title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 1
+                id: 0
               }
             ],
             id: 0
           });
+
+        if (this.validate(this.test.preTest.form)) {
+          if (this.items.length) {
+            this.items[0].value.push({
+              title: "Form",
+              icon: "mdi-checkbox-blank-circle-outline",
+              id: 1
+            });
+          } else {
+            this.items.push({
+              title: "Pre Test",
+              icon: "mdi-checkbox-blank-circle-outline",
+              value: [
+                {
+                  title: "Form",
+                  icon: "mdi-checkbox-blank-circle-outline",
+                  id: 1
+                }
+              ],
+              id: 0
+            });
+          }
         }
+
+        //Tasks
+        if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
+          this.items.push({
+            title: "Tasks",
+            icon: "mdi-checkbox-blank-circle-outline",
+            value: this.test.tasks.map(i => {
+              return {
+                title: i.name,
+                icon: "mdi-checkbox-blank-circle-outline"
+              };
+            }),
+            id: 1
+          });
+
+        //PostTest
+        if (this.validate(this.test.postTest.form))
+          this.items.push({
+            title: "Post Test",
+            icon: "mdi-checkbox-blank-circle-outline",
+            value: this.test.postTest,
+            id: 2
+          });
+      } else if (this.test.type === "Expert") {
+        //Heuristics
+        if (
+          this.validate(this.test.heuristics) &&
+          this.test.heuristics.length !== 0
+        )
+          this.items.push({
+            title: "Heuristics",
+            icon: "mdi-checkbox-marked-circle-outline",
+            value: this.test.heuristics.map(i => {
+              return {
+                title: i.title,
+                icon: "mdi-checkbox-marked-circle-outline"
+              };
+            }),
+            id: 1
+          });
       }
-      //Tasks
-      if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
-        this.items.push({
-          title: "Tasks",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.tasks.map(i => {
-            return {
-              title: i.name,
-              icon: "mdi-checkbox-blank-circle-outline"
-            };
-          }),
-          id: 1
-        });
-
-      //Heuristics
-      if (
-        this.validate(this.test.heuristics) &&
-        this.test.heuristics.length !== 0
-      )
-        this.items.push({
-          title: "Heuristics",
-          icon: "mdi-checkbox-marked-circle-outline",
-          value: this.test.heuristics.map(i => {
-            return {
-              title: i.title,
-              icon: "mdi-checkbox-marked-circle-outline"
-            };
-          }),
-          id: 1
-        });
-
-      //PostTest
-      if (this.validate(this.test.postTest.form))
-        this.items.push({
-          title: "Post Test",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.postTest,
-          id: 2
-        });
     },
     validate(object) {
       return object !== null && object !== undefined && object !== "";
@@ -430,9 +433,6 @@ export default {
       return (
         (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
-    },
-    print(string) {
-      console.log(string);
     }
   },
   computed: {
