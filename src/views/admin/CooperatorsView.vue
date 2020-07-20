@@ -7,7 +7,7 @@
       </v-btn>
     </v-snackbar>
 
-    <!-- <v-btn
+    <v-btn
       v-if="change"
       large
       dark
@@ -19,7 +19,7 @@
       @click="submit(), change = false"
     >
       <v-icon large>mdi-email</v-icon>
-    </v-btn>-->
+    </v-btn>
 
     <ShowInfo title="Cooperators">
       <v-autocomplete
@@ -39,7 +39,7 @@
         :items="cooperatorsEdit"
         :headers="headers"
         height="450px"
-        items-per-page="7"
+        :items-per-page="7"
         items-per-page-text="7"
         :footer-props="{ 
           'items-per-page-options': [7]
@@ -96,11 +96,15 @@
                 <v-list-item-title>Cancel invitation</v-list-item-title>
               </v-list-item>
 
-              <v-list-item link v-if="item.invited && item.accepted == false">
+              <v-list-item
+                @click="reinvite(item)"
+                link
+                v-if="item.invited && item.accepted == false"
+              >
                 <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="removeCoop(item)" v-if="item.accepted">
+              <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
                 <v-list-item-title>Remove cooperator</v-list-item-title>
               </v-list-item>
 
@@ -236,6 +240,45 @@ export default {
             docId: this.id,
             element: Object.assign({}, guest)
           });
+        });
+    },
+    reinvite(guest) {
+      let inv = {
+        to: {
+          id: guest.id,
+          email: guest.email,
+          accessLevel: guest.accessLevel.value
+        },
+        from: {
+          id: this.user.uid,
+          email: this.user.email
+        },
+        test: {
+          id: this.test.id,
+          title: this.test.title,
+          type: this.test.type,
+          reports: this.test.reports,
+          answers: this.test.answers,
+          cooperators: this.test.cooperators
+        }
+      };
+      this.$store
+        .dispatch("pushNotification", {
+          docId: inv.to.id,
+          element: inv,
+          param: "notifications"
+        })
+        .then(() => {
+          this.$store
+            .dispatch("updateCooperator", {
+              docId: this.id,
+              elementId: guest.id,
+              element: null,
+              param: "accepted"
+            })
+            .then(() => {
+              guest.accepted = null;
+            });
         });
     },
     pushToArray() {
