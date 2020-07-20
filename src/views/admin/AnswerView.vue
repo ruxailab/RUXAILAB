@@ -221,7 +221,6 @@
                         <QuestionChart :data="dataQuestions[dataSelected].data" />
                       </v-col>
                       <v-col v-if="ind == 1">
-                        {{dataQuestions}}
                         <v-timeline v-if="dataQuestions[dataSelected].comments.length" dense>
                           <v-timeline-item
                             fill-dot

@@ -1,5 +1,5 @@
 <template >
-  <v-container v-if="test" class="pa-0 ma-0">
+  <v-container v-if="test && answersSheet" class="pa-0 ma-0">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -265,7 +265,7 @@ export default {
   },
   data: () => ({
     drawer: true,
-    start: false, //change to true
+    start: true, //change to true
     mini: false,
     index: null,
     heurisIndex: 0,
