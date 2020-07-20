@@ -198,8 +198,44 @@
                   <!-- Graph -->
                   <v-col class="mx-3" v-else>
                     <v-row justify="center">
-                      <v-col>
+                      <!-- Bottom Tabs -->
+                      <v-tabs
+                        background-color="transparent"
+                        color="grey darken-2"
+                        class="mt-2"
+                        centered
+                        v-model="ind"
+                      >
+                        <v-tab
+                          class="tab-text"
+                          style="text-transform: none !important"
+                          @click="ind = 0"
+                        >Graphic</v-tab>
+                        <v-tab
+                          class="tab-text"
+                          style="text-transform: none !important"
+                          @click="ind = 1"
+                        >Comments</v-tab>
+                      </v-tabs>
+                      <v-col v-if="ind == 0">
                         <QuestionChart :data="dataQuestions[dataSelected].data" />
+                      </v-col>
+                      <v-col v-if="ind == 1">
+                        {{dataQuestions}}
+                        <v-timeline v-if="dataQuestions[dataSelected].comments.length" dense>
+                          <v-timeline-item
+                            fill-dot
+                            color="#fca326"
+                            icon="mdi-message-reply-text"
+                            v-for="(comment,index) in dataQuestions[dataSelected].comments"
+                            :key="index"
+                          >
+                            <v-card class="elevation-2">
+                              <v-card-text>{{comment}}</v-card-text>
+                            </v-card>
+                          </v-timeline-item>
+                        </v-timeline>
+                        <div v-else>No comments yet</div>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -275,7 +311,7 @@ export default {
         };
         aux.uid = answer.uid;
 
-        if(answer.heuristics[index])
+        if (answer.heuristics[index])
           aux.questions = Array.from(answer.heuristics[index].questions);
 
         this.items.push(aux);
@@ -302,29 +338,35 @@ export default {
         });
         index++;
       });
-      console.info(this.headers);
     },
     questionGraph(data, ids) {
       this.dataQuestions = [];
       var questionMap = new Map();
+
       ids.forEach(id => {
         let aux = [];
+        let comments = [];
         data.forEach(item => {
-          if(item.questions.length)
+          if (item.questions.length) {
             aux.push(item.questions.find(q => q.id == id).res);
+            if (item.questions.find(q => q.id == id).com)
+              comments.push(item.questions.find(q => q.id == id).com);
+          }
         });
-        questionMap.set(`Question ${id}`, aux);
+        questionMap.set(`Question ${id}`, {aux:aux, comments:comments });
       });
 
       let possibleAnswers = [1, 0.5, 0, -1, null];
       for (var [key, value] of questionMap.entries()) {
         let aux = [];
+        
         possibleAnswers.forEach(el => {
-          aux.push(value.filter(v => v == el).length);
+          aux.push(value.aux.filter(v => v == el).length);
         });
         this.dataQuestions.push({
           question: key,
-          data: aux
+          data: aux,
+          comments: value.comments
         });
       }
     },
