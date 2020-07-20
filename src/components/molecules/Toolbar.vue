@@ -1,17 +1,18 @@
 <template>
   <v-app-bar app dark dense>
     <v-icon left @click="goTo('/testslist')">mdi-alpha-r-circle</v-icon>
-    <v-toolbar-title @click="goTo('testsList')" style="cursor: pointer">Research Workflow</v-toolbar-title>
+    <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer">Research Workflow</v-toolbar-title>
     <v-spacer></v-spacer>
     <locale-changer></locale-changer>
     <v-btn
-      v-if="this.$router.resolve({ name: this.$router.path }).href === '/' && user"
+      v-if="this.$route.path === '/' && user"
       text
       color="#f9a826"
       class="console-button mx-1"
       @click="goTo('/testslist')"
     >Go to Console</v-btn>
-
+    
+   
     <NotificationBtn v-if="user" />
 
     <v-btn text @click="goTo('/signin')" v-if="!user">
