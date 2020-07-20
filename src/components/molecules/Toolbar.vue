@@ -1,17 +1,24 @@
 <template>
   <v-app-bar app dark dense>
-    <v-icon left @click="moveHome()">mdi-alpha-r-circle</v-icon>
-    <v-toolbar-title @click="moveHome()" style="cursor: pointer">Research Workflow</v-toolbar-title>
-
+    <v-icon left @click="goTo('/testslist')">mdi-alpha-r-circle</v-icon>
+    <v-toolbar-title @click="goTo('testsList')" style="cursor: pointer">Research Workflow</v-toolbar-title>
     <v-spacer></v-spacer>
     <locale-changer></locale-changer>
+    <v-btn
+      v-if="this.$router.resolve({ name: this.$router.path }).href === '/' && user"
+      text
+      color="#f9a826"
+      class="console-button mx-1"
+      @click="goTo('/testslist')"
+    >Go to Console</v-btn>
+
     <NotificationBtn v-if="user" />
 
-    <v-btn text @click="moveSignIn()" v-if="!user">
+    <v-btn text @click="goTo('/signin')" v-if="!user">
       <v-icon left>mdi-lock</v-icon>Sign-in
     </v-btn>
 
-    <v-menu offset-y open-on-hover v-else>
+    <v-menu offset-y open-on-hover v-if="user">
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
           <v-icon dark>mdi-account-circle</v-icon>
@@ -35,11 +42,8 @@ import LocaleChanger from "@/components/atoms/LocaleChanger";
 export default {
   data: () => ({}),
   methods: {
-    moveHome() {
-      this.$router.push("/testslist");
-    },
-    moveSignIn() {
-      this.$router.push("/signin");
+    goTo(route) {
+      this.$router.push(route);
     },
     async signOut() {
       this.$store.dispatch("logout").then(() => {
@@ -58,3 +62,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.console-button {
+  font-size: 13px;
+  font: Roboto;
+  text-transform: none!important;
+  padding: 7px!important;
+}
+</style>
