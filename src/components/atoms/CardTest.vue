@@ -16,7 +16,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-2" text @click="dialog = false">Cancel</v-btn>
-          <v-btn class="red white--text" :loading="loading" text @click="deleteTest(item), loading = true">Delete</v-btn>
+          <v-btn
+            class="red white--text"
+            :loading="loading"
+            text
+            @click="deleteTest(item), loading = true"
+          >Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -120,62 +125,65 @@ export default {
       await this.$store.dispatch("getAnswers", { id: item.answers });
       await this.$store.dispatch("getReports", { id: item.reports });
       await this.$store.dispatch("getCooperators", { id: item.cooperators });
-      
 
-      this.$store.dispatch("deleteTest", item).then(() => {
-
-       
-        //Remove test from myTests
-        this.$store.dispatch("removeMyTest", {
-          docId: this.test.admin.id,
-          element: {
-            id: item.id,
-            title: item.title,
-            type: item.type
-          },
-          param: "myTests"
-        })
+      this.$store
+        .dispatch("deleteTest", item)
         .then(() => {
-          this.loading = false
-          this.$store.commit("setSuccess", "Project successfully deleted");
-        });
+          //Remove test from myTests
+          this.$store
+            .dispatch("removeMyTest", {
+              docId: this.test.admin.id,
+              element: {
+                id: item.id,
+                title: item.title,
+                type: item.type
+              },
+              param: "myTests"
+            })
+            .then(() => {
+              this.loading = false;
+              this.$store.commit("setSuccess", "Project successfully deleted");
+            })
+            .catch(err => {
+              this.$store.commit("setError", err);
+            });
 
-       
-        //Remove report from collection
-        this.$store.dispatch("deleteReport", { id: item.reports });
+          //Remove report from collection
+          this.$store.dispatch("deleteReport", { id: item.reports });
 
-      
-        // Remove all myAnswers
-        this.reports.reports.forEach(rep => {
-          this.$store.dispatch("removeMyAnswers", {
-            docId: rep.uid,
-            element: {
-              id: item.id,
-              title: item.title,
-              type: item.type
-            }
+          // Remove all myAnswers
+          this.reports.reports.forEach(rep => {
+            this.$store.dispatch("removeMyAnswers", {
+              docId: rep.uid,
+              element: {
+                id: item.id,
+                title: item.title,
+                type: item.type
+              }
+            });
           });
-        });
 
-      
-        //Remove all answers
-        this.$store.dispatch("deleteAnswers", { id: item.answers });
+          //Remove all answers
+          this.$store.dispatch("deleteAnswers", { id: item.answers });
 
-        //Remove all myCoops
-        this.cooperators.cooperators.forEach(guest => {
-          this.$store.dispatch("removeMyCoops", {
-            docId: guest.id,
-            element: {
-              id: item.id,
-              title: item.title,
-              type: item.type
-            }
+          //Remove all myCoops
+          this.cooperators.cooperators.forEach(guest => {
+            this.$store.dispatch("removeMyCoops", {
+              docId: guest.id,
+              element: {
+                id: item.id,
+                title: item.title,
+                type: item.type
+              }
+            });
           });
-        });
 
-        //Remove all Cooperators
-        this.$store.dispatch("deleteCooperators", { id: item.cooperators });
-      });
+          //Remove all Cooperators
+          this.$store.dispatch("deleteCooperators", { id: item.cooperators });
+        })
+        .catch(err => {
+          this.$store.commit("setError", err);
+        });
     },
     openManager(test) {
       this.$router.push({
