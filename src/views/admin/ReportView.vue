@@ -67,7 +67,7 @@
               prepend-icon="mdi-account-multiple-plus"
             ></v-autocomplete>
 
-            <v-list class="mx-2">
+            <v-list class="mx-2" max-height="310" height="310" style="overflow:auto">
               <v-list-item link v-for="(guest, n) in invitations" :key="n">
                 <v-row justify="center" align="center">
                   <v-icon class="mr-2">mdi-account-circle</v-icon>
@@ -334,5 +334,27 @@ export default {
 }
 .cardReport {
   box-shadow: 0px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:  #fca326; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #fca326; 
 }
 </style>
