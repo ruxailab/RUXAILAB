@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Snackbar />
+
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
@@ -14,7 +16,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-2" text @click="dialog = false">Cancel</v-btn>
-          <v-btn class="red white--text" text @click="deleteTest(item)">Delete</v-btn>
+          <v-btn class="red white--text" :loading="loading" text @click="deleteTest(item), loading = true">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -97,11 +99,17 @@
 </template>
 
 <script>
+import Snackbar from "@/components/atoms/Snackbar";
+
 export default {
   props: ["item", "accessLevel"],
+  components: {
+    Snackbar
+  },
   data: () => ({
     menu: false,
-    dialog: false
+    dialog: false,
+    loading: false
   }),
   methods: {
     openTest(test) {
@@ -126,6 +134,10 @@ export default {
             type: item.type
           },
           param: "myTests"
+        })
+        .then(() => {
+          this.loading = false
+          this.$store.commit("setSuccess", "Project successfully deleted");
         });
 
        
@@ -187,6 +199,11 @@ export default {
     },
     cooperators() {
       return this.$store.state.cooperators.cooperators || [];
+    }
+  },
+  watch: {
+    loading() {
+      console.log(this.loading);
     }
   }
 };
