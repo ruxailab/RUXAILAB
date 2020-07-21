@@ -25,12 +25,32 @@
             <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
           </v-btn>
         </template>
-        <v-btn @click="submitLog(true)" fab dark small color="#F9A826">
-          <v-icon>mdi-content-save</v-icon>
-        </v-btn>
-        <v-btn @click="submitLog(false)" fab dark small color="#F9A826">
-          <v-icon>mdi-file-move</v-icon>
-        </v-btn>
+
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn @click="submitLog(true)" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
+              <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+          </template>
+          <span>Save</span>
+        </v-tooltip>
+
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="submitLog(false)"
+              fab
+              dark
+              small
+              color="#F9A826"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-file-move</v-icon>
+            </v-btn>
+          </template>
+          <span>Submit</span>
+        </v-tooltip>
       </v-speed-dial>
 
       <v-navigation-drawer

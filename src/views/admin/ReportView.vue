@@ -21,7 +21,9 @@
           <template v-slot:item.more="{ item }">
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-vertical</v-icon></v-btn>
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
               </template>
               <v-list>
                 <v-list-item @click="removeReport(item)">
@@ -40,13 +42,16 @@
           </template>
         </v-data-table>
 
-        <v-dialog v-model="dialog" color="white" max-width="600px">
-          <template v-slot:activator="{ on }">
-            <v-btn large dark fab fixed bottom right color="#F9A826" v-on="on">
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn large dark fab fixed bottom right color="#F9A826" v-bind="attrs" v-on="on" @click="dialog = true">
               <v-icon large>mdi-email</v-icon>
             </v-btn>
           </template>
+          <span>Invite</span>
+        </v-tooltip>
 
+        <v-dialog v-model="dialog" color="white" max-width="600px">
           <v-card min-height="450px">
             <v-autocomplete
               v-model="userSelected"
@@ -243,8 +248,8 @@ export default {
         element: {
           id: report.uid
         },
-        param:"reports"
-      })
+        param: "reports"
+      });
     }
   },
   computed: {

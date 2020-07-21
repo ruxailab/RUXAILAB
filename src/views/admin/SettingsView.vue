@@ -26,9 +26,26 @@
             @change="change = true"
           />
         </v-card>
-        <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" @click=" submit()">
-          <v-icon large>mdi-content-save</v-icon>
-        </v-btn>
+        <v-tooltip left v-if="change">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-if="change"
+              large
+              dark
+              fab
+              fixed
+              bottom
+              right
+              color="#F9A826"
+              @click=" submit()"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon large>mdi-content-save</v-icon>
+            </v-btn>
+          </template>
+          <span>Save</span>
+        </v-tooltip>
       </v-col>
     </v-row>
   </v-container>

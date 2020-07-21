@@ -7,19 +7,24 @@
       </v-btn>
     </v-snackbar>
 
-    <v-btn
-      v-if="change"
-      large
-      dark
-      fab
-      fixed
-      bottom
-      right
-      color="#F9A826"
-      @click="submit(), change = false"
-    >
-      <v-icon large>mdi-email</v-icon>
-    </v-btn>
+    <v-tooltip left v-if="change">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click="submit(), change = false"
+          v-bind="attrs" v-on="on"
+        >
+          <v-icon large>mdi-email</v-icon>
+        </v-btn>
+      </template>
+      <span>Send invitations</span>
+    </v-tooltip>
 
     <ShowInfo title="Cooperators">
       <v-autocomplete

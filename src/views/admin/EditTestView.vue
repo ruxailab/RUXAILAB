@@ -25,9 +25,16 @@
       </v-col>
     </v-row>
     <v-divider></v-divider>
-    <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" @click=" validateAll()">
-      <v-icon large>mdi-content-save</v-icon>
-    </v-btn>
+
+    <v-tooltip left v-if="change">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn large dark fab fixed bottom right color="#F9A826" @click=" validateAll()" v-bind="attrs" v-on="on">
+          <v-icon large>mdi-content-save</v-icon>
+        </v-btn>
+      </template>
+      <span>Save</span>
+    </v-tooltip>
+
     <v-row justify="center">
       <v-col cols="12">
         <v-card v-if="index==0" class="dataCard">
