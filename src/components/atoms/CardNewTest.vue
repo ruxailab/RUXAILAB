@@ -12,12 +12,7 @@
         </v-card-text>
       </v-card>
     </v-hover>
-    <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
-      <p>{{ snackMsg }}</p>
-      <v-btn text @click="snackbar = false">
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
+    
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
@@ -40,7 +35,8 @@ import FormTestDescription from "@/components/atoms/FormTestDescription";
 
 export default {
   components: {
-    FormTestDescription
+    FormTestDescription,
+  
   },
   data: () => ({
     dialog: false,
@@ -50,9 +46,6 @@ export default {
       description: "",
       type: ""
     },
-    snackbar: false,
-    snackMsg: "",
-    snackColor: "",
     testID: null
   }),
   methods: {
@@ -63,9 +56,6 @@ export default {
       await this.testAssembly(); // build Test
       let object = this.object;
       let successful = true;
-      this.snackMsg = "Test created succesfully";
-      this.snackColor = "success";
-      this.snackbar = true;
       //Send db
       await this.$store
         .dispatch("createTest", {

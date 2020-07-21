@@ -1,11 +1,6 @@
 <template>
   <v-container v-if="cooperators" class="ma-0 pa-0">
-    <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
-      <p>{{ snackMsg }}</p>
-      <v-btn text @click="snackbar = false">
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <Snackbar />
 
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
@@ -126,19 +121,18 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
   components: {
-    ShowInfo
+    ShowInfo,
+    Snackbar
   },
   data: () => ({
     object: null,
     change: false,
     valids: [false, true, true],
-    snackbar: false,
-    snackMsg: "",
-    snackColor: "",
     cooperatorsEdit: [],
     editedCoops: [],
     deletedCoops: [],
@@ -339,10 +333,6 @@ export default {
           this.$store.dispatch("getTest", { id: this.cooperators.test.id });
         }
       }
-    },
-    snackbar() {
-      if (this.snackbar === false && this.snackColor == "success")
-        this.change = false;
     }
   },
   computed: {

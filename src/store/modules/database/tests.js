@@ -4,6 +4,8 @@ export default {
     tests: null,
     myTests: null,
     loading: false,
+    snackMessage: null,
+    snackColor: null
   },
   mutations: {
     setTest(state, payload) {
@@ -18,6 +20,18 @@ export default {
     setMyTests(state, payload) {
       state.myTests = payload;
     },
+    setError(state, payload) {
+      state.snackMessage = payload;
+      state.snackColor = "red"
+    },
+    setSuccess(state, payload) {
+      state.snackMessage = payload;
+      state.snackColor = "success"
+    },
+    resetSnack(state) {
+      state.snackMessage = null;
+      state.snackColor = null;
+    }
   },
   getters: {
     tests(state) {
