@@ -123,15 +123,13 @@ export default {
       else this.$router.push(item.path);
     },
     setIsCoops(payload) {
-      this.isCoops = payload
+      this.isCoops = payload;
     }
   },
   computed: {
     testsList() {
-      if(!this.isCoops)
-        return this.$store.state.auth.user.myTests;
-      else 
-        return this.$store.state.auth.user.myCoops;
+      if (!this.isCoops) return this.$store.state.auth.user.myTests;
+      else return this.$store.state.auth.user.myCoops;
     },
     test() {
       let test = Object.assign(
@@ -150,22 +148,27 @@ export default {
           )
         );
 
-        if(Object.keys(test).length) {
+        if (Object.keys(test).length) {
           //se nao for vazio entao é coops
-          this.setIsCoops(true)
+          this.setIsCoops(true);
         }
       } else {
-        this.setIsCoops(false)
+        this.setIsCoops(false);
       }
 
       return test;
     },
-    index() {
-      if (this.items)
-        return this.items.indexOf(
-          this.items.find(item => item.path.includes(this.$route.path))
-        );
-      return 0;
+    index: {
+      get() {
+        if (this.items)
+          return this.items.indexOf(
+            this.items.find(item => item.path.includes(this.$route.path))
+          );
+        return 0;
+      },
+      set(item) {
+        return item;
+      }
     },
     items() {
       let items = [
@@ -201,16 +204,16 @@ export default {
         }
       ];
 
-      if(this.test.accessLevel == 0) {
+      if (this.test.accessLevel == 0) {
         items.push({
           title: "Cooperators",
           icon: "mdi-account-group",
-          path: `/cooperatorsview/${this.test.id}`,
+          path: `/cooperatorsview/${this.test.cooperators}`,
           id: 5
-        })
+        });
       }
 
-      return items
+      return items;
     }
   },
   watch: {

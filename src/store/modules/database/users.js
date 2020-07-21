@@ -92,6 +92,16 @@ export default {
         console.error("Error to remove myCoop ", err);
       });
     },
+    updateAccessLevel({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "users",
+        field: "myCoops",
+        identifier: "cooperators",
+      });
+      dispatch("updateArrayElement", payload).catch((err) => {
+        console.error("Error updating element", err);
+      });
+    },
     pushMyAnswers({ dispatch }, payload) {
       payload = Object.assign(payload, {
         collection: "users",

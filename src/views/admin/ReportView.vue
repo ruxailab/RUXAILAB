@@ -18,9 +18,25 @@
           :items-per-page="5"
           height="420px"
         >
-          <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2">{{item}}mdi-pencil</v-icon>
-            <v-icon small>mdi-delete</v-icon>
+          <template v-slot:item.more="{ item }">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-vertical</v-icon></v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="removeReport(item)">
+                  <v-list-item-title>Remove Report</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item v-if="item.log.status === 'Denied'">
+                  <v-list-item-title>Re-invite</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+
+          <template v-slot:item.progress="{ item }">
+            <div>{{item.log.progress}}%</div>
           </template>
         </v-data-table>
 
@@ -31,12 +47,40 @@
             </v-btn>
           </template>
 
-          <v-card>
-            <v-container>
-              <FormCooperation class="cardReport" :invitations="invitations" type="tester" />
-              <v-btn text @click="close">Cancel</v-btn>
-              <v-btn text @click="save">Send</v-btn>
-            </v-container>
+          <v-card min-height="450px">
+            <v-autocomplete
+              v-model="userSelected"
+              :items="filteredUsers"
+              item-text="email"
+              return-object
+              label="Select User"
+              outlined
+              @input="pushToArray()"
+              class="mx-2 pt-3"
+              dense
+              color="#fca326"
+              prepend-icon="mdi-account-multiple-plus"
+            ></v-autocomplete>
+
+            <v-list class="mx-2">
+              <v-list-item link v-for="(guest, n) in invitations" :key="n">
+                <v-row justify="center" align="center">
+                  <v-icon class="mr-2">mdi-account-circle</v-icon>
+                  <div>{{guest.email}}</div>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="removeFromInvitations(guest)">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-list-item>
+            </v-list>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn class="white--text" color="#F47C7C" @click="close">Cancel</v-btn>
+              <v-btn class="white--text" color="#8EB995" @click="send">Send</v-btn>
+            </v-card-actions>
+            <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
           </v-card>
         </v-dialog>
       </v-col>
@@ -45,14 +89,13 @@
 </template>
 
 <script>
-import FormCooperation from "@/components/atoms/FormCooperation";
+// import FormCooperation from "@/components/atoms/FormCooperation";
 export default {
   props: ["id"],
   components: {
-    FormCooperation
+    // FormCooperation
   },
   data: () => ({
-    invitations: [],
     dialog: false,
     headers: [
       {
@@ -62,9 +105,9 @@ export default {
       },
       { text: "Tester", value: "email" },
       { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "log.progress", justify: "center" },
+      { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
-      { text: "Actions", value: "actions" }
+      { text: "More", value: "more" }
     ],
     records: [
       {
@@ -104,7 +147,10 @@ export default {
         progress: null,
         state: null
       }
-    }
+    },
+    //Invide
+    userSelected: {},
+    invitations: []
   }),
   watch: {
     dialog(val) {
@@ -129,34 +175,76 @@ export default {
       this.invitations = [];
     },
 
-    async save() {
+    async send() {
       //Making invites
+      let d = new Date();
       this.invitations.forEach(item => {
         let inv = {
           to: {
-            id: item.id,
+            id: item.uid,
             email: item.email,
-            accessLevel: item.accessLevel
+            accessLevel: 2
           },
           from: {
             id: this.user.uid,
             email: this.user.email
           },
           test: {
-            id: this.reports.test.id,
-            title: this.reports.test.title,
-            type: this.reports.test.type,
-            reports: this.id,
-            answers: this.reports.test.answers
+            id: this.test.id,
+            title: this.test.title,
+            type: this.test.type,
+            reports: this.test.reports,
+            answers: this.test.answers,
+            cooperators: this.test.cooperators
           }
         };
-        this.$store.dispatch("pushNotification", {
-          docId: inv.to.id,
-          element: inv,
-          param: "notifications"
-        });
+
+        this.$store
+          .dispatch("pushNotification", {
+            docId: inv.to.id,
+            element: inv,
+            param: "notifications"
+          })
+          .then(() => {
+            item.log.date = d.toLocaleString("en-US");
+            this.$store.dispatch("pushLog", {
+              docId: this.id,
+              element: item
+            });
+          });
       });
       this.close();
+    },
+
+    pushToArray() {
+      let obj = {
+        uid: this.userSelected.id,
+        email: this.userSelected.email,
+        log: {
+          date: null,
+          progress: 0,
+          status: "Invited"
+        }
+      };
+
+      this.invitations.push(obj);
+
+      this.userSelected = {};
+    },
+    removeFromInvitations(item) {
+      let index = this.invitations.indexOf(item);
+
+      this.invitations.splice(index, 1);
+    },
+    removeReport(report) {
+      console.log(report);
+      this.$store.dispatch("removeReport", {
+        docId: this.id,
+        element: {
+          id: report.uid
+        },
+        param:"reports"
+      })
     }
   },
   computed: {
@@ -168,6 +256,33 @@ export default {
     },
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    },
+    users() {
+      if (this.$store.state.users.users) return this.$store.getters.admins;
+      return [];
+    },
+    filteredUsers() {
+      let hasUser = null;
+      let array = [];
+      this.users.forEach(user => {
+        hasUser = false;
+        this.invitations.forEach(guest => {
+          if (guest.uid === user.id) {
+            hasUser = true;
+          }
+        });
+
+        if (!hasUser)
+          //evita um foreach se ja tiver encontrado
+          this.reports.reports.forEach(guest => {
+            if (guest.uid === user.id) {
+              hasUser = true;
+            }
+          });
+
+        if (!hasUser) array.push(user);
+      });
+      return array;
     }
   },
 
@@ -179,6 +294,7 @@ export default {
       {},
       this.$store.state.auth.user.myTests.find(test => test.reports == this.id)
     );
+    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   }
 };
 </script>

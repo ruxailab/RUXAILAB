@@ -37,7 +37,12 @@
             </v-col>
 
             <v-btn small color="success" @click="acceptNotification(notification)">Accept</v-btn>
-            <v-btn small class="ml-2" color="error" @click="removeNotification(notification)">Deny</v-btn>
+            <v-btn
+              small
+              class="ml-2"
+              color="error"
+              @click="removeNotification(notification),denyNotification(notification)"
+            >Deny</v-btn>
           </v-row>
         </v-list-item>
       </v-list>
@@ -81,9 +86,11 @@ export default {
             accessLevel: item.to.accessLevel
           })
         });
-        this.$store.dispatch("pushCoop", {
-          docId: item.test.id,
-          element: item.to
+        this.$store.dispatch("updateCooperator", {
+          docId: item.test.cooperators,
+          elementId: item.to.id,
+          element: true,
+          param: "accepted"
         });
       } else {
         //answer
@@ -96,19 +103,37 @@ export default {
           })
         });
 
-        //criar log
-        let date = new Date()
-        this.$store.dispatch("pushLog", {
+        //update log
+        var log = {
+          date: new Date().toLocaleString("en-US"),
+          progress: 0,
+          status: "In progress"
+        };
+        this.$store.dispatch("updateLog", {
           docId: item.test.reports,
-          element: {
-            log: {
-              date: date.toLocaleString('pt-BR'),
-              progress: 0,
-              status: "In progress"
-            },
-            uid: this.user.uid,
-            email: this.user.email
-          }
+          elementId: this.user.uid,
+          element: log
+        });
+      }
+    },
+    denyNotification(item) {
+      if (item.to.accessLevel < 2) {
+        this.$store.dispatch("updateCooperator", {
+          docId: item.test.cooperators,
+          elementId: item.to.id,
+          element: false,
+          param: "accepted"
+        });
+      } else {
+        var log = {
+          date: new Date().toLocaleString("en-US"),
+          progress: 0,
+          status: "Denied"
+        };
+        this.$store.dispatch("updateLog", {
+          docId: item.test.reports,
+          elementId: this.user.uid,
+          element: log
         });
       }
     },

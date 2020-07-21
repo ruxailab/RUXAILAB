@@ -18,8 +18,10 @@
                 <AddOptionBtn
                   :option="option"
                   :dialog="dialog"
+                  :hasValue="hasValue"
                   @addOption="updateOptions"
                   @dialog="changeDialog"
+                  @change="emitChange()"
                 />
               </v-row>
             </v-col>
@@ -63,7 +65,8 @@ export default {
       value: null
     },
     dialog: false,
-    editIndex: -1
+    editIndex: -1,
+    hasValue: true,
   }),
   methods: {
     updateOptions() {
@@ -78,6 +81,7 @@ export default {
         text: '',
         value: null
       }
+      this.hasValue = true;
     },
     changeDialog(payload) {
       this.dialog = payload;
@@ -90,7 +94,12 @@ export default {
       this.option.text = this.options[this.editIndex].text;
       this.option.value = this.options[this.editIndex].value;
       
+      if(this.option.value == null) this.hasValue = false;
+      else this.hasValue = true;
       this.dialog = true;
+    },
+    emitChange() {
+      this.$emit("change")
     }
   },
   watch: {
@@ -100,6 +109,7 @@ export default {
           text: '',
           value: null
         }
+        this.hasValue = true
       }
     },
     options() {

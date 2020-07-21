@@ -1,5 +1,5 @@
 <template >
-  <v-container v-if="test" class="pa-0 ma-0">
+  <v-container v-if="test && answersSheet != undefined" class="pa-0 ma-0">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -11,7 +11,7 @@
     </v-row>
     <v-row v-else class="nav pa-0 ma-0" dense>
       <v-speed-dial
-        v-if="answersSheet !== undefined && answersSheet !== null"
+        v-if="answersSheet !== undefined "
         v-model="fab"
         fixed
         class="mr-3"
@@ -47,7 +47,7 @@
                 <div class="idText">{{test.id}}</div>
                 <div class="titleText">{{test.title}}</div>
               </v-col>
-              <v-col>
+              <v-col v-if="test.type === 'Expert'">
                 <v-row justify="center">
                   <v-progress-circular
                     :value="answersSheet.progress"
@@ -111,7 +111,7 @@
               <template v-slot:activator>
                 <v-list-item-icon>
                   <v-progress-circular
-                    v-if="answersSheet.progress != 100"
+                    v-if="test.type === 'Expert' && answersSheet.progress != 100"
                     :value="answersSheet.progress"
                     :color="index == item.id ? '#ffffff' : '#fca326'"
                   ></v-progress-circular>
@@ -125,7 +125,7 @@
               <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
                 <v-list-item-icon>
                   <v-progress-circular
-                    v-if="progress(answersSheet.heuristics[i])!=100"
+                    v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
                     :value="progress(answersSheet.heuristics[i])"
                     :size="24"
                     :width="3"
@@ -216,27 +216,18 @@
             <v-col cols="10">
               <p class="subtitleView">{{i+1}}) {{question.text}}</p>
 
-              <v-select
-                v-if="answersSheet !== undefined && answersSheet !== null"
-                class="mt-3"
-                :items="test.options"
-                @change="calcProgress()"
-                v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
-                label="Respuestas/Answers"
-                outlined
-                dense
-              ></v-select>
-
-              <v-select
-                v-else
-                class="mt-3"
-                :items="test.options"
-                @change="calcProgress()"
-                v-model="test.answersSheet.heuristics[heurisIndex].questions[i].res"
-                label="Respuestas/Answers"
-                outlined
-                dense
-              ></v-select>
+              <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+                <v-select
+                  slot="answer"
+                  v-if="answersSheet !== undefined"
+                  :items="test.options"
+                  @change="calcProgress()"
+                  v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
+                  label="Respuestas/Answers"
+                  outlined
+                  dense
+                ></v-select>
+              </AddCommentBtn>
             </v-col>
           </v-row>
         </ShowInfo>
@@ -263,12 +254,14 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
+import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
-    ViewTask
+    ViewTask,
+    AddCommentBtn
   },
   data: () => ({
     drawer: true,
@@ -280,19 +273,12 @@ export default {
     items: [],
     idx: 0,
     fab: false,
-    answersSheet: null,
     res: 0
   }),
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
-      if (this.user !== null && this.user !== undefined) {
-        let x = this.user.myAnswers.find(answer => answer.id == this.id);
-        this.answersSheet = x.answersSheet;
-      } else {
-        this.answersSheet = this.test.answersSheet;
-      }
     },
     items() {
       if (this.items.length) {
@@ -306,82 +292,85 @@ export default {
   },
   methods: {
     mappingSteps() {
-      //PreTest
-      if (this.validate(this.test.preTest.consent))
-        this.items.push({
-          title: "Pre Test",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: [
-            {
-              title: "Consent",
-              icon: "mdi-checkbox-blank-circle-outline",
-              id: 0
-            }
-          ],
-          id: 0
-        });
-
-      if (this.validate(this.test.preTest.form)) {
-        if (this.items.length) {
-          this.items[0].value.push({
-            title: "Form",
-            icon: "mdi-checkbox-blank-circle-outline",
-            id: 1
-          });
-        } else {
+      if (this.test.type === "User") {
+        //PreTest
+        if (this.validate(this.test.preTest.consent))
           this.items.push({
             title: "Pre Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: [
               {
-                title: "Form",
+                title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 1
+                id: 0
               }
             ],
             id: 0
           });
+
+        if (this.validate(this.test.preTest.form)) {
+          if (this.items.length) {
+            this.items[0].value.push({
+              title: "Form",
+              icon: "mdi-checkbox-blank-circle-outline",
+              id: 1
+            });
+          } else {
+            this.items.push({
+              title: "Pre Test",
+              icon: "mdi-checkbox-blank-circle-outline",
+              value: [
+                {
+                  title: "Form",
+                  icon: "mdi-checkbox-blank-circle-outline",
+                  id: 1
+                }
+              ],
+              id: 0
+            });
+          }
         }
+
+        //Tasks
+        if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
+          this.items.push({
+            title: "Tasks",
+            icon: "mdi-checkbox-blank-circle-outline",
+            value: this.test.tasks.map(i => {
+              return {
+                title: i.name,
+                icon: "mdi-checkbox-blank-circle-outline"
+              };
+            }),
+            id: 1
+          });
+
+        //PostTest
+        if (this.validate(this.test.postTest.form))
+          this.items.push({
+            title: "Post Test",
+            icon: "mdi-checkbox-blank-circle-outline",
+            value: this.test.postTest,
+            id: 2
+          });
+      } else if (this.test.type === "Expert") {
+        //Heuristics
+        if (
+          this.validate(this.test.heuristics) &&
+          this.test.heuristics.length !== 0
+        )
+          this.items.push({
+            title: "Heuristics",
+            icon: "mdi-checkbox-marked-circle-outline",
+            value: this.test.heuristics.map(i => {
+              return {
+                title: i.title,
+                icon: "mdi-checkbox-marked-circle-outline"
+              };
+            }),
+            id: 1
+          });
       }
-      //Tasks
-      if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
-        this.items.push({
-          title: "Tasks",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.tasks.map(i => {
-            return {
-              title: i.name,
-              icon: "mdi-checkbox-blank-circle-outline"
-            };
-          }),
-          id: 1
-        });
-
-      //Heuristics
-      if (
-        this.validate(this.test.heuristics) &&
-        this.test.heuristics.length !== 0
-      )
-        this.items.push({
-          title: "Heuristics",
-          icon: "mdi-checkbox-marked-circle-outline",
-          value: this.test.heuristics.map(i => {
-            return {
-              title: i.title,
-              icon: "mdi-checkbox-marked-circle-outline"
-            };
-          }),
-          id: 1
-        });
-
-      //PostTest
-      if (this.validate(this.test.postTest.form))
-        this.items.push({
-          title: "Post Test",
-          icon: "mdi-checkbox-blank-circle-outline",
-          value: this.test.postTest,
-          id: 2
-        });
     },
     validate(object) {
       return object !== null && object !== undefined && object !== "";
@@ -400,7 +389,7 @@ export default {
     submitLog(save) {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
       var log = {
-        date: new Date().toLocaleString("pt-BR"),
+        date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
         status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
       };
@@ -430,9 +419,6 @@ export default {
       return (
         (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
-    },
-    print(string) {
-      console.log(string);
     }
   },
   computed: {
@@ -441,6 +427,20 @@ export default {
     },
     user() {
       return this.$store.state.auth.user;
+    },
+    answersSheet: {
+      get() {
+        if (this.user !== null && this.user !== undefined) {
+          let x = this.user.myAnswers.find(answer => answer.id == this.id);
+          if (x) return x.answersSheet;
+          else return this.test.answersSheet;
+        } else {
+          return this.test.answersSheet;
+        }
+      },
+      set(item) {
+        return item;
+      }
     }
   },
   created() {

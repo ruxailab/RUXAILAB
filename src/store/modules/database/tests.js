@@ -108,6 +108,14 @@ export default {
       .catch((err) => {
         console.error("Error ", err);
       })
+    },
+    setCooperatorsID( { dispatch }, payload) {
+      payload = Object.assign(payload, {collection: "test", param: "cooperators"});
+
+      dispatch("setParamInObject", payload)
+      .catch((err) => {
+        console.error("Error ", err);
+      })
     }
   },
 };

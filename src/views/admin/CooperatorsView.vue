@@ -1,29 +1,131 @@
 <template>
-  <v-container v-if="test" class="ma-0 pa-0">
+  <v-container v-if="cooperators" class="ma-0 pa-0">
     <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
       <p>{{ snackMsg }}</p>
       <v-btn text @click="snackbar = false">
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-btn large dark fab fixed bottom right color="#F9A826" @click=" send()">
+
+    <v-btn
+      v-if="change"
+      large
+      dark
+      fab
+      fixed
+      bottom
+      right
+      color="#F9A826"
+      @click="submit(), change = false"
+    >
       <v-icon large>mdi-email</v-icon>
     </v-btn>
+
     <ShowInfo title="Cooperators">
-      <FormCooperation :invitations="invitations" />
+      <v-autocomplete
+        v-model="userSelected"
+        :items="filteredUsers"
+        item-text="email"
+        return-object
+        label="Add cooperator"
+        @input="pushToArray()"
+        dense
+        color="#fca326"
+        prepend-icon="mdi-account-multiple-plus"
+        class="mx-4 pt-4"
+      ></v-autocomplete>
+
+      <v-data-table
+        :items="cooperatorsEdit"
+        :headers="headers"
+        height="450px"
+        :items-per-page="7"
+        items-per-page-text="7"
+        :footer-props="{ 
+          'items-per-page-options': [7]
+        }"
+      >
+        <!-- Email -->
+        <template v-slot:item.email="{ item }">
+          <v-row align="center">
+            <v-icon class="mr-2">mdi-account-circle</v-icon>
+            <div>{{item.email}}</div>
+          </v-row>
+        </template>
+
+        <!-- Role -->
+        <template v-slot:item.accessLevel="{ item }">
+          <v-select
+            color="#fca326"
+            style="max-width: 200px"
+            @change="recordChange(item)"
+            v-model="item.accessLevel"
+            return-object
+            dense
+            :items="roleOptions"
+            :v-text="item.accessLevel.text"
+            :disabled="!item.invited || item.accepted ? false : true"
+            class="mt-3"
+          ></v-select>
+        </template>
+
+        <!-- Invited -->
+        <template v-slot:item.invited="{ item }">
+          <v-icon color="#8EB995" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+        </template>
+
+        <!-- Accepted -->
+        <template v-slot:item.accepted="{ item }">
+          <v-icon color="#F9A826" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
+          <v-icon color="#8EB995" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+        </template>
+
+        <!-- More -->
+        <template v-slot:item.more="{ item }">
+          <v-menu>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item @click="removeFromList(item)" v-if="!item.invited">
+                <v-list-item-title>Cancel invitation</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item
+                @click="reinvite(item)"
+                link
+                v-if="item.invited && item.accepted == false"
+              >
+                <v-list-item-title>Re-invite</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
+                <v-list-item-title>Remove cooperator</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item v-if="item.invited && item.accepted == null">
+                <v-list-item-title>No options yet</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
     </ShowInfo>
   </v-container>
 </template>
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import FormCooperation from "@/components/atoms/FormCooperation.vue";
 
 export default {
   props: ["id"],
   components: {
-    ShowInfo,
-    FormCooperation
+    ShowInfo
   },
   data: () => ({
     object: null,
@@ -32,104 +134,205 @@ export default {
     snackbar: false,
     snackMsg: "",
     snackColor: "",
-    invitations: []
+    cooperatorsEdit: [],
+    editedCoops: [],
+    deletedCoops: [],
+    userSelected: {},
+    headers: [
+      { text: "User", value: "email" },
+      { text: "Role", value: "accessLevel" },
+      { text: "Invited", value: "invited", justify: "center" },
+      { text: "Accepted", value: "accepted", justify: "center" },
+      { text: "More", value: "more", sortable: false }
+    ],
+    roleOptions: [
+      { text: "Researcher", value: 1 },
+      { text: "Co-Administrator", value: 0 }
+    ]
   }),
   methods: {
+    log() {
+      console.log("aaaaaa");
+    },
     validate(valid, index) {
       this.valids[index] = valid;
     },
-    async submit() {
-      this.snackMsg = "Test updated succesfully";
-      this.snackColor = "success";
-      this.snackbar = true;
+    submit() {
+      this.cooperatorsEdit.forEach(async guest => {
+        //Invide new cooperators
+        if (!guest.invited) {
+          this.send(guest);
+        }
 
+        if (this.editedCoops.includes(guest.id)) {
+          this.edit(guest);
+        }
+
+        this.deletedCoops.forEach(guest => {
+          this.remove(guest);
+        });
+      });
+    },
+    remove(guest) {
       this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object
+        .dispatch("removeMyCoops", {
+          docId: guest,
+          element: {
+            id: this.testID
+          }
         })
         .then(() => {
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
+          //Remove element array
+          this.$store.dispatch("removeCooperator", {
+            docId: this.id,
             element: {
-              id: this.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              accessLevel: 0
+              id: guest
             }
-          });
-
-          this.object.coop.forEach(coop => {
-            this.$store.dispatch("updateMyCoops", {
-              docId: coop.id,
-              element: {
-                id: this.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                accessLevel: coop.accessLevel
-              }
-            });
           });
         });
     },
-    send() {
-      let removed = this.object.coop.filter(e => !this.invitations.includes(e));
-      let invite = this.invitations.filter(e => !this.object.coop.includes(e));
-
-      removed.forEach(item => {
-        this.$store.dispatch("removeMyCoops", {
-          docId: item.id,
-          element: {
-            id: this.id,
-            title: this.object.title,
-            type: this.object.type,
-            reports: this.object.reports,
-            answers: this.object.answers,
-            accessLevel: this.object.accessLevel
-          }
+    edit(guest) {
+      this.$store
+        .dispatch("updateAccessLevel", {
+          docId: guest.id,
+          elementId: this.id,
+          element: guest.accessLevel.value,
+          param: "accessLevel"
+        })
+        .then(() => {
+          this.$store.dispatch("updateCooperator", {
+            docId: this.id,
+            elementId: guest.id,
+            element: guest.accessLevel,
+            param: "accessLevel"
+          });
         });
-      });
-
-      invite.forEach(item => {
-        let inv = {
-          to: {
-            id: item.id,
-            email: item.email,
-            accessLevel: item.accessLevel
-          },
-          from: {
-            id: this.user.uid,
-            email: this.user.email
-          },
-          test: {
-            id: this.id,
-            title: this.object.title,
-            type: this.object.type,
-            reports: this.object.reports,
-            answers: this.object.answers
-          }
-        };
-        this.$store.dispatch("pushNotification", {
+    },
+    send(guest) {
+      let inv = {
+        to: {
+          id: guest.id,
+          email: guest.email,
+          accessLevel: guest.accessLevel.value
+        },
+        from: {
+          id: this.user.uid,
+          email: this.user.email
+        },
+        test: {
+          id: this.test.id,
+          title: this.test.title,
+          type: this.test.type,
+          reports: this.test.reports,
+          answers: this.test.answers,
+          cooperators: this.test.cooperators
+        }
+      };
+      this.$store
+        .dispatch("pushNotification", {
           docId: inv.to.id,
           element: inv,
           param: "notifications"
+        })
+        .then(() => {
+          guest.invited = true;
+          this.$store.dispatch("pushCooperator", {
+            docId: this.id,
+            element: Object.assign({}, guest)
+          });
         });
+    },
+    reinvite(guest) {
+      let inv = {
+        to: {
+          id: guest.id,
+          email: guest.email,
+          accessLevel: guest.accessLevel.value
+        },
+        from: {
+          id: this.user.uid,
+          email: this.user.email
+        },
+        test: {
+          id: this.test.id,
+          title: this.test.title,
+          type: this.test.type,
+          reports: this.test.reports,
+          answers: this.test.answers,
+          cooperators: this.test.cooperators
+        }
+      };
+      this.$store
+        .dispatch("pushNotification", {
+          docId: inv.to.id,
+          element: inv,
+          param: "notifications"
+        })
+        .then(() => {
+          this.$store
+            .dispatch("updateCooperator", {
+              docId: this.id,
+              elementId: guest.id,
+              element: null,
+              param: "accepted"
+            })
+            .then(() => {
+              guest.accepted = null;
+            });
+        });
+    },
+    pushToArray() {
+      let hasObj = false;
+      let obj = {
+        id: this.userSelected.id,
+        email: this.userSelected.email,
+        invited: false,
+        accepted: null,
+        accessLevel: { text: "Researcher", value: 1 }
+      };
+      let index = 0;
+
+      this.cooperatorsEdit.forEach(coop => {
+        if (coop.id === obj.id) {
+          hasObj = true;
+          this.filteredUsers.splice(index, 1);
+          index++;
+        }
       });
 
-      removed.forEach(item => {
-        this.object.coop.splice(this.testEdit.coop.indexOf(item), 1);
-      });
+      if (!hasObj) {
+        this.cooperatorsEdit.push(obj);
+        this.change = true;
+
+        if (this.deletedCoops.includes(obj.id))
+          //se add de novo remove do deleted
+          this.deletedCoops.splice(this.deletedCoops.indexOf(obj.id), 1);
+      }
+      this.userSelected = {};
+    },
+    removeCoop(coop) {
+      this.deletedCoops.push(coop.id);
+      this.change = true;
+    },
+    removeFromList(coop) {
+      let index = this.cooperatorsEdit.indexOf(coop);
+      this.cooperatorsEdit.splice(index, 1);
+    },
+    recordChange(item) {
+      this.change = true;
+      if (!this.editedCoops.includes(item.id) && item.accepted)
+        this.editedCoops.push(item.id);
+
+      console.log(this.editedCoops);
     }
   },
   watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.object = await Object.assign({}, this.test);
-        this.invitations = Array.from(this.test.coop);
+    cooperators: async function() {
+      if (this.cooperators !== null && this.cooperators !== undefined) {
+        this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+        if (!this.$store.test) {
+          this.$store.dispatch("getTest", { id: this.cooperators.test.id });
+        }
       }
     },
     snackbar() {
@@ -141,14 +344,40 @@ export default {
     test() {
       return this.$store.getters.test;
     },
+    testID() {
+      return this.$store.state.auth.user.myTests.find(test =>
+        Object.values(test).includes(this.id)
+      ).id;
+    },
     user() {
       return this.$store.getters.user;
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators || [];
+    },
+    users() {
+      if (this.$store.state.users.users) return this.$store.getters.admins;
+      return [];
+    },
+    filteredUsers() {
+      let hasUser = null;
+      let array = [];
+      this.users.forEach(user => {
+        hasUser = false;
+        this.cooperatorsEdit.forEach(coop => {
+          if (coop.id === user.id) {
+            hasUser = true;
+          }
+        });
+        if (!hasUser) array.push(user);
+      });
+      return array;
     }
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      this.$store.dispatch("getTest", { id: this.id });
-    }
+    if (!this.$store.state.cooperators.cooperators)
+      this.$store.dispatch("getCooperators", { id: this.id });
+    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   }
 };
 </script>

@@ -13,7 +13,7 @@
               @input="$emit('change')"
               dense
             ></v-text-field>
-            <v-overflow-btn
+            <v-select
               :disabled="lock"
               :items="types"
               v-model="test.type"
@@ -22,7 +22,7 @@
               dense
               outlined
             
-            ></v-overflow-btn>
+            ></v-select>
           </v-col>
           <v-col cols="5">
             <v-textarea
@@ -50,7 +50,7 @@ export default {
     typeRequired: [
       v => !!v || "Field Required"
     ],
-    types: ["User", "Expert"]
+    types: [{text: "Usability User Test", value: "User"}, {text: "Usability Heuristic Evaluation", value: "Expert"}]
   }),
   methods: {
     valida() {

@@ -55,10 +55,9 @@
 
 <script>
 export default {
-  props: ["option", "dialog"],
+  props: ["option", "dialog", "hasValue"],
   data: () => ({
     id: 0,
-    hasValue: true,
     textRequired: [v => !!v || "Text is required"]
   }),
   methods: {
@@ -73,6 +72,7 @@ export default {
 
           this.$emit("dialog", false);
           this.$emit("addOption");
+          this.$emit("change");
           this.resetVal();
         }
       }
