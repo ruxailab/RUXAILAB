@@ -1,5 +1,5 @@
 <template >
-  <v-container v-if="test && answersSheet" class="pa-0 ma-0">
+  <v-container v-if="test && answersSheet != undefined" class="pa-0 ma-0">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -11,7 +11,7 @@
     </v-row>
     <v-row v-else class="nav pa-0 ma-0" dense>
       <v-speed-dial
-        v-if="answersSheet !== undefined && answersSheet !== null"
+        v-if="answersSheet !== undefined "
         v-model="fab"
         fixed
         class="mr-3"
@@ -219,7 +219,7 @@
               <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
                 <v-select
                   slot="answer"
-                  v-if="answersSheet !== undefined && answersSheet !== null"
+                  v-if="answersSheet !== undefined"
                   :items="test.options"
                   @change="calcProgress()"
                   v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
@@ -273,19 +273,12 @@ export default {
     items: [],
     idx: 0,
     fab: false,
-    answersSheet: null,
     res: 0
   }),
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
-      if (this.user !== null && this.user !== undefined) {
-        let x = this.user.myAnswers.find(answer => answer.id == this.id);
-        this.answersSheet = x.answersSheet;
-      } else {
-        this.answersSheet = this.test.answersSheet;
-      }
     },
     items() {
       if (this.items.length) {
@@ -434,6 +427,20 @@ export default {
     },
     user() {
       return this.$store.state.auth.user;
+    },
+    answersSheet: {
+      get() {
+        if (this.user !== null && this.user !== undefined) {
+          let x = this.user.myAnswers.find(answer => answer.id == this.id);
+          if (x) return x.answersSheet;
+          else return this.test.answersSheet;
+        } else {
+          return this.test.answersSheet;
+        }
+      },
+      set(item) {
+        return item;
+      }
     }
   },
   created() {

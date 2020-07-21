@@ -158,12 +158,17 @@ export default {
 
       return test;
     },
-    index() {
-      if (this.items)
-        return this.items.indexOf(
-          this.items.find(item => item.path.includes(this.$route.path))
-        );
-      return 0;
+    index: {
+      get() {
+        if (this.items)
+          return this.items.indexOf(
+            this.items.find(item => item.path.includes(this.$route.path))
+          );
+        return 0;
+      },
+      set(item) {
+        return item;
+      }
     },
     items() {
       let items = [
