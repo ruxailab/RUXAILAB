@@ -1,11 +1,7 @@
 <template>
   <v-container v-if="test">
-    <v-snackbar v-model="snackbar" :color="snackColor" top :timeout="2000">
-      <p>{{ snackMsg }}</p>
-      <v-btn text @click="snackbar = false">
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <Snackbar />
+
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Settings</v-col>
     </v-row>
@@ -53,19 +49,18 @@
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
+import Snackbar from "@/components/atoms/Snackbar"
 
 export default {
   props: ["id"],
   components: {
-    FormTestDescription
+    FormTestDescription,
+    Snackbar
   },
   data: () => ({
     object: null,
     change: false,
-    valids: [false, true, true],
-    snackbar: false,
-    snackMsg: "",
-    snackColor: ""
+    valids: [false, true, true]
   }),
   methods: {
     validate(valid, index) {
@@ -74,10 +69,6 @@ export default {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
-
-      this.snackMsg = "Test updated succesfully";
-      this.snackColor = "success";
-      this.snackbar = true;
 
       this.$store
         .dispatch("updateTest", {
@@ -124,6 +115,11 @@ export default {
             docId: this.test.reports,
             data: this.reports
           });
+
+          this.$store.commit("setSuccess", "Test updated succesfully");
+        })
+        .catch(err => {
+          this.$store.commit("setError", err);
         });
     }
   },
@@ -132,10 +128,6 @@ export default {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    },
-    snackbar() {
-      if (this.snackbar === false && this.snackColor == "success")
-        this.change = false;
     }
   },
   computed: {

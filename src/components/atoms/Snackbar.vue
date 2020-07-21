@@ -1,32 +1,31 @@
 <template>
-    <v-snackbar
-    v-model="snackbar"
-    color="red"
-    :timeout="4000"
-    top
-    absolute
-    >
-    {{errorMessage}}
-    </v-snackbar>
+  <v-snackbar v-model="snackbar" :color="snackColor" :timeout="4000" top absolute>
+    <div>{{snackMessage}}</div>
+
+    <v-btn text @click="snackbar = false">Close</v-btn>
+  </v-snackbar>
 </template>
 
 <script>
 export default {
-    data: () => ({
-        snackbar: false
-    }),
-    computed: {
-        errorMessage() {
-            return this.$store.getters.errorMessage;
-        }
+  data: () => ({
+    snackbar: false
+  }),
+  computed: {
+    snackMessage() {
+      return this.$store.state.tests.snackMessage;
     },
-    watch: {
-        errorMessage() {
-            if(this.errorMessage) this.snackbar = true;
-        },
-        snackbar() {
-            if(!this.snackbar) this.$store.commit('setError', null);
-        }
+    snackColor() {
+      return this.$store.state.tests.snackColor;
     }
-}
+  },
+  watch: {
+    snackMessage() {
+      if (this.snackMessage) this.snackbar = true;
+    },
+    snackbar() {
+      if (!this.snackbar) this.$store.commit("resetSnack");
+    }
+  }
+};
 </script>

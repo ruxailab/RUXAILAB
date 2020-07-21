@@ -14,16 +14,16 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-2" text @click="dialog = false">Stay</v-btn>
-          <v-btn class="yellow accent-4 white--text" text @click="change = false,$router.push(go)">Leave</v-btn>
+          <v-btn
+            class="yellow accent-4 white--text"
+            text
+            @click="change = false,$router.push(go)"
+          >Leave</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-snackbar v-model="snackbar" :color="snackColor" top absolute :timeout="3000">
-      <p>{{ snackMsg }}</p>
-      <v-btn text @click="snackbar = false">
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
+    <Snackbar />
+
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Test Edit</v-col>
       <v-col cols="12" class="pa-0 pl-3 ma-0">
@@ -125,26 +125,29 @@ import FormPostTest from "@/components/atoms/FormPostTest";
 import ListTasks from "@/components/molecules/ListTasks";
 import Heuristic from "@/components/molecules/HeuristicsTable";
 import OptionsTable from "@/components/molecules/OptionsTable";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
-  components: { FormPreTest, FormPostTest, ListTasks, Heuristic, OptionsTable },
+  components: {
+    FormPreTest,
+    FormPostTest,
+    ListTasks,
+    Heuristic,
+    OptionsTable,
+    Snackbar
+  },
   data: () => ({
     index: 0,
     object: {},
     valids: [true, true],
     change: false,
-    snackbar: false,
-    snackMsg: "",
-    snackColor: "",
     dialog: false
+    
   }),
   methods: {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
-      this.snackMsg = "Test updated succesfully";
-      this.snackColor = "success";
-      this.snackbar = true;
 
       this.$store
         .dispatch("updateTest", {
@@ -164,35 +167,37 @@ export default {
               accessLevel: 0
             }
           });
-        });
 
-      this.answers.answersSheet = this.object.answersSheet;
-      this.$store.dispatch("updateTestAnswer", {
-        docId: this.test.answers,
-        data: this.answers
-      });
+          this.answers.answersSheet = this.object.answersSheet;
+          this.$store
+            .dispatch("updateTestAnswer", {
+              docId: this.test.answers,
+              data: this.answers
+            })
+            .then(() => {
+              this.$store.commit("setSuccess", "Test updated succesfully");
+            })
+            .catch(err => {
+              this.$store.commit("setError", err);
+            });
+        })
+        .catch(err => {
+          this.$store.commit("setError", err);
+        });
     },
     validate(valid, index) {
       this.valids[index] = valid;
     },
     validateAll() {
       if (this.test.type === "User" && !this.valids[0]) {
-        this.snackMsg =
-          "Please fill all fields in Pre Test correctly or leave them empty";
-        this.snackColor = "red";
-        this.snackbar = "true";
+        this.$store.commit("setError", "Please fill all fields in Pre Test correctly or leave them empty")
       } else if (
         this.test.type === "Expert" &&
         this.object.options.length == 1
       ) {
-        this.snackMsg = "Please create at least 2 options or none at all";
-        this.snackColor = "red";
-        this.snackbar = "true";
+        this.$store.commit("setError", "Please create at least 2 options or none at all");
       } else if (this.test.type === "User" && !this.valids[1]) {
-        this.snackMsg =
-          "Please fill all fields in Post Test correctly or leave them empty";
-        this.snackColor = "red";
-        this.snackbar = "true";
+        this.$store.commit("setError", "Please fill all fields in Post Test correctly or leave them empty");
       } else {
         this.submit();
       }
@@ -206,10 +211,6 @@ export default {
         if (this.test.type === "Expert") this.index = 1;
         else if (this.test.type === "User") this.index = 0;
       }
-    },
-    snackbar() {
-      if (this.snackbar === false && this.snackColor == "success")
-        this.change = false;
     }
   },
   computed: {

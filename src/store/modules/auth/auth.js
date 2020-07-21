@@ -3,23 +3,16 @@ import api from "@/api";
 export default {
   state: {
     user: null,
-    errorMessage: null,
   },
   getters: {
     user(state) {
       return state.user;
-    },
-    errorMessage(state) {
-      return state.errorMessage;
     }
   },
   mutations: {
     setUser(state, payload) {
       state.user = payload;
-    },
-    setError(state, payload) {
-      state.errorMessage = payload;
-    },
+    }
   },
   actions: {
     async signup({ commit }, payload) {

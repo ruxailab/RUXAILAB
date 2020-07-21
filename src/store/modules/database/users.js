@@ -49,10 +49,15 @@ export default {
         console.error("Error to remove myTest ", err);
       });
     },
-    async pushNotification({ dispatch }, payload) {
+    async pushNotification({ dispatch, commit }, payload) {
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("pushObject", payload).catch((err) => {
+      dispatch("pushObject", payload)
+      .then(() => {
+        commit("setSuccess", "Invitations sent succesfully");
+      })
+      .catch((err) => {
         console.error("Error to push notifications ", err);
+        commit("setError", err);
       });
     },
     async removeNotification({ dispatch }, payload) {
