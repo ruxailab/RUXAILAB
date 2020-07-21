@@ -1,5 +1,23 @@
 <template>
   <v-container v-if="test">
+    <v-dialog v-model="dialog" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline yellow accent-4 white--text"
+          primary-title
+        >Are you sure you want to leave?</v-card-title>
+
+        <v-card-text>Are you sure you want to leave? Your changes will be discarded</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-2" text @click="dialog = false">Stay</v-btn>
+          <v-btn class="yellow accent-4 white--text" text @click="change = false,$router.push(go)">Leave</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-snackbar v-model="snackbar" :color="snackColor" top absolute :timeout="3000">
       <p>{{ snackMsg }}</p>
       <v-btn text @click="snackbar = false">
@@ -15,11 +33,11 @@
             color="#FCA326"
             class="tab-border-bottom pb-0 mb-0"
           >
-            <v-tab v-if="test.type === 'User'"  @click="index = 0">Pre Test</v-tab>
+            <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
             <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
             <v-tab v-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
             <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
-            <v-tab v-if="test.type === 'User'"  @click="index = 3">Post Test</v-tab>
+            <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
           </v-tabs>
         </v-row>
       </v-col>
@@ -28,7 +46,18 @@
 
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn large dark fab fixed bottom right color="#F9A826" @click=" validateAll()" v-bind="attrs" v-on="on">
+        <v-btn
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click=" validateAll()"
+          v-bind="attrs"
+          v-on="on"
+        >
           <v-icon large>mdi-content-save</v-icon>
         </v-btn>
       </template>
@@ -66,11 +95,7 @@
 
         <v-row justify="center" v-if="index==2">
           <v-col cols="12" class="pa-0">
-            <OptionsTable
-              :options="object.options"
-              @valForm="validate"
-              @change="change = true"
-            />
+            <OptionsTable :options="object.options" @valForm="validate" @change="change = true" />
           </v-col>
         </v-row>
 
@@ -111,7 +136,8 @@ export default {
     change: false,
     snackbar: false,
     snackMsg: "",
-    snackColor: ""
+    snackColor: "",
+    dialog: false
   }),
   methods: {
     async submit() {
@@ -138,10 +164,9 @@ export default {
               accessLevel: 0
             }
           });
-
         });
 
-      this.answers.answersSheet = this.object.answersSheet
+      this.answers.answersSheet = this.object.answersSheet;
       this.$store.dispatch("updateTestAnswer", {
         docId: this.test.answers,
         data: this.answers
@@ -151,16 +176,21 @@ export default {
       this.valids[index] = valid;
     },
     validateAll() {
-      if (this.test.type === 'User' && !this.valids[0]) {
-        this.snackMsg = "Please fill all fields in Pre Test correctly or leave them empty";
+      if (this.test.type === "User" && !this.valids[0]) {
+        this.snackMsg =
+          "Please fill all fields in Pre Test correctly or leave them empty";
         this.snackColor = "red";
         this.snackbar = "true";
-      } else if (this.test.type === 'Expert' && this.object.options.length == 1) {
+      } else if (
+        this.test.type === "Expert" &&
+        this.object.options.length == 1
+      ) {
         this.snackMsg = "Please create at least 2 options or none at all";
         this.snackColor = "red";
         this.snackbar = "true";
-      } else if (this.test.type === 'User' && !this.valids[1]) {
-        this.snackMsg = "Please fill all fields in Post Test correctly or leave them empty";
+      } else if (this.test.type === "User" && !this.valids[1]) {
+        this.snackMsg =
+          "Please fill all fields in Post Test correctly or leave them empty";
         this.snackColor = "red";
         this.snackbar = "true";
       } else {
@@ -173,8 +203,8 @@ export default {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign(this.object, this.test);
 
-        if(this.test.type === 'Expert') this.index = 1
-        else if(this.test.type === 'User') this.index = 0
+        if (this.test.type === "Expert") this.index = 1;
+        else if (this.test.type === "User") this.index = 0;
       }
     },
     snackbar() {
@@ -196,6 +226,14 @@ export default {
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.change) {
+      this.dialog = true
+      this.go = to.path
+    } else {
+      next();
     }
   }
 };
