@@ -208,11 +208,6 @@ export default {
     cooperators() {
       return this.$store.state.cooperators.cooperators || [];
     }
-  },
-  watch: {
-    loading() {
-      console.log(this.loading);
-    }
   }
 };
 </script>

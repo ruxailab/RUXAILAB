@@ -83,12 +83,6 @@ export default {
       { text: "Edit/Delete", value: "actions", align: "end", sortable: false },
       { text: "", value: "data-table-expand" }
     ],
-    heuris: {
-      id: 0,
-      total: 0,
-      title: "",
-      questions: []
-    },
     dialog: false,
     editIndex: -1
   }),
@@ -164,7 +158,7 @@ export default {
       let array = Array.from(this.heuris.questions);
       let aux = [];
       array.forEach(el => {
-        aux.push(Object.assign({}, { id: el.id, res: "", com:"" }));
+        aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
       return aux;
     },
@@ -178,6 +172,23 @@ export default {
   },
   components: {
     AddHeurBtn
+  },
+  created() {
+    if (this.heuristics.length) {
+      this.heuris = {
+        id: this.heuristics[this.heuristics.length - 1].id + 1,
+        total: 0,
+        title: "",
+        questions: []
+      };
+    } else {
+      this.heuris = {
+        id: 0,
+        total: 0,
+        title: "",
+        questions: []
+      };
+    }
   }
 };
 </script>
