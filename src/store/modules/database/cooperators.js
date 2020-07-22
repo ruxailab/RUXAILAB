@@ -64,5 +64,11 @@ export default {
         console.error("Error ", err);
       });
     },
+    updateTestCooperators({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "cooperators" });
+      dispatch("updateObject", payload).catch(() => {
+        console.error("Error to update");
+      });
+    },
   },
 };

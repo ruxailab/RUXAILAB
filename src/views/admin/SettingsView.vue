@@ -69,6 +69,7 @@ export default {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
+      await this.$store.dispatch("getCooperators", { id: this.test.cooperators });
 
       this.$store
         .dispatch("updateTest", {
@@ -89,7 +90,7 @@ export default {
             }
           });
 
-          this.object.coop.forEach(coop => {
+          this.cooperators.cooperators.forEach(coop => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -106,6 +107,8 @@ export default {
 
           this.answers.test.title = this.object.title;
           this.reports.test.title = this.object.title;
+          this.cooperators.test.title = this.object.title;
+
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
             data: this.answers
@@ -114,6 +117,11 @@ export default {
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
             data: this.reports
+          });
+
+          this.$store.dispatch("updateTestCooperators", {
+            docId: this.test.cooperators,
+            data: this.cooperators
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
@@ -142,6 +150,9 @@ export default {
     },
     reports() {
       return this.$store.state.reports.reports || [];
+    },
+    cooperators(){
+      return this.$store.state.cooperators.cooperators || []
     }
   },
   created() {
