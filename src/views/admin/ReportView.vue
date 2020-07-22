@@ -277,7 +277,7 @@ export default {
           }
         });
 
-        if (!hasUser)
+        if (!hasUser && this.reports)
           //evita um foreach se ja tiver encontrado
           this.reports.reports.forEach(guest => {
             if (guest.uid === user.id) {

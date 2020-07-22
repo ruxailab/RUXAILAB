@@ -45,7 +45,7 @@
         </v-list>
 
         <div class="footer" v-if="!mini">
-          <v-btn icon @click="go(`/settingsview/${id}`)" class="ml-3">
+          <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3">
             <v-icon color="white">mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -57,7 +57,7 @@
         <div class="footer" style="height:16%" v-else>
           <v-list class="mt-0 pa-0">
             <v-list-item class="pt-0">
-              <v-list-item-icon @click="go(`/settingsview/${id}`)">
+              <v-list-item-icon @click="go(`/settingsview/${test.id}`)">
                 <v-icon color="white">mdi-cog</v-icon>
               </v-list-item-icon>
             </v-list-item>
@@ -119,8 +119,10 @@ export default {
     },
     go(item) {
       if (item.id == undefined) this.$router.push(item);
-      if (item.id == 2) window.open(item.path);
-      else this.$router.push(item.path);
+      else {
+        if (item.id == 2) window.open(item.path);
+        else this.$router.push(item.path);
+      }
     },
     setIsCoops(payload) {
       this.isCoops = payload;
@@ -170,6 +172,14 @@ export default {
         return item;
       }
     },
+    selectedTest: {
+      get() {
+        return this.test;
+      },
+      set(item) {
+        return item;
+      }
+    },
     items() {
       let items = [
         {
@@ -214,11 +224,6 @@ export default {
       }
 
       return items;
-    }
-  },
-  watch: {
-    test() {
-      this.selectedTest = this.test;
     }
   },
   created() {
