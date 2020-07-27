@@ -46,7 +46,7 @@
                 <v-text-field
                   v-model="newQuestion.title"
                   dense
-                  label="Title Heuristic"
+                  label="Title Questions"
                   outlined
                   class="mx-3"
                   :rules="questionRequired"
@@ -59,7 +59,7 @@
             <v-btn
               class="lighten-2"
               text
-              @click="dialog = false,$refs.form.resetValidation(),itemEdit = null"
+              @click="dialog = false,$refs.form.resetValidation(),newQuestion = null"
             >Cancel</v-btn>
             <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Save</v-btn>
           </v-card-actions>
@@ -129,7 +129,7 @@
         <v-divider></v-divider>
         <v-row justify="space-around">
           <v-row class="ma-0 pa-0" v-if="heuristics.length">
-            <v-col class="ma-0 pr-0" cols="2">
+            <v-col class="ma-0 pr-0" cols="3">
               <!--Heuristics List-->
               <v-list dense height="550px" outlined>
                 <v-subheader>Heuristics</v-subheader>
@@ -157,7 +157,7 @@
             </v-col>
             <v-divider vertical inset></v-divider>
             <!--Questions List-->
-            <v-col class="ma-0 pr-0 pl-0" cols="2" v-if="itemSelect!=null">
+            <v-col class="ma-0 pr-0 pl-0" cols="3" v-if="itemSelect!=null">
               <v-list dense height="550px" outlined>
                 <v-subheader>
                   {{heuristics[itemSelect].title}} - Questions
@@ -210,7 +210,7 @@
             <v-divider vertical inset></v-divider>
             <!--Questions content-->
             <v-col class="ma-0 pl-0" v-if="questionSelect!=null">
-              <v-card height="550px" elevation='0'> 
+              <v-card height="550px" elevation="0">
                 <v-subheader class="pa-2">
                   {{heuristics[itemSelect].questions[questionSelect].title}}
                   <v-spacer></v-spacer>
@@ -239,8 +239,27 @@
                   </v-menu>
                 </v-subheader>
                 <v-divider></v-divider>
-                <v-card-text>{{heuristics}}</v-card-text>
-                <v-card-text>{{answersSheet}}</v-card-text>
+                <v-list outline dense>
+                  <v-subheader>
+                    <p>Descriptions:</p>
+                    <v-spacer></v-spacer>
+                    <v-btn rounded color="#f9a826" class="white--text" small
+                    @click="add()"
+                    >Add a new Description</v-btn>
+                  </v-subheader>
+                  <v-list-item
+                    v-for="(item, i) in heuristics[itemSelect].questions[questionSelect].descriptions"
+                    :key="i"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>{{item.title}}</v-list-item-title>
+                    </v-list-item-content>
+                    <v-list-item-icon>
+                      <v-icon>mdi-pencil</v-icon>
+                      <v-icon>mdi-delete</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </v-list>
               </v-card>
             </v-col>
           </v-row>
@@ -380,7 +399,7 @@ export default {
             this.heuristics[this.itemSelect].questions.length - 1
           ].id + 1,
         title: "",
-        description: "",
+        descriptions: [],
       };
       this.dialog = true;
     },
@@ -443,7 +462,7 @@ export default {
             {
               id: 0,
               title: "",
-              description: "",
+              descriptions: [],
             },
           ],
         };
@@ -486,7 +505,7 @@ export default {
           {
             id: 0,
             title: "",
-            description: "",
+            descriptions: [],
           },
         ],
       };
@@ -499,7 +518,7 @@ export default {
           {
             id: 0,
             title: "",
-            description: "",
+            descriptions: [],
           },
         ],
       };
