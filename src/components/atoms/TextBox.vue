@@ -2,8 +2,8 @@
   <!-- https://github.com/ueberdosis/tiptap -->
   <div>
     <div class="main-box">
-      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }" class="editor-bar">
-        <div class="grey lighten-3">
+      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+        <div class="grey lighten-3 editor-bar">
           <v-btn @click="commands.undo" text small color="#FCA326">
             <v-icon color="grey darken-1">mdi-undo</v-icon>
           </v-btn>
@@ -54,7 +54,7 @@
             >mdi-format-list-numbered</v-icon>
           </v-btn>
 
-          <v-btn text small @click="loadImage(commands.image)">
+          <v-btn text small @click="loadImage(commands.image)" color="#FCA326">
             <v-icon color="grey darken-1">mdi-image</v-icon>
           </v-btn>
 
@@ -65,11 +65,11 @@
       </editor-menu-bar>
 
       <v-divider />
-      <editor-content class="text-box mt-1 pa-1" :editor="editor" />
+      <editor-content class="text-box pa-1" :editor="editor" />
     </div>
 
-    <v-btn @click="getJson()">json</v-btn>
-    <v-btn @click="getHtml()">html</v-btn>
+    <!-- <v-btn @click="getJson()">json</v-btn>
+    <v-btn @click="getHtml()">html</v-btn> -->
   </div>
 </template>
 
@@ -172,10 +172,24 @@ export default {
   word-break: break-word; */
 }
 .main-box {
-  border: 1px solid grey;
+  border: 1px solid #3F3D56;
   border-radius: 4px;
 }
-.ProseMirror {
-    background-color: red!important;
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
 }
 </style>
