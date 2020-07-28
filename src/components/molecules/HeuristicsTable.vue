@@ -239,36 +239,63 @@
                   </v-menu>
                 </v-subheader>
                 <v-divider></v-divider>
-                <v-list outline dense>
-                  <v-subheader>
-                    <p>Descriptions:</p>
-                    <v-spacer></v-spacer>
-                    <v-btn rounded color="#f9a826" class="white--text" small
-                    @click="add()"
-                    >Add a new Description</v-btn>
-                  </v-subheader>
-                  <v-list-item
-                    v-for="(item, i) in heuristics[itemSelect].questions[questionSelect].descriptions"
-                    :key="i"
-                  >
-                    <v-list-item-content>
-                      <v-list-item-title>{{item.title}}</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-icon>
-                      <v-icon>mdi-pencil</v-icon>
-                      <v-icon>mdi-delete</v-icon>
-                    </v-list-item-icon>
-                  </v-list-item>
-                </v-list>
+                <v-row>
+                  <v-col>
+                    <v-data-table
+                      height="350px"
+                      :headers="headers"
+                      :items=" this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions"
+                      :items-per-page="5"
+                    >
+                      <template v-slot:top>
+                        <v-row class>
+                          <v-col class="ml-2 mb-1 pa-4 pb-0">
+                            <p class="subtitleView">Descriptions</p>
+                          </v-col>
+                          <v-col class="mr-2 mb-1 pb-0 pa-4">
+                            <v-row justify="end" class="ma-0 pa-0">
+                              <v-btn
+                                rounded
+                                color="#f9a826"
+                                class="white--text"
+                                small
+                                @click="add()"
+                              >Add a new Description</v-btn>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                        <v-divider class="mb-4"></v-divider>
+                      </template>
+
+                      <template v-slot:item.actions="{ item }">
+                        <!-- table actions -->
+                        <v-row justify="end" class="pr-1">
+                          <v-btn icon small class="mr-2" @click="editItem(item)">
+                            <v-icon small>mdi-pencil</v-icon>
+                          </v-btn>
+                          <v-btn icon small @click="deleteItem(item)">
+                            <v-icon small>mdi-delete</v-icon>
+                          </v-btn>
+                        </v-row>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
               </v-card>
             </v-col>
           </v-row>
-          <v-col cols="10" v-else>
-            <p class="subtitleView">You don't have heuristic yet, start one.</p>
-            <v-btn @click="dialog=true" icon x-large color="grey">
-              <v-icon>mdi-plus-circle-outline</v-icon>
-            </v-btn>
-          </v-col>
+          <v-row justify="center" v-else>
+            <v-col class="ma-10" cols="10">
+              <v-row justify="center" align="center">
+                <p class="subtitleView">You don't have heuristic yet, start one.</p>
+              </v-row>
+              <v-row class="ma-4" justify="center" align="center">
+                <v-btn @click="dialog=true" icon x-large color="grey">
+                  <v-icon size="100">mdi-plus-circle-outline</v-icon>
+                </v-btn>
+              </v-row>
+            </v-col>
+          </v-row>
         </v-row>
       </v-card>
     </v-col>
@@ -293,8 +320,7 @@ export default {
         align: "start",
         value: "title",
       },
-      { text: "Edit/Delete", value: "actions", align: "end", sortable: false },
-      { text: "", value: "data-table-expand" },
+      { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
     dialog: false,
     editIndex: -1,
@@ -303,6 +329,11 @@ export default {
     questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
   methods: {
+    add() {
+      this.heuristics[this.itemSelect].questions[
+        this.questionSelect
+      ].descriptions.push({ title: "aaa", text: "sssss" });
+    },
     updateHeuristics() {
       if (this.editIndex == -1) {
         this.heuristics.push(this.heuris);
@@ -449,6 +480,16 @@ export default {
     resetVal() {
       this.$refs.form.resetValidation();
       this.$refs.form1.resetValidation();
+    },
+    deleteItem(item) {
+      this.heuristics[this.itemSelect].questions[
+        this.questionSelect
+      ].descriptions.splice(
+        this.heuristics[this.itemSelect].questions[
+          this.questionSelect
+        ].descriptions.indexOf(item),
+        1
+      );
     },
   },
   watch: {
