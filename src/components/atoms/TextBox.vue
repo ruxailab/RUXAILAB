@@ -147,10 +147,21 @@ export default {
         command({ href: link });
       }
     },
+    resetContent() {
+    this.editor.clearContent();
+  }
   },
   beforeDestroy() {
     this.editor.destroy();
   },
+  watch: {
+    json() {
+      this.$emit('updateJson', this.json);
+    },
+    html() {
+      this.$emit('updateHtml', this.html);
+    }
+  }
 };
 </script>
 

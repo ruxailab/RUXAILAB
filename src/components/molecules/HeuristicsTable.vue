@@ -254,13 +254,7 @@
                           </v-col>
                           <v-col class="mr-2 mb-1 pb-0 pa-4">
                             <v-row justify="end" class="ma-0 pa-0">
-                              <v-btn
-                                rounded
-                                color="#f9a826"
-                                class="white--text"
-                                small
-                                @click="add()"
-                              >Add a new Description</v-btn>
+                              <AddDescBtn :question="heuristics[itemSelect].questions[questionSelect]" />
                             </v-row>
                           </v-col>
                         </v-row>
@@ -304,9 +298,14 @@
 
 
 <script>
+import AddDescBtn from '@/components/atoms/AddDescBtn';
+
 export default {
   props: ["heuristics", "answersSheet"],
 
+  components: {
+    AddDescBtn
+  },
   data: () => ({
     menuHeuristics: false,
     menuQuestions: false,
@@ -581,7 +580,6 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
 .dataCard {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
