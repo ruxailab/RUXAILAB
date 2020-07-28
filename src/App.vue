@@ -1,4 +1,4 @@
-<template  > 
+<template  >
   <v-app>
     <Toolbar />
 
@@ -15,9 +15,18 @@ import Toolbar from "./components/molecules/Toolbar";
 
 export default {
   name: "App",
-  data: () => ({ }),
+  data: () => ({}),
   components: {
-    Toolbar
-  }
+    Toolbar,
+  },
 };
 </script>
+
+<style>
+.ProseMirror:focus {
+  outline: none;
+}
+.ProseMirror {
+  height: 100%;
+}
+</style>

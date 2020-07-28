@@ -114,7 +114,7 @@ export default {
   }),
   methods: {
     pushToTest() {
-      this.$router.push("/managerview/" + this.selectedTest);
+      this.$router.push("/managerview/" + this.selectedTest.id);
       this.index = 0;
     },
     go(item) {

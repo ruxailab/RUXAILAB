@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="test">
+    <!-- <TextBox /> -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
@@ -126,6 +127,7 @@ import ListTasks from "@/components/molecules/ListTasks";
 import Heuristic from "@/components/molecules/HeuristicsTable";
 import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
+// import TextBox from "@/components/atoms/TextBox";
 
 export default {
   props: ["id"],
@@ -135,7 +137,8 @@ export default {
     ListTasks,
     Heuristic,
     OptionsTable,
-    Snackbar
+    Snackbar,
+    // TextBox
   },
   data: () => ({
     index: 0,
