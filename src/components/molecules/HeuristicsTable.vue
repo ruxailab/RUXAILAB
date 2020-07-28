@@ -128,10 +128,10 @@
         <v-card-title class="subtitleView">Current Heuristics</v-card-title>
         <v-divider></v-divider>
         <v-row justify="space-around">
-          <v-row class="ma-0 pa-0" v-if="heuristics.length">
-            <v-col class="ma-0 pr-0" cols="3">
+          <v-row class="ma-0" v-if="heuristics.length">
+            <v-col class="ma-0 pa-0 pl-3" cols="3">
               <!--Heuristics List-->
-              <v-list dense height="550px" outlined>
+              <v-list dense min-height="560px" outlined>
                 <v-subheader>Heuristics</v-subheader>
                 <v-divider></v-divider>
                 <v-list-item @click="dialog=true">
@@ -155,10 +155,10 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical inset></v-divider>
+            <v-divider vertical ></v-divider>
             <!--Questions List-->
-            <v-col class="ma-0 pr-0 pl-0" cols="3" v-if="itemSelect!=null">
-              <v-list dense height="550px" outlined>
+            <v-col class="ma-0 pa-0 " cols="3" v-if="itemSelect!=null">
+              <v-list dense height="560px" outlined>
                 <v-subheader>
                   {{heuristics[itemSelect].title}} - Questions
                   <v-spacer></v-spacer>
@@ -207,10 +207,10 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical inset></v-divider>
+            <v-divider vertical ></v-divider>
             <!--Questions content-->
-            <v-col class="ma-0 pl-0" v-if="questionSelect!=null">
-              <v-card height="550px" elevation="0">
+            <v-col class="ma-0 pa-0 pr-3" v-if="questionSelect!=null">
+              <v-card height="560px" elevation="0">
                 <v-subheader class="pa-2">
                   {{heuristics[itemSelect].questions[questionSelect].title}}
                   <v-spacer></v-spacer>
@@ -587,7 +587,7 @@ export default {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   margin: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
   min-height: 550px;
 }
 </style>
