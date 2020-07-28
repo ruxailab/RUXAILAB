@@ -127,6 +127,7 @@
       <v-card class="dataCard">
         <v-card-title class="subtitleView">Current Heuristics</v-card-title>
         <v-divider></v-divider>
+      
         <v-row justify="space-around">
           <v-row class="ma-0" v-if="heuristics.length">
             <v-col class="ma-0 pa-0 pl-3" cols="3">
@@ -155,9 +156,9 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical ></v-divider>
+            <v-divider vertical></v-divider>
             <!--Questions List-->
-            <v-col class="ma-0 pa-0 " cols="3" v-if="itemSelect!=null">
+            <v-col class="ma-0 pa-0" cols="3" v-if="itemSelect!=null">
               <v-list dense height="560px" outlined>
                 <v-subheader>
                   {{heuristics[itemSelect].title}} - Questions
@@ -207,7 +208,7 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical ></v-divider>
+            <v-divider vertical></v-divider>
             <!--Questions content-->
             <v-col class="ma-0 pa-0 pr-3" v-if="questionSelect!=null">
               <v-card height="560px" elevation="0">
@@ -254,7 +255,9 @@
                           </v-col>
                           <v-col class="mr-2 mb-1 pb-0 pa-4">
                             <v-row justify="end" class="ma-0 pa-0">
-                              <AddDescBtn :question="heuristics[itemSelect].questions[questionSelect]" />
+                              <AddDescBtn
+                                :question="heuristics[itemSelect].questions[questionSelect]"
+                              />
                             </v-row>
                           </v-col>
                         </v-row>
@@ -298,13 +301,13 @@
 
 
 <script>
-import AddDescBtn from '@/components/atoms/AddDescBtn';
+import AddDescBtn from "@/components/atoms/AddDescBtn";
 
 export default {
   props: ["heuristics", "answersSheet"],
 
   components: {
-    AddDescBtn
+    AddDescBtn,
   },
   data: () => ({
     menuHeuristics: false,
@@ -321,6 +324,7 @@ export default {
       },
       { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
+    heuris: null,
     dialog: false,
     editIndex: -1,
     step: 1,
@@ -332,37 +336,6 @@ export default {
       this.heuristics[this.itemSelect].questions[
         this.questionSelect
       ].descriptions.push({ title: "aaa", text: "sssss" });
-    },
-    updateHeuristics() {
-      if (this.editIndex == -1) {
-        this.heuristics.push(this.heuris);
-        this.answersSheet.heuristics.push(
-          Object.assign(
-            {},
-            {
-              id: this.heuris.id,
-              total: this.heuris.total,
-              questions: this.arrayQuestions,
-            }
-          )
-        );
-      } else {
-        Object.assign(this.heuristics[this.editIndex], this.heuris);
-        Object.assign(this.answersSheet.heuristics[this.editIndex], {
-          id: this.heuris.id,
-          total: this.heuris.total,
-          questions: this.arrayQuestions,
-        });
-        this.editIndex = -1;
-      }
-      this.heuristics.total = this.totalQuestions;
-      this.answersSheet.total = this.totalQuestions;
-      this.heuris = {
-        id: this.heuristics[this.heuristics.length - 1].id + 1,
-        title: "",
-        total: 0,
-        questions: [],
-      };
     },
     changeDialog(payload) {
       this.dialog = payload;
@@ -392,6 +365,13 @@ export default {
         if (config) {
           this.heuristics[this.itemSelect].questions.splice(item, 1);
           this.questionSelect = null;
+          this.answersSheet.heuristics[this.itemSelect].questions.splice(
+            item,
+            1
+          );
+          this.heuristics[this.itemSelect].total = this.heuristics[
+            this.itemSelect
+          ].questions.length;
           this.answersSheet.total = this.totalQuestions;
         }
       } else {
@@ -450,7 +430,20 @@ export default {
           case 0: //Start New Heuristic
             this.step = 1;
             this.dialog = false;
-            this.updateHeuristics();
+            this.heuristics.push(this.heuris);
+            this.itemSelect = this.heuristics.indexOf(this.heuris);
+            this.answersSheet.heuristics.push(
+              Object.assign(
+                {},
+                {
+                  id: this.heuris.id,
+                  total: this.heuris.total,
+                  questions: this.arrayQuestions,
+                }
+              )
+            );
+            this.heuristics.total = this.totalQuestions;
+            this.answersSheet.total = this.totalQuestions;
             this.$refs.form1.resetValidation();
             break;
 
@@ -471,7 +464,12 @@ export default {
             this.heuristics[this.itemSelect].total = this.heuristics[
               this.itemSelect
             ].questions.length;
-            this.updateHeuristics();
+            this.answersSheet.total = this.totalQuestions;
+            Object.assign(this.answersSheet.heuristics[this.itemSelect], {
+              id: this.heuristics[this.itemSelect].id,
+              total: this.heuristics[this.itemSelect].total,
+              questions: this.arrayQuestions,
+            });
             break;
         }
       }
@@ -519,8 +517,8 @@ export default {
   },
   computed: {
     arrayQuestions() {
-      let array = Array.from(this.heuris.questions);
       let aux = [];
+      let array = Array.from(this.heuristics[this.itemSelect].questions);
       array.forEach((el) => {
         aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
