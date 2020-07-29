@@ -209,6 +209,7 @@
               </v-list>
             </v-col>
             <v-divider vertical></v-divider>
+            <div v-if="questionSelect">{{heuristics[itemSelect].questions[questionSelect].descriptions}}</div>
             <!--Questions content-->
             <v-col class="ma-0 pa-0 pr-3" v-if="questionSelect!=null">
               <v-card height="560px" elevation="0">
@@ -245,7 +246,7 @@
                     <v-data-table
                       height="350px"
                       :headers="headers"
-                      :items=" this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions"
+                      :items="heuristics[itemSelect].questions[questionSelect].descriptions"
                       :items-per-page="5"
                     >
                       <template v-slot:top>
@@ -255,9 +256,7 @@
                           </v-col>
                           <v-col class="mr-2 mb-1 pb-0 pa-4">
                             <v-row justify="end" class="ma-0 pa-0">
-                              <AddDescBtn
-                                :question="heuristics[itemSelect].questions[questionSelect]"
-                              />
+                              <AddDescBtn ref="descBtn" @change="emitChange" :question="heuristics[itemSelect].questions[questionSelect]" />
                             </v-row>
                           </v-col>
                         </v-row>
@@ -265,9 +264,10 @@
                       </template>
 
                       <template v-slot:item.actions="{ item }">
+                        {{item}}
                         <!-- table actions -->
                         <v-row justify="end" class="pr-1">
-                          <v-btn icon small class="mr-2" @click="editItem(item)">
+                          <v-btn icon small class="mr-2" @click="editDescription(item)">
                             <v-icon small>mdi-pencil</v-icon>
                           </v-btn>
                           <v-btn icon small @click="deleteItem(item)">
@@ -332,10 +332,39 @@ export default {
     questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
   methods: {
-    add() {
-      this.heuristics[this.itemSelect].questions[
-        this.questionSelect
-      ].descriptions.push({ title: "aaa", text: "sssss" });
+    log() {
+      console.log('log', this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions);
+    },
+    updateHeuristics() {
+      if (this.editIndex == -1) {
+        this.heuristics.push(this.heuris);
+        this.answersSheet.heuristics.push(
+          Object.assign(
+            {},
+            {
+              id: this.heuris.id,
+              total: this.heuris.total,
+              questions: this.arrayQuestions,
+            }
+          )
+        );
+      } else {
+        Object.assign(this.heuristics[this.editIndex], this.heuris);
+        Object.assign(this.answersSheet.heuristics[this.editIndex], {
+          id: this.heuris.id,
+          total: this.heuris.total,
+          questions: this.arrayQuestions,
+        });
+        this.editIndex = -1;
+      }
+      this.heuristics.total = this.totalQuestions;
+      this.answersSheet.total = this.totalQuestions;
+      this.heuris = {
+        id: this.heuristics[this.heuristics.length - 1].id + 1,
+        title: "",
+        total: 0,
+        questions: [],
+      };
     },
     changeDialog(payload) {
       this.dialog = payload;
@@ -399,8 +428,14 @@ export default {
       };
       this.dialog = true;
     },
+    editDescription(desc) {
+      let ind = this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions.indexOf(desc);
+      this.$refs.descBtn.editSetup(ind)
+    },
     emitChange() {
       this.$emit("change");
+      this.log();
+      this.$forceUpdate();
     },
     addQuestion() {
       this.newQuestion = {
@@ -530,7 +565,7 @@ export default {
         result += h.total;
       });
       return result;
-    },
+    }
   },
 
   created() {
