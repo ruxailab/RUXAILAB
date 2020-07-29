@@ -209,12 +209,10 @@
               </v-list>
             </v-col>
             <v-divider vertical></v-divider>
-            <div v-if="questionSelect">{{heuristics[itemSelect].questions[questionSelect].descriptions}}</div>
             <!--Questions content-->
             <v-col class="ma-0 pa-0 pr-3" v-if="questionSelect!=null">
               <v-card height="560px" elevation="0">
                 <v-subheader class="pa-2">
-                  {{heuristics[itemSelect].questions[questionSelect].title}}
                   <v-spacer></v-spacer>
                   <v-menu v-model="menuQuestions" offset-x>
                     <template v-slot:activator="{ on, attrs }">
@@ -264,7 +262,6 @@
                       </template>
 
                       <template v-slot:item.actions="{ item }">
-                        {{item}}
                         <!-- table actions -->
                         <v-row justify="end" class="pr-1">
                           <v-btn icon small class="mr-2" @click="editDescription(item)">

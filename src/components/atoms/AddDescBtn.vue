@@ -10,7 +10,6 @@
 
     <v-dialog width="700" v-model="dialog" persistent>
       <v-card class="dataCard">
-      {{question}}
 
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add a new Description</p>
         <v-divider></v-divider>
@@ -66,7 +65,8 @@ export default {
       if (valid && this.desc.text.length > 0) {
         if (this.editIndex == null) this.question.descriptions.push(this.desc);
         else
-          this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
+          // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
+          this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc)) //para atualizar no component
 
         console.log(this.question.descriptions);
         this.reset();
