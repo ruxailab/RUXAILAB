@@ -254,13 +254,18 @@
             :items-per-page="5"
             class="elevation-1 cardStyle"
           >
-            <template v-for="(header) in headersExperts" v-slot:[`item.${header.value}`]="{ item }">
-            
-              <v-chip v-if="header.value != 'heuristic'" :key="header.value" :color="getColor(item[header.value])" dark>{{ item[header.value] }}</v-chip>
-              <div v-else  :key="header.value" >{{item[header.value]}}</div>
+            <template
+              v-for="(header) in headersExperts"
+              v-slot:[`item.${header.value}`]="{ item }"
+            >
+              <v-chip
+                v-if="header.value != 'heuristic'"
+                :key="header.value"
+                :color="getColor(item[header.value])"
+                dark
+              >{{ item[header.value] }}</v-chip>
+              <div v-else :key="header.value">{{item[header.value]}}</div>
             </template>
-
-           
           </v-data-table>
         </v-card>
       </v-col>
@@ -394,6 +399,7 @@ export default {
       const answers = this.answers.answers;
       const answersResults = new Map();
       const heurisResults = new Map();
+      const avaliatorsResults = new Map();
 
       //Total Test
       const ResultTest = answers.reduce((total, answer) => {
@@ -426,13 +432,13 @@ export default {
       };
 
       for (var [key, list] of heurisResults.entries()) {
-        
         this.dataHeuris.push({
           name: key,
-          max: Math.max(...(list.map(i => i.res))).toFixed(2),
-          min: Math.min(...(list.map(i => i.res))).toFixed(2),
-          sd: this.standardDeviation(list.map(i => i.res)).toFixed(2),
-          average: list.map(i => i.res)
+          max: Math.max(...list.map((i) => i.res)).toFixed(2),
+          min: Math.min(...list.map((i) => i.res)).toFixed(2),
+          sd: this.standardDeviation(list.map((i) => i.res)).toFixed(2),
+          average: list
+            .map((i) => i.res)
             .reduce((total, value) => total + value / list.length, 0)
             .toFixed(2),
         });
@@ -449,7 +455,6 @@ export default {
       }
 
       //Set Experts Headers
-
       this.headersExperts.push({
         text: "Heuristics",
         value: "heuristic",
@@ -465,6 +470,24 @@ export default {
         id++;
       });
 
+      //Calc Result for Avalitor
+      this.dataExperts.forEach((data) => {
+        Object.keys(data).forEach((item) => {
+          if (item !== "heuristic") {
+            const collection = avaliatorsResults.get(item);
+            if (!collection) {
+              avaliatorsResults.set(item, data[item]);
+            } else {
+              let newValue = collection + data[item];
+              avaliatorsResults.set(item, newValue);
+            }
+          }
+        });
+      });
+
+      console.log(avaliatorsResults);
+
+      //Set Heuristic Graph
       this.labelsHeuris = [...heurisResults.keys()];
       this.graphDataHeuris = this.dataHeuris.map((list) => {
         return list.average;
