@@ -13,6 +13,7 @@
           >
             <v-tab @click="index = 0">Statistics</v-tab>
             <v-tab @click="index = 1">Heuristics</v-tab>
+            <v-tab @click="index = 2">Experts</v-tab>
           </v-tabs>
         </v-row>
       </v-col>
@@ -244,6 +245,24 @@
             </v-col>
           </v-row>
         </v-card>
+
+        <!-- Tab 3 -->
+        <v-card v-if="index == 2" class="dataCard">
+          <v-data-table
+            :headers="headersExperts"
+            :items="dataExperts"
+            :items-per-page="5"
+            class="elevation-1 cardStyle"
+          >
+            <template v-for="(header) in headersExperts" v-slot:[`item.${header.value}`]="{ item }">
+            
+              <v-chip v-if="header.value != 'heuristic'" :key="header.value" :color="getColor(item[header.value])" dark>{{ item[header.value] }}</v-chip>
+              <div v-else  :key="header.value" >{{item[header.value]}}</div>
+            </template>
+
+           
+          </v-data-table>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -257,7 +276,7 @@ export default {
   props: ["id"],
   components: {
     QuestionChart,
-    BarChart
+    BarChart,
   },
   data: () => ({
     index: 0,
@@ -275,7 +294,7 @@ export default {
       average: null,
       max: null,
       min: null,
-      sd: null
+      sd: null,
     },
     graph: [],
     dataQuestions: [],
@@ -284,16 +303,18 @@ export default {
         text: "Heuristics",
         align: "start",
         sortable: false,
-        value: "name"
+        value: "name",
       },
       { text: "Max", value: "max", align: "center" },
       { text: "Min", value: "min", align: "center" },
       { text: "Standard deviation", value: "sd", align: "center" },
-      { text: "Average", value: "average", align: "center" }
+      { text: "Average", value: "average", align: "center" },
     ],
     labelsHeuris: [],
     dataHeuris: [],
-    graphDataHeuris: []
+    graphDataHeuris: [],
+    headersExperts: [],
+    dataExperts: [],
   }),
   methods: {
     setItems(index) {
@@ -303,10 +324,10 @@ export default {
       this.heurisIndex = index;
 
       // answers.answersSheet.heuristics
-      this.answers.answers.forEach(answer => {
+      this.answers.answers.forEach((answer) => {
         aux = {
           uid: null,
-          questions: []
+          questions: [],
         };
         aux.uid = answer.uid;
 
@@ -316,7 +337,7 @@ export default {
         this.items.push(aux);
       });
       let ids = [];
-      aux.questions.forEach(q => {
+      aux.questions.forEach((q) => {
         ids.push(q.id);
       });
       this.questionGraph(this.items, ids);
@@ -327,13 +348,13 @@ export default {
       this.headers.push({
         text: "ID",
         align: "start",
-        value: "uid"
+        value: "uid",
       });
 
-      heuris.questions.forEach(question => {
+      heuris.questions.forEach((question) => {
         this.headers.push({
           text: "Question " + (question.id + 1).toString(),
-          value: `questions[${index}].res`
+          value: `questions[${index}].res`,
         });
         index++;
       });
@@ -342,30 +363,30 @@ export default {
       this.dataQuestions = [];
       var questionMap = new Map();
 
-      ids.forEach(id => {
+      ids.forEach((id) => {
         let aux = [];
         let comments = [];
-        data.forEach(item => {
+        data.forEach((item) => {
           if (item.questions.length) {
-            aux.push(item.questions.find(q => q.id == id).res);
-            if (item.questions.find(q => q.id == id).com)
-              comments.push(item.questions.find(q => q.id == id).com);
+            aux.push(item.questions.find((q) => q.id == id).res);
+            if (item.questions.find((q) => q.id == id).com)
+              comments.push(item.questions.find((q) => q.id == id).com);
           }
         });
-        questionMap.set(`Question ${id}`, {aux:aux, comments:comments });
+        questionMap.set(`Question ${id}`, { aux: aux, comments: comments });
       });
 
       let possibleAnswers = [1, 0.5, 0, -1, null];
       for (var [key, value] of questionMap.entries()) {
         let aux = [];
-        
-        possibleAnswers.forEach(el => {
-          aux.push(value.aux.filter(v => v == el).length);
+
+        possibleAnswers.forEach((el) => {
+          aux.push(value.aux.filter((v) => v == el).length);
         });
         this.dataQuestions.push({
           question: key,
           data: aux,
-          comments: value.comments
+          comments: value.comments,
         });
       }
     },
@@ -380,13 +401,15 @@ export default {
         let res = answer.heuristics.reduce((totalHeuris, heuris) => {
           //Total Questions
           let res = heuris.questions.reduce((totalQuestions, question) => {
-            return totalQuestions + question.res;
+            return totalQuestions + Number(question.res);
           }, 0);
           const collection = heurisResults.get(`heuristics ${heuris.id + 1}`);
           if (!collection) {
-            heurisResults.set(`heuristics ${heuris.id + 1}`, [res]);
+            heurisResults.set(`heuristics ${heuris.id + 1}`, [
+              { res: res, av: answer.uid },
+            ]);
           } else {
-            collection.push(res);
+            collection.push({ res: res, av: answer.uid });
           }
           return totalHeuris + res;
         }, 0);
@@ -399,23 +422,51 @@ export default {
         average: Math.fround(ResultTest / answers.length).toFixed(2),
         max: Math.max(...answersResults.values()).toFixed(2),
         min: Math.min(...answersResults.values()).toFixed(2),
-        sd: this.standardDeviation([...answersResults.values()]).toFixed(2)
+        sd: this.standardDeviation([...answersResults.values()]).toFixed(2),
       };
 
       for (var [key, list] of heurisResults.entries()) {
+        
         this.dataHeuris.push({
           name: key,
-          max: Math.max(...list).toFixed(2),
-          min: Math.min(...list).toFixed(2),
-          sd: this.standardDeviation(list).toFixed(2),
-          average: list
+          max: Math.max(...(list.map(i => i.res))).toFixed(2),
+          min: Math.min(...(list.map(i => i.res))).toFixed(2),
+          sd: this.standardDeviation(list.map(i => i.res)).toFixed(2),
+          average: list.map(i => i.res)
             .reduce((total, value) => total + value / list.length, 0)
-            .toFixed(2)
+            .toFixed(2),
         });
+
+        // Set Experts Data for Heuristic
+        let obj = {
+          heuristic: key,
+        };
+        list.forEach((item) => {
+          obj = Object.assign(obj, { [item.av]: item.res });
+        });
+
+        this.dataExperts.push(obj);
       }
 
+      //Set Experts Headers
+
+      this.headersExperts.push({
+        text: "Heuristics",
+        value: "heuristic",
+        align: "start",
+      });
+      let id = 1;
+      answers.forEach((answer) => {
+        this.headersExperts.push({
+          text: `Avaliator ${id}`,
+          value: answer.uid,
+          align: "center",
+        });
+        id++;
+      });
+
       this.labelsHeuris = [...heurisResults.keys()];
-      this.graphDataHeuris = this.dataHeuris.map(list => {
+      this.graphDataHeuris = this.dataHeuris.map((list) => {
         return list.average;
       });
     },
@@ -430,7 +481,12 @@ export default {
           0
         )
       );
-    }
+    },
+    getColor(value) {
+      if (value < 1) return "red";
+      else if (value < 3) return "orange";
+      else return "green";
+    },
   },
   computed: {
     answers() {
@@ -438,14 +494,14 @@ export default {
     },
     loading() {
       return this.answers.length == 0;
-    }
+    },
   },
   watch: {
     answers() {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
       }
-    }
+    },
   },
   created() {
     if (
@@ -456,9 +512,11 @@ export default {
     }
     this.test = Object.assign(
       {},
-      this.$store.state.auth.user.myTests.find(test => test.answers == this.id)
+      this.$store.state.auth.user.myTests.find(
+        (test) => test.answers == this.id
+      )
     );
-  }
+  },
 };
 </script>
 
