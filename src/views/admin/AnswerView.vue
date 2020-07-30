@@ -267,6 +267,17 @@
               <div v-else :key="header.value">{{item[header.value]}}</div>
             </template>
           </v-data-table>
+
+          <v-divider></v-divider>
+          <v-data-table
+            :headers="headersAvaliators"
+            :items="dataAvaliators"
+            :items-per-page="5"
+            class="elevation-1 cardStyle"
+          ></v-data-table>
+
+          <v-divider></v-divider>
+          <RadarChart :labels="labelsAvaliators" :data="graphDataAvaliators" />
         </v-card>
       </v-col>
     </v-row>
@@ -276,12 +287,14 @@
 <script>
 import QuestionChart from "@/components/atoms/QuestionChart.vue";
 import BarChart from "@/components/atoms/BarChart.vue";
+import RadarChart from "@/components/atoms/RadarChart.vue";
 
 export default {
   props: ["id"],
   components: {
     QuestionChart,
     BarChart,
+    RadarChart,
   },
   data: () => ({
     index: 0,
@@ -320,6 +333,8 @@ export default {
     graphDataHeuris: [],
     headersExperts: [],
     dataExperts: [],
+    labelsAvaliators: [],
+    dataAvaliators: [],
   }),
   methods: {
     setItems(index) {
@@ -402,16 +417,16 @@ export default {
       const avaliatorsResults = new Map();
 
       //Total Test
-      const ResultTest = answers.reduce((total, answer) => {
+       answers.reduce((total, answer) => {
         //Total Heuristics
         let res = answer.heuristics.reduce((totalHeuris, heuris) => {
           //Total Questions
           let res = heuris.questions.reduce((totalQuestions, question) => {
             return totalQuestions + Number(question.res);
           }, 0);
-          const collection = heurisResults.get(`heuristics ${heuris.id + 1}`);
+          const collection = heurisResults.get(`heuristic ${heuris.id + 1}`);
           if (!collection) {
-            heurisResults.set(`heuristics ${heuris.id + 1}`, [
+            heurisResults.set(`heuristic ${heuris.id + 1}`, [
               { res: res, av: answer.uid },
             ]);
           } else {
@@ -423,14 +438,7 @@ export default {
         return total + res;
       }, 0);
 
-      //Set Data
-      this.testData = {
-        average: Math.fround(ResultTest / answers.length).toFixed(2),
-        max: Math.max(...answersResults.values()).toFixed(2),
-        min: Math.min(...answersResults.values()).toFixed(2),
-        sd: this.standardDeviation([...answersResults.values()]).toFixed(2),
-      };
-
+    
       for (var [key, list] of heurisResults.entries()) {
         this.dataHeuris.push({
           name: key,
@@ -485,13 +493,58 @@ export default {
         });
       });
 
-      console.log(avaliatorsResults);
+      let dataAvaliatorResult = [];
+
+      for (var [av, value] of avaliatorsResults.entries()) {
+        dataAvaliatorResult.push({
+          avaliator: av,
+          result: this.percentage(
+            value,
+            this.answers.answersSheet.perfectResult
+          ).toFixed(1),
+        });
+      }
+      //Set Avaliators Graph
+      this.labelsAvaliators = dataAvaliatorResult.map(
+        (item) => `Av ${dataAvaliatorResult.indexOf(item) + 1}: ${item.result}%`
+      );
+      this.graphDataAvaliators = dataAvaliatorResult.map((item) => item.result);
+
+      this.headersAvaliators = this.headersExperts
+        .filter((item) => item.value !== "heuristic")
+      this.headersAvaliators.unshift({
+          text: " ",
+          value: "title",
+          align: "start",
+        })
+
+      let obj = { title: "Usability Percentage" };
+      dataAvaliatorResult.forEach((item) => {
+        Object.assign(obj, {
+          [item.avaliator]: item.result,
+        });
+      });
+
+      this.dataAvaliators = [obj];
 
       //Set Heuristic Graph
       this.labelsHeuris = [...heurisResults.keys()];
       this.graphDataHeuris = this.dataHeuris.map((list) => {
         return list.average;
       });
+
+      let res = dataAvaliatorResult.map(item => item.result).reduce((total, value) => {
+            return total + Number(value);
+          }, 0);
+
+        //Set Data
+      this.testData = {
+        average: `${Math.fround(res / dataAvaliatorResult.length).toFixed(1)}%`,
+        max: `${Math.max(...dataAvaliatorResult.map(item => item.result)).toFixed(1)}%`,
+        min: `${Math.min(...dataAvaliatorResult.map(item => item.result)).toFixed(1)}%`,
+        sd: `${this.standardDeviation(dataAvaliatorResult.map(item => item.result)).toFixed(1)}%`,
+      };
+
     },
     standardDeviation(array) {
       let average = array.reduce(
@@ -504,6 +557,9 @@ export default {
           0
         )
       );
+    },
+    percentage(value, result) {
+      return (value * 100) / result;
     },
     getColor(value) {
       if (value < 1) return "red";
