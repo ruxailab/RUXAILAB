@@ -519,6 +519,7 @@ export default {
         ].descriptions.indexOf(item),
         1
       );
+      this.emitChange();
     },
   },
   watch: {

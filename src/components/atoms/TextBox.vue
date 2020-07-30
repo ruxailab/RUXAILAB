@@ -1,7 +1,7 @@
 <template>
   <!-- https://github.com/ueberdosis/tiptap -->
   <div>
-    <div class="main-box">
+    <div class="main-box" v-if="editable">
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <div class="grey lighten-3 editor-bar">
           <v-btn @click="commands.undo" text small color="#FCA326">
@@ -67,8 +67,8 @@
       <v-divider />
       <editor-content class="text-box pa-1" :editor="editor" />
     </div>
-    <!-- <v-btn @click="getJson()">json</v-btn>
-    <v-btn @click="getHtml()">html</v-btn> -->
+    <!-- Read only -->
+    <editor-content v-else style="outline-color: none !important;" :editor="editor" />
   </div>
 </template>
 
@@ -93,6 +93,16 @@ export default {
     EditorContent,
     EditorMenuBar,
   },
+  props: {
+    editable: {
+      type: Boolean,
+      default: true,
+    },
+    text: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       editor: new Editor({
@@ -110,6 +120,7 @@ export default {
           new Image(),
         ],
         content: ``,
+        editable: this.editable,
         onUpdate: ({ getJSON, getHTML }) => {
           this.json = getJSON();
           this.html = getHTML();
@@ -134,13 +145,11 @@ export default {
       return this.html;
     },
     setLink(command) {
-      console.log("href", command);
       let link = prompt("Link: ");
 
       if (link) {
         if (link.indexOf("http://") !== 0 && link.indexOf("https://") !== 0) {
           link = "http://".concat(link);
-          console.log(link);
         }
 
         command({ href: link });
@@ -148,26 +157,29 @@ export default {
     },
     setContent(text) {
       this.editor.setContent(text);
-      // this.editor.setContent('gayzola')
     },
     resetContent() {
-    this.editor.clearContent();
-  }
+      this.editor.clearContent();
+    },
   },
   beforeDestroy() {
     this.editor.destroy();
   },
   watch: {
     json() {
-      this.$emit('updateJson', this.json);
+      this.$emit("updateJson", this.json);
     },
     html() {
-      this.$emit('updateHtml', this.html);
+      this.$emit("updateHtml", this.html);
+    },
+    text() {
+      this.editor.setContent(this.text);
     }
   },
   mounted() {
-    this.$emit('mounted');
-  }
+    this.$emit("mounted");
+    if(this.text.length > 0) this.editor.setContent(this.text);
+  },
 };
 </script>
 
@@ -189,7 +201,7 @@ export default {
   word-break: break-word; */
 }
 .main-box {
-  border: 1px solid #3F3D56;
+  border: 1px solid #3f3d56;
   border-radius: 4px;
 }
 /* width */
