@@ -6,20 +6,8 @@ export default {
   extends: Radar,
   watch: {
     data() {
-      this.renderChart(
-        {
-          labels: this.labels,
-          datasets: [
-            {
-              label: "Data One",
-              backgroundColor: "#f87979",
-              data: this.data
-            }
-          ]
-        },
-        { responsive: true, maintainAspectRatio: false }
-      );
-    }
+      this.$data._chart.update();
+    },
   },
   mounted() {
     this.renderChart(
@@ -27,14 +15,17 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: "Data One",
-            backgroundColor: "#f87979",
-            data: this.data
-          }
-        ]
+            label: "Usability Percentage",
+            backgroundColor: "rgba(39, 71, 196,0.2)",
+            borderColor:'rgba(39, 71, 196,1)',
+            pointBackgroundColor:"rgba(39, 71, 196,1)",
+            data: this.data,
+           
+          },
+        ],
       },
       { responsive: true, maintainAspectRatio: false }
     );
-  }
+  },
 };
 </script>

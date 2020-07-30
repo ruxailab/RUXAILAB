@@ -6,20 +6,8 @@ export default {
   extends: Bar,
   watch: {
     data() {
-      this.renderChart(
-        {
-          labels: this.labels,
-          datasets: [
-            {
-              label: "Data One",
-              backgroundColor: "#f87979",
-              data: this.data
-            }
-          ]
-        },
-        { responsive: true, maintainAspectRatio: false }
-      );
-    }
+      this.$data._chart.update();
+    },
   },
   mounted() {
     this.renderChart(
@@ -29,12 +17,12 @@ export default {
           {
             label: "Data One",
             backgroundColor: "#f87979",
-            data: this.data
-          }
-        ]
+            data: this.data,
+          },
+        ],
       },
       { responsive: true, maintainAspectRatio: false }
     );
-  }
+  },
 };
 </script>
