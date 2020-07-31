@@ -67,7 +67,6 @@
       <v-divider />
       <editor-content class="text-box pa-1" :editor="editor" />
     </div>
-
     <!-- <v-btn @click="getJson()">json</v-btn>
     <v-btn @click="getHtml()">html</v-btn> -->
   </div>
@@ -147,6 +146,10 @@ export default {
         command({ href: link });
       }
     },
+    setContent(text) {
+      this.editor.setContent(text);
+      // this.editor.setContent('gayzola')
+    },
     resetContent() {
     this.editor.clearContent();
   }
@@ -161,6 +164,9 @@ export default {
     html() {
       this.$emit('updateHtml', this.html);
     }
+  },
+  mounted() {
+    this.$emit('mounted');
   }
 };
 </script>

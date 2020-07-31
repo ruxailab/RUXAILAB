@@ -127,6 +127,7 @@
       <v-card class="dataCard">
         <v-card-title class="subtitleView">Current Heuristics</v-card-title>
         <v-divider></v-divider>
+      
         <v-row justify="space-around">
           <v-row class="ma-0" v-if="heuristics.length">
             <v-col class="ma-0 pa-0 pl-3" cols="3">
@@ -155,9 +156,9 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical ></v-divider>
+            <v-divider vertical></v-divider>
             <!--Questions List-->
-            <v-col class="ma-0 pa-0 " cols="3" v-if="itemSelect!=null">
+            <v-col class="ma-0 pa-0" cols="3" v-if="itemSelect!=null">
               <v-list dense height="560px" outlined>
                 <v-subheader>
                   {{heuristics[itemSelect].title}} - Questions
@@ -207,12 +208,11 @@
                 </v-list-item-group>
               </v-list>
             </v-col>
-            <v-divider vertical ></v-divider>
+            <v-divider vertical></v-divider>
             <!--Questions content-->
             <v-col class="ma-0 pa-0 pr-3" v-if="questionSelect!=null">
               <v-card height="560px" elevation="0">
                 <v-subheader class="pa-2">
-                  {{heuristics[itemSelect].questions[questionSelect].title}}
                   <v-spacer></v-spacer>
                   <v-menu v-model="menuQuestions" offset-x>
                     <template v-slot:activator="{ on, attrs }">
@@ -244,7 +244,7 @@
                     <v-data-table
                       height="350px"
                       :headers="headers"
-                      :items=" this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions"
+                      :items="heuristics[itemSelect].questions[questionSelect].descriptions"
                       :items-per-page="5"
                     >
                       <template v-slot:top>
@@ -254,7 +254,7 @@
                           </v-col>
                           <v-col class="mr-2 mb-1 pb-0 pa-4">
                             <v-row justify="end" class="ma-0 pa-0">
-                              <AddDescBtn :question="heuristics[itemSelect].questions[questionSelect]" />
+                              <AddDescBtn ref="descBtn" @change="emitChange" :question="heuristics[itemSelect].questions[questionSelect]" />
                             </v-row>
                           </v-col>
                         </v-row>
@@ -264,7 +264,7 @@
                       <template v-slot:item.actions="{ item }">
                         <!-- table actions -->
                         <v-row justify="end" class="pr-1">
-                          <v-btn icon small class="mr-2" @click="editItem(item)">
+                          <v-btn icon small class="mr-2" @click="editDescription(item)">
                             <v-icon small>mdi-pencil</v-icon>
                           </v-btn>
                           <v-btn icon small @click="deleteItem(item)">
@@ -298,13 +298,13 @@
 
 
 <script>
-import AddDescBtn from '@/components/atoms/AddDescBtn';
+import AddDescBtn from "@/components/atoms/AddDescBtn";
 
 export default {
   props: ["heuristics", "answersSheet"],
 
   components: {
-    AddDescBtn
+    AddDescBtn,
   },
   data: () => ({
     menuHeuristics: false,
@@ -321,6 +321,7 @@ export default {
       },
       { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
+    heuris: null,
     dialog: false,
     editIndex: -1,
     step: 1,
@@ -328,10 +329,8 @@ export default {
     questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
   methods: {
-    add() {
-      this.heuristics[this.itemSelect].questions[
-        this.questionSelect
-      ].descriptions.push({ title: "aaa", text: "sssss" });
+    log() {
+      console.log('log', this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions);
     },
     updateHeuristics() {
       if (this.editIndex == -1) {
@@ -392,6 +391,13 @@ export default {
         if (config) {
           this.heuristics[this.itemSelect].questions.splice(item, 1);
           this.questionSelect = null;
+          this.answersSheet.heuristics[this.itemSelect].questions.splice(
+            item,
+            1
+          );
+          this.heuristics[this.itemSelect].total = this.heuristics[
+            this.itemSelect
+          ].questions.length;
           this.answersSheet.total = this.totalQuestions;
         }
       } else {
@@ -419,8 +425,14 @@ export default {
       };
       this.dialog = true;
     },
+    editDescription(desc) {
+      let ind = this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions.indexOf(desc);
+      this.$refs.descBtn.editSetup(ind)
+    },
     emitChange() {
       this.$emit("change");
+      this.log();
+      this.$forceUpdate();
     },
     addQuestion() {
       this.newQuestion = {
@@ -450,7 +462,20 @@ export default {
           case 0: //Start New Heuristic
             this.step = 1;
             this.dialog = false;
-            this.updateHeuristics();
+            this.heuristics.push(this.heuris);
+            this.itemSelect = this.heuristics.indexOf(this.heuris);
+            this.answersSheet.heuristics.push(
+              Object.assign(
+                {},
+                {
+                  id: this.heuris.id,
+                  total: this.heuris.total,
+                  questions: this.arrayQuestions,
+                }
+              )
+            );
+            this.heuristics.total = this.totalQuestions;
+            this.answersSheet.total = this.totalQuestions;
             this.$refs.form1.resetValidation();
             break;
 
@@ -471,7 +496,12 @@ export default {
             this.heuristics[this.itemSelect].total = this.heuristics[
               this.itemSelect
             ].questions.length;
-            this.updateHeuristics();
+            this.answersSheet.total = this.totalQuestions;
+            Object.assign(this.answersSheet.heuristics[this.itemSelect], {
+              id: this.heuristics[this.itemSelect].id,
+              total: this.heuristics[this.itemSelect].total,
+              questions: this.arrayQuestions,
+            });
             break;
         }
       }
@@ -519,8 +549,8 @@ export default {
   },
   computed: {
     arrayQuestions() {
-      let array = Array.from(this.heuris.questions);
       let aux = [];
+      let array = Array.from(this.heuristics[this.itemSelect].questions);
       array.forEach((el) => {
         aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
@@ -532,7 +562,7 @@ export default {
         result += h.total;
       });
       return result;
-    },
+    }
   },
 
   created() {

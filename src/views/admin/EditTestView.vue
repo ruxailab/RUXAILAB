@@ -145,17 +145,20 @@ export default {
     object: {},
     valids: [true, true],
     change: false,
-    dialog: false
-    
+    dialog: false,
   }),
   methods: {
     async submit() {
+      Object.assign(this.object.answersSheet, {
+        perfectResult: this.perfectResult,
+      });
+
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -167,24 +170,24 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
           this.answers.answersSheet = this.object.answersSheet;
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers
+              data: this.answers,
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -193,28 +196,37 @@ export default {
     },
     validateAll() {
       if (this.test.type === "User" && !this.valids[0]) {
-        this.$store.commit("setError", "Please fill all fields in Pre Test correctly or leave them empty")
+        this.$store.commit(
+          "setError",
+          "Please fill all fields in Pre Test correctly or leave them empty"
+        );
       } else if (
         this.test.type === "Expert" &&
         this.object.options.length == 1
       ) {
-        this.$store.commit("setError", "Please create at least 2 options or none at all");
+        this.$store.commit(
+          "setError",
+          "Please create at least 2 options or none at all"
+        );
       } else if (this.test.type === "User" && !this.valids[1]) {
-        this.$store.commit("setError", "Please fill all fields in Post Test correctly or leave them empty");
+        this.$store.commit(
+          "setError",
+          "Please fill all fields in Post Test correctly or leave them empty"
+        );
       } else {
         this.submit();
       }
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign(this.object, this.test);
 
         if (this.test.type === "Expert") this.index = 1;
         else if (this.test.type === "User") this.index = 0;
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -225,7 +237,20 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers || [];
-    }
+    },
+    perfectResult() {
+      if (this.object) {
+        let maxOption = 0;
+        if (this.object.options)
+          maxOption = Math.max(
+            ...this.object.options.map((item) => item.value)
+          );
+
+        return maxOption * this.object.answersSheet.total;
+      }
+
+      return 0;
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
@@ -234,12 +259,12 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
-      this.dialog = true
-      this.go = to.path
+      this.dialog = true;
+      this.go = to.path;
     } else {
       next();
     }
-  }
+  },
 };
 </script>
 

@@ -1,9 +1,16 @@
 <template>
   <div>
-    <v-btn rounded color="#f9a826" class="white--text" small @click="dialog = true">Add a new Description</v-btn>
+    <v-btn
+      rounded
+      color="#f9a826"
+      class="white--text"
+      small
+      @click="dialog = true, resetIndex()"
+    >Add a new Description</v-btn>
 
     <v-dialog width="700" v-model="dialog" persistent>
       <v-card class="dataCard">
+
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add a new Description</p>
         <v-divider></v-divider>
         <v-row justify="center" class="ma-0">
@@ -14,7 +21,7 @@
                   <v-text-field :rules="rule" v-model="desc.title" dense outlined label="Title"></v-text-field>
 
                   <div>Description:</div>
-                  <TextBox @updateHtml="updateText" ref="textbox" />
+                  <TextBox @mounted="setDescriptionText" @updateHtml="updateText" ref="textbox" />
                 </v-col>
               </v-row>
             </v-form>
@@ -23,12 +30,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            @click="reset()"
-            small
-            text
-            color="red lighten-1 white--text"
-          >Cancel</v-btn>
+          <v-btn @click="reset()" small text color="red lighten-1 white--text">Cancel</v-btn>
 
           <v-btn @click="validate()" small color="#f9a826" class="white--text">Save</v-btn>
         </v-card-actions>
@@ -38,48 +40,74 @@
 </template>
 
 <script>
-import TextBox from '@/components/atoms/TextBox';
+import TextBox from "@/components/atoms/TextBox";
 
 export default {
-  props:["question"],
+  props: ["question"],
 
   components: {
-    TextBox
-  },  
+    TextBox,
+  },
   data: () => ({
     dialog: false,
     desc: {
-      title: '',
-      text: ''
+      title: "",
+      text: "",
     },
-    rule: [
-      v => !!v || "Title Required",
-    ]
+    rule: [(v) => !!v || "Title Required"],
+    editIndex: null,
+    loading: false,
+    isMounted: false
   }),
   methods: {
-      validate() {
-        let valid = this.$refs.form.validate();
-        if(valid && this.desc.text.length > 0) {
-          this.question.descriptions.push(this.desc);
-          this.reset();
-          console.log(this.question.descriptions)
-        } else if(valid && this.desc.text.length == 0) {
-          alert('Please add a descritpion');
-        }
-      },
-      reset() {
-          this.dialog = false,
-          this.$refs.form.resetValidation(),
-          this.$refs.textbox.resetContent(),
-          this.desc = {
-            title: '',
-            text: ''
-          }
-      },
-      updateText(html) {
-        this.desc.text = html;
+    validate() {
+      let valid = this.$refs.form.validate();
+      if (valid && this.desc.text.length > 0) {
+        if (this.editIndex == null) this.question.descriptions.push(this.desc);
+        else
+          // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
+          this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc)) //para atualizar no component
+
+        console.log(this.question.descriptions);
+        this.reset();
+        this.$emit("change");
+      } else if (valid && this.desc.text.length == 0) {
+        alert("Please add a descritpion");
       }
-  }
+    },
+    reset() {
+      this.dialog = false;
+      this.$refs.form.resetValidation();
+      this.$refs.textbox.resetContent();
+      this.desc = {
+        title: "",
+        text: "",
+      };
+      this.resetIndex();
+    },
+    resetIndex() {
+      this.editIndex = null;
+    },
+    updateText(html) {
+      this.desc.text = html;
+    },
+    openDialog() {
+      this.dialog = true;
+    },
+    editSetup(i) {
+      // this.loading = true;
+      this.dialog = true;
+      this.editIndex = i;
+      this.desc = Object.assign({}, this.question.descriptions[this.editIndex]);
+      if(this.isMounted) {
+        this.setDescriptionText();
+      }
+    },
+    setDescriptionText() {
+      this.isMounted = true;
+      this.$refs.textbox.setContent(this.desc.text);
+    },
+  },
 };
 </script>
 
