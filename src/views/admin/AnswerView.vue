@@ -12,8 +12,8 @@
             class="tab-border-bottom pb-0 mb-0"
           >
             <v-tab @click="index = 0">Statistics</v-tab>
-            <v-tab @click="index = 1">Heuristics</v-tab>
-            <v-tab @click="index = 2">Experts</v-tab>
+            <v-tab @click="index = 1">Evaluators</v-tab>
+            <v-tab @click="index = 2">Heuristics</v-tab>
             <v-tab @click="index = 3">Data</v-tab>
           </v-tabs>
         </v-row>
@@ -30,14 +30,10 @@
           <v-card-title class="subtitleView">Statistics</v-card-title>
 
           <v-divider></v-divider>
-          <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
-            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
-          </v-tabs>
 
           <v-row justify="space-around">
             <!-- Top Card -->
-            <v-col cols="10" v-if="ind == 0">
+            <v-col cols="10">
               <v-card class="cardStyle">
                 <v-row justify="space-around">
                   <!-- Average -->
@@ -84,14 +80,50 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="10" v-if="ind == 1">
-              <RadarChart :labels="labelsAvaliators" :data="graphDataAvaliators" />
-            </v-col>
           </v-row>
         </v-card>
 
-        <!-- Tab 2 - Heuristics-->
+        <!-- Tab 2 - Evaluators -->
         <v-card v-if="index == 1" class="dataCard">
+          <v-card-title class="subtitleView">Evaluators</v-card-title>
+
+          <v-divider></v-divider>
+
+          <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
+          </v-tabs>
+
+          <v-row justify="center">
+            <v-col cols="10" v-if="ind == 0">
+              <v-data-table
+                :headers="headersEvaluators"
+                :items="dataEvaluators"
+                :items-per-page="5"
+                class="elevation-1 cardStyle"
+              >
+                <template
+                  v-for="(header) in headersExperts"
+                  v-slot:[`item.${header.value}`]="{ item }"
+                >
+                  <v-chip
+                    v-if="header.value != 'item'"
+                    :key="header.value"
+                    :color="getColorHSL(item[header.value])"
+                    dark
+                  >{{ item[header.value]}}%</v-chip>
+                  <div v-else :key="header.value">{{item[header.value]}}</div>
+                </template>
+              </v-data-table>
+            </v-col>
+
+            <v-col cols="10" v-if="ind == 1">
+              <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
+            </v-col>
+          </v-row>
+        </v-card>
+        <!-- Tab 3 - Heuristics-->
+        <v-card v-if="index == 2" class="dataCard">
           <v-col cols="12" class="mt-3">
             <v-card-title class="subtitleView">Heuristics Data</v-card-title>
 
@@ -99,11 +131,12 @@
 
             <!-- Bottom Tabs -->
             <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
+              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table 1</v-tab>
+              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Table 2</v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
-                @click="ind = 1"
+                @click="ind = 2"
               >Graphic</v-tab>
             </v-tabs>
 
@@ -111,68 +144,52 @@
             <v-row justify="center">
               <v-col cols="10">
                 <v-row>
-                  <!-- Bottom Tab 1 -->
+                 <!-- Bottom Tab 1 -->
                   <v-col cols="12" v-if="ind == 0">
+                    <v-data-table
+                      :headers="headersExperts"
+                      :items="dataExperts"
+                      :items-per-page="5"
+                      class="elevation-1 cardStyle"
+                    >
+                      <template
+                        v-for="(header) in headersExperts"
+                        v-slot:[`item.${header.value}`]="{ item }"
+                      >
+                        <v-chip
+                          v-if="header.value != 'heuristic'"
+                          :key="header.value"
+                          :color="getColor(item[header.value])"
+                          dark
+                          class="chip"
+                        >{{ item[header.value] }}</v-chip>
+                        <div v-else :key="header.value">{{item[header.value]}}</div>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                <!-- Bottom Tab 2 -->
+                  <v-col cols="12" v-if="ind == 1">
                     <v-data-table
                       :headers="headersHeuris"
                       :items="dataHeuris"
                       :items-per-page="5"
                       class="elevation-1 cardStyle"
-                    ></v-data-table>
+                    >
+                       <template v-slot:item.average="{ item }">
+                         <v-chip :color="getColor(item.average)" dark>{{ item.average }}</v-chip>
+                       </template>
+                    </v-data-table>
                   </v-col>
 
-                  <!-- Bottom Tab 2 -->
-                  <v-col cols="12" v-if="ind == 1">
+                <!-- Bottom Tab 3 -->
+                  <v-col cols="12" v-if="ind == 2">
                     <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
                   </v-col>
+                 
                 </v-row>
               </v-col>
             </v-row>
           </v-col>
-        </v-card>
-        <!-- Tab 3 - Expert-->
-        <v-card v-if="index == 2" class="dataCard">
-          <v-data-table
-            :headers="headersExperts"
-            :items="dataExperts"
-            :items-per-page="5"
-            class="elevation-1 cardStyle"
-          >
-            <template
-              v-for="(header) in headersExperts"
-              v-slot:[`item.${header.value}`]="{ item }"
-            >
-              <v-chip
-                v-if="header.value != 'heuristic'"
-                :key="header.value"
-                :color="getColor(item[header.value])"
-                dark
-                class="chip"
-              >{{ item[header.value] }}</v-chip>
-              <div v-else :key="header.value">{{item[header.value]}}</div>
-            </template>
-          </v-data-table>
-
-          <v-divider></v-divider>
-          <v-data-table
-            :headers="headersAvaliators"
-            :items="dataAvaliators"
-            :items-per-page="5"
-            class="elevation-1 cardStyle"
-          >
-            <template
-              v-for="(header) in headersExperts"
-              v-slot:[`item.${header.value}`]="{ item }"
-            >
-              <v-chip
-                v-if="header.value != 'item'"
-                :key="header.value"
-                :color="getColorHSL(item[header.value])"
-                dark
-              >{{ item[header.value] }}</v-chip>
-              <div v-else :key="header.value">{{item[header.value]}}</div>
-            </template>
-          </v-data-table>
         </v-card>
 
         <!-- Tab 4 - Data -->
@@ -340,18 +357,18 @@ export default {
         sortable: false,
         value: "name",
       },
+      { text: "Average", value: "average", align: "center" },
+      { text: "Standard deviation", value: "sd", align: "center" },
       { text: "Max", value: "max", align: "center" },
       { text: "Min", value: "min", align: "center" },
-      { text: "Standard deviation", value: "sd", align: "center" },
-      { text: "Average", value: "average", align: "center" },
     ],
     labelsHeuris: [],
     dataHeuris: [],
     graphDataHeuris: [],
     headersExperts: [],
     dataExperts: [],
-    labelsAvaliators: [],
-    dataAvaliators: [],
+    labelsEvaluators: [],
+    dataEvaluators: [],
   }),
   methods: {
     setItems(index) {
@@ -431,7 +448,7 @@ export default {
       const answers = this.answers.answers;
       const answersResults = new Map();
       const heurisResults = new Map();
-      const avaliatorsResults = new Map();
+      const EvaluatorsResults = new Map();
 
       //Total Test
       answers.reduce((total, answer) => {
@@ -498,12 +515,12 @@ export default {
       this.dataExperts.forEach((data) => {
         Object.keys(data).forEach((item) => {
           if (item !== "heuristic") {
-            const collection = avaliatorsResults.get(item);
+            const collection = EvaluatorsResults.get(item);
             if (!collection) {
-              avaliatorsResults.set(item, data[item]);
+              EvaluatorsResults.set(item, data[item]);
             } else {
               let newValue = collection + data[item];
-              avaliatorsResults.set(item, newValue);
+              EvaluatorsResults.set(item, newValue);
             }
           }
         });
@@ -511,7 +528,7 @@ export default {
 
       let dataAvaliatorResult = [];
 
-      for (var [av, value] of avaliatorsResults.entries()) {
+      for (var [av, value] of EvaluatorsResults.entries()) {
         dataAvaliatorResult.push({
           avaliator: av,
           result: this.percentage(
@@ -520,16 +537,16 @@ export default {
           ).toFixed(1),
         });
       }
-      //Set Avaliators Graph
-      this.labelsAvaliators = dataAvaliatorResult.map(
+      //Set Evaluators Graph
+      this.labelsEvaluators = dataAvaliatorResult.map(
         (item) => `Av ${dataAvaliatorResult.indexOf(item) + 1}: ${item.result}%`
       );
-      this.graphDataAvaliators = dataAvaliatorResult.map((item) => item.result);
+      this.graphDataEvaluators = dataAvaliatorResult.map((item) => item.result);
 
-      this.headersAvaliators = this.headersExperts.filter(
+      this.headersEvaluators = this.headersExperts.filter(
         (item) => item.value !== "heuristic"
       );
-      this.headersAvaliators.unshift({
+      this.headersEvaluators.unshift({
         text: " ",
         value: "title",
         align: "start",
@@ -542,7 +559,7 @@ export default {
         });
       });
 
-      this.dataAvaliators = [obj];
+      this.dataEvaluators = [obj];
 
       //Set Heuristic Graph
       this.labelsHeuris = [...heurisResults.keys()];
@@ -609,9 +626,9 @@ export default {
         this.statistics();
       }
     },
-    index(){
-      this.ind = 0
-    }
+    index() {
+      this.ind = 0;
+    },
   },
   created() {
     if (
