@@ -32,7 +32,8 @@
           <v-spacer></v-spacer>
           <v-btn @click="reset()" small text color="red lighten-1 white--text">Cancel</v-btn>
 
-          <v-btn @click="validate()" small color="#f9a826" class="white--text">Save</v-btn>
+          <v-btn v-if="editIndex !== null" @click="validate()" small color="#f9a826" class="white--text">Confirm</v-btn>
+          <v-btn v-else @click="validate()" small color="#f9a826" class="white--text">Add</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -68,7 +69,6 @@ export default {
           // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
           this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc)) //para atualizar no component
 
-        console.log(this.question.descriptions);
         this.reset();
         this.$emit("change");
       } else if (valid && this.desc.text.length == 0) {

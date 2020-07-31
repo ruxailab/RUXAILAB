@@ -217,6 +217,11 @@ export default {
         this.submit();
       }
     },
+    preventNav(event) {
+      if (!this.change) return
+      event.preventDefault()
+      event.returnValue = ""
+    }
   },
   watch: {
     test: async function () {
@@ -264,6 +269,12 @@ export default {
     } else {
       next();
     }
+  },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav)
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav);
   },
 };
 </script>

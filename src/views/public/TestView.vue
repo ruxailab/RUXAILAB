@@ -201,6 +201,7 @@
           </v-list>
         </div>
       </v-navigation-drawer>
+
       <v-col class="backgroundTest pa-0 ma-0">
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
@@ -234,7 +235,14 @@
             justify="center"
           >
             <v-col cols="10">
-              <p class="subtitleView">{{i+1}}) {{question.text}}</p>
+              <v-row justify="space-around" align="center">
+                <v-col cols="11">
+                  <p class="subtitleView">{{i+1}}) {{question.title}}</p>
+                </v-col>
+                <v-col cols="1">
+                  <HelpBtn :question="question" />
+                </v-col>
+              </v-row>
 
               <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
                 <v-select
@@ -275,17 +283,19 @@
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
+import HelpBtn from "@/components/atoms/QuestionHelpBtn"
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
     ViewTask,
-    AddCommentBtn
+    AddCommentBtn,
+    HelpBtn
   },
   data: () => ({
     drawer: true,
-    start: true, //change to true
+    start: false, //change to true
     mini: false,
     index: null,
     heurisIndex: 0,
@@ -293,22 +303,22 @@ export default {
     items: [],
     idx: 0,
     fab: false,
-    res: 0
+    res: 0,
   }),
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
     },
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
-        if (this.items.find(obj => obj.id == 0)) {
+        if (this.items.find((obj) => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
         }
       }
-    }
+    },
   },
   methods: {
     mappingSteps() {
@@ -322,10 +332,10 @@ export default {
               {
                 title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 0
-              }
+                id: 0,
+              },
             ],
-            id: 0
+            id: 0,
           });
 
         if (this.validate(this.test.preTest.form)) {
@@ -333,7 +343,7 @@ export default {
             this.items[0].value.push({
               title: "Form",
               icon: "mdi-checkbox-blank-circle-outline",
-              id: 1
+              id: 1,
             });
           } else {
             this.items.push({
@@ -343,10 +353,10 @@ export default {
                 {
                   title: "Form",
                   icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1
-                }
+                  id: 1,
+                },
               ],
-              id: 0
+              id: 0,
             });
           }
         }
@@ -356,13 +366,13 @@ export default {
           this.items.push({
             title: "Tasks",
             icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map(i => {
+            value: this.test.tasks.map((i) => {
               return {
                 title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline"
+                icon: "mdi-checkbox-blank-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
 
         //PostTest
@@ -371,7 +381,7 @@ export default {
             title: "Post Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: this.test.postTest,
-            id: 2
+            id: 2,
           });
       } else if (this.test.type === "Expert") {
         //Heuristics
@@ -382,13 +392,13 @@ export default {
           this.items.push({
             title: "Heuristics",
             icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map(i => {
+            value: this.test.heuristics.map((i) => {
               return {
                 title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline"
+                icon: "mdi-checkbox-marked-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
       }
     },
@@ -397,8 +407,8 @@ export default {
     },
     calcProgress() {
       var qtd = 0;
-      this.answersSheet.heuristics.forEach(h => {
-        qtd += h.questions.filter(q => q.res !== "").length;
+      this.answersSheet.heuristics.forEach((h) => {
+        qtd += h.questions.filter((q) => q.res !== "").length;
       });
 
       this.answersSheet.progress = (
@@ -407,17 +417,19 @@ export default {
       ).toFixed(1);
     },
     submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      let newAnswer = this.user.myAnswers.find(
+        (answer) => answer.id == this.id
+      );
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
       };
       this.$store
         .dispatch("updateLog", {
           docId: newAnswer.reports,
           elementId: this.user.uid,
-          element: log
+          element: log,
         })
         .then(() => {
           if (!save)
@@ -425,21 +437,21 @@ export default {
               docId: newAnswer.answers,
               element: Object.assign(this.answersSheet, {
                 uid: this.user.uid,
-                email: this.user.email
-              })
+                email: this.user.email,
+              }),
             });
         });
 
       this.$store.dispatch("updateMyAnswers", {
         docId: this.user.uid,
-        element: newAnswer
+        element: newAnswer,
       });
     },
     progress(item) {
       return (
-        (item.questions.filter(q => q.res !== "").length * 100) / item.total
+        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
       );
-    }
+    },
   },
   computed: {
     test() {
@@ -451,7 +463,7 @@ export default {
     answersSheet: {
       get() {
         if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find(answer => answer.id == this.id);
+          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
@@ -460,12 +472,12 @@ export default {
       },
       set(item) {
         return item;
-      }
-    }
+      },
+    },
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
-  }
+  },
 };
 </script>
 
