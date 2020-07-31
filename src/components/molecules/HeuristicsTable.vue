@@ -15,7 +15,7 @@
                 <v-text-field
                   v-model="itemEdit.titleEdit"
                   dense
-                  label="Title Heuristic"
+                  :label="itemEdit.title === 'Edit Heuristic' ? 'Title Heuristic': 'Title Question'"
                   outlined
                   class="mx-3"
                   :rules="itemEdit.rule"
@@ -30,7 +30,7 @@
               text
               @click="dialog = false,$refs.form.resetValidation(),itemEdit = null"
             >Cancel</v-btn>
-            <v-btn class="white--text" color="#fca326" @click="itemEdit.validate(1)">Save</v-btn>
+            <v-btn class="white--text" color="#fca326" @click="itemEdit.validate(1)">Ok</v-btn>
           </v-card-actions>
         </v-card>
         <!--Card Create New Question-->
@@ -46,7 +46,7 @@
                 <v-text-field
                   v-model="newQuestion.title"
                   dense
-                  label="Title Questions"
+                  label="Title Question"
                   outlined
                   class="mx-3"
                   :rules="questionRequired"
@@ -61,7 +61,7 @@
               text
               @click="dialog = false,$refs.form.resetValidation(),newQuestion = null"
             >Cancel</v-btn>
-            <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Save</v-btn>
+            <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Add</v-btn>
           </v-card-actions>
         </v-card>
         <!--Card Create New Heuristic-->
@@ -119,7 +119,7 @@
                 color="#fca326"
                 @click="validateHeuristic()"
               >Next</v-btn>
-              <v-btn v-else class="white--text" color="#fca326" @click="validateQuestion(0)">Save</v-btn>
+              <v-btn v-else class="white--text" color="#fca326" @click="validateQuestion(0)">Add</v-btn>
             </v-card-actions>
           </v-stepper>
         </v-card>
