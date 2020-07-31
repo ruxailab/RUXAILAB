@@ -110,11 +110,12 @@ export default {
     loading: true,
     tests: [],
     mini: true,
-    isCoops: null
+    isCoops: null,
+    selectedTest:null
   }),
   methods: {
     pushToTest() {
-      this.$router.push("/managerview/" + this.selectedTest.id);
+      this.$router.push("/managerview/" + this.selectedTest);
       this.index = 0;
     },
     go(item) {
@@ -134,10 +135,11 @@ export default {
       else return this.$store.state.auth.user.myCoops;
     },
     test() {
+      let seach = this.selectedTest || this.id
       let test = Object.assign(
         {},
         this.$store.state.auth.user.myTests.find(test =>
-          Object.values(test).includes(this.id)
+          Object.values(test).includes(seach)
         )
       );
 
@@ -146,7 +148,7 @@ export default {
         test = Object.assign(
           {},
           this.$store.state.auth.user.myCoops.find(test =>
-            Object.values(test).includes(this.id)
+            Object.values(test).includes(seach)
           )
         );
 
@@ -167,14 +169,6 @@ export default {
             this.items.find(item => item.path.includes(this.$route.path))
           );
         return 0;
-      },
-      set(item) {
-        return item;
-      }
-    },
-    selectedTest: {
-      get() {
-        return this.test;
       },
       set(item) {
         return item;
