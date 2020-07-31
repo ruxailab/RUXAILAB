@@ -205,6 +205,7 @@
       <v-col class="backgroundTest pa-0 ma-0">
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
+            slot="content"
             :src="test.preTest.consent"
             width="100%"
             height="900"
@@ -215,6 +216,7 @@
         </ShowInfo>
         <ShowInfo v-if="index==0 && preTestIndex == 1" title="Pre Test - Form">
           <iframe
+            slot="content"
             :src="test.preTest.form"
             width="100%"
             height="900"
@@ -227,45 +229,50 @@
           v-if="index==1 && test.type === 'Expert'"
           :title="test.heuristics[heurisIndex].title"
         >
-          <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
-          <v-divider class="mb-5"></v-divider>
-          <v-row
-            v-for="(question,i) in test.heuristics[heurisIndex].questions"
-            :key="i"
-            justify="center"
-          >
-            <v-col cols="10">
-              <v-row justify="space-around" align="center">
-                <v-col cols="11">
-                  <p class="subtitleView">{{i+1}}) {{question.title}}</p>
-                </v-col>
-                <v-col cols="1">
-                  <HelpBtn :question="question" />
-                </v-col>
-              </v-row>
+          <div slot="content" class="ma-0 pa-0">
+            <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
+            <v-divider class="mb-5"></v-divider>
+            <v-row
+              v-for="(question,i) in test.heuristics[heurisIndex].questions"
+              :key="i"
+              justify="center"
+            >
+              <v-col cols="10">
+                <v-row justify="space-around" align="center">
+                  <v-col cols="11">
+                    <p class="subtitleView">{{i+1}}) {{question.title}}</p>
+                  </v-col>
+                  <v-col cols="1">
+                    <HelpBtn :question="question" />
+                  </v-col>
+                </v-row>
 
-              <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
-                <v-select
-                  slot="answer"
-                  v-if="answersSheet !== undefined"
-                  :items="test.options"
-                  @change="calcProgress()"
-                  v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
-                  label="Respuestas/Answers"
-                  outlined
-                  dense
-                ></v-select>
-              </AddCommentBtn>
-            </v-col>
-          </v-row>
+                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+                  <v-select
+                    slot="answer"
+                    v-if="answersSheet !== undefined"
+                    :items="test.options"
+                    @change="calcProgress()"
+                    v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
+                    label="Respuestas/Answers"
+                    outlined
+                    dense
+                  ></v-select>
+                </AddCommentBtn>
+              </v-col>
+            </v-row>
+          </div>
         </ShowInfo>
         <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
-          <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
-          <v-divider class="mb-5"></v-divider>
-          <ViewTask :item="test.tasks[heurisIndex]" />
+          <div slot="content" class="ma-0 pa-0">
+            <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
+            <v-divider class="mb-5"></v-divider>
+            <ViewTask :item="test.tasks[heurisIndex]" />
+          </div>
         </ShowInfo>
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
+            slot="content"
             :src="test.postTest.form"
             width="100%"
             height="900"
@@ -283,7 +290,7 @@
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
-import HelpBtn from "@/components/atoms/QuestionHelpBtn"
+import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 
 export default {
   props: ["id"],
@@ -291,7 +298,7 @@ export default {
     ShowInfo,
     ViewTask,
     AddCommentBtn,
-    HelpBtn
+    HelpBtn,
   },
   data: () => ({
     drawer: true,

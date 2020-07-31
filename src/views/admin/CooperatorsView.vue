@@ -13,7 +13,8 @@
           right
           color="#F9A826"
           @click="submit(), change = false"
-          v-bind="attrs" v-on="on"
+          v-bind="attrs"
+          v-on="on"
         >
           <v-icon large>mdi-email</v-icon>
         </v-btn>
@@ -22,99 +23,103 @@
     </v-tooltip>
 
     <ShowInfo title="Cooperators">
-      <v-autocomplete
-        v-model="userSelected"
-        :items="filteredUsers"
-        item-text="email"
-        return-object
-        label="Add cooperator"
-        @input="pushToArray()"
-        dense
-        color="#fca326"
-        prepend-icon="mdi-account-multiple-plus"
-        class="mx-4 pt-4"
-      ></v-autocomplete>
+      <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">
+        <v-autocomplete
+          style="background: #f5f7ff;"
+          v-model="userSelected"
+          :items="filteredUsers"
+          item-text="email"
+          return-object
+          label="Add cooperator"
+          @input="pushToArray()"
+          dense
+          color="#fca326"
+          prepend-icon="mdi-account-multiple-plus"
+          class="mx-4 pt-4"
+        ></v-autocomplete>
 
-      <v-data-table
-        :items="cooperatorsEdit"
-        :headers="headers"
-        height="450px"
-        :items-per-page="7"
-        items-per-page-text="7"
-        :footer-props="{ 
+        <v-data-table
+          style="background: #f5f7ff;"
+          :items="cooperatorsEdit"
+          :headers="headers"
+          height="450px"
+          :items-per-page="7"
+          items-per-page-text="7"
+          :footer-props="{ 
           'items-per-page-options': [7]
         }"
-      >
-        <!-- Email -->
-        <template v-slot:item.email="{ item }">
-          <v-row align="center">
-            <v-icon class="mr-2">mdi-account-circle</v-icon>
-            <div>{{item.email}}</div>
-          </v-row>
-        </template>
+        >
+          <!-- Email -->
+          <template v-slot:item.email="{ item }">
+            <v-row align="center">
+              <v-icon class="mr-2">mdi-account-circle</v-icon>
+              <div>{{item.email}}</div>
+            </v-row>
+          </template>
 
-        <!-- Role -->
-        <template v-slot:item.accessLevel="{ item }">
-          <v-select
-            color="#fca326"
-            style="max-width: 200px"
-            @change="recordChange(item)"
-            v-model="item.accessLevel"
-            return-object
-            dense
-            :items="roleOptions"
-            :v-text="item.accessLevel.text"
-            :disabled="!item.invited || item.accepted ? false : true"
-            class="mt-3"
-          ></v-select>
-        </template>
+          <!-- Role -->
+          <template v-slot:item.accessLevel="{ item }">
+            <v-select
+              color="#fca326"
+              style="max-width: 200px"
+              @change="recordChange(item)"
+              v-model="item.accessLevel"
+              return-object
+              dense
+              :items="roleOptions"
+              :v-text="item.accessLevel.text"
+              :disabled="!item.invited || item.accepted ? false : true"
+              class="mt-3"
+            ></v-select>
+          </template>
 
-        <!-- Invited -->
-        <template v-slot:item.invited="{ item }">
-          <v-icon color="#8EB995" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
-          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
-        </template>
+          <!-- Invited -->
+          <template v-slot:item.invited="{ item }">
+            <v-icon color="#8EB995" v-if="item.invited">mdi-checkbox-marked-circle-outline</v-icon>
+            <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+          </template>
 
-        <!-- Accepted -->
-        <template v-slot:item.accepted="{ item }">
-          <v-icon color="#F9A826" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
-          <v-icon color="#8EB995" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
-          <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
-        </template>
+          <!-- Accepted -->
+          <template v-slot:item.accepted="{ item }">
+            <v-icon color="#F9A826" v-if="item.accepted == null">mdi-checkbox-blank-circle-outline</v-icon>
+            <v-icon color="#8EB995" v-else-if="item.accepted">mdi-checkbox-marked-circle-outline</v-icon>
+            <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+          </template>
 
-        <!-- More -->
-        <template v-slot:item.more="{ item }">
-          <v-menu>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
+          <!-- More -->
+          <template v-slot:item.more="{ item }">
+            <v-menu>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
 
-            <v-list>
-              <v-list-item @click="removeFromList(item)" v-if="!item.invited">
-                <v-list-item-title>Cancel invitation</v-list-item-title>
-              </v-list-item>
+              <v-list>
+                <v-list-item @click="removeFromList(item)" v-if="!item.invited">
+                  <v-list-item-title>Cancel invitation</v-list-item-title>
+                </v-list-item>
 
-              <v-list-item
-                @click="reinvite(item)"
-                link
-                v-if="item.invited && item.accepted == false"
-              >
-                <v-list-item-title>Re-invite</v-list-item-title>
-              </v-list-item>
+                <v-list-item
+                  @click="reinvite(item)"
+                  link
+                  v-if="item.invited && item.accepted == false"
+                >
+                  <v-list-item-title>Re-invite</v-list-item-title>
+                </v-list-item>
 
-              <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
-                <v-list-item-title>Remove cooperator</v-list-item-title>
-              </v-list-item>
+                <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
+                  <v-list-item-title>Remove cooperator</v-list-item-title>
+                </v-list-item>
 
-              <v-list-item v-if="item.invited && item.accepted == null">
-                <v-list-item-title>No options yet</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
+                <v-list-item v-if="item.invited && item.accepted == null">
+                  <v-list-item-title>No options yet</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+        </v-data-table>
+      </div>
     </ShowInfo>
   </v-container>
 </template>
@@ -127,7 +132,7 @@ export default {
   props: ["id"],
   components: {
     ShowInfo,
-    Snackbar
+    Snackbar,
   },
   data: () => ({
     object: null,
@@ -142,12 +147,12 @@ export default {
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
       { text: "Accepted", value: "accepted", justify: "center" },
-      { text: "More", value: "more", sortable: false }
+      { text: "More", value: "more", sortable: false },
     ],
     roleOptions: [
       { text: "Researcher", value: 1 },
-      { text: "Co-Administrator", value: 0 }
-    ]
+      { text: "Co-Administrator", value: 0 },
+    ],
   }),
   methods: {
     log() {
@@ -157,7 +162,7 @@ export default {
       this.valids[index] = valid;
     },
     submit() {
-      this.cooperatorsEdit.forEach(async guest => {
+      this.cooperatorsEdit.forEach(async (guest) => {
         //Invide new cooperators
         if (!guest.invited) {
           this.send(guest);
@@ -167,7 +172,7 @@ export default {
           this.edit(guest);
         }
 
-        this.deletedCoops.forEach(guest => {
+        this.deletedCoops.forEach((guest) => {
           this.remove(guest);
         });
       });
@@ -177,16 +182,16 @@ export default {
         .dispatch("removeMyCoops", {
           docId: guest,
           element: {
-            id: this.testID
-          }
+            id: this.testID,
+          },
         })
         .then(() => {
           //Remove element array
           this.$store.dispatch("removeCooperator", {
             docId: this.id,
             element: {
-              id: guest
-            }
+              id: guest,
+            },
           });
         });
     },
@@ -196,14 +201,14 @@ export default {
           docId: guest.id,
           elementId: this.id,
           element: guest.accessLevel.value,
-          param: "accessLevel"
+          param: "accessLevel",
         })
         .then(() => {
           this.$store.dispatch("updateCooperator", {
             docId: this.id,
             elementId: guest.id,
             element: guest.accessLevel,
-            param: "accessLevel"
+            param: "accessLevel",
           });
         });
     },
@@ -212,11 +217,11 @@ export default {
         to: {
           id: guest.id,
           email: guest.email,
-          accessLevel: guest.accessLevel.value
+          accessLevel: guest.accessLevel.value,
         },
         from: {
           id: this.user.uid,
-          email: this.user.email
+          email: this.user.email,
         },
         test: {
           id: this.test.id,
@@ -224,20 +229,20 @@ export default {
           type: this.test.type,
           reports: this.test.reports,
           answers: this.test.answers,
-          cooperators: this.test.cooperators
-        }
+          cooperators: this.test.cooperators,
+        },
       };
       this.$store
         .dispatch("pushNotification", {
           docId: inv.to.id,
           element: inv,
-          param: "notifications"
+          param: "notifications",
         })
         .then(() => {
           guest.invited = true;
           this.$store.dispatch("pushCooperator", {
             docId: this.id,
-            element: Object.assign({}, guest)
+            element: Object.assign({}, guest),
           });
         });
     },
@@ -246,11 +251,11 @@ export default {
         to: {
           id: guest.id,
           email: guest.email,
-          accessLevel: guest.accessLevel.value
+          accessLevel: guest.accessLevel.value,
         },
         from: {
           id: this.user.uid,
-          email: this.user.email
+          email: this.user.email,
         },
         test: {
           id: this.test.id,
@@ -258,14 +263,14 @@ export default {
           type: this.test.type,
           reports: this.test.reports,
           answers: this.test.answers,
-          cooperators: this.test.cooperators
-        }
+          cooperators: this.test.cooperators,
+        },
       };
       this.$store
         .dispatch("pushNotification", {
           docId: inv.to.id,
           element: inv,
-          param: "notifications"
+          param: "notifications",
         })
         .then(() => {
           this.$store
@@ -273,7 +278,7 @@ export default {
               docId: this.id,
               elementId: guest.id,
               element: null,
-              param: "accepted"
+              param: "accepted",
             })
             .then(() => {
               guest.accepted = null;
@@ -287,11 +292,11 @@ export default {
         email: this.userSelected.email,
         invited: false,
         accepted: null,
-        accessLevel: { text: "Researcher", value: 1 }
+        accessLevel: { text: "Researcher", value: 1 },
       };
       let index = 0;
 
-      this.cooperatorsEdit.forEach(coop => {
+      this.cooperatorsEdit.forEach((coop) => {
         if (coop.id === obj.id) {
           hasObj = true;
           this.filteredUsers.splice(index, 1);
@@ -323,24 +328,24 @@ export default {
         this.editedCoops.push(item.id);
 
       console.log(this.editedCoops);
-    }
+    },
   },
   watch: {
-    cooperators: async function() {
+    cooperators: async function () {
       if (this.cooperators !== null && this.cooperators !== undefined) {
         this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
         if (!this.$store.test) {
           this.$store.dispatch("getTest", { id: this.cooperators.test.id });
         }
       }
-    }
+    },
   },
   computed: {
     test() {
       return this.$store.getters.test;
     },
     testID() {
-      return this.$store.state.auth.user.myTests.find(test =>
+      return this.$store.state.auth.user.myTests.find((test) =>
         Object.values(test).includes(this.id)
       ).id;
     },
@@ -357,9 +362,9 @@ export default {
     filteredUsers() {
       let hasUser = null;
       let array = [];
-      this.users.forEach(user => {
+      this.users.forEach((user) => {
         hasUser = false;
-        this.cooperatorsEdit.forEach(coop => {
+        this.cooperatorsEdit.forEach((coop) => {
           if (coop.id === user.id) {
             hasUser = true;
           }
@@ -367,13 +372,13 @@ export default {
         if (!hasUser) array.push(user);
       });
       return array;
-    }
+    },
   },
   created() {
     if (!this.$store.state.cooperators.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
-  }
+  },
 };
 </script>
 

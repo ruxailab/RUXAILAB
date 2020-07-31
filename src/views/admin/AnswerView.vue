@@ -1,327 +1,316 @@
 <template >
-  <v-container>
-    <!-- Top/Title -->
-    <v-row justify="space-around">
-      <v-col cols="12" class="titleView">Answers</v-col>
-      <v-col cols="12" class="pa-0 pl-3 ma-0">
-        <v-row justify="end" dense>
-          <!-- Main Tabs -->
-          <v-tabs
-            background-color="transparent"
-            color="#FCA326"
-            class="tab-border-bottom pb-0 mb-0"
-          >
-            <v-tab @click="index = 0">Statistics</v-tab>
-            <v-tab @click="index = 1">Evaluators</v-tab>
-            <v-tab @click="index = 2">Heuristics</v-tab>
-            <v-tab @click="index = 3">Data</v-tab>
-          </v-tabs>
-        </v-row>
-      </v-col>
-    </v-row>
-
-    <v-divider></v-divider>
-
+  <ShowInfo title="Answers">
+    <!-- Main Tabs -->
+    <v-tabs
+      slot="top"
+      background-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0"
+    >
+      <v-tab @click="index = 0">Statistics</v-tab>
+      <v-tab @click="index = 1">Evaluators</v-tab>
+      <v-tab @click="index = 2">Heuristics</v-tab>
+      <v-tab @click="index = 3">Data</v-tab>
+    </v-tabs>
+        
     <!-- Main Tabs Content -->
-    <v-row justify="center">
-      <v-col cols="12">
-        <!-- Main Tab 1 -->
-        <v-card v-if="index==0" class="dataCard">
-          <v-card-title class="subtitleView">Statistics</v-card-title>
+    <div slot="content">
+      <!-- Main Tab 1 -->
+      <v-card v-if="index==0" style="background: #f5f7ff;">
+        <v-card-title class="subtitleView">Statistics</v-card-title>
 
-          <v-divider></v-divider>
+        <v-divider></v-divider>
 
-          <v-row justify="space-around">
-            <!-- Top Card -->
-            <v-col cols="10">
-              <v-card class="cardStyle">
-                <v-row justify="space-around">
-                  <!-- Average -->
-                  <v-col cols="4">
-                    <v-row justify="center">
-                      <v-card-title>Usability Percentage</v-card-title>
-                      <v-card-text>
-                        <v-row align="center" justify="center">
-                          <p class="display-3">{{testData.average}}</p>
-                        </v-row>
-                      </v-card-text>
-                    </v-row>
-                  </v-col>
+        <v-row justify="space-around">
+          <!-- Top Card -->
+          <v-col cols="10">
+            <v-card class="cardStyle">
+              <v-row justify="space-around">
+                <!-- Average -->
+                <v-col cols="4">
+                  <v-row justify="center">
+                    <v-card-title>Usability Percentage</v-card-title>
+                    <v-card-text>
+                      <v-row align="center" justify="center">
+                        <p class="display-3">{{testData.average}}</p>
+                      </v-row>
+                    </v-card-text>
+                  </v-row>
+                </v-col>
 
-                  <v-divider vertical></v-divider>
+                <v-divider vertical></v-divider>
 
-                  <!-- Info -->
-                  <v-col>
-                    <v-list class="transparent">
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
-                        </v-list-item-icon>
+                <!-- Info -->
+                <v-col>
+                  <v-list class="transparent">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
 
-                        <v-list-item-title>Max</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>Min</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-plus-minus</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>Standard deviation</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-card>
+                      <v-list-item-title>Max</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Min</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-plus-minus</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Standard deviation</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-card>
 
-        <!-- Tab 2 - Evaluators -->
-        <v-card v-if="index == 1" class="dataCard">
-          <v-card-title class="subtitleView">Evaluators</v-card-title>
+      <!-- Tab 2 - Evaluators -->
+      <v-card v-if="index == 1" style="background: #f5f7ff;">
+        <v-card-title class="subtitleView">Evaluators</v-card-title>
 
-          <v-divider></v-divider>
+        <v-divider></v-divider>
 
-          <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
-            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
-          </v-tabs>
+        <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
+        </v-tabs>
 
-          <v-row justify="center">
-            <v-col cols="10" v-if="ind == 0">
-              <v-data-table
-                :headers="headersEvaluators"
-                :items="dataEvaluators"
-                :items-per-page="5"
-                class="elevation-1 cardStyle"
+        <v-row justify="center">
+          <v-col cols="10" v-if="ind == 0">
+            <v-data-table
+              :headers="headersEvaluators"
+              :items="dataEvaluators"
+              :items-per-page="5"
+              class="elevation-1 cardStyle"
+            >
+              <template
+                v-for="(header) in headersExperts"
+                v-slot:[`item.${header.value}`]="{ item }"
               >
-                <template
-                  v-for="(header) in headersExperts"
-                  v-slot:[`item.${header.value}`]="{ item }"
+                <v-chip
+                  v-if="header.value != 'item'"
+                  :key="header.value"
+                  :color="getColorHSL(item[header.value])"
+                  dark
+                >{{ item[header.value]}}%</v-chip>
+                <div v-else :key="header.value">{{item[header.value]}}</div>
+              </template>
+            </v-data-table>
+          </v-col>
+
+          <v-col cols="10" v-if="ind == 1">
+            <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
+          </v-col>
+        </v-row>
+      </v-card>
+
+      <!-- Tab 3 - Heuristics-->
+      <v-card v-if="index == 2" style="background: #f5f7ff;">
+        <v-card-title class="subtitleView">Heuristics Data</v-card-title>
+
+        <v-divider></v-divider>
+
+        <!-- Bottom Tabs -->
+        <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table 1</v-tab>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Table 2</v-tab>
+          <v-tab
+            class="tab-text"
+            style="text-transform: none !important"
+            @click="ind = 2"
+          >Graphic</v-tab>
+        </v-tabs>
+
+        <!-- Bottom Tab Content -->
+        <v-row justify="center">
+          <v-col cols="10">
+            <v-row>
+              <!-- Bottom Tab 1 -->
+              <v-col cols="12" v-if="ind == 0">
+                <v-data-table
+                  :headers="headersExperts"
+                  :items="dataExperts"
+                  :items-per-page="5"
+                  class="elevation-1 cardStyle"
                 >
-                  <v-chip
-                    v-if="header.value != 'item'"
-                    :key="header.value"
-                    :color="getColorHSL(item[header.value])"
-                    dark
-                  >{{ item[header.value]}}%</v-chip>
-                  <div v-else :key="header.value">{{item[header.value]}}</div>
-                </template>
-              </v-data-table>
-            </v-col>
-
-            <v-col cols="10" v-if="ind == 1">
-              <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
-            </v-col>
-          </v-row>
-        </v-card>
-        <!-- Tab 3 - Heuristics-->
-        <v-card v-if="index == 2" class="dataCard">
-          <v-col cols="12" class="mt-3">
-            <v-card-title class="subtitleView">Heuristics Data</v-card-title>
-
-            <v-divider></v-divider>
-
-            <!-- Bottom Tabs -->
-            <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table 1</v-tab>
-              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Table 2</v-tab>
-              <v-tab
-                class="tab-text"
-                style="text-transform: none !important"
-                @click="ind = 2"
-              >Graphic</v-tab>
-            </v-tabs>
-
-            <!-- Bottom Tab Content -->
-            <v-row justify="center">
-              <v-col cols="10">
-                <v-row>
-                 <!-- Bottom Tab 1 -->
-                  <v-col cols="12" v-if="ind == 0">
-                    <v-data-table
-                      :headers="headersExperts"
-                      :items="dataExperts"
-                      :items-per-page="5"
-                      class="elevation-1 cardStyle"
-                    >
-                      <template
-                        v-for="(header) in headersExperts"
-                        v-slot:[`item.${header.value}`]="{ item }"
-                      >
-                        <v-chip
-                          v-if="header.value != 'heuristic'"
-                          :key="header.value"
-                          :color="getColor(item[header.value])"
-                          dark
-                          class="chip"
-                        >{{ item[header.value] }}</v-chip>
-                        <div v-else :key="header.value">{{item[header.value]}}</div>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-                <!-- Bottom Tab 2 -->
-                  <v-col cols="12" v-if="ind == 1">
-                    <v-data-table
-                      :headers="headersHeuris"
-                      :items="dataHeuris"
-                      :items-per-page="5"
-                      class="elevation-1 cardStyle"
-                    >
-                       <template v-slot:item.average="{ item }">
-                         <v-chip :color="getColor(item.average)" dark>{{ item.average }}</v-chip>
-                       </template>
-                    </v-data-table>
-                  </v-col>
-
-                <!-- Bottom Tab 3 -->
-                  <v-col cols="12" v-if="ind == 2">
-                    <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
-                  </v-col>
-                 
-                </v-row>
+                  <template
+                    v-for="(header) in headersExperts"
+                    v-slot:[`item.${header.value}`]="{ item }"
+                  >
+                    <v-chip
+                      v-if="header.value != 'heuristic'"
+                      :key="header.value"
+                      :color="getColor(item[header.value])"
+                      dark
+                      class="chip"
+                    >{{ item[header.value] }}</v-chip>
+                    <div v-else :key="header.value">{{item[header.value]}}</div>
+                  </template>
+                </v-data-table>
               </v-col>
+            <!-- Bottom Tab 2 -->
+              <v-col cols="12" v-if="ind == 1">
+                <v-data-table
+                  :headers="headersHeuris"
+                  :items="dataHeuris"
+                  :items-per-page="5"
+                  class="elevation-1 cardStyle"
+                >
+                    <template v-slot:item.average="{ item }">
+                      <v-chip :color="getColor(item.average)" dark>{{ item.average }}</v-chip>
+                    </template>
+                </v-data-table>
+              </v-col>
+
+            <!-- Bottom Tab 3 -->
+              <v-col cols="12" v-if="ind == 2">
+                <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
+              </v-col>
+              
             </v-row>
           </v-col>
-        </v-card>
+        </v-row>
+      </v-card>
 
-        <!-- Tab 4 - Data -->
-        <v-card v-if="index==3" class="dataCard">
-          <v-row dense justify="start" class="pa-0 ma-0">
-            <!-- Left Column -->
-            <v-col cols="2" class="pa-2 ma-0">
-              <div class="subtitleView">HEURISTICS</div>
+      <!-- Tab 4 - Data -->
+      <v-card v-if="index==3" style="background: #f5f7ff;">
+        <v-row dense justify="start" class="pa-0 ma-0">
+          <!-- Left Column -->
+          <v-col cols="2" class="pa-2 ma-0">
+            <div class="subtitleView">HEURISTICS</div>
+            <v-divider></v-divider>
+            <v-list color="transparent" dense>
+              <v-list-item
+                v-for="(heuris, i) in answers.answersSheet.heuristics"
+                :key="i"
+                @click="setHeaders(heuris,i),setItems(i),open = true,dataSelected=-1, questionIndex = -1"
+              >
+                <v-list-item-title
+                  :style="i == heurisIndex ? 'color: #fca326': 'color:black'"
+                >Heuristic {{i + 1}}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-col>
+
+          <v-divider vertical inset style="height:530px"></v-divider>
+
+          <!-- Middle Column -->
+          <v-col v-if="open" cols="2" class="pa-2 ma-0">
+            <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
+            <v-divider></v-divider>
+            <v-list color="transparent" dense>
+              <v-list-item @click="dataSelected = -1, questionIndex = -1">
+                <v-list-item-title
+                  :style="dataSelected == -1? 'color: #fca326': 'color:black'"
+                >Data Table</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                v-for="(question, i) in dataQuestions"
+                :key="i"
+                @click="dataSelected = i, questionIndex = i"
+              >
+                <v-list-item-title
+                  :style="i == questionIndex ? 'color: #fca326': 'color:black'"
+                >Question {{i + 1}}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-col>
+
+          <v-divider v-if="open" vertical inset></v-divider>
+
+          <!-- Right Column -->
+          <v-col cols="7" class="pa-2 ma-0" style="width:100%">
+            <div v-if="dataSelected != null">
+              <div class="subtitleView" v-if="dataSelected != -1">QUESTION {{dataSelected+1}}</div>
+              <div class="subtitleView" v-else>Data Table</div>
+
               <v-divider></v-divider>
-              <v-list color="transparent" dense>
-                <v-list-item
-                  v-for="(heuris, i) in answers.answersSheet.heuristics"
-                  :key="i"
-                  @click="setHeaders(heuris,i),setItems(i),open = true,dataSelected=-1, questionIndex = -1"
-                >
-                  <v-list-item-title
-                    :style="i == heurisIndex ? 'color: #fca326': 'color:black'"
-                  >Heuristic {{i + 1}}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-col>
 
-            <v-divider vertical inset style="height:530px"></v-divider>
+              <v-row justify="center" dense>
+                <!-- Table -->
+                <v-col v-if="dataSelected == -1" class="ma-0 pa-0">
+                  <v-text-field
+                    class="mx-3"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    v-model="search"
+                  ></v-text-field>
 
-            <!-- Middle Column -->
-            <v-col v-if="open" cols="2" class="pa-2 ma-0">
-              <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
-              <v-divider></v-divider>
-              <v-list color="transparent" dense>
-                <v-list-item @click="dataSelected = -1, questionIndex = -1">
-                  <v-list-item-title
-                    :style="dataSelected == -1? 'color: #fca326': 'color:black'"
-                  >Data Table</v-list-item-title>
-                </v-list-item>
-                <v-list-item
-                  v-for="(question, i) in dataQuestions"
-                  :key="i"
-                  @click="dataSelected = i, questionIndex = i"
-                >
-                  <v-list-item-title
-                    :style="i == questionIndex ? 'color: #fca326': 'color:black'"
-                  >Question {{i + 1}}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-col>
+                  <v-data-table
+                    class="elevation-1 cardStyle"
+                    :headers="headers"
+                    :items="items"
+                    :search="search"
+                  ></v-data-table>
+                </v-col>
 
-            <v-divider v-if="open" vertical inset></v-divider>
-
-            <!-- Right Column -->
-            <v-col cols="7" class="pa-2 ma-0" style="width:100%">
-              <div v-if="dataSelected != null">
-                <div class="subtitleView" v-if="dataSelected != -1">QUESTION {{dataSelected+1}}</div>
-                <div class="subtitleView" v-else>Data Table</div>
-
-                <v-divider></v-divider>
-
-                <v-row justify="center" dense>
-                  <!-- Table -->
-                  <v-col v-if="dataSelected == -1" class="ma-0 pa-0">
-                    <v-text-field
-                      class="mx-3"
-                      append-icon="mdi-magnify"
-                      label="Search"
-                      v-model="search"
-                    ></v-text-field>
-
-                    <v-data-table
-                      class="elevation-1 cardStyle"
-                      :headers="headers"
-                      :items="items"
-                      :search="search"
-                    ></v-data-table>
-                  </v-col>
-
-                  <!-- Graph -->
-                  <v-col class="mx-3" v-else>
-                    <v-row justify="center">
-                      <!-- Bottom Tabs -->
-                      <v-tabs
-                        background-color="transparent"
-                        color="grey darken-2"
-                        class="mt-2"
-                        centered
-                        v-model="ind"
-                      >
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 0"
-                        >Graphic</v-tab>
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 1"
-                        >Comments</v-tab>
-                      </v-tabs>
-                      <v-col v-if="ind == 0">
-                        <QuestionChart :data="dataQuestions[dataSelected].data" />
-                      </v-col>
-                      <v-col v-if="ind == 1">
-                        <v-timeline v-if="dataQuestions[dataSelected].comments.length" dense>
-                          <v-timeline-item
-                            fill-dot
-                            color="#fca326"
-                            icon="mdi-message-reply-text"
-                            v-for="(comment,index) in dataQuestions[dataSelected].comments"
-                            :key="index"
-                          >
-                            <v-card class="elevation-2">
-                              <v-card-text>{{comment}}</v-card-text>
-                            </v-card>
-                          </v-timeline-item>
-                        </v-timeline>
-                        <div v-else>No comments yet</div>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-              </div>
-              <h2 v-else class="ml-3">Please select a heuristic</h2>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                <!-- Graph -->
+                <v-col class="mx-3" v-else>
+                  <v-row justify="center">
+                    <!-- Bottom Tabs -->
+                    <v-tabs
+                      background-color="transparent"
+                      color="grey darken-2"
+                      class="mt-2"
+                      centered
+                      v-model="ind"
+                    >
+                      <v-tab
+                        class="tab-text"
+                        style="text-transform: none !important"
+                        @click="ind = 0"
+                      >Graphic</v-tab>
+                      <v-tab
+                        class="tab-text"
+                        style="text-transform: none !important"
+                        @click="ind = 1"
+                      >Comments</v-tab>
+                    </v-tabs>
+                    <v-col v-if="ind == 0">
+                      <QuestionChart :data="dataQuestions[dataSelected].data" />
+                    </v-col>
+                    <v-col v-if="ind == 1">
+                      <v-timeline v-if="dataQuestions[dataSelected].comments.length" dense>
+                        <v-timeline-item
+                          fill-dot
+                          color="#fca326"
+                          icon="mdi-message-reply-text"
+                          v-for="(comment,index) in dataQuestions[dataSelected].comments"
+                          :key="index"
+                        >
+                          <v-card class="elevation-2">
+                            <v-card-text>{{comment}}</v-card-text>
+                          </v-card>
+                        </v-timeline-item>
+                      </v-timeline>
+                      <div v-else>No comments yet</div>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </div>
+            <h2 v-else class="ml-3">Please select a heuristic</h2>
+          </v-col>
+        </v-row>
+      </v-card>
+    </div>
+  </ShowInfo>
 </template>
 
 <script>
 import QuestionChart from "@/components/atoms/QuestionChart.vue";
 import BarChart from "@/components/atoms/BarChart.vue";
 import RadarChart from "@/components/atoms/RadarChart.vue";
+import ShowInfo from "@/components/organisms/ShowInfo"
 
 export default {
   props: ["id"],
@@ -329,6 +318,7 @@ export default {
     QuestionChart,
     BarChart,
     RadarChart,
+    ShowInfo
   },
   data: () => ({
     index: 0,
@@ -668,31 +658,18 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
-.dataCard {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
-  padding-bottom: 10px;
-  min-height: 550px;
-}
-
 .scroll {
   overflow-y: auto;
   overflow-x: hidden;
 }
-
 .cardStyle {
   background-color: transparent;
   border: 0.2px solid rgba(0, 0, 0, 0.25);
 }
-
 .cardAnswers {
   background: #e6e4e4;
   border-radius: 34px;
 }
-
 .tab-text {
   font-family: Roboto;
   font-style: normal;
@@ -701,7 +678,6 @@ export default {
   align-items: center;
   color: #000000;
 }
-
 .container {
   height: 400px;
   padding: 0px;
