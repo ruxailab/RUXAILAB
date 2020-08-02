@@ -41,7 +41,7 @@
         height="450px"
         :items-per-page="7"
         items-per-page-text="7"
-        :footer-props="{ 
+        :footer-props="{
           'items-per-page-options': [7]
         }"
       >

@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-row justify="space-around" align="center">
-      <v-col cols="11">
+      <v-col cols="11" class="pa-0">
         <slot name="answer"></slot>
       </v-col>
-      <v-col cols="1" class="mb-6">
+      <v-col cols="1" class="mb-6 pa-0">
         <v-tooltip bottom v-if="!show">
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="show = !show" icon v-bind="attrs" v-on="on">
@@ -24,7 +24,7 @@
         </v-tooltip>
       </v-col>
 
-      <v-col cols="12">
+      <v-col cols="12" class="pa-0">
         <v-textarea
           outlined
           dense

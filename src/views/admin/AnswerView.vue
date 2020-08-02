@@ -1,5 +1,6 @@
 <template >
   <v-container>
+
     <!-- Top/Title -->
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Answers</v-col>
@@ -185,7 +186,7 @@
                   <v-col cols="12" v-if="ind == 2">
                     <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
                   </v-col>
-                 
+
                 </v-row>
               </v-col>
             </v-row>

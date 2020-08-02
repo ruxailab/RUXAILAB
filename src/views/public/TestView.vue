@@ -1,5 +1,5 @@
 <template >
-  <v-container v-if="test && answersSheet != undefined" class="pa-0 ma-0">
+  <div v-if="test && answersSheet != undefined">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -234,17 +234,17 @@
             :key="i"
             justify="center"
           >
-            <v-col cols="10">
+            <v-col cols="10" class="pa-0">
               <v-row justify="space-around" align="center">
-                <v-col cols="11">
+                <v-col cols="11" class="pa-0">
                   <p class="subtitleView">{{i+1}}) {{question.title}}</p>
                 </v-col>
-                <v-col cols="1">
+                <v-col cols="1" class="pa-0">
                   <HelpBtn :question="question" />
                 </v-col>
               </v-row>
 
-              <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+              <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]" class="pa-0">
                 <v-select
                   slot="answer"
                   v-if="answersSheet !== undefined"
@@ -276,7 +276,7 @@
         </ShowInfo>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -567,4 +567,5 @@ export default {
   padding-top: 0px;
   align-items: flex-end;
 }
+
 </style>
