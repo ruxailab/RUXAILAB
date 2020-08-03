@@ -1,6 +1,8 @@
 module.exports = {
   "transpileDependencies": [
-    "vuetify"
+    "vuetify",
+    "vue-clamp",
+    "resize-detector"
   ],
 
   pluginOptions: {
