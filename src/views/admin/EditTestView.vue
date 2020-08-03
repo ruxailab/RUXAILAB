@@ -179,6 +179,7 @@ export default {
           });
 
           this.answers.answersSheet = this.object.answersSheet;
+          Object.assign(this.answers, { options: this.object.options });
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
@@ -186,6 +187,7 @@ export default {
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
+              this.change = false
             })
             .catch((err) => {
               this.$store.commit("setError", err);

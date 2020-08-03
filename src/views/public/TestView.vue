@@ -1,5 +1,5 @@
 <template >
-  <v-container v-if="test && answersSheet != undefined" class="pa-0 ma-0">
+  <div v-if="test && answersSheet != undefined">
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -283,7 +283,7 @@
         </ShowInfo>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -574,4 +574,5 @@ export default {
   padding-top: 0px;
   align-items: flex-end;
 }
+
 </style>

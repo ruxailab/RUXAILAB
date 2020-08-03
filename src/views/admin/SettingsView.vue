@@ -1,7 +1,6 @@
 <template>
   <v-container v-if="test">
     <Snackbar />
-
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Settings</v-col>
     </v-row>
