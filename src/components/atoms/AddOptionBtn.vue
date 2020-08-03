@@ -17,7 +17,7 @@
             <v-form ref="form">
               <v-row justify="center" align="center">
                 <v-col cols="9">
-                  <v-text-field v-model="option.text" label="Text" :rules="textRequired"></v-text-field>
+                  <v-text-field maxLength="100" counter="100" v-model="option.text" label="Text" :rules="textRequired"></v-text-field>
                 </v-col>
 
                 <v-col cols="2">
