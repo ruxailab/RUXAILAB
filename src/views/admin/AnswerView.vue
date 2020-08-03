@@ -184,7 +184,10 @@
                       class="elevation-1 cardStyle"
                     >
                       <template v-slot:item.average="{ item }">
-                        <v-chip :color="getColor(item.average,item.max,item.min)" dark>{{ item.average }}</v-chip>
+                        <v-chip
+                          :color="getColor(item.average,item.max,item.min)"
+                          dark
+                        >{{ item.average }}</v-chip>
                       </template>
                     </v-data-table>
                   </v-col>
@@ -620,23 +623,22 @@ export default {
       return (value * 100) / result;
     },
     getColor(value, max, min) {
-      max = Number(max)
-      min = Number(min)
-      let h = (max - min)/5
-      
+      max = Number(max);
+      min = Number(min);
+      let h = (max - min) / 5;
+
       if (value <= min + h) return "red";
-      else if (value <= min + 2*h) return "amber";
-      else if (value <= min + 3*h) return "orange lighten-1";
-      else if (value <= min + 4*h) return "lime";
+      else if (value <= min + 2 * h) return "amber";
+      else if (value <= min + 3 * h) return "orange lighten-1";
+      else if (value <= min + 4 * h) return "lime";
       else return "green";
     },
     getColorPorcentage(value) {
       if (value <= 20) return "red";
       else if (value <= 40) return "ambar";
-      else if (value <= 60) return "orange";
+      else if (value <= 60) return "orange lighten-1";
       else if (value <= 80) return "lime";
       else return "green";
-
     },
   },
   computed: {
