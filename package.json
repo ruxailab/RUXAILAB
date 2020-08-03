@@ -18,6 +18,7 @@
     "tiptap-extensions": "^1.31.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
+    "vue-clamp": "^0.3.1",
     "vue-i18n": "^8.18.2",
     "vue-router": "^3.1.6",
     "vuetify": "^2.2.22",

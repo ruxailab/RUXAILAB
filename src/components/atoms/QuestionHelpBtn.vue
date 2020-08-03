@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tooltip bottom>
+    <v-tooltip bottom v-if="question.descriptions.length > 0">
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon>
           <v-icon v-bind="attrs" v-on="on" @click="dialog = true">mdi-help-circle-outline</v-icon>
@@ -9,7 +9,7 @@
       <span>Help</span>
     </v-tooltip>
 
-    <v-dialog v-model="dialog" persistent width="85%">
+    <v-dialog v-model="dialog" width="85%">
       <v-card>
         <div style="display: flex; justify-content: flex-end">
           <v-btn small icon @click="dialog = false" class="ma-1">

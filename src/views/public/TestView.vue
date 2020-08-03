@@ -65,16 +65,16 @@
             <v-row dense align="center" justify="space-around">
               <v-col class="pa-0 ma-0" cols="8">
                 <div class="idText">{{test.id}}</div>
-                <div class="titleText">{{test.title}}</div>
+                <v-clamp class="titleText" autoresize :max-lines="2">{{test.title}}</v-clamp>
               </v-col>
               <v-col v-if="test.type === 'Expert'">
-                <v-row justify="center">
-                  <v-progress-circular
-                    :value="answersSheet.progress"
-                    color="#fca326"
-                    :size="50"
-                  >{{answersSheet.progress}}</v-progress-circular>
-                </v-row>
+                <v-progress-circular
+                  rotate="-90"
+                  :value="answersSheet.progress"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >{{answersSheet.progress}}</v-progress-circular>
               </v-col>
             </v-row>
           </v-list-item>
@@ -117,34 +117,15 @@
               </v-list-item>
             </v-list-group>
             <!--Heuris/Tasks-->
-            <v-list-group
+            <v-list
               @click="index = item.id"
               v-else-if="item.id == 1"
               :value="index == 1 ? true : false"
-              color="white"
-              no-action
             >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-              >mdi-chevron-down</v-icon>
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-progress-circular
-                    v-if="test.type === 'Expert' && answersSheet.progress != 100"
-                    :value="answersSheet.progress"
-                    :color="index == item.id ? '#ffffff' : '#fca326'"
-                  ></v-progress-circular>
-                  <v-icon v-else :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title
-                  :style="index ==item.id? 'color: white': 'color:#fca326'"
-                >{{ item.title }}</v-list-item-title>
-              </template>
-
               <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
                 <v-list-item-icon>
                   <v-progress-circular
+                    rotate="-90"
                     v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
                     :value="progress(answersSheet.heuristics[i])"
                     :size="24"
@@ -160,7 +141,7 @@
                   >{{ heuris.title }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-list-group>
+            </v-list>
             <!--Post Test-->
             <v-list-item @click="index = item.id" v-else-if="item.id ==2">
               <v-list-item-icon>
@@ -176,29 +157,12 @@
           </div>
         </v-list>
 
-        <div class="footer" v-if="!mini">
-          <v-btn icon @click="go(`/settingsview/${id}`)" class="ml-3">
-            <v-icon color="white">mdi-cog</v-icon>
-          </v-btn>
+        <div class="footer">
           <v-spacer></v-spacer>
           <v-btn icon @click.stop="mini = !mini" class="mr-2">
-            <v-icon color="white">mdi-chevron-left</v-icon>
+            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
+            <v-icon v-else color="white">mdi-chevron-left</v-icon>
           </v-btn>
-        </div>
-
-        <div class="footer" style="height:16%" v-else>
-          <v-list class="mt-0 pa-0">
-            <v-list-item class="pt-0">
-              <v-list-item-icon @click="go(`/settingsview/${id}`)">
-                <v-icon color="white">mdi-cog</v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon @click.stop="mini = !mini">
-                <v-icon color="white">mdi-chevron-right</v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </v-list>
         </div>
       </v-navigation-drawer>
 
@@ -291,6 +255,7 @@ import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
+import VClamp from 'vue-clamp'
 
 export default {
   props: ["id"],
@@ -299,6 +264,7 @@ export default {
     ViewTask,
     AddCommentBtn,
     HelpBtn,
+    VClamp
   },
   data: () => ({
     drawer: true,
@@ -537,15 +503,6 @@ export default {
   align-items: flex-end;
   color: #ffffff;
 }
-.dataCard {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
-  padding-bottom: 10px;
-  min-height: 550px;
-}
-
 .nav {
   position: fixed;
   width: 100%;
@@ -572,7 +529,40 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  align-items: flex-end;
+  
+/*
+  height: 2.9em; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; */
+}
+.line-clamp {  
+  /**Major Properties**/
+  line-height: 1.2rem;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
 </style>
