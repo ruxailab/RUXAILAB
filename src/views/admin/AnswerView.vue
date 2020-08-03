@@ -1,6 +1,5 @@
 <template >
   <v-container>
-
     <!-- Top/Title -->
     <v-row justify="space-around">
       <v-col cols="12" class="titleView">Answers</v-col>
@@ -132,8 +131,16 @@
 
             <!-- Bottom Tabs -->
             <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table 1</v-tab>
-              <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Table 2</v-tab>
+              <v-tab
+                class="tab-text"
+                style="text-transform: none !important"
+                @click="ind = 0"
+              >Table 1</v-tab>
+              <v-tab
+                class="tab-text"
+                style="text-transform: none !important"
+                @click="ind = 1"
+              >Table 2</v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
@@ -145,7 +152,7 @@
             <v-row justify="center">
               <v-col cols="10">
                 <v-row>
-                 <!-- Bottom Tab 1 -->
+                  <!-- Bottom Tab 1 -->
                   <v-col cols="12" v-if="ind == 0">
                     <v-data-table
                       :headers="headersExperts"
@@ -168,7 +175,7 @@
                       </template>
                     </v-data-table>
                   </v-col>
-                <!-- Bottom Tab 2 -->
+                  <!-- Bottom Tab 2 -->
                   <v-col cols="12" v-if="ind == 1">
                     <v-data-table
                       :headers="headersHeuris"
@@ -176,17 +183,16 @@
                       :items-per-page="5"
                       class="elevation-1 cardStyle"
                     >
-                       <template v-slot:item.average="{ item }">
-                         <v-chip :color="getColor(item.average)" dark>{{ item.average }}</v-chip>
-                       </template>
+                      <template v-slot:item.average="{ item }">
+                        <v-chip :color="getColor(item.average,item.max,item.min)" dark>{{ item.average }}</v-chip>
+                      </template>
                     </v-data-table>
                   </v-col>
 
-                <!-- Bottom Tab 3 -->
+                  <!-- Bottom Tab 3 -->
                   <v-col cols="12" v-if="ind == 2">
                     <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
                   </v-col>
-
                 </v-row>
               </v-col>
             </v-row>
@@ -490,16 +496,19 @@ export default {
           heuristic: key,
         };
 
-        let index = String(key).split(' ')[1] -1 
-        let values = this.answers.options.map(item =>item.value)
-        let max = Math.max(...values) * this.answers.answersSheet.heuristics[index].total
-        let min = Math.min(...values) * this.answers.answersSheet.heuristics[index].total
+        let index = String(key).split(" ")[1] - 1;
+        let values = this.answers.options.map((item) => item.value);
+        let max =
+          Math.max(...values) *
+          this.answers.answersSheet.heuristics[index].total;
+        let min =
+          Math.min(...values) *
+          this.answers.answersSheet.heuristics[index].total;
 
         list.forEach((item) => {
           obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
         });
-        
-        
+
         this.dataExperts.push(obj);
       }
 
@@ -610,13 +619,24 @@ export default {
     percentage(value, result) {
       return (value * 100) / result;
     },
-    getColor(value,max,min) {
-      let h = (120*((value-min)/(max-min)))
-      return `hsl(${h}, 80%, 50%)`;
+    getColor(value, max, min) {
+      max = Number(max)
+      min = Number(min)
+      let h = (max - min)/5
+      
+      if (value <= min + h) return "red";
+      else if (value <= min + 2*h) return "amber";
+      else if (value <= min + 3*h) return "orange lighten-1";
+      else if (value <= min + 4*h) return "lime";
+      else return "green";
     },
     getColorHSL(value) {
-      let h = (120 * value) / 100;
-      return `hsl(${h}, 75%, 60%)`;
+      if (value <= 20) return "red";
+      else if (value <= 40) return "ambar";
+      else if (value <= 60) return "orange";
+      else if (value <= 80) return "lime";
+      else return "green";
+
     },
   },
   computed: {
