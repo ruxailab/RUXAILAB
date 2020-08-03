@@ -5,7 +5,7 @@
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
-          class="headline error white--text"
+          class="headline error"
           primary-title
         >Are you sure you want to delete this test?</v-card-title>
 
