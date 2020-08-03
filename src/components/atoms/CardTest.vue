@@ -1,30 +1,19 @@
 <template>
   <div>
     <Snackbar />
+    <Dialog :dialog="dialog" :text="dialogText">
+      <v-card-title slot="title" class="headline error white--text" primary-title>Are you sure you want to delete this test?</v-card-title>
 
-    <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
-        <v-card-title
-          class="headline error white--text"
-          primary-title
-        >Are you sure you want to delete this test?</v-card-title>
-
-        <v-card-text>Are you sure you want to delete your test "{{ item.title }}"? This action can't be undone</v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-2" text @click="dialog = false">Cancel</v-btn>
-          <v-btn
-            class="red white--text"
-            :loading="loading"
-            text
-            @click="deleteTest(item), loading = true"
-          >Delete</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+        <v-btn
+          class="red white--text ml-1"
+          :loading="loading"
+          text
+          @click="deleteTest(item), loading = true"
+        >Delete</v-btn>
+      </div>
+    </Dialog>
 
     <v-card shaped class="card">
       <v-container>
@@ -105,16 +94,18 @@
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
+import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["item", "accessLevel"],
   components: {
-    Snackbar
+    Snackbar,
+    Dialog,
   },
   data: () => ({
     menu: false,
     dialog: false,
-    loading: false
+    loading: false,
   }),
   methods: {
     openTest(test) {
@@ -136,15 +127,15 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
+                type: item.type,
               },
-              param: "myTests"
+              param: "myTests",
             })
             .then(() => {
               this.loading = false;
               this.$store.commit("setSuccess", "Project successfully deleted");
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
 
@@ -152,14 +143,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach(rep => {
+          this.reports.reports.forEach((rep) => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
@@ -167,29 +158,29 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach(guest => {
+          this.cooperators.cooperators.forEach((guest) => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
     openManager(test) {
       this.$router.push({
-        path: "/managerview/" + test.id
+        path: "/managerview/" + test.id,
       });
-    }
+    },
   },
   computed: {
     user() {
@@ -207,8 +198,14 @@ export default {
     },
     cooperators() {
       return this.$store.state.cooperators.cooperators || [];
-    }
-  }
+    },
+  },
+  created() {
+    this.dialogText = ''
+  },
+  mounted() {
+    this.dialogText = `Are you sure you want to delete your test "${this.item.title}"? This action can't be undone`;
+  },
 };
 </script>
 

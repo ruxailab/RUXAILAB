@@ -1,7 +1,6 @@
 <template>
-  <v-container v-if="test">
-    <!-- <TextBox /> -->
-    <v-dialog v-model="dialog" width="600" persistent>
+  <div>
+    <!-- <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
           class="headline yellow accent-4 white--text"
@@ -14,7 +13,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-2" text @click="dialog = false">Stay</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
           <v-btn
             class="yellow accent-4 white--text"
             text
@@ -22,28 +21,25 @@
           >Leave</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <Snackbar />
+    </v-dialog>-->
+    <Dialog :dialog="dialog" text="Are you sure you want to leave? All your changes will be discarded">
+      <v-card-title
+        slot="title"
+        class="headline yellow accent-4 white--text"
+        primary-title
+      >Are you sure you want to leave?</v-card-title>
 
-    <v-row justify="space-around">
-      <v-col cols="12" class="titleView">Test Edit</v-col>
-      <v-col cols="12" class="pa-0 pl-3 ma-0">
-        <v-row dense>
-          <v-tabs
-            background-color="transparent"
-            color="#FCA326"
-            class="tab-border-bottom pb-0 mb-0"
-          >
-            <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
-            <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
-            <v-tab v-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
-            <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
-            <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
-          </v-tabs>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-divider></v-divider>
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+        <v-btn
+          class="yellow accent-4 white--text ml-1"
+          text
+          @click="change = false,$router.push(go)"
+        >Leave</v-btn>
+      </div>
+    </Dialog>
+
+    <Snackbar />
 
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
@@ -65,9 +61,19 @@
       <span>Save</span>
     </v-tooltip>
 
-    <v-row justify="center">
-      <v-col cols="12">
-        <v-card v-if="index==0" class="dataCard">
+    <ShowInfo v-if="test" title="Test Edit">
+      <v-row dense slot="top">
+        <v-tabs background-color="transparent" color="#FCA326" class="tab-border-bottom pb-0 mb-0">
+          <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
+          <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
+          <v-tab v-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
+          <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
+          <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
+        </v-tabs>
+      </v-row>
+
+      <div slot="content" class="ma-0 pa-0">
+        <v-card v-if="index==0" style="background: #f5f7ff">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
@@ -82,25 +88,21 @@
           </v-row>
         </v-card>
 
-        <v-row justify="center" v-if="index==1">
-          <v-col cols="12" class="pa-0">
-            <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
-            <Heuristic
-              v-else-if="test.type === 'Expert'"
-              :heuristics="object.heuristics"
-              :answersSheet="object.answersSheet"
-              @change="change = true"
-            />
-          </v-col>
-        </v-row>
+        <div v-if="index==1" class="ma-0 pa-0">
+          <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
+          <Heuristic
+            v-else-if="test.type === 'Expert'"
+            :heuristics="object.heuristics"
+            :answersSheet="object.answersSheet"
+            @change="change = true"
+          />
+        </div>
 
-        <v-row justify="center" v-if="index==2">
-          <v-col cols="12" class="pa-0">
-            <OptionsTable :options="object.options" @valForm="validate" @change="change = true" />
-          </v-col>
-        </v-row>
+        <div class="ma-0 pa-0" v-if="index==2">
+          <OptionsTable :options="object.options" @valForm="validate" @change="change = true" />
+        </div>
 
-        <v-card v-if="index==3" class="dataCard">
+        <v-card v-if="index==3" style="background: #f5f7ff">
           <v-card-title class="subtitleView">Post Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
@@ -115,9 +117,9 @@
             </v-col>
           </v-row>
         </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+      </div>
+    </ShowInfo>
+  </div>
 </template>
 
 <script>
@@ -127,7 +129,8 @@ import ListTasks from "@/components/molecules/ListTasks";
 import Heuristic from "@/components/molecules/HeuristicsTable";
 import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
-// import TextBox from "@/components/atoms/TextBox";
+import ShowInfo from "@/components/organisms/ShowInfo";
+import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["id"],
@@ -138,7 +141,8 @@ export default {
     Heuristic,
     OptionsTable,
     Snackbar,
-    // TextBox
+    ShowInfo,
+    Dialog,
   },
   data: () => ({
     index: 0,
@@ -218,10 +222,10 @@ export default {
       }
     },
     preventNav(event) {
-      if (!this.change) return
-      event.preventDefault()
-      event.returnValue = ""
-    }
+      if (!this.change) return;
+      event.preventDefault();
+      event.returnValue = "";
+    },
   },
   watch: {
     test: async function () {
@@ -271,7 +275,7 @@ export default {
     }
   },
   beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav)
+    window.addEventListener("beforeunload", this.preventNav);
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
@@ -299,14 +303,5 @@ export default {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
-}
-
-.dataCard {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
-  padding-bottom: 10px;
-  min-height: 550px;
 }
 </style>

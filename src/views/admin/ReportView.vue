@@ -1,104 +1,111 @@
 <template>
-  <v-container>
-    <v-row justify="space-around">
-      <v-col cols="12" class="titleView">Reports</v-col>
-      <v-col cols="12" class="pb-0 mb-0">
-        <v-row justify="end" dense>
-          <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
-        </v-row>
-      </v-col>
+  <ShowInfo title="Reports">
+    <v-row justify="end" dense slot="top" class="mr-3">
+      <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
     </v-row>
-    <v-divider></v-divider>
-    <v-row justify="center">
-      <v-col cols="12">
-        <v-data-table
-          class="datatable"
-          :headers="headers"
-          :items="reports.reports"
-          :items-per-page="5"
-          height="420px"
-        >
-          <template v-slot:item.more="{ item }">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="removeReport(item)">
-                  <v-list-item-title>Remove Report</v-list-item-title>
-                </v-list-item>
 
-                <v-list-item v-if="item.log.status === 'Denied'">
-                  <v-list-item-title>Re-invite</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
+    <div slot="content" class="ma-0 pa-0">
+      <v-data-table
+        style="background: #f5f7ff"
+        :headers="headers"
+        :items="reports.reports"
+        :items-per-page="5"
+        height="420px"
+      >
+        <template v-slot:item.more="{ item }">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="removeReport(item)">
+                <v-list-item-title>Remove Report</v-list-item-title>
+              </v-list-item>
 
-          <template v-slot:item.progress="{ item }">
-            <div>{{item.log.progress}}%</div>
-          </template>
-        </v-data-table>
-
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn large dark fab fixed bottom right color="#F9A826" v-bind="attrs" v-on="on" @click="dialog = true">
-              <v-icon large>mdi-email</v-icon>
-            </v-btn>
-          </template>
-          <span>Invite</span>
-        </v-tooltip>
-
-        <v-dialog v-model="dialog" color="white" max-width="600px">
-          <v-card min-height="450px">
-            <v-autocomplete
-              v-model="userSelected"
-              :items="filteredUsers"
-              item-text="email"
-              return-object
-              label="Select User"
-              outlined
-              @input="pushToArray()"
-              class="mx-2 pt-3"
-              dense
-              color="#fca326"
-              prepend-icon="mdi-account-multiple-plus"
-            ></v-autocomplete>
-
-            <v-list class="mx-2" max-height="310" height="310" style="overflow:auto">
-              <v-list-item link v-for="(guest, n) in invitations" :key="n">
-                <v-row justify="center" align="center">
-                  <v-icon class="mr-2">mdi-account-circle</v-icon>
-                  <div>{{guest.email}}</div>
-                  <v-spacer></v-spacer>
-                  <v-btn icon @click="removeFromInvitations(guest)">
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </v-row>
+              <v-list-item v-if="item.log.status === 'Denied'">
+                <v-list-item-title>Re-invite</v-list-item-title>
               </v-list-item>
             </v-list>
+          </v-menu>
+        </template>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn class="white--text" color="#F47C7C" @click="close">Cancel</v-btn>
-              <v-btn class="white--text" color="#8EB995" @click="send">Send</v-btn>
-            </v-card-actions>
-            <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
-          </v-card>
-        </v-dialog>
-      </v-col>
-    </v-row>
-  </v-container>
+        <template v-slot:item.progress="{ item }">
+          <div>{{item.log.progress}}%</div>
+        </template>
+      </v-data-table>
+
+      <v-tooltip left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            large
+            dark
+            fab
+            fixed
+            bottom
+            right
+            color="#F9A826"
+            v-bind="attrs"
+            v-on="on"
+            @click="dialog = true"
+          >
+            <v-icon large>mdi-email</v-icon>
+          </v-btn>
+        </template>
+        <span>Invite</span>
+      </v-tooltip>
+
+      <v-dialog v-model="dialog" color="white" max-width="600px">
+        <v-card min-height="450px">
+          <v-autocomplete
+            v-model="userSelected"
+            :items="filteredUsers"
+            item-text="email"
+            return-object
+            label="Select User"
+            outlined
+            @input="pushToArray()"
+            class="mx-2 pt-3"
+            dense
+            color="#fca326"
+            prepend-icon="mdi-account-multiple-plus"
+          ></v-autocomplete>
+
+          <v-list class="mx-2" max-height="310" height="310" style="overflow:auto">
+            <v-list-item link v-for="(guest, n) in invitations" :key="n">
+              <v-row justify="center" align="center">
+                <v-icon class="mr-2">mdi-account-circle</v-icon>
+                <div>{{guest.email}}</div>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="removeFromInvitations(guest)">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-row>
+            </v-list-item>
+          </v-list>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn class="white--text" color="#F47C7C" @click="close">Cancel</v-btn>
+            <v-btn class="white--text" color="#8EB995" @click="send">Send</v-btn>
+          </v-card-actions>
+          <!--<FormCooperation class="cardReport" :invitations="invitations" type="tester" />-->
+        </v-card>
+      </v-dialog>
+    </div>
+  </ShowInfo>
 </template>
 
 <script>
 // import FormCooperation from "@/components/atoms/FormCooperation";
+import ShowInfo from "@/components/organisms/ShowInfo";
+
 export default {
   props: ["id"],
   components: {
-    // FormCooperation
+    // FormCooperation,
+    ShowInfo,
   },
   data: () => ({
     dialog: false,
@@ -106,61 +113,61 @@ export default {
       {
         text: "Id",
         align: "start",
-        value: "uid"
+        value: "uid",
       },
       { text: "Tester", value: "email" },
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
-      { text: "More", value: "more" }
+      { text: "More", value: "more" },
     ],
     records: [
       {
         id: "101",
         tester: {
           id: "null",
-          email: "null@null.com"
+          email: "null@null.com",
         },
         log: {
           date_init: "null",
           progress: "null",
-          state: "null"
-        }
-      }
+          state: "null",
+        },
+      },
     ],
     editedIndex: -1,
     editedRecord: {
       id: null,
       tester: {
         id: null,
-        email: null
+        email: null,
       },
       log: {
         date_init: null,
         progress: null,
-        state: null
-      }
+        state: null,
+      },
     },
     defaultRecord: {
       id: null,
       tester: {
         id: null,
-        email: null
+        email: null,
       },
       log: {
         date_init: null,
         progress: null,
-        state: null
-      }
+        state: null,
+      },
     },
     //Invide
     userSelected: {},
-    invitations: []
+    invitations: [],
   }),
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
   methods: {
     editItem(item) {
@@ -183,16 +190,16 @@ export default {
     async send() {
       //Making invites
       let d = new Date();
-      this.invitations.forEach(item => {
+      this.invitations.forEach((item) => {
         let inv = {
           to: {
             id: item.uid,
             email: item.email,
-            accessLevel: 2
+            accessLevel: 2,
           },
           from: {
             id: this.user.uid,
-            email: this.user.email
+            email: this.user.email,
           },
           test: {
             id: this.test.id,
@@ -200,21 +207,21 @@ export default {
             type: this.test.type,
             reports: this.test.reports,
             answers: this.test.answers,
-            cooperators: this.test.cooperators
-          }
+            cooperators: this.test.cooperators,
+          },
         };
 
         this.$store
           .dispatch("pushNotification", {
             docId: inv.to.id,
             element: inv,
-            param: "notifications"
+            param: "notifications",
           })
           .then(() => {
             item.log.date = d.toLocaleString("en-US");
             this.$store.dispatch("pushLog", {
               docId: this.id,
-              element: item
+              element: item,
             });
           });
       });
@@ -228,8 +235,8 @@ export default {
         log: {
           date: null,
           progress: 0,
-          status: "Invited"
-        }
+          status: "Invited",
+        },
       };
 
       this.invitations.push(obj);
@@ -246,11 +253,11 @@ export default {
       this.$store.dispatch("removeReport", {
         docId: this.id,
         element: {
-          id: report.uid
+          id: report.uid,
         },
-        param: "reports"
+        param: "reports",
       });
-    }
+    },
   },
   computed: {
     user() {
@@ -269,9 +276,9 @@ export default {
     filteredUsers() {
       let hasUser = null;
       let array = [];
-      this.users.forEach(user => {
+      this.users.forEach((user) => {
         hasUser = false;
-        this.invitations.forEach(guest => {
+        this.invitations.forEach((guest) => {
           if (guest.uid === user.id) {
             hasUser = true;
           }
@@ -279,7 +286,7 @@ export default {
 
         if (!hasUser && this.reports)
           //evita um foreach se ja tiver encontrado
-          this.reports.reports.forEach(guest => {
+          this.reports.reports.forEach((guest) => {
             if (guest.uid === user.id) {
               hasUser = true;
             }
@@ -288,7 +295,7 @@ export default {
         if (!hasUser) array.push(user);
       });
       return array;
-    }
+    },
   },
 
   created() {
@@ -297,10 +304,12 @@ export default {
     }
     this.test = Object.assign(
       {},
-      this.$store.state.auth.user.myTests.find(test => test.reports == this.id)
+      this.$store.state.auth.user.myTests.find(
+        (test) => test.reports == this.id
+      )
     );
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
-  }
+  },
 };
 </script>
 
@@ -326,12 +335,6 @@ export default {
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
-.datatable {
-  background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
-}
 .cardReport {
   box-shadow: 0px;
 }
@@ -343,18 +346,18 @@ export default {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey; 
+  box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background:  #fca326; 
+  background: #fca326;
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #fca326; 
+  background: #fca326;
 }
 </style>
