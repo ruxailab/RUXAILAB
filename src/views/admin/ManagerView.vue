@@ -1,15 +1,5 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
-
-    <v-overlay class="text-center" v-model="loading">
-      <v-progress-circular
-      indeterminate
-      color="#fca326"
-      size="50"
-    ></v-progress-circular>
-    <div class="white-text mt-3">Loading Test</div>
-    </v-overlay>
-
     <v-row class="nav pa-0 ma-0" dense>
       <v-navigation-drawer
         clipped
@@ -137,9 +127,6 @@ export default {
     },
     setIsCoops(payload) {
       this.isCoops = payload;
-    },
-    setLoading(payload) {
-      this.loading = payload;
     }
   },
   computed: {
@@ -171,12 +158,6 @@ export default {
         }
       } else {
         this.setIsCoops(false);
-      }
-
-      if(!Object.keys(test).length) {
-        this.setLoading(true);
-      } else {
-        this.setLoading(false);
       }
 
       return test;
@@ -238,6 +219,13 @@ export default {
 
       return items;
     }
+  },
+  created() {
+    this.itemSelect = {
+      title: "Manager",
+      icon: "mdi-home",
+      path: `/managerview/${this.test.id}`
+    };
   }
 };
 </script>

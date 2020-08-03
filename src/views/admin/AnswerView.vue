@@ -1,5 +1,4 @@
 <template >
-<<<<<<< HEAD
   <ShowInfo title="Answers">
     <!-- Main Tabs -->
     <v-tabs
@@ -71,25 +70,6 @@
               </v-row>
             </v-card>
           </v-col>
-=======
-  <v-container>
-    <!-- Top/Title -->
-    <v-row justify="space-around">
-      <v-col cols="12" class="titleView">Answers</v-col>
-      <v-col cols="12" class="pa-0 pl-3 ma-0">
-        <v-row justify="end" dense>
-          <!-- Main Tabs -->
-          <v-tabs
-            background-color="transparent"
-            color="#FCA326"
-            class="tab-border-bottom pb-0 mb-0"
-          >
-            <v-tab @click="index = 0">Statistics</v-tab>
-            <v-tab @click="index = 1">Evaluators</v-tab>
-            <v-tab @click="index = 2">Heuristics</v-tab>
-            <v-tab @click="index = 3">Data</v-tab>
-          </v-tabs>
->>>>>>> answersUI
         </v-row>
       </v-card>
 
@@ -214,39 +194,12 @@
                 :key="i"
                 @click="setHeaders(heuris,i),setItems(i),open = true,dataSelected=-1, questionIndex = -1"
               >
-<<<<<<< HEAD
                 <v-list-item-title
                   :style="i == heurisIndex ? 'color: #fca326': 'color:black'"
                 >Heuristic {{i + 1}}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-col>
-=======
-                <template
-                  v-for="(header) in headersExperts"
-                  v-slot:[`item.${header.value}`]="{ item }"
-                >
-                  <v-chip
-                    v-if="header.value != 'item'"
-                    :key="header.value"
-                    :color="getColorPorcentage(item[header.value])"
-                    dark
-                  >{{ item[header.value]}}%</v-chip>
-                  <div v-else :key="header.value">{{item[header.value]}}</div>
-                </template>
-              </v-data-table>
-            </v-col>
-
-            <v-col cols="10" v-if="ind == 1">
-              <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
-            </v-col>
-          </v-row>
-        </v-card>
-        <!-- Tab 3 - Heuristics-->
-        <v-card v-if="index == 2" class="dataCard">
-          <v-col cols="12" class="mt-3">
-            <v-card-title class="subtitleView">Heuristics Data</v-card-title>
->>>>>>> answersUI
 
           <v-divider vertical inset style="height:530px"></v-divider>
 
@@ -272,7 +225,6 @@
             </v-list>
           </v-col>
 
-<<<<<<< HEAD
           <v-divider v-if="open" vertical inset></v-divider>
 
           <!-- Right Column -->
@@ -347,75 +299,6 @@
               </v-row>
             </div>
             <h2 v-else class="ml-3">Please select a heuristic</h2>
-=======
-            <!-- Bottom Tabs -->
-            <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-              <v-tab
-                class="tab-text"
-                style="text-transform: none !important"
-                @click="ind = 0"
-              >Table 1</v-tab>
-              <v-tab
-                class="tab-text"
-                style="text-transform: none !important"
-                @click="ind = 1"
-              >Table 2</v-tab>
-              <v-tab
-                class="tab-text"
-                style="text-transform: none !important"
-                @click="ind = 2"
-              >Graphic</v-tab>
-            </v-tabs>
-
-            <!-- Bottom Tab Content -->
-            <v-row justify="center">
-              <v-col cols="10">
-                <v-row>
-                  <!-- Bottom Tab 1 -->
-                  <v-col cols="12" v-if="ind == 0">
-                    <v-data-table
-                      :headers="headersExperts"
-                      :items="dataExperts"
-                      :items-per-page="5"
-                      class="elevation-1 cardStyle"
-                    >
-                      <template
-                        v-for="(header) in headersExperts"
-                        v-slot:[`item.${header.value}`]="{ item }"
-                      >
-                        <v-chip
-                          v-if="header.value != 'heuristic'"
-                          :key="header.value"
-                          :color="getColor(item[header.value],item.max,item.min)"
-                          dark
-                          class="chip"
-                        >{{ item[header.value] }}</v-chip>
-                        <div v-else :key="header.value">{{item[header.value]}}</div>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-                  <!-- Bottom Tab 2 -->
-                  <v-col cols="12" v-if="ind == 1">
-                    <v-data-table
-                      :headers="headersHeuris"
-                      :items="dataHeuris"
-                      :items-per-page="5"
-                      class="elevation-1 cardStyle"
-                    >
-                      <template v-slot:item.average="{ item }">
-                        <v-chip :color="getColor(item.average,item.max,item.min)" dark>{{ item.average }}</v-chip>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-
-                  <!-- Bottom Tab 3 -->
-                  <v-col cols="12" v-if="ind == 2">
-                    <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
->>>>>>> answersUI
           </v-col>
         </v-row>
       </v-card>
@@ -595,18 +478,8 @@ export default {
         let obj = {
           heuristic: key,
         };
-
-        let index = String(key).split(" ")[1] - 1;
-        let values = this.answers.options.map((item) => item.value);
-        let max =
-          Math.max(...values) *
-          this.answers.answersSheet.heuristics[index].total;
-        let min =
-          Math.min(...values) *
-          this.answers.answersSheet.heuristics[index].total;
-
         list.forEach((item) => {
-          obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
+          obj = Object.assign(obj, { [item.av]: item.res });
         });
 
         this.dataExperts.push(obj);
@@ -631,7 +504,7 @@ export default {
       //Calc Result for Avalitor
       this.dataExperts.forEach((data) => {
         Object.keys(data).forEach((item) => {
-          if (item !== "heuristic" && item !== "max" && item !== "min") {
+          if (item !== "heuristic") {
             const collection = EvaluatorsResults.get(item);
             if (!collection) {
               EvaluatorsResults.set(item, data[item]);
@@ -719,24 +592,14 @@ export default {
     percentage(value, result) {
       return (value * 100) / result;
     },
-    getColor(value, max, min) {
-      max = Number(max)
-      min = Number(min)
-      let h = (max - min)/5
-      
-      if (value <= min + h) return "red";
-      else if (value <= min + 2*h) return "amber";
-      else if (value <= min + 3*h) return "orange lighten-1";
-      else if (value <= min + 4*h) return "lime";
+    getColor(value) {
+      if (value < 1) return "red";
+      else if (value < 3) return "orange";
       else return "green";
     },
-    getColorPorcentage(value) {
-      if (value <= 20) return "red";
-      else if (value <= 40) return "ambar";
-      else if (value <= 60) return "orange";
-      else if (value <= 80) return "lime";
-      else return "green";
-
+    getColorHSL(value) {
+      let h = (120 * value) / 100;
+      return `hsl(${h}, 80%, 50%)`;
     },
   },
   computed: {
