@@ -109,7 +109,7 @@
                   <v-chip
                     v-if="header.value != 'item'"
                     :key="header.value"
-                    :color="getColorHSL(item[header.value])"
+                    :color="getColorPorcentage(item[header.value])"
                     dark
                   >{{ item[header.value]}}%</v-chip>
                   <div v-else :key="header.value">{{item[header.value]}}</div>
@@ -630,7 +630,7 @@ export default {
       else if (value <= min + 4*h) return "lime";
       else return "green";
     },
-    getColorHSL(value) {
+    getColorPorcentage(value) {
       if (value <= 20) return "red";
       else if (value <= 40) return "ambar";
       else if (value <= 60) return "orange";
