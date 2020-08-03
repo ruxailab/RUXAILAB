@@ -160,7 +160,7 @@
                         <v-chip
                           v-if="header.value != 'heuristic'"
                           :key="header.value"
-                          :color="getColor(item[header.value])"
+                          :color="getColor(item[header.value],item.max,item.min)"
                           dark
                           class="chip"
                         >{{ item[header.value] }}</v-chip>
@@ -489,10 +489,17 @@ export default {
         let obj = {
           heuristic: key,
         };
-        list.forEach((item) => {
-          obj = Object.assign(obj, { [item.av]: item.res });
-        });
 
+        let index = String(key).split(' ')[1] -1 
+        let values = this.answers.options.map(item =>item.value)
+        let max = Math.max(...values) * this.answers.answersSheet.heuristics[index].total
+        let min = Math.min(...values) * this.answers.answersSheet.heuristics[index].total
+
+        list.forEach((item) => {
+          obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
+        });
+        
+        
         this.dataExperts.push(obj);
       }
 
@@ -515,7 +522,7 @@ export default {
       //Calc Result for Avalitor
       this.dataExperts.forEach((data) => {
         Object.keys(data).forEach((item) => {
-          if (item !== "heuristic") {
+          if (item !== "heuristic" && item !== "max" && item !== "min") {
             const collection = EvaluatorsResults.get(item);
             if (!collection) {
               EvaluatorsResults.set(item, data[item]);
@@ -603,14 +610,13 @@ export default {
     percentage(value, result) {
       return (value * 100) / result;
     },
-    getColor(value) {
-      if (value < 1) return "red";
-      else if (value < 3) return "orange";
-      else return "green";
+    getColor(value,max,min) {
+      let h = (120*((value-min)/(max-min)))
+      return `hsl(${h}, 80%, 50%)`;
     },
     getColorHSL(value) {
       let h = (120 * value) / 100;
-      return `hsl(${h}, 80%, 50%)`;
+      return `hsl(${h}, 75%, 60%)`;
     },
   },
   computed: {
