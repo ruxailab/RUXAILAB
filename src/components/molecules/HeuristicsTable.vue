@@ -10,7 +10,7 @@
         >{{itemEdit.title}}</v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
-            <v-form ref="form">
+            <v-form ref="form" @submit.prevent="itemEdit.validate(1)">
               <v-text-field
                 v-model="itemEdit.titleEdit"
                 dense
@@ -41,7 +41,7 @@
         >New Question</v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
-            <v-form ref="form">
+            <v-form ref="form" @submit.prevent="validateQuestion(2)">
               <v-text-field
                 v-model="newQuestion.title"
                 dense
@@ -80,7 +80,7 @@
             <v-stepper-content step="1">
               <v-row>
                 <v-col cols="10">
-                  <v-form ref="form">
+                  <v-form ref="form" @submit.prevent="validateHeuristic()">
                     <v-text-field
                       v-model="heuris.title"
                       dense
@@ -96,7 +96,7 @@
             <v-stepper-content step="2">
               <v-row>
                 <v-col cols="10" class="mx-3">
-                  <v-form ref="form1">
+                  <v-form ref="form1" @submit.prevent="validateQuestion(0)">
                     <v-text-field
                       v-model="heuris.questions[0].title"
                       dense
@@ -331,11 +331,7 @@ export default {
   }),
   methods: {
     log() {
-      console.log(
-        "log",
-        this.heuristics[this.itemSelect].questions[this.questionSelect]
-          .descriptions
-      );
+      console.log('aaaa');
     },
     updateHeuristics() {
       if (this.editIndex == -1) {
