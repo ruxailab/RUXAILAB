@@ -149,7 +149,7 @@
                     <v-chip
                       v-if="header.value != 'heuristic'"
                       :key="header.value"
-                      :color="getColor(item[header.value])"
+                      :color="getColor(item[header.value],item.max,item.min)"
                       dark
                       class="chip"
                     >{{ item[header.value] }}</v-chip>
@@ -166,7 +166,7 @@
                   class="elevation-1 cardStyle"
                 >
                     <template v-slot:item.average="{ item }">
-                      <v-chip :color="getColor(item.average)" dark>{{ item.average }}</v-chip>
+                      <v-chip :color="getColor(item.average,item.max,item.min)" dark>{{ item.average }}</v-chip>
                     </template>
                 </v-data-table>
               </v-col>
@@ -478,8 +478,17 @@ export default {
         let obj = {
           heuristic: key,
         };
+         let index = String(key).split(" ")[1] - 1;
+        let values = this.answers.options.map((item) => item.value);
+        let max =
+          Math.max(...values) *
+          this.answers.answersSheet.heuristics[index].total;
+        let min =
+          Math.min(...values) *
+          this.answers.answersSheet.heuristics[index].total;
+
         list.forEach((item) => {
-          obj = Object.assign(obj, { [item.av]: item.res });
+          obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
         });
 
         this.dataExperts.push(obj);
@@ -504,7 +513,7 @@ export default {
       //Calc Result for Avalitor
       this.dataExperts.forEach((data) => {
         Object.keys(data).forEach((item) => {
-          if (item !== "heuristic") {
+          if (item !== "heuristic" && item !== "min" && item !== "max") {
             const collection = EvaluatorsResults.get(item);
             if (!collection) {
               EvaluatorsResults.set(item, data[item]);
