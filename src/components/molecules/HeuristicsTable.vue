@@ -459,13 +459,14 @@ export default {
         this.itemEdit = null;
         this.dialog = false;
         this.$refs.form.resetValidation();
+        this.$emit("change");
       } else if (this.$refs.form.validate()) {
         this.step = 2;
         this.$refs.form.resetValidation();
       }
     },
     validateQuestion(code) {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form1.validate()) {
         switch (code) {
           case 0: //Start New Heuristic
             this.step = 1;
@@ -486,6 +487,7 @@ export default {
             this.answersSheet.total = this.totalQuestions;
             this.$refs.form1.resetValidation();
             this.$refs.form.resetValidation();
+            this.$emit("change");
             break;
 
           case 1: //Edit Question
@@ -495,6 +497,7 @@ export default {
             this.itemEdit = null;
             this.dialog = false;
             this.$refs.form1.resetValidation();
+            this.$emit("change");
             break;
 
           case 2: //Add New Question
@@ -511,6 +514,7 @@ export default {
               total: this.heuristics[this.itemSelect].total,
               questions: this.arrayQuestions,
             });
+            this.$emit("change");
             break;
         }
       }
