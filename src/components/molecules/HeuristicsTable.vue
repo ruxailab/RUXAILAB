@@ -18,6 +18,7 @@
                 outlined
                 class="mx-3"
                 :rules="itemEdit.rule"
+                autofocus
               ></v-text-field>
             </v-form>
           </v-col>
@@ -49,6 +50,7 @@
                 outlined
                 class="mx-3"
                 :rules="questionRequired"
+                autofocus
               ></v-text-field>
             </v-form>
           </v-col>
@@ -88,6 +90,7 @@
                       outlined
                       class="mx-3"
                       :rules="nameRequired"
+                      autofocus
                     ></v-text-field>
                   </v-form>
                 </v-col>
@@ -103,6 +106,7 @@
                       label="Title Question"
                       outlined
                       :rules="questionRequired"
+                      autofocus
                     ></v-text-field>
                   </v-form>
                 </v-col>
