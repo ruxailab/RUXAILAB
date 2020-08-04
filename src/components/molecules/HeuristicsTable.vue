@@ -42,7 +42,7 @@
         >New Question</v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
-            <v-form ref="form" @submit.prevent="validateQuestion(2)">
+            <v-form ref="form1" @submit.prevent="validateQuestion(2)">
               <v-text-field
                 v-model="newQuestion.title"
                 dense
@@ -60,7 +60,7 @@
           <v-btn
             class="lighten-2"
             text
-            @click="dialog = false,$refs.form.resetValidation(),newQuestion = null"
+            @click="$refs.form1.resetValidation(),dialog = false"
           >Cancel</v-btn>
           <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Add</v-btn>
         </v-card-actions>
@@ -74,9 +74,9 @@
         >Creating a heuristic</v-card-title>
         <v-stepper v-model="step">
           <v-stepper-header>
-            <v-stepper-step color="#fca326" step="1" :complete="step>1">Name the heuristic</v-stepper-step>
+            <v-stepper-step color="#fca326" step="1" :complete="step>1" editable>Name the heuristic</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step color="#fca326" step="2">Initialize first question</v-stepper-step>
+            <v-stepper-step color="#fca326" step="2" editable>Initialize first question</v-stepper-step>
           </v-stepper-header>
           <v-stepper-items>
             <v-stepper-content step="1">
@@ -215,6 +215,7 @@
         <v-col class="ma-0 pa-0" v-if="questionSelect!=null">
           <v-card height="560px" elevation="0">
             <v-subheader class="pa-2">
+            {{heuristics[itemSelect].questions[questionSelect].title}}
               <v-spacer></v-spacer>
               <v-menu v-model="menuQuestions" offset-x>
                 <template v-slot:activator="{ on, attrs }">
@@ -484,6 +485,7 @@ export default {
             this.heuristics.total = this.totalQuestions;
             this.answersSheet.total = this.totalQuestions;
             this.$refs.form1.resetValidation();
+            this.$refs.form.resetValidation();
             break;
 
           case 1: //Edit Question
@@ -492,14 +494,14 @@ export default {
             ].title = this.itemEdit.titleEdit;
             this.itemEdit = null;
             this.dialog = false;
-            this.$refs.form.resetValidation();
+            this.$refs.form1.resetValidation();
             break;
 
           case 2: //Add New Question
             this.heuristics[this.itemSelect].questions.push(this.newQuestion);
             this.newQuestion = null;
             this.dialog = false;
-            this.$refs.form.resetValidation();
+            this.$refs.form1.resetValidation();
             this.heuristics[this.itemSelect].total = this.heuristics[
               this.itemSelect
             ].questions.length;
@@ -545,6 +547,12 @@ export default {
           ],
         };
         this.heuris.total = this.heuris.questions.length;
+      }
+      if(!this.dialog){
+        if(this.$refs.form) this.$refs.form.resetValidation()
+        if(this.$refs.form1) this.$refs.form1.resetValidation()
+        this.newQuestion = null
+        this.itemEdit = null
       }
     },
     heuristics() {
