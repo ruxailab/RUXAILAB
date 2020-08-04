@@ -28,7 +28,6 @@
         <v-textarea
           outlined
           dense
-          :rules="rules"
           auto-grow
           v-if="show"
           v-model="comment.com"
@@ -45,8 +44,7 @@
 export default {
   props: ["comment"],
   data: () => ({
-    show: false,
-    rules: [v => v.length <= 100 || "Max 100 characters"]
+    show: false
   })
 };
 </script>
