@@ -1,7 +1,7 @@
 <template>
   <v-container style="overflow: scrol;">
     <v-row justify="space-around">
-      <v-col cols="12" class="titleView">{{title}}</v-col>
+      <v-col cols="12" ><h3>{{title}}</h3></v-col>
       <slot name="top"></slot>
     </v-row>
     <v-divider></v-divider>
@@ -22,12 +22,10 @@ export default {
 </script>
 
 <style scoped>
-.titleView {
+h3 {
   font-family: Roboto;
   font-style: normal;
   font-weight: 300;
-  font-size: 40px;
-  line-height: 70px;
   display: flex;
   align-items: center;
   color: #000000;
