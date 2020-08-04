@@ -79,8 +79,8 @@
             </v-row>
           </v-list-item>
         </div>
-
-        <v-list flat dense>
+        
+        <v-list class="nav-list" flat dense max-height="65%" style="overflow:auto">
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
@@ -166,7 +166,7 @@
         </div>
       </v-navigation-drawer>
 
-      <v-col class="backgroundTest pa-0 ma-0">
+      <v-col class="backgroundTest pa-0 ma-0 right-view">
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             slot="content"
@@ -538,31 +538,43 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; */
 }
-.line-clamp {  
-  /**Major Properties**/
-  line-height: 1.2rem;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-  overflow: hidden !important;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-}
 
+/* Right side scroll bar */
 /* width */
-::-webkit-scrollbar {
+.right-view::-webkit-scrollbar {
   width: 9px;
 }
 /* Track */
-::-webkit-scrollbar-track {
+.right-view::-webkit-scrollbar-track {
   background: none;
 }
 /* Handle */
-::-webkit-scrollbar-thumb {
+.right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+/* Nav bar list scroll bar */
+/* width */
+.nav-list::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.nav-list::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.nav-list::-webkit-scrollbar-thumb {
+  background: #777596;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.nav-list::-webkit-scrollbar-thumb:hover {
+  background: #64618a;
+  /* background: #515069; */
 }
 </style>
