@@ -121,45 +121,7 @@ export default {
       { text: "Status", value: "log.status" },
       { text: "More", value: "more" },
     ],
-    records: [
-      {
-        id: "101",
-        tester: {
-          id: "null",
-          email: "null@null.com",
-        },
-        log: {
-          date_init: "null",
-          progress: "null",
-          state: "null",
-        },
-      },
-    ],
     editedIndex: -1,
-    editedRecord: {
-      id: null,
-      tester: {
-        id: null,
-        email: null,
-      },
-      log: {
-        date_init: null,
-        progress: null,
-        state: null,
-      },
-    },
-    defaultRecord: {
-      id: null,
-      tester: {
-        id: null,
-        email: null,
-      },
-      log: {
-        date_init: null,
-        progress: null,
-        state: null,
-      },
-    },
     //Invide
     userSelected: {},
     invitations: [],
@@ -243,11 +205,13 @@ export default {
 
       this.userSelected = {};
     },
+
     removeFromInvitations(item) {
       let index = this.invitations.indexOf(item);
 
       this.invitations.splice(index, 1);
     },
+    
     removeReport(report) {
       console.log(report);
       this.$store.dispatch("removeReport", {

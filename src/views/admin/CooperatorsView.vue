@@ -37,7 +37,6 @@
           prepend-icon="mdi-account-multiple-plus"
           class="mx-4 pt-4"
         ></v-autocomplete>
-
         <v-data-table
           style="background: #f5f7ff;"
           :items="cooperatorsEdit"
@@ -150,8 +149,9 @@ export default {
       { text: "More", value: "more", sortable: false },
     ],
     roleOptions: [
-      { text: "Researcher", value: 1 },
-      { text: "Co-Administrator", value: 0 },
+      { text: "Tester", value: 2 },
+      { text: "Guest", value: 1 },
+      { text: "Administrator", value: 0 },
     ],
   }),
   methods: {
@@ -240,10 +240,29 @@ export default {
         })
         .then(() => {
           guest.invited = true;
-          this.$store.dispatch("pushCooperator", {
-            docId: this.id,
-            element: Object.assign({}, guest),
-          });
+          //Access Level Guest
+            this.$store.dispatch("pushCooperator", {
+              docId: this.id,
+              element: Object.assign({}, guest),
+            });
+          //Access Level Tester
+          if(guest.accessLevel.value == 2){
+            let item = Object.assign({},{
+              uid: guest.id,
+              email:guest.email,
+              log:{
+                  date: new Date().toLocaleString("en-Us"),
+                  progress: 0,
+                  status: "Invited"
+              }
+            })
+            console.log(item)
+            this.$store.dispatch("pushLog", {
+              docId: this.test.reports,
+              element: item,
+            });
+          }
+
         });
     },
     reinvite(guest) {
