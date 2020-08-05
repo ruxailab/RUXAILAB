@@ -1,7 +1,7 @@
 <template>
   <v-container style="overflow: scrol;">
     <v-row justify="space-around">
-      <v-col cols="12" ><h3>{{title}}</h3></v-col>
+      <v-col cols="12" ><h1>{{title}}</h1></v-col>
       <slot name="top"></slot>
     </v-row>
     <v-divider></v-divider>
@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style scoped>
-h3 {
+h1 {
   font-family: Roboto;
   font-style: normal;
   font-weight: 300;
