@@ -1,5 +1,22 @@
 <template >
   <div v-if="test && answersSheet != undefined">
+    <Dialog :dialog="dialog" :text="dialogText">
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to submit this test?</v-card-title>
+
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+        <v-btn
+          class="red white--text ml-1"
+          text
+          @click="submitLog(false), dialog = false"
+        >Submit</v-btn>
+      </div>
+    </Dialog>
+
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -10,15 +27,7 @@
       </v-col>
     </v-row>
     <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial
-        v-if="answersSheet !== undefined "
-        v-model="fab"
-        fixed
-        class="mr-3"
-        bottom
-        right
-        open-on-hover
-      >
+      <v-speed-dial v-if="showBtn" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
             <v-icon v-if="fab">mdi-close</v-icon>
@@ -38,7 +47,7 @@
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              @click="submitLog(false)"
+              @click="dialog = true"
               fab
               dark
               small
@@ -79,7 +88,7 @@
             </v-row>
           </v-list-item>
         </div>
-        
+
         <v-list class="nav-list" flat dense max-height="65%" style="overflow:auto">
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
@@ -255,7 +264,8 @@ import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
-import VClamp from 'vue-clamp'
+import VClamp from "vue-clamp";
+import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["id"],
@@ -264,7 +274,8 @@ export default {
     ViewTask,
     AddCommentBtn,
     HelpBtn,
-    VClamp
+    VClamp,
+    Dialog,
   },
   data: () => ({
     drawer: true,
@@ -277,6 +288,8 @@ export default {
     idx: 0,
     fab: false,
     res: 0,
+    dialog: false,
+    dialogText: "Are you sure you want to submit your test. You can only do it once."
   }),
   watch: {
     test: async function () {
@@ -393,6 +406,7 @@ export default {
       let newAnswer = this.user.myAnswers.find(
         (answer) => answer.id == this.id
       );
+      newAnswer.answersSheet.submited = true;
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
@@ -446,6 +460,12 @@ export default {
       set(item) {
         return item;
       },
+    },
+    showBtn() {
+      if (this.answersSheet !== undefined) {
+        if (!this.answersSheet.submited) return true;
+      }
+      return false;
     },
   },
   created() {
@@ -529,8 +549,8 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  
-/*
+
+  /*
   height: 2.9em; 
   overflow: hidden;
   text-overflow: ellipsis;

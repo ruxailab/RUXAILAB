@@ -98,7 +98,7 @@ export default {
         this.$store.dispatch("pushMyAnswers", {
           docId: this.user.uid,
           element: Object.assign(item.test, {
-            answersSheet: this.test.answersSheet,
+            answersSheet: Object.assign(this.test.answersSheet, {submited: false}),
             accessLevel: 2
           })
         });
