@@ -1,7 +1,22 @@
 <template>
   <v-container v-if="cooperators" class="ma-0 pa-0">
     <Snackbar />
+     <Dialog :dialog="dialog" text="Are you sure you want to leave? All your changes will be discarded">
+      <v-card-title
+        slot="title"
+        class="headline error accent-4 white--text"
+        primary-title
+      >Are you sure you want to leave?</v-card-title>
 
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+        <v-btn
+          class="error accent-4 white--text ml-1"
+          text
+          @click="change = false,$router.push(go)"
+        >Leave</v-btn>
+      </div>
+    </Dialog>
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -126,12 +141,14 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
+import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
     Snackbar,
+    Dialog
   },
   data: () => ({
     object: null,
@@ -153,6 +170,7 @@ export default {
       { text: "Guest", value: 1 },
       { text: "Administrator", value: 0 },
     ],
+    dialog:false
   }),
   methods: {
     log() {
@@ -375,6 +393,11 @@ export default {
 
       console.log(this.editedCoops);
     },
+     preventNav(event) {
+      if (!this.change) return;
+      event.preventDefault();
+      event.returnValue = "";
+    },
   },
   watch: {
     cooperators: async function () {
@@ -385,6 +408,7 @@ export default {
         }
       }
     },
+    
   },
   computed: {
     test() {
@@ -424,6 +448,20 @@ export default {
     if (!this.$store.state.cooperators.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
+  },
+   beforeRouteLeave(to, from, next) {
+    if (this.change) {
+      this.dialog = true;
+      this.go = to.path;
+    } else {
+      next();
+    }
+  },
+   beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav);
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav);
   },
 };
 </script>
