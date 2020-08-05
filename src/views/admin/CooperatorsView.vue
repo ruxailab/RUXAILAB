@@ -38,6 +38,7 @@
     </v-tooltip>
 
     <ShowInfo title="Cooperators">
+   
       <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">
         <v-autocomplete
           style="background: #f5f7ff;"
@@ -423,7 +424,7 @@ export default {
       return this.$store.getters.user;
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators || [];
+      return this.$store.state.cooperators.cooperators || []
     },
     users() {
       if (this.$store.state.users.users) return this.$store.getters.admins;
@@ -447,6 +448,8 @@ export default {
   created() {
     if (!this.$store.state.cooperators.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
+    else
+      this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   },
    beforeRouteLeave(to, from, next) {
