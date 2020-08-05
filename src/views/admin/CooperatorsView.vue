@@ -107,7 +107,7 @@
                   <v-list-item-title>Re-invite</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
+                <v-list-item @click="removeCoop(item),removeFromList(item)" v-if="item.accepted != null">
                   <v-list-item-title>Remove cooperator</v-list-item-title>
                 </v-list-item>
 
@@ -178,22 +178,49 @@ export default {
       });
     },
     remove(guest) {
+      console.log(guest)
+      if(guest.accessLevel.value != 2){
       this.$store
-        .dispatch("removeMyCoops", {
-          docId: guest,
-          element: {
-            id: this.testID,
-          },
-        })
-        .then(() => {
-          //Remove element array
-          this.$store.dispatch("removeCooperator", {
+              .dispatch("removeMyCoops", {
+                docId: guest.id,
+                element: {
+                  id: this.testID.id,
+                },
+              })
+              .then(() => {
+                //Remove element array
+                this.$store.dispatch("removeCooperator", {
+                  docId: this.id,
+                  element: {
+                    id: guest.id,
+                  },
+                });
+              })
+      }else{
+        this.$store.dispatch("removeMyAnswers",{
+           docId: guest.id,
+            element: {
+              id: this.testID.id,
+            }
+        }).then(()=>{
+   this.$store.dispatch("removeReport", {
+        docId: this.testID.reports,
+        element: {
+          id: guest.id,
+        },
+        param: "reports",
+      }).then(()=>{
+         this.$store.dispatch("removeCooperator", {
             docId: this.id,
             element: {
-              id: guest,
+              id: guest.id,
             },
           });
-        });
+      })
+
+        })
+     
+      }
     },
     edit(guest) {
       this.$store
@@ -334,7 +361,7 @@ export default {
       this.userSelected = {};
     },
     removeCoop(coop) {
-      this.deletedCoops.push(coop.id);
+      this.deletedCoops.push(coop);
       this.change = true;
     },
     removeFromList(coop) {
@@ -366,7 +393,7 @@ export default {
     testID() {
       return this.$store.state.auth.user.myTests.find((test) =>
         Object.values(test).includes(this.id)
-      ).id;
+      )
     },
     user() {
       return this.$store.getters.user;
