@@ -86,12 +86,7 @@ export default {
             accessLevel: item.to.accessLevel
           })
         });
-        this.$store.dispatch("updateCooperator", {
-          docId: item.test.cooperators,
-          elementId: item.to.id,
-          element: true,
-          param: "accepted"
-        });
+       
       } else {
         //answer
         await this.$store.dispatch("getTest", { id: item.test.id });
@@ -115,6 +110,12 @@ export default {
           element: log
         });
       }
+       this.$store.dispatch("updateCooperator", {
+          docId: item.test.cooperators,
+          elementId: item.to.id,
+          element: true,
+          param: "accepted"
+        });
     },
     denyNotification(item) {
       if (item.to.accessLevel < 2) {

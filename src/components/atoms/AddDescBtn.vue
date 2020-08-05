@@ -15,7 +15,7 @@
         <v-divider></v-divider>
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
-            <v-form ref="form">
+            <v-form ref="form" @submit.prevent="validate()">
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field :rules="rule" v-model="desc.title" dense outlined label="Title"></v-text-field>
