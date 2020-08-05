@@ -57,11 +57,7 @@
         </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            class="lighten-2"
-            text
-            @click="$refs.form1.resetValidation(),dialog = false"
-          >Cancel</v-btn>
+          <v-btn class="lighten-2" text @click="$refs.form1.resetValidation(),dialog = false">Cancel</v-btn>
           <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Add</v-btn>
         </v-card-actions>
       </v-card>
@@ -132,9 +128,9 @@
       <v-divider></v-divider>
 
       <v-row class="ma-0 pa-0" v-if="heuristics.length">
+        <!--Heuristics List-->
         <v-col class="ma-0 pa-0" cols="3">
-          <!--Heuristics List-->
-          <v-list dense min-height="560px" outlined>
+          <v-list dense height="560px" outlined>
             <v-subheader>Heuristics</v-subheader>
             <v-divider></v-divider>
             <v-list-item @click="dialog=true">
@@ -146,16 +142,18 @@
               </v-list-item-content>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list-item-group v-model="itemSelect" color="#fca326">
-              <v-list-item v-for="(item, i) in heuristics" :key="i">
-                <v-list-item-content>
-                  <v-list-item-title>{{item.title}}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon v-if="i == itemSelect">
-                  <v-icon>mdi-chevron-right</v-icon>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list-item-group>
+            <v-list dense height="470px" outlined class="list-scroll">
+              <v-list-item-group v-model="itemSelect" color="#fca326">
+                <v-list-item v-for="(item, i) in heuristics" :key="i">
+                  <v-list-item-content>
+                    <v-list-item-title>{{item.title}}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon v-if="i == itemSelect">
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </v-list>
         </v-col>
         <v-divider vertical></v-divider>
@@ -198,16 +196,18 @@
               </v-list-item-content>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list-item-group v-model="questionSelect" color="#fca326">
-              <v-list-item v-for="(item, i) in heuristics[itemSelect].questions" :key="i">
-                <v-list-item-content>
-                  <v-list-item-title>{{item.title}}</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-icon v-if="i == questionSelect">
-                  <v-icon>mdi-chevron-right</v-icon>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list-item-group>
+            <v-list dense height="470px" outlined class="list-scroll">
+              <v-list-item-group v-model="questionSelect" color="#fca326">
+                <v-list-item v-for="(item, i) in heuristics[itemSelect].questions" :key="i">
+                  <v-list-item-content>
+                    <v-list-item-title>{{item.title}}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon v-if="i == questionSelect">
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </v-list>
         </v-col>
         <v-divider vertical></v-divider>
@@ -215,7 +215,7 @@
         <v-col class="ma-0 pa-0" v-if="questionSelect!=null">
           <v-card height="560px" elevation="0">
             <v-subheader class="pa-2">
-            {{heuristics[itemSelect].questions[questionSelect].title}}
+              {{heuristics[itemSelect].questions[questionSelect].title}}
               <v-spacer></v-spacer>
               <v-menu v-model="menuQuestions" offset-x>
                 <template v-slot:activator="{ on, attrs }">
@@ -336,7 +336,7 @@ export default {
   }),
   methods: {
     log() {
-      console.log('aaaa');
+      console.log("aaaa");
     },
     updateHeuristics() {
       if (this.editIndex == -1) {
@@ -552,11 +552,11 @@ export default {
         };
         this.heuris.total = this.heuris.questions.length;
       }
-      if(!this.dialog){
-        if(this.$refs.form) this.$refs.form.resetValidation()
-        if(this.$refs.form1) this.$refs.form1.resetValidation()
-        this.newQuestion = null
-        this.itemEdit = null
+      if (!this.dialog) {
+        if (this.$refs.form) this.$refs.form.resetValidation();
+        if (this.$refs.form1) this.$refs.form1.resetValidation();
+        this.newQuestion = null;
+        this.itemEdit = null;
       }
     },
     heuristics() {
@@ -629,5 +629,26 @@ export default {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
+}
+
+.list-scroll {
+  overflow: auto;
+}
+.list-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+/* Track */
+.list-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.list-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+  /* background: #515069; */
 }
 </style>
