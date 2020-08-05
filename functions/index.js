@@ -11,7 +11,7 @@ admin.initializeApp();
 
 exports.processSignUp = functions.auth.user().onCreate(async (user) =>{
     const customClaims = {
-        accessLevel: 2
+        accessLevel: 1
     }
     try {
         await admin.auth().setCustomUserClaims(user.uid,customClaims)
