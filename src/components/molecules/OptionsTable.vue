@@ -56,6 +56,7 @@ export default {
         align: "start",
         value: "text",
       },
+      { text: "Value", align: "end", value: "value" },
       { text: "Edit/Delete", value: "actions", align: "end", sortable: false },
     ],
     option: {
@@ -64,7 +65,7 @@ export default {
     },
     dialog: false,
     editIndex: -1,
-    hasValue: true,
+    hasValue: true
   }),
   methods: {
     updateOptions() {

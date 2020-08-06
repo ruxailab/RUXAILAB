@@ -1,7 +1,22 @@
 <template>
   <v-container v-if="cooperators" class="ma-0 pa-0">
     <Snackbar />
+     <Dialog :dialog="dialog" text="Are you sure you want to leave? All your changes will be discarded">
+      <v-card-title
+        slot="title"
+        class="headline error accent-4 white--text"
+        primary-title
+      >Are you sure you want to leave?</v-card-title>
 
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+        <v-btn
+          class="error accent-4 white--text ml-1"
+          text
+          @click="change = false,$router.push(go)"
+        >Leave</v-btn>
+      </div>
+    </Dialog>
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -23,6 +38,7 @@
     </v-tooltip>
 
     <ShowInfo title="Cooperators">
+   
       <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">
         <v-autocomplete
           style="background: #f5f7ff;"
@@ -37,7 +53,6 @@
           prepend-icon="mdi-account-multiple-plus"
           class="mx-4 pt-4"
         ></v-autocomplete>
-
         <v-data-table
           style="background: #f5f7ff;"
           :items="cooperatorsEdit"
@@ -108,7 +123,7 @@
                   <v-list-item-title>Re-invite</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item @click="removeCoop(item)" v-if="item.accepted != null">
+                <v-list-item @click="removeCoop(item),removeFromList(item)" v-if="item.accepted != null">
                   <v-list-item-title>Remove cooperator</v-list-item-title>
                 </v-list-item>
 
@@ -127,12 +142,14 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
+import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
     Snackbar,
+    Dialog
   },
   data: () => ({
     object: null,
@@ -150,9 +167,11 @@ export default {
       { text: "More", value: "more", sortable: false },
     ],
     roleOptions: [
-      { text: "Researcher", value: 1 },
-      { text: "Co-Administrator", value: 0 },
+      { text: "Tester", value: 2 },
+      { text: "Guest", value: 1 },
+      { text: "Administrator", value: 0 },
     ],
+    dialog:false
   }),
   methods: {
     log() {
@@ -178,22 +197,49 @@ export default {
       });
     },
     remove(guest) {
+      console.log(guest)
+      if(guest.accessLevel.value != 2){
       this.$store
-        .dispatch("removeMyCoops", {
-          docId: guest,
-          element: {
-            id: this.testID,
-          },
-        })
-        .then(() => {
-          //Remove element array
-          this.$store.dispatch("removeCooperator", {
+              .dispatch("removeMyCoops", {
+                docId: guest.id,
+                element: {
+                  id: this.testID.id,
+                },
+              })
+              .then(() => {
+                //Remove element array
+                this.$store.dispatch("removeCooperator", {
+                  docId: this.id,
+                  element: {
+                    id: guest.id,
+                  },
+                });
+              })
+      }else{
+        this.$store.dispatch("removeMyAnswers",{
+           docId: guest.id,
+            element: {
+              id: this.testID.id,
+            }
+        }).then(()=>{
+   this.$store.dispatch("removeReport", {
+        docId: this.testID.reports,
+        element: {
+          id: guest.id,
+        },
+        param: "reports",
+      }).then(()=>{
+         this.$store.dispatch("removeCooperator", {
             docId: this.id,
             element: {
-              id: guest,
+              id: guest.id,
             },
           });
-        });
+      })
+
+        })
+     
+      }
     },
     edit(guest) {
       this.$store
@@ -240,10 +286,29 @@ export default {
         })
         .then(() => {
           guest.invited = true;
-          this.$store.dispatch("pushCooperator", {
-            docId: this.id,
-            element: Object.assign({}, guest),
-          });
+          //Access Level Guest
+            this.$store.dispatch("pushCooperator", {
+              docId: this.id,
+              element: Object.assign({}, guest),
+            });
+          //Access Level Tester
+          if(guest.accessLevel.value == 2){
+            let item = Object.assign({},{
+              uid: guest.id,
+              email:guest.email,
+              log:{
+                  date: new Date().toLocaleString("en-Us"),
+                  progress: 0,
+                  status: "Invited"
+              }
+            })
+            console.log(item)
+            this.$store.dispatch("pushLog", {
+              docId: this.test.reports,
+              element: item,
+            });
+          }
+
         });
     },
     reinvite(guest) {
@@ -315,7 +380,7 @@ export default {
       this.userSelected = {};
     },
     removeCoop(coop) {
-      this.deletedCoops.push(coop.id);
+      this.deletedCoops.push(coop);
       this.change = true;
     },
     removeFromList(coop) {
@@ -329,6 +394,11 @@ export default {
 
       console.log(this.editedCoops);
     },
+     preventNav(event) {
+      if (!this.change) return;
+      event.preventDefault();
+      event.returnValue = "";
+    },
   },
   watch: {
     cooperators: async function () {
@@ -339,6 +409,7 @@ export default {
         }
       }
     },
+    
   },
   computed: {
     test() {
@@ -347,13 +418,13 @@ export default {
     testID() {
       return this.$store.state.auth.user.myTests.find((test) =>
         Object.values(test).includes(this.id)
-      ).id;
+      )
     },
     user() {
       return this.$store.getters.user;
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators || [];
+      return this.$store.state.cooperators.cooperators || []
     },
     users() {
       if (this.$store.state.users.users) return this.$store.getters.admins;
@@ -377,7 +448,23 @@ export default {
   created() {
     if (!this.$store.state.cooperators.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
+    else
+      this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
+  },
+   beforeRouteLeave(to, from, next) {
+    if (this.change) {
+      this.dialog = true;
+      this.go = to.path;
+    } else {
+      next();
+    }
+  },
+   beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav);
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav);
   },
 };
 </script>

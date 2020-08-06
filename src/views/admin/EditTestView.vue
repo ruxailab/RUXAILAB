@@ -1,38 +1,16 @@
 <template>
   <div>
-    <!-- <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
-        <v-card-title
-          class="headline yellow accent-4 white--text"
-          primary-title
-        >Are you sure you want to leave?</v-card-title>
-
-        <v-card-text>Are you sure you want to leave? Your changes will be discarded</v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
-          <v-btn
-            class="yellow accent-4 white--text"
-            text
-            @click="change = false,$router.push(go)"
-          >Leave</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>-->
     <Dialog :dialog="dialog" text="Are you sure you want to leave? All your changes will be discarded">
       <v-card-title
         slot="title"
-        class="headline yellow accent-4 white--text"
+        class="headline error accent-4 white--text"
         primary-title
       >Are you sure you want to leave?</v-card-title>
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
         <v-btn
-          class="yellow accent-4 white--text ml-1"
+          class="error accent-4 white--text ml-1"
           text
           @click="change = false,$router.push(go)"
         >Leave</v-btn>
