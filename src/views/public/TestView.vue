@@ -12,7 +12,9 @@
         <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
       </div>
     </Dialog>
+    <Snackbar />
 
+    <!-- Start Screen -->
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -22,6 +24,7 @@
         </v-row>
       </v-col>
     </v-row>
+
     <v-row v-else class="nav pa-0 ma-0" dense>
       <v-speed-dial v-if="showBtn" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
         <template v-slot:activator>
@@ -164,6 +167,7 @@
       </v-navigation-drawer>
 
       <v-col class="backgroundTest pa-0 ma-0 right-view">
+        <!-- Consent - Pre Test -->
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             slot="content"
@@ -175,6 +179,8 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
+
+        <!-- Form - Pre Test -->
         <ShowInfo v-if="index==0 && preTestIndex == 1" title="Pre Test - Form">
           <iframe
             slot="content"
@@ -186,6 +192,8 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
+
+        <!-- Heuristics -->
         <ShowInfo
           v-if="index==1 && test.type === 'Expert'"
           :title="test.heuristics[heurisIndex].title"
@@ -224,6 +232,8 @@
             </v-row>
           </div>
         </ShowInfo>
+
+        <!-- Tasks -->
         <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
@@ -231,6 +241,8 @@
             <ViewTask :item="test.tasks[heurisIndex]" />
           </div>
         </ShowInfo>
+
+        <!-- Post Test -->
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
             slot="content"
@@ -254,6 +266,7 @@ import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";
 import Dialog from "@/components/atoms/Dialog";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
@@ -264,6 +277,7 @@ export default {
     HelpBtn,
     VClamp,
     Dialog,
+    Snackbar,
   },
   data: () => ({
     drawer: true,
@@ -409,20 +423,36 @@ export default {
           element: log,
         })
         .then(() => {
-          if (!save)
-            this.$store.dispatch("pushAnswers", {
-              docId: newAnswer.answers,
-              element: Object.assign(this.answersSheet, {
-                uid: this.user.uid,
-                email: this.user.email,
-              }),
-            });
+          if (!save) {
+            this.$store
+              .dispatch("pushAnswers", {
+                docId: newAnswer.answers,
+                element: Object.assign(this.answersSheet, {
+                  uid: this.user.uid,
+                  email: this.user.email,
+                }),
+              })
+              .then(() => {
+                this.$store.commit("setSuccess", "Test succesfully submited");
+              })
+              .catch((err) => {
+                this.$store.commit("setError", err);
+              });
+          }
         });
 
-      this.$store.dispatch("updateMyAnswers", {
-        docId: this.user.uid,
-        element: newAnswer,
-      });
+      this.$store
+        .dispatch("updateMyAnswers", {
+          docId: this.user.uid,
+          element: newAnswer,
+        })
+        .then(() => {
+          if (save)
+            this.$store.commit("setSuccess", "Project succesfully saved");
+        })
+        .catch((err) => {
+          if (save) this.$store.commit("setError", err);
+        });
     },
     progress(item) {
       return (
