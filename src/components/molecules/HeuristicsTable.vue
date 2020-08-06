@@ -78,7 +78,7 @@
             <v-stepper-content step="1">
               <v-row>
                 <v-col cols="10">
-                  <v-form ref="form" @submit.prevent="validateHeuristic()">
+                  <v-form ref="form" @submit.prevent="validateHeuris()">
                     <v-text-field
                       v-model="heuris.title"
                       dense
@@ -95,7 +95,7 @@
             <v-stepper-content step="2">
               <v-row>
                 <v-col cols="10" class="mx-3">
-                  <v-form ref="form1" @submit.prevent="validateQuestion(0)">
+                  <v-form ref="form1" @submit.prevent="addHeuris()">
                     <v-text-field
                       v-model="heuris.questions[0].title"
                       dense
@@ -111,14 +111,14 @@
           </v-stepper-items>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn class="lighten-2" text @click="dialog = false,resetVal(),step=1">Cancel</v-btn>
+            <v-btn class="lighten-2" text @click="dialog = false, kajdjkak(),step=1">Cancel</v-btn>
             <v-btn
               v-if="step < 2"
               class="white--text"
               color="#fca326"
-              @click="validateHeuristic()"
+              @click="validateHeuris()"
             >Next</v-btn>
-            <v-btn v-else class="white--text" color="#fca326" @click="validateQuestion(0)">Add</v-btn>
+            <v-btn v-else class="white--text" color="#fca326" @click="addHeuris()">Add</v-btn>
           </v-card-actions>
         </v-stepper>
       </v-card>
@@ -369,9 +369,6 @@ export default {
         questions: [],
       };
     },
-    changeDialog(payload) {
-      this.dialog = payload;
-    },
     deleteHeuristic(item) {
       let config = confirm(
         `Are you sure delete the heuristic ${this.heuristics[item].title}?`
@@ -534,6 +531,46 @@ export default {
       );
       this.emitChange();
     },
+
+    //MY STUFF
+    validateHeuris() {
+      let valid = (valid = this.$refs.form.validate());
+      if (valid) {
+        this.step = 2;
+      }
+    },
+    addHeuris() {
+      let valid = this.$refs.form1.validate();
+      console.log('heuris', this.heuris);
+
+      if (valid) {
+        this.step = 1;
+        this.dialog = false;
+
+        this.heuristics.push(this.heuris);
+        this.itemSelect = this.heuristics.indexOf(this.heuris);
+
+        this.answersSheet.heuristics.push(
+          Object.assign(
+            {},
+            {
+              id: this.heuris.id,
+              total: this.heuris.total,
+              questions: this.arrayQuestions,
+            }
+          )
+        );
+        this.heuristics.total = this.totalQuestions;
+        this.answersSheet.total = this.totalQuestions;
+        
+        this.resetAll();
+        this.$emit("change");
+      }
+    },
+    resetAll() {
+      if(this.$refs.form) this.$refs.form.reset();
+      if(this.$refs.form) this.$refs.form1.reset();
+    }
   },
   watch: {
     dialog() {
