@@ -9,11 +9,7 @@
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
-        <v-btn
-          class="red white--text ml-1"
-          text
-          @click="submitLog(false), dialog = false"
-        >Submit</v-btn>
+        <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
       </div>
     </Dialog>
 
@@ -46,15 +42,7 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="dialog = true"
-              fab
-              dark
-              small
-              color="#F9A826"
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn @click="dialog = true" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -289,7 +277,8 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
-    dialogText: "Are you sure you want to submit your test. You can only do it once."
+    dialogText:
+      "Are you sure you want to submit your test. You can only do it once.",
   }),
   watch: {
     test: async function () {
@@ -406,7 +395,8 @@ export default {
       let newAnswer = this.user.myAnswers.find(
         (answer) => answer.id == this.id
       );
-      newAnswer.answersSheet.submited = true;
+      if (!save) newAnswer.answersSheet.submited = true;
+
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
