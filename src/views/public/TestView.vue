@@ -166,7 +166,7 @@
         </div>
       </v-navigation-drawer>
 
-      <v-col class="backgroundTest pa-0 ma-0 right-view">
+      <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
         <!-- Consent - Pre Test -->
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
@@ -308,6 +308,9 @@ export default {
         }
       }
     },
+    heurisIndex() {
+      this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
+    }
   },
   methods: {
     mappingSteps() {
