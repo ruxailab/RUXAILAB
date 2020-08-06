@@ -42,13 +42,13 @@
         >New Question</v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
-            <v-form ref="form1" @submit.prevent="validateQuestion(2)">
+            <v-form ref="formQuestion" @submit.prevent="addQuestion()">
               <v-text-field
                 v-model="newQuestion.title"
                 dense
-                label="Title Question"
+                label="Title new question"
                 outlined
-                class="mx-3"
+                class="mx-2"
                 :rules="questionRequired"
                 autofocus
               ></v-text-field>
@@ -57,70 +57,50 @@
         </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="$refs.form1.resetValidation(),dialog = false">Cancel</v-btn>
-          <v-btn class="white--text" color="#fca326" @click="validateQuestion(2)">Add</v-btn>
+          <v-btn class="lighten-2" text @click="closeDialog()">Cancel</v-btn>
+          <v-btn class="white--text" color="#fca326" @click="addQuestion()">Add</v-btn>
         </v-card-actions>
       </v-card>
       <!--Card Create New Heuristic-->
-      <v-card v-else>
+      <v-card v-else style="overflow: hidden">
         <v-card-title
           class="headline white--text"
           style="background-color:#fca326"
           primary-title
         >Creating a heuristic</v-card-title>
-        <v-stepper v-model="step">
-          <v-stepper-header>
-            <v-stepper-step color="#fca326" step="1" :complete="step>1" editable>Name the heuristic</v-stepper-step>
-            <v-divider></v-divider>
-            <v-stepper-step color="#fca326" step="2" editable>Initialize first question</v-stepper-step>
-          </v-stepper-header>
-          <v-stepper-items>
-            <v-stepper-content step="1">
-              <v-row>
-                <v-col cols="10">
-                  <v-form ref="form" @submit.prevent="validateHeuris()">
-                    <v-text-field
-                      v-model="heuris.title"
-                      dense
-                      label="Title Heuristic"
-                      outlined
-                      class="mx-3"
-                      :rules="nameRequired"
-                      autofocus
-                    ></v-text-field>
-                  </v-form>
-                </v-col>
-              </v-row>
-            </v-stepper-content>
-            <v-stepper-content step="2">
-              <v-row>
-                <v-col cols="10" class="mx-3">
-                  <v-form ref="form1" @submit.prevent="addHeuris()">
-                    <v-text-field
-                      v-model="heuris.questions[0].title"
-                      dense
-                      label="Title Question"
-                      outlined
-                      :rules="questionRequired"
-                      autofocus
-                    ></v-text-field>
-                  </v-form>
-                </v-col>
-              </v-row>
-            </v-stepper-content>
-          </v-stepper-items>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn class="lighten-2" text @click="dialog = false, kajdjkak(),step=1">Cancel</v-btn>
-            <v-btn
-              v-if="step < 2"
-              class="white--text"
-              color="#fca326"
-              @click="validateHeuris()"
-            >Next</v-btn>
-            <v-btn v-else class="white--text" color="#fca326" @click="addHeuris()">Add</v-btn>
-          </v-card-actions>
-        </v-stepper>
+
+        <v-row justify="center">
+          <v-col cols="10">
+            <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
+              <v-text-field
+                v-model="heuris.title"
+                dense
+                label="Title your heuristic"
+                outlined
+                class="mx-2"
+                :rules="nameRequired"
+                autofocus
+              ></v-text-field>
+
+              <v-text-field
+                v-model="heuris.questions[0].title"
+                dense
+                label="Title first question"
+                outlined
+                class="mx-2"
+                :rules="questionRequired"
+              ></v-text-field>
+
+              <v-btn @click="log()">log</v-btn>
+            </v-form>
+          </v-col>
+        </v-row>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="lighten-2" text @click="closeDialog()">Cancel</v-btn>
+          <v-btn class="white--text" color="#fca326" @click="addHeuris()">Add</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-card style="background: #f5f7ff;" elevation="0">
@@ -187,7 +167,7 @@
               </v-menu>
             </v-subheader>
             <v-divider></v-divider>
-            <v-list-item @click="addQuestion()">
+            <v-list-item @click="setupQuestion()">
               <v-list-item-icon>
                 <v-icon color="#fca326">mdi-plus</v-icon>
               </v-list-item-icon>
@@ -327,7 +307,6 @@ export default {
       },
       { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
-    heuris: null,
     dialog: false,
     editIndex: -1,
     step: 1,
@@ -336,7 +315,7 @@ export default {
   }),
   methods: {
     log() {
-      console.log("aaaa");
+      console.log("log", this.heuris);
     },
     updateHeuristics() {
       if (this.editIndex == -1) {
@@ -439,7 +418,7 @@ export default {
       this.log();
       this.$forceUpdate();
     },
-    addQuestion() {
+    setupQuestion() {
       this.newQuestion = {
         id:
           this.heuristics[this.itemSelect].questions[
@@ -534,19 +513,16 @@ export default {
 
     //MY STUFF
     validateHeuris() {
-      let valid = (valid = this.$refs.form.validate());
+      let valid = (valid = this.$refs.formHeuris.validate());
       if (valid) {
         this.step = 2;
       }
     },
     addHeuris() {
-      let valid = this.$refs.form1.validate();
-      console.log('heuris', this.heuris);
+      this.dialog = false;
 
-      if (valid) {
-        this.step = 1;
-        this.dialog = false;
-
+      if (this.$refs.formHeuris.validate()) {
+        console.log("heuris", this.heuris);
         this.heuristics.push(this.heuris);
         this.itemSelect = this.heuristics.indexOf(this.heuris);
 
@@ -562,15 +538,45 @@ export default {
         );
         this.heuristics.total = this.totalQuestions;
         this.answersSheet.total = this.totalQuestions;
-        
-        this.resetAll();
+
+        this.$refs.formHeuris.resetValidation();
+        this.$refs.formHeuris.reset();
         this.$emit("change");
       }
     },
-    resetAll() {
-      if(this.$refs.form) this.$refs.form.reset();
-      if(this.$refs.form) this.$refs.form1.reset();
-    }
+    closeDialog() {
+      this.dialog = false;
+
+      if (this.$refs.formHeuris) {
+        this.$refs.formHeuris.resetValidation();
+        this.$refs.formHeuris.reset();
+      }
+      if (this.$refs.formQuestion) {
+        this.$refs.formQuestion.resetValidation();
+        this.$refs.formQuestion.reset();
+      }
+    },
+    addQuestion() {
+      this.dialog = false;
+
+      this.heuristics[this.itemSelect].questions.push(this.newQuestion);
+      this.newQuestion = null;
+
+      this.heuristics[this.itemSelect].total = this.heuristics[
+        this.itemSelect
+      ].questions.length;
+      this.answersSheet.total = this.totalQuestions;
+
+      Object.assign(this.answersSheet.heuristics[this.itemSelect], {
+        id: this.heuristics[this.itemSelect].id,
+        total: this.heuristics[this.itemSelect].total,
+        questions: this.arrayQuestions,
+      });
+
+      this.$refs.formQuestion.resetValidation();
+      this.$refs.formQuestion.reset();
+      this.$emit("change");
+    },
   },
   watch: {
     dialog() {
@@ -590,10 +596,20 @@ export default {
         this.heuris.total = this.heuris.questions.length;
       }
       if (!this.dialog) {
-        if (this.$refs.form) this.$refs.form.resetValidation();
-        if (this.$refs.form1) this.$refs.form1.resetValidation();
         this.newQuestion = null;
         this.itemEdit = null;
+      }
+      if (this.dialog) {
+        //when dialog opens everything is reset
+        if (this.$refs.formHeuris) {
+          this.$refs.formHeuris.resetValidation();
+          this.$refs.formHeuris.reset();
+        }
+
+        if (this.$refs.formQuestion) {
+          this.$refs.formQuestion.resetValidation();
+          this.$refs.formQuestion.reset();
+        }
       }
     },
     heuristics() {
@@ -602,6 +618,9 @@ export default {
     itemSelect() {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
+    },
+    "heuris.title"() {
+      console.log(this.heuris.title);
     },
   },
   computed: {
@@ -651,6 +670,7 @@ export default {
       };
     }
     this.heuris.total = this.heuris.questions.length;
+    console.log("created", this.heuris);
   },
 };
 </script>
