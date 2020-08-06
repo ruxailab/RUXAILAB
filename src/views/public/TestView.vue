@@ -216,7 +216,7 @@
                   </v-col>
                 </v-row>
 
-                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]" :heurisIndex="heurisIndex">
                   <v-select
                     slot="answer"
                     v-if="answersSheet !== undefined"

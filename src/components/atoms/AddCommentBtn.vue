@@ -42,9 +42,14 @@
 
 <script>
 export default {
-  props: ["comment"],
+  props: ["comment", "heurisIndex"],
   data: () => ({
     show: false
-  })
+  }),
+  watch: {
+    heurisIndex() {
+      this.show = false; //fecha comentario qnd muda de heuristica
+    }
+  }
 };
 </script>
