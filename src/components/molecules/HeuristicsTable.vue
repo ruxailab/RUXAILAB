@@ -390,7 +390,7 @@ export default {
         title: "Edit Heuristic",
         titleEdit: item.title,
         rule: this.nameRequired,
-        id: item.id
+        id: item.id,
       };
       this.dialog = true;
     },
@@ -511,7 +511,6 @@ export default {
       if (this.$refs.formHeuris.validate()) {
         this.dialog = false;
 
-        console.log("heuris", this.heuris);
         this.heuristics.push(this.heuris);
         this.itemSelect = this.heuristics.indexOf(this.heuris);
 
@@ -572,20 +571,15 @@ export default {
       if (this.$refs.formEdit.validate()) {
         this.dialog = false;
 
-        if(this.itemEdit.title === "Edit Heuristic") {
-          this.updateHeuris();
+        if (this.itemEdit.title === "Edit Heuristic") {
+          this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit;
         } else {
-          this.updateQuestion();
+          this.heuristics[this.itemSelect].questions[
+            this.questionSelect
+          ].title = this.itemEdit.titleEdit;
         }
       }
     },
-    updateHeuris() {
-      let edit = this.heuristics.find(heuris => {
-        
-        heuris.id == this.itemEdit.id
-      })
-      console.log('edit', edit);
-    }
   },
   watch: {
     dialog() {
@@ -627,9 +621,6 @@ export default {
     itemSelect() {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
-    },
-    "heuris.title"() {
-      console.log(this.heuris.title);
     },
   },
   computed: {
