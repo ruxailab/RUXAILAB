@@ -64,7 +64,8 @@
           style="background-color:#fca326"
           primary-title
         >Creating a heuristic</v-card-title>
-
+        {{heuris}}
+        
         <v-row justify="center">
           <v-col cols="10">
             <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
@@ -293,6 +294,7 @@ export default {
     questionSelect: null,
     itemEdit: null,
     newQuestion: null,
+    heuris:null,
     headers: [
       {
         text: "Title",
@@ -507,10 +509,11 @@ export default {
     //MY STUFF
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
-        this.dialog = false;
-
-        this.heuristics.push(this.heuris);
-        this.itemSelect = this.heuristics.indexOf(this.heuris);
+        //this.dialog = false;
+        console.log("heuris", this.heuris);
+        console.log("Heris",this.heuris.title)
+        this.heuristics.push(Object.assign({},this.heuris));
+        this.itemSelect = this.heuristics.length-1;
 
         this.answersSheet.heuristics.push(
           Object.assign(
@@ -582,6 +585,7 @@ export default {
   watch: {
     dialog() {
       if (!this.dialog && this.heuristics.length > 0 && !this.itemEdit) {
+        debugger
         this.heuris = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
           title: "",
@@ -596,10 +600,10 @@ export default {
         };
         this.heuris.total = this.heuris.questions.length;
       }
-      if (!this.dialog) {
-        this.newQuestion = null;
-        this.itemEdit = null;
-      }
+      // if (!this.dialog) {
+      //   this.newQuestion = null;
+      //   this.itemEdit = null;
+      // }
       if (this.dialog) {
         //when dialog opens everything is reset
         if (this.$refs.formHeuris) {
