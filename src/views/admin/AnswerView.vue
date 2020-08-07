@@ -1,4 +1,5 @@
 <template >
+<v-row justify="center">
   <ShowInfo title="Answers">
     <!-- Main Tabs -->
     <v-tabs
@@ -14,7 +15,7 @@
     </v-tabs>
         
     <!-- Main Tabs Content -->
-    <div slot="content">
+    <div slot="content" class="ma-0 pa-0">
       <!-- Main Tab 1 -->
       <v-card v-if="index==0" style="background: #f5f7ff;">
         <v-card-title class="subtitleView">Statistics</v-card-title>
@@ -306,6 +307,7 @@
       </v-card>
     </div>
   </ShowInfo>
+</v-row>
 </template>
 
 <script>
