@@ -448,9 +448,9 @@ export default {
           let res = heuris.questions.reduce((totalQuestions, question) => {
             return totalQuestions + Number(question.res);
           }, 0);
-          const collection = heurisResults.get(`heuristic ${heuris.id + 1}`);
+          const collection = heurisResults.get(`H ${heuris.id + 1}`);
           if (!collection) {
-            heurisResults.set(`heuristic ${heuris.id + 1}`, [
+            heurisResults.set(`H ${heuris.id + 1}`, [
               { res: res, av: answer.uid },
             ]);
           } else {
@@ -503,7 +503,7 @@ export default {
       let id = 1;
       answers.forEach((answer) => {
         this.headersExperts.push({
-          text: `Avaliator ${id}`,
+          text: `Av ${id}`,
           value: answer.uid,
           align: "center",
         });
