@@ -10,7 +10,7 @@
         >{{itemEdit.title}}</v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
-            <v-form ref="form" @submit.prevent="itemEdit.validate(1)">
+            <v-form ref="formEdit" @submit.prevent="validateEdit()">
               <v-text-field
                 v-model="itemEdit.titleEdit"
                 dense
@@ -25,12 +25,8 @@
         </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            class="lighten-2"
-            text
-            @click="dialog = false,$refs.form.resetValidation(),itemEdit = null"
-          >Cancel</v-btn>
-          <v-btn class="white--text" color="#fca326" @click="itemEdit.validate(1)">Ok</v-btn>
+          <v-btn class="lighten-2" text @click="dialog = false, itemEdit = null">Cancel</v-btn>
+          <v-btn class="white--text" color="#fca326" @click="validateEdit()">Ok</v-btn>
         </v-card-actions>
       </v-card>
       <!--Card Create New Question-->
@@ -317,37 +313,37 @@ export default {
     log() {
       console.log("log", this.heuris);
     },
-    updateHeuristics() {
-      if (this.editIndex == -1) {
-        this.heuristics.push(this.heuris);
-        this.answersSheet.heuristics.push(
-          Object.assign(
-            {},
-            {
-              id: this.heuris.id,
-              total: this.heuris.total,
-              questions: this.arrayQuestions,
-            }
-          )
-        );
-      } else {
-        Object.assign(this.heuristics[this.editIndex], this.heuris);
-        Object.assign(this.answersSheet.heuristics[this.editIndex], {
-          id: this.heuris.id,
-          total: this.heuris.total,
-          questions: this.arrayQuestions,
-        });
-        this.editIndex = -1;
-      }
-      this.heuristics.total = this.totalQuestions;
-      this.answersSheet.total = this.totalQuestions;
-      this.heuris = {
-        id: this.heuristics[this.heuristics.length - 1].id + 1,
-        title: "",
-        total: 0,
-        questions: [],
-      };
-    },
+    // updateHeuristics() {
+    //   if (this.editIndex == -1) {
+    //     this.heuristics.push(this.heuris);
+    //     this.answersSheet.heuristics.push(
+    //       Object.assign(
+    //         {},
+    //         {
+    //           id: this.heuris.id,
+    //           total: this.heuris.total,
+    //           questions: this.arrayQuestions,
+    //         }
+    //       )
+    //     );
+    //   } else {
+    //     Object.assign(this.heuristics[this.editIndex], this.heuris);
+    //     Object.assign(this.answersSheet.heuristics[this.editIndex], {
+    //       id: this.heuris.id,
+    //       total: this.heuris.total,
+    //       questions: this.arrayQuestions,
+    //     });
+    //     this.editIndex = -1;
+    //   }
+    //   this.heuristics.total = this.totalQuestions;
+    //   this.answersSheet.total = this.totalQuestions;
+    //   this.heuris = {
+    //     id: this.heuristics[this.heuristics.length - 1].id + 1,
+    //     title: "",
+    //     total: 0,
+    //     questions: [],
+    //   };
+    // },
     deleteHeuristic(item) {
       let config = confirm(
         `Are you sure delete the heuristic ${this.heuristics[item].title}?`
@@ -394,7 +390,7 @@ export default {
         title: "Edit Heuristic",
         titleEdit: item.title,
         rule: this.nameRequired,
-        validate: this.validateHeuristic,
+        id: item.id
       };
       this.dialog = true;
     },
@@ -403,7 +399,6 @@ export default {
         title: "Edit Question",
         titleEdit: item.title,
         rule: this.questionRequired,
-        validate: this.validateQuestion,
       };
       this.dialog = true;
     },
@@ -429,76 +424,76 @@ export default {
       };
       this.dialog = true;
     },
-    validateHeuristic(edit) {
-      if (this.$refs.form.validate() && edit) {
-        this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit;
-        this.itemEdit = null;
-        this.dialog = false;
-        this.$refs.form.resetValidation();
-        this.$emit("change");
-      } else if (this.$refs.form.validate()) {
-        this.step = 2;
-        this.$refs.form.resetValidation();
-      }
-    },
-    validateQuestion(code) {
-      if (this.$refs.form1.validate()) {
-        switch (code) {
-          case 0: //Start New Heuristic
-            this.step = 1;
-            this.dialog = false;
-            this.heuristics.push(this.heuris);
-            this.itemSelect = this.heuristics.indexOf(this.heuris);
-            this.answersSheet.heuristics.push(
-              Object.assign(
-                {},
-                {
-                  id: this.heuris.id,
-                  total: this.heuris.total,
-                  questions: this.arrayQuestions,
-                }
-              )
-            );
-            this.heuristics.total = this.totalQuestions;
-            this.answersSheet.total = this.totalQuestions;
-            this.$refs.form1.resetValidation();
-            this.$refs.form.resetValidation();
-            this.$emit("change");
-            break;
+    // validateHeuristic(edit) {
+    //   if (this.$refs.form.validate() && edit) {
+    //     this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit;
+    //     this.itemEdit = null;
+    //     this.dialog = false;
+    //     this.$refs.form.resetValidation();
+    //     this.$emit("change");
+    //   } else if (this.$refs.form.validate()) {
+    //     this.step = 2;
+    //     this.$refs.form.resetValidation();
+    //   }
+    // },
+    // validateQuestion(code) {
+    //   if (this.$refs.form1.validate()) {
+    //     switch (code) {
+    //       case 0: //Start New Heuristic
+    //         this.step = 1;
+    //         this.dialog = false;
+    //         this.heuristics.push(this.heuris);
+    //         this.itemSelect = this.heuristics.indexOf(this.heuris);
+    //         this.answersSheet.heuristics.push(
+    //           Object.assign(
+    //             {},
+    //             {
+    //               id: this.heuris.id,
+    //               total: this.heuris.total,
+    //               questions: this.arrayQuestions,
+    //             }
+    //           )
+    //         );
+    //         this.heuristics.total = this.totalQuestions;
+    //         this.answersSheet.total = this.totalQuestions;
+    //         this.$refs.form1.resetValidation();
+    //         this.$refs.form.resetValidation();
+    //         this.$emit("change");
+    //         break;
 
-          case 1: //Edit Question
-            this.heuristics[this.itemSelect].questions[
-              this.questionSelect
-            ].title = this.itemEdit.titleEdit;
-            this.itemEdit = null;
-            this.dialog = false;
-            this.$refs.form1.resetValidation();
-            this.$emit("change");
-            break;
+    //       case 1: //Edit Question
+    //         this.heuristics[this.itemSelect].questions[
+    //           this.questionSelect
+    //         ].title = this.itemEdit.titleEdit;
+    //         this.itemEdit = null;
+    //         this.dialog = false;
+    //         this.$refs.form1.resetValidation();
+    //         this.$emit("change");
+    //         break;
 
-          case 2: //Add New Question
-            this.heuristics[this.itemSelect].questions.push(this.newQuestion);
-            this.newQuestion = null;
-            this.dialog = false;
-            this.$refs.form1.resetValidation();
-            this.heuristics[this.itemSelect].total = this.heuristics[
-              this.itemSelect
-            ].questions.length;
-            this.answersSheet.total = this.totalQuestions;
-            Object.assign(this.answersSheet.heuristics[this.itemSelect], {
-              id: this.heuristics[this.itemSelect].id,
-              total: this.heuristics[this.itemSelect].total,
-              questions: this.arrayQuestions,
-            });
-            this.$emit("change");
-            break;
-        }
-      }
-    },
-    resetVal() {
-      this.$refs.form.resetValidation();
-      this.$refs.form1.resetValidation();
-    },
+    //       case 2: //Add New Question
+    //         this.heuristics[this.itemSelect].questions.push(this.newQuestion);
+    //         this.newQuestion = null;
+    //         this.dialog = false;
+    //         this.$refs.form1.resetValidation();
+    //         this.heuristics[this.itemSelect].total = this.heuristics[
+    //           this.itemSelect
+    //         ].questions.length;
+    //         this.answersSheet.total = this.totalQuestions;
+    //         Object.assign(this.answersSheet.heuristics[this.itemSelect], {
+    //           id: this.heuristics[this.itemSelect].id,
+    //           total: this.heuristics[this.itemSelect].total,
+    //           questions: this.arrayQuestions,
+    //         });
+    //         this.$emit("change");
+    //         break;
+    //     }
+    //   }
+    // },
+    // resetVal() {
+    //   this.$refs.form.resetValidation();
+    //   this.$refs.form1.resetValidation();
+    // },
     deleteItem(item) {
       this.heuristics[this.itemSelect].questions[
         this.questionSelect
@@ -512,16 +507,10 @@ export default {
     },
 
     //MY STUFF
-    validateHeuris() {
-      let valid = (valid = this.$refs.formHeuris.validate());
-      if (valid) {
-        this.step = 2;
-      }
-    },
     addHeuris() {
-      this.dialog = false;
-
       if (this.$refs.formHeuris.validate()) {
+        this.dialog = false;
+
         console.log("heuris", this.heuris);
         this.heuristics.push(this.heuris);
         this.itemSelect = this.heuristics.indexOf(this.heuris);
@@ -557,26 +546,46 @@ export default {
       }
     },
     addQuestion() {
-      this.dialog = false;
+      if (this.$refs.formQuestion.validate()) {
+        this.dialog = false;
 
-      this.heuristics[this.itemSelect].questions.push(this.newQuestion);
-      this.newQuestion = null;
+        this.heuristics[this.itemSelect].questions.push(this.newQuestion);
+        this.newQuestion = null;
 
-      this.heuristics[this.itemSelect].total = this.heuristics[
-        this.itemSelect
-      ].questions.length;
-      this.answersSheet.total = this.totalQuestions;
+        this.heuristics[this.itemSelect].total = this.heuristics[
+          this.itemSelect
+        ].questions.length;
+        this.answersSheet.total = this.totalQuestions;
 
-      Object.assign(this.answersSheet.heuristics[this.itemSelect], {
-        id: this.heuristics[this.itemSelect].id,
-        total: this.heuristics[this.itemSelect].total,
-        questions: this.arrayQuestions,
-      });
+        Object.assign(this.answersSheet.heuristics[this.itemSelect], {
+          id: this.heuristics[this.itemSelect].id,
+          total: this.heuristics[this.itemSelect].total,
+          questions: this.arrayQuestions,
+        });
 
-      this.$refs.formQuestion.resetValidation();
-      this.$refs.formQuestion.reset();
-      this.$emit("change");
+        this.$refs.formQuestion.resetValidation();
+        this.$refs.formQuestion.reset();
+        this.$emit("change");
+      }
     },
+    validateEdit() {
+      if (this.$refs.formEdit.validate()) {
+        this.dialog = false;
+
+        if(this.itemEdit.title === "Edit Heuristic") {
+          this.updateHeuris();
+        } else {
+          this.updateQuestion();
+        }
+      }
+    },
+    updateHeuris() {
+      let edit = this.heuristics.find(heuris => {
+        
+        heuris.id == this.itemEdit.id
+      })
+      console.log('edit', edit);
+    }
   },
   watch: {
     dialog() {
@@ -670,7 +679,6 @@ export default {
       };
     }
     this.heuris.total = this.heuris.questions.length;
-    console.log("created", this.heuris);
   },
 };
 </script>
