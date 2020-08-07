@@ -378,6 +378,7 @@ export default {
           ].questions.length;
           this.answersSheet.total = this.totalQuestions;
         }
+        this.emitChange();
       } else {
         alert("Sorry, but you can't delete all heuristics questions");
       }
