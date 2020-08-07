@@ -86,8 +86,6 @@
                 class="mx-2"
                 :rules="questionRequired"
               ></v-text-field>
-
-              <v-btn @click="log()">log</v-btn>
             </v-form>
           </v-col>
         </v-row>
@@ -411,7 +409,6 @@ export default {
     },
     emitChange() {
       this.$emit("change");
-      this.log();
       this.$forceUpdate();
     },
     setupQuestion() {
