@@ -86,12 +86,13 @@
         </v-tabs>
 
         <v-row justify="center">
-          <v-col cols="10" v-if="ind == 0">
+          <v-col cols="12" v-if="ind == 0">
             <v-data-table
+              dense
               :headers="headersEvaluators"
               :items="dataEvaluators"
               :items-per-page="5"
-              class="elevation-1 cardStyle"
+              class="elevation-1 cardStyle mx-2"
             >
               <template
                 v-for="(header) in headersExperts"
