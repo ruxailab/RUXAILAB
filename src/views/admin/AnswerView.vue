@@ -139,8 +139,9 @@
                 <v-data-table
                   :headers="headersExperts"
                   :items="dataExperts"
-                  :items-per-page="5"
+                  :items-per-page="15"
                   class="elevation-1 cardStyle"
+                  dense
                 >
                   <template
                     v-for="(header) in headersExperts"
@@ -162,8 +163,9 @@
                 <v-data-table
                   :headers="headersHeuris"
                   :items="dataHeuris"
-                  :items-per-page="5"
+                  :items-per-page="15"
                   class="elevation-1 cardStyle"
+                  dense
                 >
                     <template v-slot:item.average="{ item }">
                       <v-chip :color="getColor(item.average,item.max,item.min)" dark>{{ item.average }}</v-chip>
@@ -704,7 +706,7 @@ export default {
 </style>
 <style >
 .v-chip {
-  min-width: 100px;
+  min-width: 50px;
   justify-content: center;
 }
 </style>
