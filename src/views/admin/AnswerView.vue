@@ -192,7 +192,7 @@
           <v-col cols="2" class="pa-2 ma-0">
             <div class="subtitleView">HEURISTICS</div>
             <v-divider></v-divider>
-            <v-list color="transparent" dense>
+            <v-list color="transparent" dense class="list-scroll">
               <v-list-item
                 v-for="(heuris, i) in answers.answersSheet.heuristics"
                 :key="i"
@@ -211,7 +211,7 @@
           <v-col v-if="open" cols="2" class="pa-2 ma-0">
             <div class="subtitleView">HEURISTIC {{heurisSelected}}</div>
             <v-divider></v-divider>
-            <v-list color="transparent" dense>
+            <v-list color="transparent" dense class="list-scroll">
               <v-list-item @click="dataSelected = -1, questionIndex = -1">
                 <v-list-item-title
                   :style="dataSelected == -1? 'color: #fca326': 'color:black'"
@@ -705,6 +705,29 @@ export default {
   height: 400px;
   padding: 0px;
   margin: 0px 10px 0px;
+}
+.list-scroll {
+  height: 508px;
+  overflow: auto;
+}
+/* Nav bar list scroll bar */
+/* width */
+.list-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.list-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.list-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+  /* background: #515069; */
 }
 </style>
 <style >
