@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!--
     <Snackbar />
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title slot="title" class="headline error white--text" primary-title>Are you sure you want to delete this test?</v-card-title>
@@ -13,11 +14,17 @@
           @click="deleteTest(item), loading = true"
         >Delete</v-btn>
       </div>
-    </Dialog>
+    </Dialog> -->
+    <v-hover v-slot:default="{ hover }">
 
-    <v-card shaped class="card">
+    <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="openManager(item)">
+
       <v-container>
-        <v-row justify="end">
+        <v-col cols="12" align-self="start">
+          <h4>{{item.title}}</h4>
+        </v-col>
+       <v-row justify="end">
+           <!--
           <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
             <template v-slot:activator="{ on, attrs }">
               <v-col cols="9" align-self="start">
@@ -55,7 +62,7 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list>
-          </v-menu>
+          </v-menu> -->
         </v-row>
 
         <!-- Desktop/Tablet -->
@@ -64,12 +71,10 @@
             <v-row class="bottomStart">
               <v-col>
                 <v-icon x-large>mdi-account-circle</v-icon>
-                <div class="text-center caption">{{new Date().toDateString()}}</div>
-              </v-col>
-            </v-row>
+                <v-btn color="grey darken-3 white--text" disabled rounded :ripple="false">{{item.type}}</v-btn>
+                <div class="text-center caption">Created  {{new Date().toDateString()}}</div>
 
-            <v-row class="bottomEnd">
-              <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+              </v-col>
             </v-row>
           </div>
         </v-row>
@@ -89,19 +94,23 @@
         </v-row>
       </v-container>
     </v-card>
+  </v-hover>
+
   </div>
 </template>
 
 <script>
-import Snackbar from "@/components/atoms/Snackbar";
-import Dialog from "@/components/atoms/Dialog";
+//
+// import Snackbar from "@/components/atoms/Snackbar";
+// import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["item", "accessLevel"],
-  components: {
-    Snackbar,
-    Dialog,
-  },
+  //
+  // components: {
+  //   Snackbar,
+  //   Dialog,
+  // },
   data: () => ({
     menu: false,
     dialog: false,

@@ -11,8 +11,8 @@
       class="console-button mx-1"
       @click="goTo('/testslist')"
     >Go to Console</v-btn>
-    
-   
+
+
     <NotificationBtn v-if="user" />
 
     <v-btn text @click="goTo('/signin')" v-if="!user">

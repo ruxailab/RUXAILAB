@@ -4,7 +4,7 @@
       <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="dialog = true">
         <v-card-text>
           <v-row class="fill-height" justify="center" align="center">
-            <v-icon color="#f9a826" size="150">mdi-plus-circle-outline</v-icon>
+            <v-icon color="#f9a826" size="100">mdi-plus-circle-outline</v-icon>
           </v-row>
           <v-row class="fill-height" justify="center" align="center">
             <p>New Test</p>
@@ -12,7 +12,7 @@
         </v-card-text>
       </v-card>
     </v-hover>
-    
+
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
@@ -36,7 +36,7 @@ import FormTestDescription from "@/components/atoms/FormTestDescription";
 export default {
   components: {
     FormTestDescription,
-  
+
   },
   data: () => ({
     dialog: false,

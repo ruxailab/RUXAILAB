@@ -2,7 +2,7 @@
   <v-container style="display:contents">
     <div style="height: 300px" class="background-orange background-img">
       <v-row justify="center" class="fill-height">
-        <v-col cols="10">
+        <v-col cols="11">
           <v-text-field
             class="mt-5"
             label="Search"
@@ -23,6 +23,8 @@
             <v-tab @click="index = 1">Tests I colaborate with</v-tab>
             <v-tab @click="index = 2">My Answers</v-tab>
           </v-tabs>
+
+
 
           <!-- Mobile Button -->
           <v-select dense outlined v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
@@ -60,7 +62,22 @@
           </v-row>
         </v-col>
       </v-row>
+
     </div>
+    <v-fab-transition>
+             <v-btn
+               color="orange"
+               fab
+       large
+       dark
+       bottom
+       right
+               class="v-btn--example"
+
+             >
+               <v-icon>mdi-plus</v-icon>
+             </v-btn>
+           </v-fab-transition>
   </v-container>
 </template>
 
@@ -203,4 +220,11 @@ export default {
     transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+ .v-btn--example {
+   bottom: 0;
+   right: 0;
+   position: absolute;
+   margin: 0 16px 16px 0;
+ }
+
 </style>
