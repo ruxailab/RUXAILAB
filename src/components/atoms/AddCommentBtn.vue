@@ -28,7 +28,6 @@
         <v-textarea
           outlined
           dense
-          :rules="rules"
           auto-grow
           v-if="show"
           v-model="comment.com"
@@ -43,10 +42,14 @@
 
 <script>
 export default {
-  props: ["comment"],
+  props: ["comment", "heurisIndex"],
   data: () => ({
-    show: false,
-    rules: [v => v.length <= 100 || "Max 100 characters"]
-  })
+    show: false
+  }),
+  watch: {
+    heurisIndex() {
+      this.show = false; //fecha comentario qnd muda de heuristica
+    }
+  }
 };
 </script>

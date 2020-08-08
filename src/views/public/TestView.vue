@@ -1,5 +1,20 @@
 <template >
   <div v-if="test && answersSheet != undefined">
+    <Dialog :dialog="dialog" :text="dialogText">
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to submit this test?</v-card-title>
+
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+        <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
+      </div>
+    </Dialog>
+    <Snackbar />
+
+    <!-- Start Screen -->
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{test.title}}</h1>
@@ -9,16 +24,9 @@
         </v-row>
       </v-col>
     </v-row>
+
     <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial
-        v-if="answersSheet !== undefined "
-        v-model="fab"
-        fixed
-        class="mr-3"
-        bottom
-        right
-        open-on-hover
-      >
+      <v-speed-dial v-if="showBtn" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
             <v-icon v-if="fab">mdi-close</v-icon>
@@ -37,15 +45,7 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="submitLog(false)"
-              fab
-              dark
-              small
-              color="#F9A826"
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn @click="dialog = true" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -80,7 +80,7 @@
           </v-list-item>
         </div>
 
-        <v-list flat dense>
+        <v-list class="nav-list" flat dense max-height="65%" style="overflow:auto">
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
@@ -166,7 +166,8 @@
         </div>
       </v-navigation-drawer>
 
-      <v-col class="backgroundTest pa-0 ma-0">
+      <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
+        <!-- Consent - Pre Test -->
         <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
           <iframe
             slot="content"
@@ -178,6 +179,8 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
+
+        <!-- Form - Pre Test -->
         <ShowInfo v-if="index==0 && preTestIndex == 1" title="Pre Test - Form">
           <iframe
             slot="content"
@@ -189,6 +192,8 @@
             marginwidth="0"
           >Carregando…</iframe>
         </ShowInfo>
+
+        <!-- Heuristics -->
         <ShowInfo
           v-if="index==1 && test.type === 'Expert'"
           :title="test.heuristics[heurisIndex].title"
@@ -211,7 +216,7 @@
                   </v-col>
                 </v-row>
 
-                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]">
+                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]" :heurisIndex="heurisIndex">
                   <v-select
                     slot="answer"
                     v-if="answersSheet !== undefined"
@@ -227,6 +232,8 @@
             </v-row>
           </div>
         </ShowInfo>
+
+        <!-- Tasks -->
         <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
@@ -234,6 +241,8 @@
             <ViewTask :item="test.tasks[heurisIndex]" />
           </div>
         </ShowInfo>
+
+        <!-- Post Test -->
         <ShowInfo v-if="index==2 " title="Post Test">
           <iframe
             slot="content"
@@ -255,7 +264,9 @@ import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
-import VClamp from 'vue-clamp'
+import VClamp from "vue-clamp";
+import Dialog from "@/components/atoms/Dialog";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
@@ -264,7 +275,9 @@ export default {
     ViewTask,
     AddCommentBtn,
     HelpBtn,
-    VClamp
+    VClamp,
+    Dialog,
+    Snackbar,
   },
   data: () => ({
     drawer: true,
@@ -277,6 +290,9 @@ export default {
     idx: 0,
     fab: false,
     res: 0,
+    dialog: false,
+    dialogText:
+      "Are you sure you want to submit your test. You can only do it once.",
   }),
   watch: {
     test: async function () {
@@ -292,6 +308,9 @@ export default {
         }
       }
     },
+    heurisIndex() {
+      this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
+    }
   },
   methods: {
     mappingSteps() {
@@ -393,6 +412,8 @@ export default {
       let newAnswer = this.user.myAnswers.find(
         (answer) => answer.id == this.id
       );
+      if (!save) newAnswer.answersSheet.submited = true;
+
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
@@ -405,20 +426,36 @@ export default {
           element: log,
         })
         .then(() => {
-          if (!save)
-            this.$store.dispatch("pushAnswers", {
-              docId: newAnswer.answers,
-              element: Object.assign(this.answersSheet, {
-                uid: this.user.uid,
-                email: this.user.email,
-              }),
-            });
+          if (!save) {
+            this.$store
+              .dispatch("pushAnswers", {
+                docId: newAnswer.answers,
+                element: Object.assign(this.answersSheet, {
+                  uid: this.user.uid,
+                  email: this.user.email,
+                }),
+              })
+              .then(() => {
+                this.$store.commit("setSuccess", "Test succesfully submited");
+              })
+              .catch((err) => {
+                this.$store.commit("setError", err);
+              });
+          }
         });
 
-      this.$store.dispatch("updateMyAnswers", {
-        docId: this.user.uid,
-        element: newAnswer,
-      });
+      this.$store
+        .dispatch("updateMyAnswers", {
+          docId: this.user.uid,
+          element: newAnswer,
+        })
+        .then(() => {
+          if (save)
+            this.$store.commit("setSuccess", "Project succesfully saved");
+        })
+        .catch((err) => {
+          if (save) this.$store.commit("setError", err);
+        });
     },
     progress(item) {
       return (
@@ -446,6 +483,12 @@ export default {
       set(item) {
         return item;
       },
+    },
+    showBtn() {
+      if (this.answersSheet !== undefined) {
+        if (!this.answersSheet.submited) return true;
+      }
+      return false;
     },
   },
   created() {
@@ -529,8 +572,8 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  
-/*
+
+  /*
   height: 2.9em; 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -538,31 +581,43 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; */
 }
-.line-clamp {  
-  /**Major Properties**/
-  line-height: 1.2rem;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-  overflow: hidden !important;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-}
 
+/* Right side scroll bar */
 /* width */
-::-webkit-scrollbar {
+.right-view::-webkit-scrollbar {
   width: 9px;
 }
 /* Track */
-::-webkit-scrollbar-track {
+.right-view::-webkit-scrollbar-track {
   background: none;
 }
 /* Handle */
-::-webkit-scrollbar-thumb {
+.right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+/* Nav bar list scroll bar */
+/* width */
+.nav-list::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.nav-list::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.nav-list::-webkit-scrollbar-thumb {
+  background: #777596;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.nav-list::-webkit-scrollbar-thumb:hover {
+  background: #64618a;
+  /* background: #515069; */
 }
 </style>
