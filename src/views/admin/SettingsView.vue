@@ -1,12 +1,9 @@
 <template>
   <v-container v-if="test">
     <Snackbar />
-    <v-row justify="space-around">
-      <v-col cols="12" class="titleView">Settings</v-col>
-    </v-row>
-    <v-divider></v-divider>
-    <v-row justify="center">
-      <v-col cols="12">
+
+    <ShowInfo title="Settings">
+      <div slot="content">
         <v-card class="dataCard">
           <v-col class="mb-1 pa-4 pb-1">
             <p class="subtitleView">Current Test</p>
@@ -41,25 +38,27 @@
           </template>
           <span>Save</span>
         </v-tooltip>
-      </v-col>
-    </v-row>
+      </div>
+    </ShowInfo>
   </v-container>
 </template>
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
-import Snackbar from "@/components/atoms/Snackbar"
+import Snackbar from "@/components/atoms/Snackbar";
+import ShowInfo from "@/components/organisms/ShowInfo";
 
 export default {
   props: ["id"],
   components: {
     FormTestDescription,
-    Snackbar
+    Snackbar,
+    ShowInfo,
   },
   data: () => ({
     object: null,
     change: false,
-    valids: [false, true, true]
+    valids: [false, true, true],
   }),
   methods: {
     validate(valid, index) {
@@ -68,12 +67,14 @@ export default {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
-      await this.$store.dispatch("getCooperators", { id: this.test.cooperators });
+      await this.$store.dispatch("getCooperators", {
+        id: this.test.cooperators,
+      });
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -85,11 +86,11 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -99,8 +100,8 @@ export default {
                 reports: this.object.reports,
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
-                accessLevel: coop.accessLevel
-              }
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -110,32 +111,32 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -150,15 +151,15 @@ export default {
     reports() {
       return this.$store.state.reports.reports || [];
     },
-    cooperators(){
-      return this.$store.state.cooperators.cooperators || []
-    }
+    cooperators() {
+      return this.$store.state.cooperators.cooperators || [];
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
     }
-  }
+  },
 };
 </script>
 
@@ -187,10 +188,6 @@ export default {
 
 .dataCard {
   background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  margin: 10px;
-  padding-bottom: 10px;
-  min-height: 550px;
+  min-height: 350px;
 }
 </style>
