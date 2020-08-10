@@ -162,7 +162,6 @@ export default {
   data: () => ({
     object: null,
     change: false,
-    valids: [false, true, true],
     cooperatorsEdit: [],
     editedCoops: [],
     deletedCoops: [],
@@ -183,10 +182,7 @@ export default {
   }),
   methods: {
     log() {
-      console.log("aaaaaa");
-    },
-    validate(valid, index) {
-      this.valids[index] = valid;
+      console.log("log", this.cooperators.cooperators[0].accessLevel);
     },
     submit() {
       this.cooperatorsEdit.forEach(async (guest) => {
@@ -267,6 +263,9 @@ export default {
             param: "accessLevel",
           });
         });
+      
+      // let coop = this.cooperators.cooperators.find(el => el.id == guest.id);
+      // console.log("coop", coop);
     },
     send(guest) {
       let inv = {
@@ -410,7 +409,7 @@ export default {
       if (!this.change) return;
       event.preventDefault();
       event.returnValue = "";
-    },
+    }
   },
   watch: {
     cooperators: async function () {
@@ -420,7 +419,7 @@ export default {
           this.$store.dispatch("getTest", { id: this.cooperators.test.id });
         }
       }
-    },
+    }
   },
   computed: {
     test() {
@@ -454,12 +453,14 @@ export default {
         if (!hasUser) array.push(user);
       });
       return array;
-    },
+    }
   },
   created() {
     if (!this.$store.state.cooperators.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
-    else this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+    else {
+      this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+    }
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   },
   beforeRouteLeave(to, from, next) {
