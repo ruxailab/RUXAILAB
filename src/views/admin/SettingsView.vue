@@ -23,7 +23,11 @@
     </Dialog>
 
     <Dialog :dialog="dialogDel" :text="dialogText">
-      <v-card-title slot="title" class="headline error white--text" primary-title>Are you sure you want to delete this test?</v-card-title>
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to delete this test?</v-card-title>
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
@@ -103,7 +107,7 @@ export default {
     valids: [false, true, true],
     dialogAlert: false,
     dialogDel: false,
-    loading: false
+    loading: false,
   }),
   methods: {
     validate(valid, index) {
@@ -202,8 +206,12 @@ export default {
             })
             .then(() => {
               this.loading = false;
-              this.$router.push('/testslist');
-              this.$store.commit("setSuccess", "Project successfully deleted");
+              this.$router.push("/testslist").then(() => {
+                this.$store.commit(
+                  "setSuccess",
+                  "Project successfully deleted"
+                );
+              });
             })
             .catch((err) => {
               this.$store.commit("setError", err);
@@ -271,10 +279,11 @@ export default {
       return this.$store.state.cooperators.cooperators || [];
     },
     dialogText() {
-      if(this.object) return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone`
+      if (this.object)
+        return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone`;
 
-      return `Are you sure you want to delete this test? This action can't be undone` //in case object isnt loaded
-    }
+      return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
