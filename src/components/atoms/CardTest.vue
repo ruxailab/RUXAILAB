@@ -14,88 +14,74 @@
           @click="deleteTest(item), loading = true"
         >Delete</v-btn>
       </div>
-    </Dialog> -->
+    </Dialog>-->
     <v-hover v-slot:default="{ hover }">
-
-    <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="openManager(item)">
-
-      <v-container>
-        <v-col cols="12" align-self="start">
-          <h4>{{item.title}}</h4>
-        </v-col>
-       <v-row justify="end">
-           <!--
-          <v-menu v-model="menu" close-on-click close-on-content-click offset-x>
-            <template v-slot:activator="{ on, attrs }">
-              <v-col cols="9" align-self="start">
-                <h3>{{item.title}}</h3>
+      <v-menu absolute offset-y style="max-width: 600px">
+        <template v-slot:activator="{ on, attrs }">
+          <v-card :elevation="hover ? 24 : 10" shaped class="card" v-bind="attrs" v-on="on">
+            <v-container>
+              <v-col cols="12" align-self="start">
+                <h4>{{item.title}}</h4>
               </v-col>
-              <v-col cols="2" class="mr-2">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </v-col>
-            </template>
-            <v-list>
-              <v-list-item v-if="accessLevel == 2" @click="openTest(item)">
-                <v-list-item-icon>
-                  <v-icon>mdi-glasses</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Open Test</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item v-if="accessLevel < 2" @click="openManager(item)">
-                <v-list-item-icon>
-                  <v-icon>mdi-cog</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Manager</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item v-if="accessLevel == 0" @click="dialog = true">
-                <v-list-item-icon>
-                  <v-icon color="error">mdi-trash-can-outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title color="red">Delete</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu> -->
-        </v-row>
 
-        <!-- Desktop/Tablet -->
-        <v-row align="center">
-          <div class="hidden-sm-and-down">
-            <v-row class="bottomStart">
-              <v-col>
-                <v-icon x-large>mdi-account-circle</v-icon>
-                <v-btn color="grey darken-3 white--text" disabled rounded :ripple="false">{{item.type}}</v-btn>
-                <div class="text-center caption">Created  {{item.date || '~no date~'}}</div>
+              <!-- Desktop/Tablet -->
+              <v-row align="center">
+                <div class="hidden-sm-and-down">
+                  <v-row class="bottomStart">
+                    <v-col>
+                      <v-icon x-large>mdi-account-circle</v-icon>
+                      <v-btn
+                        color="grey darken-3 white--text"
+                        disabled
+                        rounded
+                        :ripple="false"
+                      >{{item.type}}</v-btn>
+                      <div class="text-center caption">Created {{item.date}}</div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-row>
 
-              </v-col>
-            </v-row>
-          </div>
-        </v-row>
+              <!-- Mobile -->
+              <v-row justify="center">
+                <div class="hidden-md-and-up bottomMobile">
+                  <v-row class="ma-1" justify="space-between">
+                    <v-icon x-large>mdi-account-circle</v-icon>
+                    <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+                  </v-row>
 
-        <!-- Mobile -->
-        <v-row justify="center">
-          <div class="hidden-md-and-up bottomMobile">
-            <v-row class="ma-1" justify="space-between">
-              <v-icon x-large>mdi-account-circle</v-icon>
-              <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
-            </v-row>
+                  <v-row class="mt-2" justify="center">
+                    <div class="text-center caption">{{new Date().toDateString()}}</div>
+                  </v-row>
+                </div>
+              </v-row>
+            </v-container>
+          </v-card>
+        </template>
 
-            <v-row class="mt-2" justify="center">
-              <div class="text-center caption">{{new Date().toDateString()}}</div>
-            </v-row>
-          </div>
-        </v-row>
-      </v-container>
-    </v-card>
-  </v-hover>
+        <v-list dense>
+          <v-list-item v-if="accessLevel < 2" @click="openManager(item)">
+            <v-list-item-icon>
+              <v-icon>mdi-cog</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Manager</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
+          <v-list-item @click="openTest(item)">
+            <v-list-item-icon>
+              <v-icon v-if="accessLevel <= 1">mdi-file-eye</v-icon>
+              <v-icon v-else>mdi-file-document-edit</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{accessLevel == 2 ? 'Open Test' : 'Preview Test'}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          
+        </v-list>
+      </v-menu>
+    </v-hover>
   </div>
 </template>
 
@@ -210,7 +196,7 @@ export default {
     },
   },
   created() {
-    this.dialogText = ''
+    this.dialogText = "";
   },
   mounted() {
     this.dialogText = `Are you sure you want to delete your test "${this.item.title}"? This action can't be undone`;
