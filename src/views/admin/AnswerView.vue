@@ -7,6 +7,7 @@
       background-color="transparent"
       color="#FCA326"
       class="pb-0 mb-0"
+      v-model="index"
     >
       <v-tab @click="index = 0">Statistics</v-tab>
       <v-tab @click="index = 1">Evaluators</v-tab>
@@ -156,11 +157,11 @@
                       dark
                       class="chip"
                     >{{ item[header.value] }}</v-chip>
-                    <div v-else :key="header.value">{{item[header.value]}}</div>
+                    <div style="cursor:pointer" v-else @click="sendToData(item)" :key="header.value">{{item[header.value]}}</div>
                   </template>
                 </v-data-table>
               </v-col>
-            <!-- Bottom Tab 2 -->
+              <!-- Bottom Tab 2 -->
               <v-col cols="12" v-if="ind == 1">
                 <v-data-table
                   :headers="headersHeuris"
@@ -175,7 +176,7 @@
                 </v-data-table>
               </v-col>
 
-            <!-- Bottom Tab 3 -->
+              <!-- Bottom Tab 3 -->
               <v-col cols="12" v-if="ind == 2">
                 <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
               </v-col>
@@ -624,6 +625,13 @@ export default {
       else if (value <= 80) return "lime";
       else return "green";
     },
+    sendToData(item) {
+      this.index = 3;
+      this.heurisIndex = this.dataExperts.indexOf(item);
+      this.open = true;
+      this.dataSelected =-1;
+      this.questionIndex = -1
+    }
   },
   computed: {
     answers() {
