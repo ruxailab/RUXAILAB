@@ -1,5 +1,7 @@
 <template>
   <v-container style="display:contents">
+    <NewTestBtn />
+
     <div style="height: 300px" class="background-orange background-img">
       <v-row justify="center" class="fill-height">
         <v-col cols="11">
@@ -31,9 +33,6 @@
 
           <!-- My Tests -->
           <v-row v-if="index == 0" :class="`grid mx-2`">
-            <v-col cols="12" sm="6" md="4">
-              <CardNewTest />
-            </v-col>
             <v-col cols="12" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
@@ -64,27 +63,13 @@
       </v-row>
 
     </div>
-    <v-fab-transition>
-             <v-btn
-               color="orange"
-               fab
-       large
-       dark
-       bottom
-       right
-               class="v-btn--example"
-
-             >
-               <v-icon>mdi-plus</v-icon>
-             </v-btn>
-           </v-fab-transition>
   </v-container>
 </template>
 
 
 <script>
 import CardTest from "@/components/atoms/CardTest";
-import CardNewTest from "@/components/atoms/CardNewTest";
+import NewTestBtn from "@/components/atoms/NewTestBtn";
 
 export default {
   data: () => ({
@@ -154,7 +139,7 @@ export default {
   },
   components: {
     CardTest,
-    CardNewTest
+    NewTestBtn
   }
 };
 </script>
@@ -220,11 +205,4 @@ export default {
     transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
- .v-btn--example {
-   bottom: 0;
-   right: 0;
-   position: absolute;
-   margin: 0 16px 16px 0;
- }
-
 </style>
