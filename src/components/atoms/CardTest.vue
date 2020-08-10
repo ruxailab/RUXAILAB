@@ -72,7 +72,7 @@
               <v-col>
                 <v-icon x-large>mdi-account-circle</v-icon>
                 <v-btn color="grey darken-3 white--text" disabled rounded :ripple="false">{{item.type}}</v-btn>
-                <div class="text-center caption">Created  {{new Date().toDateString()}}</div>
+                <div class="text-center caption">Created  {{item.date || '~no date~'}}</div>
 
               </v-col>
             </v-row>

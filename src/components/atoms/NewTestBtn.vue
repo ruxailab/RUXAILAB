@@ -50,7 +50,7 @@ export default {
     test: {
       title: "",
       description: "",
-      type: "",
+      type: ""
     },
     testID: null,
   }),
@@ -60,13 +60,14 @@ export default {
     },
     async submit() {
       await this.testAssembly(); // build Test
+      let d = new Date()
       let object = this.object;
       let successful = true;
       //Send db
       await this.$store
         .dispatch("createTest", {
           collection: "test",
-          data: object,
+          data: Object.assign(object, {date: d.toDateString()}),
         })
         .then((id) => {
           this.testID = id;
@@ -130,6 +131,7 @@ export default {
                           answers: idAnswers,
                           cooperators: idCooperators,
                           accessLevel: 0,
+                          date: d.toDateString()
                         },
                         param: "myTests",
                       });
@@ -159,6 +161,7 @@ export default {
 
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
+      this.object = Object.assign(this.object, {date: new Date().toDateString()})
 
       //assigning tasks/heuristics
       if (this.test.type === "User") {
