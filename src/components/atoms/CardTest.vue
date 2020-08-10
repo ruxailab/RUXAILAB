@@ -1,20 +1,5 @@
 <template>
   <div>
-    <!--
-    <Snackbar />
-    <Dialog :dialog="dialog" :text="dialogText">
-      <v-card-title slot="title" class="headline error white--text" primary-title>Are you sure you want to delete this test?</v-card-title>
-
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
-        <v-btn
-          class="red white--text ml-1"
-          :loading="loading"
-          text
-          @click="deleteTest(item), loading = true"
-        >Delete</v-btn>
-      </div>
-    </Dialog> -->
     <v-hover v-slot:default="{ hover }">
 
     <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="openManager(item)">

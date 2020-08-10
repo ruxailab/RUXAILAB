@@ -5,6 +5,7 @@
         <v-row justify="space-around">
           <v-col cols="5">
             <v-text-field
+              :autofocus="lock ? false : true"
               v-model="test.title"
               label="Title"
               :rules="titleRequired"
