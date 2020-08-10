@@ -1,112 +1,90 @@
-<template>
-  <v-row justify="center">
-    <ShowInfo title="Answers">
-      <!-- Main Tabs -->
-      <v-tabs
-        slot="top"
-        background-color="transparent"
-        color="#FCA326"
-        class="pb-0 mb-0"
-      >
-        <v-tab @click="index = 0">Statistics</v-tab>
-        <v-tab @click="index = 1">Evaluators</v-tab>
-        <v-tab @click="index = 2">Heuristics</v-tab>
-        <v-tab @click="index = 3">Data</v-tab>
-      </v-tabs>
+<template >
+<v-row justify="center">
+  <ShowInfo title="Answers">
+    <!-- Main Tabs -->
+    <v-tabs
+      slot="top"
+      background-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0"
+      v-model="index"
+    >
+      <v-tab @click="index = 0">Statistics</v-tab>
+      <v-tab @click="index = 1">Evaluators</v-tab>
+      <v-tab @click="index = 2">Heuristics</v-tab>
+      <v-tab @click="index = 3">Data</v-tab>
+    </v-tabs>
+        
+    <!-- Main Tabs Content -->
+    <div slot="content" class="ma-0 pa-0">
+      <!-- Tab 1 - Statistics -->
+      <v-card v-if="index==0" style="background: #f5f7ff;">
+        <v-card-title class="subtitleView">Statistics</v-card-title>
 
-      <!-- Main Tabs Content -->
-      <div slot="content" class="ma-0 pa-0">
-        <!-- Main Tab 1 -->
-        <v-card v-if="index == 0" style="background: #f5f7ff;">
-          <v-card-title class="subtitleView">Statistics</v-card-title>
+        <v-divider></v-divider>
 
-          <v-divider></v-divider>
+        <v-row justify="space-around">
+          <!-- Top Card -->
+          <v-col cols="10">
+            <v-card class="cardStyle">
+              <v-row justify="space-around">
+                <!-- Average -->
+                <v-col cols="4">
+                  <v-row justify="center">
+                    <v-card-title>Usability Percentage</v-card-title>
+                    <v-card-text>
+                      <v-row align="center" justify="center">
+                        <p class="display-3">{{testData.average}}</p>
+                      </v-row>
+                    </v-card-text>
+                  </v-row>
+                </v-col>
 
-          <v-row justify="space-around">
-            <!-- Top Card -->
-            <v-col cols="10">
-              <v-card class="cardStyle">
-                <v-row justify="space-around">
-                  <!-- Average -->
-                  <v-col cols="4">
-                    <v-row justify="center">
-                      <v-card-title>Usability Percentage</v-card-title>
-                      <v-card-text>
-                        <v-row align="center" justify="center">
-                          <p class="display-3">{{ testData.average }}</p>
-                        </v-row>
-                      </v-card-text>
-                    </v-row>
-                  </v-col>
+                <v-divider vertical></v-divider>
 
-                  <v-divider vertical></v-divider>
+                <!-- Info -->
+                <v-col>
+                  <v-list class="transparent">
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
 
-                  <!-- Info -->
-                  <v-col>
-                    <v-list class="transparent">
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
-                        </v-list-item-icon>
+                      <v-list-item-title>Max</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Min</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-icon>
+                        <v-icon>mdi-plus-minus</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Standard deviation</v-list-item-title>
+                      <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-card>
 
-                        <v-list-item-title>Max</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{
-                          testData.max
-                        }}</v-list-item-subtitle>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>Min</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{
-                          testData.min
-                        }}</v-list-item-subtitle>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-list-item-icon>
-                          <v-icon>mdi-plus-minus</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title
-                          >Standard deviation</v-list-item-title
-                        >
-                        <v-list-item-subtitle class="text-right">{{
-                          testData.sd
-                        }}</v-list-item-subtitle>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-card>
+      <!-- Tab 2 - Evaluators -->
+      <v-card v-if="index == 1" style="background: #f5f7ff;">
+        <v-card-title class="subtitleView">Evaluators</v-card-title>
 
-        <!-- Tab 2 - Evaluators -->
-        <v-card v-if="index == 1" style="background: #f5f7ff;">
-          <v-card-title class="subtitleView">Evaluators</v-card-title>
+        <v-divider></v-divider>
 
-          <v-divider></v-divider>
-
-          <v-tabs
-            background-color="transparent"
-            color="grey darken-2"
-            class="mt-2"
-            centered
-          >
-            <v-tab
-              class="tab-text"
-              style="text-transform: none !important"
-              @click="ind = 0"
-              >Table</v-tab
-            >
-            <v-tab
-              class="tab-text"
-              style="text-transform: none !important"
-              @click="ind = 1"
-              >Graphic</v-tab
-            >
-          </v-tabs>
+        <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
+          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
+        </v-tabs>
 
           <v-row justify="center">
             <v-col cols="12" v-if="ind == 0">
@@ -797,6 +775,23 @@ export default {
       else if (value <= 80) return "lime";
       else return "green";
     },
+    sendToData(item) {
+      this.index = 3;
+      this.heurisIndex = this.dataExperts.indexOf(item);
+      this.open = true;
+      this.dataSelected =-1;
+      this.questionIndex = -1
+    },
+    getContent(item, value) {
+      console.log("item", item);
+      if(value == 'uid') {
+        return item.uid;
+      } else if(item.questions[value[10]].res != null){
+        return item.questions[value[10]].res
+      } else {
+        return '-'
+      }     
+    }
   },
   computed: {
     answers() {
