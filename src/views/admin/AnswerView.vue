@@ -17,7 +17,7 @@
         
     <!-- Main Tabs Content -->
     <div slot="content" class="ma-0 pa-0">
-      <!-- Main Tab 1 -->
+      <!-- Tab 1 - Statistics -->
       <v-card v-if="index==0" style="background: #f5f7ff;">
         <v-card-title class="subtitleView">Statistics</v-card-title>
 
@@ -255,7 +255,18 @@
                     :headers="headers"
                     :items="items"
                     :search="search"
-                  ></v-data-table>
+                  >
+                    <template
+                      v-for="(header) in headers"
+                      v-slot:[`item.${header.value}`]="{ item }"
+                    >
+                      <div  
+                        :key="header.value"
+                      >
+                        {{getContent(item, header.value)}}
+                      </div>
+                    </template>
+                  </v-data-table>
                 </v-col>
 
                 <!-- Graph -->
@@ -631,6 +642,16 @@ export default {
       this.open = true;
       this.dataSelected =-1;
       this.questionIndex = -1
+    },
+    getContent(item, value) {
+      console.log("item", item);
+      if(value == 'uid') {
+        return item.uid;
+      } else if(item.questions[value[10]].res != null){
+        return item.questions[value[10]].res
+      } else {
+        return '-'
+      }     
     }
   },
   computed: {
