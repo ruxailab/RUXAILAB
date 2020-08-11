@@ -42,16 +42,11 @@
 
     <ShowInfo title="Settings">
       <div slot="content">
-        <v-card class="dataCard">
-          <v-row>
-            <v-col class="mb-1 pa-4 pb-1">
-              <p class="subtitleView">Current Test</p>
-            </v-col>
-            <v-spacer></v-spacer>
-            <v-btn @click="dialogDel = true" color="#e04141" icon class="my-1 mx-4">
-              <v-icon color="#f26363">mdi-trash-can-outline</v-icon>
-            </v-btn>
-          </v-row>
+        <v-card style="background: #f5f7ff;">
+          <v-col class="mb-1 pa-4 pb-1">
+            <p class="subtitleView">Current Test</p>
+          </v-col>
+         
           <v-divider></v-divider>
           <FormTestDescription
             v-if="object"
@@ -61,7 +56,16 @@
             :lock="true"
             @change="change = true"
           />
+
+          <v-divider class="my-3 mx-2"></v-divider>
+
+          <v-row justify="center">
+            <v-btn color="#f26363" class="white--text mb-4" style="justify-self: center">
+              <v-icon left>mdi-trash-can-outline</v-icon>Delete Test
+            </v-btn>
+          </v-row>
         </v-card>
+        
         <v-tooltip left v-if="change">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -328,10 +332,5 @@ export default {
   color: #000000;
   margin-bottom: 0px;
   padding-bottom: 0px;
-}
-
-.dataCard {
-  background: #f5f7ff;
-  min-height: 350px;
 }
 </style>
