@@ -68,18 +68,29 @@
     </v-btn>
 
     <div class="hidden-sm-and-down">
-      <v-menu offset-y open-on-hover v-if="user">
+      <v-menu offset-y v-if="user" class="ma-0 pa-0" min-width="200">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
-            <v-icon dark>mdi-account-circle</v-icon>
+          <v-btn text v-bind="attrs" v-on="on" class="pa-0">
+            <v-icon class="mr-1" dark>mdi-account-circle</v-icon>
+            <v-icon small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
-        <v-list>
-          <v-list-item>
-            <v-btn text @click="signOut()">
-              <v-icon left>mdi-logout</v-icon>Sign-out
-            </v-btn>
+        <v-list dense class="ma-0 py-1" style="border-radius: 0px!important">
+          <v-list-item dense style="font-size: 14px; font: Roboto;" class="px-2">
+            <v-list-item-content>
+              <v-list-item-title style="font-weight: bold">Username</v-list-item-title>
+              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
+
+          <div class="divider"></div>
+
+          <v-list-item
+            @click="signOut()"
+            dense
+            style="font-size: 14px; font: Roboto"
+            class="px-2"
+          >Sign-out</v-list-item>
         </v-list>
       </v-menu>
     </div>
@@ -133,5 +144,9 @@ export default {
 
   position: absolute;
   bottom: 0px;
+}
+.divider {
+  background: #C4C4C4!important;
+  height: 1.5px
 }
 </style>
