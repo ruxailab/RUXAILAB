@@ -1,6 +1,7 @@
 <template>
   <v-container style="display:contents">
     <NewTestBtn />
+    <Snackbar />
 
     <div style="height: 300px" class="background-orange background-img">
       <v-row justify="center" class="fill-height">
@@ -70,6 +71,7 @@
 <script>
 import CardTest from "@/components/atoms/CardTest";
 import NewTestBtn from "@/components/atoms/NewTestBtn";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   data: () => ({
@@ -139,7 +141,8 @@ export default {
   },
   components: {
     CardTest,
-    NewTestBtn
+    NewTestBtn,
+    Snackbar
   }
 };
 </script>
