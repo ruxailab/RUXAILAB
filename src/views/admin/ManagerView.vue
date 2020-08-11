@@ -4,7 +4,7 @@
       <v-navigation-drawer
         clipped
         v-model="drawer"
-        :mini-variant.sync="mini"
+        :mini-variant="mini"
         permanent
         color="#3F3D56"
       >

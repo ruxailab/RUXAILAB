@@ -64,7 +64,6 @@
           style="background-color:#fca326"
           primary-title
         >Creating a heuristic</v-card-title>
-        {{heuris}}
         {{heuristics[itemSelect || heuristics.length-1]}}
         <v-row justify="center">
           <v-col cols="10">
