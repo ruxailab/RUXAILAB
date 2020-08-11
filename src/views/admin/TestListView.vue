@@ -7,6 +7,7 @@
       <v-row justify="center" class="fill-height">
         <v-col cols="11">
           <v-text-field
+            dense
             class="mt-5"
             label="Search"
             prepend-inner-icon="mdi-magnify"
@@ -27,10 +28,14 @@
             <v-tab @click="index = 2">My Answers</v-tab>
           </v-tabs>
 
-
-
           <!-- Mobile Button -->
-          <v-select dense outlined v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
+          <v-select
+            dense
+            outlined
+            v-model="index"
+            class="hidden-md-and-up mx-2"
+            :items="buttonItems"
+          ></v-select>
 
           <!-- My Tests -->
           <v-row v-if="index == 0" :class="`grid mx-2`">
@@ -62,7 +67,6 @@
           </v-row>
         </v-col>
       </v-row>
-
     </div>
   </v-container>
 </template>
@@ -86,24 +90,24 @@ export default {
       {
         text: "Title",
         align: "start",
-        value: "title"
+        value: "title",
       },
       { text: "Id", value: "id", align: "center" },
       { text: "Type", value: "type", align: "center" },
       { text: "Edit", value: "edit", align: "center", sortable: false },
       { text: "Delete", value: "delete", align: "center", sortable: false },
-      { text: "More", value: "more", align: "center", sortable: false }
+      { text: "More", value: "more", align: "center", sortable: false },
     ],
     items: [
       { title: "Open Test" },
       { title: "Open Answers" },
-      { title: "Open Manager" }
+      { title: "Open Manager" },
     ],
     buttonItems: [
       { text: "My Tests", value: 0 },
       { text: "Tests I colaborate with", value: 1 },
-      { text: "My Answers", value: 2 }
-    ]
+      { text: "My Answers", value: 2 },
+    ],
   }),
   computed: {
     user() {
@@ -113,20 +117,20 @@ export default {
       return this.$store.state.tests.loading;
     },
     filteredMyTests() {
-      return this.user.myTests.filter(test => {
+      return this.user.myTests.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyCoops() {
-      return this.user.myCoops.filter(test => {
+      return this.user.myCoops.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyAnswers() {
-      return this.user.myAnswers.filter(test => {
+      return this.user.myAnswers.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
-    }
+    },
   },
   watch: {
     index() {
@@ -137,13 +141,13 @@ export default {
       } else {
         this.label = "My Answers";
       }
-    }
+    },
   },
   components: {
     CardTest,
     NewTestBtn,
-    Snackbar
-  }
+    Snackbar,
+  },
 };
 </script>
 

@@ -1,38 +1,37 @@
 <template>
   <v-app-bar app dark dense>
-    <v-btn icon dark @click.stop="drawer =! drawer" class="hidden-md-and-up">
+    <v-btn v-if="user" icon dark @click.stop="drawer =! drawer" class="hidden-md-and-up">
       <v-icon>mdi-menu</v-icon>
     </v-btn>
     <v-icon left class="hidden-sm-and-down" @click="goTo('/testslist')">mdi-alpha-r-circle</v-icon>
 
-    <v-navigation-drawer app absolute temporary v-model="drawer" class="hidden-md-and-up" disable-resize-watcher>
-      <v-list-item>
+    <v-navigation-drawer
+      app
+      absolute
+      temporary
+      v-model="drawer"
+      class="hidden-md-and-up"
+      disable-resize-watcher
+      v-if="user"
+    >
+      <v-row align="center" class="ma-0" justify="center">
         <v-list-item-avatar>
-          <!-- <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img> -->
           <v-icon large dark>mdi-account-circle</v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-content>
-          <v-list-item-title v-if="user">{{user.email}}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      
+        <v-col>
+          <v-list-item-content v-if="user">
+            <v-list-item-title>Username</v-list-item-title>
+            <div class="caption">{{ user.email }}</div>
+          </v-list-item-content>
+        </v-col>
+      </v-row>
+
       <v-divider></v-divider>
 
-      <v-list dense>
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon>mdi-email</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Messages</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <v-list dense></v-list>
 
       <div class="footer">
-        <!-- <locale-changer></locale-changer> -->
         <v-btn
           dark
           text
@@ -43,8 +42,11 @@
     </v-navigation-drawer>
 
     <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer">Research Workflow</v-toolbar-title>
+
     <v-spacer></v-spacer>
-    <locale-changer class="hidden-sm-and-down"></locale-changer>
+
+    <locale-changer></locale-changer>
+
     <v-btn
       v-if="this.$route.path === '/' && user"
       text
@@ -55,24 +57,32 @@
 
     <NotificationBtn v-if="user" />
 
-    <v-btn text @click="goTo('/signin')" v-if="!user">
+    <!-- Desktop -->
+    <v-btn text @click="goTo('/signin')" v-if="!user" class="hidden-sm-and-down">
       <v-icon left>mdi-lock</v-icon>Sign-in
     </v-btn>
 
-    <v-menu offset-y open-on-hover v-if="user">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
-          <v-icon dark>mdi-account-circle</v-icon>
-        </v-btn>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-btn text @click="signOut()">
-            <v-icon left>mdi-logout</v-icon>Sign-out
+    <!-- Mobile -->
+    <v-btn icon @click="goTo('/signin')" v-if="!user" class="hidden-md-and-up">
+      <v-icon size="20">mdi-lock</v-icon>
+    </v-btn>
+
+    <div class="hidden-sm-and-down">
+      <v-menu offset-y open-on-hover v-if="user">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on" class="mx-1">
+            <v-icon dark>mdi-account-circle</v-icon>
           </v-btn>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-btn text @click="signOut()">
+              <v-icon left>mdi-logout</v-icon>Sign-out
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
   </v-app-bar>
 </template>
 

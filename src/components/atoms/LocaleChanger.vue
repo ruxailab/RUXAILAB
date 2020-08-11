@@ -1,7 +1,8 @@
 <template>
-<v-col cols="12" lg="2" md="2" sm="3" xs="2">
+  <v-col cols="1" md="2">
+    <!-- Desktop -->
     <v-select
-      class="pt-7 custom-language-height"
+      class="pt-7 hidden-sm-and-down"
       prepend-inner-icon="mdi-translate"
       :items="languages"
       item-text="label"
@@ -14,28 +15,47 @@
       light
       background-color="grey lighten-4"
     ></v-select>
-</v-col>
+
+    <!-- Mobile -->
+    <div class="hidden-md-and-up mr-1" style="display: flex; justify-content: center">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn small color="primary" v-bind="attrs" v-on="on" icon>
+            <v-icon size="20" color="white">mdi-translate</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in languages"
+            :key="index"
+            link
+            @click="lang = item.value"
+          >
+            <v-list-item-title>{{ item.label }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+  </v-col>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      languages: [{ label: "English", value: "en" }, { label: "Español", value: "es" },{ label: "Português", value: "pt_br" }],
-      lang: this.$i18n.locale
+      languages: [
+        { label: "English", value: "en" },
+        { label: "Español", value: "es" },
+        { label: "Português", value: "pt_br" },
+      ],
+      lang: this.$i18n.locale,
     };
   },
   watch: {
-    lang: function(newValue) {
+    lang: function (newValue) {
       this.$i18n.locale = newValue;
-    }
-  }
+    },
+  },
 };
 </script>
 
-
-<style media="screen">
-.v-input__control, .v-input__slot{
-  min-height: 30px !important;
- }
-</style>
