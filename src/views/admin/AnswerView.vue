@@ -139,6 +139,7 @@
                     class="elevation-1 cardStyle"
                     dense
                   >
+                
                     <template
                       v-for="header in heuristicsEvaluator.header"
                       v-slot:[`item.${header.value}`]="{ item }"
@@ -152,7 +153,7 @@
                         dark
                         class="chip"
                       >{{ item[header.value] }}</v-chip>
-                      <div v-else :key="header.value">{{ item[header.value] }}</div>
+                      <v-btn text v-else @click="goToDataHeuristic(item.heuristic)" :key="header.value">{{ item[header.value] }}</v-btn>
                     </template>
                   </v-data-table>
                 </v-col>
@@ -344,28 +345,7 @@ export default {
     ShowInfo
   },
   data: () => ({
-    heurisIndex: null,
-    questionIndex: null,
-    open: false,
     search: "",
-    dataSelected: null,
-    headers: [],
-    items: [],
-    testData: {
-      average: null,
-      max: null,
-      min: null,
-      sd: null
-    },
-    graph: [],
-    labelsHeuris: [],
-    dataHeuris: [],
-    graphDataHeuris: [],
-    headersExperts: [],
-    dataExperts: [],
-    labelsEvaluators: [],
-    dataEvaluators: [],
-    //New data
     tab: 0,
     ind: 0,
     heuristicSelect: null,
@@ -376,11 +356,7 @@ export default {
   methods: {
     statistics() {
       const answers = this.answers.answers;
-      const answersResults = new Map();
-      const heurisResults = new Map();
-      const EvaluatorsResults = new Map();
-
-      //New Statistics
+    
       this.resultHeuristics = [];
       this.resultEvaluator = [];
 
@@ -465,154 +441,7 @@ export default {
       this.resultEvaluator.forEach(ev => {
         ev.result = this.calcFinalResult(ev.heuristics);
       });
-
-
-      //--------------------- Old Statistics -----------------------------------
-      //Total Test
-      answers.reduce((total, answer) => {
-        //Total Heuristics
-        let res = answer.heuristics.reduce((totalHeuris, heuris) => {
-          //Total Questions
-          let res = heuris.questions.reduce((totalQuestions, question) => {
-            return totalQuestions + Number(question.res);
-          }, 0);
-          const collection = heurisResults.get(`H ${heuris.id + 1}`);
-          if (!collection) {
-            heurisResults.set(`H ${heuris.id + 1}`, [
-              { res: res, av: answer.uid }
-            ]);
-          } else {
-            collection.push({ res: res, av: answer.uid });
-          }
-          return totalHeuris + res;
-        }, 0);
-        answersResults.set(answer.uid, res);
-        return total + res;
-      }, 0);
-
-      for (var [key, list] of heurisResults.entries()) {
-        this.dataHeuris.push({
-          name: key,
-          max: Math.max(...list.map(i => i.res)).toFixed(2),
-          min: Math.min(...list.map(i => i.res)).toFixed(2),
-          sd: this.standardDeviation(list.map(i => i.res)).toFixed(2),
-          average: list
-            .map(i => i.res)
-            .reduce((total, value) => total + value / list.length, 0)
-            .toFixed(2)
-        });
-
-        // Set Experts Data for Heuristic
-        let obj = {
-          heuristic: key
-        };
-        let index = String(key).split(" ")[1] - 1;
-        let values = this.answers.options.map(item => item.value);
-        let max =
-          Math.max(...values) *
-          this.answers.answersSheet.heuristics[index].total;
-        let min =
-          Math.min(...values) *
-          this.answers.answersSheet.heuristics[index].total;
-
-        list.forEach(item => {
-          obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
-        });
-
-        this.dataExperts.push(obj);
-      }
-
-      //Set Experts Headers
-      this.headersExperts.push({
-        text: "Heuristics",
-        value: "heuristic",
-        align: "start"
-      });
-      let id = 1;
-      answers.forEach(answer => {
-        this.headersExperts.push({
-          text: `Av ${id}`,
-          value: answer.uid,
-          align: "center"
-        });
-        id++;
-      });
-
-      //Calc Result for Avalitor
-      this.dataExperts.forEach(data => {
-        Object.keys(data).forEach(item => {
-          if (item !== "heuristic" && item !== "min" && item !== "max") {
-            const collection = EvaluatorsResults.get(item);
-            if (!collection) {
-              EvaluatorsResults.set(item, data[item]);
-            } else {
-              let newValue = collection + data[item];
-              EvaluatorsResults.set(item, newValue);
-            }
-          }
-        });
-      });
-
-      let dataAvaliatorResult = [];
-
-      for (var [av, value] of EvaluatorsResults.entries()) {
-        dataAvaliatorResult.push({
-          avaliator: av,
-          result: this.percentage(
-            value,
-            this.answers.answersSheet.perfectResult
-          ).toFixed(1)
-        });
-      }
-      //Set Evaluators Graph
-      this.labelsEvaluators = dataAvaliatorResult.map(
-        item => `Av ${dataAvaliatorResult.indexOf(item) + 1}: ${item.result}%`
-      );
-      this.graphDataEvaluators = dataAvaliatorResult.map(item => item.result);
-
-      this.headersEvaluators = this.headersExperts.filter(
-        item => item.value !== "heuristic"
-      );
-      this.headersEvaluators.unshift({
-        text: " ",
-        value: "title",
-        align: "start"
-      });
-
-      let obj = { title: " Usability Percentage " };
-      dataAvaliatorResult.forEach(item => {
-        Object.assign(obj, {
-          [item.avaliator]: item.result
-        });
-      });
-
-      this.dataEvaluators = [obj];
-
-      //Set Heuristic Graph
-      this.labelsHeuris = [...heurisResults.keys()];
-      this.graphDataHeuris = this.dataHeuris.map(list => {
-        return list.average;
-      });
-
-      let res = dataAvaliatorResult
-        .map(item => item.result)
-        .reduce((total, value) => {
-          return total + Number(value);
-        }, 0);
-
-      //Set Data
-      this.testData = {
-        average: `${Math.fround(res / dataAvaliatorResult.length).toFixed(1)}%`,
-        max: `${Math.max(
-          ...dataAvaliatorResult.map(item => item.result)
-        ).toFixed(1)}%`,
-        min: `${Math.min(
-          ...dataAvaliatorResult.map(item => item.result)
-        ).toFixed(1)}%`,
-        sd: `${this.standardDeviation(
-          dataAvaliatorResult.map(item => item.result)
-        ).toFixed(1)}%`
-      };
+      
     },
     calcFinalResult(array) {
       let result = 0;
@@ -660,21 +489,10 @@ export default {
       else if (value <= 80) return "lime";
       else return "green";
     },
-    sendToData(item) {
-      this.index = 3;
-      this.heurisIndex = this.dataExperts.indexOf(item);
-      this.open = true;
-      this.dataSelected = -1;
-      this.questionIndex = -1;
-    },
-    getContent(item, value) {
-      if (value == "uid") {
-        return item.uid;
-      } else if (item.questions[value[10]].res != null) {
-        return item.questions[value[10]].res;
-      } else {
-        return "-";
-      }
+    goToDataHeuristic(item){
+      this.tab = 3
+      this.heuristicSelect = (this.resultHeuristics.indexOf(this.resultHeuristics.find(h => h.id === item)))
+      this.questionSelect = 0
     }
   },
   computed: {
