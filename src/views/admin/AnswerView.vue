@@ -136,14 +136,14 @@
                 <!-- Bottom Tab 1 -->
                 <v-col cols="12" v-if="ind == 0">
                   <v-data-table
-                    :headers="headersExperts"
-                    :items="dataExperts"
+                    :headers="heuristicsEvaluator.header"
+                    :items="heuristicsEvaluator.items"
                     :items-per-page="15"
                     class="elevation-1 cardStyle"
                     dense
                   >
                     <template
-                      v-for="header in headersExperts"
+                      v-for="header in heuristicsEvaluator.header"
                       v-slot:[`item.${header.value}`]="{ item }"
                     >
                       <v-chip
@@ -162,8 +162,8 @@
                 <!-- Bottom Tab 2 -->
                 <v-col cols="12" v-if="ind == 1">
                   <v-data-table
-                    :headers="headersHeuris"
-                    :items="dataHeuris"
+                    :headers="heuristicsStatistics.header"
+                    :items="heuristicsStatistics.items"
                     :items-per-page="15"
                     class="elevation-1 cardStyle"
                     dense
@@ -176,10 +176,9 @@
                     </template>
                   </v-data-table>
                 </v-col>
-
                 <!-- Bottom Tab 3 -->
                 <v-col cols="12" v-if="ind == 2">
-                  <BarChart :labels="labelsHeuris" :data="graphDataHeuris" />
+                  <BarChart :labels="heuristicsStatistics.items.map(item => item.name)" :data="heuristicsStatistics.items.map(item => item.average)" />
                 </v-col>
               </v-row>
             </v-col>
@@ -295,7 +294,11 @@
                     >Comments</v-tab>
                   </v-tabs>
                   <v-col v-if="ind == 0">
-                    <BarChart v-if="questionGraph" :labels="questionGraph.label" :data="questionGraph.data" />
+                    <BarChart
+                      v-if="questionGraph"
+                      :labels="questionGraph.label"
+                      :data="questionGraph.data"
+                    />
                   </v-col>
                   <v-col v-if="ind == 1">
                     <v-row class="list-scroll" style="height:430px">
@@ -348,8 +351,6 @@ export default {
     questionIndex: null,
     open: false,
     search: "",
-    heurisSelected: null,
-    graphSelected: null,
     dataSelected: null,
     headers: [],
     items: [],
@@ -360,19 +361,6 @@ export default {
       sd: null
     },
     graph: [],
-    dataQuestions: [],
-    headersHeuris: [
-      {
-        text: "Heuristics",
-        align: "start",
-        sortable: false,
-        value: "name"
-      },
-      { text: "Average", value: "average", align: "center" },
-      { text: "Standard deviation", value: "sd", align: "center" },
-      { text: "Max", value: "max", align: "center" },
-      { text: "Min", value: "min", align: "center" }
-    ],
     labelsHeuris: [],
     dataHeuris: [],
     graphDataHeuris: [],
@@ -385,7 +373,8 @@ export default {
     ind: 0,
     heuristicSelect: null,
     questionSelect: null,
-    resultHeuristics: []
+    resultHeuristics: [],
+    resultEvaluator: []
   }),
   methods: {
     statistics() {
@@ -396,23 +385,25 @@ export default {
 
       //New Statistics
       this.resultHeuristics = [];
-      const resultEvaluator = [];
+      this.resultEvaluator = [];
 
       //Get Evaluator answers
       let evaluatorIndex = 1;
       answers.forEach(evaluator => {
-        let SelectEvaluator = resultEvaluator.find(
+        let SelectEvaluator = this.resultEvaluator.find(
           e => e.id == `Ev${evaluatorIndex}`
         );
         if (!SelectEvaluator) {
-          resultEvaluator.push({
+          this.resultEvaluator.push({
             uid: evaluator.uid,
             email: evaluator.email,
             id: `Ev${evaluatorIndex}`,
             heuristics: [],
             result: 0
           });
-          SelectEvaluator = resultEvaluator[resultEvaluator.length - 1];
+          SelectEvaluator = this.resultEvaluator[
+            this.resultEvaluator.length - 1
+          ];
         }
         //Get Heuristics for evaluators
         let heurisIndex = 1;
@@ -471,14 +462,13 @@ export default {
       });
 
       //Calc Final result
-      resultEvaluator.forEach(ev => {
+      this.resultEvaluator.forEach(ev => {
         ev.result = this.calcFinalResult(ev.heuristics);
       });
 
-      console.log("resultEvaluatorFinal", resultEvaluator);
-      console.log("Result Heuristics", this.resultHeuristics);
+      console.log("this.resultEvaluatorFinal", this.resultEvaluator);
 
-      //Old Statistics
+      //--------------------- Old Statistics -----------------------------------
       //Total Test
       answers.reduce((total, answer) => {
         //Total Heuristics
@@ -730,18 +720,11 @@ export default {
       }
       return items;
     },
-    answers() {
-      return this.$store.state.answers.answers || [];
-    },
-    loading() {
-      return this.answers.length == 0;
-    },
     questionGraph() {
       let options = this.answers.options;
       let graph = {
         label: [...options.map(op => op.text)],
-        data: [
-          ...options.map(() => 0)]
+        data: [...options.map(() => 0)]
       };
       if (this.heuristicSelect != null && this.questionSelect != null) {
         let question = this.resultHeuristics[this.heuristicSelect].questions[
@@ -749,10 +732,97 @@ export default {
         ];
         question.result.forEach(result => {
           let item = options.find(op => op.value == result.response);
-          if(item) graph.data[graph.label.indexOf(item.text)] += 1;
-         });
+          if (item) graph.data[graph.label.indexOf(item.text)] += 1;
+        });
       }
       return graph;
+    },
+    heuristicsEvaluator() {
+      let table = {
+        header: [],
+        items: []
+      };
+      let options = this.answers.options.map(op => op.value);
+      let max = Math.max(...options);
+      let min = Math.min(...options);
+
+      table.header.push({
+        text: "Heuristics",
+        align: "start",
+        value: "heuristic"
+      });
+
+      if (this.resultEvaluator) {
+        this.resultEvaluator.forEach(evaluator => {
+          let header = table.header.find(h => h.text == evaluator.id);
+          if (!header) {
+            table.header.push({
+              text: evaluator.id,
+              align: "center",
+              value: evaluator.id
+            });
+          }
+          evaluator.heuristics.forEach(heuristic => {
+            let item = table.items.find(i => i.heuristic == heuristic.id);
+            if (item) {
+              Object.assign(item, { [evaluator.id]: heuristic.result });
+            } else {
+              table.items.push({
+                heuristic: heuristic.id,
+                max: max * heuristic.totalQuestions,
+                min: min * heuristic.totalQuestions,
+                [evaluator.id]: heuristic.result
+              });
+            }
+          });
+        });
+      }
+      console.log(table.items);
+      return table;
+    },
+    heuristicsStatistics() {
+      let table = {
+        header: [],
+        items: []
+      };
+
+      table.header = [
+        {
+          text: "Heuristics",
+          align: "start",
+          sortable: false,
+          value: "name"
+        },
+        { text: "Average", value: "average", align: "center" },
+        { text: "Standard deviation", value: "sd", align: "center" },
+        { text: "Max", value: "max", align: "center" },
+        { text: "Min", value: "min", align: "center" }
+      ];
+      if (this.heuristicsEvaluator.items) {
+        this.heuristicsEvaluator.items.forEach(item => {
+          let results = Object.entries(item)
+            .filter(item => item[0].includes("Ev"))
+            .map(item => item[1]);
+
+          table.items.push({
+            name: item.heuristic,
+            max: Math.max(...results).toFixed(2),
+            min: Math.min(...results).toFixed(2),
+            sd: this.standardDeviation(results).toFixed(2),
+            average: results
+              .reduce((total, value) => total + value / results.length, 0)
+              .toFixed(2)
+          });
+        });
+      }
+
+      return table;
+    },
+    answers() {
+      return this.$store.state.answers.answers || [];
+    },
+    loading() {
+      return this.answers.length == 0;
     }
   },
   watch: {
