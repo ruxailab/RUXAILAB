@@ -1,7 +1,7 @@
 <template>
-  <v-container style="overflow: scrol;">
+  <v-container style="overflow: scrol; justify-content: center">
     <v-row justify="space-around">
-      <v-col cols="12" ><h1>{{title}}</h1></v-col>
+      <v-col cols="12"><h1>{{title}}</h1></v-col>
       <slot name="top"></slot>
     </v-row>
     <v-divider></v-divider>
