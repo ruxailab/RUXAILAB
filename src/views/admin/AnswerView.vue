@@ -90,28 +90,25 @@
             <v-col cols="12" v-if="ind == 0">
               <v-data-table
                 dense
-                :headers="headersEvaluators"
-                :items="dataEvaluators"
-                :items-per-page="5"
+                :headers="evaluatorStatistics.header"
+                :items="evaluatorStatistics.items"
+                :items-per-page="15"
                 class="elevation-1 cardStyle mx-2"
               >
-                <template
-                  v-for="header in headersExperts"
-                  v-slot:[`item.${header.value}`]="{ item }"
-                >
+                 <template v-slot:item.result="{ item }">
                   <v-chip
-                    v-if="header.value != 'item'"
-                    :key="header.value"
-                    :color="getColorPorcentage(item[header.value])"
+                    :color="getColorPorcentage(item.result)"
                     dark
-                  >{{ item[header.value] }}%</v-chip>
-                  <div v-else :key="header.value">{{ item[header.value] }}</div>
+                  >{{ item.result}}%</v-chip>
+                </template>
+                <template v-slot:item.answered="{ item }">
+                  {{item.answered}}%
                 </template>
               </v-data-table>
             </v-col>
 
             <v-col cols="10" v-if="ind == 1">
-              <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
+              <RadarChart :labels="evaluatorStatistics.items.map(item => `${item.evaluator} - ${item.result}%`)" :data="evaluatorStatistics.items.map(item => item.result)" />
             </v-col>
           </v-row>
         </v-card>
@@ -411,6 +408,7 @@ export default {
           //Get Questions for heuristic
           let questionIndex = 1;
           let noAplication = 0;
+          let noReply = 0;
           let SelectHeuristic = this.resultHeuristics.find(
             h => h.id == `H${heurisIndex}`
           );
@@ -448,13 +446,15 @@ export default {
             }
             questionIndex++;
             if (question.res === null) noAplication++; //count answers no aplication
+            if(question.res === "") noReply++;
             return totalQuestions + Number(question.res); //sum of responses
           }, 0);
           SelectEvaluator.heuristics.push({
             id: `H${heurisIndex}`,
             result: res,
             totalQuestions: heuristic.total,
-            totalNoAplication: noAplication
+            totalNoAplication: noAplication,
+            totalNoReply: noReply 
           });
           heurisIndex++;
         });
@@ -817,6 +817,49 @@ export default {
       }
 
       return table;
+    },
+    evaluatorStatistics(){
+      let table = {
+        header: [],
+        items: []
+      };
+      
+       table.header = [
+        {
+          text: "Evaluator",
+          align: "start",
+          sortable: false,
+          value: "evaluator"
+        },
+        { text: "Usability Percentage", value: "result", align: "center" },
+        { text: "Applicable Question", value: "aplication", align: "center" },
+        { text: "No Applicable Question", value: "noAplication", align: "center" },
+        { text: "Conclusion Percentage", value: "answered", align: "center" }
+      ];
+      
+      if(this.resultEvaluator){
+        this.resultEvaluator.forEach(evaluator => {
+            let totalNoAplication = 0
+            let totalNoReply = 0
+            let totalQuestions = 0
+
+            evaluator.heuristics.forEach(heuristic =>{
+              totalNoAplication += heuristic.totalNoAplication
+              totalNoReply += heuristic.totalNoReply
+              totalQuestions += heuristic.totalQuestions
+            })
+
+            table.items.push({
+              evaluator: evaluator.id,
+              result: evaluator.result,
+              aplication:totalQuestions-totalNoAplication,
+              noAplication:totalNoAplication ,
+              answered:this.percentage(totalQuestions-totalNoReply, totalQuestions),
+            })
+        })
+      }
+
+      return table
     },
     answers() {
       return this.$store.state.answers.answers || [];
