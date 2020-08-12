@@ -29,7 +29,12 @@
 
       <v-divider></v-divider>
 
-      <v-list dense></v-list>
+      <v-list dense dark>
+        <v-list-item link @click="goTo('/testslist')" v-if="this.$route.path === '/' && user">
+          <v-list-item-icon><v-icon>mdi-console</v-icon></v-list-item-icon>
+          <v-list-item-title>Go to Console</v-list-item-title>
+        </v-list-item>
+      </v-list>
 
       <div class="footer">
         <v-btn
@@ -47,11 +52,12 @@
 
     <locale-changer></locale-changer>
 
+    <!-- Go to console Desktop -->
     <v-btn
       v-if="this.$route.path === '/' && user"
       text
       color="#f9a826"
-      class="console-button mx-1"
+      class="console-button mx-1 hidden-sm-and-down"
       @click="goTo('/testslist')"
     >Go to Console</v-btn>
 
@@ -67,10 +73,11 @@
       <v-icon size="20">mdi-lock</v-icon>
     </v-btn>
 
+    <!-- Profile Button Desktop -->
     <div class="hidden-sm-and-down">
-      <v-menu offset-y v-if="user" class="ma-0 pa-0" min-width="200">
+      <v-menu offset-y v-if="user" min-width="200">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn text v-bind="attrs" v-on="on" class="pa-0">
+          <v-btn text v-bind="attrs" v-on="on" class="pa-0 btn-fix">
             <v-icon class="mr-1" dark>mdi-account-circle</v-icon>
             <v-icon small>mdi-chevron-down</v-icon>
           </v-btn>
@@ -148,5 +155,8 @@ export default {
 .divider {
   background: #C4C4C4!important;
   height: 1.5px
+}
+.btn-fix:focus::before {
+  opacity: 0 !important;
 }
 </style>
