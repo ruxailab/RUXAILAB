@@ -34,7 +34,7 @@
                       <v-card-title>Usability Percentage</v-card-title>
                       <v-card-text>
                         <v-row align="center" justify="center">
-                          <p class="display-3">{{testData.average}}</p>
+                          <p class="display-3">{{finalResult.average}}</p>
                         </v-row>
                       </v-card-text>
                     </v-row>
@@ -51,21 +51,21 @@
                         </v-list-item-icon>
 
                         <v-list-item-title>Max</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                        <v-list-item-subtitle class="text-right">{{finalResult.max}}</v-list-item-subtitle>
                       </v-list-item>
                       <v-list-item>
                         <v-list-item-icon>
                           <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>Min</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                        <v-list-item-subtitle class="text-right">{{finalResult.min}}</v-list-item-subtitle>
                       </v-list-item>
                       <v-list-item>
                         <v-list-item-icon>
                           <v-icon>mdi-plus-minus</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>Standard deviation</v-list-item-title>
-                        <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                        <v-list-item-subtitle class="text-right">{{finalResult.sd}}</v-list-item-subtitle>
                       </v-list-item>
                     </v-list>
                   </v-col>
@@ -466,7 +466,6 @@ export default {
         ev.result = this.calcFinalResult(ev.heuristics);
       });
 
-      console.log("this.resultEvaluatorFinal", this.resultEvaluator);
 
       //--------------------- Old Statistics -----------------------------------
       //Total Test
@@ -669,7 +668,6 @@ export default {
       this.questionIndex = -1;
     },
     getContent(item, value) {
-      console.log("item", item);
       if (value == "uid") {
         return item.uid;
       } else if (item.questions[value[10]].res != null) {
@@ -777,7 +775,6 @@ export default {
           });
         });
       }
-      console.log(table.items);
       return table;
     },
     heuristicsStatistics() {
@@ -860,6 +857,37 @@ export default {
       }
 
       return table
+    },
+    finalResult(){
+      let testData = {
+      average: null,
+      max: null,
+      min: null,
+      sd: null
+      }
+
+      if(this.evaluatorStatistics.items.length){
+          
+          let res = this.evaluatorStatistics.items.reduce((total,value)=>{
+            return total + value.result /this.evaluatorStatistics.items.length
+          }, 0)
+
+          testData.average = `${Math.fround(res).toFixed(1)}%`
+
+          testData.max = `${Math.max(
+            ...this.evaluatorStatistics.items.map(item => item.result)
+          ).toFixed(1)}%`
+
+          testData.min = `${Math.min(
+            ...this.evaluatorStatistics.items.map(item => item.result)
+          ).toFixed(1)}%`
+
+          testData.sd =  `${this.standardDeviation(
+            this.evaluatorStatistics.items.map(item => item.result)
+          ).toFixed(1)}%`
+      }
+
+      return testData
     },
     answers() {
       return this.$store.state.answers.answers || [];
