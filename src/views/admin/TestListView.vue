@@ -1,9 +1,13 @@
 <template>
   <v-container style="display:contents">
+    <NewTestBtn />
+    <Snackbar />
+
     <div style="height: 300px" class="background-orange background-img">
       <v-row justify="center" class="fill-height">
-        <v-col cols="10">
+        <v-col cols="11">
           <v-text-field
+            dense
             class="mt-5"
             label="Search"
             prepend-inner-icon="mdi-magnify"
@@ -25,13 +29,16 @@
           </v-tabs>
 
           <!-- Mobile Button -->
-          <v-select dense outlined v-model="index" class="hidden-md-and-up mx-2" :items="buttonItems"></v-select>
+          <v-select
+            dense
+            outlined
+            v-model="index"
+            class="hidden-md-and-up mx-2"
+            :items="buttonItems"
+          ></v-select>
 
           <!-- My Tests -->
           <v-row v-if="index == 0" :class="`grid mx-2`">
-            <v-col cols="12" sm="6" md="4">
-              <CardNewTest />
-            </v-col>
             <v-col cols="12" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
@@ -67,7 +74,8 @@
 
 <script>
 import CardTest from "@/components/atoms/CardTest";
-import CardNewTest from "@/components/atoms/CardNewTest";
+import NewTestBtn from "@/components/atoms/NewTestBtn";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   data: () => ({
@@ -82,24 +90,24 @@ export default {
       {
         text: "Title",
         align: "start",
-        value: "title"
+        value: "title",
       },
       { text: "Id", value: "id", align: "center" },
       { text: "Type", value: "type", align: "center" },
       { text: "Edit", value: "edit", align: "center", sortable: false },
       { text: "Delete", value: "delete", align: "center", sortable: false },
-      { text: "More", value: "more", align: "center", sortable: false }
+      { text: "More", value: "more", align: "center", sortable: false },
     ],
     items: [
       { title: "Open Test" },
       { title: "Open Answers" },
-      { title: "Open Manager" }
+      { title: "Open Manager" },
     ],
     buttonItems: [
       { text: "My Tests", value: 0 },
       { text: "Tests I colaborate with", value: 1 },
-      { text: "My Answers", value: 2 }
-    ]
+      { text: "My Answers", value: 2 },
+    ],
   }),
   computed: {
     user() {
@@ -109,20 +117,20 @@ export default {
       return this.$store.state.tests.loading;
     },
     filteredMyTests() {
-      return this.user.myTests.filter(test => {
+      return this.user.myTests.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyCoops() {
-      return this.user.myCoops.filter(test => {
+      return this.user.myCoops.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyAnswers() {
-      return this.user.myAnswers.filter(test => {
+      return this.user.myAnswers.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
-    }
+    },
   },
   watch: {
     index() {
@@ -133,12 +141,13 @@ export default {
       } else {
         this.label = "My Answers";
       }
-    }
+    },
   },
   components: {
     CardTest,
-    CardNewTest
-  }
+    NewTestBtn,
+    Snackbar,
+  },
 };
 </script>
 

@@ -8,11 +8,11 @@
       :value="user.notifications.length"
     >
       <v-btn v-if="user.notifications.length == 0" small icon @click="openDropdown" class="mr-1">
-        <v-icon small>mdi-bell-outline</v-icon>
+        <v-icon size="20">mdi-bell-outline</v-icon>
       </v-btn>
 
       <v-btn v-else small icon @click="openDropdown" class="mr-1">
-        <v-icon small>mdi-bell-ring</v-icon>
+        <v-icon size="20">mdi-bell-ring</v-icon>
       </v-btn>
     </v-badge>
 

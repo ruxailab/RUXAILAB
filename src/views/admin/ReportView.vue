@@ -9,8 +9,9 @@
         style="background: #f5f7ff"
         :headers="headers"
         :items="reports.reports"
-        :items-per-page="5"
+        :items-per-page="10"
         height="420px"
+        dense
       >
         <template v-slot:item.more="{ item }">
           <v-menu offset-y>

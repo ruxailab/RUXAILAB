@@ -1,18 +1,25 @@
 <template>
   <div>
-    <v-hover v-slot:default="{ hover }">
-      <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="dialog = true">
-        <v-card-text>
-          <v-row class="fill-height" justify="center" align="center">
-            <v-icon color="#f9a826" size="150">mdi-plus-circle-outline</v-icon>
-          </v-row>
-          <v-row class="fill-height" justify="center" align="center">
-            <p>New Test</p>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-hover>
-    
+    <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click=" dialog = true"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon large>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <span>Create new test</span>
+    </v-tooltip>
+
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
@@ -36,7 +43,6 @@ import FormTestDescription from "@/components/atoms/FormTestDescription";
 export default {
   components: {
     FormTestDescription,
-  
   },
   data: () => ({
     dialog: false,
@@ -46,7 +52,7 @@ export default {
       description: "",
       type: ""
     },
-    testID: null
+    testID: null,
   }),
   methods: {
     createTest() {
@@ -54,15 +60,16 @@ export default {
     },
     async submit() {
       await this.testAssembly(); // build Test
+      let d = new Date()
       let object = this.object;
       let successful = true;
       //Send db
       await this.$store
         .dispatch("createTest", {
           collection: "test",
-          data: object
+          data: Object.assign(object, {date: d.toDateString()}),
         })
-        .then(id => {
+        .then((id) => {
           this.testID = id;
           this.$store
             .dispatch("createAnswers", {
@@ -70,16 +77,16 @@ export default {
                 test: {
                   id: id,
                   title: object.title,
-                  type: object.type
+                  type: object.type,
                 },
                 answers: [],
-                answersSheet: object.answersSheet
-              }
+                answersSheet: object.answersSheet,
+              },
             })
-            .then(idAnswers => {
+            .then((idAnswers) => {
               this.$store.dispatch("setAnswerID", {
                 docId: id,
-                data: idAnswers
+                data: idAnswers,
               });
               this.$store
                 .dispatch("createReport", {
@@ -88,15 +95,15 @@ export default {
                       id: id,
                       title: object.title,
                       type: object.type,
-                      answers: idAnswers
+                      answers: idAnswers,
                     },
-                    reports: []
-                  }
+                    reports: [],
+                  },
                 })
-                .then(idReport => {
+                .then((idReport) => {
                   this.$store.dispatch("setReportID", {
                     docId: id,
-                    data: idReport
+                    data: idReport,
                   });
                   this.$store
                     .dispatch("createCooperators", {
@@ -104,15 +111,15 @@ export default {
                         test: {
                           id: id,
                           title: object.title,
-                          type: object.type
+                          type: object.type,
                         },
-                        cooperators: []
-                      }
+                        cooperators: [],
+                      },
                     })
-                    .then(idCooperators => {
+                    .then((idCooperators) => {
                       this.$store.dispatch("setCooperatorsID", {
                         docId: id,
-                        data: idCooperators
+                        data: idCooperators,
                       });
                       this.$store.dispatch("pushMyTest", {
                         docId: this.user.uid,
@@ -123,15 +130,16 @@ export default {
                           reports: idReport,
                           answers: idAnswers,
                           cooperators: idCooperators,
-                          accessLevel: 0
+                          accessLevel: 0,
+                          date: d.toDateString()
                         },
-                        param: "myTests"
+                        param: "myTests",
                       });
                     });
                 });
             });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error", err);
           successful = false;
         });
@@ -146,13 +154,14 @@ export default {
         this.object = Object.assign(this.object, {
           admin: {
             id: this.user.uid,
-            email: this.user.email
-          }
+            email: this.user.email,
+          },
         });
       }
 
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
+      this.object = Object.assign(this.object, {date: new Date().toDateString()})
 
       //assigning tasks/heuristics
       if (this.test.type === "User") {
@@ -160,20 +169,20 @@ export default {
         this.object = Object.assign(this.object, {
           preTest: {
             consent: null,
-            form: null
-          }
+            form: null,
+          },
         });
 
         this.object = Object.assign(this.object, {
           tasks: [],
-          answersSheet: null
+          answersSheet: null,
         });
 
         //assigning post test
         this.object = Object.assign(this.object, {
           postTest: {
-            form: null
-          }
+            form: null,
+          },
         });
       } else if (this.test.type === "Expert") {
         this.object = Object.assign(this.object, {
@@ -181,8 +190,8 @@ export default {
           answersSheet: {
             total: 0,
             progress: 0,
-            heuristics: []
-          }
+            heuristics: [],
+          },
         });
 
         this.object = Object.assign(this.object, { options: [] });
@@ -195,14 +204,14 @@ export default {
       if (this.$refs.form.valida()) {
         this.submit();
       }
-    }
+    },
   },
   watch: {
     dialog() {
       this.test = {
         title: "",
         description: "",
-        type: ""
+        type: "",
       };
       this.object = {};
 
@@ -210,13 +219,13 @@ export default {
         this.$refs.form.resetVal();
         this.dialog = false;
       }
-    }
+    },
   },
   computed: {
     user() {
       return this.$store.getters.user;
-    }
-  }
+    },
+  },
 };
 </script>
 

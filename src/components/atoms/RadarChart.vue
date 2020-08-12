@@ -17,14 +17,22 @@ export default {
           {
             label: "Usability Percentage",
             backgroundColor: "rgba(39, 71, 196,0.2)",
-            borderColor:'rgba(39, 71, 196,1)',
-            pointBackgroundColor:"rgba(39, 71, 196,1)",
+            borderColor: "rgba(39, 71, 196,1)",
+            pointBackgroundColor: "rgba(39, 71, 196,1)",
             data: this.data,
-           
           },
         ],
       },
-      { responsive: true, maintainAspectRatio: false }
+      {
+        responsive: true,
+        maintainAspectRatio: false,
+        scale: {
+          ticks: {
+            suggestedMin: 0,
+            suggestedMax: 100,
+          },
+        },
+      }
     );
   },
 };
