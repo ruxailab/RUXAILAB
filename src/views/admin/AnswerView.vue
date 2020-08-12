@@ -1,90 +1,90 @@
 <template >
-<v-row justify="center">
-  <ShowInfo title="Answers">
-    <!-- Main Tabs -->
-    <v-tabs
-      slot="top"
-      background-color="transparent"
-      color="#FCA326"
-      class="pb-0 mb-0"
-      v-model="index"
-    >
-      <v-tab @click="index = 0">Statistics</v-tab>
-      <v-tab @click="index = 1">Evaluators</v-tab>
-      <v-tab @click="index = 2">Heuristics</v-tab>
-      <v-tab @click="index = 3">Data</v-tab>
-    </v-tabs>
-        
-    <!-- Main Tabs Content -->
-    <div slot="content" class="ma-0 pa-0">
-      <!-- Tab 1 - Statistics -->
-      <v-card v-if="index==0" style="background: #f5f7ff;">
-        <v-card-title class="subtitleView">Statistics</v-card-title>
+  <v-row justify="center">
+    <ShowInfo title="Answers">
+      <!-- Main Tabs -->
+      <v-tabs
+        slot="top"
+        background-color="transparent"
+        color="#FCA326"
+        class="pb-0 mb-0"
+        v-model="tab"
+      >
+        <v-tab @click="tab = 0">Statistics</v-tab>
+        <v-tab @click="tab = 1">Evaluators</v-tab>
+        <v-tab @click="tab = 2">Heuristics</v-tab>
+        <v-tab @click="tab = 3">Data</v-tab>
+      </v-tabs>
 
-        <v-divider></v-divider>
+      <!-- Main Tabs Content -->
+      <div slot="content" class="ma-0 pa-0">
+        <!-- Tab 1 - Statistics -->
+        <v-card v-if="tab==0" style="background: #f5f7ff;">
+          <v-card-title class="subtitleView">Statistics</v-card-title>
 
-        <v-row justify="space-around">
-          <!-- Top Card -->
-          <v-col cols="10">
-            <v-card class="cardStyle">
-              <v-row justify="space-around">
-                <!-- Average -->
-                <v-col cols="4">
-                  <v-row justify="center">
-                    <v-card-title>Usability Percentage</v-card-title>
-                    <v-card-text>
-                      <v-row align="center" justify="center">
-                        <p class="display-3">{{testData.average}}</p>
-                      </v-row>
-                    </v-card-text>
-                  </v-row>
-                </v-col>
+          <v-divider></v-divider>
 
-                <v-divider vertical></v-divider>
+          <v-row justify="space-around">
+            <!-- Top Card -->
+            <v-col cols="10">
+              <v-card class="cardStyle">
+                <v-row justify="space-around">
+                  <!-- Average -->
+                  <v-col cols="4">
+                    <v-row justify="center">
+                      <v-card-title>Usability Percentage</v-card-title>
+                      <v-card-text>
+                        <v-row align="center" justify="center">
+                          <p class="display-3">{{testData.average}}</p>
+                        </v-row>
+                      </v-card-text>
+                    </v-row>
+                  </v-col>
 
-                <!-- Info -->
-                <v-col>
-                  <v-list class="transparent">
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
-                      </v-list-item-icon>
+                  <v-divider vertical></v-divider>
 
-                      <v-list-item-title>Max</v-list-item-title>
-                      <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Min</v-list-item-title>
-                      <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <v-icon>mdi-plus-minus</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Standard deviation</v-list-item-title>
-                      <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
-                    </v-list-item>
-                  </v-list>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-card>
+                  <!-- Info -->
+                  <v-col>
+                    <v-list class="transparent">
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
+                        </v-list-item-icon>
 
-      <!-- Tab 2 - Evaluators -->
-      <v-card v-if="index == 1" style="background: #f5f7ff;">
-        <v-card-title class="subtitleView">Evaluators</v-card-title>
+                        <v-list-item-title>Max</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.max}}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Min</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.min}}</v-list-item-subtitle>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon>mdi-plus-minus</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Standard deviation</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">{{testData.sd}}</v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
 
-        <v-divider></v-divider>
+        <!-- Tab 2 - Evaluators -->
+        <v-card v-if="tab == 1" style="background: #f5f7ff;">
+          <v-card-title class="subtitleView">Evaluators</v-card-title>
 
-        <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
-          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
-          <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
-        </v-tabs>
+          <v-divider></v-divider>
+
+          <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table</v-tab>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Graphic</v-tab>
+          </v-tabs>
 
           <v-row justify="center">
             <v-col cols="12" v-if="ind == 0">
@@ -104,53 +104,29 @@
                     :key="header.value"
                     :color="getColorPorcentage(item[header.value])"
                     dark
-                    >{{ item[header.value] }}%</v-chip
-                  >
+                  >{{ item[header.value] }}%</v-chip>
                   <div v-else :key="header.value">{{ item[header.value] }}</div>
                 </template>
               </v-data-table>
             </v-col>
 
             <v-col cols="10" v-if="ind == 1">
-              <RadarChart
-                :labels="labelsEvaluators"
-                :data="graphDataEvaluators"
-              />
+              <RadarChart :labels="labelsEvaluators" :data="graphDataEvaluators" />
             </v-col>
           </v-row>
         </v-card>
 
         <!-- Tab 3 - Heuristics-->
-        <v-card v-if="index == 2" style="background: #f5f7ff;">
+        <v-card v-if="tab == 2" style="background: #f5f7ff;">
           <v-card-title class="subtitleView">Heuristics Data</v-card-title>
 
           <v-divider></v-divider>
 
           <!-- Bottom Tabs -->
-          <v-tabs
-            background-color="transparent"
-            color="grey darken-2"
-            class="mt-2"
-            centered
-          >
-            <v-tab
-              class="tab-text"
-              style="text-transform: none !important"
-              @click="ind = 0"
-              >Table 1</v-tab
-            >
-            <v-tab
-              class="tab-text"
-              style="text-transform: none !important"
-              @click="ind = 1"
-              >Table 2</v-tab
-            >
-            <v-tab
-              class="tab-text"
-              style="text-transform: none !important"
-              @click="ind = 2"
-              >Graphic</v-tab
-            >
+          <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">Table 1</v-tab>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">Table 2</v-tab>
+            <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 2">Graphic</v-tab>
           </v-tabs>
 
           <!-- Bottom Tab Content -->
@@ -178,11 +154,8 @@
                         "
                         dark
                         class="chip"
-                        >{{ item[header.value] }}</v-chip
-                      >
-                      <div v-else :key="header.value">
-                        {{ item[header.value] }}
-                      </div>
+                      >{{ item[header.value] }}</v-chip>
+                      <div v-else :key="header.value">{{ item[header.value] }}</div>
                     </template>
                   </v-data-table>
                 </v-col>
@@ -199,8 +172,7 @@
                       <v-chip
                         :color="getColor(item.average, item.max, item.min)"
                         dark
-                        >{{ item.average }}</v-chip
-                      >
+                      >{{ item.average }}</v-chip>
                     </template>
                   </v-data-table>
                 </v-col>
@@ -215,147 +187,142 @@
         </v-card>
 
         <!-- Tab 4 - Data -->
-        <v-card v-if="index == 3" style="background: #f5f7ff;">
-          <v-row dense justify="start" class="pa-0 ma-0">
-            <!-- Left Column -->
-            <v-col cols="2" class="pa-2 ma-0">
-              <div class="subtitleView">HEURISTICS</div>
-              <v-divider></v-divider>
-              <v-list color="transparent" dense class="list-scroll">
-                <v-list-item
-                  v-for="(heuris, i) in answers.answersSheet.heuristics"
-                  :key="i"
-                  @click="
-                    setHeaders(heuris, i),
-                      setItems(i),
-                      (open = true),
-                      (dataSelected = -1),
-                      (questionIndex = -1)
-                  "
-                >
-                  <v-list-item-title
-                    :style="i == heurisIndex ? 'color: #fca326' : 'color:black'"
-                    >Heuristic {{ i + 1 }}</v-list-item-title
-                  >
-                </v-list-item>
-              </v-list>
-            </v-col>
-
-            <v-divider vertical inset style="height:530px"></v-divider>
-
-            <!-- Middle Column -->
-            <v-col v-if="open" cols="2" class="pa-2 ma-0">
-              <div class="subtitleView">HEURISTIC {{ heurisSelected }}</div>
-              <v-divider></v-divider>
-              <v-list color="transparent" dense class="list-scroll">
-                <v-list-item @click="(dataSelected = -1), (questionIndex = -1)">
-                  <v-list-item-title
-                    :style="
-                      dataSelected == -1 ? 'color: #fca326' : 'color:black'
-                    "
-                    >Data Table</v-list-item-title
-                  >
-                </v-list-item>
-                <v-list-item
-                  v-for="(question, i) in dataQuestions"
-                  :key="i"
-                  @click="(dataSelected = i), (questionIndex = i)"
-                >
-                  <v-list-item-title
-                    :style="
-                      i == questionIndex ? 'color: #fca326' : 'color:black'
-                    "
-                    >Question {{ i + 1 }}</v-list-item-title
-                  >
-                </v-list-item>
-              </v-list>
-            </v-col>
-
-            <v-divider v-if="open" vertical inset></v-divider>
-
-            <!-- Right Column -->
-            <v-col cols="7" class="pa-2 ma-0" style="width:100%">
-              <div v-if="dataSelected != null">
-                <div class="subtitleView" v-if="dataSelected != -1">
-                  QUESTION {{ dataSelected + 1 }}
-                </div>
-                <div class="subtitleView" v-else>Data Table</div>
-
+        <v-card v-if="tab == 3" style="background :#f5f7ff;">
+          <v-row class="ma-0 pa-0" v-if="resultHeuristics">
+            <!--Heuristics List-->
+            <v-col class="ma-0 pa-0" cols="2">
+              <v-list dense height="560px" outlined>
+                <v-subheader>Heuristics</v-subheader>
                 <v-divider></v-divider>
-
-                <v-row justify="center" dense>
-                  <!-- Table -->
-                  <v-col v-if="dataSelected == -1" class="ma-0 pa-0">
+                <v-list dense height="470px" outlined class="list-scroll">
+                  <v-list-item-group v-model="heuristicSelect" color="#fca326">
+                    <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
+                      <v-list-item-content>
+                        <v-list-item-title>{{item.id}}</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="i == heuristicSelect">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-list>
+            </v-col>
+            <v-divider vertical inset></v-divider>
+            <!--Questions List-->
+            <v-col class="ma-0 pa-0" cols="2" v-if="heuristicSelect != null">
+              <v-list dense height="560px" outlined>
+                <v-subheader>{{resultHeuristics[heuristicSelect].id}} - Questions</v-subheader>
+                <v-divider></v-divider>
+                <v-list dense height="470px" outlined class="list-scroll">
+                  <v-list-item-group v-model="questionSelect" color="#fca326">
+                    <v-list-item :value="-1">
+                      <v-list-item-content>
+                        <v-list-item-title>Data Table</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="questionSelect == -1">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                    <v-list-item
+                      v-for="(item, i) in resultHeuristics[heuristicSelect].questions"
+                      :key="i"
+                      :value="i"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>{{item.id}}</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="i == questionSelect">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-list>
+            </v-col>
+            <!--Content-->
+            <v-col class="ma-0 pa-0" v-if="questionSelect != null && heuristicSelect != null">
+              <v-card height="560px" elevation-0>
+                <v-subheader
+                  class="pa-2"
+                  v-if="questionSelect !=-1"
+                >{{resultHeuristics[heuristicSelect].questions[questionSelect].id}}</v-subheader>
+                <v-subheader class="pa-2" v-else>Data Table</v-subheader>
+                <v-divider></v-divider>
+                <v-row v-if="questionSelect==-1">
+                  <v-col>
                     <v-text-field
                       class="mx-3"
                       append-icon="mdi-magnify"
                       label="Search"
                       v-model="search"
                     ></v-text-field>
-
                     <v-data-table
-                      class="elevation-1 cardStyle"
-                      :headers="headers"
-                      :items="items"
+                      class="elevation-1"
+                      :headers="headersHeuristic"
+                      :items="itemsHeuristic"
                       :search="search"
-                    ></v-data-table>
-                  </v-col>
-
-                  <!-- Graph -->
-                  <v-col class="mx-3" v-else>
-                    <v-row justify="center">
-                      <!-- Bottom Tabs -->
-                      <v-tabs
-                        background-color="transparent"
-                        color="grey darken-2"
-                        class="mt-2"
-                        centered
-                        v-model="ind"
+                      height="360px"
+                      dense
+                    >
+                      <template
+                        v-for="header in headersHeuristic"
+                        v-slot:[`item.${header.value}`]="{ item }"
                       >
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 0"
-                          >Graphic</v-tab
-                        >
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 1"
-                          >Comments</v-tab
-                        >
-                      </v-tabs>
-                      <v-col v-if="ind == 0">
-                        <QuestionChart
-                          :data="dataQuestions[dataSelected].data"
-                        />
-                      </v-col>
-                      <v-col v-if="ind == 1">
-                        <v-timeline
-                          v-if="dataQuestions[dataSelected].comments.length"
-                          dense
+                        <div v-if="item[header.value]==null" :key="header.value">-</div>
+                        <div v-else :key="header.value">{{ item[header.value] }}</div>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
+                <v-row class="ma-0 pa-0" v-else>
+                  <v-tabs
+                    background-color="transparent"
+                    color="grey darken-2"
+                    class="mt-2"
+                    centered
+                    v-model="ind"
+                  >
+                    <v-tab
+                      class="tab-text"
+                      style="text-transform: none !important"
+                      @click="ind = 0"
+                    >Graphic</v-tab>
+                    <v-tab
+                      class="tab-text"
+                      style="text-transform: none !important"
+                      @click="ind = 1"
+                    >Comments</v-tab>
+                  </v-tabs>
+                  <v-col v-if="ind == 0">
+                    <BarChart v-if="questionGraph" :labels="questionGraph.label" :data="questionGraph.data" />
+                  </v-col>
+                  <v-col v-if="ind == 1">
+                    <v-row class="list-scroll" style="height:430px">
+                      <v-timeline
+                        v-if="resultHeuristics[heuristicSelect].questions[questionSelect].result.length"
+                        dense
+                      >
+                        <div
+                          v-for="(result, index) in resultHeuristics[heuristicSelect].questions[questionSelect].result"
+                          :key="index"
                         >
                           <v-timeline-item
+                            v-if="result.comment"
                             fill-dot
                             color="#fca326"
                             icon="mdi-message-reply-text"
-                            v-for="(comment, index) in dataQuestions[
-                              dataSelected
-                            ].comments"
-                            :key="index"
                           >
                             <v-card class="elevation-2">
-                              <v-card-text>{{ comment }}</v-card-text>
+                              <v-card-text>{{ result.comment}}</v-card-text>
                             </v-card>
                           </v-timeline-item>
-                        </v-timeline>
-                        <div v-else>No comments yet</div>
-                      </v-col>
+                        </div>
+                      </v-timeline>
                     </v-row>
                   </v-col>
                 </v-row>
-              </div>
-              <h2 v-else class="ml-3">Please select a heuristic</h2>
+              </v-card>
             </v-col>
           </v-row>
         </v-card>
@@ -365,7 +332,6 @@
 </template>
 
 <script>
-import QuestionChart from "@/components/atoms/QuestionChart.vue";
 import BarChart from "@/components/atoms/BarChart.vue";
 import RadarChart from "@/components/atoms/RadarChart.vue";
 import ShowInfo from "@/components/organisms/ShowInfo";
@@ -373,16 +339,13 @@ import ShowInfo from "@/components/organisms/ShowInfo";
 export default {
   props: ["id"],
   components: {
-    QuestionChart,
     BarChart,
     RadarChart,
-    ShowInfo,
+    ShowInfo
   },
   data: () => ({
-    index: 0,
     heurisIndex: null,
     questionIndex: null,
-    ind: 0,
     open: false,
     search: "",
     heurisSelected: null,
@@ -394,7 +357,7 @@ export default {
       average: null,
       max: null,
       min: null,
-      sd: null,
+      sd: null
     },
     graph: [],
     dataQuestions: [],
@@ -403,12 +366,12 @@ export default {
         text: "Heuristics",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "name"
       },
       { text: "Average", value: "average", align: "center" },
       { text: "Standard deviation", value: "sd", align: "center" },
       { text: "Max", value: "max", align: "center" },
-      { text: "Min", value: "min", align: "center" },
+      { text: "Min", value: "min", align: "center" }
     ],
     labelsHeuris: [],
     dataHeuris: [],
@@ -417,83 +380,14 @@ export default {
     dataExperts: [],
     labelsEvaluators: [],
     dataEvaluators: [],
+    //New data
+    tab: 0,
+    ind: 0,
+    heuristicSelect: null,
+    questionSelect: null,
+    resultHeuristics: []
   }),
   methods: {
-    setItems(index) {
-      this.items = [];
-
-      let aux;
-      this.heurisIndex = index;
-
-      // answers.answersSheet.heuristics
-      this.answers.answers.forEach((answer) => {
-        aux = {
-          uid: null,
-          questions: [],
-        };
-        aux.uid = answer.uid;
-
-        if (answer.heuristics[index])
-          aux.questions = Array.from(answer.heuristics[index].questions);
-
-        this.items.push(aux);
-      });
-      let ids = [];
-      aux.questions.forEach((q) => {
-        ids.push(q.id);
-      });
-      this.questionGraph(this.items, ids);
-    },
-    setHeaders(heuris, i) {
-      let index = 0;
-      (this.heurisSelected = i + 1), (this.headers = []);
-      this.headers.push({
-        text: "ID",
-        align: "start",
-        value: "uid",
-      });
-
-      heuris.questions.forEach((question) => {
-        this.headers.push({
-          text: "Question " + (question.id + 1).toString(),
-          value: `questions[${index}].res`,
-        });
-        index++;
-      });
-    },
-    questionGraph(data, ids) {
-      this.dataQuestions = [];
-      var questionMap = new Map();
-
-      ids.forEach((id) => {
-        let aux = [];
-        let comments = [];
-        data.forEach((item) => {
-          if (item.questions.length) {
-            aux.push(item.questions.find((q) => q.id == id).res);
-            if (item.questions.find((q) => q.id == id).com)
-              comments.push(item.questions.find((q) => q.id == id).com);
-          }
-        });
-        questionMap.set(`Question ${id}`, { aux: aux, comments: comments });
-      });
-      let possibleAnswers = [1, 0.5, 0, -1, null];
-      for (var [key, value] of questionMap.entries()) {
-        let aux = [];
-
-        possibleAnswers.forEach((el) => {
-          aux.push(value.aux.filter((v) => v == el).length);
-        });
-        this.dataQuestions.push({
-          question: key,
-          data: aux,
-          comments: value.comments,
-        });
-      }
-
-      console.log("questionMap", questionMap);
-      console.log("dataQuestions", this.dataQuestions);
-    },
     statistics() {
       const answers = this.answers.answers;
       const answersResults = new Map();
@@ -501,14 +395,14 @@ export default {
       const EvaluatorsResults = new Map();
 
       //New Statistics
-      const resultHeuristics = [];
+      this.resultHeuristics = [];
       const resultEvaluator = [];
 
       //Get Evaluator answers
       let evaluatorIndex = 1;
-      answers.forEach((evaluator) => {
+      answers.forEach(evaluator => {
         let SelectEvaluator = resultEvaluator.find(
-          (e) => e.id == `Ev${evaluatorIndex}`
+          e => e.id == `Ev${evaluatorIndex}`
         );
         if (!SelectEvaluator) {
           resultEvaluator.push({
@@ -516,30 +410,32 @@ export default {
             email: evaluator.email,
             id: `Ev${evaluatorIndex}`,
             heuristics: [],
-            result: 0,
+            result: 0
           });
           SelectEvaluator = resultEvaluator[resultEvaluator.length - 1];
         }
         //Get Heuristics for evaluators
         let heurisIndex = 1;
-        evaluator.heuristics.forEach((heuristic) => {
+        evaluator.heuristics.forEach(heuristic => {
           //Get Questions for heuristic
           let questionIndex = 1;
           let noAplication = 0;
-          let SelectHeuristic = resultHeuristics.find(
-            (h) => h.id == `H${heurisIndex}`
+          let SelectHeuristic = this.resultHeuristics.find(
+            h => h.id == `H${heurisIndex}`
           );
           if (!SelectHeuristic) {
-            resultHeuristics.push({
+            this.resultHeuristics.push({
               id: `H${heurisIndex}`,
-              questions: [],
+              questions: []
             });
-            SelectHeuristic = resultHeuristics[resultHeuristics.length - 1];
+            SelectHeuristic = this.resultHeuristics[
+              this.resultHeuristics.length - 1
+            ];
           }
           let res = heuristic.questions.reduce((totalQuestions, question) => {
             //grouping of answers
             let selectQuestion = SelectHeuristic.questions.find(
-              (q) => q.id == `Question ${questionIndex}`
+              q => q.id == `Question ${questionIndex}`
             );
             if (!selectQuestion) {
               SelectHeuristic.questions.push({
@@ -548,15 +444,15 @@ export default {
                   {
                     evaluator: evaluator.uid,
                     response: question.res,
-                    comment: question.com,
-                  },
-                ],
+                    comment: question.com
+                  }
+                ]
               });
             } else {
               selectQuestion.result.push({
                 evaluator: evaluator.uid,
                 response: question.res,
-                comment: question.com,
+                comment: question.com
               });
             }
             questionIndex++;
@@ -567,7 +463,7 @@ export default {
             id: `H${heurisIndex}`,
             result: res,
             totalQuestions: heuristic.total,
-            totalNoAplication: noAplication,
+            totalNoAplication: noAplication
           });
           heurisIndex++;
         });
@@ -575,10 +471,12 @@ export default {
       });
 
       //Calc Final result
-      resultEvaluator.forEach((ev) => {
+      resultEvaluator.forEach(ev => {
         ev.result = this.calcFinalResult(ev.heuristics);
       });
+
       console.log("resultEvaluatorFinal", resultEvaluator);
+      console.log("Result Heuristics", this.resultHeuristics);
 
       //Old Statistics
       //Total Test
@@ -592,7 +490,7 @@ export default {
           const collection = heurisResults.get(`H ${heuris.id + 1}`);
           if (!collection) {
             heurisResults.set(`H ${heuris.id + 1}`, [
-              { res: res, av: answer.uid },
+              { res: res, av: answer.uid }
             ]);
           } else {
             collection.push({ res: res, av: answer.uid });
@@ -606,21 +504,21 @@ export default {
       for (var [key, list] of heurisResults.entries()) {
         this.dataHeuris.push({
           name: key,
-          max: Math.max(...list.map((i) => i.res)).toFixed(2),
-          min: Math.min(...list.map((i) => i.res)).toFixed(2),
-          sd: this.standardDeviation(list.map((i) => i.res)).toFixed(2),
+          max: Math.max(...list.map(i => i.res)).toFixed(2),
+          min: Math.min(...list.map(i => i.res)).toFixed(2),
+          sd: this.standardDeviation(list.map(i => i.res)).toFixed(2),
           average: list
-            .map((i) => i.res)
+            .map(i => i.res)
             .reduce((total, value) => total + value / list.length, 0)
-            .toFixed(2),
+            .toFixed(2)
         });
 
         // Set Experts Data for Heuristic
         let obj = {
-          heuristic: key,
+          heuristic: key
         };
         let index = String(key).split(" ")[1] - 1;
-        let values = this.answers.options.map((item) => item.value);
+        let values = this.answers.options.map(item => item.value);
         let max =
           Math.max(...values) *
           this.answers.answersSheet.heuristics[index].total;
@@ -628,7 +526,7 @@ export default {
           Math.min(...values) *
           this.answers.answersSheet.heuristics[index].total;
 
-        list.forEach((item) => {
+        list.forEach(item => {
           obj = Object.assign(obj, { [item.av]: item.res, max: max, min: min });
         });
 
@@ -639,21 +537,21 @@ export default {
       this.headersExperts.push({
         text: "Heuristics",
         value: "heuristic",
-        align: "start",
+        align: "start"
       });
       let id = 1;
-      answers.forEach((answer) => {
+      answers.forEach(answer => {
         this.headersExperts.push({
           text: `Av ${id}`,
           value: answer.uid,
-          align: "center",
+          align: "center"
         });
         id++;
       });
 
       //Calc Result for Avalitor
-      this.dataExperts.forEach((data) => {
-        Object.keys(data).forEach((item) => {
+      this.dataExperts.forEach(data => {
+        Object.keys(data).forEach(item => {
           if (item !== "heuristic" && item !== "min" && item !== "max") {
             const collection = EvaluatorsResults.get(item);
             if (!collection) {
@@ -674,28 +572,28 @@ export default {
           result: this.percentage(
             value,
             this.answers.answersSheet.perfectResult
-          ).toFixed(1),
+          ).toFixed(1)
         });
       }
       //Set Evaluators Graph
       this.labelsEvaluators = dataAvaliatorResult.map(
-        (item) => `Av ${dataAvaliatorResult.indexOf(item) + 1}: ${item.result}%`
+        item => `Av ${dataAvaliatorResult.indexOf(item) + 1}: ${item.result}%`
       );
-      this.graphDataEvaluators = dataAvaliatorResult.map((item) => item.result);
+      this.graphDataEvaluators = dataAvaliatorResult.map(item => item.result);
 
       this.headersEvaluators = this.headersExperts.filter(
-        (item) => item.value !== "heuristic"
+        item => item.value !== "heuristic"
       );
       this.headersEvaluators.unshift({
         text: " ",
         value: "title",
-        align: "start",
+        align: "start"
       });
 
       let obj = { title: " Usability Percentage " };
-      dataAvaliatorResult.forEach((item) => {
+      dataAvaliatorResult.forEach(item => {
         Object.assign(obj, {
-          [item.avaliator]: item.result,
+          [item.avaliator]: item.result
         });
       });
 
@@ -703,12 +601,12 @@ export default {
 
       //Set Heuristic Graph
       this.labelsHeuris = [...heurisResults.keys()];
-      this.graphDataHeuris = this.dataHeuris.map((list) => {
+      this.graphDataHeuris = this.dataHeuris.map(list => {
         return list.average;
       });
 
       let res = dataAvaliatorResult
-        .map((item) => item.result)
+        .map(item => item.result)
         .reduce((total, value) => {
           return total + Number(value);
         }, 0);
@@ -717,24 +615,22 @@ export default {
       this.testData = {
         average: `${Math.fround(res / dataAvaliatorResult.length).toFixed(1)}%`,
         max: `${Math.max(
-          ...dataAvaliatorResult.map((item) => item.result)
+          ...dataAvaliatorResult.map(item => item.result)
         ).toFixed(1)}%`,
         min: `${Math.min(
-          ...dataAvaliatorResult.map((item) => item.result)
+          ...dataAvaliatorResult.map(item => item.result)
         ).toFixed(1)}%`,
         sd: `${this.standardDeviation(
-          dataAvaliatorResult.map((item) => item.result)
-        ).toFixed(1)}%`,
+          dataAvaliatorResult.map(item => item.result)
+        ).toFixed(1)}%`
       };
     },
     calcFinalResult(array) {
       let result = 0;
       let qtdQuestion = 0;
       let qtdNoAplication = 0;
-      let maxOption = Math.max(
-        ...this.answers.options.map((item) => item.value)
-      );
-      array.forEach((res) => {
+      let maxOption = Math.max(...this.answers.options.map(item => item.value));
+      array.forEach(res => {
         (result += res.result), (qtdQuestion += res.totalQuestions);
         qtdNoAplication += res.totalNoAplication;
       });
@@ -779,27 +675,85 @@ export default {
       this.index = 3;
       this.heurisIndex = this.dataExperts.indexOf(item);
       this.open = true;
-      this.dataSelected =-1;
-      this.questionIndex = -1
+      this.dataSelected = -1;
+      this.questionIndex = -1;
     },
     getContent(item, value) {
       console.log("item", item);
-      if(value == 'uid') {
+      if (value == "uid") {
         return item.uid;
-      } else if(item.questions[value[10]].res != null){
-        return item.questions[value[10]].res
+      } else if (item.questions[value[10]].res != null) {
+        return item.questions[value[10]].res;
       } else {
-        return '-'
-      }     
+        return "-";
+      }
     }
   },
   computed: {
+    headersHeuristic() {
+      let header = [
+        {
+          text: "ID",
+          align: "start",
+          value: "uid"
+        }
+      ];
+      if (this.heuristicSelect != null) {
+        this.resultHeuristics[this.heuristicSelect].questions.forEach(
+          question => {
+            header.push({
+              text: question.id,
+              align: "center",
+              value: question.id
+            });
+          }
+        );
+      }
+
+      return header;
+    },
+    itemsHeuristic() {
+      let items = [];
+      if (this.heuristicSelect != null) {
+        this.resultHeuristics[this.heuristicSelect].questions.forEach(
+          question => {
+            question.result.forEach(result => {
+              let ev = items.find(item => item.uid == result.evaluator);
+              if (!ev) {
+                items.push({ uid: result.evaluator });
+                ev = items[items.length - 1];
+              }
+              Object.assign(ev, { [question.id]: result.response });
+            });
+          }
+        );
+      }
+      return items;
+    },
     answers() {
       return this.$store.state.answers.answers || [];
     },
     loading() {
       return this.answers.length == 0;
     },
+    questionGraph() {
+      let options = this.answers.options;
+      let graph = {
+        label: [...options.map(op => op.text)],
+        data: [
+          ...options.map(() => 0)]
+      };
+      if (this.heuristicSelect != null && this.questionSelect != null) {
+        let question = this.resultHeuristics[this.heuristicSelect].questions[
+          this.questionSelect
+        ];
+        question.result.forEach(result => {
+          let item = options.find(op => op.value == result.response);
+          if(item) graph.data[graph.label.indexOf(item.text)] += 1;
+         });
+      }
+      return graph;
+    }
   },
   watch: {
     answers() {
@@ -810,6 +764,12 @@ export default {
     index() {
       this.ind = 0;
     },
+    heuristicSelect() {
+      this.questionSelect = -1;
+    },
+    questionSelect() {
+      this.ind = 0;
+    }
   },
   created() {
     if (
@@ -820,11 +780,9 @@ export default {
     }
     this.test = Object.assign(
       {},
-      this.$store.state.auth.user.myTests.find(
-        (test) => test.answers == this.id
-      )
+      this.$store.state.auth.user.myTests.find(test => test.answers == this.id)
     );
-  },
+  }
 };
 </script>
 

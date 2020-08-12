@@ -101,7 +101,6 @@
     <v-card style="background: #f5f7ff;" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
-
       <v-row class="ma-0 pa-0" v-if="heuristics.length">
         <!--Heuristics List-->
         <v-col class="ma-0 pa-0" cols="3">
