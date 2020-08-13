@@ -42,7 +42,7 @@
       </v-tooltip>
 
       <ShowInfo title="Cooperators">
-        <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">        
+        <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">       
           <v-autocomplete
             style="background: #f5f7ff;"
             v-model="userSelected"
@@ -187,7 +187,8 @@ export default {
       this.edited = value;
     },
     submit() {
-      this.cooperatorsEdit.forEach(async guest => {
+     
+      this.cooperatorsEdit.forEach( guest => {
         //Invide new cooperators
         if (!guest.invited) {
           this.send(guest);
@@ -278,9 +279,10 @@ export default {
                   },
                   param: "reports"
                 });
+                let test = Object.assign({},this.testID)
                 this.$store.dispatch("pushMyCoops", {
                   docId: guest.guest.id,
-                  element: Object.assign(this.testID, {
+                  element: Object.assign(test, {
                     accessLevel: guest.current.value
                   })
                 });
@@ -290,6 +292,7 @@ export default {
             (guest.previous.value == 1 || guest.previous.value == 0) &&
             guest.current.value == 2
           ) {
+
             this.$store
               .dispatch("removeMyCoops", {
                 docId: guest.guest.id,
@@ -298,11 +301,10 @@ export default {
                 }
               })
               .then( () => {
-             
-
+                let test = Object.assign({},this.testID)
                 this.$store.dispatch("pushMyAnswers", {
                   docId: guest.guest.id,
-                  element: Object.assign(this.testID, {
+                  element: Object.assign(test, {
                     answersSheet: Object.assign(this.test.answersSheet, {
                       submited: false
                     }),
@@ -327,7 +329,7 @@ export default {
                   element: item
                 });
               });
-          } else {
+          } else if(guest.previous.value != 2 && guest.current.value != 2 ) {
             this.$store.dispatch("updateAccessLevel", {
               docId: guest.guest.id,
               elementId: this.id,
@@ -499,6 +501,9 @@ export default {
           this.$store.dispatch("getTest", { id: this.cooperators.test.id });
         }
       }
+    },
+    testID(){
+      console.log(this.testID)
     }
   },
   computed: {
