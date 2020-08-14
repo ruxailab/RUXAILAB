@@ -1,39 +1,46 @@
 <template>
-  <ShowInfo title="Reports">
-    <v-row justify="end" dense slot="top" class="mr-3">
-      <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
-    </v-row>
+  <div>
+    <v-overlay class="text-center" v-model="loading">
+      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+      <div class="white-text mt-3">Loading Reports</div>
+    </v-overlay>
 
-    <div slot="content" class="ma-0 pa-0">
-      <v-data-table
-        style="background: #f5f7ff"
-        :headers="headers"
-        :items="reports.reports"
-        :items-per-page="10"
-        height="420px"
-        dense
-      >
-        <template v-slot:item.more="{ item }">
-          <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="removeReport(item)">
-                <v-list-item-title>Remove Report</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
+    <ShowInfo title="Reports">
+      <v-row justify="end" dense slot="top" class="mr-3">
+        <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
+      </v-row>
 
-        <template v-slot:item.progress="{ item }">
-          <div>{{item.log.progress}}%</div>
-        </template>
-      </v-data-table>
-    </div>
-  </ShowInfo>
+      <div slot="content" class="ma-0 pa-0">
+        <v-data-table
+          style="background: #f5f7ff"
+          :headers="headers"
+          :items="reports.reports"
+          :items-per-page="10"
+          height="420px"
+          dense
+        >
+          <template v-slot:item.more="{ item }">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="removeReport(item)">
+                  <v-list-item-title>Remove Report</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+
+          <template v-slot:item.progress="{ item }">
+            <div>{{item.log.progress}}%</div>
+          </template>
+        </v-data-table>
+      </div>
+    </ShowInfo>
+  </div>
 </template>
 
 <script>
@@ -58,7 +65,8 @@ export default {
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
       { text: "More", value: "more" },
-    ], 
+    ],
+    loading: true
   }),
   methods: {
     removeReport(report) {
@@ -76,10 +84,17 @@ export default {
       return this.$store.state.reports.reports || [];
     },
   },
-
+  watch: {
+    reports() {
+      if(Object.keys(this.reports).length) this.loading = false;
+    }
+  },
   created() {
     if (!this.$store.reports) {
       this.$store.dispatch("getReports", { id: this.id });
+    }
+    else {
+      this.loading = false
     }
     this.test = Object.assign(
       {},
