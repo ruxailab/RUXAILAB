@@ -1,52 +1,57 @@
 <template>
   <div>
-    <v-hover v-slot:default="{ hover }">
+    <v-hover v-slot:default="{ hover }" class="ma-0 pa-0">
+      <v-card
+        :elevation="hover ? 24 : 10"
+        shaped
+        class="card"
+        @click="redirect(item)"
+        min-width="260px"
+      >
+        <v-container>
+          <v-col cols="12" align-self="start">
+            <h4>{{item.title}}</h4>
+          </v-col>
 
-    <v-card :elevation="hover ? 24 : 10" shaped class="card" @click="redirect(item)">
+          <!-- Desktop/Tablet -->
+          <v-row align="center">
+            <div class="hidden-sm-and-down">
+              <v-row class="bottomStart">
+                <v-col>
+                  <v-icon x-large>mdi-account-circle</v-icon>
+                  <v-btn
+                    color="grey darken-3 white--text"
+                    disabled
+                    rounded
+                    :ripple="false"
+                  >{{item.type}}</v-btn>
+                  <div class="text-center caption">Created {{item.date || '~no date~'}}</div>
+                </v-col>
+              </v-row>
+            </div>
+          </v-row>
 
-      <v-container>
-        <v-col cols="12" align-self="start">
-          <h4>{{item.title}}</h4>
-        </v-col>
-
-        <!-- Desktop/Tablet -->
-        <v-row align="center">
-          <div class="hidden-sm-and-down">
-            <v-row class="bottomStart">
-              <v-col>
+          <!-- Mobile -->
+          <v-row justify="center">
+            <div class="hidden-md-and-up bottomMobile">
+              <v-row class="ma-1" justify="space-between">
                 <v-icon x-large>mdi-account-circle</v-icon>
-                <v-btn color="grey darken-3 white--text" disabled rounded :ripple="false">{{item.type}}</v-btn>
-                <div class="text-center caption">Created  {{item.date || '~no date~'}}</div>
+                <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
+              </v-row>
 
-              </v-col>
-            </v-row>
-          </div>
-        </v-row>
-
-        <!-- Mobile -->
-        <v-row justify="center">
-          <div class="hidden-md-and-up bottomMobile">
-            <v-row class="ma-1" justify="space-between">
-              <v-icon x-large>mdi-account-circle</v-icon>
-              <v-btn color="grey darken-3 white--text" rounded :ripple="false">{{item.type}}</v-btn>
-            </v-row>
-
-            <v-row class="mt-2" justify="center">
-              <div class="text-center caption">{{new Date().toDateString()}}</div>
-            </v-row>
-          </div>
-        </v-row>
-      </v-container>
-    </v-card>
-  </v-hover>
-
+              <v-row class="mt-2" justify="center">
+                <div class="text-center caption">{{new Date().toDateString()}}</div>
+              </v-row>
+            </div>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-hover>
   </div>
 </template>
 
 
 <script>
-
-
 export default {
   props: ["item", "accessLevel"],
   data: () => ({
@@ -129,9 +134,9 @@ export default {
       });
     },
     redirect(test) {
-      if(this.accessLevel <= 1) this.openManager(test);
+      if (this.accessLevel <= 1) this.openManager(test);
       else this.openTest(test);
-    }
+    },
   },
   computed: {
     user() {
@@ -167,8 +172,6 @@ export default {
   border-radius: 3px;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
   background-color: #fff;
-  border-bottom: 2px solid transparent;
-  margin: 0 16px 16px 0;
 }
 .bottomStart {
   position: absolute;

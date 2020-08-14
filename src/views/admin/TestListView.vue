@@ -38,15 +38,15 @@
           ></v-select>
 
           <!-- My Tests -->
-          <v-row v-if="index == 0" :class="`grid mx-2`">
-            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
+          <v-row v-if="index == 0" :class="`grid`" justify="center">
+            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
           </v-row>
 
           <!-- Tests I Colaborate With -->
-          <v-row justify="start" v-if="index == 1" class="grid mx-2">
-            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
+          <v-row justify="center" v-if="index == 1" class="grid mx-2">
+            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">              
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
