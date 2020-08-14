@@ -56,7 +56,7 @@
       <v-navigation-drawer
         clipped
         v-model="drawer"
-        :mini-variant.sync="mini"
+        :mini-variant="mini"
         permanent
         color="#3F3D56"
       >
@@ -122,25 +122,65 @@
               v-else-if="item.id == 1"
               :value="index == 1 ? true : false"
             >
-              <v-list-item v-for="(heuris, i) in item.value" :key="i" @click="heurisIndex = i" link>
-                <v-list-item-icon>
-                  <v-progress-circular
-                    rotate="-90"
-                    v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
-                    :value="progress(answersSheet.heuristics[i])"
-                    :size="24"
-                    :width="3"
-                    :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                  ></v-progress-circular>
-                  <v-icon v-else :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ heuris.icon }}</v-icon>
-                </v-list-item-icon>
+              <div v-if="mini">
+                <v-tooltip right v-for="(heuris, i) in item.value" :key="i">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item @click="heurisIndex = i" link v-bind="attrs" v-on="on">
+                      <v-list-item-icon>
+                        <v-progress-circular
+                          rotate="-90"
+                          v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
+                          :value="progress(answersSheet.heuristics[i])"
+                          :size="24"
+                          :width="3"
+                          :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                        ></v-progress-circular>
+                        <v-icon
+                          v-else
+                          :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                        >{{ heuris.icon }}</v-icon>
+                      </v-list-item-icon>
 
-                <v-list-item-content>
-                  <v-list-item-title
-                    :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
-                  >{{ heuris.title }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
+                        >{{ heuris.title }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <span>{{ heuris.title }}</span>
+                </v-tooltip>
+              </div>
+
+              <div v-else>
+                <v-list-item
+                  v-for="(heuris, i) in item.value"
+                  :key="i"
+                  @click="heurisIndex = i"
+                  link
+                >
+                  <v-list-item-icon>
+                    <v-progress-circular
+                      rotate="-90"
+                      v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
+                      :value="progress(answersSheet.heuristics[i])"
+                      :size="24"
+                      :width="3"
+                      :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                    ></v-progress-circular>
+                    <v-icon
+                      v-else
+                      :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                    >{{ heuris.icon }}</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title
+                      :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
+                    >{{ heuris.title }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </div>
             </v-list>
             <!--Post Test-->
             <v-list-item @click="index = item.id" v-else-if="item.id ==2">
@@ -216,7 +256,10 @@
                   </v-col>
                 </v-row>
 
-                <AddCommentBtn :comment="answersSheet.heuristics[heurisIndex].questions[i]" :heurisIndex="heurisIndex">
+                <AddCommentBtn
+                  :comment="answersSheet.heuristics[heurisIndex].questions[i]"
+                  :heurisIndex="heurisIndex"
+                >
                   <v-select
                     slot="answer"
                     v-if="answersSheet !== undefined"
@@ -310,7 +353,7 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
-    }
+    },
   },
   methods: {
     mappingSteps() {
