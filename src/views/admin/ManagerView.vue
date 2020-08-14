@@ -1,13 +1,8 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <v-row class="nav pa-0 ma-0" dense>
-      <v-navigation-drawer
-        clipped
-        v-model="drawer"
-        :mini-variant="mini"
-        permanent
-        color="#3F3D56"
-      >
+      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56">
+        <!-- Navigation header -->
         <div class="header" v-if="!mini">
           <v-list-item>
             <v-row dense>
@@ -29,21 +24,44 @@
             </v-row>
           </v-list-item>
         </div>
-
+        
+        <!-- Navigation options -->
         <v-list flat dense v-if="items">
-          <v-list-item v-for="(item,n) in items" :key="n" link @click="index = n,go(item)">
-            <v-list-item-icon>
-              <v-icon :color="index == item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
-            </v-list-item-icon>
+          <div v-if="mini">
+            <v-tooltip right v-for="(item,n) in items" :key="n">
+              <template v-slot:activator="{ on, attrs }">
+                <v-list-item @click="index = n,go(item)" v-bind="attrs" v-on="on">
+                  <v-list-item-icon>
+                    <v-icon :color="index == item.id? '#fca326' : '#bababa'">{{ item.icon }}</v-icon>
+                  </v-list-item-icon>
 
-            <v-list-item-content>
-              <v-list-item-title
-                :style="index == item.id? 'color: white': 'color:#fca326'"
-              >{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      :style="index == item.id? 'color: #fca326': 'color:#bababa'"
+                    >{{ item.title }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+              <span>{{ item.title }}</span>
+            </v-tooltip>
+          </div>
+
+          <div v-else>
+            <v-list-item v-for="(item,n) in items" :key="n" @click="index = n,go(item)">
+              <v-list-item-icon>
+                <v-icon :color="index == item.id? '#fca326' : '#bababa'">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title
+                  :style="index == item.id? 'color: #fca326': 'color:#bababa'"
+                >{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
         </v-list>
 
+        <!-- Navigation footer -->
         <div class="footer" v-if="!mini">
           <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3">
             <v-icon color="white">mdi-cog</v-icon>
@@ -56,12 +74,12 @@
 
         <div class="footer" style="height:16%" v-else>
           <v-list class="mt-0 pa-0">
-            <v-list-item class="pt-0">
+            <v-list-item class="pt-0" style="cursor: pointer">
               <v-list-item-icon @click="go(`/settingsview/${test.id}`)">
                 <v-icon color="white">mdi-cog</v-icon>
               </v-list-item-icon>
             </v-list-item>
-            <v-list-item>
+            <v-list-item style="cursor: pointer">
               <v-list-item-icon @click.stop="mini = !mini">
                 <v-icon color="white">mdi-chevron-right</v-icon>
               </v-list-item-icon>
@@ -70,6 +88,7 @@
         </div>
       </v-navigation-drawer>
 
+      <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="background-top">
@@ -111,7 +130,8 @@ export default {
     tests: [],
     mini: true,
     isCoops: null,
-    selectedTest:null
+    selectedTest: null,
+    item: 0,
   }),
   methods: {
     pushToTest() {
@@ -127,7 +147,7 @@ export default {
     },
     setIsCoops(payload) {
       this.isCoops = payload;
-    }
+    },
   },
   computed: {
     testsList() {
@@ -135,10 +155,10 @@ export default {
       else return this.$store.state.auth.user.myCoops;
     },
     test() {
-      let seach = this.selectedTest || this.id
+      let seach = this.selectedTest || this.id;
       let test = Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find(test =>
+        this.$store.state.auth.user.myTests.find((test) =>
           Object.values(test).includes(seach)
         )
       );
@@ -147,7 +167,7 @@ export default {
         //se o objeto for vazio
         test = Object.assign(
           {},
-          this.$store.state.auth.user.myCoops.find(test =>
+          this.$store.state.auth.user.myCoops.find((test) =>
             Object.values(test).includes(seach)
           )
         );
@@ -166,13 +186,13 @@ export default {
       get() {
         if (this.items)
           return this.items.indexOf(
-            this.items.find(item => item.path.includes(this.$route.path))
+            this.items.find((item) => item.path.includes(this.$route.path))
           );
         return 0;
       },
       set(item) {
         return item;
-      }
+      },
     },
     items() {
       let items = [
@@ -180,32 +200,32 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0
+          id: 0,
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1
+          id: 1,
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2
+          id: 2,
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3
+          id: 3,
         },
         {
           title: "Answers",
           icon: "mdi-chart-bar",
           path: `/answerview/${this.test.answers}`,
-          id: 4
-        }
+          id: 4,
+        },
       ];
 
       if (this.test.accessLevel == 0) {
@@ -213,20 +233,20 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 5
+          id: 5,
         });
       }
 
       return items;
-    }
+    },
   },
   created() {
     this.itemSelect = {
       title: "Manager",
       icon: "mdi-home",
-      path: `/managerview/${this.test.id}`
+      path: `/managerview/${this.test.id}`,
     };
-  }
+  },
 };
 </script>
 

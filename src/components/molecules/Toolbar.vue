@@ -75,9 +75,9 @@
 
     <!-- Profile Button Desktop -->
     <div class="hidden-sm-and-down">
-      <v-menu offset-y v-if="user" min-width="200">
+      <v-menu v-model="menu" offset-y v-if="user" min-width="200" :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn text v-bind="attrs" v-on="on" class="pa-0 btn-fix">
+          <v-btn text v-bind="attrs" v-on="on" class="pa-0 btn-fix" @click="menu = !menu">
             <v-icon class="mr-1" dark>mdi-account-circle</v-icon>
             <v-icon small>mdi-chevron-down</v-icon>
           </v-btn>
@@ -93,7 +93,7 @@
           <div class="divider"></div>
 
           <v-list-item
-            @click="signOut()"
+            @click="signOut(), menu = false"
             dense
             style="font-size: 14px; font: Roboto"
             class="px-2"
@@ -111,6 +111,7 @@ import LocaleChanger from "@/components/atoms/LocaleChanger";
 export default {
   data: () => ({
     drawer: false,
+    menu: false
   }),
   methods: {
     goTo(route) {
