@@ -1,5 +1,6 @@
 <template >
-  <v-row justify="center">
+  <IntroAnswer v-if="!answers.length && !loading"></IntroAnswer>
+  <v-row justify="center" v-else>
     <ShowInfo title="Answers">
       <!-- Main Tabs -->
       <v-tabs
@@ -336,13 +337,15 @@
 import BarChart from "@/components/atoms/BarChart.vue";
 import RadarChart from "@/components/atoms/RadarChart.vue";
 import ShowInfo from "@/components/organisms/ShowInfo";
+import IntroAnswer from "@/components/atoms/IntroAnswer";
 
 export default {
   props: ["id"],
   components: {
     BarChart,
     RadarChart,
-    ShowInfo
+    ShowInfo,
+    IntroAnswer
   },
   data: () => ({
     search: "",
@@ -685,7 +688,7 @@ export default {
       }
 
       if(this.evaluatorStatistics.items.length){
-          
+
           let res = this.evaluatorStatistics.items.reduce((total,value)=>{
             return total + value.result /this.evaluatorStatistics.items.length
           }, 0)
@@ -704,7 +707,7 @@ export default {
             this.evaluatorStatistics.items.map(item => item.result)
           ).toFixed(1)}%`
       }
-
+      
       return testData
     },
     answers() {
