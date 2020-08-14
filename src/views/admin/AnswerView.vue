@@ -1,7 +1,10 @@
 <template >
   <div v-if="answers">
-    <IntroAnswer v-if=" answers != null && loading"></IntroAnswer>
-    <v-row justify="center" v-else-if="answers != null && !loading">
+    <v-overlay :value="loading==null">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <IntroAnswer v-if=" answers != null && loading == true"></IntroAnswer>
+    <v-row justify="center" v-else-if="answers != null && loading == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <v-tabs
@@ -331,7 +334,9 @@ export default {
       else return "green";
     },
     goToDataHeuristic(item) {
-      let selectHeruristc =  (this.heuristicsEvaluator.items.indexOf(this.heuristicsEvaluator.items.find(h => h.heuristic === item)))
+      let selectHeruristc = this.heuristicsEvaluator.items.indexOf(
+        this.heuristicsEvaluator.items.find(h => h.heuristic === item)
+      );
       this.$router.push(`/analyticsview/${this.id}/${selectHeruristc}`);
     }
   },
@@ -500,12 +505,10 @@ export default {
       return this.$store.state.answers.answers || [];
     },
     loading() {
-      if (this.answers.answers) 
-         if(this.answers.answers.length == 0)
-          return true
-        else
-          return false
-      return null
+      if (this.answers.answers)
+        if (this.answers.answers.length == 0) return true;
+        else return false;
+      return null;
     }
   },
   watch: {
