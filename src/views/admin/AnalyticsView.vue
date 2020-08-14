@@ -1,15 +1,166 @@
 <template>
-  <div>
-      hello everybody
-  </div>
+  <v-row>
+    <ShowInfo title="Analytics">
+      <div slot="content" class="ma-0 pa-0">
+      <v-card v-if="tab == 3" style="background :#f5f7ff;">
+          <v-row class="ma-0 pa-0" v-if="resultHeuristics">
+            <!--Heuristics List-->
+            <v-col class="ma-0 pa-0" cols="2">
+              <v-list dense height="560px" outlined>
+                <v-subheader>Heuristics</v-subheader>
+                <v-divider></v-divider>
+                <v-list dense height="470px" outlined class="list-scroll">
+                  <v-list-item-group v-model="heuristicSelect" color="#fca326">
+                    <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
+                      <v-list-item-content>
+                        <v-list-item-title>{{item.id}}</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="i == heuristicSelect">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-list>
+            </v-col>
+            <v-divider vertical inset></v-divider>
+            <!--Questions List-->
+            <v-col class="ma-0 pa-0" cols="2" v-if="heuristicSelect != null">
+              <v-list dense height="560px" outlined>
+                <v-subheader>{{resultHeuristics[heuristicSelect].id}} - Questions</v-subheader>
+                <v-divider></v-divider>
+                <v-list dense height="470px" outlined class="list-scroll">
+                  <v-list-item-group v-model="questionSelect" color="#fca326">
+                    <v-list-item :value="-1">
+                      <v-list-item-content>
+                        <v-list-item-title>Data Table</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="questionSelect == -1">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                    <v-list-item
+                      v-for="(item, i) in resultHeuristics[heuristicSelect].questions"
+                      :key="i"
+                      :value="i"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>{{item.id}}</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon v-if="i == questionSelect">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-list>
+            </v-col>
+            <!--Content-->
+            <v-col class="ma-0 pa-0" v-if="questionSelect != null && heuristicSelect != null">
+              <v-card height="560px" elevation-0>
+                <v-subheader
+                  class="pa-2"
+                  v-if="questionSelect !=-1"
+                >{{resultHeuristics[heuristicSelect].questions[questionSelect].id}}</v-subheader>
+                <v-subheader class="pa-2" v-else>Data Table</v-subheader>
+                <v-divider></v-divider>
+                <v-row v-if="questionSelect==-1">
+                  <v-col>
+                    <v-text-field
+                      class="mx-3"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      v-model="search"
+                    ></v-text-field>
+                    <v-data-table
+                      class="elevation-1"
+                      :headers="headersHeuristic"
+                      :items="itemsHeuristic"
+                      :search="search"
+                      height="360px"
+                      dense
+                    >
+                      <template
+                        v-for="header in headersHeuristic"
+                        v-slot:[`item.${header.value}`]="{ item }"
+                      >
+                        <div v-if="item[header.value]==null" :key="header.value">-</div>
+                        <div v-else :key="header.value">{{ item[header.value] }}</div>
+                      </template>
+                    </v-data-table>
+                  </v-col>
+                </v-row>
+                <v-row class="ma-0 pa-0" v-else>
+                  <v-tabs
+                    background-color="transparent"
+                    color="grey darken-2"
+                    class="mt-2"
+                    centered
+                    v-model="ind"
+                  >
+                    <v-tab
+                      class="tab-text"
+                      style="text-transform: none !important"
+                      @click="ind = 0"
+                    >Graphic</v-tab>
+                    <v-tab
+                      class="tab-text"
+                      style="text-transform: none !important"
+                      @click="ind = 1"
+                    >Comments</v-tab>
+                  </v-tabs>
+                  <v-col v-if="ind == 0">
+                    <BarChart
+                      v-if="questionGraph"
+                      :labels="questionGraph.label"
+                      :data="questionGraph.data"
+                    />
+                  </v-col>
+                  <v-col v-if="ind == 1">
+                    <v-row class="list-scroll" style="height:430px">
+                      <v-timeline
+                        v-if="resultHeuristics[heuristicSelect].questions[questionSelect].result.length"
+                        dense
+                      >
+                        <div
+                          v-for="(result, index) in resultHeuristics[heuristicSelect].questions[questionSelect].result"
+                          :key="index"
+                        >
+                          <v-timeline-item
+                            v-if="result.comment"
+                            fill-dot
+                            color="#fca326"
+                            icon="mdi-message-reply-text"
+                          >
+                            <v-card class="elevation-2">
+                              <v-card-text>{{ result.comment}}</v-card-text>
+                            </v-card>
+                          </v-timeline-item>
+                        </div>
+                      </v-timeline>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>        
+
+      </div>
+    </ShowInfo>
+  </v-row>
 </template>
 
 <script>
+import ShowInfo from "@/components/organisms/ShowInfo";
+//import BarChart from "@/components/atoms/BarChart.vue";
 export default {
-
-}
+  props: ["id"],
+  components: {
+    ShowInfo
+  }
+};
 </script>
 
 <style>
-
 </style>

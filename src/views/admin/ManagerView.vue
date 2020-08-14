@@ -224,8 +224,14 @@ export default {
           title: "Answers",
           icon: "mdi-chart-bar",
           path: `/answerview/${this.test.answers}`,
-          id: 4,
+          id: 4
         },
+        {
+          title: "Analytics",
+          icon: "mdi-alien-outline", //Change It
+          path: `/analyticsview/${this.test.answers}`,
+          id: 5
+        }
       ];
 
       if (this.test.accessLevel == 0) {
@@ -233,7 +239,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 5,
+          id: 6
         });
       }
 
