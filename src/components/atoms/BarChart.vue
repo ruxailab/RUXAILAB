@@ -6,7 +6,19 @@ export default {
   extends: Bar,
   watch: {
     data() {
-      this.$data._chart.update();
+      this.renderChart(
+      {
+        labels: this.labels,
+        datasets: [
+          {
+            label: "Data One",
+            backgroundColor: "#f87979",
+            data: this.data,
+          },
+        ],
+      },
+      { responsive: true, maintainAspectRatio: false }
+    );
     },
   },
   mounted() {
