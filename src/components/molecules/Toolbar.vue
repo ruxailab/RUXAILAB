@@ -29,11 +29,26 @@
 
       <v-divider></v-divider>
 
-      <v-list dense dark>
-        <v-list-item link @click="goTo('/testslist')" v-if="this.$route.path === '/' && user">
-          <v-list-item-icon><v-icon>mdi-console</v-icon></v-list-item-icon>
+      <!-- Landing Page Options -->
+      <v-list dense dark v-if="this.$route.path === '/' && user">
+        <v-list-item link @click="goTo('/testslist')">
+          <v-list-item-icon>
+            <v-icon>mdi-console</v-icon>
+          </v-list-item-icon>
           <v-list-item-title>Go to Console</v-list-item-title>
         </v-list-item>
+      </v-list>
+
+      <!-- Manager Options -->
+      <v-list dense dark v-if="isManager && test">
+        <v-list-item-group v-model="item">
+          <v-list-item link v-for="(item, i) in managerItems" :key="i" @click="goTo(item.path)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
 
       <div class="footer">
@@ -63,12 +78,12 @@
 
     <NotificationBtn v-if="user" />
 
-    <!-- Desktop -->
+    <!-- Sign-in Desktop -->
     <v-btn text @click="goTo('/signin')" v-if="!user" class="hidden-sm-and-down">
       <v-icon left>mdi-lock</v-icon>Sign-in
     </v-btn>
 
-    <!-- Mobile -->
+    <!-- Sign-in Mobile -->
     <v-btn icon @click="goTo('/signin')" v-if="!user" class="hidden-md-and-up">
       <v-icon size="20">mdi-lock</v-icon>
     </v-btn>
@@ -111,11 +126,13 @@ import LocaleChanger from "@/components/atoms/LocaleChanger";
 export default {
   data: () => ({
     drawer: false,
-    menu: false
+    menu: false,
+    item: 0,
   }),
   methods: {
     goTo(route) {
-      this.$router.push(route);
+      if (route.includes("/testview")) window.open(route);
+      else this.$router.push(route);
     },
     async signOut() {
       this.$store.dispatch("logout").then(() => {
@@ -126,6 +143,64 @@ export default {
   computed: {
     user() {
       return this.$store.getters.user;
+    },
+    isManager() {
+      let routeName = null;
+      if (this.$route.matched[0])
+        routeName = this.$router.options.routes.filter(
+          (route) => route.path == this.$route.matched[0].path
+        )[0].name;
+
+      if (routeName === "Manager View") return true;
+      else return false;
+    },
+    managerItems() {
+      let items = [
+        {
+          title: "Manager",
+          icon: "mdi-home",
+          path: `/managerview/${this.test.id}`,
+          id: 0,
+        },
+        {
+          title: "Test",
+          icon: "mdi-file-document-edit",
+          path: `/edittest/${this.test.id}`,
+          id: 1,
+        },
+        {
+          title: "Preview",
+          icon: "mdi-file-eye",
+          path: `/testview/${this.test.id}`,
+          id: 2,
+        },
+        {
+          title: "Reports",
+          icon: "mdi-book-multiple",
+          path: `/reportview/${this.test.reports}`,
+          id: 3,
+        },
+        {
+          title: "Answers",
+          icon: "mdi-chart-bar",
+          path: `/answerview/${this.test.answers}`,
+          id: 4,
+        },
+      ];
+
+      if (this.test.accessLevel == 0) {
+        items.push({
+          title: "Cooperators",
+          icon: "mdi-account-group",
+          path: `/cooperatorsview/${this.test.cooperators}`,
+          id: 5,
+        });
+      }
+
+      return items;
+    },
+    test() {
+      return this.$store.state.tests.test;
     },
   },
   components: {
@@ -154,8 +229,8 @@ export default {
   bottom: 0px;
 }
 .divider {
-  background: #C4C4C4!important;
-  height: 1.5px
+  background: #c4c4c4 !important;
+  height: 1.5px;
 }
 .btn-fix:focus::before {
   opacity: 0 !important;

@@ -6,7 +6,7 @@
     </v-overlay>
 
     <v-row class="nav pa-0 ma-0" dense>
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56">
+      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down">
         <!-- Navigation header -->
         <div class="header" v-if="!mini">
           <v-list-item>
@@ -193,6 +193,7 @@ export default {
         this.setLoading(false);
       }
 
+      this.$store.commit("setTest", test);
       return test;
     },
     index: {
