@@ -38,15 +38,15 @@
           ></v-select>
 
           <!-- My Tests -->
-          <v-row v-if="index == 0" :class="`grid`" justify="center">
+          <v-row v-if="index == 0" :class="`grid`" :justify="width < 600 ? 'center' : 'start'">
             <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
           </v-row>
 
           <!-- Tests I Colaborate With -->
-          <v-row justify="center" v-if="index == 1" class="grid mx-2">
-            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">              
+          <v-row v-if="index == 1" class="grid" :justify="width < 600 ? 'center' : 'start'">
+            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
@@ -56,8 +56,8 @@
           </v-row>
 
           <!-- My Answers -->
-          <v-row justify="start" v-if="index == 2" class="grid mx-2">
-            <v-col cols="12" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
+          <v-row v-if="index == 2" class="grid" :justify="width < 600 ? 'center' : 'start'">
+            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
               <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
             </v-col>
 
@@ -81,6 +81,7 @@ export default {
   data: () => ({
     showMenu: false,
     label: "My Tests",
+    width: 0,
     x: 0,
     y: 0,
     test: {},
@@ -141,12 +142,24 @@ export default {
       } else {
         this.label = "My Answers";
       }
-    },
+    }
   },
   components: {
     CardTest,
     NewTestBtn,
     Snackbar,
+  },
+  methods: {
+    handleResize() {
+      this.width = window.innerWidth;
+    },
+  },
+  created() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
   },
 };
 </script>
