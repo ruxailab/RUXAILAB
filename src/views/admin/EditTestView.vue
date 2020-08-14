@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Dialog :dialog="dialog" text="Are you sure you want to leave? All your changes will be discarded">
+    <Dialog
+      :dialog="dialog"
+      text="Are you sure you want to leave? All your changes will be discarded"
+    >
       <v-card-title
         slot="title"
         class="headline error accent-4 white--text"
@@ -38,6 +41,11 @@
       </template>
       <span>Save</span>
     </v-tooltip>
+
+    <v-overlay class="text-center" v-model="loading">
+      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+      <div class="white-text mt-3">Loading Test</div>
+    </v-overlay>
 
     <ShowInfo v-if="test" title="Test Edit">
       <v-row dense slot="top">
@@ -128,6 +136,7 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
+    loading: true
   }),
   methods: {
     async submit() {
@@ -165,7 +174,7 @@ export default {
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
-              this.change = false
+              this.change = false;
             })
             .catch((err) => {
               this.$store.commit("setError", err);
@@ -210,6 +219,7 @@ export default {
   watch: {
     test: async function () {
       if (this.test !== null && this.test !== undefined) {
+        this.loading = false
         this.object = await Object.assign(this.object, this.test);
 
         if (this.test.type === "Expert") this.index = 1;
@@ -244,6 +254,8 @@ export default {
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    } else {
+      this.loading = false
     }
   },
   beforeRouteLeave(to, from, next) {
