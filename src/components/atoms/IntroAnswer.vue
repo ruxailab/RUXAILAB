@@ -11,7 +11,7 @@
           <span
             class="white--text mobile-center"
             style="cursor: pointer"
-            @click="goTo('/cooperators')"
+            @click="go()"
           >
             <u>Invite testers to answer your test!</u>
           </span>
@@ -85,8 +85,8 @@ export default {
     ],
   }),
   methods: {
-    goTo(link) {
-      this.$router.push(link);
+    go() {
+      this.$emit('goToCoops');
     },
     func() {
 

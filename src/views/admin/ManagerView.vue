@@ -115,7 +115,7 @@
             </v-container>
           </div>
         </div>
-        <router-view v-else></router-view>
+        <router-view @goToCoops="go(items[5])" v-else></router-view>
       </v-col>
     </v-row>
   </v-container>
@@ -134,6 +134,9 @@ export default {
     item: 0,
   }),
   methods: {
+    log() {
+      console.log("log");
+    },
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
       this.index = 0;

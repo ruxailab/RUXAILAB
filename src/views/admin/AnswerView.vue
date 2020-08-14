@@ -1,5 +1,5 @@
 <template >
-  <IntroAnswer v-if="!answers.length && !loading"></IntroAnswer>
+  <IntroAnswer @goToCoops="goToCoops()" v-if="!answers.length && !loading"></IntroAnswer>
   <v-row justify="center" v-else>
     <ShowInfo title="Answers">
       <!-- Main Tabs -->
@@ -496,6 +496,9 @@ export default {
       this.tab = 3
       this.heuristicSelect = (this.resultHeuristics.indexOf(this.resultHeuristics.find(h => h.id === item)))
       this.questionSelect = 0
+    },
+    goToCoops() {
+      this.$emit('goToCoops');
     }
   },
   computed: {
