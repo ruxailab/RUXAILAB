@@ -1,6 +1,6 @@
 <template>
-  <v-row v-if="answers" >
-    <ShowInfo  title="Analytics">
+  <v-row v-if="answers">
+    <ShowInfo title="Analytics">
       <div slot="content" class="ma-0 pa-0">
         <v-card style="background :#f5f7ff;">
           <v-row class="ma-0 pa-0" v-if="resultHeuristics">
@@ -176,7 +176,7 @@ export default {
         let heurisIndex = 1;
         evaluator.heuristics.forEach(heuristic => {
           //Get Questions for heuristic
-          let questionIndex = 0
+          let questionIndex = 1;
           let SelectHeuristic = this.resultHeuristics.find(
             h => h.id == `H${heurisIndex}`
           );
@@ -189,8 +189,8 @@ export default {
               this.resultHeuristics.length - 1
             ];
           }
-           heuristic.questions.forEach(question => {
-             let selectQuestion = SelectHeuristic.questions.find(
+          heuristic.questions.forEach(question => {
+            let selectQuestion = SelectHeuristic.questions.find(
               q => q.id == `Question ${questionIndex}`
             );
             if (!selectQuestion) {
@@ -211,15 +211,15 @@ export default {
                 comment: question.com
               });
             }
-             questionIndex++;
-           });
+            questionIndex++;
+          });
           heurisIndex++;
         });
       });
     }
   },
   computed: {
-     headersHeuristic() {
+    headersHeuristic() {
       let header = [
         {
           text: "ID",
@@ -280,7 +280,8 @@ export default {
       return this.$store.state.answers.answers || [];
     },
     loading() {
-      return this.answers.answers.length == 0;
+      if (this.answers) return this.answers.answers.length == 0;
+      return false;
     }
   },
   watch: {
@@ -294,6 +295,11 @@ export default {
     },
     questionSelect() {
       this.ind = 0;
+    }
+  },
+  updated() {
+    if (this.heuristic != null && this.heuristic != undefined) {
+      this.heuristicSelect = Number(this.heuristic);
     }
   },
   created() {
