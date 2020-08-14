@@ -1,8 +1,8 @@
 <template>
-  <v-row>
-    <ShowInfo title="Analytics">
+  <v-row v-if="answers" >
+    <ShowInfo  title="Analytics">
       <div slot="content" class="ma-0 pa-0">
-      <v-card v-if="tab == 3" style="background :#f5f7ff;">
+        <v-card style="background :#f5f7ff;">
           <v-row class="ma-0 pa-0" v-if="resultHeuristics">
             <!--Heuristics List-->
             <v-col class="ma-0 pa-0" cols="2">
@@ -144,8 +144,7 @@
               </v-card>
             </v-col>
           </v-row>
-        </v-card>        
-
+        </v-card>
       </div>
     </ShowInfo>
   </v-row>
@@ -153,14 +152,187 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
-//import BarChart from "@/components/atoms/BarChart.vue";
+import BarChart from "@/components/atoms/BarChart.vue";
 export default {
-  props: ["id"],
+  props: ["id", "heuristic"],
   components: {
-    ShowInfo
+    ShowInfo,
+    BarChart
+  },
+  data: () => ({
+    search: "",
+    ind: 0,
+    resultHeuristics: [],
+    heuristicSelect: null,
+    questionSelect: null
+  }),
+  methods: {
+    statistics() {
+      const answers = this.answers.answers;
+      this.resultHeuristics = [];
+
+      answers.forEach(evaluator => {
+        //Get Heuristics for evaluators
+        let heurisIndex = 1;
+        evaluator.heuristics.forEach(heuristic => {
+          //Get Questions for heuristic
+          let questionIndex = 0
+          let SelectHeuristic = this.resultHeuristics.find(
+            h => h.id == `H${heurisIndex}`
+          );
+          if (!SelectHeuristic) {
+            this.resultHeuristics.push({
+              id: `H${heurisIndex}`,
+              questions: []
+            });
+            SelectHeuristic = this.resultHeuristics[
+              this.resultHeuristics.length - 1
+            ];
+          }
+           heuristic.questions.forEach(question => {
+             let selectQuestion = SelectHeuristic.questions.find(
+              q => q.id == `Question ${questionIndex}`
+            );
+            if (!selectQuestion) {
+              SelectHeuristic.questions.push({
+                id: `Question ${questionIndex}`,
+                result: [
+                  {
+                    evaluator: evaluator.uid,
+                    response: question.res,
+                    comment: question.com
+                  }
+                ]
+              });
+            } else {
+              selectQuestion.result.push({
+                evaluator: evaluator.uid,
+                response: question.res,
+                comment: question.com
+              });
+            }
+             questionIndex++;
+           });
+          heurisIndex++;
+        });
+      });
+    }
+  },
+  computed: {
+     headersHeuristic() {
+      let header = [
+        {
+          text: "ID",
+          align: "start",
+          value: "uid"
+        }
+      ];
+      if (this.heuristicSelect != null) {
+        this.resultHeuristics[this.heuristicSelect].questions.forEach(
+          question => {
+            header.push({
+              text: question.id,
+              align: "center",
+              value: question.id
+            });
+          }
+        );
+      }
+
+      return header;
+    },
+    itemsHeuristic() {
+      let items = [];
+      if (this.heuristicSelect != null) {
+        this.resultHeuristics[this.heuristicSelect].questions.forEach(
+          question => {
+            question.result.forEach(result => {
+              let ev = items.find(item => item.uid == result.evaluator);
+              if (!ev) {
+                items.push({ uid: result.evaluator });
+                ev = items[items.length - 1];
+              }
+              Object.assign(ev, { [question.id]: result.response });
+            });
+          }
+        );
+      }
+      return items;
+    },
+    questionGraph() {
+      let options = this.answers.options;
+      let graph = {
+        label: [...options.map(op => op.text)],
+        data: [...options.map(() => 0)]
+      };
+      if (this.heuristicSelect != null && this.questionSelect != null) {
+        let question = this.resultHeuristics[this.heuristicSelect].questions[
+          this.questionSelect
+        ];
+        question.result.forEach(result => {
+          let item = options.find(op => op.value == result.response);
+          if (item) graph.data[graph.label.indexOf(item.text)] += 1;
+        });
+      }
+      return graph;
+    },
+    answers() {
+      return this.$store.state.answers.answers || [];
+    },
+    loading() {
+      return this.answers.answers.length == 0;
+    }
+  },
+  watch: {
+    answers() {
+      if (this.answers !== null || this.answers.length > 0) {
+        this.statistics();
+      }
+    },
+    heuristicSelect() {
+      this.questionSelect = -1;
+    },
+    questionSelect() {
+      this.ind = 0;
+    }
+  },
+  created() {
+    if (
+      !this.$store.state.answers.answers ||
+      !this.$store.state.answers.answers.id !== this.id
+    ) {
+      this.$store.dispatch("getAnswers", { id: this.id });
+    }
+    this.test = Object.assign(
+      {},
+      this.$store.state.auth.user.myTests.find(test => test.answers == this.id)
+    );
   }
 };
 </script>
 
 <style>
+.list-scroll {
+  height: 508px;
+  overflow: auto;
+}
+/* Nav bar list scroll bar */
+/* width */
+.list-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.list-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.list-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+  /* background: #515069; */
+}
 </style>

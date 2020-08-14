@@ -1,5 +1,5 @@
 <template >
-  <IntroAnswer v-if="!answers.length && !loading"></IntroAnswer>
+  <IntroAnswer v-if="!answers.answers.length && !loading"></IntroAnswer>
   <v-row justify="center" v-else>
     <ShowInfo title="Answers">
       <!-- Main Tabs -->
@@ -789,7 +789,7 @@ export default {
   align-items: center;
   color: #000000;
 }
-.containaksdasdkjasjker {
+.container {
   height: 400px;
   padding: 0px;
   margin: 0px 10px 0px;
