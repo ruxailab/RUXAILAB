@@ -186,8 +186,8 @@ export default {
       get() {
         if (this.items){
           return this.items.indexOf(
-            this.items.find((item) => item.path.includes(this.$route.path))
-          );
+            this.items.find((item) => item.path.split('/').includes(this.$route.path.split('/')[1])
+          ))
         }
         return 0;
       },
