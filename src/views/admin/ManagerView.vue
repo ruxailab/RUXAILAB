@@ -29,7 +29,7 @@
             </v-row>
           </v-list-item>
         </div>
-        
+
         <!-- Navigation options -->
         <v-list flat dense v-if="items">
           <div v-if="mini">
@@ -78,18 +78,14 @@
         </div>
 
         <div class="footer" style="height:16%" v-else>
-          <v-list class="mt-0 pa-0">
-            <v-list-item class="pt-0" style="cursor: pointer">
-              <v-list-item-icon @click="go(`/settingsview/${test.id}`)">
-                <v-icon color="white">mdi-cog</v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-            <v-list-item style="cursor: pointer">
-              <v-list-item-icon @click.stop="mini = !mini">
-                <v-icon color="white">mdi-chevron-right</v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </v-list>
+          <v-col>
+            <v-btn icon @click="go(`/settingsview/${test.id}`)">
+              <v-icon color="white">mdi-cog</v-icon>
+            </v-btn>
+            <v-btn icon @click.stop="mini = !mini" class="mt-2">
+              <v-icon color="white">mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-col>
         </div>
       </v-navigation-drawer>
 
@@ -158,8 +154,7 @@ export default {
     },
     setLoading(payload) {
       this.loading = payload;
-    }
-
+    },
   },
   computed: {
     testsList() {
@@ -192,7 +187,7 @@ export default {
         this.setIsCoops(false);
       }
 
-      if(!Object.keys(test).length) {
+      if (!Object.keys(test).length) {
         this.setLoading(true);
       } else {
         this.setLoading(false);
@@ -257,7 +252,7 @@ export default {
 
       return items;
     },
-  }
+  },
 };
 </script>
 
