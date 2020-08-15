@@ -198,10 +198,11 @@ export default {
     },
     index: {
       get() {
-        if (this.items)
+        if (this.items){
           return this.items.indexOf(
-            this.items.find((item) => item.path.includes(this.$route.path))
-          );
+            this.items.find((item) => item.path.split('/').includes(this.$route.path.split('/')[1])
+          ))
+        }
         return 0;
       },
       set(item) {
@@ -238,8 +239,14 @@ export default {
           title: "Answers",
           icon: "mdi-chart-bar",
           path: `/answerview/${this.test.answers}`,
-          id: 4,
+          id: 4
         },
+        {
+          title: "Analytics",
+          icon: "mdi-alien-outline", //Change It
+          path: `/analyticsview/${this.test.answers}`,
+          id: 5
+        }
       ];
 
       if (this.test.accessLevel == 0) {
@@ -247,7 +254,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 5,
+          id: 6
         });
       }
 
