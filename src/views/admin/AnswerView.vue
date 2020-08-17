@@ -95,7 +95,7 @@
             </v-tabs>
 
             <v-row justify="center">
-              <v-col cols="12" v-if="ind == 0">
+              <v-col cols="10" v-if="ind == 0">
                 <v-data-table
                   dense
                   :headers="evaluatorStatistics.header"
