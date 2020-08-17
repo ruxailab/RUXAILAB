@@ -80,7 +80,7 @@
         <div class="footer" style="height:16%" v-else>
           <v-col>
             <v-btn icon @click="go(`/settingsview/${test.id}`)">
-              <v-icon color="white">mdi-cog</v-icon>
+              <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
             </v-btn>
             <v-btn icon @click.stop="mini = !mini" class="mt-2">
               <v-icon color="white">mdi-chevron-right</v-icon>
@@ -260,6 +260,9 @@ export default {
 
       return items;
     },
+    isSettings() {
+      return this.$route.path.includes('/settings');
+    }
   },
 };
 </script>
