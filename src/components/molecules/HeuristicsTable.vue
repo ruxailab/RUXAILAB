@@ -64,7 +64,6 @@
           style="background-color:#fca326"
           primary-title
         >Creating a heuristic</v-card-title>
-        {{heuristics[itemSelect || heuristics.length-1]}}
         <v-row justify="center">
           <v-col cols="10">
             <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
