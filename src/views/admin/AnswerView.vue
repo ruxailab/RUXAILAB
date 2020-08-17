@@ -3,7 +3,7 @@
     <v-overlay :value="loading==null">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <IntroAnswer v-if=" answers != null && loading == true"></IntroAnswer>
+    <IntroAnswer @goToCoops="goToCoops()" v-if=" answers != null && loading == true"></IntroAnswer>
     <v-row justify="center" v-else-if="answers != null && loading == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
@@ -339,6 +339,9 @@ export default {
         this.heuristicsEvaluator.items.find(h => h.heuristic === item)
       );
       this.$router.push(`/analyticsview/${this.id}/${selectHeruristc}`);
+    },
+    goToCoops() {
+      this.$emit("goToCoops");
     }
   },
   computed: {

@@ -115,7 +115,7 @@
             </v-container>
           </div>
         </div>
-        <router-view v-else></router-view>
+        <router-view @goToCoops="go(items[6])" v-else></router-view>
       </v-col>
     </v-row>
   </v-container>
