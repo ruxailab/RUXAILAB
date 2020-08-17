@@ -223,13 +223,13 @@ export default {
         },
         {
           title: "Answers",
-          icon: "mdi-chart-bar",
+          icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
           id: 4
         },
         {
           title: "Analytics",
-          icon: "mdi-alien-outline", //Change It
+          icon: "mdi-chart-bar", //Change It
           path: `/analyticsview/${this.test.answers}`,
           id: 5
         }

@@ -231,7 +231,8 @@ export default {
     search: "",
     tab: 0,
     ind: 0,
-    resultEvaluator: []
+    resultEvaluator: [],
+    loading: null
   }),
   methods: {
     statistics() {
@@ -504,17 +505,13 @@ export default {
     answers() {
       return this.$store.state.answers.answers || [];
     },
-    loading() {
-      if (this.answers.answers)
-        if (this.answers.answers.length == 0) return true;
-        else return false;
-      return null;
-    }
   },
   watch: {
     answers() {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
+        if (this.answers.answers.length == 0) this.loading =  true;
+        else this.loading =  false;
       }
     },
     index() {
