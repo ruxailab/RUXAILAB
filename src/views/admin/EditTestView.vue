@@ -62,7 +62,7 @@
         <v-card v-if="index==0" style="background: #f5f7ff">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
           <v-divider></v-divider>
-          <v-row justify="space-around">
+          <v-row justify="space-around" v-if="object.preTest">
             <v-col cols="10">
               <FormPreTest
                 :preTest="object.preTest"
@@ -140,10 +140,7 @@ export default {
   }),
   methods: {
     async submit() {
-      Object.assign(this.object.answersSheet, {
-        perfectResult: this.perfectResult,
-      });
-
+    
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
       this.$store
@@ -221,7 +218,6 @@ export default {
       if (this.test !== null && this.test !== undefined) {
         this.loading = false
         this.object = await Object.assign(this.object, this.test);
-
         if (this.test.type === "Expert") this.index = 1;
         else if (this.test.type === "User") this.index = 0;
       }
@@ -236,19 +232,6 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers || [];
-    },
-    perfectResult() {
-      if (this.object) {
-        let maxOption = 0;
-        if (this.object.options)
-          maxOption = Math.max(
-            ...this.object.options.map((item) => item.value)
-          );
-
-        return maxOption * this.object.answersSheet.total;
-      }
-
-      return 0;
     },
   },
   created() {
