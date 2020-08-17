@@ -85,16 +85,8 @@ export default {
     ],
   }),
   methods: {
-<<<<<<< HEAD
     goToCoops() {
       this.$emit('goToCoops')
-=======
-    go() {
-      this.$emit('goToCoops');
-    },
-    func() {
-
->>>>>>> fixes
     }
   },
 };
