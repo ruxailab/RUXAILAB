@@ -1,5 +1,10 @@
 <template>
   <v-row justify="center">
+    <v-overlay class="text-center" v-model="loading">
+      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+      <div class="white-text mt-3">Loading Cooperators</div>
+    </v-overlay>
+
     <v-container v-if="cooperators" class="ma-0 pa-0">
       <Snackbar />
       <Dialog
@@ -180,7 +185,8 @@ export default {
       { text: "Guest", value: 1 },
       { text: "Administrator", value: 0 }
     ],
-    dialog: false
+    dialog: false,
+    loading: true
   }),
   methods: {
     setValue(value) {
@@ -501,6 +507,10 @@ export default {
           this.$store.dispatch("getTest", { id: this.cooperators.test.id });
         }
       }
+
+      if(Object.keys(this.cooperators).length) {
+        this.loading = false;
+      }
     },
     testID(){
       console.log(this.testID)
@@ -545,6 +555,8 @@ export default {
       this.$store.dispatch("getCooperators", { id: this.id });
     else {
       this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+      console.log("loaded create");
+      this.loading = false
     }
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   },

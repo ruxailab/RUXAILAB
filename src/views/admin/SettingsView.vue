@@ -60,7 +60,7 @@
           <v-divider class="my-3 mx-2"></v-divider>
 
           <v-row justify="center">
-            <v-btn color="#f26363" class="white--text mb-4" style="justify-self: center">
+            <v-btn color="#f26363" class="white--text mb-4" style="justify-self: center" @click="dialogDel = true">
               <v-icon left>mdi-trash-can-outline</v-icon>Delete Test
             </v-btn>
           </v-row>
