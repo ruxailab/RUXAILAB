@@ -3,16 +3,15 @@
     <div class="back-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
-          <div class="display-3mb-4 white--text mobile-center" style="font-size: 60px; font-weight: 500">Answers</div>
+          <div
+            class="display-3mb-4 white--text mobile-center"
+            style="font-size: 60px; font-weight: 500"
+          >Answers</div>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Quickly get feedback on you project by analyzing data from other users' answers.</div>
-          <span
-            class="white--text mobile-center"
-            style="cursor: pointer"
-            @click="goToCoops()"
-          >
+          <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
             <u>Invite testers to answer your test!</u>
           </span>
         </div>
@@ -36,7 +35,7 @@
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item
                   class="py-5"
-                  link
+                  @click="item.func"
                   :ripple="false"
                   style="border-radius: 10px!important"
                 >
@@ -62,32 +61,28 @@
 
 <script>
 export default {
-  data: () => ({
-    items: [
-      {
-        iconColor: "#4bbdaf",
-        icon: "mdi-cog",
-        title: "askjdakjs",
-        subtitle: "asjdkjas",
-      },
-      {
-        iconColor: "#009676",
-        icon: "mdi-information",
-        title: "askjdakjs",
-        subtitle: "asjdkjas",
-      },
-      {
-        iconColor: "#92c730",
-        icon: "mdi-emoticon-happy-outline",
-        title: "askjdakjs",
-        subtitle: "asjdkjas",
-      },
-    ],
-  }),
+  data: () => ({}),
   methods: {
     goToCoops() {
-      this.$emit('goToCoops')
+      this.$emit("goToCoops");
+    },
+    goToDoc() {
+      this.$router.push("/answers/documentation")
     }
+  },
+  computed: {
+    items() {
+      return [
+        {
+          iconColor: "#4bbdaf",
+          icon: "mdi-file-document",
+          title: "Read documentation",
+          subtitle:
+            "Click to access the documentation on how to use the answers page.",
+          func: this.goToDoc
+        },
+      ];
+    },
   },
 };
 </script>
