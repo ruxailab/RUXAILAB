@@ -163,7 +163,8 @@ export default {
           });
 
           this.answers.answersSheet = this.object.answersSheet;
-          Object.assign(this.answers, { options: this.object.options });
+          if(this.test.type === "Expert")
+           Object.assign(this.answers, { options: this.object.options });
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
