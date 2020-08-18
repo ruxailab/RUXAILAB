@@ -76,7 +76,7 @@
       @click="goTo('/testslist')"
     >Go to Console</v-btn>
 
-    <NotificationBtn v-if="user" />
+    <NotificationBtn class="mx-2" v-if="user" />
 
     <!-- Sign-in Desktop -->
     <v-btn text @click="goTo('/signin')" v-if="!user" class="hidden-sm-and-down">

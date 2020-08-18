@@ -6,13 +6,13 @@
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-          >Answers</div>
+          >Cooperators</div>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Quickly get feedback on you project by analyzing data from other users' answers.</div>
-          <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite testers to answer your test!</u>
+          >Add cooperators who can help you improve your project and gather data for your studies.</div>
+          <span class="white--text mobile-center" style="cursor: pointer" @click="closeIntro()">
+            <u>Get started!</u>
           </span>
         </div>
 
@@ -21,7 +21,7 @@
           contain
           max-width="40%"
           max-height="400"
-          src="@/assets/manager/IntroAnswer.svg"
+          src="@/assets/manager/IntroCoops.svg"
         ></v-img>
       </v-row>
     </div>
@@ -63,22 +63,22 @@
 export default {
   data: () => ({}),
   methods: {
-    goToCoops() {
-      this.$emit("goToCoops");
-    },
     goToDoc() {
-      this.$router.push("/answers/documentation")
+      this.$router.push("/cooperators/documentation")
+    },
+    closeIntro() {
+        this.$emit("closeIntro");
     }
   },
   computed: {
     items() {
       return [
         {
-          iconColor: "#4bbdaf",
+          iconColor: "#daf01a",
           icon: "mdi-file-document",
           title: "Read documentation",
           subtitle:
-            "Click to access the documentation on how to use the answers page.",
+            "Click to access the documentation on how to use the cooperators page.",
           func: this.goToDoc
         },
       ];
@@ -90,7 +90,8 @@ export default {
 <style scoped>
 .back-gradient {
   height: 400px;
-  background-image: radial-gradient(circle at top right, #9ac94f, #7eb543);
+  background-image: radial-gradient(circle at top right, #eff31a, #eecf22);
+  /* background-image: radial-gradient(circle at top right, #ffe53b, #f1c515);   */
 }
 .learn-text {
   color: rgb(87, 84, 100);

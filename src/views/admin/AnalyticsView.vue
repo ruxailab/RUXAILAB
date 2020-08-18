@@ -1,6 +1,7 @@
 <template>
-  <v-row v-if="answers">
-    <ShowInfo title="Analytics">
+  <div v-if="answers">
+    <IntroAnalytics @goToCoops="goToCoops()" v-if=" answers != null && intro == true"/>
+    <ShowInfo title="Analytics" v-if=" answers != null && intro == false">
       <div slot="content" class="ma-0 pa-0">
         <v-card style="background :#f5f7ff;">
           <v-row class="ma-0 pa-0" v-if="resultHeuristics">
@@ -147,24 +148,27 @@
         </v-card>
       </div>
     </ShowInfo>
-  </v-row>
+  </div>
 </template>
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
 import BarChart from "@/components/atoms/BarChart.vue";
+import IntroAnalytics from "@/components/atoms/IntroAnalytics.vue"
 export default {
   props: ["id", "heuristic"],
   components: {
     ShowInfo,
-    BarChart
+    BarChart,
+    IntroAnalytics
   },
   data: () => ({
     search: "",
     ind: 0,
     resultHeuristics: [],
     heuristicSelect: null,
-    questionSelect: null
+    questionSelect: null,
+    intro: null
   }),
   methods: {
     statistics() {
@@ -216,6 +220,9 @@ export default {
           heurisIndex++;
         });
       });
+    },
+    goToCoops() {
+      this.$emit("goToCoops");
     }
   },
   computed: {
@@ -280,7 +287,7 @@ export default {
       return this.$store.state.answers.answers || [];
     },
     loading() {
-      if (this.answers) return this.answers.answers.length == 0;
+      if (this.answers) return true;
       return false;
     }
   },
@@ -288,6 +295,9 @@ export default {
     answers() {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
+
+        if (this.answers.answers.length == 0) this.intro =  true;
+        else this.intro =  false;
       }
     },
     heuristicSelect() {

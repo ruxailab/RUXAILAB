@@ -6,11 +6,11 @@
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-          >Answers</div>
+          >Analytics</div>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Quickly get feedback on you project by analyzing data from other users' answers.</div>
+          >Take a deep look into your test and see what people are saying about it.</div>
           <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
             <u>Invite testers to answer your test!</u>
           </span>
@@ -20,8 +20,8 @@
           class="hidden-sm-and-down"
           contain
           max-width="40%"
-          max-height="400"
-          src="@/assets/manager/IntroAnswer.svg"
+          max-height="380"
+          src="@/assets/manager/IntroAnalytics.svg"
         ></v-img>
       </v-row>
     </div>
@@ -67,18 +67,18 @@ export default {
       this.$emit("goToCoops");
     },
     goToDoc() {
-      this.$router.push("/answers/documentation")
+      this.$router.push("/analytics/documentation")
     }
   },
   computed: {
     items() {
       return [
         {
-          iconColor: "#4bbdaf",
+          iconColor: "#59b9d4",
           icon: "mdi-file-document",
           title: "Read documentation",
           subtitle:
-            "Click to access the documentation on how to use the answers page.",
+            "Click to access the documentation on how to use the analytics page.",
           func: this.goToDoc
         },
       ];
@@ -90,7 +90,7 @@ export default {
 <style scoped>
 .back-gradient {
   height: 400px;
-  background-image: radial-gradient(circle at top right, #9ac94f, #7eb543);
+  background-image: radial-gradient(circle at top right, #32bde7, #2488e0);
 }
 .learn-text {
   color: rgb(87, 84, 100);
