@@ -24,6 +24,7 @@
                   :items="testsList"
                   :label="test.title"
                   background-color="#343344"
+                  style="max-width: 240px"
                 ></v-overflow-btn>
               </v-col>
             </v-row>
