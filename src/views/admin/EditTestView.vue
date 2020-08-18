@@ -47,7 +47,8 @@
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
-    <ShowInfo v-if="test" title="Test Edit">
+    <IntroEdit v-if="test && intro==true" @closeIntro="intro = false" />
+    <ShowInfo v-if="test  &&  intro==false" title="Test Edit">
       <v-row dense slot="top">
         <v-tabs background-color="transparent" color="#FCA326" class="tab-border-bottom pb-0 mb-0">
           <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
@@ -117,6 +118,7 @@ import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Dialog from "@/components/atoms/Dialog";
+import IntroEdit from "@/components/atoms/IntroEdit.vue";
 
 export default {
   props: ["id"],
@@ -129,6 +131,7 @@ export default {
     Snackbar,
     ShowInfo,
     Dialog,
+    IntroEdit
   },
   data: () => ({
     index: 0,
@@ -136,7 +139,8 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    loading: true
+    loading: true,
+    intro: null
   }),
   methods: {
     async submit() {
@@ -146,7 +150,7 @@ export default {
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -158,8 +162,8 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
           this.answers.answersSheet = this.object.answersSheet;
@@ -168,17 +172,17 @@ export default {
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers,
+              data: this.answers
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -212,17 +216,32 @@ export default {
       if (!this.change) return;
       event.preventDefault();
       event.returnValue = "";
-    },
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
-        this.loading = false
+        this.loading = false;
         this.object = await Object.assign(this.object, this.test);
-        if (this.test.type === "Expert") this.index = 1;
-        else if (this.test.type === "User") this.index = 0;
+
+        if (this.test.type === "Expert") {
+          this.index = 1;
+          if (this.test.heuristics.length == 0 && this.test.options.length == 0)
+            this.intro = true;
+          else this.intro = false;
+        } else if (this.test.type === "User") {
+          this.index = 0;
+          if (
+            this.test.tasks.length == 0 &&
+            this.test.posTest.form == null &&
+            this.test.preTest.consent == null &&
+            this.test.preTest.form == null
+          )
+            this.intro = true;
+          else this.intro = false;
+        }
       }
-    },
+    }
   },
   computed: {
     test() {
@@ -239,7 +258,7 @@ export default {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
     } else {
-      this.loading = false
+      this.loading = false;
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -255,7 +274,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 
