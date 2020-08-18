@@ -86,14 +86,15 @@ export default {
             accessLevel: item.to.accessLevel
           })
         });
-       
       } else {
         //answer
         await this.$store.dispatch("getTest", { id: item.test.id });
         this.$store.dispatch("pushMyAnswers", {
           docId: this.user.uid,
           element: Object.assign(item.test, {
-            answersSheet: Object.assign(this.test.answersSheet, {submited: false}),
+            answersSheet: Object.assign(this.test.answersSheet, {
+              submited: false
+            }),
             accessLevel: 2
           })
         });
@@ -110,22 +111,15 @@ export default {
           element: log
         });
       }
-       this.$store.dispatch("updateCooperator", {
-          docId: item.test.cooperators,
-          elementId: item.to.id,
-          element: true,
-          param: "accepted"
-        });
+      this.$store.dispatch("updateCooperator", {
+        docId: item.test.cooperators,
+        elementId: item.to.id,
+        element: true,
+        param: "accepted"
+      });
     },
     denyNotification(item) {
-      if (item.to.accessLevel < 2) {
-        this.$store.dispatch("updateCooperator", {
-          docId: item.test.cooperators,
-          elementId: item.to.id,
-          element: false,
-          param: "accepted"
-        });
-      } else {
+      if (item.to.accessLevel >= 2) {
         var log = {
           date: new Date().toLocaleString("en-US"),
           progress: 0,
@@ -137,6 +131,12 @@ export default {
           element: log
         });
       }
+      this.$store.dispatch("updateCooperator", {
+        docId: item.test.cooperators,
+        elementId: item.to.id,
+        element: false,
+        param: "accepted"
+      });
     },
     removeNotification(notif) {
       this.$store.dispatch("removeNotification", {
