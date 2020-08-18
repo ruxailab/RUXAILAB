@@ -1,5 +1,5 @@
 <template >
-  <div v-if="test && answersSheet != undefined">
+  <div v-if="test && answersSheet != undefined || test && test.type ==='User'">
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title
         slot="title"
@@ -53,13 +53,7 @@
         </v-tooltip>
       </v-speed-dial>
 
-      <v-navigation-drawer
-        clipped
-        v-model="drawer"
-        :mini-variant="mini"
-        permanent
-        color="#3F3D56"
-      >
+      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" >
         <div class="header" v-if="!mini">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
@@ -80,7 +74,7 @@
           </v-list-item>
         </div>
 
-        <v-list class="nav-list" flat dense max-height="65%" style="overflow:auto">
+        <v-list class="nav-list" flat dense max-height="85%" style="overflow-y:auto;overflow-x:hidden;" >
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
@@ -116,10 +110,10 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
-            <!--Heuris/Tasks-->
+            <!--Heuris-->
             <v-list
               @click="index = item.id"
-              v-else-if="item.id == 1"
+              v-else-if="item.id == 1 && test.type == 'Expert'"
               :value="index == 1 ? true : false"
             >
               <div v-if="mini">
@@ -182,6 +176,41 @@
                 </v-list-item>
               </div>
             </v-list>
+            <!--Tasks--->
+            <v-list-group
+              @click="index = item.id"
+              v-else-if="item.id == 1  && test.type == 'User'"
+              :value="index == 1 ? true : false"
+              no-action
+            >
+              <v-icon
+                slot="appendIcon"
+                :color="index == item.id ? '#ffffff' : '#fca326'"
+              >mdi-chevron-down</v-icon>
+              <template v-slot:activator>
+                <v-list-item-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title
+                  :style="index ==item.id? 'color: white': 'color:#fca326'"
+                >{{ item.title }}</v-list-item-title>
+              </template>
+              <v-tooltip right v-for="(task, i) in item.value" :key="i">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-list-item @click="heurisIndex = i" link v-bind="attrs" v-on="on">
+                    <v-list-item-icon>
+                      <v-icon :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ task.icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
+                      >{{ task.title }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
+            </v-list-group>
             <!--Post Test-->
             <v-list-item @click="index = item.id" v-else-if="item.id ==2">
               <v-list-item-icon>
@@ -320,7 +349,7 @@ export default {
     HelpBtn,
     VClamp,
     Dialog,
-    Snackbar,
+    Snackbar
   },
   data: () => ({
     drawer: true,
@@ -335,17 +364,17 @@ export default {
     res: 0,
     dialog: false,
     dialogText:
-      "Are you sure you want to submit your test. You can only do it once.",
+      "Are you sure you want to submit your test. You can only do it once."
   }),
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
     },
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
-        if (this.items.find((obj) => obj.id == 0)) {
+        if (this.items.find(obj => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
         }
@@ -353,7 +382,7 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
-    },
+    }
   },
   methods: {
     mappingSteps() {
@@ -367,10 +396,10 @@ export default {
               {
                 title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 0,
-              },
+                id: 0
+              }
             ],
-            id: 0,
+            id: 0
           });
 
         if (this.validate(this.test.preTest.form)) {
@@ -378,7 +407,7 @@ export default {
             this.items[0].value.push({
               title: "Form",
               icon: "mdi-checkbox-blank-circle-outline",
-              id: 1,
+              id: 1
             });
           } else {
             this.items.push({
@@ -388,10 +417,10 @@ export default {
                 {
                   title: "Form",
                   icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1,
-                },
+                  id: 1
+                }
               ],
-              id: 0,
+              id: 0
             });
           }
         }
@@ -401,13 +430,13 @@ export default {
           this.items.push({
             title: "Tasks",
             icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map((i) => {
+            value: this.test.tasks.map(i => {
               return {
                 title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline",
+                icon: "mdi-checkbox-blank-circle-outline"
               };
             }),
-            id: 1,
+            id: 1
           });
 
         //PostTest
@@ -416,7 +445,7 @@ export default {
             title: "Post Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: this.test.postTest,
-            id: 2,
+            id: 2
           });
       } else if (this.test.type === "Expert") {
         //Heuristics
@@ -427,13 +456,13 @@ export default {
           this.items.push({
             title: "Heuristics",
             icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map((i) => {
+            value: this.test.heuristics.map(i => {
               return {
                 title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline",
+                icon: "mdi-checkbox-marked-circle-outline"
               };
             }),
-            id: 1,
+            id: 1
           });
       }
     },
@@ -442,8 +471,8 @@ export default {
     },
     calcProgress() {
       var qtd = 0;
-      this.answersSheet.heuristics.forEach((h) => {
-        qtd += h.questions.filter((q) => q.res !== "").length;
+      this.answersSheet.heuristics.forEach(h => {
+        qtd += h.questions.filter(q => q.res !== "").length;
       });
 
       this.answersSheet.progress = (
@@ -452,21 +481,19 @@ export default {
       ).toFixed(1);
     },
     submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(
-        (answer) => answer.id == this.id
-      );
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
       if (!save) newAnswer.answersSheet.submited = true;
 
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
       };
       this.$store
         .dispatch("updateLog", {
           docId: newAnswer.reports,
           elementId: this.user.uid,
-          element: log,
+          element: log
         })
         .then(() => {
           if (!save) {
@@ -475,13 +502,13 @@ export default {
                 docId: newAnswer.answers,
                 element: Object.assign(this.answersSheet, {
                   uid: this.user.uid,
-                  email: this.user.email,
-                }),
+                  email: this.user.email
+                })
               })
               .then(() => {
                 this.$store.commit("setSuccess", "Test succesfully submited");
               })
-              .catch((err) => {
+              .catch(err => {
                 this.$store.commit("setError", err);
               });
           }
@@ -490,21 +517,21 @@ export default {
       this.$store
         .dispatch("updateMyAnswers", {
           docId: this.user.uid,
-          element: newAnswer,
+          element: newAnswer
         })
         .then(() => {
           if (save)
             this.$store.commit("setSuccess", "Project succesfully saved");
         })
-        .catch((err) => {
+        .catch(err => {
           if (save) this.$store.commit("setError", err);
         });
     },
     progress(item) {
       return (
-        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
+        (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
-    },
+    }
   },
   computed: {
     test() {
@@ -516,7 +543,7 @@ export default {
     answersSheet: {
       get() {
         if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
+          let x = this.user.myAnswers.find(answer => answer.id == this.id);
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
@@ -525,18 +552,21 @@ export default {
       },
       set(item) {
         return item;
-      },
+      }
     },
     showBtn() {
-      if (this.answersSheet !== undefined) {
+      if (this.answersSheet !== undefined && this.answersSheet !== null) {
         if (!this.answersSheet.submited) return true;
       }
+      if (this.test.type == "User") {
+        return true;
+      }
       return false;
-    },
+    }
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
-  },
+  }
 };
 </script>
 
