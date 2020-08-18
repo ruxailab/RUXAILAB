@@ -1,5 +1,5 @@
 <template>
-  <v-row v-if="answers">
+  <div v-if="answers">
     <IntroAnalytics @goToCoops="goToCoops()" v-if=" answers != null && intro == true"/>
     <ShowInfo title="Analytics" v-if=" answers != null && intro == false">
       <div slot="content" class="ma-0 pa-0">
@@ -148,7 +148,7 @@
         </v-card>
       </div>
     </ShowInfo>
-  </v-row>
+  </div>
 </template>
 
 <script>
