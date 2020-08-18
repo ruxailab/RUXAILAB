@@ -5,7 +5,8 @@
       <div class="white-text mt-3">Loading Reports</div>
     </v-overlay>
 
-    <ShowInfo title="Reports">
+    <Intro v-if="reports.reports.length == 0 && !loading" @goToCoops="goToCoops()" />
+    <ShowInfo title="Reports" v-else>
       <v-row justify="end" dense slot="top" class="mr-3">
         <p class="subtitleView">Last Updated: {{new Date().toLocaleString('en')}}</p>
       </v-row>
@@ -46,12 +47,14 @@
 <script>
 // import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
+import Intro from "@/components/atoms/IntroReports";
 
 export default {
   props: ["id"],
   components: {
     // FormCooperation,
     ShowInfo,
+    Intro
   },
   data: () => ({
     headers: [
@@ -78,10 +81,13 @@ export default {
         param: "reports",
       });
     },
+    goToCoops() {
+      this.$emit("goToCoops");
+    }
   },
   computed: {
     reports() {
-      return this.$store.state.reports.reports || [];
+      return this.$store.state.reports.reports || Object.assign({}, {reports: []});
     },
   },
   watch: {
