@@ -5,7 +5,8 @@
       <div class="white-text mt-3">Loading Cooperators</div>
     </v-overlay>
 
-    <v-container v-if="cooperators" class="ma-0 pa-0">
+    <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading" @closeIntro="intro = false" />
+    <v-container v-else-if="cooperators" class="ma-0 pa-0">
       <Snackbar />
       <Dialog
         :dialog="dialog"
@@ -157,13 +158,15 @@
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
 import Dialog from "@/components/atoms/Dialog";
+import Intro from "@/components/atoms/IntroCoops";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
     Snackbar,
-    Dialog
+    Dialog,
+    Intro
   },
   data: () => ({
     object: null,
@@ -186,7 +189,8 @@ export default {
       { text: "Administrator", value: 0 }
     ],
     dialog: false,
-    loading: true
+    loading: true,
+    intro: true
   }),
   methods: {
     setValue(value) {
