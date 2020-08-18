@@ -196,7 +196,7 @@ export default {
     ],
     dialog: false,
     loading: true,
-    intro: true,
+    intro: null,
   }),
   methods: {
     setValue(value) {
@@ -522,6 +522,12 @@ export default {
     testID() {
       console.log(this.testID);
     },
+    loading() {
+      if(!this.loading) {
+        if(this.cooperatorsEdit.length == 0) this.intro = true;
+        else this.intro = false;
+      }
+    }
   },
   computed: {
     test() {
