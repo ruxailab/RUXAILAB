@@ -100,9 +100,27 @@
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
-          <div class="background-top">
-            <v-row class="pa-5 ma-0">
-              <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
+          <div class="back-gradient">
+            <v-row>
+              
+            </v-row>
+            <v-row align="center" justify="center" style="height: 100%">
+              <v-col class="text-div">
+                <div
+                  class="display-3 mb-4 white--text mobile-center"
+                  style="font-size: 60px; font-weight: 500"
+                >Manager</div>
+                <div style="font-size: 22px" 
+                class="white--text mb-4 mobile-center"
+                >{{test.title}}</div>
+              </v-col>
+              <v-img
+                class="hidden-sm-and-down"
+                contain
+                max-width="40%"
+                max-height="100%"
+                src="@/assets/manager/IntroManager.svg"
+              ></v-img>
             </v-row>
           </div>
           <div>
@@ -169,7 +187,7 @@ export default {
     mini: true,
     isCoops: null,
     selectedTest: null,
-    item: 0,
+    item: 0
   }),
   methods: {
     log() {
@@ -191,7 +209,7 @@ export default {
     },
     setLoading(payload) {
       this.loading = payload;
-    },
+    }
   },
   computed: {
     testsList() {
@@ -202,7 +220,7 @@ export default {
       let seach = this.selectedTest || this.id;
       let test = Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find((test) =>
+        this.$store.state.auth.user.myTests.find(test =>
           Object.values(test).includes(seach)
         )
       );
@@ -211,7 +229,7 @@ export default {
         //se o objeto for vazio
         test = Object.assign(
           {},
-          this.$store.state.auth.user.myCoops.find((test) =>
+          this.$store.state.auth.user.myCoops.find(test =>
             Object.values(test).includes(seach)
           )
         );
@@ -246,7 +264,7 @@ export default {
       },
       set(item) {
         return item;
-      },
+      }
     },
     items() {
       let items = [
@@ -254,25 +272,25 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0,
+          id: 0
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1,
+          id: 1
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2,
+          id: 2
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3,
+          id: 3
         },
         {
           title: "Answers",
@@ -422,8 +440,11 @@ export default {
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 20px;
 }
-.divider {
-  height: 5px;
-  background-color: black;
+.back-gradient {
+  height: 100vh;
+  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
+}
+.text-div {
+  max-width: 45%;
 }
 </style>
