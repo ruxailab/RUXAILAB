@@ -6,7 +6,14 @@
     </v-overlay>
 
     <v-row class="nav pa-0 ma-0" dense>
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down">
+      <v-navigation-drawer
+        clipped
+        v-model="drawer"
+        :mini-variant="mini"
+        permanent
+        color="#3F3D56"
+        class="hidden-sm-and-down"
+      >
         <!-- Navigation header -->
         <div class="header" v-if="!mini">
           <v-list-item>
@@ -93,13 +100,31 @@
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
-          <div class="background-top">
-            <v-row class="pa-5 ma-0">
-              <v-col cols="10" class="testTitle" v-text="test.title"></v-col>
+          <div class="back-gradient">
+            <v-row>
+              
+            </v-row>
+            <v-row align="center" justify="center" style="height: 100%">
+              <v-col class="text-div">
+                <div
+                  class="display-3 mb-4 white--text mobile-center"
+                  style="font-size: 60px; font-weight: 500"
+                >Manager</div>
+                <div style="font-size: 22px" 
+                class="white--text mb-4 mobile-center"
+                >{{test.title}}</div>
+              </v-col>
+              <v-img
+                class="hidden-sm-and-down"
+                contain
+                max-width="40%"
+                max-height="100%"
+                src="@/assets/manager/IntroManager.svg"
+              ></v-img>
             </v-row>
           </div>
           <div>
-            <v-container class="content">
+            <v-container class>
               <v-row justify="space-around">
                 <v-col cols="6" v-for="n in 2" :key="n">
                   <v-card height="300px">
@@ -133,7 +158,7 @@ export default {
     mini: true,
     isCoops: null,
     selectedTest: null,
-    item: 0,
+    item: 0
   }),
   methods: {
     log() {
@@ -155,7 +180,7 @@ export default {
     },
     setLoading(payload) {
       this.loading = payload;
-    },
+    }
   },
   computed: {
     testsList() {
@@ -166,7 +191,7 @@ export default {
       let seach = this.selectedTest || this.id;
       let test = Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find((test) =>
+        this.$store.state.auth.user.myTests.find(test =>
           Object.values(test).includes(seach)
         )
       );
@@ -175,7 +200,7 @@ export default {
         //se o objeto for vazio
         test = Object.assign(
           {},
-          this.$store.state.auth.user.myCoops.find((test) =>
+          this.$store.state.auth.user.myCoops.find(test =>
             Object.values(test).includes(seach)
           )
         );
@@ -199,16 +224,18 @@ export default {
     },
     index: {
       get() {
-        if (this.items){
+        if (this.items) {
           return this.items.indexOf(
-            this.items.find((item) => item.path.split('/').includes(this.$route.path.split('/')[1])
-          ))
+            this.items.find(item =>
+              item.path.split("/").includes(this.$route.path.split("/")[1])
+            )
+          );
         }
         return 0;
       },
       set(item) {
         return item;
-      },
+      }
     },
     items() {
       let items = [
@@ -216,25 +243,25 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0,
+          id: 0
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1,
+          id: 1
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2,
+          id: 2
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3,
+          id: 3
         },
         {
           title: "Answers",
@@ -262,9 +289,9 @@ export default {
       return items;
     },
     isSettings() {
-      return this.$route.path.includes('/settings');
+      return this.$route.path.includes("/settings");
     }
-  },
+  }
 };
 </script>
 
@@ -326,5 +353,12 @@ export default {
   margin-bottom: 0px;
   margin-top: 20px;
   align-items: flex-end;
+}
+.back-gradient {
+  height: 100vh;
+  background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
+}
+.text-div {
+  max-width: 45%;
 }
 </style>
