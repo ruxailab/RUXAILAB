@@ -114,7 +114,7 @@
                 class="hidden-sm-and-down"
                 contain
                 max-width="40%"
-                max-height="100%"
+                max-height="85%"
                 src="@/assets/manager/IntroManager.svg"
               ></v-img>
             </v-row>
@@ -125,7 +125,7 @@
 
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
-                  <v-card height="380px" :style="item.cardStyle"  @click="go(item.path)"> 
+                  <v-card height="380px" :style="item.cardStyle"  @click="go(item.path)" hover >   
                     <v-img
                       :style="item.imageStyle"
                       contain
@@ -147,7 +147,7 @@
 
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
-                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path) ">
+                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path)" hover>
                     <v-img
                       :style="item.imageStyle"
                       contain
@@ -438,11 +438,10 @@ export default {
   font-weight: bold;
   font-size: 30px;
   color: #415b74;
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 20px;
 }
 .back-gradient {
-  height: 100vh;
+  height: 60vh;
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 .text-div {

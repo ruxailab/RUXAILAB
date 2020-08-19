@@ -61,7 +61,7 @@
       </div>
     </v-navigation-drawer>
 
-    <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer">Research Workflow</v-toolbar-title>
+    <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer">Remote Testing Lab</v-toolbar-title>
 
     <v-spacer></v-spacer>
 
