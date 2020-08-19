@@ -233,7 +233,7 @@ export default {
           this.index = 0;
           if (
             this.test.tasks.length == 0 &&
-            this.test.posTest.form == null &&
+            this.test.postTest.form == null &&
             this.test.preTest.consent == null &&
             this.test.preTest.form == null
           )
