@@ -10,7 +10,7 @@
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Add cooperators who can help you improve your project and gather data for your studies.</div>
+          >Create and customize your tasks and heuristics for your research needs.</div>
           <span class="white--text mobile-center" style="cursor: pointer" @click="closeIntro()">
             <u>Get started!</u>
           </span>
