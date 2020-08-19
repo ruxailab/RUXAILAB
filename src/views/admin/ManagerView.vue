@@ -101,18 +101,14 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row>
-              
-            </v-row>
+            <v-row></v-row>
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >Manager</div>
-                <div style="font-size: 22px" 
-                class="white--text mb-4 mobile-center"
-                >{{test.title}}</div>
+                <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{test.title}}</div>
               </v-col>
               <v-img
                 class="hidden-sm-and-down"
@@ -129,7 +125,7 @@
 
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
-                  <v-card height="380px" :style="item.cardStyle">
+                  <v-card height="380px" :style="item.cardStyle"  @click="go(item.path)"> 
                     <v-img
                       :style="item.imageStyle"
                       contain
@@ -151,7 +147,7 @@
 
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
-                  <v-card height="350px" :style="item.cardStyle">
+                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path) ">
                     <v-img
                       :style="item.imageStyle"
                       contain
@@ -255,7 +251,7 @@ export default {
       get() {
         if (this.items) {
           return this.items.indexOf(
-            this.items.find((item) =>
+            this.items.find(item =>
               item.path.split("/").includes(this.$route.path.split("/")[1])
             )
           );
@@ -296,14 +292,14 @@ export default {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4,
+          id: 4
         },
         {
           title: "Analytics",
-          icon: "mdi-chart-bar", //Change It
+          icon: "mdi-chart-bar",
           path: `/analyticsview/${this.test.answers}`,
-          id: 5,
-        },
+          id: 5
+        }
       ];
 
       if (this.test.accessLevel == 0) {
@@ -311,7 +307,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6,
+          id: 6
         });
       }
 
@@ -331,6 +327,7 @@ export default {
           description: "Start creating and editing your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
+          path: `/edittest/${this.test.id}`
         },
         {
           image: "IntroCoops.svg",
@@ -340,7 +337,8 @@ export default {
           description: "Invite people to help you in your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
-        },
+          path: `/cooperatorsview/${this.test.cooperators}`
+        }
       ];
     },
     bottomCards() {
@@ -348,33 +346,36 @@ export default {
         {
           image: "IntroReports.svg",
           title: "Reports",
-          imageStyle: 'height: 250px; position: relative; top: 10px',
+          imageStyle: "height: 250px; position: relative; top: 10px",
           bottom: "#E03C3C",
           description: "Take a look at how your testers are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
+          path: `/reportview/${this.test.reports}`
         },
         {
           image: "IntroAnswer.svg",
           title: "Answers",
-          imageStyle:"height: 250px",
+          imageStyle: "height: 250px",
           bottom: "#4DA73E",
           description: "See how your tester are evaluating your project.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
+          path: `/answerview/${this.test.answers}`
         },
         {
           image: "IntroAnalytics.svg",
           title: "Analytics",
-          imageStyle:"height: 250px",
+          imageStyle: "height: 250px",
           bottom: "#2666E1",
           description: "Analyze comments and answers from your testers.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
-        },
+          path: `/analyticsview/${this.test.answers}`
+        }
       ];
-    },
-  },
+    }
+  }
 };
 </script>
 
