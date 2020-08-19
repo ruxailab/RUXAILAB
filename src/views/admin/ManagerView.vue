@@ -6,7 +6,14 @@
     </v-overlay>
 
     <v-row class="nav pa-0 ma-0" dense>
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down">
+      <v-navigation-drawer
+        clipped
+        v-model="drawer"
+        :mini-variant="mini"
+        permanent
+        color="#3F3D56"
+        class="hidden-sm-and-down"
+      >
         <!-- Navigation header -->
         <div class="header" v-if="!mini">
           <v-list-item>
@@ -99,18 +106,47 @@
             </v-row>
           </div>
           <div>
-            <v-container class="content">
-              <v-row justify="space-around">
-                <v-col cols="6" v-for="n in 2" :key="n">
-                  <v-card height="300px">
-                    <v-card-title>INFO</v-card-title>
+            <v-container style="width: 70%">
+              <div class="presentation-text">Edit and invite people to your test</div>
+
+              <v-row justify="center" justify-md="space-around">
+                <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
+                  <v-card height="380px" :style="item.cardStyle">
+                    <v-img
+                      :style="item.imageStyle"
+                      contain
+                      :src="require('../../assets/manager/' + item.image)"
+                    ></v-img>
+
+                    <div
+                      class="white--text pl-4"
+                      :style="{height: '90px', position: 'absolute', bottom: '0', width: '100%', 'background-color': item.bottom, 'padding-top': '10px', 'border-top': '.3px solid #505050'}"
+                    >
+                      <h2>{{ item.title }}</h2>
+                      <div>{{ item.description }}</div>
+                    </div>
                   </v-card>
                 </v-col>
               </v-row>
-              <v-row justify="space-around">
-                <v-col cols="4" v-for="n in 3" :key="n">
-                  <v-card height="300px">
-                    <v-card-title>INFO</v-card-title>
+
+              <div class="presentation-text mt-5">Analyze your project and testers</div>
+
+              <v-row justify="center" justify-md="space-around">
+                <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
+                  <v-card height="350px" :style="item.cardStyle">
+                    <v-img
+                      :style="item.imageStyle"
+                      contain
+                      :src="require('../../assets/manager/' + item.image)"
+                    ></v-img>
+
+                    <div
+                      class="white--text pl-4"
+                      :style="{height: '90px', position: 'absolute', bottom: '0', width: '100%', 'background-color': item.bottom, 'border-top': '.3px solid #505050'}"
+                    >
+                      <h2>{{ item.title }}</h2>
+                      <div>{{ item.description }}</div>
+                    </div>
                   </v-card>
                 </v-col>
               </v-row>
@@ -199,10 +235,12 @@ export default {
     },
     index: {
       get() {
-        if (this.items){
+        if (this.items) {
           return this.items.indexOf(
-            this.items.find((item) => item.path.split('/').includes(this.$route.path.split('/')[1])
-          ))
+            this.items.find((item) =>
+              item.path.split("/").includes(this.$route.path.split("/")[1])
+            )
+          );
         }
         return 0;
       },
@@ -240,14 +278,14 @@ export default {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4
+          id: 4,
         },
         {
           title: "Analytics",
           icon: "mdi-chart-bar", //Change It
           path: `/analyticsview/${this.test.answers}`,
-          id: 5
-        }
+          id: 5,
+        },
       ];
 
       if (this.test.accessLevel == 0) {
@@ -255,15 +293,69 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6
+          id: 6,
         });
       }
 
       return items;
     },
     isSettings() {
-      return this.$route.path.includes('/settings');
-    }
+      return this.$route.path.includes("/settings");
+    },
+    topCards() {
+      return [
+        {
+          image: "IntroEdit.svg",
+          title: "Edit",
+          imageStyle:
+            "transform: rotateY(180deg); height: 360px; position: relative; top: 0; left: -20px",
+          bottom: "#740999",
+          description: "Start creating and editing your test.",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
+        },
+        {
+          image: "IntroCoops.svg",
+          title: "Cooperators",
+          imageStyle: "height: 320px; position: relative; top: 30px",
+          bottom: "#DBC717",
+          description: "Invite people to help you in your test.",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
+        },
+      ];
+    },
+    bottomCards() {
+      return [
+        {
+          image: "IntroReports.svg",
+          title: "Reports",
+          imageStyle: 'height: 250px; position: relative; top: 10px',
+          bottom: "#E03C3C",
+          description: "Take a look at how your testers are doing.",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
+        },
+        {
+          image: "IntroAnswer.svg",
+          title: "Answers",
+          imageStyle:"height: 250px",
+          bottom: "#4DA73E",
+          description: "See how your tester are evaluating your project.",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
+        },
+        {
+          image: "IntroAnalytics.svg",
+          title: "Analytics",
+          imageStyle:"height: 250px",
+          bottom: "#2666E1",
+          description: "Analyze comments and answers from your testers.",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
+        },
+      ];
+    },
   },
 };
 </script>
@@ -287,11 +379,6 @@ export default {
 }
 .background::-webkit-scrollbar {
   display: none;
-}
-.content {
-  position: relative;
-  top: -100px;
-  width: 80%;
 }
 .testTitle {
   font-family: Roboto;
@@ -326,5 +413,17 @@ export default {
   margin-bottom: 0px;
   margin-top: 20px;
   align-items: flex-end;
+}
+.presentation-text {
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 30px;
+  color: #415b74;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+}
+.divider {
+  height: 5px;
+  background-color: black;
 }
 </style>
