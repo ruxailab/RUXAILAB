@@ -101,18 +101,14 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row>
-              
-            </v-row>
+            <v-row></v-row>
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >Manager</div>
-                <div style="font-size: 22px" 
-                class="white--text mb-4 mobile-center"
-                >{{test.title}}</div>
+                <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{test.title}}</div>
               </v-col>
               <v-img
                 class="hidden-sm-and-down"
@@ -127,14 +123,18 @@
             <v-container style="width: 70%">
               <div class="presentation-text">Edit and invite people to your test</div>
 
+              <!-- Top Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
                   <v-card height="380px" :style="item.cardStyle">
-                    <v-img
-                      :style="item.imageStyle"
-                      contain
-                      :src="require('../../assets/manager/' + item.image)"
-                    ></v-img>
+                    <v-row style="height: 290px" justify="center" align="center">
+                      <v-img
+                        max-height="220"
+                        :style="item.imageStyle"
+                        contain
+                        :src="require('../../assets/manager/' + item.image)"
+                      ></v-img>
+                    </v-row>
 
                     <div
                       class="white--text pl-4"
@@ -149,14 +149,17 @@
 
               <div class="presentation-text mt-5">Analyze your project and testers</div>
 
+              <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
                   <v-card height="350px" :style="item.cardStyle">
-                    <v-img
-                      :style="item.imageStyle"
-                      contain
-                      :src="require('../../assets/manager/' + item.image)"
-                    ></v-img>
+                    <v-row style="height: 260px" justify="center" align="center" class="px-5">
+                      <v-img
+                        :style="item.imageStyle"
+                        contain
+                        :src="require('../../assets/manager/' + item.image)"
+                      ></v-img>
+                    </v-row>
 
                     <div
                       class="white--text pl-4"
@@ -187,7 +190,7 @@ export default {
     mini: true,
     isCoops: null,
     selectedTest: null,
-    item: 0
+    item: 0,
   }),
   methods: {
     log() {
@@ -209,7 +212,7 @@ export default {
     },
     setLoading(payload) {
       this.loading = payload;
-    }
+    },
   },
   computed: {
     testsList() {
@@ -220,7 +223,7 @@ export default {
       let seach = this.selectedTest || this.id;
       let test = Object.assign(
         {},
-        this.$store.state.auth.user.myTests.find(test =>
+        this.$store.state.auth.user.myTests.find((test) =>
           Object.values(test).includes(seach)
         )
       );
@@ -229,7 +232,7 @@ export default {
         //se o objeto for vazio
         test = Object.assign(
           {},
-          this.$store.state.auth.user.myCoops.find(test =>
+          this.$store.state.auth.user.myCoops.find((test) =>
             Object.values(test).includes(seach)
           )
         );
@@ -264,7 +267,7 @@ export default {
       },
       set(item) {
         return item;
-      }
+      },
     },
     items() {
       let items = [
@@ -272,25 +275,25 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0
+          id: 0,
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1
+          id: 1,
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2
+          id: 2,
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3
+          id: 3,
         },
         {
           title: "Answers",
@@ -325,8 +328,7 @@ export default {
         {
           image: "IntroEdit.svg",
           title: "Edit",
-          imageStyle:
-            "transform: rotateY(180deg); height: 360px; position: relative; top: 0; left: -20px",
+          imageStyle: "transform: rotateY(180deg);",
           bottom: "#740999",
           description: "Start creating and editing your test.",
           cardStyle:
@@ -335,7 +337,7 @@ export default {
         {
           image: "IntroCoops.svg",
           title: "Cooperators",
-          imageStyle: "height: 320px; position: relative; top: 30px",
+          imageStyle: "",
           bottom: "#DBC717",
           description: "Invite people to help you in your test.",
           cardStyle:
@@ -348,7 +350,7 @@ export default {
         {
           image: "IntroReports.svg",
           title: "Reports",
-          imageStyle: 'height: 250px; position: relative; top: 10px',
+          imageStyle: "height: 250px; margin: 10px 10px 10px 10px",
           bottom: "#E03C3C",
           description: "Take a look at how your testers are doing.",
           cardStyle:
@@ -357,7 +359,7 @@ export default {
         {
           image: "IntroAnswer.svg",
           title: "Answers",
-          imageStyle:"height: 250px",
+          imageStyle: "height: 250px",
           bottom: "#4DA73E",
           description: "See how your tester are evaluating your project.",
           cardStyle:
@@ -366,7 +368,7 @@ export default {
         {
           image: "IntroAnalytics.svg",
           title: "Analytics",
-          imageStyle:"height: 250px",
+          imageStyle: "height: 250px",
           bottom: "#2666E1",
           description: "Analyze comments and answers from your testers.",
           cardStyle:
@@ -435,7 +437,7 @@ export default {
 .presentation-text {
   color: rgb(87, 84, 100);
   font-weight: 700;
-  font-size: 22px;  
+  font-size: 22px;
   margin-bottom: 20px;
 }
 .back-gradient {
@@ -444,5 +446,12 @@ export default {
 }
 .text-div {
   max-width: 45%;
+}
+@media screen and (max-width: 960px) {
+  .presentation-text {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
 }
 </style>
