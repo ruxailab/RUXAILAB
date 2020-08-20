@@ -19,6 +19,14 @@ export default {
   components: {
     Toolbar,
   },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to) {
+        document.title = "ReTLab " + (to.name ? '| ' + to.name : '');
+      },
+    },
+  }
 };
 </script>
 
