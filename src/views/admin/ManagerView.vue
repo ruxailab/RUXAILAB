@@ -433,11 +433,9 @@ export default {
   align-items: flex-end;
 }
 .presentation-text {
-  font-family: Roboto;
-  font-weight: bold;
-  font-size: 30px;
-  color: #415b74;
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+  color: rgb(87, 84, 100);
+  font-weight: 700;
+  font-size: 22px;  
   margin-bottom: 20px;
 }
 .back-gradient {
