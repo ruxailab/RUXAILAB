@@ -155,7 +155,7 @@
                   <v-card height="350px" :style="item.cardStyle">
                     <v-row style="height: 260px" justify="center" align="center" class="px-5">
                       <v-img
-                        :style="item.imageStyle"
+                        height="150"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
                       ></v-img>
@@ -350,7 +350,7 @@ export default {
         {
           image: "IntroReports.svg",
           title: "Reports",
-          imageStyle: "height: 250px; margin: 10px 10px 10px 10px",
+          imageStyle: "height: 250px",
           bottom: "#E03C3C",
           description: "Take a look at how your testers are doing.",
           cardStyle:
