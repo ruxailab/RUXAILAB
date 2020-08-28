@@ -1,6 +1,23 @@
 <template>
   <div>
     <Snackbar />
+    <Dialog :dialog="dialog" :text="dialogText">
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to delete this test?</v-card-title>
+
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+        <v-btn
+          class="red white--text ml-1"
+          :loading="loadingBtn"
+          text
+          @click="removeReport(report), loadingBtn = true"
+        >Delete</v-btn>
+      </div>
+    </Dialog>
 
     <v-overlay class="text-center" v-model="loading">
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
@@ -30,7 +47,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="removeReport(item)">
+                <v-list-item @click="dialog = true, report = item">
                   <v-list-item-title>Remove Report</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -50,6 +67,7 @@
 // import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Intro from "@/components/atoms/IntroReports";
+import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
@@ -59,6 +77,7 @@ export default {
     ShowInfo,
     Intro,
     Snackbar,
+    Dialog
   },
   data: () => ({
     headers: [
@@ -66,9 +85,12 @@ export default {
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
-      { text: "More", value: "more", justify: 'end'},
+      { text: "More", value: "more", justify: "end" },
     ],
     loading: true,
+    dialog: false,
+    loadingBtn: false,
+    report: null
   }),
   methods: {
     removeReport(report) {
@@ -82,6 +104,8 @@ export default {
         })
         .then(() => {
           this.$store.commit("setSuccess", "Report successfully deleted");
+          this.loadingBtn = false;
+          this.dialog = false;
         })
         .catch((err) => {
           this.$store.commit("setError", err);
@@ -97,6 +121,9 @@ export default {
         this.$store.state.reports.reports || Object.assign({}, { reports: [] })
       );
     },
+    dialogText() {
+      return 'Are you sure you want to delete ' + (this.report !== null ? this.report.email : '') + `'s report? This action can't be undone`;
+    }
   },
   watch: {
     reports() {
