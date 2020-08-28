@@ -50,7 +50,7 @@
 // import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Intro from "@/components/atoms/IntroReports";
-import Snackbar from "@/components/atoms/Snackbar"
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
@@ -58,57 +58,56 @@ export default {
     // FormCooperation,
     ShowInfo,
     Intro,
-    Snackbar
+    Snackbar,
   },
   data: () => ({
     headers: [
-      {
-        text: "Id",
-        align: "start",
-        value: "uid",
-      },
       { text: "Tester", value: "email" },
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },
-      { text: "More", value: "more" },
+      { text: "More", value: "more", justify: 'end'},
     ],
-    loading: true
+    loading: true,
   }),
   methods: {
     removeReport(report) {
-      this.$store.dispatch("removeReport", {
-        docId: this.id,
-        element: {
-          id: report.uid,
-        },
-        param: "reports",
-      }).then(() => {
-        this.$store.commit('setSuccess', "Report successfully deleted");
-      }).catch(err => {
-        this.$store.commit('setError', err);
-      })
+      this.$store
+        .dispatch("removeReport", {
+          docId: this.id,
+          element: {
+            id: report.uid,
+          },
+          param: "reports",
+        })
+        .then(() => {
+          this.$store.commit("setSuccess", "Report successfully deleted");
+        })
+        .catch((err) => {
+          this.$store.commit("setError", err);
+        });
     },
     goToCoops() {
       this.$emit("goToCoops");
-    }
+    },
   },
   computed: {
     reports() {
-      return this.$store.state.reports.reports || Object.assign({}, {reports: []});
+      return (
+        this.$store.state.reports.reports || Object.assign({}, { reports: [] })
+      );
     },
   },
   watch: {
     reports() {
-      if(Object.keys(this.reports).length) this.loading = false;
-    }
+      if (Object.keys(this.reports).length) this.loading = false;
+    },
   },
   created() {
     if (!this.$store.reports) {
       this.$store.dispatch("getReports", { id: this.id });
-    }
-    else {
-      this.loading = false
+    } else {
+      this.loading = false;
     }
     this.test = Object.assign(
       {},
