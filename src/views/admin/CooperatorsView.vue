@@ -190,7 +190,7 @@ export default {
       { text: "More", value: "more", sortable: false }
     ],
     roleOptions: [
-      { text: "Tester", value: 2 },
+      { text: "Evaluator", value: 2 },
       { text: "Guest", value: 1 },
       { text: "Administrator", value: 0 }
     ],

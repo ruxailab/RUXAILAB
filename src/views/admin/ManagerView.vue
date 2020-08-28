@@ -147,7 +147,7 @@
                 </v-col>
               </v-row>
 
-              <div class="presentation-text mt-5">Analyze your project and testers</div>
+              <div class="presentation-text mt-5">Analyze your project and evaluators</div>
 
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
@@ -354,7 +354,7 @@ export default {
           title: "Reports",
           imageStyle: "height: 250px",
           bottom: "#E03C3C",
-          description: "Take a look at how your testers are doing.",
+          description: "Take a look at how your evaluators are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
           path: `/reportview/${this.test.reports}`
@@ -364,7 +364,7 @@ export default {
           title: "Answers",
           imageStyle: "height: 250px",
           bottom: "#4DA73E",
-          description: "See how your tester are evaluating your project.",
+          description: "See how your evaluators are evaluating your project.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
           path: `/answerview/${this.test.answers}`
@@ -374,7 +374,7 @@ export default {
           title: "Analytics",
           imageStyle: "height: 250px",
           bottom: "#2666E1",
-          description: "Analyze comments and answers from your testers.",
+          description: "Analyze comments and answers from your evaluators.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
           path: `/analyticsview/${this.test.answers}`

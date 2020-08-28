@@ -12,7 +12,7 @@
             class="white--text mb-4 mobile-center"
           >Quickly get feedback on you project by analyzing data from other users' answers.</div>
           <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite testers to answer your test!</u>
+            <u>Invite evaluators to answer your test!</u>
           </span>
         </div>
 

@@ -81,7 +81,7 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: "Tester", value: "email" },
+      { text: "Evaluator", value: "email" },
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "log.status" },

@@ -10,9 +10,9 @@
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Keep track of your testers progress and answering status while they complete your test.</div>
+          >Keep track of your evaluators progress and answering status while they complete your test.</div>
           <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite new testers!</u>
+            <u>Invite new evaluators!</u>
           </span>
         </div>
 
