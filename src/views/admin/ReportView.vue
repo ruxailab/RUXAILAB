@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Snackbar />
+
     <v-overlay class="text-center" v-model="loading">
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Reports</div>
@@ -48,13 +50,15 @@
 // import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Intro from "@/components/atoms/IntroReports";
+import Snackbar from "@/components/atoms/Snackbar"
 
 export default {
   props: ["id"],
   components: {
     // FormCooperation,
     ShowInfo,
-    Intro
+    Intro,
+    Snackbar
   },
   data: () => ({
     headers: [
@@ -79,7 +83,11 @@ export default {
           id: report.uid,
         },
         param: "reports",
-      });
+      }).then(() => {
+        this.$store.commit('setSuccess', "Report successfully deleted");
+      }).catch(err => {
+        this.$store.commit('setError', err);
+      })
     },
     goToCoops() {
       this.$emit("goToCoops");
