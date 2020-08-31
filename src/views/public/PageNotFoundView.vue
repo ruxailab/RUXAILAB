@@ -9,7 +9,7 @@
           style="font-size:15px; color: grey"
         >We weren't able to find the page you were looking for.</div>
         <v-row justify="center" class="mt-4">
-          <v-btn style="color: #f9a826" outlined rounded @click="sendHome()">Back Home</v-btn>
+          <v-btn style="color: #f9a826" outlined rounded @click="sendHome()">Go Back</v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -18,11 +18,20 @@
 
 <script>
 export default {
+  data: () => ({
+    prevRoute: null,
+  }),
   methods: {
     sendHome() {
-      this.$router.push("/testslist");
-    }
-  }
+      if (this.prevRoute !== null) this.$router.push(this.prevRoute.path);
+      else this.$router.push("/");
+    },
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.prevRoute = from;
+    });
+  },
 };
 </script>
 
