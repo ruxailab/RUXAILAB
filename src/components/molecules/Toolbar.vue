@@ -202,8 +202,6 @@ export default {
           if (parentRoute.name === "Manager View") this.isManager = true;
           else this.isManager = false;
         }
-
-        console.log("is?", this.isManager);
       },
     },
   },
