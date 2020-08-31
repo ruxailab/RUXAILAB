@@ -1,17 +1,18 @@
 <template>
-  <v-container style="display:contents; background-color:#f4b700; height:300px">
-    <div class="back-gradient">
+  <v-container style="display:contents; background-color:#f4b700">
+    <div class="background-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >Edit Test</div>
+          <v-img class="hidden-md-and-up" contain src="@/assets/manager/IntroEdit.svg"></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Create and customize your tasks and heuristics for your research needs.</div>
-          <span class="white--text mobile-center" style="cursor: pointer" @click="closeIntro()">
+          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="closeIntro()">
             <u>Get started!</u>
           </span>
         </div>
@@ -28,7 +29,7 @@
 
     <v-col>
       <v-row justify="center" class="ml-0">
-        <v-col cols="8">
+        <v-col cols="12" md="8">
           <div class="learn-text">Learn More</div>
           <v-card elevation="4" class="ma-0 pa-0" style="border-radius: 10px!important">
             <v-list class="ma-0 pa-0">
@@ -64,11 +65,11 @@ export default {
   data: () => ({}),
   methods: {
     goToDoc() {
-      this.$router.push("/edit/documentation")
+      this.$router.push("/edit/documentation");
     },
     closeIntro() {
-        this.$emit("closeIntro");
-    }
+      this.$emit("closeIntro");
+    },
   },
   computed: {
     items() {
@@ -79,7 +80,7 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the edit page.",
-          func: this.goToDoc
+          func: this.goToDoc,
         },
       ];
     },
@@ -88,8 +89,8 @@ export default {
 </script>
 
 <style scoped>
-.back-gradient {
-  height: 400px;
+.background-gradient {
+  height: 60vh;
   background-image: radial-gradient(circle at top right, #d128c9, #9a1aab);
   /* background-image: radial-gradient(circle at top right, #ffe53b, #f1c515);   */
 }
@@ -103,6 +104,11 @@ export default {
 .text-div {
   max-width: 45%;
 }
+.page-title {
+  font-size: 60px;
+  font-weight: 500
+}
+/* sm */
 @media screen and (max-width: 960px) {
   .text-div {
     max-width: 100%;
@@ -116,6 +122,13 @@ export default {
     display: flex;
     text-align: center;
     justify-content: center;
+    margin: 0px 10px;
+  }
+  .page-title {
+    font-size: 40px;
+  }
+  .background-gradient{
+    height: 100%;
   }
 }
 </style>

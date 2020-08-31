@@ -101,7 +101,6 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row></v-row>
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
@@ -392,11 +391,6 @@ export default {
 </script>
 
 <style>
-.background-top {
-  background-color: #fca326;
-  height: 45vh;
-  width: 100%;
-}
 .background {
   background-color: #e8eaf2;
   height: 94%;
@@ -482,6 +476,9 @@ export default {
   }
   .card-container {
     width: 85%;
+  }
+  .back-gradient {
+    height: 100%;
   }
 }
 </style>
