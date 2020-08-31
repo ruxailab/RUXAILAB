@@ -3,7 +3,7 @@
     <v-overlay :value="loading==null">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <IntroAnswer  v-if=" answers != null && loading == true"></IntroAnswer>
+    <IntroAnswer v-if=" answers != null && loading == true"></IntroAnswer>
     <v-row justify="center" v-else-if="answers != null && loading == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
@@ -169,7 +169,7 @@
                         "
                           dark
                           class="chip"
-                        >{{ item[header.value] }}</v-chip>
+                        >{{ item[header.value]?item[header.value]:0 }}</v-chip>
                         <v-btn
                           text
                           v-else
@@ -200,7 +200,7 @@
                   <v-col cols="12" v-if="ind == 2">
                     <BarChart
                       :labels="heuristicsStatistics.items.map(item => item.name)"
-                      :data="heuristicsStatistics.items.map(item => item.average)" 
+                      :data="heuristicsStatistics.items.map(item => item.average)"
                       legend="Average"
                     />
                   </v-col>
@@ -268,10 +268,15 @@ export default {
           let noReply = 0;
           let res = heuristic.questions.reduce((totalQuestions, question) => {
             //grouping of answers
-            if (question.res === null) noAplication++; //count answers no aplication
+            if (question.res === null) {
+              noAplication++;           
+            } //count answers no aplication
             if (question.res === "") noReply++;
             return totalQuestions + Number(question.res); //sum of responses
           }, 0);
+          if(noAplication == heuristic.questions.length)
+            res = null
+
           SelectEvaluator.heuristics.push({
             id: `H${heurisIndex}`,
             result: res,
@@ -318,11 +323,13 @@ export default {
       return (value * 100) / result;
     },
     getColor(value, max, min) {
+          
       max = Number(max);
       min = Number(min);
       let h = (max - min) / 5;
 
-      if (value <= min + h) return "red";
+      if(value == null) return 'grey'
+      else if (value <= min + h) return "red";
       else if (value <= min + 2 * h) return "amber";
       else if (value <= min + 3 * h) return "orange lighten-1";
       else if (value <= min + 4 * h) return "lime";
@@ -508,14 +515,14 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers || [];
-    },
+    }
   },
   watch: {
     answers() {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
-        if (this.answers.answers.length == 0) this.loading =  true;
-        else this.loading =  false;
+        if (this.answers.answers.length == 0) this.loading = true;
+        else this.loading = false;
       }
     },
     index() {
