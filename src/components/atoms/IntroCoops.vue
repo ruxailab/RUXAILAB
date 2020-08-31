@@ -1,17 +1,22 @@
 <template>
   <v-container style="display:contents; background-color:#f4b700; height:300px">
-    <div class="back-gradient">
+    <div class="background-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >Cooperators</div>
+          <v-img class="hidden-md-and-up" style="margin: 0px 30px" contain src="@/assets/manager/IntroCoops.svg"></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Add cooperators who can help you improve your project and gather data for your studies.</div>
-          <span class="white--text mobile-center" style="cursor: pointer" @click="closeIntro()">
+          <span
+            class="white--text mobile-center mb-4"
+            style="cursor: pointer"
+            @click="closeIntro()"
+          >
             <u>Get started!</u>
           </span>
         </div>
@@ -28,7 +33,7 @@
 
     <v-col>
       <v-row justify="center" class="ml-0">
-        <v-col cols="8">
+        <v-col cols="12" md="8">
           <div class="learn-text">Learn More</div>
           <v-card elevation="4" class="ma-0 pa-0" style="border-radius: 10px!important">
             <v-list class="ma-0 pa-0">
@@ -64,11 +69,11 @@ export default {
   data: () => ({}),
   methods: {
     goToDoc() {
-      this.$router.push("/cooperators/documentation")
+      this.$router.push("/cooperators/documentation");
     },
     closeIntro() {
-        this.$emit("closeIntro");
-    }
+      this.$emit("closeIntro");
+    },
   },
   computed: {
     items() {
@@ -79,7 +84,7 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the cooperators page.",
-          func: this.goToDoc
+          func: this.goToDoc,
         },
       ];
     },
@@ -88,8 +93,8 @@ export default {
 </script>
 
 <style scoped>
-.back-gradient {
-  height: 400px;
+.background-gradient {
+  height: 60vh;
   background-image: radial-gradient(circle at top right, #eff31a, #eecf22);
   /* background-image: radial-gradient(circle at top right, #ffe53b, #f1c515);   */
 }
@@ -116,6 +121,10 @@ export default {
     display: flex;
     text-align: center;
     justify-content: center;
+    margin: 0px 10px;
+  }
+  .background-gradient {
+    height: 100%;
   }
 }
 </style>
