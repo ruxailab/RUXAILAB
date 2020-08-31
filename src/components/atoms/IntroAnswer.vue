@@ -109,14 +109,11 @@ export default {
     margin: 0px 10px;
     text-justify: center;
   }
-  .image-back {
-    height: 300px;
-  }
   .mobile-center {
     display: flex;
     text-align: center;
     justify-content: center;
-    margin: 0px 10px;
+    margin: 0px 20px;
   }
   .background-gradient {
     height: 100%;
