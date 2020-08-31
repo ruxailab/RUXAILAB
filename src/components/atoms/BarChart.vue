@@ -2,7 +2,15 @@
 import { Bar } from "vue-chartjs";
 
 export default {
-  props: ["labels", "data"],
+  props: {
+    labels: {
+      default: "Data One"
+    },
+    data: {},
+    legend: {
+      default: "Legend"
+    }
+  },
   extends: Bar,
   watch: {
     data() {
@@ -11,7 +19,7 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: "Data One",
+            label: this.legend,
             backgroundColor: "#f87979",
             data: this.data,
           },
@@ -27,7 +35,7 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: "Data One",
+            label: this.legend,
             backgroundColor: "#f87979",
             data: this.data,
           },

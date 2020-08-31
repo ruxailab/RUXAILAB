@@ -200,7 +200,8 @@
                   <v-col cols="12" v-if="ind == 2">
                     <BarChart
                       :labels="heuristicsStatistics.items.map(item => item.name)"
-                      :data="heuristicsStatistics.items.map(item => item.average)"
+                      :data="heuristicsStatistics.items.map(item => item.average)" 
+                      legend="Average"
                     />
                   </v-col>
                 </v-row>

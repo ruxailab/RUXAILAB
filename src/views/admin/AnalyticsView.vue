@@ -115,6 +115,7 @@
                       v-if="questionGraph"
                       :labels="questionGraph.label"
                       :data="questionGraph.data"
+                      legend="Quantity"
                     />
                   </v-col>
                   <v-col v-if="ind == 1">
