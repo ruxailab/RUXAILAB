@@ -11,7 +11,6 @@
       temporary
       v-model="drawer"
       class="hidden-md-and-up"
-      disable-resize-watcher
       v-if="user"
     >
       <v-row align="center" class="ma-0" justify="center">
@@ -128,6 +127,7 @@ export default {
     drawer: false,
     menu: false,
     item: 0,
+    isManager: false,
   }),
   methods: {
     goTo(route) {
@@ -143,16 +143,6 @@ export default {
   computed: {
     user() {
       return this.$store.getters.user;
-    },
-    isManager() {
-      let routeName = null;
-      if (this.$route.matched[0])
-        routeName = this.$router.options.routes.filter(
-          (route) => route.path == this.$route.matched[0].path
-        )[0].name;
-
-      if (routeName === "Manager View") return true;
-      else return false;
     },
     managerItems() {
       let items = [
@@ -201,6 +191,20 @@ export default {
     },
     test() {
       return this.$store.state.tests.test;
+    },
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to) {
+        let parentRoute = to.matched[0];
+        if (parentRoute) {
+          if (parentRoute.name === "Manager View") this.isManager = true;
+          else this.isManager = false;
+        }
+
+        console.log("is?", this.isManager);
+      },
     },
   },
   components: {
