@@ -131,12 +131,12 @@
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 0"
-              >Table 1</v-tab>
+              >Answers by Evaluator</v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 1"
-              >Table 2</v-tab>
+              >Answers By Heuristics</v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
