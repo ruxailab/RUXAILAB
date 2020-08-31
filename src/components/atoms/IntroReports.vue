@@ -1,17 +1,23 @@
 <template>
   <v-container style="display:contents; background-color:#f4b700; height:300px">
-    <div class="back-gradient">
+    <div class="background-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >Reports</div>
+          <v-img
+            class="hidden-md-and-up"
+            style="margin: 0px 20px"
+            contain
+            src="@/assets/manager/IntroReports.svg"
+          ></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Keep track of your evaluators progress and answering status while they complete your test.</div>
-          <span class="white--text mobile-center" style="cursor: pointer" @click="goToCoops()">
+          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="goToCoops()">
             <u>Invite new evaluators!</u>
           </span>
         </div>
@@ -28,7 +34,7 @@
 
     <v-col>
       <v-row justify="center" class="ml-0">
-        <v-col cols="8">
+        <v-col cols="12" md="8">
           <div class="learn-text">Learn More</div>
           <v-card elevation="4" class="ma-0 pa-0" style="border-radius: 10px!important">
             <v-list class="ma-0 pa-0">
@@ -64,11 +70,11 @@ export default {
   data: () => ({}),
   methods: {
     goToDoc() {
-      this.$router.push("/reports/documentation")
+      this.$router.push("/reports/documentation");
     },
     goToCoops() {
-        this.$emit('goToCoops');
-    }
+      this.$emit("goToCoops");
+    },
   },
   computed: {
     items() {
@@ -79,7 +85,7 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the reports page.",
-          func: this.goToDoc
+          func: this.goToDoc,
         },
       ];
     },
@@ -88,8 +94,8 @@ export default {
 </script>
 
 <style scoped>
-.back-gradient {
-  height: 400px;
+.background-gradient {
+  height: 60vh;
   background-image: radial-gradient(circle at top right, #ec6618, #f54e42);
 }
 .learn-text {
@@ -108,13 +114,14 @@ export default {
     margin: 0px 10px;
     text-justify: center;
   }
-  .image-back {
-    height: 300px;
-  }
   .mobile-center {
     display: flex;
     text-align: center;
     justify-content: center;
+    margin: 0px 20px;
+  }
+  .background-gradient {
+    height: 100%;
   }
 }
 </style>
