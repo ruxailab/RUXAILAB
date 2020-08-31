@@ -108,6 +108,12 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >Manager</div>
+                <v-img
+                  class="hidden-md-and-up"
+                  style="max-height: 40vh"
+                  contain
+                  src="@/assets/manager/IntroManager.svg"
+                ></v-img>
                 <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{test.title}}</div>
               </v-col>
               <v-img
@@ -120,13 +126,13 @@
             </v-row>
           </div>
           <div>
-            <v-container style="width: 70%">
+            <v-container class="card-container">
               <div class="presentation-text">Edit and invite people to your test</div>
 
               <!-- Top Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
-                  <v-card height="380px" :style="item.cardStyle"  @click="go(item.path)" hover > 
+                  <v-card height="380px" :style="item.cardStyle" @click="go(item.path)" hover :ripple="false">
                     <v-row style="height: 290px" justify="center" align="center">
                       <v-img
                         max-height="220"
@@ -152,7 +158,7 @@
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
-                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path)" hover>
+                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path)" hover :ripple="false">
                     <v-row style="height: 260px" justify="center" align="center" class="px-5">
                       <v-img
                         height="150"
@@ -258,7 +264,7 @@ export default {
       get() {
         if (this.items) {
           return this.items.indexOf(
-            this.items.find(item =>
+            this.items.find((item) =>
               item.path.split("/").includes(this.$route.path.split("/")[1])
             )
           );
@@ -299,14 +305,14 @@ export default {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4
+          id: 4,
         },
         {
           title: "Analytics",
           icon: "mdi-chart-bar",
           path: `/analyticsview/${this.test.answers}`,
-          id: 5
-        }
+          id: 5,
+        },
       ];
 
       if (this.test.accessLevel == 0) {
@@ -314,7 +320,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6
+          id: 6,
         });
       }
 
@@ -333,7 +339,7 @@ export default {
           description: "Start creating and editing your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
-          path: `/edittest/${this.test.id}`
+          path: `/edittest/${this.test.id}`,
         },
         {
           image: "IntroCoops.svg",
@@ -343,8 +349,8 @@ export default {
           description: "Invite people to help you in your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
-          path: `/cooperatorsview/${this.test.cooperators}`
-        }
+          path: `/cooperatorsview/${this.test.cooperators}`,
+        },
       ];
     },
     bottomCards() {
@@ -357,7 +363,7 @@ export default {
           description: "Take a look at how your evaluators are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
-          path: `/reportview/${this.test.reports}`
+          path: `/reportview/${this.test.reports}`,
         },
         {
           image: "IntroAnswer.svg",
@@ -367,7 +373,7 @@ export default {
           description: "See how your evaluators are evaluating your project.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
-          path: `/answerview/${this.test.answers}`
+          path: `/answerview/${this.test.answers}`,
         },
         {
           image: "IntroAnalytics.svg",
@@ -377,11 +383,11 @@ export default {
           description: "Analyze comments and answers from your evaluators.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
-          path: `/analyticsview/${this.test.answers}`
-        }
+          path: `/analyticsview/${this.test.answers}`,
+        },
       ];
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -452,11 +458,30 @@ export default {
 .text-div {
   max-width: 45%;
 }
+.card-container {
+  width: 70%;
+}
 @media screen and (max-width: 960px) {
   .presentation-text {
     display: flex;
     text-align: center;
     justify-content: center;
+  }
+  .text-div {
+    max-width: 100%;
+    margin: 0px 10px;
+    text-justify: center;
+  }
+  .image-back {
+    height: 300px;
+  }
+  .mobile-center {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+  .card-container {
+    width: 85%;
   }
 }
 </style>
