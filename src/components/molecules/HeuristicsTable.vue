@@ -96,6 +96,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-card style="background: #f5f7ff;" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
@@ -133,7 +134,7 @@
         <v-col class="ma-0 pa-0" cols="3" v-if="itemSelect!=null">
           <v-list dense height="560px" outlined>
             <v-subheader>
-              {{heuristics[itemSelect].title}} - Questions
+              <v-clamp autoresize :max-lines="2">{{heuristics[itemSelect].title}} - Questions</v-clamp>
               <v-spacer></v-spacer>
               <v-menu v-model="menuHeuristics" offset-x>
                 <template v-slot:activator="{ on, attrs }">
@@ -277,12 +278,14 @@
 
 <script>
 import AddDescBtn from "@/components/atoms/AddDescBtn";
+import VClamp from "vue-clamp"
 
 export default {
   props: ["heuristics", "answersSheet"],
 
   components: {
     AddDescBtn,
+    VClamp
   },
   data: () => ({
     menuHeuristics: false,
