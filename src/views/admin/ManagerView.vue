@@ -251,7 +251,7 @@ export default {
         this.setLoading(false);
       }
 
-      this.$store.commit("setTest", test);
+      this.$store.commit("setManagerIDS", test);
       return test;
     },
     index: {

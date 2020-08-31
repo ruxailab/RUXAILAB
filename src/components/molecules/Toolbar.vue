@@ -196,7 +196,7 @@ export default {
       return items;
     },
     test() {
-      return this.$store.state.tests.test;
+      return this.$store.state.tests.managerIDs;
     },
   },
   watch: {

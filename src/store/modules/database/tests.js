@@ -5,7 +5,8 @@ export default {
     myTests: null,
     loading: false,
     snackMessage: null,
-    snackColor: null
+    snackColor: null,
+    managerIDs: null
   },
   mutations: {
     setTest(state, payload) {
@@ -31,6 +32,9 @@ export default {
     resetSnack(state) {
       state.snackMessage = null;
       state.snackColor = null;
+    },
+    setManagerIDS(state, payload) {
+      state.managerIDs = payload;
     }
   },
   getters: {
