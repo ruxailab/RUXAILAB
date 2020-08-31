@@ -1,6 +1,6 @@
 <template>
   <div v-if="answers">
-    <IntroAnalytics @goToCoops="goToCoops()" v-if=" answers != null && intro == true"/>
+    <IntroAnalytics @goToCoops="goToCoops()" v-if=" answers != null && intro == true" />
     <ShowInfo title="Analytics" v-if=" answers != null && intro == false">
       <div slot="content" class="ma-0 pa-0">
         <v-card style="background :#f5f7ff;">
@@ -13,12 +13,17 @@
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
                     <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
-                      <v-list-item-content>
-                        <v-list-item-title>{{item.id}}</v-list-item-title>
-                      </v-list-item-content>
-                      <v-list-item-icon v-if="i == heuristicSelect">
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </v-list-item-icon>
+                      <v-tooltip right>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-list-item-content v-bind="attrs" v-on="on">
+                            <v-list-item-title>{{item.id}}</v-list-item-title>
+                          </v-list-item-content>
+                          <v-list-item-icon v-if="i == heuristicSelect">
+                            <v-icon>mdi-chevron-right</v-icon>
+                          </v-list-item-icon>
+                        </template>
+                        <span v-if="test">{{test.heuristics[i].title}}</span>
+                      </v-tooltip>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -28,7 +33,7 @@
             <!--Questions List-->
             <v-col class="ma-0 pa-0" cols="2" v-if="heuristicSelect != null">
               <v-list dense height="560px" outlined>
-                <v-subheader>{{resultHeuristics[heuristicSelect].id}} - Questions</v-subheader>
+                <v-subheader>{{test.heuristics[heuristicSelect].title}} - Questions</v-subheader>
                 <v-divider></v-divider>
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="questionSelect" color="#fca326">
@@ -45,12 +50,17 @@
                       :key="i"
                       :value="i"
                     >
-                      <v-list-item-content>
-                        <v-list-item-title>{{item.id}}</v-list-item-title>
-                      </v-list-item-content>
-                      <v-list-item-icon v-if="i == questionSelect">
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </v-list-item-icon>
+                      <v-tooltip right>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-list-item-content v-bind="attrs" v-on="on">
+                            <v-list-item-title>{{item.id}}</v-list-item-title>
+                          </v-list-item-content>
+                          <v-list-item-icon v-if="i == questionSelect">
+                            <v-icon>mdi-chevron-right</v-icon>
+                          </v-list-item-icon>
+                        </template>
+                        <span v-if="test">{{test.heuristics[heuristicSelect].questions[i].title}}</span>
+                      </v-tooltip>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -62,7 +72,7 @@
                 <v-subheader
                   class="pa-2"
                   v-if="questionSelect !=-1"
-                >{{resultHeuristics[heuristicSelect].questions[questionSelect].id}}</v-subheader>
+                >{{test.heuristics[heuristicSelect].questions[questionSelect].title}}</v-subheader>
                 <v-subheader class="pa-2" v-else>Data Table</v-subheader>
                 <v-divider></v-divider>
                 <v-row v-if="questionSelect==-1">
@@ -103,23 +113,28 @@
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 0"
-                    >Graphic</v-tab>
+                    >Comments</v-tab>
                     <v-tab
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 1"
-                    >Comments</v-tab>
+                    >Graphic</v-tab>
                   </v-tabs>
-                  <v-col v-if="ind == 0">
+                  <v-col v-if="ind == 1">
+                    <v-row justify="center">
+                      <v-col cols="10">
                     <BarChart
                       v-if="questionGraph"
                       :labels="questionGraph.label"
                       :data="questionGraph.data"
                       legend="Quantity"
                     />
+                     </v-col>
+                    </v-row>
                   </v-col>
-                  <v-col v-if="ind == 1">
-                    <v-row class="list-scroll" style="height:430px">
+                  <v-col v-if="ind == 0">
+                    <v-row class="list-scroll" style="height:430px" justify="center">
+                      <v-col cols="10">
                       <v-timeline
                         v-if="resultHeuristics[heuristicSelect].questions[questionSelect].result.length"
                         dense
@@ -140,6 +155,7 @@
                           </v-timeline-item>
                         </div>
                       </v-timeline>
+                      </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
@@ -155,7 +171,7 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
 import BarChart from "@/components/atoms/BarChart.vue";
-import IntroAnalytics from "@/components/atoms/IntroAnalytics.vue"
+import IntroAnalytics from "@/components/atoms/IntroAnalytics.vue";
 export default {
   props: ["id", "heuristic"],
   components: {
@@ -172,6 +188,9 @@ export default {
     intro: null
   }),
   methods: {
+    log() {
+      console.log("Test", this.test);
+    },
     statistics() {
       const answers = this.answers.answers;
       this.resultHeuristics = [];
@@ -290,6 +309,9 @@ export default {
     loading() {
       if (this.answers) return true;
       return false;
+    },
+    test() {
+      return this.$store.state.tests.test;
     }
   },
   watch: {
@@ -297,8 +319,8 @@ export default {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
 
-        if (this.answers.answers.length == 0) this.intro =  true;
-        else this.intro =  false;
+        if (this.answers.answers.length == 0) this.intro = true;
+        else this.intro = false;
       }
     },
     heuristicSelect() {
@@ -320,10 +342,12 @@ export default {
     ) {
       this.$store.dispatch("getAnswers", { id: this.id });
     }
-    this.test = Object.assign(
-      {},
-      this.$store.state.auth.user.myTests.find(test => test.answers == this.id)
-    );
+
+    this.$store.state.auth.user.myTests.forEach(t => {
+      if (t.answers == this.id) {
+        this.$store.dispatch("getTest", { id: t.id });
+      }
+    });
   }
 };
 </script>
