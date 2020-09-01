@@ -3,7 +3,7 @@
     <v-overlay :value="loading==null">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <IntroAnswer v-if=" answers != null && loading == true"></IntroAnswer>
+    <IntroAnswer v-if=" answers != null && loading == true" @goToCoops="goToCoops"></IntroAnswer>
     <v-row justify="center" v-else-if="answers != null && loading == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
