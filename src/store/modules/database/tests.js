@@ -79,9 +79,44 @@ export default {
       commit("setTests", tests);
       commit("setLoading", false);
     },
-    deleteTest({ dispatch }, payload) {
-      payload = Object.assign(payload, { collection: "test" });
-      return dispatch("deleteObject", payload);
+    async deleteTest({ dispatch }, payload) {
+      await dispatch("getTest", { id: payload.id });
+      await dispatch("getAnswers", { id: payload.answers });
+      // await dispatch("getReports", { id: payload.reports });
+      await dispatch("getCooperators", { id: payload.cooperators });
+      let coops = this.state.cooperators.cooperators;
+      console.log("delete", payload, coops);
+      
+      //delete test from user
+      // payload = Object.assign(payload, { collection: "test" });
+      // dispatch("deleteObject", payload)
+      // .then(() => {
+      //   dispatch("deleteReport", { id: payload.reports });
+      //   dispatch("deleteAnswers", { id: payload.answers });
+
+      // coops.cooperators.forEach(coop => {
+      //   if(coop.value <= 1) dispatch("removeMyCoops", {
+      //     docId: coop.id,
+      //     element: {
+      //       id: payload.id,
+      //       title: payload.title,
+      //       type: payload.type,
+      //     },
+      //   });
+      //   else dispatch("removeMyAnswers", {
+      //     docId: coop.id,
+      //     element: {
+      //       id: payload.id,
+      //       title: payload.title,
+      //       type: payload.type,
+      //     },
+      //   });
+      // })
+
+      //   dispatch("deleteCooperators", { id: payload.cooperators });
+      // })
+
+      //delete user from test
     },
     async getTest({ commit, dispatch }, payload) {
       commit("setLoading", true);

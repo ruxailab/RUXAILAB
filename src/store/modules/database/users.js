@@ -136,5 +136,16 @@ export default {
         console.error("Error ", err);
       });
     },
+    deleteUser({dispatch}, user) {
+      //deletar do auth
+        //deletar do firestore -> cascata
+      dispatch("removeUser", user);
+
+      //remove da collection user
+      // user.myTests.forEach(test => {
+      //   dispatch("deleteTest")
+      // });
+    }
+    
   },
 };

@@ -17,5 +17,8 @@ export default {
     singOut:() =>{
         var auth = firebase.auth()
         return auth.signOut()
+    },
+    deleteUserByID: (payload) => {
+        console.log("api delete ", payload.id);
     }
 }

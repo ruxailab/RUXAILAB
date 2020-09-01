@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="test">
+    
     <Snackbar />
 
     <Dialog
@@ -27,7 +28,9 @@
         slot="title"
         class="headline error white--text"
         primary-title
-      >Are you sure you want to delete this test?</v-card-title>
+      >Are you sure you want to delete this test?
+      <v-btn @click="log">log</v-btn></v-card-title>
+      
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
@@ -114,6 +117,9 @@ export default {
     loading: false,
   }),
   methods: {
+    log() {
+      this.$store.dispatch("deleteTest", this.object);
+    },
     validate(valid, index) {
       this.valids[index] = valid;
     },
@@ -189,6 +195,7 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
+      console.log("deletetest", item);
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
       await this.$store.dispatch("getReports", { id: item.reports });

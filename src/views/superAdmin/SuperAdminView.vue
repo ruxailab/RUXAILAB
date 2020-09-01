@@ -155,6 +155,7 @@ export default {
     deleteUser(user) {
       console.log("delete", user.email);
       this.dialogDel = false;
+      this.$store.dispatch("deleteUser", user);
       this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
       this.userClicked = null
     }

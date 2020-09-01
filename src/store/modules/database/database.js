@@ -93,5 +93,10 @@ export default {
         console.error("Error", err);
       }
     },
+    removeUser(_, user) {
+      //deletar do auth
+      //deletar do firestore -> cascata
+      api.auth.deleteUserByID(user);
+    }
   },
 };
