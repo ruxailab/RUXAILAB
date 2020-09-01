@@ -1,5 +1,23 @@
 <template>
   <v-content>
+    <Snackbar></Snackbar>
+    <Dialog :dialog="dialogDel" :text="dialogText">
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to delete this test?</v-card-title>
+
+      <div slot="actions">
+        <v-btn class="grey lighten-3" text @click="dialogDel = false, userClicked = null">Cancel</v-btn>
+        <v-btn
+          class="red white--text ml-1"
+          text
+          @click="deleteUser(userClicked)"
+        >Delete</v-btn>
+      </div>
+    </Dialog>
+    
     <v-row align="center" justify="center">
       <v-col cols="10">
         <v-data-table :headers="headers" :items="users" class="elevation-1" :loading="loading">
@@ -13,7 +31,7 @@
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon small class="mr-2" @click="editUser(item)">mdi-pencil</v-icon>
-            <v-icon small click>mdi-delete</v-icon>
+            <v-icon color="red" small click @click="dialogDel = true, userClicked = item">mdi-delete</v-icon>
           </template>
         </v-data-table>
         <v-dialog v-model="dialog" max-width="500px">
@@ -57,9 +75,18 @@
 </template>
 
 <script>
+import Dialog from "@/components/atoms/Dialog";
+import Snackbar from "@/components/atoms/Snackbar";
+
 export default {
+  components: {
+    Dialog,
+    Snackbar
+  },  
   data: () => ({
     dialog: false,
+    dialogDel: false,
+    userClicked: null,
     headers: [
       {
         text: "Id",
@@ -124,6 +151,12 @@ export default {
         }
       });
       return text;
+    },
+    deleteUser(user) {
+      console.log("delete", user.email);
+      this.dialogDel = false;
+      this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
+      this.userClicked = null
     }
   },
   computed: {
@@ -132,6 +165,9 @@ export default {
     },
     loading() {
       return this.$store.state.tests.loading;
+    },
+    dialogText() {
+      return 'Are you sure you want to delete the user ' + (this.userClicked !== null ? this.userClicked.email : '') + "? This action can't be undone.";
     }
   },
   watch: {
