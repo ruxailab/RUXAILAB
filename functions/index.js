@@ -38,3 +38,14 @@ exports.setUserRole = functions.https.onCall(async (data, context) => {
         return err
     }
 })
+
+exports.deleteAuth = functions.https.onCall(async (data, context) => {
+    try {
+        admin.auth().deleteUser(data.id).then(() => {
+            console.log("deleted user: ", data.email);
+            return;
+        }).catch(err => console.error(err));
+    } catch (err) {
+        return err
+    }
+})
