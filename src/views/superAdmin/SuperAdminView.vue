@@ -151,15 +151,20 @@ export default {
       return text;
     },
     deleteUser(user) {
-     
-      this.dialogDel = false;
-      //Delete User from Authentication
-
-      //Delete User from Collection User
-      // this.$store.dispatch("deleteUser", user); 
-      // this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
-      this.$store.dispatch("deleteAuth", user);
-      this.userClicked = null
+      this.dialogDel = false;      
+      this.$store.dispatch("deleteAuth", user).then(() => {
+        this.$store.dispatch("deleteUser", user).then(() => {
+          this.$store.commit("setSuccess", "Successfully deleted user " + this.userClicked.email);
+          this.userClicked = null
+        }).catch(err => {
+          console.error(err);
+          this.commit("setError", "Error deleting user");
+        }) 
+        
+      }).catch(err => {
+        console.error(err);
+        this.commit("setError", "Error deleting user");
+      });
     }
   },
   computed: {

@@ -1,5 +1,4 @@
 import firebase from 'firebase'
-import admin from 'firebase-admin'
 
 export default {
     signUp:(payload) =>{
@@ -18,9 +17,5 @@ export default {
     singOut:() =>{
         var auth = firebase.auth()
         return auth.signOut()
-    },
-    deleteUserAuth: (payload) => {
-        console.log("api delete ", admin.auth().getUser(payload.id));
-        // console.log(payload)
     }
 }

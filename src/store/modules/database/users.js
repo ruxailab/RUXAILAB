@@ -140,37 +140,46 @@ export default {
       //Delete from  Users' colletion
       payload = Object.assign(payload, { collection: 'users' })
       dispatch('deleteObject', payload)
-     
-  
-      //Remove User Relations
-      payload.myTests.forEach(test => {
-        dispatch("deleteTest",test)
-      });
 
-      payload.myCoops.forEach(test => {
-        console.log(test)
-        dispatch('removeCooperator', {
-          docId: test.cooperators,
-          element: {
-            id: payload.id
+
+      //Remove User Relations
+      if (payload.myTests.length) {
+        payload.myTests.forEach(test => {
+          dispatch("deleteTest", test)
+        });
+      }
+
+
+      if (payload.myCoops.length) {
+        payload.myCoops.forEach(test => {
+          console.log(test)
+          dispatch('removeCooperator', {
+            docId: test.cooperators,
+            element: {
+              id: payload.id
+            }
+          })
+        })
+      }
+
+
+      if (payload.myAnswers.length) {
+        payload.myAnswers.forEach(test => {
+          if (!test.answersSheet.submited) {
+            var log = {
+              date: new Date().toLocaleString("en-US"),
+              progress: '-',
+              status: "User Deleted"
+            };
+            dispatch("updateLog", {
+              docId: test.reports,
+              elementId: payload.id,
+              element: log
+            })
           }
         })
-      })
+      }
 
-      payload.myAnswers.forEach(test => {
-        if (!test.answersSheet.submited ) {
-          var log = {
-            date: new Date().toLocaleString("en-US"),
-            progress: '-',
-            status: "User Deleted"
-          };
-          dispatch("updateLog", {
-            docId: test.reports,
-            elementId: payload.id,
-            element: log
-          })
-        }
-      })
     }
 
   },

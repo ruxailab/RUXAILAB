@@ -78,8 +78,12 @@ export default {
     setUser({ commit }, user) {
       commit("setUser", user);
     },
-    async deleteAuth(user) {
-      await api.auth.deleteUserAuth(user);
+    async deleteAuth({ dispatch }, user) {
+      // await api.auth.deleteUserAuth(user);
+      dispatch("callFunction", Object.assign({}, {
+        function: 'deleteAuth',
+        data: user
+      }))
     }
   },
 };
