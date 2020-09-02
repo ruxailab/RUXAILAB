@@ -20,11 +20,12 @@
     
     <v-row align="center" justify="center">
       <v-col cols="10">
-        <v-data-table :headers="headers" :items="users" class="elevation-1" :loading="loading">
+        <v-data-table :search="search" :headers="headers" :items="users" class="elevation-1" :loading="loading">
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-toolbar-title>Users</v-toolbar-title>
             </v-toolbar>
+            <v-text-field outlined prepend-inner-icon="mdi-magnify" v-model="search" class="mx-3" dense label="Search"></v-text-field>
           </template>
           <template v-slot:item.accessLevel="{ item }">
             <div>{{level(item.accessLevel)}}</div>
@@ -87,6 +88,7 @@ export default {
     dialog: false,
     dialogDel: false,
     userClicked: null,
+    search: '',
     headers: [
       {
         text: "Id",
