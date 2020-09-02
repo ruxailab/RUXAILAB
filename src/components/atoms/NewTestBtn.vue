@@ -252,4 +252,11 @@ export default {
 .icon {
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
 }
+@media screen and (max-width: 960px){
+  .titleView {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+}
 </style>
