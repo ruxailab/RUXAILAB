@@ -123,10 +123,6 @@ export default {
       this.dialog = true;
     },
 
-    /*deleteItem(item) {
-        item 
-    },*/
-
     close() {
       this.dialog = false;
       this.$nextTick(() => {
@@ -155,11 +151,14 @@ export default {
       return text;
     },
     deleteUser(user) {
-      console.log("delete", user.email);
+     
       this.dialogDel = false;
-      this.$store.dispatch("deleteUser", user);
-      this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
-      this.userClicked = null
+      //Delete User from Authentication
+
+      //Delete User from Collection User
+      this.$store.dispatch("deleteUser", user); 
+      // this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
+      // this.userClicked = null
     }
   },
   computed: {

@@ -52,13 +52,13 @@ export default {
     async pushNotification({ dispatch, commit }, payload) {
       payload = Object.assign(payload, { collection: "users" });
       dispatch("pushObject", payload)
-      .then(() => {
-        commit("setSuccess", "Invitations sent succesfully");
-      })
-      .catch((err) => {
-        console.error("Error to push notifications ", err);
-        commit("setError", err);
-      });
+        .then(() => {
+          commit("setSuccess", "Invitations sent succesfully");
+        })
+        .catch((err) => {
+          console.error("Error to push notifications ", err);
+          commit("setError", err);
+        });
     },
     async removeNotification({ dispatch }, payload) {
       payload = Object.assign(payload, {
@@ -136,16 +136,42 @@ export default {
         console.error("Error ", err);
       });
     },
-    deleteUser({dispatch}, user) {
-      //deletar do auth
-        //deletar do firestore -> cascata
-      dispatch("removeUser", user);
+    deleteUser({ dispatch }, payload) {
+      //Delete from  Users' colletion
+      payload = Object.assign(payload, { collection: 'users' })
+      dispatch('deleteObject', payload)
+     
+  
+      //Remove User Relations
+      payload.myTests.forEach(test => {
+        dispatch("deleteTest",test)
+      });
 
-      //remove da collection user
-      // user.myTests.forEach(test => {
-      //   dispatch("deleteTest")
-      // });
+      payload.myCoops.forEach(test => {
+        console.log(test)
+        dispatch('removeCooperator', {
+          docId: test.cooperators,
+          element: {
+            id: payload.id
+          }
+        })
+      })
+
+      payload.myAnswers.forEach(test => {
+        if (!test.answersSheet.submited ) {
+          var log = {
+            date: new Date().toLocaleString("en-US"),
+            progress: '-',
+            status: "User Deleted"
+          };
+          dispatch("updateLog", {
+            docId: test.reports,
+            elementId: payload.id,
+            element: log
+          })
+        }
+      })
     }
-    
+
   },
 };

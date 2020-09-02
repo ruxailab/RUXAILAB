@@ -80,41 +80,41 @@ export default {
       commit("setLoading", false);
     },
     async deleteTest({ dispatch }, payload) {
-      await dispatch("getTest", { id: payload.id });
-      await dispatch("getAnswers", { id: payload.answers });
-      // await dispatch("getReports", { id: payload.reports });
+      // await dispatch("getTest", { id: payload.id });
+      console.log(payload)
       await dispatch("getCooperators", { id: payload.cooperators });
+
       let coops = this.state.cooperators.cooperators;
-      console.log("delete", payload, coops);
       
       //delete test from user
-      // payload = Object.assign(payload, { collection: "test" });
-      // dispatch("deleteObject", payload)
-      // .then(() => {
-      //   dispatch("deleteReport", { id: payload.reports });
-      //   dispatch("deleteAnswers", { id: payload.answers });
+      payload = Object.assign(payload, { collection: "test" }); //Delete test from Tests' Collection
+      dispatch("deleteObject", payload)
+      .then(() => {
+        dispatch("deleteReport", { id: payload.reports });
+        dispatch("deleteAnswers", { id: payload.answers });
+      
+      coops.cooperators.forEach(coop => {
+        console.log(coop)
+        if(coop.accessLevel.value <= 1) dispatch("removeMyCoops", {
+          docId: coop.id,
+          element: {
+            id: payload.id,
+            title: payload.title,
+            type: payload.type,
+          },
+        });
+        else dispatch("removeMyAnswers", {
+          docId: coop.id,
+          element: {
+            id: payload.id,
+            title: payload.title,
+            type: payload.type,
+          },
+        });
+      })
 
-      // coops.cooperators.forEach(coop => {
-      //   if(coop.value <= 1) dispatch("removeMyCoops", {
-      //     docId: coop.id,
-      //     element: {
-      //       id: payload.id,
-      //       title: payload.title,
-      //       type: payload.type,
-      //     },
-      //   });
-      //   else dispatch("removeMyAnswers", {
-      //     docId: coop.id,
-      //     element: {
-      //       id: payload.id,
-      //       title: payload.title,
-      //       type: payload.type,
-      //     },
-      //   });
-      // })
-
-      //   dispatch("deleteCooperators", { id: payload.cooperators });
-      // })
+        dispatch("deleteCooperators", { id: payload.cooperators });
+      })
 
       //delete user from test
     },
