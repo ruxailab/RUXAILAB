@@ -156,9 +156,10 @@ export default {
       //Delete User from Authentication
 
       //Delete User from Collection User
-      this.$store.dispatch("deleteUser", user); 
+      // this.$store.dispatch("deleteUser", user); 
       // this.$store.commit("setSuccess", "yiha deleta ai " + this.userClicked.email);
-      // this.userClicked = null
+      this.$store.dispatch("deleteAuth", user);
+      this.userClicked = null
     }
   },
   computed: {
