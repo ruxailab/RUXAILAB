@@ -23,10 +23,11 @@
     </Dialog>
 
     <Dialog :dialog="dialogDel" :text="dialogText">
-      <v-card-title slot="title" class="headline error white--text" primary-title>
-        Are you sure you want to delete this test?
-        <v-btn @click="log">log</v-btn>
-      </v-card-title>
+      <v-card-title
+        slot="title"
+        class="headline error white--text"
+        primary-title
+      >Are you sure you want to delete this test?</v-card-title>
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
@@ -61,6 +62,7 @@
               <v-btn @click="createTemplate" text>Create public template</v-btn>
             </v-col>
           </v-row>
+          <v-btn @click="log">log</v-btn>
           <v-divider class="my-3 mx-2"></v-divider>
 
           <v-row justify="center">
@@ -124,7 +126,7 @@ export default {
   }),
   methods: {
     log() {
-      this.$store.dispatch("deleteTest", this.object);
+      console.log("templates", this.id);
     },
     validate(valid, index) {
       this.valids[index] = valid;
@@ -274,7 +276,12 @@ export default {
     createTemplate() {
       //create template
       let template = {};
-
+      let header = {
+        id: this.$store.getters.user.uid,
+        author: this.$store.getters.user.email,
+        version: "1.0.0",
+        date: new Date().toLocaleString("en-US")
+      };
       if (this.test.type == "Expert") {
         template = Object.assign(template, {
           heeuristics: this.test.heuristics,
@@ -291,9 +298,15 @@ export default {
         });
       }
 
-      this.$store.dispatch("createTemplate", { data: template });
-      console.log("Test", this.test);
-      console.log("Template", template);
+      let payload = {
+        data: { template: template, header: header }
+      };
+
+      this.$store.dispatch("createTemplate", payload).then(id => {
+        this.object = Object.assign(this.object, { template: id });
+        this.submit();
+      });
+      console.log("Template", payload);
     }
   },
   watch: {
@@ -306,6 +319,9 @@ export default {
   computed: {
     test() {
       return this.$store.getters.test;
+    },
+    templates() {
+      return this.$store.getters.templates;
     },
     user() {
       return this.$store.getters.user;
@@ -329,6 +345,9 @@ export default {
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
+    }
+    if (!this.$store.getters.templates) {
+      this.$store.dispatch("getTemplates", {});
     }
   },
   beforeRouteLeave(to, from, next) {
