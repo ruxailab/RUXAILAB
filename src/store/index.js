@@ -7,6 +7,7 @@ import users from '@/store/modules/database/users'
 import reports from '@/store/modules/database/reports'
 import answers from '@/store/modules/database/answers'
 import cooperators from '@/store/modules/database/cooperators'
+import templates from '@/store/modules/database/templates'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     users,
     reports,
     answers,
-    cooperators
+    cooperators,
+    templates
   }
 })

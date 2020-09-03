@@ -1,6 +1,5 @@
 <template>
   <v-container v-if="test">
-    
     <Snackbar />
 
     <Dialog
@@ -24,13 +23,10 @@
     </Dialog>
 
     <Dialog :dialog="dialogDel" :text="dialogText">
-      <v-card-title
-        slot="title"
-        class="headline error white--text"
-        primary-title
-      >Are you sure you want to delete this test?
-      <v-btn @click="log">log</v-btn></v-card-title>
-      
+      <v-card-title slot="title" class="headline error white--text" primary-title>
+        Are you sure you want to delete this test?
+        <v-btn @click="log">log</v-btn>
+      </v-card-title>
 
       <div slot="actions">
         <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
@@ -49,7 +45,7 @@
           <v-col class="mb-1 pa-4 pb-1">
             <p class="subtitleView">Current Test</p>
           </v-col>
-         
+
           <v-divider></v-divider>
           <FormTestDescription
             v-if="object"
@@ -60,15 +56,25 @@
             @change="change = true"
           />
 
+          <v-row class="mx-3 pa-0">
+            <v-col>
+              <v-btn @click="createTemplate" text>Create public template</v-btn>
+            </v-col>
+          </v-row>
           <v-divider class="my-3 mx-2"></v-divider>
 
           <v-row justify="center">
-            <v-btn color="#f26363" class="white--text mb-4" style="justify-self: center" @click="dialogDel = true">
+            <v-btn
+              color="#f26363"
+              class="white--text mb-4"
+              style="justify-self: center"
+              @click="dialogDel = true"
+            >
               <v-icon left>mdi-trash-can-outline</v-icon>Delete Test
             </v-btn>
           </v-row>
         </v-card>
-        
+
         <v-tooltip left v-if="change">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -106,7 +112,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
-    Dialog,
+    Dialog
   },
   data: () => ({
     object: null,
@@ -114,7 +120,7 @@ export default {
     valids: [false, true, true],
     dialogAlert: false,
     dialogDel: false,
-    loading: false,
+    loading: false
   }),
   methods: {
     log() {
@@ -127,13 +133,13 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
+        id: this.test.cooperators
       });
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -145,11 +151,11 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
-          this.cooperators.cooperators.forEach((coop) => {
+          this.cooperators.cooperators.forEach(coop => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -159,8 +165,8 @@ export default {
                 reports: this.object.reports,
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
-                accessLevel: coop.accessLevel,
-              },
+                accessLevel: coop.accessLevel
+              }
             });
           });
 
@@ -170,22 +176,22 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers,
+            data: this.answers
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports,
+            data: this.reports
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators,
+            data: this.cooperators
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -211,9 +217,9 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
+                type: item.type
               },
-              param: "myTests",
+              param: "myTests"
             })
             .then(() => {
               this.loading = false;
@@ -224,7 +230,7 @@ export default {
                 );
               });
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
 
@@ -232,14 +238,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach((rep) => {
+          this.reports.reports.forEach(rep => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
-              },
+                type: item.type
+              }
             });
           });
 
@@ -247,31 +253,55 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach((guest) => {
+          this.cooperators.cooperators.forEach(guest => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
-              },
+                type: item.type
+              }
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
+    createTemplate() {
+      //create template
+      let template = {};
+
+      if (this.test.type == "Expert") {
+        template = Object.assign(template, {
+          heeuristics: this.test.heuristics,
+          options: this.test.options,
+          answersSheet: this.test.answersSheet,
+          type: this.test.type
+        });
+      } else if (this.test.type == "User") {
+        template = Object.assign(template, {
+          tasks: this.test.tasks,
+          preTest: this.test.preTest,
+          postTest: this.test.postTest,
+          type: this.test.type
+        });
+      }
+
+      this.$store.dispatch("createTemplate", { data: template });
+      console.log("Test", this.test);
+      console.log("Template", template);
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    },
+    }
   },
   computed: {
     test() {
@@ -294,7 +324,7 @@ export default {
         return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone`;
 
       return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
-    },
+    }
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
@@ -314,7 +344,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 

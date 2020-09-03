@@ -27,31 +27,31 @@ export default {
     return collectionRef.get();
   },
   pushArray: (payload) => {
-      const db = firebase.firestore();
-      var collectionRef = db.collection(payload.collection);
-      var docRef = collectionRef.doc(payload.docId);
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
 
-      return docRef.update({
-        [payload.param]: firebase.firestore.FieldValue.arrayUnion(
-          payload.element
-        ),
-      });
+    return docRef.update({
+      [payload.param]: firebase.firestore.FieldValue.arrayUnion(
+        payload.element
+      ),
+    });
   },
   removeArray: async (payload) => {
-    
+
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
     let doc = await docRef.get();
     doc = Object.assign({ id: payload.docId }, doc.data());
 
-    
+
     let itemDelete = doc[payload.param].find(
       (item) => item.id == payload.element.id
     );
-   
+
     doc[payload.param].splice(doc[payload.param].indexOf(itemDelete), 1);
-  
+
     return docRef.update({
       [payload.param]: doc[payload.param],
     });
