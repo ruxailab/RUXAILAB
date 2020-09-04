@@ -1,5 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
@@ -54,22 +56,19 @@ exports.deleteAuth = functions.https.onCall(async (data, context) => {
 
 exports.sendEmail = functions.https.onCall(async (data, context) => {
     try {
-        require('dotenv').config();
-        const nodemailer = require('nodemailer');
-
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
+                user: process.env.VUE_APP_FIREBASE_EMAIL,
+                pass: process.env.VUE_APP_FIREBASE_PASSWORD
             }
         });
 
         let mail = {
-            from: 'uramakilab@gmail.com',
+            from: 'Uramaki Lab',
             to: 'leo.coelho.ruas@gmail.com',
             subject: 'Test',
-            text: 'tu é foda pacero',
+            html: '<h1>nhai</h1>'
         };
 
         transporter.sendMail(mail)
