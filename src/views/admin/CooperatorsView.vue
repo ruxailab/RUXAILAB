@@ -4,7 +4,7 @@
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Cooperators</div>
     </v-overlay>
-
+    <v-btn @click="sendInvitationMail()">email po tio</v-btn>
     <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading" @closeIntro="intro = false" />
 
     <v-row justify="center" v-else-if="cooperators">
@@ -505,6 +505,9 @@ export default {
       if (!this.change) return;
       event.preventDefault();
       event.returnValue = "";
+    },
+    sendInvitationMail() {
+      this.$store.dispatch("sendEmailInvitation");
     }
   },
   watch: {

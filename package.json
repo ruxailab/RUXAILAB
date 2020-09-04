@@ -14,6 +14,7 @@
     "firebase": "^7.14.1",
     "firebase-admin": "^9.1.1",
     "firebase-functions": "^3.6.1",
+    "nodemailer": "^6.4.11",
     "stylus-loader": "^3.0.2",
     "tiptap": "^1.29.1",
     "tiptap-extensions": "^1.31.1",

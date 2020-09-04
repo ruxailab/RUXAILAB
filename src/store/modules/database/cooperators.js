@@ -70,5 +70,8 @@ export default {
         console.error("Error to update");
       });
     },
+    sendEmailInvitation({ dispatch }) {
+      dispatch("callFunction", Object.assign({}, {function: 'sendEmail'}));
+    }
   },
 };
