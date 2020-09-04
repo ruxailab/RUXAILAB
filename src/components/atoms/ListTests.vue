@@ -1,9 +1,9 @@
 <template>
   <v-list class="py-0">
     <div v-for="(test, n) in tests" :key="n">
-      <v-list-item link :ripple="false">
+      <v-list-item @click="goTo(test)" :ripple="false">
         <v-list-item-avatar tile style="border-radius: 5px" size="40">
-          <v-avatar tile :color="generateColor()" style="color: #545454">{{test.title[0]}}</v-avatar>
+          <v-avatar tile :color="generateColor()" style="color: #545454">{{test.title[0].toUpperCase()}}</v-avatar>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -13,13 +13,18 @@
             <span
               style="position: absolute; right: 5px;"
               class="caption hidden-sm-and-down"
-            >Created {{test.date}}</span>
+            >{{test.date ? 'Created ' : '-'}}{{test.date}}</span>
           </v-list-item-title>
-          <v-list-item-subtitle class="hidden-md-and-up">Created {{test.date}}</v-list-item-subtitle>
+          <v-list-item-subtitle
+            class="hidden-md-and-up"
+          >{{test.date ? 'Created ' : '-'}}{{test.date}}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-divider v-if="n !== tests.length - 1"></v-divider>
     </div>
+    <v-row justify="center" align="center" class="ma-0 mt-2 pa-0" v-if="tests.length == 0">
+      <span>No tests found</span>
+    </v-row>
   </v-list>
 </template>
 
@@ -33,6 +38,9 @@ export default {
       let color = "hsl(" + hue + ", 80%, 80%)";
 
       return color;
+    },
+    goTo(test) {
+        this.$router.push((test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id)
     },
   },
 };

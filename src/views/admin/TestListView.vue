@@ -3,30 +3,53 @@
     <NewTestBtn />
     <Snackbar />
 
-    <div style="height: 300px" class="background-orange background-img">
+    <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="11">
+          <v-row align="center" v-if="!searching">
+            <span class="titleText">Tests</span>
+            <v-spacer></v-spacer>
+            <v-btn class="mr-3" icon @click="searching = true">
+              <v-icon class="hidden-md-and-up">mdi-magnify</v-icon>
+            </v-btn>
+          </v-row>
           <v-text-field
+            autofocus
+            @blur="log()"
+            v-else
             dense
-            class="mt-5"
             label="Search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
             v-model="search"
           ></v-text-field>
+          <v-divider class="mb-1"></v-divider>
 
           <!-- Desktop Tabs -->
           <v-tabs
             v-model="index"
             background-color="transparent"
             color="black"
-            class="tab-border-bottom hidden-sm-and-down"
+            class="hidden-sm-and-down"
           >
             <v-tab @click="index = 0">My Tests</v-tab>
             <v-tab @click="index = 1">Tests I colaborate with</v-tab>
             <v-tab @click="index = 2">My Answers</v-tab>
+
+            <v-spacer></v-spacer>
+
+            <v-text-field
+              dense
+              class="mt-1"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              outlined
+              color="grey darken-2"
+              v-model="search"
+            ></v-text-field>
           </v-tabs>
+          <v-divider class="hidden-sm-and-down"></v-divider>
 
           <!-- Mobile Button -->
           <v-select
@@ -38,33 +61,13 @@
           ></v-select>
 
           <!-- My Tests -->
-          <v-row v-if="index == 0" :class="`grid`" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-          </v-row>
+          <List v-if="index == 0" :tests="filteredMyTests"></List>
 
           <!-- Tests I Colaborate With -->
-          <v-row v-if="index == 1" class="grid" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-
-            <v-col v-if="filteredMyCoops.length == 0">
-              <div class="text-center">No tests found.</div>
-            </v-col>
-          </v-row>
+          <List v-if="index == 1" :tests="filteredMyCoops"></List>
 
           <!-- My Answers -->
-          <v-row v-if="index == 2" class="grid" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-
-            <v-col v-if="filteredMyAnswers.length == 0">
-              <div class="text-center">No tests found.</div>
-            </v-col>
-          </v-row>
+          <List v-if="index == 2" :tests="filteredMyAnswers"></List>
         </v-col>
       </v-row>
     </div>
@@ -73,9 +76,10 @@
 
 
 <script>
-import CardTest from "@/components/atoms/CardTest";
+// import CardTest from "@/components/atoms/CardTest";
 import NewTestBtn from "@/components/atoms/NewTestBtn";
 import Snackbar from "@/components/atoms/Snackbar";
+import List from "@/components/atoms/ListTests";
 
 export default {
   data: () => ({
@@ -87,6 +91,7 @@ export default {
     test: {},
     search: "",
     index: 0,
+    searching: false,
     headers: [
       {
         text: "Title",
@@ -142,25 +147,19 @@ export default {
       } else {
         this.label = "My Answers";
       }
-    }
-  },
-  components: {
-    CardTest,
-    NewTestBtn,
-    Snackbar,
-  },
-  methods: {
-    handleResize() {
-      this.width = window.innerWidth;
     },
   },
-  created() {
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
+  components: {
+    // CardTest,
+    NewTestBtn,
+    Snackbar,
+    List,
   },
-  destroyed() {
-    window.removeEventListener("resize", this.handleResize);
-  },
+  methods: {
+    log() {
+      console.log("log");
+    }
+  }
 };
 </script>
 
@@ -200,8 +199,9 @@ export default {
   background-position: right 0px bottom 0px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tab-border-bottom {
-  border-bottom: 1px solid black;
+.titleText {
+  font-size: 40px;
+  font-weight: 300;
 }
 
 @media screen and (max-width: 960px) {
