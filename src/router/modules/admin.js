@@ -5,14 +5,10 @@ import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 import SettingsView from "@/views/admin/SettingsView.vue";
-<<<<<<< HEAD
 import AnalyticsView from "@/views/admin/AnalyticsView.vue"
 import TemplateView from "@/views/admin/TemplateView.vue"
-=======
-import AnalyticsView from "@/views/admin/AnalyticsView.vue";
 import CreateView from "@/views/admin/CreateView.vue";
 import CreateFromTemplate from "@/views/admin/CreateFromTemplateView.vue";
->>>>>>> origin/createView
 
 export default [
   {
