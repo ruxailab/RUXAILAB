@@ -14,6 +14,10 @@
     </Dialog>
     <Snackbar />
 
+    <v-dialog v-model="noExistUser" width="500" persistent>
+      <v-btn @click="log" >Log</v-btn>
+      <iframe height="800" src="/signin" />
+    </v-dialog>
     <!-- Start Screen -->
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
@@ -53,7 +57,7 @@
         </v-tooltip>
       </v-speed-dial>
 
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" >
+      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56">
         <div class="header" v-if="!mini">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
@@ -74,7 +78,13 @@
           </v-list-item>
         </div>
 
-        <v-list class="nav-list" flat dense max-height="85%" style="overflow-y:auto;overflow-x:hidden;" >
+        <v-list
+          class="nav-list"
+          flat
+          dense
+          max-height="85%"
+          style="overflow-y:auto;overflow-x:hidden;"
+        >
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
@@ -356,6 +366,7 @@ export default {
     start: true, //change to true
     mini: false,
     index: null,
+    noExistUser: true,
     heurisIndex: 0,
     preTestIndex: null,
     items: [],
@@ -382,9 +393,16 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
+    },
+    user() {
+      if (this.user) this.noExistUser = false;
     }
   },
   methods: {
+    log(){
+      console.log("computed",this.user)
+      console.log("Store",this.$store.state.auth.user)
+    },
     mappingSteps() {
       if (this.test.type === "User") {
         //PreTest
