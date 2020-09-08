@@ -42,5 +42,12 @@ export default {
             let template = await dispatch("getObject", payload)
             commit('setTemplate', template)
         },
+        updateTemplate({ dispatch }, payload) {
+            payload = Object.assign(payload, { collection: "templates" });
+            dispatch("updateObject", payload)
+                .catch(() => {
+                    console.error("Error to update");
+                });
+        },
     }
 }

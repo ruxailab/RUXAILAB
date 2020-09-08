@@ -323,6 +323,15 @@ export default {
         });
       }
 
+       if (this.test.template) {
+        items.push({
+          title: "Template",
+          icon: "mdi-alien",
+          path: `/templateview/${this.test.template}`,
+          id: 7,
+        });
+      }
+
       return items;
     },
     isSettings() {

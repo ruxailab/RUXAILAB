@@ -6,6 +6,7 @@ import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 import SettingsView from "@/views/admin/SettingsView.vue";
 import AnalyticsView from "@/views/admin/AnalyticsView.vue"
+import TemplateView from "@/views/admin/TemplateView.vue"
 
 export default [
   {
@@ -62,6 +63,13 @@ export default [
         props: true,
         meta: { authorize: [1] },
         component: AnalyticsView
+      },
+      {
+        path: "/templateview/:id",
+        name: "Template View",
+        props: true,
+        meta: { authorize: [1] },
+        component: TemplateView
       }
     ],
   },

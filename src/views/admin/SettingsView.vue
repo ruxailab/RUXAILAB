@@ -321,9 +321,6 @@ export default {
     test() {
       return this.$store.getters.test;
     },
-    templates() {
-      return this.$store.getters.templates;
-    },
     user() {
       return this.$store.getters.user;
     },
@@ -347,10 +344,7 @@ export default {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
     }
-    if (!this.$store.getters.templates) {
-      this.$store.dispatch("getTemplates", {});
-    }
-  },
+   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
       this.dialogAlert = true;
