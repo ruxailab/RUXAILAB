@@ -5,7 +5,8 @@ import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
 import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 import SettingsView from "@/views/admin/SettingsView.vue";
-import AnalyticsView from "@/views/admin/AnalyticsView.vue"
+import AnalyticsView from "@/views/admin/AnalyticsView.vue";
+import CreateView from "@/views/admin/CreateView.vue";
 
 export default [
   {
@@ -63,6 +64,12 @@ export default [
         meta: { authorize: [1] },
         component: AnalyticsView
       }
-    ],
+    ]
   },
+  {
+    path: "/create",
+    name: "Create View",
+    meta: { authorize: [1] },
+    component: CreateView
+  }
 ];
