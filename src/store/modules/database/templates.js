@@ -49,5 +49,9 @@ export default {
                     console.error("Error to update");
                 });
         },
+        deteleTemplate({ dispatch }, payload) {
+            payload = Object.assign(payload, { collection: "templates" });
+            dispatch("deleteObject", payload)
+        }
     }
 }

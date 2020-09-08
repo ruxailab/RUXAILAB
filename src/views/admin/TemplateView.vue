@@ -13,7 +13,7 @@
           class="red white--text ml-1"
           :loading="loading"
           text
-          @click="deleteTest(object), loading = true"
+          @click="deleteTemplate(object), loading = true"
         >Delete</v-btn>
       </div>
     </Dialog>
@@ -126,6 +126,87 @@ export default {
         docId: this.id,
         data: payload
       });
+    },
+    deleteTemplate() {
+      this.$store
+        .dispatch("deteleTemplate", {
+          id: this.id
+        })
+        .then(() => {
+          this.object.template = null;
+          this.submit()
+          this.loading = false
+          this.dialogDel = false
+          this.$router.push(`/managerview/${this.object.id}`)
+        });
+    },
+    async submit() {
+      await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      await this.$store.dispatch("getReports", { id: this.test.reports });
+      await this.$store.dispatch("getCooperators", {
+        id: this.test.cooperators
+      });
+      console.log( this.object.template )
+      this.$store
+        .dispatch("updateTest", {
+          docId: this.object.id,
+          data: this.object
+        })
+        .then(() => {
+          this.$store.dispatch("updateMyTest", {
+            docId: this.object.admin.id,
+            element: {
+              id:this.object.id,
+              title: this.object.title,
+              type: this.object.type,
+              reports: this.object.reports,
+              answers: this.object.answers,
+              cooperators: this.object.cooperators,
+              template: this.object.template,
+              accessLevel: 0
+            }
+          });
+
+          this.cooperators.cooperators.forEach(coop => {
+            this.$store.dispatch("updateMyCoops", {
+              docId: coop.id,
+              element: {
+                id: this.object.id,
+                title: this.object.title,
+                type: this.object.type,
+                reports: this.object.reports,
+                answers: this.object.answers,
+                cooperators: this.object.cooperators,
+                template: this.object.template,
+                accessLevel: coop.accessLevel
+              }
+            });
+          });
+
+          this.answers.test.title = this.object.title;
+          this.reports.test.title = this.object.title;
+          this.cooperators.test.title = this.object.title;
+
+          this.$store.dispatch("updateTestAnswer", {
+            docId: this.test.answers,
+            data: this.answers
+          });
+
+          this.$store.dispatch("updateTestReport", {
+            docId: this.test.reports,
+            data: this.reports
+          });
+
+          this.$store.dispatch("updateTestCooperators", {
+            docId: this.test.cooperators,
+            data: this.cooperators
+          });
+
+          this.$store.commit("setSuccess", "Test updated succesfully");
+        })
+        .catch(err => {
+          this.$store.commit("setError", err);
+        });
     }
   },
   computed: {
