@@ -1,32 +1,74 @@
 <template>
   <v-container style="display:contents">
-    <NewTestBtn />
     <Snackbar />
 
-    <div style="height: 300px" class="background-orange background-img">
+    <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click="pushCreate()"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon large>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <span>Create new test</span>
+    </v-tooltip>
+
+    <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="11">
+          <v-row align="center" v-if="!searching">
+            <span class="titleText ml-3">Tests</span>
+            <v-spacer></v-spacer>
+            <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+          </v-row>
           <v-text-field
+            :autofocus="searching"
+            @blur="searching = false"
+            v-else
             dense
-            class="mt-5"
             label="Search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
             v-model="search"
           ></v-text-field>
+          <v-divider class="mb-1"></v-divider>
 
           <!-- Desktop Tabs -->
           <v-tabs
             v-model="index"
             background-color="transparent"
             color="black"
-            class="tab-border-bottom hidden-sm-and-down"
+            class="hidden-sm-and-down"
           >
             <v-tab @click="index = 0">My Tests</v-tab>
             <v-tab @click="index = 1">Tests I colaborate with</v-tab>
             <v-tab @click="index = 2">My Answers</v-tab>
+
+            <v-spacer></v-spacer>
+
+            <v-text-field
+              dense
+              class="mt-1"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              outlined
+              color="grey darken-2"
+              v-model="search"
+            ></v-text-field>
           </v-tabs>
+          <v-divider class="hidden-sm-and-down"></v-divider>
 
           <!-- Mobile Button -->
           <v-select
@@ -38,33 +80,13 @@
           ></v-select>
 
           <!-- My Tests -->
-          <v-row v-if="index == 0" :class="`grid`" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyTests" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-          </v-row>
+          <List @clicked="goTo" v-if="index == 0" :tests="filteredMyTests"></List>
 
           <!-- Tests I Colaborate With -->
-          <v-row v-if="index == 1" class="grid" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyCoops" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-
-            <v-col v-if="filteredMyCoops.length == 0">
-              <div class="text-center">No tests found.</div>
-            </v-col>
-          </v-row>
+          <List @clicked="goTo" v-if="index == 1" :tests="filteredMyCoops"></List>
 
           <!-- My Answers -->
-          <v-row v-if="index == 2" class="grid" :justify="width < 600 ? 'center' : 'start'">
-            <v-col cols="auto" sm="6" md="4" v-for="test in filteredMyAnswers" :key="test.id">
-              <CardTest :item="test" :accessLevel="test.accessLevel"></CardTest>
-            </v-col>
-
-            <v-col v-if="filteredMyAnswers.length == 0">
-              <div class="text-center">No tests found.</div>
-            </v-col>
-          </v-row>
+          <List @clicked="goTo" v-if="index == 2" :tests="filteredMyAnswers"></List>
         </v-col>
       </v-row>
     </div>
@@ -73,20 +95,19 @@
 
 
 <script>
-import CardTest from "@/components/atoms/CardTest";
-import NewTestBtn from "@/components/atoms/NewTestBtn";
+// import CardTest from "@/components/atoms/CardTest";
+// import NewTestBtn from "@/components/atoms/NewTestBtn";
 import Snackbar from "@/components/atoms/Snackbar";
+import List from "@/components/atoms/ListTests";
 
 export default {
   data: () => ({
     showMenu: false,
     label: "My Tests",
-    width: 0,
-    x: 0,
-    y: 0,
     test: {},
     search: "",
     index: 0,
+    searching: false,
     headers: [
       {
         text: "Title",
@@ -142,25 +163,22 @@ export default {
       } else {
         this.label = "My Answers";
       }
-    }
-  },
-  components: {
-    CardTest,
-    NewTestBtn,
-    Snackbar,
-  },
-  methods: {
-    handleResize() {
-      this.width = window.innerWidth;
     },
   },
-  created() {
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
+  components: {
+    // CardTest,
+    // NewTestBtn,
+    Snackbar,
+    List,
   },
-  destroyed() {
-    window.removeEventListener("resize", this.handleResize);
-  },
+  methods: {
+    pushCreate() {
+      this.$router.push("/createtest");
+    },
+    goTo(test) {
+        this.$router.push((test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id)
+    },
+  }
 };
 </script>
 
@@ -200,8 +218,9 @@ export default {
   background-position: right 0px bottom 0px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tab-border-bottom {
-  border-bottom: 1px solid black;
+.titleText {
+  font-size: 40px;
+  font-weight: 300;
 }
 
 @media screen and (max-width: 960px) {

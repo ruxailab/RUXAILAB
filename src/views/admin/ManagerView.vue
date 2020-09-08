@@ -77,7 +77,7 @@
         <!-- Navigation footer -->
         <div class="footer" v-if="!mini">
           <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3">
-            <v-icon color="white">mdi-cog</v-icon>
+            <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn icon @click.stop="mini = !mini" class="mr-2">
