@@ -1,7 +1,7 @@
 <template>
   <v-list class="py-0">
     <div v-for="(test, n) in tests" :key="n">
-      <v-list-item @click="goTo(test)" :ripple="false">
+      <v-list-item @click="emitClick(test)" :ripple="false">
         <v-list-item-avatar tile style="border-radius: 5px" size="40">
           <v-avatar tile :color="generateColor()" style="color: #545454">{{test.title[0].toUpperCase()}}</v-avatar>
         </v-list-item-avatar>
@@ -17,7 +17,10 @@
           </v-list-item-title>
           <v-list-item-subtitle
             class="hidden-md-and-up"
-          >{{test.date ? 'Created ' : '-'}}{{test.date}}</v-list-item-subtitle>
+          >{{test.author ? 'Created by ' : ''}}{{test.author}}{{test.date && test.author? ' on ' : ''}}{{test.date? 'Created ' : ''}}{{test.date}}</v-list-item-subtitle>
+           <v-list-item-subtitle
+            class="hidden-sm-and-down"
+          >{{test.author ? 'Created by ' : ''}}{{test.author}}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-divider v-if="n !== tests.length - 1"></v-divider>
@@ -39,9 +42,9 @@ export default {
 
       return color;
     },
-    goTo(test) {
-        this.$router.push((test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id)
-    },
+    emitClick(test) {
+      this.$emit('clicked', test);
+    }
   },
 };
 </script>

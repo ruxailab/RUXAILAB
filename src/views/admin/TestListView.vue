@@ -26,10 +26,10 @@
       <v-row justify="center" class="fill-height">
         <v-col cols="11">
           <v-row align="center" v-if="!searching">
-            <span class="titleText">Tests</span>
+            <span class="titleText ml-3">Tests</span>
             <v-spacer></v-spacer>
-            <v-btn class="mr-3" icon @click="searching = true">
-              <v-icon class="hidden-md-and-up">mdi-magnify</v-icon>
+            <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
+              <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
           <v-text-field
@@ -80,13 +80,13 @@
           ></v-select>
 
           <!-- My Tests -->
-          <List v-if="index == 0" :tests="filteredMyTests"></List>
+          <List @clicked="goTo" v-if="index == 0" :tests="filteredMyTests"></List>
 
           <!-- Tests I Colaborate With -->
-          <List v-if="index == 1" :tests="filteredMyCoops"></List>
+          <List @clicked="goTo" v-if="index == 1" :tests="filteredMyCoops"></List>
 
           <!-- My Answers -->
-          <List v-if="index == 2" :tests="filteredMyAnswers"></List>
+          <List @clicked="goTo" v-if="index == 2" :tests="filteredMyAnswers"></List>
         </v-col>
       </v-row>
     </div>
@@ -173,8 +173,11 @@ export default {
   },
   methods: {
     pushCreate() {
-      this.$router.push("/create");
-    }
+      this.$router.push("/createtest");
+    },
+    goTo(test) {
+        this.$router.push((test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id)
+    },
   }
 };
 </script>

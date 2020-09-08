@@ -7,6 +7,7 @@ import CooperatorsView from "@/views/admin/CooperatorsView.vue";
 import SettingsView from "@/views/admin/SettingsView.vue";
 import AnalyticsView from "@/views/admin/AnalyticsView.vue";
 import CreateView from "@/views/admin/CreateView.vue";
+import CreateFromTemplate from "@/views/admin/CreateFromTemplateView.vue";
 
 export default [
   {
@@ -67,9 +68,15 @@ export default [
     ]
   },
   {
-    path: "/create",
+    path: "/createtest",
     name: "Create View",
     meta: { authorize: [1] },
-    component: CreateView
+    component: CreateView,
+  },
+  {
+    path: "/fromtemplate",
+    name: "Create from template",
+    meta: { authorize: [1] },
+    component: CreateFromTemplate
   }
 ];

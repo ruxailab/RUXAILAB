@@ -39,7 +39,7 @@ export default [
   },
   {
     path: "*",
-    name: "pagenotfound",
+    name: "Page not Found",
     meta: { authorize: [] },
     component: PageNotFound,
   },

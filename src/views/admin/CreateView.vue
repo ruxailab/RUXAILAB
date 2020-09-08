@@ -1,9 +1,44 @@
 <template>
   <div>
+    <h2
+      style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
+    >Create a new test</h2>
+
+    <v-row justify="center" style="padding: 0px 30px;">
+      <v-row style="max-width: 90%" justify="center">
+        <v-col cols="12" md="6">
+          <v-card class="card" flat @click="dialog = true" :ripple="false">
+            <v-row align="center">
+              <v-col cols="12" md="5">
+                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200"></v-img>
+              </v-col>
+              <v-col cols="12" md="6" class="card-text">
+                <div class="card-title">Create a blank test</div>
+                <div>Create a blank test to begin with a completely new and fresh template.</div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-card class="card" flat @click="pushToFromTemplate()" :ripple="false">
+            <v-row align="center">
+              <v-col cols="12" md="5">
+                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200"></v-img>
+              </v-col>
+              <v-col cols="12" md="6" class="card-text-box">
+                <div class="card-title">Create from template</div>
+                <div>Create a test based on a template created by one of our users.</div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-row>
+
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
-          <p class="titleView ma-2 pa-2">Create Test</p>
+          <p class="dialog-title ma-2 pa-2">Create Test</p>
           <v-divider></v-divider>
           <FormTestDescription :test="test" ref="form" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
@@ -25,29 +60,29 @@ export default {
     FormTestDescription,
   },
   data: () => ({
-    dialog: true,
+    dialog: false,
     object: {},
     test: {
       title: "",
       description: "",
-      type: ""
+      type: "",
     },
     testID: null,
   }),
   methods: {
-    createTest() {
-      this.$router.push("/createtest");
+    pushToFromTemplate() {
+        this.$router.push('/fromtemplate');
     },
     async submit() {
       await this.testAssembly(); // build Test
-      let d = new Date()
+      let d = new Date();
       let object = this.object;
       let successful = true;
       //Send db
       await this.$store
         .dispatch("createTest", {
           collection: "test",
-          data: Object.assign(object, {date: d.toDateString()}),
+          data: Object.assign(object, { date: d.toDateString() }),
         })
         .then((id) => {
           this.testID = id;
@@ -111,7 +146,7 @@ export default {
                           answers: idAnswers,
                           cooperators: idCooperators,
                           accessLevel: 0,
-                          date: d.toDateString()
+                          date: d.toDateString(),
                         },
                         param: "myTests",
                       });
@@ -141,7 +176,9 @@ export default {
 
       //Assigning test info
       this.object = Object.assign(this.object, this.test);
-      this.object = Object.assign(this.object, {date: new Date().toDateString()})
+      this.object = Object.assign(this.object, {
+        date: new Date().toDateString(),
+      });
 
       //assigning tasks/heuristics
       if (this.test.type === "User") {
@@ -184,7 +221,7 @@ export default {
       if (this.$refs.form.valida()) {
         this.submit();
       }
-    }
+    },
   },
   watch: {
     dialog() {
@@ -209,8 +246,8 @@ export default {
 };
 </script>
 
-<style>
-.titleView {
+<style scoped>
+.dialog-title {
   font-family: Roboto;
   font-style: normal;
   font-weight: 300;
@@ -221,22 +258,30 @@ export default {
   color: #000000;
 }
 .card {
-  max-width: 330px;
-  height: 200px;
-  border-radius: 3px;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
-  background-color: #fff;
-  border-bottom: 2px solid transparent;
-  margin: 0 16px 16px 0;
+  border: 1px solid rgb(201, 201, 201);
+  padding: 30px;
+  height: 250px;
 }
-.icon {
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5);
+.card-title {
+  font-size: 25px;
+  color: #f9a826;
+  margin: 0px 0px 10px 0px;
 }
-@media screen and (max-width: 960px){
-  .titleView {
+.card-text-box {
+  margin: 0px 0px 0px 30px;
+}
+
+@media screen and (max-width: 960px) {
+  .dialog-title {
     display: flex;
     text-align: center;
     justify-content: center;
+  }
+  .card-text-box {
+    margin: 20px 0px 0px 0px;
+  }
+  .card {
+      height: auto;
   }
 }
 </style>
