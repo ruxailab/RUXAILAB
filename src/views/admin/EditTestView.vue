@@ -162,6 +162,7 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
+              template:this.object.template,
               accessLevel: 0
             }
           });

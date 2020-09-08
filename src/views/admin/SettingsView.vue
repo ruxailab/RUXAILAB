@@ -153,6 +153,7 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
+              template:this.object.template,
               accessLevel: 0
             }
           });
@@ -167,6 +168,7 @@ export default {
                 reports: this.object.reports,
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
+                template:this.object.template,
                 accessLevel: coop.accessLevel
               }
             });
@@ -306,7 +308,6 @@ export default {
         this.object = Object.assign(this.object, { template: id });
         this.submit();
       });
-      console.log("Template", payload);
     }
   },
   watch: {
