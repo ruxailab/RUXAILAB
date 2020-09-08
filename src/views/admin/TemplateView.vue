@@ -106,14 +106,14 @@ export default {
       payload.header.version = "1.0.1";
       payload.header.date = new Date().toLocaleString("en-US");
 
-      if (this.test.type == "Expert") {
+      if (payload.template.type == "Expert") {
         Object.assign(payload.template, {
-          heeuristics: this.test.heuristics,
+          heuristics: this.test.heuristics,
           options: this.test.options,
           answersSheet: this.test.answersSheet,
           type: this.test.type
         });
-      } else if (this.test.type == "User") {
+      } else if (payload.template.type == "User") {
         Object.assign(payload.template, {
           tasks: this.test.tasks,
           preTest: this.test.preTest,
@@ -122,11 +122,10 @@ export default {
         });
       }
 
-        this.$store.dispatch("updateTemplate", {
-          docId: this.id,
-          data: payload
-        });
-      
+      this.$store.dispatch("updateTemplate", {
+        docId: this.id,
+        data: payload
+      });
     }
   },
   computed: {
