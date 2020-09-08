@@ -14,8 +14,8 @@
             </v-btn>
           </v-row>
           <v-text-field
-            autofocus
-            @blur="log()"
+            :autofocus="searching"
+            @blur="searching = false"
             v-else
             dense
             label="Search"
@@ -85,9 +85,6 @@ export default {
   data: () => ({
     showMenu: false,
     label: "My Tests",
-    width: 0,
-    x: 0,
-    y: 0,
     test: {},
     search: "",
     index: 0,
