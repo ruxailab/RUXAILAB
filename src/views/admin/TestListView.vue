@@ -1,7 +1,26 @@
 <template>
   <v-container style="display:contents">
-    <NewTestBtn />
     <Snackbar />
+
+    <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click="pushCreate()"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon large>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <span>Create new test</span>
+    </v-tooltip>
 
     <div>
       <v-row justify="center" class="fill-height">
@@ -77,7 +96,7 @@
 
 <script>
 // import CardTest from "@/components/atoms/CardTest";
-import NewTestBtn from "@/components/atoms/NewTestBtn";
+// import NewTestBtn from "@/components/atoms/NewTestBtn";
 import Snackbar from "@/components/atoms/Snackbar";
 import List from "@/components/atoms/ListTests";
 
@@ -148,13 +167,13 @@ export default {
   },
   components: {
     // CardTest,
-    NewTestBtn,
+    // NewTestBtn,
     Snackbar,
     List,
   },
   methods: {
-    log() {
-      console.log("log");
+    pushCreate() {
+      this.$router.push("/create");
     }
   }
 };
