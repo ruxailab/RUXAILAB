@@ -64,13 +64,16 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
             }
         });
 
+        // EmailTemplate = require('email-templates').EmailTemplate;
+        // path = require('path');
+        // Promise = require('bluebird');
+
         let mail = {
             from: 'Uramaki Lab',
             to: 'leo.coelho.ruas@gmail.com',
             subject: 'Test',
-            html: '<h1>nhai</h1>'
+            html: data.template
         };
-
         transporter.sendMail(mail)
             .then(() => {
                 console.log("Email sent");
@@ -81,10 +84,55 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
                 return err;
             });
 
+        //loadTemplate
+        // let users = [
+        //     {
+        //         name: 'Lheu',
+        //         email: 'leo.coelho.ruas@gmail.com'
+        //     }
+        // ];
+        // let template = new EmailTemplate(path.join(__dirname, 'emailTemplates', data.templateName))
+
+        // Promise.all(users.map(user => {
+        //     return new Promise((resolve, reject) => {
+        //         template.render(user, (err, result) => {
+        //             if (err) reject(err);
+        //             else resolve({
+        //                 email: result,
+        //                 user
+        //             });
+        //             return;
+        //         })
+        //     })
+        // })).catch(err => {
+        //     console.log(err);
+        // })
+
+        // Promise.all(results.map((result) => {
+        //     transporter.sendMail({
+        //         to: result.user.email,
+        //         from: 'RetLab',
+        //         subject: result.email.subject,
+        //         html: result.email.html
+        //     })
+        //         .then(() => {
+        //             console.log("Email sent");
+        //             return;
+        //         })
+        //         .catch(err => {
+        //             console.log("Error on sendEmail transporter", err);
+        //             return err;
+        //         });
+        // })).catch(err => {
+        //     console.error(err);
+        // });
+
+
+
         return 0;
     } catch (err) {
         console.log("Error on sendEmail", err);
         return err;
     }
-    
+
 })
