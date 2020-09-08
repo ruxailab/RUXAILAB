@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{templates}}
     <v-row justify="center">
       <v-col cols="11">
         <v-row align="center" v-if="!searching">
@@ -33,7 +34,8 @@
         ></v-text-field>
         <v-divider class="mb-1"></v-divider>
 
-        <List @clicked="openTemp()" :tests="filteredTemplates"></List>
+        <List @clicked="openTemp()" :tests="templates"></List>
+        <!-- mudar para filteredTemplates dps que incluir o title -->
       </v-col>
     </v-row>
   </div>
@@ -41,30 +43,58 @@
 
 <script>
 import List from "@/components/atoms/ListTests";
+
 export default {
   components: {
     List,
   },
   data: () => ({
-    templates: [
-      { title: "Template 1", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
-      { title: "Template 2", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
-      { title: "Template 3", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
-    ],
+    // templates: [
+    //   { title: "Template 1", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
+    //   { title: "Template 2", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
+    //   { title: "Template 3", date: new Date().toDateString(), type: "Expert", author: 'John Green' },
+    // ],
     searching: false,
     search: "",
   }),
   methods: {
     openTemp() {
-        alert('open template')
+      alert("open template");
     },
   },
   computed: {
-    filteredTemplates() {
-      return this.templates.filter((temp) => {
-        return temp.title.toLowerCase().includes(this.search.toLowerCase());
-      });
+    storeTemplates() {
+      return this.$store.state.templates.templates || [];
     },
+    templates() {
+      let array = [];
+      if (this.storeTemplates !== null) {
+        array = this.storeTemplates.map((temp) => {
+          let obj = {
+            title: "Titulo que o Kevin nao colocou",
+            date: temp.header.date,
+            type: temp.template.type,
+            author: temp.header.author,
+          };
+          return obj;
+        });
+      }
+
+      return array;
+    },
+    // filteredTemplates() {
+    //   if(this.templates !== null)
+    //     return this.templates.filter((temp) => {
+    //       return temp.title.toLowerCase().includes(this.search.toLowerCase());
+    //     });
+
+    //   return [];
+    // },
+  },
+  created() {
+    if (this.$store.state.templates.templates == null) {
+      this.$store.dispatch("getTemplates");
+    }
   },
 };
 </script>

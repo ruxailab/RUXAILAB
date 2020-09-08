@@ -282,7 +282,7 @@ export default {
         id: this.$store.getters.user.uid,
         author: this.$store.getters.user.email,
         version: "1.0.0",
-        date: new Date().toLocaleString("en-US")
+        date: new Date().toDateString()
       };
       if (this.test.type == "Expert") {
         template = Object.assign(template, {

@@ -17,7 +17,7 @@
           </v-list-item-title>
           <v-list-item-subtitle
             class="hidden-md-and-up"
-          >{{test.author ? 'Created by ' : ''}}{{test.author}}{{test.date && test.author? ' on ' : ''}}{{test.date? 'Created ' : ''}}{{test.date}}</v-list-item-subtitle>
+          >{{test.author ? 'Created by ' : ''}}{{test.author}}{{test.date && test.author? ' on ' : ''}}{{test.date && !test.author? 'Created ' : ''}}{{test.date}}</v-list-item-subtitle>
            <v-list-item-subtitle
             class="hidden-sm-and-down"
           >{{test.author ? 'Created by ' : ''}}{{test.author}}</v-list-item-subtitle>

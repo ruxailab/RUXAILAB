@@ -32,8 +32,8 @@ export default {
                 })
             return docRef;
         },
-        async getTemplates({ commit, dispatch }, payload) {
-            payload = Object.assign(payload, { collection: 'templates' })
+        async getTemplates({ commit, dispatch }) {
+            let payload = Object.assign({}, { collection: 'templates' })
             let templates = await dispatch("getAllObjects", payload)
             commit('setTemplates', templates)
         },
