@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="test">
+  <v-container v-if="test ">
     <Dialog :dialog="dialogDel" :text="dialogText">
       <v-card-title
         slot="title"
@@ -44,13 +44,50 @@
           <p class="subtitleView">Settings</p>
         </v-col>
         <v-divider></v-divider>
-        <div>{{template}}</div>
-        <div>{{object}}</div>
+        <v-form ref="tempform" class="px-5">
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                v-model="template.template.title"
+                label="Title"
+                :rules="titleRequired"
+                counter="100"
+                outlined
+                @input="change=true"
+                dense
+              ></v-text-field>
+
+              <v-textarea
+                v-model="template.template.description"
+                label="Description"
+                outlined
+                dense
+                @input="change=true"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="template.header.date"
+                label="Last Update"
+                outlined
+                dense
+                disabled
+              ></v-text-field>
+              <v-text-field
+                v-model="template.header.version"
+                label="Version"
+                outlined
+                dense
+                @input="change=true"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-form>
         <v-divider></v-divider>
         <v-row justify="center">
           <v-btn
             color="#f26363"
-            class="white--text mb-4"
+            class="white--text my-4"
             style="justify-self: center"
             @click="dialogDel = true"
           >
@@ -58,6 +95,7 @@
           </v-btn>
         </v-row>
       </v-card>
+
       <v-tooltip left v-if="change">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -90,14 +128,19 @@ export default {
   props: ["id"],
   components: {
     ShowInfo,
-    Dialog,
+    Dialog
   },
   data: () => ({
-    change: true,
+    change: false,
     dialogDel: false,
     dialogAlert: false,
     loading: false,
     object: null,
+    template: null,
+    titleRequired: [
+      v => !!v || "Field Required",
+      v => v.length <= 100 || "Max 100 characters"
+    ]
   }),
   methods: {
     update() {
@@ -106,7 +149,7 @@ export default {
 
       payload.header.version = "1.0.1";
       payload.header.date = new Date().toLocaleString("en-US");
-      console.log(this.template)
+      console.log(this.template);
       if (this.template.template.type == "Expert") {
         Object.assign(payload, {
           template: Object.assign(
@@ -115,9 +158,9 @@ export default {
               heuristics: this.test.heuristics,
               options: this.test.options,
               answersSheet: this.test.answersSheet,
-              type: this.test.type,
+              type: this.test.type
             }
-          ),
+          )
         });
       } else if (this.template.template.type == "User") {
         Object.assign(payload, {
@@ -127,21 +170,21 @@ export default {
               tasks: this.test.tasks,
               preTest: this.test.preTest,
               postTest: this.test.postTest,
-              type: this.test.type,
+              type: this.test.type
             }
-          ),
+          )
         });
       }
 
       this.$store.dispatch("updateTemplate", {
         docId: this.id,
-        data: payload,
+        data: payload
       });
     },
     deleteTemplate() {
       this.$store
         .dispatch("deteleTemplate", {
-          id: this.id,
+          id: this.id
         })
         .then(() => {
           this.object.template = null;
@@ -155,13 +198,13 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
+        id: this.test.cooperators
       });
       console.log(this.object.template);
       this.$store
         .dispatch("updateTest", {
           docId: this.object.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -174,11 +217,11 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
-          this.cooperators.cooperators.forEach((coop) => {
+          this.cooperators.cooperators.forEach(coop => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -189,8 +232,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel,
-              },
+                accessLevel: coop.accessLevel
+              }
             });
           });
 
@@ -200,28 +243,28 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers,
+            data: this.answers
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports,
+            data: this.reports
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators,
+            data: this.cooperators
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
   },
   computed: {
-    template() {
+    templateStore() {
       return this.$store.getters.template;
     },
     test() {
@@ -232,14 +275,19 @@ export default {
         return `Are you sure you want to delete your template ? This action can't be undone`;
 
       return `Are you sure you want to delete this template? This action can't be undone`; //in case object isnt loaded
-    },
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
     },
+    templateStore: async function() {
+      if (this.templateStore !== null && this.templateStore !== undefined) {
+        this.template = await Object.assign({}, this.templateStore);
+      }
+    }
   },
   created() {
     if (!this.$store.getters.template) {
@@ -249,8 +297,8 @@ export default {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", {
         id: this.$store.state.auth.user.myTests.find(
-          (test) => test.template == this.id
-        ).id,
+          test => test.template == this.id
+        ).id
       });
     }
   },
@@ -267,7 +315,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 
