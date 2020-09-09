@@ -18,8 +18,13 @@ export default {
     async signup({ commit }, payload) {
       commit("setLoading", true);
       try {
-        await api.auth.signUp(payload);
-        commit("setUser", payload);
+        let user = await api.auth.signUp(payload);
+        user = await api.database.getObject({
+          collection: "users",
+          id: user.uid,
+        });
+        user = Object.assign({ uid: user.id }, user.data());
+        api.database.observer({ docId: user.uid, collection: "users" }, commit);
       } catch (err) {
         console.error("Error when creating user :(", err);
         commit("setError", err);

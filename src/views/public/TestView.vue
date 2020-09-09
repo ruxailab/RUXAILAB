@@ -1,5 +1,5 @@
 <template >
-  <div v-if="test && answersSheet != undefined || test && test.type ==='User'">
+  <div v-if="test  || test && test.type ==='User'">
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title
         slot="title"
@@ -15,9 +15,10 @@
     <Snackbar />
 
     <v-dialog v-model="noExistUser" width="500" persistent>
-      <v-btn @click="log" >Log</v-btn>
-      <iframe height="800" src="/signin" />
+      <CardSignIn @change="selected = !selected" v-if="selected" />
+      <CardSignUp @change="selected = !selected" v-else />
     </v-dialog>
+
     <!-- Start Screen -->
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
       <v-col cols="6" class="ml-5">
@@ -349,6 +350,8 @@ import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";
 import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
+import CardSignIn from "@/components/atoms/CardSignIn";
+import CardSignUp from "@/components/atoms/CardSignUp";
 
 export default {
   props: ["id"],
@@ -359,9 +362,12 @@ export default {
     HelpBtn,
     VClamp,
     Dialog,
-    Snackbar
+    Snackbar,
+    CardSignIn,
+    CardSignUp
   },
   data: () => ({
+    selected: true,
     drawer: true,
     start: true, //change to true
     mini: false,
@@ -394,15 +400,37 @@ export default {
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
     },
-    user() {
-      if (this.user) this.noExistUser = false;
+    async user() {
+      if (this.user) {
+        this.noExistUser = false;
+        if (this.user.myAnswers) {
+          let exist = this.user.myAnswers.find(test => test.id == this.id);
+          if (!exist) {
+            let payload = Object.assign(
+              {},
+              {
+                id: this.test.id,
+                title: this.test.title,
+                type: this.test.type,
+                reports: this.test.reports,
+                answers: this.test.answers,
+                cooperators: this.test.cooperators,
+                answersSheet: Object.assign(this.test.answersSheet, {
+                  submited: false
+                }),
+                accessLevel: 2
+              }
+            );
+            this.$store.dispatch("pushMyAnswers", {
+              docId: this.user.uid,
+              element: payload
+            });
+          }
+        }
+      }
     }
   },
   methods: {
-    log(){
-      console.log("computed",this.user)
-      console.log("Store",this.$store.state.auth.user)
-    },
     mappingSteps() {
       if (this.test.type === "User") {
         //PreTest
@@ -549,6 +577,9 @@ export default {
       return (
         (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
+    },
+    setExistUser() {
+      this.noExistUser = false;
     }
   },
   computed: {
@@ -556,6 +587,7 @@ export default {
       return this.$store.getters.test;
     },
     user() {
+      if (this.$store.state.auth.user) this.setExistUser();
       return this.$store.state.auth.user;
     },
     answersSheet: {
@@ -565,7 +597,7 @@ export default {
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
-          return this.test.answersSheet;
+          return null;
         }
       },
       set(item) {
@@ -710,5 +742,14 @@ export default {
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
   /* background: #515069; */
+}
+.card-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 56px;
+  margin-left: 12px;
+  margin-bottom: 20px;
 }
 </style>
