@@ -421,10 +421,29 @@ export default {
                 accessLevel: 2
               }
             );
-            this.$store.dispatch("pushMyAnswers", {
-              docId: this.user.uid,
-              element: payload
-            });
+            this.$store
+              .dispatch("pushMyAnswers", {
+                docId: this.user.uid,
+                element: payload
+              })
+              .then(() => {
+                let item = Object.assign(
+                  {},
+                  {
+                    uid: this.user.uid,
+                    email: this.user.email,
+                    log: {
+                      date: new Date().toLocaleString("en-Us"),
+                      progress: 0,
+                      status: "In progress"
+                    }
+                  }
+                );
+                this.$store.dispatch("pushLog", {
+                  docId: this.test.reports,
+                  element: item
+                });
+              });
           }
         }
       }
