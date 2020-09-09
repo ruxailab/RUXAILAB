@@ -13,7 +13,7 @@
           class="red white--text ml-1"
           :loading="loading"
           text
-          @click="deleteTemplate(object), loading = true"
+          @click="deleteTemplate(object), loading = true, change = false"
         >Delete</v-btn>
       </div>
     </Dialog>
@@ -90,84 +90,95 @@ export default {
   props: ["id"],
   components: {
     ShowInfo,
-    Dialog
+    Dialog,
   },
   data: () => ({
     change: true,
     dialogDel: false,
     dialogAlert: false,
     loading: false,
-    object: null
+    object: null,
   }),
   methods: {
     update() {
-      let payload = Object.assign({}, this.template);
+      let payload = Object.assign({}, { header: this.template.header });
+      console.log(payload, this.id);
 
       payload.header.version = "1.0.1";
       payload.header.date = new Date().toLocaleString("en-US");
-
-      if (payload.template.type == "Expert") {
-        Object.assign(payload.template, {
-          heuristics: this.test.heuristics,
-          options: this.test.options,
-          answersSheet: this.test.answersSheet,
-          type: this.test.type
+      console.log(this.template)
+      if (this.template.template.type == "Expert") {
+        Object.assign(payload, {
+          template: Object.assign(
+            {},
+            {
+              heuristics: this.test.heuristics,
+              options: this.test.options,
+              answersSheet: this.test.answersSheet,
+              type: this.test.type,
+            }
+          ),
         });
-      } else if (payload.template.type == "User") {
-        Object.assign(payload.template, {
-          tasks: this.test.tasks,
-          preTest: this.test.preTest,
-          postTest: this.test.postTest,
-          type: this.test.type
+      } else if (this.template.template.type == "User") {
+        Object.assign(payload, {
+          templatate: Object.assign(
+            {},
+            {
+              tasks: this.test.tasks,
+              preTest: this.test.preTest,
+              postTest: this.test.postTest,
+              type: this.test.type,
+            }
+          ),
         });
       }
 
       this.$store.dispatch("updateTemplate", {
         docId: this.id,
-        data: payload
+        data: payload,
       });
     },
     deleteTemplate() {
       this.$store
         .dispatch("deteleTemplate", {
-          id: this.id
+          id: this.id,
         })
         .then(() => {
           this.object.template = null;
-          this.submit()
-          this.loading = false
-          this.dialogDel = false
-          this.$router.push(`/managerview/${this.object.id}`)
+          this.submit();
+          this.loading = false;
+          this.dialogDel = false;
+          this.$router.push(`/managerview/${this.object.id}`);
         });
     },
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators
+        id: this.test.cooperators,
       });
-      console.log( this.object.template )
+      console.log(this.object.template);
       this.$store
         .dispatch("updateTest", {
           docId: this.object.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
             docId: this.object.admin.id,
             element: {
-              id:this.object.id,
+              id: this.object.id,
               title: this.object.title,
               type: this.object.type,
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -178,8 +189,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel
-              }
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -189,25 +200,25 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
-    }
+    },
   },
   computed: {
     template() {
@@ -221,14 +232,14 @@ export default {
         return `Are you sure you want to delete your template ? This action can't be undone`;
 
       return `Are you sure you want to delete this template? This action can't be undone`; //in case object isnt loaded
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    }
+    },
   },
   created() {
     if (!this.$store.getters.template) {
@@ -238,8 +249,8 @@ export default {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", {
         id: this.$store.state.auth.user.myTests.find(
-          test => test.template == this.id
-        ).id
+          (test) => test.template == this.id
+        ).id,
       });
     }
   },
@@ -256,7 +267,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 

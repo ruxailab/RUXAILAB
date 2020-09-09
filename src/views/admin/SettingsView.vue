@@ -40,6 +40,48 @@
       </div>
     </Dialog>
 
+    <v-dialog v-model="tempDialog" max-width="80%">
+      <v-card>
+        <p class="dialog-title ma-2 pa-2">Create Template</p>
+        <v-divider></v-divider>
+        <v-form ref="tempform" class="px-5">
+          <v-row justify="space-around" class="pa-2">
+            <v-col cols="12">
+              <v-text-field
+                :autofocus="lock ? false : true"
+                v-model="templateTitle"
+                label="Title"
+                :rules="titleRequired"
+                counter="100"
+                outlined
+                @input="$emit('change')"
+                dense
+              ></v-text-field>
+
+              <v-textarea
+                v-model="templateDescription"
+                label="Description"
+                outlined
+                dense
+                @input="$emit('change')"
+              ></v-textarea>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
+            <v-btn
+              @click="createTemplate"
+              text
+              :disabled="hasTemplate ? true : false"
+              class="success"
+            >Create</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
+
     <ShowInfo title="Settings">
       <div slot="content">
         <v-card style="background: #f5f7ff;">
@@ -57,12 +99,16 @@
             @change="change = true"
           />
 
-          <v-row class="mx-3 pa-0">
-            <v-col>
-              <v-btn @click="createTemplate" text>Create public template</v-btn>
-            </v-col>
+          <v-row class="mx-3">
+            <v-spacer></v-spacer>
+            <v-btn
+            style="margin-right: 40px"
+              outlined
+              color="green"
+              @click="tempDialog = true"
+              :disabled="hasTemplate ? true : false"
+            >Create public template</v-btn>
           </v-row>
-          <v-btn @click="log">log</v-btn>
           <v-divider class="my-3 mx-2"></v-divider>
 
           <v-row justify="center">
@@ -114,7 +160,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
-    Dialog
+    Dialog,
   },
   data: () => ({
     object: null,
@@ -122,7 +168,14 @@ export default {
     valids: [false, true, true],
     dialogAlert: false,
     dialogDel: false,
-    loading: false
+    loading: false,
+    templateTitle: "",
+    templateDescription: "",
+    tempDialog: false,
+    titleRequired: [
+      (v) => !!v || "Field Required",
+      (v) => v.length <= 100 || "Max 100 characters",
+    ],
   }),
   methods: {
     log() {
@@ -135,13 +188,13 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators
+        id: this.test.cooperators,
       });
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -153,12 +206,12 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              template:this.object.template,
-              accessLevel: 0
-            }
+              template: this.object.template,
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -168,9 +221,9 @@ export default {
                 reports: this.object.reports,
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
-                template:this.object.template,
-                accessLevel: coop.accessLevel
-              }
+                template: this.object.template,
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -180,22 +233,22 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -221,9 +274,9 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
+                type: item.type,
               },
-              param: "myTests"
+              param: "myTests",
             })
             .then(() => {
               this.loading = false;
@@ -234,7 +287,7 @@ export default {
                 );
               });
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
 
@@ -242,14 +295,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach(rep => {
+          this.reports.reports.forEach((rep) => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
@@ -257,65 +310,77 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach(guest => {
+          this.cooperators.cooperators.forEach((guest) => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
     createTemplate() {
       //create template
-      let template = {};
-      let header = {
-        id: this.$store.getters.user.uid,
-        author: this.$store.getters.user.email,
-        version: "1.0.0",
-        date: new Date().toDateString()
-      };
-      if (this.test.type == "Expert") {
-        template = Object.assign(template, {
-          heuristics: this.test.heuristics,
-          options: this.test.options,
-          answersSheet: this.test.answersSheet,
-          type: this.test.type
-        });
-      } else if (this.test.type == "User") {
-        template = Object.assign(template, {
-          tasks: this.test.tasks,
-          preTest: this.test.preTest,
-          postTest: this.test.postTest,
-          type: this.test.type
+      if (this.$refs.tempform.validate()) {
+        let template = {};
+        let header = {
+          id: this.$store.getters.user.uid,
+          author: this.$store.getters.user.email,
+          version: "1.0.0",
+          date: new Date().toDateString(),
+        };
+        if (this.test.type == "Expert") {
+          template = Object.assign(template, {
+            heuristics: this.test.heuristics,
+            options: this.test.options,
+            answersSheet: this.test.answersSheet,
+            type: this.test.type,
+            title: this.templateTitle,
+            description: this.templateDescription,
+          });
+        } else if (this.test.type == "User") {
+          template = Object.assign(template, {
+            tasks: this.test.tasks,
+            preTest: this.test.preTest,
+            postTest: this.test.postTest,
+            type: this.test.type,
+            title: this.templateTitle,
+            description: this.templateDescription,
+          });
+        }
+
+        let payload = {
+          data: { template: template, header: header },
+        };
+
+        this.$store.dispatch("createTemplate", payload).then((id) => {
+          this.object = Object.assign(this.object, { template: id });
+          this.submit();
         });
       }
-
-      let payload = {
-        data: { template: template, header: header }
-      };
-
-      this.$store.dispatch("createTemplate", payload).then(id => {
-        this.object = Object.assign(this.object, { template: id });
-        this.submit();
-      });
+    },
+    closeDialog() {
+      this.tempDialog = false;
+      this.$refs.tempform.resetValidation();
+      this.templateTitle = '';
+      this.templateDescription = '';
     }
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -338,13 +403,21 @@ export default {
         return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone`;
 
       return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
-    }
+    },
+    hasTemplate() {
+      if (this.object)
+        if ("template" in this.object) {
+          if (this.object.template !== null) return true;
+        }
+
+      return false;
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
     }
-   },
+  },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
       this.dialogAlert = true;
@@ -358,7 +431,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 
@@ -383,5 +456,23 @@ export default {
   color: #000000;
   margin-bottom: 0px;
   padding-bottom: 0px;
+}
+.dialog-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+
+@media screen and (max-width: 960px) {
+  .dialog-title {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
 }
 </style>

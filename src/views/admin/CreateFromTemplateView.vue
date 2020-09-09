@@ -215,7 +215,7 @@ export default {
         array = this.storeTemplates.map(temp => {
           let obj = {
             id: temp.id,
-            title: "Titulo que o Kevin nao colocou",
+            title: temp.template.title || 'No Title',
             date: temp.header.date,
             type: temp.template.type,
             author: temp.header.author
