@@ -131,9 +131,11 @@ export default {
     },
   },
   created() {
-    if (!this.$store.reports) {
+    if (!this.$store.state.reports.reports) {
       this.$store.dispatch("getReports", { id: this.id });
-    } else {
+    } else if(this.$store.state.reports.reports.id !== this.id)
+    this.$store.dispatch("getReports", { id: this.id });
+    else {
       this.loading = false;
     }
     this.test = Object.assign(

@@ -257,9 +257,9 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.templates.templates == null) {
+    // if (this.$store.state.templates.templates == null) {
       this.$store.dispatch("getTemplates");
-    }
+    // }
   }
 };
 </script>
