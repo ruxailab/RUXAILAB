@@ -37,17 +37,24 @@
       </div>
     </Dialog>
 
-    <v-dialog v-model="dialogDetail" width="800px" >
+    <v-dialog v-model="dialogDetail" width="800px">
       <v-card min-height="400px" class="list-scroll">
         <v-col class="mb-1 pa-4 pb-1">
-          <p class="subtitleView">Current informations
-            <v-btn style="position: absolute; right: 4px; top: 8px" small icon @click="dialogDetail = false, open = []" class="ma-1">
-            <v-icon color="error">mdi-close</v-icon>
-          </v-btn>
+          <p class="subtitleView">
+            Current informations
+            <v-btn
+              style="position: absolute; right: 4px; top: 8px"
+              small
+              icon
+              @click="dialogDetail = false, open = []"
+              class="ma-1"
+            >
+              <v-icon color="error">mdi-close</v-icon>
+            </v-btn>
           </p>
         </v-col>
         <v-divider></v-divider>
-        <v-row class="ma-0 pa-0 ">
+        <v-row class="ma-0 pa-0">
           <v-col cols="10">
             <v-treeview
               v-model="tree"
@@ -69,7 +76,7 @@
           <v-spacer></v-spacer>
           <v-btn class="error" text>Close</v-btn>
           <v-btn text>Button</v-btn>
-        </v-card-actions> -->
+        </v-card-actions>-->
       </v-card>
     </v-dialog>
 
@@ -119,7 +126,7 @@
               <v-row class="mx-1">
                 <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn outlined @click="log">Update</v-btn>
+                <v-btn outlined @click="updateTemplate(),change=true">update</v-btn>
               </v-row>
             </v-col>
           </v-row>
@@ -174,7 +181,11 @@ export default {
   data: () => ({
     tree: [],
     open: [],
-    icons: {},
+    icons: {
+      question: "mdi-timeline-help",
+      reponse: "mdi-timeline-check",
+      description: "mdi-timeline-text"
+    },
     change: false,
     dialogDel: false,
     dialogAlert: false,
@@ -190,11 +201,8 @@ export default {
   methods: {
     update() {
       let payload = Object.assign({}, { header: this.template.header });
-      console.log(payload, this.id);
 
-      payload.header.version = "1.0.1";
       payload.header.date = new Date().toLocaleString("en-US");
-      console.log(this.template);
       if (this.template.template.type == "Expert") {
         Object.assign(payload, {
           template: Object.assign(
@@ -312,6 +320,23 @@ export default {
     },
     log() {
       console.log(this.template.template);
+    },
+    updateTemplate() {
+      if (this.template.template.type == "Expert") {
+        Object.assign(this.template.template, {
+          heuristics: this.test.heuristics,
+          options: this.test.options,
+          answersSheet: this.test.answersSheet,
+          type: this.test.type
+        });
+      } else if (this.template.template.type == "User") {
+        Object.assign(this.template.template, {
+          tasks: this.test.tasks,
+          preTest: this.test.preTest,
+          postTest: this.test.postTest,
+          type: this.test.type
+        });
+      }
     }
   },
   computed: {
@@ -352,9 +377,11 @@ export default {
                       children: q.descriptions.map(d => {
                         return {
                           id: id++,
-                          name: d.title
-                        }
-                      })
+                          name: d.title,
+                          icon: "description"
+                        };
+                      }),
+                      icon: "question"
                     };
                   })
                 };
@@ -369,7 +396,9 @@ export default {
                 return {
                   id: id++,
                   name: op.text,
-                  children: [{ id: id++, name: `Value: ${op.value}` }]
+                  children: [
+                    { id: id++, name: `value: ${op.value}`, icon: "reponse" }
+                  ]
                 };
               })
             });

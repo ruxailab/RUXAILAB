@@ -326,7 +326,7 @@ export default {
        if (this.test.template) {
         items.push({
           title: "Template",
-          icon: "mdi-alien",
+          icon: "mdi-file-compare",
           path: `/templateview/${this.test.template}`,
           id: 7,
         });
