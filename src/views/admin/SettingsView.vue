@@ -48,7 +48,7 @@
           <v-row justify="space-around" class="pa-2">
             <v-col cols="12">
               <v-text-field
-                :autofocus="lock ? false : true"
+                autofocus
                 v-model="templateTitle"
                 label="Title"
                 :rules="titleRequired"
@@ -72,7 +72,7 @@
             <v-spacer></v-spacer>
             <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
             <v-btn
-              @click="createTemplate"
+              @click="createTemplate, tempDialog = false"
               text
               :disabled="hasTemplate ? true : false"
               class="success"
@@ -106,7 +106,7 @@
               outlined
               color="green"
               @click="tempDialog = true"
-              :disabled="hasTemplate ? true : false"
+              :disabled="hasTemplate || !object ? true : false"
             >Create public template</v-btn>
           </v-row>
           <v-divider class="my-3 mx-2"></v-divider>

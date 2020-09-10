@@ -37,14 +37,18 @@
       </div>
     </Dialog>
 
-    <v-dialog v-model="dialogDedetail" width="800px">
-      <v-card min-height="400px">
+    <v-dialog v-model="dialogDetail" width="800px" >
+      <v-card min-height="400px" class="list-scroll">
         <v-col class="mb-1 pa-4 pb-1">
-          <p class="subtitleView">Current informations</p>
+          <p class="subtitleView">Current informations
+            <v-btn style="position: absolute; right: 4px; top: 8px" small icon @click="dialogDetail = false, open = []" class="ma-1">
+            <v-icon color="error">mdi-close</v-icon>
+          </v-btn>
+          </p>
         </v-col>
         <v-divider></v-divider>
         <v-row class="ma-0 pa-0 ">
-          <v-col cols="10" class="list-scroll">
+          <v-col cols="10">
             <v-treeview
               v-model="tree"
               :open="open"
@@ -61,11 +65,11 @@
             </v-treeview>
           </v-col>
         </v-row>
-        <v-card-actions>
+        <!-- <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn class="error" text>Close</v-btn>
           <v-btn text>Button</v-btn>
-          <v-btn text>Button</v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-card>
     </v-dialog>
 
@@ -113,9 +117,9 @@
                 @input="change=true"
               ></v-text-field>
               <v-row class="mx-1">
-                <v-btn @click="dialogDedetail=true">Detailed information</v-btn>
+                <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="log">update</v-btn>
+                <v-btn outlined @click="log">Update</v-btn>
               </v-row>
             </v-col>
           </v-row>
@@ -174,7 +178,7 @@ export default {
     change: false,
     dialogDel: false,
     dialogAlert: false,
-    dialogDedetail: false,
+    dialogDetail: false,
     loading: false,
     object: null,
     template: null,
@@ -344,7 +348,13 @@ export default {
                   children: h.questions.map(q => {
                     return {
                       id: id++,
-                      name: q.title
+                      name: q.title,
+                      children: q.descriptions.map(d => {
+                        return {
+                          id: id++,
+                          name: d.title
+                        }
+                      })
                     };
                   })
                 };
@@ -359,7 +369,7 @@ export default {
                 return {
                   id: id++,
                   name: op.text,
-                  children: [{ id: id++, name: `value: ${op.value}` }]
+                  children: [{ id: id++, name: `Value: ${op.value}` }]
                 };
               })
             });
