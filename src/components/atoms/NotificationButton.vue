@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user.notifications">
     <v-badge
       color="red"
       bottom
