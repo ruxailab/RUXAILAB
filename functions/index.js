@@ -22,6 +22,7 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
             accessLevel: customClaims.accessLevel,
             myTests: [],
             myCoops: [],
+            myAnswers: [],
             notifications: []
         })
     } catch (err) {
@@ -64,70 +65,22 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
             }
         });
 
-        // EmailTemplate = require('email-templates').EmailTemplate;
-        // path = require('path');
-        // Promise = require('bluebird');
-
         let mail = {
             from: 'Uramaki Lab',
-            to: 'leo.coelho.ruas@gmail.com',
-            subject: 'Test',
+            to: data.guest.email,
+            subject: 'You have been invited to evaluate a test!',
             html: data.template
         };
+
         transporter.sendMail(mail)
             .then(() => {
-                console.log("Email sent");
+                console.log("Email sent to " + data.guest.email);
                 return;
             })
             .catch(err => {
                 console.log("Error on sendEmail transporter", err);
                 return err;
             });
-
-        //loadTemplate
-        // let users = [
-        //     {
-        //         name: 'Lheu',
-        //         email: 'leo.coelho.ruas@gmail.com'
-        //     }
-        // ];
-        // let template = new EmailTemplate(path.join(__dirname, 'emailTemplates', data.templateName))
-
-        // Promise.all(users.map(user => {
-        //     return new Promise((resolve, reject) => {
-        //         template.render(user, (err, result) => {
-        //             if (err) reject(err);
-        //             else resolve({
-        //                 email: result,
-        //                 user
-        //             });
-        //             return;
-        //         })
-        //     })
-        // })).catch(err => {
-        //     console.log(err);
-        // })
-
-        // Promise.all(results.map((result) => {
-        //     transporter.sendMail({
-        //         to: result.user.email,
-        //         from: 'RetLab',
-        //         subject: result.email.subject,
-        //         html: result.email.html
-        //     })
-        //         .then(() => {
-        //             console.log("Email sent");
-        //             return;
-        //         })
-        //         .catch(err => {
-        //             console.log("Error on sendEmail transporter", err);
-        //             return err;
-        //         });
-        // })).catch(err => {
-        //     console.error(err);
-        // });
-
-
 
         return 0;
     } catch (err) {

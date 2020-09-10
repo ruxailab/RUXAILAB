@@ -4,7 +4,6 @@
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Cooperators</div>
     </v-overlay>
-    <v-btn @click="sendInvitationMail()">email po tio</v-btn>
     <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading" @closeIntro="intro = false" />
 
     <v-row justify="center" v-else-if="cooperators">
@@ -206,7 +205,12 @@ export default {
       this.cooperatorsEdit.forEach(guest => {
         //Invide new cooperators
         if (!guest.invited) {
+          console.log(guest);
           this.send(guest);
+          if(guest.accessLevel.value >= 2) {
+            console.log("send email", guest.email);
+            this.sendInvitationMail(guest)
+            }
         }
       });
 
@@ -506,8 +510,8 @@ export default {
       event.preventDefault();
       event.returnValue = "";
     },
-    sendInvitationMail() {
-      this.$store.dispatch("sendEmailInvitation");
+    sendInvitationMail(guest) {
+      this.$store.dispatch("sendEmailInvitation", Object.assign({}, {testId: this.test.id, from: this.user.email, testTitle: this.test.title, guest: guest}));
     }
   },
   watch: {
