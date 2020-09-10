@@ -319,7 +319,7 @@ export default {
       this.template = this.$store.getters.template;
     },
     log() {
-      console.log(this.template.template);
+      console.log(this.template);
     },
     updateTemplate() {
       if (this.template.template.type == "Expert") {
@@ -423,6 +423,8 @@ export default {
   },
   created() {
     if (!this.$store.getters.template) {
+      this.$store.dispatch("getTemplate", { id: this.id });
+    } else if (this.$store.getters.template.id !== this.id) {
       this.$store.dispatch("getTemplate", { id: this.id });
     }
 
