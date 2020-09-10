@@ -37,6 +37,38 @@
       </div>
     </Dialog>
 
+    <v-dialog v-model="dialogDedetail" width="800px">
+      <v-card min-height="400px">
+        <v-col class="mb-1 pa-4 pb-1">
+          <p class="subtitleView">Current informations</p>
+        </v-col>
+        <v-divider></v-divider>
+        <v-row class="ma-0 pa-0 ">
+          <v-col cols="10" class="list-scroll">
+            <v-treeview
+              v-model="tree"
+              :open="open"
+              activatable
+              item-key="id"
+              open-on-click
+              dense
+              :items="items"
+            >
+              <template v-slot:prepend="{ item, open }">
+                <v-icon v-if="!item.icon">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
+                <v-icon v-else>{{ icons[item.icon] }}</v-icon>
+              </template>
+            </v-treeview>
+          </v-col>
+        </v-row>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text>Button</v-btn>
+          <v-btn text>Button</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <ShowInfo title="Template"></ShowInfo>
     <div slot="content">
       <v-card style="background: #f5f7ff">
@@ -80,6 +112,11 @@
                 dense
                 @input="change=true"
               ></v-text-field>
+              <v-row class="mx-1">
+                <v-btn @click="dialogDedetail=true">Detailed information</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn @click="log">update</v-btn>
+              </v-row>
             </v-col>
           </v-row>
         </v-form>
@@ -131,9 +168,13 @@ export default {
     Dialog
   },
   data: () => ({
+    tree: [],
+    open: [],
+    icons: {},
     change: false,
     dialogDel: false,
     dialogAlert: false,
+    dialogDedetail: false,
     loading: false,
     object: null,
     template: null,
@@ -262,9 +303,16 @@ export default {
           this.$store.commit("setError", err);
         });
     },
+    setTemplate() {
+      this.template = this.$store.getters.template;
+    },
+    log() {
+      console.log(this.template.template);
+    }
   },
   computed: {
     templateStore() {
+      if (this.$store.getters.template) this.setTemplate();
       return this.$store.getters.template;
     },
     test() {
@@ -275,6 +323,51 @@ export default {
         return `Are you sure you want to delete your template ? This action can't be undone`;
 
       return `Are you sure you want to delete this template? This action can't be undone`; //in case object isnt loaded
+    },
+    items() {
+      let items = [];
+
+      if (this.template) {
+        let template = this.template.template;
+        if (template.type == "Expert") {
+          let id = 0;
+          let heuristics = template.heuristics;
+          let options = template.options;
+          if (heuristics) {
+            items.push({
+              id: id++,
+              name: "Heuristics",
+              children: heuristics.map(h => {
+                return {
+                  id: id++,
+                  name: h.title,
+                  children: h.questions.map(q => {
+                    return {
+                      id: id++,
+                      name: q.title
+                    };
+                  })
+                };
+              })
+            });
+          }
+          if (options) {
+            items.push({
+              id: id++,
+              name: "Options",
+              children: options.map(op => {
+                return {
+                  id: id++,
+                  name: op.text,
+                  children: [{ id: id++, name: `value: ${op.value}` }]
+                };
+              })
+            });
+          }
+        }
+      }
+
+      return items;
     }
   },
   watch: {
@@ -340,5 +433,29 @@ export default {
   color: #000000;
   margin-bottom: 0px;
   padding-bottom: 0px;
+}
+
+.list-scroll {
+  height: 508px;
+  overflow: auto;
+}
+/* Nav bar list scroll bar */
+/* width */
+.list-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.list-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.list-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+  /* background: #515069; */
 }
 </style>
