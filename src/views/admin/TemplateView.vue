@@ -184,7 +184,8 @@ export default {
     icons: {
       question: "mdi-timeline-help",
       reponse: "mdi-timeline-check",
-      description: "mdi-timeline-text"
+      description: "mdi-timeline-text",
+      item: "mdi-timeline"
     },
     change: false,
     dialogDel: false,
@@ -403,6 +404,58 @@ export default {
               })
             });
           }
+        } else if (template.type == "User") {
+          let id = 0;
+          let tasks = template.tasks;
+          let preTest = template.preTest;
+          let postTest = template.postTest;
+          if (tasks) {
+            items.push({
+              id: id++,
+              name: "Tasks",
+              children: tasks.map(task => {
+                return {
+                  id: id++,
+                  name: task.name,
+                  children: Object.entries(task).map(item => {
+                    return {
+                      id: id++,
+                      name: `${item[0]}: ${item[1]}`,
+                      icon: "item"
+                    };
+                  }),
+                  icon: "question"
+                };
+              })
+            });
+          }
+          if (preTest) {
+            items.push({
+              id: id++,
+              name: "Pre Test",
+              children: Object.entries(preTest).map(item => {
+                return {
+                  id: id++,
+                  name: `${item[0]}: ${item[1]}`,
+                  icon: "item"
+                };
+              })
+            });
+          }
+          if (postTest) {
+            items.push({
+              id: id++,
+              name: "Post Test",
+              children: Object.entries(postTest).map(item => {
+                return {
+                  id: id++,
+                  name: `${item[0]}: ${item[1]}`,
+                  icon: "item"
+                };
+              })
+            });
+          }
+          console.log(postTest);
         }
       }
 
