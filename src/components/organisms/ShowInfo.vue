@@ -5,6 +5,7 @@
       <slot name="top"></slot>
     </v-row>
     <v-divider></v-divider>
+    <slot name="warning"></slot>    
     <v-row justify="center">
       <v-col cols="12">
         <v-card class="dataCard ma-0 pa-0" >

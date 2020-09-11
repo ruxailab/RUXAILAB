@@ -160,7 +160,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
-    Dialog
+    Dialog,
   },
   data: () => ({
     object: null,
@@ -173,9 +173,9 @@ export default {
     templateDescription: "",
     tempDialog: false,
     titleRequired: [
-      v => !!v || "Field Required",
-      v => v.length <= 100 || "Max 100 characters"
-    ]
+      (v) => !!v || "Field Required",
+      (v) => v.length <= 100 || "Max 100 characters",
+    ],
   }),
   methods: {
     log() {
@@ -188,13 +188,13 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators
+        id: this.test.cooperators,
       });
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -207,11 +207,11 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -222,8 +222,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel
-              }
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -233,22 +233,22 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -274,9 +274,9 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
+                type: item.type,
               },
-              param: "myTests"
+              param: "myTests",
             })
             .then(() => {
               this.loading = false;
@@ -287,7 +287,7 @@ export default {
                 );
               });
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
 
@@ -295,14 +295,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach(rep => {
+          this.reports.reports.forEach((rep) => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
@@ -310,21 +310,21 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach(guest => {
+          this.cooperators.cooperators.forEach((guest) => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -338,30 +338,38 @@ export default {
           version: "1.0.0",
           date: new Date().toDateString(),
           title: this.templateTitle,
-          description: this.templateDescription
+          description: this.templateDescription,
         };
         if (this.test.type == "Expert") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,
             options: this.test.options,
             answersSheet: this.test.answersSheet,
-            type: this.test.type
+            type: this.test.type,
           });
         } else if (this.test.type == "User") {
           template = Object.assign(template, {
             tasks: this.test.tasks,
             preTest: this.test.preTest,
             postTest: this.test.postTest,
-            type: this.test.type
+            type: this.test.type,
           });
         }
 
         let payload = {
-          data: { body: template, header: header }
+          data: { body: template, header: header },
         };
 
-        this.$store.dispatch("createTemplate", payload).then(id => {
-          this.object = Object.assign(this.object, { template: id });
+        this.$store.dispatch("createTemplate", payload).then((id) => {
+          this.object = Object.assign(this.object, {
+            template: Object.assign(
+              {},
+              {
+                id: id,
+                upToDate: true,
+              }
+            ),
+          });
           this.submit();
         });
       }
@@ -371,14 +379,14 @@ export default {
       this.$refs.tempform.resetValidation();
       this.templateTitle = "";
       this.templateDescription = "";
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -409,7 +417,7 @@ export default {
         }
 
       return false;
-    }
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
@@ -429,7 +437,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 

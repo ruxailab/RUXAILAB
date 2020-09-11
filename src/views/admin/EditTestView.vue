@@ -131,7 +131,7 @@ export default {
     Snackbar,
     ShowInfo,
     Dialog,
-    IntroEdit
+    IntroEdit,
   },
   data: () => ({
     index: 0,
@@ -140,17 +140,18 @@ export default {
     change: false,
     dialog: false,
     loading: true,
-    intro: null
+    intro: null,
   }),
   methods: {
     async submit() {
-    
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
+      if('template' in this.object)
+        this.object.template.upToDate = false; //flag as outdated
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -162,28 +163,28 @@ export default {
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              template:this.object.template,
-              accessLevel: 0
-            }
+              template: this.object.template,
+              accessLevel: 0,
+            },
           });
 
           this.answers.answersSheet = this.object.answersSheet;
-          if(this.test.type === "Expert")
-           Object.assign(this.answers, { options: this.object.options });
+          if (this.test.type === "Expert")
+            Object.assign(this.answers, { options: this.object.options });
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers
+              data: this.answers,
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -217,10 +218,10 @@ export default {
       if (!this.change) return;
       event.preventDefault();
       event.returnValue = "";
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.loading = false;
         this.object = await Object.assign(this.object, this.test);
@@ -242,7 +243,7 @@ export default {
           else this.intro = false;
         }
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -275,7 +276,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 

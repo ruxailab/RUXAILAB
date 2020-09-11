@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
-    <v-overlay class="text-center" v-model="loading">
+    <v-overlay class="text-center" v-model="loading" v-if="this.$route.path.includes('manager')">
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
@@ -131,7 +131,13 @@
               <!-- Top Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
-                  <v-card height="380px" :style="item.cardStyle" @click="go(item.path)" hover :ripple="false">
+                  <v-card
+                    height="380px"
+                    :style="item.cardStyle"
+                    @click="go(item.path)"
+                    hover
+                    :ripple="false"
+                  >
                     <v-row style="height: 290px" justify="center" align="center">
                       <v-img
                         max-height="220"
@@ -157,7 +163,13 @@
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
-                  <v-card height="350px" :style="item.cardStyle" @click="go(item.path)" hover :ripple="false">
+                  <v-card
+                    height="350px"
+                    :style="item.cardStyle"
+                    @click="go(item.path)"
+                    hover
+                    :ripple="false"
+                  >
                     <v-row style="height: 260px" justify="center" align="center" class="px-5">
                       <v-img
                         height="150"
@@ -225,20 +237,29 @@ export default {
       else return this.$store.state.auth.user.myCoops;
     },
     test() {
-      let seach = this.selectedTest || this.id;
-      let test = Object.assign(
-        {},
-        this.$store.state.auth.user.myTests.find((test) =>
-          Object.values(test).includes(seach)
-        )
-      );
+      let search = this.selectedTest || this.id;
 
+      let test = this.$route.path.includes("template")
+        ? Object.assign(
+            {},
+            this.$store.state.auth.user.myTests.find((test) => {
+              if ("template" in test)
+                return Object.values(test.template).includes(search);
+            })
+          )
+        : Object.assign(
+            {},
+            this.$store.state.auth.user.myTests.find((test) =>
+              Object.values(test).includes(search)
+            )
+          );
+      
       if (!Object.keys(test).length) {
         //se o objeto for vazio
         test = Object.assign(
           {},
           this.$store.state.auth.user.myCoops.find((test) =>
-            Object.values(test).includes(seach)
+            Object.values(test).includes(search)
           )
         );
 
@@ -323,11 +344,11 @@ export default {
         });
       }
 
-       if (this.test.template) {
+      if (this.test.template) {
         items.push({
           title: "Template",
           icon: "mdi-file-compare",
-          path: `/templateview/${this.test.template}`,
+          path: `/templateview/${this.test.template.id}`,
           id: 7,
         });
       }

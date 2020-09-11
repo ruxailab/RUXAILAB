@@ -80,103 +80,109 @@
         </v-card-actions>-->
       </v-card>
     </v-dialog>
+    
+    <ShowInfo title="Template">
+      <v-alert
+      type="warning"
+      v-if="!test.template.upToDate"
+      dense
+      slot="warning"
+    >Your template is not up to date with your test.</v-alert>
+      <div slot="content">
+        <v-card style="background: #f5f7ff">
+          <v-col class="mb-1 pa-4 pb-1">
+            <p class="subtitleView">Settings</p>
+          </v-col>
+          <v-divider></v-divider>
+          <v-form ref="tempform" class="px-5">
+            <v-row>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="template.header.title"
+                  label="Title"
+                  :rules="titleRequired"
+                  counter="100"
+                  outlined
+                  @input="change=true"
+                  dense
+                ></v-text-field>
 
-    <ShowInfo title="Template"></ShowInfo>
-    <div slot="content">
-      <v-card style="background: #f5f7ff">
-        <v-col class="mb-1 pa-4 pb-1">
-          <p class="subtitleView">Settings</p>
-        </v-col>
-        <v-divider></v-divider>
-        <v-form ref="tempform" class="px-5">
-          <v-row>
-            <v-col cols="6">
-              <v-text-field
-                v-model="template.header.title"
-                label="Title"
-                :rules="titleRequired"
-                counter="100"
-                outlined
-                @input="change=true"
-                dense
-              ></v-text-field>
+                <v-textarea
+                  v-model="template.header.description"
+                  label="Description"
+                  outlined
+                  dense
+                  @input="change=true"
+                ></v-textarea>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="template.header.date"
+                  label="Last Update"
+                  outlined
+                  dense
+                  disabled
+                ></v-text-field>
+                <v-text-field
+                  v-model="template.header.version"
+                  label="Version"
+                  outlined
+                  dense
+                  @input="change=true"
+                ></v-text-field>
+                <v-row class="mx-1">
+                  <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
+                  <v-spacer></v-spacer>
 
-              <v-textarea
-                v-model="template.header.description"
-                label="Description"
-                outlined
-                dense
-                @input="change=true"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="template.header.date"
-                label="Last Update"
-                outlined
-                dense
-                disabled
-              ></v-text-field>
-              <v-text-field
-                v-model="template.header.version"
-                label="Version"
-                outlined
-                dense
-                @input="change=true"
-              ></v-text-field>
-              <v-row class="mx-1">
-                <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
-                <v-spacer></v-spacer>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      outlined
-                      @click="updateTemplate(),change=true"
-                      v-bind="attrs"
-                      v-on="on"
-                    >Update</v-btn>
-                  </template>
-                  <span>Click to update your local template, click save to submit it.</span>
-                </v-tooltip>
-              </v-row>
-            </v-col>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        outlined
+                        @click="updateTemplate(),change=true"
+                        v-bind="attrs"
+                        v-on="on"
+                      >Update</v-btn>
+                    </template>
+                    <span>Click to update your local template, click save to submit it.</span>
+                  </v-tooltip>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-form>
+          <v-divider></v-divider>
+          <v-row justify="center">
+            <v-btn
+              color="#f26363"
+              class="white--text my-4"
+              style="justify-self: center"
+              @click="dialogDel = true"
+            >
+              <v-icon left>mdi-trash-can-outline</v-icon>Delete template
+            </v-btn>
           </v-row>
-        </v-form>
-        <v-divider></v-divider>
-        <v-row justify="center">
-          <v-btn
-            color="#f26363"
-            class="white--text my-4"
-            style="justify-self: center"
-            @click="dialogDel = true"
-          >
-            <v-icon left>mdi-trash-can-outline</v-icon>Delete template
-          </v-btn>
-        </v-row>
-      </v-card>
-
-      <v-tooltip left v-if="change">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-if="change"
-            large
-            dark
-            fab
-            fixed
-            bottom
-            right
-            color="#F9A826"
-            @click=" update()"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon large>mdi-content-save</v-icon>
-          </v-btn>
-        </template>
-        <span>Save</span>
-      </v-tooltip>
-    </div>
+        </v-card>
+      </div>
+    </ShowInfo>
+    <v-tooltip left v-if="change">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          v-if="change"
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          @click=" update()"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon large>mdi-content-save</v-icon>
+        </v-btn>
+      </template>
+      <span>Save</span>
+    </v-tooltip>
   </v-container>
 </template>
 
@@ -190,7 +196,7 @@ export default {
   components: {
     ShowInfo,
     Dialog,
-    SnackBar
+    SnackBar,
   },
   data: () => ({
     tree: [],
@@ -212,13 +218,14 @@ export default {
       (v) => !!v || "Field Required",
       (v) => v.length <= 100 || "Max 100 characters",
     ],
+    updated: false,
   }),
   methods: {
     update() {
       let payload = Object.assign({}, { header: this.template.header });
-      console.log("Payload",payload)
-      
-      payload.header.date = new Date().toDateString()
+      console.log("Payload", payload);
+
+      payload.header.date = new Date().toDateString();
       if (this.template.body.type == "Expert") {
         Object.assign(payload, {
           body: Object.assign(
@@ -245,13 +252,21 @@ export default {
         });
       }
 
-      this.$store.dispatch("updateTemplate", {
-        docId: this.id,
-        data: payload,
-      }).then(() => {
-        this.$store.commit("setSuccess", "Template succesfully updated");
-        this.change = false
-      }).catch(err => this.$store.commit("setError", err));
+      this.$store
+        .dispatch("updateTemplate", {
+          docId: this.id,
+          data: payload,
+        })
+        .then(() => {
+          this.$store.commit("setSuccess", "Template succesfully updated");
+          this.change = false;
+          if (this.updated)
+            this.$store.dispatch("setUpToDate", {
+              docId: this.test.id,
+              data: true,
+            });
+        })
+        .catch((err) => this.$store.commit("setError", err));
     },
     deleteTemplate() {
       this.$store
@@ -272,7 +287,7 @@ export default {
       await this.$store.dispatch("getCooperators", {
         id: this.test.cooperators,
       });
-      console.log(this.object.template);
+
       this.$store
         .dispatch("updateTest", {
           docId: this.object.id,
@@ -341,6 +356,7 @@ export default {
       console.log(this.template);
     },
     updateTemplate() {
+      this.updated = true;
       if (this.template.body.type == "Expert") {
         Object.assign(this.template.body, {
           heuristics: this.test.heuristics,
@@ -501,9 +517,9 @@ export default {
 
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", {
-        id: this.$store.state.auth.user.myTests.find(
-          (test) => test.template == this.id
-        ).id,
+        id: this.$store.state.auth.user.myTests.find((test) => {
+          if ("template" in test) return test.template.id == this.id;
+        }).id,
       });
     }
   },

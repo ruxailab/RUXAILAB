@@ -169,6 +169,14 @@ export default {
       .catch((err) => {
         console.error("Error ", err);
       })
+    },
+    setUpToDate({dispatch}, payload) {
+      payload = Object.assign(payload, {collection: "test", param: "template.upToDate"});
+
+      dispatch("setParamInObject", payload)
+      .catch((err) => {
+        console.error("Error ", err);
+      })
     }
   },
 };
