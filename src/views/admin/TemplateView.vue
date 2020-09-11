@@ -92,7 +92,7 @@
           <v-row>
             <v-col cols="6">
               <v-text-field
-                v-model="template.template.title"
+                v-model="template.header.title"
                 label="Title"
                 :rules="titleRequired"
                 counter="100"
@@ -102,7 +102,7 @@
               ></v-text-field>
 
               <v-textarea
-                v-model="template.template.description"
+                v-model="template.header.description"
                 label="Description"
                 outlined
                 dense
@@ -216,11 +216,12 @@ export default {
   methods: {
     update() {
       let payload = Object.assign({}, { header: this.template.header });
-
-      payload.header.date = new Date().toLocaleString("en-US");
-      if (this.template.template.type == "Expert") {
+      console.log("Payload",payload)
+      
+      payload.header.date = new Date().toDateString()
+      if (this.template.body.type == "Expert") {
         Object.assign(payload, {
-          template: Object.assign(
+          body: Object.assign(
             {},
             {
               heuristics: this.test.heuristics,
@@ -230,9 +231,9 @@ export default {
             }
           ),
         });
-      } else if (this.template.template.type == "User") {
+      } else if (this.template.body.type == "User") {
         Object.assign(payload, {
-          templatate: Object.assign(
+          body: Object.assign(
             {},
             {
               tasks: this.test.tasks,
@@ -248,7 +249,8 @@ export default {
         docId: this.id,
         data: payload,
       }).then(() => {
-        this.$store.commit("setSucces", "Template succesfully updated");
+        this.$store.commit("setSuccess", "Template succesfully updated");
+        this.change = false
       }).catch(err => this.$store.commit("setError", err));
     },
     deleteTemplate() {
@@ -339,15 +341,15 @@ export default {
       console.log(this.template);
     },
     updateTemplate() {
-      if (this.template.template.type == "Expert") {
-        Object.assign(this.template.template, {
+      if (this.template.body.type == "Expert") {
+        Object.assign(this.template.body, {
           heuristics: this.test.heuristics,
           options: this.test.options,
           answersSheet: this.test.answersSheet,
           type: this.test.type,
         });
-      } else if (this.template.template.type == "User") {
-        Object.assign(this.template.template, {
+      } else if (this.template.body.type == "User") {
+        Object.assign(this.template.body, {
           tasks: this.test.tasks,
           preTest: this.test.preTest,
           postTest: this.test.postTest,
@@ -374,7 +376,7 @@ export default {
       let items = [];
 
       if (this.template) {
-        let template = this.template.template;
+        let template = this.template.body;
         if (template.type == "Expert") {
           let id = 0;
           let heuristics = template.heuristics;

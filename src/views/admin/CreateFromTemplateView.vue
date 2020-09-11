@@ -193,8 +193,10 @@ export default {
       });
 
       //assigning tasks/heuristics
-      let selectTemplate = this.storeTemplates.find(t => t.id == this.temp.idTemplate)
-      this.object = Object.assign(this.object, selectTemplate.template);
+      let selectTemplate = this.storeTemplates.find(
+        t => t.id == this.temp.idTemplate
+      );
+      this.object = Object.assign(this.object, selectTemplate.body);
     },
     validate() {
       if (this.$refs.form.valida()) {
@@ -215,9 +217,9 @@ export default {
         array = this.storeTemplates.map(temp => {
           let obj = {
             id: temp.id,
-            title: temp.template.title || 'No Title',
+            title: temp.header.title || "No Title",
             date: temp.header.date,
-            type: temp.template.type,
+            type: temp.body.type,
             author: temp.header.author,
             version: temp.header.version
           };
@@ -259,7 +261,7 @@ export default {
   },
   created() {
     // if (this.$store.state.templates.templates == null) {
-      this.$store.dispatch("getTemplates");
+    this.$store.dispatch("getTemplates");
     // }
   }
 };
