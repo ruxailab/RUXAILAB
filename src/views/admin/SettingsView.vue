@@ -72,7 +72,7 @@
             <v-spacer></v-spacer>
             <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
             <v-btn
-              @click="createTemplate, tempDialog = false"
+              @click="createTemplate(), tempDialog = false"
               text
               :disabled="hasTemplate ? true : false"
               class="success"
