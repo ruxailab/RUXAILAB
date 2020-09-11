@@ -426,24 +426,6 @@ export default {
                 docId: this.user.uid,
                 element: payload
               })
-              .then(() => {
-                let item = Object.assign(
-                  {},
-                  {
-                    uid: this.user.uid,
-                    email: this.user.email,
-                    log: {
-                      date: new Date().toLocaleString("en-Us"),
-                      progress: 0,
-                      status: "In progress"
-                    }
-                  }
-                );
-                this.$store.dispatch("pushLog", {
-                  docId: this.test.reports,
-                  element: item
-                });
-              });
           }
         }
       }
