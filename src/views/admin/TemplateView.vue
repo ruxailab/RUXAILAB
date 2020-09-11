@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="test ">
+    <SnackBar></SnackBar>
     <Dialog :dialog="dialogDel" :text="dialogText">
       <v-card-title
         slot="title"
@@ -126,7 +127,18 @@
               <v-row class="mx-1">
                 <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn outlined @click="updateTemplate(),change=true">update</v-btn>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      outlined
+                      @click="updateTemplate(),change=true"
+                      v-bind="attrs"
+                      v-on="on"
+                    >Update</v-btn>
+                  </template>
+                  <span>Click to update your local template, click save to submit it.</span>
+                </v-tooltip>
               </v-row>
             </v-col>
           </v-row>
@@ -171,12 +183,14 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Dialog from "@/components/atoms/Dialog";
+import SnackBar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
-    Dialog
+    Dialog,
+    SnackBar
   },
   data: () => ({
     tree: [],
@@ -185,7 +199,7 @@ export default {
       question: "mdi-timeline-help",
       reponse: "mdi-timeline-check",
       description: "mdi-timeline-text",
-      item: "mdi-timeline"
+      item: "mdi-timeline",
     },
     change: false,
     dialogDel: false,
@@ -195,9 +209,9 @@ export default {
     object: null,
     template: null,
     titleRequired: [
-      v => !!v || "Field Required",
-      v => v.length <= 100 || "Max 100 characters"
-    ]
+      (v) => !!v || "Field Required",
+      (v) => v.length <= 100 || "Max 100 characters",
+    ],
   }),
   methods: {
     update() {
@@ -212,9 +226,9 @@ export default {
               heuristics: this.test.heuristics,
               options: this.test.options,
               answersSheet: this.test.answersSheet,
-              type: this.test.type
+              type: this.test.type,
             }
-          )
+          ),
         });
       } else if (this.template.template.type == "User") {
         Object.assign(payload, {
@@ -224,21 +238,23 @@ export default {
               tasks: this.test.tasks,
               preTest: this.test.preTest,
               postTest: this.test.postTest,
-              type: this.test.type
+              type: this.test.type,
             }
-          )
+          ),
         });
       }
 
       this.$store.dispatch("updateTemplate", {
         docId: this.id,
-        data: payload
-      });
+        data: payload,
+      }).then(() => {
+        this.$store.commit("setSucces", "Template succesfully updated");
+      }).catch(err => this.$store.commit("setError", err));
     },
     deleteTemplate() {
       this.$store
         .dispatch("deteleTemplate", {
-          id: this.id
+          id: this.id,
         })
         .then(() => {
           this.object.template = null;
@@ -252,13 +268,13 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators
+        id: this.test.cooperators,
       });
       console.log(this.object.template);
       this.$store
         .dispatch("updateTest", {
           docId: this.object.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -271,11 +287,11 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -286,8 +302,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel
-              }
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -297,22 +313,22 @@ export default {
 
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
-          this.$store.commit("setSuccess", "Test updated succesfully");
+          this.$store.commit("setSuccess", "Template succesfully deleted");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -328,17 +344,17 @@ export default {
           heuristics: this.test.heuristics,
           options: this.test.options,
           answersSheet: this.test.answersSheet,
-          type: this.test.type
+          type: this.test.type,
         });
       } else if (this.template.template.type == "User") {
         Object.assign(this.template.template, {
           tasks: this.test.tasks,
           preTest: this.test.preTest,
           postTest: this.test.postTest,
-          type: this.test.type
+          type: this.test.type,
         });
       }
-    }
+    },
   },
   computed: {
     templateStore() {
@@ -367,41 +383,41 @@ export default {
             items.push({
               id: id++,
               name: "Heuristics",
-              children: heuristics.map(h => {
+              children: heuristics.map((h) => {
                 return {
                   id: id++,
                   name: h.title,
-                  children: h.questions.map(q => {
+                  children: h.questions.map((q) => {
                     return {
                       id: id++,
                       name: q.title,
-                      children: q.descriptions.map(d => {
+                      children: q.descriptions.map((d) => {
                         return {
                           id: id++,
                           name: d.title,
-                          icon: "description"
+                          icon: "description",
                         };
                       }),
-                      icon: "question"
+                      icon: "question",
                     };
-                  })
+                  }),
                 };
-              })
+              }),
             });
           }
           if (options) {
             items.push({
               id: id++,
               name: "Options",
-              children: options.map(op => {
+              children: options.map((op) => {
                 return {
                   id: id++,
                   name: op.text,
                   children: [
-                    { id: id++, name: `value: ${op.value}`, icon: "reponse" }
-                  ]
+                    { id: id++, name: `value: ${op.value}`, icon: "reponse" },
+                  ],
                 };
-              })
+              }),
             });
           }
         } else if (template.type == "User") {
@@ -413,46 +429,46 @@ export default {
             items.push({
               id: id++,
               name: "Tasks",
-              children: tasks.map(task => {
+              children: tasks.map((task) => {
                 return {
                   id: id++,
                   name: task.name,
-                  children: Object.entries(task).map(item => {
+                  children: Object.entries(task).map((item) => {
                     return {
                       id: id++,
                       name: `${item[0]}: ${item[1]}`,
-                      icon: "item"
+                      icon: "item",
                     };
                   }),
-                  icon: "question"
+                  icon: "question",
                 };
-              })
+              }),
             });
           }
           if (preTest) {
             items.push({
               id: id++,
               name: "Pre Test",
-              children: Object.entries(preTest).map(item => {
+              children: Object.entries(preTest).map((item) => {
                 return {
                   id: id++,
                   name: `${item[0]}: ${item[1]}`,
-                  icon: "item"
+                  icon: "item",
                 };
-              })
+              }),
             });
           }
           if (postTest) {
             items.push({
               id: id++,
               name: "Post Test",
-              children: Object.entries(postTest).map(item => {
+              children: Object.entries(postTest).map((item) => {
                 return {
                   id: id++,
                   name: `${item[0]}: ${item[1]}`,
-                  icon: "item"
+                  icon: "item",
                 };
-              })
+              }),
             });
           }
           console.log(postTest);
@@ -460,19 +476,19 @@ export default {
       }
 
       return items;
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
     },
-    templateStore: async function() {
+    templateStore: async function () {
       if (this.templateStore !== null && this.templateStore !== undefined) {
         this.template = await Object.assign({}, this.templateStore);
       }
-    }
+    },
   },
   created() {
     if (!this.$store.getters.template) {
@@ -484,8 +500,8 @@ export default {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", {
         id: this.$store.state.auth.user.myTests.find(
-          test => test.template == this.id
-        ).id
+          (test) => test.template == this.id
+        ).id,
       });
     }
   },
@@ -502,7 +518,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 
