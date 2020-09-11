@@ -218,7 +218,8 @@ export default {
             title: temp.template.title || 'No Title',
             date: temp.header.date,
             type: temp.template.type,
-            author: temp.header.author
+            author: temp.header.author,
+            version: temp.header.version
           };
           return obj;
         });

@@ -3,10 +3,15 @@
     <div v-for="(test, n) in tests" :key="n">
       <v-list-item @click="emitClick(test)" :ripple="false">
         <v-list-item-avatar tile style="border-radius: 5px" size="40">
-          <v-avatar tile :color="generateColor()" style="color: #545454">{{test.title[0].toUpperCase()}}</v-avatar>
+          <v-avatar
+            tile
+            :color="generateColor()"
+            style="color: #545454"
+          >{{test.title[0].toUpperCase()}}</v-avatar>
         </v-list-item-avatar>
 
         <v-list-item-content>
+          <!-- {{test.version ? ` (${test.version})` : '' }} -->
           <v-list-item-title>
             {{test.title}}
             <v-chip outlined style="color: grey" small class="ml-1">{{test.type}}</v-chip>
@@ -18,9 +23,16 @@
           <v-list-item-subtitle
             class="hidden-md-and-up"
           >{{test.author ? 'Created by ' : ''}}{{test.author}}{{test.date && test.author? ' on ' : ''}}{{test.date && !test.author? 'Created ' : ''}}{{test.date}}</v-list-item-subtitle>
-           <v-list-item-subtitle
-            class="hidden-sm-and-down"
-          >{{test.author ? 'Created by ' : ''}}{{test.author}}</v-list-item-subtitle>
+          <v-list-item-subtitle class="hidden-sm-and-down">
+            {{test.author ? 'Created by ' : ''}}{{test.author}}
+            <v-chip
+              v-if="test.version"
+              style="position: absolute; right: 5px; color: grey"
+              outlined
+              small
+              class="ml-1"
+            >Version: {{test.version}}</v-chip>
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-divider v-if="n !== tests.length - 1"></v-divider>
@@ -43,8 +55,8 @@ export default {
       return color;
     },
     emitClick(test) {
-      this.$emit('clicked', test);
-    }
+      this.$emit("clicked", test);
+    },
   },
 };
 </script>
