@@ -1,5 +1,5 @@
 <template >
-  <div v-if="test && answersSheet != undefined || test && test.type ==='User'">
+  <div v-if="test  || test && test.type ==='User'">
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title
         slot="title"
@@ -13,6 +13,11 @@
       </div>
     </Dialog>
     <Snackbar />
+
+    <v-dialog v-model="noExistUser" width="500" persistent>
+      <CardSignIn @change="selected = !selected" v-if="selected" />
+      <CardSignUp @change="selected = !selected" v-else />
+    </v-dialog>
 
     <!-- Start Screen -->
     <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
@@ -53,7 +58,7 @@
         </v-tooltip>
       </v-speed-dial>
 
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56" >
+      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56">
         <div class="header" v-if="!mini">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
@@ -74,7 +79,13 @@
           </v-list-item>
         </div>
 
-        <v-list class="nav-list" flat dense max-height="85%" style="overflow-y:auto;overflow-x:hidden;" >
+        <v-list
+          class="nav-list"
+          flat
+          dense
+          max-height="85%"
+          style="overflow-y:auto;overflow-x:hidden;"
+        >
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
@@ -339,6 +350,8 @@ import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";
 import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
+import CardSignIn from "@/components/atoms/CardSignIn";
+import CardSignUp from "@/components/atoms/CardSignUp";
 
 export default {
   props: ["id"],
@@ -349,13 +362,17 @@ export default {
     HelpBtn,
     VClamp,
     Dialog,
-    Snackbar
+    Snackbar,
+    CardSignIn,
+    CardSignUp
   },
   data: () => ({
+    selected: true,
     drawer: true,
     start: true, //change to true
     mini: false,
     index: null,
+    noExistUser: true,
     heurisIndex: 0,
     preTestIndex: null,
     items: [],
@@ -382,6 +399,54 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
+    },
+    async user() {
+      if (this.user) {
+        this.noExistUser = false;
+        if (this.user.myAnswers) {
+          let exist = this.user.myAnswers.find(test => test.id == this.id);
+          if (!exist) {
+            let payload = Object.assign(
+              {},
+              {
+                id: this.test.id,
+                title: this.test.title,
+                type: this.test.type,
+                reports: this.test.reports,
+                answers: this.test.answers,
+                cooperators: this.test.cooperators,
+                answersSheet: Object.assign(this.test.answersSheet, {
+                  submited: false
+                }),
+                accessLevel: 2
+              }
+            );
+            this.$store
+              .dispatch("pushMyAnswers", {
+                docId: this.user.uid,
+                element: payload
+              })
+              .then(() => {
+                let item = Object.assign(
+                  {},
+                  {
+                    uid: this.user.uid,
+                    email: this.user.email,
+                    log: {
+                      date: new Date().toLocaleString("en-Us"),
+                      progress: 0,
+                      status: "In progress"
+                    }
+                  }
+                );
+                this.$store.dispatch("pushLog", {
+                  docId: this.test.reports,
+                  element: item
+                });
+              });
+          }
+        }
+      }
     }
   },
   methods: {
@@ -531,6 +596,9 @@ export default {
       return (
         (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
+    },
+    setExistUser() {
+      this.noExistUser = false;
     }
   },
   computed: {
@@ -538,6 +606,7 @@ export default {
       return this.$store.getters.test;
     },
     user() {
+      if (this.$store.state.auth.user) this.setExistUser();
       return this.$store.state.auth.user;
     },
     answersSheet: {
@@ -547,7 +616,7 @@ export default {
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
-          return this.test.answersSheet;
+          return null;
         }
       },
       set(item) {
@@ -692,5 +761,14 @@ export default {
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
   /* background: #515069; */
+}
+.card-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 56px;
+  margin-left: 12px;
+  margin-bottom: 20px;
 }
 </style>

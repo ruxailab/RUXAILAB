@@ -1,9 +1,10 @@
 import firebase from 'firebase'
 
 export default {
-    signUp:(payload) =>{
+    signUp: async (payload) =>{
         var auth = firebase.auth()
-        return auth.createUserWithEmailAndPassword(payload.email,payload.password)
+        await auth.createUserWithEmailAndPassword(payload.email,payload.password)
+        return auth.currentUser
     },
     signIn: async (payload) =>{
         var auth = firebase.auth()

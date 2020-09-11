@@ -4,7 +4,6 @@
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Cooperators</div>
     </v-overlay>
-
     <Intro v-if="cooperatorsEdit.length == 0 && intro && !loading" @closeIntro="intro = false" />
 
     <v-row justify="center" v-else-if="cooperators">
@@ -51,7 +50,7 @@
 
         <ShowInfo title="Cooperators">
           <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">
-            <v-autocomplete
+            <!-- <v-autocomplete
               style="background: #f5f7ff;"
               v-model="userSelected"
               :items="filteredUsers"
@@ -63,7 +62,26 @@
               color="#fca326"
               prepend-icon="mdi-account-multiple-plus"
               class="mx-4 pt-4"
-            ></v-autocomplete>
+            ></v-autocomplete>-->
+
+            <v-combobox
+              :hide-no-data="false"
+              style="background: #f5f7ff;"
+              v-model="email"
+              :items="filteredUsers"
+              item-text="email"
+              label="Add cooperator"
+              @keydown.native.enter="pushToArray()"
+              ref="combobox"
+              dense
+              color="#fca326"
+              prepend-icon="mdi-account-multiple-plus"
+              class="mx-4 pt-4"
+            >
+              <template
+                v-slot:no-data
+              >There are no users registered with that email, press enter to add anyways.</template>
+            </v-combobox>
             <v-data-table
               dense
               style="background: #f5f7ff;"
@@ -197,6 +215,7 @@ export default {
     dialog: false,
     loading: true,
     intro: null,
+    email: "",
   }),
   methods: {
     setValue(value) {
@@ -206,7 +225,12 @@ export default {
       this.cooperatorsEdit.forEach((guest) => {
         //Invide new cooperators
         if (!guest.invited) {
+          console.log(guest);
           this.send(guest);
+          if (guest.accessLevel.value >= 2) {
+            console.log("send email", guest.email);
+            this.sendInvitationMail(guest);
+          }
         }
       });
 
@@ -448,32 +472,44 @@ export default {
     },
     pushToArray() {
       let hasObj = false;
-      let obj = {
-        id: this.userSelected.id,
-        email: this.userSelected.email,
-        invited: false,
-        accepted: null,
-        accessLevel: { text: "Researcher", value: 1 },
-      };
-      let index = 0;
+      let obj = null;
 
-      this.cooperatorsEdit.forEach((coop) => {
-        if (coop.id === obj.id) {
-          hasObj = true;
-          this.filteredUsers.splice(index, 1);
-          index++;
-        }
-      });
+      if (typeof this.email == "object") {
+        obj = Object.assign({}, this.email);
+      } else if (!/.+@.+\..+/.test(this.email))
+        alert(this.email + " is not a valid email");
+      else {
+        obj = Object.assign(
+          {},
+          {
+            id: null,
+            email: this.email,
+            invited: false,
+            accepted: null,
+            accessLevel: { text: "Researcher", value: 1 },
+          }
+        );
+      }
 
-      if (!hasObj) {
+      if (obj !== null)
+        this.cooperatorsEdit.forEach((coop) => {
+          if (coop.email === obj.email) {
+            hasObj = true;
+          }
+        });
+
+      if (!hasObj && obj !== null) {
         this.cooperatorsEdit.push(obj);
         this.change = true;
 
         if (this.deletedCoops.includes(obj.id))
           //se add de novo remove do deleted
           this.deletedCoops.splice(this.deletedCoops.indexOf(obj.id), 1);
+
+        this.userSelected = {};
+        this.email = "";
+        this.$refs.combobox.blur();
       }
-      this.userSelected = {};
     },
     removeCoop(coop) {
       this.deletedCoops.push(coop);
@@ -505,6 +541,20 @@ export default {
       if (!this.change) return;
       event.preventDefault();
       event.returnValue = "";
+    },
+    sendInvitationMail(guest) {
+      this.$store.dispatch(
+        "sendEmailInvitation",
+        Object.assign(
+          {},
+          {
+            testId: this.test.id,
+            from: this.user.email,
+            testTitle: this.test.title,
+            guest: guest,
+          }
+        )
+      );
     },
   },
   watch: {
