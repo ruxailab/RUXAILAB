@@ -476,7 +476,7 @@ export default {
 
       if (typeof this.email == "object") {
         obj = Object.assign({}, this.email);
-      } else if (!/.+@.+\..+/.test(this.email))
+      } else if (!this.email.includes('@') || !this.email.includes('.')) 
         alert(this.email + " is not a valid email");
       else {
         obj = Object.assign(
