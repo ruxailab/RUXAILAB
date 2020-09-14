@@ -90,10 +90,14 @@ export default {
   methods: {
     async onSignUp() {
       if (this.valid)
-        await this.$store.dispatch("signup", {
-          email: this.email,
-          password: this.password
-        });
+        await this.$store
+          .dispatch("signup", {
+            email: this.email,
+            password: this.password
+          })
+          .then(() => {
+            this.$emit("logined");
+          });
     }
   }
 };
