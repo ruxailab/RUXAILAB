@@ -404,7 +404,7 @@ export default {
           param: "notifications"
         })
         .then(() => {
-          guest.invited = true;
+          this.$set(guest, "invited", true);
           //Access Level Guest
           this.$store.dispatch("pushCooperator", {
             docId: this.id,
@@ -546,19 +546,23 @@ export default {
       let domain = window.location.href;
       domain = domain.replace(window.location.pathname, "");
 
-      this.$store.dispatch(
-        "sendEmailInvitation",
-        Object.assign(
-          {},
-          {
-            testId: this.test.id,
-            from: this.user.email,
-            testTitle: this.test.title,
-            guest: guest,
-            domain: domain
-          }
+      this.$store
+        .dispatch(
+          "sendEmailInvitation",
+          Object.assign(
+            {},
+            {
+              testId: this.test.id,
+              from: this.user.email,
+              testTitle: this.test.title,
+              guest: guest,
+              domain: domain
+            }
+          )
         )
-      );
+        .then(() => {
+          this.$set(guest, "invited", true);
+        });
     }
   },
   watch: {
