@@ -128,6 +128,7 @@
                   label="Version"
                   outlined
                   dense
+                  v-on:keypress="isNumber(event)"
                   @input="change=true"
                 ></v-text-field>
                 <v-row class="mx-1">
@@ -373,6 +374,15 @@ export default {
         });
       }
     },
+    isNumber: function(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    }
   },
   computed: {
     templateStore() {
