@@ -17,7 +17,7 @@
     </v-badge>
 
     <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute max-width="300px" offset-y>
-      <v-list v-if="user.notifications.length > 0">
+      <v-list v-if="user.notifications.length > 0" class="menu-scroll">
         <v-list-item
           @click="nothing()"
           v-for="(notification, n) in user.notifications"
@@ -156,3 +156,27 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.menu-scroll {
+  max-height: 400px;
+  overflow: auto;
+}
+/* width */
+.menu-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+.menu-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.menu-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+.menu-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
+</style>
