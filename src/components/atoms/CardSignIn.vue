@@ -54,10 +54,14 @@ export default {
   }),
   methods: {
     async onSignIn() {
-      await this.$store.dispatch("signin", {
-        email: this.email,
-        password: this.password
-      });
+      await this.$store
+        .dispatch("signin", {
+          email: this.email,
+          password: this.password
+        })
+        .then(() => {
+          this.$emit("logined");
+        });
     }
   },
   computed: {

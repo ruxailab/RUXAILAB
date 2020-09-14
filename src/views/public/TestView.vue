@@ -14,9 +14,28 @@
     </Dialog>
     <Snackbar />
 
-    <v-dialog v-model="noExistUser" width="500" persistent>
-      <CardSignIn @change="selected = !selected" v-if="selected" />
-      <CardSignUp @change="selected = !selected" v-else />
+    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
+      <CardSignIn @logined="logined=true" @change="selected = !selected" v-if="selected" />
+      <CardSignUp @logined="logined=true" @change="selected = !selected" v-else />
+    </v-dialog>
+
+    <v-dialog :value="fromlink && !noExistUser" width="500" persistent>
+      <v-card v-if="user">
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange lighten-4" size="150">
+            <v-icon size="120" dark>mdi-account</v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">Continue as {{user.email}}</v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            Not {{user.email}}?
+            <a style="color: #F9A826" @click="signOut()">Change account</a>
+          </p>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
     <!-- Start Screen -->
@@ -367,7 +386,9 @@ export default {
     CardSignUp
   },
   data: () => ({
+    logined: null,
     selected: true,
+    fromlink: null,
     drawer: true,
     start: true, //change to true
     mini: false,
@@ -403,31 +424,7 @@ export default {
     async user() {
       if (this.user) {
         this.noExistUser = false;
-        if (this.user.myAnswers) {
-          let exist = this.user.myAnswers.find(test => test.id == this.id);
-          if (!exist) {
-            let payload = Object.assign(
-              {},
-              {
-                id: this.test.id,
-                title: this.test.title,
-                type: this.test.type,
-                reports: this.test.reports,
-                answers: this.test.answers,
-                cooperators: this.test.cooperators,
-                answersSheet: Object.assign(this.test.answersSheet, {
-                  submited: false
-                }),
-                accessLevel: 2
-              }
-            );
-            this.$store
-              .dispatch("pushMyAnswers", {
-                docId: this.user.uid,
-                element: payload
-              })
-          }
-        }
+        if (this.logined) this.setTest();
       }
     }
   },
@@ -581,6 +578,38 @@ export default {
     },
     setExistUser() {
       this.noExistUser = false;
+    },
+    signOut() {
+      this.$store.dispatch("logout").then(() => {
+        this.noExistUser = true;
+      });
+    },
+    setTest() {
+      if (this.user.myAnswers) {
+        this.fromlink = false;
+        let exist = this.user.myAnswers.find(test => test.id == this.id);
+        if (!exist) {
+          let payload = Object.assign(
+            {},
+            {
+              id: this.test.id,
+              title: this.test.title,
+              type: this.test.type,
+              reports: this.test.reports,
+              answers: this.test.answers,
+              cooperators: this.test.cooperators,
+              answersSheet: Object.assign(this.test.answersSheet, {
+                submited: false
+              }),
+              accessLevel: 2
+            }
+          );
+          this.$store.dispatch("pushMyAnswers", {
+            docId: this.user.uid,
+            element: payload
+          });
+        }
+      }
     }
   },
   computed: {
@@ -617,6 +646,14 @@ export default {
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
+  },
+  beforeRouteEnter(to, from, next) {
+    if (!from.name)
+      next(vm => {
+        vm.fromlink = true;
+      });
+    next();
+    // don't forget to call next()
   }
 };
 </script>
