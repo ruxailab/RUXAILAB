@@ -5,7 +5,7 @@
         class="display-1 text-center mb-3 mx-1 hidden-md-and-up"
       >Quickly get feedback on your projects</h4>
       <v-col cols="12" md="5">
-        <v-img src="@/assets/aboutTop.png"></v-img>
+        <v-img src="@/assets/aboutTop.png" max-height="350" contain></v-img>
       </v-col>
       <v-col cols="12" md="6">
         <h4
@@ -28,7 +28,7 @@
         <h4 class="display-1 text-left mb-3 hidden-sm-and-down">Start your own UX LAB</h4>
         <h4 class="display-1 text-center mb-3 hidden-md-and-up">Start your own UX LAB</h4>
 
-        <v-img src="@/assets/aboutBottom.png" class="mb-4 hidden-md-and-up"></v-img>
+        <v-img src="@/assets/aboutBottom.png" max-height="350" contain class="mb-4 hidden-md-and-up"></v-img>
 
         <p
           align="justify"

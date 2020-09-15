@@ -35,7 +35,7 @@
         <div style="background-color: #f4b700">
           <h1 class="display-3 font-weight-regular white--text text-center">UX Remote LAB</h1>
         </div>
-        <v-img src="@/assets/introductionMobile.svg" class="mb-4"></v-img>
+        <v-img src="@/assets/introductionMobile.svg" class="mb-4" max-height="350" contain></v-img>
         <div style="background-color: #f4b700" class="mx-1">
           <h4
             class="display-1 white--text mb-4 text-center"
