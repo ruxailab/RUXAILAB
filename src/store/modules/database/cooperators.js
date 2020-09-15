@@ -3,7 +3,11 @@ export default {
   state: {
     cooperators: null,
   },
-  getters: {},
+  getters: {
+    getCooperatorByToken: (state) => (token) => {
+      return state.cooperators.cooperators.filter(cooperator => cooperator.token == token)
+    }
+  },
   mutations: {
     setCooperators(state, payload) {
       state.cooperators = payload;
@@ -43,8 +47,9 @@ export default {
       payload = Object.assign(payload, {
         collection: "cooperators",
         field: "cooperators",
-        identifier: "id",
       });
+      if (!payload.identifier)
+        Object.assign(payload, { identifier: "id", })
       dispatch("updateArrayElement", payload).catch((err) => {
         console.error("Error updating element", err);
       });
@@ -73,7 +78,7 @@ export default {
     },
     sendEmailInvitation({ dispatch }, payload) {
       let link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`
-      console.log("Link",link)
+      console.log("Link", link)
       Object.assign(payload, { link: link })
       dispatch("callFunction", Object.assign({}, {
         function: 'sendEmail', data: Object.assign(payload, { template: template.getTemplate(payload) }

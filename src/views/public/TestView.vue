@@ -373,7 +373,7 @@ import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
 
 export default {
-  props: ["id"],
+  props: ["id", "token"],
   components: {
     ShowInfo,
     ViewTask,
@@ -408,6 +408,18 @@ export default {
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
+      if (this.test && this.token) {
+        if (!this.$store.state.cooperators.cooperators)
+          this.$store.dispatch("getCooperators", {
+            id: this.test.cooperators
+          });
+        else if (
+          this.$store.state.cooperators.cooperators !== this.test.cooperators
+        )
+          this.$store.dispatch("getCooperators", {
+            id: this.test.cooperators
+          });
+      }
     },
     items() {
       if (this.items.length) {
@@ -604,10 +616,44 @@ export default {
               accessLevel: 2
             }
           );
-          this.$store.dispatch("pushMyAnswers", {
-            docId: this.user.uid,
-            element: payload
-          });
+          this.$store
+            .dispatch("pushMyAnswers", {
+              docId: this.user.uid,
+              element: payload
+            })
+            .then(async () => {
+              let coop = this.cooperators.cooperators.find(
+                coop => coop.token == this.token
+              );
+              if (this.user.uid == coop.id) {
+                console.log("User Invided");
+                this.$store.dispatch("updateCooperator", {
+                  docId: this.test.cooperators,
+                  elementId: this.user.uid,
+                  element: true,
+                  param: "accepted"
+                });
+              } else if (coop.id == null) {
+                console.log("User didn't resister");
+                this.$store
+                  .dispatch("updateCooperator", {
+                    docId: this.test.cooperators,
+                    elementId: this.token,
+                    element: this.user.uid,
+                    identifier: "token",
+                    param: "id"
+                  })
+                  .then(() => {
+                    this.$store.dispatch("updateCooperator", {
+                      docId: this.test.cooperators,
+                      elementId: this.token,
+                      identifier: "token",
+                      element: true,
+                      param: "accepted"
+                    });
+                  });
+              }
+            });
         }
       }
     }
@@ -642,6 +688,9 @@ export default {
         return true;
       }
       return false;
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators;
     }
   },
   created() {

@@ -401,11 +401,6 @@ export default {
           })
           .then(() => {
             this.$set(guest, "invited", true);
-            //Access Level Guest
-            this.$store.dispatch("pushCooperator", {
-              docId: this.id,
-              element: Object.assign({}, guest)
-            });
             //Access Level Tester
             if (guest.accessLevel.value == 2) {
               let item = Object.assign(
@@ -555,7 +550,7 @@ export default {
 
       let domain = window.location.href;
       domain = domain.replace(window.location.pathname, "");
-      let auxid = guest.id ? null : uidgen.generateSync();
+      let token = uidgen.generateSync();
       let email = Object.assign(
         {},
         {
@@ -567,27 +562,25 @@ export default {
         }
       );
 
-      console.log("Auxid", auxid);
       if (guest.accessLevel.value >= 2) {
         email = Object.assign(email, {
           path: "testview",
-          token: auxid ? auxid : guest.id
+          token: token
         });
       } else {
         email = Object.assign(email, {
           path: "managerview",
-          token: auxid ? auxid : guest.id
+          token: token
         });
       }
       this.$store.dispatch("sendEmailInvitation", email).then(() => {
         this.$set(guest, "invited", true);
-        if (auxid) {
-          guest.id = auxid;
-          this.$store.dispatch("pushCooperator", {
-            docId: this.id,
-            element: Object.assign({}, guest)
-          });
-        }
+
+        Object.assign(guest, { token: token });
+        this.$store.dispatch("pushCooperator", {
+          docId: this.id,
+          element: Object.assign({}, guest)
+        });
       });
     }
   },
