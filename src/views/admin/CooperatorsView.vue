@@ -374,7 +374,11 @@ export default {
     },
     send(guest) {
       if (guest.id) {
+        const UIDGenerator = require("uid-generator");
+        const uidgen = new UIDGenerator();
+        let invID = uidgen.generateSync();
         let inv = {
+          id: invID,
           to: {
             id: guest.id,
             email: guest.email,
@@ -425,7 +429,11 @@ export default {
       this.sendInvitationMail(guest);
     },
     reinvite(guest) {
+      const UIDGenerator = require("uid-generator");
+      const uidgen = new UIDGenerator();
+      let invID = uidgen.generateSync();
       let inv = {
+        id: invID,
         to: {
           id: guest.id,
           email: guest.email,

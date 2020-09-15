@@ -616,25 +616,35 @@ export default {
               accessLevel: 2
             }
           );
-          this.$store
-            .dispatch("pushMyAnswers", {
-              docId: this.user.uid,
-              element: payload
-            })
-            .then(async () => {
-              let coop = this.cooperators.cooperators.find(
-                coop => coop.token == this.token
-              );
-              if (this.user.uid == coop.id) {
-                console.log("User Invided");
+          let coop = this.cooperators.cooperators.find(
+            coop => coop.token == this.token
+          );
+          if (this.user.uid == coop.id) {
+            this.$store
+              .dispatch("pushMyAnswers", {
+                docId: this.user.uid,
+                element: payload
+              })
+              .then(() => {
                 this.$store.dispatch("updateCooperator", {
                   docId: this.test.cooperators,
                   elementId: this.user.uid,
                   element: true,
                   param: "accepted"
                 });
-              } else if (coop.id == null) {
-                console.log("User didn't resister");
+
+                this.$store.dispatch("removeNotification", {
+                  docId: this.user.uid,
+                  element: null 
+                });
+              });
+          } else if (coop.id == null) {
+            this.$store
+              .dispatch("pushMyAnswers", {
+                docId: this.user.uid,
+                element: payload
+              })
+              .then(() => {
                 this.$store
                   .dispatch("updateCooperator", {
                     docId: this.test.cooperators,
@@ -652,8 +662,8 @@ export default {
                       param: "accepted"
                     });
                   });
-              }
-            });
+              });
+          }
         }
       }
     }
