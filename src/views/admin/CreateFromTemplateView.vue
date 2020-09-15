@@ -272,4 +272,41 @@ export default {
   font-size: 40px;
   font-weight: 300;
 }
+.dialog-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+.card {
+  border: 1px solid rgb(201, 201, 201);
+  padding: 30px;
+  height: 250px;
+}
+.card-title {
+  font-size: 25px;
+  color: #f9a826;
+  margin: 0px 0px 10px 0px;
+}
+.card-text-box {
+  margin: 0px 0px 0px 30px;
+}
+
+@media screen and (max-width: 960px) {
+  .dialog-title {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+  .card-text-box {
+    margin: 20px 0px 0px 0px;
+  }
+  .card {
+      height: auto;
+  }
+}
 </style>
