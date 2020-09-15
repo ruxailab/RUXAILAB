@@ -7,7 +7,7 @@ import PageNotFound from "@/views/public/PageNotFoundView.vue";
 
 export default [
   {
-    path: "/testview/:id",
+    path: "/testview/:id/:token?",
     name: "TestView",
     props: true,
     meta: { authorize: [] },

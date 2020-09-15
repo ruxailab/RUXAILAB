@@ -18,7 +18,7 @@ export default [
     component: TestList,
   },
   {
-    path: "/managerview/:id",
+    path: "/managerview/:id/:token?",
     name: "Manager View",
     meta: { authorize: [1] },
     component: ManagerView,

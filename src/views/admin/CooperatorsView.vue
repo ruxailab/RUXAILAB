@@ -225,12 +225,7 @@ export default {
       this.cooperatorsEdit.forEach(guest => {
         //Invide new cooperators
         if (!guest.invited) {
-          console.log(guest);
           this.send(guest);
-          if (guest.accessLevel.value >= 2) {
-            console.log("send email", guest.email);
-            this.sendInvitationMail(guest);
-          }
         }
       });
 
@@ -378,58 +373,61 @@ export default {
         });
     },
     send(guest) {
-      let inv = {
-        to: {
-          id: guest.id,
-          email: guest.email,
-          accessLevel: guest.accessLevel.value
-        },
-        from: {
-          id: this.user.uid,
-          email: this.user.email
-        },
-        test: {
-          id: this.test.id,
-          title: this.test.title,
-          type: this.test.type,
-          reports: this.test.reports,
-          answers: this.test.answers,
-          cooperators: this.test.cooperators
-        }
-      };
-      this.$store
-        .dispatch("pushNotification", {
-          docId: inv.to.id,
-          element: inv,
-          param: "notifications"
-        })
-        .then(() => {
-          this.$set(guest, "invited", true);
-          //Access Level Guest
-          this.$store.dispatch("pushCooperator", {
-            docId: this.id,
-            element: Object.assign({}, guest)
-          });
-          //Access Level Tester
-          if (guest.accessLevel.value == 2) {
-            let item = Object.assign(
-              {},
-              {
-                uid: guest.id,
-                email: guest.email,
-                log: {
-                  date: new Date().toLocaleString("en-Us"),
-                  progress: 0,
-                  status: "Invited"
-                }
-              }
-            );
-            this.$store.dispatch("pushLog", {
-              docId: this.test.reports,
-              element: item
-            });
+      if (guest.id) {
+        let inv = {
+          to: {
+            id: guest.id,
+            email: guest.email,
+            accessLevel: guest.accessLevel.value
+          },
+          from: {
+            id: this.user.uid,
+            email: this.user.email
+          },
+          test: {
+            id: this.test.id,
+            title: this.test.title,
+            type: this.test.type,
+            reports: this.test.reports,
+            answers: this.test.answers,
+            cooperators: this.test.cooperators
           }
-        });
+        };
+        this.$store
+          .dispatch("pushNotification", {
+            docId: inv.to.id,
+            element: inv,
+            param: "notifications"
+          })
+          .then(() => {
+            this.$set(guest, "invited", true);
+            //Access Level Guest
+            this.$store.dispatch("pushCooperator", {
+              docId: this.id,
+              element: Object.assign({}, guest)
+            });
+            //Access Level Tester
+            if (guest.accessLevel.value == 2) {
+              let item = Object.assign(
+                {},
+                {
+                  uid: guest.id,
+                  email: guest.email,
+                  log: {
+                    date: new Date().toLocaleString("en-Us"),
+                    progress: 0,
+                    status: "Invited"
+                  }
+                }
+              );
+              this.$store.dispatch("pushLog", {
+                docId: this.test.reports,
+                element: item
+              });
+            }
+          });
+      }
+      this.sendInvitationMail(guest);
     },
     reinvite(guest) {
       let inv = {
@@ -475,8 +473,17 @@ export default {
       let obj = null;
 
       if (typeof this.email == "object") {
-        obj = Object.assign({}, this.email);
-      } else if (!this.email.includes('@') || !this.email.includes('.')) 
+        obj = Object.assign(
+          {},
+          {
+            id: this.email.id,
+            email: this.email.email,
+            invited: false,
+            accepted: null,
+            accessLevel: { text: "Researcher", value: 1 }
+          }
+        );
+      } else if (!this.email.includes("@") || !this.email.includes("."))
         alert(this.email + " is not a valid email");
       else {
         obj = Object.assign(
@@ -543,26 +550,45 @@ export default {
       event.returnValue = "";
     },
     sendInvitationMail(guest) {
+      const UIDGenerator = require("uid-generator");
+      const uidgen = new UIDGenerator();
+
       let domain = window.location.href;
       domain = domain.replace(window.location.pathname, "");
+      let auxid = guest.id ? null : uidgen.generateSync();
+      let email = Object.assign(
+        {},
+        {
+          testId: this.test.id,
+          from: this.user.email,
+          testTitle: this.test.title,
+          guest: guest,
+          domain: domain
+        }
+      );
 
-      this.$store
-        .dispatch(
-          "sendEmailInvitation",
-          Object.assign(
-            {},
-            {
-              testId: this.test.id,
-              from: this.user.email,
-              testTitle: this.test.title,
-              guest: guest,
-              domain: domain
-            }
-          )
-        )
-        .then(() => {
-          this.$set(guest, "invited", true);
+      console.log("Auxid", auxid);
+      if (guest.accessLevel.value >= 2) {
+        email = Object.assign(email, {
+          path: "testview",
+          token: auxid ? auxid : guest.id
         });
+      } else {
+        email = Object.assign(email, {
+          path: "managerview",
+          token: auxid ? auxid : guest.id
+        });
+      }
+      this.$store.dispatch("sendEmailInvitation", email).then(() => {
+        this.$set(guest, "invited", true);
+        if (auxid) {
+          guest.id = auxid;
+          this.$store.dispatch("pushCooperator", {
+            docId: this.id,
+            element: Object.assign({}, guest)
+          });
+        }
+      });
     }
   },
   watch: {

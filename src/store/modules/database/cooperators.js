@@ -72,7 +72,8 @@ export default {
       });
     },
     sendEmailInvitation({ dispatch }, payload) {
-      let link = `${payload.domain}/testview/${payload.testId}`
+      let link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`
+      console.log("Link",link)
       Object.assign(payload, { link: link })
       dispatch("callFunction", Object.assign({}, {
         function: 'sendEmail', data: Object.assign(payload, { template: template.getTemplate(payload) }
