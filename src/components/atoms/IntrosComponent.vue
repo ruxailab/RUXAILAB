@@ -1,24 +1,16 @@
 <template>
-  <v-container style="display:contents; background-color:#f4b700; height:300px">
-    <div class="background-gradient">
+  <v-container style="display:contents; background-color:#f4b700">
+    <div class="background-gradient" :style="backgroundImage">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-          >Reports</div>
-          <v-img
-            class="hidden-md-and-up"
-            style="margin: 0px 20px"
-            contain
-            src="@/assets/manager/IntroReports.svg"
-          ></v-img>
-          <div
-            style="font-size: 22px"
-            class="white--text mb-4 mobile-center"
-          >Keep track of your evaluators progress and answering status while they complete your test.</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite new evaluators!</u>
+          >{{title}}</div>
+          <v-img class="hidden-md-and-up" contain :src="require('../../assets/manager/' + image)"></v-img>
+          <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{main}}</div>
+          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
+            <u>{{link}}</u>
           </span>
         </div>
 
@@ -27,7 +19,7 @@
           contain
           max-width="40%"
           max-height="400"
-          src="@/assets/manager/IntroReports.svg"
+          :src="require('../../assets/manager/' + image)"
         ></v-img>
       </v-row>
     </div>
@@ -41,7 +33,7 @@
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item
                   class="py-5"
-                  @click="item.func"
+                  @click="emitCallFunc(item.func)"
                   :ripple="false"
                   style="border-radius: 10px!important"
                 >
@@ -67,27 +59,19 @@
 
 <script>
 export default {
+  props: ["title", "image", "main", "link", "items", 'colors'],
   data: () => ({}),
   methods: {
-    goToDoc() {
-      this.$router.push("/reports/documentation");
+    emitClick() {
+      this.$emit("linkClicked");
     },
-    goToCoops() {
-      this.$emit("goToCoops");
+    emitCallFunc(func) {
+      this.$emit("callFunc", func);
     },
   },
   computed: {
-    items() {
-      return [
-        {
-          iconColor: "#ff6224",
-          icon: "mdi-file-document",
-          title: "Read documentation",
-          subtitle:
-            "Click to access the documentation on how to use the reports page.",
-          func: this.goToDoc,
-        },
-      ];
+    backgroundImage() {
+        return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
     },
   },
 };
@@ -96,7 +80,6 @@ export default {
 <style scoped>
 .background-gradient {
   height: 60vh;
-  background-image: radial-gradient(circle at top right, #ec6618, #f54e42);
 }
 .learn-text {
   color: rgb(87, 84, 100);
@@ -108,6 +91,11 @@ export default {
 .text-div {
   max-width: 45%;
 }
+.page-title {
+  font-size: 60px;
+  font-weight: 500;
+}
+/* sm */
 @media screen and (max-width: 960px) {
   .text-div {
     max-width: 100%;
@@ -119,6 +107,9 @@ export default {
     text-align: center;
     justify-content: center;
     margin: 0px 20px;
+  }
+  .page-title {
+    font-size: 40px;
   }
   .background-gradient {
     height: 100%;

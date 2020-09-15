@@ -1,19 +1,34 @@
 <template>
-  <v-container style="display:contents; background-color:#f4b700; height:300px">
+  <IntroComp
+    :colors="['#eff31a', '#eecf22']"
+    :title="'Cooperators'"
+    :image="'IntroCoops.svg'"
+    :main="'Add cooperators who can help you improve your project and gather data for your studies.'"
+    :link="'Get started!'"
+    @linkClicked="closeIntro()"
+    :items="items"
+    @callFunc="callFunc"
+  >
+  </IntroComp>
+  <!-- <v-container style="display:contents; background-color:#f4b700; height:300px">
     <div class="background-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-          >Answers</div>
-          <v-img class="hidden-md-and-up" style="margin: 0px 20px" contain src="@/assets/manager/IntroAnswer.svg"></v-img>
+          >Cooperators</div>
+          <v-img class="hidden-md-and-up" style="margin: 0px 30px" contain src="@/assets/manager/IntroCoops.svg"></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Quickly get feedback on you project by analyzing data from other users' answers.</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite evaluators to answer your test!</u>
+          >Add cooperators who can help you improve your project and gather data for your studies.</div>
+          <span
+            class="white--text mobile-center mb-4"
+            style="cursor: pointer"
+            @click="closeIntro()"
+          >
+            <u>Get started!</u>
           </span>
         </div>
 
@@ -22,7 +37,7 @@
           contain
           max-width="40%"
           max-height="400"
-          src="@/assets/manager/IntroAnswer.svg"
+          src="@/assets/manager/IntroCoops.svg"
         ></v-img>
       </v-row>
     </div>
@@ -57,66 +72,41 @@
         </v-col>
       </v-row>
     </v-col>
-  </v-container>
+  </v-container> -->
 </template>
 
 <script>
+import IntroComp from "@/components/atoms/IntrosComponent";
+
 export default {
   data: () => ({}),
+  components: {
+    IntroComp
+  },
   methods: {
-    goToCoops() {
-      this.$emit("goToCoops");
-    },
     goToDoc() {
-      this.$router.push("/answers/documentation");
+      this.$router.push("/cooperators/documentation");
+    },
+    closeIntro() {
+      this.$emit("closeIntro");
+    },
+    callFunc(func) {
+      this[func]();
     },
   },
   computed: {
     items() {
       return [
         {
-          iconColor: "#4bbdaf",
+          iconColor: "#daf01a",
           icon: "mdi-file-document",
           title: "Read documentation",
           subtitle:
-            "Click to access the documentation on how to use the answers page.",
-          func: this.goToDoc,
+            "Click to access the documentation on how to use the cooperators page.",
+          func: 'goToDoc',
         },
       ];
     },
   },
 };
 </script>
-
-<style scoped>
-.background-gradient {
-  height: 60vh;
-  background-image: radial-gradient(circle at top right, #9ac94f, #7eb543);
-}
-.learn-text {
-  color: rgb(87, 84, 100);
-  font-weight: 700;
-  font-size: 22px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-.text-div {
-  max-width: 45%;
-}
-@media screen and (max-width: 960px) {
-  .text-div {
-    max-width: 100%;
-    margin: 0px 10px;
-    text-justify: center;
-  }
-  .mobile-center {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-    margin: 0px 20px;
-  }
-  .background-gradient {
-    height: 100%;
-  }
-}
-</style>

@@ -66,7 +66,7 @@
 <script>
 // import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
-import Intro from "@/components/atoms/IntroReports";
+import Intro from "@/components/molecules/IntroReports";
 import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
 

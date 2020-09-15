@@ -218,7 +218,7 @@
 import BarChart from "@/components/atoms/BarChart.vue";
 import RadarChart from "@/components/atoms/RadarChart.vue";
 import ShowInfo from "@/components/organisms/ShowInfo";
-import IntroAnswer from "@/components/atoms/IntroAnswer";
+import IntroAnswer from "@/components/molecules/IntroAnswer";
 
 export default {
   props: ["id"],

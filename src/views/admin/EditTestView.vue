@@ -118,7 +118,7 @@ import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Dialog from "@/components/atoms/Dialog";
-import IntroEdit from "@/components/atoms/IntroEdit.vue";
+import IntroEdit from "@/components/molecules/IntroEdit.vue";
 
 export default {
   props: ["id"],

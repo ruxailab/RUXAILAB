@@ -182,7 +182,7 @@
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
 import Dialog from "@/components/atoms/Dialog";
-import Intro from "@/components/atoms/IntroCoops";
+import Intro from "@/components/molecules/IntroCoops";
 
 export default {
   props: ["id"],
