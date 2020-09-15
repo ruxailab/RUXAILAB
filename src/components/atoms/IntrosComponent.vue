@@ -7,7 +7,7 @@
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >{{title}}</div>
-          <v-img class="hidden-md-and-up" contain :src="require('../../assets/manager/' + image)"></v-img>
+          <v-img class="mb-5 hidden-md-and-up" contain :src="require('../../assets/manager/' + image)" max-height="350"></v-img>
           <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{main}}</div>
           <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
             <u>{{link}}</u>
