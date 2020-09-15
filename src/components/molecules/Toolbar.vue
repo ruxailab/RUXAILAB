@@ -193,6 +193,21 @@ export default {
         });
       }
 
+      if (this.test.template) {
+        items.push({
+          title: "Template",
+          icon: "mdi-file-compare",
+          path: `/templateview/${this.test.template.id}`,
+          id: 7,
+        });
+      }
+
+      items.push({
+        title: "Settings",
+          icon: "mdi-cog",
+          path: `/settingsview/${this.test.id}`,
+          id: 8,
+      })
       return items;
     },
     test() {
