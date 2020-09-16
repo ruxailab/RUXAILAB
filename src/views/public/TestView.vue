@@ -1,5 +1,6 @@
 <template >
   <div v-if="test  || test && test.type ==='User'">
+    {{answersSheet.progress}}
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title
         slot="title"
@@ -69,7 +70,7 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="dialog = true" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
+            <v-btn  :disabled="answersSheet.progress < 100" class="white--text" @click="dialog = true" fab  small color="#F9A826" v-bind="attrs" v-on="on">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -839,7 +840,7 @@ export default {
   padding-top: 0px;
 
   /*
-  height: 2.9em; 
+  height: 2.9em;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
