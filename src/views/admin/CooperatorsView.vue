@@ -50,20 +50,6 @@
 
         <ShowInfo title="Cooperators">
           <div class="ma-0 pa-0" style="background: #f5f7ff;" slot="content">
-            <!-- <v-autocomplete
-              style="background: #f5f7ff;"
-              v-model="userSelected"
-              :items="filteredUsers"
-              item-text="email"
-              return-object
-              label="Add cooperator"
-              @input="pushToArray()"
-              dense
-              color="#fca326"
-              prepend-icon="mdi-account-multiple-plus"
-              class="mx-4 pt-4"
-            ></v-autocomplete>-->
-
             <v-combobox
               :hide-no-data="false"
               style="background: #f5f7ff;"
