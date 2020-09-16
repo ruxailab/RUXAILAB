@@ -20,10 +20,10 @@ router.beforeResolve(async (to, from, next) => {
   const { authorize } = to.meta;
   const signIn = autoSignIn();
 
-  
-  if (authorize.length > 0 && to.path !== "/signin") {
+
+  if (authorize.length > 0 && to.path !== "/signin" && !to.params.token) {
     await signIn;
- 
+
     const user = store.state.auth.user;
 
     if (!user) {
