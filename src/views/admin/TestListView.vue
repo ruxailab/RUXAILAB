@@ -24,7 +24,7 @@
 
     <div>
       <v-row justify="center" class="fill-height">
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row align="center" v-if="!searching">
             <span class="titleText ml-3">Tests</span>
             <v-spacer></v-spacer>

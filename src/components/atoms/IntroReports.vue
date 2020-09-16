@@ -17,9 +17,11 @@
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Keep track of your evaluators progress and answering status while they complete your test.</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite new evaluators!</u>
-          </span>
+          <v-btn
+            class=" mobile-center mb-4"
+            style="cursor: pointer"
+            @click="goToCoops()"
+          >Invite new evaluators!</v-btn>
         </div>
 
         <v-img
@@ -74,7 +76,7 @@ export default {
     },
     goToCoops() {
       this.$emit("goToCoops");
-    },
+    }
   },
   computed: {
     items() {
@@ -85,11 +87,11 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the reports page.",
-          func: this.goToDoc,
-        },
+          func: this.goToDoc
+        }
       ];
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -12,9 +12,11 @@
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Create and customize your tasks and heuristics for your research needs.</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="closeIntro()">
-            <u>Get started!</u>
-          </span>
+          <v-btn
+            class="mobile-center mb-4"
+            style="cursor: pointer  "
+            @click="closeIntro()"
+          >Get started!</v-btn>
         </div>
 
         <v-img
@@ -69,7 +71,7 @@ export default {
     },
     closeIntro() {
       this.$emit("closeIntro");
-    },
+    }
   },
   computed: {
     items() {
@@ -80,11 +82,11 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the edit page.",
-          func: this.goToDoc,
-        },
+          func: this.goToDoc
+        }
       ];
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -106,7 +108,7 @@ export default {
 }
 .page-title {
   font-size: 60px;
-  font-weight: 500
+  font-weight: 500;
 }
 /* sm */
 @media screen and (max-width: 960px) {
@@ -124,7 +126,7 @@ export default {
   .page-title {
     font-size: 40px;
   }
-  .background-gradient{
+  .background-gradient {
     height: 100%;
   }
 }

@@ -14,7 +14,12 @@
           <!-- {{test.version ? ` (${test.version})` : '' }} -->
           <v-list-item-title>
             {{test.title}}
-            <v-chip outlined style="color: grey" small class="ml-1">{{test.type}}</v-chip>
+            <v-chip
+              outlined
+              style="color: grey"
+              small
+              class="ml-1"
+            >{{test.type=="Expert"?"Heuristics":test.type}}</v-chip>
             <span
               style="position: absolute; right: 5px;"
               class="caption hidden-sm-and-down"
@@ -56,7 +61,7 @@ export default {
     },
     emitClick(test) {
       this.$emit("clicked", test);
-    },
-  },
+    }
+  }
 };
 </script>

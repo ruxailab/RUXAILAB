@@ -7,14 +7,21 @@
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >Analytics</div>
-          <v-img class="hidden-md-and-up" style="margin: 0px 30px" contain src="@/assets/manager/IntroAnalytics.svg"></v-img>
+          <v-img
+            class="hidden-md-and-up"
+            style="margin: 0px 30px"
+            contain
+            src="@/assets/manager/IntroAnalytics.svg"
+          ></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Take a deep look into your test and see what people are saying about it.</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="goToCoops()">
-            <u>Invite evaluators to answer your test!</u>
-          </span>
+          <v-btn
+            class="mobile-center mb-4"
+            style="cursor: pointer"
+            @click="goToCoops()"
+          >Invite evaluators to answer your test!</v-btn>
         </div>
 
         <v-img
@@ -69,7 +76,7 @@ export default {
     },
     goToDoc() {
       this.$router.push("/analytics/documentation");
-    },
+    }
   },
   computed: {
     items() {
@@ -80,11 +87,11 @@ export default {
           title: "Read documentation",
           subtitle:
             "Click to access the documentation on how to use the analytics page.",
-          func: this.goToDoc,
-        },
+          func: this.goToDoc
+        }
       ];
-    },
-  },
+    }
+  }
 };
 </script>
 
