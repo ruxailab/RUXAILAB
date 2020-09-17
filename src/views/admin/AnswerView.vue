@@ -269,13 +269,12 @@ export default {
           let res = heuristic.questions.reduce((totalQuestions, question) => {
             //grouping of answers
             if (question.res === null) {
-              noAplication++;           
+              noAplication++;
             } //count answers no aplication
             if (question.res === "") noReply++;
             return totalQuestions + Number(question.res); //sum of responses
           }, 0);
-          if(noAplication == heuristic.questions.length)
-            res = null
+          if (noAplication == heuristic.questions.length) res = null;
 
           SelectEvaluator.heuristics.push({
             id: `H${heurisIndex}`,
@@ -323,12 +322,11 @@ export default {
       return (value * 100) / result;
     },
     getColor(value, max, min) {
-          
       max = Number(max);
       min = Number(min);
       let h = (max - min) / 5;
 
-      if(value == null) return 'grey'
+      if (value == null) return "grey";
       else if (value <= min + h) return "red";
       else if (value <= min + 2 * h) return "amber";
       else if (value <= min + 3 * h) return "orange lighten-1";
@@ -473,10 +471,10 @@ export default {
             result: evaluator.result,
             aplication: totalQuestions - totalNoAplication,
             noAplication: totalNoAplication,
-            answered: this.percentage(
+            answered: (this.percentage(
               totalQuestions - totalNoReply,
               totalQuestions
-            )
+            )).toFixed(2)
           });
         });
       }
@@ -515,6 +513,9 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers || [];
+    },
+    test(){
+      return this.$store.state.test
     }
   },
   watch: {
@@ -536,10 +537,7 @@ export default {
     ) {
       this.$store.dispatch("getAnswers", { id: this.id });
     }
-    this.test = Object.assign(
-      {},
-      this.$store.state.auth.user.myTests.find(test => test.answers == this.id)
-    );
+
   }
 };
 </script>

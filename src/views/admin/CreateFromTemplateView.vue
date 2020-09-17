@@ -103,7 +103,8 @@ export default {
                   type: object.type
                 },
                 answers: [],
-                answersSheet: object.answersSheet
+                answersSheet: object.answersSheet,
+                options: object.options
               }
             })
             .then(idAnswers => {
