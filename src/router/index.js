@@ -21,7 +21,7 @@ router.beforeResolve(async (to, from, next) => {
   const signIn = autoSignIn();
 
 
-  if (authorize.length > 0 && to.path !== "/signin" && !to.params.token) {
+  if (authorize.length > 0 && to.path !== "/signin" && !to.params.token && from.path !== "/signup") {
     await signIn;
 
     const user = store.state.auth.user;

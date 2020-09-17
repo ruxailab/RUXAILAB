@@ -458,6 +458,9 @@ export default {
         });
     },
     pushToArray() {
+      const UIDGenerator = require("uid-generator");
+      const uidgen = new UIDGenerator();
+      let token = uidgen.generateSync();
       let hasObj = false;
       let obj = null;
 
@@ -469,7 +472,8 @@ export default {
             email: this.email.email,
             invited: false,
             accepted: null,
-            accessLevel: { text: "Researcher", value: 1 }
+            accessLevel: { text: "Researcher", value: 1 },
+            token: token
           }
         );
       } else if (!this.email.includes("@") || !this.email.includes("."))
@@ -482,7 +486,8 @@ export default {
             email: this.email,
             invited: false,
             accepted: null,
-            accessLevel: { text: "Researcher", value: 1 }
+            accessLevel: { text: "Researcher", value: 1 },
+            token: token
           }
         );
       }
@@ -519,19 +524,24 @@ export default {
       let edit = this.editedCoops.find(c => c.guest.id == item.id);
       this.change = true;
 
-      if (!edit && item.accepted) {
-        this.editedCoops.push({
-          guest: item,
-          previous: item.accessLevel,
-          current: this.edited
-        });
-      } else if (edit && item.accepted) {
-        if (edit.previous.value === this.edited.value) {
-          this.editedCoops.splice(this.editedCoops.indexOf(edit), 1);
-        } else edit.current = this.edited;
+      if (item.id) {
+        if (!edit && item.accepted) {
+          this.editedCoops.push({
+            guest: item,
+            previous: item.accessLevel,
+            current: this.edited
+          });
+        } else if (edit && item.accepted) {
+          if (edit.previous.value === this.edited.value) {
+            this.editedCoops.splice(this.editedCoops.indexOf(edit), 1);
+          } else edit.current = this.edited;
+        }
+        let coop = this.cooperatorsEdit.find(coop => coop.id == item.id);
+        coop.accessLevel = this.edited;
+      } else {
+        let coop = this.cooperatorsEdit.find(coop => coop.token == item.token);
+        coop.accessLevel = this.edited;
       }
-      let coop = this.cooperatorsEdit.find(coop => coop.id == item.id);
-      coop.accessLevel = this.edited;
     },
     preventNav(event) {
       if (!this.change) return;
@@ -539,12 +549,9 @@ export default {
       event.returnValue = "";
     },
     sendInvitationMail(guest) {
-      const UIDGenerator = require("uid-generator");
-      const uidgen = new UIDGenerator();
-
       let domain = window.location.href;
       domain = domain.replace(window.location.pathname, "");
-      let token = uidgen.generateSync();
+
       let email = Object.assign(
         {},
         {
@@ -559,18 +566,18 @@ export default {
       if (guest.accessLevel.value >= 2) {
         email = Object.assign(email, {
           path: "testview",
-          token: token
+          token: guest.token
         });
       } else {
         email = Object.assign(email, {
           path: "managerview",
-          token: token
+          token: guest.token
         });
       }
       this.$store.dispatch("sendEmailInvitation", email).then(() => {
         this.$set(guest, "invited", true);
 
-        Object.assign(guest, { token: token });
+        Object.assign(guest);
         this.$store.dispatch("pushCooperator", {
           docId: this.id,
           element: Object.assign({}, guest)
