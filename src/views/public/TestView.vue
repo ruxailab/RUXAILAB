@@ -1,6 +1,5 @@
 <template >
   <div v-if="test  || test && test.type ==='User'">
-    {{answersSheet.progress}}
     <Dialog :dialog="dialog" :text="dialogText">
       <v-card-title
         slot="title"
