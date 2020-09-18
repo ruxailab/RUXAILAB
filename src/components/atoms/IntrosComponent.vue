@@ -6,31 +6,12 @@
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-<<<<<<< HEAD:src/components/atoms/IntrosComponent.vue
           >{{title}}</div>
           <v-img class="mb-5 hidden-md-and-up" contain :src="require('../../assets/manager/' + image)" max-height="350"></v-img>
           <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{main}}</div>
           <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
             <u>{{link}}</u>
           </span>
-=======
-          >Answers</div>
-          <v-img
-            class="hidden-md-and-up"
-            style="margin: 0px 20px"
-            contain
-            src="@/assets/manager/IntroAnswer.svg"
-          ></v-img>
-          <div
-            style="font-size: 22px"
-            class="white--text mb-4 mobile-center"
-          >Quickly get feedback on you project by analyzing data from other users' answers.</div>
-          <v-btn
-            class="mobile-center mb-4"
-            style="cursor: pointer"
-            @click="goToCoops()"
-          >Invite evaluators to answer your test!</v-btn>
->>>>>>> master:src/components/atoms/IntroAnswer.vue
         </div>
 
         <v-img
@@ -84,7 +65,6 @@ export default {
     emitClick() {
       this.$emit("linkClicked");
     },
-<<<<<<< HEAD:src/components/atoms/IntrosComponent.vue
     emitCallFunc(func) {
       this.$emit("callFunc", func);
     },
@@ -94,26 +74,6 @@ export default {
         return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
     },
   },
-=======
-    goToDoc() {
-      this.$router.push("/answers/documentation");
-    }
-  },
-  computed: {
-    items() {
-      return [
-        {
-          iconColor: "#4bbdaf",
-          icon: "mdi-file-document",
-          title: "Read documentation",
-          subtitle:
-            "Click to access the documentation on how to use the answers page.",
-          func: this.goToDoc
-        }
-      ];
-    }
-  }
->>>>>>> master:src/components/atoms/IntroAnswer.vue
 };
 </script>
 
