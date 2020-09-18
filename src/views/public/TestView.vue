@@ -69,7 +69,7 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="dialog = true" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
+            <v-btn  :disabled="answersSheet.progress < 100" class="white--text" @click="dialog = true" fab  small color="#F9A826" v-bind="attrs" v-on="on">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -103,7 +103,7 @@
           flat
           dense
           max-height="85%"
-          style="overflow-y:auto;overflow-x:hidden;"
+          style="overflow-y:auto;overflow-x:hidden; padding-bottom: 100px"
         >
           <div v-for="(item,n) in items" :key="n">
             <!--Pre Test-->
@@ -373,7 +373,7 @@ import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
 
 export default {
-  props: ["id"],
+  props: ["id", "token"],
   components: {
     ShowInfo,
     ViewTask,
@@ -408,6 +408,18 @@ export default {
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
+      if (this.test && this.token) {
+        if (!this.$store.state.cooperators.cooperators)
+          this.$store.dispatch("getCooperators", {
+            id: this.test.cooperators
+          });
+        else if (
+          this.$store.state.cooperators.cooperators !== this.test.cooperators
+        )
+          this.$store.dispatch("getCooperators", {
+            id: this.test.cooperators
+          });
+      }
     },
     items() {
       if (this.items.length) {
@@ -604,10 +616,99 @@ export default {
               accessLevel: 2
             }
           );
-          this.$store.dispatch("pushMyAnswers", {
-            docId: this.user.uid,
-            element: payload
-          });
+          //Get invitation
+          let coop = this.cooperators.cooperators.find(
+            coop => coop.token == this.token
+          );
+
+          if (coop) {
+            //User invited and he has account
+            if (this.user.uid == coop.id) {
+              this.$store
+                .dispatch("pushMyAnswers", {
+                  docId: this.user.uid,
+                  element: payload
+                })
+                .then(() => {
+                  //Update invitation to accepted
+                  this.$store.dispatch("updateCooperator", {
+                    docId: this.test.cooperators,
+                    elementId: this.user.uid,
+                    element: true,
+                    param: "accepted"
+                  });
+
+                  //Remove notification
+                  let inv = this.user.notifications.find(
+                    not => not.test.id == this.id
+                  );
+                  this.$store.dispatch("removeNotification", {
+                    docId: this.user.uid,
+                    element: inv
+                  });
+
+                  //Update state reports
+                  var log = {
+                    date: new Date().toLocaleString("en-US"),
+                    progress: 0,
+                    status: "In progress"
+                  };
+                  this.$store.dispatch("updateLog", {
+                    docId: this.test.reports,
+                    elementId: this.user.uid,
+                    element: log
+                  });
+                });
+            }
+            //User invited and he doesn't have account
+            else if (coop.id == null) {
+              this.$store
+                .dispatch("pushMyAnswers", {
+                  docId: this.user.uid,
+                  element: payload
+                })
+                .then(() => {
+                  //Update Invitation insert User ID and invitation accepted
+                  this.$store
+                    .dispatch("updateCooperator", {
+                      docId: this.test.cooperators,
+                      elementId: this.token,
+                      element: this.user.uid,
+                      identifier: "token",
+                      param: "id"
+                    })
+                    .then(() => {
+                      this.$store.dispatch("updateCooperator", {
+                        docId: this.test.cooperators,
+                        elementId: this.token,
+                        identifier: "token",
+                        element: true,
+                        param: "accepted"
+                      });
+                    });
+
+                  //Insert User at state reports
+                  let item = Object.assign(
+                    {},
+                    {
+                      uid: this.user.uid,
+                      email: this.user.email,
+                      log: {
+                        date: new Date().toLocaleString("en-Us"),
+                        progress: 0,
+                        status: "In progress"
+                      }
+                    }
+                  );
+                  this.$store.dispatch("pushLog", {
+                    docId: this.test.reports,
+                    element: item
+                  });
+                });
+            }
+          } else {
+            this.$store.commit("setError", "Invalid invitation");
+          }
         }
       }
     }
@@ -642,6 +743,9 @@ export default {
         return true;
       }
       return false;
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators;
     }
   },
   created() {
@@ -735,7 +839,7 @@ export default {
   padding-top: 0px;
 
   /*
-  height: 2.9em; 
+  height: 2.9em;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

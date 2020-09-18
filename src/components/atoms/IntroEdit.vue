@@ -1,36 +1,22 @@
 <template>
   <v-container style="display:contents; background-color:#f4b700">
-    <div class="background-gradient" :style="backgroundImage">
+    <div class="background-gradient">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-<<<<<<< HEAD:src/components/atoms/IntrosComponent.vue
-          >{{title}}</div>
-          <v-img class="mb-5 hidden-md-and-up" contain :src="require('../../assets/manager/' + image)" max-height="350"></v-img>
-          <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{main}}</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
-            <u>{{link}}</u>
-          </span>
-=======
-          >Answers</div>
-          <v-img
-            class="hidden-md-and-up"
-            style="margin: 0px 20px"
-            contain
-            src="@/assets/manager/IntroAnswer.svg"
-          ></v-img>
+          >Edit Test</div>
+          <v-img class="hidden-md-and-up" contain src="@/assets/manager/IntroEdit.svg"></v-img>
           <div
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
-          >Quickly get feedback on you project by analyzing data from other users' answers.</div>
+          >Create and customize your tasks and heuristics for your research needs.</div>
           <v-btn
             class="mobile-center mb-4"
-            style="cursor: pointer"
-            @click="goToCoops()"
-          >Invite evaluators to answer your test!</v-btn>
->>>>>>> master:src/components/atoms/IntroAnswer.vue
+            style="cursor: pointer  "
+            @click="closeIntro()"
+          >Get started!</v-btn>
         </div>
 
         <v-img
@@ -38,7 +24,7 @@
           contain
           max-width="40%"
           max-height="400"
-          :src="require('../../assets/manager/' + image)"
+          src="@/assets/manager/IntroEdit.svg"
         ></v-img>
       </v-row>
     </div>
@@ -52,7 +38,7 @@
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item
                   class="py-5"
-                  @click="emitCallFunc(item.func)"
+                  @click="item.func"
                   :ripple="false"
                   style="border-radius: 10px!important"
                 >
@@ -78,48 +64,37 @@
 
 <script>
 export default {
-  props: ["title", "image", "main", "link", "items", 'colors'],
   data: () => ({}),
   methods: {
-    emitClick() {
-      this.$emit("linkClicked");
-    },
-<<<<<<< HEAD:src/components/atoms/IntrosComponent.vue
-    emitCallFunc(func) {
-      this.$emit("callFunc", func);
-    },
-  },
-  computed: {
-    backgroundImage() {
-        return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
-    },
-  },
-=======
     goToDoc() {
-      this.$router.push("/answers/documentation");
+      this.$router.push("/edit/documentation");
+    },
+    closeIntro() {
+      this.$emit("closeIntro");
     }
   },
   computed: {
     items() {
       return [
         {
-          iconColor: "#4bbdaf",
+          iconColor: "#D128C9",
           icon: "mdi-file-document",
           title: "Read documentation",
           subtitle:
-            "Click to access the documentation on how to use the answers page.",
+            "Click to access the documentation on how to use the edit page.",
           func: this.goToDoc
         }
       ];
     }
   }
->>>>>>> master:src/components/atoms/IntroAnswer.vue
 };
 </script>
 
 <style scoped>
 .background-gradient {
   height: 60vh;
+  background-image: radial-gradient(circle at top right, #d128c9, #9a1aab);
+  /* background-image: radial-gradient(circle at top right, #ffe53b, #f1c515);   */
 }
 .learn-text {
   color: rgb(87, 84, 100);

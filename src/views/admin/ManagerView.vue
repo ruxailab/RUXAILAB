@@ -5,6 +5,30 @@
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
+    <v-dialog :value="flagToken && !flagUser" width="500" persistent>
+      <CardSignIn @logined="logined=true" @change="selected = !selected" v-if="selected" />
+      <CardSignUp @logined="logined=true" @change="selected = !selected" v-else />
+    </v-dialog>
+
+    <v-dialog :value="flagToken && flagUser" width="500" persistent>
+      <v-card v-if="user">
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange lighten-4" size="150">
+            <v-icon size="120" dark>mdi-account</v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">Continue as {{user.email}}</v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            Not {{user.email}}?
+            <a style="color: #F9A826" @click="signOut()">Change account</a>
+          </p>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-row class="nav pa-0 ma-0" dense>
       <v-navigation-drawer
         clipped
@@ -198,21 +222,28 @@
 </template>
 
 <script>
+import CardSignIn from "@/components/atoms/CardSignIn";
+import CardSignUp from "@/components/atoms/CardSignUp";
+
 export default {
-  props: ["id"],
+  props: ["id", "token"],
+  components: {
+    CardSignIn,
+    CardSignUp
+  },
   data: () => ({
+    selected: true,
+    flagUser: false,
+    flagToken: false,
     drawer: true,
     loading: true,
     tests: [],
     mini: true,
     isCoops: null,
     selectedTest: null,
-    item: 0,
+    item: 0
   }),
   methods: {
-    log() {
-      console.log("log");
-    },
     pushToTest() {
       this.$router.push("/managerview/" + this.selectedTest);
       this.index = 0;
@@ -230,6 +261,14 @@ export default {
     setLoading(payload) {
       this.loading = payload;
     },
+    setFlag(flag, value) {
+      this[flag] = value;
+    },
+    signOut() {
+      this.$store.dispatch("logout").then(() => {
+        this.setFlag("flagUser", false);
+      });
+    }
   },
   computed: {
     testsList() {
@@ -238,45 +277,46 @@ export default {
     },
     test() {
       let search = this.selectedTest || this.id;
+      let test;
+      if (this.user) {
+        test = this.$route.path.includes("template")
+          ? Object.assign(
+              {},
+              this.$store.state.auth.user.myTests.find(test => {
+                if ("template" in test)
+                  return Object.values(test.template).includes(search);
+              })
+            )
+          : Object.assign(
+              {},
+              this.$store.state.auth.user.myTests.find(test =>
+                Object.values(test).includes(search)
+              )
+            );
 
-      let test = this.$route.path.includes("template")
-        ? Object.assign(
+        if (!Object.keys(test).length) {
+          //se o objeto for vazio
+          test = Object.assign(
             {},
-            this.$store.state.auth.user.myTests.find((test) => {
-              if ("template" in test)
-                return Object.values(test.template).includes(search);
-            })
-          )
-        : Object.assign(
-            {},
-            this.$store.state.auth.user.myTests.find((test) =>
+            this.$store.state.auth.user.myCoops.find(test =>
               Object.values(test).includes(search)
             )
           );
-      
-      if (!Object.keys(test).length) {
-        //se o objeto for vazio
-        test = Object.assign(
-          {},
-          this.$store.state.auth.user.myCoops.find((test) =>
-            Object.values(test).includes(search)
-          )
-        );
 
-        if (Object.keys(test).length) {
-          //se nao for vazio entao é coops
-          this.setIsCoops(true);
+          if (Object.keys(test).length) {
+            //se nao for vazio entao é coops
+            this.setIsCoops(true);
+          }
+        } else {
+          this.setIsCoops(false);
         }
-      } else {
-        this.setIsCoops(false);
-      }
 
-      if (!Object.keys(test).length) {
-        this.setLoading(true);
-      } else {
-        this.setLoading(false);
+        if (!Object.keys(test).length) {
+          this.setLoading(true);
+        } else {
+          this.setLoading(false);
+        }
       }
-
       this.$store.commit("setManagerIDS", test);
       return test;
     },
@@ -284,7 +324,7 @@ export default {
       get() {
         if (this.items) {
           return this.items.indexOf(
-            this.items.find((item) =>
+            this.items.find(item =>
               item.path.split("/").includes(this.$route.path.split("/")[1])
             )
           );
@@ -293,7 +333,7 @@ export default {
       },
       set(item) {
         return item;
-      },
+      }
     },
     items() {
       let items = [
@@ -301,38 +341,38 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0,
+          id: 0
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1,
+          id: 1
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2,
+          id: 2
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3,
+          id: 3
         },
         {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4,
+          id: 4
         },
         {
           title: "Analytics",
           icon: "mdi-chart-bar",
           path: `/analyticsview/${this.test.answers}`,
-          id: 5,
-        },
+          id: 5
+        }
       ];
 
       if (this.test.accessLevel == 0) {
@@ -340,7 +380,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6,
+          id: 6
         });
       }
 
@@ -349,7 +389,7 @@ export default {
           title: "Template",
           icon: "mdi-file-compare",
           path: `/templateview/${this.test.template.id}`,
-          id: 7,
+          id: 7
         });
       }
 
@@ -368,7 +408,7 @@ export default {
           description: "Start creating and editing your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
-          path: `/edittest/${this.test.id}`,
+          path: `/edittest/${this.test.id}`
         },
         {
           image: "IntroCoops.svg",
@@ -378,8 +418,8 @@ export default {
           description: "Invite people to help you in your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
-          path: `/cooperatorsview/${this.test.cooperators}`,
-        },
+          path: `/cooperatorsview/${this.test.cooperators}`
+        }
       ];
     },
     bottomCards() {
@@ -392,7 +432,7 @@ export default {
           description: "Take a look at how your evaluators are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
-          path: `/reportview/${this.test.reports}`,
+          path: `/reportview/${this.test.reports}`
         },
         {
           image: "IntroAnswer.svg",
@@ -402,7 +442,7 @@ export default {
           description: "See how your evaluators are evaluating your project.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
-          path: `/answerview/${this.test.answers}`,
+          path: `/answerview/${this.test.answers}`
         },
         {
           image: "IntroAnalytics.svg",
@@ -412,11 +452,31 @@ export default {
           description: "Analyze comments and answers from your evaluators.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
-          path: `/analyticsview/${this.test.answers}`,
-        },
+          path: `/analyticsview/${this.test.answers}`
+        }
       ];
     },
+    user() {
+      if (this.$store.state.auth.user) {
+        this.setFlag("flagUser", true);
+      }
+      return this.$store.state.auth.user;
+    }
   },
+  watch: {
+    user() {
+      if (this.user) {
+        this.setFlag("flagUser", true);
+      }
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    if (to.params.token)
+      next(vm => {
+        vm.setFlag("flagToken", true);
+      });
+    next();
+  }
 };
 </script>
 

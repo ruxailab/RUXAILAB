@@ -23,13 +23,13 @@
             style="font-size: 22px"
             class="white--text mb-4 mobile-center"
           >Add cooperators who can help you improve your project and gather data for your studies.</div>
-          <span
-            class="white--text mobile-center mb-4"
+          <v-btn
+            class="mobile-center mb-4"
             style="cursor: pointer"
             @click="closeIntro()"
           >
-            <u>Get started!</u>
-          </span>
+            Get started!
+          </v-btn>
         </div>
 
         <v-img

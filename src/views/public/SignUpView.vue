@@ -109,6 +109,9 @@ export default {
         await this.$store.dispatch("signup", {
           email: this.email,
           password: this.password
+        }).then(() => {
+          console.log('push');
+          this.$router.push('/testslist');
         });
       if (this.user) {
         this.$router.push("/");

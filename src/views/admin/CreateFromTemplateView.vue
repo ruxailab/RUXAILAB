@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col cols="11">
+      <v-col cols="10">
         <v-row align="center" v-if="!searching">
           <span class="titleText ml-3 mb-2">Create from template</span>
 
@@ -103,7 +103,8 @@ export default {
                   type: object.type
                 },
                 answers: [],
-                answersSheet: object.answersSheet
+                answersSheet: object.answersSheet,
+                options: object.options
               }
             })
             .then(idAnswers => {
