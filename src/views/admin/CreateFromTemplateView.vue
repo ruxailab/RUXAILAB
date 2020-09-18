@@ -33,22 +33,59 @@
         ></v-text-field>
         <v-divider class="mb-1"></v-divider>
         <List @clicked="openTemp" :tests="filteredTemplates"></List>
-        <!-- mudar para filteredTemplates dps que incluir o title -->
       </v-col>
     </v-row>
     <v-dialog v-model="dialog" max-width="80%">
-      <v-card color="#e8eaf2">
-        <v-container>
-          <p class="dialog-title ma-2 pa-2">Create Test</p>
+      <!-- <v-card color="#e8eaf2">
+      <v-container>-->
+      <v-stepper v-model="step" style="background-color: #e8eaf2">
+        <v-stepper-header>
+          <v-stepper-step color="#F9A826" :complete="step > 1" step="1">Template Info</v-stepper-step>
+
+          <v-divider></v-divider>
+
+          <v-stepper-step color="#F9A826" step="2">Create From Template</v-stepper-step>
+        </v-stepper-header>
+
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <p class="dialog-title ma-0">{{temp.title}}</p>
+            <div
+              class="caption ma-0"
+            >Created by {{temp.author}} {{temp.version == '1.0.0' ? ` on ${temp.date}` : ` - Last updated: ${temp.date}`}} (Version: {{temp.version}})</div>
+            <v-divider class="my-2"></v-divider>
+
+            <div style="margin: 0px 0px 30px 0px">{{temp.description ? temp.description : 'Template has no description.' }}</div>
+
+            <v-row justify="end" class="ma-0 pa-0">
+              <v-btn class="error mr-2" @click="dialog = false">Cancel</v-btn>
+              <v-btn class="success" color="primary" @click="step = 2">Continue</v-btn>
+            </v-row>
+          </v-stepper-content>
+
+          <v-stepper-content step="2">
+            <p class="dialog-title ma-0">Create Test</p>
+            <v-divider class="my-2"></v-divider>
+            <FormTestDescription style="margin: 0px 0px 20px 0px" :test="temp" ref="form" :lock="true" />
+            <v-row justify="end" class="ma-0 pa-0">
+              <v-btn @click="step = 1" class="warning" style="position: absolute; left: 24px">Go Back</v-btn>
+
+              <v-btn class="error mr-2" @click="dialog = false">Cancel</v-btn>
+              <v-btn class="success" color="primary" @click="validate()">Create</v-btn>
+            </v-row>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+      <!-- <p class="dialog-title ma-2 pa-2">Create Test</p>
           <v-divider></v-divider>
           <FormTestDescription :test="temp" ref="form" :lock="true" />
           <v-card-actions class="ma-0 pa-2">
             <v-spacer></v-spacer>
             <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
             <v-btn color="#F9A826" @click="validate()">Create</v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
+      </v-card-actions>-->
+      <!-- </v-container>
+      </v-card>-->
     </v-dialog>
   </div>
 </template>
@@ -60,25 +97,25 @@ import FormTestDescription from "@/components/atoms/FormTestDescription";
 export default {
   components: {
     List,
-    FormTestDescription
+    FormTestDescription,
   },
   data: () => ({
     temp: {
       title: "",
       description: "",
       type: "",
-      idTemplate: ""
+      idTemplate: "",
     },
     dialog: false,
     searching: false,
     search: "",
     testID: null,
-    object: {}
+    object: {},
+    step: 1,
   }),
   methods: {
     openTemp(item) {
-      this.temp.idTemplate = item.id;
-      this.temp.type = item.type;
+      this.temp = Object.assign({}, item);
       this.dialog = true;
     },
     async submit() {
@@ -90,9 +127,9 @@ export default {
       await this.$store
         .dispatch("createTest", {
           collection: "test",
-          data: Object.assign(object, { date: d.toDateString() })
+          data: Object.assign(object, { date: d.toDateString() }),
         })
-        .then(id => {
+        .then((id) => {
           this.testID = id;
           this.$store
             .dispatch("createAnswers", {
@@ -100,17 +137,17 @@ export default {
                 test: {
                   id: id,
                   title: object.title,
-                  type: object.type
+                  type: object.type,
                 },
                 answers: [],
                 answersSheet: object.answersSheet,
-                options: object.options
-              }
+                options: object.options,
+              },
             })
-            .then(idAnswers => {
+            .then((idAnswers) => {
               this.$store.dispatch("setAnswerID", {
                 docId: id,
-                data: idAnswers
+                data: idAnswers,
               });
               this.$store
                 .dispatch("createReport", {
@@ -119,15 +156,15 @@ export default {
                       id: id,
                       title: object.title,
                       type: object.type,
-                      answers: idAnswers
+                      answers: idAnswers,
                     },
-                    reports: []
-                  }
+                    reports: [],
+                  },
                 })
-                .then(idReport => {
+                .then((idReport) => {
                   this.$store.dispatch("setReportID", {
                     docId: id,
-                    data: idReport
+                    data: idReport,
                   });
                   this.$store
                     .dispatch("createCooperators", {
@@ -135,15 +172,15 @@ export default {
                         test: {
                           id: id,
                           title: object.title,
-                          type: object.type
+                          type: object.type,
                         },
-                        cooperators: []
-                      }
+                        cooperators: [],
+                      },
                     })
-                    .then(idCooperators => {
+                    .then((idCooperators) => {
                       this.$store.dispatch("setCooperatorsID", {
                         docId: id,
-                        data: idCooperators
+                        data: idCooperators,
                       });
                       this.$store.dispatch("pushMyTest", {
                         docId: this.user.uid,
@@ -155,15 +192,15 @@ export default {
                           answers: idAnswers,
                           cooperators: idCooperators,
                           accessLevel: 0,
-                          date: d.toDateString()
+                          date: d.toDateString(),
                         },
-                        param: "myTests"
+                        param: "myTests",
                       });
                     });
                 });
             });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error", err);
           successful = false;
         });
@@ -178,8 +215,8 @@ export default {
         this.object = Object.assign(this.object, {
           admin: {
             id: this.user.uid,
-            email: this.user.email
-          }
+            email: this.user.email,
+          },
         });
       }
 
@@ -187,15 +224,15 @@ export default {
       this.object = Object.assign(this.object, {
         title: this.temp.title,
         description: this.temp.description,
-        type: this.temp.type
+        type: this.temp.type,
       });
       this.object = Object.assign(this.object, {
-        date: new Date().toDateString()
+        date: new Date().toDateString(),
       });
 
       //assigning tasks/heuristics
       let selectTemplate = this.storeTemplates.find(
-        t => t.id == this.temp.idTemplate
+        (t) => t.id == this.temp.id
       );
       this.object = Object.assign(this.object, selectTemplate.body);
     },
@@ -206,7 +243,7 @@ export default {
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
-    }
+    },
   },
   computed: {
     storeTemplates() {
@@ -215,14 +252,15 @@ export default {
     templates() {
       let array = [];
       if (this.storeTemplates !== null) {
-        array = this.storeTemplates.map(temp => {
+        array = this.storeTemplates.map((temp) => {
           let obj = {
             id: temp.id,
             title: temp.header.title || "No Title",
             date: temp.header.date,
             type: temp.body.type,
             author: temp.header.author,
-            version: temp.header.version
+            version: temp.header.version,
+            description: temp.header.description,
           };
           return obj;
         });
@@ -232,7 +270,7 @@ export default {
     },
     filteredTemplates() {
       if (this.templates !== null)
-        return this.templates.filter(temp => {
+        return this.templates.filter((temp) => {
           return temp.title.toLowerCase().includes(this.search.toLowerCase());
         });
 
@@ -240,7 +278,7 @@ export default {
     },
     user() {
       return this.$store.getters.user;
-    }
+    },
   },
   watch: {
     dialog() {
@@ -249,7 +287,7 @@ export default {
           title: "",
           description: "",
           type: "",
-          idTemplate: ""
+          idTemplate: "",
         };
 
         this.object = {};
@@ -258,13 +296,13 @@ export default {
         this.$refs.form.resetVal();
         this.dialog = false;
       }
-    }
+    },
   },
   created() {
     // if (this.$store.state.templates.templates == null) {
     this.$store.dispatch("getTemplates");
     // }
-  }
+  },
 };
 </script>
 
@@ -277,10 +315,7 @@ export default {
   font-family: Roboto;
   font-style: normal;
   font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
+  font-size: 34px;
   color: #000000;
 }
 .card {
@@ -296,6 +331,22 @@ export default {
 .card-text-box {
   margin: 0px 0px 0px 30px;
 }
+.dialog-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+.dialog-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.dialog-scroll::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+.dialog-scroll::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
 
 @media screen and (max-width: 960px) {
   .dialog-title {
@@ -307,7 +358,7 @@ export default {
     margin: 20px 0px 0px 0px;
   }
   .card {
-      height: auto;
+    height: auto;
   }
 }
 </style>
