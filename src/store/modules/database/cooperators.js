@@ -54,6 +54,17 @@ export default {
         console.error("Error updating element", err);
       });
     },
+    updateCooperatorObject({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "cooperators",
+        field: "cooperators",
+      });
+      if (!payload.identifier)
+        Object.assign(payload, { identifier: "id", })
+      dispatch("updateArrayElementObject", payload).catch((err) => {
+        console.error("Error updating element", err);
+      });
+    },
     removeCooperator({ dispatch }, payload) {
       payload = Object.assign(payload, {
         collection: "cooperators",
