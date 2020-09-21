@@ -338,26 +338,7 @@ export default {
                     })
                     .then(() => {
                       this.flagToken = false;
-                    });
-                  // this.$store
-                  //   .dispatch("updateCooperator", {
-                  //     docId: this.cooperators.id,
-                  //     elementId: this.token,
-                  //     identifier: "token",
-                  //     element: true,
-                  //     param: "accepted"
-                  //   })
-                  //   .then(() => {
-                  //     //this.flagToken = false;
-                  //   });
-                  // //Update Invitation insert User ID and invitation accepted
-                  // this.$store.dispatch("updateCooperator", {
-                  //   docId: this.cooperators.id,
-                  //   elementId: this.token,
-                  //   identifier: "token",
-                  //   element: this.user.uid,
-                  //   param: "id"
-                  // });
+                    });               
                 });
             }
           } else {

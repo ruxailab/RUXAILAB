@@ -150,8 +150,11 @@
                       <v-list-item-title>Remove cooperator</v-list-item-title>
                     </v-list-item>
 
-                    <v-list-item v-if="item.invited && item.accepted == null">
-                      <v-list-item-title>No options yet</v-list-item-title>
+                    <v-list-item
+                      @click="cancelInvitation(item)"
+                      v-if="item.invited && item.accepted == null"
+                    >
+                      <v-list-item-title>Cancel invitation</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -391,6 +394,7 @@ export default {
           })
           .then(() => {
             this.$set(guest, "invited", true);
+            Object.assign(guest, { invitation: invID });
             //Access Level Tester
             if (guest.accessLevel.value == 2) {
               let item = Object.assign(
@@ -583,6 +587,33 @@ export default {
           element: Object.assign({}, guest)
         });
       });
+    },
+    cancelInvitation(guest) {
+      this.$store
+        .dispatch("removeCooperator", {
+          docId: this.id,
+          element: {
+            id: guest.id
+          }
+        })
+        .then(() => {
+          if (guest.id) {
+            this.$store.dispatch("removeNotification", {
+              docId: guest.id,
+              element: { id: guest.invitation }
+            });
+          }
+          if (guest.accessLevel.value >= 2 && guest.id) {
+            this.$store.dispatch("removeReport", {
+              docId: this.testID.reports,
+              element: {
+                id: guest.id
+              },
+              param: "reports"
+            });
+          }
+        });
+      this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest),1)
     }
   },
   watch: {
