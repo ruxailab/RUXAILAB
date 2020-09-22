@@ -40,7 +40,6 @@ export default {
       commit("setLoading",false);
     },
     deleteAnswers({ dispatch }, payload) {
-      console.log("delete")
       payload = Object.assign(payload, { collection: "answers" });
 
       dispatch("deleteObject", payload).catch((err) => {
@@ -48,7 +47,6 @@ export default {
       });
     },
     updateTestAnswer({ dispatch }, payload) {
-      console.log("update")
       payload = Object.assign(payload, { collection: "answers" });
       dispatch("updateObject", payload).catch(() => {
         console.error("Error to update");

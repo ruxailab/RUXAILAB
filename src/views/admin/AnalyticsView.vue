@@ -188,9 +188,6 @@ export default {
     intro: null
   }),
   methods: {
-    log() {
-      console.log("Test", this.test);
-    },
     statistics() {
       const answers = this.answers.answers;
       this.resultHeuristics = [];

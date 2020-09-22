@@ -178,9 +178,6 @@ export default {
     ],
   }),
   methods: {
-    log() {
-      console.log("templates", this.id);
-    },
     validate(valid, index) {
       this.valids[index] = valid;
     },
@@ -258,7 +255,6 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
-      console.log("deletetest", item);
       await this.$store.dispatch("getTest", { id: item.id });
       await this.$store.dispatch("getAnswers", { id: item.answers });
       await this.$store.dispatch("getReports", { id: item.reports });

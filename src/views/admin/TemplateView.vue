@@ -224,7 +224,6 @@ export default {
   methods: {
     update() {
       let payload = Object.assign({}, { header: this.template.header });
-      console.log("Payload", payload);
 
       payload.header.date = new Date().toDateString();
       if (this.template.body.type == "Expert") {
@@ -352,9 +351,6 @@ export default {
     },
     setTemplate() {
       this.template = this.$store.getters.template;
-    },
-    log() {
-      console.log(this.template);
     },
     updateTemplate() {
       this.updated = true;
@@ -499,7 +495,6 @@ export default {
               }),
             });
           }
-          console.log(postTest);
         }
       }
 

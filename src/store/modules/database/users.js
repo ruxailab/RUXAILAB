@@ -152,7 +152,6 @@ export default {
 
       if (payload.myCoops.length) {
         payload.myCoops.forEach(test => {
-          console.log(test)
           dispatch('removeCooperator', {
             docId: test.cooperators,
             element: {

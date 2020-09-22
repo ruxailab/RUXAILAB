@@ -81,7 +81,6 @@ export default {
     },
     async deleteTest({ dispatch }, payload) {
       // await dispatch("getTest", { id: payload.id });
-      console.log(payload)
       await dispatch("getCooperators", { id: payload.cooperators });
 
       let coops = this.state.cooperators.cooperators;
@@ -94,7 +93,6 @@ export default {
         dispatch("deleteAnswers", { id: payload.answers });
       
       coops.cooperators.forEach(coop => {
-        console.log(coop)
         if(coop.accessLevel.value <= 1) dispatch("removeMyCoops", {
           docId: coop.id,
           element: {
