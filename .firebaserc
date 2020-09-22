@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "research-workflow"
+    "default": "retlab-dev",
+    "dev": "retlab-dev",
+    "production": "retlab"
   }
 }

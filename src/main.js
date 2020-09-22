@@ -6,7 +6,16 @@ import firebase from 'firebase/app'
 import vuetify from './plugins/vuetify';
 import i18n from './i18n'
 
-const firebaseConfig = {
+let isProduction = false;
+
+fetch('/__/firebase/init.json').then(response => {
+  isProduction = response.url.includes('dev') ? false : true;
+});
+
+console.log("isProduction? ", isProduction);
+
+const firebaseConfig = isProduction ? {
+
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
   storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
@@ -14,11 +23,22 @@ const firebaseConfig = {
   projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_FIREBASE_APP_ID
+} :
+{
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY_DEV,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN_DEV,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET_DEV,
+  databaseURL: process.env.VUE_APP_FIREBASE_DB_URL_DEV,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID_DEV,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID_DEV 
 }
 
 firebase.initializeApp(firebaseConfig)
 
-
+// fetch('/__/firebase/init.json').then(response => {
+//   firebase.initializeApp(response.json());
+// });
 
 Vue.config.productionTip = false
 
