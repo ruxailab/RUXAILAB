@@ -752,12 +752,11 @@ export default {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   },
   beforeRouteEnter(to, from, next) {
-    if (!from.name)
+    if (to.params.token)
       next(vm => {
         vm.fromlink = true;
       });
     next();
-    // don't forget to call next()
   }
 };
 </script>

@@ -6,8 +6,8 @@
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
-      <CardSignIn @logined="logined=true" @change="selected = !selected" v-if="selected" />
-      <CardSignUp @logined="logined=true" @change="selected = !selected" v-else />
+      <CardSignIn @logined="setTest()" @change="selected = !selected" v-if="selected" />
+      <CardSignUp @logined="flagNewUser = true" @change="selected = !selected" v-else />
     </v-dialog>
 
     <v-dialog :value="flagToken && flagUser" width="500" persistent>
@@ -29,7 +29,7 @@
       </v-card>
     </v-dialog>
 
-    <v-row class="nav pa-0 ma-0" dense>
+    <v-row class="nav pa-0 ma-0" dense v-if="test">
       <v-navigation-drawer
         clipped
         v-model="drawer"
@@ -235,6 +235,7 @@ export default {
     selected: true,
     flagUser: false,
     flagToken: false,
+    flagNewUser: false,
     drawer: true,
     loading: true,
     tests: [],
@@ -268,6 +269,85 @@ export default {
       this.$store.dispatch("logout").then(() => {
         this.setFlag("flagUser", false);
       });
+    },
+    async setTest() {
+      if (this.user.myCoops && this.test) {
+        let exist = this.user.myCoops.find(test => test.id == this.id);
+        if (!exist) {
+          //Get invitation
+          let invitation = this.cooperators.cooperators.find(
+            coop => coop.token == this.token
+          );
+
+          let payload = Object.assign(
+            {},
+            {
+              id: this.test.id,
+              title: this.test.title,
+              type: this.test.type,
+              reports: this.test.reports,
+              answers: this.test.answers,
+              cooperators: this.test.cooperators,
+              accessLevel: invitation.accessLevel.value
+            }
+          );
+
+          if (invitation) {
+            //User invited and he has account
+            if (this.user.uid == invitation.id) {
+              this.$store
+                .dispatch("pushMyCoops", {
+                  docId: this.user.uid,
+                  element: payload
+                })
+                .then(() => {
+                  //Update invitation to accepted
+                  this.$store.dispatch("updateCooperator", {
+                    docId: this.test.cooperators,
+                    elementId: this.user.uid,
+                    element: true,
+                    param: "accepted"
+                  });
+                  //Remove notification
+                  let inv = this.user.notifications.find(
+                    not => not.test.id == this.id
+                  );
+                  this.$store.dispatch("removeNotification", {
+                    docId: this.user.uid,
+                    element: inv
+                  });
+                  this.flagToken = false;
+                });
+            }
+            //User invited and he doesn't have account
+            else if (invitation.id == null) {
+              this.$store
+                .dispatch("pushMyCoops", {
+                  docId: this.user.uid,
+                  element: payload
+                })
+                .then(() => {
+                  invitation.id = this.user.uid;
+                  invitation.accepted = true;
+                  this.$store
+                    .dispatch("updateCooperatorObject", {
+                      docId: this.cooperators.id,
+                      elementId: this.token,
+                      identifier: "token",
+                      element: invitation
+                    })
+                    .then(() => {
+                      this.flagToken = false;
+                    });               
+                });
+            }
+          } else {
+            this.$store.commit("setError", "Invalid invitation");
+          }
+        } else {
+          this.flagToken = false;
+        }
+      }
     }
   },
   computed: {
@@ -278,7 +358,7 @@ export default {
     test() {
       let search = this.selectedTest || this.id;
       let test;
-      if (this.user) {
+      if (this.user && !this.flagToken) {
         test = this.$route.path.includes("template")
           ? Object.assign(
               {},
@@ -316,9 +396,11 @@ export default {
         } else {
           this.setLoading(false);
         }
+        this.$store.commit("setManagerIDS", test);
+        return test;
+      } else {
+        return this.$store.getters.test;
       }
-      this.$store.commit("setManagerIDS", test);
-      return test;
     },
     index: {
       get() {
@@ -336,61 +418,64 @@ export default {
       }
     },
     items() {
-      let items = [
-        {
-          title: "Manager",
-          icon: "mdi-home",
-          path: `/managerview/${this.test.id}`,
-          id: 0
-        },
-        {
-          title: "Test",
-          icon: "mdi-file-document-edit",
-          path: `/edittest/${this.test.id}`,
-          id: 1
-        },
-        {
-          title: "Preview",
-          icon: "mdi-file-eye",
-          path: `/testview/${this.test.id}`,
-          id: 2
-        },
-        {
-          title: "Reports",
-          icon: "mdi-book-multiple",
-          path: `/reportview/${this.test.reports}`,
-          id: 3
-        },
-        {
-          title: "Answers",
-          icon: "mdi-order-bool-ascending-variant",
-          path: `/answerview/${this.test.answers}`,
-          id: 4
-        },
-        {
-          title: "Analytics",
-          icon: "mdi-chart-bar",
-          path: `/analyticsview/${this.test.answers}`,
-          id: 5
+      let items;
+      if (this.test) {
+        items = [
+          {
+            title: "Manager",
+            icon: "mdi-home",
+            path: `/managerview/${this.test.id}`,
+            id: 0
+          },
+          {
+            title: "Test",
+            icon: "mdi-file-document-edit",
+            path: `/edittest/${this.test.id}`,
+            id: 1
+          },
+          {
+            title: "Preview",
+            icon: "mdi-file-eye",
+            path: `/testview/${this.test.id}`,
+            id: 2
+          },
+          {
+            title: "Reports",
+            icon: "mdi-book-multiple",
+            path: `/reportview/${this.test.reports}`,
+            id: 3
+          },
+          {
+            title: "Answers",
+            icon: "mdi-order-bool-ascending-variant",
+            path: `/answerview/${this.test.answers}`,
+            id: 4
+          },
+          {
+            title: "Analytics",
+            icon: "mdi-chart-bar",
+            path: `/analyticsview/${this.test.answers}`,
+            id: 5
+          }
+        ];
+
+        if (this.test.accessLevel == 0) {
+          items.push({
+            title: "Cooperators",
+            icon: "mdi-account-group",
+            path: `/cooperatorsview/${this.test.cooperators}`,
+            id: 6
+          });
         }
-      ];
 
-      if (this.test.accessLevel == 0) {
-        items.push({
-          title: "Cooperators",
-          icon: "mdi-account-group",
-          path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6
-        });
-      }
-
-      if (this.test.template) {
-        items.push({
-          title: "Template",
-          icon: "mdi-file-compare",
-          path: `/templateview/${this.test.template.id}`,
-          id: 7
-        });
+        if (this.test.template) {
+          items.push({
+            title: "Template",
+            icon: "mdi-file-compare",
+            path: `/templateview/${this.test.template.id}`,
+            id: 7
+          });
+        }
       }
 
       return items;
@@ -461,12 +546,35 @@ export default {
         this.setFlag("flagUser", true);
       }
       return this.$store.state.auth.user;
+    },
+    cooperators() {
+      return this.$store.state.cooperators.cooperators;
     }
   },
   watch: {
     user() {
       if (this.user) {
         this.setFlag("flagUser", true);
+      }
+      if (this.user.myCoops && this.flagNewUser) {
+        this.setTest();
+        this.flagNewUser = false;
+      }
+    },
+    test() {
+      if (this.test && this.token) {
+        if (this.test.cooperators) {
+          if (!this.$store.state.cooperators.cooperators)
+            this.$store.dispatch("getCooperators", {
+              id: this.test.cooperators
+            });
+          else if (
+            this.$store.state.cooperators.cooperators !== this.test.cooperators
+          )
+            this.$store.dispatch("getCooperators", {
+              id: this.test.cooperators
+            });
+        }
       }
     }
   },
@@ -476,6 +584,12 @@ export default {
         vm.setFlag("flagToken", true);
       });
     next();
+  },
+  created() {
+    if (!this.$store.state.tests.test)
+      this.$store.dispatch("getTest", { id: this.id });
+    else if (this.$store.state.tests.test.id !== this.id)
+      this.$store.dispatch("getTest", { id: this.id });
   }
 };
 </script>

@@ -80,10 +80,36 @@ export default {
     var docRef = collectionRef.doc(payload.docId);
     let element = await docRef.get();
     element = Object.assign({ id: payload.docId }, element.data());
+    console.log("element", element)
     var obj = element[payload.field].find(
       (el) => el[payload.identifier] === payload.elementId
     );
+    console.log("Object", obj)
     obj[payload.param] = payload.element;
+    console.log("Object", obj)
+    return docRef.update({
+      [payload.field]: element[payload.field],
+    });
+  },
+  updateArrayObject: async (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+    var docRef = collectionRef.doc(payload.docId);
+    let element = await docRef.get();
+    element = Object.assign({ id: payload.docId }, element.data());
+    let index
+    element[payload.field].forEach(
+      (el) => {
+        if (el[payload.identifier] === payload.elementId) {
+          console.log("el", el)
+          index = element[payload.field].indexOf(el)
+          el = payload.element
+        }
+      }
+    );
+    
+    element[payload.field][index] = payload.element
+
 
     return docRef.update({
       [payload.field]: element[payload.field],

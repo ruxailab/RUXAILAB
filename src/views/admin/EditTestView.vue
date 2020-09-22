@@ -257,7 +257,7 @@ export default {
     },
   },
   created() {
-    if (!this.$store.test && this.id !== null && this.id !== undefined) {
+    if (! this.$store.state.tests.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", { id: this.id });
     } else {
       this.loading = false;
