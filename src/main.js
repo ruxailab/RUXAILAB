@@ -8,12 +8,6 @@ import i18n from './i18n'
 
 let isProduction = false;
 
-fetch('/__/firebase/init.json').then(response => {
-  isProduction = response.url.includes('dev') ? false : true;
-});
-
-console.log("isProduction? ", isProduction);
-
 const firebaseConfig = isProduction ? {
 
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
