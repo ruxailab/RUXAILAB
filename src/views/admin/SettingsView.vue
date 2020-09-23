@@ -2,44 +2,56 @@
   <v-container v-if="test">
     <Snackbar />
 
-    <Dialog
-      :dialog="dialogAlert"
-      text="Are you sure you want to leave? All your changes will be discarded"
-    >
-      <v-card-title
-        slot="title"
-        class="headline error accent-4 white--text"
-        primary-title
-      >Are you sure you want to leave?</v-card-title>
+    <!-- Leave Alert Dialog -->
+    <v-dialog v-model="dialogAlert" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error accent-4 white--text"
+          primary-title
+        >Are you sure you want to leave?</v-card-title>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
-        <v-btn
-          class="error accent-4 white--text ml-1"
-          text
-          @click="change = false,$router.push(go)"
-        >Leave</v-btn>
-      </div>
-    </Dialog>
+        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
 
-    <Dialog :dialog="dialogDel" :text="dialogText">
-      <v-card-title
-        slot="title"
-        class="headline error white--text"
-        primary-title
-      >Are you sure you want to delete this test?</v-card-title>
+        <v-divider></v-divider>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
-        <v-btn
-          class="red white--text ml-1"
-          :loading="loading"
-          text
-          @click="deleteTest(object), loading = true"
-        >Delete</v-btn>
-      </div>
-    </Dialog>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
+          <v-btn
+            class="error accent-4 white--text ml-1"
+            text
+            @click="change = false,$router.push(go)"
+          >Leave</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
+    <!-- Delete Alert Dialog -->
+    <v-dialog v-model="dialogDel" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error white--text"
+          primary-title
+        >Are you sure you want to delete this test?</v-card-title>
+
+        <v-card-text>{{ dialogText }}</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
+          <v-btn
+            class="red white--text ml-1"
+            :loading="loading"
+            text
+            @click="deleteTest(object), loading = true"
+          >Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
       <v-card>
         <p class="dialog-title ma-2 pa-2">Create Template</p>
@@ -152,15 +164,13 @@
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
-import Dialog from "@/components/atoms/Dialog";
 
 export default {
   props: ["id"],
   components: {
     FormTestDescription,
     Snackbar,
-    ShowInfo,
-    Dialog,
+    ShowInfo
   },
   data: () => ({
     object: null,

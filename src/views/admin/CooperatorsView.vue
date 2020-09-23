@@ -9,25 +9,30 @@
     <v-row justify="center" v-else-if="cooperators">
       <v-container class="ma-0 pa-0">
         <Snackbar />
-        <Dialog
-          :dialog="dialog"
-          text="Are you sure you want to leave? All your changes will be discarded"
-        >
-          <v-card-title
-            slot="title"
-            class="headline error accent-4 white--text"
-            primary-title
-          >Are you sure you want to leave?</v-card-title>
 
-          <div slot="actions">
-            <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
-            <v-btn
-              class="error accent-4 white--text ml-1"
-              text
-              @click="change = false,$router.push(go)"
-            >Leave</v-btn>
-          </div>
-        </Dialog>
+        <!-- Leave alert dialog -->
+        <v-dialog v-model="dialog" width="600" persistent>
+          <v-card>
+            <v-card-title
+              class="headline error accent-4 white--text"
+              primary-title
+            >Are you sure you want to leave?</v-card-title>
+
+            <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+              <v-btn
+                class="error accent-4 white--text ml-1"
+                text
+                @click="change = false,$router.push(go)"
+              >Leave</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-tooltip left v-if="change">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -170,7 +175,6 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
-import Dialog from "@/components/atoms/Dialog";
 import Intro from "@/components/molecules/IntroCoops";
 
 export default {
@@ -178,7 +182,6 @@ export default {
   components: {
     ShowInfo,
     Snackbar,
-    Dialog,
     Intro
   },
   data: () => ({
@@ -194,35 +197,35 @@ export default {
       { text: "Role", value: "accessLevel" },
       { text: "Invited", value: "invited", justify: "center" },
       { text: "Accepted", value: "accepted", justify: "center" },
-      { text: "More", value: "more", sortable: false }
+      { text: "More", value: "more", sortable: false },
     ],
     roleOptions: [
       { text: "Evaluator", value: 2 },
       { text: "Guest", value: 1 },
-      { text: "Administrator", value: 0 }
+      { text: "Administrator", value: 0 },
     ],
     dialog: false,
     loading: true,
     intro: null,
-    email: ""
+    email: "",
   }),
   methods: {
     setValue(value) {
       this.edited = value;
     },
     submit() {
-      this.cooperatorsEdit.forEach(guest => {
+      this.cooperatorsEdit.forEach((guest) => {
         //Invide new cooperators
         if (!guest.invited) {
           this.send(guest);
         }
       });
 
-      this.editedCoops.forEach(guest => {
+      this.editedCoops.forEach((guest) => {
         this.edit(guest);
       });
 
-      this.deletedCoops.forEach(guest => {
+      this.deletedCoops.forEach((guest) => {
         this.remove(guest);
       });
 
@@ -236,16 +239,16 @@ export default {
           .dispatch("removeMyCoops", {
             docId: guest.id,
             element: {
-              id: this.testID.id
-            }
+              id: this.testID.id,
+            },
           })
           .then(() => {
             //Remove element array
             this.$store.dispatch("removeCooperator", {
               docId: this.id,
               element: {
-                id: guest.id
-              }
+                id: guest.id,
+              },
             });
           });
       } else {
@@ -253,24 +256,24 @@ export default {
           .dispatch("removeMyAnswers", {
             docId: guest.id,
             element: {
-              id: this.testID.id
-            }
+              id: this.testID.id,
+            },
           })
           .then(() => {
             this.$store
               .dispatch("removeReport", {
                 docId: this.testID.reports,
                 element: {
-                  id: guest.id
+                  id: guest.id,
                 },
-                param: "reports"
+                param: "reports",
               })
               .then(() => {
                 this.$store.dispatch("removeCooperator", {
                   docId: this.id,
                   element: {
-                    id: guest.id
-                  }
+                    id: guest.id,
+                  },
                 });
               });
           });
@@ -282,7 +285,7 @@ export default {
           docId: this.id,
           elementId: guest.guest.id,
           element: guest.current,
-          param: "accessLevel"
+          param: "accessLevel",
         })
         .then(() => {
           // Cooperator was Tester
@@ -291,23 +294,23 @@ export default {
               .dispatch("removeMyAnswers", {
                 docId: guest.guest.id,
                 element: {
-                  id: this.testID.id
-                }
+                  id: this.testID.id,
+                },
               })
               .then(() => {
                 this.$store.dispatch("removeReport", {
                   docId: this.testID.reports,
                   element: {
-                    id: guest.id
+                    id: guest.id,
                   },
-                  param: "reports"
+                  param: "reports",
                 });
                 let test = Object.assign({}, this.testID);
                 this.$store.dispatch("pushMyCoops", {
                   docId: guest.guest.id,
                   element: Object.assign(test, {
-                    accessLevel: guest.current.value
-                  })
+                    accessLevel: guest.current.value,
+                  }),
                 });
               });
           } else if (
@@ -319,8 +322,8 @@ export default {
               .dispatch("removeMyCoops", {
                 docId: guest.guest.id,
                 element: {
-                  id: this.testID.id
-                }
+                  id: this.testID.id,
+                },
               })
               .then(() => {
                 let test = Object.assign({}, this.testID);
@@ -328,10 +331,10 @@ export default {
                   docId: guest.guest.id,
                   element: Object.assign(test, {
                     answersSheet: Object.assign(this.test.answersSheet, {
-                      submited: false
+                      submited: false,
                     }),
-                    accessLevel: 2
-                  })
+                    accessLevel: 2,
+                  }),
                 });
 
                 let item = Object.assign(
@@ -342,13 +345,13 @@ export default {
                     log: {
                       date: new Date().toLocaleString("en-Us"),
                       progress: 0,
-                      status: "In progress"
-                    }
+                      status: "In progress",
+                    },
                   }
                 );
                 this.$store.dispatch("pushLog", {
                   docId: this.testID.reports,
-                  element: item
+                  element: item,
                 });
               });
           } else if (guest.previous.value != 2 && guest.current.value != 2) {
@@ -356,7 +359,7 @@ export default {
               docId: guest.guest.id,
               elementId: this.id,
               element: guest.current.value,
-              param: "accessLevel"
+              param: "accessLevel",
             });
           }
         });
@@ -371,11 +374,11 @@ export default {
           to: {
             id: guest.id,
             email: guest.email,
-            accessLevel: guest.accessLevel.value
+            accessLevel: guest.accessLevel.value,
           },
           from: {
             id: this.user.uid,
-            email: this.user.email
+            email: this.user.email,
           },
           test: {
             id: this.test.id,
@@ -383,14 +386,14 @@ export default {
             type: this.test.type,
             reports: this.test.reports,
             answers: this.test.answers,
-            cooperators: this.test.cooperators
-          }
+            cooperators: this.test.cooperators,
+          },
         };
         this.$store
           .dispatch("pushNotification", {
             docId: inv.to.id,
             element: inv,
-            param: "notifications"
+            param: "notifications",
           })
           .then(() => {
             this.$set(guest, "invited", true);
@@ -405,13 +408,13 @@ export default {
                   log: {
                     date: new Date().toLocaleString("en-Us"),
                     progress: 0,
-                    status: "Invited"
-                  }
+                    status: "Invited",
+                  },
                 }
               );
               this.$store.dispatch("pushLog", {
                 docId: this.test.reports,
-                element: item
+                element: item,
               });
             }
           });
@@ -427,11 +430,11 @@ export default {
         to: {
           id: guest.id,
           email: guest.email,
-          accessLevel: guest.accessLevel.value
+          accessLevel: guest.accessLevel.value,
         },
         from: {
           id: this.user.uid,
-          email: this.user.email
+          email: this.user.email,
         },
         test: {
           id: this.test.id,
@@ -439,14 +442,14 @@ export default {
           type: this.test.type,
           reports: this.test.reports,
           answers: this.test.answers,
-          cooperators: this.test.cooperators
-        }
+          cooperators: this.test.cooperators,
+        },
       };
       this.$store
         .dispatch("pushNotification", {
           docId: inv.to.id,
           element: inv,
-          param: "notifications"
+          param: "notifications",
         })
         .then(() => {
           this.$store
@@ -454,7 +457,7 @@ export default {
               docId: this.id,
               elementId: guest.id,
               element: null,
-              param: "accepted"
+              param: "accepted",
             })
             .then(() => {
               guest.accepted = null;
@@ -477,7 +480,7 @@ export default {
             invited: false,
             accepted: null,
             accessLevel: { text: "Researcher", value: 1 },
-            token: token
+            token: token,
           }
         );
       } else if (!this.email.includes("@") || !this.email.includes("."))
@@ -491,13 +494,13 @@ export default {
             invited: false,
             accepted: null,
             accessLevel: { text: "Researcher", value: 1 },
-            token: token
+            token: token,
           }
         );
       }
 
       if (obj !== null)
-        this.cooperatorsEdit.forEach(coop => {
+        this.cooperatorsEdit.forEach((coop) => {
           if (coop.email === obj.email) {
             hasObj = true;
           }
@@ -525,7 +528,7 @@ export default {
       this.cooperatorsEdit.splice(index, 1);
     },
     recordChange(item) {
-      let edit = this.editedCoops.find(c => c.guest.id == item.id);
+      let edit = this.editedCoops.find((c) => c.guest.id == item.id);
       this.change = true;
 
       if (item.id) {
@@ -533,17 +536,19 @@ export default {
           this.editedCoops.push({
             guest: item,
             previous: item.accessLevel,
-            current: this.edited
+            current: this.edited,
           });
         } else if (edit && item.accepted) {
           if (edit.previous.value === this.edited.value) {
             this.editedCoops.splice(this.editedCoops.indexOf(edit), 1);
           } else edit.current = this.edited;
         }
-        let coop = this.cooperatorsEdit.find(coop => coop.id == item.id);
+        let coop = this.cooperatorsEdit.find((coop) => coop.id == item.id);
         coop.accessLevel = this.edited;
       } else {
-        let coop = this.cooperatorsEdit.find(coop => coop.token == item.token);
+        let coop = this.cooperatorsEdit.find(
+          (coop) => coop.token == item.token
+        );
         coop.accessLevel = this.edited;
       }
     },
@@ -563,19 +568,19 @@ export default {
           from: this.user.email,
           testTitle: this.test.title,
           guest: guest,
-          domain: domain
+          domain: domain,
         }
       );
 
       if (guest.accessLevel.value >= 2) {
         email = Object.assign(email, {
           path: "testview",
-          token: guest.token
+          token: guest.token,
         });
       } else {
         email = Object.assign(email, {
           path: "managerview",
-          token: guest.token
+          token: guest.token,
         });
       }
       this.$store.dispatch("sendEmailInvitation", email).then(() => {
@@ -584,7 +589,7 @@ export default {
         Object.assign(guest);
         this.$store.dispatch("pushCooperator", {
           docId: this.id,
-          element: Object.assign({}, guest)
+          element: Object.assign({}, guest),
         });
       });
     },
@@ -593,31 +598,31 @@ export default {
         .dispatch("removeCooperator", {
           docId: this.id,
           element: {
-            id: guest.id
-          }
+            id: guest.id,
+          },
         })
         .then(() => {
           if (guest.id) {
             this.$store.dispatch("removeNotification", {
               docId: guest.id,
-              element: { id: guest.invitation }
+              element: { id: guest.invitation },
             });
           }
           if (guest.accessLevel.value >= 2 && guest.id) {
             this.$store.dispatch("removeReport", {
               docId: this.testID.reports,
               element: {
-                id: guest.id
+                id: guest.id,
               },
-              param: "reports"
+              param: "reports",
             });
           }
         });
-      this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest),1)
-    }
+      this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest), 1);
+    },
   },
   watch: {
-    cooperators: async function() {
+    cooperators: async function () {
       if (this.cooperators !== null && this.cooperators !== undefined) {
         this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
         if (!this.$store.test) {
@@ -634,14 +639,14 @@ export default {
         if (this.cooperatorsEdit.length == 0) this.intro = true;
         else this.intro = false;
       }
-    }
+    },
   },
   computed: {
     test() {
       return this.$store.getters.test;
     },
     testID() {
-      return this.$store.state.auth.user.myTests.find(test =>
+      return this.$store.state.auth.user.myTests.find((test) =>
         Object.values(test).includes(this.id)
       );
     },
@@ -658,9 +663,9 @@ export default {
     filteredUsers() {
       let hasUser = null;
       let array = [];
-      this.users.forEach(user => {
+      this.users.forEach((user) => {
         hasUser = false;
-        this.cooperatorsEdit.forEach(coop => {
+        this.cooperatorsEdit.forEach((coop) => {
           if (coop.id === user.id) {
             hasUser = true;
           }
@@ -668,7 +673,7 @@ export default {
         if (!hasUser) array.push(user);
       });
       return array;
-    }
+    },
   },
   created() {
     if (!this.$store.state.cooperators.cooperators)
@@ -694,7 +699,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 
