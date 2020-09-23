@@ -237,7 +237,6 @@ export default {
     flagToken: false,
     flagNewUser: false,
     drawer: true,
-    loading: true,
     tests: [],
     mini: true,
     isCoops: null,
@@ -258,9 +257,6 @@ export default {
     },
     setIsCoops(payload) {
       this.isCoops = payload;
-    },
-    setLoading(payload) {
-      this.loading = payload;
     },
     setFlag(flag, value) {
       this[flag] = value;
@@ -391,11 +387,6 @@ export default {
           this.setIsCoops(false);
         }
 
-        if (!Object.keys(test).length) {
-          this.setLoading(true);
-        } else {
-          this.setLoading(false);
-        }
         this.$store.commit("setManagerIDS", test);
         return test;
       } else {
@@ -549,6 +540,9 @@ export default {
     },
     cooperators() {
       return this.$store.state.cooperators.cooperators;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   },
   watch: {
