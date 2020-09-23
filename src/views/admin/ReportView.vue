@@ -1,23 +1,30 @@
 <template>
   <div>
     <Snackbar />
-    <Dialog :dialog="dialog" :text="dialogText">
-      <v-card-title
-        slot="title"
-        class="headline error white--text"
-        primary-title
-      >Are you sure you want to delete this test?</v-card-title>
+    
+    <v-dialog v-model="dialog" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error white--text"
+          primary-title
+        >Are you sure you want to delete this report?</v-card-title>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
-        <v-btn
-          class="red white--text ml-1"
-          :loading="loadingBtn"
-          text
-          @click="removeReport(report), loadingBtn = true"
-        >Delete</v-btn>
-      </div>
-    </Dialog>
+        <v-card-text>{{dialogText}}</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+          <v-btn
+            class="red white--text ml-1"
+            :loading="loadingBtn"
+            text
+            @click="removeReport(report), loadingBtn = true"
+          >Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-overlay class="text-center" v-model="loading">
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
@@ -64,20 +71,16 @@
 </template>
 
 <script>
-// import FormCooperation from "@/components/atoms/FormCooperation";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Intro from "@/components/molecules/IntroReports";
-import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
   components: {
-    // FormCooperation,
     ShowInfo,
     Intro,
-    Snackbar,
-    Dialog
+    Snackbar
   },
   data: () => ({
     headers: [
@@ -90,7 +93,7 @@ export default {
     loading: true,
     dialog: false,
     loadingBtn: false,
-    report: null
+    report: null,
   }),
   methods: {
     removeReport(report) {
@@ -122,8 +125,12 @@ export default {
       );
     },
     dialogText() {
-      return 'Are you sure you want to delete ' + (this.report !== null ? this.report.email : '') + `'s report? This action can't be undone`;
-    }
+      return (
+        "Are you sure you want to delete " +
+        (this.report !== null ? this.report.email : "") +
+        `'s report? This action can't be undone`
+      );
+    },
   },
   watch: {
     reports() {
@@ -133,8 +140,8 @@ export default {
   created() {
     if (!this.$store.state.reports.reports) {
       this.$store.dispatch("getReports", { id: this.id });
-    } else if(this.$store.state.reports.reports.id !== this.id)
-    this.$store.dispatch("getReports", { id: this.id });
+    } else if (this.$store.state.reports.reports.id !== this.id)
+      this.$store.dispatch("getReports", { id: this.id });
     else {
       this.loading = false;
     }
