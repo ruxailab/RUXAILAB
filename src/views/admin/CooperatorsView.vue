@@ -650,7 +650,7 @@ export default {
       return this.$store.getters.user;
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators || [];
+      return this.$store.getters.cooperators || [];
     },
     users() {
       if (this.$store.state.users.users) return this.$store.getters.admins;

@@ -4,15 +4,15 @@ export default {
     cooperators: null,
   },
   getters: {
-    getCooperatorByToken: (state) => (token) => {
-      return state.cooperators.cooperators.filter(cooperator => cooperator.token == token)
+    cooperators(state) {
+      return state.cooperators
     }
   },
   mutations: {
     setCooperators(state, payload) {
       state.cooperators = payload;
     },
-    setLoading(state,payload){
+    setLoading(state, payload) {
       state.loading = payload
     }
   },
@@ -32,10 +32,10 @@ export default {
     },
     async getCooperators({ dispatch, commit }, payload) {
       payload = Object.assign(payload, { collection: "cooperators" });
-      commit("setLoading",true)
+      commit("setLoading", true)
       let coop = await dispatch("getObject", payload);
       commit("setCooperators", coop);
-      commit("setLoading",false)
+      commit("setLoading", false)
     },
     pushCooperator({ dispatch }, payload) {
       payload = Object.assign(payload, {
