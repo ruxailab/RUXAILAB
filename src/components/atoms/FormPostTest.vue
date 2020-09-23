@@ -26,7 +26,7 @@ export default {
         v == "" ||
         v.indexOf("https://docs.google.com/forms/") == 0 ||
         v.indexOf("docs.google.com/forms/") == 0 ||
-        "Google forms link required" //link precisa ter "https://docs.google.com/forms/" no indice 0 ou nao é um link valido
+        "Google forms link required"
     ]
   }),
   watch: {

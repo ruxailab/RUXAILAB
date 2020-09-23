@@ -11,7 +11,6 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <!-- {{test.version ? ` (${test.version})` : '' }} -->
           <v-list-item-title>
             {{test.title}}
             <v-chip
