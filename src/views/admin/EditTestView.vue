@@ -118,7 +118,7 @@ import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Dialog from "@/components/atoms/Dialog";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
-import { mapGetters } from 'vuex'
+
 
 export default {
   props: ["id"],
@@ -218,7 +218,7 @@ export default {
       event.returnValue = "";
     },
     async setIntro() {
-       this.object = await Object.assign(this.object, this.test);
+      this.object = await Object.assign(this.object, this.test);
       if (this.test.type === "Expert") {
         this.index = 1;
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
@@ -245,14 +245,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'test',
-      'loading',
-      'user'
-    ]),
+    loading(){
+      return this.$store.getters.loading
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    test() {
+      return this.$store.getters.test;
+    },
     answers() {
       return this.$store.state.answers.answers || [];
-    },
+    }
   },
   created() {
     if (
