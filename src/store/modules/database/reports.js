@@ -38,7 +38,7 @@ export default {
       commit("setLoading",true)
       let reps = await dispatch("getObject", payload);
       commit("setReports", reps);
-      commit("setLoading",true)
+      commit("setLoading",false)
     },
     pushLog({ dispatch }, payload) {
       payload = Object.assign(payload, {

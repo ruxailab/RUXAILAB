@@ -205,7 +205,6 @@ export default {
       { text: "Administrator", value: 0 },
     ],
     dialog: false,
-    loading: true,
     intro: null,
     email: "",
   }),
@@ -630,9 +629,6 @@ export default {
         }
       }
 
-      if (Object.keys(this.cooperators).length) {
-        this.loading = false;
-      }
     },
     loading() {
       if (!this.loading) {
@@ -674,6 +670,9 @@ export default {
       });
       return array;
     },
+    loading(){
+      return this.$store.getters.loading
+    }
   },
   created() {
     if (!this.$store.state.cooperators.cooperators)
@@ -682,7 +681,6 @@ export default {
       this.$store.dispatch("getCooperators", { id: this.id });
     else {
       this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
-      this.loading = false;
     }
     if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
   },
