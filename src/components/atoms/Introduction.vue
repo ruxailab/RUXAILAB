@@ -5,7 +5,7 @@
       style="display:contents; background-color:#f4b700; height:300px"
       class="hidden-sm-and-down"
     >
-      <v-img src="@/assets/introductionDesktop.svg">
+      <v-img src="@/assets/landing/introductionDesktop.svg">
         <v-container>
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
@@ -35,7 +35,7 @@
         <div style="background-color: #f4b700">
           <h1 class="display-3 font-weight-regular white--text text-center">UX Remote LAB</h1>
         </div>
-        <v-img src="@/assets/introductionMobile.svg" class="mb-4" max-height="350" contain></v-img>
+        <v-img src="@/assets/landing/introductionMobile.svg" class="mb-4" max-height="350" contain></v-img>
         <div style="background-color: #f4b700" class="mx-1">
           <h4
             class="display-1 white--text mb-4 text-center"

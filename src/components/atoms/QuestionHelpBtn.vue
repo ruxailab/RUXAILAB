@@ -20,7 +20,7 @@
 
         <div v-for="(description, i) in question.descriptions" :key="i">
           <div class="subtitleView mx-4 mb-1 mt-5">{{ description.title }}</div>
-          <TextBox class="mx-4" :text="description.text" :editable="false" ref="textbox" />
+          <TextBox class="mx-4" :text="description.text" :editable="false"></TextBox>
         </div>
       </v-card>
     </v-dialog>
