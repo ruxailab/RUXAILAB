@@ -2,6 +2,7 @@
   <div>
     <Snackbar />
     
+    <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title
