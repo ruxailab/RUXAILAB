@@ -48,7 +48,7 @@ export default {
   }),
   watch: {
     heurisIndex() {
-      this.show = false; //fecha comentario qnd muda de heuristica
+      this.show = false; //close comment when changing heuristic
     }
   }
 };

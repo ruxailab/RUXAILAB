@@ -45,7 +45,6 @@ import TextBox from "@/components/atoms/TextBox";
 
 export default {
   props: ["question"],
-
   components: {
     TextBox,
   },
@@ -91,11 +90,7 @@ export default {
     updateText(html) {
       this.desc.text = html;
     },
-    openDialog() {
-      this.dialog = true;
-    },
-    editSetup(i) {
-      // this.loading = true;
+    editSetup(i) { //used when edit clicked
       this.dialog = true;
       this.editIndex = i;
       this.desc = Object.assign({}, this.question.descriptions[this.editIndex]);
@@ -106,8 +101,8 @@ export default {
     setDescriptionText() {
       this.isMounted = true;
       this.$refs.textbox.setContent(this.desc.text);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -122,7 +117,6 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
 .dataCard {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
