@@ -1,43 +1,57 @@
 <template>
   <v-container v-if="test ">
     <SnackBar></SnackBar>
-    <Dialog :dialog="dialogDel" :text="dialogText">
-      <v-card-title
-        slot="title"
-        class="headline error white--text"
-        primary-title
-      >Are you sure you want to delete this template?</v-card-title>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
-        <v-btn
-          class="red white--text ml-1"
-          :loading="loading"
-          text
-          @click="deleteTemplate(object), loading = true, change = false"
-        >Delete</v-btn>
-      </div>
-    </Dialog>
-    <Dialog
-      :dialog="dialogAlert"
-      text="Are you sure you want to leave? All your changes will be discarded"
-    >
-      <v-card-title
-        slot="title"
-        class="headline error accent-4 white--text"
-        primary-title
-      >Are you sure you want to leave?</v-card-title>
+    <!-- Delete Alert Dialog -->
+    <v-dialog v-model="dialogDel" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error white--text"
+          primary-title
+        >Are you sure you want to delete this template?</v-card-title>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
-        <v-btn
-          class="error accent-4 white--text ml-1"
-          text
-          @click="change = false,$router.push(go)"
-        >Leave</v-btn>
-      </div>
-    </Dialog>
+        <v-card-text>{{ dialogText }}</v-card-text>
 
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
+          <v-btn
+            class="red white--text ml-1"
+            :loading="loading"
+            text
+            @click="deleteTemplate(object), loading = true, change = false"
+          >Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Leave Alert Dialog -->
+    <v-dialog v-model="dialogAlert" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error accent-4 white--text"
+          primary-title
+        >Are you sure you want to leave?</v-card-title>
+
+        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
+          <v-btn
+            class="error accent-4 white--text ml-1"
+            text
+            @click="change = false,$router.push(go)"
+          >Leave</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Detailed Info Dialog -->
     <v-dialog v-model="dialogDetail" width="800px">
       <v-card min-height="400px" class="list-scroll">
         <v-col class="mb-1 pa-4 pb-1">
@@ -73,21 +87,16 @@
             </v-treeview>
           </v-col>
         </v-row>
-        <!-- <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="error" text>Close</v-btn>
-          <v-btn text>Button</v-btn>
-        </v-card-actions>-->
       </v-card>
     </v-dialog>
-    
+
     <ShowInfo title="Template">
       <v-alert
-      type="warning"
-      v-if="!test.template.upToDate"
-      dense
-      slot="warning"
-    >Your template is not up to date with your test.</v-alert>
+        type="warning"
+        v-if="!test.template.upToDate"
+        dense
+        slot="warning"
+      >Your template is not up to date with your test.</v-alert>
       <div slot="content">
         <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
@@ -189,14 +198,12 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
-import Dialog from "@/components/atoms/Dialog";
 import SnackBar from "@/components/atoms/Snackbar";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
-    Dialog,
     SnackBar,
   },
   data: () => ({
@@ -370,15 +377,19 @@ export default {
         });
       }
     },
-    isNumber: function(evt) {
-      evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+    isNumber: function (evt) {
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
+      if (
+        charCode > 31 &&
+        (charCode < 48 || charCode > 57) &&
+        charCode !== 46
+      ) {
         evt.preventDefault();
       } else {
         return true;
       }
-    }
+    },
   },
   computed: {
     templateStore() {
