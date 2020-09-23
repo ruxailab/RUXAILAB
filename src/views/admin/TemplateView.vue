@@ -233,7 +233,7 @@ export default {
       let payload = Object.assign({}, { header: this.template.header });
 
       payload.header.date = new Date().toDateString();
-      if (this.template.body.type == "Expert") {
+      if (this.template.body.type == "Heuristics") {
         Object.assign(payload, {
           body: Object.assign(
             {},
@@ -361,7 +361,7 @@ export default {
     },
     updateTemplate() {
       this.updated = true;
-      if (this.template.body.type == "Expert") {
+      if (this.template.body.type == "Heuristics") {
         Object.assign(this.template.body, {
           heuristics: this.test.heuristics,
           options: this.test.options,
@@ -410,7 +410,7 @@ export default {
 
       if (this.template) {
         let template = this.template.body;
-        if (template.type == "Expert") {
+        if (template.type == "Heuristics") {
           let id = 0;
           let heuristics = template.heuristics;
           let options = template.options;

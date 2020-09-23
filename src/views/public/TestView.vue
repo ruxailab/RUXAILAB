@@ -102,7 +102,7 @@
                 <div class="idText">{{test.id}}</div>
                 <v-clamp class="titleText" autoresize :max-lines="2">{{test.title}}</v-clamp>
               </v-col>
-              <v-col v-if="test.type === 'Expert'">
+              <v-col v-if="test.type === 'Heuristics'">
                 <v-progress-circular
                   rotate="-90"
                   :value="answersSheet.progress"
@@ -160,7 +160,7 @@
             <!--Heuris-->
             <v-list
               @click="index = item.id"
-              v-else-if="item.id == 1 && test.type == 'Expert'"
+              v-else-if="item.id == 1 && test.type == 'Heuristics'"
               :value="index == 1 ? true : false"
             >
               <div v-if="mini">
@@ -170,7 +170,7 @@
                       <v-list-item-icon>
                         <v-progress-circular
                           rotate="-90"
-                          v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
+                          v-if="test.type === 'Heuristics' && progress(answersSheet.heuristics[i])!=100"
                           :value="progress(answersSheet.heuristics[i])"
                           :size="24"
                           :width="3"
@@ -203,7 +203,7 @@
                   <v-list-item-icon>
                     <v-progress-circular
                       rotate="-90"
-                      v-if="test.type === 'Expert' && progress(answersSheet.heuristics[i])!=100"
+                      v-if="test.type === 'Heuristics' && progress(answersSheet.heuristics[i])!=100"
                       :value="progress(answersSheet.heuristics[i])"
                       :size="24"
                       :width="3"
@@ -311,7 +311,7 @@
 
         <!-- Heuristics -->
         <ShowInfo
-          v-if="index==1 && test.type === 'Expert'"
+          v-if="index==1 && test.type === 'Heuristics'"
           :title="test.heuristics[heurisIndex].title"
         >
           <div slot="content" class="ma-0 pa-0">
@@ -516,7 +516,7 @@ export default {
             value: this.test.postTest,
             id: 2,
           });
-      } else if (this.test.type === "Expert") {
+      } else if (this.test.type === "Heuristics") {
         //Heuristics
         if (
           this.validate(this.test.heuristics) &&

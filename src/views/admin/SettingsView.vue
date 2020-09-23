@@ -346,7 +346,7 @@ export default {
           title: this.templateTitle,
           description: this.templateDescription,
         };
-        if (this.test.type == "Expert") {
+        if (this.test.type == "Heuristics") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,
             options: this.test.options,

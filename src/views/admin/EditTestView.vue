@@ -54,8 +54,8 @@
         <v-tabs background-color="transparent" color="#FCA326" class="tab-border-bottom pb-0 mb-0">
           <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
           <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
-          <v-tab v-if="test.type === 'Expert'" @click="index = 1">Heuristics</v-tab>
-          <v-tab v-if="test.type === 'Expert'" @click="index = 2">Options</v-tab>
+          <v-tab v-if="test.type === 'Heuristics'" @click="index = 1">Heuristics</v-tab>
+          <v-tab v-if="test.type === 'Heuristics'" @click="index = 2">Options</v-tab>
           <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
         </v-tabs>
       </v-row>
@@ -79,7 +79,7 @@
         <div v-if="index==1" class="ma-0 pa-0">
           <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
           <Heuristic
-            v-else-if="test.type === 'Expert'"
+            v-else-if="test.type === 'Heuristics'"
             :heuristics="object.heuristics"
             :answersSheet="object.answersSheet"
             @change="change = true"
@@ -166,7 +166,7 @@ export default {
           });
 
           this.answers.answersSheet = this.object.answersSheet;
-          if (this.test.type === "Expert")
+          if (this.test.type === "Heuristics")
             Object.assign(this.answers, { options: this.object.options });
           this.$store
             .dispatch("updateTestAnswer", {
@@ -195,7 +195,7 @@ export default {
           "Please fill all fields in Pre Test correctly or leave them empty"
         );
       } else if (
-        this.test.type === "Expert" &&
+        this.test.type === "Heuristics" &&
         this.object.options.length == 1
       ) {
         this.$store.commit(
@@ -218,7 +218,7 @@ export default {
     },
     async setIntro() {
       this.object = await Object.assign(this.object, this.test);
-      if (this.test.type === "Expert") {
+      if (this.test.type === "Heuristics") {
         this.index = 1;
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
           this.intro = true;

@@ -201,7 +201,7 @@ export default {
             form: null,
           },
         });
-      } else if (this.test.type === "Expert") {
+      } else if (this.test.type === "Heuristics") {
         this.object = Object.assign(this.object, {
           heuristics: [],
           answersSheet: {
