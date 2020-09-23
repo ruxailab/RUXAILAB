@@ -1,10 +1,10 @@
 <template >
   <div v-if="answers">
-    <v-overlay :value="loading==null">
+    <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <IntroAnswer v-if=" answers != null && loading == true" @goToCoops="goToCoops"></IntroAnswer>
-    <v-row justify="center" v-else-if="answers != null && loading == false">
+    <IntroAnswer v-if=" answers != null && intro == true" @goToCoops="goToCoops"></IntroAnswer>
+    <v-row justify="center" v-else-if="answers != null && intro == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <v-tabs
@@ -229,11 +229,10 @@ export default {
     IntroAnswer
   },
   data: () => ({
-    search: "",
     tab: 0,
     ind: 0,
     resultEvaluator: [],
-    loading: null
+    intro: null
   }),
   methods: {
     statistics() {
@@ -512,18 +511,21 @@ export default {
       return testData;
     },
     answers() {
-      return this.$store.state.answers.answers || [];
+      return this.$store.getters.answers || [];
     },
     test(){
-      return this.$store.state.test
+      return this.$store.getters.test
+    },
+    loading(){
+      return this.$store.getters.loading
     }
   },
   watch: {
     answers() {
       if (this.answers !== null || this.answers.length > 0) {
         this.statistics();
-        if (this.answers.answers.length == 0) this.loading = true;
-        else this.loading = false;
+        if (this.answers.answers.length == 0) this.intro = true;
+        else this.intro = false;
       }
     },
     index() {

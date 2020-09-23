@@ -1,15 +1,11 @@
 export default {
   state: {
     reports: null,
-    loading: false
   },
   getters: {
     reports(state){
       return state.reports
     },
-    loading(state){
-      return state.loading
-    }
   },
   mutations: {
     setReports(state, payload) {

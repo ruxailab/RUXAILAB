@@ -2,11 +2,18 @@ export default {
   state: {
     answers: null,
   },
-  getters: {},
+  getters: {
+    answers(state){
+      return state.answers
+    }
+  },
   mutations: {
     setAnswers(state, payload) {
       state.answers = payload;
     },
+    setLoading(state,payload){
+      state.loading = payload;
+    }
   },
   actions: {
     createAnswers({ dispatch }, payload) {

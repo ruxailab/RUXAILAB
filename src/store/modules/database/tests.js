@@ -50,9 +50,6 @@ export default {
     heuristics(state) {
       return state.test.heuristics;
     },
-    answers(state) {
-      return state.test.answers;
-    },
     coops(state){
       return state.test.coop;
     },
