@@ -1,12 +1,23 @@
 export default {
   state: {
     reports: null,
+    loading: false
   },
-  getters: {},
+  getters: {
+    reports(state){
+      return state.reports
+    },
+    loading(state){
+      return state.loading
+    }
+  },
   mutations: {
     setReports(state, payload) {
       state.reports = payload;
     },
+    setLoading(state,payload){
+      state.loading = payload;
+    }
   },
   actions: {
     createReport({ dispatch }, payload) {
@@ -28,9 +39,10 @@ export default {
     },
     async getReports({ dispatch, commit }, payload) {
       payload = Object.assign(payload, { collection: "reports" });
-
+      commit("setLoading",true)
       let reps = await dispatch("getObject", payload);
       commit("setReports", reps);
+      commit("setLoading",true)
     },
     pushLog({ dispatch }, payload) {
       payload = Object.assign(payload, {

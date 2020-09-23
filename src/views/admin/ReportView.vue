@@ -122,7 +122,7 @@ export default {
   computed: {
     reports() {
       return (
-        this.$store.state.reports.reports || Object.assign({}, { reports: [] })
+        this.$store.getters.reports || Object.assign({}, { reports: [] })
       );
     },
     dialogText() {
@@ -158,16 +158,6 @@ export default {
 </script>
 
 <style scoped>
-.titleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
@@ -179,29 +169,5 @@ export default {
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
-.cardReport {
-  box-shadow: 0px;
-}
 
-/* width */
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey;
-  border-radius: 10px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #fca326;
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
-}
 </style>
