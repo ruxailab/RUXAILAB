@@ -41,12 +41,10 @@
       </template>
       <span>Save</span>
     </v-tooltip>
-
     <v-overlay class="text-center" v-model="loading">
       <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
-
     <IntroEdit v-if="test && intro==true" @closeIntro="intro = false" />
     <ShowInfo v-if="test  &&  intro==false" title="Test Edit">
       <v-row dense slot="top">
@@ -76,6 +74,7 @@
         </v-card>
 
         <div v-if="index==1" class="ma-0 pa-0">
+          {{object}}
           <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
           <Heuristic
             v-else-if="test.type === 'Expert'"
@@ -119,6 +118,7 @@ import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import Dialog from "@/components/atoms/Dialog";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
+import { mapGetters } from 'vuex'
 
 export default {
   props: ["id"],
@@ -131,7 +131,7 @@ export default {
     Snackbar,
     ShowInfo,
     Dialog,
-    IntroEdit,
+    IntroEdit
   },
   data: () => ({
     index: 0,
@@ -139,19 +139,17 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    loading: true,
-    intro: null,
+    intro: null
   }),
   methods: {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
-      if('template' in this.object)
-        this.object.template.upToDate = false; //flag as outdated
+      if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -164,8 +162,8 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
           this.answers.answersSheet = this.object.answersSheet;
@@ -174,17 +172,17 @@ export default {
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers,
+              data: this.answers
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -219,48 +217,52 @@ export default {
       event.preventDefault();
       event.returnValue = "";
     },
+    async setIntro() {
+       this.object = await Object.assign(this.object, this.test);
+      if (this.test.type === "Expert") {
+        this.index = 1;
+        if (this.test.heuristics.length == 0 && this.test.options.length == 0)
+          this.intro = true;
+        else this.intro = false;
+      } else if (this.test.type === "User") {
+        this.index = 0;
+        if (
+          this.test.tasks.length == 0 &&
+          this.test.postTest.form == null &&
+          this.test.preTest.consent == null &&
+          this.test.preTest.form == null
+        )
+          this.intro = true;
+        else this.intro = false;
+      }
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
-        this.loading = false;
-        this.object = await Object.assign(this.object, this.test);
-
-        if (this.test.type === "Expert") {
-          this.index = 1;
-          if (this.test.heuristics.length == 0 && this.test.options.length == 0)
-            this.intro = true;
-          else this.intro = false;
-        } else if (this.test.type === "User") {
-          this.index = 0;
-          if (
-            this.test.tasks.length == 0 &&
-            this.test.postTest.form == null &&
-            this.test.preTest.consent == null &&
-            this.test.preTest.form == null
-          )
-            this.intro = true;
-          else this.intro = false;
-        }
+        this.setIntro();
       }
-    },
+    }
   },
   computed: {
-    test() {
-      return this.$store.getters.test;
-    },
-    user() {
-      return this.$store.getters.user;
-    },
+    ...mapGetters([
+      'test',
+      'loading',
+      'user'
+    ]),
     answers() {
       return this.$store.state.answers.answers || [];
     },
   },
   created() {
-    if (! this.$store.state.tests.test && this.id !== null && this.id !== undefined) {
+    if (
+      !this.$store.state.tests.test &&
+      this.id !== null &&
+      this.id !== undefined
+    ) {
       this.$store.dispatch("getTest", { id: this.id });
     } else {
-      this.loading = false;
+      this.setIntro();
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -276,21 +278,11 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 
 <style scoped>
-.titleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
