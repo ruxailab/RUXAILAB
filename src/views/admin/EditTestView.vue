@@ -1,24 +1,27 @@
 <template>
   <div>
-    <Dialog
-      :dialog="dialog"
-      text="Are you sure you want to leave? All your changes will be discarded"
-    >
-      <v-card-title
-        slot="title"
-        class="headline error accent-4 white--text"
-        primary-title
-      >Are you sure you want to leave?</v-card-title>
+    <v-dialog v-model="dialog" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error accent-4 white--text"
+          primary-title
+        >Are you sure you want to leave?</v-card-title>
 
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
-        <v-btn
-          class="error accent-4 white--text ml-1"
-          text
-          @click="change = false,$router.push(go)"
-        >Leave</v-btn>
-      </div>
-    </Dialog>
+        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+          <v-btn
+            class="error accent-4 white--text ml-1"
+            text
+            @click="change = false,$router.push(go)"
+          >Leave</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <Snackbar />
 
@@ -74,7 +77,6 @@
         </v-card>
 
         <div v-if="index==1" class="ma-0 pa-0">
-          {{object}}
           <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
           <Heuristic
             v-else-if="test.type === 'Expert'"
@@ -116,9 +118,7 @@ import Heuristic from "@/components/molecules/HeuristicsTable";
 import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
-import Dialog from "@/components/atoms/Dialog";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
-
 
 export default {
   props: ["id"],
@@ -130,8 +130,7 @@ export default {
     OptionsTable,
     Snackbar,
     ShowInfo,
-    Dialog,
-    IntroEdit
+    IntroEdit,
   },
   data: () => ({
     index: 0,
@@ -139,7 +138,7 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    intro: null
+    intro: null,
   }),
   methods: {
     async submit() {
@@ -149,7 +148,7 @@ export default {
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -162,8 +161,8 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
           this.answers.answersSheet = this.object.answersSheet;
@@ -172,17 +171,17 @@ export default {
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers
+              data: this.answers,
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -235,14 +234,14 @@ export default {
           this.intro = true;
         else this.intro = false;
       }
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro();
       }
-    }
+    },
   },
   computed: {
     loading(){
@@ -282,7 +281,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 
