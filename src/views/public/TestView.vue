@@ -1,18 +1,26 @@
 <template >
   <div v-if="test  || test && test.type ==='User'">
-    <Dialog :dialog="dialog" :text="dialogText">
-      <v-card-title
-        slot="title"
-        class="headline error white--text"
-        primary-title
-      >Are you sure you want to submit this test?</v-card-title>
-
-      <div slot="actions">
-        <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
-        <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
-      </div>
-    </Dialog>
     <Snackbar />
+
+    <!-- Submit Alert Dialog -->
+    <v-dialog v-model="dialog" width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="headline error white--text"
+          primary-title
+        >Are you sure you want to submit this test?</v-card-title>
+
+        <v-card-text>Are you sure you want to submit your test. You can only do it once.</v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
+          <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn @logined="logined=true" @change="selected = !selected" v-if="selected" />
@@ -69,7 +77,16 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn  :disabled="answersSheet.progress < 100" class="white--text" @click="dialog = true" fab  small color="#F9A826" v-bind="attrs" v-on="on">
+            <v-btn
+              :disabled="answersSheet.progress < 100"
+              class="white--text"
+              @click="dialog = true"
+              fab
+              small
+              color="#F9A826"
+              v-bind="attrs"
+              v-on="on"
+            >
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -367,7 +384,6 @@ import ViewTask from "@/components/atoms/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";
-import Dialog from "@/components/atoms/Dialog";
 import Snackbar from "@/components/atoms/Snackbar";
 import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
@@ -380,10 +396,9 @@ export default {
     AddCommentBtn,
     HelpBtn,
     VClamp,
-    Dialog,
     Snackbar,
     CardSignIn,
-    CardSignUp
+    CardSignUp,
   },
   data: () => ({
     logined: null,
@@ -401,30 +416,28 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
-    dialogText:
-      "Are you sure you want to submit your test. You can only do it once."
   }),
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       if (this.test && this.token) {
         if (!this.$store.state.cooperators.cooperators)
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators
+            id: this.test.cooperators,
           });
         else if (
           this.$store.state.cooperators.cooperators !== this.test.cooperators
         )
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators
+            id: this.test.cooperators,
           });
       }
     },
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
-        if (this.items.find(obj => obj.id == 0)) {
+        if (this.items.find((obj) => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
         }
@@ -438,7 +451,7 @@ export default {
         this.noExistUser = false;
         if (this.logined) this.setTest();
       }
-    }
+    },
   },
   methods: {
     mappingSteps() {
@@ -452,10 +465,10 @@ export default {
               {
                 title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 0
-              }
+                id: 0,
+              },
             ],
-            id: 0
+            id: 0,
           });
 
         if (this.validate(this.test.preTest.form)) {
@@ -463,7 +476,7 @@ export default {
             this.items[0].value.push({
               title: "Form",
               icon: "mdi-checkbox-blank-circle-outline",
-              id: 1
+              id: 1,
             });
           } else {
             this.items.push({
@@ -473,10 +486,10 @@ export default {
                 {
                   title: "Form",
                   icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1
-                }
+                  id: 1,
+                },
               ],
-              id: 0
+              id: 0,
             });
           }
         }
@@ -486,13 +499,13 @@ export default {
           this.items.push({
             title: "Tasks",
             icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map(i => {
+            value: this.test.tasks.map((i) => {
               return {
                 title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline"
+                icon: "mdi-checkbox-blank-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
 
         //PostTest
@@ -501,7 +514,7 @@ export default {
             title: "Post Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: this.test.postTest,
-            id: 2
+            id: 2,
           });
       } else if (this.test.type === "Expert") {
         //Heuristics
@@ -512,13 +525,13 @@ export default {
           this.items.push({
             title: "Heuristics",
             icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map(i => {
+            value: this.test.heuristics.map((i) => {
               return {
                 title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline"
+                icon: "mdi-checkbox-marked-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
       }
     },
@@ -527,8 +540,8 @@ export default {
     },
     calcProgress() {
       var qtd = 0;
-      this.answersSheet.heuristics.forEach(h => {
-        qtd += h.questions.filter(q => q.res !== "").length;
+      this.answersSheet.heuristics.forEach((h) => {
+        qtd += h.questions.filter((q) => q.res !== "").length;
       });
 
       this.answersSheet.progress = (
@@ -537,19 +550,21 @@ export default {
       ).toFixed(1);
     },
     submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      let newAnswer = this.user.myAnswers.find(
+        (answer) => answer.id == this.id
+      );
       if (!save) newAnswer.answersSheet.submited = true;
 
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
       };
       this.$store
         .dispatch("updateLog", {
           docId: newAnswer.reports,
           elementId: this.user.uid,
-          element: log
+          element: log,
         })
         .then(() => {
           if (!save) {
@@ -558,13 +573,13 @@ export default {
                 docId: newAnswer.answers,
                 element: Object.assign(this.answersSheet, {
                   uid: this.user.uid,
-                  email: this.user.email
-                })
+                  email: this.user.email,
+                }),
               })
               .then(() => {
                 this.$store.commit("setSuccess", "Test succesfully submited");
               })
-              .catch(err => {
+              .catch((err) => {
                 this.$store.commit("setError", err);
               });
           }
@@ -573,19 +588,19 @@ export default {
       this.$store
         .dispatch("updateMyAnswers", {
           docId: this.user.uid,
-          element: newAnswer
+          element: newAnswer,
         })
         .then(() => {
           if (save)
             this.$store.commit("setSuccess", "Project succesfully saved");
         })
-        .catch(err => {
+        .catch((err) => {
           if (save) this.$store.commit("setError", err);
         });
     },
     progress(item) {
       return (
-        (item.questions.filter(q => q.res !== "").length * 100) / item.total
+        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
       );
     },
     setExistUser() {
@@ -599,7 +614,7 @@ export default {
     setTest() {
       if (this.user.myAnswers) {
         this.fromlink = false;
-        let exist = this.user.myAnswers.find(test => test.id == this.id);
+        let exist = this.user.myAnswers.find((test) => test.id == this.id);
         if (!exist) {
           let payload = Object.assign(
             {},
@@ -611,14 +626,14 @@ export default {
               answers: this.test.answers,
               cooperators: this.test.cooperators,
               answersSheet: Object.assign(this.test.answersSheet, {
-                submited: false
+                submited: false,
               }),
-              accessLevel: 2
+              accessLevel: 2,
             }
           );
           //Get invitation
           let coop = this.cooperators.cooperators.find(
-            coop => coop.token == this.token
+            (coop) => coop.token == this.token
           );
 
           if (coop) {
@@ -627,7 +642,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   //Update invitation to accepted
@@ -635,28 +650,28 @@ export default {
                     docId: this.test.cooperators,
                     elementId: this.user.uid,
                     element: true,
-                    param: "accepted"
+                    param: "accepted",
                   });
 
                   //Remove notification
                   let inv = this.user.notifications.find(
-                    not => not.test.id == this.id
+                    (not) => not.test.id == this.id
                   );
                   this.$store.dispatch("removeNotification", {
                     docId: this.user.uid,
-                    element: inv
+                    element: inv,
                   });
 
                   //Update state reports
                   var log = {
                     date: new Date().toLocaleString("en-US"),
                     progress: 0,
-                    status: "In progress"
+                    status: "In progress",
                   };
                   this.$store.dispatch("updateLog", {
                     docId: this.test.reports,
                     elementId: this.user.uid,
-                    element: log
+                    element: log,
                   });
                 });
             }
@@ -665,7 +680,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   //Update Invitation insert User ID and invitation accepted
@@ -675,7 +690,7 @@ export default {
                       elementId: this.token,
                       element: this.user.uid,
                       identifier: "token",
-                      param: "id"
+                      param: "id",
                     })
                     .then(() => {
                       this.$store.dispatch("updateCooperator", {
@@ -683,7 +698,7 @@ export default {
                         elementId: this.token,
                         identifier: "token",
                         element: true,
-                        param: "accepted"
+                        param: "accepted",
                       });
                     });
 
@@ -696,13 +711,13 @@ export default {
                       log: {
                         date: new Date().toLocaleString("en-Us"),
                         progress: 0,
-                        status: "In progress"
-                      }
+                        status: "In progress",
+                      },
                     }
                   );
                   this.$store.dispatch("pushLog", {
                     docId: this.test.reports,
-                    element: item
+                    element: item,
                   });
                 });
             }
@@ -711,7 +726,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -724,7 +739,7 @@ export default {
     answersSheet: {
       get() {
         if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find(answer => answer.id == this.id);
+          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
@@ -733,7 +748,7 @@ export default {
       },
       set(item) {
         return item;
-      }
+      },
     },
     showBtn() {
       if (this.answersSheet !== undefined && this.answersSheet !== null) {
@@ -746,18 +761,18 @@ export default {
     },
     cooperators() {
       return this.$store.state.cooperators.cooperators;
-    }
+    },
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
-      next(vm => {
+      next((vm) => {
         vm.fromlink = true;
       });
     next();
-  }
+  },
 };
 </script>
 
