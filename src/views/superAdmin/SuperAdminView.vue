@@ -177,6 +177,7 @@ export default {
                 "setSuccess",
                 "Successfully deleted user " + this.userClicked.email
               );
+              this.$delete(this.users, this.users.indexOf(this.userClicked));
               this.userClicked = null;
             })
             .catch((err) => {
