@@ -12,7 +12,7 @@
           <v-list-item-title>
             {{ test.title }}
             <v-chip outlined style="color: grey" small class="ml-1">{{
-              test.type == "Heuristics" ? "Heuristics" : test.type
+              test.type
             }}</v-chip>
             <span
               style="position: absolute; right: 5px;"

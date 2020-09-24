@@ -5,23 +5,28 @@
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialogAlert" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error accent-4 white--text"
-          primary-title
-        >Are you sure you want to leave?</v-card-title>
+        <v-card-title class="headline error accent-4 white--text" primary-title
+          >Are you sure you want to leave?</v-card-title
+        >
 
-        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+        <v-card-text
+          >Are you sure you want to leave? All your changes will be
+          discarded</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialogAlert = false"
+            >Stay</v-btn
+          >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
-            @click="change = false,$router.push(go)"
-          >Leave</v-btn>
+            @click="(change = false), $router.push(go)"
+            >Leave</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -29,10 +34,9 @@
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error white--text"
-          primary-title
-        >Are you sure you want to delete this test?</v-card-title>
+        <v-card-title class="headline error white--text" primary-title
+          >Are you sure you want to delete this test?</v-card-title
+        >
 
         <v-card-text>{{ dialogText }}</v-card-text>
 
@@ -40,13 +44,16 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialogDel = false"
+            >Cancel</v-btn
+          >
           <v-btn
             class="red white--text ml-1"
             :loading="loading"
             text
-            @click="deleteTest(object), loading = true"
-          >Delete</v-btn>
+            @click="deleteTest(object), (loading = true)"
+            >Delete</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -84,11 +91,12 @@
             <v-spacer></v-spacer>
             <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
             <v-btn
-              @click="createTemplate(), tempDialog = false"
+              @click="createTemplate(), (tempDialog = false)"
               text
               :disabled="hasTemplate ? true : false"
               class="success"
-            >Create</v-btn>
+              >Create</v-btn
+            >
           </v-card-actions>
         </v-form>
       </v-card>
@@ -119,7 +127,8 @@
               color="green"
               @click="tempDialog = true"
               :disabled="hasTemplate || !object ? true : false"
-            >Create public template</v-btn>
+              >Create public template</v-btn
+            >
           </v-row>
           <v-divider class="my-3 mx-2"></v-divider>
 
@@ -146,7 +155,7 @@
               bottom
               right
               color="#F9A826"
-              @click=" submit()"
+              @click="submit()"
               v-bind="attrs"
               v-on="on"
             >
@@ -183,9 +192,9 @@ export default {
     templateDescription: "",
     tempDialog: false,
     titleRequired: [
-      (v) => !!v || "Field Required",
-      (v) => v.length <= 100 || "Max 100 characters",
-    ],
+      v => !!v || "Field Required",
+      v => v.length <= 100 || "Max 100 characters"
+    ]
   }),
   methods: {
     validate(valid, index) {
@@ -195,13 +204,15 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
+        id: this.test.cooperators
       });
+
+      delete this.object.id;
 
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -214,11 +225,11 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
-          this.cooperators.cooperators.forEach((coop) => {
+          this.cooperators.cooperators.forEach(coop => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -229,8 +240,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel,
-              },
+                accessLevel: coop.accessLevel
+              }
             });
           });
 
@@ -238,24 +249,29 @@ export default {
           this.reports.test.title = this.object.title;
           this.cooperators.test.title = this.object.title;
 
+          console.log(this.answers);
+          delete this.answers.id;
+          console.log("Delete ID", this.answers);
+          delete this.reports.id;
+          delete this.cooperators.id;
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers,
+            data: this.answers
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports,
+            data: this.reports
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators,
+            data: this.cooperators
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -280,9 +296,9 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
+                type: item.type
               },
-              param: "myTests",
+              param: "myTests"
             })
             .then(() => {
               this.loading = false;
@@ -293,7 +309,7 @@ export default {
                 );
               });
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
 
@@ -301,14 +317,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach((rep) => {
+          this.reports.reports.forEach(rep => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
-              },
+                type: item.type
+              }
             });
           });
 
@@ -316,21 +332,21 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach((guest) => {
+          this.cooperators.cooperators.forEach(guest => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type,
-              },
+                type: item.type
+              }
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -344,37 +360,37 @@ export default {
           version: "1.0.0",
           date: new Date().toDateString(),
           title: this.templateTitle,
-          description: this.templateDescription,
+          description: this.templateDescription
         };
         if (this.test.type == "Heuristics") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,
             options: this.test.options,
             answersSheet: this.test.answersSheet,
-            type: this.test.type,
+            type: this.test.type
           });
         } else if (this.test.type == "User") {
           template = Object.assign(template, {
             tasks: this.test.tasks,
             preTest: this.test.preTest,
             postTest: this.test.postTest,
-            type: this.test.type,
+            type: this.test.type
           });
         }
 
         let payload = {
-          data: { body: template, header: header },
+          data: { body: template, header: header }
         };
 
-        this.$store.dispatch("createTemplate", payload).then((id) => {
+        this.$store.dispatch("createTemplate", payload).then(id => {
           this.object = Object.assign(this.object, {
             template: Object.assign(
               {},
               {
                 id: id,
-                upToDate: true,
+                upToDate: true
               }
-            ),
+            )
           });
           this.submit();
         });
@@ -385,14 +401,14 @@ export default {
       this.$refs.tempform.resetValidation();
       this.templateTitle = "";
       this.templateDescription = "";
-    },
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
-    },
+    }
   },
   computed: {
     test() {
@@ -423,7 +439,7 @@ export default {
         }
 
       return false;
-    },
+    }
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
@@ -443,7 +459,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 
