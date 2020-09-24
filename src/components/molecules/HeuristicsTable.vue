@@ -1,11 +1,11 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-dialog v-model="dialog" width="800" persistent>
-      <!--Card Edit-->
+    <!--Dialog Edit-->
+    <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
         <v-card-title
           class="headline white--text"
-          style="background-color:#fca326"
+          style="background-color: #fca326"
           primary-title
           >{{ itemEdit.title }}</v-card-title
         >
@@ -33,7 +33,7 @@
           <v-btn
             class="lighten-2"
             text
-            @click="(dialog = false), (itemEdit = null)"
+            @click="(dialogEdit = false), (itemEdit = null)"
             >Cancel</v-btn
           >
           <v-btn class="white--text" color="#fca326" @click="validateEdit()"
@@ -41,11 +41,14 @@
           >
         </v-card-actions>
       </v-card>
-      <!--Card Create New Question-->
-      <v-card v-else-if="newQuestion">
+    </v-dialog>
+
+    <!--Dialog Create New Question-->
+    <v-dialog v-model="dialogQuestion" width="800" persistent>
+      <v-card v-if="newQuestion">
         <v-card-title
           class="headline white--text"
-          style="background-color:#fca326"
+          style="background-color: #fca326"
           primary-title
           >New Question</v-card-title
         >
@@ -66,17 +69,22 @@
         </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog()">Cancel</v-btn>
+          <v-btn class="lighten-2" text @click="closeDialog('dialogQuestion')"
+            >Cancel</v-btn
+          >
           <v-btn class="white--text" color="#fca326" @click="addQuestion()"
             >Add</v-btn
           >
         </v-card-actions>
       </v-card>
-      <!--Card Create New Heuristic-->
-      <v-card v-else style="overflow: hidden">
+    </v-dialog>
+
+    <!--Card Create New Heuristic-->
+    <v-dialog v-model="dialogHeuris" width="800" persistent
+      ><v-card style="overflow: hidden">
         <v-card-title
           class="headline white--text"
-          style="background-color:#fca326"
+          style="background-color: #fca326"
           primary-title
           >Creating a heuristic</v-card-title
         >
@@ -107,14 +115,18 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog()">Cancel</v-btn>
+          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">Cancel</v-btn>
           <v-btn class="white--text" color="#fca326" @click="addHeuris()"
             >Add</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-card style="background: #f5f7ff;" elevation="0">
+
+    <v-dialog v-model="dialog" width="800" persistent> </v-dialog>
+
+    <!-- Main -->
+    <v-card style="background: #f5f7ff" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
       <v-row class="ma-0 pa-0" v-if="heuristics.length">
@@ -123,12 +135,12 @@
           <v-list dense height="560px" outlined>
             <v-subheader>Heuristics</v-subheader>
             <v-divider></v-divider>
-            <v-list-item @click="dialog = true">
+            <v-list-item @click="dialogHeuris = true">
               <v-list-item-icon>
                 <v-icon color="#fca326">mdi-plus</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title style="color:#fca326"
+                <v-list-item-title style="color: #fca326"
                   >Add new heuristic</v-list-item-title
                 >
               </v-list-item-content>
@@ -148,7 +160,9 @@
             </v-list>
           </v-list>
         </v-col>
+
         <v-divider vertical></v-divider>
+
         <!--Questions List-->
         <v-col class="ma-0 pa-0" cols="3" v-if="itemSelect != null">
           <v-list dense height="560px" outlined>
@@ -186,7 +200,7 @@
                 <v-icon color="#fca326">mdi-plus</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title style="color:#fca326"
+                <v-list-item-title style="color: #fca326"
                   >Add new question</v-list-item-title
                 >
               </v-list-item-content>
@@ -305,7 +319,7 @@
             <p class="subtitleView">You don't have heuristic yet, start one.</p>
           </v-row>
           <v-row class="ma-4" justify="center" align="center">
-            <v-btn @click="dialog = true" icon x-large color="grey">
+            <v-btn @click="dialogHeuris = true" icon x-large color="grey">
               <v-icon size="100">mdi-plus-circle-outline</v-icon>
             </v-btn>
           </v-row>
@@ -325,26 +339,26 @@ export default {
     heuristics: {
       type: Array,
       required: true,
-      default: function() {
+      default: function () {
         return [];
-      }
+      },
     },
     answersSheet: {
       type: Object,
       required: true,
-      default: function() {
+      default: function () {
         return {
           progress: 0,
           heuristics: [],
-          total: 0
+          total: 0,
         };
-      }
-    }
+      },
+    },
   },
 
   components: {
     AddDescBtn,
-    VClamp
+    VClamp,
   },
   data: () => ({
     menuHeuristics: false,
@@ -358,15 +372,18 @@ export default {
       {
         text: "Title",
         align: "start",
-        value: "title"
+        value: "title",
       },
-      { text: "Actions", value: "actions", align: "end", sortable: false }
+      { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
     dialog: false,
+    dialogEdit: false,
+    dialogHeuris: false,
+    dialogQuestion: false,
     editIndex: -1,
     step: 1,
-    nameRequired: [v => !!v || "Name is required"],
-    questionRequired: [v => !!v || "Question has to be filled"]
+    nameRequired: [(v) => !!v || "Name is required"],
+    questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
   methods: {
     deleteHeuristic(item) {
@@ -416,17 +433,17 @@ export default {
         title: "Edit Heuristic",
         titleEdit: item.title,
         rule: this.nameRequired,
-        id: item.id
+        id: item.id,
       };
-      this.dialog = true;
+      this.dialogEdit = true;
     },
     editQuestions(item) {
       this.itemEdit = {
         title: "Edit Question",
         titleEdit: item.title,
-        rule: this.questionRequired
+        rule: this.questionRequired,
       };
-      this.dialog = true;
+      this.dialogEdit = true;
     },
     editDescription(desc) {
       let ind = this.heuristics[this.itemSelect].questions[
@@ -445,9 +462,9 @@ export default {
             this.heuristics[this.itemSelect].questions.length - 1
           ].id + 1,
         title: "",
-        descriptions: []
+        descriptions: [],
       };
-      this.dialog = true;
+      this.dialogQuestion = true;
     },
     deleteItem(item) {
       this.heuristics[this.itemSelect].questions[
@@ -464,7 +481,7 @@ export default {
     //MY STUFF
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
-        this.dialog = false;
+        this.dialogHeuris = false;
 
         this.heuristics.push(Object.assign({}, this.heuris));
         this.itemSelect = this.heuristics.length - 1;
@@ -475,7 +492,7 @@ export default {
             {
               id: this.heuris.id,
               total: this.heuris.total,
-              questions: this.arrayQuestions
+              questions: this.arrayQuestions,
             }
           )
         );
@@ -487,8 +504,8 @@ export default {
         this.$emit("change");
       }
     },
-    closeDialog() {
-      this.dialog = false;
+    closeDialog(dialogName) {
+      this[`${dialogName}`] = false;
 
       if (this.$refs.formHeuris) {
         this.$refs.formHeuris.resetValidation();
@@ -497,12 +514,12 @@ export default {
       if (this.$refs.formQuestion) {
         this.$refs.formQuestion.resetValidation();
         this.$refs.formQuestion.reset();
-        this.newQuestion = null
+        this.newQuestion = null;
       }
     },
     addQuestion() {
       if (this.$refs.formQuestion.validate()) {
-        this.dialog = false;
+        this.dialogQuestion = false;
 
         this.heuristics[this.itemSelect].questions.push(this.newQuestion);
         this.newQuestion = null;
@@ -515,17 +532,16 @@ export default {
         Object.assign(this.answersSheet.heuristics[this.itemSelect], {
           id: this.heuristics[this.itemSelect].id,
           total: this.heuristics[this.itemSelect].total,
-          questions: this.arrayQuestions
+          questions: this.arrayQuestions,
         });
 
         this.$refs.formQuestion.resetValidation();
-        //this.$refs.formQuestion.reset();
         this.$emit("change");
       }
     },
     validateEdit() {
       if (this.$refs.formEdit.validate()) {
-        this.dialog = false;
+        this.dialogEdit = false;
 
         if (this.itemEdit.title === "Edit Heuristic") {
           this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit;
@@ -534,12 +550,13 @@ export default {
             this.questionSelect
           ].title = this.itemEdit.titleEdit;
         }
+        this.emitChange();
       }
-    }
+    },
   },
   watch: {
-    dialog() {
-      if (!this.dialog && this.heuristics.length > 0 && !this.itemEdit) {
+    dialogHeuris() {
+      if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuris = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
           title: "",
@@ -548,49 +565,73 @@ export default {
             {
               id: 0,
               title: "",
-              descriptions: []
-            }
-          ]
+              descriptions: [],
+            },
+          ],
         };
         this.heuris.total = this.heuris.questions.length;
       }
-      if (this.dialog) {
+      if (this.dialogHeuris) {
         //when dialog opens everything is reset
         if (this.$refs.formHeuris) {
           this.$refs.formHeuris.resetValidation();
           this.$refs.formHeuris.reset();
         }
-
-        if (this.$refs.formQuestion) {
-          this.$refs.formQuestion.resetValidation();
-          this.$refs.formQuestion.reset();
-        }
       }
     },
+    // dialog() {
+    //   if (!this.dialog && this.heuristics.length > 0 && !this.itemEdit) {
+    //     this.heuris = {
+    //       id: this.heuristics[this.heuristics.length - 1].id + 1,
+    //       title: "",
+    //       total: 0,
+    //       questions: [
+    //         {
+    //           id: 0,
+    //           title: "",
+    //           descriptions: [],
+    //         },
+    //       ],
+    //     };
+    //     this.heuris.total = this.heuris.questions.length;
+    //   }
+    //   if (this.dialog) {
+    //     //when dialog opens everything is reset
+    //     if (this.$refs.formHeuris) {
+    //       this.$refs.formHeuris.resetValidation();
+    //       this.$refs.formHeuris.reset();
+    //     }
+
+    //     if (this.$refs.formQuestion) {
+    //       this.$refs.formQuestion.resetValidation();
+    //       this.$refs.formQuestion.reset();
+    //     }
+    //   }
+    // },
     heuristics() {
       this.$emit("change");
     },
     itemSelect() {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
-    }
+    },
   },
   computed: {
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);
-      array.forEach(el => {
+      array.forEach((el) => {
         aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
       return aux;
     },
     totalQuestions() {
       let result = 0;
-      this.heuristics.forEach(h => {
+      this.heuristics.forEach((h) => {
         result += h.total;
       });
       return result;
-    }
+    },
   },
 
   created() {
@@ -603,9 +644,9 @@ export default {
           {
             id: 0,
             title: "",
-            descriptions: []
-          }
-        ]
+            descriptions: [],
+          },
+        ],
       };
     } else {
       this.heuris = {
@@ -616,13 +657,13 @@ export default {
           {
             id: 0,
             title: "",
-            descriptions: []
-          }
-        ]
+            descriptions: [],
+          },
+        ],
       };
     }
     this.heuris.total = this.heuris.questions.length;
-  }
+  },
 };
 </script>
 
