@@ -8,7 +8,9 @@
         <v-tooltip bottom v-if="!show">
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="show = !show" icon v-bind="attrs" v-on="on">
-              <v-icon :color="comment.com ? '#F9A826' : ''">mdi-comment-plus-outline</v-icon>
+              <v-icon :color="comment.com ? '#F9A826' : ''"
+                >mdi-comment-plus-outline</v-icon
+              >
             </v-btn>
           </template>
           <span v-if="comment.com">Show comment</span>
@@ -42,7 +44,15 @@
 
 <script>
 export default {
-  props: ["comment", "heurisIndex"],
+  props: {
+    comment: {
+      type: Object,
+      require: true
+    },
+    heurisIndex: {
+      type: Number
+    }
+  },
   data: () => ({
     show: false
   }),

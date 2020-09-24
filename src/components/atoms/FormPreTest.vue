@@ -29,7 +29,16 @@
 
 <script>
 export default {
-  props: ["preTest", "valIndex"],
+  props: {
+    preTest: {
+      type: Object,
+      required: true
+    },
+    valIndex: {
+      type: Number,
+      required: true 
+    }
+  },
   data: () => ({
     googleLinkRules: [
       v =>

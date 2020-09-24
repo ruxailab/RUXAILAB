@@ -6,11 +6,24 @@
           <div
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
-          >{{title}}</div>
-          <v-img class="mb-5 hidden-md-and-up" contain :src="require('../../assets/manager/' + image)" max-height="350"></v-img>
-          <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{main}}</div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
-            <u>{{link}}</u>
+          >
+            {{ title }}
+          </div>
+          <v-img
+            class="mb-5 hidden-md-and-up"
+            contain
+            :src="require('../../assets/manager/' + image)"
+            max-height="350"
+          ></v-img>
+          <div style="font-size: 22px" class="white--text mb-4 mobile-center">
+            {{ main }}
+          </div>
+          <span
+            class="white--text mobile-center mb-4"
+            style="cursor: pointer"
+            @click="emitClick()"
+          >
+            <u>{{ link }}</u>
           </span>
         </div>
 
@@ -28,7 +41,11 @@
       <v-row justify="center" class="ml-0">
         <v-col cols="12" md="8">
           <div class="learn-text">Learn More</div>
-          <v-card elevation="4" class="ma-0 pa-0" style="border-radius: 10px!important">
+          <v-card
+            elevation="4"
+            class="ma-0 pa-0"
+            style="border-radius: 10px!important"
+          >
             <v-list class="ma-0 pa-0">
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item
@@ -42,7 +59,10 @@
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title style="font-size: 25px;" v-text="item.title" />
+                    <v-list-item-title
+                      style="font-size: 25px;"
+                      v-text="item.title"
+                    />
                     <v-list-item-subtitle v-text="item.subtitle" />
                   </v-list-item-content>
                 </v-list-item>
@@ -59,7 +79,32 @@
 
 <script>
 export default {
-  props: ["title", "image", "main", "link", "items", 'colors'],
+  props: {
+    title: {
+      type: String,
+      require: true
+    },
+    image: {
+      type: String,
+      require: true
+    },
+    main: {
+      type: String,
+      require: true
+    },
+    link: {
+      type: String,
+      require: true
+    },
+    items: {
+      type: Array,
+      require: true
+    },
+    colors: {
+      type: Array,
+      require: true
+    }
+  },
   data: () => ({}),
   methods: {
     emitClick() {
@@ -67,13 +112,13 @@ export default {
     },
     emitCallFunc(func) {
       this.$emit("callFunc", func);
-    },
+    }
   },
   computed: {
     backgroundImage() {
-        return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
-    },
-  },
+      return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
+    }
+  }
 };
 </script>
 

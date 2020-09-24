@@ -16,7 +16,11 @@
               ></v-text-field>
             </template>
             <v-list>
-              <v-list-item v-for="(item, index) in seaching" :key="index" @click="select(item)">
+              <v-list-item
+                v-for="(item, index) in seaching"
+                :key="index"
+                @click="select(item)"
+              >
                 <v-list-item-title>{{ item.email }}</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -37,16 +41,22 @@
                   </v-col>
                   <v-col cols="4">
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.email"></v-list-item-title>
+                      <v-list-item-title
+                        v-text="item.email"
+                      ></v-list-item-title>
                     </v-list-item-content>
                   </v-col>
                   <v-col cols="4">
-                    <v-list-item-content v-if="type !=='tester'">
+                    <v-list-item-content v-if="type !== 'tester'">
                       <v-overflow-btn
                         v-model="accessLevel[i]"
                         class="my-2"
                         :items="accessLevels"
-                        :label="item.accessLevel!==null?item.accessLevel.toString():accessLevels[accessLevels.length-1].toString()"
+                        :label="
+                          item.accessLevel !== null
+                            ? item.accessLevel.toString()
+                            : accessLevels[accessLevels.length - 1].toString()
+                        "
                       ></v-overflow-btn>
                     </v-list-item-content>
                   </v-col>
@@ -67,7 +77,16 @@
 
 <script>
 export default {
-  props: ["invitations", "type"],
+  props: {
+    invitations: {
+      type: Array,
+      required: true,
+      default: function() {
+        return [];
+      }
+    },
+    type: {}
+  },
   data: () => ({
     selecteds: [],
     seach: "",

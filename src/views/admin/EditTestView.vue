@@ -125,7 +125,7 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    intro: null,
+    intro: null
   }),
   methods: {
     // log() {
@@ -138,7 +138,7 @@ export default {
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -151,8 +151,8 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
           this.answers.answersSheet = this.object.answersSheet;
@@ -161,17 +161,17 @@ export default {
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers,
+              data: this.answers
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -228,11 +228,11 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro();
       }
-    },
+    }
   },
   computed: {
     loading() {
@@ -272,7 +272,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 

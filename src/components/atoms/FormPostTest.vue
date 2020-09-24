@@ -18,7 +18,16 @@
 
 <script>
 export default {
-  props: ["postTest", "valIndex"],
+  props: {
+    postTest: {
+      type: Object,
+      required: true
+    },
+    valIndex: {
+      type: Number,
+      required: true
+    }
+  },
   data: () => ({
     googleLinkRules: [
       v =>

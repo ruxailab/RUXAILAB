@@ -6,7 +6,8 @@
       class="white--text"
       small
       @click="$emit('dialog', true)"
-    >Add a new Option</v-btn>
+      >Add a new Option</v-btn
+    >
 
     <v-dialog width="500" v-model="dialog" persistent>
       <v-card class="dataCard">
@@ -17,7 +18,13 @@
             <v-form ref="form">
               <v-row justify="center" align="center">
                 <v-col cols="9">
-                  <v-text-field maxLength="100" counter="100" v-model="option.text" label="Text" :rules="textRequired"></v-text-field>
+                  <v-text-field
+                    maxLength="100"
+                    counter="100"
+                    v-model="option.text"
+                    label="Text"
+                    :rules="textRequired"
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="2">
@@ -44,9 +51,12 @@
             small
             text
             color="red lighten-1 white--text"
-          >Cancel</v-btn>
+            >Cancel</v-btn
+          >
 
-          <v-btn @click="validate()" small color="#f9a826" class="white--text">Save</v-btn>
+          <v-btn @click="validate()" small color="#f9a826" class="white--text"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -55,7 +65,21 @@
 
 <script>
 export default {
-  props: ["option", "dialog", "hasValue"],
+  props: {
+    option: {
+      type: Object,
+      required: true
+    },
+    dialog: {
+      type: Boolean,
+      default: false
+    },
+    hasValue: {
+      type: Boolean,
+      required:true,
+      default: false
+    }
+  },
   data: () => ({
     id: 0,
     textRequired: [v => !!v || "Text is required"]

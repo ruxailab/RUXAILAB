@@ -1,10 +1,9 @@
 <template>
   <v-container>
-    
     <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
       <v-col cols="12">
         <v-row justify="center">
-          <h1>{{item.name}}</h1>
+          <h1>{{ item.name }}</h1>
         </v-row>
         <v-spacer></v-spacer>
         <v-row justify="end" v-if="item.tip !== null">
@@ -12,7 +11,7 @@
         </v-row>
         <v-spacer></v-spacer>
         <v-row justify="center">
-          <p class="paragraph">{{item.description}}</p>
+          <p class="paragraph">{{ item.description }}</p>
         </v-row>
         <v-spacer></v-spacer>
         <v-row justify="center">
@@ -22,7 +21,7 @@
         </v-row>
         <v-spacer></v-spacer>
         <v-row class="paragraph" justify="space-around">
-          <v-col v-if="item.answer === 'textArea' ">
+          <v-col v-if="item.answer === 'textArea'">
             <v-textarea outlined label="answer"></v-textarea>
           </v-col>
           <v-col>
@@ -39,7 +38,8 @@
         frameborder="0"
         marginheight="0"
         marginwidth="0"
-      >Carregando…</iframe>
+        >Carregando…</iframe
+      >
     </v-row>
   </v-container>
 </template>
@@ -47,7 +47,16 @@
 <script>
 import TipButton from "../atoms/TipButton";
 export default {
-  props: ["item",'postTest'],
+  props: {
+    item: {
+      type: Object,
+      required: true
+    },
+    postTest: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     TipButton
   }
