@@ -18,6 +18,7 @@
                 :option="option"
                 :dialog="dialog"
                 :hasValue="hasValue"
+                @changeHasValue="hasValue = !hasValue"
                 @addOption="updateOptions"
                 @dialog="changeDialog"
                 @change="emitChange()"

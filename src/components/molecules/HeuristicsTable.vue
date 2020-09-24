@@ -497,6 +497,7 @@ export default {
       if (this.$refs.formQuestion) {
         this.$refs.formQuestion.resetValidation();
         this.$refs.formQuestion.reset();
+        this.newQuestion = null
       }
     },
     addQuestion() {
@@ -518,7 +519,7 @@ export default {
         });
 
         this.$refs.formQuestion.resetValidation();
-        this.$refs.formQuestion.reset();
+        //this.$refs.formQuestion.reset();
         this.$emit("change");
       }
     },

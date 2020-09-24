@@ -38,7 +38,10 @@
               </v-row>
 
               <v-row justify="center">
-                <v-checkbox v-model="hasValue" label="Has Value"></v-checkbox>
+                <v-checkbox
+                  v-model="hasValueState"
+                  label="Has Value"
+                ></v-checkbox>
               </v-row>
             </v-form>
           </v-col>
@@ -76,14 +79,24 @@ export default {
     },
     hasValue: {
       type: Boolean,
-      required:true,
-      default: false
+      required: true,
+      default: true
     }
   },
   data: () => ({
     id: 0,
     textRequired: [v => !!v || "Text is required"]
   }),
+  computed: {
+    hasValueState: {
+      get() {
+        return this.hasValue;
+      },
+      set() {
+        this.$emit("changeHasValue");
+      }
+    }
+  },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
