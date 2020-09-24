@@ -1,30 +1,37 @@
 <template>
   <div>
+    <Snackbar />
+
+    <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error accent-4 white--text"
-          primary-title
-        >Are you sure you want to leave?</v-card-title>
+        <v-card-title class="headline error accent-4 white--text" primary-title
+          >Are you sure you want to leave?</v-card-title
+        >
 
-        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+        <v-card-text
+          >Are you sure you want to leave? All your changes will be
+          discarded</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialog = false"
+            >Stay</v-btn
+          >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
-            @click="change = false,$router.push(go)"
-          >Leave</v-btn>
+            @click="(change = false), $router.push(go)"
+            >Leave</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <Snackbar />
-
+    <!-- Save button -->
     <v-tooltip left v-if="change">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -35,7 +42,7 @@
           bottom
           right
           color="#F9A826"
-          @click=" validateAll()"
+          @click="validateAll()"
           v-bind="attrs"
           v-on="on"
         >
@@ -44,93 +51,73 @@
       </template>
       <span>Save</span>
     </v-tooltip>
+
+    <!-- Loading Overlay -->
     <v-overlay class="text-center" v-model="loading">
-      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      ></v-progress-circular>
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
-    <IntroEdit v-if="test && intro==true" @closeIntro="intro = false" />
-    <ShowInfo v-if="test  &&  intro==false" title="Test Edit">
-      <v-row dense slot="top">
-        <v-tabs background-color="transparent" color="#FCA326" class="tab-border-bottom pb-0 mb-0">
-          <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
-          <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
-          <v-tab v-if="test.type === 'Heuristics'" @click="index = 1">Heuristics</v-tab>
-          <v-tab v-if="test.type === 'Heuristics'" @click="index = 2">Options</v-tab>
-          <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
-        </v-tabs>
-      </v-row>
 
-      <div slot="content" class="ma-0 pa-0">
-        <v-card v-if="index==0" style="background: #f5f7ff">
-          <v-card-title class="subtitleView">Pre Test</v-card-title>
-          <v-divider></v-divider>
-          <v-row justify="space-around" v-if="object.preTest">
-            <v-col cols="10">
-              <FormPreTest
-                :preTest="object.preTest"
-                @valForm="validate"
-                :valIndex="0"
-                @change="change = true"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
+    <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
 
-        <div v-if="index==1" class="ma-0 pa-0">
-          <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
-          <Heuristic
-            v-else-if="test.type === 'Heuristics'"
-            :heuristics="object.heuristics"
-            :answersSheet="object.answersSheet"
-            @change="change = true"
-          />
-        </div>
+    <ShowInfo v-if="test && intro == false" title="Test Edit">
+      <!-- Heuristics tests -->
+      <EditHeuristicsTest
+        v-if="test.type == 'Heuristics'"
+        type="tabs"
+        @tabClicked="setIndex"
+        slot="top"
+      />
+      <EditHeuristicsTest
+        v-if="test.type === 'Heuristics'"
+        type="content"
+        :object="object"
+        :index="index"
+        @change="change = true"
+        slot="content"
+      />
 
-        <div class="ma-0 pa-0" v-if="index==2">
-          <OptionsTable :options="object.options" @valForm="validate" @change="change = true" />
-        </div>
+      <!-- User tests -->
+      <EditUserTest
+        v-if="test.type === 'User'"
+        type="tabs"
+        @tabClicked="setIndex"
+        slot="top"
+      />
 
-        <v-card v-if="index==3" style="background: #f5f7ff">
-          <v-card-title class="subtitleView">Post Test</v-card-title>
-          <v-divider></v-divider>
-          <v-row justify="space-around">
-            <v-col cols="12">
-              <FormPostTest
-                :postTest="object.postTest"
-                :valIndex="1"
-                @input="object.postTest = $event"
-                @valForm="validate"
-                @change="change = true"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
-      </div>
+      <EditUserTest
+        v-if="test.type === 'User'"
+        :object="object"
+        :index="index"
+        type="content"
+        @change="change = true"
+        @valForm="validate"
+        slot="content"
+      />
+      <!-- </div> -->
     </ShowInfo>
   </div>
 </template>
 
 <script>
-import FormPreTest from "@/components/atoms/FormPreTest";
-import FormPostTest from "@/components/atoms/FormPostTest";
-import ListTasks from "@/components/molecules/ListTasks";
-import Heuristic from "@/components/molecules/HeuristicsTable";
-import OptionsTable from "@/components/molecules/OptionsTable";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
+import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
+import EditUserTest from "@/components/organisms/EditUserTest";
 
 export default {
   props: ["id"],
   components: {
-    FormPreTest,
-    FormPostTest,
-    ListTasks,
-    Heuristic,
-    OptionsTable,
     Snackbar,
     ShowInfo,
     IntroEdit,
+    EditHeuristicsTest,
+    EditUserTest,
   },
   data: () => ({
     index: 0,
@@ -141,6 +128,9 @@ export default {
     intro: null,
   }),
   methods: {
+    // log() {
+    //   console.log("log", this.$refs.edit.top)
+    // },
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
@@ -219,12 +209,10 @@ export default {
     async setIntro() {
       this.object = await Object.assign(this.object, this.test);
       if (this.test.type === "Heuristics") {
-        this.index = 1;
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
           this.intro = true;
         else this.intro = false;
       } else if (this.test.type === "User") {
-        this.index = 0;
         if (
           this.test.tasks.length == 0 &&
           this.test.postTest.form == null &&
@@ -235,6 +223,9 @@ export default {
         else this.intro = false;
       }
     },
+    setIndex(ind) {
+      this.index = ind;
+    },
   },
   watch: {
     test: async function () {
@@ -244,8 +235,8 @@ export default {
     },
   },
   computed: {
-    loading(){
-      return this.$store.getters.loading
+    loading() {
+      return this.$store.getters.loading;
     },
     user() {
       return this.$store.getters.user;
@@ -255,7 +246,7 @@ export default {
     },
     answers() {
       return this.$store.state.answers.answers || [];
-    }
+    },
   },
   created() {
     if (
