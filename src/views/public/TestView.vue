@@ -1,33 +1,54 @@
 <template >
-  <div v-if="test  || test && test.type ==='User'">
+  <div v-if="test || (test && test.type === 'User')">
     <Snackbar />
 
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error white--text"
-          primary-title
-        >Are you sure you want to submit this test?</v-card-title>
+        <v-card-title class="headline error white--text" primary-title
+          >Are you sure you want to submit this test?</v-card-title
+        >
 
-        <v-card-text>Are you sure you want to submit your test. You can only do it once.</v-card-text>
+        <v-card-text
+          >Are you sure you want to submit your test. You can only do it
+          once.</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false">Cancel</v-btn>
-          <v-btn class="red white--text ml-1" text @click="submitLog(false), dialog = false">Submit</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn
+            class="red white--text ml-1"
+            text
+            @click="submitLog(false), (dialog = false)"
+            >Submit</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
+    <v-overlay v-model="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn @logined="logined=true" @change="selected = !selected" v-if="selected" />
-      <CardSignUp @logined="logined=true" @change="selected = !selected" v-else />
+      <CardSignIn
+        @logined="logined = true"
+        @change="selected = !selected"
+        v-if="selected"
+      />
+      <CardSignUp
+        @logined="logined = true"
+        @change="selected = !selected"
+        v-else
+      />
     </v-dialog>
 
-    <v-dialog :value="fromlink && !noExistUser" width="500" persistent>
+    <v-dialog :value="fromlink && !noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -35,11 +56,13 @@
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">Continue as {{user.email}}</v-btn>
+          <v-btn color="#F9A826" class="white--text" @click="setTest()"
+            >Continue as {{ user.email }}</v-btn
+          >
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
-            Not {{user.email}}?
+            Not {{ user.email }}?
             <a style="color: #F9A826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
@@ -47,18 +70,32 @@
     </v-dialog>
 
     <!-- Start Screen -->
-    <v-row v-if="test && start " class="background background-img pa-0 ma-0" align="center">
+    <v-row
+      v-if="test && start"
+      class="background background-img pa-0 ma-0"
+      align="center"
+    >
       <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{test.title}}</h1>
-        <p align="justify" class="description">{{test.description}}</p>
+        <h1 class="titleView pb-1">{{ test.title }}</h1>
+        <p align="justify" class="description">{{ test.description }}</p>
         <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="start=!start">Start Test</v-btn>
+          <v-btn color="white" outlined rounded @click="start = !start"
+            >Start Test</v-btn
+          >
         </v-row>
       </v-col>
     </v-row>
 
     <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial v-if="showBtn" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
+      <v-speed-dial
+        v-if="showBtn"
+        v-model="fab"
+        fixed
+        class="mr-3"
+        bottom
+        right
+        open-on-hover
+      >
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
             <v-icon v-if="fab">mdi-close</v-icon>
@@ -68,7 +105,15 @@
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="submitLog(true)" fab dark small color="#F9A826" v-bind="attrs" v-on="on">
+            <v-btn
+              @click="submitLog(true)"
+              fab
+              dark
+              small
+              color="#F9A826"
+              v-bind="attrs"
+              v-on="on"
+            >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
@@ -94,13 +139,21 @@
         </v-tooltip>
       </v-speed-dial>
 
-      <v-navigation-drawer clipped v-model="drawer" :mini-variant="mini" permanent color="#3F3D56">
+      <v-navigation-drawer
+        clipped
+        v-model="drawer"
+        :mini-variant="mini"
+        permanent
+        color="#3F3D56"
+      >
         <div class="header" v-if="!mini">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
               <v-col class="pa-0 ma-0" cols="8">
-                <div class="idText">{{test.id}}</div>
-                <v-clamp class="titleText" autoresize :max-lines="2">{{test.title}}</v-clamp>
+                <div class="idText">{{ test.id }}</div>
+                <v-clamp class="titleText" autoresize :max-lines="2">{{
+                  test.title
+                }}</v-clamp>
               </v-col>
               <v-col v-if="test.type === 'Heuristics'">
                 <v-progress-circular
@@ -109,7 +162,8 @@
                   color="#fca326"
                   :size="50"
                   class="mt-2"
-                >{{answersSheet.progress}}</v-progress-circular>
+                  >{{ answersSheet.progress }}</v-progress-circular
+                >
               </v-col>
             </v-row>
           </v-list-item>
@@ -122,7 +176,7 @@
           max-height="85%"
           style="overflow-y:auto;overflow-x:hidden; padding-bottom: 100px"
         >
-          <div v-for="(item,n) in items" :key="n">
+          <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
               @click="index = item.id"
@@ -133,27 +187,41 @@
               <v-icon
                 slot="appendIcon"
                 :color="index == item.id ? '#ffffff' : '#fca326'"
-              >mdi-chevron-down</v-icon>
+                >mdi-chevron-down</v-icon
+              >
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
+                    item.icon
+                  }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
-                  :style="index ==item.id? 'color: white': 'color:#fca326'"
-                >{{ item.title }}</v-list-item-title>
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                  >{{ item.title }}</v-list-item-title
+                >
               </template>
 
-              <v-list-item v-for="(preTest, i) in item.value" :key="i" @click="preTestIndex = i">
+              <v-list-item
+                v-for="(preTest, i) in item.value"
+                :key="i"
+                @click="preTestIndex = i"
+              >
                 <v-list-item-icon>
                   <v-icon
                     :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'"
-                  >{{ preTest.icon }}</v-icon>
+                    >{{ preTest.icon }}</v-icon
+                  >
                 </v-list-item-icon>
 
                 <v-list-item-content>
                   <v-list-item-title
-                    :style="preTestIndex == preTest.id ? 'color: white': 'color:#fca326'"
-                  >{{ preTest.title }}</v-list-item-title>
+                    :style="
+                      preTestIndex == preTest.id
+                        ? 'color: white'
+                        : 'color:#fca326'
+                    "
+                    >{{ preTest.title }}</v-list-item-title
+                  >
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
@@ -166,11 +234,19 @@
               <div v-if="mini">
                 <v-tooltip right v-for="(heuris, i) in item.value" :key="i">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-list-item @click="heurisIndex = i" link v-bind="attrs" v-on="on">
+                    <v-list-item
+                      @click="heurisIndex = i"
+                      link
+                      v-bind="attrs"
+                      v-on="on"
+                    >
                       <v-list-item-icon>
                         <v-progress-circular
                           rotate="-90"
-                          v-if="test.type === 'Heuristics' && progress(answersSheet.heuristics[i])!=100"
+                          v-if="
+                            test.type === 'Heuristics' &&
+                              progress(answersSheet.heuristics[i]) != 100
+                          "
                           :value="progress(answersSheet.heuristics[i])"
                           :size="24"
                           :width="3"
@@ -179,13 +255,17 @@
                         <v-icon
                           v-else
                           :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        >{{ heuris.icon }}</v-icon>
+                          >{{ heuris.icon }}</v-icon
+                        >
                       </v-list-item-icon>
 
                       <v-list-item-content>
                         <v-list-item-title
-                          :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
-                        >{{ heuris.title }}</v-list-item-title>
+                          :style="
+                            heurisIndex == i ? 'color: white' : 'color:#fca326'
+                          "
+                          >{{ heuris.title }}</v-list-item-title
+                        >
                       </v-list-item-content>
                     </v-list-item>
                   </template>
@@ -203,7 +283,10 @@
                   <v-list-item-icon>
                     <v-progress-circular
                       rotate="-90"
-                      v-if="test.type === 'Heuristics' && progress(answersSheet.heuristics[i])!=100"
+                      v-if="
+                        test.type === 'Heuristics' &&
+                          progress(answersSheet.heuristics[i]) != 100
+                      "
                       :value="progress(answersSheet.heuristics[i])"
                       :size="24"
                       :width="3"
@@ -212,13 +295,17 @@
                     <v-icon
                       v-else
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                    >{{ heuris.icon }}</v-icon>
+                      >{{ heuris.icon }}</v-icon
+                    >
                   </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title
-                      :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
-                    >{{ heuris.title }}</v-list-item-title>
+                      :style="
+                        heurisIndex == i ? 'color: white' : 'color:#fca326'
+                      "
+                      >{{ heuris.title }}</v-list-item-title
+                    >
                   </v-list-item-content>
                 </v-list-item>
               </div>
@@ -226,32 +313,47 @@
             <!--Tasks--->
             <v-list-group
               @click="index = item.id"
-              v-else-if="item.id == 1  && test.type == 'User'"
+              v-else-if="item.id == 1 && test.type == 'User'"
               :value="index == 1 ? true : false"
               no-action
             >
               <v-icon
                 slot="appendIcon"
                 :color="index == item.id ? '#ffffff' : '#fca326'"
-              >mdi-chevron-down</v-icon>
+                >mdi-chevron-down</v-icon
+              >
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
+                    item.icon
+                  }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
-                  :style="index ==item.id? 'color: white': 'color:#fca326'"
-                >{{ item.title }}</v-list-item-title>
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                  >{{ item.title }}</v-list-item-title
+                >
               </template>
               <v-tooltip right v-for="(task, i) in item.value" :key="i">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-list-item @click="heurisIndex = i" link v-bind="attrs" v-on="on">
+                  <v-list-item
+                    @click="heurisIndex = i"
+                    link
+                    v-bind="attrs"
+                    v-on="on"
+                  >
                     <v-list-item-icon>
-                      <v-icon :color="heurisIndex == i ? '#ffffff' : '#fca326'">{{ task.icon }}</v-icon>
+                      <v-icon
+                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                        >{{ task.icon }}</v-icon
+                      >
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title
-                        :style="heurisIndex == i ? 'color: white': 'color:#fca326'"
-                      >{{ task.title }}</v-list-item-title>
+                        :style="
+                          heurisIndex == i ? 'color: white' : 'color:#fca326'
+                        "
+                        >{{ task.title }}</v-list-item-title
+                      >
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -259,15 +361,18 @@
               </v-tooltip>
             </v-list-group>
             <!--Post Test-->
-            <v-list-item @click="index = item.id" v-else-if="item.id ==2">
+            <v-list-item @click="index = item.id" v-else-if="item.id == 2">
               <v-list-item-icon>
-                <v-icon :color="index ==item.id? '#ffffff' : '#fca326'">{{ item.icon }}</v-icon>
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
+                  item.icon
+                }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
-                  :style="index ==item.id? 'color: white': 'color:#fca326'"
-                >{{ item.title }}</v-list-item-title>
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                  >{{ item.title }}</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
           </div>
@@ -284,7 +389,10 @@
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
         <!-- Consent - Pre Test -->
-        <ShowInfo v-if="index==0 && preTestIndex == 0" title="Pre Test - Consent">
+        <ShowInfo
+          v-if="index == 0 && preTestIndex == 0"
+          title="Pre Test - Consent"
+        >
           <iframe
             slot="content"
             :src="test.preTest.consent"
@@ -293,11 +401,15 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…</iframe
+          >
         </ShowInfo>
 
         <!-- Form - Pre Test -->
-        <ShowInfo v-if="index==0 && preTestIndex == 1" title="Pre Test - Form">
+        <ShowInfo
+          v-if="index == 0 && preTestIndex == 1"
+          title="Pre Test - Form"
+        >
           <iframe
             slot="content"
             :src="test.preTest.form"
@@ -306,26 +418,31 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…</iframe
+          >
         </ShowInfo>
 
         <!-- Heuristics -->
         <ShowInfo
-          v-if="index==1 && test.type === 'Heuristics'"
+          v-if="index == 1 && test.type === 'Heuristics'"
           :title="test.heuristics[heurisIndex].title"
         >
           <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{test.heuristics[heurisIndex].title}}</v-card-title>
+            <v-card-title class="subtitleView">{{
+              test.heuristics[heurisIndex].title
+            }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
             <v-row
-              v-for="(question,i) in test.heuristics[heurisIndex].questions"
+              v-for="(question, i) in test.heuristics[heurisIndex].questions"
               :key="i"
               justify="center"
             >
               <v-col cols="10">
                 <v-row justify="space-around" align="center">
                   <v-col cols="11">
-                    <p class="subtitleView">{{i+1}}) {{question.title}}</p>
+                    <p class="subtitleView">
+                      {{ i + 1 }}) {{ question.title }}
+                    </p>
                   </v-col>
                   <v-col cols="1">
                     <HelpBtn :question="question" />
@@ -341,7 +458,9 @@
                     v-if="answersSheet !== undefined"
                     :items="test.options"
                     @change="calcProgress()"
-                    v-model="answersSheet.heuristics[heurisIndex].questions[i].res"
+                    v-model="
+                      answersSheet.heuristics[heurisIndex].questions[i].res
+                    "
                     label="Respuestas/Answers"
                     outlined
                     dense
@@ -353,16 +472,21 @@
         </ShowInfo>
 
         <!-- Tasks -->
-        <ShowInfo v-if="index==1 && test.type === 'User'" :title="test.tasks[heurisIndex].name">
+        <ShowInfo
+          v-if="index == 1 && test.type === 'User'"
+          :title="test.tasks[heurisIndex].name"
+        >
           <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{test.tasks[heurisIndex].name}}</v-card-title>
+            <v-card-title class="subtitleView">{{
+              test.tasks[heurisIndex].name
+            }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
             <ViewTask :item="test.tasks[heurisIndex]" />
           </div>
         </ShowInfo>
 
         <!-- Post Test -->
-        <ShowInfo v-if="index==2 " title="Post Test">
+        <ShowInfo v-if="index == 2" title="Post Test">
           <iframe
             slot="content"
             :src="test.postTest.form"
@@ -371,7 +495,8 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…</iframe
+          >
         </ShowInfo>
       </v-col>
     </v-row>
@@ -398,7 +523,7 @@ export default {
     VClamp,
     Snackbar,
     CardSignIn,
-    CardSignUp,
+    CardSignUp
   },
   data: () => ({
     logined: null,
@@ -415,29 +540,29 @@ export default {
     idx: 0,
     fab: false,
     res: 0,
-    dialog: false,
+    dialog: false
   }),
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       if (this.test && this.token) {
         if (!this.$store.state.cooperators.cooperators)
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
+            id: this.test.cooperators
           });
         else if (
           this.$store.state.cooperators.cooperators !== this.test.cooperators
         )
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
+            id: this.test.cooperators
           });
       }
     },
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
-        if (this.items.find((obj) => obj.id == 0)) {
+        if (this.items.find(obj => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
         }
@@ -451,7 +576,7 @@ export default {
         this.noExistUser = false;
         if (this.logined) this.setTest();
       }
-    },
+    }
   },
   methods: {
     mappingSteps() {
@@ -465,10 +590,10 @@ export default {
               {
                 title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 0,
-              },
+                id: 0
+              }
             ],
-            id: 0,
+            id: 0
           });
 
         if (this.validate(this.test.preTest.form)) {
@@ -476,7 +601,7 @@ export default {
             this.items[0].value.push({
               title: "Form",
               icon: "mdi-checkbox-blank-circle-outline",
-              id: 1,
+              id: 1
             });
           } else {
             this.items.push({
@@ -486,10 +611,10 @@ export default {
                 {
                   title: "Form",
                   icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1,
-                },
+                  id: 1
+                }
               ],
-              id: 0,
+              id: 0
             });
           }
         }
@@ -499,13 +624,13 @@ export default {
           this.items.push({
             title: "Tasks",
             icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map((i) => {
+            value: this.test.tasks.map(i => {
               return {
                 title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline",
+                icon: "mdi-checkbox-blank-circle-outline"
               };
             }),
-            id: 1,
+            id: 1
           });
 
         //PostTest
@@ -514,7 +639,7 @@ export default {
             title: "Post Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: this.test.postTest,
-            id: 2,
+            id: 2
           });
       } else if (this.test.type === "Heuristics") {
         //Heuristics
@@ -525,13 +650,13 @@ export default {
           this.items.push({
             title: "Heuristics",
             icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map((i) => {
+            value: this.test.heuristics.map(i => {
               return {
                 title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline",
+                icon: "mdi-checkbox-marked-circle-outline"
               };
             }),
-            id: 1,
+            id: 1
           });
       }
     },
@@ -540,8 +665,8 @@ export default {
     },
     calcProgress() {
       var qtd = 0;
-      this.answersSheet.heuristics.forEach((h) => {
-        qtd += h.questions.filter((q) => q.res !== "").length;
+      this.answersSheet.heuristics.forEach(h => {
+        qtd += h.questions.filter(q => q.res !== "").length;
       });
 
       this.answersSheet.progress = (
@@ -550,21 +675,19 @@ export default {
       ).toFixed(1);
     },
     submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(
-        (answer) => answer.id == this.id
-      );
+      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
       if (!save) newAnswer.answersSheet.submited = true;
 
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
       };
       this.$store
         .dispatch("updateLog", {
           docId: newAnswer.reports,
           elementId: this.user.uid,
-          element: log,
+          element: log
         })
         .then(() => {
           if (!save) {
@@ -573,13 +696,13 @@ export default {
                 docId: newAnswer.answers,
                 element: Object.assign(this.answersSheet, {
                   uid: this.user.uid,
-                  email: this.user.email,
-                }),
+                  email: this.user.email
+                })
               })
               .then(() => {
                 this.$store.commit("setSuccess", "Test succesfully submited");
               })
-              .catch((err) => {
+              .catch(err => {
                 this.$store.commit("setError", err);
               });
           }
@@ -588,19 +711,19 @@ export default {
       this.$store
         .dispatch("updateMyAnswers", {
           docId: this.user.uid,
-          element: newAnswer,
+          element: newAnswer
         })
         .then(() => {
           if (save)
             this.$store.commit("setSuccess", "Project succesfully saved");
         })
-        .catch((err) => {
+        .catch(err => {
           if (save) this.$store.commit("setError", err);
         });
     },
     progress(item) {
       return (
-        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
+        (item.questions.filter(q => q.res !== "").length * 100) / item.total
       );
     },
     setExistUser() {
@@ -614,7 +737,7 @@ export default {
     setTest() {
       if (this.user.myAnswers) {
         this.fromlink = false;
-        let exist = this.user.myAnswers.find((test) => test.id == this.id);
+        let exist = this.user.myAnswers.find(test => test.id == this.id);
         if (!exist) {
           let payload = Object.assign(
             {},
@@ -626,14 +749,14 @@ export default {
               answers: this.test.answers,
               cooperators: this.test.cooperators,
               answersSheet: Object.assign(this.test.answersSheet, {
-                submited: false,
+                submited: false
               }),
-              accessLevel: 2,
+              accessLevel: 2
             }
           );
           //Get invitation
           let coop = this.cooperators.cooperators.find(
-            (coop) => coop.token == this.token
+            coop => coop.token == this.token
           );
 
           if (coop) {
@@ -642,7 +765,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload,
+                  element: payload
                 })
                 .then(() => {
                   //Update invitation to accepted
@@ -650,28 +773,28 @@ export default {
                     docId: this.test.cooperators,
                     elementId: this.user.uid,
                     element: true,
-                    param: "accepted",
+                    param: "accepted"
                   });
 
                   //Remove notification
                   let inv = this.user.notifications.find(
-                    (not) => not.test.id == this.id
+                    not => not.test.id == this.id
                   );
                   this.$store.dispatch("removeNotification", {
                     docId: this.user.uid,
-                    element: inv,
+                    element: inv
                   });
 
                   //Update state reports
                   var log = {
                     date: new Date().toLocaleString("en-US"),
                     progress: 0,
-                    status: "In progress",
+                    status: "In progress"
                   };
                   this.$store.dispatch("updateLog", {
                     docId: this.test.reports,
                     elementId: this.user.uid,
-                    element: log,
+                    element: log
                   });
                 });
             }
@@ -680,7 +803,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload,
+                  element: payload
                 })
                 .then(() => {
                   //Update Invitation insert User ID and invitation accepted
@@ -690,7 +813,7 @@ export default {
                       elementId: this.token,
                       element: this.user.uid,
                       identifier: "token",
-                      param: "id",
+                      param: "id"
                     })
                     .then(() => {
                       this.$store.dispatch("updateCooperator", {
@@ -698,7 +821,7 @@ export default {
                         elementId: this.token,
                         identifier: "token",
                         element: true,
-                        param: "accepted",
+                        param: "accepted"
                       });
                     });
 
@@ -711,13 +834,13 @@ export default {
                       log: {
                         date: new Date().toLocaleString("en-Us"),
                         progress: 0,
-                        status: "In progress",
-                      },
+                        status: "In progress"
+                      }
                     }
                   );
                   this.$store.dispatch("pushLog", {
                     docId: this.test.reports,
-                    element: item,
+                    element: item
                   });
                 });
             }
@@ -726,7 +849,7 @@ export default {
           }
         }
       }
-    },
+    }
   },
   computed: {
     test() {
@@ -739,7 +862,7 @@ export default {
     answersSheet: {
       get() {
         if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
+          let x = this.user.myAnswers.find(answer => answer.id == this.id);
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
@@ -748,7 +871,7 @@ export default {
       },
       set(item) {
         return item;
-      },
+      }
     },
     showBtn() {
       if (this.answersSheet !== undefined && this.answersSheet !== null) {
@@ -760,19 +883,22 @@ export default {
       return false;
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators;
+      return this.$store.getters.cooperators;
     },
+    loading(){
+      return this.$store.getters.loading
+    }
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
-      next((vm) => {
+      next(vm => {
         vm.fromlink = true;
       });
     next();
-  },
+  }
 };
 </script>
 

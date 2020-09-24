@@ -22,6 +22,10 @@
       <span>Create new test</span>
     </v-tooltip>
 
+    <v-overlay v-model="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
@@ -81,13 +85,25 @@
           ></v-select>
 
           <!-- My Tests -->
-          <List @clicked="goTo" v-if="index == 0" :tests="filteredMyTests"></List>
+          <List
+            @clicked="goTo"
+            v-if="index == 0"
+            :tests="filteredMyTests"
+          ></List>
 
           <!-- Tests I Colaborate With -->
-          <List @clicked="goTo" v-if="index == 1" :tests="filteredMyCoops"></List>
+          <List
+            @clicked="goTo"
+            v-if="index == 1"
+            :tests="filteredMyCoops"
+          ></List>
 
           <!-- My Answers -->
-          <List @clicked="goTo" v-if="index == 2" :tests="filteredMyAnswers"></List>
+          <List
+            @clicked="goTo"
+            v-if="index == 2"
+            :tests="filteredMyAnswers"
+          ></List>
         </v-col>
       </v-row>
     </div>
@@ -111,36 +127,41 @@ export default {
     buttonItems: [
       { text: "My Tests", value: 0 },
       { text: "Tests I colaborate with", value: 1 },
-      { text: "My Answers", value: 2 },
-    ],
+      { text: "My Answers", value: 2 }
+    ]
   }),
   methods: {
     pushCreate() {
       this.$router.push("/createtest");
     },
     goTo(test) {
-        this.$router.push((test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id)
-    },
+      this.$router.push(
+        (test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
+      );
+    }
   },
   computed: {
     user() {
       return this.$store.state.auth.user;
     },
     filteredMyTests() {
-      return this.user.myTests.filter((test) => {
+      return this.user.myTests.filter(test => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyCoops() {
-      return this.user.myCoops.filter((test) => {
+      return this.user.myCoops.filter(test => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     filteredMyAnswers() {
-      return this.user.myAnswers.filter((test) => {
+      return this.user.myAnswers.filter(test => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
+    loading() {
+      return this.$store.getters.loading;
+    }
   }
 };
 </script>

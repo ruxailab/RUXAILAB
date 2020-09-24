@@ -103,7 +103,7 @@ export default {
         }
       }
     );
-    
+
     element[payload.field][index] = payload.element
 
 
@@ -120,6 +120,11 @@ export default {
       let user = await docRef.get();
       user = Object.assign({ uid: payload.docId }, user.data());
       commit("setUser", user);
+
+      if (user.myTests !== undefined)
+        commit('setLoading', false)
+      else
+        commit('setLoading', true)
     });
   },
   setParam: (payload) => {

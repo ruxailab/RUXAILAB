@@ -7,6 +7,9 @@ export default {
   getters: {
     user(state) {
       return state.user;
+    },
+    setLoading(state) {
+      return state.Loading
     }
   },
   mutations: {
@@ -59,6 +62,9 @@ export default {
         commit("setUser", null);
       } catch (err) {
         console.error("Error logging out.", err);
+      } finally {
+        //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
+        commit("setLoading", false);
       }
     },
     async autoSignIn({ commit }) {
@@ -78,6 +84,9 @@ export default {
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
+      } finally {
+        //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
+        commit("setLoading", false);
       }
     },
     setUser({ commit }, user) {
