@@ -380,7 +380,7 @@
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import ViewTask from "@/components/atoms/ViewTask.vue";
+import ViewTask from "@/components/molecules/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";

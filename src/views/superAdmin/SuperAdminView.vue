@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <Snackbar></Snackbar>
 
     <!-- Delete Alert Dialog -->
@@ -89,7 +89,7 @@
       </v-col>
     </v-row>
     <v-card></v-card>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

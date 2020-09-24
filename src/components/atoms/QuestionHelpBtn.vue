@@ -3,7 +3,9 @@
     <v-tooltip bottom v-if="question.descriptions.length > 0">
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon>
-          <v-icon v-bind="attrs" v-on="on" @click="dialog = true">mdi-help-circle-outline</v-icon>
+          <v-icon v-bind="attrs" v-on="on" @click="dialog = true"
+            >mdi-help-circle-outline</v-icon
+          >
         </v-btn>
       </template>
       <span>Help</span>
@@ -20,7 +22,11 @@
 
         <div v-for="(description, i) in question.descriptions" :key="i">
           <div class="subtitleView mx-4 mb-1 mt-5">{{ description.title }}</div>
-          <TextBox class="mx-4" :text="description.text" :editable="false"></TextBox>
+          <TextBox
+            class="mx-4"
+            :text="description.text"
+            :editable="false"
+          ></TextBox>
         </div>
       </v-card>
     </v-dialog>
@@ -31,15 +37,20 @@
 import TextBox from "@/components/atoms/TextBox";
 
 export default {
-  props: ["question"],
+  props: {
+    question: {
+      type: Object,
+      required: true
+    }
+  },
   components: {
-    TextBox,
+    TextBox
   },
   data: () => ({
     dialog: false,
-    isMounted: false,
+    isMounted: false
   }),
-  methods: {},
+  methods: {}
 };
 </script>
 

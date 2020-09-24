@@ -48,20 +48,28 @@
 import AddOptionBtn from "../atoms/AddOptionBtn";
 
 export default {
-  props: ["options"],
+  props: {
+    options: {
+      type: Array,
+      required: true,
+      default: function() {
+        return [];
+      }
+    }
+  },
   data: () => ({
     headers: [
       {
         text: "Text",
         align: "start",
-        value: "text",
+        value: "text"
       },
       { text: "Value", align: "end", value: "value" },
-      { text: "Edit/Delete", value: "actions", align: "end", sortable: false },
+      { text: "Edit/Delete", value: "actions", align: "end", sortable: false }
     ],
     option: {
       text: "",
-      value: null,
+      value: null
     },
     dialog: false,
     editIndex: -1,
@@ -78,7 +86,7 @@ export default {
 
       this.option = {
         text: "",
-        value: null,
+        value: null
       };
       this.hasValue = true;
     },
@@ -99,25 +107,25 @@ export default {
     },
     emitChange() {
       this.$emit("change");
-    },
+    }
   },
   watch: {
     dialog() {
       if (!this.dialog) {
         this.option = {
           text: "",
-          value: null,
+          value: null
         };
         this.hasValue = true;
       }
     },
     options() {
       this.$emit("change");
-    },
+    }
   },
   components: {
-    AddOptionBtn,
-  },
+    AddOptionBtn
+  }
 };
 </script>
 

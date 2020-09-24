@@ -6,7 +6,8 @@
       class="white--text"
       small
       @click="$emit('dialog', true)"
-    >Add new Heuristic</v-btn>
+      >Add new Heuristic</v-btn
+    >
 
     <v-dialog width="500" v-model="dialog" persistent>
       <v-card class="dataCard">
@@ -15,7 +16,12 @@
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form">
-              <v-text-field label="Title" class="mx-3" v-model="heuris.title" :rules="nameRequired"></v-text-field>
+              <v-text-field
+                label="Title"
+                class="mx-3"
+                v-model="heuris.title"
+                :rules="nameRequired"
+              ></v-text-field>
               <v-row
                 align="center"
                 justify="space-around"
@@ -38,7 +44,9 @@
                 </v-col>
               </v-row>
 
-              <v-btn color="#f9a826" text class="ma-3" @click="addQuestion()">+ Add Question</v-btn>
+              <v-btn color="#f9a826" text class="ma-3" @click="addQuestion()"
+                >+ Add Question</v-btn
+              >
             </v-form>
           </v-col>
         </v-row>
@@ -50,9 +58,12 @@
             small
             text
             color="red lighten-1 white--text"
-          >Cancel</v-btn>
+            >Cancel</v-btn
+          >
 
-          <v-btn @click="validate()" small color="#f9a826" class="white--text">Save</v-btn>
+          <v-btn @click="validate()" small color="#f9a826" class="white--text"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -61,7 +72,16 @@
 
 <script>
 export default {
-  props: ["heuris", "dialog"],
+  props: {
+    heuris: {
+      type: Object,
+      required: true
+    },
+    dialog: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     id: 0,
     nameRequired: [v => !!v || "Name is required"],

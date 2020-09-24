@@ -9,8 +9,15 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red lighten-1 white--text" text @click="$emit('closeDialog'), reset()">Cancel</v-btn>
-        <v-btn color="#f9a826" class="white--text" @click="validate()">Save</v-btn>
+        <v-btn
+          color="red lighten-1 white--text"
+          text
+          @click="$emit('closeDialog'), reset()"
+          >Cancel</v-btn
+        >
+        <v-btn color="#f9a826" class="white--text" @click="validate()"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -20,7 +27,15 @@
 import FormTask from "../atoms/FormTask";
 
 export default {
-  props: ["dialog", "task"],
+  props: {
+    dialog: {
+      type: Boolean,
+      default: false
+    },
+    task: {
+      type: Object
+    }
+  },
   components: {
     FormTask
   },

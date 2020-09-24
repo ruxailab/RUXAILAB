@@ -3,7 +3,14 @@ import { Bar } from "vue-chartjs";
 
 export default {
   extends: Bar,
-  props: ["data"],
+  props: {
+    data: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    }
+  },
   watch: {
     data() {
       this.renderChart(

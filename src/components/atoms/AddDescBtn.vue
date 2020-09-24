@@ -44,7 +44,12 @@
 import TextBox from "@/components/atoms/TextBox";
 
 export default {
-  props: ["question"],
+  props: {
+    question:{
+      type:Object,
+      required:true
+    }
+  },
   components: {
     TextBox,
   },

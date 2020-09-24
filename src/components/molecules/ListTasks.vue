@@ -20,7 +20,8 @@
                 class="white--text"
                 small
                 @click="dialog = true"
-              >Add new task</v-btn>
+                >Add new task</v-btn
+              >
               <FormDialog
                 :task="task"
                 :dialog="dialog"
@@ -56,9 +57,17 @@
 import FormDialog from "./FormDialog";
 
 export default {
-  props: ["tasks"],
+  props: {
+    tasks: {
+      type: Array,
+      requeired: true,
+      default: function() {
+        return [];
+      }
+    }
+  },
   components: {
-    FormDialog,
+    FormDialog
   },
   data: () => ({
     dialog: false,
@@ -68,13 +77,13 @@ export default {
         text: "Name",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "name"
       },
       { text: "Description", value: "description" },
       { text: "Tip", value: "tip" },
       { text: "Post Test", value: "postTest" },
       { text: "Timer", value: "timer" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     task: {
       name: "",
@@ -82,8 +91,8 @@ export default {
       tip: null,
       postTest: null,
       answer: null,
-      timer: false,
-    },
+      timer: false
+    }
   }),
   methods: {
     editItem(item) {
@@ -96,7 +105,7 @@ export default {
       confirm("Are you sure you want to delete this task?") &&
         this.tasks.splice(index, 1);
     },
-    addTask: function () {
+    addTask: function() {
       if (this.editedIndex > -1) {
         Object.assign(this.tasks[this.editedIndex], this.task);
       } else {
@@ -108,21 +117,21 @@ export default {
         tip: null,
         postTest: null,
         answer: null,
-        timer: false,
+        timer: false
       };
-    },
+    }
   },
   computed: {
     exist(item) {
       if (item !== " ") return true;
       return false;
-    },
+    }
   },
   watch: {
     tasks() {
       this.$emit("change");
-    },
-  },
+    }
+  }
 };
 </script>
 

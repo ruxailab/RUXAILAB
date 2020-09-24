@@ -2,23 +2,28 @@
   <div>
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error accent-4 white--text"
-          primary-title
-        >Are you sure you want to leave?</v-card-title>
+        <v-card-title class="headline error accent-4 white--text" primary-title
+          >Are you sure you want to leave?</v-card-title
+        >
 
-        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+        <v-card-text
+          >Are you sure you want to leave? All your changes will be
+          discarded</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false">Stay</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialog = false"
+            >Stay</v-btn
+          >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
-            @click="change = false,$router.push(go)"
-          >Leave</v-btn>
+            @click="(change = false), $router.push(go)"
+            >Leave</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -35,7 +40,7 @@
           bottom
           right
           color="#F9A826"
-          @click=" validateAll()"
+          @click="validateAll()"
           v-bind="attrs"
           v-on="on"
         >
@@ -45,23 +50,37 @@
       <span>Save</span>
     </v-tooltip>
     <v-overlay class="text-center" v-model="loading">
-      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      ></v-progress-circular>
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
-    <IntroEdit v-if="test && intro==true" @closeIntro="intro = false" />
-    <ShowInfo v-if="test  &&  intro==false" title="Test Edit">
+    <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
+    <ShowInfo v-if="test && intro == false" title="Test Edit">
       <v-row dense slot="top">
-        <v-tabs background-color="transparent" color="#FCA326" class="tab-border-bottom pb-0 mb-0">
+        <v-tabs
+          background-color="transparent"
+          color="#FCA326"
+          class="tab-border-bottom pb-0 mb-0"
+        >
           <v-tab v-if="test.type === 'User'" @click="index = 0">Pre Test</v-tab>
           <v-tab v-if="test.type === 'User'" @click="index = 1">Tasks</v-tab>
-          <v-tab v-if="test.type === 'Heuristics'" @click="index = 1">Heuristics</v-tab>
-          <v-tab v-if="test.type === 'Heuristics'" @click="index = 2">Options</v-tab>
-          <v-tab v-if="test.type === 'User'" @click="index = 3">Post Test</v-tab>
+          <v-tab v-if="test.type === 'Heuristics'" @click="index = 1"
+            >Heuristics</v-tab
+          >
+          <v-tab v-if="test.type === 'Heuristics'" @click="index = 2"
+            >Options</v-tab
+          >
+          <v-tab v-if="test.type === 'User'" @click="index = 3"
+            >Post Test</v-tab
+          >
         </v-tabs>
       </v-row>
 
       <div slot="content" class="ma-0 pa-0">
-        <v-card v-if="index==0" style="background: #f5f7ff">
+        <v-card v-if="index == 0" style="background: #f5f7ff">
           <v-card-title class="subtitleView">Pre Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around" v-if="object.preTest">
@@ -76,8 +95,12 @@
           </v-row>
         </v-card>
 
-        <div v-if="index==1" class="ma-0 pa-0">
-          <ListTasks v-if="test.type === 'User'" :tasks="object.tasks" @change="change = true" />
+        <div v-if="index == 1" class="ma-0 pa-0">
+          <ListTasks
+            v-if="test.type === 'User'"
+            :tasks="object.tasks"
+            @change="change = true"
+          />
           <Heuristic
             v-else-if="test.type === 'Heuristics'"
             :heuristics="object.heuristics"
@@ -86,11 +109,15 @@
           />
         </div>
 
-        <div class="ma-0 pa-0" v-if="index==2">
-          <OptionsTable :options="object.options" @valForm="validate" @change="change = true" />
+        <div class="ma-0 pa-0" v-if="index == 2">
+          <OptionsTable
+            :options="object.options"
+            @valForm="validate"
+            @change="change = true"
+          />
         </div>
 
-        <v-card v-if="index==3" style="background: #f5f7ff">
+        <v-card v-if="index == 3" style="background: #f5f7ff">
           <v-card-title class="subtitleView">Post Test</v-card-title>
           <v-divider></v-divider>
           <v-row justify="space-around">
@@ -130,7 +157,7 @@ export default {
     OptionsTable,
     Snackbar,
     ShowInfo,
-    IntroEdit,
+    IntroEdit
   },
   data: () => ({
     index: 0,
@@ -138,7 +165,7 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    intro: null,
+    intro: null
   }),
   methods: {
     async submit() {
@@ -148,7 +175,7 @@ export default {
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object,
+          data: this.object
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -161,8 +188,8 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0,
-            },
+              accessLevel: 0
+            }
           });
 
           this.answers.answersSheet = this.object.answersSheet;
@@ -171,17 +198,17 @@ export default {
           this.$store
             .dispatch("updateTestAnswer", {
               docId: this.test.answers,
-              data: this.answers,
+              data: this.answers
             })
             .then(() => {
               this.$store.commit("setSuccess", "Test updated succesfully");
               this.change = false;
             })
-            .catch((err) => {
+            .catch(err => {
               this.$store.commit("setError", err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.$store.commit("setError", err);
         });
     },
@@ -234,18 +261,18 @@ export default {
           this.intro = true;
         else this.intro = false;
       }
-    },
+    }
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro();
       }
-    },
+    }
   },
   computed: {
-    loading(){
-      return this.$store.getters.loading
+    loading() {
+      return this.$store.getters.loading;
     },
     user() {
       return this.$store.getters.user;
@@ -281,7 +308,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  },
+  }
 };
 </script>
 
