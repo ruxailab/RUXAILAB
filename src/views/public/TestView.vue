@@ -553,9 +553,12 @@ export default {
           coop => coop.token == this.token
         );
         if (!invitation) {
-          this.$router.push("/").then(() => {
-            this.$store.commit("setError", "Invalid invitation");
-          });
+          this.$router
+            .push("/")
+            .then(() => {
+              this.$store.commit("setError", "Invalid invitation");
+            })
+            .catch(() => {});
         }
       }
     },
@@ -567,9 +570,7 @@ export default {
           this.$store.dispatch("getCooperators", {
             id: this.test.cooperators
           });
-        else if (
-          this.$store.getters.cooperators !== this.test.cooperators
-        )
+        else if (this.$store.getters.cooperators !== this.test.cooperators)
           this.$store.dispatch("getCooperators", {
             id: this.test.cooperators
           });

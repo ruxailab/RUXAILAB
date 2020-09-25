@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     goToDoc() {
-      this.$router.push("/edit/documentation");
+      this.$router.push("/edit/documentation").catch(() => {});
     },
     closeIntro() {
       this.$emit("closeIntro");

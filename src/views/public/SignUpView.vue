@@ -110,10 +110,10 @@ export default {
           email: this.email,
           password: this.password
         }).then(() => {
-          this.$router.push('/testslist');
+          this.$router.push('/testslist').catch(() => {});
         });
       if (this.user) {
-        this.$router.push("/");
+        this.$router.push("/").catch(() => {}).catch(() => {});
       }
     }
   },

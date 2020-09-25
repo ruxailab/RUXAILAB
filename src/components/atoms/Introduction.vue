@@ -132,7 +132,7 @@ export default {
   data: () => ({}),
   methods: {
     goTo(path) {
-      this.$router.push(path);
+      this.$router.push(path).catch(() => {});
     }
   }
 };

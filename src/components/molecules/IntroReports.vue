@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     goToDoc() {
-      this.$router.push("/reports/documentation");
+      this.$router.push("/reports/documentation").catch(() => {});
     },
     goToCoops() {
       this.$emit("goToCoops");

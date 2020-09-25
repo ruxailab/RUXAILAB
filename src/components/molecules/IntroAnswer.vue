@@ -24,7 +24,7 @@ export default {
       this.$emit("goToCoops");
     },
     goToDoc() {
-      this.$router.push("/answers/documentation");
+      this.$router.push("/answers/documentation").catch(() => {});
     },
     callFunc(func) {
       this[func]();

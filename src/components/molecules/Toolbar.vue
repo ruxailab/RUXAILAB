@@ -1,9 +1,17 @@
 <template>
   <v-app-bar app dark dense>
-    <v-btn v-if="user" icon dark @click.stop="drawer =! drawer" class="hidden-md-and-up">
+    <v-btn
+      v-if="user"
+      icon
+      dark
+      @click.stop="drawer = !drawer"
+      class="hidden-md-and-up"
+    >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-icon left class="hidden-sm-and-down" @click="goTo('/testslist')">mdi-alpha-r-circle</v-icon>
+    <v-icon left class="hidden-sm-and-down" @click="goTo('/testslist')"
+      >mdi-alpha-r-circle</v-icon
+    >
 
     <v-navigation-drawer
       app
@@ -41,7 +49,12 @@
       <!-- Manager Options -->
       <v-list dense dark v-if="isManager && test">
         <v-list-item-group v-model="item">
-          <v-list-item link v-for="(item, i) in managerItems" :key="i" @click="goTo(item.path)">
+          <v-list-item
+            link
+            v-for="(item, i) in managerItems"
+            :key="i"
+            @click="goTo(item.path)"
+          >
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
@@ -56,11 +69,14 @@
           text
           @click.stop="signOut()"
           style="text-transform: none !important; font: Roboto; font-size: 17px"
-        >Sign-out</v-btn>
+          >Sign-out</v-btn
+        >
       </div>
     </v-navigation-drawer>
 
-    <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer">Remote Testing Lab</v-toolbar-title>
+    <v-toolbar-title @click="goTo('/testslist')" style="cursor: pointer"
+      >Remote Testing Lab</v-toolbar-title
+    >
 
     <v-spacer></v-spacer>
 
@@ -73,12 +89,18 @@
       color="#f9a826"
       class="console-button mx-1 hidden-sm-and-down"
       @click="goTo('/testslist')"
-    >Go to Console</v-btn>
+      >Go to Console</v-btn
+    >
 
     <NotificationBtn class="mx-2" v-if="user" />
 
     <!-- Sign-in Desktop -->
-    <v-btn text @click="goTo('/signin')" v-if="!user" class="hidden-sm-and-down">
+    <v-btn
+      text
+      @click="goTo('/signin')"
+      v-if="!user"
+      class="hidden-sm-and-down"
+    >
       <v-icon left>mdi-lock</v-icon>Sign-in
     </v-btn>
 
@@ -89,17 +111,35 @@
 
     <!-- Profile Button Desktop -->
     <div class="hidden-sm-and-down">
-      <v-menu v-model="menu" offset-y v-if="user" min-width="200" :close-on-content-click="false">
+      <v-menu
+        v-model="menu"
+        offset-y
+        v-if="user"
+        min-width="200"
+        :close-on-content-click="false"
+      >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn text v-bind="attrs" v-on="on" class="pa-0 btn-fix" @click="menu = !menu">
+          <v-btn
+            text
+            v-bind="attrs"
+            v-on="on"
+            class="pa-0 btn-fix"
+            @click="menu = !menu"
+          >
             <v-icon class="mr-1" dark>mdi-account-circle</v-icon>
             <v-icon small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
         <v-list dense class="ma-0 py-1" style="border-radius: 0px!important">
-          <v-list-item dense style="font-size: 14px; font: Roboto;" class="px-2">
+          <v-list-item
+            dense
+            style="font-size: 14px; font: Roboto;"
+            class="px-2"
+          >
             <v-list-item-content>
-              <v-list-item-title style="font-weight: bold">Username</v-list-item-title>
+              <v-list-item-title style="font-weight: bold"
+                >Username</v-list-item-title
+              >
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -107,11 +147,12 @@
           <div class="divider"></div>
 
           <v-list-item
-            @click="signOut(), menu = false"
+            @click="signOut(), (menu = false)"
             dense
             style="font-size: 14px; font: Roboto"
             class="px-2"
-          >Sign-out</v-list-item>
+            >Sign-out</v-list-item
+          >
         </v-list>
       </v-menu>
     </div>
@@ -127,18 +168,18 @@ export default {
     drawer: false,
     menu: false,
     item: 0,
-    isManager: false,
+    isManager: false
   }),
   methods: {
     goTo(route) {
       if (route.includes("/testview")) window.open(route);
-      else this.$router.push(route);
+      else this.$router.push(route).catch(() => {}).catch(() => {});
     },
     async signOut() {
       this.$store.dispatch("logout").then(() => {
-        this.$router.push("/");
+        this.$router.push("/").catch(() => {}).catch(() => {});
       });
-    },
+    }
   },
   computed: {
     user() {
@@ -150,31 +191,31 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0,
+          id: 0
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1,
+          id: 1
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2,
+          id: 2
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3,
+          id: 3
         },
         {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4,
+          id: 4
         },
         {
           title: "Analytics",
@@ -189,7 +230,7 @@ export default {
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6,
+          id: 6
         });
       }
 
@@ -198,21 +239,21 @@ export default {
           title: "Template",
           icon: "mdi-file-compare",
           path: `/templateview/${this.test.template.id}`,
-          id: 7,
+          id: 7
         });
       }
 
       items.push({
         title: "Settings",
-          icon: "mdi-cog",
-          path: `/settingsview/${this.test.id}`,
-          id: 8,
-      })
+        icon: "mdi-cog",
+        path: `/settingsview/${this.test.id}`,
+        id: 8
+      });
       return items;
     },
     test() {
       return this.$store.getters.managerIDs;
-    },
+    }
   },
   watch: {
     $route: {
@@ -223,13 +264,13 @@ export default {
           if (parentRoute.name === "Manager View") this.isManager = true;
           else this.isManager = false;
         }
-      },
-    },
+      }
+    }
   },
   components: {
     NotificationBtn,
-    LocaleChanger,
-  },
+    LocaleChanger
+  }
 };
 </script>
 

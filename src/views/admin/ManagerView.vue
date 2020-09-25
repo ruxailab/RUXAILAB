@@ -320,14 +320,14 @@ export default {
   }),
   methods: {
     pushToTest() {
-      this.$router.push("/managerview/" + this.selectedTest);
+      this.$router.push("/managerview/" + this.selectedTest).catch(() => {});
       this.index = 0;
     },
     go(item) {
-      if (item.id == undefined) this.$router.push(item);
+      if (item.id == undefined) this.$router.push(item).catch(() => {});
       else {
         if (item.id == 2) window.open(item.path);
-        else this.$router.push(item.path);
+        else this.$router.push(item.path).catch(() => {});
       }
     },
     setIsCoops(payload) {
@@ -654,7 +654,7 @@ export default {
         if (!invitation) {
           this.$router.push("/").then(() => {
             this.$store.commit("setError", "Invalid invitation");
-          });
+          }).catch(() => {});
         }
       }
     }

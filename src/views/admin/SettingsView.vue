@@ -302,12 +302,15 @@ export default {
             })
             .then(() => {
               this.loading = false;
-              this.$router.push("/testslist").then(() => {
-                this.$store.commit(
-                  "setSuccess",
-                  "Project successfully deleted"
-                );
-              });
+              this.$router
+                .push("/testslist")
+                .then(() => {
+                  this.$store.commit(
+                    "setSuccess",
+                    "Project successfully deleted"
+                  );
+                })
+                .catch(() => {});
             })
             .catch(err => {
               this.$store.commit("setError", err);

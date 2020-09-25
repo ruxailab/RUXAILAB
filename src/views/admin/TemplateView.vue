@@ -285,7 +285,7 @@ export default {
           this.submit();
           this.loading = false;
           this.dialogDel = false;
-          this.$router.push(`/managerview/${this.object.id}`);
+          this.$router.push(`/managerview/${this.object.id}`).catch(() => {});
         });
     },
     async submit() {

@@ -132,12 +132,12 @@ export default {
   }),
   methods: {
     pushCreate() {
-      this.$router.push("/createtest");
+      this.$router.push("/createtest").catch(() => {});
     },
     goTo(test) {
       this.$router.push(
         (test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
-      );
+      ).catch(() => {});
     }
   },
   computed: {

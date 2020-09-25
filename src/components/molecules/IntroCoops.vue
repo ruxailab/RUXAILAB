@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     goToDoc() {
-      this.$router.push("/cooperators/documentation");
+      this.$router.push("/cooperators/documentation").catch(() => {});
     },
     closeIntro() {
       this.$emit("closeIntro");

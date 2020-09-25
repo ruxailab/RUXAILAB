@@ -343,7 +343,7 @@ export default {
       let selectHeruristc = this.heuristicsEvaluator.items.indexOf(
         this.heuristicsEvaluator.items.find(h => h.heuristic === item)
       );
-      this.$router.push(`/analyticsview/${this.id}/${selectHeruristc}`);
+      this.$router.push(`/analyticsview/${this.id}/${selectHeruristc}`).catch(() => {});
     },
     goToCoops() {
       this.$emit("goToCoops");

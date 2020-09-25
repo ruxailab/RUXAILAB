@@ -23,8 +23,8 @@ export default {
   }),
   methods: {
     sendHome() {
-      if (this.prevRoute !== null) this.$router.push(this.prevRoute.path);
-      else this.$router.push("/");
+      if (this.prevRoute !== null) this.$router.push(this.prevRoute.path).catch(() => {});
+      else this.$router.push("/").catch(() => {});
     },
   },
   beforeRouteEnter(to, from, next) {

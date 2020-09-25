@@ -24,7 +24,7 @@ export default {
       this.$emit("goToCoops");
     },
     goToDoc() {
-      this.$router.push("/analytics/documentation");
+      this.$router.push("/analytics/documentation").catch(() => {});
     },
     callFunc(func) {
       this[func]();

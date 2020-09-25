@@ -72,7 +72,7 @@ export default {
         password: this.password
       });
       if (this.user) {
-        this.$router.push("/testslist");
+        this.$router.push("/testslist").catch(() => {});
       }
     }
   },

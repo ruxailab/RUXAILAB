@@ -242,7 +242,7 @@ export default {
       }
     },
     sendManager(id) {
-      this.$router.push(`/managerview/${id}`);
+      this.$router.push(`/managerview/${id}`).catch(() => {});
     },
   },
   computed: {
