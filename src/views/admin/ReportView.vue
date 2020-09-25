@@ -139,9 +139,9 @@ export default {
     },
   },
   created() {
-    if (!this.$store.state.reports.reports) {
+    if (!this.$store.getters.reports) {
       this.$store.dispatch("getReports", { id: this.id });
-    } else if (this.$store.state.reports.reports.id !== this.id)
+    } else if (this.$store.getters.reports.id !== this.id)
       this.$store.dispatch("getReports", { id: this.id });
     else {
       this.loading = false;

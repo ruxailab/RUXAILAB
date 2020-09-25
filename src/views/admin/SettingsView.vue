@@ -421,7 +421,7 @@ export default {
       return this.$store.getters.answers || [];
     },
     reports() {
-      return this.$store.state.reports.reports || [];
+      return this.$store.getters.reports || [];
     },
     cooperators() {
       return this.$store.getters.cooperators || [];
