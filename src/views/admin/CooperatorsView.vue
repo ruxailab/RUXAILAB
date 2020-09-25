@@ -675,9 +675,9 @@ export default {
     }
   },
   created() {
-    if (!this.$store.state.cooperators.cooperators)
+    if (!this.$store.getters.cooperators)
       this.$store.dispatch("getCooperators", { id: this.id });
-    else if (this.$store.state.cooperators.cooperators !== this.id)
+    else if (this.$store.getters.cooperators !== this.id)
       this.$store.dispatch("getCooperators", { id: this.id });
     else {
       this.cooperatorsEdit = Array.from(this.cooperators.cooperators);

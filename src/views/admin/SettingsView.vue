@@ -424,7 +424,7 @@ export default {
       return this.$store.state.reports.reports || [];
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators || [];
+      return this.$store.getters.cooperators || [];
     },
     dialogText() {
       if (this.object)

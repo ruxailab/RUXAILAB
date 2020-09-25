@@ -563,12 +563,12 @@ export default {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       if (this.test && this.token) {
-        if (!this.$store.state.cooperators.cooperators)
+        if (!this.$store.getters.cooperators)
           this.$store.dispatch("getCooperators", {
             id: this.test.cooperators
           });
         else if (
-          this.$store.state.cooperators.cooperators !== this.test.cooperators
+          this.$store.getters.cooperators !== this.test.cooperators
         )
           this.$store.dispatch("getCooperators", {
             id: this.test.cooperators

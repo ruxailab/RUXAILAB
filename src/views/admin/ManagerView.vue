@@ -633,12 +633,12 @@ export default {
     test() {
       if (this.test && this.token) {
         if (this.test.cooperators) {
-          if (!this.$store.state.cooperators.cooperators)
+          if (!this.$store.getters.cooperators)
             this.$store.dispatch("getCooperators", {
               id: this.test.cooperators
             });
           else if (
-            this.$store.state.cooperators.cooperators !== this.test.cooperators
+            this.$store.getters.cooperators !== this.test.cooperators
           )
             this.$store.dispatch("getCooperators", {
               id: this.test.cooperators
