@@ -247,7 +247,7 @@ export default {
   },
   computed: {
     storeTemplates() {
-      return this.$store.state.templates.templates || [];
+      return this.$store.getters.templates || [];
     },
     templates() {
       let array = [];
@@ -299,7 +299,7 @@ export default {
     },
   },
   created() {
-    // if (this.$store.state.templates.templates == null) {
+    // if (this.$store.getters.templates == null) {
     this.$store.dispatch("getTemplates");
     // }
   },
