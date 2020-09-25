@@ -241,7 +241,7 @@ export default {
       return this.$store.getters.test;
     },
     answers() {
-      return this.$store.state.answers.answers || [];
+      return this.$store.getters.answers || [];
     },
   },
   created() {

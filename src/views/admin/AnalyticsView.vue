@@ -301,7 +301,7 @@ export default {
       return graph;
     },
     answers() {
-      return this.$store.state.answers.answers || [];
+      return this.$store.getters.answers || [];
     },
     loading() {
       if (this.answers) return true;
@@ -334,8 +334,8 @@ export default {
   },
   created() {
     if (
-      !this.$store.state.answers.answers ||
-      !this.$store.state.answers.answers.id !== this.id
+      !this.$store.getters.answers ||
+      !this.$store.getters.answers.id !== this.id
     ) {
       this.$store.dispatch("getAnswers", { id: this.id });
     }

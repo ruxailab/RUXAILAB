@@ -418,7 +418,7 @@ export default {
       return this.$store.getters.user;
     },
     answers() {
-      return this.$store.state.answers.answers || [];
+      return this.$store.getters.answers || [];
     },
     reports() {
       return this.$store.state.reports.reports || [];
