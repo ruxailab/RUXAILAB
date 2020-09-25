@@ -13,10 +13,10 @@ export default {
   }),
   computed: {
     snackMessage() {
-      return this.$store.state.tests.snackMessage;
+      return this.$store.getters.snackMessage;
     },
     snackColor() {
-      return this.$store.state.tests.snackColor;
+      return this.$store.getters.snackColor;
     }
   },
   watch: {
