@@ -8,6 +8,9 @@ export default {
         return item.accessLevel == 1;
       });
     },
+    users(state) {
+      return state.users;
+    }
   },
   mutations: {
     setUsers(state, payload) {

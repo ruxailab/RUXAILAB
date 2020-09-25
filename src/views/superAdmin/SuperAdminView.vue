@@ -193,7 +193,7 @@ export default {
   },
   computed: {
     users() {
-      return this.$store.state.users.users || [];
+      return this.$store.getters.users || [];
     },
     loading() {
       return this.$store.state.tests.loading;
@@ -212,7 +212,7 @@ export default {
     },
   },
   created() {
-    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
+    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
   },
 };
 </script>

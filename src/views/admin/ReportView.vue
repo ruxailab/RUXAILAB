@@ -152,7 +152,7 @@ export default {
         (test) => test.reports == this.id
       )
     );
-    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
+    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
   },
 };
 </script>

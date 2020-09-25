@@ -653,7 +653,7 @@ export default {
       return this.$store.getters.cooperators || [];
     },
     users() {
-      if (this.$store.state.users.users) return this.$store.getters.admins;
+      if (this.$store.getters.users) return this.$store.getters.admins;
       return [];
     },
     filteredUsers() {
@@ -682,7 +682,7 @@ export default {
     else {
       this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
     }
-    if (!this.$store.state.users.users) this.$store.dispatch("getUsers", {});
+    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
