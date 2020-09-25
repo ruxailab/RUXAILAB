@@ -28,6 +28,9 @@ export default {
     },
     snackMessage(state) {
       return state.snackMessage;
+    },
+    managerIDs(state) {
+      return state.managerIDs;
     }
   },
   mutations: {

@@ -211,7 +211,7 @@ export default {
       return items;
     },
     test() {
-      return this.$store.state.tests.managerIDs;
+      return this.$store.getters.managerIDs;
     },
   },
   watch: {
