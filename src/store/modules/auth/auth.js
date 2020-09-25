@@ -8,9 +8,6 @@ export default {
     user(state) {
       return state.user;
     },
-    setLoading(state) {
-      return state.Loading
-    }
   },
   mutations: {
     setUser(state, payload) {

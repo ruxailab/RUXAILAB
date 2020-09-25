@@ -10,9 +10,6 @@ export default {
   mutations: {
     setReports(state, payload) {
       state.reports = payload;
-    },
-    setLoading(state,payload){
-      state.loading = payload;
     }
   },
   actions: {

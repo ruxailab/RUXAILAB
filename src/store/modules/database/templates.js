@@ -4,20 +4,20 @@ export default {
         template: null,
         templates: null,
     },
-    mutations: {
-        setTemplate(state, payload) {
-            state.template = payload
-        },
-        setTemplates(state, payload) {
-            state.templates = payload
-        }
-    },
     getters: {
         templates(state) {
             return state.templates
         },
         template(state) {
             return state.template
+        }
+    },
+    mutations: {
+        setTemplate(state, payload) {
+            state.template = payload
+        },
+        setTemplates(state, payload) {
+            state.templates = payload
         }
     },
     actions: {

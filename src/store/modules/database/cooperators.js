@@ -11,9 +11,6 @@ export default {
   mutations: {
     setCooperators(state, payload) {
       state.cooperators = payload;
-    },
-    setLoading(state, payload) {
-      state.loading = payload
     }
   },
   actions: {

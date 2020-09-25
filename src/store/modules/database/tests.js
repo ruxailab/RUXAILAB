@@ -3,10 +3,32 @@ export default {
     test: null,
     tests: null,
     myTests: null,
-    loading: false,
     snackMessage: null,
     snackColor: null,
     managerIDs: null
+  },
+  getters: {
+    tests(state) {
+      return state.tests;
+    },
+    test(state) {
+      return state.test;
+    },
+    tasks(state) {
+      return state.test.tasks;
+    },
+    heuristics(state) {
+      return state.test.heuristics;
+    },
+    coops(state) {
+      return state.test.coop;
+    },
+    snackColor(state) {
+      return state.snackColor;
+    },
+    snackMessage(state) {
+      return state.snackMessage;
+    }
   },
   mutations: {
     setTest(state, payload) {
@@ -14,9 +36,6 @@ export default {
     },
     setTests(state, payload) {
       state.tests = payload;
-    },
-    setLoading(state, payload) {
-      state.loading = payload;
     },
     setMyTests(state, payload) {
       state.myTests = payload;
@@ -35,32 +54,6 @@ export default {
     },
     setManagerIDS(state, payload) {
       state.managerIDs = payload;
-    }
-  },
-  getters: {
-    tests(state) {
-      return state.tests;
-    },
-    test(state) {
-      return state.test;
-    },
-    tasks(state) {
-      return state.test.tasks;
-    },
-    heuristics(state) {
-      return state.test.heuristics;
-    },
-    coops(state){
-      return state.test.coop;
-    },
-    loading(state) {
-      return state.loading;
-    },
-    snackColor(state) {
-      return state.snackColor;
-    },
-    snackMessage(state) {
-      return state.snackMessage;
     }
   },
   actions: {
@@ -87,35 +80,35 @@ export default {
       await dispatch("getCooperators", { id: payload.cooperators });
 
       let coops = this.state.cooperators.cooperators;
-      
+
       //delete test from user
       payload = Object.assign(payload, { collection: "test" }); //Delete test from Tests' Collection
       dispatch("deleteObject", payload)
-      .then(() => {
-        dispatch("deleteReport", { id: payload.reports });
-        dispatch("deleteAnswers", { id: payload.answers });
-      
-      coops.cooperators.forEach(coop => {
-        if(coop.accessLevel.value <= 1) dispatch("removeMyCoops", {
-          docId: coop.id,
-          element: {
-            id: payload.id,
-            title: payload.title,
-            type: payload.type,
-          },
-        });
-        else dispatch("removeMyAnswers", {
-          docId: coop.id,
-          element: {
-            id: payload.id,
-            title: payload.title,
-            type: payload.type,
-          },
-        });
-      })
+        .then(() => {
+          dispatch("deleteReport", { id: payload.reports });
+          dispatch("deleteAnswers", { id: payload.answers });
 
-        dispatch("deleteCooperators", { id: payload.cooperators });
-      })
+          coops.cooperators.forEach(coop => {
+            if (coop.accessLevel.value <= 1) dispatch("removeMyCoops", {
+              docId: coop.id,
+              element: {
+                id: payload.id,
+                title: payload.title,
+                type: payload.type,
+              },
+            });
+            else dispatch("removeMyAnswers", {
+              docId: coop.id,
+              element: {
+                id: payload.id,
+                title: payload.title,
+                type: payload.type,
+              },
+            });
+          })
+
+          dispatch("deleteCooperators", { id: payload.cooperators });
+        })
 
       //delete user from test
     },
@@ -147,37 +140,39 @@ export default {
           console.error("Error to push coops ", err);
         });
     },
-    setReportID({dispatch},payload){
-      payload = Object.assign(payload,{collection:"test",
-      param:"reports"})
-      dispatch("setParamInObject",payload).
-      catch((err) => {
-        console.error("Error set report id ",err)
+    setReportID({ dispatch }, payload) {
+      payload = Object.assign(payload, {
+        collection: "test",
+        param: "reports"
       })
+      dispatch("setParamInObject", payload).
+        catch((err) => {
+          console.error("Error set report id ", err)
+        })
     },
-    setAnswerID( { dispatch }, payload) {
-      payload = Object.assign(payload, {collection: "test", param: "answers"});
+    setAnswerID({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "test", param: "answers" });
 
       dispatch("setParamInObject", payload)
-      .catch((err) => {
-        console.error("Error ", err);
-      })
+        .catch((err) => {
+          console.error("Error ", err);
+        })
     },
-    setCooperatorsID( { dispatch }, payload) {
-      payload = Object.assign(payload, {collection: "test", param: "cooperators"});
+    setCooperatorsID({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "test", param: "cooperators" });
 
       dispatch("setParamInObject", payload)
-      .catch((err) => {
-        console.error("Error ", err);
-      })
+        .catch((err) => {
+          console.error("Error ", err);
+        })
     },
-    setUpToDate({dispatch}, payload) {
-      payload = Object.assign(payload, {collection: "test", param: "template.upToDate"});
+    setUpToDate({ dispatch }, payload) {
+      payload = Object.assign(payload, { collection: "test", param: "template.upToDate" });
 
       dispatch("setParamInObject", payload)
-      .catch((err) => {
-        console.error("Error ", err);
-      })
+        .catch((err) => {
+          console.error("Error ", err);
+        })
     }
   },
 };

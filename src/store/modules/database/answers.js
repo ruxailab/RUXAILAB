@@ -10,9 +10,6 @@ export default {
   mutations: {
     setAnswers(state, payload) {
       state.answers = payload;
-    },
-    setLoading(state,payload){
-      state.loading = payload;
     }
   },
   actions: {
