@@ -533,7 +533,7 @@ export default {
 
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       this.$store.dispatch("getTest", {
-        id: this.$store.state.auth.user.myTests.find((test) => {
+        id: this.$store.getters.user.myTests.find((test) => {
           if ("template" in test) return test.template.id == this.id;
         }).id,
       });

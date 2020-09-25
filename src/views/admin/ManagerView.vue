@@ -423,8 +423,8 @@ export default {
   },
   computed: {
     testsList() {
-      if (!this.isCoops) return this.$store.state.auth.user.myTests;
-      else return this.$store.state.auth.user.myCoops;
+      if (!this.isCoops) return this.$store.getters.user.myTests;
+      else return this.$store.getters.user.myCoops;
     },
     test() {
       let search = this.selectedTest || this.id;
@@ -433,14 +433,14 @@ export default {
         test = this.$route.path.includes("template")
           ? Object.assign(
               {},
-              this.$store.state.auth.user.myTests.find(test => {
+              this.$store.getters.user.myTests.find(test => {
                 if ("template" in test)
                   return Object.values(test.template).includes(search);
               })
             )
           : Object.assign(
               {},
-              this.$store.state.auth.user.myTests.find(test =>
+              this.$store.getters.user.myTests.find(test =>
                 Object.values(test).includes(search)
               )
             );
@@ -449,7 +449,7 @@ export default {
           //se o objeto for vazio
           test = Object.assign(
             {},
-            this.$store.state.auth.user.myCoops.find(test =>
+            this.$store.getters.user.myCoops.find(test =>
               Object.values(test).includes(search)
             )
           );

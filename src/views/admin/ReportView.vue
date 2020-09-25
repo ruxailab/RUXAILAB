@@ -148,7 +148,7 @@ export default {
     }
     this.test = Object.assign(
       {},
-      this.$store.state.auth.user.myTests.find(
+      this.$store.getters.user.myTests.find(
         (test) => test.reports == this.id
       )
     );

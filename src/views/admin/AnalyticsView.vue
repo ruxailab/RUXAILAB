@@ -340,7 +340,7 @@ export default {
       this.$store.dispatch("getAnswers", { id: this.id });
     }
 
-    this.$store.state.auth.user.myTests.forEach(t => {
+    this.$store.getters.user.myTests.forEach(t => {
       if (t.answers == this.id) {
         this.$store.dispatch("getTest", { id: t.id });
       }

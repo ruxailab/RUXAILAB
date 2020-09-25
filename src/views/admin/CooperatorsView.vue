@@ -642,7 +642,7 @@ export default {
       return this.$store.getters.test;
     },
     testID() {
-      return this.$store.state.auth.user.myTests.find((test) =>
+      return this.$store.getters.user.myTests.find((test) =>
         Object.values(test).includes(this.id)
       );
     },

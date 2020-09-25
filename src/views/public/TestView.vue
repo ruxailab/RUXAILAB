@@ -872,8 +872,8 @@ export default {
       return this.$store.getters.test;
     },
     user() {
-      if (this.$store.state.auth.user) this.setExistUser();
-      return this.$store.state.auth.user;
+      if (this.$store.getters.user) this.setExistUser();
+      return this.$store.getters.user;
     },
     answersSheet: {
       get() {
