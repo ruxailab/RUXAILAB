@@ -645,6 +645,18 @@ export default {
             });
         }
       }
+    },
+    cooperators() {
+      if (this.cooperators && this.token) {
+        let invitation = this.cooperators.cooperators.find(
+          coop => coop.token == this.token
+        );
+        if (!invitation) {
+          this.$router.push("/").then(() => {
+            this.$store.commit("setError", "Invalid invitation");
+          });
+        }
+      }
     }
   },
   beforeRouteEnter(to, from, next) {

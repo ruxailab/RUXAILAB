@@ -48,7 +48,11 @@
       />
     </v-dialog>
 
-    <v-dialog :value="fromlink && !noExistUser && !logined" width="500" persistent>
+    <v-dialog
+      :value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -543,6 +547,18 @@ export default {
     dialog: false
   }),
   watch: {
+    cooperators() {
+      if (this.cooperators && this.token) {
+        let invitation = this.cooperators.cooperators.find(
+          coop => coop.token == this.token
+        );
+        if (!invitation) {
+          this.$router.push("/").then(() => {
+            this.$store.commit("setError", "Invalid invitation");
+          });
+        }
+      }
+    },
     test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
@@ -885,8 +901,8 @@ export default {
     cooperators() {
       return this.$store.getters.cooperators;
     },
-    loading(){
-      return this.$store.getters.loading
+    loading() {
+      return this.$store.getters.loading;
     }
   },
   created() {

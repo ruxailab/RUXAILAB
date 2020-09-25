@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Snackbar />
     <Intro/>
     <About/>
     <Footer/>
@@ -10,13 +11,15 @@
 import Intro from "@/components/atoms/Introduction";
 import About from "@/components/organisms/LandingAbout";
 import Footer from "@/components/organisms/Footer";
+import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   data: () => ({}),
   components: {
     Intro,
     About,
-    Footer
+    Footer,
+    Snackbar
   }
 };
 </script>
