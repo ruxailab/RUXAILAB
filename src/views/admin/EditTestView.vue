@@ -246,7 +246,7 @@ export default {
   },
   created() {
     if (
-      !this.$store.state.tests.test &&
+      !this.$store.getters.test &&
       this.id !== null &&
       this.id !== undefined
     ) {

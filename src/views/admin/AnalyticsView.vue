@@ -308,7 +308,7 @@ export default {
       return false;
     },
     test() {
-      return this.$store.state.tests.test;
+      return this.$store.getters.test;
     }
   },
   watch: {

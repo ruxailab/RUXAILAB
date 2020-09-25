@@ -151,7 +151,7 @@ export default {
       return this.$store.getters.user;
     },
     test() {
-      return this.$store.state.tests.test;
+      return this.$store.getters.test;
     }
   }
 };

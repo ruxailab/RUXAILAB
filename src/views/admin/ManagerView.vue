@@ -667,9 +667,9 @@ export default {
     next();
   },
   created() {
-    if (!this.$store.state.tests.test)
+    if (!this.$store.getters.test)
       this.$store.dispatch("getTest", { id: this.id });
-    else if (this.$store.state.tests.test.id !== this.id)
+    else if (this.$store.getters.test.id !== this.id)
       this.$store.dispatch("getTest", { id: this.id });
   }
 };
