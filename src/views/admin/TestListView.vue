@@ -142,22 +142,30 @@ export default {
   },
   computed: {
     user() {
-      return this.$store.state.auth.user;
+      return this.$store.getters.user;
     },
     filteredMyTests() {
-      return this.user.myTests.filter(test => {
-        return test.title.toLowerCase().includes(this.search.toLowerCase());
-      });
+      if (this.user)
+        return (
+          this.user.myTests.filter(test => {
+            return test.title.toLowerCase().includes(this.search.toLowerCase());
+          }) || []
+        );
+      return [];
     },
     filteredMyCoops() {
-      return this.user.myCoops.filter(test => {
-        return test.title.toLowerCase().includes(this.search.toLowerCase());
-      });
+      if (this.user)
+        return this.user.myCoops.filter(test => {
+          return test.title.toLowerCase().includes(this.search.toLowerCase());
+        }) || [] 
+      return [];
     },
     filteredMyAnswers() {
-      return this.user.myAnswers.filter(test => {
-        return test.title.toLowerCase().includes(this.search.toLowerCase());
-      });
+      if (this.user)
+        return this.user.myAnswers.filter(test => {
+          return test.title.toLowerCase().includes(this.search.toLowerCase());
+        }) || [] 
+      return [];
     },
     loading() {
       return this.$store.getters.loading;
