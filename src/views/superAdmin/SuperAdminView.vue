@@ -196,7 +196,7 @@ export default {
       return this.$store.getters.users || [];
     },
     loading() {
-      return this.$store.state.tests.loading;
+      return this.$store.getters.loading;
     },
     dialogText() {
       return (
