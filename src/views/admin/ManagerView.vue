@@ -1,16 +1,32 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
-    <v-overlay class="text-center" v-model="loading" v-if="this.$route.path.includes('manager')">
-      <v-progress-circular indeterminate color="#fca326" size="50"></v-progress-circular>
+    <v-overlay
+      class="text-center"
+      v-model="loading"
+      v-if="this.$route.path.includes('manager')"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      ></v-progress-circular>
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
-      <CardSignIn @logined="setTest()" @change="selected = !selected" v-if="selected" />
-      <CardSignUp @logined="flagNewUser = true" @change="selected = !selected" v-else />
+      <CardSignIn
+        @logined="setTest(), (logined = true)"
+        @change="selected = !selected"
+        v-if="selected"
+      />
+      <CardSignUp
+        @logined="(flagNewUser = true), (logined = true)"
+        @change="selected = !selected"
+        v-else
+      />
     </v-dialog>
 
-    <v-dialog :value="flagToken && flagUser" width="500" persistent>
+    <v-dialog :value="flagToken && flagUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -18,11 +34,13 @@
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">Continue as {{user.email}}</v-btn>
+          <v-btn color="#F9A826" class="white--text" @click="setTest()"
+            >Continue as {{ user.email }}</v-btn
+          >
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
-            Not {{user.email}}?
+            Not {{ user.email }}?
             <a style="color: #F9A826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
@@ -43,7 +61,7 @@
           <v-list-item>
             <v-row dense>
               <v-col class="pa-0 ma-0">
-                <div class="idText">{{test.id}}</div>
+                <div class="idText">{{ test.id }}</div>
                 <v-overflow-btn
                   class="pa-0 ma-0"
                   dark
@@ -65,17 +83,26 @@
         <!-- Navigation options -->
         <v-list flat dense v-if="items">
           <div v-if="mini">
-            <v-tooltip right v-for="(item,n) in items" :key="n">
+            <v-tooltip right v-for="(item, n) in items" :key="n">
               <template v-slot:activator="{ on, attrs }">
-                <v-list-item @click="index = n,go(item)" v-bind="attrs" v-on="on">
+                <v-list-item
+                  @click="(index = n), go(item)"
+                  v-bind="attrs"
+                  v-on="on"
+                >
                   <v-list-item-icon>
-                    <v-icon :color="index == item.id? '#fca326' : '#bababa'">{{ item.icon }}</v-icon>
+                    <v-icon :color="index == item.id ? '#fca326' : '#bababa'">{{
+                      item.icon
+                    }}</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title
-                      :style="index == item.id? 'color: #fca326': 'color:#bababa'"
-                    >{{ item.title }}</v-list-item-title>
+                      :style="
+                        index == item.id ? 'color: #fca326' : 'color:#bababa'
+                      "
+                      >{{ item.title }}</v-list-item-title
+                    >
                   </v-list-item-content>
                 </v-list-item>
               </template>
@@ -84,15 +111,22 @@
           </div>
 
           <div v-else>
-            <v-list-item v-for="(item,n) in items" :key="n" @click="index = n,go(item)">
+            <v-list-item
+              v-for="(item, n) in items"
+              :key="n"
+              @click="(index = n), go(item)"
+            >
               <v-list-item-icon>
-                <v-icon :color="index == item.id? '#fca326' : '#bababa'">{{ item.icon }}</v-icon>
+                <v-icon :color="index == item.id ? '#fca326' : '#bababa'">{{
+                  item.icon
+                }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
-                  :style="index == item.id? 'color: #fca326': 'color:#bababa'"
-                >{{ item.title }}</v-list-item-title>
+                  :style="index == item.id ? 'color: #fca326' : 'color:#bababa'"
+                  >{{ item.title }}</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
           </div>
@@ -130,14 +164,21 @@
                 <div
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
-                >Manager</div>
+                >
+                  Manager
+                </div>
                 <v-img
                   class="hidden-md-and-up"
                   style="max-height: 40vh"
                   contain
                   src="@/assets/manager/IntroManager.svg"
                 ></v-img>
-                <div style="font-size: 22px" class="white--text mb-4 mobile-center">{{test.title}}</div>
+                <div
+                  style="font-size: 22px"
+                  class="white--text mb-4 mobile-center"
+                >
+                  {{ test.title }}
+                </div>
               </v-col>
               <v-img
                 class="hidden-sm-and-down"
@@ -150,7 +191,9 @@
           </div>
           <div>
             <v-container class="card-container">
-              <div class="presentation-text">Edit and invite people to your test</div>
+              <div class="presentation-text">
+                Edit and invite people to your test
+              </div>
 
               <!-- Top Cards -->
               <v-row justify="center" justify-md="space-around">
@@ -162,7 +205,11 @@
                     hover
                     :ripple="false"
                   >
-                    <v-row style="height: 290px" justify="center" align="center">
+                    <v-row
+                      style="height: 290px"
+                      justify="center"
+                      align="center"
+                    >
                       <v-img
                         max-height="220"
                         :style="item.imageStyle"
@@ -173,7 +220,15 @@
 
                     <div
                       class="white--text pl-4"
-                      :style="{height: '90px', position: 'absolute', bottom: '0', width: '100%', 'background-color': item.bottom, 'padding-top': '10px', 'border-top': '.3px solid #505050'}"
+                      :style="{
+                        height: '90px',
+                        position: 'absolute',
+                        bottom: '0',
+                        width: '100%',
+                        'background-color': item.bottom,
+                        'padding-top': '10px',
+                        'border-top': '.3px solid #505050'
+                      }"
                     >
                       <h2>{{ item.title }}</h2>
                       <div>{{ item.description }}</div>
@@ -182,11 +237,18 @@
                 </v-col>
               </v-row>
 
-              <div class="presentation-text mt-5">Analyze your project and evaluators</div>
+              <div class="presentation-text mt-5">
+                Analyze your project and evaluators
+              </div>
 
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
-                <v-col cols="12" md="4" v-for="(item, i) in bottomCards" :key="i">
+                <v-col
+                  cols="12"
+                  md="4"
+                  v-for="(item, i) in bottomCards"
+                  :key="i"
+                >
                   <v-card
                     height="350px"
                     :style="item.cardStyle"
@@ -194,7 +256,12 @@
                     hover
                     :ripple="false"
                   >
-                    <v-row style="height: 260px" justify="center" align="center" class="px-5">
+                    <v-row
+                      style="height: 260px"
+                      justify="center"
+                      align="center"
+                      class="px-5"
+                    >
                       <v-img
                         height="150"
                         contain
@@ -204,7 +271,14 @@
 
                     <div
                       class="white--text pl-4"
-                      :style="{height: '90px', position: 'absolute', bottom: '0', width: '100%', 'background-color': item.bottom, 'border-top': '.3px solid #505050'}"
+                      :style="{
+                        height: '90px',
+                        position: 'absolute',
+                        bottom: '0',
+                        width: '100%',
+                        'background-color': item.bottom,
+                        'border-top': '.3px solid #505050'
+                      }"
                     >
                       <h2>{{ item.title }}</h2>
                       <div>{{ item.description }}</div>
@@ -236,6 +310,7 @@ export default {
     flagUser: false,
     flagToken: false,
     flagNewUser: false,
+    logined: false,
     drawer: true,
     tests: [],
     mini: true,
@@ -334,7 +409,7 @@ export default {
                     })
                     .then(() => {
                       this.flagToken = false;
-                    });               
+                    });
                 });
             }
           } else {
@@ -533,13 +608,13 @@ export default {
       ];
     },
     user() {
-      if (this.$store.state.auth.user) {
+      if (this.$store.getters.user) {
         this.setFlag("flagUser", true);
       }
-      return this.$store.state.auth.user;
+      return this.$store.getters.user;
     },
     cooperators() {
-      return this.$store.state.cooperators.cooperators;
+      return this.$store.getters.cooperators;
     },
     loading() {
       return this.$store.getters.loading;
