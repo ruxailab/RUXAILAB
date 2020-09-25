@@ -349,7 +349,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .list-scroll {
   height: 508px;
   overflow: auto;

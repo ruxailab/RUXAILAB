@@ -56,6 +56,12 @@ export default {
     loading(state) {
       return state.loading;
     },
+    snackColor(state) {
+      return state.snackColor;
+    },
+    snackMessage(state) {
+      return state.snackMessage;
+    }
   },
   actions: {
     createTest({ dispatch }, payload) {
