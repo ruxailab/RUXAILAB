@@ -134,7 +134,7 @@
 
         <!-- Navigation footer -->
         <div class="footer" v-if="!mini">
-          <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3">
+          <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3" v-if="test.accessLevel == 0">
             <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -143,9 +143,9 @@
           </v-btn>
         </div>
 
-        <div class="footer" style="height:16%" v-else>
+        <div class="footer" :style="test.accessLevel == 0 ? 'height:16%' : ''" v-else>
           <v-col>
-            <v-btn icon @click="go(`/settingsview/${test.id}`)">
+            <v-btn icon @click="go(`/settingsview/${test.id}`)" v-if="test.accessLevel == 0">
               <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
             </v-btn>
             <v-btn icon @click.stop="mini = !mini" class="mt-2">
