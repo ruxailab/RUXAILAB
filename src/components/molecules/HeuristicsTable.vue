@@ -381,7 +381,6 @@ export default {
     dialogHeuris: false,
     dialogQuestion: false,
     editIndex: -1,
-    step: 1,
     nameRequired: [(v) => !!v || "Name is required"],
     questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
@@ -477,8 +476,6 @@ export default {
       );
       this.emitChange();
     },
-
-    //MY STUFF
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
         this.dialogHeuris = false;
@@ -505,7 +502,7 @@ export default {
       }
     },
     closeDialog(dialogName) {
-      this[`${dialogName}`] = false;
+      this[dialogName] = false;
 
       if (this.$refs.formHeuris) {
         this.$refs.formHeuris.resetValidation();
@@ -579,35 +576,6 @@ export default {
         }
       }
     },
-    // dialog() {
-    //   if (!this.dialog && this.heuristics.length > 0 && !this.itemEdit) {
-    //     this.heuris = {
-    //       id: this.heuristics[this.heuristics.length - 1].id + 1,
-    //       title: "",
-    //       total: 0,
-    //       questions: [
-    //         {
-    //           id: 0,
-    //           title: "",
-    //           descriptions: [],
-    //         },
-    //       ],
-    //     };
-    //     this.heuris.total = this.heuris.questions.length;
-    //   }
-    //   if (this.dialog) {
-    //     //when dialog opens everything is reset
-    //     if (this.$refs.formHeuris) {
-    //       this.$refs.formHeuris.resetValidation();
-    //       this.$refs.formHeuris.reset();
-    //     }
-
-    //     if (this.$refs.formQuestion) {
-    //       this.$refs.formQuestion.resetValidation();
-    //       this.$refs.formQuestion.reset();
-    //     }
-    //   }
-    // },
     heuristics() {
       this.$emit("change");
     },
@@ -633,7 +601,6 @@ export default {
       return result;
     },
   },
-
   created() {
     if (this.heuristics.length) {
       this.heuris = {

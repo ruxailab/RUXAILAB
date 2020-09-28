@@ -121,12 +121,6 @@ export default {
       };
     }
   },
-  computed: {
-    exist(item) {
-      if (item !== " ") return true;
-      return false;
-    }
-  },
   watch: {
     tasks() {
       this.$emit("change");
