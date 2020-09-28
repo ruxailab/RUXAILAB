@@ -61,7 +61,6 @@ export default {
     },
     rule: [(v) => !!v || "Title Required"],
     editIndex: null,
-    loading: false,
     isMounted: false
   }),
   methods: {

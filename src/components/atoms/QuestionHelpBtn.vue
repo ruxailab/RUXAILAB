@@ -48,7 +48,6 @@ export default {
   },
   data: () => ({
     dialog: false,
-    isMounted: false
   }),
   methods: {}
 };

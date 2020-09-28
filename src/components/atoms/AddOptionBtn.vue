@@ -84,7 +84,6 @@ export default {
     }
   },
   data: () => ({
-    id: 0,
     textRequired: [v => !!v || "Text is required"]
   }),
   computed: {

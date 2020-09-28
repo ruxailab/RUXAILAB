@@ -65,7 +65,7 @@ export default {
       return valid;
     },
     resetVal() {
-      this.$refs.form.resetValidation();
+      this.$refs.form.resetValidation(); //used on emits
     }
   }
 };

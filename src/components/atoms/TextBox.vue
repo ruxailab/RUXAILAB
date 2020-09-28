@@ -95,9 +95,11 @@ export default {
   },
   props: {
     editable: {
+      type: Boolean,
       default: true
     },
     text: {
+      type: String,
       default: ''
     }
   },
