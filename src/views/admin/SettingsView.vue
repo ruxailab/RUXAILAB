@@ -175,14 +175,14 @@
     ></v-progress-circular>
     <div class="white-text mt-3">Loading Settings</div>
   </v-overlay>
-  <NoAccess v-else />
+  <AccessNotAllowed v-else />
 </template>
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
-import NoAccess from "@/components/atoms/AccessNotAllowed";
+import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
 
 export default {
   props: ["id"],
@@ -190,7 +190,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
-    NoAccess
+    AccessNotAllowed
   },
   data: () => ({
     object: null,
