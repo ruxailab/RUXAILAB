@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="test">
+  <v-container v-if="test && showSettings">
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -104,7 +104,7 @@
 
     <ShowInfo title="Settings">
       <div slot="content">
-        <v-card style="background: #f5f7ff;">
+        <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
             <p class="subtitleView">Current Test</p>
           </v-col>
@@ -167,19 +167,30 @@
       </div>
     </ShowInfo>
   </v-container>
+  <v-overlay class="text-center" v-model="loadingPage" v-else-if="loadingPage">
+    <v-progress-circular
+      indeterminate
+      color="#fca326"
+      size="50"
+    ></v-progress-circular>
+    <div class="white-text mt-3">Loading Settings</div>
+  </v-overlay>
+  <NoAccess v-else />
 </template>
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
+import NoAccess from "@/components/atoms/AccessNotAllowed";
 
 export default {
   props: ["id"],
   components: {
     FormTestDescription,
     Snackbar,
-    ShowInfo
+    ShowInfo,
+    NoAccess
   },
   data: () => ({
     object: null,
@@ -188,13 +199,15 @@ export default {
     dialogAlert: false,
     dialogDel: false,
     loading: false,
+    loadingPage: true,
     templateTitle: "",
     templateDescription: "",
     tempDialog: false,
     titleRequired: [
-      v => !!v || "Field Required",
-      v => v.length <= 100 || "Max 100 characters"
-    ]
+      (v) => !!v || "Field Required",
+      (v) => v.length <= 100 || "Max 100 characters",
+    ],
+    showSettings: false,
   }),
   methods: {
     validate(valid, index) {
@@ -204,7 +217,7 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
       await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators
+        id: this.test.cooperators,
       });
 
       delete this.object.id;
@@ -212,7 +225,7 @@ export default {
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
-          data: this.object
+          data: this.object,
         })
         .then(() => {
           this.$store.dispatch("updateMyTest", {
@@ -225,11 +238,11 @@ export default {
               answers: this.object.answers,
               cooperators: this.object.cooperators,
               template: this.object.template,
-              accessLevel: 0
-            }
+              accessLevel: 0,
+            },
           });
 
-          this.cooperators.cooperators.forEach(coop => {
+          this.cooperators.cooperators.forEach((coop) => {
             this.$store.dispatch("updateMyCoops", {
               docId: coop.id,
               element: {
@@ -240,8 +253,8 @@ export default {
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
                 template: this.object.template,
-                accessLevel: coop.accessLevel
-              }
+                accessLevel: coop.accessLevel,
+              },
             });
           });
 
@@ -256,22 +269,22 @@ export default {
           delete this.cooperators.id;
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
-            data: this.answers
+            data: this.answers,
           });
 
           this.$store.dispatch("updateTestReport", {
             docId: this.test.reports,
-            data: this.reports
+            data: this.reports,
           });
 
           this.$store.dispatch("updateTestCooperators", {
             docId: this.test.cooperators,
-            data: this.cooperators
+            data: this.cooperators,
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -296,9 +309,9 @@ export default {
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
+                type: item.type,
               },
-              param: "myTests"
+              param: "myTests",
             })
             .then(() => {
               this.loading = false;
@@ -312,7 +325,7 @@ export default {
                 })
                 .catch(() => {});
             })
-            .catch(err => {
+            .catch((err) => {
               this.$store.commit("setError", err);
             });
 
@@ -320,14 +333,14 @@ export default {
           this.$store.dispatch("deleteReport", { id: item.reports });
 
           // Remove all myAnswers
-          this.reports.reports.forEach(rep => {
+          this.reports.reports.forEach((rep) => {
             this.$store.dispatch("removeMyAnswers", {
               docId: rep.uid,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
@@ -335,21 +348,21 @@ export default {
           this.$store.dispatch("deleteAnswers", { id: item.answers });
 
           //Remove all myCoops
-          this.cooperators.cooperators.forEach(guest => {
+          this.cooperators.cooperators.forEach((guest) => {
             this.$store.dispatch("removeMyCoops", {
               docId: guest.id,
               element: {
                 id: item.id,
                 title: item.title,
-                type: item.type
-              }
+                type: item.type,
+              },
             });
           });
 
           //Remove all Cooperators
           this.$store.dispatch("deleteCooperators", { id: item.cooperators });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.commit("setError", err);
         });
     },
@@ -363,37 +376,37 @@ export default {
           version: "1.0.0",
           date: new Date().toDateString(),
           title: this.templateTitle,
-          description: this.templateDescription
+          description: this.templateDescription,
         };
         if (this.test.type == "Heuristics") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,
             options: this.test.options,
             answersSheet: this.test.answersSheet,
-            type: this.test.type
+            type: this.test.type,
           });
         } else if (this.test.type == "User") {
           template = Object.assign(template, {
             tasks: this.test.tasks,
             preTest: this.test.preTest,
             postTest: this.test.postTest,
-            type: this.test.type
+            type: this.test.type,
           });
         }
 
         let payload = {
-          data: { body: template, header: header }
+          data: { body: template, header: header },
         };
 
-        this.$store.dispatch("createTemplate", payload).then(id => {
+        this.$store.dispatch("createTemplate", payload).then((id) => {
           this.object = Object.assign(this.object, {
             template: Object.assign(
               {},
               {
                 id: id,
-                upToDate: true
+                upToDate: true,
               }
-            )
+            ),
           });
           this.submit();
         });
@@ -404,14 +417,40 @@ export default {
       this.$refs.tempform.resetValidation();
       this.templateTitle = "";
       this.templateDescription = "";
-    }
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
+        if (
+          this.cooperators == [] ||
+          this.cooperators.id !== this.test.cooperators
+        )
+          this.$store.dispatch("getCooperators", {
+            id: this.test.cooperators,
+          });
       }
-    }
+    },
+    cooperators: async function () {
+      if (this.cooperators !== null && this.cooperators !== {}) {
+        let isOwner =
+          this.user.myTests.find((test) => test.id == this.id) == undefined
+            ? false
+            : true;
+        let hasAccess = false;
+        if (!isOwner)
+          hasAccess =
+            this.cooperators.cooperators.find(
+              (coop) =>
+                coop.email == this.user.email && coop.accessLevel.value == 0
+            ) == undefined
+              ? false
+              : true;
+        if (hasAccess || isOwner) this.showSettings = true;
+        this.loadingPage = false;
+      }
+    },
   },
   computed: {
     test() {
@@ -427,7 +466,7 @@ export default {
       return this.$store.getters.reports || [];
     },
     cooperators() {
-      return this.$store.getters.cooperators || [];
+      return this.$store.getters.cooperators || {};
     },
     dialogText() {
       if (this.object)
@@ -442,11 +481,15 @@ export default {
         }
 
       return false;
-    }
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      this.$store.dispatch("getTest", { id: this.id });
+      this.$store.dispatch("getTest", { id: this.id }).then(() => {
+        this.$store.dispatch("getCooperators", {
+          id: this.test.cooperators,
+        });
+      });
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -462,7 +505,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("beforeunload", this.preventNav);
-  }
+  },
 };
 </script>
 
