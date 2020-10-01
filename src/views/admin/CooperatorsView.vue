@@ -47,6 +47,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <v-tooltip left v-if="change">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -192,7 +193,7 @@
                   </v-list-item>
 
                   <v-list-item
-                    @click="removeCoop(item), removeFromList(item)"
+                    @click="removeCoop(item)"
                     v-if="item.accepted != null"
                   >
                     <v-list-item-title>Remove cooperator</v-list-item-title>
@@ -256,7 +257,7 @@ export default {
     selectedRole: 1,
     showCoops: false,
     verified: false,
-    dataTableKey: 0
+    dataTableKey: 0,
   }),
   methods: {
     log() {
@@ -285,22 +286,21 @@ export default {
     },
     submit() {
       this.cooperatorsEdit.forEach((guest) => {
-        //Invide new cooperators
-        if (!guest.invited) {
-          this.send(guest);
-        }
+        //Invite new cooperators
+        this.send(guest);
       });
 
       // this.editedCoops.forEach((guest) => {
       //   this.edit(guest);
       // });
 
-      this.deletedCoops.forEach((guest) => {
-        this.remove(guest);
-      });
+      // this.deletedCoops.forEach((guest) => {
+      //   this.remove(guest);
+      // });
+
       this.$store.commit("setSuccess", "invitations sent");
       // this.editedCoops = [];
-      this.deletedCoops = [];
+      // this.deletedCoops = [];
       this.change = false;
     },
     remove(guest) {
@@ -314,12 +314,22 @@ export default {
           })
           .then(() => {
             //Remove element array
-            this.$store.dispatch("removeCooperator", {
-              docId: this.id,
-              element: {
-                id: guest.id,
-              },
-            });
+            this.$store
+              .dispatch("removeCooperator", {
+                docId: this.id,
+                element: {
+                  id: guest.id,
+                },
+              })
+              .then(() => {
+                this.$store.commit(
+                  "setSuccess",
+                  "Cooperator successfuly removed"
+                );
+              })
+              .catch((err) => {
+                this.$store.commit("setError", err);
+              });
           });
       } else {
         this.$store
@@ -339,12 +349,22 @@ export default {
                 param: "reports",
               })
               .then(() => {
-                this.$store.dispatch("removeCooperator", {
-                  docId: this.id,
-                  element: {
-                    id: guest.id,
-                  },
-                });
+                this.$store
+                  .dispatch("removeCooperator", {
+                    docId: this.id,
+                    element: {
+                      id: guest.id,
+                    },
+                  })
+                  .then(() => {
+                    this.$store.commit(
+                      "setSuccess",
+                      "Cooperator successfuly removed"
+                    );
+                  })
+                  .catch((err) => {
+                    this.$store.commit("setError", err);
+                  });
               });
           });
       }
@@ -562,7 +582,7 @@ export default {
             {
               id: coop.id,
               email: coop.email,
-              invited: false,
+              invited: true,
               accepted: null,
               accessLevel: this.roleOptions[this.selectedRole],
               token: token,
@@ -574,7 +594,7 @@ export default {
             {
               id: null,
               email: coop,
-              invited: false,
+              invited: true,
               accepted: null,
               accessLevel: this.roleOptions[this.selectedRole],
               token: token,
@@ -619,7 +639,14 @@ export default {
     },
     removeCoop(coop) {
       this.deletedCoops.push(coop);
-      this.change = true;
+      let ok = confirm(
+        `Are you sure you want to remove ${coop.email} from your cooperators?`
+      );
+      if (ok) {
+        let index = this.cooperatorsEdit.indexOf(coop);
+        this.cooperatorsEdit.splice(index, 1);
+        this.remove(coop);
+      }
     },
     removeFromList(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
