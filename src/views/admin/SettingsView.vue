@@ -11,7 +11,7 @@
 
         <v-card-text
           >Are you sure you want to leave? All your changes will be
-          discarded</v-card-text
+          discarded.</v-card-text
         >
 
         <v-divider></v-divider>
@@ -470,7 +470,7 @@ export default {
     },
     dialogText() {
       if (this.object)
-        return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone`;
+        return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone.`;
 
       return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
     },
