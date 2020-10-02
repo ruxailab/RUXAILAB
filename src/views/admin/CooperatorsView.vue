@@ -12,8 +12,7 @@
     @closeIntro="intro = false"
   />
   <v-row justify="center" v-else-if="cooperators && showCoops">
-    <v-btn @click="log()">log</v-btn>
-    <!-- <v-btn @click="log()">Log</v-btn> -->
+    <!-- <v-btn @click="log()">log</v-btn> -->
     <v-container class="ma-0 pa-0">
       <Snackbar />
 
@@ -70,27 +69,30 @@
 
       <ShowInfo title="Cooperators">
         <div class="ma-0 pa-0" style="background: #f5f7ff" slot="content">
+          <v-chip
+            class="ml-2 mt-2"
+            v-for="(coop, i) in selectedCoops"
+            :key="i"
+            @click:close="removeSelectedCoops(i)"
+            close
+            >{{ typeof coop == "object" ? coop.email : coop }}</v-chip
+          >
           <v-row class="ma-0 pa-0 pt-3" align="center">
             <v-col class="ma-0 pa-0" cols="12" md="10">
               <v-combobox
-                @input="validateEmail()"
-                deletable-chips
-                class="mx-2"
                 :hide-no-data="false"
-                outlined
                 style="background: #f5f7ff"
-                v-model="selectedCoops"
-                multiple
-                small-chips
+                v-model="email"
                 :items="filteredUsers"
                 item-text="email"
-                label="Select cooperators"
+                label="Select cooperator"
+                @input="validateEmail()"
                 ref="combobox"
+                outlined
                 dense
                 color="#fca326"
+                class="mx-2"
               >
-                <!-- @keydown.native.enter="pushToArray()" -->
-
                 <template v-slot:no-data
                   >There are no users registered with that email, press enter to
                   select anyways.</template
@@ -109,7 +111,6 @@
               ></v-select>
             </v-col>
           </v-row>
-
           <v-data-table
             dense
             style="background: #f5f7ff"
@@ -233,11 +234,7 @@ export default {
   data: () => ({
     object: null,
     change: false,
-    edited: null,
     cooperatorsEdit: [],
-    // editedCoops: [],
-    deletedCoops: [],
-    userSelected: {},
     headers: [
       { text: "User", value: "email" },
       { text: "Role", value: "accessLevel" },
@@ -260,10 +257,14 @@ export default {
     dataTableKey: 0,
   }),
   methods: {
-    log() {
-      console.log("log", this.cooperatorsEdit);
+    removeSelectedCoops(index) {
+      this.selectedCoops.splice(index, 1);
     },
     changeRole(item, event) {
+      let index = this.cooperatorsEdit.indexOf(item);
+      let newCoop = Object.assign({}, item);
+      newCoop.accessLevel = event;
+
       if (item.accessLevel.value !== event.value) {
         let ok = confirm(
           `Are you sure you want to change ${item.email}'s role from "${item.accessLevel.text}" to "${event.text}"`
@@ -279,6 +280,7 @@ export default {
           );
 
           this.edit(edited);
+          this.$set(this.cooperatorsEdit, index, newCoop); //update on table
         } else {
           this.dataTableKey++; //forces data table re-render without changing user role
         }
@@ -611,13 +613,6 @@ export default {
 
         if (!hasObj && obj !== null) {
           this.cooperatorsEdit.push(obj);
-          // this.change = true;
-
-          if (this.deletedCoops.includes(obj.id))
-            //se add de novo remove do deleted
-            this.deletedCoops.splice(this.deletedCoops.indexOf(obj.id), 1);
-
-          // this.email = "";
           this.selectedCoops = [];
           this.$refs.combobox.blur();
         }
@@ -626,19 +621,25 @@ export default {
       this.submit();
     },
     validateEmail() {
-      let email = this.selectedCoops[this.selectedCoops.length - 1];
-      console.log(email);
-
-      if (typeof email !== "object" && email !== undefined) {
+      if (typeof this.email !== "object" && this.email !== undefined) {
         //if is object then no need to validate
-        if (!email.includes("@") || !email.includes(".")) {
-          alert(email + " is not a valid email");
-          this.selectedCoops.pop();
-        } else this.change = true;
-      } else this.change = true;
+        if (this.email.length) {
+          if (!this.email.includes("@") || !this.email.includes(".")) {
+            alert(this.email + " is not a valid email");
+          } else {
+            this.selectedCoops.push(this.email);
+            this.change = true;
+          }
+        }
+      } else {
+        this.selectedCoops.push(this.email);
+        this.change = true;
+      }
+
+      console.log("email", this.email);
     },
     removeCoop(coop) {
-      this.deletedCoops.push(coop);
+      // this.deletedCoops.push(coop);
       let ok = confirm(
         `Are you sure you want to remove ${coop.email} from your cooperators?`
       );
@@ -652,31 +653,6 @@ export default {
       let index = this.cooperatorsEdit.indexOf(coop);
       this.cooperatorsEdit.splice(index, 1);
     },
-    // recordChange(item) {
-    //   let edit = this.editedCoops.find((c) => c.guest.id == item.id);
-    //   this.change = true;
-
-    //   if (item.id) {
-    //     if (!edit && item.accepted) {
-    //       this.editedCoops.push({
-    //         guest: item,
-    //         previous: item.accessLevel,
-    //         current: this.edited,
-    //       });
-    //     } else if (edit && item.accepted) {
-    //       if (edit.previous.value === this.edited.value) {
-    //         this.editedCoops.splice(this.editedCoops.indexOf(edit), 1);
-    //       } else edit.current = this.edited;
-    //     }
-    //     let coop = this.cooperatorsEdit.find((coop) => coop.id == item.id);
-    //     coop.accessLevel = this.edited;
-    //   } else {
-    //     let coop = this.cooperatorsEdit.find(
-    //       (coop) => coop.token == item.token
-    //     );
-    //     coop.accessLevel = this.edited;
-    //   }
-    // },
     preventNav(event) {
       if (!this.change) return;
       event.preventDefault();
@@ -782,7 +758,7 @@ export default {
         if (this.cooperatorsEdit.length == 0) this.intro = true;
         else this.intro = false;
       }
-    },
+    }
   },
   computed: {
     test() {

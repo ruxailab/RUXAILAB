@@ -70,7 +70,7 @@ export default {
         if (this.editIndex == null) this.question.descriptions.push(this.desc);
         else
           // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
-          this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc)) //para atualizar no component
+          this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc))
 
         this.reset();
         this.$emit("change");
