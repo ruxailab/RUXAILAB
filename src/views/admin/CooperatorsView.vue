@@ -12,7 +12,7 @@
     @closeIntro="intro = false"
   />
   <v-row justify="center" v-else-if="cooperators && showCoops">
-    <!-- <v-btn @click="log()">log</v-btn> -->
+    <v-btn @click="comboboxKey++">log</v-btn>
     <v-container class="ma-0 pa-0">
       <Snackbar />
 
@@ -81,12 +81,15 @@
             <v-col class="ma-0 pa-0" cols="12" md="10">
               <v-combobox
                 :hide-no-data="false"
+                :autofocus="comboboxKey == 0 ? false : true"
                 style="background: #f5f7ff"
-                v-model="email"
                 :items="filteredUsers"
                 item-text="email"
                 label="Select cooperator"
                 @input="validateEmail()"
+                v-model="comboboxModel"
+                multiple
+                :key="comboboxKey"
                 ref="combobox"
                 outlined
                 dense
@@ -251,6 +254,8 @@ export default {
     intro: null,
     email: "",
     selectedCoops: [],
+    comboboxModel: [],
+    comboboxKey: 0,
     selectedRole: 1,
     showCoops: false,
     verified: false,
@@ -292,18 +297,9 @@ export default {
         this.send(guest);
       });
 
-      // this.editedCoops.forEach((guest) => {
-      //   this.edit(guest);
-      // });
-
-      // this.deletedCoops.forEach((guest) => {
-      //   this.remove(guest);
-      // });
-
-      this.$store.commit("setSuccess", "invitations sent");
-      // this.editedCoops = [];
-      // this.deletedCoops = [];
       this.change = false;
+      this.selectedCoops = [];
+      this.$refs.combobox.blur();
     },
     remove(guest) {
       if (guest.accessLevel.value != 2) {
@@ -411,7 +407,7 @@ export default {
                   .catch((err) => this.$store.commit("setError", err));
               });
           } else if (
-            //I'll be a Tester
+            //It'll be a Tester
             (guest.previous.value == 1 || guest.previous.value == 0) &&
             guest.current.value == 2
           ) {
@@ -518,10 +514,20 @@ export default {
                   },
                 }
               );
-              this.$store.dispatch("pushLog", {
-                docId: this.test.reports,
-                element: item,
-              });
+              this.$store
+                .dispatch("pushLog", {
+                  docId: this.test.reports,
+                  element: item,
+                })
+                .then(() => {
+                  this.$store.commit(
+                    "setSuccess",
+                    "Invitations sent successfully!"
+                  );
+                })
+                .catch((err) => {
+                  this.$store.commit("setError", err);
+                });
             }
           });
       }
@@ -613,30 +619,29 @@ export default {
 
         if (!hasObj && obj !== null) {
           this.cooperatorsEdit.push(obj);
-          this.selectedCoops = [];
-          this.$refs.combobox.blur();
         }
       });
 
       this.submit();
     },
     validateEmail() {
+      this.email = this.comboboxModel.pop();
+      this.comboboxKey++;
+      
       if (typeof this.email !== "object" && this.email !== undefined) {
         //if is object then no need to validate
         if (this.email.length) {
           if (!this.email.includes("@") || !this.email.includes(".")) {
             alert(this.email + " is not a valid email");
-          } else {
+          } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email);
             this.change = true;
           }
         }
-      } else {
+      } else if (!this.selectedCoops.includes(this.email)) {
         this.selectedCoops.push(this.email);
         this.change = true;
       }
-
-      console.log("email", this.email);
     },
     removeCoop(coop) {
       // this.deletedCoops.push(coop);
