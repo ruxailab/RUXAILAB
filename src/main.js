@@ -16,7 +16,7 @@ const firebaseConfig = isProduction ? {
   databaseURL: process.env.VUE_APP_FIREBASE_DB_URL,
   projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VUE_APP_FIREBASE_APP_ID
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
 } :
 {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY_DEV,
@@ -25,11 +25,12 @@ const firebaseConfig = isProduction ? {
   databaseURL: process.env.VUE_APP_FIREBASE_DB_URL_DEV,
   projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID_DEV,
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV,
-  appId: process.env.VUE_APP_FIREBASE_APP_ID_DEV 
+  appId: process.env.VUE_APP_FIREBASE_APP_ID_DEV,
+  measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID_DEV
 }
 
 firebase.initializeApp(firebaseConfig)
-
+if(!isProduction) firebase.analytics();
 // fetch('/__/firebase/init.json').then(response => {
 //   firebase.initializeApp(response.json());
 // });
