@@ -30,7 +30,7 @@ const firebaseConfig = isProduction ? {
 }
 
 firebase.initializeApp(firebaseConfig)
-if(!isProduction) firebase.analytics();
+if(!isProduction) firebase.analytics(); //remove if when added firebase analytics to production
 // fetch('/__/firebase/init.json').then(response => {
 //   firebase.initializeApp(response.json());
 // });
