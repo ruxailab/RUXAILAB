@@ -3,7 +3,7 @@ export default {
     answers: null,
   },
   getters: {
-    answers(state){
+    answers(state) {
       return state.answers
     }
   },
@@ -13,48 +13,50 @@ export default {
     }
   },
   actions: {
-    createAnswers({ dispatch }, payload) {
+    createAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "answers" });
 
       let docId = dispatch("createObject", payload)
         .then((doc) => {
           return doc.id;
         })
-        .catch((err) => {
-          console.error("Error ", err);
-        });
+        .catch((err) => commit("setError", "Error in createAnswers." + err));
 
       return docId;
     },
-    pushAnswers({ dispatch }, payload) {
+    pushAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "answers",
         param: "answers",
       });
 
-      dispatch("pushObject", payload).catch((err) => {
-        console.error("Error pushing log ", err);
-      });
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushAnswers." + err));
     },
     async getAnswers({ dispatch, commit }, payload) {
-      commit("setLoading",true);
-      payload = Object.assign(payload, { collection: "answers" });
-      let ans = await dispatch("getObject", payload);
-      commit("setAnswers", ans);
-      commit("setLoading",false);
-    },
-    deleteAnswers({ dispatch }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "answers" });
 
-      dispatch("deleteObject", payload).catch((err) => {
-        console.error("Error ", err);
-      });
+      let ans = await dispatch("getObject", payload)
+        .catch((err) => commit("setError", "Error in getAnswers." + err));
+
+      commit("setAnswers", ans);
     },
-    updateTestAnswer({ dispatch }, payload) {
+    deleteAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "answers" });
-      dispatch("updateObject", payload).catch(() => {
-        console.error("Error to update");
-      });
+
+      dispatch("deleteObject", payload)
+        .catch((err) => commit("setError", "Error in deleteAnswers." + err));
+    },
+    updateTestAnswer({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, { collection: "answers" });
+
+      dispatch("updateObject", payload)
+        .catch((err) => commit("setError", "Error in updateTestAnswer." + err));
     },
   },
 };
