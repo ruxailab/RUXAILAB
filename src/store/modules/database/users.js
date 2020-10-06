@@ -20,135 +20,151 @@ export default {
   actions: {
     async getUsers({ commit, dispatch }, payload) {
       commit("setLoading", true);
-      payload = Object.assign(payload, { collection: "users" }); //adiciona collection ao objeto passado
-      var users = await dispatch("getAllObjects", payload); //chama action que retorna tudo que tem na collection do objeto passado
-      commit("setUsers", users); //guarda o array na users da store
-      commit("setLoading", false);
+      payload = Object.assign(payload, { collection: "users" });
+
+      var users = await dispatch("getAllObjects", payload)
+        .catch((err) => commit("setError", "Error in getUsers." + err));
+
+      commit("setUsers", users);
     },
     async updateLevel({ commit, dispatch }, payload) {
       commit("setLoading", true);
       payload = Object.assign(payload, { function: "setUserRole" });
-      await dispatch("callFunction", payload);
+
+      await dispatch("callFunction", payload)
+        .catch((err) => commit("setError", "Error in updateLevel." + err));
+
       dispatch("getUsers", {});
     },
-    async pushMyTest({ dispatch }, payload) {
+    pushMyTest({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("pushObject", payload).catch((err) => {
-        console.error("Error to push myTest ", err);
-      });
+
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushMyTest." + err));
     },
-    async updateMyTest({ dispatch }, payload) {
+    updateMyTest({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         param: "myTests",
       });
-      dispatch("updateArrayObject", payload).catch((err) => {
-        console.error("Error to update myTests ", err);
-      });
+
+      dispatch("updateArrayObject", payload)
+        .catch((err) => commit("setError", "Error in updateMyTest." + err));
     },
-    async removeMyTest({ dispatch }, payload) {
+    removeMyTest({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "users" });
-      dispatch("removeObject", payload).catch((err) => {
-        console.error("Error to remove myTest ", err);
-      });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeMyTest." + err));
     },
-    async pushNotification({ dispatch, commit }, payload) {
+    pushNotification({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "users" });
+
       dispatch("pushObject", payload)
         .then(() => {
           commit("setSuccess", "Invitations sent succesfully");
         })
-        .catch((err) => {
-          console.error("Error to push notifications ", err);
-          commit("setError", err);
-        });
+        .catch((err) => commit("setError", "Error in pushNotification." + err));
     },
-    async removeNotification({ dispatch }, payload) {
+    removeNotification({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         param: "notifications",
       });
-      dispatch("removeObject", payload).catch((err) => {
-        console.error("Error ", err);
-      });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeNotification." + err));
     },
-    async pushMyCoops({ dispatch }, payload) {
-      payload = Object.assign(payload, {
-        collection: "users",
-        param: "myCoops",
-      });
-      dispatch("pushObject", payload).catch((err) => {
-        console.error("Error to push myCoops ", err);
-      });
-    },
-    async updateMyCoops({ dispatch }, payload) {
-      payload = Object.assign(payload, {
-        collection: "users",
-        param: "myCoops",
-      });
-      dispatch("updateArrayObject", payload).catch((err) => {
-        console.error("Error to update myCoops ", err);
-      });
-    },
-    async removeMyCoops({ dispatch }, payload) {
+    pushMyCoops({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         param: "myCoops",
       });
 
-      dispatch("removeObject", payload).catch((err) => {
-        console.error("Error to remove myCoop ", err);
-      });
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushMyCoops." + err));
     },
-    updateAccessLevel({ dispatch }, payload) {
+    updateMyCoops({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myCoops",
+      });
+
+      dispatch("updateArrayObject", payload)
+        .catch((err) => commit("setError", "Error in updateMyCoops." + err));
+    },
+    removeMyCoops({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myCoops",
+      });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeMyCoops." + err));
+    },
+    updateAccessLevel({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         field: "myCoops",
         identifier: "cooperators",
       });
-      dispatch("updateArrayElement", payload).catch((err) => {
-        console.error("Error updating element", err);
-      });
+
+      dispatch("updateArrayElement", payload)
+        .catch((err) => commit("setError", "Error in updateAccessLevel." + err));
     },
-    pushMyAnswers({ dispatch }, payload) {
+    pushMyAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         param: "myAnswers",
       });
 
-      dispatch("pushObject", payload).catch((err) => {
-        console.error("Error pushing answers: ", err);
-      });
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushMyAnswers." + err));
     },
-    async updateMyAnswers({ dispatch }, payload) {
-      payload = Object.assign(payload, {
-        collection: "users",
-        param: "myAnswers",
-      });
-      dispatch("updateArrayObject", payload).catch((err) => {
-        console.error("Error to update myAnswers ", err);
-      });
-    },
-    removeMyAnswers({ dispatch }, payload) {
+    updateMyAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "users",
         param: "myAnswers",
       });
 
-      dispatch("removeObject", payload).catch((err) => {
-        console.error("Error ", err);
-      });
+      dispatch("updateArrayObject", payload)
+        .catch((err) => commit("setError", "Error in updateMyAnswers." + err));
     },
-    deleteUser({ dispatch }, payload) {
+    removeMyAnswers({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myAnswers",
+      });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeMyAnswers." + err));
+    },
+    deleteUser({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+
       //Delete from  Users' colletion
       payload = Object.assign(payload, { collection: 'users' })
       dispatch('deleteObject', payload)
+        .catch((err) => commit("setError", "Error in deleteUser." + err));
 
 
       //Remove User Relations
       if (payload.myTests.length) {
         payload.myTests.forEach(test => {
           dispatch("deleteTest", test)
+            .catch((err) => commit("setError", "Error in deleteUser." + err));
         });
       }
 
@@ -161,6 +177,7 @@ export default {
               id: payload.id
             }
           })
+            .catch((err) => commit("setError", "Error in deleteUser." + err));
         })
       }
 
@@ -173,11 +190,13 @@ export default {
               progress: '-',
               status: "User Deleted"
             };
+            
             dispatch("updateLog", {
               docId: test.reports,
               elementId: payload.id,
               element: log
             })
+              .catch((err) => commit("setError", "Error in deleteUser." + err));
           }
         })
       }
