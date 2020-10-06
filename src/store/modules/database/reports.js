@@ -3,7 +3,7 @@ export default {
     reports: null,
   },
   getters: {
-    reports(state){
+    reports(state) {
       return state.reports
     },
   },
@@ -13,63 +13,69 @@ export default {
     }
   },
   actions: {
-    createReport({ dispatch }, payload) {
+    createReport({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "reports" });
+
       let docRef = dispatch("createObject", payload)
         .then((doc) => {
           return doc.id;
         })
-        .catch((err) => {
-          console.error("Error to create report ", err);
-        });
+        .catch((err) => commit("setError", "Error in createReport." + err));
+
       return docRef;
     },
-    deleteReport({ dispatch }, payload) {
+    deleteReport({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "reports" });
-      dispatch("deleteObject", payload).catch((err) => {
-        console.error("Error ", err);
-      });
+
+      dispatch("deleteObject", payload)
+        .catch((err) => commit("setError", "Error in deleteReport." + err));
     },
     async getReports({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "reports" });
-      commit("setLoading",true)
-      let reps = await dispatch("getObject", payload);
+
+      let reps = await dispatch("getObject", payload)
+        .catch((err) => commit("setError", "Error in getReports." + err));
+
       commit("setReports", reps);
-      commit("setLoading",false)
     },
-    pushLog({ dispatch }, payload) {
+    pushLog({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "reports",
         param: "reports",
       });
 
-      dispatch("pushObject", payload).catch((err) => {
-        console.error("Error pushing log ", err);
-      });
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushLog." + err));
     },
-    updateLog({ dispatch }, payload) {
+    updateLog({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "reports",
         field: "reports",
         param: "log",
         identifier: "uid",
       });
-      dispatch("updateArrayElement", payload).catch((err) => {
-        console.error("Error updating element", err);
-      });
+
+      dispatch("updateArrayElement", payload)
+        .catch((err) => commit("setError", "Error in updateLog." + err));
     },
-    updateTestReport({ dispatch }, payload) {
+    updateTestReport({ dispatch, commit }, payload) {
+      commit("setLoading", true);
       payload = Object.assign(payload, { collection: "reports" });
-      dispatch("updateObject", payload).catch(() => {
-        console.error("Error to update");
-      });
+
+      dispatch("updateObject", payload)
+        .catch((err) => commit("setError", "Error in updateTestReport." + err));
     },
-    removeReport({ dispatch }, payload) {
-      payload = Object.assign(payload, {collection: "reports"});
+    removeReport({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, { collection: "reports" });
+
       dispatch("removeObject", payload)
-      .catch((err) => {
-        console.error(err);
-      })
+        .catch((err) => commit("setError", "Error in removeReport." + err));
     }
   },
 };
