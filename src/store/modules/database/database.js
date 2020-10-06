@@ -15,15 +15,17 @@ export default {
     }
   },
   actions: {
-    async createObject(_, payload) {
+    async createObject({ commit }, payload) {
       try {
         var docRef = await api.database.createObject(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in createObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async getAllObjects(_, payload) {
+    async getAllObjects({ commit }, payload) {
       try {
         var snapshot;
         snapshot = await api.database.getAllObjects(payload);
@@ -33,91 +35,117 @@ export default {
         });
         return objects;
       } catch (err) {
-        console.error("Error getting document: ", err);
+        commit("setError", "Error in getAllObjects" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async deleteObject(_, payload) {
+    async deleteObject({ commit }, payload) {
       try {
         await api.database.deleteObject(payload);
       } catch (err) {
-        console.error("Error removing document: ", err);
+        commit("setError", "Error in deleteObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async getObject(_, payload) {
+    async getObject({ commit }, payload) {
       try {
         var doc = await api.database.getObject(payload);
         const object = Object.assign({ id: doc.id }, doc.data());
         return object;
       } catch (err) {
-        console.error("Error getting document: ", err);
+        commit("setError", "Error in getObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async updateObject(_, payload) {
+    async updateObject({ commit }, payload) {
       try {
         var docRef = await api.database.updateObject(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in updateObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async pushObject(_, payload) {
+    async pushObject({ commit }, payload) {
       try {
         var docRef = await api.database.pushArray(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in pushObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async removeObject(_, payload) {
+    async removeObject({ commit }, payload) {
       try {
         var docRef = await api.database.removeArray(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in removeObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async updateArrayObject(_, payload) {
+    async updateArrayObject({ commit }, payload) {
       try {
         var docRef = await api.database.updateArray(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in updateArrayObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async updateArrayElement(_, payload) {
+    async updateArrayElement({ commit }, payload) {
       try {
         let docRef = await api.database.updateArrayElement(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in updateArrayElement" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async updateArrayElementObject(_, payload) {
+    async updateArrayElementObject({ commit }, payload) {
       try {
         let docRef = await api.database.updateArrayObject(payload);
         return docRef;
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in updateArrayElementObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async callFunction(_, payload) {
+    async callFunction({ commit }, payload) {
       try {
         await api.functions.call(payload);
       } catch (err) {
-        console.error("Error calling the function:  ", err);
+        commit("setError", "Error in callFunction" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    async setParamInObject(_, payload) {
+    async setParamInObject({ commit }, payload) {
       try {
         await api.database.setParam(payload);
       } catch (err) {
-        console.error("Error", err);
+        commit("setError", "Error in setParamInObject" + err);
+      } finally {
+        commit("setLoading", false);
       }
     },
-    removeUser(_, user) {
-      //deletar do auth
-      //deletar do firestore -> cascata
-      api.auth.deleteUserByID(user);
+    removeUser({ commit }, user) {
+      try {
+        api.auth.deleteUserByID(user);
+      } catch (err) {
+        commit("setError", "Error in removeUser" + err);
+      } finally {
+        commit("setLoading", false);
+      }
     }
   },
 };
