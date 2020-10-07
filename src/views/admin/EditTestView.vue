@@ -137,18 +137,27 @@ export default {
           data: this.object,
         })
         .then(() => {
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: {
+          let element = Object.assign(
+            {},
+            {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              template: this.object.template,
               accessLevel: 0,
-            },
+              date: this.object.date
+            }
+          );
+          if ("template" in this.object)
+            element = Object.assign(element, {
+              template: this.object.template,
+            });
+
+          this.$store.dispatch("updateMyTest", {
+            docId: this.object.admin.id,
+            element: element,
           });
 
           this.answers.answersSheet = this.object.answersSheet;
