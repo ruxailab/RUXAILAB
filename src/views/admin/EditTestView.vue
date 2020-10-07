@@ -129,6 +129,9 @@ export default {
   methods: {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      let today = new Date();
+
+      if(this.object.date !== today.toDateString()) this.object.date = today.toDateString(); //update date if not the same as last update
 
       if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
       this.$store

@@ -17,13 +17,13 @@
             <span
               style="position: absolute; right: 5px;"
               class="caption hidden-sm-and-down"
-              >{{ test.date ? "Created " : "-" }}{{ test.date }}</span
+              >{{ test.date ? "Last Updated on " : "-" }}{{ test.date }}</span
             >
           </v-list-item-title>
           <v-list-item-subtitle class="hidden-md-and-up"
             >{{ test.author ? "Created by " : "" }}{{ test.author
             }}{{ test.date && test.author ? " on " : ""
-            }}{{ test.date && !test.author ? "Created " : ""
+            }}{{ test.date && !test.author ? "Last updated on " : ""
             }}{{ test.date }}</v-list-item-subtitle
           >
           <v-list-item-subtitle class="hidden-sm-and-down">
