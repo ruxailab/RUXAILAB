@@ -16,7 +16,8 @@ export default {
   },
   actions: {
     /**
-     * This action sign up a user in platform
+     * This action register a user on the platform, 
+     * using the API and creates the observer for the user's metadata in the database
      * 
      * @action signup 
      * @param {object} payload - Data to create a new user 
@@ -43,7 +44,8 @@ export default {
       }
     },
     /**
-     * This action sign in the user the platform
+     *This action connects a user to the platform, using the API 
+     and creates the observer for the user's metadata in the database
      * 
      * @action signin=setUser
      * @param {object} payload - Data to create a new user 
@@ -72,7 +74,7 @@ export default {
       }
     },
     /**
-     * This action log out user of platform
+     * This action disconnects the user from the platform
      * 
      *  @action signin=[setUser=null]
      *  @returns {void}
@@ -89,8 +91,8 @@ export default {
       }
     },
     /**
-     * This action reconnect user automatically to platform when 
-     * reload or come in the page
+     * This action automatically reconnects the user to the platform when 
+     * reloading or entering the page, using the API and creates the observer for the user's metadata
      *
      *  @action signin=setUser
      *  @returns {void}
@@ -117,11 +119,26 @@ export default {
         commit("setLoading", false);
       }
     },
+    /**
+     * This action updates the user's metadata
+     *  
+     * @action setUser=setUser
+     * @param {object} user - user's data
+     * @param {number} user.accessLevel - user acess permition 
+     * @param {string} user.collection -  local in database 
+     * @param {string} user.email - user's email
+     * @param {string} user.id -user's indentification
+     * @param {object[]} user.myAnswers - test list that user is repling
+     * @param {object[]} user.myCoops- test list that user is cooperator
+     * @param {object[]} user.myTests - user's test list 
+     * @param {object[]} user.notifications - notificatinons recived 
+     * @returns {void}
+     */
     setUser({ commit }, user) {
       commit("setUser", user);
     },
     /**
-     * This action delete the user's authentication
+     * This action excludes user authentication by calling a firebase function
      * 
      * @action deleteAuth
      * @param {object} user - user's data
