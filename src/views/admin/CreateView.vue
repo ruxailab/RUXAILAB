@@ -147,6 +147,7 @@ export default {
                           cooperators: idCooperators,
                           accessLevel: 0,
                           date: d.toDateString(),
+                          nCoops: 0
                         },
                         param: "myTests",
                       });
