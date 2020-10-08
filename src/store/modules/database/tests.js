@@ -61,7 +61,7 @@ export default {
   },
   actions: {
     /**
-     * This action creates a new test, using a generic function for creating objects, 
+     * This action creates a new test, using the generic function "createObject" to creates the object, 
      * passing the test data
      * 
      * @action createTest  
@@ -101,7 +101,7 @@ export default {
       return docRef;
     },
     /**
-     * This action gets all test in database, using a generic function 
+     * This action gets all test in database, using the generic function "getAllObjects" 
      * 
      * @deprecated
      * @action getTests=setTests
@@ -116,8 +116,8 @@ export default {
       commit("setTests", tests);
     },
     /**
-     * This action deletes a test, using a generic
-     *  function, passing the test data 
+     * This action deletes a test, the generic function "deleteObject",
+     *  passing the test data 
      * 
      * @action deleteTest 
      * @param {object} payload - test's data 
@@ -193,7 +193,7 @@ export default {
         .catch((err) => commit("setError", "Error in deleteTest." + err));
     },
     /**
-     *This action gets a test by id, using  a generic function 
+     *This action gets a test by id, using the generic function "getObject" 
      *
      * @action getTest=setTest 
      * @param {object} payload - test's data 
@@ -212,7 +212,7 @@ export default {
     },
     /**
      * This action updates the test, 
-     * using a generic function sending the update data
+     * using a the generic function "updateObject" sending the update data
      * 
      * @action updateTest
      * @param {object} payload - data to update
@@ -274,7 +274,8 @@ export default {
         .catch((err) => commit("setError", "Error in pushCoop." + err));
     },
     /**
-     * this action defines the  reference of the reports collection 
+     * this action defines the  reference of the reports collection, using the generic function "setParamInObject" 
+     * 
      * @action setReportID
      * @param {object} payload - data 
      * @param {string} payload.data -  reports collection reference identification
@@ -293,7 +294,7 @@ export default {
         .catch((err) => commit("setError", "Error in setReportID." + err));
     },
     /**
-     * this action defines the  reference of the answers collection 
+     * this action defines the  reference of the answers collection, using the generic function "setParamInObject"
      * 
      * @action setAnswerID
      * @param {object} payload - data 
@@ -310,7 +311,7 @@ export default {
         .catch((err) => commit("setError", "Error in setAnswerID." + err));
     },
     /**
-     * this action defines the  reference of the cooperators collection 
+     * this action defines the  reference of the cooperators collection, using the generic function "setParamInObject"
      * 
      * @action {setCooperatorsID}
      * @param {object} payload - data 
@@ -327,7 +328,7 @@ export default {
         .catch((err) => commit("setError", "Error in setCooperatorsID." + err));
     },
     /**
-     * Identified when the test is updated
+     * Identified when the test is updated, using the generic function "setParamInObject"
      * 
      * @action setUpToDate
      * @param {object} payload - data 
