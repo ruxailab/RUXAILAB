@@ -61,6 +61,7 @@
             </template>
             <span>Progress</span>
           </v-tooltip>
+          <v-list-item-action-text v-if="type === 'myAnswers'">Last Updated on {{test.date}}</v-list-item-action-text>
         </v-list-item-action>
       </v-list-item>
       <v-divider v-if="n !== tests.length - 1"></v-divider>

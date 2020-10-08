@@ -83,7 +83,8 @@ export default {
         this.$store.dispatch("pushMyCoops", {
           docId: this.user.uid,
           element: Object.assign(item.test, {
-            accessLevel: item.to.accessLevel
+            accessLevel: item.to.accessLevel,
+            date: new Date().toDateString()
           })
         });
       } else {
@@ -93,7 +94,7 @@ export default {
           docId: this.user.uid,
           element: Object.assign(item.test, {
             answersSheet: Object.assign(this.test.answersSheet, {
-              submited: false
+              submitted: false
             }),
             accessLevel: 2
           })

@@ -693,13 +693,15 @@ export default {
     },
     submitLog(save) {
       let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
-      if (!save) newAnswer.answersSheet.submited = true;
-
+      if (!save) newAnswer.answersSheet.submitted = true;
+      
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
         status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
       };
+      log.status = newAnswer.answersSheet.submitted ? "Submitted" : log.status;
+
       this.$store
         .dispatch("updateLog", {
           docId: newAnswer.reports,
@@ -717,7 +719,7 @@ export default {
                 })
               })
               .then(() => {
-                this.$store.commit("setSuccess", "Test succesfully submited");
+                this.$store.commit("setSuccess", "Test succesfully submitted");
               })
               .catch(err => {
                 this.$store.commit("setError", err);
@@ -725,6 +727,7 @@ export default {
           }
         });
 
+      newAnswer.date = new Date().toDateString();
       this.$store
         .dispatch("updateMyAnswers", {
           docId: this.user.uid,
@@ -766,7 +769,7 @@ export default {
               answers: this.test.answers,
               cooperators: this.test.cooperators,
               answersSheet: Object.assign(this.test.answersSheet, {
-                submited: false
+                submitted: false
               }),
               accessLevel: 2
             }
@@ -892,7 +895,7 @@ export default {
     },
     showBtn() {
       if (this.answersSheet !== undefined && this.answersSheet !== null) {
-        if (!this.answersSheet.submited) return true;
+        if (!this.answersSheet.submitted) return true;
       }
       if (this.test.type == "User") {
         return true;

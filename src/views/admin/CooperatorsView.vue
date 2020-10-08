@@ -423,10 +423,11 @@ export default {
                   docId: guest.guest.id,
                   element: Object.assign(test, {
                     answersSheet: Object.assign(this.test.answersSheet, {
-                      submited: false,
+                      submitted: false,
                     }),
                     accessLevel: 2,
-                    author: this.test.admin.email
+                    author: this.test.admin.email,
+                    date: new Date().toDateString()
                   }),
                 });
 

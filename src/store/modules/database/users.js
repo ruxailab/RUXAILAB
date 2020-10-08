@@ -184,7 +184,7 @@ export default {
 
       if (payload.myAnswers.length) {
         payload.myAnswers.forEach(test => {
-          if (!test.answersSheet.submited) {
+          if (!test.answersSheet.submitted) {
             var log = {
               date: new Date().toLocaleString("en-US"),
               progress: '-',
