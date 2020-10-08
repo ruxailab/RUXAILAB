@@ -104,7 +104,7 @@ export default {
      * This action gets all test in database, using a generic function 
      * 
      * @deprecated
-     * @action getTests = setTests
+     * @action getTests=setTests
      * @param {object} payload - empty object
      * @returns {void}
      */
@@ -195,7 +195,7 @@ export default {
     /**
      *This action gets a test by id, using  a generic function 
      *
-     * @action getTest = setTest 
+     * @action getTest=setTest 
      * @param {object} payload - test's data 
      * @param {string} [payload.collection = test] -  local in database 
      * @param {string} payload.id - test's identification code
