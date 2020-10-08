@@ -34,34 +34,44 @@
             v-if="type == 'myTests'"
             >Last Updated on {{ test.date }}</v-list-item-subtitle
           >
+
+          <div
+            class="hidden-sm-and-down"
+            style="position: absolute; right: 25%"
+          >
+            <v-tooltip top v-if="type === 'myTests'">
+              <template v-slot:activator="{ on, attrs }">
+                <v-row class="ma-0 pa-0" v-bind="attrs" v-on="on">
+                  xx
+                  <v-icon class="ml-1">mdi-account-multiple</v-icon>
+                </v-row>
+              </template>
+              <span>Cooperators</span>
+            </v-tooltip>
+            <v-tooltip top v-else-if="type === 'myAnswers'">
+              <template v-slot:activator="{ on, attrs }">
+                <v-row v-bind="attrs" v-on="on">
+                  <div class="caption">{{ test.answersSheet.progress }}%</div>
+
+                  <v-progress-circular
+                    rotate="-90"
+                    :value="test.answersSheet.progress"
+                    color="grey darken-1"
+                    :size="20"
+                    class="ml-1"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+              <span>Progress</span>
+            </v-tooltip>
+          </div>
         </v-list-item-content>
 
         <!-- Actions -->
         <v-list-item-action>
-          <v-tooltip top v-if="type === 'myTests'">
-            <template v-slot:activator="{ on, attrs }">
-              <v-row class="ma-0 pa-0" v-bind="attrs" v-on="on">
-                12
-                <v-icon class="ml-1">mdi-account-multiple</v-icon>
-              </v-row>
-            </template>
-            <span>Cooperators</span>
-          </v-tooltip>
-
-          <v-tooltip top v-else-if="type === 'myAnswers'">
-            <template v-slot:activator="{ on, attrs }">
-              <v-progress-circular
-                v-bind="attrs"
-                v-on="on"
-                rotate="-90"
-                :value="test.answersSheet.progress"
-                color="grey darken-1"
-                :size="20"
-              ></v-progress-circular>
-            </template>
-            <span>Progress</span>
-          </v-tooltip>
-          <v-list-item-action-text v-if="type === 'myAnswers'">Last Updated on {{test.date}}</v-list-item-action-text>
+          <v-list-item-action-text v-if="type === 'myAnswers'"
+            >Last Updated on {{ test.date }}</v-list-item-action-text
+          >
         </v-list-item-action>
       </v-list-item>
       <v-divider v-if="n !== tests.length - 1"></v-divider>
