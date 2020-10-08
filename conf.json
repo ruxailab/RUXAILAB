@@ -1,0 +1,26 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": [
+            "src"
+        ],
+        "exclude": [
+            "(node_modules|docs)"
+        ],
+        "includePattern": ".js$",
+        "excludePattern": ""
+    },
+    "plugins": [
+        "jsdoc-vuex-plugin"
+    ],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    },
+    "opts":{
+        "recurse": true,
+        "destination":"./docs/"
+    }
+}
