@@ -41,8 +41,8 @@
           >
             <v-tooltip top v-if="type === 'myTests'">
               <template v-slot:activator="{ on, attrs }">
-                <v-row class="ma-0 pa-0" v-bind="attrs" v-on="on">
-                  xx
+                <v-row class="ma-0 pa-0" v-bind="attrs" v-on="on" align="center">
+                  {{test.nCoops? test.nCoops : '-'}}
                   <v-icon class="ml-1">mdi-account-multiple</v-icon>
                 </v-row>
               </template>
