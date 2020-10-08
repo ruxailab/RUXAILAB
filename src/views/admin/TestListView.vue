@@ -89,6 +89,7 @@
             @clicked="goTo"
             v-if="index == 0"
             :tests="filteredMyTests"
+            type="myTests"
           ></List>
 
           <!-- Tests I Colaborate With -->
@@ -96,6 +97,7 @@
             @clicked="goTo"
             v-if="index == 1"
             :tests="filteredMyCoops"
+            type="myCoops"
           ></List>
 
           <!-- My Answers -->
@@ -103,6 +105,7 @@
             @clicked="goTo"
             v-if="index == 2"
             :tests="filteredMyAnswers"
+            type="myAnswers"
           ></List>
         </v-col>
       </v-row>
