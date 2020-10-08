@@ -12,7 +12,6 @@
     @closeIntro="intro = false"
   />
   <v-row justify="center" v-else-if="cooperators && showCoops">
-    <v-btn @click="comboboxKey++">log</v-btn>
     <v-container class="ma-0 pa-0">
       <Snackbar />
 
@@ -427,6 +426,7 @@ export default {
                       submited: false,
                     }),
                     accessLevel: 2,
+                    author: this.test.admin.email
                   }),
                 });
 
@@ -489,6 +489,7 @@ export default {
             reports: this.test.reports,
             answers: this.test.answers,
             cooperators: this.test.cooperators,
+            author: this.test.admin.email
           },
         };
         this.$store
