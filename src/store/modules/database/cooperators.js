@@ -1,4 +1,10 @@
 import template from "@/assets/template.js"
+
+/**
+ * Cooperators store module
+ * @module cooperators
+*/
+
 export default {
   state: {
     cooperators: null,

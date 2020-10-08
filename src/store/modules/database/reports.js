@@ -1,3 +1,8 @@
+/**
+ * Reports store module
+ * @module Reports
+ */
+
 export default {
   state: {
     reports: null,

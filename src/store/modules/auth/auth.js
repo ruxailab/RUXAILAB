@@ -1,4 +1,8 @@
 import api from "@/api";
+/**
+ * Auth store module
+ * @module auth
+ */
 
 export default {
   state: {

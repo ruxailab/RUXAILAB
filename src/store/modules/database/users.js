@@ -1,3 +1,8 @@
+/**
+ * Users store module
+ * @module users
+ */
+
 export default {
   state: {
     users: null,

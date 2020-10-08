@@ -1,3 +1,8 @@
+/**
+ * Tests Store Module
+ * @module tests
+ */
+
 export default {
   state: {
     test: null,

@@ -1,5 +1,11 @@
 import api from "@/api/index";
 
+/**
+ * Database store module
+ * @module database
+ */
+
+
 export default {
   state: {
     loading: false

@@ -1,3 +1,7 @@
+/**
+ * Templates store module
+ * @module templates
+ */
 
 export default {
     state: {

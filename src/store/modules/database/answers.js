@@ -1,3 +1,8 @@
+/**
+ * Answers store module
+ * @module answers
+ */
+
 export default {
   state: {
     answers: null,
