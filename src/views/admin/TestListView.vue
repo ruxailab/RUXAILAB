@@ -75,7 +75,9 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
+          <!-- Desktop Sub Tabs -->
           <v-tabs
+            v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
@@ -111,18 +113,34 @@
           ></List>
 
           <!-- Tests I Colaborate With -->
-          <List
+          <!-- <List
             @clicked="goTo"
             v-if="mainIndex == 1"
             :tests="filteredMyCoops"
             type="myCoops"
-          ></List>
+          ></List> -->
 
-          <!-- My Answers -->
+          <!-- Answers -> All -->
           <List
             @clicked="goTo"
-            v-if="mainIndex == 2"
+            v-if="mainIndex == 1 && subIndex == 0"
             :tests="filteredMyAnswers"
+            type="myAnswers"
+          ></List>
+
+          <!-- Answers -> Personal -->
+          <List
+            @clicked="goTo"
+            v-if="mainIndex == 1 && subIndex == 1"
+            :tests="personalAnswers"
+            type="myAnswers"
+          ></List>
+
+          <!-- Answers -> Ohters -->
+          <List
+            @clicked="goTo"
+            v-if="mainIndex == 1 && subIndex == 2"
+            :tests="otherAnswers"
             type="myAnswers"
           ></List>
         </v-col>
@@ -144,6 +162,7 @@ export default {
   data: () => ({
     search: "",
     mainIndex: 0,
+    subIndex: 0,
     searching: false,
     buttonItems: [
       { text: "Tests", value: 0 },
@@ -188,8 +207,31 @@ export default {
         }) || [] 
       return [];
     },
+    personalAnswers() {
+      if(this.user) {
+        return this.user.myAnswers.filter(test => {
+          return test.author == this.user.email;
+        }) || []
+      }
+
+      return [];
+    },
+    otherAnswers() {
+      if(this.user) {
+        return this.user.myAnswers.filter(test => {
+          return test.author !== this.user.email;
+        }) || []
+      }
+
+      return [];
+    },
     loading() {
       return this.$store.getters.loading;
+    }
+  },
+  watch: {
+    mainIndex() {
+      this.subIndex = 0; //reset subIndex when main idex change
     }
   }
 };
