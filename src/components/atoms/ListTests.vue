@@ -28,13 +28,6 @@
             {{ test.date ? "Last Updated on " : "-" }}{{ test.date }}
           </v-list-item-subtitle>
 
-          <!-- Mobile Subtitle -->
-          <v-list-item-subtitle
-            class="hidden-md-and-up"
-            v-if="type == 'myTests'"
-            >Last Updated on {{ test.date }}</v-list-item-subtitle
-          >
-
           <div
             class="hidden-sm-and-down"
             style="position: absolute; right: 25%"

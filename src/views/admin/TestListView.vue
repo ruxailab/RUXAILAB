@@ -50,16 +50,16 @@
           ></v-text-field>
           <v-divider class="mb-1"></v-divider>
 
-          <!-- Desktop Tabs -->
+          <!-- Desktop Main Tabs -->
           <v-tabs
-            v-model="index"
+            v-model="mainIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
           >
-            <v-tab @click="index = 0">My Tests</v-tab>
-            <v-tab @click="index = 1">Tests I colaborate with</v-tab>
-            <v-tab @click="index = 2">My Answers</v-tab>
+            <v-tab>Tests</v-tab>
+            <v-tab>Answers</v-tab>
+            <v-tab>Templates</v-tab>
 
             <v-spacer></v-spacer>
 
@@ -75,11 +75,29 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
+          <v-tabs
+            background-color="transparent"
+            color="black"
+            class="hidden-sm-and-down"
+          >
+            <!-- Tests/Answers sub tabs -->
+            <v-tab v-if="mainIndex != 2">All</v-tab>
+            <v-tab v-if="mainIndex != 2">Personal</v-tab>
+            <v-tab v-if="mainIndex != 2">Others</v-tab>
+
+            <!-- Template sub tabs -->
+            <v-tab v-if="mainIndex == 2">Personal</v-tab>
+            <v-tab v-if="mainIndex == 2">Explore</v-tab>
+
+            <v-spacer></v-spacer>
+          </v-tabs>
+          <v-divider class="hidden-sm-and-down"></v-divider>
+
           <!-- Mobile Button -->
           <v-select
             dense
             outlined
-            v-model="index"
+            v-model="mainIndex"
             class="hidden-md-and-up mx-2"
             :items="buttonItems"
           ></v-select>
@@ -87,7 +105,7 @@
           <!-- My Tests -->
           <List
             @clicked="goTo"
-            v-if="index == 0"
+            v-if="mainIndex == 0"
             :tests="filteredMyTests"
             type="myTests"
           ></List>
@@ -95,7 +113,7 @@
           <!-- Tests I Colaborate With -->
           <List
             @clicked="goTo"
-            v-if="index == 1"
+            v-if="mainIndex == 1"
             :tests="filteredMyCoops"
             type="myCoops"
           ></List>
@@ -103,7 +121,7 @@
           <!-- My Answers -->
           <List
             @clicked="goTo"
-            v-if="index == 2"
+            v-if="mainIndex == 2"
             :tests="filteredMyAnswers"
             type="myAnswers"
           ></List>
@@ -125,12 +143,12 @@ export default {
   },
   data: () => ({
     search: "",
-    index: 0,
+    mainIndex: 0,
     searching: false,
     buttonItems: [
-      { text: "My Tests", value: 0 },
-      { text: "Tests I colaborate with", value: 1 },
-      { text: "My Answers", value: 2 }
+      { text: "Tests", value: 0 },
+      { text: "Answers", value: 1 },
+      { text: "Templates", value: 2 }
     ]
   }),
   methods: {
