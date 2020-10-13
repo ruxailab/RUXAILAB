@@ -81,9 +81,9 @@ export default {
      * @param {string} payload.data.description - test description
      * @param {string} payload.data.type - test type
      * @param {object} [payload.data.answersSheet] - standard object to answer the test
-     * @param {number} payload.data.answersSheet.total
-     * @param {number} payload.data.answersSheet.progress
-     * @param {object[]} payload.data.answersSheet.heuristics
+     * @param {number} payload.data.answersSheet.total - total questions answered
+     * @param {number} payload.data.answersSheet.progress - complete test percentage
+     * @param {object[]} payload.data.answersSheet.heuristics - answers
      * @param {object[]} [payload.data.heuristics] - structure test when its type is heuristic
      * @param {object[]} [payload.data.options] -  alternatives to respond when your type is heuristic
      * @param {object} [payload.data.postTest] - object with google form for pretest
