@@ -105,13 +105,31 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
-          <!-- Mobile Button -->
+          <!-- Mobile Main Button -->
           <v-select
             dense
             outlined
             v-model="mainIndex"
             class="hidden-md-and-up mx-2"
             :items="buttonItems"
+          ></v-select>
+
+          <!-- Mobile Sub Buttons -->
+          <v-select
+            dense
+            outlined
+            v-model="subIndex"
+            class="hidden-md-and-up mx-2"
+            :items="testButtonItems"
+            v-if="mainIndex <= 1"
+          ></v-select>
+          <v-select
+            dense
+            outlined
+            v-model="subIndex"
+            class="hidden-md-and-up mx-2"
+            :items="templateButtonItems"
+            v-else
           ></v-select>
 
           <!-- Tests -> All -->
@@ -173,7 +191,7 @@
           <List
             v-if="mainIndex == 2 && subIndex == 1"
             :tests="filteredTemplates"
-            type="myCoops"
+            type="template"
           ></List>
         </v-col>
       </v-row>
@@ -201,6 +219,15 @@ export default {
       { text: "Answers", value: 1 },
       { text: "Templates", value: 2 },
     ],
+    testButtonItems: [
+      { text: "All", value: 0 },
+      { text: "Personal", value: 1 },
+      { text: "Others", value: 2 },
+    ],
+    templateButtonItems: [
+      { text: "Personal", value: 0 },
+      { text: "Explore", value: 1 },
+    ]
   }),
   methods: {
     pushCreate() {
