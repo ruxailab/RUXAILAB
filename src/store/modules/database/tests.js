@@ -121,7 +121,7 @@ export default {
       commit("setTests", tests);
     },
     /**
-     * This action deletes a test, the generic action "deleteObject",
+     * This action deletes a test,using the generic action "deleteObject",
      *  passing the test data 
      * 
      * @action deleteTest 

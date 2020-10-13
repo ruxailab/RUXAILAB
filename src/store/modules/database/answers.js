@@ -94,10 +94,10 @@ export default {
     },
     /**
      * This action deletes the answers document, 
-     * using the generic action {@link deleteObject }, 
+     * using the generic action {@link deleteObject}, 
      * passing the response data
      * 
-     * @action
+     * @action deleteAnswers
      * @param {object} payload - answers document data
      * @param {string} payload.id - answers document identification
      * @returns {void} 
