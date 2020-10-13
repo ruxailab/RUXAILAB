@@ -32,7 +32,7 @@
           v-model="search"
         ></v-text-field>
         <v-divider class="mb-1"></v-divider>
-        <List @clicked="openTemp" :tests="filteredTemplates"></List>
+        <List @clicked="openTemp" type="template" :items="filteredTemplates"></List>
       </v-col>
     </v-row>
     <v-dialog v-model="dialog" max-width="80%">
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import List from "@/components/atoms/ListTests";
+import List from "@/components/atoms/ListComponent";
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 
 export default {

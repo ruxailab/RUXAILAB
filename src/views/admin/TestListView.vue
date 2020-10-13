@@ -136,7 +136,7 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 0"
-            :tests="filteredAllTests"
+            :items="filteredAllTests"
             type="myCoops"
           ></List>
 
@@ -144,7 +144,7 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 1"
-            :tests="filteredMyTests"
+            :items="filteredMyTests"
             type="myTests"
           ></List>
 
@@ -152,7 +152,7 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 2"
-            :tests="filteredMyCoops"
+            :items="filteredMyCoops"
             type="myCoops"
           ></List>
 
@@ -160,7 +160,7 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 0"
-            :tests="filteredMyAnswers"
+            :items="filteredMyAnswers"
             type="answers"
           ></List>
 
@@ -168,7 +168,7 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 1"
-            :tests="filteredPersonalAnswers"
+            :items="filteredPersonalAnswers"
             type="answers"
           ></List>
 
@@ -176,21 +176,21 @@
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 2"
-            :tests="filteredOtherAnswers"
+            :items="filteredOtherAnswers"
             type="answers"
           ></List>
 
           <!-- Templates -> Personal -->
           <List
             v-if="mainIndex == 2 && subIndex == 0"
-            :tests="filteredPersonalTemplates"
+            :items="filteredPersonalTemplates"
             type="template"
           ></List>
 
           <!-- Templates -> Explore -->
           <List
             v-if="mainIndex == 2 && subIndex == 1"
-            :tests="filteredTemplates"
+            :items="filteredTemplates"
             type="template"
           ></List>
         </v-col>
@@ -202,7 +202,7 @@
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
-import List from "@/components/atoms/ListTests";
+import List from "@/components/atoms/ListComponent";
 
 export default {
   components: {

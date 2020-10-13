@@ -1,71 +1,20 @@
-  <!-- <v-list class="py-0">
-    <div v-for="(test, n) in tests" :key="n">
-      <v-list-item @click="emitClick(test)" :ripple="false">
-        <v-list-item-avatar tile style="border-radius: 5px" size="40">
-          <v-avatar tile :color="generateColor()" style="color: #545454">{{
-            test.title[0].toUpperCase()
-          }}</v-avatar>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ test.title }}
-            <v-chip outlined style="color: grey" small class="ml-1">{{
-              test.type
-            }}</v-chip>
-            <span
-              style="position: absolute; right: 5px;"
-              class="caption hidden-sm-and-down"
-              >{{ test.date ? "Created " : "-" }}{{ test.date }}</span
-            >
-          </v-list-item-title>
-          <v-list-item-subtitle class="hidden-md-and-up"
-            >{{ test.author ? "Created by " : "" }}{{ test.author
-            }}{{ test.date && test.author ? " on " : ""
-            }}{{ test.date && !test.author ? "Created " : ""
-            }}{{ test.date }}</v-list-item-subtitle
-          >
-          <v-list-item-subtitle class="hidden-sm-and-down">
-            {{ test.author ? "Created by " : "" }}{{ test.author }}
-            <v-chip
-              v-if="test.version"
-              style="position: absolute; right: 5px; color: grey"
-              outlined
-              small
-              class="ml-1"
-              >Version: {{ test.version }}</v-chip
-            >
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-divider v-if="n !== tests.length - 1"></v-divider>
-    </div>
-    <v-row
-      justify="center"
-      align="center"
-      class="ma-0 mt-2 pa-0"
-      v-if="tests.length == 0"
-    >
-      <span>No tests found</span>
-    </v-row>
-  </v-list> -->
 <template>
   <v-list class="py-0">
-    <div v-for="(test, n) in tests" :key="n">
-      <v-list-item @click="emitClick(test)" :ripple="false">
+    <div v-for="(item, n) in items" :key="n">
+      <v-list-item @click="emitClick(item)" :ripple="false">
         <!-- Avatar -->
         <v-list-item-avatar tile style="border-radius: 5px" size="40">
           <v-avatar tile :color="generateColor()" style="color: #545454">{{
-            test.title[0].toUpperCase()
+            item.title[0].toUpperCase()
           }}</v-avatar>
         </v-list-item-avatar>
 
         <v-list-item-content>
           <!-- Title -->
           <v-list-item-title>
-            {{ test.title }}
+            {{ item.title }}
             <v-chip outlined style="color: grey" small class="ml-1">{{
-              test.type
+              item.type
             }}</v-chip>
           </v-list-item-title>
 
@@ -75,10 +24,10 @@
               type === 'answers' || type === 'myCoops' || type === 'template'
             "
           >
-            {{ test.author ? `Created by ${test.author}` : "" }}
+            {{ item.author ? `Created by ${item.author}` : "" }}
           </v-list-item-subtitle>
           <v-list-item-subtitle v-else-if="type === 'myTests'">
-            {{ test.date ? "Last Updated on " : "-" }}{{ test.date }}
+            {{ item.date ? "Last Updated on " : "-" }}{{ item.date }}
           </v-list-item-subtitle>
 
           <div
@@ -93,7 +42,7 @@
                   v-on="on"
                   align="center"
                 >
-                  {{ test.nCoops >= 0 ? test.nCoops : "-" }}
+                  {{ item.nCoops >= 0 ? item.nCoops : "-" }}
                   <v-icon class="ml-1">mdi-account-multiple</v-icon>
                 </v-row>
               </template>
@@ -102,11 +51,11 @@
             <v-tooltip top v-else-if="type === 'answers'">
               <template v-slot:activator="{ on, attrs }">
                 <v-row v-bind="attrs" v-on="on">
-                  <div class="caption">{{ test.answersSheet.progress }}%</div>
+                  <div class="caption">{{ item.answersSheet.progress }}%</div>
 
                   <v-progress-circular
                     rotate="-90"
-                    :value="test.answersSheet.progress"
+                    :value="item.answersSheet.progress"
                     color="grey darken-1"
                     :size="20"
                     class="ml-1"
@@ -122,23 +71,23 @@
         <v-list-item-action class="hidden-sm-and-down">
           <v-list-item-action-text
             v-if="type === 'answers' || type === 'template' || type === 'myCoops'"
-            >Last Updated on {{ test.date }}</v-list-item-action-text
+            >Last Updated on {{ item.date }}</v-list-item-action-text
           >
           <v-list-item-action-text v-if="type === 'template'">
             <v-chip outlined small class="ml-1"
-              >Version: {{ test.version }}</v-chip
+              >Version: {{ item.version }}</v-chip
             >
           </v-list-item-action-text>
         </v-list-item-action>
       </v-list-item>
-      <v-divider v-if="n !== tests.length - 1"></v-divider>
+      <v-divider v-if="n !== items.length - 1"></v-divider>
     </div>
 
     <v-row
       justify="center"
       align="center"
       class="ma-0 mt-2 pa-0"
-      v-if="tests.length == 0"
+      v-if="items.length == 0"
     >
       <span v-if="type === 'myTests' || type === 'myCoops'"
         >No tests found</span
@@ -152,7 +101,7 @@
 <script>
 export default {
   props: {
-    tests: {
+    items: {
       type: Array,
       required: true,
       default: function () {
@@ -172,11 +121,11 @@ export default {
 
       return color;
     },
-    emitClick(test) {
-      this.$emit("clicked", test);
+    emitClick(item) {
+      this.$emit("clicked", item);
     },
   },
-  mounted() {
+  beforeUpdate() {
     let availableTypes = ["myTests", "answers", "myCoops", "template"];
 
     if (!availableTypes.includes(this.type)) {
