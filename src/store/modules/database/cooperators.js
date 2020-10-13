@@ -22,7 +22,7 @@ export default {
   actions: {
     /**
      * 
-     * This action creates a new cooperator document, using the generic function {@link createObject},
+     * This action creates a new cooperator document, using the generic action   createObject,
      * passing the cooperator's data
      * 
      * @action createCooperators
@@ -49,7 +49,7 @@ export default {
     },
     /**
      * This action obtains the cooperator's document, 
-     * using the generic function {@link getObject},
+     * using the generic action   getObject,
      * passing the cooperator's data
      * 
      * @action getCooperators=setCooperators
@@ -68,7 +68,7 @@ export default {
     },
     /**
      * This action invite a new cooperator to document,
-     * using the generic function {@link pushObject}, passing the cooperator data
+     * using the generic action   pushObject, passing the cooperator data
      * 
      * @action pushCooperator
      * @param {object} payload - cooperator data
@@ -97,7 +97,7 @@ export default {
     },
     /**
      * This action updates a param in a existent cooperator,
-     * using the generic function {@link updateArrayElement},
+     * using the generic action   updateArrayElement,
      * passing the cooperator's data
      * 
      * @action updateCooperator
@@ -123,7 +123,7 @@ export default {
     },
     /**
      * This action updates  an existing cooperator, 
-     * using the generic function {@link updateArrayElementObject}, 
+     * using the generic action   updateArrayElementObject, 
      * passing the cooperator's data
      * 
      * @action updateCooperatorObject  
@@ -149,7 +149,7 @@ export default {
     },
     /**
      * This action removes an existing cooperator,
-     * using the generic function {@link removeObject},
+     * using the generic action   removeObject,
      * passing the cooperator's data
      * 
      * @action removeCooperator
@@ -171,7 +171,7 @@ export default {
     },
     /**
      * This action deletes the cooperator document, 
-     * using the generic function {@link deleteObject}, 
+     * using the generic action   deleteObject, 
      * passing the cooperator's data
      * 
      * @action deleteCooperators
@@ -188,7 +188,7 @@ export default {
     },
     /**
      * This action updates the cooperator document, 
-     * using the generic function {@link updateObject},
+     * using the generic action   updateObject,
      * passing the cooperator's data 
      * 
      * @action updateTestCooperators
@@ -211,7 +211,7 @@ export default {
     },
     /**
      * This action send a email, 
-     * using the generic function {@link callFunction}, 
+     * using the generic action   callFunction, 
      * passing the cooperator's data
      * 
      * @action sendEmailInvitation

@@ -26,7 +26,7 @@ export default {
     },
     actions: {
         /**
-         * This action creates a new template, using the generic function "createObject",
+         * This action creates a new template, using the generic action "createObject",
          *  passing the template data
          * 
          * @action createTemplate
@@ -62,7 +62,7 @@ export default {
             return docRef;
         },
         /**
-         * This action returns all templates, using the generic function "getAllObjects"
+         * This action returns all templates, using the generic action "getAllObjects"
          * 
          * @action getTemplates=setTemplates
          * @returns {void}
@@ -77,7 +77,7 @@ export default {
             commit('setTemplates', templates)
         },
         /**
-         * This action returns a template, using the generic function "getObject", 
+         * This action returns a template, using the generic action "getObject", 
          * passing the template data
          * 
          * @action getTemplate=setTemplate
@@ -95,7 +95,7 @@ export default {
             commit('setTemplate', template);
         },
         /**
-         * This action updates template, using the generic function "updateObject",
+         * This action updates template, using the generic action "updateObject",
          * passing the template data
          * 
          * @action updateTemplate
@@ -126,7 +126,7 @@ export default {
                 .catch((err) => commit("setError", "Error in updateTemplate." + err));
         },
         /**
-         * This action deletes template, using the generic function "deleteObject",
+         * This action deletes template, using the generic action "deleteObject",
          *  passing the template data
          * 
          * @action deteleTemplate

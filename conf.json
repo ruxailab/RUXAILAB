@@ -16,8 +16,8 @@
         "jsdoc-vuex-plugin"
     ],
     "templates": {
-        "cleverLinks": true,
-        "monospaceLinks": true
+        "cleverLinks": false,
+        "monospaceLinks": false
     },
     "opts":{
         "recurse": true,

@@ -19,7 +19,7 @@ export default {
   },
   actions: {
     /**
-     * This action creates a new report, using the generic function "createObject", passing the report data
+     * This action creates a new report, using the generic action "createObject", passing the report data
      * 
      * @action createReport
      * @param {object} payload - data to create a report
@@ -45,7 +45,7 @@ export default {
       return docRef;
     },
     /**
-     * This action deletes a report, using the generic function "deleteObject" and passing the report data
+     * This action deletes a report, using the generic action "deleteObject" and passing the report data
      * 
      * @action deleteReport
      * @param {object} payload - data to delete a report
@@ -61,7 +61,7 @@ export default {
     },
     /**
      * This action obtains the complete report document, 
-     * using the generic function "getObject", passing the report data
+     * using the generic action "getObject", passing the report data
      * 
      * @action getReports=setReports
      * @param {object} payload - data to get a report
@@ -78,7 +78,7 @@ export default {
       commit("setReports", reps);
     },
     /**
-     * This action adds a new log to the report, using the generic function 
+     * This action adds a new log to the report, using the generic action 
      * "pushObject", passing the log data
      * 
      * @action pushLog
@@ -106,7 +106,7 @@ export default {
     /**
      * 
      * This action updates the log in the report,
-     *  using the generic function "updateArrayElement", passing the log data
+     *  using the generic action "updateArrayElement", passing the log data
      * 
      * @action updateLog
      * @param {object} payload - data to update a log in report
@@ -131,7 +131,7 @@ export default {
         .catch((err) => commit("setError", "Error in updateLog." + err));
     },
     /**
-     * This action updates a report, using the generic function "updateObject",
+     * This action updates a report, using the generic action "updateObject",
      * passing the updated report data
      * 
      * @action updateTestReport
@@ -161,7 +161,7 @@ export default {
     /**
     * 
     * this action removes an evaluator log in the report, 
-    * using the generic function "removeObject", passing the report data
+    * using the generic action "removeObject", passing the report data
     * 
     * @action removeReport
     * @param {object} payload - data to remove a report log 
