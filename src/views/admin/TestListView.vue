@@ -25,7 +25,6 @@
     <v-overlay v-model="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
@@ -115,11 +114,27 @@
             :items="buttonItems"
           ></v-select>
 
-          <!-- Tests -->
+          <!-- Tests -> All -->
           <List
             @clicked="goTo"
-            v-if="mainIndex == 0"
+            v-if="mainIndex == 0 && subIndex == 0"
+            :tests="filteredAllTests"
+            type="myTests"
+          ></List>
+
+          <!-- Tests -> Personal -->
+          <List
+            @clicked="goTo"
+            v-if="mainIndex == 0 && subIndex == 1"
             :tests="filteredMyTests"
+            type="myTests"
+          ></List>
+
+          <!-- Tests -> Others -->
+          <List
+            @clicked="goTo"
+            v-if="mainIndex == 0 && subIndex == 2"
+            :tests="filteredMyCoops"
             type="myTests"
           ></List>
 
@@ -203,6 +218,34 @@ export default {
     user() {
       return this.$store.getters.user;
     },
+    allTests() {
+      let array = [];
+
+      if(this.user) {
+        array.push(...this.user.myTests);
+
+        let hasTest = null
+
+        this.user.myCoops.forEach(test => {
+          hasTest = array.find(t => t.id == test.id);
+
+          if(hasTest == undefined) //if test not add to array
+            array.push(test);
+        })
+
+        
+      }
+      return array;
+    },
+    filteredAllTests() {
+      let arr = [];
+
+      arr = this.allTests.filter((test) => {
+        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      })
+
+      return arr;
+    },
     filteredMyTests() {
       if (this.user)
         return (
@@ -270,9 +313,6 @@ export default {
         );
       return [];
     },
-    loading() {
-      return this.$store.getters.loading;
-    },
     storeTemplates() {
       return this.$store.getters.templates || [];
     },
@@ -309,7 +349,10 @@ export default {
       return this.personalTemplates.filter(temp => {
         return temp.title.toLowerCase().includes(this.search.toLowerCase());
       })
-    }
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   watch: {
     mainIndex() {
