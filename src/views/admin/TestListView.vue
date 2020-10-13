@@ -137,7 +137,7 @@
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 0"
             :tests="filteredAllTests"
-            type="myTests"
+            type="myCoops"
           ></List>
 
           <!-- Tests -> Personal -->
@@ -153,7 +153,7 @@
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 2"
             :tests="filteredMyCoops"
-            type="myTests"
+            type="myCoops"
           ></List>
 
           <!-- Answers -> All -->
@@ -161,7 +161,7 @@
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 0"
             :tests="filteredMyAnswers"
-            type="myAnswers"
+            type="answers"
           ></List>
 
           <!-- Answers -> Personal -->
@@ -169,7 +169,7 @@
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 1"
             :tests="filteredPersonalAnswers"
-            type="myAnswers"
+            type="answers"
           ></List>
 
           <!-- Answers -> Ohters -->
@@ -177,14 +177,14 @@
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 2"
             :tests="filteredOtherAnswers"
-            type="myAnswers"
+            type="answers"
           ></List>
 
           <!-- Templates -> Personal -->
           <List
             v-if="mainIndex == 2 && subIndex == 0"
             :tests="filteredPersonalTemplates"
-            type="myCoops"
+            type="template"
           ></List>
 
           <!-- Templates -> Explore -->
