@@ -84,6 +84,12 @@
                 dense
                 @input="$emit('change')"
               ></v-textarea>
+
+              <v-checkbox
+                label="Make template public to all users"
+                v-model="publicTemplate"
+                color="#F9A826"
+              ></v-checkbox>
             </v-col>
           </v-row>
           <v-divider></v-divider>
@@ -127,7 +133,7 @@
               color="green"
               @click="tempDialog = true"
               :disabled="hasTemplate || !object ? true : false"
-              >Create public template</v-btn
+              >Create template</v-btn
             >
           </v-row>
           <v-divider class="my-3 mx-2"></v-divider>
@@ -190,7 +196,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
-    AccessNotAllowed
+    AccessNotAllowed,
   },
   data: () => ({
     object: null,
@@ -208,6 +214,7 @@ export default {
       (v) => v.length <= 100 || "Max 100 characters",
     ],
     showSettings: false,
+    publicTemplate: true,
   }),
   methods: {
     validate(valid, index) {
@@ -377,7 +384,9 @@ export default {
           date: new Date().toDateString(),
           title: this.templateTitle,
           description: this.templateDescription,
+          isPublic: this.publicTemplate
         };
+
         if (this.test.type == "Heuristics") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,

@@ -4,7 +4,6 @@
     :color="snackColor"
     :timeout="4000"
     top
-    style="margin-top: 50px"
   >
     <div>{{ snackMessage }}</div>
     <template v-slot:action="{ attrs }">

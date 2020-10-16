@@ -227,7 +227,7 @@ export default {
     templateButtonItems: [
       { text: "Personal", value: 0 },
       { text: "Explore", value: 1 },
-    ]
+    ],
   }),
   methods: {
     pushCreate() {
@@ -248,19 +248,18 @@ export default {
     allTests() {
       let array = [];
 
-      if(this.user) {
+      if (this.user) {
         array.push(...this.user.myTests);
 
-        let hasTest = null
+        let hasTest = null;
 
-        this.user.myCoops.forEach(test => {
-          hasTest = array.find(t => t.id == test.id);
+        this.user.myCoops.forEach((test) => {
+          hasTest = array.find((t) => t.id == test.id);
 
-          if(hasTest == undefined) //if test not add to array
+          if (hasTest == undefined)
+            //if test not add to array
             array.push(test);
-        })
-
-        
+        });
       }
       return array;
     },
@@ -269,7 +268,7 @@ export default {
 
       arr = this.allTests.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
-      })
+      });
 
       return arr;
     },
@@ -345,8 +344,13 @@ export default {
     },
     templates() {
       let array = [];
+      let publics = [];
       if (this.storeTemplates !== null) {
-        array = this.storeTemplates.map((temp) => {
+        publics = this.storeTemplates.filter(
+          (tp) => tp.header.isPublic !== false
+        );
+        
+        array = publics.map((temp) => {
           let obj = {
             id: temp.id,
             title: temp.header.title || "No Title",
@@ -363,19 +367,19 @@ export default {
       return array;
     },
     filteredTemplates() {
-      return this.templates.filter(temp=> {
-        return temp.title.toLowerCase().includes(this.search.toLowerCase())
-      })
+      return this.templates.filter((temp) => {
+        return temp.title.toLowerCase().includes(this.search.toLowerCase());
+      });
     },
     personalTemplates() {
-      return this.templates.filter(temp => {
-        return temp.author == this.user.email
-      })
+      return this.templates.filter((temp) => {
+        return temp.author == this.user.email;
+      });
     },
     filteredPersonalTemplates() {
-      return this.personalTemplates.filter(temp => {
+      return this.personalTemplates.filter((temp) => {
         return temp.title.toLowerCase().includes(this.search.toLowerCase());
-      })
+      });
     },
     loading() {
       return this.$store.getters.loading;

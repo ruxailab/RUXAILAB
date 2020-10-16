@@ -1,14 +1,13 @@
 <template>
-  <v-container v-if="test ">
+  <v-container v-if="test">
     <SnackBar></SnackBar>
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error white--text"
-          primary-title
-        >Are you sure you want to delete this template?</v-card-title>
+        <v-card-title class="headline error white--text" primary-title
+          >Are you sure you want to delete this template?</v-card-title
+        >
 
         <v-card-text>{{ dialogText }}</v-card-text>
 
@@ -16,13 +15,16 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">Cancel</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialogDel = false"
+            >Cancel</v-btn
+          >
           <v-btn
             class="red white--text ml-1"
             :loading="loading"
             text
-            @click="deleteTemplate(object), loading = true, change = false"
-          >Delete</v-btn>
+            @click="deleteTemplate(object), (loading = true), (change = false)"
+            >Delete</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -30,23 +32,28 @@
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialogAlert" width="600" persistent>
       <v-card>
-        <v-card-title
-          class="headline error accent-4 white--text"
-          primary-title
-        >Are you sure you want to leave?</v-card-title>
+        <v-card-title class="headline error accent-4 white--text" primary-title
+          >Are you sure you want to leave?</v-card-title
+        >
 
-        <v-card-text>Are you sure you want to leave? All your changes will be discarded</v-card-text>
+        <v-card-text
+          >Are you sure you want to leave? All your changes will be
+          discarded</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false">Stay</v-btn>
+          <v-btn class="grey lighten-3" text @click="dialogAlert = false"
+            >Stay</v-btn
+          >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
-            @click="change = false,$router.push(go)"
-          >Leave</v-btn>
+            @click="(change = false), $router.push(go)"
+            >Leave</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -61,7 +68,7 @@
               style="position: absolute; right: 4px; top: 8px"
               small
               icon
-              @click="dialogDetail = false, open = []"
+              @click="(dialogDetail = false), (open = [])"
               class="ma-1"
             >
               <v-icon color="error">mdi-close</v-icon>
@@ -81,7 +88,9 @@
               :items="items"
             >
               <template v-slot:prepend="{ item, open }">
-                <v-icon v-if="!item.icon">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
+                <v-icon v-if="!item.icon">{{
+                  open ? "mdi-folder-open" : "mdi-folder"
+                }}</v-icon>
                 <v-icon v-else>{{ icons[item.icon] }}</v-icon>
               </template>
             </v-treeview>
@@ -96,7 +105,8 @@
         v-if="!test.template.upToDate"
         dense
         slot="warning"
-      >Your template is not up to date with your test.</v-alert>
+        >Your template is not up to date with your test.</v-alert
+      >
       <div slot="content">
         <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
@@ -112,7 +122,7 @@
                   :rules="titleRequired"
                   counter="100"
                   outlined
-                  @input="change=true"
+                  @input="change = true"
                   dense
                 ></v-text-field>
 
@@ -121,7 +131,7 @@
                   label="Description"
                   outlined
                   dense
-                  @input="change=true"
+                  @input="change = true"
                 ></v-textarea>
               </v-col>
               <v-col cols="6">
@@ -138,22 +148,35 @@
                   outlined
                   dense
                   v-on:keypress="isNumber(event)"
-                  @input="change=true"
+                  @input="change = true"
                 ></v-text-field>
+                <v-checkbox
+                  label="Make template public to all users"
+                  v-model="template.header.isPublic"
+                  class="ma-0"
+                  @change="change = true"
+                  color="#F9A826"
+                ></v-checkbox>
                 <v-row class="mx-1">
-                  <v-btn outlined @click="dialogDetail=true">Detailed information</v-btn>
+                  <v-btn outlined @click="dialogDetail = true"
+                    >Detailed information</v-btn
+                  >
                   <v-spacer></v-spacer>
 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         outlined
-                        @click="updateTemplate(),change=true"
+                        @click="updateTemplate(), (change = true)"
                         v-bind="attrs"
                         v-on="on"
-                      >Update</v-btn>
+                        >Update</v-btn
+                      >
                     </template>
-                    <span>Click to update your local template, click save to submit it.</span>
+                    <span
+                      >Click to update your local template, click save to submit
+                      it.</span
+                    >
                   </v-tooltip>
                 </v-row>
               </v-col>
@@ -184,7 +207,7 @@
           bottom
           right
           color="#F9A826"
-          @click=" update()"
+          @click="update()"
           v-bind="attrs"
           v-on="on"
         >
