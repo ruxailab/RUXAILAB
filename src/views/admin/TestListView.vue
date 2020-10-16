@@ -349,7 +349,7 @@ export default {
         publics = this.storeTemplates.filter(
           (tp) => tp.header.isPublic !== false
         );
-        
+
         array = publics.map((temp) => {
           let obj = {
             id: temp.id,
@@ -372,9 +372,27 @@ export default {
       });
     },
     personalTemplates() {
-      return this.templates.filter((temp) => {
-        return temp.author == this.user.email;
-      });
+      let array = [];
+      let myTemps = [];
+      if (this.storeTemplates !== null) {
+        myTemps = this.storeTemplates.filter((temp) => {
+          return temp.header.author == this.user.email;
+        });
+
+        array = myTemps.map((temp) => {
+          let obj = {
+            id: temp.id,
+            title: temp.header.title || "No Title",
+            date: temp.header.date,
+            type: temp.body.type,
+            author: temp.header.author,
+            version: temp.header.version,
+            description: temp.header.description,
+          };
+          return obj;
+        });
+      }
+      return array;
     },
     filteredPersonalTemplates() {
       return this.personalTemplates.filter((temp) => {
