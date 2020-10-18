@@ -23,6 +23,7 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
             myTests: [],
             myCoops: [],
             myAnswers: [],
+            myTemps: [],
             notifications: []
         })
     } catch (err) {
@@ -30,7 +31,7 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
     }
 })
 
-exports.setUserRole = functions.https.onCall(async (data, context) => {
+exports.setUserRole = functions.https.onCall(async (data) => {
     try {
         var _ = await admin.auth().setCustomUserClaims(data.uid, data.customClaims)
 
