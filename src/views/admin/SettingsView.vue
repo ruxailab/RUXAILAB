@@ -384,7 +384,7 @@ export default {
           date: new Date().toDateString(),
           title: this.templateTitle,
           description: this.templateDescription,
-          isPublic: this.publicTemplate
+          isPublic: this.publicTemplate,
         };
 
         if (this.test.type == "Heuristics") {
@@ -417,6 +417,19 @@ export default {
               }
             ),
           });
+          
+          let el = {};
+          
+          Object.keys(payload.data.header).forEach((key) => {
+            el[key] = payload.data.header[key];
+          })
+
+          this.$store.dispatch("pushMyTemps", {
+            docId: this.user.uid,
+            element: el,
+            param: "myTemps",
+          });
+
           this.submit();
         });
       }

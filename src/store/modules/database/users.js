@@ -467,7 +467,13 @@ export default {
         })
       }
 
-    }
+    },
+    pushMyTemps({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, { collection: "users" });
 
+      dispatch("pushObject", payload)
+        .catch((err) => commit("setError", "Error in pushMyTest." + err));
+    },
   },
 };
