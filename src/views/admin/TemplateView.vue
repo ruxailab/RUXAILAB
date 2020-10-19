@@ -291,7 +291,7 @@ export default {
           this.change = false;
           if (this.updated)
             this.$store.dispatch("setUpToDate", {
-              docId: this.template.header,
+              docId: this.test.id,
               data: true,
             });
 

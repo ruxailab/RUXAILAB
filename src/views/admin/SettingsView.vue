@@ -289,10 +289,10 @@ export default {
           this.cooperators.test.title = this.object.title;
 
           console.log(this.answers);
-          // delete this.answers.id;
+          delete this.answers.id;
           console.log("Delete ID", this.answers);
-          // delete this.reports.id;
-          // delete this.cooperators.id;
+          delete this.reports.id;
+          delete this.cooperators.id;
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
             data: this.answers,
