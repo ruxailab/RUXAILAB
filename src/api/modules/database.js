@@ -134,4 +134,31 @@ export default {
       [payload.param]: payload.data,
     });
   },
+  paginateArray: (payload) => {
+    const db = firebase.firestore();
+    var collectionRef = db.collection(payload.collection);
+
+    if (!("last" in payload)) {
+      // is first
+
+      const first = collectionRef
+        .orderBy('id')
+      
+      //TODO: add conditions
+      // if ("conditions" in payload) {
+      //   const queryRef = first.where(payload.conditions[0], payload.conditions[1], payload.conditions[2])
+      //   return queryRef.get();
+      // }
+        
+      return first.limit(payload.itemsPerPage).get();
+    } else {
+      //has a last object
+
+      const next = collectionRef
+        .orderBy('id')
+        .startAfter(payload.last)
+
+      return next.limit(payload.itemsPerPage).get();
+    }
+  }
 };

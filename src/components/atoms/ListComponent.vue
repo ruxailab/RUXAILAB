@@ -1,101 +1,115 @@
 <template>
-  <v-list class="py-0">
-    <div v-for="(item, n) in items" :key="n">
-      <v-list-item @click="emitClick(item)" :ripple="false">
-        <!-- Avatar -->
-        <v-list-item-avatar tile style="border-radius: 5px" size="40">
-          <v-avatar tile :color="generateColor()" style="color: #545454">{{
-            item.title[0].toUpperCase()
-          }}</v-avatar>
-        </v-list-item-avatar>
+  <div>
+    <v-list class="py-0">
+      <div v-for="(item, n) in items" :key="n">
+        <v-list-item @click="emitClick(item)" :ripple="false">
+          <!-- Avatar -->
+          <v-list-item-avatar tile style="border-radius: 5px" size="40">
+            <v-avatar tile :color="generateColor()" style="color: #545454">{{
+              item.title[0].toUpperCase()
+            }}</v-avatar>
+          </v-list-item-avatar>
 
-        <v-list-item-content>
-          <!-- Title -->
-          <v-list-item-title>
-            {{ item.title }}
-            <v-chip outlined style="color: grey" small class="ml-1">{{
-              item.type
-            }}</v-chip>
-          </v-list-item-title>
+          <v-list-item-content>
+            <!-- Title -->
+            <v-list-item-title>
+              {{ item.title }}
+              <v-chip outlined style="color: grey" small class="ml-1">{{
+                item.type
+              }}</v-chip>
+            </v-list-item-title>
 
-          <!-- Subtitle -->
-          <v-list-item-subtitle
-            v-if="
-              type === 'answers' || type === 'myCoops' || type === 'template'
-            "
-          >
-            {{ item.author ? `Created by ${type === "template" ? item.author.email : item.author}` : "" }}
-          </v-list-item-subtitle>
-          <v-list-item-subtitle v-else-if="type === 'myTests'">
-            {{ item.date ? "Last Updated on " : "-" }}{{ item.date }}
-          </v-list-item-subtitle>
-
-          <div
-            class="hidden-sm-and-down"
-            style="position: absolute; right: 25%"
-          >
-            <v-tooltip top v-if="type === 'myTests'">
-              <template v-slot:activator="{ on, attrs }">
-                <v-row
-                  class="ma-0 pa-0"
-                  v-bind="attrs"
-                  v-on="on"
-                  align="center"
-                >
-                  {{ item.nCoops >= 0 ? item.nCoops : "-" }}
-                  <v-icon class="ml-1">mdi-account-multiple</v-icon>
-                </v-row>
-              </template>
-              <span>Cooperators</span>
-            </v-tooltip>
-            <v-tooltip top v-else-if="type === 'answers'">
-              <template v-slot:activator="{ on, attrs }">
-                <v-row v-bind="attrs" v-on="on">
-                  <div class="caption">{{ item.answersSheet.progress }}%</div>
-
-                  <v-progress-circular
-                    rotate="-90"
-                    :value="item.answersSheet.progress"
-                    color="grey darken-1"
-                    :size="20"
-                    class="ml-1"
-                  ></v-progress-circular>
-                </v-row>
-              </template>
-              <span>Progress</span>
-            </v-tooltip>
-          </div>
-        </v-list-item-content>
-
-        <!-- Actions -->
-        <v-list-item-action class="hidden-sm-and-down">
-          <v-list-item-action-text
-            v-if="type === 'answers' || type === 'template' || type === 'myCoops'"
-            >Last Updated on {{ item.date }}</v-list-item-action-text
-          >
-          <v-list-item-action-text v-if="type === 'template'">
-            <v-chip outlined small class="ml-1"
-              >Version: {{ item.version }}</v-chip
+            <!-- Subtitle -->
+            <v-list-item-subtitle
+              v-if="
+                type === 'answers' || type === 'myCoops' || type === 'template'
+              "
             >
-          </v-list-item-action-text>
-        </v-list-item-action>
-      </v-list-item>
-      <v-divider v-if="n !== items.length - 1"></v-divider>
-    </div>
+              {{
+                item.author
+                  ? `Created by ${
+                      type === "template" ? item.author.email : item.author
+                    }`
+                  : ""
+              }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else-if="type === 'myTests'">
+              {{ item.date ? "Last Updated on " : "-" }}{{ item.date }}
+            </v-list-item-subtitle>
 
-    <v-row
-      justify="center"
-      align="center"
-      class="ma-0 mt-2 pa-0"
-      v-if="items.length == 0"
-    >
-      <span v-if="type === 'myTests' || type === 'myCoops'"
-        >No tests found</span
+            <div
+              class="hidden-sm-and-down"
+              style="position: absolute; right: 25%"
+            >
+              <v-tooltip top v-if="type === 'myTests'">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-row
+                    class="ma-0 pa-0"
+                    v-bind="attrs"
+                    v-on="on"
+                    align="center"
+                  >
+                    {{ item.nCoops >= 0 ? item.nCoops : "-" }}
+                    <v-icon class="ml-1">mdi-account-multiple</v-icon>
+                  </v-row>
+                </template>
+                <span>Cooperators</span>
+              </v-tooltip>
+              <v-tooltip top v-else-if="type === 'answers'">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-row v-bind="attrs" v-on="on">
+                    <div class="caption">{{ item.answersSheet.progress }}%</div>
+
+                    <v-progress-circular
+                      rotate="-90"
+                      :value="item.answersSheet.progress"
+                      color="grey darken-1"
+                      :size="20"
+                      class="ml-1"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+                <span>Progress</span>
+              </v-tooltip>
+            </div>
+          </v-list-item-content>
+
+          <!-- Actions -->
+          <v-list-item-action class="hidden-sm-and-down">
+            <v-list-item-action-text
+              v-if="
+                type === 'answers' || type === 'template' || type === 'myCoops'
+              "
+              >Last Updated on {{ item.date }}</v-list-item-action-text
+            >
+            <v-list-item-action-text v-if="type === 'template'">
+              <v-chip outlined small class="ml-1"
+                >Version: {{ item.version }}</v-chip
+              >
+            </v-list-item-action-text>
+          </v-list-item-action>
+        </v-list-item>
+        <v-divider v-if="n !== items.length - 1"></v-divider>
+      </div>
+
+      <v-row
+        justify="center"
+        align="center"
+        class="ma-0 mt-2 pa-0"
+        v-if="items.length == 0"
       >
-      <span v-else-if="type === 'answers'">No answers found</span>
-      <span v-else-if="type === 'template'">No templates found</span>
+        <span v-if="type === 'myTests' || type === 'myCoops'"
+          >No tests found</span
+        >
+        <span v-else-if="type === 'answers'">No answers found</span>
+        <span v-else-if="type === 'template'">No templates found</span>
+      </v-row>
+    </v-list>
+    <v-row v-if="hasPagination" justify="center" class="mt-5">
+      <v-btn :disabled="disablePrevious" icon @click="emitPreviousPage()"><v-icon>mdi-arrow-left</v-icon></v-btn>
+      <v-btn :disabled="disableNext" icon class="ml-3" @click="emitNextPage()"><v-icon>mdi-arrow-right</v-icon></v-btn>
     </v-row>
-  </v-list>
+  </div>
 </template>
 
 <script>
@@ -112,6 +126,16 @@ export default {
       type: String,
       required: true,
     },
+    hasPagination: {
+      type: Boolean,
+      default: false
+    },
+    disableNext: {
+      type: Boolean
+    },
+    disablePrevious: {
+      type: Boolean
+    }
   },
   data: () => ({}),
   methods: {
@@ -124,6 +148,12 @@ export default {
     emitClick(item) {
       this.$emit("clicked", item);
     },
+    emitNextPage() {
+      this.$emit("nextPage");
+    },
+    emitPreviousPage() {
+      this.$emit("previousPage");
+    }
   },
   beforeUpdate() {
     let availableTypes = ["myTests", "answers", "myCoops", "template"];

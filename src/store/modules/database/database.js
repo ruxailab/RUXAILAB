@@ -258,6 +258,21 @@ export default {
       } finally {
         commit("setLoading", false);
       }
+    },
+    async getPaginationArray({commit}, payload) {
+      try {
+        var snapshot;
+        snapshot = await api.database.paginateArray(payload);
+        var objects = [];
+        snapshot.forEach((doc) => {
+          objects.push(Object.assign({ id: doc.id }, doc.data()));
+        });
+        return objects;
+      } catch (err) {
+        commit("setError", "Error in getPaginationArray" + err);
+      } finally {
+        commit("setLoading", false);
+      }
     }
   },
 };

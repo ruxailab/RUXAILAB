@@ -253,7 +253,7 @@ export default {
               template: this.object.template,
             });
 
-          console.log("mytest", element)
+          console.log("mytest", element);
           this.$store.dispatch("updateMyTest", {
             docId: this.object.admin.id,
             element: element,
@@ -432,6 +432,12 @@ export default {
         };
 
         this.$store.dispatch("createTemplate", payload).then((id) => {
+          //add id to document
+          this.$store.dispatch("updateTemplate", {
+            docId: id,
+            data: Object.assign(payload.data, { id: id }),
+          });
+
           this.object = Object.assign(this.object, {
             template: Object.assign(
               {},

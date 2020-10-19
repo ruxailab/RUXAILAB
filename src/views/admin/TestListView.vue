@@ -67,6 +67,7 @@
               class="mt-1"
               label="Search"
               prepend-inner-icon="mdi-magnify"
+              :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
               outlined
               color="grey darken-2"
               v-model="search"
@@ -190,8 +191,13 @@
           <!-- Templates -> Explore -->
           <List
             v-if="mainIndex == 2 && subIndex == 1"
-            :items="filteredTemplates"
+            :items="showOnExplore"
             type="template"
+            :hasPagination="true"
+            @nextPage="nextPage()"
+            :disableNext="disableNext"
+            @previousPage="previousPage()"
+            :disablePrevious="disablePrevious"
           ></List>
         </v-col>
       </v-row>
@@ -228,6 +234,12 @@ export default {
       { text: "Personal", value: 0 },
       { text: "Explore", value: 1 },
     ],
+    page: 1,
+    lastPage: 1,
+    itemsPerPage: 4,
+    exploreTemplates: [],
+    disableNext: false,
+    disablePrevious: true,
   }),
   methods: {
     pushCreate() {
@@ -239,6 +251,41 @@ export default {
           (test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
         )
         .catch(() => {});
+    },
+    nextPage() {
+      this.page++;
+      this.disablePrevious = false;
+      if (this.paginatedTemps.length) {
+        //if length == 0 got all templates in database
+        if (this.page > this.lastPage)
+          this.$store
+            .dispatch(
+              "getPaginationTemplates",
+              Object.assign(
+                {},
+                {
+                  itemsPerPage: 2,
+                  last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
+                }
+              )
+            )
+            .then(() => {
+              this.exploreTemplates.push(...this.paginatedTemps);
+              this.lastPage++;
+              if (this.paginatedTemps.length == 0) {
+                this.page--; //no more templates to show, go back one page
+                alert("No more templates to show");
+                this.disableNext = true;
+              }
+            });
+      } else if (this.page == this.lastPage - 1) {
+        this.disableNext = true;
+      }
+    },
+    previousPage() {
+      this.page--;
+      if (this.page <= 1) this.disablePrevious = true;
+      this.disableNext = false;
     },
   },
   computed: {
@@ -343,41 +390,38 @@ export default {
       return this.$store.getters.templates || [];
     },
     filteredMyTemps() {
-      return this.user.myTemps.filter(temp => {
-        return temp.title.toLowerCase().includes(this.search.toLowerCase());
-      })
-    },
-    templates() {
-      let array = [];
-      let publics = [];
-      if (this.storeTemplates !== null) {
-        publics = this.storeTemplates.filter(
-          (tp) => tp.header.isPublic !== false
-        );
-
-        array = publics.map((temp) => {
-          let obj = {
-            id: temp.id,
-            title: temp.header.title || "No Title",
-            date: temp.header.date,
-            type: temp.body.type,
-            author: temp.header.author,
-            version: temp.header.version,
-            description: temp.header.description,
-          };
-          return obj;
-        });
-      }
-
-      return array;
-    },
-    filteredTemplates() {
-      return this.templates.filter((temp) => {
+      return this.user.myTemps.filter((temp) => {
         return temp.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     loading() {
       return this.$store.getters.loading;
+    },
+    paginatedTemps() {
+      return this.$store.getters.paginatedTemps;
+    },
+    showOnExplore() {
+      let array = [];
+      let temps = null;
+      let start = (this.page - 1) * this.itemsPerPage;
+      let finish = this.page * this.itemsPerPage;
+
+      temps = this.exploreTemplates.slice(start, finish);
+
+      array = temps.map((temp) => {
+        let obj = {
+          id: temp.id,
+          title: temp.header.title || "No Title",
+          date: temp.header.date,
+          type: temp.body.type,
+          author: temp.header.author,
+          version: temp.header.version,
+          description: temp.header.description,
+        };
+        return obj;
+      });
+
+      return array;
     },
   },
   watch: {
@@ -386,9 +430,14 @@ export default {
     },
   },
   created() {
-    // if (this.$store.getters.templates == null) {
-    this.$store.dispatch("getTemplates");
-    // }
+    this.$store
+      .dispatch(
+        "getPaginationTemplates",
+        Object.assign({}, { itemsPerPage: this.itemsPerPage })
+      )
+      .then(() => {
+        this.exploreTemplates.push(...this.paginatedTemps);
+      });
   },
 };
 </script>

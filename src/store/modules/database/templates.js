@@ -7,6 +7,7 @@ export default {
     state: {
         template: null,
         templates: null,
+        paginatedTemps: null,
     },
     getters: {
         templates(state) {
@@ -14,6 +15,9 @@ export default {
         },
         template(state) {
             return state.template
+        },
+        paginatedTemps(state) {
+            return state.paginatedTemps
         }
     },
     mutations: {
@@ -22,6 +26,9 @@ export default {
         },
         setTemplates(state, payload) {
             state.templates = payload
+        },
+        setPaginatedTemps(state, payload) {
+            state.paginatedTemps = payload;
         }
     },
     actions: {
@@ -140,6 +147,16 @@ export default {
 
             dispatch("deleteObject", payload)
                 .catch((err) => commit("setError", "Error in deleteTemplate." + err));
+        },
+        async getPaginationTemplates({ dispatch, commit }, payload) {
+            commit("setLoading", true);
+
+            payload = Object.assign(payload, { collection: "templates" });
+
+            let temps = await dispatch("getPaginationArray", payload)
+                .catch((err) => commit("setError", "Error in getPaginationTemplates." + err));
+            
+            commit("setPaginatedTemps", temps);
         }
     }
 }
