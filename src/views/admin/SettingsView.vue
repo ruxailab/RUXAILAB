@@ -397,7 +397,6 @@ export default {
       if (this.$refs.tempform.validate()) {
         let template = {};
         let header = {
-          id: this.$store.getters.user.uid,
           author: Object.assign(
             {},
             {
@@ -449,7 +448,7 @@ export default {
             el[key] = payload.data.header[key];
           });
 
-          el = Object.assign(el, { type: payload.data.body.type });
+          el = Object.assign(el, { type: payload.data.body.type, id: id });
 
           this.$store.dispatch("pushMyTemps", {
             docId: this.user.uid,

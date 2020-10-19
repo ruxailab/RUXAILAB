@@ -257,7 +257,7 @@ export default {
           hasTest = array.find((t) => t.id == test.id);
 
           if (hasTest == undefined)
-            //if test not add to array
+            //if test not added to array
             array.push(test);
         });
       }

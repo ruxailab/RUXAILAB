@@ -459,8 +459,6 @@ export default {
               )
             );
 
-        console.log(" nhhaaa", test);
-
         if (!Object.keys(test).length) {
           //if object empty (not own test) search in myCoops
           test = this.$route.path.includes("template")
@@ -489,10 +487,8 @@ export default {
 
         this.$store.commit("setManagerIDS", test);
 
-        console.log("test", test);
         return test;
       } else {
-        console.log("test", this.$store.getters.test);
         return this.$store.getters.test;
       }
     },

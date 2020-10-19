@@ -300,6 +300,7 @@ export default {
               docId: this.template.header.author.id,
               element: Object.assign(this.template.header, {
                 type: this.template.body.type,
+                id: this.id
               }),
             })
             .then(() =>
