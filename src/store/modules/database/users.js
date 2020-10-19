@@ -473,7 +473,17 @@ export default {
       payload = Object.assign(payload, { collection: "users" });
 
       dispatch("pushObject", payload)
-        .catch((err) => commit("setError", "Error in pushMyTest." + err));
+        .catch((err) => commit("setError", "Error in pushMyTemps." + err));
+    },
+    updateMyTemps({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, {
+        collection: "users",
+        param: "myTemps",
+      });
+
+      dispatch("updateArrayObject", payload)
+        .catch((err) => commit("setError", "Error in updateMyTemps." + err));
     },
   },
 };

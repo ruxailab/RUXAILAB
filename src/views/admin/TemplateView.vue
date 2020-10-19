@@ -1,6 +1,7 @@
 <template>
   <v-container v-if="test">
     <SnackBar></SnackBar>
+    {{template}}
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -292,9 +293,14 @@ export default {
           this.change = false;
           if (this.updated)
             this.$store.dispatch("setUpToDate", {
-              docId: this.test.id,
+              docId: this.template.header,
               data: true,
             });
+
+          this.$store.dispatch("updateMyTemps", {
+            docId: this.template.header.author.id,
+            element: this.template.header,
+          });
         })
         .catch((err) => this.$store.commit("setError", err));
     },

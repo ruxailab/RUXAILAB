@@ -379,7 +379,13 @@ export default {
         let template = {};
         let header = {
           id: this.$store.getters.user.uid,
-          author: this.$store.getters.user.email,
+          author: Object.assign(
+            {},
+            {
+              email: this.$store.getters.user.email,
+              id: this.$store.getters.user.uid,
+            }
+          ),
           version: "1.0.0",
           date: new Date().toDateString(),
           title: this.templateTitle,
@@ -417,12 +423,12 @@ export default {
               }
             ),
           });
-          
+
           let el = {};
-          
+
           Object.keys(payload.data.header).forEach((key) => {
             el[key] = payload.data.header[key];
-          })
+          });
 
           this.$store.dispatch("pushMyTemps", {
             docId: this.user.uid,
