@@ -298,7 +298,7 @@ export default {
           this.$store
             .dispatch("updateMyTemps", {
               docId: this.template.header.author.id,
-              element: this.template.header,
+              element: Object.assign(this.template.header, {type: this.template.body.type}),
             })
             .then(() =>
               this.$store.commit("setSuccess", "Template succesfully updated")

@@ -430,6 +430,8 @@ export default {
             el[key] = payload.data.header[key];
           });
 
+          el = Object.assign(el, {type: payload.data.body.type});
+
           this.$store.dispatch("pushMyTemps", {
             docId: this.user.uid,
             element: el,
