@@ -298,7 +298,9 @@ export default {
           this.$store
             .dispatch("updateMyTemps", {
               docId: this.template.header.author.id,
-              element: Object.assign(this.template.header, {type: this.template.body.type}),
+              element: Object.assign(this.template.header, {
+                type: this.template.body.type,
+              }),
             })
             .then(() =>
               this.$store.commit("setSuccess", "Template succesfully updated")
@@ -312,11 +314,25 @@ export default {
           id: this.id,
         })
         .then(() => {
-          this.object.template = null;
-          this.submit();
-          this.loading = false;
-          this.dialogDel = false;
-          this.$router.push(`/managerview/${this.object.id}`).catch(() => {});
+          this.$store
+            .dispatch("removeMyTemps", {
+              docId: this.template.header.author.id,
+              element: {
+                id: this.id,
+                title: this.template.header.title,
+                type: this.template.body.type,
+              },
+              param: "myTemps",
+            })
+            .then(() => {
+              this.object.template = null;
+              this.submit();
+              this.loading = false;
+              this.dialogDel = false;
+              this.$router
+                .push(`/managerview/${this.object.id}`)
+                .catch(() => {});
+            });
         });
     },
     async submit() {

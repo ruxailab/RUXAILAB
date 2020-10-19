@@ -485,5 +485,12 @@ export default {
       dispatch("updateArrayObject", payload)
         .catch((err) => commit("setError", "Error in updateMyTemps." + err));
     },
+    removeMyTemps({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, { collection: "users" });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeMyTemps." + err));
+    },
   },
 };
