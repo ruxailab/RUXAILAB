@@ -376,34 +376,6 @@ export default {
         return temp.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
-    // personalTemplates() {
-    //   let array = [];
-    //   let myTemps = [];
-    //   if (this.storeTemplates !== null) {
-    //     myTemps = this.storeTemplates.filter((temp) => {
-    //       return temp.header.author == this.user.email;
-    //     });
-
-    //     array = myTemps.map((temp) => {
-    //       let obj = {
-    //         id: temp.id,
-    //         title: temp.header.title || "No Title",
-    //         date: temp.header.date,
-    //         type: temp.body.type,
-    //         author: temp.header.author,
-    //         version: temp.header.version,
-    //         description: temp.header.description,
-    //       };
-    //       return obj;
-    //     });
-    //   }
-    //   return array;
-    // },
-    // filteredPersonalTemplates() {
-    //   return this.personalTemplates.filter((temp) => {
-    //     return temp.title.toLowerCase().includes(this.search.toLowerCase());
-    //   });
-    // },
     loading() {
       return this.$store.getters.loading;
     },

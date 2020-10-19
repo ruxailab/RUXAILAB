@@ -41,7 +41,7 @@
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a style="color: #F9A826" @click="signOut()">Change account</a>
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -134,7 +134,12 @@
 
         <!-- Navigation footer -->
         <div class="footer" v-if="!mini">
-          <v-btn icon @click="go(`/settingsview/${test.id}`)" class="ml-3" v-if="test.accessLevel == 0">
+          <v-btn
+            icon
+            @click="go(`/settingsview/${test.id}`)"
+            class="ml-3"
+            v-if="test.accessLevel == 0"
+          >
             <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -143,9 +148,17 @@
           </v-btn>
         </div>
 
-        <div class="footer" :style="test.accessLevel == 0 ? 'height:16%' : ''" v-else>
+        <div
+          class="footer"
+          :style="test.accessLevel == 0 ? 'height:16%' : ''"
+          v-else
+        >
           <v-col>
-            <v-btn icon @click="go(`/settingsview/${test.id}`)" v-if="test.accessLevel == 0">
+            <v-btn
+              icon
+              @click="go(`/settingsview/${test.id}`)"
+              v-if="test.accessLevel == 0"
+            >
               <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
             </v-btn>
             <v-btn icon @click.stop="mini = !mini" class="mt-2">
@@ -227,7 +240,7 @@
                         width: '100%',
                         'background-color': item.bottom,
                         'padding-top': '10px',
-                        'border-top': '.3px solid #505050'
+                        'border-top': '.3px solid #505050',
                       }"
                     >
                       <h2>{{ item.title }}</h2>
@@ -277,7 +290,7 @@
                         bottom: '0',
                         width: '100%',
                         'background-color': item.bottom,
-                        'border-top': '.3px solid #505050'
+                        'border-top': '.3px solid #505050',
                       }"
                     >
                       <h2>{{ item.title }}</h2>
@@ -303,7 +316,7 @@ export default {
   props: ["id", "token"],
   components: {
     CardSignIn,
-    CardSignUp
+    CardSignUp,
   },
   data: () => ({
     selected: true,
@@ -316,7 +329,7 @@ export default {
     mini: true,
     isCoops: null,
     selectedTest: null,
-    item: 0
+    item: 0,
   }),
   methods: {
     pushToTest() {
@@ -343,11 +356,11 @@ export default {
     },
     async setTest() {
       if (this.user.myCoops && this.test) {
-        let exist = this.user.myCoops.find(test => test.id == this.id);
+        let exist = this.user.myCoops.find((test) => test.id == this.id);
         if (!exist) {
           //Get invitation
           let invitation = this.cooperators.cooperators.find(
-            coop => coop.token == this.token
+            (coop) => coop.token == this.token
           );
 
           let payload = Object.assign(
@@ -359,7 +372,7 @@ export default {
               reports: this.test.reports,
               answers: this.test.answers,
               cooperators: this.test.cooperators,
-              accessLevel: invitation.accessLevel.value
+              accessLevel: invitation.accessLevel.value,
             }
           );
 
@@ -369,7 +382,7 @@ export default {
               this.$store
                 .dispatch("pushMyCoops", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   //Update invitation to accepted
@@ -377,15 +390,15 @@ export default {
                     docId: this.test.cooperators,
                     elementId: this.user.uid,
                     element: true,
-                    param: "accepted"
+                    param: "accepted",
                   });
                   //Remove notification
                   let inv = this.user.notifications.find(
-                    not => not.test.id == this.id
+                    (not) => not.test.id == this.id
                   );
                   this.$store.dispatch("removeNotification", {
                     docId: this.user.uid,
-                    element: inv
+                    element: inv,
                   });
                   this.flagToken = false;
                 });
@@ -395,7 +408,7 @@ export default {
               this.$store
                 .dispatch("pushMyCoops", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   invitation.id = this.user.uid;
@@ -405,7 +418,7 @@ export default {
                       docId: this.cooperators.id,
                       elementId: this.token,
                       identifier: "token",
-                      element: invitation
+                      element: invitation,
                     })
                     .then(() => {
                       this.flagToken = false;
@@ -419,7 +432,7 @@ export default {
           this.flagToken = false;
         }
       }
-    }
+    },
   },
   computed: {
     testsList() {
@@ -433,29 +446,41 @@ export default {
         test = this.$route.path.includes("template")
           ? Object.assign(
               {},
-              this.$store.getters.user.myTests.find(test => {
-                if ("template" in test)
-                  return Object.values(test.template).includes(search);
+              this.$store.getters.user.myTests.find((myTest) => {
+                if ("template" in myTest) {
+                  if (myTest.template.id == this.id) return myTest;
+                }
               })
             )
           : Object.assign(
               {},
-              this.$store.getters.user.myTests.find(test =>
-                Object.values(test).includes(search)
+              this.$store.getters.user.myTests.find((myTest) =>
+                Object.values(myTest).includes(search)
               )
             );
 
+        console.log(" nhhaaa", test);
+
         if (!Object.keys(test).length) {
-          //se o objeto for vazio
-          test = Object.assign(
-            {},
-            this.$store.getters.user.myCoops.find(test =>
-              Object.values(test).includes(search)
-            )
-          );
+          //if object empty (not own test) search in myCoops
+          test = this.$route.path.includes("template")
+            ? Object.assign(
+                {},
+                this.$store.getters.user.myCoops.find((myCoop) => {
+                  if ("template" in myCoop) {
+                    if (myCoop.template.id == this.id) return myCoop;
+                  }
+                })
+              )
+            : Object.assign(
+                {},
+                this.$store.getters.user.myCoops.find((myCoop) =>
+                  Object.values(myCoop).includes(search)
+                )
+              );
 
           if (Object.keys(test).length) {
-            //se nao for vazio entao é coops
+            //if not empty then it is coop
             this.setIsCoops(true);
           }
         } else {
@@ -463,8 +488,11 @@ export default {
         }
 
         this.$store.commit("setManagerIDS", test);
+
+        console.log("test", test);
         return test;
       } else {
+        console.log("test", this.$store.getters.test);
         return this.$store.getters.test;
       }
     },
@@ -472,7 +500,7 @@ export default {
       get() {
         if (this.items) {
           return this.items.indexOf(
-            this.items.find(item =>
+            this.items.find((item) =>
               item.path.split("/").includes(this.$route.path.split("/")[1])
             )
           );
@@ -481,7 +509,7 @@ export default {
       },
       set(item) {
         return item;
-      }
+      },
     },
     items() {
       let items;
@@ -491,38 +519,38 @@ export default {
             title: "Manager",
             icon: "mdi-home",
             path: `/managerview/${this.test.id}`,
-            id: 0
+            id: 0,
           },
           {
             title: "Test",
             icon: "mdi-file-document-edit",
             path: `/edittest/${this.test.id}`,
-            id: 1
+            id: 1,
           },
           {
             title: "Preview",
             icon: "mdi-file-eye",
             path: `/testview/${this.test.id}`,
-            id: 2
+            id: 2,
           },
           {
             title: "Reports",
             icon: "mdi-book-multiple",
             path: `/reportview/${this.test.reports}`,
-            id: 3
+            id: 3,
           },
           {
             title: "Answers",
             icon: "mdi-order-bool-ascending-variant",
             path: `/answerview/${this.test.answers}`,
-            id: 4
+            id: 4,
           },
           {
             title: "Analytics",
             icon: "mdi-chart-bar",
             path: `/analyticsview/${this.test.answers}`,
-            id: 5
-          }
+            id: 5,
+          },
         ];
 
         if (this.test.accessLevel == 0) {
@@ -530,7 +558,7 @@ export default {
             title: "Cooperators",
             icon: "mdi-account-group",
             path: `/cooperatorsview/${this.test.cooperators}`,
-            id: 6
+            id: 6,
           });
         }
 
@@ -539,7 +567,7 @@ export default {
             title: "Template",
             icon: "mdi-file-compare",
             path: `/templateview/${this.test.template.id}`,
-            id: 7
+            id: 7,
           });
         }
       }
@@ -559,7 +587,7 @@ export default {
           description: "Start creating and editing your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
-          path: `/edittest/${this.test.id}`
+          path: `/edittest/${this.test.id}`,
         },
         {
           image: "IntroCoops.svg",
@@ -569,8 +597,8 @@ export default {
           description: "Invite people to help you in your test.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
-          path: `/cooperatorsview/${this.test.cooperators}`
-        }
+          path: `/cooperatorsview/${this.test.cooperators}`,
+        },
       ];
     },
     bottomCards() {
@@ -583,7 +611,7 @@ export default {
           description: "Take a look at how your evaluators are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
-          path: `/reportview/${this.test.reports}`
+          path: `/reportview/${this.test.reports}`,
         },
         {
           image: "IntroAnswer.svg",
@@ -593,7 +621,7 @@ export default {
           description: "See how your evaluators are evaluating your project.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
-          path: `/answerview/${this.test.answers}`
+          path: `/answerview/${this.test.answers}`,
         },
         {
           image: "IntroAnalytics.svg",
@@ -603,8 +631,8 @@ export default {
           description: "Analyze comments and answers from your evaluators.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
-          path: `/analyticsview/${this.test.answers}`
-        }
+          path: `/analyticsview/${this.test.answers}`,
+        },
       ];
     },
     user() {
@@ -618,7 +646,7 @@ export default {
     },
     loading() {
       return this.$store.getters.loading;
-    }
+    },
   },
   watch: {
     user() {
@@ -635,13 +663,11 @@ export default {
         if (this.test.cooperators) {
           if (!this.$store.getters.cooperators)
             this.$store.dispatch("getCooperators", {
-              id: this.test.cooperators
+              id: this.test.cooperators,
             });
-          else if (
-            this.$store.getters.cooperators !== this.test.cooperators
-          )
+          else if (this.$store.getters.cooperators !== this.test.cooperators)
             this.$store.dispatch("getCooperators", {
-              id: this.test.cooperators
+              id: this.test.cooperators,
             });
         }
       }
@@ -649,19 +675,22 @@ export default {
     cooperators() {
       if (this.cooperators && this.token) {
         let invitation = this.cooperators.cooperators.find(
-          coop => coop.token == this.token
+          (coop) => coop.token == this.token
         );
         if (!invitation) {
-          this.$router.push("/").then(() => {
-            this.$store.commit("setError", "Invalid invitation");
-          }).catch(() => {});
+          this.$router
+            .push("/")
+            .then(() => {
+              this.$store.commit("setError", "Invalid invitation");
+            })
+            .catch(() => {});
         }
       }
-    }
+    },
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
-      next(vm => {
+      next((vm) => {
         vm.setFlag("flagToken", true);
       });
     next();
@@ -671,7 +700,7 @@ export default {
       this.$store.dispatch("getTest", { id: this.id });
     else if (this.$store.getters.test.id !== this.id)
       this.$store.dispatch("getTest", { id: this.id });
-  }
+  },
 };
 </script>
 

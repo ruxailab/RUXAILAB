@@ -235,33 +235,52 @@ export default {
           data: this.object,
         })
         .then(() => {
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: {
+          let element = Object.assign(
+            {},
+            {
               id: this.id,
               title: this.object.title,
               type: this.object.type,
               reports: this.object.reports,
               answers: this.object.answers,
               cooperators: this.object.cooperators,
-              template: this.object.template,
               accessLevel: 0,
-            },
+            }
+          );
+
+          if ("template" in this.object)
+            element = Object.assign(element, {
+              template: this.object.template,
+            });
+
+          console.log("mytest", element)
+          this.$store.dispatch("updateMyTest", {
+            docId: this.object.admin.id,
+            element: element,
           });
 
           this.cooperators.cooperators.forEach((coop) => {
-            this.$store.dispatch("updateMyCoops", {
-              docId: coop.id,
-              element: {
+            element = Object.assign(
+              {},
+              {
                 id: this.id,
                 title: this.object.title,
                 type: this.object.type,
                 reports: this.object.reports,
                 answers: this.object.answers,
                 cooperators: this.object.cooperators,
-                template: this.object.template,
                 accessLevel: coop.accessLevel,
-              },
+              }
+            );
+
+            if ("template" in this.object)
+              element = Object.assign(element, {
+                template: this.object.template,
+              });
+
+            this.$store.dispatch("updateMyCoops", {
+              docId: coop.id,
+              element: element,
             });
           });
 
@@ -270,10 +289,10 @@ export default {
           this.cooperators.test.title = this.object.title;
 
           console.log(this.answers);
-          delete this.answers.id;
+          // delete this.answers.id;
           console.log("Delete ID", this.answers);
-          delete this.reports.id;
-          delete this.cooperators.id;
+          // delete this.reports.id;
+          // delete this.cooperators.id;
           this.$store.dispatch("updateTestAnswer", {
             docId: this.test.answers,
             data: this.answers,
@@ -430,7 +449,7 @@ export default {
             el[key] = payload.data.header[key];
           });
 
-          el = Object.assign(el, {type: payload.data.body.type});
+          el = Object.assign(el, { type: payload.data.body.type });
 
           this.$store.dispatch("pushMyTemps", {
             docId: this.user.uid,
