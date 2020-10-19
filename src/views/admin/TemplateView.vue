@@ -1,7 +1,6 @@
 <template>
   <v-container v-if="test">
     <SnackBar></SnackBar>
-    {{template}}
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -289,7 +288,6 @@ export default {
           data: payload,
         })
         .then(() => {
-          this.$store.commit("setSuccess", "Template succesfully updated");
           this.change = false;
           if (this.updated)
             this.$store.dispatch("setUpToDate", {
@@ -297,10 +295,14 @@ export default {
               data: true,
             });
 
-          this.$store.dispatch("updateMyTemps", {
-            docId: this.template.header.author.id,
-            element: this.template.header,
-          });
+          this.$store
+            .dispatch("updateMyTemps", {
+              docId: this.template.header.author.id,
+              element: this.template.header,
+            })
+            .then(() =>
+              this.$store.commit("setSuccess", "Template succesfully updated")
+            );
         })
         .catch((err) => this.$store.commit("setError", err));
     },

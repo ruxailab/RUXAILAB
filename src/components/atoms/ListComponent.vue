@@ -24,7 +24,7 @@
               type === 'answers' || type === 'myCoops' || type === 'template'
             "
           >
-            {{ item.author ? `Created by ${item.author}` : "" }}
+            {{ item.author ? `Created by ${type === "template" ? item.author.email : item.author}` : "" }}
           </v-list-item-subtitle>
           <v-list-item-subtitle v-else-if="type === 'myTests'">
             {{ item.date ? "Last Updated on " : "-" }}{{ item.date }}
