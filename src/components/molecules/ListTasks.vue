@@ -108,6 +108,7 @@ export default {
     addTask: function() {
       if (this.editedIndex > -1) {
         Object.assign(this.tasks[this.editedIndex], this.task);
+        this.$emit("change");
       } else {
         this.tasks.push(this.task);
       }
