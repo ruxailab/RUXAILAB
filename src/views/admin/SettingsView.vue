@@ -234,26 +234,19 @@ export default {
           docId: this.id,
           data: this.object,
         })
-        .then(() => {
-          let element = Object.assign(
-            {},
-            {
-              id: this.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              cooperators: this.object.cooperators,
-              accessLevel: 0,
-            }
-          );
+        .then(() => {          
+          let element = this.myObject;
+
+          //update attributes
+          element.title = this.object.title;
+          element.description = this.object.description;
 
           if ("template" in this.object)
             element = Object.assign(element, {
               template: this.object.template,
             });
 
-          console.log("mytest", element);
+          // console.log("mytest", element);
           this.$store.dispatch("updateMyTest", {
             docId: this.object.admin.id,
             element: element,
@@ -309,6 +302,7 @@ export default {
           });
 
           this.$store.commit("setSuccess", "Test updated succesfully");
+          this.change = false; //reset change
         })
         .catch((err) => {
           this.$store.commit("setError", err);
@@ -536,6 +530,19 @@ export default {
 
       return false;
     },
+    myObject() {
+      if(this.user) {
+        let myObject;
+        myObject = this.user.myTests.find((test) => test.id === this.id); //look for myTest
+
+        if(!myObject) //if not found
+          myObject = this.user.myCoops.find((test) => test.id === this.id); //look for my coop
+
+        return myObject;
+      }
+
+      return null;
+    }
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {

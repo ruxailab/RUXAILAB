@@ -140,29 +140,6 @@ export default {
           data: this.object,
         })
         .then(() => {
-          let element = Object.assign(
-            {},
-            {
-              id: this.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              cooperators: this.object.cooperators,
-              accessLevel: 0,
-              date: this.object.date
-            }
-          );
-          if ("template" in this.object)
-            element = Object.assign(element, {
-              template: this.object.template,
-            });
-
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: element,
-          });
-
           this.answers.answersSheet = this.object.answersSheet;
           if (this.test.type === "Heuristics")
             Object.assign(this.answers, { options: this.object.options });
@@ -254,7 +231,7 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || [];
-    },
+    }
   },
   created() {
     if (
