@@ -705,7 +705,7 @@ export default {
       let email = Object.assign(
         {},
         {
-          test: this.test.id,
+          testId: this.test.id,
           from: this.user.email,
           testTitle: this.test.title,
           guest: guest,
@@ -724,6 +724,7 @@ export default {
           token: guest.token,
         });
       }
+      
       this.$store.dispatch("sendEmailInvitation", email).then(() => {
         this.$set(guest, "invited", true);
 
