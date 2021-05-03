@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="80%">
+  <v-dialog v-model="dialog" max-width="80%" v-if="template">
     <v-stepper v-model="step" style="background-color: #e8eaf2">
       <v-stepper-header>
         <v-stepper-step color="#F9A826" :complete="step > 1" step="1"
@@ -17,7 +17,7 @@
         <v-stepper-content step="1">
           <p class="dialog-title ma-0">{{ template.title }}</p>
           <div class="caption ma-0">
-            Created by {{ template.author }}
+            Created by {{ author }}
             {{
               template.version == "1.0.0"
                 ? ` on ${template.date}`
@@ -36,8 +36,14 @@
           </div>
 
           <v-row justify="end" class="ma-0 pa-0">
-            <v-btn class="error mr-2" @click="reset()"> {{allowCreate ? "Cancel" : "Close"}}</v-btn>
-            <v-btn class="success" color="primary" @click="step = 2" v-if="allowCreate"
+            <v-btn class="error mr-2" @click="reset()">
+              {{ allowCreate ? "Cancel" : "Close" }}</v-btn
+            >
+            <v-btn
+              class="success"
+              color="primary"
+              @click="step = 2"
+              v-if="allowCreate"
               >Continue</v-btn
             >
           </v-row>
@@ -88,8 +94,8 @@ export default {
     },
     allowCreate: {
       type: Boolean,
-      default: () => false
-    }
+      default: () => false,
+    },
   },
   components: {
     FormTestDescription,
@@ -99,14 +105,19 @@ export default {
   }),
   methods: {
     reset() {
-        this.$emit("close");
-        this.$refs.form.resetVal();
-        this.step = 1;
+      this.$emit("close");
+      this.$refs.form.resetVal();
+      this.step = 1;
     },
     validate() {
       if (this.$refs.form.valida()) {
         this.$emit("submitTemplate");
       }
+    },
+  },
+  computed: {
+    author() {
+      return this.template.author?.email || "";
     },
   },
 };

@@ -44,6 +44,7 @@
       :template="temp"
       @submitTemplate="submit"
       @close="dialog = false"
+      :allowCreate="true"
     />
   </div>
 </template>
@@ -58,12 +59,7 @@ export default {
     TempDialog,
   },
   data: () => ({
-    temp: {
-      title: "",
-      description: "",
-      type: "",
-      idTemplate: "",
-    },
+    temp: {},
     dialog: false,
     searching: false,
     search: "",
@@ -236,12 +232,7 @@ export default {
   watch: {
     dialog() {
       if (!this.dialog) {
-        this.temp = {
-          title: "",
-          description: "",
-          type: "",
-          idTemplate: "",
-        };
+        this.temp = {};
 
         this.object = {};
         this.selectTemplate = null;

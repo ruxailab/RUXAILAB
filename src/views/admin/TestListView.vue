@@ -204,7 +204,11 @@
         </v-col>
       </v-row>
 
-      <TempDialog :dialog="tempDialog" :template="temp" @close="tempDialog = false" />
+      <TempDialog
+        :dialog="tempDialog"
+        :template="temp"
+        @close="tempDialog = false"
+      />
     </div>
   </v-container>
 </template>
@@ -296,9 +300,9 @@ export default {
       this.disableNext = false;
     },
     setupTempDialog(temp) {
-      this.temp = temp;
+      this.temp = Object.assign({}, temp);
       this.tempDialog = true;
-    }
+    },
   },
   computed: {
     user() {
