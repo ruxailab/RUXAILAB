@@ -1,7 +1,6 @@
 <template>
   <div>
     <Snackbar />
-
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
@@ -131,7 +130,8 @@ export default {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       let today = new Date();
 
-      if(this.object.date !== today.toDateString()) this.object.date = today.toDateString(); //update date if not the same as last update
+      if (this.object.date !== today.toDateString())
+        this.object.date = today.toDateString(); //update date if not the same as last update
 
       if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
       this.$store
@@ -233,16 +233,9 @@ export default {
       return this.$store.getters.answers || [];
     }
   },
-  created() {
-    if (
-      !this.$store.getters.test &&
-      this.id !== null &&
-      this.id !== undefined
-    ) {
-      this.$store.dispatch("getTest", { id: this.id });
-    } else {
-      this.setIntro();
-    }
+  async created() {
+    await this.$store.dispatch("getTest", { id: this.id });
+    this.setIntro();
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
