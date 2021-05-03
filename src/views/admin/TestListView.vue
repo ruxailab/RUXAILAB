@@ -183,6 +183,7 @@
 
           <!-- Templates -> Personal -->
           <List
+            @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 0"
             :items="filteredMyTemps"
             type="template"
@@ -190,6 +191,7 @@
 
           <!-- Templates -> Explore -->
           <List
+            @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 1"
             :items="showOnExplore"
             type="template"
@@ -201,6 +203,12 @@
           ></List>
         </v-col>
       </v-row>
+
+      <TempDialog
+        :dialog="tempDialog"
+        :template="temp"
+        @close="tempDialog = false"
+      />
     </div>
   </v-container>
 </template>
@@ -209,11 +217,13 @@
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
 import List from "@/components/atoms/ListComponent";
+import TempDialog from "@/components/molecules/TemplateInfoDialog";
 
 export default {
   components: {
     Snackbar,
     List,
+    TempDialog,
   },
   data: () => ({
     search: "",
@@ -240,6 +250,8 @@ export default {
     exploreTemplates: [],
     disableNext: false,
     disablePrevious: true,
+    tempDialog: false,
+    temp: {},
   }),
   methods: {
     pushCreate() {
@@ -286,6 +298,10 @@ export default {
       this.page--;
       if (this.page <= 1) this.disablePrevious = true;
       this.disableNext = false;
+    },
+    setupTempDialog(temp) {
+      this.temp = Object.assign({}, temp);
+      this.tempDialog = true;
     },
   },
   computed: {

@@ -130,12 +130,8 @@
             <v-icon small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
-        <v-list dense class="ma-0 py-1" style="border-radius: 0px!important">
-          <v-list-item
-            dense
-            style="font-size: 14px; font: Roboto;"
-            class="px-2"
-          >
+        <v-list dense class="ma-0 py-1" style="border-radius: 0px !important">
+          <v-list-item dense style="font-size: 14px; font: Roboto" class="px-2">
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold"
                 >Username</v-list-item-title
@@ -168,18 +164,25 @@ export default {
     drawer: false,
     menu: false,
     item: 0,
-    isManager: false
+    isManager: false,
   }),
   methods: {
     goTo(route) {
       if (route.includes("/testview")) window.open(route);
-      else this.$router.push(route).catch(() => {}).catch(() => {});
+      else
+        this.$router
+          .push(route)
+          .catch(() => {})
+          .catch(() => {});
     },
     async signOut() {
       this.$store.dispatch("logout").then(() => {
-        this.$router.push("/").catch(() => {}).catch(() => {});
+        this.$router
+          .push("/")
+          .catch(() => {})
+          .catch(() => {});
       });
-    }
+    },
   },
   computed: {
     user() {
@@ -191,46 +194,46 @@ export default {
           title: "Manager",
           icon: "mdi-home",
           path: `/managerview/${this.test.id}`,
-          id: 0
+          id: 0,
         },
         {
           title: "Test",
           icon: "mdi-file-document-edit",
           path: `/edittest/${this.test.id}`,
-          id: 1
+          id: 1,
         },
         {
           title: "Preview",
           icon: "mdi-file-eye",
           path: `/testview/${this.test.id}`,
-          id: 2
+          id: 2,
         },
         {
           title: "Reports",
           icon: "mdi-book-multiple",
           path: `/reportview/${this.test.reports}`,
-          id: 3
+          id: 3,
         },
         {
           title: "Answers",
           icon: "mdi-order-bool-ascending-variant",
           path: `/answerview/${this.test.answers}`,
-          id: 4
+          id: 4,
         },
         {
           title: "Analytics",
           icon: "mdi-chart-bar",
           path: `/analyticsview/${this.test.answers}`,
-          id: 5
-        }
+          id: 5,
+        },
       ];
 
-      if (this.test.accessLevel == 0) {
+      if (this.accessLevel == 0) {
         items.push({
           title: "Cooperators",
           icon: "mdi-account-group",
           path: `/cooperatorsview/${this.test.cooperators}`,
-          id: 6
+          id: 6,
         });
       }
 
@@ -239,7 +242,7 @@ export default {
           title: "Template",
           icon: "mdi-file-compare",
           path: `/templateview/${this.test.template.id}`,
-          id: 7
+          id: 7,
         });
       }
 
@@ -247,13 +250,23 @@ export default {
         title: "Settings",
         icon: "mdi-cog",
         path: `/settingsview/${this.test.id}`,
-        id: 8
+        id: 8,
       });
       return items;
     },
     test() {
-      return this.$store.getters.managerIDs;
-    }
+      return this.$store.getters.test;
+    },
+    accessLevel() {
+      let id = this.test?.id;
+      console.log("user", this.user);
+      if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
+
+      let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
+      if (myCoop) return myCoop.accessLevel;
+
+      return 2; //default to 2 -> Guest
+    },
   },
   watch: {
     $route: {
@@ -264,13 +277,13 @@ export default {
           if (parentRoute.name === "Manager View") this.isManager = true;
           else this.isManager = false;
         }
-      }
-    }
+      },
+    },
   },
   components: {
     NotificationBtn,
-    LocaleChanger
-  }
+    LocaleChanger,
+  },
 };
 </script>
 
