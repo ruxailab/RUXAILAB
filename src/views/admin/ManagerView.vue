@@ -138,7 +138,7 @@
             icon
             @click="go(`/settingsview/${test.id}`)"
             class="ml-3"
-            v-if="test.accessLevel == 0"
+            v-if="accessLevel == 0"
           >
             <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
           </v-btn>
@@ -150,14 +150,14 @@
 
         <div
           class="footer"
-          :style="test.accessLevel == 0 ? 'height:16%' : ''"
+          :style="accessLevel == 0 ? 'height:16%' : ''"
           v-else
         >
           <v-col>
             <v-btn
               icon
               @click="go(`/settingsview/${test.id}`)"
-              v-if="test.accessLevel == 0"
+              v-if="accessLevel == 0"
             >
               <v-icon :color="isSettings ? '#fca326' : 'white'">mdi-cog</v-icon>
             </v-btn>
@@ -441,56 +441,16 @@ export default {
     },
     test() {
       let search = this.selectedTest || this.id;
-      let test;
+
       if (this.user && !this.flagToken) {
-        test = this.$route.path.includes("template")
-          ? Object.assign(
-              {},
-              this.$store.getters.user.myTests.find((myTest) => {
-                if ("template" in myTest) {
-                  if (myTest.template.id == this.id) return myTest;
-                }
-              })
-            )
-          : Object.assign(
-              {},
-              this.$store.getters.user.myTests.find((myTest) =>
-                Object.values(myTest).includes(search)
-              )
-            );
-
-        if (!Object.keys(test).length) {
-          //if object empty (not own test) search in myCoops
-          test = this.$route.path.includes("template")
-            ? Object.assign(
-                {},
-                this.$store.getters.user.myCoops.find((myCoop) => {
-                  if ("template" in myCoop) {
-                    if (myCoop.template.id == this.id) return myCoop;
-                  }
-                })
-              )
-            : Object.assign(
-                {},
-                this.$store.getters.user.myCoops.find((myCoop) =>
-                  Object.values(myCoop).includes(search)
-                )
-              );
-
-          if (Object.keys(test).length) {
-            //if not empty then it is coop
-            this.setIsCoops(true);
-          }
-        } else {
+        if (this.user.myTests.find((mt) => mt.id == search)) {
           this.setIsCoops(false);
+        } else {
+          this.setIsCoops(true);
         }
-
-        this.$store.commit("setManagerIDS", test);
-
-        return test;
-      } else {
-        return this.$store.getters.test;
       }
+
+      return this.$store.getters.test;
     },
     index: {
       get() {
@@ -549,7 +509,7 @@ export default {
           },
         ];
 
-        if (this.test.accessLevel == 0) {
+        if (this.accessLevel == 0) {
           items.push({
             title: "Cooperators",
             icon: "mdi-account-group",
@@ -643,6 +603,15 @@ export default {
     loading() {
       return this.$store.getters.loading;
     },
+    accessLevel() {
+      let id = this.selectedTest || this.id;
+      if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
+
+      let myCoop = this.user?.myCoops.find(mc => mc.id == id);
+      if(myCoop) return myCoop.accessLevel;
+
+      return 2; //default to 2 -> Guest
+    },
   },
   watch: {
     user() {
@@ -691,11 +660,8 @@ export default {
       });
     next();
   },
-  created() {
-    if (!this.$store.getters.test)
-      this.$store.dispatch("getTest", { id: this.id });
-    else if (this.$store.getters.test.id !== this.id)
-      this.$store.dispatch("getTest", { id: this.id });
+  async created() {
+    await this.$store.dispatch("getTest", { id: this.id });
   },
 };
 </script>
