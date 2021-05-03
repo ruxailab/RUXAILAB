@@ -359,7 +359,6 @@ export default {
 
     let testId = this.answers.test.id;
     await this.$store.dispatch("getTest", { id: testId });
-    console.log("heuris", this.test.heuristics[0]);
   },
 };
 </script>

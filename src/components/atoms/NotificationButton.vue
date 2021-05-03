@@ -96,7 +96,8 @@ export default {
             answersSheet: Object.assign(this.test.answersSheet, {
               submitted: false
             }),
-            accessLevel: 2
+            accessLevel: 2,
+            date: new Date().toDateString()
           })
         });
 

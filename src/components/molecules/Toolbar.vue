@@ -259,13 +259,13 @@ export default {
     },
     accessLevel() {
       let id = this.test?.id;
-      console.log("user", this.user);
+      
       if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
       let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
       if (myCoop) return myCoop.accessLevel;
 
-      return 2; //default to 2 -> Guest
+      return 1; //default to 1 -> Guest
     },
   },
   watch: {

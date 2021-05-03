@@ -78,7 +78,7 @@
           <v-list-item-action class="hidden-sm-and-down">
             <v-list-item-action-text
               v-if="
-                type === 'answers' || type === 'template' || type === 'myCoops'
+                (type === 'answers' || type === 'template' || type === 'myCoops') && item.date
               "
               >Last Updated on {{ item.date }}</v-list-item-action-text
             >

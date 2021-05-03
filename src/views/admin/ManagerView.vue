@@ -610,7 +610,7 @@ export default {
       let myCoop = this.user?.myCoops.find(mc => mc.id == id);
       if(myCoop) return myCoop.accessLevel;
 
-      return 2; //default to 2 -> Guest
+      return 1; //default to 1 -> Guest
     },
   },
   watch: {
