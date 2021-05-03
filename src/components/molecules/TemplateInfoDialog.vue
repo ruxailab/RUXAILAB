@@ -8,7 +8,7 @@
 
         <v-divider></v-divider>
 
-        <v-stepper-step color="#F9A826" step="2"
+        <v-stepper-step color="#F9A826" step="2" v-if="allowCreate"
           >Create From Template</v-stepper-step
         >
       </v-stepper-header>
@@ -36,8 +36,8 @@
           </div>
 
           <v-row justify="end" class="ma-0 pa-0">
-            <v-btn class="error mr-2" @click="dialog = false">Cancel</v-btn>
-            <v-btn class="success" color="primary" @click="step = 2"
+            <v-btn class="error mr-2" @click="reset()"> {{allowCreate ? "Cancel" : "Close"}}</v-btn>
+            <v-btn class="success" color="primary" @click="step = 2" v-if="allowCreate"
               >Continue</v-btn
             >
           </v-row>
@@ -86,6 +86,10 @@ export default {
       required: true,
       default: () => {},
     },
+    allowCreate: {
+      type: Boolean,
+      default: () => false
+    }
   },
   components: {
     FormTestDescription,
