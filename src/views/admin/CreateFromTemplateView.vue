@@ -32,72 +32,30 @@
           v-model="search"
         ></v-text-field>
         <v-divider class="mb-1"></v-divider>
-        <List @clicked="openTemp" type="template" :items="filteredTemplates"></List>
+        <List
+          @clicked="openTemp"
+          type="template"
+          :items="filteredTemplates"
+        ></List>
       </v-col>
     </v-row>
-    <v-dialog v-model="dialog" max-width="80%">
-      <!-- <v-card color="#e8eaf2">
-      <v-container>-->
-      <v-stepper v-model="step" style="background-color: #e8eaf2">
-        <v-stepper-header>
-          <v-stepper-step color="#F9A826" :complete="step > 1" step="1">Template Info</v-stepper-step>
-
-          <v-divider></v-divider>
-
-          <v-stepper-step color="#F9A826" step="2">Create From Template</v-stepper-step>
-        </v-stepper-header>
-
-        <v-stepper-items>
-          <v-stepper-content step="1">
-            <p class="dialog-title ma-0">{{temp.title}}</p>
-            <div
-              class="caption ma-0"
-            >Created by {{temp.author}} {{temp.version == '1.0.0' ? ` on ${temp.date}` : ` - Last updated: ${temp.date}`}} (Version: {{temp.version}})</div>
-            <v-divider class="my-2"></v-divider>
-
-            <div style="margin: 0px 0px 30px 0px">{{temp.description ? temp.description : 'Template has no description.' }}</div>
-
-            <v-row justify="end" class="ma-0 pa-0">
-              <v-btn class="error mr-2" @click="dialog = false">Cancel</v-btn>
-              <v-btn class="success" color="primary" @click="step = 2">Continue</v-btn>
-            </v-row>
-          </v-stepper-content>
-
-          <v-stepper-content step="2">
-            <p class="dialog-title ma-0">Create Test</p>
-            <v-divider class="my-2"></v-divider>
-            <FormTestDescription style="margin: 0px 0px 20px 0px" :test="temp" ref="form" :lock="true" />
-            <v-row justify="end" class="ma-0 pa-0">
-              <v-btn @click="step = 1" class="warning" style="position: absolute; left: 24px">Go Back</v-btn>
-
-              <v-btn class="error mr-2" @click="dialog = false">Cancel</v-btn>
-              <v-btn class="success" color="primary" @click="validate()">Create</v-btn>
-            </v-row>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
-      <!-- <p class="dialog-title ma-2 pa-2">Create Test</p>
-          <v-divider></v-divider>
-          <FormTestDescription :test="temp" ref="form" :lock="true" />
-          <v-card-actions class="ma-0 pa-2">
-            <v-spacer></v-spacer>
-            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
-            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
-      </v-card-actions>-->
-      <!-- </v-container>
-      </v-card>-->
-    </v-dialog>
+    <TempDialog
+      :dialog="dialog"
+      :template="temp"
+      @submitTemplate="submit"
+      @close="dialog = false"
+    />
   </div>
 </template>
 
 <script>
 import List from "@/components/atoms/ListComponent";
-import FormTestDescription from "@/components/atoms/FormTestDescription";
+import TempDialog from "@/components/molecules/TemplateInfoDialog";
 
 export default {
   components: {
     List,
-    FormTestDescription,
+    TempDialog,
   },
   data: () => ({
     temp: {
@@ -111,7 +69,6 @@ export default {
     search: "",
     testID: null,
     object: {},
-    step: 1,
   }),
   methods: {
     openTemp(item) {
@@ -193,7 +150,7 @@ export default {
                           cooperators: idCooperators,
                           accessLevel: 0,
                           date: d.toDateString(),
-                          nCoops: 0
+                          nCoops: 0,
                         },
                         param: "myTests",
                       });
@@ -236,11 +193,6 @@ export default {
         (t) => t.id == this.temp.id
       );
       this.object = Object.assign(this.object, selectTemplate.body);
-    },
-    validate() {
-      if (this.$refs.form.valida()) {
-        this.submit();
-      }
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`).catch(() => {});
@@ -293,9 +245,6 @@ export default {
 
         this.object = {};
         this.selectTemplate = null;
-
-        this.$refs.form.resetVal();
-        this.dialog = false;
       }
     },
   },
