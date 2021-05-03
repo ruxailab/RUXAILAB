@@ -604,7 +604,7 @@ export default {
       return this.$store.getters.loading;
     },
     accessLevel() {
-      let id = this.selectedTest || this.id;
+      let id = this.selectedTest || this.test?.id;
       if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
       let myCoop = this.user?.myCoops.find(mc => mc.id == id);
