@@ -410,6 +410,7 @@ export default {
         { text: "Max", value: "max", align: "center" },
         { text: "Min", value: "min", align: "center" }
       ];
+      
       if (this.heuristicsEvaluator.items) {
         this.heuristicsEvaluator.items.forEach(item => {
           let results = Object.entries(item)
@@ -418,8 +419,8 @@ export default {
 
           table.items.push({
             name: item.heuristic,
-            max: Math.max(...results).toFixed(2),
-            min: Math.min(...results).toFixed(2),
+            max: Math.max(item.max).toFixed(2),
+            min: Math.min(item.min).toFixed(2),
             sd: this.standardDeviation(results).toFixed(2),
             average: results
               .reduce((total, value) => total + value / results.length, 0)
