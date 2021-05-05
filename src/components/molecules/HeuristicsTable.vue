@@ -343,19 +343,7 @@ export default {
         return [];
       },
     },
-    answersSheet: {
-      type: Object,
-      required: true,
-      default: function () {
-        return {
-          progress: 0,
-          heuristics: [],
-          total: 0,
-        };
-      },
-    },
   },
-
   components: {
     AddDescBtn,
     VClamp,
@@ -394,7 +382,6 @@ export default {
         this.heuristics.splice(item, 1);
         this.itemSelect = null;
         this.questionSelect = null;
-        this.answersSheet.total = this.totalQuestions;
       }
       this.menuQuestions = false;
       this.menuHeuristics = false;
@@ -410,14 +397,10 @@ export default {
         if (config) {
           this.heuristics[this.itemSelect].questions.splice(item, 1);
           this.questionSelect = null;
-          this.answersSheet.heuristics[this.itemSelect].questions.splice(
-            item,
-            1
-          );
+          
           this.heuristics[this.itemSelect].total = this.heuristics[
             this.itemSelect
           ].questions.length;
-          this.answersSheet.total = this.totalQuestions;
         }
         this.emitChange();
       } else {
@@ -483,18 +466,7 @@ export default {
         this.heuristics.push(Object.assign({}, this.heuris));
         this.itemSelect = this.heuristics.length - 1;
 
-        this.answersSheet.heuristics.push(
-          Object.assign(
-            {},
-            {
-              id: this.heuris.id,
-              total: this.heuris.total,
-              questions: this.arrayQuestions,
-            }
-          )
-        );
         this.heuristics.total = this.totalQuestions;
-        this.answersSheet.total = this.totalQuestions;
 
         this.$refs.formHeuris.resetValidation();
         //this.$refs.formHeuris.reset();
@@ -524,13 +496,6 @@ export default {
         this.heuristics[this.itemSelect].total = this.heuristics[
           this.itemSelect
         ].questions.length;
-        this.answersSheet.total = this.totalQuestions;
-
-        Object.assign(this.answersSheet.heuristics[this.itemSelect], {
-          id: this.heuristics[this.itemSelect].id,
-          total: this.heuristics[this.itemSelect].total,
-          questions: this.arrayQuestions,
-        });
 
         this.$refs.formQuestion.resetValidation();
         this.$emit("change");

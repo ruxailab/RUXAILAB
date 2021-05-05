@@ -71,6 +71,7 @@
         @tabClicked="setIndex"
         slot="top"
       />
+
       <EditHeuristicsTest
         v-if="test.type === 'Heuristics'"
         type="content"
@@ -127,20 +128,20 @@ export default {
   }),
   methods: {
     async submit() {
-      await this.$store.dispatch("getAnswers", { id: this.test.answers });
       let today = new Date();
 
       if (this.object.date !== today.toDateString())
         this.object.date = today.toDateString(); //update date if not the same as last update
 
       if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
+      this.object.answersSheet = await this.mountAnswerSheet(); //update object answersheet
       this.$store
         .dispatch("updateTest", {
           docId: this.id,
           data: this.object,
         })
-        .then(() => {
-          this.answers.answersSheet = this.object.answersSheet;
+        .then(async () => {
+          this.answers.answersSheet = await this.mountAnswerSheet();
           if (this.test.type === "Heuristics")
             Object.assign(this.answers, { options: this.object.options });
           this.$store
@@ -159,6 +160,37 @@ export default {
         .catch((err) => {
           this.$store.commit("setError", err);
         });
+    },
+    mountAnswerSheet() {
+      let aux = {
+        heuristics: [],
+        progress: 0,
+        total: this.totalQuestions,
+      };
+
+      this.object.heuristics.forEach((heuris) => {
+        let questions = Array.from(heuris.questions);
+        let arrayQuestions = [];
+
+        questions.forEach((el) => {
+          arrayQuestions.push(
+            Object.assign({}, { id: el.id, res: "", com: "" })
+          );
+        });
+
+        aux.heuristics.push(
+          Object.assign(
+            {},
+            {
+              id: heuris.id,
+              total: heuris.total,
+              questions: arrayQuestions,
+            }
+          )
+        );
+      });
+
+      return aux;
     },
     validate(valid, index) {
       this.valids[index] = valid;
@@ -231,10 +263,18 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || [];
-    }
+    },
+    totalQuestions() {
+      let result = 0;
+      this.object?.heuristics.forEach((h) => {
+        result += h.total;
+      });
+      return result;
+    },
   },
   async created() {
     await this.$store.dispatch("getTest", { id: this.id });
+    await this.$store.dispatch("getAnswers", { id: this.test?.answers });
     this.setIntro();
   },
   beforeRouteLeave(to, from, next) {

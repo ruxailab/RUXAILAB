@@ -13,7 +13,6 @@
     <Heuristic
       v-if="index == 0"
       :heuristics="object.heuristics"
-      :answersSheet="object.answersSheet"
       @change="emitChange()"
     />
 
