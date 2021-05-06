@@ -1,18 +1,35 @@
 <template>
   <div>
-    <v-list class="py-0">
+    <v-list class="py-0" v-if="items">
       <div v-for="(item, n) in items" :key="n">
-        <v-list-item @click="emitClick(item)" :ripple="false">
+        <v-list-item @click="emitClick(item)" :ripple="false" v-if="item">
           <!-- Avatar -->
           <v-list-item-avatar tile style="border-radius: 5px" size="40">
-            <v-avatar tile :color="generateColor()" style="color: #545454">{{
-              item.title[0].toUpperCase()
-            }}</v-avatar>
+            <v-avatar
+              v-if="type === 'template'"
+              tile
+              :color="generateColor()"
+              style="color: #545454"
+              >{{ item.header.title[0].toUpperCase() }}</v-avatar
+            >
+            <v-avatar
+              v-else
+              tile
+              :color="generateColor()"
+              style="color: #545454"
+              >{{ item.title[0].toUpperCase() }}</v-avatar
+            >
           </v-list-item-avatar>
 
           <v-list-item-content>
             <!-- Title -->
-            <v-list-item-title>
+            <v-list-item-title v-if="type === 'template'">
+              {{ item.header.title }}
+              <v-chip outlined style="color: grey" small class="ml-1">{{
+                item.header.type
+              }}</v-chip>
+            </v-list-item-title>
+            <v-list-item-title v-else>
               {{ item.title }}
               <v-chip outlined style="color: grey" small class="ml-1">{{
                 item.type
@@ -26,9 +43,11 @@
               "
             >
               {{
-                item.author
+                item.author || item.header.author
                   ? `Created by ${
-                      type === "template" ? item.author.email : item.author
+                      type === "template"
+                        ? item.header.author.email
+                        : item.author
                     }`
                   : ""
               }}
@@ -78,13 +97,19 @@
           <v-list-item-action class="hidden-sm-and-down">
             <v-list-item-action-text
               v-if="
-                (type === 'answers' || type === 'template' || type === 'myCoops') && item.date
+                (type === 'answers' ||
+                  type === 'template' ||
+                  type === 'myCoops') &&
+                (item.date || item.header.date)
               "
-              >Last Updated on {{ item.date }}</v-list-item-action-text
+              >Last Updated on
+              {{
+                type === "template" ? item.header.date : item.date
+              }}</v-list-item-action-text
             >
             <v-list-item-action-text v-if="type === 'template'">
               <v-chip outlined small class="ml-1"
-                >Version: {{ item.version }}</v-chip
+                >Version: {{ item.header.version }}</v-chip
               >
             </v-list-item-action-text>
           </v-list-item-action>
@@ -106,8 +131,12 @@
       </v-row>
     </v-list>
     <v-row v-if="hasPagination" justify="center" class="mt-5">
-      <v-btn :disabled="disablePrevious" icon @click="emitPreviousPage()"><v-icon>mdi-arrow-left</v-icon></v-btn>
-      <v-btn :disabled="disableNext" icon class="ml-3" @click="emitNextPage()"><v-icon>mdi-arrow-right</v-icon></v-btn>
+      <v-btn :disabled="disablePrevious" icon @click="emitPreviousPage()"
+        ><v-icon>mdi-arrow-left</v-icon></v-btn
+      >
+      <v-btn :disabled="disableNext" icon class="ml-3" @click="emitNextPage()"
+        ><v-icon>mdi-arrow-right</v-icon></v-btn
+      >
     </v-row>
   </div>
 </template>
@@ -128,14 +157,14 @@ export default {
     },
     hasPagination: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disableNext: {
-      type: Boolean
+      type: Boolean,
     },
     disablePrevious: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data: () => ({}),
   methods: {
@@ -153,7 +182,7 @@ export default {
     },
     emitPreviousPage() {
       this.$emit("previousPage");
-    }
+    },
   },
   beforeUpdate() {
     let availableTypes = ["myTests", "answers", "myCoops", "template"];

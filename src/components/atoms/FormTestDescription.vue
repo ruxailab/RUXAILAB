@@ -40,23 +40,23 @@ export default {
   props: {
     test: {
       type: Object,
-      required: true
+      required: true,
     },
     lock: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     titleRequired: [
-      v => !!v || "Field Required",
-      v => v.length <= 100 || "Max 100 characters"
+      (v) => !!v || "Field Required",
+      (v) => v.length <= 100 || "Max 100 characters",
     ],
-    typeRequired: [v => !!v || "Field Required"],
+    typeRequired: [(v) => !!v || "Field Required"],
     types: [
       { text: "Usability User Test", value: "User" },
-      { text: "Usability Heuristic Evaluation", value: "Heuristics" }
-    ]
+      { text: "Usability Heuristic Evaluation", value: "Heuristics" },
+    ],
   }),
   methods: {
     valida() {
@@ -66,8 +66,8 @@ export default {
     },
     resetVal() {
       this.$refs.form.resetValidation(); //used on emits
-    }
-  }
+    },
+  },
 };
 </script>
 

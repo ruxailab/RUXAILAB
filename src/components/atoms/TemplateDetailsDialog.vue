@@ -78,7 +78,8 @@ export default {
 
       if (this.template) {
         let template = this.template.body;
-        if (template.type == "Heuristics") {
+        let type = this.template?.header?.type;
+        if (type == "Heuristics") {
           let id = 0;
           let heuristics = template.heuristics;
           let options = template.options;
@@ -123,7 +124,7 @@ export default {
               }),
             });
           }
-        } else if (template.type == "User") {
+        } else if (type == "User") {
           let id = 0;
           let tasks = template.tasks;
           let preTest = template.preTest;

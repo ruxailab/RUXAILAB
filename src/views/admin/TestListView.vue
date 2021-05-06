@@ -206,6 +206,7 @@
 
       <TempDialog
         :dialog="tempDialog"
+        :showDetails="showTempDetails"
         :template="temp"
         @close="tempDialog = false"
       />
@@ -405,9 +406,18 @@ export default {
     storeTemplates() {
       return this.$store.getters.templates || [];
     },
+    myTempsHeaders() {
+      return this.user.myTemps.map((temp) => {
+        return {
+          header: temp,
+        };
+      });
+    },
     filteredMyTemps() {
-      return this.user.myTemps.filter((temp) => {
-        return temp.title.toLowerCase().includes(this.search.toLowerCase());
+      return this.myTempsHeaders.filter((temp) => {
+        return temp.header.title
+          .toLowerCase()
+          .includes(this.search.toLowerCase());
       });
     },
     loading() {
@@ -417,28 +427,18 @@ export default {
       return this.$store.getters.paginatedTemps;
     },
     showOnExplore() {
-      let array = [];
+      // let array = [];
       let temps = null;
       let start = (this.page - 1) * this.itemsPerPage;
       let finish = this.page * this.itemsPerPage;
 
       temps = this.exploreTemplates.slice(start, finish);
 
-      array = temps.map((temp) => {
-        let obj = {
-          id: temp.id,
-          title: temp.header.title || "No Title",
-          date: temp.header.date,
-          type: temp.body.type,
-          author: temp.header.author,
-          version: temp.header.version,
-          description: temp.header.description,
-        };
-        return obj;
-      });
-
-      return array;
+      return temps;
     },
+    showTempDetails() {
+      return !(this.mainIndex == 2 && this.subIndex == 0); //dont show on this tab
+    }
   },
   watch: {
     mainIndex() {

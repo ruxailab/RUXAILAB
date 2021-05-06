@@ -40,6 +40,7 @@
       </v-col>
     </v-row>
     <TempDialog
+      v-if="temp"
       :dialog="dialog"
       :template="temp"
       @submitTemplate="submit"
@@ -68,7 +69,7 @@ export default {
   }),
   methods: {
     openTemp(item) {
-      this.temp = Object.assign({}, item);
+      this.temp = JSON.parse(JSON.stringify(item)); //deep copy
       this.dialog = true;
     },
     async submit() {
@@ -176,18 +177,16 @@ export default {
 
       //Assigning test info
       this.object = Object.assign(this.object, {
-        title: this.temp.title,
-        description: this.temp.description,
-        type: this.temp.type,
+        title: this.temp.header.title,
+        description: this.temp.header.description,
+        type: this.temp.header.type,
       });
       this.object = Object.assign(this.object, {
         date: new Date().toDateString(),
       });
 
       //assigning tasks/heuristics
-      let selectTemplate = this.storeTemplates.find(
-        (t) => t.id == this.temp.id
-      );
+      let selectTemplate = this.templates.find((t) => t.id == this.temp.id);
       this.object = Object.assign(this.object, selectTemplate.body);
     },
     sendManager(id) {
@@ -195,33 +194,17 @@ export default {
     },
   },
   computed: {
-    storeTemplates() {
+    templates() {
       return this.$store.getters.templates || [];
     },
-    templates() {
-      let array = [];
-      if (this.storeTemplates !== null) {
-        array = this.storeTemplates.map((temp) => {
-          let obj = {
-            id: temp.id,
-            title: temp.header.title || "No Title",
-            date: temp.header.date,
-            type: temp.body.type,
-            author: temp.header.author,
-            version: temp.header.version,
-            description: temp.header.description,
-          };
-          return obj;
+    filteredTemplates() {
+      if (this.templates !== null) {
+        return this.templates.filter((temp) => {
+          return temp.header.title
+            .toLowerCase()
+            .includes(this.search.toLowerCase());
         });
       }
-
-      return array;
-    },
-    filteredTemplates() {
-      if (this.templates !== null)
-        return this.templates.filter((temp) => {
-          return temp.title.toLowerCase().includes(this.search.toLowerCase());
-        });
 
       return [];
     },
@@ -239,10 +222,8 @@ export default {
       }
     },
   },
-  created() {
-    // if (this.$store.getters.templates == null) {
-    this.$store.dispatch("getTemplates");
-    // }
+  async created() {
+    await this.$store.dispatch("getTemplates");
   },
 };
 </script>
