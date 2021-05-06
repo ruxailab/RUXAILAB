@@ -422,7 +422,7 @@ export default {
         }
 
         let payload = {
-          data: { body: template, header: header },
+          data: { body: template, header: header, testId: this.test.id },
         };
 
         this.$store.dispatch("createTemplate", payload).then((id) => {
