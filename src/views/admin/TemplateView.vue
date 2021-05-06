@@ -57,7 +57,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    
+
     <TemplateDetails
       :dialog="dialogDetails"
       :template="template"
@@ -212,39 +212,12 @@ export default {
   }),
   methods: {
     update() {
-      let payload = Object.assign({}, { header: this.template.header });
-
-      payload.header.date = new Date().toDateString();
-      if (this.template.body.type == "Heuristics") {
-        Object.assign(payload, {
-          body: Object.assign(
-            {},
-            {
-              heuristics: this.test.heuristics,
-              options: this.test.options,
-              answersSheet: this.test.answersSheet,
-              type: this.test.type,
-            }
-          ),
-        });
-      } else if (this.template.body.type == "User") {
-        Object.assign(payload, {
-          body: Object.assign(
-            {},
-            {
-              tasks: this.test.tasks,
-              preTest: this.test.preTest,
-              postTest: this.test.postTest,
-              type: this.test.type,
-            }
-          ),
-        });
-      }
+      this.template.header.date = new Date().toDateString();
 
       this.$store
         .dispatch("updateTemplate", {
           docId: this.id,
-          data: payload,
+          data: this.template,
         })
         .then(() => {
           this.change = false;
@@ -368,21 +341,10 @@ export default {
     },
     updateTemplate() {
       this.updated = true;
-      if (this.template.body.type == "Heuristics") {
-        Object.assign(this.template.body, {
-          heuristics: this.test.heuristics,
-          options: this.test.options,
-          answersSheet: this.test.answersSheet,
-          type: this.test.type,
-        });
-      } else if (this.template.body.type == "User") {
-        Object.assign(this.template.body, {
-          tasks: this.test.tasks,
-          preTest: this.test.preTest,
-          postTest: this.test.postTest,
-          type: this.test.type,
-        });
-      }
+
+      Object.keys(this.template.body).forEach((key) => {
+        this.template.body[key] = this.test[key];
+      });
     },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;

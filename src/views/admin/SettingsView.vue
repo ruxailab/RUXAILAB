@@ -426,12 +426,6 @@ export default {
         };
 
         this.$store.dispatch("createTemplate", payload).then((id) => {
-          //add id to document
-          this.$store.dispatch("updateTemplate", {
-            docId: id,
-            data: Object.assign(payload.data, { id: id }),
-          });
-
           this.object = Object.assign(this.object, {
             template: Object.assign(
               {},
