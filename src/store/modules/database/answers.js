@@ -134,5 +134,15 @@ export default {
       dispatch("updateObject", payload)
         .catch((err) => commit("setError", "Error in updateTestAnswer." + err));
     },
+    removeUserAnswer({ dispatch, commit }, payload) {
+      commit("setLoading", true);
+      payload = Object.assign(payload, {
+        collection: "answers",
+        param: "answers",
+      });
+
+      dispatch("removeObject", payload)
+        .catch((err) => commit("setError", "Error in removeCooperator." + err));
+    }
   },
 };
