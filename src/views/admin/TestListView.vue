@@ -313,7 +313,10 @@ export default {
       let array = [];
 
       if (this.user) {
-        array.push(...this.user.myTests);
+        this.user.myTests.forEach(test => {
+          let obj = Object.assign(test, {author: this.user.email});
+          array.push(obj);
+        })
 
         let hasTest = null;
 
