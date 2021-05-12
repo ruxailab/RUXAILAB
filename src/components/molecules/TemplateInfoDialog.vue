@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="80%" v-if="template.header">
+    <v-dialog v-model="dialog" max-width="80%" v-if="template.header" persistent>
       <v-stepper v-model="step" style="background-color: #e8eaf2">
         <v-stepper-header>
           <v-stepper-step color="#F9A826" :complete="step > 1" step="1"

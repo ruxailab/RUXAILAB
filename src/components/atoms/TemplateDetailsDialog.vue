@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="800px">
+  <v-dialog v-model="dialog" width="800px" persistent>
     <v-card min-height="400px" class="list-scroll">
       <v-col class="mb-1 pa-4 pb-1">
         <p class="subtitleView">
