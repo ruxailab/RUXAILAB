@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="test && showSettings">
+    {{ test }}
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -234,7 +235,7 @@ export default {
           docId: this.id,
           data: this.object,
         })
-        .then(() => {          
+        .then(() => {
           let element = this.myObject;
 
           //update attributes
@@ -253,28 +254,53 @@ export default {
           });
 
           this.cooperators.cooperators.forEach((coop) => {
-            element = Object.assign(
-              {},
-              {
-                id: this.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                cooperators: this.object.cooperators,
-                accessLevel: coop.accessLevel,
-              }
-            );
+            let isAdmin = coop.accessLevel.value <= 1;
+            if (isAdmin) {
+              element = Object.assign(
+                {},
+                {
+                  id: this.id,
+                  title: this.object.title,
+                  type: this.object.type,
+                  reports: this.object.reports,
+                  answers: this.object.answers,
+                  cooperators: this.object.cooperators,
+                  accessLevel: coop.accessLevel,
+                }
+              );
+            } else {
+              element = Object.assign(
+                {},
+                {
+                  id: this.id,
+                  title: this.object.title,
+                  type: this.object.type,
+                  reports: this.object.reports,
+                  answers: this.object.answers,
+                  cooperators: this.object.cooperators,
+                  accessLevel: coop.accessLevel,
+                  author: this.test.admin.email,
+                  answersSheet: this.test.answersSheet,
+                  date: new Date().toLocaleString("en-Us"),
+                }
+              );
+            }
 
-            if ("template" in this.object)
+            if ("template" in this.object && isAdmin)
               element = Object.assign(element, {
                 template: this.object.template,
               });
 
-            this.$store.dispatch("updateMyCoops", {
-              docId: coop.id,
-              element: element,
-            });
+            if (isAdmin)
+              this.$store.dispatch("updateMyCoops", {
+                docId: coop.id,
+                element: element,
+              });
+            else
+              this.$store.dispatch("updateMyAnswers", {
+                docId: coop.id,
+                element: element,
+              });
           });
 
           this.answers.test.title = this.object.title;
@@ -525,18 +551,19 @@ export default {
       return false;
     },
     myObject() {
-      if(this.user) {
+      if (this.user) {
         let myObject;
         myObject = this.user.myTests.find((test) => test.id === this.id); //look for myTest
 
-        if(!myObject) //if not found
+        if (!myObject)
+          //if not found
           myObject = this.user.myCoops.find((test) => test.id === this.id); //look for my coop
 
         return myObject;
       }
 
       return null;
-    }
+    },
   },
   created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {

@@ -67,7 +67,7 @@
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a style="color: #F9A826" @click="signOut()">Change account</a>
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -178,7 +178,7 @@
           flat
           dense
           max-height="85%"
-          style="overflow-y:auto;overflow-x:hidden; padding-bottom: 100px"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
         >
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
@@ -249,7 +249,7 @@
                           rotate="-90"
                           v-if="
                             test.type === 'Heuristics' &&
-                              progress(answersSheet.heuristics[i]) != 100
+                            progress(answersSheet.heuristics[i]) != 100
                           "
                           :value="progress(answersSheet.heuristics[i])"
                           :size="24"
@@ -289,7 +289,7 @@
                       rotate="-90"
                       v-if="
                         test.type === 'Heuristics' &&
-                          progress(answersSheet.heuristics[i]) != 100
+                        progress(answersSheet.heuristics[i]) != 100
                       "
                       :value="progress(answersSheet.heuristics[i])"
                       :size="24"
@@ -527,7 +527,7 @@ export default {
     VClamp,
     Snackbar,
     CardSignIn,
-    CardSignUp
+    CardSignUp,
   },
   data: () => ({
     logined: null,
@@ -544,13 +544,13 @@ export default {
     idx: 0,
     fab: false,
     res: 0,
-    dialog: false
+    dialog: false,
   }),
   watch: {
     cooperators() {
       if (this.cooperators && this.token) {
         let invitation = this.cooperators.cooperators.find(
-          coop => coop.token == this.token
+          (coop) => coop.token == this.token
         );
         if (!invitation) {
           this.$router
@@ -562,24 +562,24 @@ export default {
         }
       }
     },
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       if (this.test && this.token) {
         if (!this.$store.getters.cooperators)
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators
+            id: this.test.cooperators,
           });
         else if (this.$store.getters.cooperators !== this.test.cooperators)
           this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators
+            id: this.test.cooperators,
           });
       }
     },
     items() {
       if (this.items.length) {
         this.index = this.items[0].id;
-        if (this.items.find(obj => obj.id == 0)) {
+        if (this.items.find((obj) => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id;
         }
@@ -593,7 +593,7 @@ export default {
         this.noExistUser = false;
         if (this.logined) this.setTest();
       }
-    }
+    },
   },
   methods: {
     mappingSteps() {
@@ -607,10 +607,10 @@ export default {
               {
                 title: "Consent",
                 icon: "mdi-checkbox-blank-circle-outline",
-                id: 0
-              }
+                id: 0,
+              },
             ],
-            id: 0
+            id: 0,
           });
 
         if (this.validate(this.test.preTest.form)) {
@@ -618,7 +618,7 @@ export default {
             this.items[0].value.push({
               title: "Form",
               icon: "mdi-checkbox-blank-circle-outline",
-              id: 1
+              id: 1,
             });
           } else {
             this.items.push({
@@ -628,10 +628,10 @@ export default {
                 {
                   title: "Form",
                   icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1
-                }
+                  id: 1,
+                },
               ],
-              id: 0
+              id: 0,
             });
           }
         }
@@ -641,13 +641,13 @@ export default {
           this.items.push({
             title: "Tasks",
             icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map(i => {
+            value: this.test.tasks.map((i) => {
               return {
                 title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline"
+                icon: "mdi-checkbox-blank-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
 
         //PostTest
@@ -656,7 +656,7 @@ export default {
             title: "Post Test",
             icon: "mdi-checkbox-blank-circle-outline",
             value: this.test.postTest,
-            id: 2
+            id: 2,
           });
       } else if (this.test.type === "Heuristics") {
         //Heuristics
@@ -667,13 +667,13 @@ export default {
           this.items.push({
             title: "Heuristics",
             icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map(i => {
+            value: this.test.heuristics.map((i) => {
               return {
                 title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline"
+                icon: "mdi-checkbox-marked-circle-outline",
               };
             }),
-            id: 1
+            id: 1,
           });
       }
     },
@@ -682,8 +682,8 @@ export default {
     },
     calcProgress() {
       var qtd = 0;
-      this.answersSheet.heuristics.forEach(h => {
-        qtd += h.questions.filter(q => q.res !== "").length;
+      this.answersSheet.heuristics.forEach((h) => {
+        qtd += h.questions.filter((q) => q.res !== "").length;
       });
 
       this.answersSheet.progress = (
@@ -692,13 +692,15 @@ export default {
       ).toFixed(1);
     },
     submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(answer => answer.id == this.id);
+      let newAnswer = this.user.myAnswers.find(
+        (answer) => answer.id == this.id
+      );
       if (!save) newAnswer.answersSheet.submitted = true;
-      
+
       var log = {
         date: new Date().toLocaleString("en-US"),
         progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed"
+        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
       };
       log.status = newAnswer.answersSheet.submitted ? "Submitted" : log.status;
 
@@ -706,7 +708,7 @@ export default {
         .dispatch("updateLog", {
           docId: newAnswer.reports,
           elementId: this.user.uid,
-          element: log
+          element: log,
         })
         .then(() => {
           if (!save) {
@@ -715,13 +717,13 @@ export default {
                 docId: newAnswer.answers,
                 element: Object.assign(this.answersSheet, {
                   uid: this.user.uid,
-                  email: this.user.email
-                })
+                  email: this.user.email,
+                }),
               })
               .then(() => {
                 this.$store.commit("setSuccess", "Test succesfully submitted");
               })
-              .catch(err => {
+              .catch((err) => {
                 this.$store.commit("setError", err);
               });
           }
@@ -731,19 +733,19 @@ export default {
       this.$store
         .dispatch("updateMyAnswers", {
           docId: this.user.uid,
-          element: newAnswer
+          element: newAnswer,
         })
         .then(() => {
           if (save)
             this.$store.commit("setSuccess", "Project succesfully saved");
         })
-        .catch(err => {
+        .catch((err) => {
           if (save) this.$store.commit("setError", err);
         });
     },
     progress(item) {
       return (
-        (item.questions.filter(q => q.res !== "").length * 100) / item.total
+        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
       );
     },
     setExistUser() {
@@ -757,7 +759,7 @@ export default {
     setTest() {
       if (this.user.myAnswers) {
         this.fromlink = false;
-        let exist = this.user.myAnswers.find(test => test.id == this.id);
+        let exist = this.user.myAnswers.find((test) => test.id == this.id);
         if (!exist) {
           let payload = Object.assign(
             {},
@@ -769,14 +771,17 @@ export default {
               answers: this.test.answers,
               cooperators: this.test.cooperators,
               answersSheet: Object.assign(this.test.answersSheet, {
-                submitted: false
+                submitted: false,
               }),
-              accessLevel: 2
+              accessLevel: {
+                text: "Evaluator",
+                value: 2,
+              },
             }
           );
           //Get invitation
           let coop = this.cooperators.cooperators.find(
-            coop => coop.token == this.token
+            (coop) => coop.token == this.token
           );
 
           if (coop) {
@@ -785,7 +790,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   //Update invitation to accepted
@@ -793,28 +798,28 @@ export default {
                     docId: this.test.cooperators,
                     elementId: this.user.uid,
                     element: true,
-                    param: "accepted"
+                    param: "accepted",
                   });
 
                   //Remove notification
                   let inv = this.user.notifications.find(
-                    not => not.test.id == this.id
+                    (not) => not.test.id == this.id
                   );
                   this.$store.dispatch("removeNotification", {
                     docId: this.user.uid,
-                    element: inv
+                    element: inv,
                   });
 
                   //Update state reports
                   var log = {
                     date: new Date().toLocaleString("en-US"),
                     progress: 0,
-                    status: "In progress"
+                    status: "In progress",
                   };
                   this.$store.dispatch("updateLog", {
                     docId: this.test.reports,
                     elementId: this.user.uid,
-                    element: log
+                    element: log,
                   });
                 });
             }
@@ -823,7 +828,7 @@ export default {
               this.$store
                 .dispatch("pushMyAnswers", {
                   docId: this.user.uid,
-                  element: payload
+                  element: payload,
                 })
                 .then(() => {
                   //Update Invitation insert User ID and invitation accepted
@@ -833,7 +838,7 @@ export default {
                       elementId: this.token,
                       element: this.user.uid,
                       identifier: "token",
-                      param: "id"
+                      param: "id",
                     })
                     .then(() => {
                       this.$store.dispatch("updateCooperator", {
@@ -841,7 +846,7 @@ export default {
                         elementId: this.token,
                         identifier: "token",
                         element: true,
-                        param: "accepted"
+                        param: "accepted",
                       });
                     });
 
@@ -854,13 +859,13 @@ export default {
                       log: {
                         date: new Date().toLocaleString("en-Us"),
                         progress: 0,
-                        status: "In progress"
-                      }
+                        status: "In progress",
+                      },
                     }
                   );
                   this.$store.dispatch("pushLog", {
                     docId: this.test.reports,
-                    element: item
+                    element: item,
                   });
                 });
             }
@@ -869,7 +874,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   computed: {
     test() {
@@ -882,7 +887,7 @@ export default {
     answersSheet: {
       get() {
         if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find(answer => answer.id == this.id);
+          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
           if (x) return x.answersSheet;
           else return this.test.answersSheet;
         } else {
@@ -891,7 +896,7 @@ export default {
       },
       set(item) {
         return item;
-      }
+      },
     },
     showBtn() {
       if (this.answersSheet !== undefined && this.answersSheet !== null) {
@@ -907,18 +912,18 @@ export default {
     },
     loading() {
       return this.$store.getters.loading;
-    }
+    },
   },
   created() {
     if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
-      next(vm => {
+      next((vm) => {
         vm.fromlink = true;
       });
     next();
-  }
+  },
 };
 </script>
 

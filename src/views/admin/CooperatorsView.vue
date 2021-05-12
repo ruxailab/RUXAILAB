@@ -293,8 +293,7 @@ export default {
     submit() {
       this.cooperatorsEdit.forEach((guest) => {
         //Invite new cooperators
-        if(!guest.invited)
-          this.send(guest);
+        if (!guest.invited) this.send(guest);
       });
 
       //update nCoops
@@ -458,7 +457,10 @@ export default {
                     answersSheet: Object.assign(this.test.answersSheet, {
                       submitted: false,
                     }),
-                    accessLevel: 2,
+                    accessLevel: {
+                      text: "Evaluator",
+                      value: 2,
+                    },
                     author: this.test.admin.email,
                     date: new Date().toDateString(),
                   }),
@@ -724,7 +726,7 @@ export default {
           token: guest.token,
         });
       }
-      
+
       this.$store.dispatch("sendEmailInvitation", email).then(() => {
         this.$set(guest, "invited", true);
 
