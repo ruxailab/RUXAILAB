@@ -1,6 +1,5 @@
 <template>
   <v-container v-if="test && showSettings">
-    {{ test }}
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -246,6 +245,9 @@ export default {
             element = Object.assign(element, {
               template: this.object.template,
             });
+          else if("template" in this.myObject) {
+            delete element.template;
+          }
 
           // console.log("mytest", element);
           this.$store.dispatch("updateMyTest", {

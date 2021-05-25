@@ -258,7 +258,7 @@ export default {
               param: "myTemps",
             })
             .then(() => {
-              this.object.template = null;
+              delete this.object.template;
               this.submit();
               this.loading = false;
               this.dialogDel = false;

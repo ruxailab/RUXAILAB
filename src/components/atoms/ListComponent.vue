@@ -53,7 +53,7 @@
               }}
             </v-list-item-subtitle>
             <v-list-item-subtitle v-else-if="type === 'myTests'">
-              {{ item.date ? "Last Updated on " : "-" }}{{ item.date }}
+              {{ item.date ? `Last Updated on ${item.date}` : "-" }}
             </v-list-item-subtitle>
 
             <div
