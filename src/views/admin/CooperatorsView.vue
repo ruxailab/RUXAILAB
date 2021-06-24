@@ -808,6 +808,9 @@ export default {
               : true;
         }
 
+        // grant access if user is superadmin
+        if(this.user?.accessLevel == 0) hasAccess = true;
+        
         if (hasAccess || isOwner) this.showCoops = true;
         this.verified = true;
       }

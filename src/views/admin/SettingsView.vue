@@ -517,6 +517,10 @@ export default {
             ) == undefined
               ? false
               : true;
+
+        // grant access if user is superadmin
+        if(this.user?.accessLevel == 0) hasAccess = true;
+
         if (hasAccess || isOwner) this.showSettings = true;
         this.loadingPage = false;
       }

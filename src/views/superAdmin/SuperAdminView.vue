@@ -152,6 +152,12 @@
                   label="Search"
                 ></v-text-field>
               </template>
+
+              <template v-slot:item.actions="{ item }">
+                <v-icon small class="mr-2" @click="openManager(item)"
+                  >mdi-eye</v-icon
+                >
+              </template>
             </v-data-table>
           </v-tab-item>
         </v-tabs-items>
@@ -181,7 +187,7 @@ export default {
       },
       { text: "E-mail", value: "email", align: "center" },
       { text: "Access Level", value: "accessLevel", align: "center" },
-      { text: "Actions", value: "actions", align: "end" },
+      { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
     testsHeaders: [
       {
@@ -190,6 +196,7 @@ export default {
         value: "title",
       },
       { text: "Created by", value: "admin.email" },
+      { text: "Actions", value: "actions", align: "end", sortable: false },
     ],
     editedIndex: -1,
     editedUser: {
@@ -268,6 +275,9 @@ export default {
           this.commit("setError", "Error deleting user");
         });
     },
+    openManager(test) {
+      this.$router.push(`managerview/${test.id}`)
+    }
   },
   computed: {
     users() {

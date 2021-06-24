@@ -604,6 +604,9 @@ export default {
       return this.$store.getters.loading;
     },
     accessLevel() {
+      // if user is superadmin grant full access
+      if(this.user?.accessLevel == 0) return 0
+
       let id = this.selectedTest || this.test?.id;
       if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
