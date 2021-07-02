@@ -141,6 +141,9 @@ export default {
     reports() {
       return this.$store.getters.reports || Object.assign({}, { reports: [] });
     },
+    test() {
+      return this.$store.getters.test;
+    },
     dialogText() {
       return (
         "Are you sure you want to delete " +
@@ -160,10 +163,7 @@ export default {
   async created() {
     await this.$store.dispatch("getReports", { id: this.id });
 
-    this.test = Object.assign(
-      {},
-      this.$store.getters.user.myTests.find((test) => test.reports == this.id)
-    );
+    await this.$store.dispatch("getTest", { id: this.reports.test.id });
 
     await this.$store.dispatch("getAnswers", { id: this.test.answers });
 

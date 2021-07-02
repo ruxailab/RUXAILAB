@@ -33,7 +33,9 @@ export default {
         var docRef = await api.database.createObject(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in createObject" + err);
+        console.error("Error in createObject:", err)
+        commit("setError", "Error creating object in database");
+        
       } finally {
         commit("setLoading", false);
       }
@@ -57,7 +59,8 @@ export default {
         });
         return objects;
       } catch (err) {
-        commit("setError", "Error in getAllObjects" + err);
+        console.error("Error in getAllObjects:", err)
+        commit("setError", "Error getting all objects in database");
       } finally {
         commit("setLoading", false);
       }
@@ -75,7 +78,8 @@ export default {
       try {
         await api.database.deleteObject(payload);
       } catch (err) {
-        commit("setError", "Error in deleteObject" + err);
+        console.error("Error in deleteObject:", err)
+        commit("setError", "Error deleting object in database");
       } finally {
         commit("setLoading", false);
       }
@@ -95,7 +99,8 @@ export default {
         const object = Object.assign({ id: doc.id }, doc.data());
         return object;
       } catch (err) {
-        commit("setError", "Error in getObject" + err);
+        console.error('Error in getObject:', err)
+        commit("setError", "Error getting object from database");
       } finally {
         commit("setLoading", false);
       }
@@ -113,7 +118,8 @@ export default {
         var docRef = await api.database.updateObject(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in updateObject" + err);
+        console.error("Error in updateObject:", err)
+        commit("setError", "Error updating object in database");
       } finally {
         commit("setLoading", false);
       }
@@ -131,7 +137,8 @@ export default {
         var docRef = await api.database.pushArray(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in pushObject" + err);
+        console.error("Error pushObject:", err)
+        commit("setError", "Error pushing object to database");
       } finally {
         commit("setLoading", false);
       }
@@ -149,7 +156,8 @@ export default {
         var docRef = await api.database.removeArray(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in removeObject" + err);
+        console.error("Error in removeObject:", err)
+        commit("setError", "Error removing object from database");
       } finally {
         commit("setLoading", false);
       }
@@ -167,7 +175,8 @@ export default {
         var docRef = await api.database.updateArray(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in updateArrayObject" + err);
+        console.error("Error in updateArrayObject:", err)
+        commit("setError", "Error updating array object in database");
       } finally {
         commit("setLoading", false);
       }
@@ -185,7 +194,8 @@ export default {
         let docRef = await api.database.updateArrayElement(payload);
         return docRef;
       } catch (err) {
-        commit("setError", "Error in updateArrayElement" + err);
+        console.error("Error in updateArrayElement:", err)
+        commit("setError", "Error updating array element in database");
       } finally {
         commit("setLoading", false);
       }
@@ -203,6 +213,8 @@ export default {
         let docRef = await api.database.updateArrayObject(payload);
         return docRef;
       } catch (err) {
+        console.error("Error in updateArrayElementObject:", err)
+        commit("setError", "Error updating object in database");
         commit("setError", "Error in updateArrayElementObject" + err);
       } finally {
         commit("setLoading", false);
@@ -220,7 +232,8 @@ export default {
       try {
         await api.functions.call(payload);
       } catch (err) {
-        commit("setError", "Error in callFunction" + err);
+        console.error("Error in callFunction:", err)
+        commit("setError", "Error calling function");
       } finally {
         commit("setLoading", false);
       }
@@ -237,7 +250,8 @@ export default {
       try {
         await api.database.setParam(payload);
       } catch (err) {
-        commit("setError", "Error in setParamInObject" + err);
+        console.error("Error in setParamInObject:", err)
+        commit("setError", "Error setting object parameter in database");
       } finally {
         commit("setLoading", false);
       }
@@ -254,7 +268,8 @@ export default {
       try {
         api.auth.deleteUserByID(user);
       } catch (err) {
-        commit("setError", "Error in removeUser" + err);
+        console.error("Error in removeUser:", err)
+        commit("setError", "Error removing user from database");
       } finally {
         commit("setLoading", false);
       }
@@ -269,7 +284,8 @@ export default {
         });
         return objects;
       } catch (err) {
-        commit("setError", "Error in getPaginationArray" + err);
+        console.error("Error in getPaginationArray:", err)
+        commit("setError", "Error getting paginated array in database");
       } finally {
         commit("setLoading", false);
       }
