@@ -7,7 +7,13 @@
       :content="user.notifications.length"
       :value="user.notifications.length"
     >
-      <v-btn v-if="user.notifications.length == 0" small icon @click="openDropdown" class="mr-1">
+      <v-btn
+        v-if="user.notifications.length == 0"
+        small
+        icon
+        @click="openDropdown"
+        class="mr-1"
+      >
         <v-icon size="20">mdi-bell-outline</v-icon>
       </v-btn>
 
@@ -16,7 +22,14 @@
       </v-btn>
     </v-badge>
 
-    <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute max-width="300px" offset-y>
+    <v-menu
+      v-model="showMenu"
+      :position-x="x"
+      :position-y="y"
+      absolute
+      max-width="300px"
+      offset-y
+    >
       <v-list v-if="user.notifications.length > 0" class="menu-scroll">
         <v-list-item
           @click="nothing()"
@@ -29,27 +42,39 @@
               <v-list-item-title
                 v-if="notification.to.accessLevel != 2"
                 class="text-wrap text-center"
-              >{{notification.from.email}} has invited you to colaborate on his test: "{{notification.test.title}}"</v-list-item-title>
-              <v-list-item-title
-                v-else
-                class="text-wrap text-center"
-              >{{notification.from.email}} has invited you to reply test: "{{notification.test.title}}"</v-list-item-title>
+                >{{ notification.from.email }} has invited you to colaborate on
+                his test: "{{ notification.test.title }}"</v-list-item-title
+              >
+              <v-list-item-title v-else class="text-wrap text-center"
+                >{{ notification.from.email }} has invited you to reply test:
+                "{{ notification.test.title }}"</v-list-item-title
+              >
             </v-col>
 
-            <v-btn small color="success" @click="acceptNotification(notification)">Accept</v-btn>
+            <v-btn
+              small
+              color="success"
+              @click="acceptNotification(notification)"
+              >Accept</v-btn
+            >
             <v-btn
               small
               class="ml-2"
               color="error"
-              @click="removeNotification(notification),denyNotification(notification)"
-            >Deny</v-btn>
+              @click="
+                removeNotification(notification), denyNotification(notification)
+              "
+              >Deny</v-btn
+            >
           </v-row>
         </v-list-item>
       </v-list>
 
       <v-list v-else>
         <v-list-item>
-          <v-list-item-title class="caption">You don't have any notifications yet</v-list-item-title>
+          <v-list-item-title class="caption"
+            >You don't have any notifications yet</v-list-item-title
+          >
         </v-list-item>
       </v-list>
     </v-menu>
@@ -79,7 +104,7 @@ export default {
         element: item
       });
       if (item.to.accessLevel < 2) {
-        //joinTest
+        // joinTest
         this.$store.dispatch("pushMyCoops", {
           docId: this.user.uid,
           element: Object.assign(item.test, {
@@ -93,7 +118,7 @@ export default {
         this.$store.dispatch("pushMyAnswers", {
           docId: this.user.uid,
           element: Object.assign(item.test, {
-            answersSheet: Object.assign(this.test.answersSheet, {
+            answersSheet: Object.assign(this.test.answersSheet ? this.test.answersSheet : {}, {
               submitted: false
             }),
             accessLevel: {
