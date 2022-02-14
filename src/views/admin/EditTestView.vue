@@ -164,31 +164,39 @@ export default {
     mountAnswerSheet() {
       let aux = {
         heuristics: [],
+        tasks: [],
         progress: 0,
         total: this.totalQuestions,
       };
 
-      this.object.heuristics.forEach((heuris) => {
-        let questions = Array.from(heuris.questions);
-        let arrayQuestions = [];
+      if (this.object?.heuristics) {
+        this.object.heuristics.forEach((heuris) => {
+          let questions = Array.from(heuris.questions);
+          let arrayQuestions = [];
 
-        questions.forEach((el) => {
-          arrayQuestions.push(
-            Object.assign({}, { id: el.id, res: "", com: "" })
+          questions.forEach((el) => {
+            arrayQuestions.push(
+              Object.assign({}, { id: el.id, res: "", com: "" })
+            );
+          });
+
+          aux.heuristics.push(
+            Object.assign(
+              {},
+              {
+                id: heuris.id,
+                total: heuris.total,
+                questions: arrayQuestions,
+              }
+            )
           );
         });
 
-        aux.heuristics.push(
-          Object.assign(
-            {},
-            {
-              id: heuris.id,
-              total: heuris.total,
-              questions: arrayQuestions,
-            }
-          )
-        );
-      });
+        delete aux.tasks;
+      } else if (this.object?.tasks) {
+        aux.tasks = [...this.object.tasks]
+        delete aux.heuristics;
+      }
 
       return aux;
     },
@@ -245,7 +253,7 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro();
       }
@@ -266,9 +274,17 @@ export default {
     },
     totalQuestions() {
       let result = 0;
-      this.object?.heuristics.forEach((h) => {
-        result += h.total;
-      });
+      console.log(this.object);
+      if (this.object?.heuristics) {
+        this.object?.heuristics.forEach((h) => {
+          result += h.total;
+        });
+      } else if (this.object?.tasks) {
+        this.object?.tasks.forEach((h) => {
+          result += h.total;
+        });
+      }
+
       return result;
     },
   },

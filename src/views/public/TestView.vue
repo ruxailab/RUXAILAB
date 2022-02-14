@@ -681,6 +681,7 @@ export default {
       return object !== null && object !== undefined && object !== "";
     },
     calcProgress() {
+      console.log('cal progress')
       var qtd = 0;
       this.answersSheet.heuristics.forEach((h) => {
         qtd += h.questions.filter((q) => q.res !== "").length;
@@ -695,6 +696,8 @@ export default {
       let newAnswer = this.user.myAnswers.find(
         (answer) => answer.id == this.id
       );
+
+      console.log(newAnswer);
       if (!save) newAnswer.answersSheet.submitted = true;
 
       var log = {
@@ -914,8 +917,11 @@ export default {
       return this.$store.getters.loading;
     },
   },
-  created() {
-    if (!this.$store.test) this.$store.dispatch("getTest", { id: this.id });
+  async created() {
+    if (!this.$store.test) {
+      await this.$store.dispatch("getTest", { id: this.id });
+      await this.$store.dispatch("getCooperators", {id: this.test.cooperators})
+    }
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
