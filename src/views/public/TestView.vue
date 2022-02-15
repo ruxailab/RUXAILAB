@@ -924,7 +924,6 @@ export default {
       get() {
         if (this.user !== null && this.user !== undefined) {
           let x = this.user.myAnswers.find((answer) => answer.id == this.id);
-          console.log("x", x);
           if (x) {
             if(x.answersSheet.tasks) {
               /* eslint-disable*/

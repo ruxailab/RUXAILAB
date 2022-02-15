@@ -27,7 +27,7 @@
               :id="'id-'+item.name"
               outlined
               label="answer"
-              v-model="res"
+              v-model="item.res"
               @change="updated"
             ></v-textarea>
           </v-col>
@@ -36,7 +36,7 @@
               :id="'id-'+item.name"
               outlined
               label="observation (optional)"
-              v-model="obs"
+              v-model="item.obs"
               @change="updated"
             ></v-textarea>
           </v-col>
@@ -73,20 +73,8 @@ export default {
   components: {
     TipButton,
   },
-  data() {
-    return {
-      obs: null,
-      res: null,
-    };
-  },
-  created() {
-    this.obs = `${this.item.obs ?? ''}`;
-    this.res = `${this.item.res ?? ''}`;
-  },
   methods: {
     updated() {
-      this.item.obs = `${this.obs}`
-      this.item.res = `${this.res}`
       this.$emit("updatedAnswer", this.item);
     },
   },
