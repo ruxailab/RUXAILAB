@@ -124,10 +124,27 @@
           <span>Save</span>
         </v-tooltip>
 
-        <v-tooltip left>
+        <v-tooltip left v-if="answersSheet.heuristics">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               :disabled="answersSheet.progress < 100"
+              class="white--text"
+              @click="dialog = true"
+              fab
+              small
+              color="#F9A826"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-file-move</v-icon>
+            </v-btn>
+          </template>
+          <span>Submit</span>
+        </v-tooltip>
+
+         <v-tooltip left v-else>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
               class="white--text"
               @click="dialog = true"
               fab

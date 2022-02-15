@@ -21,7 +21,6 @@
         </v-row>
         <v-spacer></v-spacer>
         <v-row class="paragraph" justify="space-around">
-          {{item}}
           <v-col v-if="item.answer === 'textArea'">
             <v-textarea
               :id="'id-'+item.name"
