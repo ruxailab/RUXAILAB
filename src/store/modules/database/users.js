@@ -376,9 +376,11 @@ export default {
         collection: "users",
         param: "myAnswers",
       });
-
       dispatch("updateArrayObject", payload)
-        .catch((err) => commit("setError", "Error in updateMyAnswers." + err));
+        .catch((err) => {
+          console.log(err)
+          commit("setError", "Error in updateMyAnswers." + err)
+        })
     },
     /**
      * This action removes the answer sheet  into user tests answer array, 

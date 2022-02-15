@@ -1,4 +1,4 @@
-<template >
+<template>
   <div v-if="test || (test && test.type === 'User')">
     <Snackbar />
 
@@ -249,7 +249,7 @@
                           rotate="-90"
                           v-if="
                             test.type === 'Heuristics' &&
-                            progress(answersSheet.heuristics[i]) != 100
+                              progress(answersSheet.heuristics[i]) != 100
                           "
                           :value="progress(answersSheet.heuristics[i])"
                           :size="24"
@@ -289,7 +289,7 @@
                       rotate="-90"
                       v-if="
                         test.type === 'Heuristics' &&
-                        progress(answersSheet.heuristics[i]) != 100
+                          progress(answersSheet.heuristics[i]) != 100
                       "
                       :value="progress(answersSheet.heuristics[i])"
                       :size="24"
@@ -485,7 +485,10 @@
               test.tasks[heurisIndex].name
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
-            <ViewTask :item="test.tasks[heurisIndex]" />
+            <ViewTask
+              :item="test.tasks[heurisIndex]"
+              @updatedAnswer="updateAnswer"
+            />
           </div>
         </ShowInfo>
 
@@ -562,7 +565,7 @@ export default {
         }
       }
     },
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined)
         await this.mappingSteps();
       if (this.test && this.token) {
@@ -596,6 +599,9 @@ export default {
     },
   },
   methods: {
+    updateAnswer() {
+      this.calcProgress();
+    },
     mappingSteps() {
       if (this.test.type === "User") {
         //PreTest
@@ -681,23 +687,28 @@ export default {
       return object !== null && object !== undefined && object !== "";
     },
     calcProgress() {
-      console.log('cal progress')
       var qtd = 0;
-      this.answersSheet.heuristics.forEach((h) => {
-        qtd += h.questions.filter((q) => q.res !== "").length;
-      });
 
-      this.answersSheet.progress = (
-        (qtd * 100) /
-        this.answersSheet.total
-      ).toFixed(1);
+      if (this.answersSheet.heuristics) {
+        this.answersSheet.heuristics.forEach((h) => {
+          qtd += h.questions.filter((q) => q.res !== "").length;
+        });
+
+        this.answersSheet.progress = (
+          (qtd * 100) /
+          this.answersSheet.total
+        ).toFixed(1);
+      } else if (this.test.answersSheet.tasks) {
+        // TODO: Implement progress system for User Tests
+        this.answersSheet.total = this.answersSheet.tasks.length;
+        this.answersSheet.progress = 0;
+      }
     },
     submitLog(save) {
       let newAnswer = this.user.myAnswers.find(
         (answer) => answer.id == this.id
       );
 
-      console.log(newAnswer);
       if (!save) newAnswer.answersSheet.submitted = true;
 
       var log = {
@@ -706,6 +717,11 @@ export default {
         status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
       };
       log.status = newAnswer.answersSheet.submitted ? "Submitted" : log.status;
+
+      if (this.answersSheet.tasks) {
+        this.answersSheet.tasks = Object.assign({}, this.test.tasks);
+        newAnswer.answersSheet = this.answersSheet;
+      }
 
       this.$store
         .dispatch("updateLog", {
@@ -745,6 +761,23 @@ export default {
         .catch((err) => {
           if (save) this.$store.commit("setError", err);
         });
+
+      if (newAnswer.answersSheet.tasks) {
+        this.$store
+          .dispatch("pushAnswers", {
+            docId: newAnswer.answers,
+            element: Object.assign(this.answersSheet, {
+              uid: this.user.uid,
+              email: this.user.email,
+            }),
+          })
+          .then(() => {
+            this.$store.commit("setSuccess", "Test succesfully submitted");
+          })
+          .catch((err) => {
+            this.$store.commit("setError", err);
+          });
+      }
     },
     progress(item) {
       return (
@@ -891,8 +924,18 @@ export default {
       get() {
         if (this.user !== null && this.user !== undefined) {
           let x = this.user.myAnswers.find((answer) => answer.id == this.id);
-          if (x) return x.answersSheet;
-          else return this.test.answersSheet;
+          console.log("x", x);
+          if (x) {
+            if(x.answersSheet.tasks) {
+              /* eslint-disable*/
+              this.test.answersSheet = Object.assign({},x.answersSheet)
+              this.test.tasks = Object.assign({}, x.answersSheet.tasks)
+              return this.test.answersSheet
+            }
+            return x.answersSheet;
+          } else {
+            return this.test.answersSheet;
+          }
         } else {
           return null;
         }
@@ -920,7 +963,9 @@ export default {
   async created() {
     if (!this.$store.test) {
       await this.$store.dispatch("getTest", { id: this.id });
-      await this.$store.dispatch("getCooperators", {id: this.test.cooperators})
+      await this.$store.dispatch("getCooperators", {
+        id: this.test.cooperators,
+      });
     }
   },
   beforeRouteEnter(to, from, next) {

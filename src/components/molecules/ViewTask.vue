@@ -21,11 +21,24 @@
         </v-row>
         <v-spacer></v-spacer>
         <v-row class="paragraph" justify="space-around">
+          {{item}}
           <v-col v-if="item.answer === 'textArea'">
-            <v-textarea outlined label="answer"></v-textarea>
+            <v-textarea
+              :id="'id-'+item.name"
+              outlined
+              label="answer"
+              v-model="res"
+              @change="updated"
+            ></v-textarea>
           </v-col>
           <v-col>
-            <v-textarea outlined label="observation (optional)"></v-textarea>
+            <v-textarea
+              :id="'id-'+item.name"
+              outlined
+              label="observation (optional)"
+              v-model="obs"
+              @change="updated"
+            ></v-textarea>
           </v-col>
         </v-row>
       </v-col>
@@ -50,15 +63,32 @@ export default {
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     postTest: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: {
-    TipButton
-  }
+    TipButton,
+  },
+  data() {
+    return {
+      obs: null,
+      res: null,
+    };
+  },
+  created() {
+    this.obs = `${this.item.obs ?? ''}`;
+    this.res = `${this.item.res ?? ''}`;
+  },
+  methods: {
+    updated() {
+      this.item.obs = `${this.obs}`
+      this.item.res = `${this.res}`
+      this.$emit("updatedAnswer", this.item);
+    },
+  },
 };
 </script>

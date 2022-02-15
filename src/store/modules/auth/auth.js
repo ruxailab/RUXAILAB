@@ -156,7 +156,6 @@ export default {
      * @param {object[]} user.notifications - notificatinons recived 
      */
     async deleteAuth({ dispatch }, user) {
-      console.log(user)
       // await api.auth.deleteUserAuth(user);
       dispatch("callFunction", Object.assign({}, {
         function: 'deleteAuth',

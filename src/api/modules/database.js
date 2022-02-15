@@ -106,7 +106,6 @@ export default {
 
     element[payload.field][index] = payload.element
 
-
     return docRef.update({
       [payload.field]: element[payload.field],
     });

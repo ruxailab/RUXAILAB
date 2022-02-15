@@ -274,7 +274,6 @@ export default {
     },
     totalQuestions() {
       let result = 0;
-      console.log(this.object);
       if (this.object?.heuristics) {
         this.object?.heuristics.forEach((h) => {
           result += h.total;
