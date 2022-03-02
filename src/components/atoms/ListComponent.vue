@@ -26,7 +26,7 @@
             <v-list-item-title v-if="type === 'template'">
               {{ item.header.title }}
               <v-chip outlined style="color: grey" small class="ml-1">{{
-                item.header.type
+                item.header.type || item.body.type
               }}</v-chip>
             </v-list-item-title>
             <v-list-item-title v-else>

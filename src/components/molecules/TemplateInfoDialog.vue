@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="80%" v-if="template.header" persistent>
+    <v-dialog
+      v-model="dialog"
+      max-width="80%"
+      v-if="template.header"
+      persistent
+    >
       <v-stepper v-model="step" style="background-color: #e8eaf2">
         <v-stepper-header>
           <v-stepper-step color="#F9A826" :complete="step > 1" step="1"
@@ -82,7 +87,7 @@
             <!-- TODO: CHECK HERE -->
             <FormTestDescription
               style="margin: 0px 0px 20px 0px"
-              :test="template.header"
+              :test="mountTest"
               ref="form"
               :lock="true"
             />
@@ -159,6 +164,13 @@ export default {
     },
   },
   computed: {
+    mountTest() {
+      const test = this.template.header;
+      if (!test.type) {
+        test.type = this.template.body.type;
+      }
+      return test
+    },
     author() {
       return this.template?.header?.author?.email || "";
     },
