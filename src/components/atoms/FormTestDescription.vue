@@ -12,7 +12,6 @@
           @input="$emit('change')"
           dense
         ></v-text-field>
-        {{test}}
         <v-select
           :disabled="lock"
           :items="types"
