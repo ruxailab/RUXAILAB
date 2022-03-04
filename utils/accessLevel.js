@@ -10,7 +10,13 @@ const testAccessLevels = Object.freeze({
 	2 : evaluator
 })
 
+const testTypes = Object.freeze({
+    heuristics,
+	user
+})
+
 module.exports = {
     accessLevels,
-    testAccessLevels
+    testAccessLevels,
+    testTypes
 }
