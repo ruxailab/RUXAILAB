@@ -1,5 +1,3 @@
-const { use } = require("vue/types/umd")
-
 module.exports = class TaskAnswer {
     constructor({
         taskId, 
