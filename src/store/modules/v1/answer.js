@@ -52,18 +52,18 @@ export default {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "answers" });
 
-            let ans = await dispatch("getObject", payload)
+            let answers = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getAnswers." + err));
 
             commit("setAnswers", answers);
         },
 
         // get answers by id
-        async getAllAnswers({ dispatch, commit }, payload) {
+        async getAnswerById({ dispatch, commit }, payload) {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "answers" });
 
-            let ans = await dispatch("getObject", payload)
+            let answer = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getAnswers." + err));
 
             commit("setAnswers", answer);
