@@ -1,4 +1,5 @@
-// send email invitation for colaborators
+export default{
+    // send email invitation for colaborators
 
 
 // create test

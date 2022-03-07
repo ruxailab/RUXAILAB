@@ -1,3 +1,7 @@
+export default{
+
+}
+
 // create answer
 
 
