@@ -9,6 +9,13 @@ import answers from '@/store/modules/database/answers'
 import cooperators from '@/store/modules/database/cooperators'
 import templates from '@/store/modules/database/templates'
 
+// refactored store
+import answerv1 from '@/store/modules/v1/answer'
+import testv1 from '@/store/modules/v1/test'
+import templatev1 from '@/store/modules/v1/answer'
+import userv1 from '@/store/modules/v1/answer'
+import authv1 from '@/store/modules/v1/answer'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -20,6 +27,11 @@ export default new Vuex.Store({
     reports,
     answers,
     cooperators,
-    templates
+    templates,
+    answerv1,
+    testv1,
+    templatev1,
+    userv1,
+    authv1,
   }
 })

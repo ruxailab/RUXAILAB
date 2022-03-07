@@ -19,23 +19,24 @@ module.exports = {
         updateDate(string)
         testAuthorName(string)
     */
-    getUsers: async payload => {
-        try{
-            payload = Object.assign(payload, { collection: "users" });
-        } catch(e){
-            return new InternalError(e.code)
-        }
-    },
-    updateMyTest: async payload=> {
-        try{
-            payload = Object.assign(payload, {
-                collection: "users",
-                param: "myTests",
-              });        
-        }
-        catch{
-            return new InternalError(e.code)
-        }
-    }
 
+    // get users
+    
+
+    // create user
+
+
+    // update user
+
+
+    // delete user
+
+
+    // update level
+
+
+    // push notification
+
+
+    // remove notification
 }
