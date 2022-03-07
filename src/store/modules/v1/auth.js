@@ -1,21 +1,3 @@
-/// Passar a logica de dentro das actions para o controller
-// store só tem q chamar o controller e setar o state
-// esse é um bom exemplo
-
-// async logout({ commit }) {
-//   try {
-//     commit("setLoading", true);
-//     const controller = new AuthController()
-//     await controller.auth.signOut();
-//     commit("setUser", null);
-//   } catch (err) {
-//     commit("setError", err)
-//   } finally {
-//     //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
-//     commit("setLoading", false);
-//   }
-// },
-
 import api from "@/api";
 /**
  * Auth store module
@@ -45,7 +27,7 @@ export default {
      * @param {object} payload - Data to create a new user 
      * @param {string} payload.email - the user email
      * @param {string} payload.password - the user password 
-     * @returns {void}
+     * @returns {void} 
      */
     async signup({ commit }, payload) {
       commit("setLoading", true);
