@@ -5,7 +5,8 @@
 // async logout({ commit }) {
 //   try {
 //     commit("setLoading", true);
-//     await api.auth.singOut();
+//     const controller = new AuthController()
+//     await controller.auth.signOut();
 //     commit("setUser", null);
 //   } catch (err) {
 //     commit("setError", err)
