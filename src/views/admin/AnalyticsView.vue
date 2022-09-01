@@ -14,7 +14,7 @@
             <!--Heuristics List-->
             <v-col class="ma-0 pa-0" cols="2">
               <v-list dense height="560px" outlined>
-                <v-subheader>Heuristics</v-subheader>
+                <v-subheader>{{ $t('Admin.AnalyticsView.Heuristics') }}</v-subheader>
                 <v-divider></v-divider>
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
@@ -36,14 +36,14 @@
               <v-list dense height="560px" outlined>
                 <v-subheader
                   >{{ test.heuristics[heuristicSelect].title }} -
-                  Questions</v-subheader
+                  {{ $t('Admin.AnalyticsView.Questions') }}</v-subheader
                 >
                 <v-divider></v-divider>
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="questionSelect" color="#fca326">
                     <v-list-item :value="-1">
                       <v-list-item-content>
-                        <v-list-item-title>Data Table</v-list-item-title>
+                        <v-list-item-title>{{ $t('Admin.AnalyticsView.dataTable') }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon v-if="questionSelect == -1">
                         <v-icon>mdi-chevron-right</v-icon>
@@ -123,13 +123,13 @@
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 0"
-                      >Comments</v-tab
+                      >{{ $t('Admin.AnalyticsView.Comments') }}</v-tab
                     >
                     <v-tab
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 1"
-                      >Graphic</v-tab
+                      >{{ $t('Admin.AnalyticsView.Graphic') }}</v-tab
                     >
                   </v-tabs>
                   <v-col v-if="ind == 1">

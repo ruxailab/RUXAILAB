@@ -17,16 +17,16 @@
           class="pb-0 mb-0"
           v-model="tab"
         >
-          <v-tab @click="tab = 0">Statistics</v-tab>
-          <v-tab @click="tab = 1">Evaluators</v-tab>
-          <v-tab @click="tab = 2">Heuristics</v-tab>
+          <v-tab @click="tab = 0">{{ $t('Admin.AnswerView.Statistics') }}</v-tab>
+          <v-tab @click="tab = 1">{{ $t('Admin.AnswerView.Evaluators') }}</v-tab>
+          <v-tab @click="tab = 2">{{ $t('Admin.AnswerView.Heuristics') }}</v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
         <div slot="content" class="ma-0 pa-0">
           <!-- Tab 1 - Statistics -->
           <v-card v-if="tab == 0" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Statistics</v-card-title>
+            <v-card-title class="subtitleView">{{ $t('Admin.AnswerView.Statistics') }}</v-card-title>
 
             <v-divider></v-divider>
 
@@ -38,7 +38,7 @@
                     <!-- Average -->
                     <v-col cols="4">
                       <v-row justify="center">
-                        <v-card-title>Usability Percentage</v-card-title>
+                        <v-card-title>{{ $t('Admin.AnswerView.usabilityPercentage') }}</v-card-title>
                         <v-card-text>
                           <v-row align="center" justify="center">
                             <p class="display-3">{{ finalResult.average }}</p>
@@ -57,7 +57,7 @@
                             <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
                           </v-list-item-icon>
 
-                          <v-list-item-title>Max</v-list-item-title>
+                          <v-list-item-title>{{ $t('Admin.AnswerView.Max') }}</v-list-item-title>
                           <v-list-item-subtitle class="text-right">{{
                             finalResult.max
                           }}</v-list-item-subtitle>
@@ -66,7 +66,7 @@
                           <v-list-item-icon>
                             <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
                           </v-list-item-icon>
-                          <v-list-item-title>Min</v-list-item-title>
+                          <v-list-item-title>{{ $t('Admin.AnswerView.Min') }}</v-list-item-title>
                           <v-list-item-subtitle class="text-right">{{
                             finalResult.min
                           }}</v-list-item-subtitle>
@@ -76,7 +76,7 @@
                             <v-icon>mdi-plus-minus</v-icon>
                           </v-list-item-icon>
                           <v-list-item-title
-                            >Standard deviation</v-list-item-title
+                            >{{ $t('Admin.AnswerView.standardDeviation') }}</v-list-item-title
                           >
                           <v-list-item-subtitle class="text-right">{{
                             finalResult.sd
@@ -92,7 +92,7 @@
 
           <!-- Tab 2 - Evaluators -->
           <v-card v-if="tab == 1" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Evaluators</v-card-title>
+            <v-card-title class="subtitleView">{{ $t('Admin.AnswerView.Evaluators') }}</v-card-title>
 
             <v-divider></v-divider>
 
@@ -151,7 +151,7 @@
 
           <!-- Tab 3 - Heuristics-->
           <v-card v-if="tab == 2" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Heuristics Data</v-card-title>
+            <v-card-title class="subtitleView">{{ $t('Admin.AnswerView.heuristicsData') }}</v-card-title>
 
             <v-divider></v-divider>
 
@@ -166,19 +166,19 @@
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 0"
-                >Answers by Evaluator</v-tab
+                >{{ $t('Admin.AnswerView.answersByevaluator') }}</v-tab
               >
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 1"
-                >Answers By Heuristics</v-tab
+                >{{ $t('Admin.AnswerView.answersByheuristics') }}</v-tab
               >
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 2"
-                >Graphic</v-tab
+                >{{ $t('Admin.AnswerView.Graphic') }}</v-tab
               >
             </v-tabs>
 

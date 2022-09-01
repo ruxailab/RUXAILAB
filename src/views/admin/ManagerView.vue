@@ -10,7 +10,7 @@
         color="#fca326"
         size="50"
       ></v-progress-circular>
-      <div class="white-text mt-3">Loading Test</div>
+      <div class="white-text mt-3">{{ $t('Admin.ManagerView.loadingTest') }}</div>
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
@@ -35,13 +35,13 @@
         </v-row>
         <v-card-actions class="justify-center mt-4">
           <v-btn color="#F9A826" class="white--text" @click="setTest()"
-            >Continue as {{ user.email }}</v-btn
+            >{{ $t('Admin.ManagerView.continueAs') }} {{ user.email }}</v-btn
           >
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
-            Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
+            {{ $t('Admin.ManagerView.Not') }}  {{ user.email }}?
+            <a style="color: #f9a826" @click="signOut()">{{ $t('Admin.ManagerView.changeAccount') }}</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -178,7 +178,7 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
-                  Manager
+                {{ $t('Admin.ManagerView.Manager') }}
                 </div>
                 <v-img
                   class="hidden-md-and-up"
@@ -205,7 +205,7 @@
           <div>
             <v-container class="card-container">
               <div class="presentation-text">
-                Edit and invite people to your test
+                {{ $t('Admin.ManagerView.sectionFeature1') }}
               </div>
 
               <!-- Top Cards -->
@@ -251,7 +251,7 @@
               </v-row>
 
               <div class="presentation-text mt-5">
-                Analyze your project and evaluators
+                {{ $t('Admin.ManagerView.sectionFeature2') }}
               </div>
 
               <!-- Bottom Cards -->

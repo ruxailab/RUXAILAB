@@ -6,7 +6,7 @@
         <v-card color="#f5f7ff" class="mx-2">
           <v-row>
             <v-col cols="12" md="5" align-self="center">
-              <div class="card-title">Sign-Up</div>
+              <div class="card-title">{{ $t('Public.SingUpView.signUp') }}</div>
 
               <div class="divider"></div>
 
@@ -55,7 +55,7 @@
               </v-card-actions>
               <v-card-actions class="justify-center mt-1">
                 <p>
-                  <a style="color: #F9A826" href="/signin">Already have an account? Sign in</a>
+                  <a style="color: #F9A826" href="/signin">{{ $t('Public.SingUpView.sectionDescription1') }}</a>
                 </p>
               </v-card-actions>
             </v-col>

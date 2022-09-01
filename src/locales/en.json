@@ -1,9 +1,179 @@
 {
-  "language":"Language",
-  "SIGNIN":{
-    "sign-in":"Sign-In",
-    "email":"E-mail",
-    "password":"Password",
-    "dont-have-account":"Don't have an account yet? Sign up"
+  "language": "Language",
+  "SIGNIN": {
+    "sign-in": "Sign-In",
+    "email": "E-mail",
+    "password": "Password",
+    "dont-have-account": "Don't have an account yet? Sign up"
+  },
+  "Admin": {
+    "AnalyticsView": {
+      "Heuristics": "Heuristics",
+      "Questions": "Questions",
+      "dataTable": "Data Table",
+      "Comments": "Comments",
+      "Graphic": "Graphic"
+    },
+    "AnswerView": {
+      "Statistics": "Statistics",
+      "Evaluators": "Evaluators",
+      "Heuristics": "Heuristics",
+      "usabilityPercentage": "Usability Percentage",
+      "Max": "Max",
+      "Min": "Min",
+      "answersByevaluator": "Answers by Evaluator",
+      "answersByheuristics": "Answers By Heuristics",
+      "standardDeviation": "Standard deviation",
+      "heuristicsData": "Heuristics Data",
+      "Graphic": "Graphic"
+    },
+    "CooperatorsView": {
+      "loadingCooperators": "Loading Cooperators",
+      "sectionFeature1": "Are you sure you want to leave?",
+      "sectionDescription1": "Are you sure you want to leave? All your changes will be discarded",
+      "Stay": "Stay",
+      "Leave": "Leave",
+      "mdiEmail": "mdi-email",
+      "sendInvitations": "Send invitations",
+      "sectionFeature2": "There are no users registered with that email, press enter to select anyways.",
+      "mdiAccountCircle": "mdi-account-circle",
+      "mdiClosecircleOutline": "mdi-close-circle-outline",
+      "mdiCheckboxblankCircleoutline": "mdi-checkbox-blank-circle-outline",
+      "mdiDotsvertica": "mdi-dots-vertica",
+      "cancelInvitation": "Cancel invitation",
+      "reInvite": "Re-invite",
+      "removeCooperator": "Remove cooperator"
+    },
+    "CreateFromTemplateView": {
+      "createFromtemplate": "Create from template",
+      "mdiMagnify": "mdi-magnify"
+    },
+    "CreateView": {
+      "sectionDescription1": "Create a new test",
+      "sectionDescription2": "Create a blank test",
+      "sectionFeature1": "Create a blank test to begin with a completely new and fresh template.",
+      "sectionDescription3": "Create from template",
+      "sectionFeature2": "Create a test based on a template created by one of our users.",
+      "sectionDescription4": "Create Test",
+      "Cancel": "Cancel",
+      "Create": "Create"
+    },
+    "EditTestView": {
+      "sectionFeature1": "Are you sure you want to leave ll your changes will be discarded",
+      "sectionFeature2": "Are you sure you want to leave? All your changes will bediscarded",
+      "Stay": "Stay",
+      "Leave": "Leave",
+      "mdiContentsave": "mdi-content-save",
+      "loadingTest": "Loading Test"
+    },
+    "ManagerView": {
+      "loadingTest": "Loading Test",
+      "mdiAccount": "mdi-account",
+      "continueAs": "Continue as",
+      "Not": "Not",
+      "changeAccount": "Change account",
+      "mdiCog": "mdi-cog",
+      "mdiChevronleft": "mdi-chevron-left",
+      "mdiChevronright": "mdi-chevron-right",
+      "Manager": "Manager",
+      "sectionFeature1": "Edit and invite people to your test",
+      "sectionFeature2": "Analyze your project and evaluators"
+    },
+    "ReportView": {
+      "sectionDescription1": "Are you sure you want to delete this report?",
+      "Cancel": "Cancel",
+      "Delete": "Delete",
+      "loadingReports": "Loading Reports",
+      "lastUpdated": " Last Updated:"
+    },
+    "SettingsView": {
+      "sectionDescription1": "Are you sure you want to leave?",
+      "sectionFeature1": "Are you sure you want to leave? All your changes will be discarded.",
+      "Stay": "Stay",
+      "Leave": "Leave",
+      "sectionDescription2": "Are you sure you want to delete this test?",
+      "Cancel": "Cancel",
+      "Delete": "Delete",
+      "currentTest": "Current Test",
+      "createTemplate": "Create template",
+      "mdiTrashcanoutLine": "mdi-trash-can-outline",
+      "mdiContentsave": "mdi-content-save",
+      "Save": "Save",
+      "loadingSettings": "Loading Settings"
+    },
+    "TemplateView": {
+      "sectionDescription1": "Are you sure you want to delete this template?",
+      "Cancel": "Cancel",
+      "Delete": "Delete",
+      "sectionDescription2": "Are you sure you want to leave?",
+      "sectionFeature1": "Are you sure you want to leave? All your changes will be discarded",
+      "sectionFeature2": "Your template is not up to date with your test.",
+      "detailedInformation": "Detailed information",
+      "sectionFeature3": "Click to update your local template, click save to submit",
+      "mdiTrashcanOutline": "mdi-trash-can-outline",
+      "deleteTemplate": "Delete template",
+      "mdiContentsave": "mdi-content-save",
+      "Leave": "Leave",
+      "Stay": "Stay",
+      "Save": "Save"
+    },
+    "TestListView": {
+      "mdiPlus": "mdi-plus",
+      "sectionDescription1": "Create new test",
+      "mdiMagnify": "mdi-magnify",
+      "Tests": "Tests",
+      "Answers": "Answers",
+      "Templates": "Templates",
+      "All": "All",
+      "Personal": "Personal",
+      "Others": "Others",
+      "Explore": "Explore"
+    }
+  },
+  "Public": {
+    "HomeView": {
+      "Userhome": "User Home"
+    },
+    "LandingPage": {},
+    "PageNotFoundView": {
+      "sectionFeature1": "We weren't able to find the page you were looking for."
+    },
+    "SignlnView": {},
+    "SingUpView": {
+      "signUp": "Sign-Up",
+      "sectionDescription1": "Already have an account? Sign in"
+    },
+    "TestView": {
+      "sectionDescription1": "Are you sure you want to submit this test?",
+      "sectionFeature1": "Are you sure you want to submit your test. You can only do it once.",
+      "Cancel": "Cancel",
+      "Submit": "Submit",
+      "mdiAccount": "mdi-account",
+      "Continue as": "Continue as ",
+      "Not": "Not",
+      "mdiContentsave": "mdi-content-save",
+      "mdiFilemove": "mdi-file-move",
+      "mdiChevrondown": "mdi-chevron-down",
+      "mdiChevronright": "mdi-chevron-right",
+      "mdiChevronleft": "mdi-chevron-left",
+      "mdiHammerscrewdriver": "mdi-hammer-screwdriver",
+      "changeAccount": "Change account"
+    }
+  },
+  "SuperAdmin": {
+    "SuperAdminView": {
+      "sectionDescription1": "Are you sure you want to delete this user?",
+      "Cancel": "Cancel",
+      "Delete": "Delete",
+      "mdiPencil": "mdi-pencil",
+      "mdiDelete": "mdi-delete",
+      "Edit User": "Edit User",
+      "Tests": "Tests",
+      "mdiEye": "mdi-eye",
+      "superAdmin": "Super Admin",
+      "Users": "Users"
+    },
+
+    "App": {}
   }
 }

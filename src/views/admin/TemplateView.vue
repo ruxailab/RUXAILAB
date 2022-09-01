@@ -1,12 +1,12 @@
 <template>
   <v-container v-if="test">
     <SnackBar></SnackBar>
-
+    
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to delete this template?</v-card-title
+          >{{ $t('Admin.TemplateView.sectionDescription1') }}</v-card-title
         >
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -16,14 +16,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialogDel = false"
-            >Cancel</v-btn
+            >{{ $t('Admin.TemplateView.Cancel') }}</v-btn
           >
           <v-btn
             class="red white--text ml-1"
             :loading="loading"
             text
             @click="deleteTemplate(object), (loading = true), (change = false)"
-            >Delete</v-btn
+            >{{ $t('Admin.TemplateView.Delete') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -33,12 +33,11 @@
     <v-dialog v-model="dialogAlert" width="600" persistent>
       <v-card>
         <v-card-title class="headline error accent-4 white--text" primary-title
-          >Are you sure you want to leave?</v-card-title
+          >{{ $t('Admin.TemplateView.sectionDescription2') }}</v-card-title
         >
 
         <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded</v-card-text
+          >{{ $t('Admin.TemplateView.sectionFeature1') }}</v-card-text
         >
 
         <v-divider></v-divider>
@@ -46,13 +45,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialogAlert = false"
-            >Stay</v-btn
+            >{{ $t('Admin.TemplateView.Stay') }}</v-btn
           >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
             @click="(change = false), $router.push(go)"
-            >Leave</v-btn
+            >{{ $t('Admin.TemplateView.Leave') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -70,7 +69,7 @@
         v-if="!test.template.upToDate"
         dense
         slot="warning"
-        >Your template is not up to date with your test.</v-alert
+        >{{ $t('Admin.TemplateView.sectionFeature2') }}</v-alert
       >
       <div slot="content">
         <v-card style="background: #f5f7ff">
@@ -124,7 +123,7 @@
                 ></v-checkbox>
                 <v-row class="mx-1">
                   <v-btn outlined @click="dialogDetails = true"
-                    >Detailed information</v-btn
+                    >{{ $t('Admin.TemplateView.detailedInformation') }}</v-btn
                   >
                   <v-spacer></v-spacer>
 
@@ -139,7 +138,7 @@
                       >
                     </template>
                     <span
-                      >Click to update your local template, click save to submit
+                      >{{ $t('Admin.TemplateView.sectionFeature3') }}
                       it.</span
                     >
                   </v-tooltip>
@@ -155,7 +154,7 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left>mdi-trash-can-outline</v-icon>Delete template
+              <v-icon left>mdi-trash-can-outline</v-icon>{{ $t('Admin.TemplateView.deleteTemplate') }}
             </v-btn>
           </v-row>
         </v-card>
@@ -179,7 +178,7 @@
           <v-icon large>mdi-content-save</v-icon>
         </v-btn>
       </template>
-      <span>Save</span>
+      <span>{{ $t('Admin.TemplateView.Save') }}</span>
     </v-tooltip>
   </v-container>
 </template>

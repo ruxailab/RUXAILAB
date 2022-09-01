@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-row align="center" v-if="!searching">
-          <span class="titleText ml-3 mb-2">Create from template</span>
+          <span class="titleText ml-3 mb-2">{{ $t('Admin.CreateFromTemplateView.createFromtemplate') }}</span>
 
           <v-text-field
             full-width

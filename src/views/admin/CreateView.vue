@@ -2,7 +2,7 @@
   <div>
     <h2
       style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
-    >Create a new test</h2>
+    >{{ $t('Admin.CreateView.sectionDescription1') }}</h2>
 
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
@@ -13,8 +13,8 @@
                 <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200"></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text">
-                <div class="card-title">Create a blank test</div>
-                <div>Create a blank test to begin with a completely new and fresh template.</div>
+                <div class="card-title">{{$t('Admin.CreateView.sectionDescription2') }}</div>
+                <div>{{ $t('Admin.CreateView.sectionFeature1') }}</div>
               </v-col>
             </v-row>
           </v-card>
@@ -26,8 +26,8 @@
                 <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200"></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
-                <div class="card-title">Create from template</div>
-                <div>Create a test based on a template created by one of our users.</div>
+                <div class="card-title">{{ $t('Admin.CreateView.sectionDescription3') }}</div>
+                <div>{{ $t('Admin.CreateView.sectionFeature2') }}</div>
               </v-col>
             </v-row>
           </v-card>
@@ -38,13 +38,13 @@
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
-          <p class="dialog-title ma-2 pa-2">Create Test</p>
+          <p class="dialog-title ma-2 pa-2">{{ $t('Admin.CreateView.sectionDescription4') }}</p>
           <v-divider></v-divider>
           <FormTestDescription :test="test" ref="form" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
             <v-spacer></v-spacer>
-            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
-            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
+            <v-btn color="black" text @click="dialog = false">{{ $t('Admin.CreateView.Cancel') }}</v-btn>
+            <v-btn color="#F9A826" @click="validate()">{{ $t('Admin.CreateView.Create') }}</v-btn>
           </v-card-actions>
         </v-container>
       </v-card>

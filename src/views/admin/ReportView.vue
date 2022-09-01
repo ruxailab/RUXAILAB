@@ -6,7 +6,7 @@
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to delete this report?</v-card-title
+          >{{ $t('Admin.ReportView.sectionDescription1') }}</v-card-title
         >
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -16,14 +16,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Cancel</v-btn
+            >{{ $t('Admin.ReportView.Cancel') }}</v-btn
           >
           <v-btn
             class="red white--text ml-1"
             :loading="loadingBtn"
             text
             @click="removeReport(report), (loadingBtn = true)"
-            >Delete</v-btn
+            >{{ $t('Admin.ReportView.Delete') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -35,7 +35,7 @@
         color="#fca326"
         size="50"
       ></v-progress-circular>
-      <div class="white-text mt-3">Loading Reports</div>
+      <div class="white-text mt-3">"{{ $t('Admin.ReportView.loadingReports) }}</div>
     </v-overlay>
 
     <Intro

@@ -6,12 +6,11 @@
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to submit this test?</v-card-title
+          >{{ $t('Public.TestView.sectionDescription1') }}</v-card-title
         >
 
         <v-card-text
-          >Are you sure you want to submit your test. You can only do it
-          once.</v-card-text
+          >{{ $t('Public.TestView.sectionFeature1') }}.</v-card-text
         >
 
         <v-divider></v-divider>
@@ -19,13 +18,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Cancel</v-btn
+            >{{ $t('Public.TestView.Cancel') }}</v-btn
           >
           <v-btn
             class="red white--text ml-1"
             text
             @click="submitLog(false), (dialog = false)"
-            >Submit</v-btn
+            >{{ $t('Public.TestView.Submit') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -61,12 +60,12 @@
         </v-row>
         <v-card-actions class="justify-center mt-4">
           <v-btn color="#F9A826" class="white--text" @click="setTest()"
-            >Continue as {{ user.email }}</v-btn
+            >{{ $t('Public.TestView.Continue as') }} {{ user.email }}</v-btn
           >
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
-            Not {{ user.email }}?
+            {{ $t('Public.TestView.Not') }}  {{ user.email }}?
             <a style="color: #f9a826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
@@ -84,7 +83,7 @@
         <p align="justify" class="description">{{ test.description }}</p>
         <v-row justify="center" class>
           <v-btn color="white" outlined rounded @click="start = !start"
-            >Start Test</v-btn
+            >{{ $t('Public.TestView.Continue as') }} </v-btn
           >
         </v-row>
       </v-col>

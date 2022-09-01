@@ -6,12 +6,11 @@
     <v-dialog v-model="dialogAlert" width="600" persistent>
       <v-card>
         <v-card-title class="headline error accent-4 white--text" primary-title
-          >Are you sure you want to leave?</v-card-title
+          > {{ $t('Admin.SettingsView.sectionDescription1') }}</v-card-title
         >
 
         <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded.</v-card-text
+          >{{ $t('Admin.SettingsView.sectionFeature1') }}.</v-card-text
         >
 
         <v-divider></v-divider>
@@ -19,13 +18,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialogAlert = false"
-            >Stay</v-btn
+            >{{ $t('Admin.SettingsView.Stay') }}</v-btn
           >
           <v-btn
             class="error accent-4 white--text ml-1"
             text
             @click="(change = false), $router.push(go)"
-            >Leave</v-btn
+            >{{ $t('Admin.SettingsView.Leave') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -35,7 +34,7 @@
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to delete this test?</v-card-title
+          >{{ $t('Admin.SettingsView.sectionDescription2') }}</v-card-title
         >
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -45,14 +44,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="grey lighten-3" text @click="dialogDel = false"
-            >Cancel</v-btn
+            >{{ $t('Admin.SettingsView.Cancel') }}</v-btn
           >
           <v-btn
             class="red white--text ml-1"
             :loading="loading"
             text
             @click="deleteTest(object), (loading = true)"
-            >Delete</v-btn
+            >{{ $t('Admin.SettingsView.Delete') }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -61,7 +60,7 @@
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
       <v-card>
-        <p class="dialog-title ma-2 pa-2">Create Template</p>
+        <p class="dialog-title ma-2 pa-2">{{ $t('Admin.SettingsView.createTemplate') }}</p>
         <v-divider></v-divider>
         <v-form ref="tempform" class="px-5">
           <v-row justify="space-around" class="pa-2">
@@ -95,7 +94,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
+            <v-btn class="error" @click="closeDialog()">{{ $t('Admin.SettingsView.Cancel') }}</v-btn>
             <v-btn
               @click="createTemplate(), (tempDialog = false)"
               text
@@ -112,7 +111,7 @@
       <div slot="content">
         <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
-            <p class="subtitleView">Current Test</p>
+            <p class="subtitleView">{{ $t('Admin.SettingsView.currentTest') }}</p>
           </v-col>
 
           <v-divider></v-divider>
@@ -133,7 +132,7 @@
               color="green"
               @click="tempDialog = true"
               :disabled="hasTemplate || !object ? true : false"
-              >Create template</v-btn
+              >{{ $t('Admin.SettingsView.createTemplate') }}</v-btn
             >
           </v-row>
           <v-divider class="my-3 mx-2"></v-divider>
@@ -145,7 +144,7 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left>mdi-trash-can-outline</v-icon>Delete Test
+              <v-icon left>mdi-trash-can-outline</v-icon>{{ $t('Admin.SettingsView.Delete') }}
             </v-btn>
           </v-row>
         </v-card>
@@ -179,7 +178,7 @@
       color="#fca326"
       size="50"
     ></v-progress-circular>
-    <div class="white-text mt-3">Loading Settings</div>
+    <div class="white-text mt-3">{{ $t('Admin.SettingsView.loadingSettings') }}</div>
   </v-overlay>
   <AccessNotAllowed v-else />
 </template>

@@ -1,9 +1,179 @@
 {
-    "language":"Idioma",
-    "SIGNIN":{
-        "sign-in":"Entrar",
-        "email":"E-mail",
-        "password":"Senha",
-        "dont-have-account":"Ainda não possui conta? Cadastre-se"
-      }
+  "language": "Idioma",
+  "SIGNIN": {
+    "sign-in": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "dont-have-account": "Ainda não possui conta? Cadastre-se"
+  },
+  "Admin": {
+    "AnalyticsView": {
+      "Heuristics": "heuristica",
+      "Questions": "Perguntas",
+      "dataTable": "Tabela de dados",
+      "Comments": "Comentários",
+      "Graphic": "Gráfico "
+    },
+    "AnswerView": {
+      "Statistics": "estatística",
+      "Evaluators": "Avaliadores",
+      "Heuristics": "heuristica",
+      "usabilityPercentage": "Porcentagem de Usabilidade",
+      "Max": "Máx",
+      "Min": "Mín",
+      "answersByevaluator": "Respostas do avaliador",
+      "answersByheuristics": "Respostas por heurística",
+      "standardDeviation": "Desvio padrão",
+      "heuristicsData": "Dados heurísticos",
+      "Graphic": "Gráfico "
+    },
+    "CooperatorsView": {
+      "loadingCooperators": "Carregando Cooperadores",
+      "sectionFeature1": "Você tem certeza de que quer sair?",
+      "sectionDescription1": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
+      "Stay": "Fique",
+      "Leave": "Sair",
+      "mdiEmail": "mdi-e-mail",
+      "sendInvitations": "Enviar convites",
+      "sectionFeature2": "Não há usuários registrados com esse e-mail, pressione enter para selecionar de qualquer maneira.",
+      "mdiAccountCircle": "mdi-conta-circulo",
+      "mdiClosecircleOutline": "mdi-fechar-circulo-contorno ",
+      "mdiCheckboxblankCircleoutline": "mdi-caixa de seleção-em branco-circulo-contorno",
+      "mdiDotsvertica": "mdi-pontos-vertical",
+      "cancelInvitation": "Cancelar convite",
+      "reInvite": "Convidar novamente",
+      "removeCooperator": "Remover colaborador"
+    },
+    "CreateFromTemplateView": {
+      "createFromtemplate": "criar a partir do modelo",
+      "mdiMagnify": "mdi-ampliar "
+    },
+    "CreateView": {
+      "sectionDescription1": "Criar um novo teste",
+      "sectionDescription2": "Criar um teste em branco",
+      "sectionFeature1": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
+      "sectionDescription3": "Criar a partir do modelo",
+      "sectionFeature2": "Crie um teste com base em um modelo criado por um de nossos usuários.",
+      "sectionDescription4": "Criar teste",
+      "Cancel": "Cancelar",
+      "Create": "Criar"
+    },
+    "EditTestView": {
+      "sectionFeature1": "Tem certeza de que deseja deixar todas as suas alterações serão descartadas",
+      "sectionFeature2": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
+      "Stay": "Fique",
+      "Leave": "Sair",
+      "mdiContentsave": "mdi-contente-Salve ",
+      "loadingTest": "Teste de carregamento"
+    },
+    "ManagerView": {
+      "loadingTest": "Teste de carregamento",
+      "mdiAccount": "mdi-conta ",
+      "continueAs": "Continuar como",
+      "Not": "Não",
+      "changeAccount": "Mudar de conta",
+      "mdiCog": "mdi-engrenagem ",
+      "mdiChevronleft": "mdi-divisa -deixei ",
+      "mdiChevronright": "mdi-divisa -certo ",
+      "Manager": "Gerente",
+      "sectionFeature1": "Edite e convide pessoas para seu teste",
+      "sectionFeature2": "Analise seu projeto e avaliadores"
+    },
+    "ReportView": {
+      "sectionDescription1": "Tem certeza de que deseja excluir este relatório?",
+      "Cancel": "Cancelar",
+      "Delete": "Excluir",
+      "loadingReports": "Carregando relatórios",
+      "lastUpdated": " Ultima atualização:"
+    },
+    "SettingsView": {
+      "sectionDescription1": "Você tem certeza de que quer sair?",
+      "sectionFeature1": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas.",
+      "Stay": "Fique",
+      "Leave": "Sair",
+      "sectionDescription2": "Tem certeza de que deseja excluir este teste?",
+      "Cancel": "Cancelar",
+      "Delete": "Excluir",
+      "currentTest": "Teste atual",
+      "createTemplate": "Criar modelo",
+      "mdiTrashcanoutLine": "mdi-trash-can-outline",
+      "mdiContentsave": "mdi-content-save",
+      "Save": "Salvar",
+      "loadingSettings": "Carregando configurações"
+    },
+    "TemplateView": {
+      "sectionDescription1": "Tem certeza de que deseja excluir este modelo?",
+      "Cancel": "Cancelar",
+      "Delete": "Delete",
+      "sectionDescription2": "Você tem certeza de que quer sair?",
+      "sectionFeature1": "Tem certeza de que deseja sair? Todas as suas alterações serão descartadas",
+      "sectionFeature2": "Seu modelo não está atualizado com seu teste.",
+      "detailedInformation": "Informação detalhada",
+      "sectionFeature3": "Clique para atualizar seu modelo local, clique em salvar para enviar",
+      "mdiTrashcanOutline": "mdi-trash-can-outline",
+      "deleteTemplate": "Excluir modelo",
+      "mdiContentsave": "mdi-content-save",
+      "Leave": "sair",
+      "Stay": "Fique",
+      "Save": "Salvar"
+    },
+    "TestListView": {
+      "mdiPlus": "mdi-plus",
+      "sectionDescription1": "Criar novo teste",
+      "mdiMagnify": "mdi-magnify",
+      "Tests": "Testes",
+      "Answers": "Respostas",
+      "Templates": "Modelos",
+      "All": "Tudo",
+      "Personal": "Pessoal",
+      "Others": "Outros",
+      "Explore": "Explorar"
+    }
+  },
+  "Public": {
+    "HomeView": {
+      "Userhome": "Página inicial do usuário"
+    },
+    "LandingPage": {},
+    "PageNotFoundView": {
+      "sectionFeature1": "Não foi possível encontrar a página que você estava procurando."
+    },
+    "SignlnView": {},
+    "SingUpView": {
+      "signUp": "Inscrever-se",
+      "sectionDescription1": "Já tem uma conta? Faça login"
+    },
+    "TestView": {
+      "sectionDescription1": "Tem certeza de que deseja enviar este teste?",
+      "sectionFeature1": "Tem certeza de que deseja enviar seu teste. Você só pode fazer isso uma vez.",
+      "Cancel": "Cancelar",
+      "Submit": "Enviar",
+      "mdiAccount": "mdi-account",
+      "Continue as": "Continuar como ",
+      "Not": "Não",
+      "mdiContentsave": "mdi-content-save",
+      "mdiFilemove": "mdi-file-move",
+      "mdiChevrondown": "mdi-chevron-down",
+      "mdiChevronright": "mdi-chevron-right",
+      "mdiChevronleft": "mdi-chevron-left",
+      "mdiHammerscrewdriver": "mdi-hammer-screwdriver",
+      "changeAccount": "Mudar de conta"
+    }
+  },
+  "SuperAdmin": {
+    "SuperAdminView": {
+      "sectionDescription1": "Tem certeza de que deseja excluir este usuário?",
+      "Cancel": "Cancelar",
+      "Delete": "Excluir",
+      "mdiPencil": "mdi-pencil",
+      "mdiDelete": "mdi-delete",
+      "Edit User": "Editar usuário",
+      "Tests": "Testes",
+      "mdiEye": "mdi-eye",
+      "superAdmin": "Super Adminatrador",
+      "Users": "usuario"
+    },
+
+    "App": {}
+  }
 }

@@ -5,7 +5,7 @@
       color="#fca326"
       size="50"
     ></v-progress-circular>
-    <div class="white-text mt-3">Loading Cooperators</div>
+    <div class="white-text mt-3">{{ $t('Admin.CooperatorsView.loadingCooperators') }}</div>
   </v-overlay>
   <Intro
     v-else-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
@@ -21,12 +21,11 @@
           <v-card-title
             class="headline error accent-4 white--text"
             primary-title
-            >Are you sure you want to leave?</v-card-title
+            >{{ $t('Admin.CooperatorsView.sectionFeature1') }}</v-card-title
           >
 
           <v-card-text
-            >Are you sure you want to leave? All your changes will be
-            discarded</v-card-text
+            >{{ $t('Admin.CooperatorsView.sectionDescription1') }}</v-card-text
           >
 
           <v-divider></v-divider>
@@ -34,13 +33,13 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn class="grey lighten-3" text @click="dialog = false"
-              >Stay</v-btn
+              >{{ $t('Admin.CooperatorsView.Stay') }}</v-btn
             >
             <v-btn
               class="error accent-4 white--text ml-1"
               text
               @click="(change = false), $router.push(go)"
-              >Leave</v-btn
+              >{{ $t('Admin.CooperatorsView.Leave') }}</v-btn
             >
           </v-card-actions>
         </v-card>
@@ -63,7 +62,7 @@
             <v-icon large>mdi-email</v-icon>
           </v-btn>
         </template>
-        <span>Send invitations</span>
+        <span>{{ $t('Admin.CooperatorsView.sendInvitations') }}</span>
       </v-tooltip>
 
       <ShowInfo title="Cooperators">
@@ -96,8 +95,7 @@
                 class="mx-2"
               >
                 <template v-slot:no-data
-                  >There are no users registered with that email, press enter to
-                  select anyways.</template
+                  > {{ $t('Admin.CooperatorsView.sectionFeature2') }}</template
                 >
               </v-combobox>
             </v-col>
@@ -184,7 +182,7 @@
                     @click="removeFromList(item)"
                     v-if="!item.invited"
                   >
-                    <v-list-item-title>Cancel invitation</v-list-item-title>
+                    <v-list-item-title>{{ $t('Admin.CooperatorsView.cancelInvitation') }}</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item
@@ -192,21 +190,21 @@
                     link
                     v-if="item.invited && item.accepted == false"
                   >
-                    <v-list-item-title>Re-invite</v-list-item-title>
+                    <v-list-item-title>{{ $t('Admin.CooperatorsView.reInvite') }}</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item
                     @click="removeCoop(item)"
                     v-if="item.accepted != null"
                   >
-                    <v-list-item-title>Remove cooperator</v-list-item-title>
+                    <v-list-item-title>{{ $t('Admin.CooperatorsView.removeCooperator') }}</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item
                     @click="cancelInvitation(item)"
                     v-if="item.invited && item.accepted == null"
                   >
-                    <v-list-item-title>Cancel invitation</v-list-item-title>
+                    <v-list-item-title>{{ $t('Admin.CooperatorsView.cancelInvitation') }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>

@@ -1,9 +1,179 @@
 {
-    "language":"Idioma",
-    "SIGNIN":{
-        "sign-in":"Registrarse",
-        "email":"Correo electrónico",
-        "password":"Contraseña",
-        "dont-have-account":"¿No tienes una cuenta? Regístrate"
-      }
+  "language": "Idioma",
+  "SIGNIN": {
+    "sign-in": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "dont-have-account": "¿No tienes una cuenta? Regístrate"
+  },
+  "Admin": {
+    "AnalyticsView": {
+      "Heuristics": "Heurística",
+      "Questions": "Preguntas",
+      "dataTable": "Tabla de datos",
+      "Comments": "Comentarios",
+      "Graphic": "Gráfico"
+    },
+    "AnswerView": {
+      "Statistics": "Estadísticas",
+      "Evaluators": "Evaluadores",
+      "Heuristics": "Heurística",
+      "usabilityPercentage": "Porcentaje de usabilidad",
+      "Max": "máx",
+      "Min": "mínimo",
+      "answersByevaluator": "Las respuestas del evaluador",
+      "answersByheuristics": "Respuestas por heurística",
+      "standardDeviation": "Desviación Estándar",
+      "heuristicsData": "Datos heurísticos",
+      "Graphic": "Gráfico"
+    },
+    "CooperatorsView": {
+      "loadingCooperators": "Cooperadores de carga",
+      "sectionFeature1": "Estás seguro que quieres irte?",
+      "sectionDescription1": "Estás seguro que quieres irte? Todos sus cambios serán descartados",
+      "Stay": "Quedarse",
+      "Leave": "Abandonar",
+      "mdiEmail": "mdi-email",
+      "sendInvitations": "Enviar invitaciones",
+      "sectionFeature2": "No hay usuarios registrados con ese correo electrónico, presione enter para seleccionar de todos modos.",
+      "mdiAccountCircle": "mdi-account-circle",
+      "mdiClosecircleOutline": "mdi-close-circle-outline",
+      "mdiCheckboxblankCircleoutline": "mdi-checkbox-blank-circle-outline",
+      "mdiDotsvertica": "mdi-dots-vertica",
+      "cancelInvitation": "Cancelar invitación",
+      "reInvite": "Re invitar",
+      "removeCooperator": "Eliminar cooperador"
+    },
+    "CreateFromTemplateView": {
+      "createFromtemplate": "Crear desde plantilla",
+      "mdiMagnify": "mdi-magnify"
+    },
+    "CreateView": {
+      "sectionDescription1": "Crear una nueva prueba",
+      "sectionDescription2": "Crear una prueba en blanco",
+      "sectionFeature1": "Cree una prueba en blanco para comenzar con una plantilla completamente nueva y actualizada.",
+      "sectionDescription3": "Crear desde plantilla",
+      "sectionFeature2": "Cree una prueba basada en una plantilla creada por uno de nuestros usuarios.",
+      "sectionDescription4": "Crear prueba",
+      "Cancel": "Cancelar",
+      "Create": "Crear"
+    },
+    "EditTestView": {
+      "sectionFeature1": "¿Estás seguro de que quieres salir? Todos los cambios se descartarán?",
+      "sectionFeature2": "¿Estás seguro de que quieres salir? Todos sus cambios serán descartados",
+      "Stay": "Quedarse",
+      "Leave": "Abandonar",
+      "mdiContentsave": "mdi-content-save",
+      "loadingTest": "Prueba de carga"
+    },
+    "ManagerView": {
+      "loadingTest": "Prueba de carga",
+      "mdiAccount": "mdi-account",
+      "continueAs": "Continuar como",
+      "Not": "Not",
+      "changeAccount": "Cambiar cuenta",
+      "mdiCog": "mdi-cog",
+      "mdiChevronleft": "mdi-chevron-left",
+      "mdiChevronright": "mdi-chevron-right",
+      "Manager": "Gerente",
+      "sectionFeature1": "Edite e invite a personas a su prueba",
+      "sectionFeature2": "Analiza tu proyecto y evaluadores"
+    },
+    "ReportView": {
+      "sectionDescription1": "¿Está seguro de que desea eliminar este informe?",
+      "Cancel": "Cancelar",
+      "Delete": "Borrar",
+      "loadingReports": "Cargando informes",
+      "lastUpdated": " Última actualización:"
+    },
+    "SettingsView": {
+      "sectionDescription1": "¿ Are you sure you want to leave ?",
+      "sectionFeature1": "¿ Estás seguro que quieres irte? Todos sus cambios serán descartados.",
+      "Stay": "Quedarse",
+      "Leave": "Abandonar",
+      "sectionDescription2": "¿Está seguro de que desea eliminar esta prueba?",
+      "Cancel": "Cancelar",
+      "Delete": "Borrar",
+      "currentTest": "Prueba actual",
+      "createTemplate": "Crear plantilla",
+      "mdiTrashcanoutLine": "mdi-trash-can-outline",
+      "mdiContentsave": "mdi-content-save",
+      "Save": "guardar",
+      "loadingSettings": "Configuración de carga"
+    },
+    "TemplateView": {
+      "sectionDescription1": "¿Está seguro de que desea eliminar esta plantilla?",
+      "Cancel": "Cancelar",
+      "Delete": "Borrar",
+      "sectionDescription2": "¿ Estás seguro que quieres irte?",
+      "sectionFeature1": "¿ Estás seguro que quieres irte? Todos sus cambios serán descartados",
+      "sectionFeature2": "Su plantilla no está actualizada con su prueba.",
+      "detailedInformation": "Información detallada",
+      "sectionFeature3": "Haga clic para actualizar su plantilla local, haga clic en guardar para enviar",
+      "mdiTrashcanOutline": "mdi-trash-can-outline",
+      "deleteTemplate": "Eliminar plantilla",
+      "mdiContentsave": "mdi-content-save",
+      "Leave": "abandonar",
+      "Stay": "Quedarse",
+      "Save": "guardar"
+    },
+    "TestListView": {
+      "mdiPlus": "mdi-plus",
+      "sectionDescription1": "Crear nueva prueba",
+      "mdiMagnify": "mdi-magnify",
+      "Tests": "Pruebas",
+      "Answers": "respuestas",
+      "Templates": "Plantillas",
+      "All": "Todos",
+      "Personal": "Personal",
+      "Others": "Otros",
+      "Explore": "Explorar"
+    }
+  },
+  "Public": {
+    "HomeView": {
+      "Userhome": "Inicio del usuario"
+    },
+    "LandingPage": {},
+    "PageNotFoundView": {
+      "sectionFeature1": "No pudimos encontrar la página que estabas buscando."
+    },
+    "SignlnView": {},
+    "SingUpView": {
+      "signUp": "Sign-Up",
+      "sectionDescription1": "¿Ya tienes una cuenta? Iniciar sesión"
+    },
+    "TestView": {
+      "sectionDescription1": "¿Está seguro de que desea enviar esta prueba?",
+      "sectionFeature1": "¿Estás seguro de que quieres enviar tu prueba? Solo puedes hacerlo una vez.",
+      "Cancel": "Cancelar",
+      "Submit": "Enviar",
+      "mdiAccount": "mdi-account",
+      "Continue as": "Continuar como ",
+      "Not": "No",
+      "mdiContentsave": "mdi-content-save",
+      "mdiFilemove": "mdi-file-move",
+      "mdiChevrondown": "mdi-chevron-down",
+      "mdiChevronright": "mdi-chevron-right",
+      "mdiChevronleft": "mdi-chevron-left",
+      "mdiHammerscrewdriver": "mdi-hammer-screwdriver",
+      "changeAccount": "Cambiar cuenta"
+    }
+  },
+  "SuperAdmin": {
+    "SuperAdminView": {
+      "sectionDescription1": "¿Está seguro de que desea eliminar este usuario?",
+      "Cancel": "Cancelar",
+      "Delete": "Borrar",
+      "mdiPencil": "mdi-pencil",
+      "mdiDelete": "mdi-delete",
+      "Edit User": "Edit User",
+      "Tests": "Pruebas",
+      "mdiEye": "mdi-eye",
+      "superAdmin": "Super Adminatrador",
+      "Users": "usuario"
+    },
+
+    "App": {}
+  }
 }

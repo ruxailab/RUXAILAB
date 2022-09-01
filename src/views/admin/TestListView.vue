@@ -19,7 +19,7 @@
           <v-icon large>mdi-plus</v-icon>
         </v-btn>
       </template>
-      <span>Create new test</span>
+      <span>{{ $t('Admin.TestListView.sectionDescription1') }}</span>
     </v-tooltip>
 
     <v-overlay v-model="loading">
@@ -56,9 +56,9 @@
             color="black"
             class="hidden-sm-and-down"
           >
-            <v-tab>Tests</v-tab>
-            <v-tab>Answers</v-tab>
-            <v-tab>Templates</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.Tests') }}</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.Answers') }}</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.Templates') }}</v-tab>
 
             <v-spacer></v-spacer>
 
@@ -83,9 +83,9 @@
             class="hidden-sm-and-down"
             v-if="mainIndex !== 2"
           >
-            <v-tab>All</v-tab>
-            <v-tab>Personal</v-tab>
-            <v-tab>Others</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.All') }}</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.Personal') }}</v-tab>
+            <v-tab>{{ $t('Admin.TestListView.Others') }}</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
@@ -99,8 +99,8 @@
             class="hidden-sm-and-down"
             v-if="mainIndex == 2"
           >
-            <v-tab>Personal</v-tab>
-            <v-tab>Explore</v-tab>
+            <v-tab>{{$t('Admin.TestListView.Personal') }}</v-tab>
+            <v-tab>{{$t('Admin.TestListView.Explore') }}</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>

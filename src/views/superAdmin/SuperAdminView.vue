@@ -5,7 +5,7 @@
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to delete this user?</v-card-title
+          >{{ $t('SuperAdmin.SuperAdminView.sectionDescription1') }} </v-card-title
         >
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -18,24 +18,24 @@
             class="grey lighten-3"
             text
             @click="(dialogDel = false), (userClicked = null)"
-            >Cancel</v-btn
+            >{{ $t('SuperAdmin.SuperAdminView.Cancel') }}</v-btn
           >
           <v-btn
             class="red white--text ml-1"
             text
             @click="deleteUser(userClicked)"
-            >Delete</v-btn
+            >{{ $t('SuperAdmin.SuperAdminView.Delete') }}</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <h1 style="margin-left: 8%; font-weight: 300">Super Admin</h1>
+    <h1 style="margin-left: 8%; font-weight: 300">{{ $t('SuperAdmin.SuperAdminView.superAdmin') }}</h1>
     <v-row align="center" justify="center">
       <v-col cols="10">
         <v-tabs v-model="tab">
-          <v-tab>Users</v-tab>
-          <v-tab>Tests</v-tab>
+          <v-tab>{{ $t('SuperAdmin.SuperAdminView.Users') }}</v-tab>
+          <v-tab>{{ $t('SuperAdmin.SuperAdminView.Tests') }}</v-tab>
         </v-tabs>
         <v-divider></v-divider>
       </v-col>
@@ -53,7 +53,7 @@
             >
               <template v-slot:top>
                 <v-toolbar flat color="white">
-                  <v-toolbar-title>Users</v-toolbar-title>
+                  <v-toolbar-title>{{ $t('SuperAdmin.SuperAdminView.Users') }}</v-toolbar-title>
                 </v-toolbar>
                 <v-text-field
                   outlined

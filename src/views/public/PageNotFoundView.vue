@@ -7,7 +7,7 @@
         <div
           class="text-center"
           style="font-size:15px; color: grey"
-        >We weren't able to find the page you were looking for.</div>
+        >{{$t('Public.HomeView.sectionFeature1')}}</div>
         <v-row justify="center" class="mt-4">
           <v-btn style="color: #f9a826" outlined rounded @click="sendHome()">Go Back</v-btn>
         </v-row>
