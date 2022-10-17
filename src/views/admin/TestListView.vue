@@ -214,7 +214,6 @@
   </v-container>
 </template>
 
-
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
 import List from "@/components/atoms/ListComponent";
@@ -313,20 +312,22 @@ export default {
       let array = [];
 
       if (this.user) {
-        this.user.myTests.forEach(test => {
-          let obj = Object.assign(test, {author: this.user.email});
+        this.user.myTests.forEach((test) => {
+          let obj = Object.assign(test, { author: this.user.email });
           array.push(obj);
-        })
+        });
 
         let hasTest = null;
 
-        this.user.myCoops.forEach((test) => {
-          hasTest = array.find((t) => t.id == test.id);
+        if (this.user.myCoops) {
+          this.user.myCoops.forEach((test) => {
+            hasTest = array.find((t) => t.id == test.id);
 
-          if (hasTest == undefined)
-            //if test not added to array
-            array.push(test);
-        });
+            if (hasTest == undefined)
+              //if test not added to array
+              array.push(test);
+          });
+        }
       }
       return array;
     },
@@ -441,7 +442,7 @@ export default {
     },
     showTempDetails() {
       return !(this.mainIndex == 2 && this.subIndex == 0); //dont show on this tab
-    }
+    },
   },
   watch: {
     mainIndex() {
