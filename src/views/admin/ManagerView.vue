@@ -212,19 +212,20 @@
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
                   <v-card
-                    height="380px"
+                    class="rounded-xl"
+                    height="300px"
                     :style="item.cardStyle"
                     @click="go(item.path)"
                     hover
                     :ripple="false"
                   >
                     <v-row
-                      style="height: 290px"
+                      style="height: 200px"
                       justify="center"
                       align="center"
                     >
                       <v-img
-                        max-height="220"
+                        max-height="150"
                         :style="item.imageStyle"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
@@ -263,6 +264,7 @@
                   :key="i"
                 >
                   <v-card
+                    class="rounded-xl"
                     height="350px"
                     :style="item.cardStyle"
                     @click="go(item.path)"
@@ -289,6 +291,7 @@
                         position: 'absolute',
                         bottom: '0',
                         width: '100%',
+                        paddingTop: '2px',
                         'background-color': item.bottom,
                         'border-top': '.3px solid #505050',
                       }"
@@ -539,20 +542,22 @@ export default {
           image: "IntroEdit.svg",
           title: "Edit",
           imageStyle: "transform: rotateY(180deg);",
-          bottom: "#740999",
+          // bottom: "#740999",
+          bottom: "#000",
           description: "Start creating and editing your test.",
-          cardStyle:
-            "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
+          // cardStyle:
+          //   "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
           path: `/edittest/${this.test.id}`,
         },
         {
           image: "IntroCoops.svg",
           title: "Cooperators",
           imageStyle: "",
-          bottom: "#DBC717",
+          // bottom: "#DBC717",
+          bottom: "#000",
           description: "Invite people to help you in your test.",
-          cardStyle:
-            "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
+          // cardStyle:
+          //   "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
           path: `/cooperatorsview/${this.test.cooperators}`,
         },
       ];
@@ -563,30 +568,33 @@ export default {
           image: "IntroReports.svg",
           title: "Reports",
           imageStyle: "height: 250px",
-          bottom: "#E03C3C",
+          // bottom: "#E03C3C",
+          bottom: "#000",
           description: "Take a look at how your evaluators are doing.",
-          cardStyle:
-            "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
+          // cardStyle:
+          //   "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
           path: `/reportview/${this.test.reports}`,
         },
         {
           image: "IntroAnswer.svg",
           title: "Answers",
           imageStyle: "height: 250px",
-          bottom: "#4DA73E",
+          // bottom: "#4DA73E",
+          bottom: "#000",
           description: "See how your evaluators are evaluating your project.",
-          cardStyle:
-            "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
+          // cardStyle:
+          //   "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
           path: `/answerview/${this.test.answers}`,
         },
         {
           image: "IntroAnalytics.svg",
           title: "Analytics",
           imageStyle: "height: 250px",
-          bottom: "#2666E1",
+          // bottom: "#2666E1",
+          bottom: "#000",
           description: "Analyze comments and answers from your evaluators.",
-          cardStyle:
-            "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
+          // cardStyle:
+          //   "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
           path: `/analyticsview/${this.test.answers}`,
         },
       ];
@@ -605,13 +613,13 @@ export default {
     },
     accessLevel() {
       // if user is superadmin grant full access
-      if(this.user?.accessLevel == 0) return 0
+      if (this.user?.accessLevel == 0) return 0;
 
       let id = this.selectedTest || this.test?.id;
       if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
-      let myCoop = this.user?.myCoops.find(mc => mc.id == id);
-      if(myCoop) return myCoop.accessLevel;
+      let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
+      if (myCoop) return myCoop.accessLevel;
 
       return 1; //default to 1 -> Guest
     },
