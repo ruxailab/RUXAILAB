@@ -212,12 +212,12 @@
               <v-row justify="center" justify-md="space-around">
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
                   <v-card
-                    class="rounded-xl"
-                    height="300px"
+                    class="rounded-xl cards-animation"
+                    height="270px"
                     :style="item.cardStyle"
                     @click="go(item.path)"
-                    hover
                     :ripple="false"
+                    color="#F2F3F4"
                   >
                     <v-row
                       style="height: 200px"
@@ -245,7 +245,9 @@
                       }"
                     >
                       <h2>{{ item.title }}</h2>
-                      <div>{{ item.description }}</div>
+                      <div>
+                        {{ item.description }}
+                      </div>
                     </div>
                   </v-card>
                 </v-col>
@@ -264,15 +266,15 @@
                   :key="i"
                 >
                   <v-card
-                    class="rounded-xl"
-                    height="350px"
+                    class="rounded-xl cards-animation"
+                    height="270px"
                     :style="item.cardStyle"
                     @click="go(item.path)"
                     hover
                     :ripple="false"
                   >
                     <v-row
-                      style="height: 260px"
+                      style="height: 200px"
                       justify="center"
                       align="center"
                       class="px-5"
@@ -285,7 +287,7 @@
                     </v-row>
 
                     <div
-                      class="white--text pl-4"
+                      class="white--text text-justification pl-4"
                       :style="{
                         height: '90px',
                         position: 'absolute',
@@ -297,7 +299,9 @@
                       }"
                     >
                       <h2>{{ item.title }}</h2>
-                      <div>{{ item.description }}</div>
+                      <div>
+                        {{ item.description }}
+                      </div>
                     </div>
                   </v-card>
                 </v-col>
@@ -545,8 +549,8 @@ export default {
           // bottom: "#740999",
           bottom: "#000",
           description: "Start creating and editing your test.",
-          // cardStyle:
-          //   "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
           path: `/edittest/${this.test.id}`,
         },
         {
@@ -556,8 +560,8 @@ export default {
           // bottom: "#DBC717",
           bottom: "#000",
           description: "Invite people to help you in your test.",
-          // cardStyle:
-          //   "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
           path: `/cooperatorsview/${this.test.cooperators}`,
         },
       ];
@@ -571,8 +575,8 @@ export default {
           // bottom: "#E03C3C",
           bottom: "#000",
           description: "Take a look at how your evaluators are doing.",
-          // cardStyle:
-          //   "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
           path: `/reportview/${this.test.reports}`,
         },
         {
@@ -582,8 +586,8 @@ export default {
           // bottom: "#4DA73E",
           bottom: "#000",
           description: "See how your evaluators are evaluating your project.",
-          // cardStyle:
-          //   "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
           path: `/answerview/${this.test.answers}`,
         },
         {
@@ -593,8 +597,8 @@ export default {
           // bottom: "#2666E1",
           bottom: "#000",
           description: "Analyze comments and answers from your evaluators.",
-          // cardStyle:
-          //   "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
+          cardStyle:
+            "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
           path: `/analyticsview/${this.test.answers}`,
         },
       ];
@@ -767,5 +771,16 @@ export default {
   .back-gradient {
     height: 100%;
   }
+}
+
+.cards-animation {
+  box-shadow: 0;
+  transition: box-shadow 0.5s;
+}
+.cards-animation:hover {
+  box-shadow: 0px 0px 35px 2px rgba(0, 0, 0, 0.7) !important;
+}
+.text-justification {
+  padding: 2px;
 }
 </style>
