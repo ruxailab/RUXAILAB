@@ -38,13 +38,11 @@ export default {
     });
   },
   removeArray: async (payload) => {
-
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     var docRef = collectionRef.doc(payload.docId);
     let doc = await docRef.get();
     doc = Object.assign({ id: payload.docId }, doc.data());
-
 
     let itemDelete = doc[payload.param].find(
       (item) => item.id == payload.element.id
@@ -94,17 +92,15 @@ export default {
     var docRef = collectionRef.doc(payload.docId);
     let element = await docRef.get();
     element = Object.assign({ id: payload.docId }, element.data());
-    let index
-    element[payload.field].forEach(
-      (el) => {
-        if (el[payload.identifier] === payload.elementId) {
-          index = element[payload.field].indexOf(el)
-          el = payload.element
-        }
+    let index;
+    element[payload.field].forEach((el) => {
+      if (el[payload.identifier] === payload.elementId) {
+        index = element[payload.field].indexOf(el);
+        el = payload.element;
       }
-    );
+    });
 
-    element[payload.field][index] = payload.element
+    element[payload.field][index] = payload.element;
 
     return docRef.update({
       [payload.field]: element[payload.field],
@@ -120,10 +116,8 @@ export default {
       user = Object.assign({ uid: payload.docId }, user.data());
       commit("setUser", user);
 
-      if (user.myTests !== undefined)
-        commit('setLoading', false)
-      else
-        commit('setLoading', true)
+      if (user.myTests !== undefined) commit("setLoading", false);
+      else commit("setLoading", true);
     });
   },
   setParam: (payload) => {
@@ -140,24 +134,21 @@ export default {
     if (!("last" in payload)) {
       // is first
 
-      const first = collectionRef
-        .orderBy('id')
-      
+      const first = collectionRef.orderBy("id");
+
       //TODO: add conditions
       // if ("conditions" in payload) {
       //   const queryRef = first.where(payload.conditions[0], payload.conditions[1], payload.conditions[2])
       //   return queryRef.get();
       // }
-        
+
       return first.limit(payload.itemsPerPage).get();
     } else {
       //has a last object
 
-      const next = collectionRef
-        .orderBy('id')
-        .startAfter(payload.last)
+      const next = collectionRef.orderBy("id").startAfter(payload.last);
 
       return next.limit(payload.itemsPerPage).get();
     }
-  }
+  },
 };
