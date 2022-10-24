@@ -9,6 +9,7 @@ let testController = new TestController()
 */
 
 import api from "@/api/index";
+import database from "../api/modules/database";
 
 // import Test from "../models/Test";
 // import TestAdmin from "../models/TestAdmin";
@@ -16,13 +17,27 @@ import api from "@/api/index";
 // import TestStructureOptions from "../models/TestStructureOptions";
 // import TestTempleteDoc from "../models/TestTemplateDoc";
 
-export class TestController {
+export default class TestController {
   async TestAdmin(Object) {
     return super.create(api, Object);
   }
-  // attributes/properties
-  // methods
-  // constructor
+
+  // // attributes/properties
+  // // methods
+  // // constructor
+
+  async createNewTest(data) {
+    return database.createObject(api, data);
+  }
+
+  async;
+
+  // createObject: async (payload) => {
+  //   const db = firebase.firestore();
+  //   var collectionRef = db.collection(payload.collection);
+  //   return collectionRef.add(payload.data);
+  // },
+
   constructor() {}
 
   async;
