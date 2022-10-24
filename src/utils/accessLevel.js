@@ -11,7 +11,6 @@ export const testAccessLevels =
         1: 'guest',
         2: 'evaluator'
     };
-
 export const testTypes = 
     {
         0: 'heuristics',
