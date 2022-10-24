@@ -13,7 +13,7 @@ import Test from "../models/Test";
 import TestAdmin from "../models/TestAdmin";
 import TestStructure from "../models/TestStructure";
 import TestStructureOptions from "../models/TestStructureOptions";
-import TestTempleteDoc from "../models/TestTemplateDoc";
+import TestTemplateDoc from "../models/TestTemplateDoc";
 
 export default class TestController {
   //
@@ -54,10 +54,10 @@ export default class TestController {
     return new TestStructureOptions(answer);
   }
 
-  //GetObject of TestTempleteDoc
-  async getObjectTestTempleteDoc(id) {
+  //GetObject of TestTemplateDoc
+  async getObjectTestTemplateDoc(id) {
     const answer = await database.getObject(api + "/" + id);
-    return new TestTempleteDoc(answer);
+    return new TestTemplateDoc(answer);
   }
 
   //----------------GET ALL OBJECTS----------------
@@ -83,16 +83,10 @@ export default class TestController {
       answer.map((obj) => [obj.id, new TestStructureOptions(obj)])
     );
   }
-  //GetAll data from "TestTempleteDoc"
-  async getAllTestTempleteDoc() {
+  //GetAll data from "TestTemplateDoc"
+  async getAllTestTemplateDoc() {
     const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new TestTempleteDoc(obj)]));
-  }
-
-  //------------------PUSH ARRAY------------------
-  //Push data from Test
-  async pushTest(data) {
-    return database.pushArray(api, data);
+    return new Map(answer.map((obj) => [obj.id, new TestTemplateDoc(obj)]));
   }
 }
 
