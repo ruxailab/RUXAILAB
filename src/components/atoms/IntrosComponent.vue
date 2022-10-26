@@ -23,7 +23,7 @@
             style="cursor: pointer"
             @click="emitClick()"
           >
-            <u>{{ link }}</u>
+            <button class="edit-btn rounded-xl">Click here!</button>
           </span>
         </div>
 
@@ -82,28 +82,28 @@ export default {
   props: {
     title: {
       type: String,
-      require: true
+      require: true,
     },
     image: {
       type: String,
-      require: true
+      require: true,
     },
     main: {
       type: String,
-      require: true
+      require: true,
     },
     link: {
       type: String,
-      require: true
+      require: true,
     },
     items: {
       type: Array,
-      require: true
+      require: true,
     },
     colors: {
       type: Array,
-      require: true
-    }
+      require: true,
+    },
   },
   data: () => ({}),
   methods: {
@@ -112,13 +112,13 @@ export default {
     },
     emitCallFunc(func) {
       this.$emit("callFunc", func);
-    }
+    },
   },
   computed: {
     backgroundImage() {
       return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -159,5 +159,16 @@ export default {
   .background-gradient {
     height: 100%;
   }
+}
+
+.edit-btn {
+  width: 20%;
+  height: 6%;
+  background-color: rgba(68, 12, 71, 0.644);
+  transition: box-shadow 0.5s, background-color 0.5s;
+}
+.edit-btn:hover {
+  box-shadow: 0px 0px 35px 2px rgba(0, 0, 0, 0.7) !important;
+  background-color: rgba(36, 6, 37, 0.644);
 }
 </style>
