@@ -10,7 +10,7 @@ export default {
     myTests: null,
     snackMessage: null,
     snackColor: null,
-    managerIDs: null
+    managerIDs: null,
   },
   getters: {
     tests(state) {
@@ -36,7 +36,7 @@ export default {
     },
     managerIDs(state) {
       return state.managerIDs;
-    }
+    },
   },
   mutations: {
     setTest(state, payload) {
@@ -50,11 +50,11 @@ export default {
     },
     setError(state, payload) {
       state.snackMessage = payload;
-      state.snackColor = "red"
+      state.snackColor = "red";
     },
     setSuccess(state, payload) {
       state.snackMessage = payload;
-      state.snackColor = "success"
+      state.snackColor = "success";
     },
     resetSnack(state) {
       state.snackMessage = null;
@@ -62,22 +62,22 @@ export default {
     },
     setManagerIDS(state, payload) {
       state.managerIDs = payload;
-    }
+    },
   },
   actions: {
     /**
-     * This action creates a new test, using the generic action "createObject" to creates the object, 
+     * This action creates a new test, using the generic action "createObject" to creates the object,
      * passing the test data
-     * 
-     * @action createTest  
-     * @param {object} payload -test creation data 
-     * @param {string} payload.collection - local in database 
+     *
+     * @action createTest
+     * @param {object} payload -test creation data
+     * @param {string} payload.collection - local in database
      * @param {object} payload.data - test data
      * @param {object} payload.data.admin - test's administrator data
      * @param {string} payload.data.admin.id - administrator identification
      * @param {string} payload.data.admin.email - administrator email
-     * @param {Date} payload.data.date - test created date 
-     * @param {string} payload.data.title - test title 
+     * @param {Date} payload.data.date - test created date
+     * @param {string} payload.data.title - test title
      * @param {string} payload.data.description - test description
      * @param {string} payload.data.type - test type
      * @param {object} [payload.data.answersSheet] - standard object to answer the test
@@ -89,10 +89,10 @@ export default {
      * @param {object} [payload.data.postTest] - object with google form for pretest
      * @param {?string} [payload.data.postTest.form] -  google form link
      * @param {object} [payload.data.preTest] - object with google form for post-test
-     * @param {?string} [payload.data.preTest.form] - google form link 
+     * @param {?string} [payload.data.preTest.form] - google form link
      * @param {?string} [payload.data.preTest.consent] - google form link
      * @param {object[]} [payload.data.tasks] - structure test when its type is user
-     * @returns {string} docRef - the test's identification 
+     * @returns {string} docRef - the test's identification
      */
     createTest({ dispatch, commit }, payload) {
       commit("setLoading", true);
@@ -106,8 +106,8 @@ export default {
       return docRef;
     },
     /**
-     * This action gets all test in database, using the generic action "getAllObjects" 
-     * 
+     * This action gets all test in database, using the generic action "getAllObjects"
+     *
      * @deprecated
      * @action getTests=setTests
      * @param {object} payload - empty object
@@ -116,17 +116,18 @@ export default {
     async getTests({ commit, dispatch }, payload) {
       commit("setLoading", true);
       payload = Object.assign(payload, { collection: "test" });
-      var tests = await dispatch("getAllObjects", payload)
-        .catch((err) => commit("setError", "Error in getTests." + err));
+      var tests = await dispatch("getAllObjects", payload).catch((err) =>
+        commit("setError", "Error in getTests." + err)
+      );
       commit("setTests", tests);
     },
     /**
      * This action deletes a test,using the generic action "deleteObject",
-     *  passing the test data 
-     * 
-     * @action deleteTest 
-     * @param {object} payload - test's data 
-     * @param {string} [payload.collection = test] -  local in database 
+     *  passing the test data
+     *
+     * @action deleteTest
+     * @param {object} payload - test's data
+     * @param {string} [payload.collection = test] -  local in database
      * @param {string} payload.answers  - answers collection reference identification
      * @param {string} payload.cooperators -cooperators collection reference identification
      * @param {string} payload.reports - reports collection reference identification
@@ -134,8 +135,8 @@ export default {
      * @param {object} payload.admin - test's administrator data
      * @param {string} payload.admin.id - administrator identification
      * @param {string} payload.admin.email - administrator email
-     * @param {Date} payload.date - test created date 
-     * @param {string} payload.title - test title 
+     * @param {Date} payload.date - test created date
+     * @param {string} payload.title - test title
      * @param {string} payload.description - test description
      * @param {string} payload.type - test type
      * @param {object} [payload.answersSheet] - standard object to answer the test
@@ -147,15 +148,16 @@ export default {
      * @param {object} [payload.postTest] - object with google form for pretest
      * @param {?string} [payload.postTest.form] -  google form link
      * @param {object} [payload.preTest] - object with google form for post-test
-     * @param {?string} [payload.preTest.form] - google form link 
+     * @param {?string} [payload.preTest.form] - google form link
      * @param {?string} [payload.preTest.consent] - google form link
      * @param {object[]} [payload.tasks] - structure test when its type is user
      * @returns {void}
      */
     async deleteTest({ dispatch, commit }, payload) {
       commit("setLoading", true);
-      await dispatch("getCooperators", { id: payload.cooperators })
-        .catch((err) => commit("setError", "Error in deleteTest." + err));
+      await dispatch("getCooperators", {
+        id: payload.cooperators,
+      }).catch((err) => commit("setError", "Error in deleteTest." + err));
 
       let coops = this.state.cooperators.cooperators;
 
@@ -163,13 +165,15 @@ export default {
       payload = Object.assign(payload, { collection: "test" }); //Delete test from Tests' Collection
       dispatch("deleteObject", payload)
         .then(() => {
-          dispatch("deleteReport", { id: payload.reports })
-            .catch((err) => commit("setError", "Error in deleteTest." + err));
+          dispatch("deleteReport", { id: payload.reports }).catch((err) =>
+            commit("setError", "Error in deleteTest." + err)
+          );
 
-          dispatch("deleteAnswers", { id: payload.answers })
-            .catch((err) => commit("setError", "Error in deleteTest." + err));
+          dispatch("deleteAnswers", { id: payload.answers }).catch((err) =>
+            commit("setError", "Error in deleteTest." + err)
+          );
 
-          coops.cooperators.forEach(coop => {
+          coops.cooperators.forEach((coop) => {
             if (coop.accessLevel.value <= 1)
               dispatch("removeMyCoops", {
                 docId: coop.id,
@@ -178,8 +182,9 @@ export default {
                   title: payload.title,
                   type: payload.type,
                 },
-              })
-                .catch((err) => commit("setError", "Error in deleteTest." + err));
+              }).catch((err) =>
+                commit("setError", "Error in deleteTest." + err)
+              );
             else
               dispatch("removeMyAnswers", {
                 docId: coop.id,
@@ -188,21 +193,23 @@ export default {
                   title: payload.title,
                   type: payload.type,
                 },
-              })
-                .catch((err) => commit("setError", "Error in deleteTest." + err));
-          })
+              }).catch((err) =>
+                commit("setError", "Error in deleteTest." + err)
+              );
+          });
 
-          dispatch("deleteCooperators", { id: payload.cooperators })
-            .catch((err) => commit("setError", "Error in deleteTest." + err));
+          dispatch("deleteCooperators", {
+            id: payload.cooperators,
+          }).catch((err) => commit("setError", "Error in deleteTest." + err));
         })
         .catch((err) => commit("setError", "Error in deleteTest." + err));
     },
     /**
-     *This action gets a test by id, using the generic action "getObject" 
+     *This action gets a test by id, using the generic action "getObject"
      *
-     * @action getTest=setTest 
-     * @param {object} payload - test's data 
-     * @param {string} [payload.collection = test] -  local in database 
+     * @action getTest=setTest
+     * @param {object} payload - test's data
+     * @param {string} [payload.collection = test] -  local in database
      * @param {string} payload.id - test's identification code
      * @returns {void}
      */
@@ -210,26 +217,27 @@ export default {
       commit("setLoading", true);
       payload = Object.assign(payload, { collection: "test" });
 
-      var test = await dispatch("getObject", payload)
-        .catch((err) => commit("setError", "Error in getTest." + err));
+      var test = await dispatch("getObject", payload).catch((err) =>
+        commit("setError", "Error in getTest." + err)
+      );
 
       commit("setTest", test);
     },
     /**
-     * This action updates the test, 
+     * This action updates the test,
      * using a the generic action "updateObject" sending the update data
-     * 
+     *
      * @action updateTest
      * @param {object} payload - data to update
-     * @param {string} [payload.collection = test] -  local in database  
+     * @param {string} [payload.collection = test] -  local in database
      * @param {string} payload.docId - test identification
-     * @param {object} payload.data - updated test data 
+     * @param {object} payload.data - updated test data
      * @param {string} payload.data.answers  - answers collection reference identification
      * @param {object} payload.data.admin - test's administrator data
      * @param {string} payload.data.admin.id - administrator identification
      * @param {string} payload.data.admin.email - administrator email
-     * @param {Date} payload.data.date - test created date 
-     * @param {string} payload.data.title - test title 
+     * @param {Date} payload.data.date - test created date
+     * @param {string} payload.data.title - test title
      * @param {string} payload.data.description - test description
      * @param {string} payload.data.type - test type
      * @param {object} [payload.data.answersSheet] - standard object to answer the test
@@ -241,48 +249,50 @@ export default {
      * @param {object} [payload.data.postTest] - object with google form for pretest
      * @param {?string} [payload.data.postTest.form] -  google form link
      * @param {object} [payload.data.preTest] - object with google form for post-test
-     * @param {?string} [payload.data.preTest.form] - google form link 
+     * @param {?string} [payload.data.preTest.form] - google form link
      * @param {?string} [payload.data.preTest.consent] - google form link
      * @param {object[]} [payload.data.tasks] - structure test when its type is user
      * @returns {void}
      */
     updateTest({ dispatch, commit }, payload) {
-     
       commit("setLoading", true);
       payload = Object.assign(payload, { collection: "test" });
 
-      dispatch("updateObject", payload)
-        .catch((err) => commit("setError", "Error in updateTest." + err));
+      dispatch("updateObject", payload).catch((err) =>
+        commit("setError", "Error in updateTest." + err)
+      );
     },
     /**
      * This test adds response to the test
      * @deprecated
      */
     pushTestAnswer({ dispatch, commit }, payload) {
-      console.log("pushTestAnswer",payload)
+      console.log("pushTestAnswer", payload);
       commit("setLoading", true);
       payload = Object.assign(payload, { collection: "test" });
 
-      dispatch("pushObject", payload)
-        .catch((err) => commit("setError", "Error in pushTestAnswer." + err));
+      dispatch("pushObject", payload).catch((err) =>
+        commit("setError", "Error in pushTestAnswer." + err)
+      );
     },
     /**
      * This action adds a new cooperator
      * @deprecated
      */
     async pushCoop({ dispatch, commit }, payload) {
-      console.log("pushCoop",payload)
+      console.log("pushCoop", payload);
       commit("setLoading", true);
       payload = Object.assign(payload, { collection: "test", param: "coop" });
 
-      dispatch("pushObject", payload)
-        .catch((err) => commit("setError", "Error in pushCoop." + err));
+      dispatch("pushObject", payload).catch((err) =>
+        commit("setError", "Error in pushCoop." + err)
+      );
     },
     /**
-     * this action defines the  reference of the reports collection, using the generic action "setParamInObject" 
-     * 
+     * this action defines the  reference of the reports collection, using the generic action "setParamInObject"
+     *
      * @action setReportID
-     * @param {object} payload - data 
+     * @param {object} payload - data
      * @param {string} payload.data -  reports collection reference identification
      * @param {string} payload.docId - test identification
      * @param {string} [payload.param = reports ] - field to update
@@ -292,17 +302,18 @@ export default {
       commit("setLoading", true);
       payload = Object.assign(payload, {
         collection: "test",
-        param: "reports"
+        param: "reports",
       });
 
-      dispatch("setParamInObject", payload)
-        .catch((err) => commit("setError", "Error in setReportID." + err));
+      dispatch("setParamInObject", payload).catch((err) =>
+        commit("setError", "Error in setReportID." + err)
+      );
     },
     /**
      * this action defines the  reference of the answers collection, using the generic action "setParamInObject"
-     * 
+     *
      * @action setAnswerID
-     * @param {object} payload - data 
+     * @param {object} payload - data
      * @param {string} payload.data -  answers collection reference identification
      * @param {string} payload.docId - test identification
      * @param {string} [payload.param = answers ] - field to update
@@ -310,16 +321,20 @@ export default {
      */
     setAnswerID({ dispatch, commit }, payload) {
       commit("setLoading", true);
-      payload = Object.assign(payload, { collection: "test", param: "answers" });
+      payload = Object.assign(payload, {
+        collection: "test",
+        param: "answers",
+      });
 
-      dispatch("setParamInObject", payload)
-        .catch((err) => commit("setError", "Error in setAnswerID." + err));
+      dispatch("setParamInObject", payload).catch((err) =>
+        commit("setError", "Error in setAnswerID." + err)
+      );
     },
     /**
      * this action defines the  reference of the cooperators collection, using the generic action "setParamInObject"
-     * 
+     *
      * @action {setCooperatorsID}
-     * @param {object} payload - data 
+     * @param {object} payload - data
      * @param {string} payload.data - cooperators collection reference identification
      * @param {string} payload.docId - test identification
      * @param {string} [payload.param = cooperators ] - field to update
@@ -327,26 +342,34 @@ export default {
      */
     setCooperatorsID({ dispatch, commit }, payload) {
       commit("setLoading", true);
-      payload = Object.assign(payload, { collection: "test", param: "cooperators" });
+      payload = Object.assign(payload, {
+        collection: "test",
+        param: "cooperators",
+      });
 
-      dispatch("setParamInObject", payload)
-        .catch((err) => commit("setError", "Error in setCooperatorsID." + err));
+      dispatch("setParamInObject", payload).catch((err) =>
+        commit("setError", "Error in setCooperatorsID." + err)
+      );
     },
     /**
      * Identified when the test is updated, using the generic action "setParamInObject"
-     * 
+     *
      * @action setUpToDate
-     * @param {object} payload - data 
+     * @param {object} payload - data
      * @param {string} payload.docId - test identification
      * @param {boolean} payload.data - identified when the test is updated
      * @returns {void}
      */
     setUpToDate({ dispatch, commit }, payload) {
       commit("setLoading", true);
-      payload = Object.assign(payload, { collection: "test", param: "template.upToDate" });
+      payload = Object.assign(payload, {
+        collection: "test",
+        param: "template.upToDate",
+      });
 
-      dispatch("setParamInObject", payload)
-        .catch((err) => commit("setError", "Error in setUpToDate." + err));
-    }
+      dispatch("setParamInObject", payload).catch((err) =>
+        commit("setError", "Error in setUpToDate." + err)
+      );
+    },
   },
 };
