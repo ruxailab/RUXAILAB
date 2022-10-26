@@ -26,6 +26,7 @@ export default {
     var collectionRef = db.collection(payload.collection);
     return collectionRef.get();
   },
+
   pushArray: (payload) => {
     const db = firebase.firestore();
     var collectionRef = db.collection(payload.collection);
