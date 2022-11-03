@@ -163,5 +163,5 @@ import api from "@/api";
         data: user
       }))
     }
-  },
-};
+  }
+}
