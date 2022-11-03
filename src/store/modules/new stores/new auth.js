@@ -102,7 +102,7 @@ import api from "@/api";
      *  @action signin=setUser
      *  @returns {void}
      */
-    async autoSignIn({ commit }) {
+    async authGetCurrentUser({ commit }) {
       try {
         var user = await api.auth.getCurrentUser();
         if (user) {
