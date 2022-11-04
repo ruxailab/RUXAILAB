@@ -1,6 +1,6 @@
 /**
- * Auth store controller
- * @controller auth
+ * Template Store Module
+ * @module template
  */
 
 export default {
