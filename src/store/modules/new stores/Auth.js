@@ -1,8 +1,8 @@
 import api from "@/api";
 
 /**
- * Auth store controller
- * @controller auth
+ * Auth Store Module
+ * @module auth
  */
 
  export default {
