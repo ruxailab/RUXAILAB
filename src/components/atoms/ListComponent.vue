@@ -100,7 +100,7 @@
                 (type === 'answers' ||
                   type === 'template' ||
                   type === 'myCoops') &&
-                (item.date || item.header.date)
+                  (item.date || item.header.date)
               "
               >Last Updated on
               {{
@@ -147,7 +147,7 @@ export default {
     items: {
       type: Array,
       required: true,
-      default: function () {
+      default: function() {
         return [];
       },
     },
