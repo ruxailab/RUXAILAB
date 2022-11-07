@@ -115,7 +115,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">Cancel</v-btn>
+          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')"
+            >Cancel</v-btn
+          >
           <v-btn class="white--text" color="#fca326" @click="addHeuris()"
             >Add</v-btn
           >
@@ -126,7 +128,8 @@
     <v-dialog v-model="dialog" width="800" persistent> </v-dialog>
 
     <!-- Main -->
-    <v-card style="background: #f5f7ff" elevation="0">
+
+    <v-card style="background: #f5f7ff; z-index: 10 !important;" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
       <v-row class="ma-0 pa-0" v-if="heuristics.length">
@@ -316,7 +319,9 @@
       <v-row justify="center" v-else>
         <v-col class="ma-10" cols="10">
           <v-row justify="center" align="center">
-            <p class="subtitleView">You don't have heuristic yet, start one.</p>
+            <p class="subtitleView">
+              You don't have heuristic yet, start one.
+            </p>
           </v-row>
           <v-row class="ma-4" justify="center" align="center">
             <v-btn @click="dialogHeuris = true" icon x-large color="grey">
@@ -326,9 +331,17 @@
         </v-col>
       </v-row>
     </v-card>
+
+    <button class="csv-btn"><span class="teste"></span></button>
+    <flatfile-button
+      :settings="settings"
+      :licenseKeyF="licenseKey"
+      :customer="customer"
+    >
+      Upload here
+    </flatfile-button>
   </div>
 </template>
-
 
 <script>
 import AddDescBtn from "@/components/atoms/AddDescBtn";
@@ -339,7 +352,7 @@ export default {
     heuristics: {
       type: Array,
       required: true,
-      default: function () {
+      default: function() {
         return [];
       },
     },
@@ -397,7 +410,7 @@ export default {
         if (config) {
           this.heuristics[this.itemSelect].questions.splice(item, 1);
           this.questionSelect = null;
-          
+
           this.heuristics[this.itemSelect].total = this.heuristics[
             this.itemSelect
           ].questions.length;
@@ -599,7 +612,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .subtitleView {
   font-family: Roboto;
@@ -631,5 +643,32 @@ export default {
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
   /* background: #515069; */
+}
+.csv-btn {
+  position: absolute;
+  right: 10px;
+
+  z-index: 0;
+  width: 10vw;
+  height: 4vh;
+  border-radius: 0px 0px 20px 20px;
+
+  box-shadow: 0px 2px 5px black;
+  background-color: #fca326;
+
+  transition: 1s;
+}
+
+.csv-btn:hover {
+  height: 10vh;
+  content: "test";
+}
+.teste:after {
+  width: 100vw;
+  height: 100vh;
+  content: "Import .csv file";
+}
+.teste:hover:after {
+  content: "Import .csv file teste teste";
 }
 </style>
