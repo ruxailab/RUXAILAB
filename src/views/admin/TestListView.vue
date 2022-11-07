@@ -332,15 +332,14 @@ export default {
       return array;
     },
     filteredAllTests() {
-      // let arr = [];
+      let arr = [];
 
-      // console.log(this.search);
-      // arr = this.allTests.filter((test) => {
-      //   return test.title.toLowerCase().includes(this.search.toLowerCase());
-      // });
+      arr = this.allTests.filter((test) => {
+        console.log(test);
+        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      });
 
-      // return arr;
-      return this.allTests;
+      return arr;
     },
     filteredMyTests() {
       if (this.user)
