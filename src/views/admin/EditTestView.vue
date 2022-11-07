@@ -194,7 +194,7 @@ export default {
 
         delete aux.tasks;
       } else if (this.object?.tasks) {
-        aux.tasks = [...this.object.tasks]
+        aux.tasks = [...this.object.tasks];
         delete aux.heuristics;
       }
 
