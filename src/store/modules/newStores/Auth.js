@@ -1,8 +1,8 @@
 import api from "@/api";
 
 /**
- * Auth store controller
- * @controller auth
+ * Auth Store Module
+ * @module auth
  */
 
  export default {
@@ -102,7 +102,7 @@ import api from "@/api";
      *  @action signin=setUser
      *  @returns {void}
      */
-    async autoSignIn({ commit }) {
+    async authGetCurrentUser({ commit }) {
       try {
         var user = await api.auth.getCurrentUser();
         if (user) {
@@ -163,5 +163,5 @@ import api from "@/api";
         data: user
       }))
     }
-  },
-};
+  }
+}
