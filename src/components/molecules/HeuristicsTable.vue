@@ -317,7 +317,7 @@
       </v-row>
 
       <v-row justify="center" v-else>
-        <v-col class="ma-10" cols="10">
+        <v-col class="ma-10" cols="10" v-if="!showUploadCSV">
           <v-row justify="center" align="center">
             <p class="subtitleView">
               You don't have heuristic yet, start one.
@@ -329,17 +329,51 @@
             </v-btn>
           </v-row>
         </v-col>
+
+        <v-col class="ma-10" cols="10" v-if="showUploadCSV">
+          <v-row justify="end" align="center">
+            <v-btn
+              class=" d-flex justify-end mb-6"
+              color="orange darken-2"
+              dark
+              @click="showUploadCSV = false"
+            >
+              <v-icon dark left> mdi-arrow-left </v-icon>Back
+            </v-btn>
+          </v-row>
+          <v-row class="ma-2" justify="center" align="center">
+            <v-file-input
+              class="d-flex justify-center "
+              accept=".csv"
+              show-size
+              truncate-length="15"
+              placeholder="Import your CSV file here."
+            >
+            </v-file-input>
+            <v-btn
+              :loading="loading3"
+              :disabled="loading3"
+              color="blue-grey"
+              class="ma-2 white--text"
+              @click="loader = 'loading3'"
+            >
+              Upload
+              <v-icon right dark>
+                mdi-cloud-upload
+              </v-icon>
+            </v-btn>
+          </v-row>
+        </v-col>
       </v-row>
     </v-card>
 
-    <button class="csv-btn"><span class="teste"></span></button>
-    <flatfile-button
-      :settings="settings"
-      :licenseKeyF="licenseKey"
-      :customer="customer"
-    >
-      Upload here
-    </flatfile-button>
+    <!-- <div class=" csv-model" v-if="showUploadCSV">
+
+    </div> -->
+
+    <button v-if="!showUploadCSV" class="csv-btn" @click="showUploadCSV = true">
+      Import .csv file
+    </button>
   </div>
 </template>
 
@@ -360,10 +394,12 @@ export default {
   components: {
     AddDescBtn,
     VClamp,
+    // FlatfileButton,
   },
   data: () => ({
     menuHeuristics: false,
     menuQuestions: false,
+    showUploadCSV: false,
     itemSelect: null,
     questionSelect: null,
     itemEdit: null,
@@ -656,19 +692,31 @@ export default {
   box-shadow: 0px 2px 5px black;
   background-color: #fca326;
 
-  transition: 1s;
+  transition: 0.5s;
 }
 
 .csv-btn:hover {
   height: 10vh;
   content: "test";
 }
-.teste:after {
-  width: 100vw;
-  height: 100vh;
-  content: "Import .csv file";
+
+.csv-model {
+  position: absolute;
+  top: 40%;
+  right: 32%;
+  z-index: 50;
+
+  width: 40%;
+  height: 42%;
+
+  background-color: #dbdde4;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
 }
-.teste:hover:after {
-  content: "Import .csv file teste teste";
+.import-img {
+  width: 10vw;
+  height: 10vw;
 }
 </style>
