@@ -343,6 +343,7 @@
           </v-row>
           <v-row class="ma-2" justify="center" align="center">
             <v-file-input
+              v-model="csvFile"
               class="d-flex justify-center "
               accept=".csv"
               show-size
@@ -355,7 +356,7 @@
               :disabled="loading3"
               color="blue-grey"
               class="ma-2 white--text"
-              @click="loader = 'loading3'"
+              @click="csvImportBtn()"
             >
               Upload
               <v-icon right dark>
@@ -400,6 +401,7 @@ export default {
     menuHeuristics: false,
     menuQuestions: false,
     showUploadCSV: false,
+    csvFile: null,
     itemSelect: null,
     questionSelect: null,
     itemEdit: null,
@@ -563,6 +565,9 @@ export default {
         }
         this.emitChange();
       }
+    },
+    csvImportBtn() {
+      console.log(this.csvFile);
     },
   },
   watch: {
