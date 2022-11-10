@@ -317,7 +317,7 @@
       </v-row>
 
       <v-row justify="center" v-else>
-        <v-col class="ma-10" cols="10" v-if="!showUploadCSV">
+        <v-col class="ma-10" cols="10">
           <v-row justify="center" align="center">
             <p class="subtitleView">
               You don't have heuristic yet, start one.
@@ -329,52 +329,8 @@
             </v-btn>
           </v-row>
         </v-col>
-
-        <v-col class="ma-10" cols="10" v-if="showUploadCSV">
-          <v-row justify="end" align="center">
-            <v-btn
-              class=" d-flex justify-end mb-6"
-              color="orange darken-2"
-              dark
-              @click="showUploadCSV = false"
-            >
-              <v-icon dark left> mdi-arrow-left </v-icon>Back
-            </v-btn>
-          </v-row>
-          <v-row class="ma-2" justify="center" align="center">
-            <v-file-input
-              v-model="csvFile"
-              class="d-flex justify-center "
-              accept=".csv"
-              show-size
-              truncate-length="15"
-              placeholder="Import your CSV file here."
-            >
-            </v-file-input>
-            <v-btn
-              :loading="loading"
-              :disabled="loading"
-              color="blue-grey"
-              class="ma-2 white--text"
-              @click="csvImportBtn(), (loader = 'loading')"
-            >
-              Upload
-              <v-icon right dark>
-                mdi-cloud-upload
-              </v-icon>
-            </v-btn>
-          </v-row>
-        </v-col>
       </v-row>
     </v-card>
-
-    <!-- <div class=" csv-model" v-if="showUploadCSV">
-
-    </div> -->
-
-    <button v-if="!showUploadCSV" class="csv-btn" @click="showUploadCSV = true">
-      Import .csv file
-    </button>
   </div>
 </template>
 
@@ -400,10 +356,6 @@ export default {
   data: () => ({
     menuHeuristics: false,
     menuQuestions: false,
-    showUploadCSV: false,
-    loading: false,
-    loader: null,
-    csvFile: null,
     itemSelect: null,
     questionSelect: null,
     itemEdit: null,
