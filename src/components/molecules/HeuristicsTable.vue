@@ -352,11 +352,11 @@
             >
             </v-file-input>
             <v-btn
-              :loading="loading3"
-              :disabled="loading3"
+              :loading="loading"
+              :disabled="loading"
               color="blue-grey"
               class="ma-2 white--text"
-              @click="csvImportBtn()"
+              @click="csvImportBtn(), (loader = 'loading')"
             >
               Upload
               <v-icon right dark>
@@ -401,6 +401,8 @@ export default {
     menuHeuristics: false,
     menuQuestions: false,
     showUploadCSV: false,
+    loading: false,
+    loader: null,
     csvFile: null,
     itemSelect: null,
     questionSelect: null,
@@ -602,6 +604,23 @@ export default {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
     },
+
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+      // const alertFunc = alert("Your file has been uploaded!");
+
+      if (this.csvFile != null) {
+        setTimeout(() => (this[l] = false), 3000);
+        setTimeout(() => (this.csvFile = null), 3000);
+        // setTimeout(alertFunc, 3000);
+        this.loader = null;
+      } else {
+        setTimeout(() => (this[l] = false), 3000);
+        alert("No csv file selected. \nPlease select one before procede.");
+        this.loader = null;
+      }
+    },
   },
   computed: {
     arrayQuestions() {
@@ -723,5 +742,42 @@ export default {
 .import-img {
   width: 10vw;
   height: 10vw;
+}
+
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
