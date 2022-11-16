@@ -6,18 +6,18 @@
  export default {
     state: {
         heuristic: null,
-        heuristics: null,
-        paginatedTemps: null,
+        Heuristics: null,
+        PaginatedTemp: null,
     },
     getters: {
-        heuristics(state) {
-            return state.heuristics
+        Heuristics(state) {
+            return state.Heuristics
         },
         heuristic(state) {
             return state.heuristic
         },
-        paginatedTemps(state) {
-            return state.paginatedTemps
+        PaginatedTemp(state) {
+            return state.PaginatedTemp
         }
     },
     mutations: {
@@ -25,10 +25,10 @@
             state.heuristic = payload
         },
         setHeuristics(state, payload) {
-            state.heuristics = payload
+            state.Heuristics = payload
         },
-        setPaginatedTemps(state, payload) {
-            state.paginatedTemps = payload;
+        setPaginatedTemp(state, payload) {
+            state.PaginatedTemp = payload;
         }
     },
     actions: {
@@ -48,7 +48,7 @@
          * @param {string} payload.data.header.description - heuristic description 
          * @param {object} payload.data.body - data to creating new tests
          * @param {string} payload.data.body.type - test type
-         * @param {object[]} [payload.data.body.heuristics] - structure test when its type is heuristic
+         * @param {object[]} [payload.data.body.Heuristics] - structure test when its type is heuristic
          * @param {object[]} [payload.data.body.options] -  alternatives to respond when your type is heuristic
          * @param {object} [payload.data.body.answersSheet] -  standard object to answer the test
          * @param {object[]} [payload.data.body.tasks] - structure test when its type is user
@@ -58,7 +58,7 @@
          */
         async createNewHeuristic({ dispatch, commit }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'heuristics' });
+            payload = Object.assign(payload, { collection: 'Heuristics' });
 
             let docRef = dispatch('createObject', payload)
                 .then((doc) => {
@@ -86,7 +86,7 @@
          * @param {string} payload.data.header.description - heuristic description 
          * @param {object} payload.data.body - data to creating new tests
          * @param {string} payload.data.body.type - test type
-         * @param {object[]} [payload.data.body.heuristics] - structure test when its type is heuristic
+         * @param {object[]} [payload.data.body.Heuristics] - structure test when its type is heuristic
          * @param {object[]} [payload.data.body.options] -  alternatives to respond when your type is heuristic
          * @param {object} [payload.data.body.answersSheet] -  standard object to answer the test
          * @param {object[]} [payload.data.body.tasks] - structure test when its type is user
@@ -96,7 +96,7 @@
          */
         async updateHeuristic({ dispatch, commit }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "heuristics" });
+            payload = Object.assign(payload, { collection: "Heuristics" });
 
             dispatch("updateObject", payload)
                 .catch((err) => commit("setError", "Error in updateHeuristic." + err));
@@ -112,7 +112,7 @@
          */
         async deleteHeuristic({ dispatch, commit }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "heuristics" });
+            payload = Object.assign(payload, { collection: "Heuristics" });
 
             dispatch("deleteObject", payload)
                 .catch((err) => commit("setError", "Error in deleteHeuristic." + err));
@@ -129,7 +129,7 @@
          */
         async getObjectHeuristic({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'heuristics' });
+            payload = Object.assign(payload, { collection: 'Heuristics' });
 
             let heuristic = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getHeuristic." + err));
@@ -139,7 +139,7 @@
 
         async getObjectHeuristicAuthor({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'heuristics' });
+            payload = Object.assign(payload, { collection: 'Heuristics' });
 
             let heuristic = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getHeuristic." + err));
@@ -149,7 +149,7 @@
 
         async getObjectHeuristicBody({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'heuristics' });
+            payload = Object.assign(payload, { collection: 'Heuristics' });
 
             let heuristic = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getHeuristic." + err));
@@ -165,39 +165,39 @@
          */
         async getAllHeuristic({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'heuristics' });
+            let payload = Object.assign({}, { collection: 'Heuristics' });
 
-            let heuristics = await dispatch("getAllObjects", payload)
+            let Heuristics = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getHeuristics." + err));
 
-            commit('setHeuristics', heuristics)
+            commit('setHeuristics', Heuristics)
         },
         async getAllHeuristicAuthor({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'heuristics' });
+            let payload = Object.assign({}, { collection: 'Heuristics' });
 
-            let heuristics = await dispatch("getAllObjects", payload)
+            let Heuristics = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getHeuristics." + err));
 
-            commit('setHeuristics', heuristics)
+            commit('setHeuristics', Heuristics)
         },
         async getAllHeuristicBody({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'heuristics' });
+            let payload = Object.assign({}, { collection: 'Heuristics' });
 
-            let heuristics = await dispatch("getAllObjects", payload)
+            let Heuristics = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getHeuristics." + err));
 
-            commit('setHeuristics', heuristics)
+            commit('setHeuristics', Heuristics)
         },
         async getAllHeuristicHeader({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'heuristics' });
+            let payload = Object.assign({}, { collection: 'Heuristics' });
 
-            let heuristics = await dispatch("getAllObjects", payload)
+            let Heuristics = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getHeuristics." + err));
 
-            commit('setHeuristics', heuristics)
+            commit('setHeuristics', Heuristics)
         }
     }
 }
