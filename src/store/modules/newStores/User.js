@@ -5,26 +5,26 @@
 
  export default {
     state: {
-      users: null,
+      Users: null,
     },
     getters: {
       /**
        * @name Getters
        * @type {object} 
-       * @getter {object[]} admins=users Returns a user array with users whose access level is 1
+       * @getter {object[]} Admins=Users Returns a user array with Users whose access level is 1
        */
-      admins(state) {
-        return state.users.filter((item) => {
+      Admins(state) {
+        return state.Users.filter((item) => {
           return item.accessLevel == 1;
         });
       },
-      users(state) {
-        return state.users;
+      Users(state) {
+        return state.Users;
       }
     },
     mutations: {
       setUsers(state, payload) {
-        state.users = payload;
+        state.Users = payload;
       },
     },
     actions: {
@@ -52,14 +52,14 @@
        */
       createNewUser({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
         dispatch("pushObject", payload)
           .catch((err) => commit("setError", "Error in createNewUser." + err));
       },
 
 /**
-       * This action deletes the user and its relationships with other tests and users
+       * This action deletes the user and its relationships with other tests and Users
        * 
        * @action deleteUser
        * @param {object} payload - user data  
@@ -77,7 +77,7 @@
         commit("setLoading", true);
   
         //Delete from  Users' colletion
-        payload = Object.assign(payload, { collection: 'users' })
+        payload = Object.assign(payload, { collection: 'Users' })
         dispatch('deleteObject', payload)
           .catch((err) => commit("setError", "Error in deleteUser." + err));
   
@@ -126,7 +126,7 @@
       },
       pushMyTemps({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
         dispatch("pushObject", payload)
           .catch((err) => commit("setError", "Error in pushMyTemps." + err));
@@ -134,7 +134,7 @@
       updateMyTemps({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myTemps",
         });
   
@@ -143,7 +143,7 @@
       },
       removeMyTemps({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
         dispatch("removeObject", payload)
           .catch((err) => commit("setError", "Error in removeMyTemps." + err));
@@ -217,7 +217,7 @@
 
 
       /**
-       *  This action gets all users from users collection ,
+       *  This action gets all Users from Users collection ,
        *  using the generic action {@link getAllObjects}
        * 
        * @action getUsers=setUsers
@@ -227,52 +227,52 @@
 
       async getAllUser ({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
-        var users = await dispatch("getAllObjects", payload)
+        var Users = await dispatch("getAllObjects", payload)
           .catch((err) => commit("setError", "Error in getAllUser." + err));
   
-        commit("setUsers", users);
+        commit("setUsers", Users);
       },
 
       async getAllUserAnswer({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
-        var users = await dispatch("getAllObjects", payload)
+        var Users = await dispatch("getAllObjects", payload)
           .catch((err) => commit("setError", "Error in getAllUserAnswer." + err));
   
-        commit("setUsers", users);
+        commit("setUsers", Users);
       },
 
       async getAllUserTask({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
-        var users = await dispatch("getAllObjects", payload)
+        var Users = await dispatch("getAllObjects", payload)
           .catch((err) => commit("setError", "Error in getAllUserTask." + err));
   
-        commit("setUsers", users);
+        commit("setUsers", Users);
       },
 
       async getAllUserTemplate({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
-        var users = await dispatch("getAllObjects", payload)
+        var Users = await dispatch("getAllObjects", payload)
           .catch((err) => commit("setError", "Error in getAllUserTemplate." + err));
   
-        commit("setUsers", users);
+        commit("setUsers", Users);
       },
 
       async getAllUserTest({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
-        var users = await dispatch("getAllObjects", payload)
+        var Users = await dispatch("getAllObjects", payload)
           .catch((err) => commit("setError", "Error in getAllUserTest." + err));
   
-        commit("setUsers", users);
+        commit("setUsers", Users);
       },
 
       /**
@@ -322,7 +322,7 @@
       updateMyTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myTests",
         });
   
@@ -346,7 +346,7 @@
        */
       removeMyTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
         dispatch("removeObject", payload)
           .catch((err) => commit("setError", "Error in removeMyTest." + err));
@@ -380,7 +380,7 @@
        */
       pushNotification({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "users" });
+        payload = Object.assign(payload, { collection: "Users" });
   
         dispatch("pushObject", payload)
           .then(() => {
@@ -403,7 +403,7 @@
       removeNotification({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "notifications",
         });
   
@@ -432,7 +432,7 @@
       pushMyCoops({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myCoops",
         });
   
@@ -461,7 +461,7 @@
       updateMyCoops({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myCoops",
         });
   
@@ -486,7 +486,7 @@
       removeMyCoops({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myCoops",
         });
   
@@ -509,7 +509,7 @@
       updateAccessLevel({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           field: "myCoops",
           identifier: "cooperators",
         });
@@ -543,7 +543,7 @@
       pushMyAnswers({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myAnswers",
         });
   
@@ -576,7 +576,7 @@
       updateMyAnswers({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myAnswers",
         });
         dispatch("updateArrayObject", payload)
@@ -600,7 +600,7 @@
       removeMyAnswers({ dispatch, commit }, payload) {
         commit("setLoading", true);
         payload = Object.assign(payload, {
-          collection: "users",
+          collection: "Users",
           param: "myAnswers",
         });
   

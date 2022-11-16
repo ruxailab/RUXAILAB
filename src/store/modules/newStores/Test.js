@@ -1,102 +1,102 @@
 /**
  * Tests Store Module
- * @module tests
+ * @module Tests
  */
 
  export default {
     state: {
-      test: null,
-      tests: null,
-      myTests: null,
-      snackMessage: null,
-      snackColor: null,
-      managerIDs: null,
+      Test: null,
+      Tests: null,
+      MyTests: null,
+      SnackMessage: null,
+      SnackColor: null,
+      ManagerIDs: null,
     },
     getters: {
-      tests(state) {
-        return state.tests;
+      Tests(state) {
+        return state.Tests;
       },
-      test(state) {
-        return state.test;
+      Test(state) {
+        return state.Test;
       },
-      tasks(state) {
-        return state.test.tasks;
+      Tasks(state) {
+        return state.Test.Tasks;
       },
-      heuristics(state) {
-        return state.test.heuristics;
+      HeuristicsTest(state) {
+        return state.Test.HeuristicsTest;
       },
-      coops(state) {
-        return state.test.coop;
+      Coops(state) {
+        return state.Test.coop;
       },
-      snackColor(state) {
-        return state.snackColor;
+      SnackColor(state) {
+        return state.SnackColor;
       },
-      snackMessage(state) {
-        return state.snackMessage;
+      SnackMessage(state) {
+        return state.SnackMessage;
       },
-      managerIDs(state) {
-        return state.managerIDs;
+      ManagerIDs(state) {
+        return state.ManagerIDs;
       },
     },
     mutations: {
       setTest(state, payload) {
-        state.test = payload;
+        state.Test = payload;
       },
       setTests(state, payload) {
-        state.tests = payload;
+        state.Tests = payload;
       },
       setMyTests(state, payload) {
-        state.myTests = payload;
+        state.MyTests = payload;
       },
       setError(state, payload) {
-        state.snackMessage = payload;
-        state.snackColor = "red";
+        state.SnackMessage = payload;
+        state.SnackColor = "red";
       },
       setSuccess(state, payload) {
-        state.snackMessage = payload;
-        state.snackColor = "success";
+        state.SnackMessage = payload;
+        state.SnackColor = "success";
       },
       resetSnack(state) {
-        state.snackMessage = null;
-        state.snackColor = null;
+        state.SnackMessage = null;
+        state.SnackColor = null;
       },
-      setManagerIDS(state, payload) {
-        state.managerIDs = payload;
+      setManagerIDs(state, payload) {
+        state.ManagerIDs = payload;
       },
     },
     actions: {
       /**
-       * This action creates a new test, using the generic action "createObject" to creates the object,
-       * passing the test data
+       * This action creates a new Test, using the generic action "createObject" to creates the object,
+       * passing the Test data
        *
        * @action createTest
-       * @param {object} payload -test creation data
+       * @param {object} payload -Test creation data
        * @param {string} payload.collection - local in database
-       * @param {object} payload.data - test data
-       * @param {object} payload.data.admin - test's administrator data
+       * @param {object} payload.data - Test data
+       * @param {object} payload.data.admin - Test's administrator data
        * @param {string} payload.data.admin.id - administrator identification
        * @param {string} payload.data.admin.email - administrator email
-       * @param {Date} payload.data.date - test created date
-       * @param {string} payload.data.title - test title
-       * @param {string} payload.data.description - test description
-       * @param {string} payload.data.type - test type
-       * @param {object} [payload.data.answersSheet] - standard object to answer the test
+       * @param {Date} payload.data.date - Test created date
+       * @param {string} payload.data.title - Test title
+       * @param {string} payload.data.description - Test description
+       * @param {string} payload.data.type - Test type
+       * @param {object} [payload.data.answersSheet] - standard object to answer the Test
        * @param {number} payload.data.answersSheet.total - total questions answered
-       * @param {number} payload.data.answersSheet.progress - complete test percentage
-       * @param {object[]} payload.data.answersSheet.heuristics - answers
-       * @param {object[]} [payload.data.heuristics] - structure test when its type is heuristic
+       * @param {number} payload.data.answersSheet.progress - complete Test percentage
+       * @param {object[]} payload.data.answersSheet.HeuristicsTest - answers
+       * @param {object[]} [payload.data.HeuristicsTest] - structure Test when its type is heuristic
        * @param {object[]} [payload.data.options] -  alternatives to respond when your type is heuristic
-       * @param {object} [payload.data.postTest] - object with google form for pretest
+       * @param {object} [payload.data.postTest] - object with google form for preTest
        * @param {?string} [payload.data.postTest.form] -  google form link
-       * @param {object} [payload.data.preTest] - object with google form for post-test
+       * @param {object} [payload.data.preTest] - object with google form for post-Test
        * @param {?string} [payload.data.preTest.form] - google form link
        * @param {?string} [payload.data.preTest.consent] - google form link
-       * @param {object[]} [payload.data.tasks] - structure test when its type is user
-       * @returns {string} docRef - the test's identification
+       * @param {object[]} [payload.data.Tasks] - structure Test when its type is user
+       * @returns {string} docRef - the Test's identification
        */
        createNewTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
         let docRef = dispatch("createObject", payload)
           .then((doc) => {
@@ -107,35 +107,35 @@
       },
      
       /**
-       * This action deletes a test,using the generic action "deleteObject",
-       *  passing the test data
+       * This action deletes a Test,using the generic action "deleteObject",
+       *  passing the Test data
        *
        * @action deleteTest
-       * @param {object} payload - test's data
-       * @param {string} [payload.collection = test] -  local in database
+       * @param {object} payload - Test's data
+       * @param {string} [payload.collection = Test] -  local in database
        * @param {string} payload.answers  - answers collection reference identification
        * @param {string} payload.cooperators -cooperators collection reference identification
        * @param {string} payload.reports - reports collection reference identification
        * @param {string} [payload.template] - template collection reference identification
-       * @param {object} payload.admin - test's administrator data
+       * @param {object} payload.admin - Test's administrator data
        * @param {string} payload.admin.id - administrator identification
        * @param {string} payload.admin.email - administrator email
-       * @param {Date} payload.date - test created date
-       * @param {string} payload.title - test title
-       * @param {string} payload.description - test description
-       * @param {string} payload.type - test type
-       * @param {object} [payload.answersSheet] - standard object to answer the test
+       * @param {Date} payload.date - Test created date
+       * @param {string} payload.title - Test title
+       * @param {string} payload.description - Test description
+       * @param {string} payload.type - Test type
+       * @param {object} [payload.answersSheet] - standard object to answer the Test
        * @param {number} payload.answersSheet.total
        * @param {number} payload.answersSheet.progress
-       * @param {object[]} payload.answersSheet.heuristics
-       * @param {object[]} [payload.heuristics] - structure test when its type is heuristic
+       * @param {object[]} payload.answersSheet.HeuristicsTest
+       * @param {object[]} [payload.HeuristicsTest] - structure Test when its type is heuristic
        * @param {object[]} [payload.options] -  alternatives to respond when your type is heuristic
-       * @param {object} [payload.postTest] - object with google form for pretest
+       * @param {object} [payload.postTest] - object with google form for preTest
        * @param {?string} [payload.postTest.form] -  google form link
-       * @param {object} [payload.preTest] - object with google form for post-test
+       * @param {object} [payload.preTest] - object with google form for post-Test
        * @param {?string} [payload.preTest.form] - google form link
        * @param {?string} [payload.preTest.consent] - google form link
-       * @param {object[]} [payload.tasks] - structure test when its type is user
+       * @param {object[]} [payload.Tasks] - structure Test when its type is user
        * @returns {void}
        */
       async deleteTest({ dispatch, commit }, payload) {
@@ -144,10 +144,10 @@
           id: payload.cooperators,
         }).catch((err) => commit("setError", "Error in deleteTest." + err));
   
-        let coops = this.state.cooperators.cooperators;
+        let Coops = this.state.cooperators.cooperators;
   
-        //delete test from user
-        payload = Object.assign(payload, { collection: "test" }); //Delete test from Tests' Collection
+        //delete Test from user
+        payload = Object.assign(payload, { collection: "Test" }); //Delete Test from Tests' Collection
         dispatch("deleteObject", payload)
           .then(() => {
             dispatch("deleteReport", { id: payload.reports }).catch((err) =>
@@ -158,7 +158,7 @@
               commit("setError", "Error in deleteTest." + err)
             );
   
-            coops.cooperators.forEach((coop) => {
+            Coops.cooperators.forEach((coop) => {
               if (coop.accessLevel.value <= 1)
                 dispatch("removeMyCoops", {
                   docId: coop.id,
@@ -191,39 +191,39 @@
       },
 
         /**
-       * This action updates the test,
+       * This action updates the Test,
        * using a the generic action "updateObject" sending the update data
        *
        * @action updateTest
        * @param {object} payload - data to update
-       * @param {string} [payload.collection = test] -  local in database
-       * @param {string} payload.docId - test identification
-       * @param {object} payload.data - updated test data
+       * @param {string} [payload.collection = Test] -  local in database
+       * @param {string} payload.docId - Test identification
+       * @param {object} payload.data - updated Test data
        * @param {string} payload.data.answers  - answers collection reference identification
-       * @param {object} payload.data.admin - test's administrator data
+       * @param {object} payload.data.admin - Test's administrator data
        * @param {string} payload.data.admin.id - administrator identification
        * @param {string} payload.data.admin.email - administrator email
-       * @param {Date} payload.data.date - test created date
-       * @param {string} payload.data.title - test title
-       * @param {string} payload.data.description - test description
-       * @param {string} payload.data.type - test type
-       * @param {object} [payload.data.answersSheet] - standard object to answer the test
+       * @param {Date} payload.data.date - Test created date
+       * @param {string} payload.data.title - Test title
+       * @param {string} payload.data.description - Test description
+       * @param {string} payload.data.type - Test type
+       * @param {object} [payload.data.answersSheet] - standard object to answer the Test
        * @param {number} payload.data.answersSheet.total
        * @param {number} payload.data.answersSheet.progress
-       * @param {object[]} payload.data.answersSheet.heuristics
-       * @param {object[]} [payload.data.heuristics] - structure test when its type is heuristic
+       * @param {object[]} payload.data.answersSheet.HeuristicsTest
+       * @param {object[]} [payload.data.HeuristicsTest] - structure Test when its type is heuristic
        * @param {object[]} [payload.data.options] -  alternatives to respond when your type is heuristic
-       * @param {object} [payload.data.postTest] - object with google form for pretest
+       * @param {object} [payload.data.postTest] - object with google form for preTest
        * @param {?string} [payload.data.postTest.form] -  google form link
-       * @param {object} [payload.data.preTest] - object with google form for post-test
+       * @param {object} [payload.data.preTest] - object with google form for post-Test
        * @param {?string} [payload.data.preTest.form] - google form link
        * @param {?string} [payload.data.preTest.consent] - google form link
-       * @param {object[]} [payload.data.tasks] - structure test when its type is user
+       * @param {object[]} [payload.data.Tasks] - structure Test when its type is user
        * @returns {void}
        */
       updateTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
         dispatch("updateObject", payload).catch((err) =>
           commit("setError", "Error in updateTest." + err)
@@ -231,71 +231,71 @@
       },
 
       /**
-       *This action gets a test by id, using the generic action "getObject"
+       *This action gets a Test by id, using the generic action "getObject"
        *
        * @action getTest=setTest
-       * @param {object} payload - test's data
-       * @param {string} [payload.collection = test] -  local in database
-       * @param {string} payload.id - test's identification code
+       * @param {object} payload - Test's data
+       * @param {string} [payload.collection = Test] -  local in database
+       * @param {string} payload.id - Test's identification code
        * @returns {void}
        */
       async getObjectTest({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
-        var test = await dispatch("getObject", payload).catch((err) =>
+        var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTest." + err)
         );
   
-        commit("setTest", test);
+        commit("setTest", Test);
       },
 
       async getObjectTestAdmin({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
-        var test = await dispatch("getObject", payload).catch((err) =>
+        var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestAdmin." + err)
         );
   
-        commit("setTest", test);
+        commit("setTest", Test);
       },
 
       async getObjectTestStructure({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
-        var test = await dispatch("getObject", payload).catch((err) =>
+        var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestStructure." + err)
         );
   
-        commit("setTest", test);
+        commit("setTest", Test);
       },
 
       async getObjectTestStructureOptions({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
-        var test = await dispatch("getObject", payload).catch((err) =>
+        var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestStructureOptions." + err)
         );
   
-        commit("setTest", test);
+        commit("setTest", Test);
       },
 
       async getObjectTestTemplateDoc({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "test" });
+        payload = Object.assign(payload, { collection: "Test" });
   
-        var test = await dispatch("getObject", payload).catch((err) =>
+        var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestTemplateDoc." + err)
         );
   
-        commit("setTest", test);
+        commit("setTest", Test);
       },
 
        /**
-       * This action gets all test in database, using the generic action "getAllObjects"
+       * This action gets all Test in database, using the generic action "getAllObjects"
        *
        * @deprecated
        * @action getTests=setTests
@@ -304,47 +304,47 @@
        */
         async getAllTest({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-            var tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Test" });
+            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTest." + err)
             );
-            commit("setTests", tests);
+            commit("setTests", Tests);
         },
 
         async getAllTestAdmin({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-            var tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Test" });
+            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestAdmin." + err)
             );
-            commit("setTests", tests);
+            commit("setTests", Tests);
         },
 
         async getAllTestStructure({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-            var tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Test" });
+            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestStructure." + err)
             );
-            commit("setTests", tests);
+            commit("setTests", Tests);
         },
 
         async getAllTestStructureOptions({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-            var tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Test" });
+            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestStructureOptions." + err)
             );
-            commit("setTests", tests);
+            commit("setTests", Tests);
         },
 
         async getAllTestTemplateDoc({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-            var tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Test" });
+            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestTemplateDoc." + err)
             );
-            commit("setTests", tests);
+            commit("setTests", Tests);
         },
 
 
