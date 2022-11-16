@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="FileUpload">
     <v-row justify="center">
       <v-col class="ma-10" cols="10">
         <v-row class="ma-2" justify="center" align="center">
@@ -10,6 +10,7 @@
             show-size
             truncate-length="15"
             placeholder="Import your CSV file here."
+            ref="myFile"
           >
           </v-file-input>
           <v-btn
@@ -17,7 +18,7 @@
             :disabled="loading"
             color="blue-grey"
             class="ma-2 white--text"
-            @click="csvImportBtn(), (loader = 'loading')"
+            @click="csvImportBtn(), (loader = 'loading'), changeToJSON()"
           >
             Upload
             <v-icon right dark>
@@ -32,16 +33,60 @@
 
 <script>
 export default {
-  props: {},
-  components: {},
-  data: () => ({
-    loading: false,
-    loader: null,
-    csvFile: null,
-  }),
+  data() {
+    return {
+      loading: false,
+      loader: null,
+      csvFile: null,
+      refs: this.$refs,
+    };
+  },
+
   methods: {
     csvImportBtn() {
       console.log(this.csvFile);
+    },
+
+    changeToJSON() {
+      console.log(this.csvFile);
+      let lines = "";
+      let currentline = "";
+      let csv = "";
+      let headers = "";
+      let result = [];
+      let reader = new FileReader();
+
+      console.log(FileReader);
+      reader.readAsBinaryString(this.csvFile);
+      console.log("puta");
+
+      reader.onload = (csvFile) => {
+        console.log(csvFile);
+        csv = reader.result;
+        lines = csv.split("\r" + "\n");
+        headers = lines[0].split(",");
+
+        for (var i = 1; i < lines.length; i++) {
+          if (!lines[i]) continue;
+          let obj = {};
+          currentline = lines[i];
+          var re = /"/g;
+          currentline = re[Symbol.replace](currentline, "");
+          currentline = currentline.split(",");
+
+          for (var j = 0; j < headers.length; j++) {
+            if (j == 0 || j == 1 || j == 2 || j == 3 || j == 4) {
+              let head = headers[j].trim();
+              let value = currentline[j].trim();
+              obj[head] = value;
+            }
+          }
+          result.push(obj);
+        }
+
+        result = JSON.stringify(result);
+        console.log(result);
+      };
     },
   },
   watch: {
