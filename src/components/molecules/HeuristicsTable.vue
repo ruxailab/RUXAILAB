@@ -474,7 +474,7 @@ export default {
         this.heuristics.total = this.totalQuestions;
 
         this.$refs.formHeuris.resetValidation();
-        //this.$refs.formHeuris.reset();
+
         this.$emit("change");
       }
     },
