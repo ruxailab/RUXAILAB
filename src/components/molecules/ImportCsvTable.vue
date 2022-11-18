@@ -18,7 +18,7 @@
             :disabled="loading"
             color="blue-grey"
             class="ma-2 white--text"
-            @click="csvImportBtn(), (loader = 'loading'), changeToJSON()"
+            @click="(loader = 'loading'), changeToJSON()"
           >
             Upload
             <v-icon right dark>
@@ -33,6 +33,15 @@
 
 <script>
 export default {
+  props: {
+    heuristics: {
+      type: Array,
+      required: true,
+      default: function() {
+        return [];
+      },
+    },
+  },
   data() {
     return {
       loading: false,
@@ -43,22 +52,18 @@ export default {
   },
 
   methods: {
-    csvImportBtn() {
-      console.log(this.csvFile);
-    },
-
     changeToJSON() {
+      console.log("the inputed file is: ");
       console.log(this.csvFile);
       let lines = "";
       let currentline = "";
       let csv = "";
       let headers = "";
       let result = [];
+      let result2 = [];
       let reader = new FileReader();
 
-      console.log(FileReader);
       reader.readAsBinaryString(this.csvFile);
-      console.log("puta");
 
       reader.onload = (csvFile) => {
         console.log(csvFile);
@@ -85,7 +90,17 @@ export default {
         }
 
         result = JSON.stringify(result);
+        console.log("the result is: ");
+        result2 = JSON.parse(result);
         console.log(result);
+        console.log(result2);
+
+        for (i = 0; i < result2.length; i++) {
+          this.heuristics.push(Object.assign({}, result2[i]));
+          this.itemSelect = this.heuristics.length - 1;
+
+          this.heuristics.total = this.totalQuestions;
+        }
       };
     },
   },
