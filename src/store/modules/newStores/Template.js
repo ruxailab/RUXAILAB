@@ -3,32 +3,25 @@
  * @module Template
  */
 
+//import TemplateController
+import TemplateController from '@/controllers/TemplateController.js'
+
+const TemplateCont = new TemplateController()
+
+
 export default {
     state: {
-        Template: null,
         Templates: null,
-        PaginatedTemps: null,
+        module: 'Templates'
     },
     getters: {
         Templates(state) {
             return state.Templates
-        },
-        Template(state) {
-            return state.Template
-        },
-        PaginatedTemps(state) {
-            return state.PaginatedTemps
         }
     },
     mutations: {
-        setTemplate(state, payload) {
-            state.Template = payload
-        },
-        setTemplates(state, payload) {
+        SET_TEMPLATES(state, payload) {
             state.Templates = payload
-        },
-        setPaginatedTemps(state, payload) {
-            state.PaginatedTemps = payload;
         }
     },
     actions: {
@@ -56,8 +49,10 @@ export default {
          * @param {object} [payload.data.body.preTest] - object with google form for post-test
          * @returns {string} docRef - Template identification
          */
+
         async createNewTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
+
             payload = Object.assign(payload, { collection: 'Templates' });
 
             let docRef = dispatch('createObject', payload)
@@ -66,7 +61,23 @@ export default {
                 })
                 .catch((err) => commit("setError", "Error in createTemplate." + err));
 
+            
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.createNewTemplate()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in createNewTemplate')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
+
             return docRef;
+
         },
 
 
@@ -94,13 +105,32 @@ export default {
          * @param {object} [payload.data.body.preTest] - object with google form for post-test
          * @returns {void}
          */
+
         async updateTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "Templates" });
 
             dispatch("updateObject", payload)
                 .catch((err) => commit("setError", "Error in updateTemplate." + err));
+        
+            
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.updateTemplate()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in updateTemplate')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
+        
         },
+
+
+
         /**
          * This action deletes Template, using the generic action "deleteObject",
          *  passing the Template data
@@ -110,23 +140,42 @@ export default {
          * @param {string} payload.id - Template identification
          * @returns {void}
          */
+
         async deleteTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "Templates" });
 
             dispatch("deleteObject", payload)
                 .catch((err) => commit("setError", "Error in deleteTemplate." + err));
+        
+        
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.deleteTemplate()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in deleteTemplate')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
+
         },
+
+
 
         /**
          * This action returns a Template, using the generic action "getObject", 
          * passing the Template data
          * 
-         * @action getObjectTemplate=setTemplate
+         * @action getObjectTemplate=SET_TEMPLATES
          * @param {object} payload - Template data 
          * @param {string} payload.id - Template identification
          * @returns {void}
          */
+
         async getObjectTemplate({ commit, dispatch }, payload) {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: 'Templates' });
@@ -134,7 +183,20 @@ export default {
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
 
-            commit('setTemplate', Template);
+            commit('SET_TEMPLATES', Template);
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getObjectTemplate()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getObjectTemplate')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
 
         async getObjectTemplateAuthor({ commit, dispatch }, payload) {
@@ -144,7 +206,20 @@ export default {
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
 
-            commit('setTemplate', Template);
+            commit('SET_TEMPLATES', Template);
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getObjectTemplateAuthor()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getObjectTemplateAuthor')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
 
         async getObjectTemplateBody({ commit, dispatch }, payload) {
@@ -154,15 +229,53 @@ export default {
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
 
-            commit('setTemplate', Template);
+            commit('SET_TEMPLATES', Template);
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getObjectTemplateBody()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getObjectTemplateBody')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
+
+        async getObjectTemplateHeader({ commit, dispatch }, payload) {
+            commit("setLoading", true);
+            payload = Object.assign(payload, { collection: 'Templates' });
+
+            let Template = await dispatch("getObject", payload)
+                .catch((err) => commit("setError", "Error in getTemplate." + err));
+
+            commit('SET_TEMPLATES', Template);
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getObjectTemplateHeader()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getObjectTemplateHeader')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
+        },
+
 
         /**
          * This action returns all Templates, using the generic action "getAllObjects"
          * 
-         * @action getAllTemplate=setTemplates
+         * @action getAllTemplate=SET_TEMPLATES
          * @returns {void}
          */
+
         async getAllTemplate({ commit, dispatch }) {
             commit("setLoading", true);
             let payload = Object.assign({}, { collection: 'Templates' });
@@ -170,8 +283,22 @@ export default {
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
 
-            commit('setTemplates', Templates)
+            commit('SET_TEMPLATES', Templates)
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getAllTemplate()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getAllTemplate')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
+
         async getAllTemplateAuthor({ commit, dispatch }) {
             commit("setLoading", true);
             let payload = Object.assign({}, { collection: 'Templates' });
@@ -179,8 +306,22 @@ export default {
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
 
-            commit('setTemplates', Templates)
+            commit('SET_TEMPLATES', Templates)
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getAllTemplateAuthor()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getAllTemplateAuthor')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
+
         async getAllTemplateBody({ commit, dispatch }) {
             commit("setLoading", true);
             let payload = Object.assign({}, { collection: 'Templates' });
@@ -188,8 +329,22 @@ export default {
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
 
-            commit('setTemplates', Templates)
+            commit('SET_TEMPLATES', Templates)
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getAllTemplateBody()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getAllTemplateBody')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
         },
+
         async getAllTemplateHeader({ commit, dispatch }) {
             commit("setLoading", true);
             let payload = Object.assign({}, { collection: 'Templates' });
@@ -197,7 +352,20 @@ export default {
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
 
-            commit('setTemplates', Templates)
-        }
+            commit('SET_TEMPLATES', Templates)
+
+            //Connect to controllers
+            try{
+                const res = await TemplateCont.getAllTemplateHeader()
+                commit('SET_TEMPLATES', res)
+
+            } catch{
+                console.log('Error in getAllTemplateHeader')
+                commit('setError', true)
+
+            } finally{
+                commit('setLoading', false)
+            }
+        },
     }
 }
