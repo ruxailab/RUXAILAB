@@ -188,7 +188,7 @@ const UserCont = new UserController()
         commit("setError", "Error in getObjectUser." + err)
         );
   
-        commit("setTest", test);
+        commit("SET_USERS", test);
 
 
         //Connect to controllers 
@@ -214,7 +214,7 @@ const UserCont = new UserController()
         commit("setError", "Error in getObjectUserAnswer." + err)
         );
   
-        commit("setTest", test);
+        commit("SET_USERS", test);
 
 
         //Connect to controllers 
@@ -240,7 +240,7 @@ const UserCont = new UserController()
         commit("setError", "Error in getObjectUserTask." + err)
         );
   
-        commit("setTest", test);
+        commit("SET_USERS", test);
 
 
         //Connect to controllers 
@@ -266,7 +266,7 @@ const UserCont = new UserController()
         commit("setError", "Error in getObjectUserTemplate." + err)
         );
   
-        commit("setTest", test);
+        commit("SET_USERS", test);
 
 
         //Connect to controllers 
@@ -292,7 +292,7 @@ const UserCont = new UserController()
         commit("setError", "Error in getObjectUserTest." + err)
         );
   
-        commit("setTest", test);
+        commit("SET_USERS", test);
 
 
         //Connect to controllers 
