@@ -1,19 +1,13 @@
-/* 
-import {TestController} from '././TestController'
-
-let testController = new TestController()
-*/
-
 // imports
 
 import api from "@/api/index";
-import database from "../api/modules/database";
+import database from "@/api/modules/database";
 
-import Test from "../models/Test";
-import TestAdmin from "../models/TestAdmin";
-import TestStructure from "../models/TestStructure";
-import TestStructureOptions from "../models/TestStructureOptions";
-import TestTemplateDoc from "../models/TestTemplateDoc";
+import Test from "@/models/Test";
+import TestAdmin from "@/models/TestAdmin";
+import TestStructure from "@/models/TestStructure";
+import TestStructureOptions from "@/models/TestStructureOptions";
+import TestTemplateDoc from "@/models/TestTemplateDoc";
 
 export default class TestController {
   //
