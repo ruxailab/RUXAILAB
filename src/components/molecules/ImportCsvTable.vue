@@ -32,21 +32,16 @@
 </template>
 
 <script>
+// import Heuristic from "@/models/Heuristic";
+import HeuristicTest from "@/models/HeuristicTest";
+
 export default {
-  props: {
-    heuristics: {
-      type: Array,
-      required: true,
-      default: function() {
-        return [];
-      },
-    },
-  },
   data() {
     return {
       loading: false,
       loader: null,
       csvFile: null,
+      heuris: null,
       refs: this.$refs,
     };
   },
@@ -67,6 +62,7 @@ export default {
 
       reader.onload = (csvFile) => {
         console.log(csvFile);
+        console.log("putputput");
         csv = reader.result;
         lines = csv.split("\r" + "\n");
         headers = lines[0].split(",");
@@ -80,7 +76,7 @@ export default {
           currentline = currentline.split(",");
 
           for (var j = 0; j < headers.length; j++) {
-            if (j == 0 || j == 1 || j == 2 || j == 3 || j == 4) {
+            if (j == 0 || j == 1 || j == 2 || j == 3 ) {
               let head = headers[j].trim();
               let value = currentline[j].trim();
               obj[head] = value;
@@ -93,14 +89,27 @@ export default {
         console.log("the result is: ");
         result2 = JSON.parse(result);
         console.log(result);
-        console.log(result2);
+        console.log(result2[0].HEURISTIC);
 
-        for (i = 0; i < result2.length; i++) {
-          this.heuristics.push(Object.assign({}, result2[i]));
+        const separetion = result2[0].HEURISTIC.split(";");
+        console.log(separetion);
+
+        result2.forEach((element) => {
+          const separetion = element.HEURISTIC.split(";");
+
+          console.log(separetion);
+          console.log(element + " separetion 0");
+          console.log(separetion[1] + " separetion 1");
+
+          this.heuris.title = result2[0].HEURISTIC.split(";")[0];
+          console.log(this.heuris.title);
+          this.heuristics.push(Object.assign({}, element));
           this.itemSelect = this.heuristics.length - 1;
 
           this.heuristics.total = this.totalQuestions;
-        }
+        });
+        const hTest = new HeuristicTest();
+        console.log(hTest);
       };
     },
   },
