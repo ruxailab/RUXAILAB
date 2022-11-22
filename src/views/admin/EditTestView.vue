@@ -65,6 +65,7 @@
 
     <ShowInfo v-if="test && intro == false" title="Test Edit">
       <!-- Heuristics tests -->
+      <!--TODO: change hard coded type-->
       <EditHeuristicsTest
         v-if="test.type == 'Heuristics'"
         type="tabs"

@@ -1,5 +1,6 @@
 <template>
   <div class="ma-0 pa-0">
+    {{ heuristics }}
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -92,7 +93,7 @@
           <v-col cols="10">
             <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
               <v-text-field
-                v-model="heuris.title"
+                v-model="heuristicForm.title"
                 dense
                 label="Title your heuristic"
                 outlined
@@ -102,7 +103,7 @@
               ></v-text-field>
 
               <v-text-field
-                v-model="heuris.questions[0].title"
+                v-model="heuristicForm.questions[0].title"
                 dense
                 label="Title first question"
                 outlined
@@ -336,6 +337,7 @@
 
 <script>
 import AddDescBtn from "@/components/atoms/AddDescBtn";
+
 import VClamp from "vue-clamp";
 
 export default {
@@ -360,7 +362,7 @@ export default {
     questionSelect: null,
     itemEdit: null,
     newQuestion: null,
-    heuris: null,
+    heuristicForm: null,
     headers: [
       {
         text: "Title",
@@ -468,7 +470,7 @@ export default {
       if (this.$refs.formHeuris.validate()) {
         this.dialogHeuris = false;
 
-        this.heuristics.push(Object.assign({}, this.heuris));
+        this.heuristics.push(Object.assign({}, this.heuristicForm));
         this.itemSelect = this.heuristics.length - 1;
 
         this.heuristics.total = this.totalQuestions;
@@ -527,7 +529,7 @@ export default {
   watch: {
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
-        this.heuris = {
+        this.heuristicForm = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
           title: "",
           total: 0,
@@ -539,7 +541,7 @@ export default {
             },
           ],
         };
-        this.heuris.total = this.heuris.questions.length;
+        this.heuristicForm.total = this.heuristicForm.questions.length;
       }
       if (this.dialogHeuris) {
         //when dialog opens everything is reset
@@ -593,7 +595,7 @@ export default {
   },
   created() {
     if (this.heuristics.length) {
-      this.heuris = {
+      this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
         total: 0,
         title: "",
@@ -606,7 +608,7 @@ export default {
         ],
       };
     } else {
-      this.heuris = {
+      this.heuristicForm = {
         id: 0,
         total: 0,
         title: "",
@@ -619,7 +621,7 @@ export default {
         ],
       };
     }
-    this.heuris.total = this.heuris.questions.length;
+    this.heuristicForm.total = this.heuristicForm.questions.length;
   },
 };
 </script>
