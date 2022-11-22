@@ -1,11 +1,5 @@
 // imports
 
-/* 
-import {UserController} from '././UserController'
-
-let userController = new UserController()
-*/
-
 import api from "@/api/index";
 import database from "@/api/modules/database";
 

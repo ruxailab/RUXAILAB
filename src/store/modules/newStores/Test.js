@@ -1,16 +1,18 @@
 /**
- * Tests Store Module
- * @module Tests
+ * Test Store Module
+ * @module Test
  */
+
+//import TestController
+import TestController from '@/controllers/TestController.js'
+
+const TestCont = new TestController()
 
  export default {
     state: {
       Test: null,
       Tests: null,
-      MyTests: null,
-      SnackMessage: null,
-      SnackColor: null,
-      ManagerIDs: null,
+      module: 'Tests'
     },
     getters: {
       Tests(state) {
@@ -28,40 +30,13 @@
       Coops(state) {
         return state.Test.coop;
       },
-      SnackColor(state) {
-        return state.SnackColor;
-      },
-      SnackMessage(state) {
-        return state.SnackMessage;
-      },
-      ManagerIDs(state) {
-        return state.ManagerIDs;
-      },
     },
     mutations: {
-      setTest(state, payload) {
+      SET_TEST(state, payload) {
         state.Test = payload;
       },
-      setTests(state, payload) {
+      SET_TESTS(state, payload) {
         state.Tests = payload;
-      },
-      setMyTests(state, payload) {
-        state.MyTests = payload;
-      },
-      setError(state, payload) {
-        state.SnackMessage = payload;
-        state.SnackColor = "red";
-      },
-      setSuccess(state, payload) {
-        state.SnackMessage = payload;
-        state.SnackColor = "success";
-      },
-      resetSnack(state) {
-        state.SnackMessage = null;
-        state.SnackColor = null;
-      },
-      setManagerIDs(state, payload) {
-        state.ManagerIDs = payload;
       },
     },
     actions: {
@@ -94,17 +69,32 @@
        * @param {object[]} [payload.data.Tasks] - structure Test when its type is user
        * @returns {string} docRef - the Test's identification
        */
-       createNewTest({ dispatch, commit }, payload) {
+       
+      async createNewTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+
+        payload = Object.assign(payload, { collection: "Tests" });
   
         let docRef = dispatch("createObject", payload)
-          .then((doc) => {
-            return doc.id;
-          })
+          .then((doc) => { return doc.id })
           .catch((err) => commit("setError", "Error in createNewTest." + err));
+        
+
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.createNewTest()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in createNewTest')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        }   
+
         return docRef;
       },
+
      
       /**
        * This action deletes a Test,using the generic action "deleteObject",
@@ -138,6 +128,7 @@
        * @param {object[]} [payload.Tasks] - structure Test when its type is user
        * @returns {void}
        */
+
       async deleteTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
         await dispatch("getCooperators", {
@@ -147,7 +138,8 @@
         let Coops = this.state.cooperators.cooperators;
   
         //delete Test from user
-        payload = Object.assign(payload, { collection: "Test" }); //Delete Test from Tests' Collection
+        payload = Object.assign(payload, { collection: "Tests" }); //Delete Test from Tests' Collection
+        
         dispatch("deleteObject", payload)
           .then(() => {
             dispatch("deleteReport", { id: payload.reports }).catch((err) =>
@@ -188,6 +180,19 @@
             }).catch((err) => commit("setError", "Error in deleteTest." + err));
           })
           .catch((err) => commit("setError", "Error in deleteTest." + err));
+
+
+          //Connect to controllers
+          try{
+            const res = await TestCont.deleteTest()
+            commit('SET_TESTS', res)
+          } catch{
+              console.log('Error in deleteTest')
+              commit('setError', true)
+          } finally{
+              commit('setLoading', false)
+          }   
+
       },
 
         /**
@@ -221,19 +226,34 @@
        * @param {object[]} [payload.data.Tasks] - structure Test when its type is user
        * @returns {void}
        */
-      updateTest({ dispatch, commit }, payload) {
+
+      async updateTest({ dispatch, commit }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+
+        payload = Object.assign(payload, { collection: "Tests" });
   
         dispatch("updateObject", payload).catch((err) =>
           commit("setError", "Error in updateTest." + err)
         );
+
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.updateTest()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in updateTest')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
+
 
       /**
        *This action gets a Test by id, using the generic action "getObject"
        *
-       * @action getTest=setTest
+       * @action getTest=SET_TEST
        * @param {object} payload - Test's data
        * @param {string} [payload.collection = Test] -  local in database
        * @param {string} payload.id - Test's identification code
@@ -241,110 +261,228 @@
        */
       async getObjectTest({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+        
+        payload = Object.assign(payload, { collection: "Tests" });
   
         var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTest." + err)
         );
   
-        commit("setTest", Test);
+        commit("SET_TESTS", Test);
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.getObjectTest()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in getObjectTest')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
 
       async getObjectTestAdmin({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+        
+        payload = Object.assign(payload, { collection: "Tests" });
   
         var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestAdmin." + err)
         );
   
-        commit("setTest", Test);
+        commit("SET_TESTS", Test);
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.getObjectTestAdmin()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in getObjectTestAdmin')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
 
       async getObjectTestStructure({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+        
+        payload = Object.assign(payload, { collection: "Tests" });
   
         var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestStructure." + err)
         );
   
-        commit("setTest", Test);
+        commit("SET_TESTS", Test);
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.getObjectTestStructure()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in getObjectTestStructure')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
 
       async getObjectTestStructureOptions({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+        
+        payload = Object.assign(payload, { collection: "Tests" });
   
         var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestStructureOptions." + err)
         );
   
-        commit("setTest", Test);
+        commit("SET_TESTS", Test);
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.getObjectTestStructureOptions()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in getObjectTestStructureOptions')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
 
       async getObjectTestTemplateDoc({ commit, dispatch }, payload) {
         commit("setLoading", true);
-        payload = Object.assign(payload, { collection: "Test" });
+        
+        payload = Object.assign(payload, { collection: "Tests" });
   
         var Test = await dispatch("getObject", payload).catch((err) =>
           commit("setError", "Error in getObjectTestTemplateDoc." + err)
         );
   
-        commit("setTest", Test);
+        commit("SET_TESTS", Test);
+
+        //Connect to controllers
+        try{
+          const res = await TestCont.getObjectTestTemplateDoc()
+          commit('SET_TESTS', res)
+        } catch{
+            console.log('Error in getObjectTestTemplateDoc')
+            commit('setError', true)
+        } finally{
+            commit('setLoading', false)
+        } 
       },
+
 
        /**
        * This action gets all Test in database, using the generic action "getAllObjects"
        *
        * @deprecated
-       * @action getTests=setTests
+       * @action getTests=SET_TESTS
        * @param {object} payload - empty object
        * @returns {void}
        */
         async getAllTest({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Test" });
-            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Tests" });
+            var Test = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTest." + err)
             );
-            commit("setTests", Tests);
+            commit("SET_TESTS", Test);
+
+          //Connect to controllers
+          try{
+            const res = await TestCont.getAllTest()
+            commit('SET_TESTS', res)
+          } catch{
+              console.log('Error in getAllTest')
+              commit('setError', true)
+          } finally{
+              commit('setLoading', false)
+          } 
+            
         },
 
         async getAllTestAdmin({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Test" });
-            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Tests" });
+            var Test = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestAdmin." + err)
             );
-            commit("setTests", Tests);
+            commit("SET_TESTS", Test);
+
+            //Connect to controllers
+            try{
+              const res = await TestCont.getAllTestAdmin()
+              commit('SET_TESTS', res)
+            } catch{
+                console.log('Error in getAllTestAdmin')
+                commit('setError', true)
+            } finally{
+                commit('setLoading', false)
+            } 
+            
         },
 
         async getAllTestStructure({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Test" });
-            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Tests" });
+            var Test = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestStructure." + err)
             );
-            commit("setTests", Tests);
+            commit("SET_TESTS", Test);
+
+            //Connect to controllers
+            try{
+              const res = await TestCont.getAllTestStructure()
+              commit('SET_TESTS', res)
+            } catch{
+                console.log('Error in getAllTestStructure')
+                commit('setError', true)
+            } finally{
+                commit('setLoading', false)
+            } 
         },
 
         async getAllTestStructureOptions({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Test" });
-            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Tests" });
+            var Test = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestStructureOptions." + err)
             );
-            commit("setTests", Tests);
+            commit("SET_TESTS", Test);
+
+            //Connect to controllers
+          try{
+            const res = await TestCont.getAllTestStructureOptions()
+            commit('SET_TESTS', res)
+          } catch{
+              console.log('Error in getAllTestStructureOptions')
+              commit('setError', true)
+          } finally{
+              commit('setLoading', false)
+          } 
         },
 
         async getAllTestTemplateDoc({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Test" });
-            var Tests = await dispatch("getAllObjects", payload).catch((err) =>
+            payload = Object.assign(payload, { collection: "Tests" });
+            var Test = await dispatch("getAllObjects", payload).catch((err) =>
               commit("setError", "Error in getAllTestTemplateDoc." + err)
             );
-            commit("setTests", Tests);
+            commit("SET_TESTS", Test);
+
+            //Connect to controllers
+          try{
+            const res = await TestCont.getAllTestTemplateDoc()
+            commit('SET_TESTS', res)
+          } catch{
+              console.log('Error in getAllTestTemplateDoc')
+              commit('setError', true)
+          } finally{
+              commit('setLoading', false)
+          } 
         },
 
 
