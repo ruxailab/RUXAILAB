@@ -1,19 +1,13 @@
-/* 
-import {HeuristicController} from '././HeuristicController'
-
-let HeuristicController = new HeuristicController()
-*/
-
 // imports
 
 import api from "@/api/index";
-import database from "../api/modules/database";
+import database from "@/api/modules/database";
 
-import Heuristic from "../models/Heuristic";
-import HeuristicAnswer from "../models/HeuristicAnswer";
-import HeuristicQuestion from "../models/HeuristicQuestion";
-import HeuristicQuestionAnswer from "../models/HeuristicQuestionAnswer";
-import HeuristicQuestionDescription from "../models/HeuristicQuestionDescription";
+import Heuristic from "@/models/Heuristic";
+import HeuristicAnswer from "@/models/HeuristicAnswer";
+import HeuristicQuestion from "@/models/HeuristicQuestion";
+import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
+import HeuristicQuestionDescription from "@/models/HeuristicQuestionDescription";
 
 export default class HeuristicController {
   //

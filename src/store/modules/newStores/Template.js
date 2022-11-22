@@ -41,7 +41,6 @@ export default {
          * @param {string} payload.data.header.description - Template description 
          * @param {object} payload.data.body - data to creating new tests
          * @param {string} payload.data.body.type - test type
-         * @param {object[]} [payload.data.body.heuristics] - structure test when its type is heuristic
          * @param {object[]} [payload.data.body.options] -  alternatives to respond when your type is heuristic
          * @param {object} [payload.data.body.answersSheet] -  standard object to answer the test
          * @param {object[]} [payload.data.body.tasks] - structure test when its type is user
@@ -97,7 +96,6 @@ export default {
          * @param {string} payload.data.header.description - Template description 
          * @param {object} payload.data.body - data to creating new tests
          * @param {string} payload.data.body.type - test type
-         * @param {object[]} [payload.data.body.heuristics] - structure test when its type is heuristic
          * @param {object[]} [payload.data.body.options] -  alternatives to respond when your type is heuristic
          * @param {object} [payload.data.body.answersSheet] -  standard object to answer the test
          * @param {object[]} [payload.data.body.tasks] - structure test when its type is user
