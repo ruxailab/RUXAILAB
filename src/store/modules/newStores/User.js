@@ -1,9 +1,9 @@
 /**
  * User store module
- * @module user
+ * @module User
  */
 
-//import UserController from '@/controllers/UserController.js'
+//import UserController
 import UserController from '@/controllers/UserController.js'
 
 const UserCont = new UserController()
