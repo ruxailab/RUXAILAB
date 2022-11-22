@@ -1,20 +1,14 @@
 // imports
 
-/* 
-import {TemplateController} from '././TemplateController'
-
-let templateController = new TemplateController()
-*/
-
 import api from "@/api/index";
-import database from "../api/modules/database";
+import database from "@/api/modules/database";
 
-import Template from "../models/Template";
-import TemplateAuthor from "../models/TemplateAuthor";
-import TemplateBody from "../models/TemplateBody";
-import TemplateHeader from "../models/TemplateHeader";
+import Template from "@/models/Template";
+import TemplateAuthor from "@/models/TemplateAuthor";
+import TemplateBody from "@/models/TemplateBody";
+import TemplateHeader from "@/models/TemplateHeader";
 
-export class TemplateController {
+export default class TemplateController {
   async createNewTemplate(data) {
     return database.createObject(api, data);
   }
