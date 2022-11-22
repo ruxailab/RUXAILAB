@@ -1,15 +1,8 @@
 // imports
 
-/* 
-import {AuthController} from '././AuthController'
+import auth from "@/api/modules/auth";
 
-let authController = new AuthController()
-*/
-
-// import api from "@/api/index";
-import auth from "../api/modules/auth";
-
-export class AuthController {
+export default class AuthController {
   async authSingUp(userData) {
     return auth.signUp(userData);
   }
@@ -22,4 +15,5 @@ export class AuthController {
   async authSingOut() {
     return auth.singOut();
   }
+  
 }
