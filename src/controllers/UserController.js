@@ -7,15 +7,15 @@ let userController = new UserController()
 */
 
 import api from "@/api/index";
-import database from "../api/modules/database";
+import database from "@/api/modules/database";
 
-import User from "..models/User";
-import UserAnswer from "..models/UserAnswer";
-import UserTask from "..models/UserTask";
-import UserTemplate from "..models/UserTemplate";
-import UserTest from "..models/UserTest";
+import User from "@/models/User";
+import UserAnswer from "@/models/UserAnswer";
+import UserTask from "@/models/UserTask";
+import UserTemplate from "@/models/UserTemplate";
+import UserTest from "@/models/UserTest";
 
-export class UserController {
+export default class UserController {
   //
   async createNewUser(data) {
     return database.createObject(api, data);
