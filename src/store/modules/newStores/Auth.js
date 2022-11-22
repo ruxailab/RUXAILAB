@@ -5,6 +5,12 @@ import api from "@/api";
  * @module auth
  */
 
+//import AuthController
+import AuthController from '@/controllers/AuthController.js'
+
+const AuthCont = new AuthController()
+
+
  export default {
   state: {
     User: null,
@@ -15,7 +21,7 @@ import api from "@/api";
     },
   },
   mutations: {
-    setUser(state, payload) {
+    SET_USERS(state, payload) {
       state.User = payload;
     }
   },
@@ -47,12 +53,28 @@ import api from "@/api";
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit("setLoading", false);
       }
+
+      //Connect to controllers
+      try{
+        const res = await AuthCont.authSingUp()
+        commit('SET_USERS', res)
+
+      } catch{
+        console.log('Error in authSingUp')
+        commit('setError', true)
+
+      } finally{
+        commit('setLoading', false)
+      }
+
     },
+
+
     /**
      *This action connects a User to the platform, using the API 
      and creates the observer for the User's metadata in the database
      * 
-     * @action signin=setUser
+     * @action signin=SET_USERS
      * @param {object} payload - Data to create a new User 
      * @param {string} payload.email - the User email
      * @param {string} payload.password - the User password 
@@ -69,7 +91,7 @@ import api from "@/api";
         User = Object.assign({ uid: User.id }, User.data());
 
         api.database.observer({ docId: User.uid, collection: "Users" }, commit);
-        commit("setUser", User);
+        commit("SET_USERS", User);
       } catch (err) {
         console.error("Error signing in: " + err);
         commit("setError", err);
@@ -77,29 +99,59 @@ import api from "@/api";
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit("setLoading", false);
       }
+
+      //Connect to controllers
+      try{
+        const res = await AuthCont.authSingIn()
+        commit('SET_USERS', res)
+
+      } catch{
+        console.log('Error in authSingIn')
+        commit('setError', true)
+
+      } finally{
+        commit('setLoading', false)
+      }
     },
+
+
     /**
      * This action disconnects the User from the platform
      * 
-     *  @action signin=[setUser=null]
+     *  @action signin=[SET_USERS=null]
      *  @returns {void}
      */
     async authSingOut({ commit }) {
       try {
         await api.auth.singOut();
-        commit("setUser", null);
+        commit("SET_USERS", null);
       } catch (err) {
         console.error("Error logging out.", err);
       } finally {
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit("setLoading", false);
       }
+
+      //Connect to controllers
+      try{
+        const res = await AuthCont.authSingOut()
+        commit('SET_USERS', res)
+
+      } catch{
+        console.log('Error in authSingOut')
+        commit('setError', true)
+
+      } finally{
+        commit('setLoading', false)
+      }
     },
+
+
     /**
      * This action automatically reconnects the User to the platform when 
      * reloading or entering the page, using the API and creates the observer for the User's metadata
      *
-     *  @action signin=setUser
+     *  @action signin=SET_USERS
      *  @returns {void}
      */
     async authGetCurrentUser({ commit }) {
@@ -115,7 +167,7 @@ import api from "@/api";
             { docId: User.uid, collection: "Users" },
             commit
           );
-          commit("setUser", User);
+          commit("SET_USERS", User);
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
@@ -123,25 +175,23 @@ import api from "@/api";
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit("setLoading", false);
       }
+
+      //Connect to controllers
+      try{
+        const res = await AuthCont.authGetCurrentUser()
+        commit('SET_USERS', res)
+
+      } catch{
+        console.log('Error in authGetCurrentUser')
+        commit('setError', true)
+
+      } finally{
+        commit('setLoading', false)
+      }
+
     },
-    /**
-     * This action updates the User's metadata
-     *  
-     * @action setUser=setUser
-     * @param {object} User - User's data
-     * @param {number} User.accessLevel - User acess permition 
-     * @param {string} User.collection -  local in database 
-     * @param {string} User.email - User's email
-     * @param {string} User.id -User's indentification
-     * @param {object[]} User.myAnswers - test list that User is repling
-     * @param {object[]} User.myCoops- test list that User is cooperator
-     * @param {object[]} User.myTests - User's test list 
-     * @param {object[]} User.notifications - notificatinons recived 
-     * @returns {void}
-     */
-    setUser({ commit }, User) {
-      commit("setUser", User);
-    },
+
+    
     /**
      * This action excludes User authentication by calling a firebase function
      * 
@@ -163,5 +213,9 @@ import api from "@/api";
         data: User
       }))
     }
+
+
+
+
   }
 }
