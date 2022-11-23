@@ -7,6 +7,7 @@
   >
     <v-tab @click="tabClicked(0)">Heuristics</v-tab>
     <v-tab @click="tabClicked(1)">Options</v-tab>
+    <v-tab @click="tabClicked(2)">Import .csv</v-tab>
   </v-tabs>
 
   <div v-else-if="type == 'content'">
@@ -21,17 +22,25 @@
       :options="object.options"
       @change="emitChange()"
     />
+
+    <ImportCsvTable
+      v-if="index == 2"
+      :options="object.importCsv"
+      @change="emitChange()"
+    />
   </div>
 </template>
 
 <script>
 import Heuristic from "@/components/molecules/HeuristicsTable";
 import OptionsTable from "@/components/molecules/OptionsTable";
+import ImportCsvTable from "@/components/molecules/ImportCsvTable";
 
 export default {
   components: {
     Heuristic,
     OptionsTable,
+    ImportCsvTable,
   },
   props: {
     type: {
