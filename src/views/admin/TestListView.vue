@@ -335,6 +335,7 @@ export default {
       let arr = [];
 
       arr = this.allTests.filter((test) => {
+        console.log(test);
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
 
