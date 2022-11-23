@@ -1,14 +1,18 @@
-<template>
-  <IntroComp
-    :colors="['#d128c9', '#9a1aab']"
-    :title="'Edit Test'"
-    :image="'IntroEdit.svg'"
-    :main="'Create and customize your tasks and heuristics for your research needs.'"
-    :link="'Get started!'"
-    @linkClicked="closeIntro()"
-    :items="items"
-    @callFunc="callFunc"
-  ></IntroComp>
+<template
+  ><div>
+    <IntroComp
+      :colors="['#d128c9', '#9a1aab']"
+      :title="'Edit Test'"
+      :image="'IntroEdit.svg'"
+      :main="
+        'Create and customize your tasks and heuristics for your research needs.'
+      "
+      :link="'Get started!'"
+      @linkClicked="closeIntro()"
+      :items="items"
+      @callFunc="callFunc"
+    ></IntroComp>
+  </div>
 </template>
 
 <script>
