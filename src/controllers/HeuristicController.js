@@ -16,12 +16,16 @@ import HeuristicQuestionAnswer from "../models/HeuristicQuestionAnswer";
 import HeuristicQuestionDescription from "../models/HeuristicQuestionDescription";
 import HeuristicTest from "../models/HeuristicTest";
 
+
+
 export default class HeuristicController {
   //
   async createNewHeuristic(data) {
+
     const hTest = new HeuristicTest(data);
     console.log(hTest);
     return database.createObject(api, hTest);
+
   }
   //
   async deleteHeuristic(data) {
@@ -72,6 +76,7 @@ export default class HeuristicController {
   //----------------GET ALL OBJECTS----------------
   //GetAll data from "Heuristic"
   async getAllHeuristicTest() {
+
     const answer = await database.getAllObject(api);
     return new Map(answer.map((obj) => [obj.id, new Heuristic(obj)]));
   }
