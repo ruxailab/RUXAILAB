@@ -1,6 +1,6 @@
 <template>
   <div class="ma-0 pa-0">
-    {{ heuristics }}
+    <!-- {{ heuristics }} -->
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">

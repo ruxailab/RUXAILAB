@@ -35,7 +35,13 @@ export default class HeuristicController {
   //------------------GET OBJECTS------------------
   //GetObject of Heuristic
   async getObjectHeuristic(id) {
-    const answer = await database.getObject(api + "/" + id);
+    console.log(id);
+    console.log(api + "/" + id);
+    const answer = await api.database.getObject({
+      id: id,
+      collection: "answers",
+    });
+
     return new Heuristic(answer);
   }
 
