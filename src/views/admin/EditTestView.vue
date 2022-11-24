@@ -8,10 +8,7 @@
           >Are you sure you want to leave?</v-card-title
         >
 
-        <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded</v-card-text
-        >
+        <v-card-text>All your changes will be discarded</v-card-text>
 
         <v-divider></v-divider>
 

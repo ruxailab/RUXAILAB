@@ -34,6 +34,9 @@
 <script>
 // import Heuristic from "@/models/Heuristic";
 import HeuristicTest from "@/models/HeuristicTest";
+import HeuristicController from "@/controllers/HeuristicController";
+
+const heuristicC = new HeuristicController();
 
 export default {
   data() {
@@ -41,7 +44,7 @@ export default {
       loading: false,
       loader: null,
       csvFile: null,
-      heuris: null,
+      heuristicForm: null,
       refs: this.$refs,
     };
   },
@@ -62,10 +65,13 @@ export default {
 
       reader.onload = (csvFile) => {
         console.log(csvFile);
-        console.log("putputput");
         csv = reader.result;
         lines = csv.split("\r" + "\n");
-        headers = lines[0].split(",");
+        console.log(lines[0]);
+        headers = lines[0].split(";");
+        console.log("headers: ");
+        headers[0] = headers[0].slice(3);
+        console.log(headers);
 
         for (var i = 1; i < lines.length; i++) {
           if (!lines[i]) continue;
@@ -73,12 +79,12 @@ export default {
           currentline = lines[i];
           var re = /"/g;
           currentline = re[Symbol.replace](currentline, "");
-          currentline = currentline.split(",");
+          currentline = currentline.split(";");
 
           for (var j = 0; j < headers.length; j++) {
-            if (j == 0 || j == 1 || j == 2 || j == 3 ) {
-              let head = headers[j].trim();
-              let value = currentline[j].trim();
+            if (j == 0 || j == 1 || j == 2 || j == 3) {
+              let head = headers[j];
+              let value = currentline[j];
               obj[head] = value;
             }
           }
@@ -87,27 +93,34 @@ export default {
 
         result = JSON.stringify(result);
         console.log("the result is: ");
-        result2 = JSON.parse(result);
+        result2 = JSON.parse(result.toString());
         console.log(result);
-        console.log(result2[0].HEURISTIC);
+        console.log(result2);
 
-        const separetion = result2[0].HEURISTIC.split(";");
-        console.log(separetion);
+        // result2.forEach((element) => {
+        //   const separetion = element.HEURISTIC;
+        //   console.log(separetion);
 
-        result2.forEach((element) => {
-          const separetion = element.HEURISTIC.split(";");
+        //   // this.heuristicForm.title = result2[0].HEURISTIC.split(";")[0];
+        //   // console.log(this.heuristicForm.title);
+        //   // this.heuristics.push(Object.assign({}, element));
+        //   // this.itemSelect = this.heuristics.length - 1;
 
-          console.log(separetion);
-          console.log(element + " separetion 0");
-          console.log(separetion[1] + " separetion 1");
+        //   // this.heuristics.total = this.totalQuestions;
+        // });
 
-          this.heuris.title = result2[0].HEURISTIC.split(";")[0];
-          console.log(this.heuris.title);
-          this.heuristics.push(Object.assign({}, element));
-          this.itemSelect = this.heuristics.length - 1;
-
-          this.heuristics.total = this.totalQuestions;
+        result2.forEach(async (h) => {
+          console.log(h.HID);
+          await heuristicC.createNewHeuristic({
+            data: h,
+            collection: "answers",
+          });
+          const heuristic = await heuristicC.getObjectHeuristic(h.HID);
+          console.log(heuristic);
+          var aux = { id: h.HID, title: h.HEURISTIC };
+          console.log(aux);
         });
+
         const hTest = new HeuristicTest();
         console.log(hTest);
       };
