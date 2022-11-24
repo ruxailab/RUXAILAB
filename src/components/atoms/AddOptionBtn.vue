@@ -32,7 +32,8 @@
                     v-model.number="option.value"
                     label="Value"
                     :disabled="!hasValue"
-                    type="number"
+                    type="float"
+                    placeholder="Ex. 0.5"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -71,20 +72,20 @@ export default {
   props: {
     option: {
       type: Object,
-      required: true
+      required: true,
     },
     dialog: {
       type: Boolean,
-      default: false
+      default: false,
     },
     hasValue: {
       type: Boolean,
       required: true,
-      default: true
-    }
+      default: true,
+    },
   },
   data: () => ({
-    textRequired: [v => !!v || "Text is required"]
+    textRequired: [(v) => !!v || "Text is required"],
   }),
   computed: {
     hasValueState: {
@@ -93,8 +94,8 @@ export default {
       },
       set() {
         this.$emit("changeHasValue");
-      }
-    }
+      },
+    },
   },
   methods: {
     validate() {
@@ -115,15 +116,15 @@ export default {
     },
     resetVal() {
       this.$refs.form.resetValidation();
-    }
+    },
   },
   watch: {
     dialog() {
       if (!this.dialog) {
         this.hasValue = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
