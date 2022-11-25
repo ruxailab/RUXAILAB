@@ -33,7 +33,7 @@
 
 <script>
 // import Heuristic from "@/models/Heuristic";
-import HeuristicTest from "@/models/HeuristicTest";
+// import HeuristicTest from "@/models/HeuristicTest";
 import HeuristicController from "@/controllers/HeuristicController";
 
 const heuristicC = new HeuristicController();
@@ -63,7 +63,7 @@ export default {
 
       reader.readAsBinaryString(this.csvFile);
 
-      reader.onload = (csvFile) => {
+      reader.onload = async (csvFile) => {
         console.log(csvFile);
         csv = reader.result;
         lines = csv.split("\r" + "\n");
@@ -109,20 +109,28 @@ export default {
         //   // this.heuristics.total = this.totalQuestions;
         // });
 
-        result2.forEach(async (h) => {
-          console.log(h.HID);
-          await heuristicC.createNewHeuristic({
-            data: h,
-            collection: "answers",
-          });
-          const heuristic = await heuristicC.getObjectHeuristic(h.HID);
-          console.log(heuristic);
-          var aux = { id: h.HID, title: h.HEURISTIC };
-          console.log(aux);
-        });
+        // result2.forEach(async (h) => {
+        //   // console.log(h.HID);
+        //   // console.log(h.HEURISTIC);
+        //   // console.log(h.QID);
+        //   // console.log(h.QUESTION);
 
-        const hTest = new HeuristicTest();
-        console.log(hTest);
+        //   // await heuristicC.createNewHeuristic({
+        //   //   data: h,
+        //   //   collection: "answers",
+        //   // });
+        //   const heuristic = await heuristicC.getObjectHeuristic(h.HID);
+        //   console.log(heuristic);
+        //   var aux = { id: h.HID, title: h.HEURISTIC };
+        //   console.log(aux);
+        // });
+        const allHeuristic = await heuristicC.getAllHeuristicTest();
+        console.log(allHeuristic);
+        const a = allHeuristic.some(
+          (h) => result2.HID === h.answersSheet.heuristics[2]
+        );
+        console.log(a);
+        // result2.forEach(async (h) => {});
       };
     },
   },
