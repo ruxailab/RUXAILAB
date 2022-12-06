@@ -122,8 +122,10 @@ export default {
 
         // }
 
-        const allHeuristic = await heuristicC.getAllHeuristicTest();
-        console.log(allHeuristic);
+        //const allHeuristic = await heuristicC.getAllHeuristicTest();
+        //console.log(allHeuristic);
+        this.$store.dispatch('saveCurrentTest',result2)
+        console.log('----')
 
         // const a = allHeuristic.some(
         //   (h) => result2.HID === h.answersSheet.heuristics.id
