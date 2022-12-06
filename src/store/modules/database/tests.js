@@ -222,6 +222,7 @@ export default {
       );
 
       commit("setTest", test);
+      console.log(test.id);
     },
     /**
      * This action updates the test,

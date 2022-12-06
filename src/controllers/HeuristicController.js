@@ -19,6 +19,7 @@ import HeuristicTest from "../models/HeuristicTest";
 export default class HeuristicController {
   //
   async createNewHeuristic(data) {
+    console.log(api.database.createObject);
     const hTest = new HeuristicTest(data);
     console.log(hTest);
     return database.createObject(api, hTest);
