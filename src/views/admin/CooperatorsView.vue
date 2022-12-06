@@ -14,36 +14,9 @@
   <v-row justify="center" v-else-if="cooperators && showCoops">
     <v-container class="ma-0 pa-0">
       <Snackbar />
-
       <!-- Leave alert dialog -->
       <v-dialog v-model="dialog" width="600" persistent>
-        <v-card>
-          <v-card-title
-            class="headline error accent-4 white--text"
-            primary-title
-            >Are you sure you want to leave?</v-card-title
-          >
-
-          <v-card-text
-            >Are you sure you want to leave? All your changes will be
-            discarded</v-card-text
-          >
-
-          <v-divider></v-divider>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn class="grey lighten-3" text @click="dialog = false"
-              >Stay</v-btn
-            >
-            <v-btn
-              class="error accent-4 white--text ml-1"
-              text
-              @click="(change = false), $router.push(go)"
-              >Leave</v-btn
-            >
-          </v-card-actions>
-        </v-card>
+        <LeaveAlert/>
       </v-dialog>
 
       <v-tooltip left v-if="change">
@@ -56,7 +29,7 @@
             bottom
             right
             color="#F9A826"
-            @click="pushToArray(), (change = false)"
+            @click="pushToArray(), (this.$store.dispatch('setChange', false))"
             v-bind="attrs"
             v-on="on"
           >
@@ -224,6 +197,9 @@ import ShowInfo from "@/components/organisms/ShowInfo.vue";
 import Snackbar from "@/components/atoms/Snackbar";
 import Intro from "@/components/molecules/IntroCoops";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
+import LeaveAlert from "../../components/atoms/LeaveAlert.vue";
+import { cooperatorsHeaders } from "@/utils/headers";
+import { roleOptionsItems } from "@/utils/items";
 
 export default {
   props: ["id"],
@@ -232,24 +208,13 @@ export default {
     Snackbar,
     Intro,
     AccessNotAllowed,
+    LeaveAlert
   },
   data: () => ({
     object: null,
-    change: false,
     cooperatorsEdit: [],
-    headers: [
-      { text: "User", value: "email" },
-      { text: "Role", value: "accessLevel" },
-      { text: "Invited", value: "invited", justify: "center" },
-      { text: "Accepted", value: "accepted", justify: "center" },
-      { text: "More", value: "more", sortable: false },
-    ],
-    roleOptions: [
-      { text: "Administrator", value: 0 },
-      { text: "Guest", value: 1 },
-      { text: "Evaluator", value: 2 },
-    ],
-    dialog: false,
+    headers: cooperatorsHeaders,
+    roleOptions: roleOptionsItems,
     intro: null,
     email: "",
     selectedCoops: [],
@@ -282,7 +247,6 @@ export default {
               current: event,
             }
           );
-
           this.edit(edited);
           this.$set(this.cooperatorsEdit, index, newCoop); //update on table
         } else {
@@ -312,7 +276,7 @@ export default {
         },
       });
 
-      this.change = false;
+      this.$store.dispatch('setChange', false)
       this.selectedCoops = [];
       this.$refs.combobox.blur();
     },
@@ -658,7 +622,6 @@ export default {
           this.cooperatorsEdit.push(obj);
         }
       });
-
       this.submit();
     },
     validateEmail() {
@@ -672,12 +635,12 @@ export default {
             alert(this.email + " is not a valid email");
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email);
-            this.change = true;
+            this.$store.dispatch('setChange', true);
           }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
         this.selectedCoops.push(this.email);
-        this.change = true;
+        this.$store.dispatch('setChange, true');
       }
     },
     removeCoop(coop) {
@@ -809,8 +772,8 @@ export default {
         }
 
         // grant access if user is superadmin
-        if(this.user?.accessLevel == 0) hasAccess = true;
-        
+        if (this.user?.accessLevel == 0) hasAccess = true;
+
         if (hasAccess || isOwner) this.showCoops = true;
         this.verified = true;
       }
@@ -823,6 +786,12 @@ export default {
     },
   },
   computed: {
+    change() {
+      return this.$store.state.change
+    },
+    dialog() {
+      return this.$store.state.dialog
+    },
     test() {
       return this.$store.getters.test;
     },
@@ -833,8 +802,11 @@ export default {
       return this.$store.getters.cooperators || [];
     },
     users() {
-      if (this.$store.getters.users) return this.$store.getters.admins;
-      return [];
+      if (this.$store.getters.users) {
+        return this.$store.getters.admins;
+      } else {
+        return [];
+      }
     },
     filteredUsers() {
       let hasUser = null;
@@ -865,8 +837,10 @@ export default {
     if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
   },
   beforeRouteLeave(to, from, next) {
+    console.log("change", this.change)
+    console.log("dialog", this.dialog)
     if (this.change) {
-      this.dialog = true;
+      this.$store.dispatch('setDialog', true)
       this.go = to.path;
     } else {
       next();
