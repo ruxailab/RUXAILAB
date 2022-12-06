@@ -32,13 +32,15 @@
 </template>
 
 <script>
-// import Heuristic from "@/models/Heuristic";
+import Heuristic from "@/models/Heuristic";
+import HeuristicQuestion from "@/models/HeuristicQuestion";
+
 // import HeuristicTest from "@/models/HeuristicTest";
-import HeuristicController from "@/controllers/HeuristicController";
+//import HeuristicController from "@/controllers/HeuristicController";
 // import { getDatabase, ref, set } from "firebase/database";
 // import { doc, setDoc } from "firebase/firestore";
 
-const heuristicC = new HeuristicController();
+//const heuristicC = new HeuristicController();
 
 export default {
   data() {
@@ -114,32 +116,48 @@ export default {
 
         console.log(result2);
 
+        const found=result2.find(element=> element.HID ==="1")
+        console.log(found)
+
+        function getQuestionsFromHeuristic(heuristicArray, heuristicId){
+          return heuristicArray.filter(element=>element.HID == heuristicId)
+        }
+        let heuristicTest=[]
+        let heuristicOcurrencies = 0
+
+        for(i=0;i<result2.length;i++){
+          console.log(i)
+          let auxHeuristic=getQuestionsFromHeuristic(result2, i+1)
+          if(auxHeuristic.length>0){
+            heuristicOcurrencies=heuristicOcurrencies+1
+            let auxQuestions=[]
+            for(j=0;j<auxHeuristic.length;j++){
+              let auxQuestion= new HeuristicQuestion(auxHeuristic[j].QID,auxHeuristic[j].QUESTION,auxHeuristic[j].QUESTION,auxHeuristic[j].QUESTION )
+              auxQuestions.push(auxQuestion)
+            }
+            console.log(auxQuestions)
+            let setHeuristics= new Heuristic(heuristicOcurrencies, auxHeuristic[0].HEURISTIC, auxQuestions,auxQuestions.length )
+            heuristicTest.push(setHeuristics)
+            console.log(heuristicTest)
+            console.log('----')
+          }
+       
+  
+       }
+
+/*
         heuristicC.createNewHeuristic({
           id: result2.HID,
           questions: { id: result2.QID, res: result2.QUESTION },
         });
-        // writeNewHeuristic(testId, result2.HID){
-
-        // }
-
-        //const allHeuristic = await heuristicC.getAllHeuristicTest();
-        //console.log(allHeuristic);
-        this.$store.dispatch('saveCurrentTest',result2)
+*/
+        this.$store.dispatch('saveCurrentTest',heuristicTest)
         console.log('----')
 
-        // const a = allHeuristic.some(
-        //   (h) => result2.HID === h.answersSheet.heuristics.id
-        // );
+
       };
 
-      // // Add a new document in collection "cities"
-      // await setDoc(doc(db, "answers", testId), {
-      //   name: "Los Angeles",
-      //   state: "CA",
-      //   country: "USA",
-      // });
-      // const cityRef = doc(db, "cities", "BJ");
-      // setDoc(cityRef, { capital: true }, { merge: true }); -->testando hoje
+     
     },
   },
   watch: {
