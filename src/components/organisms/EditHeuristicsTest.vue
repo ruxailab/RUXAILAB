@@ -1,4 +1,7 @@
 <template>
+<div>
+ <p> {{currentTest}}</p>
+
   <v-tabs
     v-if="type == 'tabs'"
     background-color="transparent"
@@ -29,6 +32,7 @@
       @change="emitChange()"
     />
   </div>
+</div>
 </template>
 
 <script>
@@ -62,6 +66,11 @@ export default {
     emitChange() {
       this.$emit("change");
     },
+  },
+  computed:{
+    currentTest(){
+      return this.$store.state.Tests.currentTest
+    }
   },
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
