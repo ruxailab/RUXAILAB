@@ -1,6 +1,8 @@
 <template>
   <div class="ma-0 pa-0">
     {{ heuristics }}
+    <br>
+    {{auxHeuristic}}
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -341,6 +343,7 @@ import AddDescBtn from "@/components/atoms/AddDescBtn";
 import VClamp from "vue-clamp";
 
 export default {
+  /*
   props: {
     heuristics: {
       type: Array,
@@ -350,6 +353,7 @@ export default {
       },
     },
   },
+  */
   components: {
     AddDescBtn,
     VClamp,
@@ -577,6 +581,9 @@ export default {
     },
   },
   computed: {
+    heuristics(){
+      return this.$store.state.Tests.currentTest
+    },
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);
