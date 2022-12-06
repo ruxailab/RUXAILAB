@@ -35,6 +35,8 @@
 // import Heuristic from "@/models/Heuristic";
 // import HeuristicTest from "@/models/HeuristicTest";
 import HeuristicController from "@/controllers/HeuristicController";
+// import { getDatabase, ref, set } from "firebase/database";
+// import { doc, setDoc } from "firebase/firestore";
 
 const heuristicC = new HeuristicController();
 
@@ -50,7 +52,21 @@ export default {
   },
 
   methods: {
-    changeToJSON() {
+    // writeNewHeuristic(answerId, HID, QID) {
+    //   const db = getDatabase();
+    //   set(ref(db, "answers/anserSheet" + answerId), {
+    //     heuristics: HID,
+    //   });
+    //   set(ref(db, "answers/anserSheet/heuristics" + HID), {
+    //     id: QID,
+    //   });
+    // },         --->não funcionou
+
+    async changeToJSON() {
+      const testId = this.$route.params.id;
+      console.log(this.user);
+      console.log("testId", testId);
+
       console.log("the inputed file is: ");
       console.log(this.csvFile);
       let lines = "";
@@ -95,43 +111,33 @@ export default {
         console.log("the result is: ");
         result2 = JSON.parse(result.toString());
         console.log(result);
+
         console.log(result2);
 
-        // result2.forEach((element) => {
-        //   const separetion = element.HEURISTIC;
-        //   console.log(separetion);
+        heuristicC.createNewHeuristic({
+          id: result2.HID,
+          questions: { id: result2.QID, res: result2.QUESTION },
+        });
+        // writeNewHeuristic(testId, result2.HID){
 
-        //   // this.heuristicForm.title = result2[0].HEURISTIC.split(";")[0];
-        //   // console.log(this.heuristicForm.title);
-        //   // this.heuristics.push(Object.assign({}, element));
-        //   // this.itemSelect = this.heuristics.length - 1;
+        // }
 
-        //   // this.heuristics.total = this.totalQuestions;
-        // });
-
-        // result2.forEach(async (h) => {
-        //   // console.log(h.HID);
-        //   // console.log(h.HEURISTIC);
-        //   // console.log(h.QID);
-        //   // console.log(h.QUESTION);
-
-        //   // await heuristicC.createNewHeuristic({
-        //   //   data: h,
-        //   //   collection: "answers",
-        //   // });
-        //   const heuristic = await heuristicC.getObjectHeuristic(h.HID);
-        //   console.log(heuristic);
-        //   var aux = { id: h.HID, title: h.HEURISTIC };
-        //   console.log(aux);
-        // });
         const allHeuristic = await heuristicC.getAllHeuristicTest();
         console.log(allHeuristic);
-        const a = allHeuristic.some(
-          (h) => result2.HID === h.answersSheet.heuristics[2]
-        );
-        console.log(a);
-        // result2.forEach(async (h) => {});
+
+        // const a = allHeuristic.some(
+        //   (h) => result2.HID === h.answersSheet.heuristics.id
+        // );
       };
+
+      // // Add a new document in collection "cities"
+      // await setDoc(doc(db, "answers", testId), {
+      //   name: "Los Angeles",
+      //   state: "CA",
+      //   country: "USA",
+      // });
+      // const cityRef = doc(db, "cities", "BJ");
+      // setDoc(cityRef, { capital: true }, { merge: true }); -->testando hoje
     },
   },
   watch: {
@@ -150,6 +156,14 @@ export default {
         alert("No csv file selected. \nPlease select one before procede.");
         this.loader = null;
       }
+    },
+  },
+  computed: {
+    test() {
+      return this.$store.getters.test;
+    },
+    user() {
+      return this.$store.getters.user;
     },
   },
 };
