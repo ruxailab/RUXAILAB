@@ -5,6 +5,7 @@
 
  export default {
     state: {
+      currentTest:null,
       test: null,
       tests: null,
       myTests: null,
@@ -39,6 +40,9 @@
       },
     },
     mutations: {
+      SET_CURRENT_TEST(state,payload){
+        state.currentTest=payload
+      },
       setTest(state, payload) {
         state.test = payload;
       },
@@ -65,6 +69,14 @@
       },
     },
     actions: {
+      saveCurrentTest({commit }, payload){
+        console.log('----')
+        console.log(payload)
+        commit('SET_CURRENT_TEST', payload)
+        console.log('----')
+
+      },
+
       /**
        * This action creates a new test, using the generic action "createObject" to creates the object,
        * passing the test data
