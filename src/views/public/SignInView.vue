@@ -59,6 +59,7 @@
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
 
+
 export default {
   data: () => ({
     showPassword: false,
@@ -87,6 +88,7 @@ export default {
   components: {
     Snackbar
   }
+
 };
 </script>
 

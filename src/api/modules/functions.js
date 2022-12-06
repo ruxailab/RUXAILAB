@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+/*import firebase from 'firebase'
 
 export default {
  call: async (payload) =>{
@@ -6,3 +6,4 @@ export default {
     return func(payload.data)
  }
 }
+*/
