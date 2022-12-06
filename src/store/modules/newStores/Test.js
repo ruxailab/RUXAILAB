@@ -5,7 +5,7 @@
 
  export default {
     state: {
-      currentTest:null,
+      currentTest:[],
       test: null,
       tests: null,
       myTests: null,
