@@ -451,7 +451,7 @@ export default {
       this.subIndex = 0; //reset subIndex when main idex change
     },
   },
-  created() {
+  async created() {
     this.$store
       .dispatch(
         "getPaginationTemplates",

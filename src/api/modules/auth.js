@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+/*import firebase from 'firebase'
 
 export default {
     signUp: async (payload) =>{
@@ -19,4 +19,4 @@ export default {
         var auth = firebase.auth()
         return auth.signOut()
     }
-}
+}*/
