@@ -21,4 +21,4 @@ const testListTemplateButtonItems = [
   { text: "Explore", value: 1 },
 ]
 
-export default { roleOptionsItems, testListButtonItems, testListTestButtonItems, testListTemplateButtonItems }
+export { roleOptionsItems, testListButtonItems, testListTestButtonItems, testListTemplateButtonItems }

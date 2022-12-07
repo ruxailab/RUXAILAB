@@ -7,13 +7,13 @@ export default {
         return auth.currentUser
     },
     signIn: async (payload) =>{
-        await signInWithEmailAndPassword(payload.email,payload.password)
+        await signInWithEmailAndPassword(auth, payload.email,payload.password)
         return auth.currentUser
     },
     getCurrentUser:() =>{
         return auth.currentUser
     },
     singOut:() =>{
-        return signOut()
+        return signOut(auth)
     }
 }
