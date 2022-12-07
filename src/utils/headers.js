@@ -50,4 +50,4 @@ const testsHeaders = [
   { text: "Created by", value: "admin.email" },
   { text: "Actions", value: "actions", align: "end", sortable: false },
 ]
-export default { cooperatorsHeaders, heuristicsStatisticsHeaders, evaluatorStatisticsHeaders, reportHeaders, userHeaders, testsHeaders }
+export { cooperatorsHeaders, heuristicsStatisticsHeaders, evaluatorStatisticsHeaders, reportHeaders, userHeaders, testsHeaders }

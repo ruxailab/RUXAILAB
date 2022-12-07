@@ -2,7 +2,7 @@ import { db } from "@/firebase"
 import { doc, setDoc, updateDoc, query, where, getDocs, deleteDoc, collection } from "firebase/firestore";
 
 export default class Controller {
-  constructor() {}
+  constructor() { }
 
   async create(path, document, data) {
     await setDoc(doc(db, path, document), data);

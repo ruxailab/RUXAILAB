@@ -23,7 +23,7 @@ export default {
     Snackbar
   },
   async created() {
-    const res = await new Controller().read("users", "accessLevel", 1)
+    const res = await new Controller().read("answers", "id", "4V2D6uGMpXO51pGAhGyB")
     console.log("LANDING RESPONSE ==>>", res)
   }
 };
