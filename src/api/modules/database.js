@@ -143,7 +143,7 @@ export default {
       //   return queryRef.get();
       // }
 
-      return first.limit(payload.itemsPerPage).get();
+      return first.limit(payload.itemsPerPage).geto();
     } else {
       //has a last object
 

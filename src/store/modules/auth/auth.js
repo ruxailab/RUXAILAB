@@ -1,8 +1,7 @@
 import api from "@/api";
-/**
- * Auth store module
- * @module auth
- */
+import Controller from "@/controllers/BaseController";
+import { auth } from "@/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth"
 
 export default {
   state: {
@@ -32,13 +31,7 @@ export default {
     async signup({ commit }, payload) {
       commit("setLoading", true);
       try {
-        let user = await api.auth.signUp(payload);
-        user = await api.database.getObject({
-          collection: "users",
-          id: user.uid,
-        });
-        user = Object.assign({ uid: user.id }, user.data());
-        api.database.observer({ docId: user.uid, collection: "users" }, commit);
+        await api.auth.signUp(payload);
       } catch (err) {
         console.error("Error when creating user :(", err);
         commit("setError", err);
@@ -60,15 +53,16 @@ export default {
     async signin({ commit }, payload) {
       commit("setLoading", true);
       try {
-        var user = await api.auth.signIn(payload);
-        user = await api.database.getObject({
+        await signInWithEmailAndPassword(auth, payload.email,payload.password)
+        let user = auth.currentUser.uid 
+        /* let user = await api.database.getObject({
           collection: "users",
           id: user.uid,
         });
-        user = Object.assign({ uid: user.id }, user.data());
+         user = Object.assign({ uid: user.id }, user.data());
 
-        api.database.observer({ docId: user.uid, collection: "users" }, commit);
-        commit("setUser", user);
+        api.database.observer({ docId: user.uid, collection: "users" }, commit); */
+        commit("setUser", { user });
       } catch (err) {
         console.error("Error signing in: " + err);
         commit("setError", err);
@@ -103,17 +97,12 @@ export default {
      */
     async autoSignIn({ commit }) {
       try {
-        var user = await api.auth.getCurrentUser();
+        var user = auth.currentUser
+        console.log("var user ==>>", user)
         if (user) {
-          user = await api.database.getObject({
-            collection: "users",
-            id: user.uid,
-          });
-          user = Object.assign({ uid: user.id }, user.data());
-          api.database.observer(
-            { docId: user.uid, collection: "users" },
-            commit
-          );
+          console.log("has user")
+          user = await new Controller().read("users", "email", auth.currentUser.email)
+          console.log("response user ==>>", user)
           commit("setUser", user);
         }
       } catch (err) {
