@@ -179,7 +179,7 @@ export default {
           console.error("Error", err);
           successful = false;
         });
-
+      console.log(this.object.type);
       if (successful) this.sendManager(this.testID);
     },
     testAssembly() {
