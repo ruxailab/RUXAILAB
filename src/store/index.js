@@ -8,8 +8,8 @@ import reports from '@/store/modules/database/reports'
 import answers from '@/store/modules/database/answers'
 import cooperators from '@/store/modules/database/cooperators'
 import templates from '@/store/modules/database/templates'
-import Auth from '@/store/modules/newStores/Auth'
-import Heuristics from '@/store/modules/newStores/Heuristic'
+//import Auth from '@/store/modules/newStores/Auth'
+//import Heuristics from '@/store/modules/newStores/Heuristic'
 import Templates from '@/store/modules/newStores/Template'
 import Tests from '@/store/modules/newStores/Test'
 import Users from '@/store/modules/newStores/User'
@@ -26,8 +26,8 @@ export default new Vuex.Store({
     answers,
     cooperators,
     templates,
-    Auth,
-    Heuristics,
+   // Auth,
+   // Heuristics,
     Templates,
     Tests,
     Users
