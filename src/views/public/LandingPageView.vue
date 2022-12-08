@@ -25,7 +25,7 @@ export default {
 
   async created() {
     console.log("TESTEEEEE")
-    await new TestController().createNewTest().then((res)=> {console.log(res)})
+    await new TestController().getObjectTest("0pZxsNhN2O3drsdCuA33", "udv4Qp66ncTgsL1T17nbeFajZh02","udv4Qp66ncTgsL1T17nbeFajZh02").then((res)=> {console.log(res)})
   },
 };
 </script>
