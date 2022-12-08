@@ -78,9 +78,31 @@ export default class TestController extends Controller{
   async getAllTest(path, parameter, id) {
     return super.read(path, parameter, id).then((res)=> {
       return new Map(res.map((obj) => [obj.id, new Test(obj)]));
-    })
-    
-  }
+  })}
+
+  //GetAll data from "TestAdmin"
+  async getAllTestAdmin(path, parameter, id) {
+    return super.read(path, parameter, id).then((res)=> {
+      return new Map(res.map((obj) => [obj.id, new TestAdmin(obj)]));
+  })}
+
+  //GetAll data from "TestStructure"
+  async getAllTestStructure(path, parameter, id) {
+    return super.read(path, parameter, id).then((res)=> {
+      return new Map(res.map((obj) => [obj.id, new TestStructure(obj)]));
+  })}
+
+  //GetAll data from "TestStructureOptions"
+  async getAllTestStructureOptions(path, parameter, id) {
+    return super.read(path, parameter, id).then((res)=> {
+      return new Map(res.map((obj) => [obj.id, new TestStructureOptions(obj)]));
+  })}
+
+  //GetAll data from "TestTemplateDoc"
+  async getAllTestTemplateDoc(path, parameter, id) {
+    return super.read(path, parameter, id).then((res)=> {
+      return new Map(res.map((obj) => [obj.id, new TestTemplateDoc(obj)]));
+  })}
 
 
 }
