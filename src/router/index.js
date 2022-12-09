@@ -23,7 +23,6 @@ router.beforeResolve(async (to, from, next) => {
     await signIn;
 
     const user = store.state.auth.user;
-
     if (!user) {
       return next(redirect());
     }

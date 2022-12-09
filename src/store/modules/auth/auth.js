@@ -54,15 +54,10 @@ export default {
       commit("setLoading", true);
       try {
         await signInWithEmailAndPassword(auth, payload.email,payload.password)
-        let user = auth.currentUser.uid 
-        /* let user = await api.database.getObject({
-          collection: "users",
-          id: user.uid,
-        });
-         user = Object.assign({ uid: user.id }, user.data());
-
-        api.database.observer({ docId: user.uid, collection: "users" }, commit); */
-        commit("setUser", { user });
+        await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
+          console.log("store response login ==>>", response[0])
+          commit("setUser", response[0]);
+        })
       } catch (err) {
         console.error("Error signing in: " + err);
         commit("setError", err);
@@ -98,12 +93,11 @@ export default {
     async autoSignIn({ commit }) {
       try {
         var user = auth.currentUser
-        console.log("var user ==>>", user)
         if (user) {
-          console.log("has user")
-          user = await new Controller().read("users", "email", auth.currentUser.email)
-          console.log("response user ==>>", user)
-          commit("setUser", user);
+          await new Controller().read("users", "email", user.email).then((response) => {
+            console.log("auto signin response ==>>", response[0])
+            commit("setUser", response[0]);
+          })
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
