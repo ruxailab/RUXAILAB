@@ -10,18 +10,6 @@ export async function autoSignIn(){
       }
     })
     }
-      /* return new Promise((resolve)=>{
-        let unsubscribe = onAuthStateChanged(async (user)=>{
-          if(user && !store.state.auth.user){
-            await store.dispatch('autoSignIn', user)
-            resolve(user)
-            return user
-          }
-          unsubscribe()
-          resolve(null)
-          return null
-        })
-      }) */
   }
 
 export function redirect() {
