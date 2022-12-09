@@ -41,11 +41,6 @@ import firebase from "firebase";
 export default {
   data() {
     return {
-      // test: {
-      //   title: "",
-      //   description: "",
-      //   type: "",
-      // },
       loading: false,
       loader: null,
       csvFile: null,
@@ -55,155 +50,12 @@ export default {
   },
 
   methods: {
-    // async submit() {
-    //   let i;
-    //   await this.testAssembly(); // build Test
-    //   let d = new Date();
-    //   let object = this.csvHeuristics;
-    //   let successful = true;
-    //   //Send db
-    //   await this.$store
-    //     .dispatch("createTest", {
-    //       collection: "test",
-    //       data: Object.assign(object, { date: d.toDateString() }),
-    //     })
-    //     .then((id) => {
-    //       this.testID = id;
-    //       for (i = 0; i < this.csvHeuristics.length; i++) {
-    //         this.$store
-    //           .dispatch("createAnswers", {
-    //             data: {
-    //               test: {
-    //                 id: id,
-    //                 title: object[i].title,
-    //                 type: "Heuristics",
-    //               },
-    //               answers: [],
-    //               answersSheet: object[i].answersSheet,
-    //             },
-    //           })
-    //           .then((idAnswers) => {
-    //             this.$store.dispatch("setAnswerID", {
-    //               docId: id,
-    //               data: idAnswers,
-    //             });
-    //             this.$store
-    //               .dispatch("createReport", {
-    //                 data: {
-    //                   test: {
-    //                     id: id,
-    //                     title: object.title,
-    //                     type: object.type,
-    //                     answers: idAnswers,
-    //                   },
-    //                   reports: [],
-    //                 },
-    //               })
-    //               .then((idReport) => {
-    //                 this.$store.dispatch("setReportID", {
-    //                   docId: id,
-    //                   data: idReport,
-    //                 });
-    //                 this.$store
-    //                   .dispatch("createCooperators", {
-    //                     data: {
-    //                       test: {
-    //                         id: id,
-    //                         title: object.title,
-    //                         type: object.type,
-    //                       },
-    //                       cooperators: [],
-    //                     },
-    //                   })
-    //                   .then((idCooperators) => {
-    //                     this.$store.dispatch("setCooperatorsID", {
-    //                       docId: id,
-    //                       data: idCooperators,
-    //                     });
-    //                     this.$store.dispatch("pushMyTest", {
-    //                       docId: this.user.uid,
-    //                       element: {
-    //                         id: id,
-    //                         title: object.title,
-    //                         type: object.type,
-    //                         reports: idReport,
-    //                         answers: idAnswers,
-    //                         cooperators: idCooperators,
-    //                         accessLevel: 0,
-    //                         date: d.toDateString(),
-    //                         nCoops: 0,
-    //                       },
-    //                       param: "myTests",
-    //                     });
-    //                   });
-    //               });
-    //           });
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.error("Error", err);
-    //       successful = false;
-    //     });
-
-    //   if (successful) this.sendManager(this.testID);
-    // },
-
-    // testAssembly() {
-    //   //Make object test
-    //   //Assigning admin info
-
-    //   if (this.id === null || this.id === undefined) {
-    //     this.csvHeuristics = Object.assign(this.csvHeuristics, {
-    //       admin: {
-    //         id: this.user.uid,
-    //         email: this.user.email,
-    //       },
-    //     });
-    //   }
-
-    //   //Assigning test info
-    //   this.csvHeuristics = Object.assign(this.csvHeuristics, this.test);
-    //   this.object = Object.assign(this.object, {
-    //     date: new Date().toDateString(),
-    //   });
-
-    //   //assigning tasks/heuristics
-    //   if (this.test.type === "User") {
-    //     //assigning pre-test info
-    //     this.object = Object.assign(this.object, {
-    //       preTest: {
-    //         consent: null,
-    //         form: null,
-    //       },
-    //     });
-
-    //     this.object = Object.assign(this.object, {
-    //       tasks: [],
-    //       answersSheet: null,
-    //     });
-
-    //     //assigning post test
-    //     this.object = Object.assign(this.object, {
-    //       postTest: {
-    //         form: null,
-    //       },
-    //     });
-    //   } else if (this.test.type === "Heuristics") {
-    //     this.object = Object.assign(this.object, {
-    //       heuristics: [],
-    //       answersSheet: {
-    //         total: 0,
-    //         progress: 0,
-    //         heuristics: [],
-    //       },
-    //     });
-
-    //     this.object = Object.assign(this.object, { options: [] });
-    //   }
-    // },
     async changeToJSON() {
       const db = firebase.firestore();
+
       // const testId = this.$route.params.id;
+      const testId = this.test.id;
+      var testRef = db.collection("test").doc(testId);
       let lines = "";
       let currentline = "";
       let csv = "";
@@ -267,32 +119,53 @@ export default {
               auxQuestions.length
             );
             heuristicTest.push(setHeuristics);
+            console.log(setHeuristics);
           }
         }
 
-        console.log(heuristicTest);
-        console.log(heuristicTest[0].id);
-        console.log("csvHeuristics: ");
-        console.log(this.csvHeuristics[0].questions);
-        // const db = firebase.firestore();
-        // await setDoc(doc(db, "answers", "answersSheet"), {
-        //   heuristics: heuristicTest[0].id,
-        // });
-        this.$store.dispatch("saveCurrentTest", heuristicTest);
+        console.log(this.test);
 
-        db.collection("cities")
-          .doc("LA")
-          .set({
-            name: "Los Angeles",
-            state: "CA",
-            country: "USA",
-          })
-          .then(() => {
-            console.log("Document successfully written!");
-          })
-          .catch((error) => {
-            console.error("Error writing document: ", error);
-          });
+        this.$store.dispatch("saveCurrentTest", heuristicTest);
+        console.log(testId);
+        console.log(heuristicTest);
+        for (i = 0; i < heuristicTest.length; i++) {
+          console.log(heuristicTest[i].id);
+          console.log(heuristicTest[i].questions[j]);
+          for (j = 0; j < heuristicTest[i].total; j++) {
+            testRef
+              .update({
+                heuristics: {
+                  id: heuristicTest[i].id,
+                  questions: {
+                    descriptions: firebase.firestore.FieldValue.arrayUnion(
+                      heuristicTest[i].questions[j].descriptions
+                    ),
+                    id: firebase.firestore.FieldValue.arrayUnion(
+                      heuristicTest[i].questions[j].id
+                    ),
+                    text: firebase.firestore.FieldValue.arrayUnion(
+                      heuristicTest[i].questions[j].text
+                    ),
+                    title: firebase.firestore.FieldValue.arrayUnion(
+                      heuristicTest[i].questions[j].title
+                    ),
+                  },
+                  title: firebase.firestore.FieldValue.arrayUnion(
+                    heuristicTest[i].title
+                  ),
+                  total: firebase.firestore.FieldValue.arrayUnion(
+                    heuristicTest[i].total
+                  ),
+                },
+              })
+              .then(() => {
+                console.log("Document successfully written!");
+              })
+              .catch((error) => {
+                console.error("Error writing document: ", error);
+              });
+          }
+        }
       };
     },
   },
