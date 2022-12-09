@@ -1,4 +1,9 @@
 import api from "@/api";
+import { auth } from "../../../firebase";
+import Controller from "../../../controllers/BaseController";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+
 /**
  * Auth store module
  * @module auth
@@ -32,7 +37,7 @@ export default {
     async signup({ commit }, payload) {
       commit("setLoading", true);
       try {
-        let user = await api.auth.signUp(payload);
+       let user = await api.auth.signUp(payload);
         user = await api.database.getObject({
           collection: "users",
           id: user.uid,
@@ -57,19 +62,15 @@ export default {
      * @param {string} payload.password - the user password 
      * @returns {void}
     */
-    async signin({ commit }, payload) {
+   
+     async signin({ commit }, payload) {
       commit("setLoading", true);
       try {
-        var user = await api.auth.signIn(payload);
-        user = await api.database.getObject({
-          collection: "users",
-          id: user.uid,
-        });
-        user = Object.assign({ uid: user.id }, user.data());
-
-        api.database.observer({ docId: user.uid, collection: "users" }, commit);
-        commit("setUser", user);
-      } catch (err) {
+        await signInWithEmailAndPassword(auth, payload.email, payload.password)
+          await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
+            commit("setUser", response[0])
+          })
+      }catch (err) {
         console.error("Error signing in: " + err);
         commit("setError", err);
       } finally {
@@ -77,7 +78,8 @@ export default {
         commit("setLoading", false);
       }
     },
-    /**
+
+   /**
      * This action disconnects the user from the platform
      * 
      *  @action signin=[setUser=null]
@@ -85,7 +87,7 @@ export default {
      */
     async logout({ commit }) {
       try {
-        await api.auth.singOut();
+        await api.auth.signOut();
         commit("setUser", null);
       } catch (err) {
         console.error("Error logging out.", err);
@@ -94,6 +96,7 @@ export default {
         commit("setLoading", false);
       }
     },
+
     /**
      * This action automatically reconnects the user to the platform when 
      * reloading or entering the page, using the API and creates the observer for the user's metadata
@@ -103,18 +106,11 @@ export default {
      */
     async autoSignIn({ commit }) {
       try {
-        var user = await api.auth.getCurrentUser();
+        var user = auth.currentUser
         if (user) {
-          user = await api.database.getObject({
-            collection: "users",
-            id: user.uid,
-          });
-          user = Object.assign({ uid: user.id }, user.data());
-          api.database.observer(
-            { docId: user.uid, collection: "users" },
-            commit
-          );
-          commit("setUser", user);
+          await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
+            commit("setUser", response[0]);
+          })
         }
       } catch (err) {
         console.error("Error auto signing in ", err);
@@ -123,6 +119,7 @@ export default {
         commit("setLoading", false);
       }
     },
+
     /**
      * This action updates the user's metadata
      *  

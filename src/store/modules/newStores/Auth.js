@@ -30,10 +30,10 @@ import api from "@/api";
      * @param {string} payload.password - the user password 
      * @returns {void}
      */
-    async authSingUp({ commit }, payload) {
+    async authSignUp({ commit }, payload) {
       commit("setLoading", true);
       try {
-        let user = await api.auth.authSingUp(payload);
+        let user = await api.auth.authSignUp(payload);
         user = await api.database.getObject({
           collection: "users",
           id: user.uid,
@@ -58,10 +58,10 @@ import api from "@/api";
      * @param {string} payload.password - the user password 
      * @returns {void}
     */
-    async authSingIn({ commit }, payload) {
+    async authSignIn({ commit }, payload) {
       commit("setLoading", true);
       try {
-        var user = await api.auth.authSingIn(payload);
+        var user = await api.auth.authSignIn(payload);
         user = await api.database.getObject({
           collection: "users",
           id: user.uid,
@@ -84,9 +84,9 @@ import api from "@/api";
      *  @action signin=[setUser=null]
      *  @returns {void}
      */
-    async authSingOut({ commit }) {
+    async authSignOut({ commit }) {
       try {
-        await api.auth.singOut();
+        await api.auth.signOut();
         commit("setUser", null);
       } catch (err) {
         console.error("Error logging out.", err);

@@ -1,3 +1,4 @@
+/*
 import firebase from 'firebase'
 
 export default {
@@ -20,3 +21,4 @@ export default {
         return auth.signOut()
     }
 }
+*/

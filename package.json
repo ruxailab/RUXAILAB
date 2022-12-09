@@ -6,15 +6,16 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "i18n:report": "vue-cli-service i18n:report --src './src//*.?(js|vue)' --locales './src/locales//*.json'",
     "doc": "jsdoc -c conf.json"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
+    "csvtojson": "^2.0.10",
     "email-templates": "^7.1.1",
-    "firebase": "^7.22.1",
+    "firebase": "^9.14.0",
     "firebase-admin": "^9.2.0",
     "firebase-functions": "^3.11.0",
     "handlebars": "^4.7.6",

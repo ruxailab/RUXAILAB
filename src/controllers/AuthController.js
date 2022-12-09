@@ -10,16 +10,16 @@ import api from "@/api/index";
 import auth from "../api/modules/auth";
 
 export class AuthController {
-  async authSingUp(userData) {
+  async authSignUp(userData) {
     return auth.signUp(api, userData);
   }
-  async authSingIn(userData) {
+  async authSignIn(userData) {
     return auth.signIn(api, userData);
   }
   async authGetCurrentUser() {
     return auth.getCurrentUser(api);
   }
-  async authSingOut() {
-    return auth.singOut(api);
+  async authSignOut() {
+    return auth.signOut(api);
   }
 }

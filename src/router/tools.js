@@ -1,20 +1,15 @@
 import store from "@/store/index";
-import firebase from "firebase";
+import { auth } from "../firebase";
+import {onAuthStateChanged} from "firebase/auth";
 
 export async function autoSignIn(){
-    if(!store.state.auth.user)
-      return new Promise((resolve)=>{
-        const unsubscribe = firebase.auth().onAuthStateChanged(async (user)=>{
-          if(user && !store.state.auth.user){
-            await store.dispatch('autoSignIn', user)
-            resolve(user)
-            return user
-          }
-          unsubscribe()
-          resolve(null)
-          return null
-        })
+    if (!store.state.auth.user){
+      onAuthStateChanged(auth, async (user) =>{
+        if (user && !store.state.auth.user){
+          await store.dispatch("autoSignIn", user)
+        }
       })
+    }
   }
 
 export function redirect() {

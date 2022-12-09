@@ -6,6 +6,7 @@ import SuperAdmin from "@/router/modules/superAdmin.js";
 import { autoSignIn, redirect } from "@/router/tools.js";
 import store from "@/store/index.js";
 
+
 Vue.use(VueRouter);
 
 const routes = [...Public, ...Admin, ...SuperAdmin];
@@ -17,7 +18,7 @@ const router = new VueRouter({
 });
 
 router.beforeResolve(async (to, from, next) => {
-  const { authorize } = to.meta;
+  const { authorize } = to.meta
   const signIn = autoSignIn();
 
 
