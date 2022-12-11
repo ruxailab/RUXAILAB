@@ -1,5 +1,12 @@
 <template>
   <div class="ma-0 pa-0">
+    Heuristics<br />
+    {{ heuristics }}
+    <br />
+    <br />
+    Current Test
+    <br />
+    {{ csvHeuristics }}
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -92,7 +99,7 @@
           <v-col cols="10">
             <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
               <v-text-field
-                v-model="heuris.title"
+                v-model="heuristicForm.title"
                 dense
                 label="Title your heuristic"
                 outlined
@@ -102,7 +109,7 @@
               ></v-text-field>
 
               <v-text-field
-                v-model="heuris.questions[0].title"
+                v-model="heuristicForm.questions[0].title"
                 dense
                 label="Title first question"
                 outlined
@@ -115,7 +122,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">Cancel</v-btn>
+          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')"
+            >Cancel</v-btn
+          >
           <v-btn class="white--text" color="#fca326" @click="addHeuris()"
             >Add</v-btn
           >
@@ -126,7 +135,8 @@
     <v-dialog v-model="dialog" width="800" persistent> </v-dialog>
 
     <!-- Main -->
-    <v-card style="background: #f5f7ff" elevation="0">
+
+    <v-card style="background: #f5f7ff; z-index: 10 !important;" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
       <v-row class="ma-0 pa-0" v-if="heuristics.length">
@@ -316,7 +326,9 @@
       <v-row justify="center" v-else>
         <v-col class="ma-10" cols="10">
           <v-row justify="center" align="center">
-            <p class="subtitleView">You don't have heuristic yet, start one.</p>
+            <p class="subtitleView">
+              You don't have heuristic yet, start one.
+            </p>
           </v-row>
           <v-row class="ma-4" justify="center" align="center">
             <v-btn @click="dialogHeuris = true" icon x-large color="grey">
@@ -329,21 +341,12 @@
   </div>
 </template>
 
-
 <script>
 import AddDescBtn from "@/components/atoms/AddDescBtn";
+
 import VClamp from "vue-clamp";
 
 export default {
-  props: {
-    heuristics: {
-      type: Array,
-      required: true,
-      default: function () {
-        return [];
-      },
-    },
-  },
   components: {
     AddDescBtn,
     VClamp,
@@ -355,7 +358,7 @@ export default {
     questionSelect: null,
     itemEdit: null,
     newQuestion: null,
-    heuris: null,
+    heuristicForm: null,
     headers: [
       {
         text: "Title",
@@ -397,7 +400,7 @@ export default {
         if (config) {
           this.heuristics[this.itemSelect].questions.splice(item, 1);
           this.questionSelect = null;
-          
+
           this.heuristics[this.itemSelect].total = this.heuristics[
             this.itemSelect
           ].questions.length;
@@ -463,13 +466,13 @@ export default {
       if (this.$refs.formHeuris.validate()) {
         this.dialogHeuris = false;
 
-        this.heuristics.push(Object.assign({}, this.heuris));
+        this.heuristics.push(Object.assign({}, this.heuristicForm));
         this.itemSelect = this.heuristics.length - 1;
 
         this.heuristics.total = this.totalQuestions;
 
         this.$refs.formHeuris.resetValidation();
-        //this.$refs.formHeuris.reset();
+
         this.$emit("change");
       }
     },
@@ -519,7 +522,7 @@ export default {
   watch: {
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
-        this.heuris = {
+        this.heuristicForm = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
           title: "",
           total: 0,
@@ -531,7 +534,7 @@ export default {
             },
           ],
         };
-        this.heuris.total = this.heuris.questions.length;
+        this.heuristicForm.total = this.heuristicForm.questions.length;
       }
       if (this.dialogHeuris) {
         //when dialog opens everything is reset
@@ -548,8 +551,33 @@ export default {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
     },
+
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+      // const alertFunc = alert("Your file has been uploaded!");
+
+      if (this.csvFile != null) {
+        setTimeout(() => (this[l] = false), 3000);
+        setTimeout(() => (this.csvFile = null), 3000);
+        // setTimeout(alertFunc, 3000);
+        this.loader = null;
+      } else {
+        setTimeout(() => (this[l] = false), 3000);
+        alert("No csv file selected. \nPlease select one before procede.");
+        this.loader = null;
+      }
+    },
   },
   computed: {
+    csvHeuristics() {
+      console.log(this.$store.state.Tests.currentTest);
+      return this.$store.state.Tests.currentTest;
+    },
+    heuristics() {
+      return this.$store.state.Tests.test.heuristics;
+    },
+
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);
@@ -568,7 +596,7 @@ export default {
   },
   created() {
     if (this.heuristics.length) {
-      this.heuris = {
+      this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
         total: 0,
         title: "",
@@ -581,7 +609,7 @@ export default {
         ],
       };
     } else {
-      this.heuris = {
+      this.heuristicForm = {
         id: 0,
         total: 0,
         title: "",
@@ -594,11 +622,10 @@ export default {
         ],
       };
     }
-    this.heuris.total = this.heuris.questions.length;
+    this.heuristicForm.total = this.heuristicForm.questions.length;
   },
 };
 </script>
-
 
 <style scoped>
 .subtitleView {
@@ -631,5 +658,81 @@ export default {
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
   /* background: #515069; */
+}
+.csv-btn {
+  position: absolute;
+  right: 10px;
+
+  z-index: 0;
+  width: 10vw;
+  height: 4vh;
+  border-radius: 0px 0px 20px 20px;
+
+  box-shadow: 0px 2px 5px black;
+  background-color: #fca326;
+
+  transition: 0.5s;
+}
+
+.csv-btn:hover {
+  height: 10vh;
+  content: "test";
+}
+
+.csv-model {
+  position: absolute;
+  top: 40%;
+  right: 32%;
+  z-index: 50;
+
+  width: 40%;
+  height: 42%;
+
+  background-color: #dbdde4;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+.import-img {
+  width: 10vw;
+  height: 10vw;
+}
+
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

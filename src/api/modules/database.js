@@ -22,7 +22,7 @@ export default {
     return collectionRef.doc(payload.id).get();
   },
   getAllObjects: async (payload) => {
-    const db = firebase.firestore();
+    const db = await firebase.firestore();
     var collectionRef = db.collection(payload.collection);
     return collectionRef.get();
   },
