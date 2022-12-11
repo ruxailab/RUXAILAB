@@ -14,11 +14,15 @@ import HeuristicAnswer from "../models/HeuristicAnswer";
 import HeuristicQuestion from "../models/HeuristicQuestion";
 import HeuristicQuestionAnswer from "../models/HeuristicQuestionAnswer";
 import HeuristicQuestionDescription from "../models/HeuristicQuestionDescription";
+import HeuristicTest from "../models/HeuristicTest";
 
 export default class HeuristicController {
   //
   async createNewHeuristic(data) {
-    return database.createObject(api, data);
+    console.log(api.database.createObject);
+    const hTest = new HeuristicTest(data);
+    console.log(hTest);
+    return database.createObject(api, hTest);
   }
   //
   async deleteHeuristic(data) {
@@ -32,7 +36,11 @@ export default class HeuristicController {
   //------------------GET OBJECTS------------------
   //GetObject of Heuristic
   async getObjectHeuristic(id) {
-    const answer = await database.getObject(api + "/" + id);
+    const answer = await api.database.getObject({
+      id: id,
+      collection: "answers",
+    });
+
     return new Heuristic(answer);
   }
 
@@ -62,9 +70,15 @@ export default class HeuristicController {
 
   //----------------GET ALL OBJECTS----------------
   //GetAll data from "Heuristic"
-  async getAllHeuristic() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new Heuristic(obj)]));
+  async getAllHeuristicTest() {
+    const answer = await database.getAllObjects({
+      collection: "answers",
+    });
+    const list = [];
+    answer.forEach((doc) => {
+      list.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+    return list;
   }
   //GetAll data from "HeuristicAnswer"
   async getAllHeuristicAnswer() {
@@ -91,4 +105,3 @@ export default class HeuristicController {
     );
   }
 }
-

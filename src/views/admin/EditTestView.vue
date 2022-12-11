@@ -8,10 +8,7 @@
           >Are you sure you want to leave?</v-card-title
         >
 
-        <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded</v-card-text
-        >
+        <v-card-text>All your changes will be discarded</v-card-text>
 
         <v-divider></v-divider>
 
@@ -65,6 +62,7 @@
 
     <ShowInfo v-if="test && intro == false" title="Test Edit">
       <!-- Heuristics tests -->
+      <!--TODO: change hard coded type-->
       <EditHeuristicsTest
         v-if="test.type == 'Heuristics'"
         type="tabs"
@@ -194,7 +192,7 @@ export default {
 
         delete aux.tasks;
       } else if (this.object?.tasks) {
-        aux.tasks = [...this.object.tasks]
+        aux.tasks = [...this.object.tasks];
         delete aux.heuristics;
       }
 

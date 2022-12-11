@@ -2,7 +2,9 @@
   <div>
     <h2
       style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
-    >Create a new test</h2>
+    >
+      Create a new test
+    </h2>
 
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
@@ -10,24 +12,42 @@
           <v-card class="card" flat @click="dialog = true" :ripple="false">
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200"></v-img>
+                <v-img
+                  contain
+                  src="@/assets/createView/blankCanvas.svg"
+                  max-height="200"
+                ></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text">
                 <div class="card-title">Create a blank test</div>
-                <div>Create a blank test to begin with a completely new and fresh template.</div>
+                <div>
+                  Create a blank test to begin with a completely new and fresh
+                  template.
+                </div>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
-          <v-card class="card" flat @click="pushToFromTemplate()" :ripple="false">
+          <v-card
+            class="card"
+            flat
+            @click="pushToFromTemplate()"
+            :ripple="false"
+          >
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200"></v-img>
+                <v-img
+                  contain
+                  src="@/assets/createView/createFromTemplate.svg"
+                  max-height="200"
+                ></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
                 <div class="card-title">Create from template</div>
-                <div>Create a test based on a template created by one of our users.</div>
+                <div>
+                  Create a test based on a template created by one of our users.
+                </div>
               </v-col>
             </v-row>
           </v-card>
@@ -71,7 +91,7 @@ export default {
   }),
   methods: {
     pushToFromTemplate() {
-        this.$router.push('/fromtemplate');
+      this.$router.push("/fromtemplate");
     },
     async submit() {
       await this.testAssembly(); // build Test
@@ -147,7 +167,7 @@ export default {
                           cooperators: idCooperators,
                           accessLevel: 0,
                           date: d.toDateString(),
-                          nCoops: 0
+                          nCoops: 0,
                         },
                         param: "myTests",
                       });
@@ -159,7 +179,7 @@ export default {
           console.error("Error", err);
           successful = false;
         });
-
+      console.log(this.object.type);
       if (successful) this.sendManager(this.testID);
     },
     testAssembly() {
@@ -282,7 +302,7 @@ export default {
     margin: 20px 0px 0px 0px;
   }
   .card {
-      height: auto;
+    height: auto;
   }
 }
 </style>

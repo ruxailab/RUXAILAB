@@ -1,10 +1,9 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
-import firebase from "firebase/app";
-import vuetify from "./plugins/vuetify";
-import i18n from "./i18n";
+import "firebase/auth";
+import "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 let isProduction = false;
 
@@ -29,19 +28,9 @@ const firebaseConfig = isProduction
       measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID_DEV,
     };
 
-firebase.initializeApp(firebaseConfig);
-if (!isProduction) firebase.analytics(); //remove if when added firebase analytics to production
-// fetch('/__/firebase/init.json').then(response => {
-//   firebase.initializeApp(response.json());
-// });
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const analytics = getAnalytics(firebaseApp);
 
-Vue.config.productionTip = false;
-
-new Vue({
-  router,
-  store,
-  vuetify,
-  i18n,
-
-  render: (h) => h(App),
-}).$mount("#app");
+export { auth, db, analytics };
