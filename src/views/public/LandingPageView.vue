@@ -12,7 +12,8 @@ import Intro from "@/components/atoms/Introduction";
 import About from "@/components/organisms/LandingAbout";
 import Footer from "@/components/organisms/Footer";
 import Snackbar from "@/components/atoms/Snackbar";
-import TestController from "../../controllers/TestController";
+// import TestController from "../../controllers/TestController";
+// import AuthController from "../../controllers/AuthController";
 
 //test to createNewTest
 // const docDataTest = {
@@ -38,21 +39,21 @@ export default {
     About,
     Footer,
     Snackbar,
-    
-    
-    
+  
   },
 
   //teste dos controllers
   
-  async created() {
-    console.log("TEST CONTROLLER")
-    //await new TestController().createNewTest("test", "TesteTata", docDataTest).then((res)=> {console.log(res)})
-    console.log("GET ALL")
-    await new TestController().getAllObjectTest('test').then((res)=> {console.log(res)})
-    console.log("GET OBJECT")
-    await new TestController().getObjectTest('test', "answers", "n0MWTYrj8BAqJJwNdfxl").then((res)=> {console.log(res)})
-  },
+  // async created() {
+  //   console.log("TEST CONTROLLER")
+  //   await new TestController().createNewTest("test", "TesteTata", docDataTest).then((res)=> {console.log(res)})
+  //   console.log("GET ALL")
+  //   await new TestController().getAllObjectTest('test').then((res)=> {console.log(res)})
+  //   console.log("GET OBJECT")
+  //   await new TestController().getObjectTest('test', "answers", "n0MWTYrj8BAqJJwNdfxl").then((res)=> {console.log(res)})
+  //   console.log("AUTH TEST")
+  //   await new AuthController().authGetCurrentUser().then((res)=> {console.log(res)})
+  // },
 
 };
 </script>
