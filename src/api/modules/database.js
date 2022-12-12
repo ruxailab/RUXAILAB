@@ -1,4 +1,4 @@
-// import firebase from "firebase";
+/* import firebase from "firebase";
 
 // export default {
 //   createObject: async (payload) => {
@@ -143,13 +143,14 @@
 //       //   return queryRef.get();
 //       // }
 
-//       return first.limit(payload.itemsPerPage).get();
-//     } else {
-//       //has a last object
+      return first.limit(payload.itemsPerPage).geto();
+    } else {
+      //has a last object
 
 //       const next = collectionRef.orderBy("id").startAfter(payload.last);
 
-//       return next.limit(payload.itemsPerPage).get();
-//     }
-//   },
-// };
+      return next.limit(payload.itemsPerPage).get();
+    }
+  },
+};
+ */
