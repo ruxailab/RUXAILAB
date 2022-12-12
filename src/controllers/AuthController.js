@@ -1,24 +1,72 @@
 // imports
 
-import auth from "@/api/modules/auth";
+import {auth} from "@/firebase";
 
-//let authController = new AuthController()
 
-import api from "@/api/index";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export default class AuthController {
 
-  async authSingUp(userData) {
-    return auth.signUp(api, userData);
+  //Register new users
+
+  async authSingUp(email, password) {
+  createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    console.log("User SingUp: " + user)
+    return user
+  })
+  .catch(console.log("Error in SingUp"))
   }
-  async authSingIn(userData) {
-    return auth.signIn(api, userData);
+
+  //SignIn
+
+  async authSingIn(email, password){
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    console.log("User SingIn: " + user)
+    return user
+  })
+  .catch(console.log("Error in SingUp"))
   }
+
+  //Get Current User
+
   async authGetCurrentUser() {
-    return auth.getCurrentUser(api);
+    const user = auth.currentUser;
+    if(user){
+      console.log("User is signed in")
+    }else{
+      console.log("User is signed out")
+    }
+    return user
   }
-  async authSingOut() {
-    return auth.singOut(api);
-  }
+
+  //SignOut
   
+  async authSignOut() {
+    return signOut(auth).then(() => {
+      console.log("signOut successful")
+    })
+  }
+
+
+  
+  //Authentication state and get user data
+ 
+  // async authGetStateChanged(){
+  //   onAuthStateChanged(auth, (user)=>{
+  //     if(user){
+  //       const uid = user.uid;
+  //       console.log("User is signed in")
+  //       console.log(uid)
+  //       return uid
+  //     }
+  //     else{
+  //       console.log("User is signed out")
+  //     }
+  //   })
+  // }
+
 }
