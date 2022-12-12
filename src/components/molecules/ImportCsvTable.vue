@@ -34,9 +34,11 @@
 <script>
 import Heuristic from "@/models/Heuristic";
 import HeuristicQuestion from "@/models/HeuristicQuestion";
+import HeuristicController from "../../controllers/HeuristicController";
 
 // import { doc, setDoc } from "firebase/firestore";
-import firebase from "firebase";
+// import { doc, updateDoc } from "firebase/firestore";
+// import firebase from "firebase";
 
 export default {
   data() {
@@ -51,11 +53,14 @@ export default {
 
   methods: {
     async changeToJSON() {
-      const db = firebase.firestore();
+      // const db = firebase.firestore();
 
       // const testId = this.$route.params.id;
       const testId = this.test.id;
-      var testRef = db.collection("test").doc(testId);
+      // var testRef = db.collection("test").doc(testId);
+      // console.log(db);
+      console.log(testId);
+      // const testRef = doc(db, "test", testId);
       let lines = "";
       let currentline = "";
       let csv = "";
@@ -132,38 +137,16 @@ export default {
           console.log(heuristicTest[i].id);
           console.log(heuristicTest[i].questions[j]);
           for (j = 0; j < heuristicTest[i].total; j++) {
-            testRef
-              .update({
-                heuristics: {
-                  id: heuristicTest[i].id,
-                  questions: {
-                    descriptions: firebase.firestore.FieldValue.arrayUnion(
-                      heuristicTest[i].questions[j].descriptions
-                    ),
-                    id: firebase.firestore.FieldValue.arrayUnion(
-                      heuristicTest[i].questions[j].id
-                    ),
-                    text: firebase.firestore.FieldValue.arrayUnion(
-                      heuristicTest[i].questions[j].text
-                    ),
-                    title: firebase.firestore.FieldValue.arrayUnion(
-                      heuristicTest[i].questions[j].title
-                    ),
-                  },
-                  title: firebase.firestore.FieldValue.arrayUnion(
-                    heuristicTest[i].title
-                  ),
-                  total: firebase.firestore.FieldValue.arrayUnion(
-                    heuristicTest[i].total
-                  ),
-                },
-              })
-              .then(() => {
-                console.log("Document successfully written!");
-              })
-              .catch((error) => {
-                console.error("Error writing document: ", error);
-              });
+            await new HeuristicController().createCsvHeuris({
+              testId: testId,
+              id: heuristicTest[i].id,
+              qd: heuristicTest[i].questions[j].descriptions,
+              qid: heuristicTest[i].questions[j].id,
+              qtext: heuristicTest[i].questions[j].text,
+              qtitle: heuristicTest[i].questions[j].title,
+              title: heuristicTest[i].title,
+              total: heuristicTest[i].total,
+            });
           }
         }
       };
