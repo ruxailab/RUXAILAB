@@ -1,95 +1,118 @@
 // imports
 
-import api from "@/api/index";
-import database from "@/api/modules/database";
-
-
 import Heuristic from "@/models/Heuristic";
 import HeuristicAnswer from "@/models/HeuristicAnswer";
 import HeuristicQuestion from "@/models/HeuristicQuestion";
 import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
 import HeuristicQuestionDescription from "@/models/HeuristicQuestionDescription";
 
+// functions
 
+function toHeuristic(){
+  return new Heuristic()
+}
+function toHeuristicAnswer(){
+  return new HeuristicAnswer()
+}
+function toHeuristicQuestion(){
+  return new HeuristicQuestion()
+}
+function toHeuristicQuestionAnswer(){
+  return new HeuristicQuestionAnswer()
+}
+function toHeuristicQuestionDescription(){
+  return new HeuristicQuestionDescription()
+}
 
-export default class HeuristicController {
-  //
-  async createNewHeuristic(data) {
+import Controller from '@/controllers/BaseController'
 
-    const hTest = new HeuristicTest(data);
-    console.log(hTest);
-    return database.createObject(api, hTest);
-
+export default class HeuristicController extends Controller{
+  constructor() {
+    super()
   }
-  //
-  async deleteHeuristic(data) {
-    return database.deleteObject(api, data);
-  }
-  //
-  async updateHeuristic(data) {
-    return database.updateObject(api, data);
+
+  async createNewHeuristic(path, document, data){
+    return super.create(path, document, data).then((res)=> {
+      return res
+    })
   }
 
-  //------------------GET OBJECTS------------------
+  async deleteHeuristic(path, document){
+    return super.delete(path, document).then((res)=> {
+      return res
+    })
+  }
+
+  async updateHeuristic(path, document, payload){
+    return super.delete(path, document, payload).then((res)=> {
+      return res
+    })
+  }
+
+  //------------------GET OBJECTS - ID------------------
+
   //GetObject of Heuristic
-  async getObjectHeuristic(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new Heuristic(answer);
+  async getObjectHeuristic(path, parameter, condition){
+    return super.read(path, parameter, condition, toHeuristic)  
   }
 
   //GetObject of HeuristicAnswer
-  async getObjectHeuristicAnswer(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new HeuristicAnswer(answer);
+  async getObjectHeuristicAnswer(path, parameter, condition){
+    return super.read(path, parameter, condition, toHeuristicAnswer)  
   }
 
   //GetObject of HeuristicQuestion
-  async getObjectHeuristicQuestion(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new HeuristicQuestion(answer);
+  async getObjectHeuristicQuestion(path, parameter, condition){
+    return super.read(path, parameter, condition, toHeuristicQuestion)  
   }
 
   //GetObject of HeuristicQuestionAnswer
-  async getObjectHeuristicQuestionAnswer(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new HeuristicQuestionAnswer(answer);
+  async getObjectHeuristicQuestionAnswer(path, parameter, condition){
+    return super.read(path, parameter, condition, toHeuristicQuestionAnswer)  
   }
 
   //GetObject of HeuristicQuestionDescription
-  async getObjectHeuristicQuestionDescription(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new HeuristicQuestionDescription(answer);
+  async getObjectHeuristicQuestionDescription(path, parameter, condition){
+    return super.read(path, parameter, condition, toHeuristicQuestionDescription)  
   }
 
-  //----------------GET ALL OBJECTS----------------
-  //GetAll data from "Heuristic"
-  async getAllHeuristicTest() {
 
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new Heuristic(obj)]));
+  // ----------------GET ALL OBJECTS----------------
+
+  //GetObject of Heuristic
+  async getAllObjectHeuristic(path){
+    return super.readAll(path, toHeuristic).then((res)=> {
+      return res
+    })
   }
-  //GetAll data from "HeuristicAnswer"
-  async getAllHeuristicAnswer() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new HeuristicAnswer(obj)]));
+
+  //GetObject of HeuristicAnswer
+  async getAllObjectHeuristicAnswer(path){
+    return super.readAll(path, toHeuristicAnswer).then((res)=> {
+      return res
+    })
   }
-  //GetAll data from "HeuristicQuestion"
-  async getAllHeuristicQuestion() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new HeuristicQuestion(obj)]));
+
+  //GetObject of HeuristicQuestion
+  async getAllObjectHeuristicQuestion(path){
+    return super.readAll(path, toHeuristicQuestion).then((res)=> {
+      return res
+    })
   }
-  //GetAll data from "HeuristicQuestionAnswer"
-  async getAllHeuristicQuestionAnswer() {
-    const answer = await database.getAllObject(api);
-    return new Map(
-      answer.map((obj) => [obj.id, new HeuristicQuestionAnswer(obj)])
-    );
+
+  //GetObject of HeuristicQuestionAnswer
+  async getAllObjectHeuristicQuestionAnswer(path){
+    return super.readAll(path, toHeuristicQuestionAnswer).then((res)=> {
+      return res
+    })
   }
-  //GetAll data from "HeuristicQuestionDescription"
-  async getAllHeuristicQuestionDescription() {
-    const answer = await database.getAllObject(api);
-    return new Map(
-      answer.map((obj) => [obj.id, new HeuristicQuestionDescription(obj)])
-    );
+
+  //GetObject of HeuristicQuestionDescription
+  async getAllObjectHeuristicQuestionDescription(path){
+    return super.readAll(path, toHeuristicQuestionDescription).then((res)=> {
+      return res
+    })
   }
+
+
 }
