@@ -50,35 +50,35 @@ export default class TestController extends Controller{
     })
   }
 
-  //------------------GET OBJECTS  - ID------------------
+  //------------------GET OBJECTS - ID------------------
 
   //GetObject of Test
   async getObjectTest(path, parameter, condition){
-    return super.read(path, parameter, condition, toTest)  //consulta onde (parameter)id == (condition)"legal"
+    return super.read(path, parameter, condition, toTest)  
   }
 
   //GetObject of TestAdmin
   async getObjectTestAdmin(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestAdmin)  //consulta onde (parameter)id == (condition)"legal"
+    return super.read(path, parameter, condition, toTestAdmin)  
   }
 
   //GetObject of TestStructure
   async getObjectTestStructure(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestStructure)  //consulta onde (parameter)id == (condition)"legal"
+    return super.read(path, parameter, condition, toTestStructure)  
   }
 
   //GetObject of TestStructureOptions
   async getObjectTestStructureOptions(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestStructureOptions)  //consulta onde (parameter)id == (condition)"legal"
+    return super.read(path, parameter, condition, toTestStructureOptions)  
   }
 
   //GetObject of TestTemplateDoc
   async getObjectTestTemplateDoc(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestTemplateDoc)  //consulta onde (parameter)id == (condition)"legal"
+    return super.read(path, parameter, condition, toTestTemplateDoc)  
   }
 
 
-  // //----------------GET ALL OBJECTS----------------
+  // ----------------GET ALL OBJECTS----------------
 
   //GetObject of Test
   async getAllObjectTest(path){

@@ -1,13 +1,29 @@
 // imports
 
-// import api from "@/api/index";
-// import database from "@/api/modules/database";
-
 import User from "@/models/User";
 import UserAnswer from "@/models/UserAnswer";
 import UserTask from "@/models/UserTask";
 import UserTemplate from "@/models/UserTemplate";
 import UserTest from "@/models/UserTest";
+
+// functions
+
+function toUser(){
+  return new User()
+}
+function toUserAnswer(){
+  return new UserAnswer()
+}
+function toUserTask(){
+  return new UserTask()
+}
+function toUserTemplate(){
+  return new UserTemplate()
+}
+function toUserTest(){
+  return new UserTest()
+}
+
 
 import Controller from '@/controllers/BaseController'
 
@@ -36,152 +52,69 @@ export default class UserController extends Controller{
   }
 
 
-  //------------------GET OBJECTS------------------
+  //------------------GET OBJECTS - ID------------------
 
   //GetObject of User
-  async getObjectUser(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new User(res);
-    })
+  async getObjectUser(path, parameter, condition){
+    return super.read(path, parameter, condition, toUser)  
   }
 
   //GetObject of UserAnswer
-  async getObjectUserAnswer(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new UserAnswer(res);
-    })
+  async getObjectUserAnswer(path, parameter, condition){
+    return super.read(path, parameter, condition, toUserAnswer)  
   }
 
   //GetObject of UserTask
-  async getObjectUserTask(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new UserTask(res);
-    })
+  async getObjectUserTask(path, parameter, condition){
+    return super.read(path, parameter, condition, toUserTask)  
   }
 
   //GetObject of UserTemplate
-  async getObjectUserTemplate(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new UserTemplate(res);
-    })
+  async getObjectUserTemplate(path, parameter, condition){
+    return super.read(path, parameter, condition, toUserTemplate)  
   }
 
   //GetObject of UserTest
-  async getObjectUserTest(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new UserTest(res);
-    })
+  async getObjectUserTest(path, parameter, condition){
+    return super.read(path, parameter, condition, toUserTest)  
   }
 
 
   //----------------GET ALL OBJECTS----------------
 
-  //GetAll data from "User"
-  async getAllUser(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new User(obj)]));
-  })}
+//GetObject of User
+  async getAllObjectUser(path){
+    return super.readAll(path, toUser).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "UserAnswer"
-  async getAllUserAnswer(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new UserAnswer(obj)]));
-  })}
+  //GetObject of UserAnswer
+  async getAllObjectUserAnswer(path){
+    return super.readAll(path, toUserAnswer).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "UserTask"
-  async getAllUserTask(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new UserTask(obj)]));
-  })}
+  //GetObject of UserTask
+  async getAllObjectUserTask(path){
+    return super.readAll(path, toUserTask).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "UserTemplate"
-  async getAllUserTemplate(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new UserTemplate(obj)]));
-  })}
+  //GetObject of UserTemplate
+  async getAllObjectUserTemplate(path){
+    return super.readAll(path, toUserTemplate).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "UserTest"
-  async getAllUserTest(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new UserTest(obj)]));
-  })}
-
-
+  //GetObject of UserTest
+  async getAllObjectUserTest(path){
+    return super.readAll(path, toUserTest).then((res)=> {
+      return res
+    })
+  }
 
 }
-
-
-
-  //
-//   async createNewUser(data) {
-//     return database.createObject(api, data);
-//   }
-//   //
-//   async deleteUser(data) {
-//     return database.deleteObject(api, data);
-//   }
-//   //
-//   async updateUser(data) {
-//     return database.updateObject(api, data);
-//   }
-
-//   //------------------GET OBJECTS------------------
-//   //GetObject of User
-//   async getObjectUser(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new User(answer);
-//   }
-
-//   //GetObject of UserAnswer
-//   async getObjectUserAnswer(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new UserAnswer(answer);
-//   }
-
-//   //GetObject of UserTask
-//   async getObjectUserTask(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new UserTask(answer);
-//   }
-
-//   //GetObject of UserTemplate
-//   async getObjectUserTemplate(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new UserTemplate(answer);
-//   }
-
-//   //GetObject of UserTest
-//   async getObjectUserTest(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new UserTest(answer);
-//   }
-
-//   //----------------GET ALL OBJECTS----------------
-//   //GetAll data from "User"
-//   async getAllUser() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new User(obj)]));
-//   }
-//   //GetAll data from "UserAnswer"
-//   async getAllUserAnswer() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new UserAnswer(obj)]));
-//   }
-//   //GetAll data from "UserTask"
-//   async getAllUserTask() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new UserTask(obj)]));
-//   }
-//   //GetAll data from "UserTemplate"
-//   async getAllUserTemplate() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new UserTemplate(obj)]));
-//   }
-//   //GetAll data from "UserTest"
-//   async getAllUserTest() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new UserTest(obj)]));
-//   }
-// }
-
-//How do i use an api push?

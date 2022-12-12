@@ -1,12 +1,25 @@
 // imports
 
-// import api from "@/api/index";
-// import database from "@/api/modules/database";
-
 import Template from "@/models/Template";
 import TemplateAuthor from "@/models/TemplateAuthor";
 import TemplateBody from "@/models/TemplateBody";
 import TemplateHeader from "@/models/TemplateHeader";
+
+// functions
+
+function toTemplate(){
+  return new Template()
+}
+function toTemplateAuthor(){
+  return new TemplateAuthor()
+}
+function toTemplateBody(){
+  return new TemplateBody()
+}
+function toTemplateHeader(){
+  return new TemplateHeader()
+}
+
 
 import Controller from '@/controllers/BaseController';  
 
@@ -33,124 +46,57 @@ export default class TemplateController extends Controller{
     })
   }
 
-  //------------------GET OBJECTS  - ID------------------
+  //------------------GET OBJECTS - ID------------------
 
   //GetObject of Template
-  async getObjectTemplate(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Template(res);
-    })
+  async getObjectTemplate(path, parameter, condition){
+    return super.read(path, parameter, condition, toTemplate)  
   }
 
   //GetObject of TemplateAuthor
-  async getObjectTemplateAuthor(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new TemplateAuthor(res);
-    })
+  async getObjectTemplateAuthor(path, parameter, condition){
+    return super.read(path, parameter, condition, toTemplateAuthor)  
   }
 
   //GetObject of TemplateBody
-  async getObjectTemplateBody(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new TemplateBody(res);
-    })
+  async getObjectTemplateBody(path, parameter, condition){
+    return super.read(path, parameter, condition, toTemplateBody)  
   }
 
-  //GetObject of TemplateHeader
-  async getObjectTemplateHeader(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new TemplateHeader(res);
-    })
+  //GetObject of TemplateHeade
+  async getObjectTemplateHeader(path, parameter, condition){
+    return super.read(path, parameter, condition, toTemplateHeader)  
   }
-
 
 
   //----------------GET ALL OBJECTS----------------
 
-  //GetAll data from "Template"
-  async getAllTemplate(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new Template(obj)]));
-  })}
+  //GetObject of Template
+  async getAllObjectTemplate(path){
+    return super.readAll(path, toTemplate).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "TemplateAuthor"
-  async getAllTemplateAuthor(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new TemplateAuthor(obj)]));
-  })}
+  //GetObject of TemplateAuthor
+  async getAllObjectTemplateAuthor(path){
+    return super.readAll(path, toTemplateAuthor).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "TemplateBody"
-  async getAllTemplateBody(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new TemplateBody(obj)]));
-  })}
+  //GetObject of TemplateBody
+  async getAllObjectTemplateBody(path){
+    return super.readAll(path, toTemplateBody).then((res)=> {
+      return res
+    })
+  }
 
-  //GetAll data from "TemplateHeader"
-  async getAllTemplateHeader(path, parameter, id) {
-    return super.read(path, parameter, id).then((res)=> {
-      return new Map(res.map((obj) => [obj.id, new TemplateHeader(obj)]));
-  })}
-
+  //GetObject of TemplateHeader
+  async getAllObjectTemplateHeader(path){
+    return super.readAll(path, toTemplateHeader).then((res)=> {
+      return res
+    })
+  }
 
 }
-
-
-//   async createNewTemplate(data) {
-//     return database.createObject(api, data);
-//   }
-//   //
-//   async deleteTemplate(data) {
-//     return database.deleteObject(api, data);
-//   }
-//   //
-//   async updateTemplate(data) {
-//     return database.updateObject(api, data);
-//   }
-
-//   //------------------GET OBJECTS------------------
-//   //GetObject of Template
-//   async getObjectTemplate(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new Template(answer);
-//   }
-
-//   //GetObject of TemplateAuthor
-//   async getObjectTemplateAuthor(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new TemplateAuthor(answer);
-//   }
-
-//   //GetObject of TemplateBody
-//   async getObjectTemplateBody(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new TemplateBody(answer);
-//   }
-
-//   //GetObject of TemplateHeader
-//   async getObjectTemplateHeader(id) {
-//     const answer = await database.getObject(api + "/" + id);
-//     return new TemplateHeader(answer);
-//   }
-
-//   //----------------GET ALL OBJECTS----------------
-//   //GetAll data from "Template"
-//   async getAllTemplate() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new Template(obj)]));
-//   }
-//   //GetAll data from "TemplateAuthor"
-//   async getAllTemplateAuthor() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new TemplateAuthor(obj)]));
-//   }
-//   //GetAll data from "TemplateBody"
-//   async getAllTemplateBody() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new TemplateBody(obj)]));
-//   }
-//   //GetAll data from "TemplateHeader"
-//   async getAllTemplateHeader() {
-//     const answer = await database.getAllObject(api);
-//     return new Map(answer.map((obj) => [obj.id, new TemplateHeader(obj)]));
-//   }
-// }
