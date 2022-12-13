@@ -5,22 +5,6 @@ import TemplateAuthor from "@/models/TemplateAuthor";
 import TemplateBody from "@/models/TemplateBody";
 import TemplateHeader from "@/models/TemplateHeader";
 
-// functions
-
-function toTemplate(){
-  return new Template()
-}
-function toTemplateAuthor(){
-  return new TemplateAuthor()
-}
-function toTemplateBody(){
-  return new TemplateBody()
-}
-function toTemplateHeader(){
-  return new TemplateHeader()
-}
-
-
 import Controller from '@/controllers/BaseController';  
 
 export default class TemplateController extends Controller{
@@ -49,52 +33,60 @@ export default class TemplateController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Template
-  async getObjectTemplate(path, parameter, condition){
-    return super.read(path, parameter, condition, toTemplate)  
+  async getObjectTemplate(parameter, condition){
+    return super.read('templates', parameter, condition, Template.toTemplate).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TemplateAuthor
-  async getObjectTemplateAuthor(path, parameter, condition){
-    return super.read(path, parameter, condition, toTemplateAuthor)  
+  async getObjectTemplateAuthor(parameter, condition){
+    return super.read('templates', parameter, condition, TemplateAuthor.toTemplateAuthor).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TemplateBody
-  async getObjectTemplateBody(path, parameter, condition){
-    return super.read(path, parameter, condition, toTemplateBody)  
+  async getObjectTemplateBody(parameter, condition){
+    return super.read('templates', parameter, condition, TemplateBody.toTemplateBody).then((res)=> {
+      return res
+    })  
   }
 
-  //GetObject of TemplateHeade
-  async getObjectTemplateHeader(path, parameter, condition){
-    return super.read(path, parameter, condition, toTemplateHeader)  
+  //GetObject of TemplateHeader
+  async getObjectTemplateHeader(parameter, condition){
+    return super.read('templates', parameter, condition, TemplateHeader.toTemplateHeader).then((res)=> {
+      return res
+    })  
   }
 
 
   //----------------GET ALL OBJECTS----------------
 
   //GetObject of Template
-  async getAllObjectTemplate(path){
-    return super.readAll(path, toTemplate).then((res)=> {
+  async getAllObjectTemplate(){
+    return super.readAll('templates', Template.toTemplate).then((res)=> {
       return res
     })
   }
 
   //GetObject of TemplateAuthor
-  async getAllObjectTemplateAuthor(path){
-    return super.readAll(path, toTemplateAuthor).then((res)=> {
+  async getAllObjectTemplateAuthor(){
+    return super.readAll('templates', TemplateAuthor.toTemplateAuthor).then((res)=> {
       return res
     })
   }
 
   //GetObject of TemplateBody
-  async getAllObjectTemplateBody(path){
-    return super.readAll(path, toTemplateBody).then((res)=> {
+  async getAllObjectTemplateBody(){
+    return super.readAll('templates', TemplateBody.toTemplateBody).then((res)=> {
       return res
     })
   }
 
   //GetObject of TemplateHeader
-  async getAllObjectTemplateHeader(path){
-    return super.readAll(path, toTemplateHeader).then((res)=> {
+  async getAllObjectTemplateHeader(){
+    return super.readAll('templates', TemplateHeader.toTemplateHeader).then((res)=> {
       return res
     })
   }

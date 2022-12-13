@@ -11,4 +11,7 @@ export default class TestStructure{
         this.options = options;
         this.userTasks = userTasks;
     }
+    static toTestStructure(){
+        return new TestStructure()
+    }
 }

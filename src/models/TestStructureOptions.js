@@ -9,4 +9,7 @@ export default class TestStructureOptions{
         this.text = text;
         this.value = value;
     }
+    static toTestStructureOptions(){
+        return new TestStructureOptions()
+    }
 }

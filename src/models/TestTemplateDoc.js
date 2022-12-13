@@ -11,4 +11,7 @@ export default class TestTemplateDoc{
         this.templateName = templateName;
         this.fromTemplate = fromTemplate;
     }
+    static toTestTemplateDoc(){
+        return new TestTemplateDoc()
+    }
 }

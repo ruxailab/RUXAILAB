@@ -9,4 +9,7 @@ export default class Heuristic extends Test {
     super();
     this.heuristics = heuristics;
   }
+  static toHeuristicTest(){
+    return new Heuristic()
+  }
 }

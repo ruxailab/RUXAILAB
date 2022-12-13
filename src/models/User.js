@@ -18,6 +18,9 @@ export default class User {
         this.myTemplates = myTemplates;
         this.myTests = myTests;
     }
+    static toUser(){
+        return new User()
+    }
 }
 
 

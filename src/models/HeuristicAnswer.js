@@ -17,4 +17,7 @@ export default class HeuristicAnswer{
         this.submitted = submitted;
         this.userDocId = userDocId;
     }
+    static toHeuristicAnswer(){
+        return new HeuristicAnswer()
+    }
 }

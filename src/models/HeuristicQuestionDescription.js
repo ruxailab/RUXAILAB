@@ -9,4 +9,7 @@ export default class HeuristicQuestionDescription{
         this.text = text;
         this.title = title;
     }
+    static toHeuristicQuestionDescription(){
+        return new HeuristicQuestionDescription()
+    }
 }

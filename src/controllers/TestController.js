@@ -6,25 +6,6 @@ import TestStructure from "@/models/TestStructure";
 import TestStructureOptions from "@/models/TestStructureOptions";
 import TestTemplateDoc from "@/models/TestTemplateDoc";
 
-// functions
-
-function toTest(){
-  return new Test()
-}
-function toTestAdmin(){
-  return new TestAdmin()
-}
-function toTestStructure(){
-  return new TestStructure()
-}
-function toTestStructureOptions(){
-  return new TestStructureOptions()
-}
-function toTestTemplateDoc(){
-  return new TestTemplateDoc()
-}
-
-
 import Controller from '@/controllers/BaseController'
 
 export default class TestController extends Controller{
@@ -53,64 +34,74 @@ export default class TestController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Test
-  async getObjectTest(path, parameter, condition){
-    return super.read(path, parameter, condition, toTest)  
+  async getObjectTest(parameter, condition){
+    return super.read('test', parameter, condition, Test.toTest).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TestAdmin
-  async getObjectTestAdmin(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestAdmin)  
+  async getObjectTestAdmin(parameter, condition){
+    return super.read('test', parameter, condition, TestAdmin.toTestAdmin).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TestStructure
-  async getObjectTestStructure(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestStructure)  
+  async getObjectTestStructure(parameter, condition){
+    return super.read('test', parameter, condition, TestStructure.toTestStructure).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TestStructureOptions
-  async getObjectTestStructureOptions(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestStructureOptions)  
+  async getObjectTestStructureOptions(parameter, condition){
+    return super.read('test', parameter, condition, TestStructureOptions.toTestStructureOptions).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of TestTemplateDoc
-  async getObjectTestTemplateDoc(path, parameter, condition){
-    return super.read(path, parameter, condition, toTestTemplateDoc)  
+  async getObjectTestTemplateDoc(parameter, condition){
+    return super.read('test', parameter, condition, TestTemplateDoc.toTestTemplateDoc).then((res)=> {
+      return res
+    })  
   }
 
 
   // ----------------GET ALL OBJECTS----------------
 
   //GetObject of Test
-  async getAllObjectTest(path){
-    return super.readAll(path, toTest).then((res)=> {
+  async getAllObjectTest(){
+    return super.readAll('test', Test.toTest).then((res)=> {
       return res
     })
   }
 
   //GetObject of TestAdmin
-  async getAllObjectTestAdmin(path){
-    return super.readAll(path, toTestAdmin).then((res)=> {
+  async getAllObjectTestAdmin(){
+    return super.readAll('test', TestAdmin.toTestAdmin).then((res)=> {
       return res
     })
   }
 
   //GetObject of TestStructure
-  async getAllObjectTestStructure(path){
-    return super.readAll(path, toTestStructure).then((res)=> {
+  async getAllObjectTestStructure(){
+    return super.readAll('test', TestStructure.toTestStructure).then((res)=> {
       return res
     })
   }
 
   //GetObject of TestStructureOptions
-  async getAllObjectTestStructureOptions(path){
-    return super.readAll(path, toTestStructureOptions).then((res)=> {
+  async getAllObjectTestStructureOptions(){
+    return super.readAll('test', TestStructureOptions.toTestStructureOptions).then((res)=> {
       return res
     })
   }
 
   //GetObject of TestTemplateDoc
-  async getAllObjectTestTemplateDoc(path){
-    return super.readAll(path, toTestTemplateDoc).then((res)=> {
+  async getAllObjectTestTemplateDoc(){
+    return super.readAll('test', TestTemplateDoc.toTestTemplateDoc).then((res)=> {
       return res
     })
   }

@@ -13,4 +13,7 @@ export default class Heuristic {
     this.heuristicQuestions = heuristicQuestions;
     this.heuristicTotal = heuristicTotal;
   }
+  static toHeuristic(){
+    return new Heuristic()
+}
 }

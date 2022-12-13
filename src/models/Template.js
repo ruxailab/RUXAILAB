@@ -9,4 +9,7 @@ export default class Template{
         this.body = body;
         this.header = header;
     }
+    static toTemplate(){
+        return new Template()
+    }
 }
