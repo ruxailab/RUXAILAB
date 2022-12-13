@@ -14,22 +14,7 @@ import Footer from "@/components/organisms/Footer";
 import Snackbar from "@/components/atoms/Snackbar";
 // import TestController from "../../controllers/TestController";
 // import AuthController from "../../controllers/AuthController";
-
-//test to createNewTest
-// const docDataTest = {
-//     stringExample: "Hello world!",
-//     booleanExample: true,
-//     numberExample: 3.14159265,
-//     arrayExample: [5, true, "hello"],
-//     nullExample: null,
-//     objectExample: {
-//         a: 5,
-//         b: {
-//             nested: "foo"
-//         }
-//     }
-// };
-
+// import Controller from "@/controllers/BaseController";
 
 
 export default {
@@ -42,7 +27,7 @@ export default {
   
   },
 
-  //teste dos controllers
+  //tests of controllers
   
   // async created() {
   //   console.log("TEST CONTROLLER")
@@ -53,7 +38,9 @@ export default {
   //   await new TestController().getObjectTest('test', "answers", "n0MWTYrj8BAqJJwNdfxl").then((res)=> {console.log(res)})
   //   console.log("AUTH TEST")
   //   await new AuthController().authGetCurrentUser().then((res)=> {console.log(res)})
+  //   const res = await new Controller().read("users", "email", "tamiris.tavares1801@gmail.com")
+  //   console.log("LANDING RESPONSE ==>>", res)
   // },
+}
 
-};
 </script>
