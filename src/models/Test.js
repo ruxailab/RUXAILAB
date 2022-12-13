@@ -25,4 +25,7 @@ export default class Test{
         this.updateDate = updateDate;
         this.templateDoc = templateDoc;
     }
+    static toTest(){
+        return new Test()
+    }
 }

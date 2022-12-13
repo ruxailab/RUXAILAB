@@ -23,4 +23,7 @@ export default class UserAnswer{
         this.updateDate = updateDate;
         this.testAuthorName = testAuthorName;
     }
+    static toUserAnswer(){
+        return new UserAnswer()
+    }
 }

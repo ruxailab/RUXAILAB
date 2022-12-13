@@ -21,4 +21,7 @@ export default class UserTemplate{
         this.templateDescription = templateDescription;
         this.isPublic = isPublic;
     }
+    static toUserTemplate(){
+        return new UserTemplate()
+    }
 }

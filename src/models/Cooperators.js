@@ -23,4 +23,7 @@ export default class Cooperators{
         this.answerStatus = answerStatus;
         this.updateDate = updateDate;
     }
+    static toCooperators(){
+        return new Cooperators()
+    }
 }

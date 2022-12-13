@@ -25,4 +25,7 @@ export default class UserTask{
         this.hasScreenRecord = hasScreenRecord;
         this.hasCamRecord = hasCamRecord;
     }
+    static toUserTask(){
+        return new UserTask()
+    }
 }

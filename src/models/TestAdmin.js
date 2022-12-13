@@ -9,4 +9,7 @@ export default class TestAdmin{
         this.email = email;
         this.userDocId = userDocId;
     }
+    static toTestAdmin(){
+        return new TestAdmin()
+    }
 }

@@ -11,4 +11,7 @@ export default class HeuristicQuestionAnswer{
         this.heuristicAnswer = heuristicAnswer;
         this.heuristicComment = heuristicComment;
     }
+    static toHeuristicQuestionAnswer(){
+        return new HeuristicQuestionAnswer()
+    }
 }

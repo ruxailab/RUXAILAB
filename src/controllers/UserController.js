@@ -6,25 +6,6 @@ import UserTask from "@/models/UserTask";
 import UserTemplate from "@/models/UserTemplate";
 import UserTest from "@/models/UserTest";
 
-// functions
-
-function toUser(){
-  return new User()
-}
-function toUserAnswer(){
-  return new UserAnswer()
-}
-function toUserTask(){
-  return new UserTask()
-}
-function toUserTemplate(){
-  return new UserTemplate()
-}
-function toUserTest(){
-  return new UserTest()
-}
-
-
 import Controller from '@/controllers/BaseController'
 
 export default class UserController extends Controller{
@@ -55,64 +36,74 @@ export default class UserController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of User
-  async getObjectUser(path, parameter, condition){
-    return super.read(path, parameter, condition, toUser)  
+  async getObjectUser(parameter, condition){
+    return super.read('users', parameter, condition, User.toUser).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of UserAnswer
-  async getObjectUserAnswer(path, parameter, condition){
-    return super.read(path, parameter, condition, toUserAnswer)  
+  async getObjectUserAnswer(parameter, condition){
+    return super.read('users', parameter, condition, UserAnswer.toUserAnswer).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of UserTask
-  async getObjectUserTask(path, parameter, condition){
-    return super.read(path, parameter, condition, toUserTask)  
+  async getObjectUserTask(parameter, condition){
+    return super.read('users', parameter, condition, UserTask.toUserTask).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of UserTemplate
-  async getObjectUserTemplate(path, parameter, condition){
-    return super.read(path, parameter, condition, toUserTemplate)  
+  async getObjectUserTemplate(parameter, condition){
+    return super.read('users', parameter, condition, UserTemplate.toUserTemplate).then((res)=> {
+      return res
+    })  
   }
 
   //GetObject of UserTest
-  async getObjectUserTest(path, parameter, condition){
-    return super.read(path, parameter, condition, toUserTest)  
+  async getObjectUserTest(parameter, condition){
+    return super.read('users', parameter, condition, UserTest.toUserTest).then((res)=> {
+      return res
+    })  
   }
 
 
   //----------------GET ALL OBJECTS----------------
 
-//GetObject of User
-  async getAllObjectUser(path){
-    return super.readAll(path, toUser).then((res)=> {
+  //GetObject of User
+  async getAllObjectUser(){
+    return super.readAll('users', User.toUser).then((res)=> {
       return res
     })
   }
 
   //GetObject of UserAnswer
-  async getAllObjectUserAnswer(path){
-    return super.readAll(path, toUserAnswer).then((res)=> {
+  async getAllObjectUserAnswer(){
+    return super.readAll('users', UserAnswer.toUserAnswer).then((res)=> {
       return res
     })
   }
 
   //GetObject of UserTask
-  async getAllObjectUserTask(path){
-    return super.readAll(path, toUserTask).then((res)=> {
+  async getAllObjectUserTask(){
+    return super.readAll('users', UserTask.toUserTask).then((res)=> {
       return res
     })
   }
 
   //GetObject of UserTemplate
-  async getAllObjectUserTemplate(path){
-    return super.readAll(path, toUserTemplate).then((res)=> {
+  async getAllObjectUserTemplate(){
+    return super.readAll('users', UserTemplate.toUserTemplate).then((res)=> {
       return res
     })
   }
 
   //GetObject of UserTest
-  async getAllObjectUserTest(path){
-    return super.readAll(path, toUserTest).then((res)=> {
+  async getAllObjectUserTest(){
+    return super.readAll('users', UserTest.toUserTest).then((res)=> {
       return res
     })
   }
