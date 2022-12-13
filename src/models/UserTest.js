@@ -23,4 +23,7 @@ export default class UserTest{
         this.isComplete = isComplete;
         this.testProgress = testProgress;
     }
+    static toUserTest(){
+        return new UserTest()
+    }
 }

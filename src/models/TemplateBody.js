@@ -13,4 +13,7 @@ export default class TemplateBody{
         this.testType = testType;
         this.testStructure = testStructure;
     }
+    static toTemplateBody(){
+        return new TemplateBody()
+    }
 }

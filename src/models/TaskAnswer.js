@@ -31,4 +31,7 @@ export default class TaskAnswer{
         this.submitted = submitted;
         this.userDocId = userDocId;
     }
+    static toTaskAnswer(){
+        return new TaskAnswer()
+    }
 }

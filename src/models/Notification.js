@@ -9,4 +9,7 @@ export default class Notification {
         this.title = title;
         this.description = description;
     }
+    static toNotification(){
+        return new Notification()
+    }
 }

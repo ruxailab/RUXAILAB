@@ -21,4 +21,7 @@ export default class TemplateHeader{
         this.templateVersion = templateVersion;
         this.templateType = templateType;
     }
+    static toTemplateHeader(){
+        return new TemplateHeader()
+    }
 }

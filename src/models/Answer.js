@@ -11,4 +11,7 @@ export default class Answer{
         this.heuristicAnswers = heuristicAnswers;
         this.taskAnswers = taskAnswers;
     }
+    static toAnswer(){
+        return new Answer()
+    }
 }

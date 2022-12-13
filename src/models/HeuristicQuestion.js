@@ -13,4 +13,7 @@ export default class HeuristicQuestion{
         this.descriptions = descriptions;
         this.text = text;
     }
+    static toHeuristicQuestion(){
+        return new HeuristicQuestion()
+    }
 }
