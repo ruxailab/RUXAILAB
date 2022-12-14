@@ -8,19 +8,24 @@
      * @param {Object[]} myTests - An array of UserTest value.
      */
 
-
-export default class User {
-    constructor(accessLevel, email, notifications, myAnswers, myTemplates, myTests){
-        this.accessLevel = accessLevel;
-        this.email = email;
-        this.notifications = notifications;
-        this.myAnswers = myAnswers;
-        this.myTemplates = myTemplates;
-        this.myTests = myTests;
+    export default class User {
+        constructor({
+            accessLevel, 
+            email, 
+            notifications, 
+            myAnswers, 
+            myTemplates, 
+            myTests
+        } = {}
+        ) {
+            this.accessLevel = accessLevel;
+            this.email = email;
+            this.notifications = notifications;
+            this.myAnswers = myAnswers;
+            this.myTemplates = myTemplates;
+            this.myTests = myTests;
+        }
+        static toUser(data) {
+            return new User(data)
+        }
     }
-    static toUser(){
-        return new User()
-    }
-}
-
-
