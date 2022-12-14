@@ -13,19 +13,16 @@ export default class Controller {
 
   //model to define in Controller
 
-  async read(path, parameter, condition, model) {
-    const q = query(collection(db, path), where(parameter, '==', condition));  
-    const res = new Array();
+  async read(path, parameter, condition) {
+    const q = query(collection(db, path), where(parameter, "==", condition));
     const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(doc => {
-        res.push(doc.data())
-      })
-      // res.forEach(element => {
-      //   console.log(element)
-      // })
-      console.log(res)
-      return res.map(model)
-    }
+    const res = [];
+    querySnapshot.forEach((doc) => {
+      res.push(doc.data())
+    });
+    console.log("CONTROLLER RESPONSE ====>>>>", res)
+    return res
+  }
 
   async readAll(path, model) {
     const q = query(collection(db, path));  
