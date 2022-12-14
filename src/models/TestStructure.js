@@ -6,12 +6,15 @@
      */
 
 export default class TestStructure{
-    constructor(heuristicList, options, userTasks){
+    constructor({
+        heuristicList, options, userTasks
+    } = {}
+    ) {
         this.heuristicList = heuristicList;
         this.options = options;
         this.userTasks = userTasks;
     }
-    static toTestStructure(){
-        return new TestStructure()
+    static toTestStructure(data) {
+        return new TestStructure(data)
     }
 }

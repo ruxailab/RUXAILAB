@@ -13,7 +13,10 @@
      */
 
 export default class Test{
-    constructor(testAdmin, testDescription, testTitle, testType, testStructure, answersDocId, cooperators, creationDate, updateDate, templateDoc){
+    constructor({
+        testAdmin, testDescription, testTitle, testType, testStructure, answersDocId, cooperators, creationDate, updateDate, templateDoc
+    } = {}
+    ) {
         this.testAdmin = testAdmin;
         this.testDescription = testDescription;
         this.testTitle = testTitle;
@@ -25,7 +28,7 @@ export default class Test{
         this.updateDate = updateDate;
         this.templateDoc = templateDoc;
     }
-    static toTest(){
-        return new Test()
+    static toTest(data) {
+        return new Test(data)
     }
 }
