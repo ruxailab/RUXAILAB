@@ -13,19 +13,19 @@ export default class TestController extends Controller{
     super()
   }
 
-  async createNewTest(path, document, data){
+  createNewTest(path, document, data){
     return super.create(path, document, data).then((res)=> {
       return res
     })
   }
 
-  async deleteTest(path, document){
+  deleteTest(path, document){
     return super.delete(path, document).then((res)=> {
       return res
     })
   }
 
-  async updateTest(path, document, payload){
+  updateTest(path, document, payload){
     return super.delete(path, document, payload).then((res)=> {
       return res
     })
@@ -34,76 +34,115 @@ export default class TestController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Test
-  async getObjectTest(parameter, condition){
-    return super.read('test', parameter, condition, Test.toTest).then((res)=> {
+  getObjectTest(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(Test.toTest)
+      console.log("TestController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TestController error: ", err)
     })  
   }
 
   //GetObject of TestAdmin
-  async getObjectTestAdmin(parameter, condition){
-    return super.read('test', parameter, condition, TestAdmin.toTestAdmin).then((res)=> {
+  getObjectTestAdmin(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestAdmin.toTestAdmin)
+      console.log("TestAdminController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TestAdminController error: ", err)
     })  
   }
 
   //GetObject of TestStructure
-  async getObjectTestStructure(parameter, condition){
-    return super.read('test', parameter, condition, TestStructure.toTestStructure).then((res)=> {
+  getObjectTestStructure(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestStructure.toTestStructure)
+      console.log("TestStructureController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TestStructureController error: ", err)
     })  
   }
 
   //GetObject of TestStructureOptions
-  async getObjectTestStructureOptions(parameter, condition){
-    return super.read('test', parameter, condition, TestStructureOptions.toTestStructureOptions).then((res)=> {
+  getObjectTestStructureOptions(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestStructureOptions.toTestStructureOptions)
+      console.log("TestStructureOptionsController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TestStructureOptionsController error: ", err)
     })  
   }
 
   //GetObject of TestTemplateDoc
-  async getObjectTestTemplateDoc(parameter, condition){
-    return super.read('test', parameter, condition, TestTemplateDoc.toTestTemplateDoc).then((res)=> {
+  getObjectTestTemplateDoc(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
+      console.log("TestTemplateDocController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TestTemplateDocController error: ", err)
     })  
   }
-
 
   // ----------------GET ALL OBJECTS----------------
 
   //GetObject of Test
-  async getAllObjectTest(){
-    return super.readAll('test', Test.toTest).then((res)=> {
+  getAllObjectTest(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(Test.toTest)
+      console.log("TestController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TestController error: ", err)
+    })  
   }
 
-  //GetObject of TestAdmin
-  async getAllObjectTestAdmin(){
-    return super.readAll('test', TestAdmin.toTestAdmin).then((res)=> {
+   //GetObject of TestAdmin
+   getAllObjectTestAdmin(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestAdmin.toTestAdmin)
+      console.log("TestAdminController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TestAdminController error: ", err)
+    })  
   }
 
-  //GetObject of TestStructure
-  async getAllObjectTestStructure(){
-    return super.readAll('test', TestStructure.toTestStructure).then((res)=> {
+   //GetObject of TestStructure
+   getAllObjectTestStructure(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestStructure.toTestStructure)
+      console.log("TestStructureController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TestStructureController error: ", err)
+    })  
   }
 
-  //GetObject of TestStructureOptions
-  async getAllObjectTestStructureOptions(){
-    return super.readAll('test', TestStructureOptions.toTestStructureOptions).then((res)=> {
+   //GetObject of TestStructureOptions
+   getAllObjectTestStructureOptions(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestStructureOptions.toTestStructureOptions)
+      console.log("TestStructureOptionsController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TestStructureOptionsController error: ", err)
+    })  
   }
 
-  //GetObject of TestTemplateDoc
-  async getAllObjectTestTemplateDoc(){
-    return super.readAll('test', TestTemplateDoc.toTestTemplateDoc).then((res)=> {
+   //GetObject of TestTemplateDoc
+   getAllObjectTestTemplateDoc(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
+      console.log("TestTemplateDocController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TestTemplateDocController error: ", err)
+    })  
   }
 
 }
