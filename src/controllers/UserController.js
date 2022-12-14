@@ -1,10 +1,10 @@
 // imports
 
 import User from "@/models/User";
-// import UserAnswer from "@/models/UserAnswer";
-// import UserTask from "@/models/UserTask";
-// import UserTemplate from "@/models/UserTemplate";
-// import UserTest from "@/models/UserTest";
+import UserAnswer from "@/models/UserAnswer";
+import UserTask from "@/models/UserTask";
+import UserTemplate from "@/models/UserTemplate";
+import UserTest from "@/models/UserTest";
 
 import Controller from '@/controllers/BaseController'
 
@@ -39,77 +39,113 @@ export default class UserController extends Controller{
   getObjectUser(parameter, condition){
     return super.read("users", parameter, condition).then((response) => {
       let res = response.map(User.toUser)
-      console.log("userController res: ", res)
+      console.log("UserController res: ", res)
       return res
     }).catch((err) => { 
-      console.log("User controller error: ", err)
+      console.log("UserController error: ", err)
     })  
   }
 
-  // //GetObject of UserAnswer
-  // async getObjectUserAnswer(parameter, condition){
-  //   return super.read('users', parameter, condition, UserAnswer.toUserAnswer).then((res)=> {
-  //     return res
-  //   })  
-  // }
+  //GetObject of UserAnswer
+  getObjectUserAnswer(parameter, condition){
+    return super.read("users", parameter, condition).then((response) => {
+      let res = response.map(UserAnswer.toUserAnswer)
+      console.log("UserAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserAnswerController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTask
-  // async getObjectUserTask(parameter, condition){
-  //   return super.read('users', parameter, condition, UserTask.toUserTask).then((res)=> {
-  //     return res
-  //   })  
-  // }
+  //GetObject of UserTask
+  getObjectUserTask(parameter, condition){
+    return super.read("users", parameter, condition).then((response) => {
+      let res = response.map(UserTask.toUserTask)
+      console.log("UserTaskController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTaskController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTemplate
-  // async getObjectUserTemplate(parameter, condition){
-  //   return super.read('users', parameter, condition, UserTemplate.toUserTemplate).then((res)=> {
-  //     return res
-  //   })  
-  // }
+  //GetObject of UserTemplate
+  getObjectUserTemplate(parameter, condition){
+    return super.read("users", parameter, condition).then((response) => {
+      let res = response.map(UserTemplate.toUserTemplate)
+      console.log("UserTemplateController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTemplateController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTest
-  // async getObjectUserTest(parameter, condition){
-  //   return super.read('users', parameter, condition, UserTest.toUserTest).then((res)=> {
-  //     return res
-  //   })  
-  // }
+  //GetObject of UserTest
+  getObjectUserTest(parameter, condition){
+    return super.read("users", parameter, condition).then((response) => {
+      let res = response.map(UserTest.toUserTest)
+      console.log("UserTestController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTestController error: ", err)
+    })  
+  }
 
-
+  
   // //----------------GET ALL OBJECTS----------------
 
-  // //GetObject of User
-  // async getAllObjectUser(){
-  //   return super.readAll('users', User.toUser).then((res)=> {
-  //     return res
-  //   })
-  // }
+  //GetObject of User
+  getAllObjectUser(){
+    return super.readAll("users").then((response) => {
+      let res = response.map(User.toUser)
+      console.log("UserController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserAnswer
-  // async getAllObjectUserAnswer(){
-  //   return super.readAll('users', UserAnswer.toUserAnswer).then((res)=> {
-  //     return res
-  //   })
-  // }
+  //GetObject of UserAnswer
+  getAllObjectUserAnswer(){
+    return super.readAll("users").then((response) => {
+      let res = response.map(UserAnswer.toUserAnswer)
+      console.log("UserAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserAnswerController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTask
-  // async getAllObjectUserTask(){
-  //   return super.readAll('users', UserTask.toUserTask).then((res)=> {
-  //     return res
-  //   })
-  // }
+  //GetObject of UserTask
+  getAllObjectUserTask(){
+    return super.readAll("users").then((response) => {
+      let res = response.map(UserTask.toUserTask)
+      console.log("UserTaskController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTaskController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTemplate
-  // async getAllObjectUserTemplate(){
-  //   return super.readAll('users', UserTemplate.toUserTemplate).then((res)=> {
-  //     return res
-  //   })
-  // }
+  //GetObject of UserTemplate
+  getAllObjectUserTemplate(){
+    return super.readAll("users").then((response) => {
+      let res = response.map(UserTemplate.toUserTemplate)
+      console.log("UserTemplateController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTemplateController error: ", err)
+    })  
+  }
 
-  // //GetObject of UserTest
-  // async getAllObjectUserTest(){
-  //   return super.readAll('users', UserTest.toUserTest).then((res)=> {
-  //     return res
-  //   })
-  // }
+  //GetObject of UserTest
+  getAllObjectUserTest(){
+    return super.readAll("users").then((response) => {
+      let res = response.map(UserTest.toUserTest)
+      console.log("UserTestController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("UserTestController error: ", err)
+    })  
+  }
 
 }
