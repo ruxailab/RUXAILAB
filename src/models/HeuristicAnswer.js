@@ -8,8 +8,16 @@
      * @param {string} userDocId - The userDocId value.
      */
 
-export default class HeuristicAnswer{
-    constructor(heuristicId, heuristicQuestions, progress, total, submitted, userDocId){
+export default class HeuristicAnswer {
+    constructor({
+        heuristicId,
+        heuristicQuestions,
+        progress,
+        total,
+        submitted,
+        userDocId
+    } = {}
+    ) {
         this.heuristicId = heuristicId;
         this.heuristicQuestions = heuristicQuestions;
         this.progress = progress;
@@ -17,7 +25,7 @@ export default class HeuristicAnswer{
         this.submitted = submitted;
         this.userDocId = userDocId;
     }
-    static toHeuristicAnswer(){
-        return new HeuristicAnswer()
+    static toHeuristicAnswer(data) {
+        return new HeuristicAnswer(data)
     }
 }

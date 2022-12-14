@@ -5,11 +5,14 @@
      */
 
 export default class TemplateAuthor{
-    constructor(userEmail, userDocId){
+    constructor({
+        userEmail, userDocId
+    } = {}
+    ) {
         this.userEmail = userEmail;
         this.userDocId = userDocId;
     }
-    static toTemplateAuthor(){
-        return new TemplateAuthor()
+    static toTemplateAuthor(data) {
+        return new TemplateAuthor(data)
     }
 }

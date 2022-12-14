@@ -5,11 +5,14 @@
      */
 
 export default class TestStructureOptions{
-    constructor(text, value){
+    constructor({
+        text, value
+    } = {}
+    ) {
         this.text = text;
         this.value = value;
     }
-    static toTestStructureOptions(){
-        return new TestStructureOptions()
+    static toTestStructureOptions(data) {
+        return new TestStructureOptions(data)
     }
 }
