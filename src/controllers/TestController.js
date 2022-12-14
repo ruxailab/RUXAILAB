@@ -13,20 +13,20 @@ export default class TestController extends Controller{
     super()
   }
 
-  createNewTest(path, document, data){
-    return super.create(path, document, data).then((res)=> {
+  createNewTest(document, data){
+    return super.create("test", document, data).then((res)=> {
       return res
     })
   }
 
-  deleteTest(path, document){
-    return super.delete(path, document).then((res)=> {
+  deleteTest(document){
+    return super.delete("test", document).then((res)=> {
       return res
     })
   }
 
-  updateTest(path, document, payload){
-    return super.delete(path, document, payload).then((res)=> {
+  updateTest(document, payload){
+    return super.delete("test", document, payload).then((res)=> {
       return res
     })
   }
