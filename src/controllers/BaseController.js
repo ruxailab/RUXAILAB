@@ -24,19 +24,16 @@ export default class Controller {
     return res
   }
 
-  async readAll(path, model) {
-    const q = query(collection(db, path));  
-    const res = new Array();
+  async readAll(path) {
+    const q = query(collection(db, path));
     const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(doc => {
-        res.push(doc.data())
-      })
-      // res.forEach(element => {
-      //   console.log(element)
-      // })
-      console.log(res)
-      return res.map(model)
-    }
+    const res = [];
+    querySnapshot.forEach((doc) => {
+      res.push(doc.data())
+    });
+    console.log("CONTROLLER RESPONSE ====>>>>", res)
+    return res
+  }
  
 
   async update(path, document, payload) {
