@@ -14,43 +14,37 @@ export default class UserController extends Controller{
     super()
   }
 
-  readUser(userEmail) {
-    return super.read("users", "email", userEmail).then((response) => {
+  createNewUser(path, document, data){
+    return super.create(path, document, data).then((res)=> {
+      return res
+    })
+  }
+
+  deleteUser(path, document){
+    return super.delete(path, document).then((res)=> {
+      return res
+    })
+  }
+
+  updateUser(path, document, payload){
+    return super.delete(path, document, payload).then((res)=> {
+      return res
+    })
+  }
+
+
+  //------------------GET OBJECTS - ID------------------
+
+  //GetObject of User
+  getObjectUser(parameter, condition){
+    return super.read("users", parameter, condition).then((response) => {
       let res = response.map(User.toUser)
       console.log("userController res: ", res)
       return res
     }).catch((err) => { 
       console.log("User controller error: ", err)
-    })
+    })  
   }
-
-  // async createNewUser(path, document, data){
-  //   return super.create(path, document, data).then((res)=> {
-  //     return res
-  //   })
-  // }
-
-  // async deleteUser(path, document){
-  //   return super.delete(path, document).then((res)=> {
-  //     return res
-  //   })
-  // }
-
-  // async updateUser(path, document, payload){
-  //   return super.delete(path, document, payload).then((res)=> {
-  //     return res
-  //   })
-  // }
-
-
-  // //------------------GET OBJECTS - ID------------------
-
-  // //GetObject of User
-  // async getObjectUser(parameter, condition){
-  //   return super.read('users', parameter, condition, User.toUser).then((res)=> {
-  //     return res
-  //   })  
-  // }
 
   // //GetObject of UserAnswer
   // async getObjectUserAnswer(parameter, condition){
