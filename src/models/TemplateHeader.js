@@ -11,7 +11,10 @@
      */
 
 export default class TemplateHeader{
-    constructor(templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType){
+    constructor({
+        templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType
+    } = {}
+    ) {
         this.templateAuthor = templateAuthor;
         this.creationDate = creationDate;
         this.updateDate = updateDate;
@@ -21,7 +24,7 @@ export default class TemplateHeader{
         this.templateVersion = templateVersion;
         this.templateType = templateType;
     }
-    static toTemplateHeader(){
-        return new TemplateHeader()
+    static toTemplateHeader(data) {
+        return new TemplateHeader(data)
     }
 }

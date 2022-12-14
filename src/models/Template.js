@@ -5,11 +5,14 @@
      */
 
 export default class Template{
-    constructor(body, header){
+    constructor({
+        body, header
+    } = {}
+    ) {
         this.body = body;
         this.header = header;
     }
-    static toTemplate(){
-        return new Template()
+    static toTemplate(data) {
+        return new Template(data)
     }
 }
