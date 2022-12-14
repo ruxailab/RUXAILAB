@@ -25,8 +25,8 @@ export default {
   },
 
   async created(){
-    console.log("LANDING PAGE RESPONSE ---> ")
-    await new UserController().readUser("tales.furlan@gmail.com").then((res)=> {console.log(res)})
+    console.log("LANDING PAGE RESPONSE")
+    await new UserController().getObjectUser("email","tales.furlan@gmail.com")
   }
 
 }
