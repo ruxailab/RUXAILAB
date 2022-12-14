@@ -12,20 +12,20 @@ export default class TemplateController extends Controller{
     super()
   }
 
-  async createNewTemplate(path, document, data){
-    return super.create(path, document, data).then((res)=> {
+  createNewTemplate(document, data){
+    return super.create('templates', document, data).then((res)=> {
       return res
     })
   }
 
-  async deleteTemplate(path, document){
-    return super.delete(path, document).then((res)=> {
+  deleteTemplate(document){
+    return super.delete('templates', document).then((res)=> {
       return res
     })
   }
 
-  async updateTemplate(path, document, payload){
-    return super.delete(path, document, payload).then((res)=> {
+  updateTemplate(document, payload){
+    return super.delete('templates', document, payload).then((res)=> {
       return res
     })
   }
@@ -33,62 +33,93 @@ export default class TemplateController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Template
-  async getObjectTemplate(parameter, condition){
-    return super.read('templates', parameter, condition, Template.toTemplate).then((res)=> {
+  getObjectTemplate(parameter, condition){
+    return super.read("templates", parameter, condition).then((response) => {
+      let res = response.map(Template.toTemplate)
+      console.log("TemplateController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TemplateController error: ", err)
     })  
   }
 
   //GetObject of TemplateAuthor
-  async getObjectTemplateAuthor(parameter, condition){
-    return super.read('templates', parameter, condition, TemplateAuthor.toTemplateAuthor).then((res)=> {
+  getObjectTemplateAuthor(parameter, condition){
+    return super.read("templates", parameter, condition).then((response) => {
+      let res = response.map(TemplateAuthor.toTemplateAuthor)
+      console.log("TemplateAuthorController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TemplateAuthorController error: ", err)
     })  
   }
 
   //GetObject of TemplateBody
-  async getObjectTemplateBody(parameter, condition){
-    return super.read('templates', parameter, condition, TemplateBody.toTemplateBody).then((res)=> {
+  getObjectTemplateBody(parameter, condition){
+    return super.read("templates", parameter, condition).then((response) => {
+      let res = response.map(TemplateBody.toTemplateBody)
+      console.log("TemplateBodyController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TemplateBodyController error: ", err)
     })  
   }
 
   //GetObject of TemplateHeader
-  async getObjectTemplateHeader(parameter, condition){
-    return super.read('templates', parameter, condition, TemplateHeader.toTemplateHeader).then((res)=> {
+  getObjectTemplateHeader(parameter, condition){
+    return super.read("templates", parameter, condition).then((response) => {
+      let res = response.map(TemplateHeader.toTemplateHeader)
+      console.log("TemplateHeaderController res: ", res)
       return res
+    }).catch((err) => { 
+      console.log("TemplateHeaderController error: ", err)
     })  
   }
-
 
   //----------------GET ALL OBJECTS----------------
 
   //GetObject of Template
-  async getAllObjectTemplate(){
-    return super.readAll('templates', Template.toTemplate).then((res)=> {
+  getAllObjectTemplate(){
+    return super.readAll("templates").then((response) => {
+      let res = response.map(Template.toTemplate)
+      console.log("TemplateController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TemplateController error: ", err)
+    })  
   }
 
   //GetObject of TemplateAuthor
-  async getAllObjectTemplateAuthor(){
-    return super.readAll('templates', TemplateAuthor.toTemplateAuthor).then((res)=> {
+  getAllObjectTemplateAuthor(){
+    return super.readAll("templates").then((response) => {
+      let res = response.map(TemplateAuthor.toTemplateAuthor)
+      console.log("TemplateAuthorController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TemplateAuthorController error: ", err)
+    })  
   }
 
   //GetObject of TemplateBody
-  async getAllObjectTemplateBody(){
-    return super.readAll('templates', TemplateBody.toTemplateBody).then((res)=> {
+  getAllObjectTemplateBody(){
+    return super.readAll("templates").then((response) => {
+      let res = response.map(TemplateBody.toTemplateBody)
+      console.log("TemplateBodyController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TemplateBodyController error: ", err)
+    })  
   }
 
   //GetObject of TemplateHeader
-  async getAllObjectTemplateHeader(){
-    return super.readAll('templates', TemplateHeader.toTemplateHeader).then((res)=> {
+  getAllObjectTemplateHeader(){
+    return super.readAll("templates").then((response) => {
+      let res = response.map(TemplateHeader.toTemplateHeader)
+      console.log("TemplateHeaderController res: ", res)
       return res
-    })
+    }).catch((err) => { 
+      console.log("TemplateHeaderController error: ", err)
+    })  
   }
 
 }

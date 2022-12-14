@@ -14,20 +14,20 @@ export default class UserController extends Controller{
     super()
   }
 
-  createNewUser(path, document, data){
-    return super.create(path, document, data).then((res)=> {
+  createNewUser(document, data){
+    return super.create("users", document, data).then((res)=> {
       return res
     })
   }
 
-  deleteUser(path, document){
-    return super.delete(path, document).then((res)=> {
+  deleteUser(document){
+    return super.delete("users", document).then((res)=> {
       return res
     })
   }
 
-  updateUser(path, document, payload){
-    return super.delete(path, document, payload).then((res)=> {
+  updateUser(document, payload){
+    return super.delete("users", document, payload).then((res)=> {
       return res
     })
   }
