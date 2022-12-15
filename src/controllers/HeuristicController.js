@@ -1,118 +1,151 @@
-// // imports
+// imports
 
-// import Heuristic from "@/models/Heuristic";
-// import HeuristicAnswer from "@/models/HeuristicAnswer";
-// import HeuristicQuestion from "@/models/HeuristicQuestion";
-// import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
-// import HeuristicQuestionDescription from "@/models/HeuristicQuestionDescription";
+import Heuristic from "@/models/Heuristic";
+import HeuristicAnswer from "@/models/HeuristicAnswer";
+import HeuristicQuestion from "@/models/HeuristicQuestion";
+import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
+import HeuristicQuestionDescription from "@/models/HeuristicQuestionDescription";
 
-// // functions
+import Controller from '@/controllers/BaseController'
 
-// function toHeuristic(){
-//   return new Heuristic()
-// }
-// function toHeuristicAnswer(){
-//   return new HeuristicAnswer()
-// }
-// function toHeuristicQuestion(){
-//   return new HeuristicQuestion()
-// }
-// function toHeuristicQuestionAnswer(){
-//   return new HeuristicQuestionAnswer()
-// }
-// function toHeuristicQuestionDescription(){
-//   return new HeuristicQuestionDescription()
-// }
+export default class HeuristicController extends Controller{
+  constructor() {
+    super()
+  }
 
-// import Controller from '@/controllers/BaseController'
+  createNewHeuristic(document, data){
+    return super.create("test", document, data).then((res)=> {
+      return res
+    })
+  }
 
-// export default class HeuristicController extends Controller{
-//   constructor() {
-//     super()
-//   }
+  deleteHeuristic(document){
+    return super.delete("test", document).then((res)=> {
+      return res
+    })
+  }
 
-//   async createNewHeuristic(path, document, data){
-//     return super.create(path, document, data).then((res)=> {
-//       return res
-//     })
-//   }
+  updateHeuristic(document, payload){
+    return super.delete("test", document, payload).then((res)=> {
+      return res
+    })
+  }
 
-//   async deleteHeuristic(path, document){
-//     return super.delete(path, document).then((res)=> {
-//       return res
-//     })
-//   }
+  //------------------GET OBJECTS - ID------------------
 
-//   async updateHeuristic(path, document, payload){
-//     return super.delete(path, document, payload).then((res)=> {
-//       return res
-//     })
-//   }
+  //GetObject of Heuristic
+  getObjectHeuristic(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(Heuristic.toHeuristic)
+      console.log("HeuristicController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicController error: ", err)
+    })  
+  }
 
-//   //------------------GET OBJECTS - ID------------------
-
-//   //GetObject of Heuristic
-//   async getObjectHeuristic(path, parameter, condition){
-//     return super.read(path, parameter, condition, toHeuristic)  
-//   }
-
-//   //GetObject of HeuristicAnswer
-//   async getObjectHeuristicAnswer(path, parameter, condition){
-//     return super.read(path, parameter, condition, toHeuristicAnswer)  
-//   }
-
-//   //GetObject of HeuristicQuestion
-//   async getObjectHeuristicQuestion(path, parameter, condition){
-//     return super.read(path, parameter, condition, toHeuristicQuestion)  
-//   }
-
-//   //GetObject of HeuristicQuestionAnswer
-//   async getObjectHeuristicQuestionAnswer(path, parameter, condition){
-//     return super.read(path, parameter, condition, toHeuristicQuestionAnswer)  
-//   }
-
-//   //GetObject of HeuristicQuestionDescription
-//   async getObjectHeuristicQuestionDescription(path, parameter, condition){
-//     return super.read(path, parameter, condition, toHeuristicQuestionDescription)  
-//   }
+  //GetObject of HeuristicAnswer
+  getObjectHeuristicAnswer(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(HeuristicAnswer.toHeuristicAnswer)
+      console.log("HeuristicAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicAnswerController error: ", err)
+    })  
+  }
 
 
-//   // ----------------GET ALL OBJECTS----------------
-
-//   //GetObject of Heuristic
-//   async getAllObjectHeuristic(path){
-//     return super.readAll(path, toHeuristic).then((res)=> {
-//       return res
-//     })
-//   }
-
-//   //GetObject of HeuristicAnswer
-//   async getAllObjectHeuristicAnswer(path){
-//     return super.readAll(path, toHeuristicAnswer).then((res)=> {
-//       return res
-//     })
-//   }
-
-//   //GetObject of HeuristicQuestion
-//   async getAllObjectHeuristicQuestion(path){
-//     return super.readAll(path, toHeuristicQuestion).then((res)=> {
-//       return res
-//     })
-//   }
-
-//   //GetObject of HeuristicQuestionAnswer
-//   async getAllObjectHeuristicQuestionAnswer(path){
-//     return super.readAll(path, toHeuristicQuestionAnswer).then((res)=> {
-//       return res
-//     })
-//   }
-
-//   //GetObject of HeuristicQuestionDescription
-//   async getAllObjectHeuristicQuestionDescription(path){
-//     return super.readAll(path, toHeuristicQuestionDescription).then((res)=> {
-//       return res
-//     })
-//   }
+  //GetObject of HeuristicQuestion
+  getObjectHeuristicQuestion(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(HeuristicQuestion.toHeuristicQuestion)
+      console.log("HeuristicQuestionController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionController error: ", err)
+    })  
+  }
 
 
-// }
+  //GetObject of HeuristicQuestionAnswer
+  getObjectHeuristicQuestionAnswer(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(HeuristicQuestionAnswer.toHeuristicQuestionAnswer)
+      console.log("HeuristicQuestionAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionAnswerController error: ", err)
+    })  
+  }
+
+
+  //GetObject of HeuristicQuestionDescription
+  getObjectHeuristicQuestionDescription(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(HeuristicQuestionDescription.toHeuristicQuestionDescription)
+      console.log("HeuristicQuestionDescriptionController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionDescriptionController error: ", err)
+    })  
+  }
+
+  // ----------------GET ALL OBJECTS----------------
+
+  //GetAllObject of Heuristic
+  getAllObjectHeuristic(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(Heuristic.toHeuristic)
+      console.log("HeuristicController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicController error: ", err)
+    })  
+  }
+
+  //GetAllObject of HeuristicAnswer
+  getAllObjectHeuristicAnswer(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(HeuristicAnswer.toHeuristicAnswer)
+      console.log("HeuristicAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicAnswerController error: ", err)
+    })  
+  }
+
+  //GetAllObject of HeuristicQuestion
+  getAllObjectHeuristicQuestion(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(HeuristicQuestion.toHeuristicQuestion)
+      console.log("HeuristicQuestionController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionController error: ", err)
+    })  
+  }
+
+  //GetAllObject of HeuristicQuestionAnswer
+  getAllObjectHeuristicQuestionAnswer(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(HeuristicQuestionAnswer.toHeuristicQuestionAnswer)
+      console.log("HeuristicQuestionAnswerController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionAnswerController error: ", err)
+    })  
+  }
+
+  //GetAllObject of HeuristicQuestionDescription
+  getAllObjectHeuristicQuestionDescription(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(HeuristicQuestionDescription.toHeuristicQuestionDescription)
+      console.log("HeuristicQuestionDescriptionController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("HeuristicQuestionDescriptionController error: ", err)
+    })  
+  }
+ 
+}
