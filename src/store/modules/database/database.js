@@ -1,4 +1,5 @@
 import api from "@/api/index";
+import Controller from "../../../controllers/BaseController";
 
 /**
  * Database store module, API calls
@@ -90,20 +91,18 @@ export default {
      * passing the object's data
      * 
      * @action getObject
-     * @param {object} payload -  object identificatio
+     * @param {object} payload -  object identification
      * @returns object - object data found
      */
-    async getObject({ commit }, payload) {
-      try {
-        var doc = await api.database.getObject(payload);
-        const object = Object.assign({ id: doc.id }, doc.data());
-        return object;
+    async getObject({commit}, payload) {
+      try{
+        return await new Controller().read("test", "id", payload);
       } catch (err) {
-        console.error('Error in getObject:', err)
-        commit("setError", "Error getting object from database");
-      } finally {
-        commit("setLoading", false);
-      }
+          console.error('Error in getObject:', err),
+            commit("setError", "Error getting object from database");
+        } finally {
+            commit("setLoading", false);
+        }
     },
     /**
      * This generic action updates a single object from the collection,
@@ -225,7 +224,7 @@ export default {
      * calling the API function {@link call}, passing the object's data
      * 
      * @action callFunction
-     * @param {object} payload -  funciton parameters 
+     * @param {object} payload -  function parameters 
      * @returns {void}
      */
     async callFunction({ commit }, payload) {
@@ -274,21 +273,21 @@ export default {
         commit("setLoading", false);
       }
     },
-    async getPaginationArray({commit}, payload) {
-      try {
-        var snapshot;
-        snapshot = await api.database.paginateArray(payload);
+
+    async getPaginationArray ({commit}, payload) {
+      try{
         var objects = [];
-        snapshot.forEach((doc) => {
-          objects.push(Object.assign({ id: doc.id }, doc.data()));
+        await new Controller().read("users", "id", payload).then((response) => {
+          response.forEach((doc) => {
+            objects.push(doc.data());
+          });
         });
-        return objects;
-      } catch (err) {
-        console.error("Error in getPaginationArray:", err)
-        commit("setError", "Error getting paginated array in database");
-      } finally {
-        commit("setLoading", false);
+      }catch (err){
+        console.error("Error in getPaginationArray: ", err)
+        commit("setError", "Error in getting paginated array in database");
+      }finally{
+        commit("setLoading", false)
       }
-    }
-  },
+    },
+  }, 
 };
