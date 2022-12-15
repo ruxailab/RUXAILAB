@@ -9,20 +9,25 @@
         <v-container>
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
-              <h1 class="display-3 font-weight-regular mb-4 white--text">UX Remote LAB</h1>
-              <h4 class="display-1 white--text mb-4">What about doing Usability Tests in remote?</h4>
-              <p
-                class="white--text mb-4"
-                style="width: 80%"
-                align="justify"
-              >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
+              <h1 class="display-3 font-weight-regular mb-4 white--text">
+                UX Remote LAB
+              </h1>
+              <h4 class="display-1 white--text mb-4">
+                What about doing Usability Tests in remote?
+              </h4>
+              <p class="white--text mb-4" style="width: 80%" align="justify">
+                Join our OpenSource project and start creating your own
+                usability LAB and share it with friends. Researching has never
+                been easier!
+              </p>
               <v-btn
                 color="white"
                 outlined
                 rounded
                 class="mb-2"
                 @click="goTo('/signup')"
-              >Get started</v-btn>
+                >Get started</v-btn
+              >
             </v-col>
           </v-row>
         </v-container>
@@ -33,20 +38,35 @@
     <v-container class="hidden-md-and-up ma-0 pa-0">
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
-          <h1 class="display-3 font-weight-regular white--text text-center">UX Remote LAB</h1>
+          <h1 class="display-3 font-weight-regular white--text text-center">
+            UX Remote LAB
+          </h1>
         </div>
-        <v-img src="@/assets/landing/introductionMobile.svg" class="mb-4" max-height="350" contain></v-img>
+        <v-img
+          src="@/assets/landing/introductionMobile.svg"
+          class="mb-4"
+          max-height="350"
+          contain
+        ></v-img>
         <div style="background-color: #f4b700" class="mx-1">
-          <h4
-            class="display-1 white--text mb-4 text-center"
-          >What about doing Usability Tests in remote?</h4>
+          <h4 class="display-1 white--text mb-4 text-center">
+            What about doing Usability Tests in remote?
+          </h4>
         </div>
         <div style="background-color: #f4b700" class="mx-3">
           <v-row justify="center">
-            <p
-              class="white--text mb-4 mx-4 text-center"
-            >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
-            <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
+            <p class="white--text mb-4 mx-4 text-center">
+              Join our OpenSource project and start creating your own usability
+              LAB and share it with friends. Researching has never been easier!
+            </p>
+            <v-btn
+              color="white"
+              outlined
+              rounded
+              class="mb-2"
+              @click="goTo('/signup')"
+              >Get started</v-btn
+            >
           </v-row>
         </div>
         <!-- div for margin at bottom -->
@@ -98,6 +118,37 @@
         </g>
       </svg>
     </div>
+
+    <div id="FileUpload">
+      <v-row justify="center">
+        <v-col class="ma-10" cols="10">
+          <v-row class="ma-2" justify="center" align="center">
+            <v-file-input
+              v-model="csvFile"
+              class="d-flex justify-center "
+              accept=".csv"
+              show-size
+              truncate-length="15"
+              placeholder="Import your CSV file here."
+              ref="myFile"
+            >
+            </v-file-input>
+            <v-btn
+              :loading="loading"
+              :disabled="loading"
+              color="blue-grey"
+              class="ma-2 white--text"
+              @click="(loader = 'loading'), changeToJSON()"
+            >
+              Upload
+              <v-icon right dark>
+                mdi-cloud-upload
+              </v-icon>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
   </section>
 </template>
 
@@ -129,11 +180,159 @@ section {
 
 <script>
 export default {
-  data: () => ({}),
+  data: () => ({
+    //remover
+    loading: false,
+    loader: null,
+    csvFile: null,
+    heuristicForm: null,
+    refs: this.$refs,
+  }),
   methods: {
     goTo(path) {
       this.$router.push(path).catch(() => {});
-    }
-  }
+    },
+    //remover
+    async changeToJSON() {
+      const testId = "JArhiG9o6yFTy76sDtve";
+
+      console.log(testId);
+
+      let lines = "";
+      let currentline = "";
+      let csv = "";
+      let headers = "";
+      let result = [];
+      let result2 = [];
+      let reader = new FileReader();
+
+      reader.readAsBinaryString(this.csvFile);
+
+      reader.onload = async () => {
+        csv = reader.result;
+        lines = csv.split("\r" + "\n");
+        headers = lines[0].split(";");
+        headers[0] = headers[0].slice(3);
+
+        for (var i = 1; i < lines.length; i++) {
+          if (!lines[i]) continue;
+          let obj = {};
+          currentline = lines[i];
+          var re = /"/g;
+          currentline = re[Symbol.replace](currentline, "");
+          currentline = currentline.split(";");
+
+          for (var j = 0; j < headers.length; j++) {
+            if (j == 0 || j == 1 || j == 2 || j == 3) {
+              let head = headers[j];
+              let value = currentline[j];
+              obj[head] = value;
+            }
+          }
+          result.push(obj);
+        }
+        result = JSON.stringify(result);
+        result2 = JSON.parse(result.toString());
+
+        function getQuestionsFromHeuristic(heuristicArray, heuristicId) {
+          return heuristicArray.filter((element) => element.HID == heuristicId);
+        }
+        let heuristicTest = [];
+        let heuristicOcurrencies = 0;
+
+        for (i = 0; i < result2.length; i++) {
+          let auxHeuristic = getQuestionsFromHeuristic(result2, i + 1);
+          if (auxHeuristic.length > 0) {
+            heuristicOcurrencies = heuristicOcurrencies + 1;
+            let auxQuestions = [];
+            for (j = 0; j < auxHeuristic.length; j++) {
+              let auxQuestion = new HeuristicQuestion(
+                auxHeuristic[j].QID,
+                auxHeuristic[j].QUESTION,
+                auxHeuristic[j].QUESTION,
+                auxHeuristic[j].QUESTION
+              );
+              auxQuestions.push(auxQuestion);
+            }
+            let setHeuristics = new Heuristic(
+              heuristicOcurrencies,
+              auxHeuristic[0].HEURISTIC,
+              auxQuestions,
+              auxQuestions.length
+            );
+            heuristicTest.push(setHeuristics);
+            console.log(setHeuristics);
+          }
+        }
+
+        console.log(this.test);
+
+        this.$store.dispatch("saveCurrentTest", heuristicTest);
+        console.log(testId);
+        console.log(heuristicTest);
+
+        // await new HeuristicController().createCsvHeuris({
+        //   // testId: testId,
+        //   // id: heuristicTest[0].id,
+        //   // qd: heuristicTest[0].questions[0].descriptions,
+        //   // qid: heuristicTest[0].questions[0].id,
+        //   // qtext: heuristicTest[0].questions[0].text,
+        //   // qtitle: heuristicTest[0].questions[0].title,
+        //   // title: heuristicTest[0].title,
+        //   // total: heuristicTest[0].total,
+        // });
+        for (i = 0; i < heuristicTest.length; i++) {
+          console.log(heuristicTest[i].id);
+
+          for (j = 0; j < heuristicTest[i].total; j++) {
+            console.log(heuristicTest[i].questions[j]);
+            await new HeuristicController().createCsvHeuris({
+              testId: testId,
+              id: heuristicTest[i].id,
+              qd: heuristicTest[i].questions[j].descriptions,
+              qid: heuristicTest[i].questions[j].id,
+              qtext: heuristicTest[i].questions[j].text,
+              qtitle: heuristicTest[i].questions[j].title,
+              title: heuristicTest[i].title,
+              total: heuristicTest[i].total,
+            });
+          }
+        }
+      };
+    },
+  },
+  watch: {
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+      // const alertFunc = alert("Your file has been uploaded!");
+
+      if (this.csvFile != null) {
+        setTimeout(() => (this[l] = false), 3000);
+        setTimeout(() => (this.csvFile = null), 3000);
+        // setTimeout(alertFunc, 3000);
+        this.loader = null;
+      } else {
+        setTimeout(() => (this[l] = false), 3000);
+        alert("No csv file selected. \nPlease select one before procede.");
+        this.loader = null;
+      }
+    },
+  },
+  computed: {
+    test() {
+      return this.$store.getters.test;
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    csvHeuristics() {
+      return this.$store.state.Tests.currentTest;
+    },
+  },
 };
+//remover
+import Heuristic from "@/models/Heuristic";
+import HeuristicQuestion from "@/models/HeuristicQuestion";
+import HeuristicController from "../../controllers/HeuristicController";
 </script>

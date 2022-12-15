@@ -9,7 +9,8 @@ let HeuristicController = new HeuristicController()
 import api from "@/api/index";
 import database from "../api/modules/database";
 // import firebase from "firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+// import { doc, arrayUnion } from "firebase/firestore";
 import { db } from "@/firebase/index";
 
 import Heuristic from "../models/Heuristic";
@@ -22,16 +23,19 @@ import HeuristicTest from "../models/HeuristicTest";
 export default class HeuristicController {
   async createCsvHeuris(data) {
     await updateDoc(doc(db, "test", data.testId), {
-      heuristics: {
+      heuristics: arrayUnion({
         id: data.id,
-        questions: {
-          descriptions: data.qd,
-          id: data.qid,
-          text: data.qtext,
-          title: data.qtitle,
-        },
         title: data.title,
+
         total: data.total,
+      }),
+    });
+    await setDoc(doc(db, "test", data.testId + "/heuristics/" + data.id), {
+      questions: {
+        id: data.qid,
+        descriptions: data.qd,
+        text: data.qtext,
+        title: data.qtitle,
       },
     });
   }
