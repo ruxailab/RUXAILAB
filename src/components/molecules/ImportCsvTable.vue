@@ -36,10 +36,6 @@ import Heuristic from "@/models/Heuristic";
 import HeuristicQuestion from "@/models/HeuristicQuestion";
 import HeuristicController from "../../controllers/HeuristicController";
 
-// import { doc, setDoc } from "firebase/firestore";
-// import { doc, updateDoc } from "firebase/firestore";
-// import firebase from "firebase";
-
 export default {
   data() {
     return {
@@ -53,14 +49,10 @@ export default {
 
   methods: {
     async changeToJSON() {
-      // const db = firebase.firestore();
-
-      // const testId = this.$route.params.id;
       const testId = this.test.id;
-      // var testRef = db.collection("test").doc(testId);
-      // console.log(db);
+
       console.log(testId);
-      // const testRef = doc(db, "test", testId);
+
       let lines = "";
       let currentline = "";
       let csv = "";
