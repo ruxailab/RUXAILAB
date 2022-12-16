@@ -26,12 +26,7 @@ export default class HeuristicController {
       heuristics: arrayUnion({
         id: data.id,
         title: data.title,
-        questions: {
-          id: data.qid,
-          descriptions: data.qd,
-          text: data.qtext,
-          title: data.qtitle,
-        },
+        questions: data.questions,
         total: data.total,
       }),
     });
