@@ -281,26 +281,28 @@ export default {
         //   // title: heuristicTest[0].title,
         //   // total: heuristicTest[0].total,
         // });
+        console.log(heuristicTest);
+
         for (i = 0; i < heuristicTest.length; i++) {
           console.log(heuristicTest[i].id);
-
+          let aux = Array.of(heuristicTest[i].total);
           for (j = 0; j < heuristicTest[i].total; j++) {
             console.log(heuristicTest[i].questions[j]);
-            await new HeuristicController().createCsvHeuris({
-              testId: testId,
-              id: heuristicTest[i].id,
-              // qd: heuristicTest[i].questions[j].descriptions,
-              // qid: heuristicTest[i].questions[j].id,
-              // qtext: heuristicTest[i].questions[j].text,
-              // qtitle: heuristicTest[i].questions[j].title,
-              qd: heuristicTest[i].questions[j].descriptions,
-              qid: heuristicTest[i].questions[j].id,
-              qtext: heuristicTest[i].questions[j].text,
-              qtitle: heuristicTest[i].questions[j].title,
-              title: heuristicTest[i].title,
-              total: heuristicTest[i].total,
-            });
+
+            aux[j] = {
+              id: heuristicTest[i].questions[j].id,
+              res: heuristicTest[i].questions[j].title,
+              com: heuristicTest[i].questions[j].descriptions,
+            };
+            console.log("auxiliar: " + aux);
           }
+          await new HeuristicController().createCsvHeuris({
+            testId: testId,
+            id: heuristicTest[i].id,
+            questions: aux,
+            title: heuristicTest[i].title,
+            total: heuristicTest[i].total,
+          });
         }
       };
     },
