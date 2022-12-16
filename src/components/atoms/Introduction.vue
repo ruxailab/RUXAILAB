@@ -289,6 +289,10 @@ export default {
             await new HeuristicController().createCsvHeuris({
               testId: testId,
               id: heuristicTest[i].id,
+              // qd: heuristicTest[i].questions[j].descriptions,
+              // qid: heuristicTest[i].questions[j].id,
+              // qtext: heuristicTest[i].questions[j].text,
+              // qtitle: heuristicTest[i].questions[j].title,
               qd: heuristicTest[i].questions[j].descriptions,
               qid: heuristicTest[i].questions[j].id,
               qtext: heuristicTest[i].questions[j].text,
