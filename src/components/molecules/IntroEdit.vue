@@ -27,6 +27,9 @@ export default {
     goToDoc() {
       this.$router.push("/edit/documentation").catch(() => {});
     },
+    goToDisc() {
+      window.open("https://discord.gg/XHhnXBjgRh");
+    },
     closeIntro() {
       this.$emit("closeIntro");
     },
@@ -44,6 +47,14 @@ export default {
           subtitle:
             "Click to access the documentation on how to use the edit page.",
           func: "goToDoc",
+        },
+
+        {
+          iconColor: "#D128C9",
+          icon: "mdi-emoticon-happy",
+          title: "Join the comunity!",
+          subtitle: "You will find support on our discord server.",
+          func: "goToDisc",
         },
       ];
     },
