@@ -3,7 +3,9 @@
     :colors="['#9ac94f', '#7eb543']"
     :title="'Answers'"
     :image="'IntroAnswer.svg'"
-    :main="'Quickly get feedback on you project by analyzing data from other users\' answers.'"
+    :main="
+      'Quickly get feedback on you project by analyzing data from other users\' answers.'
+    "
     :link="'Invite evaluators to answer your test!'"
     @linkClicked="goToCoops()"
     :items="items"
@@ -26,6 +28,9 @@ export default {
     goToDoc() {
       this.$router.push("/answers/documentation").catch(() => {});
     },
+    goToDisc() {
+      window.open("https://discord.gg/XHhnXBjgRh");
+    },
     callFunc(func) {
       this[func]();
     },
@@ -40,6 +45,14 @@ export default {
           subtitle:
             "Click to access the documentation on how to use the answers page.",
           func: "goToDoc",
+        },
+
+        {
+          iconColor: "#4bbdaf",
+          icon: "mdi-emoticon-happy",
+          title: "Join the comunity!",
+          subtitle: "You will find support on our discord server.",
+          func: "goToDisc",
         },
       ];
     },

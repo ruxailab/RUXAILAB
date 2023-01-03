@@ -1,33 +1,35 @@
 <template>
-  <v-tabs
-    v-if="type == 'tabs'"
-    background-color="transparent"
-    color="#FCA326"
-    class="pb-0 mb-0"
-  >
-    <v-tab @click="tabClicked(0)">Heuristics</v-tab>
-    <v-tab @click="tabClicked(1)">Options</v-tab>
-    <v-tab @click="tabClicked(2)">Import .csv</v-tab>
-  </v-tabs>
+  <div>
+    <v-tabs
+      v-if="type == 'tabs'"
+      background-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0"
+    >
+      <v-tab @click="tabClicked(0)">Heuristics</v-tab>
+      <v-tab @click="tabClicked(1)">Options</v-tab>
+      <v-tab @click="tabClicked(2)">Import .csv</v-tab>
+    </v-tabs>
 
-  <div v-else-if="type == 'content'">
-    <Heuristic
-      v-if="index == 0"
-      :heuristics="object.heuristics"
-      @change="emitChange()"
-    />
+    <div v-else-if="type == 'content'">
+      <Heuristic
+        v-if="index == 0"
+        :heuristics="object.heuristics"
+        @change="emitChange()"
+      />
 
-    <OptionsTable
-      v-if="index == 1"
-      :options="object.options"
-      @change="emitChange()"
-    />
+      <OptionsTable
+        v-if="index == 1"
+        :options="object.options"
+        @change="emitChange()"
+      />
 
-    <ImportCsvTable
-      v-if="index == 2"
-      :options="object.importCsv"
-      @change="emitChange()"
-    />
+      <ImportCsvTable
+        v-if="index == 2"
+        :options="object.importCsv"
+        @change="emitChange()"
+      />
+    </div>
   </div>
 </template>
 
@@ -61,6 +63,11 @@ export default {
     },
     emitChange() {
       this.$emit("change");
+    },
+  },
+  computed: {
+    currentTest() {
+      return this.$store.state.Tests.currentTest;
     },
   },
   mounted() {
