@@ -4,9 +4,15 @@ import Test from "./Test";
  * @param {Object[]} heuristics  - An array of HeuristicQuestion value.
  */
 
-export default class Heuristic extends Test {
-  constructor(heuristics) {
-    super();
+export default class Heuristic extends Test{
+  constructor({
+    heuristics
+  } = {}
+  ) {
+    super()
     this.heuristics = heuristics;
+  }
+  static toHeuristicTest(data) {
+      return new Heuristic(data)
   }
 }

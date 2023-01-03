@@ -6,9 +6,16 @@
      */
 
 export default class TestTemplateDoc{
-    constructor(templateDocId, templateName, fromTemplate){
+    constructor({
+        templateDocId, templateName, fromTemplate
+    } = {}
+    ) {
         this.templateDocId = templateDocId;
         this.templateName = templateName;
         this.fromTemplate = fromTemplate;
     }
+    static toTestTemplateDoc(data) {
+        return new TestTemplateDoc(data)
+    }
 }
+

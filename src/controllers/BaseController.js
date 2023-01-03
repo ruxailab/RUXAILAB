@@ -13,9 +13,14 @@ import {
 export default class Controller {
     constructor() {}
 
+    // path - collection
+    // data - document to insert (object)
+
     async create(path, document, data) {
         await setDoc(doc(db, path, document), data);
     }
+
+    //model to define in Controller
 
     async read(path, parameter, condition) {
         const q = query(
@@ -27,6 +32,18 @@ export default class Controller {
         querySnapshot.forEach((doc) => {
             res.push(doc.data());
         });
+        console.log("CONTROLLER RESPONSE ====>>>>", res);
+        return res;
+    }
+
+    async readAll(path) {
+        const q = query(collection(db, path));
+        const querySnapshot = await getDocs(q);
+        const res = [];
+        querySnapshot.forEach((doc) => {
+            res.push(doc.data());
+        });
+        console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
     }
 

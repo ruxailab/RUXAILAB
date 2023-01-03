@@ -12,7 +12,10 @@
     */
 
 export default class UserAnswer{
-    constructor(answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorName){
+    constructor({
+        answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorName
+    } = {}
+    ) {
         this.answerDocId = answerDocId;
         this.accessLevel = accessLevel;
         this.progress = progress;
@@ -22,5 +25,8 @@ export default class UserAnswer{
         this.testDocId = testDocId;
         this.updateDate = updateDate;
         this.testAuthorName = testAuthorName;
+    }
+    static toUserAnswer(data) {
+        return new UserAnswer(data)
     }
 }

@@ -738,7 +738,10 @@ export default {
         next();
     },
     async created() {
-        await this.$store.dispatch("getTest", { id: this.id });
+        console.log(this.$route);
+        console.log("puta");
+
+        await this.$store.dispatch("getTest", { id: this.$route.params.id });
     },
 };
 </script>
