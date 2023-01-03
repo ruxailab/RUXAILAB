@@ -12,7 +12,10 @@
      */
 
 export default class UserTest{
-    constructor(testDocId, testTitle, testType, creationDate, updateDate, numberColaborators, existReport, isComplete, testProgress){
+    constructor({
+        testDocId, testTitle, testType, creationDate, updateDate, numberColaborators, existReport, isComplete, testProgress
+    } = {}
+    ) {
         this.testDocId = testDocId;
         this.testTitle = testTitle;
         this.testType = testType;
@@ -22,5 +25,8 @@ export default class UserTest{
         this.existReport = existReport;
         this.isComplete = isComplete;
         this.testProgress = testProgress;
+    }
+    static toUserTest(data) {
+        return new UserTest(data)
     }
 }
