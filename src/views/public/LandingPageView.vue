@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <Snackbar />
-    <Intro/>
-    <About/>
-    <Footer/>
-  </div>
+    <div>
+        <Snackbar />
+        <Intro />
+        <About />
+        <Footer />
+    </div>
 </template>
 
 <script>
@@ -15,16 +15,20 @@ import Snackbar from "@/components/atoms/Snackbar";
 import Controller from "@/controllers/BaseController";
 
 export default {
-  data: () => ({}),
-  components: {
-    Intro,
-    About,
-    Footer,
-    Snackbar
-  },
-  async created() {
-    const res = await new Controller().read("users", "email", "tamiris.tavares1801@gmail.com")
-    console.log("LANDING RESPONSE ==>>", res)
-  }
+    data: () => ({}),
+    components: {
+        Intro,
+        About,
+        Footer,
+        Snackbar,
+    },
+    async created() {
+        const res = await new Controller().read(
+            "users",
+            "email",
+            "tamiris.tavares1801@gmail.com"
+        );
+        console.log("LANDING RESPONSE ==>>", res);
+    },
 };
 </script>
