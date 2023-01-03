@@ -1,6 +1,12 @@
 <template>
   <div class="ma-0 pa-0">
+    Heuristics<br />
     {{ heuristics }}
+    <br />
+    <br />
+    Current Test
+    <br />
+    {{ csvHeuristics }}
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -341,19 +347,9 @@ import AddDescBtn from "@/components/atoms/AddDescBtn";
 import VClamp from "vue-clamp";
 
 export default {
-  props: {
-    heuristics: {
-      type: Array,
-      required: true,
-      default: function() {
-        return [];
-      },
-    },
-  },
   components: {
     AddDescBtn,
     VClamp,
-    // FlatfileButton,
   },
   data: () => ({
     menuHeuristics: false,
@@ -522,9 +518,6 @@ export default {
         this.emitChange();
       }
     },
-    csvImportBtn() {
-      console.log(this.csvFile);
-    },
   },
   watch: {
     dialogHeuris() {
@@ -577,6 +570,14 @@ export default {
     },
   },
   computed: {
+    csvHeuristics() {
+      console.log(this.$store.state.Tests.currentTest);
+      return this.$store.state.Tests.currentTest;
+    },
+    heuristics() {
+      return this.$store.state.Tests.test.heuristics;
+    },
+
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);

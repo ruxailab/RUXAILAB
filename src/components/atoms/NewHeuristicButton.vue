@@ -75,17 +75,17 @@ export default {
   props: {
     heuris: {
       type: Object,
-      required: true
+      required: true,
     },
     dialog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     id: 0,
-    nameRequired: [v => !!v || "Name is required"],
-    questionRequired: [v => !!v || "Question has to be filled"]
+    nameRequired: [(v) => !!v || "Name is required"],
+    questionRequired: [(v) => !!v || "Question has to be filled"],
   }),
   methods: {
     addQuestion() {
@@ -114,8 +114,8 @@ export default {
     },
     resetVal() {
       this.$refs.form.resetValidation();
-    }
-  }
+    },
+  },
 };
 </script>
 

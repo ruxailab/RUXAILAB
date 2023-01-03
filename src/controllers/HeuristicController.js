@@ -8,6 +8,10 @@ let HeuristicController = new HeuristicController()
 
 import api from "@/api/index";
 import database from "../api/modules/database";
+// import firebase from "firebase";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+// import { doc, arrayUnion } from "firebase/firestore";
+import { db } from "@/firebase/index";
 
 import Heuristic from "../models/Heuristic";
 import HeuristicAnswer from "../models/HeuristicAnswer";
@@ -16,16 +20,37 @@ import HeuristicQuestionAnswer from "../models/HeuristicQuestionAnswer";
 import HeuristicQuestionDescription from "../models/HeuristicQuestionDescription";
 import HeuristicTest from "../models/HeuristicTest";
 
-
-
 export default class HeuristicController {
+  async createCsvHeuris(data) {
+    await updateDoc(doc(db, "test", data.testId), {
+      heuristics: arrayUnion({
+        id: data.id,
+        title: data.title,
+        questions: data.questions,
+        total: data.total,
+      }),
+    });
+  }
+
+  // async setCsvQuestions(data) {
+  //   await setDoc(doc(db, "test", data.testId), {
+  //     heuristics: {
+  //       questions: arrayUnion({
+  //         id: data.qid,
+  //         descriptions: data.qd,
+  //         text: data.qtext,
+  //         title: data.qtitle,
+  //       }),
+  //     },
+  //   });
+  // }
+
   //
   async createNewHeuristic(data) {
-
+    console.log(api.database.createObject);
     const hTest = new HeuristicTest(data);
     console.log(hTest);
     return database.createObject(api, hTest);
-
   }
   //
   async deleteHeuristic(data) {
@@ -39,7 +64,11 @@ export default class HeuristicController {
   //------------------GET OBJECTS------------------
   //GetObject of Heuristic
   async getObjectHeuristic(id) {
-    const answer = await database.getObject(api + "/" + id);
+    const answer = await api.database.getObject({
+      id: id,
+      collection: "answers",
+    });
+
     return new Heuristic(answer);
   }
 
@@ -70,9 +99,14 @@ export default class HeuristicController {
   //----------------GET ALL OBJECTS----------------
   //GetAll data from "Heuristic"
   async getAllHeuristicTest() {
-
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new Heuristic(obj)]));
+    const answer = await database.getAllObjects({
+      collection: "answers",
+    });
+    const list = [];
+    answer.forEach((doc) => {
+      list.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+    return list;
   }
   //GetAll data from "HeuristicAnswer"
   async getAllHeuristicAnswer() {
