@@ -368,7 +368,6 @@ import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
 
 export default {
-    props: ["id", "token"], //a desgraça tá aqui
     components: {
         CardSignIn,
         CardSignUp,
@@ -499,8 +498,6 @@ export default {
             else return this.$store.getters.user.myCoops;
         },
         test() {
-            console.log(this.id);
-            console.log(this.selectedTest);
             let search = this.selectedTest || this.id;
 
             if (this.user && !this.flagToken) {
@@ -675,11 +672,10 @@ export default {
             return this.$store.getters.loading;
         },
         accessLevel() {
-            console.log(this.selectedTest);
             // if user is superadmin grant full access
             if (this.user?.accessLevel == 0) return 0;
 
-            let id = this.selectedTest || this.test?.id; //o problema está aqui
+            let id = this.selectedTest || this.test?.id;
             if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
             let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
