@@ -16,7 +16,10 @@
      */
 
 export default class TaskAnswer{
-    constructor(taskId, taskAnswer, taskObservations, taskTime, post_testSheetURL, pre_testSheetURL,audioRecordURL, screenRecordURL, webcamRecordURL, progress, total, submitted, userDocId){
+    constructor({
+        taskId, taskAnswer, taskObservations, taskTime, post_testSheetURL, pre_testSheetURL,audioRecordURL, screenRecordURL, webcamRecordURL, progress, total, submitted, userDocId
+    } = {}
+    ) {
         this.taskId = taskId;
         this.taskAnswer = taskAnswer;
         this.taskObservations = taskObservations;
@@ -30,5 +33,8 @@ export default class TaskAnswer{
         this.total = total;
         this.submitted = submitted;
         this.userDocId = userDocId;
+    }
+    static toTaskAnswer(data) {
+        return new TaskAnswer(data)
     }
 }

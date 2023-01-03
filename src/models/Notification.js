@@ -4,9 +4,16 @@
      * @param {string} description - The description value.
      */
 
-export default class Notification {
-    constructor(title, description){
+export default class Notification{
+    constructor({
+        title,
+        description
+    } = {}
+    ) {
         this.title = title;
         this.description = description;
+    }
+    static toNotification(data) {
+        return new Notification(data)
     }
 }

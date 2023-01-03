@@ -11,8 +11,19 @@
      * @param {string} updateDate - The updateDate value.
      */
 
-export default class Cooperators{
-    constructor(userDocId, userName, userEmail, accessLevel, invited, accepted, progress, answerStatus, updateDate){
+export default class Cooperators {
+    constructor({
+        userDocId,
+        userName,
+        userEmail,
+        accessLevel,
+        invited,
+        accepted,
+        progress,
+        answerStatus,
+        updateDate
+    } = {}
+    ) {
         this.userDocId = userDocId;
         this.userName = userName;
         this.userEmail = userEmail;
@@ -22,5 +33,8 @@ export default class Cooperators{
         this.progress = progress;
         this.answerStatus = answerStatus;
         this.updateDate = updateDate;
+    }
+    static toCooperators(data) {
+        return new Cooperators(data)
     }
 }
