@@ -12,6 +12,7 @@ import Intro from "@/components/atoms/Introduction";
 import About from "@/components/organisms/LandingAbout";
 import Footer from "@/components/organisms/Footer";
 import Snackbar from "@/components/atoms/Snackbar";
+import Controller from "@/controllers/BaseController";
 
 export default {
   data: () => ({}),
@@ -20,6 +21,10 @@ export default {
     About,
     Footer,
     Snackbar
+  },
+  async created() {
+    const res = await new Controller().read("users", "email", "tamiris.tavares1801@gmail.com")
+    console.log("LANDING RESPONSE ==>>", res)
   }
 };
 </script>

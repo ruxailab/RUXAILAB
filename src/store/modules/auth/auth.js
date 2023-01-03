@@ -1,13 +1,7 @@
 import api from "@/api";
-import { auth } from "../../../firebase";
-import Controller from "../../../controllers/BaseController";
-import { signInWithEmailAndPassword } from "firebase/auth";
-
-
-/**
- * Auth store module
- * @module auth
- */
+import Controller from "@/controllers/BaseController";
+import { auth } from "@/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth"
 
 export default {
   state: {
@@ -37,13 +31,7 @@ export default {
     async signup({ commit }, payload) {
       commit("setLoading", true);
       try {
-       let user = await api.auth.signUp(payload);
-        user = await api.database.getObject({
-          collection: "users",
-          id: user.uid,
-        });
-        user = Object.assign({ uid: user.id }, user.data());
-        api.database.observer({ docId: user.uid, collection: "users" }, commit);
+        await api.auth.signUp(payload);
       } catch (err) {
         console.error("Error when creating user :(", err);
         commit("setError", err);
@@ -66,11 +54,12 @@ export default {
      async signin({ commit }, payload) {
       commit("setLoading", true);
       try {
-        await signInWithEmailAndPassword(auth, payload.email, payload.password)
-          await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
-            commit("setUser", response[0])
-          })
-      }catch (err) {
+        await signInWithEmailAndPassword(auth, payload.email,payload.password)
+        await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
+          console.log("store response login ==>>", response[0])
+          commit("setUser", response[0]);
+        })
+      } catch (err) {
         console.error("Error signing in: " + err);
         commit("setError", err);
       } finally {
@@ -108,7 +97,8 @@ export default {
       try {
         var user = auth.currentUser
         if (user) {
-          await new Controller().read("users", "email", auth.currentUser.email).then((response) => {
+          await new Controller().read("users", "email", user.email).then((response) => {
+            console.log("auto signin response ==>>", response[0])
             commit("setUser", response[0]);
           })
         }

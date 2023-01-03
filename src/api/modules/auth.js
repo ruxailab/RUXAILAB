@@ -1,24 +1,23 @@
-/*
-import firebase from 'firebase'
+import { auth } from "../../firebase";
+import {
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+} from "firebase/auth";
 
 export default {
-    signUp: async (payload) =>{
-        var auth = firebase.auth()
-        await auth.createUserWithEmailAndPassword(payload.email,payload.password)
-        return auth.currentUser
+    signUp: async (payload) => {
+        await createUserWithEmailAndPassword(payload.email, payload.password);
+        return auth.currentUser;
     },
-    signIn: async (payload) =>{
-        var auth = firebase.auth()
-        await auth.signInWithEmailAndPassword(payload.email,payload.password)
-        return auth.currentUser
+    signIn: async (payload) => {
+        await signInWithEmailAndPassword(auth, payload.email, payload.password);
+        return auth.currentUser;
     },
-    getCurrentUser:() =>{
-        var auth = firebase.auth()
-        return auth.currentUser
+    getCurrentUser: () => {
+        return auth.currentUser;
     },
-    singOut:() =>{
-        var auth = firebase.auth()
-        return auth.signOut()
-    }
-}
-*/
+    singOut: () => {
+        return signOut(auth);
+    },
+};
