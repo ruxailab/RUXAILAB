@@ -23,7 +23,7 @@
             style="cursor: pointer"
             @click="emitClick()"
           >
-            <button class="edit-btn rounded-xl">Click here!</button>
+            <button class="edit-btn rounded-lg">Click here!</button>
           </span>
         </div>
 
@@ -162,8 +162,8 @@ export default {
 }
 
 .edit-btn {
-  width: 20%;
-  height: 6%;
+  width: 30%;
+  height: 4vh;
   background-color: rgba(68, 12, 71, 0.644);
   transition: box-shadow 0.5s, background-color 0.5s;
 }

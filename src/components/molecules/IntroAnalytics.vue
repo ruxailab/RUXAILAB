@@ -3,7 +3,9 @@
     :colors="['#32bde7', '#2488e0']"
     :title="'Analytics'"
     :image="'IntroAnalytics.svg'"
-    :main="'Take a deep look into your test and see what people are saying about it.'"
+    :main="
+      'Take a deep look into your test and see what people are saying about it.'
+    "
     :link="'Invite evaluators to answer your test!'"
     @linkClicked="goToCoops()"
     :items="items"
@@ -26,6 +28,9 @@ export default {
     goToDoc() {
       this.$router.push("/analytics/documentation").catch(() => {});
     },
+    goToDisc() {
+      window.open("https://discord.gg/XHhnXBjgRh");
+    },
     callFunc(func) {
       this[func]();
     },
@@ -40,6 +45,14 @@ export default {
           subtitle:
             "Click to access the documentation on how to use the analytics page.",
           func: "goToDoc",
+        },
+
+        {
+          iconColor: "#59b9d4",
+          icon: "mdi-emoticon-happy",
+          title: "Join the comunity!",
+          subtitle: "You will find support on our discord server.",
+          func: "goToDisc",
         },
       ];
     },
