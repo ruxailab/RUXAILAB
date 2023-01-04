@@ -20,7 +20,7 @@ export default class Controller {
     querySnapshot.forEach((doc) => {
       res.push(doc.data())
     });
-    console.log("CONTROLLER RESPONSE ====>>>>", res)
+    //console.log("CONTROLLER RESPONSE ====>>>>", res)
     return res
   }
 
@@ -31,7 +31,7 @@ export default class Controller {
     querySnapshot.forEach((doc) => {
       res.push(doc.data())
     });
-    console.log("CONTROLLER RESPONSE ====>>>>", res)
+    //console.log("CONTROLLER RESPONSE ====>>>>", res)
     return res
   }
  
