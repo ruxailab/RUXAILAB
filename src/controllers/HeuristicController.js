@@ -1,22 +1,50 @@
 // imports
 
-import Heuristic from "@/models/Heuristic";
-import HeuristicAnswer from "@/models/HeuristicAnswer";
-import HeuristicQuestion from "@/models/HeuristicQuestion";
-import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
-import HeuristicQuestionDescription from "@/models/HeuristicQuestionDescription";
+import api from "@/api/index";
+import database from "../api/modules/database";
+// import firebase from "firebase";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+// import { doc, arrayUnion } from "firebase/firestore";
+import { db } from "@/firebase/index";
 
-import Controller from '@/controllers/BaseController'
+import Heuristic from "../models/Heuristic";
+import HeuristicAnswer from "../models/HeuristicAnswer";
+import HeuristicQuestion from "../models/HeuristicQuestion";
+import HeuristicQuestionAnswer from "../models/HeuristicQuestionAnswer";
+import HeuristicQuestionDescription from "../models/HeuristicQuestionDescription";
+import HeuristicTest from "../models/HeuristicTest";
 
-export default class HeuristicController extends Controller{
-  constructor() {
-    super()
+export default class HeuristicController {
+  async createCsvHeuris(data) {
+    await updateDoc(doc(db, "test", data.testId), {
+      heuristics: arrayUnion({
+        id: data.id,
+        title: data.title,
+        questions: data.questions,
+        total: data.total,
+      }),
+    });
   }
 
-  createNewHeuristic(document, data){
-    return super.create("test", document, data).then((res)=> {
-      return res
-    })
+  // async setCsvQuestions(data) {
+  //   await setDoc(doc(db, "test", data.testId), {
+  //     heuristics: {
+  //       questions: arrayUnion({
+  //         id: data.qid,
+  //         descriptions: data.qd,
+  //         text: data.qtext,
+  //         title: data.qtitle,
+  //       }),
+  //     },
+  //   });
+  // }
+
+  //
+  async createNewHeuristic(data) {
+    console.log(api.database.createObject);
+    const hTest = new HeuristicTest(data);
+    console.log(hTest);
+    return database.createObject(api, hTest);
   }
 
   deleteHeuristic(document){
@@ -34,14 +62,13 @@ export default class HeuristicController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Heuristic
-  getObjectHeuristic(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(Heuristic.toHeuristic)
-      console.log("HeuristicController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("HeuristicController error: ", err)
-    })  
+  async getObjectHeuristic(id) {
+    const answer = await api.database.getObject({
+      id: id,
+      collection: "answers",
+    });
+
+    return new Heuristic(answer);
   }
 
   //GetObject of HeuristicAnswer
@@ -91,17 +118,17 @@ export default class HeuristicController extends Controller{
     })  
   }
 
-  // ----------------GET ALL OBJECTS----------------
-
-  //GetAllObject of Heuristic
-  getAllObjectHeuristic(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(Heuristic.toHeuristic)
-      console.log("HeuristicController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("HeuristicController error: ", err)
-    })  
+  //----------------GET ALL OBJECTS----------------
+  //GetAll data from "Heuristic"
+  async getAllHeuristicTest() {
+    const answer = await database.getAllObjects({
+      collection: "answers",
+    });
+    const list = [];
+    answer.forEach((doc) => {
+      list.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+    return list;
   }
 
   //GetAllObject of HeuristicAnswer
