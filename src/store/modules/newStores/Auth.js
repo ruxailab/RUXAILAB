@@ -7,8 +7,10 @@ import { auth, db } from "@/firebase";
 
 //import AuthController
 import AuthController from "@/controllers/AuthController.js";
+import UserController from "@/controllers/UserController";
 
 const AuthCont = new AuthController();
+const UserCont = new UserController();
 
 export default {
     state: {
@@ -75,19 +77,29 @@ export default {
      * @param {string} payload.password - the User password 
      * @returns {void}
     */
+
         async authSingIn({ commit }, payload) {
             commit("setLoading", true);
             try {
                 console.log("asas");
-                let User = await AuthCont.authSingIn(payload);
+                let User = await AuthCont.authSingIn(
+                    payload.email,
+                    payload.password
+                );
+                console.log("huh");
                 //var User = await auth.authSingIn(payload);
-                User = await db.getObject({
+
+                User = await UserCont.getObjectUser({
                     collection: "Users",
                     id: User.uid,
                 });
-                User = Object.assign({ uid: User.id }, User.data());
+                console.log("teste");
+                let AuxUser = Object.assign({ uid: User.uid }, User.data());
 
-                db.observer({ docId: User.uid, collection: "Users" }, commit);
+                db.observer(
+                    { docId: AuxUser.uid, collection: "Users" },
+                    commit
+                );
                 commit("SET_USERS", User);
             } catch (err) {
                 console.error("Error signing in: " + err);
