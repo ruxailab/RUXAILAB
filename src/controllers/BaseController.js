@@ -3,6 +3,7 @@ import {
     doc,
     setDoc,
     updateDoc,
+    getDoc,
     query,
     where,
     getDocs,
@@ -34,6 +35,19 @@ export default class Controller {
         });
         console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
+    }
+
+    /**
+     * Gets a document data by its id and collection.
+     *
+     * @param {string[]} path the document path to be accessed.
+     * @throws a Firebase exception.
+     */
+    async getById(path) {
+        // return getDoc(doc(db, ...path));
+        const docRef = doc(db, path[0], path[1]);
+        console.log(docRef);
+        return getDoc(docRef);
     }
 
     async readAll(path) {

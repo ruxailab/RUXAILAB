@@ -42,11 +42,11 @@ export default {
             try {
                 let User = await auth.authSingUp(payload);
                 User = await db.getObject({
-                    collection: "Users",
+                    collection: "users",
                     id: User.uid,
                 });
                 User = Object.assign({ uid: User.id }, User.data());
-                db.observer({ docId: User.uid, collection: "Users" }, commit);
+                db.observer({ docId: User.uid, collection: "users" }, commit);
             } catch (err) {
                 console.error("Error when creating User :(", err);
                 commit("setError", err);
@@ -89,35 +89,24 @@ export default {
                 console.log("huh");
                 //var User = await auth.authSingIn(payload);
 
-                User = await UserCont.getObjectUser({
-                    collection: "Users",
-                    id: User.uid,
-                });
+                let AuxUser = (User = await UserCont.getObjectUser(
+                    "uuid",
+                    User.uid
+                ));
                 console.log("teste");
-                let AuxUser = Object.assign({ uid: User.uid }, User.data());
+                // AuxUser = Object.assign({ uid: User.uid }, User.data());
 
-                db.observer(
-                    { docId: AuxUser.uid, collection: "Users" },
-                    commit
-                );
-                commit("SET_USERS", User);
+                // db.observer(
+                //     { docId: AuxUser.uid, collection: "Users" },
+                //     commit
+                // );
+                commit("SET_USERS", AuxUser);
             } catch (err) {
                 console.error("Error signing in: " + err);
                 commit("setError", err);
             } finally {
                 //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
-                commit("setLoading", false);
-            }
-
-            //Connect to controllers
-            try {
-                const res = await AuthCont.authSingIn();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in authSingIn");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
+                // commit("setLoading", false);
             }
         },
 
