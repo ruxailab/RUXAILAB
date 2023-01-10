@@ -7,10 +7,19 @@
      */
 
 export default class HeuristicQuestion{
-    constructor(id, title, descriptions, text){
+    constructor({
+        id,
+        title,
+        descriptions,
+        text
+    } = {}
+    ) {
         this.id = id;
         this.title = title;
         this.descriptions = descriptions;
         this.text = text;
+    }
+    static toHeuristicQuestion(data) {
+        return new HeuristicQuestion(data)
     }
 }

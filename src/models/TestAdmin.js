@@ -5,8 +5,14 @@
      */
 
 export default class TestAdmin{
-    constructor(email, userDocId){
+    constructor({
+        email, userDocId
+    } = {}
+    ) {
         this.email = email;
         this.userDocId = userDocId;
+    }
+    static toTestAdmin(data) {
+        return new TestAdmin(data)
     }
 }

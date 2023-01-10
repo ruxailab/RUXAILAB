@@ -13,7 +13,10 @@
      */
 
 export default class UserTask{
-    constructor(taskName, taskType, taskDescription, taskTip, hasTimer, hasPost, hasEye, hasAudioRecord, hasScreenRecord, hasCamRecord){
+    constructor({
+        taskName, taskType, taskDescription, taskTip, hasTimer, hasPost, hasEye, hasAudioRecord, hasScreenRecord, hasCamRecord
+    } = {}
+    ) {
         this.taskName = taskName;
         this.taskType = taskType;
         this.taskDescription = taskDescription;
@@ -24,5 +27,8 @@ export default class UserTask{
         this.hasAudioRecord = hasAudioRecord;
         this.hasScreenRecord = hasScreenRecord;
         this.hasCamRecord = hasCamRecord;
+    }
+    static toUserTask(data) {
+        return new UserTask(data)
     }
 }
