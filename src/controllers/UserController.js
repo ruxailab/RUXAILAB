@@ -1,91 +1,179 @@
 // imports
 
-/* 
-import {UserController} from '././UserController'
+import User from "@/models/User";
+import UserAnswer from "@/models/UserAnswer";
+import UserTask from "@/models/UserTask";
+import UserTemplate from "@/models/UserTemplate";
+import UserTest from "@/models/UserTest";
 
-let userController = new UserController()
-*/
+import Controller from "@/controllers/BaseController";
 
-import api from "@/api/index";
-import database from "../api/modules/database";
+export default class UserController extends Controller {
+    constructor() {
+        super();
+    }
 
-import User from "..models/User";
-import UserAnswer from "..models/UserAnswer";
-import UserTask from "..models/UserTask";
-import UserTemplate from "..models/UserTemplate";
-import UserTest from "..models/UserTest";
+    createNewUser(document, data) {
+        return super.create("users", document, data).then((res) => {
+            return res;
+        });
+    }
 
-export class UserController {
-  //
-  async createNewUser(data) {
-    return database.createObject(api, data);
-  }
-  //
-  async deleteUser(data) {
-    return database.deleteObject(api, data);
-  }
-  //
-  async updateUser(data) {
-    return database.updateObject(api, data);
-  }
+    deleteUser(document) {
+        return super.delete("users", document).then((res) => {
+            return res;
+        });
+    }
 
-  //------------------GET OBJECTS------------------
-  //GetObject of User
-  async getObjectUser(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new User(answer);
-  }
+    updateUser(document, payload) {
+        return super.delete("users", document, payload).then((res) => {
+            return res;
+        });
+    }
 
-  //GetObject of UserAnswer
-  async getObjectUserAnswer(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new UserAnswer(answer);
-  }
+    //------------------GET OBJECTS - ID------------------
 
-  //GetObject of UserTask
-  async getObjectUserTask(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new UserTask(answer);
-  }
+    //GetObject of User
+    getObjectUser(parameter, condition) {
+        console.log("break point");
+        return super
+            .getById(["users", condition])
+            .then((response) => {
+                console.log(response.data());
+                //let res = response.data.map(User.toUser);
+                console.log("UserController res: ", response.data());
+                return response.data();
+            })
+            .catch((err) => {
+                console.log("UserController error: ", err);
+            });
+    }
 
-  //GetObject of UserTemplate
-  async getObjectUserTemplate(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new UserTemplate(answer);
-  }
+    //GetObject of UserAnswer
+    getObjectUserAnswer(parameter, condition) {
+        return super
+            .read("users", parameter, condition)
+            .then((response) => {
+                let res = response.map(UserAnswer.toUserAnswer);
+                console.log("UserAnswerController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserAnswerController error: ", err);
+            });
+    }
 
-  //GetObject of UserTest
-  async getObjectUserTest(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new UserTest(answer);
-  }
+    //GetObject of UserTask
+    getObjectUserTask(parameter, condition) {
+        return super
+            .read("users", parameter, condition)
+            .then((response) => {
+                let res = response.map(UserTask.toUserTask);
+                console.log("UserTaskController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTaskController error: ", err);
+            });
+    }
 
-  //----------------GET ALL OBJECTS----------------
-  //GetAll data from "User"
-  async getAllUser() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new User(obj)]));
-  }
-  //GetAll data from "UserAnswer"
-  async getAllUserAnswer() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new UserAnswer(obj)]));
-  }
-  //GetAll data from "UserTask"
-  async getAllUserTask() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new UserTask(obj)]));
-  }
-  //GetAll data from "UserTemplate"
-  async getAllUserTemplate() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new UserTemplate(obj)]));
-  }
-  //GetAll data from "UserTest"
-  async getAllUserTest() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new UserTest(obj)]));
-  }
+    //GetObject of UserTemplate
+    getObjectUserTemplate(parameter, condition) {
+        return super
+            .read("users", parameter, condition)
+            .then((response) => {
+                let res = response.map(UserTemplate.toUserTemplate);
+                console.log("UserTemplateController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTemplateController error: ", err);
+            });
+    }
+
+    //GetObject of UserTest
+    getObjectUserTest(parameter, condition) {
+        return super
+            .read("users", parameter, condition)
+            .then((response) => {
+                let res = response.map(UserTest.toUserTest);
+                console.log("UserTestController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTestController error: ", err);
+            });
+    }
+
+    // //----------------GET ALL OBJECTS----------------
+
+    //GetObject of User
+    getAllObjectUser() {
+        return super
+            .readAll("users")
+            .then((response) => {
+                let res = response.map(User.toUser);
+                console.log("UserController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserController error: ", err);
+            });
+    }
+
+    //GetObject of UserAnswer
+    getAllObjectUserAnswer() {
+        return super
+            .readAll("users")
+            .then((response) => {
+                let res = response.map(UserAnswer.toUserAnswer);
+                console.log("UserAnswerController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserAnswerController error: ", err);
+            });
+    }
+
+    //GetObject of UserTask
+    getAllObjectUserTask() {
+        return super
+            .readAll("users")
+            .then((response) => {
+                let res = response.map(UserTask.toUserTask);
+                console.log("UserTaskController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTaskController error: ", err);
+            });
+    }
+
+    //GetObject of UserTemplate
+    getAllObjectUserTemplate() {
+        return super
+            .readAll("users")
+            .then((response) => {
+                let res = response.map(UserTemplate.toUserTemplate);
+                console.log("UserTemplateController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTemplateController error: ", err);
+            });
+    }
+
+    //GetObject of UserTest
+    getAllObjectUserTest() {
+        return super
+            .readAll("users")
+            .then((response) => {
+                let res = response.map(UserTest.toUserTest);
+                console.log("UserTestController res: ", res);
+                return res;
+            })
+            .catch((err) => {
+                console.log("UserTestController error: ", err);
+            });
+    }
 }
-
-//How do i use an api push?

@@ -1,93 +1,151 @@
-/* 
-import {TestController} from '././TestController'
-
-let testController = new TestController()
-*/
-
 // imports
 
-import api from "@/api/index";
-import database from "../api/modules/database";
+import Test from "@/models/Test";
+import TestAdmin from "@/models/TestAdmin";
+import TestStructure from "@/models/TestStructure";
+import TestStructureOptions from "@/models/TestStructureOptions";
+import TestTemplateDoc from "@/models/TestTemplateDoc";
 
-import Test from "../models/Test";
-import TestAdmin from "../models/TestAdmin";
-import TestStructure from "../models/TestStructure";
-import TestStructureOptions from "../models/TestStructureOptions";
-import TestTemplateDoc from "../models/TestTemplateDoc";
+import Controller from '@/controllers/BaseController'
 
-export default class TestController {
-  //
-  async createNewTest(data) {
-    return database.createObject(api, data);
-  }
-  //
-  async deleteTest(data) {
-    return database.deleteObject(api, data);
-  }
-  //
-  async updateTest(data) {
-    return database.updateObject(api, data);
+export default class TestController extends Controller{
+  constructor() {
+    super()
   }
 
-  //------------------GET OBJECTS------------------
+  createNewTest(document, data){
+    return super.create("test", document, data).then((res)=> {
+      return res
+    })
+  }
+
+  deleteTest(document){
+    return super.delete("test", document).then((res)=> {
+      return res
+    })
+  }
+
+  updateTest(document, payload){
+    return super.delete("test", document, payload).then((res)=> {
+      return res
+    })
+  }
+
+  //------------------GET OBJECTS - ID------------------
+
   //GetObject of Test
-  async getObjectTest(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new Test(answer);
+  getObjectTest(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(Test.toTest)
+      console.log("TestController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestController error: ", err)
+    })  
   }
 
   //GetObject of TestAdmin
-  async getObjectTestAdmin(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new TestAdmin(answer);
+  getObjectTestAdmin(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestAdmin.toTestAdmin)
+      console.log("TestAdminController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestAdminController error: ", err)
+    })  
   }
 
   //GetObject of TestStructure
-  async getObjectTestStructure(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new TestStructure(answer);
+  getObjectTestStructure(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestStructure.toTestStructure)
+      console.log("TestStructureController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestStructureController error: ", err)
+    })  
   }
 
   //GetObject of TestStructureOptions
-  async getObjectTestStructureOptions(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new TestStructureOptions(answer);
+  getObjectTestStructureOptions(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestStructureOptions.toTestStructureOptions)
+      console.log("TestStructureOptionsController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestStructureOptionsController error: ", err)
+    })  
   }
 
   //GetObject of TestTemplateDoc
-  async getObjectTestTemplateDoc(id) {
-    const answer = await database.getObject(api + "/" + id);
-    return new TestTemplateDoc(answer);
+  getObjectTestTemplateDoc(parameter, condition){
+    return super.read("test", parameter, condition).then((response) => {
+      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
+      console.log("TestTemplateDocController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestTemplateDocController error: ", err)
+    })  
   }
 
-  //----------------GET ALL OBJECTS----------------
-  //GetAll data from "Test"
-  async getAllTest() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new Test(obj)]));
+  // ----------------GET ALL OBJECTS----------------
+
+  //GetObject of Test
+  getAllObjectTest(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(Test.toTest)
+      console.log("TestController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestController error: ", err)
+    })  
   }
-  //GetAll data from "TestAdmin"
-  async getAllTestAdmin() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new TestAdmin(obj)]));
+
+   //GetObject of TestAdmin
+   getAllObjectTestAdmin(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestAdmin.toTestAdmin)
+      console.log("TestAdminController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestAdminController error: ", err)
+    })  
   }
-  //GetAll data from "TestStructure"
-  async getAllTestStructure() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new TestStructure(obj)]));
+
+   //GetObject of TestStructure
+   getAllObjectTestStructure(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestStructure.toTestStructure)
+      console.log("TestStructureController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestStructureController error: ", err)
+    })  
   }
-  //GetAll data from "TestStructureOptions"
-  async getAllTestStructureOptions() {
-    const answer = await database.getAllObject(api);
-    return new Map(
-      answer.map((obj) => [obj.id, new TestStructureOptions(obj)])
-    );
+
+   //GetObject of TestStructureOptions
+   getAllObjectTestStructureOptions(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestStructureOptions.toTestStructureOptions)
+      console.log("TestStructureOptionsController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestStructureOptionsController error: ", err)
+    })  
   }
-  //GetAll data from "TestTemplateDoc"
-  async getAllTestTemplateDoc() {
-    const answer = await database.getAllObject(api);
-    return new Map(answer.map((obj) => [obj.id, new TestTemplateDoc(obj)]));
+
+   //GetObject of TestTemplateDoc
+   getAllObjectTestTemplateDoc(){
+    return super.readAll("test").then((response) => {
+      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
+      console.log("TestTemplateDocController res: ", res)
+      return res
+    }).catch((err) => { 
+      console.log("TestTemplateDocController error: ", err)
+    })  
   }
+
 }
+  
 
-/* "_" before attibutes and mehtods turn them into PRIVATE*/
+// "_" before attibutes and mehtods turn them into PRIVATE
