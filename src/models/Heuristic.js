@@ -7,13 +7,18 @@
  */
 
 export default class Heuristic {
-  constructor(id, title, questions, total) {
-    this.id = id;
-    this.title = title;
-    this.questions = questions;
-    this.total = total;
-  }
-  static toHeuristic(data) {
-      return new Heuristic(data)
-  }
+    constructor({
+        heuristicId,
+        heuristicTitle,
+        heuristicQuestions,
+        heuristicTotal,
+    } = {}) {
+        this.heuristicId = heuristicId;
+        this.heuristicTitle = heuristicTitle;
+        this.heuristicQuestions = heuristicQuestions;
+        this.heuristicTotal = heuristicTotal;
+    }
+    static toHeuristic(data) {
+        return new Heuristic(data);
+    }
 }
