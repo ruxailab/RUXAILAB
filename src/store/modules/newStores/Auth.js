@@ -14,7 +14,7 @@ const UserCont = new UserController();
 
 export default {
     state: {
-        User: null,
+        user: null,
     },
     getters: {
         User(state) {
@@ -151,12 +151,12 @@ export default {
                 var User = await auth.getCurrentUser();
                 if (User) {
                     User = await db.getObject({
-                        collection: "Users",
+                        collection: "users",
                         id: User.uid,
                     });
                     User = Object.assign({ uid: User.id }, User.data());
                     db.observer(
-                        { docId: User.uid, collection: "Users" },
+                        { docId: User.uid, collection: "users" },
                         commit
                     );
                     commit("SET_USERS", User);
