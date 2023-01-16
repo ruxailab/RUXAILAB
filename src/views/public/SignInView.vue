@@ -73,6 +73,7 @@
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
 //import AuthController from "@/controllers/AuthController";
+import router from "@/router/index";
 
 export default {
     data: () => ({
@@ -94,9 +95,8 @@ export default {
             //     email: this.email,
             //     password: this.password,
             // });
-            // if (this.user) {
-            //     this.$router.push("/testslist").catch(() => {});
-            // }
+            console.log("this is the router: ");
+            this.$router.push(router);
         },
     },
     computed: {

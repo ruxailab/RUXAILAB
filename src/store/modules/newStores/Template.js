@@ -106,7 +106,7 @@ export default {
 
         async updateTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Templates" });
+            payload = Object.assign(payload, { collection: "templates" });
 
             dispatch("updateObject", payload)
                 .catch((err) => commit("setError", "Error in updateTemplate." + err));
@@ -141,7 +141,7 @@ export default {
 
         async deleteTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Templates" });
+            payload = Object.assign(payload, { collection: "templates" });
 
             dispatch("deleteObject", payload)
                 .catch((err) => commit("setError", "Error in deleteTemplate." + err));

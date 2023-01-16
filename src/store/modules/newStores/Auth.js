@@ -1,4 +1,4 @@
-import { auth, db } from "@/firebase";
+import { auth, db, ref, onValue } from "@/firebase";
 
 /**
  * Auth Store Module
@@ -8,6 +8,7 @@ import { auth, db } from "@/firebase";
 //import AuthController
 import AuthController from "@/controllers/AuthController.js";
 import UserController from "@/controllers/UserController";
+import { redirect } from "@/router/tools";
 
 const AuthCont = new AuthController();
 const UserCont = new UserController();
@@ -18,12 +19,12 @@ export default {
     },
     getters: {
         User(state) {
-            return state.User;
+            return state.user;
         },
     },
     mutations: {
-        SET_USERS(state, payload) {
-            state.User = payload;
+        SET_USER(state, payload) {
+            state.user = payload;
         },
     },
     actions: {
@@ -93,20 +94,28 @@ export default {
                     "uuid",
                     User.uid
                 ));
-                console.log("teste");
                 // AuxUser = Object.assign({ uid: User.uid }, User.data());
+                const userRef = ref(db, "users/" + AuxUser.uid);
+                onValue(userRef, (snapshot) => {
+                    const data = snapshot.val();
+                    console.log("this is data");
+                    console.log(data);
+                });
+                db.observer(
+                    { docId: AuxUser.uid, collection: "users" },
+                    commit
+                );
 
-                // db.observer(
-                //     { docId: AuxUser.uid, collection: "Users" },
-                //     commit
-                // );
+                if (AuxUser) {
+                    redirect();
+                }
                 commit("SET_USERS", AuxUser);
-            } catch (err) {
-                console.error("Error signing in: " + err);
-                commit("setError", err);
+                } catch (err) {
+                    console.error("Error signing in: " + err);
+                    commit("setError", err);
             } finally {
                 //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
-                // commit("setLoading", false);
+                commit("setLoading", false);
             }
         },
 

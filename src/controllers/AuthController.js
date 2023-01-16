@@ -24,14 +24,13 @@ export default class AuthController {
     //SignIn
 
     async authSingIn(email, password) {
-        return signInWithEmailAndPassword(auth, email, password).then(
-            (userCredential) => {
+        return signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
                 const user = userCredential.user;
                 console.log("User SingIn: " + user);
                 return user;
-            }
-        );
-        //           .catch(console.log("Error in SingIn"));
+            })
+            .catch(console.log("Error in SingIn"));
     }
 
     //Get Current User
