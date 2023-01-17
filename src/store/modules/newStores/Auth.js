@@ -13,10 +13,10 @@ import {
 
 //import AuthController
 // import AuthController from "@/controllers/AuthController.js";
-// import UserController from "@/controllers/UserController";
+import UserController from "@/controllers/UserController";
 
 // const AuthCont = new AuthController();
-// const UserCont = new UserController();
+//const UserCont = new UserController();
 
 export default {
     state: {
@@ -72,7 +72,22 @@ export default {
             await signOut(auth)
 
             context.commit('SET_USER', null)
-        }
+        },
+
+        async autoSignIn(context) {
+            try {
+                var user = auth.currentUser;
+                if (user) {
+                    await new UserController()
+                        .read("users", "email", user.email)
+                        .then((response) => {
+                            context.commit("SET_USER", response[0]);
+                        });
+                }
+            } catch (err) {
+                console.error("Error auto signing in ", err);
+            }
+        },
 
     }
    
