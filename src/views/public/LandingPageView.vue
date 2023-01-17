@@ -12,7 +12,7 @@ import Intro from "@/components/atoms/Introduction";
 import About from "@/components/organisms/LandingAbout";
 import Footer from "@/components/organisms/Footer";
 import Snackbar from "@/components/atoms/Snackbar";
-//import UserController from "../../controllers/UserController";
+import UserController from "../../controllers/UserController";
 
 export default {
     data: () => ({}),
@@ -23,13 +23,13 @@ export default {
         Snackbar,
     },
 
-    // async created() {
-    //     console.log("LANDING PAGE RESPONSE");
-    //     await new UserController().getObjectUser(
-    //         "email",
-    //         "tales.furlan@gmail.com"
-    //     );
-        
-    // },
+    async created() {
+        console.log("LANDING PAGE RESPONSE");
+        await new UserController().getObjectUser(
+            "email",
+            "tales.furlan@gmail.com"
+        );
+        //await new UserController().getAllObjectUser()
+    },
 };
 </script>

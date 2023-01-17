@@ -3,10 +3,10 @@ import store from "@/store/index";
 import { onAuthStateChanged } from "firebase/auth";
 
 export async function autoSignIn() {
-    if (!this.$store.state.user) {
+    if (!store.state.auth.user) {
         onAuthStateChanged(auth, async (user) => {
-            if (user && !this.$store.state.user) {
-                await this.$store.dispatch("autoSignIn", user);
+            if (user && !store.state.auth.user) {
+                await store.dispatch("autoSignIn", user);
             }
         });
     }
