@@ -23,8 +23,8 @@ export default {
         user: null,
     },
     getters: {
-        User(state) {
-            return state.User;
+        user(state) {
+            return state.user;
         },
     },
     mutations: {
@@ -60,7 +60,7 @@ export default {
         },
 
         async signin(context, payload){
-            const response = await signInWithEmailAndPassword(auth, payload)
+            const response = await signInWithEmailAndPassword(auth, payload.email, payload.password)
             if (response) {
                 context.commit('SET_USER', response.user)
             } else {
