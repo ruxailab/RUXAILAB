@@ -75,13 +75,16 @@ import Snackbar from "@/components/atoms/Snackbar";
 
 export default {
   data: () => ({
-    valid: true,
+   
     email: "",
+    password: "",
+
+    valid: true,
+    
     emailRules: [
       v => !!v || "Email is required",
       v => /.+@.+\..+/.test(v) || "Invalid email"
     ],
-    password: "",
     passwordRules: [
       v => !!v || "Password is required",
       v => v.length >= 6 || "Password must be at least 6 characters"
@@ -103,13 +106,18 @@ export default {
       return this.$store.getters.loading;
     }
   },
+
   methods: {
-    async onSignUp() {
+
+    onSignUp() {
+      console.log("chegou no login")
       if (this.valid)
-        await this.$store.dispatch("signup", {
+      console.log("validado")
+        this.$store.dispatch('signup', {
           email: this.email,
           password: this.password
         }).then(() => {
+          console.log("fez login")
           this.$router.push('/testslist').catch(() => {});
         });
       if (this.user) {
