@@ -1,4 +1,4 @@
-import { auth, db, ref, onValue } from "@/firebase";
+import { auth, db, ref } from "@/firebase";
 
 /**
  * Auth Store Module
@@ -9,6 +9,7 @@ import { auth, db, ref, onValue } from "@/firebase";
 import AuthController from "@/controllers/AuthController.js";
 import UserController from "@/controllers/UserController";
 import { redirect } from "@/router/tools";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const AuthCont = new AuthController();
 const UserCont = new UserController();
@@ -96,11 +97,13 @@ export default {
                 ));
                 // AuxUser = Object.assign({ uid: User.uid }, User.data());
                 const userRef = ref(db, "users/" + AuxUser.uid);
-                onValue(userRef, (snapshot) => {
-                    const data = snapshot.val();
-                    console.log("this is data");
-                    console.log(data);
+
+                const unsub = onSnapshot(doc(userRef), (doc) => {
+                    console.log("Current data: ", doc.data());
                 });
+
+                console.log("unsub" + unsub);
+
                 db.observer(
                     { docId: AuxUser.uid, collection: "users" },
                     commit
@@ -110,9 +113,9 @@ export default {
                     redirect();
                 }
                 commit("SET_USERS", AuxUser);
-                } catch (err) {
-                    console.error("Error signing in: " + err);
-                    commit("setError", err);
+            } catch (err) {
+                console.error("Error signing in: " + err);
+                commit("setError", err);
             } finally {
                 //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
                 commit("setLoading", false);
