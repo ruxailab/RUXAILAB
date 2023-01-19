@@ -22,7 +22,7 @@ router.beforeResolve(async (to, from, next) => {
   if (authorize.length > 0 && to.path !== "/signin" && !to.params.token && from.path !== "/signup") {
     await signIn;
 
-    const user = store.state.auth.user;
+    const user = store.state.Auth.user;
     if (!user) {
       return next(redirect());
     }
