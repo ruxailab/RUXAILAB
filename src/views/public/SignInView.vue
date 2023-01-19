@@ -80,25 +80,6 @@ export default {
         email: "",
         password: "",
     }),
-    methods: {
-        async onSignIn() {
-            console.log("olá");
-            console.log("olá");
-            //const authC = new AuthController();
-            //const user = await authC.authSingIn(this.email, this.password);
-            this.$store.dispatch("authSingIn", {
-                email: this.email,
-                password: this.password,
-            });
-            // await this.$store.dispatch("signin", {
-            //     email: this.email,
-            //     password: this.password,
-            // });
-            // if (this.user) {
-            //     this.$router.push("/testslist").catch(() => {});
-            // }
-        },
-    },
     computed: {
         loading() {
             return this.$store.getters.loading;
@@ -107,6 +88,28 @@ export default {
             return this.$store.getters.user;
         },
     },
+    methods: {
+         async onSignIn() {
+            try{
+            console.log("chegou no signin");
+            await this.$store.dispatch("signin", {
+                email: this.email,
+                password: this.password,
+            })
+            .then(() => {
+                console.log("fez login")
+                this.$router.push('/testslist').catch(() => {});
+                });
+            if (this.user) {
+                this.$router.push("/").catch(() => {}).catch(() => {});
+            }
+            }
+            catch (err) {
+                console.log("Error. " + err.message)
+            }
+        },
+    },
+
     components: {
         Snackbar,
     },

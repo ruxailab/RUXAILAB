@@ -3,9 +3,9 @@ import store from "@/store/index";
 import { onAuthStateChanged } from "firebase/auth";
 
 export async function autoSignIn() {
-    if (!store.state.auth.user) {
+    if (!store.state.Auth.user) {
         onAuthStateChanged(auth, async (user) => {
-            if (user && !store.state.auth.user) {
+            if (user && !store.state.Auth.user) {
                 await store.dispatch("autoSignIn", user);
             }
         });
@@ -13,12 +13,12 @@ export async function autoSignIn() {
 }
 
 export function redirect() {
-    if (!store.state.auth.user) {
+    if (!store.state.Auth.user) {
         //se nao tiver logado mandar pra landing page
         return "/";
     }
 
-    let level = store.state.auth.user.accessLevel;
+    let level = store.state.Auth.user.accessLevel;
 
     if (level == 0) {
         return "/superadmin";
