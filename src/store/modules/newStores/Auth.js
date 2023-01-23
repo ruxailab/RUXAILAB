@@ -50,42 +50,60 @@ export default {
          * @returns {void}
          */
 
-        async signup(context, payload){
-            const response = await createUserWithEmailAndPassword(auth, payload.email, payload.password)
-            if (response) {
-                context.commit('SET_USER', response.user)
-            } else {
-                throw new Error('Signup failed')
-            }
-        },
-
-        async signin(context, payload){
-            const response = await signInWithEmailAndPassword(auth, payload.email, payload.password)
-            if (response) {
-                context.commit('SET_USER', response.user)
-            } else {
-                throw new Error('Login failed')
-            }
-        },
-
-        async logout(context){
-            await signOut(auth)
-
-            context.commit('SET_USER', null)
-        },
-
-        async autoSignIn(context) {
-            try {
-                var user = auth.currentUser;
-                if (user) {
-                    await new UserController()
-                        .read("users", "email", user.email)
-                        .then((response) => {
-                            context.commit("SET_USER", response[0]);
-                        });
+        async signup({ commit }, payload){
+            commit("setLoading", true);
+            try{
+                const response = await createUserWithEmailAndPassword(auth, payload.email, payload.password)
+                if (response) {
+                    commit('SET_USER', response.user)
+                } else {
+                    throw new Error('Signup failed')
                 }
+            } catch (err){
+                console.error("Error when creating user", err);
+                commit("setError", err);
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+
+        async signin({ commit }, payload){
+            commit("setLoading", true);
+            try{
+                const response = await signInWithEmailAndPassword(auth, payload.email, payload.password)
+                if (response) {
+                    commit('SET_USER', response.user)
+                } else {
+                    throw new Error('Login failed')
+                }
+            } catch (err){
+                console.error("Error signing in: " + err);
+                commit("setError", err);
+            } finally{
+                commit("setLoading", false);
+            }
+        },
+
+        async logout({ commit }){
+            try{
+                await signOut(auth)
+                commit('SET_USER', null)
             } catch (err) {
-                console.error("Error auto signing in ", err);
+                console.error("Error logging out.", err);
+            } finally {
+                //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
+                commit("setLoading", false);
+            }
+        },
+
+        async autoSignIn({ commit }) {
+            var user = auth.currentUser;
+            if (user) {
+                await new UserController()
+                    .read("users", "email", user.email)
+                    .then((response) => {
+                        commit("SET_USER", response[0]);
+                    });
             }
         },
 

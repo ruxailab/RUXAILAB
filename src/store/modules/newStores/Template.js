@@ -49,7 +49,7 @@ export default {
          * @returns {string} docRef - Template identification
          */
 
-        async createNewTemplate({ dispatch, commit }, payload) {
+        async createTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: 'Templates' });
@@ -64,11 +64,11 @@ export default {
 
             //Connect to controllers
             try{
-                const res = await TemplateCont.createNewTemplate()
+                const res = await TemplateCont.createTemplate()
                 commit('SET_TEMPLATES', res)
 
             } catch{
-                console.log('Error in createNewTemplate')
+                console.log('Error in createTemplate')
                 commit('setError', true)
 
             } finally{
@@ -365,5 +365,16 @@ export default {
                 commit('setLoading', false)
             }
         },
+
+        async getPaginationTemplates({ dispatch, commit }, payload) {
+            commit("setLoading", true);
+
+            payload = Object.assign(payload, { collection: "templates" });
+
+            let temps = await dispatch("getPaginationArray", payload)
+                .catch((err) => commit("setError", "Error in getPaginationTemplates." + err));
+            
+            commit("setPaginatedTemps", temps);
+        }
     }
 }
