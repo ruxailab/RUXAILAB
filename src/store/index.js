@@ -5,6 +5,7 @@ import Auth from "@/store/modules/newStores/Auth";
 import Templates from "@/store/modules/newStores/Template";
 import Tests from "@/store/modules/newStores/Test";
 import Users from "@/store/modules/newStores/User";
+import Database from "@/store/modules/newStores/Database";
 
 Vue.use(Vuex);
 
@@ -15,5 +16,8 @@ export default new Vuex.Store({
         Templates,
         Tests,
         Users,
+        Database,
+        // Cooperators,
+        // Reports
     },
 });

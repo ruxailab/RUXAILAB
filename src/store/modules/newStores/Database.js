@@ -1,5 +1,6 @@
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import Controller from "@/controllers/BaseController";
 
 /**
  * Database store module, API calls
@@ -22,24 +23,22 @@ export default {
   },
   actions: {
 
-    async getPaginationArray({commit}, payload) {
-        try {
-          var snapshot;
-          snapshot = await db.paginateArray(payload);
+    async getPaginationArray ({commit}, payload) {
+      try{
           var objects = [];
-          snapshot.forEach((doc) => {
-            objects.push(Object.assign({ id: doc.id }, doc.data()));
+          await new Controller().read("users", "id", payload).then((response) => {
+            response.forEach((doc) => {
+            objects.push(doc.data());
           });
-          return objects;
-        } catch (err) {
-          console.error("Error in getPaginationArray:", err)
-          commit("setError", "Error getting paginated array in database");
-        } finally {
-          commit("setLoading", false);
-        }
+        });
+      }catch (err){
+        console.error("Error in getPaginationArray: ", err);
+        commit("setError", "Error in getting paginated array in database");
+      }finally{
+        commit("setLoading", false)
+      }
     },
-
-
+  }, 
     async getPaginationDocs({commit}, payload){
         commit("setLoading", true);
         try{
@@ -59,9 +58,6 @@ export default {
             commit("setLoading", false);
         }
     }
-
-
-
 
     // /**
     //  * This generic action creates a new object, calling the API's function  {@link createObject},
@@ -133,9 +129,20 @@ export default {
     //  * passing the object's data
     //  * 
     //  * @action getObject
-    //  * @param {object} payload -  object identificatio
+    //  * @param {object} payload -  object identification
     //  * @returns object - object data found
     //  */
+    // versão atualizada 
+    // async getObject ({commit}, payload){
+    //   try{
+    //     return await new Controller().read("test", "id", payload);
+    //   } catch (err) {
+    //       console.error('Error in getObject:', err),
+    //         commit("setError", "Error getting object from database");
+    //     } finally {
+    //         commit("setLoading", false);
+    //     }
+    //},
     // async getObject({ commit }, payload) {
     //   try {
     //     var doc = await api.database.getObject(payload);
@@ -300,7 +307,7 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action removes user authantication , calling the API function {@link deleteUserByID},
+    //  * This generic action removes user authentication , calling the API function {@link deleteUserByID},
     //  * passing the object's data
     //  * 
     //  * @action removeUser
@@ -317,5 +324,4 @@ export default {
     //     commit("setLoading", false);
     //   }
     // },
-  },
-};
+  };
