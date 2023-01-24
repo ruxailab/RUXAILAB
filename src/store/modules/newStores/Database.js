@@ -1,5 +1,3 @@
-import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import Controller from "@/controllers/BaseController";
 
 /**
@@ -39,25 +37,6 @@ export default {
       }
     },
   }, 
-    async getPaginationDocs({commit}, payload){
-        commit("setLoading", true);
-        try{
-            const docRef = doc(db, payload);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-            } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-            }
-        } catch (err){
-            console.error("Error in getPaginationDocs:", err)
-            commit("setError", "Error getting paginated array in database");
-        } finally {
-            commit("setLoading", false);
-        }
-    }
 
     // /**
     //  * This generic action creates a new object, calling the API's function  {@link createObject},
