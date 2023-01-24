@@ -399,7 +399,7 @@ export default {
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getTest." + err)
             );
-
+            console.log(Test);
             commit("SET_TEST", Test);
         },
 

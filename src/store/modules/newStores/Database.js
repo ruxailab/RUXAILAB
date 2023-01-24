@@ -42,7 +42,9 @@ export default {
         },
         async getObject({ commit }, payload) {
             try {
-                return await new Controller().read("test", "id", payload);
+                let x = await new Controller().read("test", "id", payload);
+                console.log(x);
+                return x;
             } catch (err) {
                 console.error("Error in getObject:", err),
                     commit("setError", "Error getting object from database");
