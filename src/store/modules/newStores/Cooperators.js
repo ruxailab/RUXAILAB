@@ -3,7 +3,7 @@
  * @module cooperators
 */
 
-import template from "@/assets/Template.js"
+import template from "@/assets/template.js"
 
 export default {
   state: {
