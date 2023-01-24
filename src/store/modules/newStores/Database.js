@@ -6,42 +6,56 @@ import Controller from "@/controllers/BaseController";
  */
 
 export default {
-  state: {
-    loading: false
-  },
-  getters: {
-    loading(state) {
-      return state.loading
-    }
-  },
-  mutations: {
-    setLoading(state, payload) {
-      state.loading = payload;
-    }
-  },
-  actions: {
-
-    async getPaginationArray ({commit}, payload) {
-      try{
-          var objects = [];
-          await new Controller().read("users", "id", payload).then((response) => {
-            response.forEach((doc) => {
-            objects.push(doc.data());
-          });
-        });
-      }catch (err){
-        console.error("Error in getPaginationArray: ", err);
-        commit("setError", "Error in getting paginated array in database");
-      }finally{
-        commit("setLoading", false)
-      }
+    state: {
+        loading: false,
     },
-  }, 
+    getters: {
+        loading(state) {
+            return state.loading;
+        },
+    },
+    mutations: {
+        setLoading(state, payload) {
+            state.loading = payload;
+        },
+    },
+    actions: {
+        async getPaginationArray({ commit }, payload) {
+            try {
+                var objects = [];
+                await new Controller()
+                    .read("users", "id", payload)
+                    .then((response) => {
+                        response.forEach((doc) => {
+                            objects.push(doc.data());
+                        });
+                    });
+            } catch (err) {
+                console.error("Error in getPaginationArray: ", err);
+                commit(
+                    "setError",
+                    "Error in getting paginated array in database"
+                );
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+        async getObject({ commit }, payload) {
+            try {
+                return await new Controller().read("test", "id", payload);
+            } catch (err) {
+                console.error("Error in getObject:", err),
+                    commit("setError", "Error getting object from database");
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+    },
 
     // /**
     //  * This generic action creates a new object, calling the API's function  {@link createObject},
     //  * passing the  object data
-    //  * 
+    //  *
     //  * @action createObject
     //  * @param {object} payload -  object data
     //  * @returns {object} docRef - created object
@@ -53,7 +67,7 @@ export default {
     //   } catch (err) {
     //     console.error("Error in createObject:", err)
     //     commit("setError", "Error creating object in database");
-        
+
     //   } finally {
     //     commit("setLoading", false);
     //   }
@@ -62,7 +76,7 @@ export default {
     //  * This generic action gets all object in collection,
     //  * calling the API function {@link getAllObjects},
     //  * passing the object's data
-    //  * 
+    //  *
     //  * @action getAllObjects
     //  * @param {object} payload - collection identification
     //  * @returns {object[]} snapshot - all objects in collection
@@ -87,9 +101,9 @@ export default {
     //  * This generic action deletes a object,
     //  * calling the API function {@link deleteObject },
     //  * passing the object's data
-    //  * 
+    //  *
     //  * @action deleteObject
-    //  * @param {object} payload - object identification 
+    //  * @param {object} payload - object identification
     //  * @returns {void}
     //  */
     // async deleteObject({ commit }, payload) {
@@ -103,15 +117,15 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action gets a single object from collection, 
-    //  * calling the API function {@link getObject}, 
+    //  * This generic action gets a single object from collection,
+    //  * calling the API function {@link getObject},
     //  * passing the object's data
-    //  * 
+    //  *
     //  * @action getObject
     //  * @param {object} payload -  object identification
     //  * @returns object - object data found
     //  */
-    // versão atualizada 
+    // versão atualizada
     // async getObject ({commit}, payload){
     //   try{
     //     return await new Controller().read("test", "id", payload);
@@ -137,9 +151,9 @@ export default {
     // /**
     //  * This generic action updates a single object from the collection,
     //  * calling the API function {@link updateObject}, passing the object's data
-    //  * 
+    //  *
     //  * @action updateObject
-    //  * @param {object} payload - updated object data 
+    //  * @param {object} payload - updated object data
     //  * @return {object} docRef - updated object
     //  */
     // async updateObject({ commit }, payload) {
@@ -154,9 +168,9 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action adds a new element to the collection's object array, 
+    //  * This generic action adds a new element to the collection's object array,
     //  * calling the API function {@link pushArray}, passing the object's data
-    //  * 
+    //  *
     //  * @action pushObject
     //  * @param {object} payload - data to identify the object and the new element
     //  * @returns {object} docRef - updated object with new element
@@ -173,9 +187,9 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action removes a element  the collection's object array, 
+    //  * This generic action removes a element  the collection's object array,
     //  * calling the API function {@link removeArray}, passing the object's data
-    //  * 
+    //  *
     //  * @action removeObject
     //  * @param {object} payload - data to identify the object and the element
     //  * @returns {object} docRef - updated object without the element
@@ -192,9 +206,9 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action updates all elements the collection's object array,  
+    //  * This generic action updates all elements the collection's object array,
     //  * calling the API function {@link updateArray}, passing the object's data
-    //  * 
+    //  *
     //  * @action updateArrayObject
     //  * @param {object} payload - data to identify the object and the element updated
     //  * @returns {object} docRef -updated object with updated  element
@@ -211,11 +225,11 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action updates a element 's field  the collection's object array,  
+    //  * This generic action updates a element 's field  the collection's object array,
     //  * calling the API function {@link updateArrayElement}, passing the object's data
-    //  * 
+    //  *
     //  * @action updateArrayElement
-    //  * @param {object} payload - data to identify the object, the element and field updated 
+    //  * @param {object} payload - data to identify the object, the element and field updated
     //  * @returns {object} docRef -updated object with updated  element
     //  */
     // async updateArrayElement({ commit }, payload) {
@@ -230,9 +244,9 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action updates a element the collection's object array,  
+    //  * This generic action updates a element the collection's object array,
     //  * calling the API function {@link updateArrayObject}, passing the object's data
-    //  * 
+    //  *
     //  * @action updateArrayElementObject
     //  * @param {object} payload - data to identify the object and the element updated
     //  * @returns {object} docRef -updated object with updated  element
@@ -250,11 +264,11 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action call a firebase function, 
+    //  * This generic action call a firebase function,
     //  * calling the API function {@link call}, passing the object's data
-    //  * 
+    //  *
     //  * @action callFunction
-    //  * @param {object} payload -  funciton parameters 
+    //  * @param {object} payload -  funciton parameters
     //  * @returns {void}
     //  */
     // async callFunction({ commit }, payload) {
@@ -268,9 +282,9 @@ export default {
     //   }
     // },
     // /**
-    //  * This generic action adds a new field in a object , 
+    //  * This generic action adds a new field in a object ,
     //  * calling the API function {@link setParam}, passing the object's data
-    //  * 
+    //  *
     //  * @action setParamInObject
     //  * @param {object} payload - new field data
     //  * @returns {void}
@@ -288,7 +302,7 @@ export default {
     // /**
     //  * This generic action removes user authentication , calling the API function {@link deleteUserByID},
     //  * passing the object's data
-    //  * 
+    //  *
     //  * @action removeUser
     //  * @param {object} user - user identification
     //  * @returns {void}
@@ -303,4 +317,4 @@ export default {
     //     commit("setLoading", false);
     //   }
     // },
-  };
+};
