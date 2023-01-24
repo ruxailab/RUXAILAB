@@ -17,6 +17,8 @@ export default class UserController extends Controller {
         return super.create("users", document, data).then((res) => {
             return res;
         });
+
+        
     }
 
     deleteUser(document) {
