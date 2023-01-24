@@ -17,11 +17,17 @@ export default {
     getters: {
         Templates(state) {
             return state.Templates
+        },
+        paginatedTemps(state) {
+            return state.paginatedTemps
         }
     },
     mutations: {
         SET_TEMPLATES(state, payload) {
             state.Templates = payload
+        },
+        SET_PAGINATED_TEMPS(state, payload) {
+            state.paginatedTemps = payload;
         }
     },
     actions: {
@@ -370,11 +376,11 @@ export default {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: "templates" });
-
+            console.log(payload)
             let temps = await dispatch("getPaginationArray", payload)
                 .catch((err) => commit("setError", "Error in getPaginationTemplates." + err));
-            
-            commit("setPaginatedTemps", temps);
+            console.log("Temps: ", temps)
+            commit("SET_PAGINATED_TEMPS", temps);
         }
     }
 }
