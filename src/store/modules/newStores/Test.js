@@ -390,6 +390,18 @@ export default {
          * @param {object} payload - empty object
          * @returns {void}
          */
+
+        async getTest({ commit, dispatch }, payload) {
+            commit("setLoading", true);
+            payload = Object.assign(payload, { collection: "test" });
+
+            var test = await dispatch("getObject", payload).catch((err) =>
+                commit("setError", "Error in getTest." + err)
+            );
+
+            commit("setTest", test);
+        },
+
         async getAllTest({ commit, dispatch }, payload) {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "Tests" });
