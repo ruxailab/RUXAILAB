@@ -684,6 +684,12 @@ export default {
             return 1; //default to 1 -> Guest
         },
     },
+
+    mutations: {
+        setTest(test) {
+            console.log(test);
+        },
+    },
     watch: {
         user() {
             if (this.user) {
@@ -739,8 +745,6 @@ export default {
     },
     async created() {
         console.log(this.$route);
-        console.log("puta");
-
         await this.$store.dispatch("getTest", { id: this.$route.params.id });
     },
 };
