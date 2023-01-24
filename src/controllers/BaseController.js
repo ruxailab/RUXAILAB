@@ -24,11 +24,20 @@ export default class Controller {
     //model to define in Controller
 
     async read(path, parameter, condition) {
+        console.log(
+            "path: ",
+            path,
+            "parameter: ",
+            parameter,
+            "condition: " + condition
+        );
+        console.log(condition);
         const q = query(
             collection(db, path),
             where(parameter, "==", condition)
         );
         const querySnapshot = await getDocs(q);
+        console.log(querySnapshot);
         const res = [];
         querySnapshot.forEach((doc) => {
             res.push(doc.data());
