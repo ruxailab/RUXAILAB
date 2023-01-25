@@ -372,15 +372,27 @@ export default {
             }
         },
 
-        async getPaginationTemplates({ dispatch, commit }, payload) {
+        async getPaginationTemplates({  commit }) {
             commit("setLoading", true);
+            try{
+                await TemplateCont.getAllObjectTemplate().then((response) => {
+                    commit("SET_PAGINATED_TEMPS", response)
+                })
+            } catch (err) {
+                commit('setError', true)
+                console.error("Error in getPaginationTemplates: ", err);
+            } finally {
+                commit("setLoading", false);
+            }
 
-            payload = Object.assign(payload, { collection: "templates" });
-            console.log(payload)
-            let temps = await dispatch("getPaginationArray", payload)
-                .catch((err) => commit("setError", "Error in getPaginationTemplates." + err));
-            console.log("Temps: ", temps)
-            commit("SET_PAGINATED_TEMPS", temps);
+            // payload = Object.assign(payload, { collection: "templates" });
+            // console.log(payload)
+            // let temps = await dispatch("getPaginationArray", payload)
+            //     .catch((err) => commit("setError", "Error in getPaginationTemplates." + err));
+            // console.log("Temps: ", temps)
+            // commit("SET_PAGINATED_TEMPS", temps);
         }
+
+
     }
 }
