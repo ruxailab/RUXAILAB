@@ -61,144 +61,7 @@
         </v-dialog>
 
         <v-row class="nav pa-0 ma-0" dense v-if="test">
-            <v-navigation-drawer
-                clipped
-                v-model="drawer"
-                :mini-variant="mini"
-                permanent
-                color="#3F3D56"
-                class="hidden-sm-and-down"
-            >
-                <!-- Navigation header -->
-                <div class="header" v-if="!mini">
-                    <v-list-item>
-                        <v-row dense>
-                            <v-col class="pa-0 ma-0">
-                                <div class="idText">{{ test.id }}</div>
-                                <v-overflow-btn
-                                    class="pa-0 ma-0"
-                                    dark
-                                    dense
-                                    v-model="selectedTest"
-                                    @change="pushToTest()"
-                                    item-value="id"
-                                    item-text="title"
-                                    :items="testsList"
-                                    :label="test.title"
-                                    background-color="#343344"
-                                    style="max-width: 240px"
-                                ></v-overflow-btn>
-                            </v-col>
-                        </v-row>
-                    </v-list-item>
-                </div>
-
-                <!-- Navigation options -->
-                <v-list flat dense v-if="items">
-                    <div v-if="mini">
-                        <v-tooltip right v-for="(item, n) in items" :key="n">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-list-item
-                                    @click="(index = n), go(item)"
-                                    v-bind="attrs"
-                                    v-on="on"
-                                >
-                                    <v-list-item-icon>
-                                        <v-icon
-                                            :color="
-                                                index == item.id
-                                                    ? '#fca326'
-                                                    : '#bababa'
-                                            "
-                                            >{{ item.icon }}</v-icon
-                                        >
-                                    </v-list-item-icon>
-
-                                    <v-list-item-content>
-                                        <v-list-item-title
-                                            :style="
-                                                index == item.id
-                                                    ? 'color: #fca326'
-                                                    : 'color:#bababa'
-                                            "
-                                            >{{ item.title }}</v-list-item-title
-                                        >
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </template>
-                            <span>{{ item.title }}</span>
-                        </v-tooltip>
-                    </div>
-
-                    <div v-else>
-                        <v-list-item
-                            v-for="(item, n) in items"
-                            :key="n"
-                            @click="(index = n), go(item)"
-                        >
-                            <v-list-item-icon>
-                                <v-icon
-                                    :color="
-                                        index == item.id ? '#fca326' : '#bababa'
-                                    "
-                                    >{{ item.icon }}</v-icon
-                                >
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
-                                <v-list-item-title
-                                    :style="
-                                        index == item.id
-                                            ? 'color: #fca326'
-                                            : 'color:#bababa'
-                                    "
-                                    >{{ item.title }}</v-list-item-title
-                                >
-                            </v-list-item-content>
-                        </v-list-item>
-                    </div>
-                </v-list>
-
-                <!-- Navigation footer -->
-                <div class="footer" v-if="!mini">
-                    <v-btn
-                        icon
-                        @click="go(`/settingsview/${test.id}`)"
-                        class="ml-3"
-                        v-if="accessLevel == 0"
-                    >
-                        <v-icon :color="isSettings ? '#fca326' : 'white'"
-                            >mdi-cog</v-icon
-                        >
-                    </v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click.stop="mini = !mini" class="mr-2">
-                        <v-icon color="white">mdi-chevron-left</v-icon>
-                    </v-btn>
-                </div>
-
-                <div
-                    class="footer"
-                    :style="accessLevel == 0 ? 'height:16%' : ''"
-                    v-else
-                >
-                    <v-col>
-                        <v-btn
-                            icon
-                            @click="go(`/settingsview/${test.id}`)"
-                            v-if="accessLevel == 0"
-                        >
-                            <v-icon :color="isSettings ? '#fca326' : 'white'"
-                                >mdi-cog</v-icon
-                            >
-                        </v-btn>
-                        <v-btn icon @click.stop="mini = !mini" class="mt-2">
-                            <v-icon color="white">mdi-chevron-right</v-icon>
-                        </v-btn>
-                    </v-col>
-                </div>
-            </v-navigation-drawer>
-
+            <drawer :props="[accessLevel]"></drawer>
             <!-- View -->
             <v-col class="background pa-0 ma-0">
                 <div v-if="this.$route.path.includes('manager')">
@@ -366,11 +229,13 @@
 <script>
 import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
+import Drawer from "@/components/atoms/Drawer.vue";
 
 export default {
     components: {
         CardSignIn,
         CardSignUp,
+        Drawer,
     },
     data: () => ({
         selected: true,
@@ -378,9 +243,9 @@ export default {
         flagToken: false,
         flagNewUser: false,
         logined: false,
-        drawer: true,
+
         tests: [],
-        mini: true,
+
         isCoops: null,
         selectedTest: null,
         item: 0,
@@ -493,10 +358,6 @@ export default {
         },
     },
     computed: {
-        testsList() {
-            if (!this.isCoops) return this.$store.getters.user.myTests;
-            else return this.$store.getters.user.myCoops;
-        },
         test() {
             // let search = this.selectedTest || this.id;
 
@@ -510,23 +371,7 @@ export default {
 
             return this.$store.getters.Test;
         },
-        // index: {
-        //     get() {
-        //         if (this.items) {
-        //             return this.items.indexOf(
-        //                 this.items.find((item) =>
-        //                     item.path
-        //                         .split("/")
-        //                         .includes(this.$route.path.split("/")[1])
-        //                 )
-        //             );
-        //         }
-        //         return 0;
-        //     },
-        //     set(item) {
-        //         return item;
-        //     },
-        // },
+
         items() {
             let items;
             if (this.test) {
