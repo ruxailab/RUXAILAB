@@ -391,17 +391,28 @@ export default {
          * @returns {void}
          */
 
-        async getTest({ commit, dispatch }, payload) {
-            console.log("getTest");
+        async getTest({ commit }) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
+            try{
+                await TestCont.getAllObjectTest().then((response) => {
+                    commit("SET_TEST", response);
+                })
+            } catch (err) {
+                commit('setError', true)
+                console.error("Error in getTest: ", err);
+            } finally {
+                commit("setLoading", false);
+            }
 
-            let test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getTest." + err)
-            );
-            console.log("puta");
-            console.log(test);
-            commit("SET_TEST", test);
+
+            // payload = Object.assign(payload, { collection: "test" });
+
+            // let test = await dispatch("getObject", payload).catch((err) =>
+            //     commit("setError", "Error in getTest." + err)
+            // );
+            // console.log("puta");
+            // console.log(test);
+            // commit("SET_TEST", test);
         },
 
         async getAllTest({ commit, dispatch }, payload) {

@@ -372,7 +372,7 @@ export default {
             }
         },
 
-        async getPaginationTemplates({  commit }) {
+        async getPaginationTemplates({ commit }) {
             commit("setLoading", true);
             try{
                 await TemplateCont.getAllObjectTemplate().then((response) => {
