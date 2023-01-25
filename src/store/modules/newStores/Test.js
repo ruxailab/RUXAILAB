@@ -396,11 +396,12 @@ export default {
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "test" });
 
-            var Test = await dispatch("getObject", payload).catch((err) =>
+            let test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getTest." + err)
             );
-            console.log(Test);
-            commit("SET_TEST", Test);
+            console.log("puta");
+            console.log(test);
+            commit("SET_TEST", test);
         },
 
         async getAllTest({ commit, dispatch }, payload) {

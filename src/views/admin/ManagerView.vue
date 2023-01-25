@@ -498,35 +498,35 @@ export default {
             else return this.$store.getters.user.myCoops;
         },
         test() {
-            let search = this.selectedTest || this.id;
+            // let search = this.selectedTest || this.id;
 
-            if (this.user && !this.flagToken) {
-                if (this.user.myTests.find((mt) => mt.id == search)) {
-                    this.setIsCoops(false);
-                } else {
-                    this.setIsCoops(true);
-                }
-            }
+            // if (this.user && !this.flagToken) {
+            //     if (this.user.myTests.find((mt) => mt.id == search)) {
+            //         this.setIsCoops(false);
+            //     } else {
+            //         this.setIsCoops(true);
+            //     }
+            // }
 
-            return this.$store.getters.test;
+            return this.$store.getters.Test;
         },
-        index: {
-            get() {
-                if (this.items) {
-                    return this.items.indexOf(
-                        this.items.find((item) =>
-                            item.path
-                                .split("/")
-                                .includes(this.$route.path.split("/")[1])
-                        )
-                    );
-                }
-                return 0;
-            },
-            set(item) {
-                return item;
-            },
-        },
+        // index: {
+        //     get() {
+        //         if (this.items) {
+        //             return this.items.indexOf(
+        //                 this.items.find((item) =>
+        //                     item.path
+        //                         .split("/")
+        //                         .includes(this.$route.path.split("/")[1])
+        //                 )
+        //             );
+        //         }
+        //         return 0;
+        //     },
+        //     set(item) {
+        //         return item;
+        //     },
+        // },
         items() {
             let items;
             if (this.test) {
@@ -673,23 +673,18 @@ export default {
         },
         accessLevel() {
             // if user is superadmin grant full access
-            if (this.user?.accessLevel == 0) return 0;
+            // if (this.user?.accessLevel == 0) return 0;
 
-            let id = this.selectedTest || this.test?.id;
-            if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
+            // let id = this.selectedTest || this.test?.id;
+            // if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
-            let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
-            if (myCoop) return myCoop.accessLevel;
+            // let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
+            // if (myCoop) return myCoop.accessLevel;
 
             return 1; //default to 1 -> Guest
         },
     },
 
-    mutations: {
-        setTest(test) {
-            console.log(test);
-        },
-    },
     watch: {
         user() {
             if (this.user) {
