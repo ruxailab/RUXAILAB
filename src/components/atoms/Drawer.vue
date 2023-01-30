@@ -135,6 +135,7 @@ export default {
     data: () => ({
         drawer: true,
         mini: true,
+        selectedTest: null,
     }),
     methods: {
         go(item) {
