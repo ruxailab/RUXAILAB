@@ -11,12 +11,12 @@ const TemplateCont = new TemplateController()
 
 export default {
     state: {
-        Templates: null,
-        module: 'Templates'
+        templates: null,
+        module: 'templates'
     },
     getters: {
-        Templates(state) {
-            return state.Templates
+        templates(state) {
+            return state.templates
         },
         paginatedTemps(state) {
             return state.paginatedTemps
@@ -24,7 +24,7 @@ export default {
     },
     mutations: {
         SET_TEMPLATES(state, payload) {
-            state.Templates = payload
+            state.templates = payload
         },
         SET_PAGINATED_TEMPS(state, payload) {
             state.paginatedTemps = payload;
@@ -58,7 +58,7 @@ export default {
         async createTemplate({ dispatch, commit }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: 'Templates' });
+            payload = Object.assign(payload, { collection: 'templates' });
 
             let docRef = dispatch('createObject', payload)
                 .then((doc) => {
@@ -182,7 +182,7 @@ export default {
 
         async getObjectTemplate({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'Templates' });
+            payload = Object.assign(payload, { collection: 'templates' });
 
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
@@ -205,7 +205,7 @@ export default {
 
         async getObjectTemplateAuthor({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'Templates' });
+            payload = Object.assign(payload, { collection: 'templates' });
 
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
@@ -228,7 +228,7 @@ export default {
 
         async getObjectTemplateBody({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'Templates' });
+            payload = Object.assign(payload, { collection: 'templates' });
 
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
@@ -251,7 +251,7 @@ export default {
 
         async getObjectTemplateHeader({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: 'Templates' });
+            payload = Object.assign(payload, { collection: 'templates' });
 
             let Template = await dispatch("getObject", payload)
                 .catch((err) => commit("setError", "Error in getTemplate." + err));
@@ -282,7 +282,7 @@ export default {
 
         async getAllTemplate({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'Templates' });
+            let payload = Object.assign({}, { collection: 'templates' });
 
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
@@ -305,7 +305,7 @@ export default {
 
         async getAllTemplateAuthor({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'Templates' });
+            let payload = Object.assign({}, { collection: 'templates' });
 
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
@@ -328,7 +328,7 @@ export default {
 
         async getAllTemplateBody({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'Templates' });
+            let payload = Object.assign({}, { collection: 'templates' });
 
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));
@@ -351,7 +351,7 @@ export default {
 
         async getAllTemplateHeader({ commit, dispatch }) {
             commit("setLoading", true);
-            let payload = Object.assign({}, { collection: 'Templates' });
+            let payload = Object.assign({}, { collection: 'templates' });
 
             let Templates = await dispatch("getAllObjects", payload)
                 .catch((err) => commit("setError", "Error in getTemplates." + err));

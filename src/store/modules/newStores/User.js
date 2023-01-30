@@ -10,27 +10,27 @@ const UserCont = new UserController();
 
 export default {
     state: {
-        Users: null,
-        module: "Users",
+        users: null,
+        module: "users",
     },
     getters: {
         /**
-         * @name Getters
+         * @name getters
          * @type {object}
          * @getter {object[]} Admins=Users Returns a user array with Users whose access level is 1
          */
-        Admins(state) {
-            return state.Users.filter((item) => {
+        admins(state) {
+            return state.users.filter((item) => {
                 return item.accessLevel == 1;
             });
         },
-        Users(state) {
-            return state.Users;
+        users(state) {
+            return state.users;
         },
     },
     mutations: {
         SET_USERS(state, payload) {
-            state.Users = payload;
+            state.users = payload;
         },
     },
     actions: {
