@@ -399,8 +399,6 @@ export default {
             let test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getTest." + err)
             );
-            console.log("puta");
-            console.log(test);
             commit("SET_TEST", test);
         },
 

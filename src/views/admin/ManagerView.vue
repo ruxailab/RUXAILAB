@@ -88,7 +88,7 @@
                                     style="font-size: 22px"
                                     class="white--text mb-4 mobile-center"
                                 >
-                                    {{ test.title }}
+                                    {{ test.title }} + "Olá"
                                 </div>
                             </v-col>
                             <v-img
@@ -245,13 +245,13 @@ export default {
         logined: false,
 
         tests: [],
-
+        // test: { title: "Não está funcionando " },
+        test: {},
         isCoops: null,
 
         item: 0,
     }),
     methods: {
-
         go(item) {
             if (item.id == undefined) this.$router.push(item).catch(() => {});
             else {
@@ -354,15 +354,15 @@ export default {
     },
     computed: {
         test() {
-            // let search = this.selectedTest || this.id;
+            let search = this.selectedTest || this.id;
 
-            // if (this.user && !this.flagToken) {
-            //     if (this.user.myTests.find((mt) => mt.id == search)) {
-            //         this.setIsCoops(false);
-            //     } else {
-            //         this.setIsCoops(true);
-            //     }
-            // }
+            if (this.user && !this.flagToken) {
+                if (this.user.myTests.find((mt) => mt.id == search)) {
+                    this.setIsCoops(false);
+                } else {
+                    this.setIsCoops(true);
+                }
+            }
 
             return this.$store.getters.Test;
         },
