@@ -24,25 +24,25 @@ export default class Controller {
     //model to define in Controller
 
     async read(path, parameter, condition) {
-        console.log(
-            "path: ",
-            path,
-            "parameter: ",
-            parameter,
-            "condition: " + condition
-        );
-        console.log(condition);
+        // console.log(
+        //     "path: ",
+        //     path,
+        //     "parameter: ",
+        //     parameter,
+        //     "condition: " + condition
+        // );
+        // console.log(condition);
         const q = query(
             collection(db, path),
             where(parameter, "==", condition)
         );
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot);
+        //console.log(querySnapshot);
         const res = [];
         querySnapshot.forEach((doc) => {
             res.push(doc.data());
         });
-        console.log("CONTROLLER RESPONSE ====>>>>", res);
+        //console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
     }
 
@@ -55,7 +55,7 @@ export default class Controller {
     async getById(path) {
         // return getDoc(doc(db, ...path));
         const docRef = doc(db, path[0], path[1]);
-        console.log(docRef);
+        //console.log(docRef);
         return getDoc(docRef);
     }
 
@@ -66,7 +66,7 @@ export default class Controller {
         querySnapshot.forEach((doc) => {
             res.push(doc.data());
         });
-        console.log("CONTROLLER RESPONSE ====>>>>", res);
+        //console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
     }
 

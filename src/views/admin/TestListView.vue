@@ -411,6 +411,7 @@ export default {
       return this.$store.getters.templates || [];
     },
     myTempsHeaders() {
+      console.log("MyTemps: ", this.user.myTemps)
       return this.user.myTemps.map((temp) => {
         return {
           header: temp,

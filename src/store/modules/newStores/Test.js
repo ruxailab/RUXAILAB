@@ -12,31 +12,31 @@ export default {
     state: {
         Test: null,
         Tests: null,
-        module: "Tests",
+        module: "tests",
     },
     getters: {
-        Tests(state) {
-            return state.Tests;
+        tests(state) {
+            return state.tests;
         },
-        Test(state) {
-            return state.Test;
+        test(state) {
+            return state.test;
         },
-        Tasks(state) {
-            return state.Test.Tasks;
+        tasks(state) {
+            return state.test.tasks;
         },
-        HeuristicsTest(state) {
-            return state.Test.HeuristicsTest;
+        heuristicsTest(state) {
+            return state.test.heuristicsTest;
         },
-        Coops(state) {
-            return state.Test.coop;
+        coops(state) {
+            return state.test.coop;
         },
     },
     mutations: {
         SET_TEST(state, payload) {
-            state.Test = payload;
+            state.test = payload;
         },
         SET_TESTS(state, payload) {
-            state.Tests = payload;
+            state.tests = payload;
         },
     },
     actions: {
@@ -73,7 +73,7 @@ export default {
         async createNewTest({ dispatch, commit }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             let docRef = dispatch("createObject", payload)
                 .then((doc) => {
@@ -139,7 +139,7 @@ export default {
             let Coops = this.state.cooperators.cooperators;
 
             //delete Test from user
-            payload = Object.assign(payload, { collection: "Tests" }); //Delete Test from Tests' Collection
+            payload = Object.assign(payload, { collection: "tests" }); //Delete Test from Tests' Collection
 
             dispatch("deleteObject", payload)
                 .then(() => {
@@ -237,7 +237,7 @@ export default {
         async updateTest({ dispatch, commit }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             dispatch("updateObject", payload).catch((err) =>
                 commit("setError", "Error in updateTest." + err)
@@ -267,7 +267,7 @@ export default {
         async getObjectTest({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getObjectTest." + err)
@@ -290,7 +290,7 @@ export default {
         async getObjectTestAdmin({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getObjectTestAdmin." + err)
@@ -313,7 +313,7 @@ export default {
         async getObjectTestStructure({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getObjectTestStructure." + err)
@@ -336,7 +336,7 @@ export default {
         async getObjectTestStructureOptions({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit(
@@ -362,7 +362,7 @@ export default {
         async getObjectTestTemplateDoc({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
 
             var Test = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getObjectTestTemplateDoc." + err)
@@ -391,20 +391,33 @@ export default {
          * @returns {void}
          */
 
-        async getTest({ commit, dispatch }, payload) {
-            console.log("getTest");
+        async getTest({ commit }) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
+            try{
+                await TestCont.getAllObjectTest().then((response) => {
+                    commit("SET_TEST", response);
+                })
+            } catch (err) {
+                commit('setError', true)
+                console.error("Error in getTest: ", err);
+            } finally {
+                commit("setLoading", false);
+            }
 
-            let test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getTest." + err)
-            );
-            commit("SET_TEST", test);
+
+            // payload = Object.assign(payload, { collection: "test" });
+
+            // let test = await dispatch("getObject", payload).catch((err) =>
+            //     commit("setError", "Error in getTest." + err)
+            // );
+            // console.log("puta");
+            // console.log(test);
+            // commit("SET_TEST", test);
         },
 
         async getAllTest({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
             var Test = await dispatch("getAllObjects", payload).catch((err) =>
                 commit("setError", "Error in getAllTest." + err)
             );
@@ -424,7 +437,7 @@ export default {
 
         async getAllTestAdmin({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
             var Test = await dispatch("getAllObjects", payload).catch((err) =>
                 commit("setError", "Error in getAllTestAdmin." + err)
             );
@@ -444,7 +457,7 @@ export default {
 
         async getAllTestStructure({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
             var Test = await dispatch("getAllObjects", payload).catch((err) =>
                 commit("setError", "Error in getAllTestStructure." + err)
             );
@@ -464,7 +477,7 @@ export default {
 
         async getAllTestStructureOptions({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
             var Test = await dispatch("getAllObjects", payload).catch((err) =>
                 commit("setError", "Error in getAllTestStructureOptions." + err)
             );
@@ -484,7 +497,7 @@ export default {
 
         async getAllTestTemplateDoc({ commit, dispatch }, payload) {
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
+            payload = Object.assign(payload, { collection: "tests" });
             var Test = await dispatch("getAllObjects", payload).catch((err) =>
                 commit("setError", "Error in getAllTestTemplateDoc." + err)
             );
