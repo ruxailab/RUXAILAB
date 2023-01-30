@@ -135,8 +135,15 @@ export default {
     data: () => ({
         drawer: true,
         mini: true,
+        selectedTest: null,
     }),
     methods: {
+        pushToTest() {
+            this.$router
+                .push("/managerview/" + this.selectedTest)
+                .catch(() => {});
+            this.index = 0;
+        },
         go(item) {
             if (item.id == undefined) this.$router.push(item).catch(() => {});
             else {
