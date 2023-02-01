@@ -269,12 +269,10 @@ export default {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: "Tests" });
-            console.log("merda");
             //Connect to controllers
             try {
                 const res = await TestCont.getTest(payload);
                 console.log(res);
-                console.log("bu");
                 commit("SET_TEST", res);
             } catch {
                 console.log("Error in getObjectTest");
