@@ -42,7 +42,7 @@ export default {
         },
         async getObject({ commit }, payload) {
             try {
-                console.log("puta puta");
+
                 console.log(payload);
                 let x = await new Controller().read(
                     payload.collection,
