@@ -32,7 +32,7 @@
                     <v-list-item-content>
                         <!-- Title -->
                         <v-list-item-title v-if="type === 'template'">
-                            <!-- {{ item.testTitle }} -->
+                            <!-- {{ item.testType }} -->
                             <v-chip
                                 outlined
                                 style="color: grey"
@@ -51,7 +51,7 @@
                                 style="color: grey"
                                 small
                                 class="ml-1"
-                                >{{ item.type }}</v-chip
+                                >{{ item.testType }}</v-chip
                             >
                         </v-list-item-title>
 
