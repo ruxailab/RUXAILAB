@@ -282,6 +282,18 @@ export default {
             }
         },
 
+        async getAnswers({ dispatch, commit }, payload) {
+            console.log("getAnswers");
+            commit("setLoading", true);
+            payload = Object.assign(payload, { collection: "answers" });
+
+            let ans = await dispatch("getObject", payload).catch((err) =>
+                commit("setError", "Error in getAnswers." + err)
+            );
+
+            commit("setAnswers", ans);
+        },
+
         async getObjectTestAdmin({ commit, dispatch }, payload) {
             commit("setLoading", true);
 
