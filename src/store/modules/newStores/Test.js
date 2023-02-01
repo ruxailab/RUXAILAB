@@ -4,8 +4,8 @@
  */
 
 //import TestController
-import TestController from "@/controllers/TestController.js"
-import HeuristicTest from "@/models/HeuristicTest.model.js"
+import TestController from "@/controllers/TestController.js";
+import HeuristicTest from "@/models/HeuristicTest.model.js";
 
 const TestCont = new TestController();
 
@@ -71,27 +71,29 @@ export default {
          * @returns {string} docRef - the Test's identification
          */
 
-        async createNewTest({commit }, payload) {
+        async createNewTest({ commit }, payload) {
             commit("setLoading", true);
-            console.log('puta')
-            console.log(payload)
-            let ob= {'testTitle': payload.data.title, 'testDescription': payload.data.description}
+            console.log(payload);
+            let ob = {
+                testTitle: payload.data.title,
+                testDescription: payload.data.description,
+            };
 
-            let heuristicTest = new HeuristicTest(ob)
-            console.log(heuristicTest)
+            let heuristicTest = new HeuristicTest(ob);
+            console.log(heuristicTest);
             //payload = Object.assign(payload, { collection: "Tests" });
             try {
-               await TestCont.createTest(payload.collection, heuristicTest.toFirestore())
-                    .then((res) => {
-                        console.log(res)
-                    commit("SET_TESTS", res) 
-                })
-            }
-            catch(err){
-                console.log('erro')
-                commit("setError", true)
-            }
-            finally{
+                await TestCont.createTest(
+                    payload.collection,
+                    heuristicTest.toFirestore()
+                ).then((res) => {
+                    console.log(res);
+                    commit("SET_TESTS", res);
+                });
+            } catch (err) {
+                console.log("erro");
+                commit("setError", true);
+            } finally {
                 commit("setLoading", false);
             }
         },
@@ -267,12 +269,12 @@ export default {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: "Tests" });
-            console.log('merda')
+            console.log("merda");
             //Connect to controllers
             try {
                 const res = await TestCont.getTest(payload);
-                console.log(res)
-                console.log('bu')
+                console.log(res);
+                console.log("bu");
                 commit("SET_TEST", res);
             } catch {
                 console.log("Error in getObjectTest");
@@ -377,16 +379,13 @@ export default {
             }
         },
 
-
-
         async getAllTest({ commit }) {
-            console.log('gettingtests')
+            console.log("gettingtests");
             commit("setLoading", true);
 
             //Connect to controllers
             try {
                 const res = await TestCont.getAllObjectTest();
-                console.log('puta')
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in getAllTest");
