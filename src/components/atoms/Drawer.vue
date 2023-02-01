@@ -7,6 +7,7 @@
         color="#3F3D56"
         class="hidden-sm-and-down"
     >
+        <!-- {{ test }} -->
         <!-- Navigation header -->
         <div class="header" v-if="!mini">
             <v-list-item>
@@ -22,7 +23,7 @@
                             item-value="id"
                             item-text="title"
                             :items="testsList"
-                            :label="test.title"
+                            :label="test.testTitle"
                             background-color="#343344"
                             style="max-width: 240px"
                         ></v-overflow-btn>
@@ -148,6 +149,7 @@ export default {
     },
     computed: {
         test() {
+            // console.log("TEST---> " + this.$store.state.Tests.Test);
             return this.$store.state.Tests.Test;
         },
         testsList() {
