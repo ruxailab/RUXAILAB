@@ -94,20 +94,25 @@ export default {
       this.$router.push("/fromtemplate");
     },
     async submit() {
-      await this.testAssembly(); // build Test
+      //await this.testAssembly(); // build Test
       let d = new Date();
-      let object = this.object;
+      //let heuristicTest = new HeuristicTest()
+      //let object = this.object;
+      console.log(this.test)
       let successful = true;
       //Send db
+      console.log('ai')
       await this.$store
-        .dispatch("createTest", {
-          collection: "test",
-          data: Object.assign(object, { date: d.toDateString() }),
+        .dispatch("createNewTest", {
+          collection: "tests",
+          data: Object.assign(this.test, { date: d.toDateString() }),
         })
         .then((id) => {
-          this.testID = id;
-          this.$store
-            .dispatch("createAnswers", {
+          console.log('putaputa')
+          console.log(id)
+          //this.testID = id;
+          /*
+          this.$store.dispatch("createAnswers", {
               data: {
                 test: {
                   id: id,
@@ -117,7 +122,7 @@ export default {
                 answers: [],
                 answersSheet: object.answersSheet,
               },
-            })
+            })/*
             .then((idAnswers) => {
               this.$store.dispatch("setAnswerID", {
                 docId: id,
@@ -173,15 +178,18 @@ export default {
                       });
                     });
                 });
-            });
+            });*/
         })
         .catch((err) => {
           console.error("Error", err);
           successful = false;
         });
+        console.log('aiai')
       console.log(this.object.type);
       if (successful) this.sendManager(this.testID);
     },
+    //TODO: TAKE CARE; THIS IS HORRIBLE!
+    /*
     testAssembly() {
       //Make object test
       //Assigning admin info
@@ -235,6 +243,7 @@ export default {
         this.object = Object.assign(this.object, { options: [] });
       }
     },
+    */
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
     },

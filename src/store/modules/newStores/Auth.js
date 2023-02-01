@@ -68,11 +68,13 @@ export default {
         },
 
         async signin({ commit }, payload){
+            console.log(payload, commit)
             commit("setLoading", true);
             try{
                 const response = await signInWithEmailAndPassword(auth, payload.email, payload.password)
                 if (response) {
-                    commit('SET_USER', response.user)
+                    const dbUser = await new UserController().getById(response.user.uid)
+                    commit('SET_USER', dbUser)
                 } else {
                     throw new Error('Login failed')
                 }
@@ -99,11 +101,13 @@ export default {
         async autoSignIn({ commit }) {
             var user = auth.currentUser;
             if (user) {
-                await new UserController()
-                    .read("users", "email", user.email)
-                    .then((response) => {
-                        commit("SET_USER", response[0]);
-                    });
+                try {
+                    const dbUser = await new UserController().getById(user.uid)
+                    commit('SET_USER', dbUser)
+                } catch(e) {
+                    console.error(e)
+                }
+
             }
         },
 
