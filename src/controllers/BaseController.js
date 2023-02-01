@@ -1,9 +1,9 @@
 import { db } from "@/firebase";
 import {
     doc,
-    setDoc,
     updateDoc,
     getDoc,
+    addDoc,
     query,
     where,
     getDocs,
@@ -16,14 +16,18 @@ export default class Controller {
 
     // path - collection
     // data - document to insert (object)
+    async create(col, payload) {
+        return addDoc(collection(db, col), payload)
+      }
 
-    async create(path, document, data) {
-        await setDoc(doc(db, path, document), data);
-    }
+    async readOne(col, docId) {
+        const ref = doc(db, `${col}/${docId}`)
+        return getDoc(ref)
+      }
 
     //model to define in Controller
-
     async read(path, parameter, condition) {
+        /*
         console.log(
             "path: ",
             path,
@@ -32,6 +36,7 @@ export default class Controller {
             "condition: " + condition
         );
         console.log(condition);
+        */
         const q = query(
             collection(db, path),
             where(parameter, "==", condition)
@@ -64,7 +69,8 @@ export default class Controller {
         const querySnapshot = await getDocs(q);
         const res = [];
         querySnapshot.forEach((doc) => {
-            res.push(doc.data());
+            console.log('stop')
+            res.push(Object.assign(doc.data(),{id: doc.id}));
         });
         console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;

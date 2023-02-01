@@ -979,9 +979,12 @@ export default {
   async created() {
     if (!this.$store.test) {
       await this.$store.dispatch("getTest", { id: this.id });
+      //TODO: WTF?
+      /*
       await this.$store.dispatch("getCooperators", {
         id: this.test.cooperators,
       });
+      */
     }
   },
   beforeRouteEnter(to, from, next) {

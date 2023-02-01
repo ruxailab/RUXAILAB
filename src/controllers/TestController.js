@@ -7,14 +7,15 @@ import TestStructureOptions from "@/models/TestStructureOptions";
 import TestTemplateDoc from "@/models/TestTemplateDoc";
 
 import Controller from '@/controllers/BaseController'
-
+const COLLECTION = 'tests'
 export default class TestController extends Controller{
   constructor() {
     super()
   }
 
-  createNewTest(document, data){
-    return super.create("test", document, data).then((res)=> {
+ async createTest(document, data){
+    console.log('merda')
+    return await super.create(document, data).then((res)=> {
       return res
     })
   }
@@ -34,14 +35,14 @@ export default class TestController extends Controller{
   //------------------GET OBJECTS - ID------------------
 
   //GetObject of Test
-  getObjectTest(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(Test.toTest)
-      console.log("TestController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestController error: ", err)
-    })  
+  async getTest(parameter){
+    console.log('oasundaosd')
+    const res =await super.readOne(COLLECTION, parameter.id)
+    if(!res.exists()) return null
+    console.log("TestController res: ", res)
+    console.log(Test.toTest(res))
+    return Test.toTest(res)
+  
   }
 
   //GetObject of TestAdmin
@@ -91,8 +92,9 @@ export default class TestController extends Controller{
   // ----------------GET ALL OBJECTS----------------
 
   //GetObject of Test
-  getAllObjectTest(){
-    return super.readAll("test").then((response) => {
+  async getAllObjectTest(){
+    return await super.readAll("tests").then((response) => {
+      console.log('aiii')
       let res = response.map(Test.toTest)
       console.log("TestController res: ", res)
       return res

@@ -14,21 +14,37 @@
 
 export default class Test{
     constructor({
-        testAdmin, testDescription, testTitle, testType, testStructure, answersDocId, cooperators, creationDate, updateDate, templateDoc
+        id, testAdmin, testDescription, testTitle, testType, testStructure, answersDocId, cooperators, creationDate, updateDate, templateDoc
     } = {}
     ) {
-        this.testAdmin = testAdmin;
-        this.testDescription = testDescription;
-        this.testTitle = testTitle;
-        this.testType = testType;
-        this.testStructure = testStructure;
-        this.answersDocId = answersDocId;
-        this.cooperators = cooperators;
-        this.creationDate = creationDate;
-        this.updateDate = updateDate;
-        this.templateDoc = templateDoc;
+        this.id = id ?? null;
+        this.testAdmin = testAdmin ?? null;
+        this.testDescription = testDescription ?? null;
+        this.testTitle = testTitle ?? null;
+        this.testType = testType ?? null;
+        this.testStructure = testStructure ?? null;
+        this.answersDocId = answersDocId ?? null;
+        this.cooperators = cooperators ?? null;
+        this.creationDate = creationDate ?? null;
+        this.updateDate = updateDate ?? null;
+        this.templateDoc = templateDoc ?? null;
     }
     static toTest(data) {
         return new Test(data)
+    }
+    toFirestore(){
+        return {
+          testTitle: this.testTitle,
+          testDescription: this.testDescription,
+          testAdmin : this.testAdmin,
+          testType : this.testType,
+          testStructure : this.testStructure,
+          answersDocId : this.answersDocId,
+          cooperators : this.cooperators,
+          creationDate : this.creationDate,
+          updateDate : this.updateDate,
+          templateDoc : this.templateDoc,
+
+        }
     }
 }

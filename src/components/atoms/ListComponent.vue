@@ -10,21 +10,22 @@
               tile
               :color="generateColor()"
               style="color: #545454"
-              >{{ item.header.title[0].toUpperCase() }}</v-avatar
+              ><!--{{ item.header.title[0].toUpperCase() }}-->
+              </v-avatar
             >
             <v-avatar
               v-else
               tile
               :color="generateColor()"
               style="color: #545454"
-              >{{ item.title[0].toUpperCase() }}</v-avatar
+              ><!--{{ item.title[0].toUpperCase() }}--></v-avatar
             >
           </v-list-item-avatar>
 
           <v-list-item-content>
             <!-- Title -->
             <v-list-item-title v-if="type === 'template'">
-              {{ item.header.title }}
+              {{ item.testTitle }}
               <v-chip outlined style="color: grey" small class="ml-1">{{
                 item.header.type || item.body.type
               }}</v-chip>
@@ -43,17 +44,17 @@
               "
             >
               {{
-                item.author || item.header.author
+                item || item
                   ? `Created by ${
                       type === "template"
-                        ? item.header.author.email
-                        : item.author
+                        ? item
+                        : item
                     }`
                   : ""
               }}
             </v-list-item-subtitle>
             <v-list-item-subtitle v-else-if="type === 'myTests'">
-              {{ item.date ? `Last Updated on ${item.date}` : "-" }}
+              {{ item.updateDate ? `Last Updated on ${item.updateDate}` : "-" }}
             </v-list-item-subtitle>
 
             <div
@@ -100,11 +101,11 @@
                 (type === 'answers' ||
                   type === 'template' ||
                   type === 'myCoops') &&
-                  (item.date || item.header.date)
+                  (item || item.header.date)
               "
               >Last Updated on
               {{
-                type === "template" ? item.header.date : item.date
+                type === "template" ? item.updateDate : item
               }}</v-list-item-action-text
             >
             <v-list-item-action-text v-if="type === 'template'">

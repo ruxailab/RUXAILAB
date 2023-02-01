@@ -53,7 +53,7 @@ export default [
         component: SettingsView,
       },
       {
-        path: "/cooperatorsview/:id",
+        path: "/cooperators/:id",
         name: "Cooperators View",
         props: true,
         meta: { authorize: [0, 1] },
