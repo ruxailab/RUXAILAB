@@ -1,7 +1,7 @@
 <template>
   <v-container style="display: contents">
     <Snackbar />
-
+{{ allTests }}
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -57,8 +57,8 @@
             class="hidden-sm-and-down"
           >
             <v-tab>Tests</v-tab>
-            <v-tab>Answers</v-tab>
-            <v-tab>Templates</v-tab>
+            <!-- <v-tab>Answers</v-tab>-->
+             <!--<v-tab>Templates</v-tab>-->
 
             <v-spacer></v-spacer>
 
@@ -84,14 +84,15 @@
             v-if="mainIndex !== 2"
           >
             <v-tab>All</v-tab>
-            <v-tab>Personal</v-tab>
-            <v-tab>Others</v-tab>
+            <!-- <v-tab>Personal</v-tab>-->
+            <!-- <v-tab>Others</v-tab>-->
 
             <v-spacer></v-spacer>
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
-          <!-- Desktop Templates Sub tabs -->
+          
+          <!-- Desktop Templates Sub tabs
           <v-tabs
             v-model="subIndex"
             background-color="transparent"
@@ -105,7 +106,7 @@
             <v-spacer></v-spacer>
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
-
+ -->
           <!-- Mobile Main Button -->
           <v-select
             dense
@@ -136,60 +137,60 @@
           <!-- Tests -> All -->
           <List
             @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 0"
+          
             :items="filteredAllTests"
             type="myCoops"
           ></List>
 
-          <!-- Tests -> Personal -->
+          <!-- Tests -> Personal 
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 1"
             :items="filteredMyTests"
             type="myTests"
           ></List>
-
-          <!-- Tests -> Others -->
+-->
+          <!-- Tests -> Others 
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 2"
             :items="filteredMyCoops"
             type="myCoops"
           ></List>
-
-          <!-- Answers -> All -->
+-->
+          <!-- Answers -> All 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 0"
             :items="filteredMyAnswers"
             type="answers"
           ></List>
-
-          <!-- Answers -> Personal -->
+-->
+          <!-- Answers -> Personal 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 1"
             :items="filteredPersonalAnswers"
             type="answers"
           ></List>
-
-          <!-- Answers -> Ohters -->
+-->
+          <!-- Answers -> Ohters 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 2"
             :items="filteredOtherAnswers"
             type="answers"
           ></List>
-
-          <!-- Templates -> Personal -->
+-->
+          <!-- Templates -> Personal 
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 0"
             :items="filteredMyTemps"
             type="template"
           ></List>
-
-          <!-- Templates -> Explore -->
+-->
+          <!-- Templates -> Explore
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 1"
@@ -201,6 +202,7 @@
             @previousPage="previousPage()"
             :disablePrevious="disablePrevious"
           ></List>
+           -->
         </v-col>
       </v-row>
 
@@ -258,9 +260,12 @@ export default {
       this.$router.push("/createtest").catch(() => {});
     },
     goTo(test) {
+      console.log(this.$store.state)
+
+      console.log('goto')
       this.$router
         .push(
-          (test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
+          (this.$store.state.Auth.user.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
         )
         .catch(() => {});
     },
@@ -309,38 +314,21 @@ export default {
       return this.$store.getters.user;
     },
     allTests() {
-      let array = [];
-
-      if (this.user) {
-        this.user.myTests.forEach((test) => {
-          let obj = Object.assign(test, { author: this.user.email });
-          array.push(obj);
-        });
-
-        let hasTest = null;
-
-        if (this.user.myCoops) {
-          this.user.myCoops.forEach((test) => {
-            hasTest = array.find((t) => t.id == test.id);
-
-            if (hasTest == undefined)
-              //if test not added to array
-              array.push(test);
-          });
-        }
-      }
-      return array;
+     return this.$store.state.Tests.Tests
     },
     filteredAllTests() {
+      /*
       let arr = [];
 
       arr = this.allTests.filter((test) => {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
-
-      return arr;
+*/
+console.log(this.allTests)
+      return this.allTests;
     },
     filteredMyTests() {
+      /*
       if (this.user)
         return (
           this.user.myTests.filter((test) => {
@@ -348,8 +336,12 @@ export default {
           }) || []
         );
       return [];
+      */
+      return this.allTests;
+
     },
     filteredMyCoops() {
+      /*
       if (this.user)
         return (
           this.user.myCoops.filter((test) => {
@@ -357,8 +349,11 @@ export default {
           }) || []
         );
       return [];
+        */
+        return this.allTests;
     },
     filteredMyAnswers() {
+      /*
       if (this.user)
         return (
           this.user.myAnswers.filter((test) => {
@@ -366,28 +361,37 @@ export default {
           }) || []
         );
       return [];
+        */
+        return this.allTests;
     },
     personalAnswers() {
+      /*
       if (this.user) {
         return (
           this.user.myAnswers.filter((test) => {
             return test.author == this.user.email;
           }) || []
         );
+        
       }
 
       return [];
+        */
+        return this.allTests;
     },
     filteredPersonalAnswers() {
+      /*
       if (this.user)
         return (
           this.personalAnswers.filter((test) => {
             return test.title.toLowerCase().includes(this.search.toLowerCase());
           }) || []
         );
+        */
       return [];
     },
     otherAnswers() {
+      /*
       if (this.user) {
         return (
           this.user.myAnswers.filter((test) => {
@@ -395,17 +399,20 @@ export default {
           }) || []
         );
       }
-
+*/
       return [];
     },
     filteredOtherAnswers() {
+      /*
       if (this.user)
         return (
           this.otherAnswers.filter((test) => {
             return test.title.toLowerCase().includes(this.search.toLowerCase());
           }) || []
         );
+        */
       return [];
+      
     },
     storeTemplates() {
       return this.$store.getters.templates || [];
@@ -450,14 +457,8 @@ export default {
     },
   },
   created() {
-    this.$store
-      .dispatch(
-        "getPaginationTemplates",
-        Object.assign({}, { itemsPerPage: this.itemsPerPage })
-      )
-      .then(() => {
-        this.exploreTemplates.push(...this.paginatedTemps);
-      });
+    console.log('gettingTests')
+    this.$store.dispatch("getAllTest")
   },
 };
 </script>

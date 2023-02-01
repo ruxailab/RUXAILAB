@@ -4,7 +4,8 @@
  */
 
 //import TestController
-import TestController from "@/controllers/TestController.js";
+import TestController from "@/controllers/TestController.js"
+import HeuristicTest from "@/models/HeuristicTest.model.js"
 
 const TestCont = new TestController();
 
@@ -12,22 +13,22 @@ export default {
     state: {
         Test: null,
         Tests: null,
-        module: "Tests",
+        module: "test",
     },
     getters: {
-        Tests(state) {
+        tests(state) {
             return state.Tests;
         },
-        Test(state) {
+        test(state) {
             return state.Test;
         },
-        Tasks(state) {
+        tasks(state) {
             return state.Test.Tasks;
         },
-        HeuristicsTest(state) {
+        heuristicsTest(state) {
             return state.Test.HeuristicsTest;
         },
-        Coops(state) {
+        coops(state) {
             return state.Test.coop;
         },
     },
@@ -70,31 +71,29 @@ export default {
          * @returns {string} docRef - the Test's identification
          */
 
-        async createNewTest({ dispatch, commit }, payload) {
+        async createNewTest({commit }, payload) {
             commit("setLoading", true);
+            console.log('puta')
+            console.log(payload)
+            let ob= {'testTitle': payload.data.title, 'testDescription': payload.data.description}
 
-            payload = Object.assign(payload, { collection: "Tests" });
-
-            let docRef = dispatch("createObject", payload)
-                .then((doc) => {
-                    return doc.id;
-                })
-                .catch((err) =>
-                    commit("setError", "Error in createNewTest." + err)
-                );
-
-            //Connect to controllers
+            let heuristicTest = new HeuristicTest(ob)
+            console.log(heuristicTest)
+            //payload = Object.assign(payload, { collection: "Tests" });
             try {
-                const res = await TestCont.createNewTest();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in createNewTest");
-                commit("setError", true);
-            } finally {
+               await TestCont.createTest(payload.collection, heuristicTest.toFirestore())
+                    .then((res) => {
+                        console.log(res)
+                    commit("SET_TESTS", res) 
+                })
+            }
+            catch(err){
+                console.log('erro')
+                commit("setError", true)
+            }
+            finally{
                 commit("setLoading", false);
             }
-
-            return docRef;
         },
 
         /**
@@ -264,21 +263,17 @@ export default {
          * @param {string} payload.id - Test's identification code
          * @returns {void}
          */
-        async getObjectTest({ commit, dispatch }, payload) {
+        async getTest({ commit }, payload) {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: "Tests" });
-
-            var Test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectTest." + err)
-            );
-
-            commit("SET_TESTS", Test);
-
+            console.log('merda')
             //Connect to controllers
             try {
-                const res = await TestCont.getObjectTest();
-                commit("SET_TESTS", res);
+                const res = await TestCont.getTest(payload);
+                console.log(res)
+                console.log('bu')
+                commit("SET_TEST", res);
             } catch {
                 console.log("Error in getObjectTest");
                 commit("setError", true);
@@ -382,39 +377,16 @@ export default {
             }
         },
 
-        /**
-         * This action gets all Test in database, using the generic action "getAllObjects"
-         *
-         * @deprecated
-         * @action getTests=SET_TESTS
-         * @param {object} payload - empty object
-         * @returns {void}
-         */
 
-        async getTest({ commit, dispatch }, payload) {
-            console.log("getTest");
+
+        async getAllTest({ commit }) {
+            console.log('gettingtests')
             commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "test" });
-
-            let test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getTest." + err)
-            );
-            console.log("puta");
-            console.log(test);
-            commit("SET_TEST", test);
-        },
-
-        async getAllTest({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
-            var Test = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllTest." + err)
-            );
-            commit("SET_TESTS", Test);
 
             //Connect to controllers
             try {
-                const res = await TestCont.getAllTest();
+                const res = await TestCont.getAllObjectTest();
+                console.log('puta')
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in getAllTest");

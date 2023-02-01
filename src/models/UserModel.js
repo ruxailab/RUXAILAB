@@ -10,9 +10,10 @@
 
     export default class User {
         constructor({
-            accessLevel, email, notifications, myAnswers, myTemplates, myTests
+            id, accessLevel, email, notifications, myAnswers, myTemplates, myTests
         } = {}
         ) {
+            this.id = id
             this.accessLevel = accessLevel;
             this.email = email;
             this.notifications = notifications;

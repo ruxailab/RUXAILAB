@@ -369,7 +369,7 @@ export default {
             //     }
             // }
 
-            return this.$store.getters.Test;
+            return this.$store.getters.test;
         },
 
         items() {
@@ -418,7 +418,7 @@ export default {
                     items.push({
                         title: "Cooperators",
                         icon: "mdi-account-group",
-                        path: `/cooperatorsview/${this.test.cooperators}`,
+                        path: `/cooperators/${this.test.cooperators}`,
                         id: 6,
                     });
                 }
@@ -460,7 +460,7 @@ export default {
                     description: "Invite people to help you in your test.",
                     cardStyle:
                         "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
-                    path: `/cooperatorsview/${this.test.cooperators}`,
+                    path: `/cooperators/${this.test.cooperators}`,
                 },
             ];
         },
