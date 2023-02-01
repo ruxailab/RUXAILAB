@@ -148,8 +148,7 @@ export default {
     },
     computed: {
         test() {
-            console.log(this.$store.getters.Test);
-            return this.$store.getters.Test;
+            return this.$store.state.Tests.Test;
         },
         testsList() {
             if (!this.isCoops) return this.$store.getters.user.myTests;
