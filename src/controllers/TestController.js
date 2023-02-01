@@ -108,7 +108,6 @@ export default class TestController extends Controller {
         return await super
             .readAll("tests")
             .then((response) => {
-                console.log("aiii");
                 let res = response.map(Test.toTest);
                 console.log("TestController res: ", res);
                 return res;

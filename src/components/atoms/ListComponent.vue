@@ -63,11 +63,16 @@
                                     type === 'template'
                             "
                         >
-                            {{
+                            <!-- {{
                                 item || item
                                     ? `Created by ${
                                           type === "template" ? item : item
                                       }`
+                                    : ""
+                            }} -->
+                            {{
+                                item || item
+                                    ? `Creation date: ${item.creationDate}`
                                     : ""
                             }}
                         </v-list-item-subtitle>
