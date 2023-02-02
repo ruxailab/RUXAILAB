@@ -7,7 +7,6 @@
         color="#3F3D56"
         class="hidden-sm-and-down"
     >
-        {{ test }}
         <!-- Navigation header -->
         <div class="header" v-if="!mini">
             <v-list-item>
