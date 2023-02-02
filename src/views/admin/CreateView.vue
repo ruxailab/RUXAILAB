@@ -201,9 +201,9 @@ export default {
                     console.error("Error", err);
                     successful = false;
                 });
-            console.log("aiai");
-            console.log(this.object.type);
-            if (successful) this.sendManager(this.testID);
+                console.log(this.$store.state.Tests.Test)
+          
+            if (successful) this.sendManager(this.$store.state.Tests.Test);
         },
         //TODO: TAKE CARE; THIS IS HORRIBLE!
         /*
@@ -247,7 +247,7 @@ export default {
             form: null,
           },
         });
-      } else if (this.test.type === "Heuristics") {
+      } else if (this.test.type === "HEURISTICS") {
         this.object = Object.assign(this.object, {
           heuristics: [],
           answersSheet: {

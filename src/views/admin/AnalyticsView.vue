@@ -195,7 +195,7 @@ import ShowInfo from "@/components/organisms/ShowInfo";
 import BarChart from "@/components/atoms/BarChart.vue";
 import IntroAnalytics from "@/components/molecules/IntroAnalytics.vue";
 export default {
-  props: ["id", "heuristic"],
+  props: ["id", "HEURISTICS"],
   components: {
     ShowInfo,
     BarChart,
