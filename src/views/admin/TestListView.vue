@@ -265,8 +265,6 @@ export default {
         },
         goTo(test) {
             console.log(this.$store.state);
-
-            console.log("goto");
             this.$router
                 .push(
                     (this.$store.state.Auth.user.accessLevel <= 1
