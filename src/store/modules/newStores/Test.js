@@ -6,6 +6,12 @@
 //import TestController
 import TestController from "@/controllers/TestController.js";
 import HeuristicTest from "@/models/HeuristicTest.model.js";
+// import api from "@/api/index";
+// import database from "../api/modules/database";
+// import firebase from "firebase";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+// import { doc, arrayUnion } from "firebase/firestore";
+import { db } from "@/firebase/index";
 
 const TestCont = new TestController();
 
@@ -255,6 +261,17 @@ export default {
             } finally {
                 commit("setLoading", false);
             }
+        },
+
+        async updateObject(data) {
+            await updateDoc(doc(db, "test", data.id), {
+                heuristics: arrayUnion({
+                    id: data.id,
+                    title: data.testTitle,
+                    questions: data.questions,
+                    total: data.total,
+                }),
+            });
         },
 
         /**
