@@ -6,9 +6,9 @@
 //import TestController
 import TestController from "@/controllers/TestController.js";
 import HeuristicTest from "@/models/HeuristicTest.model.js";
-// import api from "@/api/index";
-// import database from "../api/modules/database";
-// import firebase from "firebase";
+import UserTest from "@/models/UserTest";
+
+//merda do tales
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 // import { doc, arrayUnion } from "firebase/firestore";
 import { db } from "@/firebase/index";
@@ -84,14 +84,26 @@ export default {
                 testTitle: payload.data.title,
                 testDescription: payload.data.description,
             };
-
-            let heuristicTest = new HeuristicTest(ob);
-            console.log(heuristicTest);
-            //payload = Object.assign(payload, { collection: "Tests" });
+            console.log(" puta ESSE É O PAYLOAD " + payload);
+            console.log(payload.data.type);
+            let objectTest = null;
+            if (payload.data.type === "HEURISTICS") {
+                console.log(" puta ESSE É O PAYLOAD " + payload);
+                console.log(payload.data.type);
+                objectTest = new HeuristicTest(ob);
+                console.log(objectTest);
+                //payload = Object.assign(payload, { collection: "Tests" });
+            } else {
+                console.log(" puta ESSE É O PAYLOAD " + payload);
+                console.log(payload.data.type);
+                console.log("User Test");
+                objectTest = new UserTest(ob);
+                console.log(objectTest);
+            }
             try {
                 await TestCont.createTest(
                     payload.collection,
-                    heuristicTest.toFirestore()
+                    objectTest.toFirestore()
                 ).then((res) => {
                     console.log(res.id);
                     commit("SET_TEST", res.id);
@@ -242,19 +254,17 @@ export default {
          * @returns {void}
          */
 
-        async updateTest({ dispatch, commit }, payload) {
+        async updateTest({ commit }, payload) {
             commit("setLoading", true);
 
             payload = Object.assign(payload, { collection: "Tests" });
-
-            dispatch("updateObject", payload).catch((err) =>
-                commit("setError", "Error in updateTest." + err)
-            );
-
+            console.log("store", payload.data);
+            commit("SET_TESTS", payload);
             //Connect to controllers
             try {
                 const res = await TestCont.updateTest();
                 commit("SET_TESTS", res);
+                return res;
             } catch {
                 console.log("Error in updateTest");
                 commit("setError", true);
@@ -272,6 +282,14 @@ export default {
                     total: data.total,
                 }),
             });
+        },
+        updateTestAnswer({ dispatch, commit }, payload) {
+            commit("setLoading", true);
+            payload = Object.assign(payload, { collection: "answers" });
+
+            dispatch("updateObject", payload).catch((err) =>
+                commit("setError", "Error in updateTestAnswer." + err)
+            );
         },
 
         /**
