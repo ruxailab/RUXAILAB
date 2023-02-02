@@ -87,8 +87,9 @@ export default {
                     payload.collection,
                     heuristicTest.toFirestore()
                 ).then((res) => {
-                    console.log(res);
-                    commit("SET_TESTS", res);
+                    console.log(res.id)
+                    commit("SET_TEST", res.id);
+                    return res.id
                 });
             } catch (err) {
                 console.log("erro");
@@ -272,6 +273,7 @@ export default {
             //Connect to controllers
             try {
                 const res = await TestCont.getTest(payload);
+                console.log('hola')
                 console.log(res);
                 commit("SET_TEST", res);
             } catch {
@@ -290,7 +292,7 @@ export default {
             let ans = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getAnswers." + err)
             );
-
+            console.log('oie')
             commit("setAnswers", ans);
         },
 

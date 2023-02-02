@@ -8,7 +8,7 @@ export default class Heuristic extends Test {
     constructor({ heuristics, testTitle, testDescription } = {}) {
         super({ testTitle, testDescription });
         this.heuristics = heuristics ?? null;
-        this.testType = "heuristic";
+        this.testType = "HEURISTICS";
         let date = new Date();
         let current_date =
             date.getFullYear() +

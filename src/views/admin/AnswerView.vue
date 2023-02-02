@@ -251,8 +251,7 @@
                                                 <v-chip
                                                     v-if="
                                                         header.value !=
-                                                            'heuristic'
-                                                    "
+                                                            'HEURISTICS'"
                                                     :key="header.value"
                                                     :color="
                                                         getColor(
@@ -500,9 +499,9 @@ export default {
             let min = Math.min(...options);
 
             table.header.push({
-                text: "Heuristics",
+                text: "HEURISTICS",
                 align: "start",
-                value: "heuristic",
+                value: "HEURISTICS",
             });
 
             if (this.resultEvaluator) {
@@ -546,7 +545,7 @@ export default {
 
             table.header = [
                 {
-                    text: "Heuristics",
+                    text: "HEURISTICS",
                     align: "start",
                     sortable: false,
                     value: "name",

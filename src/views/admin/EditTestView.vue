@@ -1,5 +1,6 @@
 <template>
     <div>
+        {{ test }}
         <Snackbar />
         <!-- Leave Alert Dialog -->
         <v-dialog v-model="dialog" width="600" persistent>
@@ -60,28 +61,32 @@
             <div class="white-text mt-3">Loading Test</div>
         </v-overlay>
 
+        <!--
         <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
+        -->
+        <IntroEdit  v-if="test.testStructure"  @closeIntro="intro = false"/>
 
-        <ShowInfo v-if="test && intro == false" title="Test Edit">
+        <ShowInfo v-if="test" title="Test Edit">
             <!-- Heuristics tests -->
-            <!--TODO: change hard coded type-->
+            <!--TODO: change hard coded type
             <EditHeuristicsTest
-                v-if="test.type == 'Heuristics'"
+                v-if="test.testType == "HEURISTICS""
                 type="tabs"
                 @tabClicked="setIndex"
                 slot="top"
             />
+        -->
 
+            
             <EditHeuristicsTest
-                v-if="test.type === 'Heuristics'"
+                v-if="test.testType === 'HEURISTICS'"
                 type="content"
                 :object="object"
                 :index="index"
                 @change="change = true"
                 slot="content"
             />
-
-            <!-- User tests -->
+            <!-- User tests
             <EditUserTest
                 v-if="test.type === 'User'"
                 type="tabs"
@@ -98,6 +103,7 @@
                 @valForm="validate"
                 slot="content"
             />
+             -->
         </ShowInfo>
     </div>
 </template>
@@ -107,7 +113,7 @@ import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
-import EditUserTest from "@/components/organisms/EditUserTest";
+//import EditUserTest from "@/components/organisms/EditUserTest";
 
 export default {
     props: ["id"],
@@ -116,7 +122,7 @@ export default {
         ShowInfo,
         IntroEdit,
         EditHeuristicsTest,
-        EditUserTest,
+        //EditUserTest,
     },
     data: () => ({
         index: 0,
@@ -143,7 +149,7 @@ export default {
                 })
                 .then(async () => {
                     this.answers.answersSheet = await this.mountAnswerSheet();
-                    if (this.test.type === "Heuristics")
+                    if (this.test.type === "HEURISTICS")
                         Object.assign(this.answers, {
                             options: this.object.options,
                         });
@@ -216,7 +222,7 @@ export default {
                     "Please fill all fields in Pre Test correctly or leave them empty"
                 );
             } else if (
-                this.test.type === "Heuristics" &&
+                this.test.type === "HEURISTICS" &&
                 this.object.options.length == 1
             ) {
                 this.$store.commit(
@@ -239,7 +245,7 @@ export default {
         },
         async setIntro() {
             this.object = await Object.assign(this.object, this.test);
-            if (this.test.type === "Heuristics") {
+            if (this.test.type === "HEURISTICS") {
                 if (
                     this.test.heuristics.length == 0 &&
                     this.test.options.length == 0
@@ -276,7 +282,7 @@ export default {
             return this.$store.getters.user;
         },
         test() {
-            console.log("ID --->" + this.id);
+            console.log(this.$store.getters.test);
             return this.$store.getters.test;
         },
         answers() {
@@ -298,12 +304,11 @@ export default {
         },
     },
     async created() {
-        await this.$store.dispatch("getAnswers", {
-            id: this.test.answersDocId,
-        });
+        
+        //await this.$store.dispatch("getAnswers", { id: this.test.answersDocId});
         await this.$store.dispatch("getTest", { id: this.id });
 
-        this.setIntro();
+        //this.setIntro();
     },
     beforeRouteLeave(to, from, next) {
         if (this.change) {

@@ -433,7 +433,7 @@ export default {
           isPublic: this.publicTemplate,
         };
 
-        if (this.test.type == "Heuristics") {
+        if (this.test.type == "HEURISTICS") {
           template = Object.assign(template, {
             heuristics: this.test.heuristics,
             options: this.test.options,

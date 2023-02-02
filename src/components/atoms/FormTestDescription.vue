@@ -55,7 +55,7 @@ export default {
     typeRequired: [(v) => !!v || "Field Required"],
     types: [
       { text: "Usability User Test", value: "User" },
-      { text: "Usability Heuristic Evaluation", value: "Heuristics" },
+      { text: "Usability Heuristic Evaluation", value: "HEURISTICS" },
     ],
   }),
   methods: {

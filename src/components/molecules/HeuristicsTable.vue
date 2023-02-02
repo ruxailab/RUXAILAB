@@ -575,8 +575,9 @@ export default {
       return this.$store.state.Tests.currentTest;
     },
     heuristics() {
-      return this.$store.state.Tests.test.heuristics;
-    },
+            console.log("ID --->" + this.$store.state.Tests.Test.testStructure);
+            return this.$store.state.Tests.Test.testStructure ? this.$store.state.Tests.Test.testStructure: [];
+        },
 
     arrayQuestions() {
       let aux = [];

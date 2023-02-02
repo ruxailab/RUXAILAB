@@ -108,7 +108,7 @@
 
 //         async updateHeuristic({ dispatch, commit }, payload) {
 //             commit("setLoading", true);
-//             payload = Object.assign(payload, { collection: "Heuristics" });
+//             payload = Object.assign(payload, { collection: "HEURISTICS" });
 
 //             dispatch("updateObject", payload)
 //                 .catch((err) => commit("setError", "Error in updateHeuristic." + err));
@@ -143,7 +143,7 @@
 
 //         async deleteHeuristic({ dispatch, commit }, payload) {
 //             commit("setLoading", true);
-//             payload = Object.assign(payload, { collection: "Heuristics" });
+//             payload = Object.assign(payload, { collection: "HEURISTICS" });
 
 //             dispatch("deleteObject", payload)
 //                 .catch((err) => commit("setError", "Error in deleteHeuristic." + err));
