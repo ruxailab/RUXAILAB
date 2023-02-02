@@ -4,7 +4,7 @@
  * @param {string} testDescription - The testDescription value.
  * @param {string} testTitle - The testTitle value.
  * @param {string} testType - The testType value.
- * @param {Object} testStructure - The TestStructure value.
+ * @param {Object} testStructure - The TestStructure value.  ---->
  * @param {string} answersDocId - The answersDocId value.
  * @param {Object[]} cooperators - An array of Cooperators value.
  * @param {string} creationDate - The creationDate value.

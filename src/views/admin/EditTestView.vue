@@ -64,7 +64,7 @@
         <!--
         <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
         -->
-        <IntroEdit  v-if="test.testStructure"  @closeIntro="intro = false"/>
+        <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />
 
         <ShowInfo v-if="test" title="Test Edit">
             <!-- Heuristics tests -->
@@ -77,7 +77,6 @@
             />
         -->
 
-            
             <EditHeuristicsTest
                 v-if="test.testType === 'HEURISTICS'"
                 type="content"
@@ -153,11 +152,10 @@ export default {
                         Object.assign(this.answers, {
                             options: this.object.options,
                         });
-                    this.$store
-                        .dispatch("updateTestAnswer", {
-                            docId: this.test.answers,
-                            data: this.answers,
-                        })
+                    this.$store.Test.dispatch("updateTestAnswer", {
+                        docId: this.test.answers,
+                        data: this.answers,
+                    })
                         .then(() => {
                             this.$store.commit(
                                 "setSuccess",
@@ -304,7 +302,6 @@ export default {
         },
     },
     async created() {
-        
         //await this.$store.dispatch("getAnswers", { id: this.test.answersDocId});
         await this.$store.dispatch("getTest", { id: this.id });
 
