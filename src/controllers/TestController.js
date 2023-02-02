@@ -31,6 +31,24 @@ export default class TestController extends Controller {
         });
     }
 
+    // async updateObject({ commit }, payload) {
+    //     //----> firebase update example
+    //     // DatabaseReference hopperRef = usersRef.child("gracehop");
+    //     // Map<String, Object> hopperUpdates = new HashMap<>();
+    //     // hopperUpdates.put("nickname", "Amazing Grace");
+    //     // hopperRef.updateChildrenAsync(hopperUpdates);
+    //     //---->old code
+    //     // try {
+    //     //     var docRef = await api.database.updateObject(payload);
+    //     //     return docRef;
+    //     // } catch (err) {
+    //     //     console.error("Error in updateObject:", err);
+    //     //     commit("setError", "Error updating object in database");
+    //     // } finally {
+    //     //     commit("setLoading", false);
+    //     // }
+    // }
+
     //------------------GET OBJECTS - ID------------------
 
     //GetObject of Test
@@ -39,7 +57,7 @@ export default class TestController extends Controller {
         if (!res.exists()) return null;
         console.log("TestController res: ", res.data());
         //console.log(Test.toTest(res));
-        return Test.toTest(Object.assign({id:res.id}, res.data()))
+        return Test.toTest(Object.assign({ id: res.id }, res.data()));
     }
 
     //GetObject of TestAdmin
