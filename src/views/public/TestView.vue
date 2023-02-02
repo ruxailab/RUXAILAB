@@ -681,14 +681,14 @@ export default {
             value: this.test.postTest,
             id: 2,
           });
-      } else if (this.test.type === "Heuristics") {
+      } else if (this.test.type === "HEURISTICS") {
         //Heuristics
         if (
           this.validate(this.test.heuristics) &&
           this.test.heuristics.length !== 0
         )
           this.items.push({
-            title: "Heuristics",
+            title: "HEURISTICS",
             icon: "mdi-checkbox-marked-circle-outline",
             value: this.test.heuristics.map((i) => {
               return {

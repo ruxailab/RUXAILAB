@@ -14,7 +14,6 @@ export default class TestController extends Controller {
     }
 
     async createTest(document, data) {
-        console.log("merda");
         return await super.create(document, data).then((res) => {
             return res;
         });
@@ -38,9 +37,9 @@ export default class TestController extends Controller {
     async getTest(parameter) {
         const res = await super.readOne(COLLECTION, parameter.id);
         if (!res.exists()) return null;
-        console.log("TestController res: ", res);
-        console.log(Test.toTest(res));
-        return Test.toTest(res);
+        console.log("TestController res: ", res.data());
+        //console.log(Test.toTest(res));
+        return Test.toTest(Object.assign({id:res.id}, res.data()))
     }
 
     //GetObject of TestAdmin
