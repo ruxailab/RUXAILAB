@@ -25,8 +25,9 @@ export default class TestController extends Controller {
         });
     }
 
-    updateTest(document, payload) {
-        return super.delete("test", document, payload).then((res) => {
+    updateTest(payload) {
+        console.log("puta updateTest");
+        return super.update("tests", payload).then((res) => {
             return res;
         });
     }
