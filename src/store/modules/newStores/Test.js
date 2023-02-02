@@ -19,6 +19,8 @@ export default {
     state: {
         Test: null,
         Tests: null,
+        testStructure: null,
+        answersId: null,
         module: "test",
     },
     getters: {
@@ -326,7 +328,7 @@ export default {
             let ans = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getAnswers." + err)
             );
-            console.log("oie");
+            console.log("puta getAnswers");
             commit("setAnswers", ans);
         },
 

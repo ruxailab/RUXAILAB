@@ -293,7 +293,7 @@ export default {
                             title: this.test.title,
                             type: this.test.type,
                             reports: this.test.reports,
-                            answers: this.test.answers,
+                            answers: this.test.answersDocId,
                             cooperators: this.test.cooperators,
                             accessLevel: invitation.accessLevel.value,
                         }
@@ -488,7 +488,7 @@ export default {
                         "See how your evaluators are evaluating your project.",
                     cardStyle:
                         "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
-                    path: `/answerview/${this.test.answers}`,
+                    path: `/answerview/${this.test.answersDocId}`,
                 },
                 {
                     image: "IntroAnalytics.svg",
