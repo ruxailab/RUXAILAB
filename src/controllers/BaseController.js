@@ -17,13 +17,13 @@ export default class Controller {
     // path - collection
     // data - document to insert (object)
     async create(col, payload) {
-        return addDoc(collection(db, col), payload)
-      }
+        return addDoc(collection(db, col), payload);
+    }
 
     async readOne(col, docId) {
-        const ref = doc(db, `${col}/${docId}`)
-        return getDoc(ref)
-      }
+        const ref = doc(db, `${col}/${docId}`);
+        return getDoc(ref);
+    }
 
     //model to define in Controller
     async read(path, parameter, condition) {
@@ -69,8 +69,7 @@ export default class Controller {
         const querySnapshot = await getDocs(q);
         const res = [];
         querySnapshot.forEach((doc) => {
-            console.log('stop')
-            res.push(Object.assign(doc.data(),{id: doc.id}));
+            res.push(Object.assign(doc.data(), { id: doc.id }));
         });
         console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
