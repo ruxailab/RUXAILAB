@@ -16,7 +16,6 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
     accessLevel: 1,
   };
   try {
-    console.log('ola')
     await admin.auth().setCustomUserClaims(user.uid, customClaims);
     admin
       .firestore()
