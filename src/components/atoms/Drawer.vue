@@ -9,6 +9,7 @@
   >
     <!-- Navigation header -->
     <div class="header" v-if="!mini">
+      <!--- CHANGE CURRENT TEST SELECTOR -->
       <v-list-item>
         <v-row dense>
           <v-col class="pa-0 ma-0">
@@ -18,7 +19,6 @@
               dark
               dense
               v-model="selectedTest"
-              @change="pushToTest()"
               item-value="id"
               item-text="title"
               :items="testsList"
@@ -37,19 +37,19 @@
         <v-tooltip right v-for="(item, n) in items" :key="n">
           <template v-slot:activator="{ on, attrs }">
             <v-list-item
-              @click="(index = n), go(item)"
+              @click="(currentIndexSelect = n), go(item)"
               v-bind="attrs"
               v-on="on"
             >
               <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#fca326' : '#bababa'">{{
+                <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">{{
                   item.icon
                 }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
-                  :style="index == item.id ? 'color: #fca326' : 'color:#bababa'"
+                  :style="currentIndexSelect == item.id ? 'color: #fca326' : 'color:#bababa'"
                   >{{ item.title }}</v-list-item-title
                 >
               </v-list-item-content>
@@ -63,17 +63,17 @@
         <v-list-item
           v-for="(item, n) in items"
           :key="n"
-          @click="(index = n), go(item)"
+          @click="(currentIndexSelect = n), go(item)"
         >
           <v-list-item-icon>
-            <v-icon :color="index == item.id ? '#fca326' : '#bababa'">{{
+            <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">{{
               item.icon
             }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
             <v-list-item-title
-              :style="index == item.id ? 'color: #fca326' : 'color:#bababa'"
+              :style="currentIndexSelect == item.id ? 'color: #fca326' : 'color:#bababa'"
               >{{ item.title }}</v-list-item-title
             >
           </v-list-item-content>
@@ -89,7 +89,9 @@
         class="ml-3"
         v-if="userAccessLevelOnTest == 0"
       >
-        <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">mdi-cog</v-icon>
+        <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'"
+          >mdi-cog</v-icon
+        >
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn icon @click.stop="mini = !mini" class="mr-2">
@@ -108,7 +110,9 @@
           @click="go(`/settingsview/${test.id}`)"
           v-if="userAccessLevelOnTest == 0"
         >
-          <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">mdi-cog</v-icon>
+          <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'"
+            >mdi-cog</v-icon
+          >
         </v-btn>
         <v-btn icon @click.stop="mini = !mini" class="mt-2">
           <v-icon color="white">mdi-chevron-right</v-icon>
@@ -124,7 +128,7 @@ export default {
     drawer: true,
     mini: true,
     selectedTest: null,
-    isSettingsBtnActive: false
+    isSettingsBtnActive: false,
   }),
   methods: {
     go(item) {
@@ -140,11 +144,10 @@ export default {
       return this.$store.state.Tests.Test;
     },
     testsList() {
-      //   if (!this.isCoops) return this.$store.getters.user.myTests;
-      //   else return this.$store.getters.user.myCoops;
-      return [];
+      if (!this.isCoops) return this.$store.getters.user.myTests;
+      else return this.$store.getters.user.myCoops;
     },
-    index: {
+    currentIndexSelect: {
       get() {
         if (this.items) {
           return this.items.indexOf(

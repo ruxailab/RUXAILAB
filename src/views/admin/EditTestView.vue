@@ -273,7 +273,6 @@ export default {
       return this.$store.getters.user;
     },
     test() {
-      console.log(this.$store.getters.test);
       return this.$store.getters.test;
     },
     answers() {

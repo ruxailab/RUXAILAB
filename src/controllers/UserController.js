@@ -9,24 +9,29 @@ export default class UserController extends Controller {
         super();
     }
 
-    createNewUser(document, data) {
-        return super.create("users", document, data).then((res) => {
-            return res;
-        });
+    // createNewUser(document, data) {
+    //     return super.create("users", document, data).then((res) => {
+    //         return res;
+    //     });
 
 
-    }
+    // }
 
-    deleteUser(document) {
-        return super.delete("users", document).then((res) => {
-            return res;
-        });
-    }
+    // deleteUser(document) {
+    //     return super.delete("users", document).then((res) => {
+    //         return res;
+    //     });
+    // }
 
-    updateUser(document, payload) {
-        return super.delete("users", document, payload).then((res) => {
-            return res;
-        });
+    // updateUser(document, payload) {
+    //     return super.delete("users", document, payload).then((res) => {
+    //         return res;
+    //     });
+    // }
+
+    async readAll() {
+        const docs = await super.readAll(COLLECTION)
+        return docs.map((doc) => new User(doc))
     }
 
     async getById(docId) {

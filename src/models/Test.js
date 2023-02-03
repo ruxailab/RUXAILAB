@@ -39,7 +39,6 @@ export default class Test {
         this.templateDoc = templateDoc ?? null;
     }
     static toTest(data) {
-        console.log(data);
         return new Test(data);
     }
     toFirestore() {
