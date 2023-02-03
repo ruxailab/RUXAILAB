@@ -59,7 +59,6 @@ export default {
     }),
     methods: {
         async onSignIn() {
-            console.log("olá");
             const authC = new AuthController();
             await authC.authSingIn(this.email, this.password);
             // await this.$store
