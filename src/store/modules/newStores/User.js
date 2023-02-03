@@ -1,6 +1,6 @@
 /**
  * User store module
- * @module User
+ * @module user
  */
 
 //import UserController
@@ -10,8 +10,8 @@ const UserCont = new UserController();
 
 export default {
     state: {
-        Users: null,
-        module: "Users",
+        users: null,
+        module: "user",
     },
     getters: {
         /**
@@ -19,379 +19,387 @@ export default {
          * @type {object}
          * @getter {object[]} Admins=Users Returns a user array with Users whose access level is 1
          */
-        Admins(state) {
-            return state.Users.filter((item) => {
+        admins(state) {
+            return state.users.filter((item) => {
                 return item.accessLevel == 1;
             });
         },
-        Users(state) {
+        users(state) {
             return state.Users;
         },
     },
     mutations: {
         SET_USERS(state, payload) {
-            state.Users = payload;
+            state.users = payload;
         },
     },
     actions: {
-        /**
-         * This action adds a new test into user test array,
-         * using the generic action {@link pushObject},
-         * passing the user data
-         *
-         * @action createNewUser
-         * @param {object} payload - data
-         * @param {string} payload.docId - user identification
-         * @param {object} payload.element - new test data
-         * @param {string} payload.element.id - test identification
-         * @param {string} payload.element.title - test title
-         * @param {string} payload.element.type - test type
-         * @param {string} payload.element.reports - reports document identification
-         * @param {string} payload.element.answers - answers document identification
-         * @param {string} payload.element.cooperators - cooperators documents identification
-         * @param {number} payload.element.accessLevel - user access level on this test
-         * @param {string} [payload.element.template] -template document identification
-         * @param {string} payload.element.date - test creation date
-         * @param {string} payload.param - user array to be add the new object
-         * @returns {void}
-         */
-
-        async createNewUser({ dispatch, commit }, payload) {
-            commit("setLoading", true);
-
-            payload = Object.assign(payload, { collection: "users" });
-            dispatch("pushObject", payload).catch((err) =>
-                commit("setError", "Error in createNewUser." + err)
-            );
-
-            //Connect to controllers
+        async getAllUsers({ commit }) {
             try {
-                const res = await UserCont.createNewUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in createNewUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
+                const res = await UserCont.readAll()
+                commit('SET_USERS', res)
+            } catch (e) {
+                console.error(e)
             }
-        },
+        }
+        //     /**
+        //      * This action adds a new test into user test array,
+        //      * using the generic action {@link pushObject},
+        //      * passing the user data
+        //      *
+        //      * @action createNewUser
+        //      * @param {object} payload - data
+        //      * @param {string} payload.docId - user identification
+        //      * @param {object} payload.element - new test data
+        //      * @param {string} payload.element.id - test identification
+        //      * @param {string} payload.element.title - test title
+        //      * @param {string} payload.element.type - test type
+        //      * @param {string} payload.element.reports - reports document identification
+        //      * @param {string} payload.element.answers - answers document identification
+        //      * @param {string} payload.element.cooperators - cooperators documents identification
+        //      * @param {number} payload.element.accessLevel - user access level on this test
+        //      * @param {string} [payload.element.template] -template document identification
+        //      * @param {string} payload.element.date - test creation date
+        //      * @param {string} payload.param - user array to be add the new object
+        //      * @returns {void}
+        //      */
 
-        /**
-         * This action deletes the user and its relationships with other tests and Users
-         *
-         * @action deleteUser
-         * @param {object} payload - user data
-         * @param {number} payload.accessLevel - user acess permition
-         * @param {string} payload.collection -  local in database
-         * @param {string} payload.email - user's email
-         * @param {string} payload.id -user's indentification
-         * @param {object[]} payload.myAnswers - test list that user is repling
-         * @param {object[]} payload.myCoops- test list that user is cooperator
-         * @param {object[]} payload.myTests - user's test list
-         * @param {object[]} payload.notifications - notificatinons recived
-         * @returns {void}
-         */
+        //     async createNewUser({ dispatch, commit }, payload) {
+        //         commit("setLoading", true);
 
-        async deleteUser({ dispatch, commit }, payload) {
-            commit("setLoading", true);
-            try {
-                //Delete from  Users' colletion
-                payload = Object.assign(payload, { collection: "users" });
-                dispatch("deleteObject", payload);
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         dispatch("pushObject", payload).catch((err) =>
+        //             commit("setError", "Error in createNewUser." + err)
+        //         );
 
-                //Remove User Relations
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.createNewUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in createNewUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-                //Tests
-                if (payload.myTests.length) {
-                    payload.myTests.forEach((test) => {
-                        dispatch("deleteTest", test);
-                    });
-                }
+        //     /**
+        //      * This action deletes the user and its relationships with other tests and Users
+        //      *
+        //      * @action deleteUser
+        //      * @param {object} payload - user data
+        //      * @param {number} payload.accessLevel - user acess permition
+        //      * @param {string} payload.collection -  local in database
+        //      * @param {string} payload.email - user's email
+        //      * @param {string} payload.id -user's indentification
+        //      * @param {object[]} payload.myAnswers - test list that user is repling
+        //      * @param {object[]} payload.myCoops- test list that user is cooperator
+        //      * @param {object[]} payload.myTests - user's test list
+        //      * @param {object[]} payload.notifications - notificatinons recived
+        //      * @returns {void}
+        //      */
 
-                //Cooperators
-                if (payload.myCoops.length) {
-                    payload.myCoops.forEach((test) => {
-                        dispatch("removeCooperator", {
-                            docId: test.cooperators,
-                            element: {
-                                id: payload.id,
-                            },
-                        });
-                    });
-                }
+        //     async deleteUser({ dispatch, commit }, payload) {
+        //         commit("setLoading", true);
+        //         try {
+        //             //Delete from  Users' colletion
+        //             payload = Object.assign(payload, { collection: "users" });
+        //             dispatch("deleteObject", payload);
 
-                //Answers
-                if (payload.myAnswers.length) {
-                    payload.myAnswers.forEach((test) => {
-                        if (!test.answersSheet.submitted) {
-                            var log = {
-                                date: new Date().toLocaleString("en-US"),
-                                progress: "-",
-                                status: "User Deleted",
-                            };
+        //             //Remove User Relations
 
-                            dispatch("updateLog", {
-                                docId: test.reports,
-                                elementId: payload.id,
-                                element: log,
-                            });
-                        }
-                    });
-                }
-            } catch {
-                console.log("Error in deleteUser");
-                commit("setError", true);
-            }
+        //             //Tests
+        //             if (payload.myTests.length) {
+        //                 payload.myTests.forEach((test) => {
+        //                     dispatch("deleteTest", test);
+        //                 });
+        //             }
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.deleteUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in deleteUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //             //Cooperators
+        //             if (payload.myCoops.length) {
+        //                 payload.myCoops.forEach((test) => {
+        //                     dispatch("removeCooperator", {
+        //                         docId: test.cooperators,
+        //                         element: {
+        //                             id: payload.id,
+        //                         },
+        //                     });
+        //                 });
+        //             }
 
-        /**
-         *This action gets a user by id, using the generic action "getObject"
-         *
-         * @action getUser=setUser
-         * @param {object} payload - user's data
-         * @param {string} [payload.collection = user] -  local in database
-         * @param {string} payload.id - user's identification code
-         * @returns {void}
-         */
+        //             //Answers
+        //             if (payload.myAnswers.length) {
+        //                 payload.myAnswers.forEach((test) => {
+        //                     if (!test.answersSheet.submitted) {
+        //                         var log = {
+        //                             date: new Date().toLocaleString("en-US"),
+        //                             progress: "-",
+        //                             status: "User Deleted",
+        //                         };
 
-        async getObjectUser({ commit, dispatch }, payload) {
-            commit("setLoading", true);
+        //                         dispatch("updateLog", {
+        //                             docId: test.reports,
+        //                             elementId: payload.id,
+        //                             element: log,
+        //                         });
+        //                     }
+        //                 });
+        //             }
+        //         } catch {
+        //             console.log("Error in deleteUser");
+        //             commit("setError", true);
+        //         }
 
-            payload = Object.assign(payload, { collection: "users" });
-            var test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectUser." + err)
-            );
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.deleteUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in deleteUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-            commit("SET_USERS", test);
+        //     /**
+        //      *This action gets a user by id, using the generic action "getObject"
+        //      *
+        //      * @action getUser=setUser
+        //      * @param {object} payload - user's data
+        //      * @param {string} [payload.collection = user] -  local in database
+        //      * @param {string} payload.id - user's identification code
+        //      * @returns {void}
+        //      */
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        }, //getObjectUser
+        //     async getObjectUser({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
 
-        async getObjectUserAnswer({ commit, dispatch }, payload) {
-            commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         var test = await dispatch("getObject", payload).catch((err) =>
+        //             commit("setError", "Error in getObjectUser." + err)
+        //         );
 
-            payload = Object.assign(payload, { collection: "users" });
-            var test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectUserAnswer." + err)
-            );
+        //         commit("SET_USERS", test);
 
-            commit("SET_USERS", test);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     }, //getObjectUser
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUserAnswer();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUserAnswer");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        }, //getObjectUserAnswer
+        //     async getObjectUserAnswer({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
 
-        async getObjectUserTask({ commit, dispatch }, payload) {
-            commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         var test = await dispatch("getObject", payload).catch((err) =>
+        //             commit("setError", "Error in getObjectUserAnswer." + err)
+        //         );
 
-            payload = Object.assign(payload, { collection: "users" });
-            var test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectUserTask." + err)
-            );
+        //         commit("SET_USERS", test);
 
-            commit("SET_USERS", test);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUserAnswer();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUserAnswer");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     }, //getObjectUserAnswer
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUserTask();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUserTask");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        }, //getObjectUserTask
+        //     async getObjectUserTask({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
 
-        async getObjectUserTemplate({ commit, dispatch }, payload) {
-            commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         var test = await dispatch("getObject", payload).catch((err) =>
+        //             commit("setError", "Error in getObjectUserTask." + err)
+        //         );
 
-            payload = Object.assign(payload, { collection: "users" });
-            var test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectUserTemplate." + err)
-            );
+        //         commit("SET_USERS", test);
 
-            commit("SET_USERS", test);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUserTask();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUserTask");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     }, //getObjectUserTask
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUserTemplate();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUserTemplate");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        }, //getObjectUserTemplate
+        //     async getObjectUserTemplate({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
 
-        async getObjectUserTest({ commit, dispatch }, payload) {
-            commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         var test = await dispatch("getObject", payload).catch((err) =>
+        //             commit("setError", "Error in getObjectUserTemplate." + err)
+        //         );
 
-            payload = Object.assign(payload, { collection: "users" });
-            var test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectUserTest." + err)
-            );
+        //         commit("SET_USERS", test);
 
-            commit("SET_USERS", test);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUserTemplate();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUserTemplate");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     }, //getObjectUserTemplate
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUserTest();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUserTest");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        }, //getObjectUserTest
+        //     async getObjectUserTest({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
 
-        /**
-         *  This action gets all Users from Users collection ,
-         *  using the generic action {@link getAllObjects}
-         *
-         * @action getUsers=SET_USERS
-         * @param {object} payload - empty object
-         * @returns {void}
-         */
+        //         payload = Object.assign(payload, { collection: "users" });
+        //         var test = await dispatch("getObject", payload).catch((err) =>
+        //             commit("setError", "Error in getObjectUserTest." + err)
+        //         );
 
-        async getAllUser({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "users" });
+        //         commit("SET_USERS", test);
 
-            var Users = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllUser." + err)
-            );
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUserTest();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUserTest");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     }, //getObjectUserTest
 
-            commit("SET_USERS", Users);
+        //     /**
+        //      *  This action gets all Users from Users collection ,
+        //      *  using the generic action {@link getAllObjects}
+        //      *
+        //      * @action getUsers=SET_USERS
+        //      * @param {object} payload - empty object
+        //      * @returns {void}
+        //      */
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //     async getAllUser({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
 
-        async getAllUserAnswer({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "users" });
+        //         var Users = await dispatch("getAllObjects", payload).catch((err) =>
+        //             commit("setError", "Error in getAllUser." + err)
+        //         );
 
-            var Users = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllUserAnswer." + err)
-            );
+        //         commit("SET_USERS", Users);
 
-            commit("SET_USERS", Users);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //     async getAllUserAnswer({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
 
-        async getAllUserTask({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "users" });
+        //         var Users = await dispatch("getAllObjects", payload).catch((err) =>
+        //             commit("setError", "Error in getAllUserAnswer." + err)
+        //         );
 
-            var Users = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllUserTask." + err)
-            );
+        //         commit("SET_USERS", Users);
 
-            commit("SET_USERS", Users);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //     async getAllUserTask({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
 
-        async getAllUserTemplate({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "users" });
+        //         var Users = await dispatch("getAllObjects", payload).catch((err) =>
+        //             commit("setError", "Error in getAllUserTask." + err)
+        //         );
 
-            var Users = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllUserTemplate." + err)
-            );
+        //         commit("SET_USERS", Users);
 
-            commit("SET_USERS", Users);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //     async getAllUserTemplate({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
 
-        async getAllUserTest({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "users" });
+        //         var Users = await dispatch("getAllObjects", payload).catch((err) =>
+        //             commit("setError", "Error in getAllUserTemplate." + err)
+        //         );
 
-            var Users = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllUserTest." + err)
-            );
+        //         commit("SET_USERS", Users);
 
-            commit("SET_USERS", Users);
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
 
-            //Connect to controllers
-            try {
-                const res = await UserCont.getObjectUser();
-                commit("SET_USERS", res);
-            } catch {
-                console.log("Error in getObjectUser");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
+        //     async getAllUserTest({ commit, dispatch }, payload) {
+        //         commit("setLoading", true);
+        //         payload = Object.assign(payload, { collection: "users" });
+
+        //         var Users = await dispatch("getAllObjects", payload).catch((err) =>
+        //             commit("setError", "Error in getAllUserTest." + err)
+        //         );
+
+        //         commit("SET_USERS", Users);
+
+        //         //Connect to controllers
+        //         try {
+        //             const res = await UserCont.getObjectUser();
+        //             commit("SET_USERS", res);
+        //         } catch {
+        //             console.log("Error in getObjectUser");
+        //             commit("setError", true);
+        //         } finally {
+        //             commit("setLoading", false);
+        //         }
+        //     },
     },
 };
