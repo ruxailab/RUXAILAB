@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>i0joi</p>
     <v-tabs
       v-if="type == 'tabs'"
       background-color="transparent"
@@ -7,42 +8,44 @@
       class="pb-0 mb-0"
     >
       <v-tab @click="tabClicked(0)">Heuristics</v-tab>
-      <v-tab @click="tabClicked(1)">Options</v-tab>
-      <v-tab @click="tabClicked(2)">Import .csv</v-tab>
+      <!--<v-tab @click="tabClicked(1)">Options</v-tab>-->
+        <!--<v-tab @click="tabClicked(2)">Import .csv</v-tab>-->
     </v-tabs>
 
     <div v-else-if="type == 'content'">
       <Heuristic
         v-if="index == 0"
-        :heuristics="object.heuristics"
-        @change="emitChange()"
+        :heuristics="currentTest"
+        @change="emitChange"
       />
-
+  <!--
       <OptionsTable
         v-if="index == 1"
         :options="object.options"
         @change="emitChange()"
       />
-
+  -->
+  <!--
       <ImportCsvTable
         v-if="index == 2"
         :options="object.importCsv"
         @change="emitChange()"
       />
+      -->
     </div>
   </div>
 </template>
 
 <script>
 import Heuristic from "@/components/molecules/HeuristicsTable";
-import OptionsTable from "@/components/molecules/OptionsTable";
-import ImportCsvTable from "@/components/molecules/ImportCsvTable";
+//import OptionsTable from "@/components/molecules/OptionsTable";
+//import ImportCsvTable from "@/components/molecules/ImportCsvTable";
 
 export default {
   components: {
     Heuristic,
-    OptionsTable,
-    ImportCsvTable,
+  //  OptionsTable,
+   // ImportCsvTable,
   },
   props: {
     type: {
@@ -61,13 +64,14 @@ export default {
     tabClicked(index) {
       this.$emit("tabClicked", index);
     },
-    emitChange() {
+    emitChange(param) {
+      console.log(param)
       this.$emit("change");
     },
   },
   computed: {
     currentTest() {
-      return this.$store.state.Tests.currentTest;
+      return this.$store.state.Tests.Test.testStructure;
     },
   },
   mounted() {
