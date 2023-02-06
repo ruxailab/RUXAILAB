@@ -437,7 +437,9 @@ export default {
       this.$refs.descBtn.editSetup(ind);
     },
     emitChange() {
-      this.$emit("change");
+      console.log('0')
+      console.log(this.heuristics)
+      this.$emit("change",this.heuristics);
       this.$forceUpdate();
     },
     setupQuestion() {
@@ -576,7 +578,7 @@ export default {
     },
     heuristics() {
             console.log("ID --->" + this.$store.state.Tests.Test.testStructure);
-            return this.$store.state.Tests.Test.testStructure ? this.$store.state.Tests.Test.testStructure: [];
+            return this.$store.state.Tests.Test.testStructure ? this.$store.state.Tests.Test.testStructure : [];
         },
 
     arrayQuestions() {
@@ -596,6 +598,7 @@ export default {
     },
   },
   created() {
+    console.log
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,

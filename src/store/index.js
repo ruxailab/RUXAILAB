@@ -7,6 +7,7 @@ import Users from "@/store/modules/newStores/User";
 import Database from "@/store/modules/newStores/Database";
 import Cooperators from "@/store/modules/newStores/Cooperators";
 import Reports from "@/store/modules/newStores/Reports";
+import Heuristic from "@/store/modules/newStores/Heuristic";
 
 
 Vue.use(Vuex);
@@ -19,6 +20,7 @@ export default new Vuex.Store({
         Users,
         Database,
         Cooperators,
-        Reports
+        Reports,
+        Heuristic
     },
 });
