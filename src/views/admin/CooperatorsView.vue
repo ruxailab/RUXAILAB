@@ -156,30 +156,20 @@
 
                   <v-list>
                     <v-list-item
-                      @click="removeFromList(item)"
-                      v-if="!item.invited"
-                    >
-                      <v-list-item-title>Cancel invitation</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item
                       @click="reinvite(item)"
                       link
-                      v-if="item.invited && item.accepted == false"
+                      v-if="item.accepted == false"
                     >
                       <v-list-item-title>Re-invite</v-list-item-title>
                     </v-list-item>
 
-                    <v-list-item
-                      @click="removeCoop(item)"
-                      v-if="item.accepted != null"
-                    >
+                    <v-list-item @click="removeCoop(item)" v-if="item.accepted">
                       <v-list-item-title>Remove cooperator</v-list-item-title>
                     </v-list-item>
 
                     <v-list-item
                       @click="cancelInvitation(item)"
-                      v-if="item.invited && item.accepted == null"
+                      v-if="item.invited && !item.accepted"
                     >
                       <v-list-item-title>Cancel invitation</v-list-item-title>
                     </v-list-item>
@@ -264,7 +254,7 @@ export default {
 
       // Notify users
       this.cooperatorsEdit.forEach((guest) => {
-        if (!guest.invited) this.notifyCooperator(guest);
+        this.notifyCooperator(guest);
       });
 
       this.selectedCoops = [];
@@ -441,31 +431,8 @@ export default {
         });
     },
     notifyCooperator(guest) {
-      const uidgen = new UIDGenerator();
-      let invitationID = uidgen.generateSync();
-      let invitation = {
-        id: invitationID,
-        to: {
-          id: guest.id,
-          email: guest.email,
-          accessLevel: guest.accessLevel.value,
-        },
-        from: {
-          id: this.user.id,
-          email: this.user.email,
-        },
-        test: {
-          id: this.test.id,
-          testTitle: this.test.testTitle,
-          testType: this.test.testType,
-          // reports: this.test.reports,
-          // answers: this.test.answers,
-          // cooperators: this.test.cooperators,
-          // author: this.test.testAdmin.email,
-        },
-      };
       // TODO: Send Notification
-      this.sendInvitationMail(guest, invitation);
+      this.sendInvitationMail(guest);
     },
     reinvite(guest) {
       const uidgen = new UIDGenerator();
@@ -547,7 +514,6 @@ export default {
       }
     },
     async removeCoop(coop) {
-      // this.deletedCoops.push(coop);
       let ok = confirm(
         `Are you sure you want to remove ${coop.email} from your cooperators?`
       );
@@ -569,73 +535,83 @@ export default {
       // event.preventDefault();
       // event.returnValue = "";
     },
-    sendInvitationMail(guest, invitation) {
-      // let domain = window.location.href;
-      // domain = domain.replace(window.location.pathname, "");
+    async sendInvitationMail(guest) {
+      let domain = window.location.href;
+      domain = domain.replace(window.location.pathname, "");
 
-      // let email = {
-      //   testId: this.test.id,
-      //   from: this.user.email,
-      //   testTitle: this.test.testTitle,
-      //   guest: guest,
-      //   domain: domain,
-      // };
+      let email = {
+        testId: this.test.id,
+        from: this.user.email,
+        testTitle: this.test.testTitle,
+        guest: guest,
+        domain: domain,
+      };
 
-      // if (guest.accessLevel.value >= 2) {
-      //   email = Object.assign(email, {
-      //     path: "testview",
-      //     token: guest.token,
-      //   });
-      // } else {
-      //   email = Object.assign(email, {
-      //     path: "managerview",
-      //     token: guest.token,
-      //   });
-      // }
-      console.log("TODO: SEND EMAIL TO =>", { guest, invitation });
-    },
-    cancelInvitation(guest) {
-      this.$store
-        .dispatch("removeCooperator", {
-          docId: this.id,
-          element: {
-            id: guest.id,
-          },
-        })
-        .then(() => {
-          if (guest.id) {
-            this.$store.dispatch("removeNotification", {
-              docId: guest.id,
-              element: { id: guest.invitation },
-            });
-          }
-          if (guest.accessLevel.value >= 2 && guest.id) {
-            this.$store.dispatch("removeReport", {
-              docId: this.test.reports,
-              element: {
-                id: guest.id,
-              },
-              param: "reports",
-            });
-          }
+      if (guest.accessLevel.value >= 2) {
+        email = Object.assign(email, {
+          path: "testview",
+          token: guest.token,
         });
-      this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest), 1);
+      } else {
+        email = Object.assign(email, {
+          path: "managerview",
+          token: guest.token,
+        });
+      }
+      await this.$store.dispatch("sendEmailInvitation", email);
+    },
+    async cancelInvitation(guest) {
+      let ok = confirm(
+        `Are you sure you want to cancel ${guest.email} from your cooperators?`
+      );
+      if (ok) {
+        let index = this.cooperatorsEdit.indexOf(guest);
+        this.cooperatorsEdit.splice(index, 1);
+        this.test.cooperators = this.cooperatorsEdit;
 
-      //update nCoops
-      this.$store.dispatch("updateMyTest", {
-        docId: this.test.admin.id,
-        element: {
-          accessLevel: 0,
-          answers: this.test.answers,
-          cooperators: this.test.cooperators,
-          date: this.test.date,
-          id: this.test.id,
-          reports: this.test.reports,
-          title: this.test.title,
-          type: this.test.type,
-          nCoops: this.cooperatorsEdit.length,
-        },
-      });
+        await this.$store.dispatch("updateTest", this.test);
+      }
+      //   this.$store
+      //     .dispatch("removeCooperator", {
+      //       docId: this.id,
+      //       element: {
+      //         id: guest.id,
+      //       },
+      //     })
+      //     .then(() => {
+      //       if (guest.id) {
+      //         this.$store.dispatch("removeNotification", {
+      //           docId: guest.id,
+      //           element: { id: guest.invitation },
+      //         });
+      //       }
+      //       if (guest.accessLevel.value >= 2 && guest.id) {
+      //         this.$store.dispatch("removeReport", {
+      //           docId: this.test.reports,
+      //           element: {
+      //             id: guest.id,
+      //           },
+      //           param: "reports",
+      //         });
+      //       }
+      //     });
+      //   this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest), 1);
+
+      //   //update nCoops
+      //   this.$store.dispatch("updateMyTest", {
+      //     docId: this.test.admin.id,
+      //     element: {
+      //       accessLevel: 0,
+      //       answers: this.test.answers,
+      //       cooperators: this.test.cooperators,
+      //       date: this.test.date,
+      //       id: this.test.id,
+      //       reports: this.test.reports,
+      //       title: this.test.title,
+      //       type: this.test.type,
+      //       nCoops: this.cooperatorsEdit.length,
+      //     },
+      //   });
     },
   },
   watch: {
