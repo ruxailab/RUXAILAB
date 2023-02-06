@@ -217,7 +217,6 @@ export default {
   },
   data: () => ({
     object: null,
-    cooperatorsEdit: [],
     headers: cooperatorsHeaders,
     roleOptions: roleOptionsItems,
     intro: null,
@@ -533,7 +532,7 @@ export default {
       this.selectedCoops.forEach((coop) => {
         this.cooperatorsEdit.push({
           userDocId: coop.id,
-          userName: '',
+          userName: "",
           email: coop.email,
           invited: true,
           accepted: false,
@@ -654,39 +653,39 @@ export default {
     },
   },
   watch: {
-    cooperators: async function() {
-      if (this.cooperators !== null && this.cooperators !== undefined) {
-        this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
-        if (!this.$store.test) {
-          await this.$store.dispatch("getTest", {
-            id: this.cooperators.test.id,
-          });
-        }
+    // cooperators: async function() {
+    //   if (this.cooperators !== null && this.cooperators !== undefined) {
+    //     this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
+    //     if (!this.$store.test) {
+    //       await this.$store.dispatch("getTest", {
+    //         id: this.cooperators.test.id,
+    //       });
+    //     }
 
-        let isOwner =
-          this.user.myTests.find((test) => test.cooperators == this.id) ==
-          undefined
-            ? false
-            : true;
+    //     let isOwner =
+    //       this.user.myTests.find((test) => test.cooperators == this.id) ==
+    //       undefined
+    //         ? false
+    //         : true;
 
-        let hasAccess = false;
-        if (!isOwner) {
-          hasAccess =
-            this.cooperators.cooperators.find(
-              (coop) =>
-                coop.email == this.user.email && coop.accessLevel.value == 0
-            ) == undefined
-              ? false
-              : true;
-        }
+    //     let hasAccess = false;
+    //     if (!isOwner) {
+    //       hasAccess =
+    //         this.cooperators.cooperators.find(
+    //           (coop) =>
+    //             coop.email == this.user.email && coop.accessLevel.value == 0
+    //         ) == undefined
+    //           ? false
+    //           : true;
+    //     }
 
-        // grant access if user is superadmin
-        if (this.user?.accessLevel == 0) hasAccess = true;
+    //     // grant access if user is superadmin
+    //     if (this.user?.accessLevel == 0) hasAccess = true;
 
-        if (hasAccess || isOwner) this.showCoops = true;
-        this.verified = true;
-      }
-    },
+    //     if (hasAccess || isOwner) this.showCoops = true;
+    //     this.verified = true;
+    //   }
+    // },
     loading() {
       if (!this.loading) {
         if (this.cooperatorsEdit.length == 0) this.intro = true;
@@ -704,11 +703,11 @@ export default {
     user() {
       return this.$store.getters.user;
     },
-    cooperators() {
-      return this.$store.getters.cooperators || [];
-    },
     users() {
       return this.$store.state.Users.users;
+    },
+    cooperatorsEdit() {
+      return [...this.test.cooperators] ?? [];
     },
     filteredUsers() {
       // let hasUser = null;
