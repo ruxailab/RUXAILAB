@@ -270,88 +270,72 @@ export default {
       this.selectedCoops = [];
       this.$refs.combobox.blur();
     },
-    remove(guest) {
-      if (guest.accessLevel.value != 2) {
-        this.$store
-          .dispatch("removeMyCoops", {
-            docId: guest.id,
-            element: {
-              id: this.test.id,
-            },
-          })
-          .then(() => {
-            //Remove element array
-            this.$store
-              .dispatch("removeCooperator", {
-                docId: this.id,
-                element: {
-                  id: guest.id,
-                },
-              })
-              .then(() => {
-                this.$store.commit(
-                  "setSuccess",
-                  "Cooperator successfuly removed"
-                );
-              })
-              .catch((err) => {
-                this.$store.commit("setError", err);
-              });
-          });
-      } else {
-        this.$store
-          .dispatch("removeMyAnswers", {
-            docId: guest.id,
-            element: {
-              id: this.test.id,
-            },
-          })
-          .then(() => {
-            this.$store
-              .dispatch("removeReport", {
-                docId: this.test.reports,
-                element: {
-                  id: guest.id,
-                },
-                param: "reports",
-              })
-              .then(() => {
-                this.$store
-                  .dispatch("removeCooperator", {
-                    docId: this.id,
-                    element: {
-                      id: guest.id,
-                    },
-                  })
-                  .then(() => {
-                    this.$store.commit(
-                      "setSuccess",
-                      "Cooperator successfuly removed"
-                    );
-                  })
-                  .catch((err) => {
-                    this.$store.commit("setError", err);
-                  });
-              });
-          });
-      }
-
-      //update nCoops
-      this.$store.dispatch("updateMyTest", {
-        docId: this.test.admin.id,
-        element: {
-          accessLevel: 0,
-          answers: this.test.answers,
-          cooperators: this.test.cooperators,
-          date: this.test.date,
-          id: this.test.id,
-          reports: this.test.reports,
-          title: this.test.title,
-          type: this.test.type,
-          nCoops: this.cooperatorsEdit.length,
-        },
-      });
-    },
+    // async remove(guest) {
+    // if (guest.accessLevel.value != 2) {
+    // this.$store
+    //   .dispatch("removeMyCoops", {
+    //     docId: guest.id,
+    //     element: {
+    //       id: this.test.id,
+    //     },
+    //   })
+    //   .then(() => {
+    //     Remove element array
+    //     this.$store
+    //       .dispatch("removeCooperator", {
+    //         docId: this.id,
+    //         element: {
+    //           id: guest.id,
+    //         },
+    //       })
+    //       .then(() => {
+    //         this.$store.commit(
+    //           "setSuccess",
+    //           "Cooperator successfuly removed"
+    //         );
+    //       })
+    //       .catch((err) => {
+    //         this.$store.commit("setError", err);
+    //       });
+    //   });
+    // } else {
+    //   this.$store
+    //     .dispatch("removeMyAnswers", {
+    //       docId: guest.id,
+    //       element: {
+    //         id: this.test.id,
+    //       },
+    //     })
+    //     .then(() => {
+    //       this.$store
+    //         .dispatch("removeReport", {
+    //           docId: this.test.reports,
+    //           element: {
+    //             id: guest.id,
+    //           },
+    //           param: "reports",
+    //         })
+    //         .then(() => {
+    //           this.$store
+    //             .dispatch("removeCooperator", {
+    //               docId: this.id,
+    //               element: {
+    //                 id: guest.id,
+    //               },
+    //             })
+    //             .then(() => {
+    //               this.$store.commit(
+    //                 "setSuccess",
+    //                 "Cooperator successfuly removed"
+    //               );
+    //             })
+    //             .catch((err) => {
+    //               this.$store.commit("setError", err);
+    //             });
+    //         });
+    //     });
+    // }
+    // },
     edit(guest) {
       this.$store
         .dispatch("updateCooperator", {
@@ -562,7 +546,7 @@ export default {
         this.selectedCoops.push(this.email);
       }
     },
-    removeCoop(coop) {
+    async removeCoop(coop) {
       // this.deletedCoops.push(coop);
       let ok = confirm(
         `Are you sure you want to remove ${coop.email} from your cooperators?`
@@ -570,7 +554,9 @@ export default {
       if (ok) {
         let index = this.cooperatorsEdit.indexOf(coop);
         this.cooperatorsEdit.splice(index, 1);
-        this.remove(coop);
+        this.test.cooperators = this.cooperatorsEdit;
+
+        await this.$store.dispatch("updateTest", this.test);
       }
     },
     removeFromList(coop) {
