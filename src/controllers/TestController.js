@@ -25,11 +25,8 @@ export default class TestController extends Controller {
         });
     }
 
-    updateTest(payload) {
-        console.log("puta updateTest");
-        return super.update("tests", payload).then((res) => {
-            return res;
-        });
+    async updateTest(payload) {
+        return await super.update("tests", payload.id, payload.toFirestore());
     }
 
     // async updateObject({ commit }, payload) {

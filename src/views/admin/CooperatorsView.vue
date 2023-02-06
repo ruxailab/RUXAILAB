@@ -13,7 +13,7 @@
       @closeIntro="intro = false"
     />
 
-    <v-row justify="center" >
+    <v-row justify="center">
       <v-container class="ma-0 pa-0">
         <Snackbar />
         <!-- Leave alert dialog -->
@@ -204,6 +204,8 @@ import LeaveAlert from "../../components/atoms/LeaveAlert.vue";
 import { cooperatorsHeaders } from "@/utils/headers";
 import { roleOptionsItems } from "@/utils/items";
 
+const UIDGenerator = require("uid-generator");
+
 export default {
   props: ["id"],
   components: {
@@ -257,26 +259,13 @@ export default {
         }
       }
     },
-    submit() {
-      this.cooperatorsEdit.forEach((guest) => {
-        //Invite new cooperators
-        if (!guest.invited) this.send(guest);
-      });
+    async submit() {
+      this.test.cooperators = [...this.cooperatorsEdit];
+      await this.$store.dispatch("updateTest", this.test);
 
-      //update nCoops
-      this.$store.dispatch("updateMyTest", {
-        docId: this.test.admin.id,
-        element: {
-          accessLevel: 0,
-          answers: this.test.answers,
-          cooperators: this.test.cooperators,
-          date: this.test.date,
-          id: this.test.id,
-          reports: this.test.reports,
-          title: this.test.title,
-          type: this.test.type,
-          nCoops: this.cooperatorsEdit.length,
-        },
+      // Notify users
+      this.cooperatorsEdit.forEach((guest) => {
+        if (!guest.invited) this.notifyCooperator(guest);
       });
 
       this.selectedCoops = [];
@@ -468,81 +457,38 @@ export default {
           }
         });
     },
-    send(guest) {
-      console.log(this.test)
-      if (guest.id) {
-        const UIDGenerator = require("uid-generator");
-        const uidgen = new UIDGenerator();
-        let invID = uidgen.generateSync();
-        let inv = {
-          id: invID,
-          to: {
-            id: guest.id,
-            email: guest.email,
-            accessLevel: guest.accessLevel.value,
-          },
-          from: {
-            id: this.user.uid,
-            email: this.user.email,
-          },
-          test: {
-            id: this.test.id,
-            title: this.test.title,
-            type: this.test.type,
-            reports: this.test.reports,
-            answers: this.test.answers,
-            cooperators: this.test.cooperators,
-            author: this.test.admin.email,
-          },
-        };
-        this.$store
-          .dispatch("pushNotification", {
-            docId: inv.to.id,
-            element: inv,
-            param: "notifications",
-          })
-          .then(() => {
-            this.$set(guest, "invited", true);
-            Object.assign(guest, { invitation: invID });
-            //Access Level Tester
-            if (guest.accessLevel.value == 2) {
-              let item = Object.assign(
-                {},
-                {
-                  uid: guest.id,
-                  email: guest.email,
-                  log: {
-                    date: new Date().toLocaleString("en-Us"),
-                    progress: 0,
-                    status: "Invited",
-                  },
-                }
-              );
-              this.$store
-                .dispatch("pushLog", {
-                  docId: this.test.reports,
-                  element: item,
-                })
-                .then(() => {
-                  this.$store.commit(
-                    "setSuccess",
-                    "Invitations sent successfully!"
-                  );
-                })
-                .catch((err) => {
-                  this.$store.commit("setError", err);
-                });
-            }
-          });
-      }
-      this.sendInvitationMail(guest);
+    notifyCooperator(guest) {
+      const uidgen = new UIDGenerator();
+      let invitationID = uidgen.generateSync();
+      let invitation = {
+        id: invitationID,
+        to: {
+          id: guest.id,
+          email: guest.email,
+          accessLevel: guest.accessLevel.value,
+        },
+        from: {
+          id: this.user.id,
+          email: this.user.email,
+        },
+        test: {
+          id: this.test.id,
+          testTitle: this.test.testTitle,
+          testType: this.test.testType,
+          // reports: this.test.reports,
+          // answers: this.test.answers,
+          // cooperators: this.test.cooperators,
+          // author: this.test.testAdmin.email,
+        },
+      };
+      // TODO: Send Notification
+      this.sendInvitationMail(guest, invitation);
     },
     reinvite(guest) {
-      const UIDGenerator = require("uid-generator");
       const uidgen = new UIDGenerator();
-      let invID = uidgen.generateSync();
+      let invitationID = uidgen.generateSync();
       let inv = {
-        id: invID,
+        id: invitationID,
         to: {
           id: guest.id,
           email: guest.email,
@@ -581,49 +527,22 @@ export default {
         });
     },
     saveInvitations() {
-      const UIDGenerator = require("uid-generator");
       const uidgen = new UIDGenerator();
       let token = uidgen.generateSync();
-      let hasObj = false;
-      let obj = null;
 
       this.selectedCoops.forEach((coop) => {
-        if (typeof coop == "object") {
-          obj = Object.assign(
-            {},
-            {
-              id: coop.id,
-              email: coop.email,
-              invited: false,
-              accepted: null,
-              accessLevel: this.roleOptions[this.selectedRole],
-              token: token,
-            }
-          );
-        } else {
-          obj = Object.assign(
-            {},
-            {
-              id: null,
-              email: coop,
-              invited: false,
-              accepted: null,
-              accessLevel: this.roleOptions[this.selectedRole],
-              token: token,
-            }
-          );
-        }
-
-        if (obj !== null)
-          this.cooperatorsEdit.forEach((coopEdit) => {
-            if (coopEdit.email === obj.email) {
-              hasObj = true;
-            }
-          });
-
-        if (!hasObj && obj !== null) {
-          this.cooperatorsEdit.push(obj);
-        }
+        this.cooperatorsEdit.push({
+          userDocId: coop.id,
+          userName: '',
+          email: coop.email,
+          invited: true,
+          accepted: false,
+          accessLevel: this.roleOptions[this.selectedRole].value,
+          token: token,
+          progress: 0,
+          answerStatus: "",
+          updateDate: "",
+        });
       });
       this.submit();
     },
@@ -660,47 +579,35 @@ export default {
       this.cooperatorsEdit.splice(index, 1);
     },
     preventNav(event) {
-      console.log(event)
+      console.log(event);
       // if (!this.change) return;
       // event.preventDefault();
       // event.returnValue = "";
     },
-    sendInvitationMail(guest) {
-      let domain = window.location.href;
-      domain = domain.replace(window.location.pathname, "");
+    sendInvitationMail(guest, invitation) {
+      // let domain = window.location.href;
+      // domain = domain.replace(window.location.pathname, "");
 
-      let email = Object.assign(
-        {},
-        {
-          testId: this.test.id,
-          from: this.user.email,
-          testTitle: this.test.title,
-          guest: guest,
-          domain: domain,
-        }
-      );
+      // let email = {
+      //   testId: this.test.id,
+      //   from: this.user.email,
+      //   testTitle: this.test.testTitle,
+      //   guest: guest,
+      //   domain: domain,
+      // };
 
-      if (guest.accessLevel.value >= 2) {
-        email = Object.assign(email, {
-          path: "testview",
-          token: guest.token,
-        });
-      } else {
-        email = Object.assign(email, {
-          path: "managerview",
-          token: guest.token,
-        });
-      }
-
-      this.$store.dispatch("sendEmailInvitation", email).then(() => {
-        this.$set(guest, "invited", true);
-
-        Object.assign(guest);
-        this.$store.dispatch("pushCooperator", {
-          docId: this.id,
-          element: Object.assign({}, guest),
-        });
-      });
+      // if (guest.accessLevel.value >= 2) {
+      //   email = Object.assign(email, {
+      //     path: "testview",
+      //     token: guest.token,
+      //   });
+      // } else {
+      //   email = Object.assign(email, {
+      //     path: "managerview",
+      //     token: guest.token,
+      //   });
+      // }
+      console.log("TODO: SEND EMAIL TO =>", { guest, invitation });
     },
     cancelInvitation(guest) {
       this.$store
@@ -816,7 +723,7 @@ export default {
       //   if (!hasUser) array.push(user);
       // });
       // return array;
-      return this.users ?? []
+      return this.users ?? [];
     },
     loading() {
       return this.$store.getters.loading;
@@ -832,7 +739,7 @@ export default {
     // } else {
     //   next();
     // }
-    next()
+    next();
   },
   beforeMount() {
     window.addEventListener("beforeunload", this.preventNav);
