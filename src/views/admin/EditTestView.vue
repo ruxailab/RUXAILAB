@@ -28,7 +28,7 @@
     </v-dialog>
 
     <!-- Save button -->
-    <v-tooltip left v-if="change">
+    <v-tooltip left >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           large
@@ -63,7 +63,7 @@
         -->
     <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />
 
-    <ShowInfo v-if="test" title="Test Edit">
+    <!--<ShowInfo v-if="test" title="Test Edit">-->
       <!-- Heuristics tests -->
       <!--TODO: change hard coded type
             <EditHeuristicsTest
@@ -79,7 +79,7 @@
         type="content"
         :object="object"
         :index="index"
-        @change="change = true"
+        @change="change"
         slot="content"
       />
       <!-- User tests
@@ -100,7 +100,7 @@
                 slot="content"
             />
              -->
-    </ShowInfo>
+   <!-- </ShowInfo>-->
   </div>
   <div v-else>
     <h1>LOADING</h1>
@@ -109,16 +109,17 @@
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
-import ShowInfo from "@/components/organisms/ShowInfo";
+//import ShowInfo from "@/components/organisms/ShowInfo";
 import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
+import Test from '@/models/Test'
 //import EditUserTest from "@/components/organisms/EditUserTest";
 
 export default {
   props: ["id"],
   components: {
     Snackbar,
-    ShowInfo,
+    //ShowInfo,
     IntroEdit,
     EditHeuristicsTest,
     //EditUserTest,
@@ -133,39 +134,12 @@ export default {
   }),
   methods: {
     async submit() {
-      let today = new Date();
-
-      if (this.object.date !== today.toDateString())
-        this.object.date = today.toDateString(); //update date if not the same as last update
-
-      if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
-      this.object.answersSheet = await this.mountAnswerSheet(); //update object answersheet
-      this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object,
-        })
-        .then(async () => {
-          this.answers.answersSheet = await this.mountAnswerSheet();
-          if (this.test.type === "HEURISTICS")
-            Object.assign(this.answers, {
-              options: this.object.options,
-            });
-          this.$store.Test.dispatch("updateTestAnswer", {
-            docId: this.test.answers,
-            data: this.answers,
-          })
-            .then(() => {
-              this.$store.commit("setSuccess", "Test updated succesfully");
-              this.change = false;
-            })
-            .catch((err) => {
-              this.$store.commit("setError", err);
-            });
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+      console.log('hello')
+      console.log(this.$store.state.Heuristic.heuristicStructure)
+      console.log(this.object)
+      this.object.testStructure = this.$store.state.Heuristic.heuristicStructure
+      const auxT= new Test(this.object)
+      this.$store.dispatch("updateTest", auxT)
     },
     mountAnswerSheet() {
       let aux = {
@@ -210,6 +184,7 @@ export default {
       this.valids[index] = valid;
     },
     validateAll() {
+      console.log('iaiiiii')
       if (this.test.type === "User" && !this.valids[0]) {
         this.$store.commit(
           "setError",
