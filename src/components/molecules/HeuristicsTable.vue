@@ -139,7 +139,7 @@
     <v-card style="background: #f5f7ff; z-index: 10 !important;" elevation="0">
       <v-card-title class="subtitleView">Current Heuristics</v-card-title>
       <v-divider></v-divider>
-      <v-row class="ma-0 pa-0" v-if="heuristics.length">
+      <v-row class="ma-0 pa-0" v-if="true">
         <!--Heuristics List-->
         <v-col class="ma-0 pa-0" cols="3">
           <v-list dense height="560px" outlined>
@@ -289,7 +289,6 @@
                         <v-row justify="end" class="ma-0 pa-0">
                           <AddDescBtn
                             ref="descBtn"
-                            @change="emitChange"
                             :question="
                               heuristics[itemSelect].questions[questionSelect]
                             "
@@ -405,7 +404,6 @@ export default {
             this.itemSelect
           ].questions.length;
         }
-        this.emitChange();
       } else {
         alert("Sorry, but you can't delete all heuristics questions");
       }
@@ -435,13 +433,13 @@ export default {
         this.questionSelect
       ].descriptions.indexOf(desc);
       this.$refs.descBtn.editSetup(ind);
-    },
+    },/*
     emitChange() {
       console.log('0')
       console.log(this.heuristics)
       this.$emit("change",this.heuristics);
       this.$forceUpdate();
-    },
+    },*/
     setupQuestion() {
       this.newQuestion = {
         id:
@@ -462,7 +460,7 @@ export default {
         ].descriptions.indexOf(item),
         1
       );
-      this.emitChange();
+      //this.emitChange();
     },
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
@@ -475,7 +473,7 @@ export default {
 
         this.$refs.formHeuris.resetValidation();
 
-        this.$emit("change");
+        //this.$emit("change");
       }
     },
     closeDialog(dialogName) {
@@ -503,7 +501,7 @@ export default {
         ].questions.length;
 
         this.$refs.formQuestion.resetValidation();
-        this.$emit("change");
+       // this.$emit("change");
       }
     },
     validateEdit() {
@@ -517,7 +515,7 @@ export default {
             this.questionSelect
           ].title = this.itemEdit.titleEdit;
         }
-        this.emitChange();
+        //this.emitChange();
       }
     },
   },
@@ -546,9 +544,6 @@ export default {
         }
       }
     },
-    heuristics() {
-      this.$emit("change");
-    },
     itemSelect() {
       if (this.itemSelect != null) this.questionSelect = 0;
       else this.questionSelect = null;
@@ -573,21 +568,23 @@ export default {
   },
   computed: {
     csvHeuristics() {
-      console.log(this.$store.state.Tests.currentTest);
-      return this.$store.state.Tests.currentTest;
+      console.log(this.$store.state.Tests.Test.testStructure);
+      return this.$store.state.Tests.Test.testStructure;
     },
     heuristics() {
-            console.log("ID --->" + this.$store.state.Tests.Test.testStructure);
+            console.log(this.$store.state.Tests.Test.testStructure);
             return this.$store.state.Tests.Test.testStructure ? this.$store.state.Tests.Test.testStructure : [];
         },
 
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);
+      console.log('puta')
+      console.log(array)
       array.forEach((el) => {
         aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
-      return aux;
+      return [];
     },
     totalQuestions() {
       let result = 0;
@@ -597,8 +594,8 @@ export default {
       return result;
     },
   },
-  created() {
-    console.log
+ async created() {
+  await this.$store.dispatch("getTest", { id: this.$route.params.id });
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
