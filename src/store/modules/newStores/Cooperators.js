@@ -4,6 +4,7 @@
 */
 
 import template from "@/assets/template.js"
+import { FirebaseFunctionsController } from "@/controllers/FirebaseFunctionsController";
 
 export default {
   state: {
@@ -225,16 +226,21 @@ export default {
      * @param {string} payload.token - token to identify the email invitation
      * @returns {void}
      */
-    sendEmailInvitation({ dispatch, commit }, payload) {
+    async sendEmailInvitation({ commit }, payload) {
       commit("setLoading", true);
-      let link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`;
-      Object.assign(payload, { link: link });
 
-      dispatch("callFunction", Object.assign({}, {
-        function: 'sendEmail', data: Object.assign(payload, { template: template.getTemplate(payload) }
+      try {
+        payload.link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`;
+
+        await FirebaseFunctionsController.callHttpsCallableFunction(
+          'sendEmail', Object.assign(payload, { template: template.getTemplate(payload) })
         )
-      }))
-        .catch((err) => commit("setError", "Error in sendEmailInvitation." + err));
+      } catch (e) {
+        console.error(e)
+      } finally {
+        commit("setLoading", false);
+      }
+
     }
   },
 };
