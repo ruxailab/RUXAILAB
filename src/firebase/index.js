@@ -2,10 +2,17 @@ import "firebase/auth";
 import "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import {
+  getAuth,
+  // connectAuthEmulator
+} from "firebase/auth";
+import {
+  getFirestore,
+  // connectFirestoreEmulator
+} from "firebase/firestore";
 import {
   getFunctions,
+  // connectFunctionsEmulator
 } from 'firebase/functions'
 
 let isProduction = false;
@@ -35,6 +42,10 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 const analytics = getAnalytics(firebaseApp);
-const fbFunctions = getFunctions()
+const fbFunctions = getFunctions(firebaseApp)
+
+// connectFirestoreEmulator(db, 'localhost', 8081);
+// connectAuthEmulator(auth, "http://localhost:9099");
+// connectFunctionsEmulator(fbFunctions, "localhost", 5001);
 
 export { auth, db, analytics, fbFunctions };
