@@ -20,12 +20,11 @@ export default class TestController extends Controller {
     }
 
     async deleteTest(payload) {
-        return await super.delete("tests", payload.id)
+        return await super.delete(COLLECTION, payload.id)
     }
 
     async updateTest(payload) {
-        console.log('ai')
-        return await super.update("tests", payload.id, payload.toFirestore());
+        return await super.update(COLLECTION, payload.id, payload.toFirestore());
     }
 
     // async updateObject({ commit }, payload) {

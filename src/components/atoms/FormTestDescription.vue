@@ -4,7 +4,7 @@
       <v-col cols="12" md="5">
         <v-text-field
           :autofocus="lock ? false : true"
-          v-model="test.title"
+          v-model="test.testDescription"
           label="Title"
           :rules="titleRequired"
           counter="100"
@@ -15,7 +15,7 @@
         <v-select
           :disabled="lock"
           :items="types"
-          v-model="test.type"
+          v-model="test.testType"
           label="Type"
           :rules="typeRequired"
           dense
@@ -24,7 +24,7 @@
       </v-col>
       <v-col cols="12" md="5">
         <v-textarea
-          v-model="test.description"
+          v-model="test.testDescription"
           label="Description"
           outlined
           dense

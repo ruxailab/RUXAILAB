@@ -34,6 +34,7 @@
 
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
+      {{ template }}
       <v-card>
         <p class="dialog-title ma-2 pa-2">Create Template</p>
         <v-divider></v-divider>
@@ -42,17 +43,17 @@
             <v-col cols="12">
               <v-text-field
                 autofocus
-                v-model="templateTitle"
+                v-model="template.title"
                 label="Title"
                 :rules="titleRequired"
                 counter="100"
                 outlined
-                @input="setLeavingAlert()"
+                @input="$emit('change')"
                 dense
               ></v-text-field>
 
               <v-textarea
-                v-model="templateDescription"
+                v-model="template.description"
                 label="Description"
                 outlined
                 dense
@@ -61,7 +62,7 @@
 
               <v-checkbox
                 label="Make template public to all users"
-                v-model="publicTemplate"
+                v-model="template.isPublic"
                 color="#F9A826"
               ></v-checkbox>
             </v-col>
@@ -71,7 +72,7 @@
             <v-spacer></v-spacer>
             <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
             <v-btn
-              @click="createTemplate(), (tempDialog = false)"
+              @click="createTemplate()"
               text
               :disabled="hasTemplate ? true : false"
               class="success"
@@ -164,6 +165,7 @@ import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import LeaveAlert from "@/components/atoms/LeaveAlert";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
+import Template from "@/models/Template";
 
 export default {
   props: ["id"],
@@ -175,6 +177,11 @@ export default {
     AccessNotAllowed,
   },
   data: () => ({
+    template:{
+      title:'',
+      description:'',
+      isPublic:false
+    },
     object: null,
     change: false,
     valids: [false, true, true],
@@ -323,73 +330,33 @@ export default {
       this.$router.push({name:'TestList'})
 
     },
-    createTemplate() {
-      //create template
-      if (this.$refs.tempform.validate()) {
-        let template = {};
-        let header = {
-          author: Object.assign(
-            {},
-            {
-              email: this.$store.getters.user.email,
-              id: this.$store.getters.user.uid,
-            }
-          ),
-          version: "1.0.0",
-          date: new Date().toDateString(),
-          title: this.templateTitle,
-          description: this.templateDescription,
-          isPublic: this.publicTemplate,
-        };
-
-        if (this.test.type == "HEURISTICS") {
-          template = Object.assign(template, {
-            heuristics: this.test.heuristics,
-            options: this.test.options,
-            answersSheet: this.test.answersSheet,
-            type: this.test.type,
-          });
-        } else if (this.test.type == "User") {
-          template = Object.assign(template, {
-            tasks: this.test.tasks,
-            preTest: this.test.preTest,
-            postTest: this.test.postTest,
-            type: this.test.type,
-          });
-        }
-
-        let payload = {
-          data: { body: template, header: header, testId: this.test.id },
-        };
-
-        this.$store.dispatch("createTemplate", payload).then((id) => {
-          this.object = Object.assign(this.object, {
-            template: Object.assign(
-              {},
-              {
-                id: id,
-                upToDate: true,
-              }
-            ),
-          });
-
-          let el = {};
-
-          Object.keys(payload.data.header).forEach((key) => {
-            el[key] = payload.data.header[key];
-          });
-
-          el = Object.assign(el, { type: payload.data.body.type, id: id });
-
-          this.$store.dispatch("pushMyTemps", {
-            docId: this.user.uid,
-            element: el,
-            param: "myTemps",
-          });
-
-          this.submit();
-        });
+    async createTemplate() {  
+      let template = new Template(this.template)
+      console.log('ai')
+      if (this.test.testType == "HEURISTICS") {
+        template.testStructure= this.test.testStructure,
+        template.testOptions= this.test.testOptions,
+        template.answersSheet= this.test.answersDocId,
+        template.type= this.test.testType,
+        template.authorDocId= this.$store.getters.user.id
+        template.authorEmail= this.$store.getters.user.email
+        template.creationDate= new Date().toDateString(),
+        template.version = "1.0.0"
+        template.testId = this.test.id
       }
+      
+      else if (this.test.testType == "User") {
+        template = Object.assign(template, {
+        tasks: this.test.tasks,
+        preTest: this.test.preTest,
+        postTest: this.test.postTest,
+        type: this.test.type,
+      })
+      }
+      await this.$store.dispatch("createTemplate", template)  
+      //this.submit();
+  
+    
     },
     closeDialog() {
       this.tempDialog = false;
