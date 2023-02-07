@@ -267,6 +267,7 @@ export default {
                 test: this.test,
                 cooperator: this.user,
               });
+              this.flagToken = false;
             }
             //User invited and he doesn't have account
             else if (invitation.id == null) {
