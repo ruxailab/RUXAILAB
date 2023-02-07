@@ -71,10 +71,11 @@ export default class Controller {
         return res;
     }
 
-    async update(path, document, payload) {
-        const uploadFile = doc(db, path, document);
-        await updateDoc(uploadFile, payload);
+    async update(col, payload) {
+        const ref = doc(db, `${col}/${payload.id}`)
+        return await updateDoc(ref, payload)
     }
+    
 
     async delete(path, document) {
         await deleteDoc(doc(db, path, document));
