@@ -1,5 +1,10 @@
 // imports
 
+// import firebase from "firebase";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+// import { doc, arrayUnion } from "firebase/firestore";
+import { db } from "@/firebase/index";
+
 import Heuristic from "@/models/Heuristic";
 import HeuristicAnswer from "@/models/HeuristicAnswer";
 import HeuristicQuestion from "@/models/HeuristicQuestion";
@@ -11,6 +16,17 @@ import Controller from "@/controllers/BaseController";
 export default class HeuristicController extends Controller {
     constructor() {
         super();
+    }
+
+    async createCsvHeuris(data) {
+        await updateDoc(doc(db, "test", data.testId), {
+            testStructure: arrayUnion({
+                id: data.id,
+                title: data.title,
+                questions: data.questions,
+                total: data.total,
+            }),
+        });
     }
 
     createNewHeuristic(document, data) {
