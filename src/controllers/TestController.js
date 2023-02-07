@@ -1,13 +1,17 @@
 // imports
 
 import Test from "@/models/Test";
-import TestAdmin from "@/models/TestAdmin";
-import TestStructure from "@/models/TestStructure";
-import TestStructureOptions from "@/models/TestStructureOptions";
-import TestTemplateDoc from "@/models/TestTemplateDoc";
 
 import Controller from "@/controllers/BaseController";
+import AnswerController from "./AnswerController";
+import Answer from "@/models/Answer";
+import UserAnswer from "@/models/UserAnswer";
+import UserController from "./UserController";
+
 const COLLECTION = "tests";
+const answerController = new AnswerController()
+const userController = new UserController()
+
 export default class TestController extends Controller {
     constructor() {
         super();
@@ -24,27 +28,38 @@ export default class TestController extends Controller {
     }
 
     async updateTest(payload) {
-        console.log('ai')
         return await super.update("tests", payload.id, payload.toFirestore());
     }
 
-    // async updateObject({ commit }, payload) {
-    //     //----> firebase update example
-    //     // DatabaseReference hopperRef = usersRef.child("gracehop");
-    //     // Map<String, Object> hopperUpdates = new HashMap<>();
-    //     // hopperUpdates.put("nickname", "Amazing Grace");
-    //     // hopperRef.updateChildrenAsync(hopperUpdates);
-    //     //---->old code
-    //     // try {
-    //     //     var docRef = await api.database.updateObject(payload);
-    //     //     return docRef;
-    //     // } catch (err) {
-    //     //     console.error("Error in updateObject:", err);
-    //     //     commit("setError", "Error updating object in database");
-    //     // } finally {
-    //     //     commit("setLoading", false);
-    //     // }
-    // }
+    async acceptTestCollaboration(payload) {
+        // Create answer document
+        const answer = new Answer({ type: payload.test.testType })
+        const res = await answerController.createAnswer(answer)
+        const docId = res.id
+        const userAnswer = new UserAnswer({
+            answerDocId: docId,
+            accessLevel: payload.cooperator.accessLevel,
+            progress: 0,
+            testAuthorName: '',
+            testDocId: payload.test.id,
+            testType: payload.test.testType,
+            testTitle: payload.test.testTitle,
+            total: 0,
+            updateDate: Date.now()
+        })
+
+        // Update answers inside collaborator
+        const userToUpdate = payload.cooperator
+        userToUpdate.myAnswers.push(userAnswer.toFirestore())
+        await userController.update(userToUpdate.id, userToUpdate.toFirestore())
+
+        const testToUpdate = payload.test
+        const index = testToUpdate.cooperators.findIndex((c) => c.userDocId === userToUpdate.id)
+        testToUpdate.cooperators[index].accepted = true
+
+        // Update invitation on test to accepted
+        return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
+    }
 
     //------------------GET OBJECTS - ID------------------
 
@@ -56,66 +71,6 @@ export default class TestController extends Controller {
         //console.log(Test.toTest(res));
         return Test.toTest(Object.assign({ id: res.id }, res.data()));
     }
-
-    //GetObject of TestAdmin
-    getObjectTestAdmin(parameter, condition) {
-        return super
-            .read("test", parameter, condition)
-            .then((response) => {
-                let res = response.map(TestAdmin.toTestAdmin);
-                console.log("TestAdminController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestAdminController error: ", err);
-            });
-    }
-
-    //GetObject of TestStructure
-    getObjectTestStructure(parameter, condition) {
-        return super
-            .read("test", parameter, condition)
-            .then((response) => {
-                let res = response.map(TestStructure.toTestStructure);
-                console.log("TestStructureController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestStructureController error: ", err);
-            });
-    }
-
-    //GetObject of TestStructureOptions
-    getObjectTestStructureOptions(parameter, condition) {
-        return super
-            .read("test", parameter, condition)
-            .then((response) => {
-                let res = response.map(
-                    TestStructureOptions.toTestStructureOptions
-                );
-                console.log("TestStructureOptionsController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestStructureOptionsController error: ", err);
-            });
-    }
-
-    //GetObject of TestTemplateDoc
-    getObjectTestTemplateDoc(parameter, condition) {
-        return super
-            .read("test", parameter, condition)
-            .then((response) => {
-                let res = response.map(TestTemplateDoc.toTestTemplateDoc);
-                console.log("TestTemplateDocController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestTemplateDocController error: ", err);
-            });
-    }
-
-    // ----------------GET ALL OBJECTS----------------
 
     //GetObject of Test
     async getAllObjectTest() {
@@ -130,64 +85,4 @@ export default class TestController extends Controller {
                 console.log("TestController error: ", err);
             });
     }
-
-    //GetObject of TestAdmin
-    getAllObjectTestAdmin() {
-        return super
-            .readAll("test")
-            .then((response) => {
-                let res = response.map(TestAdmin.toTestAdmin);
-                console.log("TestAdminController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestAdminController error: ", err);
-            });
-    }
-
-    //GetObject of TestStructure
-    getAllObjectTestStructure() {
-        return super
-            .readAll("test")
-            .then((response) => {
-                let res = response.map(TestStructure.toTestStructure);
-                console.log("TestStructureController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestStructureController error: ", err);
-            });
-    }
-
-    //GetObject of TestStructureOptions
-    getAllObjectTestStructureOptions() {
-        return super
-            .readAll("test")
-            .then((response) => {
-                let res = response.map(
-                    TestStructureOptions.toTestStructureOptions
-                );
-                console.log("TestStructureOptionsController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestStructureOptionsController error: ", err);
-            });
-    }
-
-    //GetObject of TestTemplateDoc
-    getAllObjectTestTemplateDoc() {
-        return super
-            .readAll("test")
-            .then((response) => {
-                let res = response.map(TestTemplateDoc.toTestTemplateDoc);
-                console.log("TestTemplateDocController res: ", res);
-                return res;
-            })
-            .catch((err) => {
-                console.log("TestTemplateDocController error: ", err);
-            });
-    }
 }
-
-// "_" before attibutes and mehtods turn them into PRIVATE
