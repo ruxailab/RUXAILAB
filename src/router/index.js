@@ -16,18 +16,14 @@ const router = new VueRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  console.log('àospkasp')
   next(vm => {
     // access to component public instance via `vm`
-    vm.$store.commit('SET_LOCAL_CHANGES',false)
+    vm.$store.commit('SET_LOCAL_CHANGES', false)
   })
 })
-router.afterEach((to, from,next) => {
-  console.log('after')
-  next(vm => {
-    // access to component public instance via `vm`
-    vm.$store.commit('SET_LOCAL_CHANGES',false)
-  })
+router.afterEach(() => {
+  // access to component public instance via `vm`
+  store.commit('SET_LOCAL_CHANGES', false)
 })
 
 router.beforeResolve(async (to, from, next) => {
