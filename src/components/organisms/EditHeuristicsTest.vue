@@ -2,8 +2,8 @@
   <div>
     <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">Heuristics</v-tab>
-      <!--<v-tab @click="tabClicked(1)">Options</v-tab>-->
-      <!--<v-tab @click="tabClicked(2)">Import .csv</v-tab>-->
+      <v-tab @click="tabClicked(1)">Options</v-tab>
+      <v-tab @click="tabClicked(2)">Import .csv</v-tab>
     </v-tabs>
 
     <div>
@@ -36,14 +36,14 @@
 
 <script>
 import Heuristic from "@/components/molecules/HeuristicsTable";
-//import OptionsTable from "@/components/molecules/OptionsTable";
-//import ImportCsvTable from "@/components/molecules/ImportCsvTable";
+import OptionsTable from "@/components/molecules/OptionsTable";
+import ImportCsvTable from "@/components/molecules/ImportCsvTable";
 
 export default {
   components: {
     Heuristic,
-    //  OptionsTable,
-    // ImportCsvTable,
+    OptionsTable,
+    ImportCsvTable,
   },
   props: {
     type: {

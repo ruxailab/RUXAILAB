@@ -259,6 +259,7 @@ export default {
         async updateTest({ commit }, payload) {
             commit("setLoading", true);
             try {
+                console.log(payload.toFirestore())
                 await TestCont.updateTest(payload);
             } catch (e) {
                 console.error("Error in updateTest", e);
