@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container>
         {{ test }}
         <Snackbar />
         <!-- Leave Alert Dialog -->
@@ -63,10 +63,10 @@
 
         <!--
         <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
-        -->
-        <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />
-
-        <ShowInfo v-if="test" title="Test Edit">
+          <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />  --> 
+   
+ <!--
+        <ShowInfo v-if="test" title="Test Edit">  --> 
             <!-- Heuristics tests -->
             <!--TODO: change hard coded type
             <EditHeuristicsTest
@@ -76,7 +76,8 @@
                 slot="top"
             />
         -->
-
+        <v-row>
+          <v-col cols="12">
             <EditHeuristicsTest
                 v-if="test.testType === 'HEURISTICS'"
                 type="content"
@@ -85,6 +86,7 @@
                 @change="change = true"
                 slot="content"
             />
+          </v-col>
             <!-- User tests
             <EditUserTest
                 v-if="test.type === 'User'"
@@ -103,14 +105,15 @@
                 slot="content"
             />
              -->
-        </ShowInfo>
-    </div>
+       <!-- </ShowInfo>  --> 
+      </v-row>
+            </v-container>
 </template>
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
-import ShowInfo from "@/components/organisms/ShowInfo";
-import IntroEdit from "@/components/molecules/IntroEdit.vue";
+//import ShowInfo from "@/components/organisms/ShowInfo";
+//import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
 //import EditUserTest from "@/components/organisms/EditUserTest";
 
@@ -118,8 +121,8 @@ export default {
     props: ["id"],
     components: {
         Snackbar,
-        ShowInfo,
-        IntroEdit,
+        //ShowInfo,
+        //IntroEdit,
         EditHeuristicsTest,
         //EditUserTest,
     },

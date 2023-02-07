@@ -258,13 +258,13 @@ export default {
 
         async updateTest({ commit }, payload) {
             commit("setLoading", true);
-
+            console.log('stop')
             payload = Object.assign(payload, { collection: "Tests" });
             console.log("store", payload.data);
             commit("SET_TESTS", payload);
             //Connect to controllers
             try {
-                const res = await TestCont.updateTest();
+                const res = await TestCont.updateTest(payload.data);
                 commit("SET_TESTS", res);
                 return res;
             } catch {
