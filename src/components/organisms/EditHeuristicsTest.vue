@@ -1,31 +1,29 @@
 <template>
   <div>
-    <p>i0joi</p>
-    <v-tabs
-      v-if="type == 'tabs'"
-      background-color="transparent"
-      color="#FCA326"
-      class="pb-0 mb-0"
-    >
+    <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">Heuristics</v-tab>
       <!--<v-tab @click="tabClicked(1)">Options</v-tab>-->
-        <!--<v-tab @click="tabClicked(2)">Import .csv</v-tab>-->
+      <!--<v-tab @click="tabClicked(2)">Import .csv</v-tab>-->
     </v-tabs>
 
-    <div v-else-if="type == 'content'">
+    <div>
+      <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
+      <OptionsTable v-if="index == 1" :options="object.options" />
+      <ImportCsvTable v-if="index == 2" :options="object.importCsv" />
+      <!--
       <Heuristic
         v-if="index == 0"
         :heuristics="currentTest"
         @change="emitChange"
       />
-  <!--
+  
       <OptionsTable
         v-if="index == 1"
         :options="object.options"
         @change="emitChange()"
       />
-  -->
-  <!--
+  
+  
       <ImportCsvTable
         v-if="index == 2"
         :options="object.importCsv"
@@ -44,39 +42,40 @@ import Heuristic from "@/components/molecules/HeuristicsTable";
 export default {
   components: {
     Heuristic,
-  //  OptionsTable,
-   // ImportCsvTable,
+    //  OptionsTable,
+    // ImportCsvTable,
   },
   props: {
     type: {
       type: String,
       required: true,
     },
-    index: {
-      type: Number,
-    },
+
     object: {
       type: Object,
     },
   },
-  data: () => ({}),
+  data: () => ({
+    index: 0,
+  }),
   methods: {
     tabClicked(index) {
-      this.$emit("tabClicked", index);
+      this.index = index;
+      //this.$emit("tabClicked", index);
     },
-    emitChange(param) {
-      console.log(param)
+    /*
+    emitChange() {
       this.$emit("change");
-    },
+    },*/
   },
   computed: {
     currentTest() {
       return this.$store.state.Tests.Test.testStructure;
     },
-  },
+  } /*
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
       console.error(this.type + " type in EditHeuristicTest.vue is not valid.");
-  },
+  },*/,
 };
 </script>
