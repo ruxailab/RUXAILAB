@@ -5,6 +5,26 @@ require("dotenv").config();
 
 admin.initializeApp();
 
+exports.onTestCreate = functions.firestore.document('tests/{docId}').onCreate(async (snap, context) => {
+  const userId = snap.data().testAdmin.userDocId
+  const test = snap.data()
+
+  return await admin.firestore().collection('users').doc(userId).update({
+    myTest: admin.firestore.FieldValue.arrayUnion({
+      testDocId: snap.id,
+      testTitle: test.testTitle,
+      testType: test.testType,
+      numberColaborators: 0,
+      existReport: false,
+      isComplete: false,
+      testProgress: 0,
+      creationDate: test.creationDate ?? null,
+      upateDate: test.upateDate ?? null
+    })
+  })
+
+})
+
 exports.processSignUp = functions.auth.user().onCreate(async (user) => {
   try {
     await admin
