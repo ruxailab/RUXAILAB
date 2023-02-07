@@ -81,13 +81,9 @@ export default {
 
         async createNewTest({ commit }, payload) {
             commit("setLoading", true);
-            let ob = {
-                testTitle: payload.data.title,
-                testDescription: payload.data.description,
-                testAdmin: payload.data.testAdmin
-            };
+            let ob = payload.data
             let objectTest = null;
-            if (payload.data.type === "HEURISTICS") {
+            if (payload.data.testType === "HEURISTICS") {
                 objectTest = new HeuristicTest(ob);
                 //payload = Object.assign(payload, { collection: "Tests" });
             } else {
@@ -98,7 +94,6 @@ export default {
                     payload.collection,
                     objectTest.toFirestore()
                 ).then((res) => {
-                    console.log(res.id);
                     commit("SET_TEST", res.id);
                     return res.id;
                 });

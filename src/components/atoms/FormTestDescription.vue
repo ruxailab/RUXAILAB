@@ -4,7 +4,7 @@
       <v-col cols="12" md="5">
         <v-text-field
           :autofocus="lock ? false : true"
-          v-model="test.testDescription"
+          v-model="test.testTitle"
           label="Title"
           :rules="titleRequired"
           counter="100"
