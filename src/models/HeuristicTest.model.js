@@ -5,8 +5,8 @@ import Test from "./Test";
  */
 
 export default class Heuristic extends Test {
-    constructor({ heuristics, testTitle, testDescription } = {}) {
-        super({ testTitle, testDescription });
+    constructor({ heuristics, testTitle, testDescription, testAdmin } = {}) {
+        super({ testTitle, testDescription, testAdmin });
         this.heuristics = heuristics ?? null;
         this.testStructure = [];
         this.testOptions = [];
@@ -28,7 +28,8 @@ export default class Heuristic extends Test {
             heuristics: this.heuristics,
             testType: this.testType,
             testStructure: [],
-            testOptions: []
+            testOptions: [],
+            testAdmin: this.testAdmin
         });
     }
     static toHeuristicTest(data) {
