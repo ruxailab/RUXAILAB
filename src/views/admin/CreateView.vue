@@ -1,134 +1,127 @@
 <template>
-    <div>
-        <h2
-            style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
-        >
-            Create a new test
-        </h2>
+  <div>
+    <h2
+      style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
+    >
+      Create a new test
+    </h2>
 
-        <v-row justify="center" style="padding: 0px 30px;">
-            <v-row style="max-width: 90%" justify="center">
-                <v-col cols="12" md="6">
-                    <v-card
-                        class="card"
-                        flat
-                        @click="dialog = true"
-                        :ripple="false"
-                    >
-                        <v-row align="center">
-                            <v-col cols="12" md="5">
-                                <v-img
-                                    contain
-                                    src="@/assets/createView/blankCanvas.svg"
-                                    max-height="200"
-                                ></v-img>
-                            </v-col>
-                            <v-col cols="12" md="6" class="card-text">
-                                <div class="card-title">
-                                    Create a blank test
-                                </div>
-                                <div>
-                                    Create a blank test to begin with a
-                                    completely new and fresh template.
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </v-card>
-                </v-col>
-                <v-col cols="12" md="6">
-                    <v-card
-                        class="card"
-                        flat
-                        @click="pushToFromTemplate()"
-                        :ripple="false"
-                    >
-                        <v-row align="center">
-                            <v-col cols="12" md="5">
-                                <v-img
-                                    contain
-                                    src="@/assets/createView/createFromTemplate.svg"
-                                    max-height="200"
-                                ></v-img>
-                            </v-col>
-                            <v-col cols="12" md="6" class="card-text-box">
-                                <div class="card-title">
-                                    Create from template
-                                </div>
-                                <div>
-                                    Create a test based on a template created by
-                                    one of our users.
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </v-card>
-                </v-col>
+    <v-row justify="center" style="padding: 0px 30px;">
+      <v-row style="max-width: 90%" justify="center">
+        <v-col cols="12" md="6">
+          <v-card class="card" flat @click="dialog = true" :ripple="false">
+            <v-row align="center">
+              <v-col cols="12" md="5">
+                <v-img
+                  contain
+                  src="@/assets/createView/blankCanvas.svg"
+                  max-height="200"
+                ></v-img>
+              </v-col>
+              <v-col cols="12" md="6" class="card-text">
+                <div class="card-title">
+                  Create a blank test
+                </div>
+                <div>
+                  Create a blank test to begin with a completely new and fresh
+                  template.
+                </div>
+              </v-col>
             </v-row>
-        </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-card
+            class="card"
+            flat
+            @click="pushToFromTemplate()"
+            :ripple="false"
+          >
+            <v-row align="center">
+              <v-col cols="12" md="5">
+                <v-img
+                  contain
+                  src="@/assets/createView/createFromTemplate.svg"
+                  max-height="200"
+                ></v-img>
+              </v-col>
+              <v-col cols="12" md="6" class="card-text-box">
+                <div class="card-title">
+                  Create from template
+                </div>
+                <div>
+                  Create a test based on a template created by one of our users.
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-row>
 
-        <v-dialog v-model="dialog" max-width="80%">
-            <v-card color="#e8eaf2">
-                <v-container>
-                    <p class="dialog-title ma-2 pa-2">Create Test</p>
-                    <v-divider></v-divider>
-                    <FormTestDescription
-                        :test="test"
-                        ref="form"
-                        :lock="false"
-                    />
-                    <v-card-actions class="ma-0 pa-2">
-                        <v-spacer></v-spacer>
-                        <v-btn color="black" text @click="dialog = false"
-                            >Cancel</v-btn
-                        >
-                        <v-btn color="#F9A826" @click="validate()"
-                            >Create</v-btn
-                        >
-                    </v-card-actions>
-                </v-container>
-            </v-card>
-        </v-dialog>
-    </div>
+    <v-dialog v-model="dialog" max-width="80%">
+      <v-card color="#e8eaf2">
+        <v-container>
+          <p class="dialog-title ma-2 pa-2">Create Test</p>
+          <v-divider></v-divider>
+          <FormTestDescription :test="test" ref="form" :lock="false" />
+          <v-card-actions class="ma-0 pa-2">
+            <v-spacer></v-spacer>
+            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
+            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
+import TestAdmin from "@/models/TestAdmin";
 
 export default {
-    components: {
-        FormTestDescription,
+  components: {
+    FormTestDescription,
+  },
+  data: () => ({
+    dialog: false,
+    object: {},
+    test: {
+      title: "",
+      description: "",
+      type: "",
     },
-    data: () => ({
-        dialog: false,
-        object: {},
-        test: {
-            title: "",
-            description: "",
-            type: "",
-        },
-        testID: null,
-    }),
-    methods: {
-        pushToFromTemplate() {
-            this.$router.push("/fromtemplate");
-        },
-        async submit() {
-            //await this.testAssembly(); // build Test
-            let d = new Date();
-            //let heuristicTest = new HeuristicTest()
-            //let object = this.object;
-            console.log(this.test);
-            let successful = true;
-            //Send db
-            console.log("ai");
-            await this.$store
-                .dispatch("createNewTest", {
-                    collection: "tests",
-                    data: Object.assign(this.test, { date: d.toDateString() }),
-                })
-                .then((id) => {
-                    console.log(id);
-                    //this.testID = id;
-                    /*
+    testID: null,
+  }),
+  methods: {
+    pushToFromTemplate() {
+      this.$router.push("/fromtemplate");
+    },
+    async submit() {
+      //await this.testAssembly(); // build Test
+      let d = new Date();
+      //let heuristicTest = new HeuristicTest()
+      //let object = this.object;
+      console.log(this.test);
+      let successful = true;
+      //Send db
+      console.log("ai");
+      await this.$store
+        .dispatch("createNewTest", {
+          collection: "tests",
+          data: Object.assign(this.test, {
+            date: d.toDateString(),
+            testAdmin: new TestAdmin({
+              email: this.user.email,
+              userDocId: this.user.id,
+            }).toFirestore(),
+          }),
+        })
+        .then((id) => {
+          console.log(id);
+          //this.testID = id;
+          /*
           this.$store.dispatch("createAnswers", {
               data: {
                 test: {
@@ -196,17 +189,17 @@ export default {
                     });
                 });
             });*/
-                })
-                .catch((err) => {
-                    console.error("Error", err);
-                    successful = false;
-                });
-                console.log(this.$store.state.Tests.Test)
-          
-            if (successful) this.sendManager(this.$store.state.Tests.Test);
-        },
-        //TODO: TAKE CARE; THIS IS HORRIBLE!
-        /*
+        })
+        .catch((err) => {
+          console.error("Error", err);
+          successful = false;
+        });
+      console.log(this.$store.state.Tests.Test);
+
+      if (successful) this.sendManager(this.$store.state.Tests.Test);
+    },
+    //TODO: TAKE CARE; THIS IS HORRIBLE!
+    /*
     testAssembly() {
       //Make object test
       //Assigning admin info
@@ -261,74 +254,74 @@ export default {
       }
     },
     */
-        sendManager(id) {
-            this.$router.push(`/managerview/${id}`);
-        },
-        validate() {
-            if (this.$refs.form.valida()) {
-                this.submit();
-            }
-        },
+    sendManager(id) {
+      this.$router.push(`/managerview/${id}`);
     },
-    watch: {
-        dialog() {
-            this.test = {
-                title: "",
-                description: "",
-                type: "",
-            };
-            this.object = {};
+    validate() {
+      if (this.$refs.form.valida()) {
+        this.submit();
+      }
+    },
+  },
+  watch: {
+    dialog() {
+      this.test = {
+        title: "",
+        description: "",
+        type: "",
+      };
+      this.object = {};
 
-            if (!this.dialog) {
-                this.$refs.form.resetVal();
-                this.dialog = false;
-            }
-        },
+      if (!this.dialog) {
+        this.$refs.form.resetVal();
+        this.dialog = false;
+      }
     },
-    computed: {
-        user() {
-            return this.$store.getters.user;
-        },
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user;
     },
+  },
 };
 </script>
 
 <style scoped>
 .dialog-title {
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 300;
-    font-size: 60px;
-    line-height: 70px;
-    display: flex;
-    align-items: center;
-    color: #000000;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
 }
 .card {
-    border: 1px solid rgb(201, 201, 201);
-    padding: 30px;
-    height: 250px;
+  border: 1px solid rgb(201, 201, 201);
+  padding: 30px;
+  height: 250px;
 }
 .card-title {
-    font-size: 25px;
-    color: #f9a826;
-    margin: 0px 0px 10px 0px;
+  font-size: 25px;
+  color: #f9a826;
+  margin: 0px 0px 10px 0px;
 }
 .card-text-box {
-    margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 30px;
 }
 
 @media screen and (max-width: 960px) {
-    .dialog-title {
-        display: flex;
-        text-align: center;
-        justify-content: center;
-    }
-    .card-text-box {
-        margin: 20px 0px 0px 0px;
-    }
-    .card {
-        height: auto;
-    }
+  .dialog-title {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+  .card-text-box {
+    margin: 20px 0px 0px 0px;
+  }
+  .card {
+    height: auto;
+  }
 }
 </style>

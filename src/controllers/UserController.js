@@ -23,11 +23,9 @@ export default class UserController extends Controller {
     //     });
     // }
 
-    // updateUser(document, payload) {
-    //     return super.delete("users", document, payload).then((res) => {
-    //         return res;
-    //     });
-    // }
+    async update(docId, payload) {
+        return super.update(COLLECTION, docId, payload)
+    }
 
     async readAll() {
         const docs = await super.readAll(COLLECTION)
