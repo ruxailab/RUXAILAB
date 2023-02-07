@@ -57,7 +57,7 @@
                   :hide-no-data="false"
                   :autofocus="comboboxKey == 0 ? false : true"
                   style="background: #f5f7ff"
-                  :items="filteredUsers"
+                  :items="users"
                   item-text="email"
                   label="Select cooperator"
                   @input="validateEmail()"
@@ -223,26 +223,30 @@ export default {
     removeSelectedCoops(index) {
       this.selectedCoops.splice(index, 1);
     },
-    changeRole(item, event) {
+    async changeRole(item, event) {
       let index = this.cooperatorsEdit.indexOf(item);
       let newCoop = Object.assign({}, item);
-      newCoop.accessLevel = event;
+      newCoop.accessLevel = event.value;
 
-      if (item.accessLevel.value !== event.value) {
+      const currentAccessLevelText = this.roleOptions.find(
+        (r) => r.value === item.accessLevel
+      ).text;
+
+      if (item.accessLevel !== event.value) {
         let ok = confirm(
-          `Are you sure you want to change ${item.email}'s role from "${item.accessLevel.text}" to "${event.text}"`
+          `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`
         );
         if (ok) {
-          let edited = Object.assign(
-            {},
-            {
-              guest: item,
-              previous: item.accessLevel,
-              current: event,
-            }
-          );
-          this.edit(edited);
-          this.$set(this.cooperatorsEdit, index, newCoop); //update on table
+          // UPDATE TEST WITH NEW COLLABORATOR ROLE
+          this.test.cooperators[index] = newCoop;
+          await this.$store.dispatch("updateTest", this.test);
+
+          // UPDATE COOPERATOR ARRAY 'MYANSWERS' TO HAVE NEW ACCESSROLE
+          await this.$store.dispatch("updateUserAnswer", {
+            testDocId: this.test.id,
+            cooperatorId: newCoop.userDocId,
+            data: { accessLevel: newCoop.accessLevel },
+          });
         } else {
           this.dataTableKey++; //forces data table re-render without changing user role
         }
@@ -326,110 +330,110 @@ export default {
     //     });
     // }
     // },
-    edit(guest) {
-      this.$store
-        .dispatch("updateCooperator", {
-          docId: this.id,
-          elementId: guest.guest.id,
-          element: guest.current,
-          param: "accessLevel",
-        })
-        .then(() => {
-          // Cooperator was Tester
-          if (guest.previous.value == 2) {
-            this.$store
-              .dispatch("removeMyAnswers", {
-                docId: guest.guest.id,
-                element: {
-                  id: this.test.id,
-                },
-              })
-              .then(() => {
-                this.$store.dispatch("removeReport", {
-                  docId: this.test.reports,
-                  element: {
-                    id: guest.id,
-                  },
-                  param: "reports",
-                });
-                let test = Object.assign({}, this.test);
-                this.$store
-                  .dispatch("pushMyCoops", {
-                    docId: guest.guest.id,
-                    element: Object.assign(test, {
-                      accessLevel: guest.current.value,
-                    }),
-                  })
-                  .then(() =>
-                    this.$store.commit("setSuccess", "Role successfuly updated")
-                  )
-                  .catch((err) => this.$store.commit("setError", err));
-              });
-          } else if (
-            //It'll be a Tester
-            (guest.previous.value == 1 || guest.previous.value == 0) &&
-            guest.current.value == 2
-          ) {
-            this.$store
-              .dispatch("removeMyCoops", {
-                docId: guest.guest.id,
-                element: {
-                  id: this.test.id,
-                },
-              })
-              .then(() => {
-                let test = Object.assign({}, this.test);
-                this.$store.dispatch("pushMyAnswers", {
-                  docId: guest.guest.id,
-                  element: Object.assign(test, {
-                    answersSheet: Object.assign(this.test.answersSheet, {
-                      submitted: false,
-                    }),
-                    accessLevel: {
-                      text: "Evaluator",
-                      value: 2,
-                    },
-                    author: this.test.admin.email,
-                    date: new Date().toDateString(),
-                  }),
-                });
+    // edit(guest) {
+    //   this.$store
+    //     .dispatch("updateCooperator", {
+    //       docId: this.id,
+    //       elementId: guest.guest.id,
+    //       element: guest.current,
+    //       param: "accessLevel",
+    //     })
+    //     .then(() => {
+    //       // Cooperator was Tester
+    //       if (guest.previous.value == 2) {
+    //         this.$store
+    //           .dispatch("removeMyAnswers", {
+    //             docId: guest.guest.id,
+    //             element: {
+    //               id: this.test.id,
+    //             },
+    //           })
+    //           .then(() => {
+    //             this.$store.dispatch("removeReport", {
+    //               docId: this.test.reports,
+    //               element: {
+    //                 id: guest.id,
+    //               },
+    //               param: "reports",
+    //             });
+    //             let test = Object.assign({}, this.test);
+    //             this.$store
+    //               .dispatch("pushMyCoops", {
+    //                 docId: guest.guest.id,
+    //                 element: Object.assign(test, {
+    //                   accessLevel: guest.current.value,
+    //                 }),
+    //               })
+    //               .then(() =>
+    //                 this.$store.commit("setSuccess", "Role successfuly updated")
+    //               )
+    //               .catch((err) => this.$store.commit("setError", err));
+    //           });
+    //       } else if (
+    //         //It'll be a Tester
+    //         (guest.previous.value == 1 || guest.previous.value == 0) &&
+    //         guest.current.value == 2
+    //       ) {
+    //         this.$store
+    //           .dispatch("removeMyCoops", {
+    //             docId: guest.guest.id,
+    //             element: {
+    //               id: this.test.id,
+    //             },
+    //           })
+    //           .then(() => {
+    //             let test = Object.assign({}, this.test);
+    //             this.$store.dispatch("pushMyAnswers", {
+    //               docId: guest.guest.id,
+    //               element: Object.assign(test, {
+    //                 answersSheet: Object.assign(this.test.answersSheet, {
+    //                   submitted: false,
+    //                 }),
+    //                 accessLevel: {
+    //                   text: "Evaluator",
+    //                   value: 2,
+    //                 },
+    //                 author: this.test.admin.email,
+    //                 date: new Date().toDateString(),
+    //               }),
+    //             });
 
-                let item = Object.assign(
-                  {},
-                  {
-                    uid: guest.guest.id,
-                    email: guest.guest.email,
-                    log: {
-                      date: new Date().toLocaleString("en-Us"),
-                      progress: 0,
-                      status: "In progress",
-                    },
-                  }
-                );
-                this.$store.dispatch("pushLog", {
-                  docId: this.test.reports,
-                  element: item,
-                });
-              })
-              .then(() =>
-                this.$store.commit("setSuccess", "Role successfuly updated")
-              )
-              .catch((err) => this.$store.commit("setError", err));
-          } else if (guest.previous.value != 2 && guest.current.value != 2) {
-            this.$store
-              .dispatch("updateAccessLevel", {
-                docId: guest.guest.id,
-                elementId: this.id,
-                element: guest.current.value,
-                param: "accessLevel",
-              })
-              .then(() =>
-                this.$store.commit("setSuccess", "Role successfuly updated")
-              )
-              .catch((err) => this.$store.commit("setError", err));
-          }
-        });
-    },
+    //             let item = Object.assign(
+    //               {},
+    //               {
+    //                 uid: guest.guest.id,
+    //                 email: guest.guest.email,
+    //                 log: {
+    //                   date: new Date().toLocaleString("en-Us"),
+    //                   progress: 0,
+    //                   status: "In progress",
+    //                 },
+    //               }
+    //             );
+    //             this.$store.dispatch("pushLog", {
+    //               docId: this.test.reports,
+    //               element: item,
+    //             });
+    //           })
+    //           .then(() =>
+    //             this.$store.commit("setSuccess", "Role successfuly updated")
+    //           )
+    //           .catch((err) => this.$store.commit("setError", err));
+    //       } else if (guest.previous.value != 2 && guest.current.value != 2) {
+    //         this.$store
+    //           .dispatch("updateAccessLevel", {
+    //             docId: guest.guest.id,
+    //             elementId: this.id,
+    //             element: guest.current.value,
+    //             param: "accessLevel",
+    //           })
+    //           .then(() =>
+    //             this.$store.commit("setSuccess", "Role successfuly updated")
+    //           )
+    //           .catch((err) => this.$store.commit("setError", err));
+    //       }
+    //     });
+    // },
     notifyCooperator(guest) {
       // TODO: Send Notification
       this.sendInvitationMail(guest);
@@ -528,12 +532,6 @@ export default {
     removeFromList(coop) {
       let index = this.cooperatorsEdit.indexOf(coop);
       this.cooperatorsEdit.splice(index, 1);
-    },
-    preventNav(event) {
-      console.log(event);
-      // if (!this.change) return;
-      // event.preventDefault();
-      // event.returnValue = "";
     },
     async sendInvitationMail(guest) {
       let domain = window.location.href;
@@ -672,42 +670,12 @@ export default {
       if (this.test.cooperators) return [...this.test.cooperators];
       return [];
     },
-    filteredUsers() {
-      // let hasUser = null;
-      // let array = [];
-      // this.users.forEach((user) => {
-      //   hasUser = false;
-      //   this.cooperatorsEdit.forEach((coop) => {
-      //     if (coop.id === user.id) {
-      //       hasUser = true;
-      //     }
-      //   });
-      //   if (!hasUser) array.push(user);
-      // });
-      // return array;
-      return this.users ?? [];
-    },
     loading() {
       return this.$store.getters.loading;
     },
   },
   created() {
     this.$store.dispatch("getAllUsers");
-  },
-  beforeRouteLeave(to, from, next) {
-    // if (this.change) {
-    //   this.$store.dispatch("setDialog", true);
-    //   this.go = to.path;
-    // } else {
-    //   next();
-    // }
-    next();
-  },
-  beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav);
-  },
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav);
   },
 };
 </script>
