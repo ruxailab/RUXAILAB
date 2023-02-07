@@ -28,6 +28,7 @@ export default class TestController extends Controller {
     updateTest(payload) {
         console.log("puta updateTest");
         return super.update("tests", payload).then((res) => {
+            console.log('hola')
             return res;
         });
     }
