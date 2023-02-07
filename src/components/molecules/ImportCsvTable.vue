@@ -1,6 +1,6 @@
 <template>
     <div id="FileUpload">
-        <v-row class="csv-box" justify="center">
+        <v-row justify="center">
             <v-col class="ma-10" cols="10">
                 <v-row class="ma-2" justify="center" align="center">
                     <v-file-input
@@ -49,10 +49,8 @@ export default {
 
     methods: {
         async changeToJSON() {
-            const testId = this.test.id;
-
+            const testId = this.$store.state.Tests.currentTest;
             console.log(testId);
-
             let lines = "";
             let currentline = "";
             let csv = "";
@@ -60,15 +58,12 @@ export default {
             let result = [];
             let result2 = [];
             let reader = new FileReader();
-
             reader.readAsBinaryString(this.csvFile);
-
             reader.onload = async () => {
                 csv = reader.result;
                 lines = csv.split("\r" + "\n");
                 headers = lines[0].split(";");
                 headers[0] = headers[0].slice(3);
-
                 for (var i = 1; i < lines.length; i++) {
                     if (!lines[i]) continue;
                     let obj = {};
@@ -76,7 +71,6 @@ export default {
                     var re = /"/g;
                     currentline = re[Symbol.replace](currentline, "");
                     currentline = currentline.split(";");
-
                     for (var j = 0; j < headers.length; j++) {
                         if (j == 0 || j == 1 || j == 2 || j == 3) {
                             let head = headers[j];
@@ -88,7 +82,6 @@ export default {
                 }
                 result = JSON.stringify(result);
                 result2 = JSON.parse(result.toString());
-
                 function getQuestionsFromHeuristic(
                     heuristicArray,
                     heuristicId
@@ -99,7 +92,6 @@ export default {
                 }
                 let heuristicTest = [];
                 let heuristicOcurrencies = 0;
-
                 for (i = 0; i < result2.length; i++) {
                     let auxHeuristic = getQuestionsFromHeuristic(
                         result2,
@@ -108,45 +100,38 @@ export default {
                     if (auxHeuristic.length > 0) {
                         heuristicOcurrencies = heuristicOcurrencies + 1;
                         let auxQuestions = [];
-                        for (j = 0; j < auxHeuristic.length; j++) {
-                            let auxQuestion = new HeuristicQuestion(
-                                auxHeuristic[j].QID,
-                                auxHeuristic[j].QUESTION
-                            );
+                        for (j = 0; j < auxHeuristic.length; ++j) {
+                            let auxQuestion = new HeuristicQuestion({
+                                id: auxHeuristic[j].QID,
+                                title: auxHeuristic[j].QUESTION,
+                                descriptions: auxHeuristic[j].QUESTION,
+                                text: auxHeuristic[j].QUESTION,
+                            });
                             auxQuestions.push(auxQuestion);
                         }
-                        let setHeuristics = new Heuristic(
-                            heuristicOcurrencies,
-                            auxHeuristic[0].HEURISTIC,
-                            auxQuestions,
-                            auxQuestions.length
-                        );
+                        let setHeuristics = new Heuristic({
+                            heuristicId: heuristicOcurrencies,
+                            heuristicQuestions: auxQuestions,
+                            heuristicTitle: auxHeuristic[0].HEURISTIC,
+
+                            heuristicTotal: auxQuestions.length,
+                        });
                         heuristicTest.push(setHeuristics);
                         console.log(setHeuristics);
                     }
                 }
-
-                console.log(this.test);
-
                 this.$store.dispatch("saveCurrentTest", heuristicTest);
-                console.log(testId);
-                console.log(heuristicTest);
-                console.log(heuristicTest);
-
                 for (i = 0; i < heuristicTest.length; i++) {
-                    console.log(heuristicTest[i].id);
                     let aux = Array.of(heuristicTest[i].total);
                     for (j = 0; j < heuristicTest[i].total; j++) {
-                        console.log(heuristicTest[i].questions[j]);
-
                         aux[j] = {
                             id: heuristicTest[i].questions[j].id,
                             res: heuristicTest[i].questions[j].title,
                             com: heuristicTest[i].questions[j].descriptions,
                         };
-                        console.log("auxiliar: " + aux);
                     }
                     await new HeuristicController().createCsvHeuris({
+                        testId: testId,
                         id: heuristicTest[i].id,
                         questions: aux,
                         title: heuristicTest[i].title,
@@ -161,7 +146,6 @@ export default {
             const l = this.loader;
             this[l] = !this[l];
             // const alertFunc = alert("Your file has been uploaded!");
-
             if (this.csvFile != null) {
                 setTimeout(() => (this[l] = false), 3000);
                 setTimeout(() => (this.csvFile = null), 3000);
@@ -178,7 +162,7 @@ export default {
     },
     computed: {
         test() {
-            return this.$store.getters.test;
+            return this.$store.getters.tests;
         },
         user() {
             return this.$store.getters.user;
