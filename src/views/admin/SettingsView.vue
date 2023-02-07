@@ -3,33 +3,7 @@
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialogAlert" width="600" persistent>
-      <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title
-          >Are you sure you want to leave?</v-card-title
-        >
-
-        <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded.</v-card-text
-        >
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false"
-            >Stay</v-btn
-          >
-          <v-btn
-            class="error accent-4 white--text ml-1"
-            text
-            @click="(change = false), $router.push(go)"
-            >Leave</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <LeaveAlert></LeaveAlert>
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -73,7 +47,7 @@
                 :rules="titleRequired"
                 counter="100"
                 outlined
-                @input="$emit('change')"
+                @input="setLeavingAlert()"
                 dense
               ></v-text-field>
 
@@ -188,6 +162,7 @@
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
+import LeaveAlert from "@/components/atoms/LeaveAlert";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
 
 export default {
@@ -196,6 +171,7 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
+    LeaveAlert,
     AccessNotAllowed,
   },
   data: () => ({
@@ -421,6 +397,10 @@ export default {
       this.templateTitle = "";
       this.templateDescription = "";
     },
+    setLeavingAlert(){
+      console.log('oie')
+      this.$store.commit('SET_DIALOG_LEAVE',true)
+    }
   },
   watch: {
     test: async function () {
@@ -514,13 +494,19 @@ export default {
       });
     }
   },
+
   beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialogAlert = true;
-      this.go = to.path;
+   
+    console.log('check')
+    if (this.$store.getters.localChanges) {
+      console.log('settingdialog')
+      this.$store.commit('SET_DIALOG_LEAVE', true)
+      this.$store.commit('SET_PATH_TO',to.name)
     } else {
+      console.log('next')
       next();
     }
+    
   },
   beforeMount() {
     window.addEventListener("beforeunload", this.preventNav);

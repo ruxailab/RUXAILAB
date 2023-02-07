@@ -15,6 +15,20 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+router.beforeEach((to, from, next) => {
+  console.log('àospkasp')
+  next(vm => {
+    // access to component public instance via `vm`
+    vm.$store.commit('SET_LOCAL_CHANGES',false)
+  })
+})
+router.afterEach((to, from,next) => {
+  console.log('after')
+  next(vm => {
+    // access to component public instance via `vm`
+    vm.$store.commit('SET_LOCAL_CHANGES',false)
+  })
+})
 
 router.beforeResolve(async (to, from, next) => {
   const { authorize } = to.meta;

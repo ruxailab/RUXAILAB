@@ -9,7 +9,7 @@
           :rules="titleRequired"
           counter="100"
           outlined
-          @input="$emit('change')"
+          @input="$store.commit('SET_LOCAL_CHANGES',true)"
           dense
         ></v-text-field>
         <v-select
@@ -28,7 +28,7 @@
           label="Description"
           outlined
           dense
-          @input="$emit('change')"
+          @input="$store.commit('SET_LOCAL_CHANGES',true)"
         ></v-textarea>
       </v-col>
     </v-row>
