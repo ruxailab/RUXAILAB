@@ -1,12 +1,5 @@
 <template>
   <v-row>
-    Heuristics<br />
-    {{ heuristics }}
-    <br />
-    <br />
-    Current Test
-    <br />
-    {{ csvHeuristics }}
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">

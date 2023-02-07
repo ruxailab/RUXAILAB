@@ -1,6 +1,5 @@
 <template>
   <div class="ma-0 pa-0">
-    {{ options }}
     <v-data-table
       height="420px"
       style="background: #f5f7ff;"
@@ -46,6 +45,7 @@
 import AddOptionBtn from "../atoms/AddOptionBtn";
 
 export default {
+  /*
   props: {
     options: {
       type: Array,
@@ -54,7 +54,7 @@ export default {
         return [];
       },
     },
-  },
+  },*/
   data: () => ({
     headers: [
       {
@@ -120,6 +120,11 @@ export default {
     options() {
       this.$emit("change");
     },
+  },
+  computed:{
+    options(){
+      return this.$store.state.Tests.Test.testOptions
+    }
   },
   components: {
     AddOptionBtn,

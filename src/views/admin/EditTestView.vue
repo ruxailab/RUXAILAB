@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    {{ test }}
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -138,7 +137,7 @@ export default {
       console.log("hello");
       console.log(this.$store.state.Heuristic.heuristicStructure);
       console.log(this.object);
-      this.object.testStructure = this.$store.state.Heuristic.heuristicStructure;
+      this.object.testStructure = this.$store.state.Tests.Test.testStructure;
       const auxT = new Test(this.object);
       this.$store.dispatch("updateTest", auxT);
     },

@@ -26,6 +26,7 @@ export default class TestController extends Controller {
     }
 
     async updateTest(payload) {
+        console.log('ai')
         return await super.update("tests", payload.id, payload.toFirestore());
     }
 
