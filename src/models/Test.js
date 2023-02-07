@@ -20,6 +20,7 @@ export default class Test {
         testTitle,
         testType,
         testStructure,
+        testOptions,
         answersDocId,
         cooperators,
         creationDate,
@@ -31,7 +32,8 @@ export default class Test {
         this.testDescription = testDescription ?? null;
         this.testTitle = testTitle ?? null;
         this.testType = testType ?? null;
-        this.testStructure = testStructure ?? null;
+        this.testStructure = testStructure ?? [];
+        this.testOptions = testOptions ?? [];
         this.answersDocId = answersDocId ?? null;
         this.cooperators = cooperators ?? null;
         this.creationDate = creationDate ?? null;
@@ -49,6 +51,7 @@ export default class Test {
             testAdmin: this.testAdmin,
             testType: this.testType,
             testStructure: this.testStructure,
+            testOptions: this.testOptions,
             answersDocId: this.answersDocId,
             cooperators: this.cooperators,
             creationDate: this.creationDate,

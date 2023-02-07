@@ -12,6 +12,18 @@ import Reports from "@/store/modules/newStores/Reports";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+    state:{
+        loading:false,
+        error:null,
+    },
+    mutations: {
+        setLoading(state, payload) {
+          state.loading = payload
+        },
+        setError(state, payload) {
+          state.error = payload
+        },
+    },
     modules: {
         Auth,
         Templates,

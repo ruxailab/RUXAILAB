@@ -8,6 +8,8 @@ export default class Heuristic extends Test {
     constructor({ heuristics, testTitle, testDescription } = {}) {
         super({ testTitle, testDescription });
         this.heuristics = heuristics ?? null;
+        this.testStructure = [];
+        this.testOptions = [];
         this.testType = "HEURISTICS";
         let date = new Date();
         let current_date =
@@ -25,6 +27,8 @@ export default class Heuristic extends Test {
         return Object.assign(super.toFirestore(), {
             heuristics: this.heuristics,
             testType: this.testType,
+            testStructure: [],
+            testOptions: []
         });
     }
     static toHeuristicTest(data) {
