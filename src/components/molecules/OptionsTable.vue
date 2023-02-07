@@ -1,5 +1,6 @@
 <template>
   <div class="ma-0 pa-0">
+    {{ options }}
     <v-data-table
       height="420px"
       style="background: #f5f7ff;"
@@ -127,14 +128,4 @@ export default {
 </script>
 
 <style scoped>
-.subtitleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
 </style>

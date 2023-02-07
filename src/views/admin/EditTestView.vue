@@ -1,5 +1,6 @@
 <template>
-  <div v-if="test">
+  <v-container>
+    {{ test }}
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -28,7 +29,7 @@
     </v-dialog>
 
     <!-- Save button -->
-    <v-tooltip left >
+    <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           large
@@ -60,12 +61,12 @@
 
     <!--
         <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
-        -->
-    <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />
+          <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />  -->
 
-    <!--<ShowInfo v-if="test" title="Test Edit">-->
-      <!-- Heuristics tests -->
-      <!--TODO: change hard coded type
+    <!--
+        <ShowInfo v-if="test" title="Test Edit">  -->
+    <!-- Heuristics tests -->
+    <!--TODO: change hard coded type
             <EditHeuristicsTest
                 v-if="test.testType == "HEURISTICS""
                 type="tabs"
@@ -73,15 +74,17 @@
                 slot="top"
             />
         -->
-
-      <EditHeuristicsTest
-        v-if="test.testType === 'HEURISTICS'"
-        type="content"
-        :object="object"
-        :index="index"
-        @change="change"
-        slot="content"
-      />
+    <v-row>
+      <v-col cols="12">
+        <EditHeuristicsTest
+          v-if="test.testType === 'HEURISTICS'"
+          type="content"
+          :object="object"
+          :index="index"
+          @change="change = true"
+          slot="content"
+        />
+      </v-col>
       <!-- User tests
             <EditUserTest
                 v-if="test.type === 'User'"
@@ -100,19 +103,17 @@
                 slot="content"
             />
              -->
-   <!-- </ShowInfo>-->
-  </div>
-  <div v-else>
-    <h1>LOADING</h1>
-  </div>
+      <!-- </ShowInfo>  -->
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
 //import ShowInfo from "@/components/organisms/ShowInfo";
-import IntroEdit from "@/components/molecules/IntroEdit.vue";
+//import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
-import Test from '@/models/Test'
+import Test from "@/models/Test";
 //import EditUserTest from "@/components/organisms/EditUserTest";
 
 export default {
@@ -120,7 +121,7 @@ export default {
   components: {
     Snackbar,
     //ShowInfo,
-    IntroEdit,
+    // IntroEdit,
     EditHeuristicsTest,
     //EditUserTest,
   },
@@ -134,13 +135,14 @@ export default {
   }),
   methods: {
     async submit() {
-      console.log('hello')
-      console.log(this.$store.state.Heuristic.heuristicStructure)
-      console.log(this.object)
-      this.object.testStructure = this.$store.state.Heuristic.heuristicStructure
-      const auxT= new Test(this.object)
-      this.$store.dispatch("updateTest", auxT)
+      console.log("hello");
+      console.log(this.$store.state.Heuristic.heuristicStructure);
+      console.log(this.object);
+      this.object.testStructure = this.$store.state.Heuristic.heuristicStructure;
+      const auxT = new Test(this.object);
+      this.$store.dispatch("updateTest", auxT);
     },
+
     mountAnswerSheet() {
       let aux = {
         heuristics: [],
@@ -184,7 +186,7 @@ export default {
       this.valids[index] = valid;
     },
     validateAll() {
-      console.log('iaiiiii')
+      console.log("iaiiiii");
       if (this.test.type === "User" && !this.valids[0]) {
         this.$store.commit(
           "setError",
