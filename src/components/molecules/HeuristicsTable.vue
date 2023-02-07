@@ -90,7 +90,7 @@
         >
         <v-row justify="center">
           <v-col cols="10">
-            <v-form ref="formHeuris" @keyup.native.enter="addHeuris()">
+            <v-form ref="formHeuris" @keyup.native.enter="addHeuris()" v-if="heuristicForm">
               <v-text-field
                 v-model="heuristicForm.title"
                 dense
