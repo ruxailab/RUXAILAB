@@ -71,8 +71,8 @@ export default class Controller {
         return res;
     }
 
-    async update(col, payload) {
-        const ref = doc(db, `${col}/${payload.id}`)
+    async update(col, docId, payload) {
+        const ref = doc(db, `${col}/${docId}`)
         return await updateDoc(ref, payload)
     }
     
