@@ -1,6 +1,6 @@
 <template>
     <div id="FileUpload">
-        <v-row justify="center">
+        <v-row class="csv-box" justify="center">
             <v-col class="ma-10" cols="10">
                 <v-row class="ma-2" justify="center" align="center">
                     <v-file-input
@@ -35,7 +35,6 @@
 import Heuristic from "@/models/Heuristic";
 import HeuristicQuestion from "@/models/HeuristicQuestion";
 import HeuristicController from "../../controllers/HeuristicController";
-
 
 export default {
     data() {
@@ -193,3 +192,9 @@ export default {
     },
 };
 </script>
+
+<style>
+.csv-box {
+    background-color: white;
+}
+</style>
