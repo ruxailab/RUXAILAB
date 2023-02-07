@@ -73,11 +73,10 @@ export default class Controller {
 
     async update(col, docId, payload) {
         const ref = doc(db, `${col}/${docId}`)
-        return await updateDoc(ref, payload)
+        return updateDoc(ref, payload)
     }
     
-
-    async delete(path, document) {
-        await deleteDoc(doc(db, path, document));
+    async delete(col, docId) {
+        return deleteDoc(doc(db, col, docId));
     }
 }

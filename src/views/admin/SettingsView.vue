@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="test && showSettings">
+  <v-container v-if="true">
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -51,7 +51,7 @@
             class="red white--text ml-1"
             :loading="loading"
             text
-            @click="deleteTest(object), (loading = true)"
+            @click="deleteTest(object)"
             >Delete</v-btn
           >
         </v-card-actions>
@@ -342,77 +342,10 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
-      await this.$store.dispatch("getTest", { id: item.id });
-      await this.$store.dispatch("getAnswers", { id: item.answers });
-      await this.$store.dispatch("getReports", { id: item.reports });
-      await this.$store.dispatch("getCooperators", { id: item.cooperators });
+      console.log(item)
+      await this.$store.dispatch("deleteTest", item)
+      this.$router.push({name:'TestList'})
 
-      this.$store
-        .dispatch("deleteTest", item)
-        .then(() => {
-          //Remove test from myTests
-          this.$store
-            .dispatch("removeMyTest", {
-              docId: this.test.admin.id,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-              param: "myTests",
-            })
-            .then(() => {
-              this.loading = false;
-              this.$router
-                .push("/testslist")
-                .then(() => {
-                  this.$store.commit(
-                    "setSuccess",
-                    "Project successfully deleted"
-                  );
-                })
-                .catch(() => {});
-            })
-            .catch((err) => {
-              this.$store.commit("setError", err);
-            });
-
-          //Remove report from collection
-          this.$store.dispatch("deleteReport", { id: item.reports });
-
-          // Remove all myAnswers
-          this.reports.reports.forEach((rep) => {
-            this.$store.dispatch("removeMyAnswers", {
-              docId: rep.uid,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-            });
-          });
-
-          //Remove all answers
-          this.$store.dispatch("deleteAnswers", { id: item.answers });
-
-          //Remove all myCoops
-          this.cooperators.cooperators.forEach((guest) => {
-            this.$store.dispatch("removeMyCoops", {
-              docId: guest.id,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-            });
-          });
-
-          //Remove all Cooperators
-          this.$store.dispatch("deleteCooperators", { id: item.cooperators });
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
     },
     createTemplate() {
       //create template
@@ -503,6 +436,7 @@ export default {
       }
     },
     cooperators: async function () {
+      console.log(this.cooperators)
       if (this.cooperators !== null && this.cooperators !== {}) {
         let isOwner =
           this.user.myTests.find((test) => test.id == this.id) == undefined
@@ -543,8 +477,8 @@ export default {
       return this.$store.getters.cooperators || {};
     },
     dialogText() {
-      if (this.object)
-        return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone.`;
+      if (this.test)
+        return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`;
 
       return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
     },

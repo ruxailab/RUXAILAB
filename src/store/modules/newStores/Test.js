@@ -152,69 +152,11 @@ export default {
          * @returns {void}
          */
 
-        async deleteTest({ dispatch, commit }, payload) {
-            commit("setLoading", true);
-            await dispatch("getCooperators", {
-                id: payload.cooperators,
-            }).catch((err) => commit("setError", "Error in deleteTest." + err));
-
-            let Coops = this.state.cooperators.cooperators;
-
-            //delete Test from user
-            payload = Object.assign(payload, { collection: "Tests" }); //Delete Test from Tests' Collection
-
-            dispatch("deleteObject", payload)
-                .then(() => {
-                    dispatch("deleteReport", {
-                        id: payload.reports,
-                    }).catch((err) =>
-                        commit("setError", "Error in deleteTest." + err)
-                    );
-
-                    dispatch("deleteAnswers", {
-                        id: payload.answers,
-                    }).catch((err) =>
-                        commit("setError", "Error in deleteTest." + err)
-                    );
-
-                    Coops.cooperators.forEach((coop) => {
-                        if (coop.accessLevel.value <= 1)
-                            dispatch("removeMyCoops", {
-                                docId: coop.id,
-                                element: {
-                                    id: payload.id,
-                                    title: payload.title,
-                                    type: payload.type,
-                                },
-                            }).catch((err) =>
-                                commit("setError", "Error in deleteTest." + err)
-                            );
-                        else
-                            dispatch("removeMyAnswers", {
-                                docId: coop.id,
-                                element: {
-                                    id: payload.id,
-                                    title: payload.title,
-                                    type: payload.type,
-                                },
-                            }).catch((err) =>
-                                commit("setError", "Error in deleteTest." + err)
-                            );
-                    });
-
-                    dispatch("deleteCooperators", {
-                        id: payload.cooperators,
-                    }).catch((err) =>
-                        commit("setError", "Error in deleteTest." + err)
-                    );
-                })
-                .catch((err) =>
-                    commit("setError", "Error in deleteTest." + err)
-                );
-
+        async deleteTest({ commit }, payload) {
             //Connect to controllers
             try {
-                const res = await TestCont.deleteTest();
+                console.log('deleting')
+                const res = await TestCont.deleteTest(payload);
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in deleteTest");
