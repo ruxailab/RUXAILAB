@@ -4,15 +4,15 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
-  // connectAuthEmulator
+  connectAuthEmulator
 } from "firebase/auth";
 import {
   getFirestore,
-  // connectFirestoreEmulator
+  connectFirestoreEmulator
 } from "firebase/firestore";
 import {
   getFunctions,
-  // connectFunctionsEmulator
+  connectFunctionsEmulator
 } from 'firebase/functions'
 
 let isProduction = false;
@@ -44,8 +44,8 @@ const db = getFirestore(firebaseApp);
 const analytics = getAnalytics(firebaseApp);
 const fbFunctions = getFunctions(firebaseApp)
 
-// connectFirestoreEmulator(db, 'localhost', 8081);
-// connectAuthEmulator(auth, "http://localhost:9099");
-// connectFunctionsEmulator(fbFunctions, "localhost", 5001);
+connectFirestoreEmulator(db, 'localhost', 8081);
+connectAuthEmulator(auth, "http://localhost:9099");
+connectFunctionsEmulator(fbFunctions, "localhost", 5001);
 
 export { auth, db, analytics, fbFunctions };

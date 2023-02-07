@@ -29,4 +29,18 @@ export default class UserAnswer{
     static toUserAnswer(data) {
         return new UserAnswer(data)
     }
+
+    toFirestore() {
+        return {
+            answerDocId: this.answerDocId,
+            accessLevel: this.accessLevel,
+            progress: this.progress,
+            total: this.total,
+            testType: this.testType,
+            testTitle: this.testTitle,
+            testDocId: this.testDocId,
+            updateDate: this.updateDate,
+            testAuthorName: this.testAuthorName
+        }
+    }
 }
