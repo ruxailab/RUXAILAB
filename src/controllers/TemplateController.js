@@ -1,25 +1,25 @@
 // imports
 
 import Template from "@/models/Template";
-import TemplateAuthor from "@/models/TemplateAuthor";
-import TemplateBody from "@/models/TemplateBody";
-import TemplateHeader from "@/models/TemplateHeader";
 
 import Controller from '@/controllers/BaseController';  
+const COLLECTION = "templatese";
 
 export default class TemplateController extends Controller{
   constructor() {
     super()
   }
 
-  createNewTemplate(document, data){
-    return super.create('templates', document, data).then((res)=> {
+  async createTemplate(data){
+    console.log('asa')
+    console.log(data)
+  await super.create(COLLECTION, data).then((res)=> {
       return res
     })
   }
 
   deleteTemplate(document){
-    return super.delete('templates', document).then((res)=> {
+    return super.delete(COLLECTION, document).then((res)=> {
       return res
     })
   }
@@ -43,38 +43,7 @@ export default class TemplateController extends Controller{
     })  
   }
 
-  //GetObject of TemplateAuthor
-  getObjectTemplateAuthor(parameter, condition){
-    return super.read("templates", parameter, condition).then((response) => {
-      let res = response.map(TemplateAuthor.toTemplateAuthor)
-      console.log("TemplateAuthorController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateAuthorController error: ", err)
-    })  
-  }
 
-  //GetObject of TemplateBody
-  getObjectTemplateBody(parameter, condition){
-    return super.read("templates", parameter, condition).then((response) => {
-      let res = response.map(TemplateBody.toTemplateBody)
-      console.log("TemplateBodyController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateBodyController error: ", err)
-    })  
-  }
-
-  //GetObject of TemplateHeader
-  getObjectTemplateHeader(parameter, condition){
-    return super.read("templates", parameter, condition).then((response) => {
-      let res = response.map(TemplateHeader.toTemplateHeader)
-      console.log("TemplateHeaderController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateHeaderController error: ", err)
-    })  
-  }
 
   //----------------GET ALL OBJECTS----------------
 
@@ -89,37 +58,6 @@ export default class TemplateController extends Controller{
     })  
   }
 
-  //GetObject of TemplateAuthor
-  getAllObjectTemplateAuthor(){
-    return super.readAll("templates").then((response) => {
-      let res = response.map(TemplateAuthor.toTemplateAuthor)
-      console.log("TemplateAuthorController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateAuthorController error: ", err)
-    })  
-  }
-
-  //GetObject of TemplateBody
-  getAllObjectTemplateBody(){
-    return super.readAll("templates").then((response) => {
-      let res = response.map(TemplateBody.toTemplateBody)
-      console.log("TemplateBodyController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateBodyController error: ", err)
-    })  
-  }
-
-  //GetObject of TemplateHeader
-  getAllObjectTemplateHeader(){
-    return super.readAll("templates").then((response) => {
-      let res = response.map(TemplateHeader.toTemplateHeader)
-      console.log("TemplateHeaderController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TemplateHeaderController error: ", err)
-    })  
-  }
+  
 
 }
