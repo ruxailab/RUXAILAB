@@ -111,8 +111,6 @@ export default {
                         for (j = 0; j < auxHeuristic.length; j++) {
                             let auxQuestion = new HeuristicQuestion(
                                 auxHeuristic[j].QID,
-                                auxHeuristic[j].QUESTION,
-                                auxHeuristic[j].QUESTION,
                                 auxHeuristic[j].QUESTION
                             );
                             auxQuestions.push(auxQuestion);
@@ -149,7 +147,6 @@ export default {
                         console.log("auxiliar: " + aux);
                     }
                     await new HeuristicController().createCsvHeuris({
-                        testId: testId,
                         id: heuristicTest[i].id,
                         questions: aux,
                         title: heuristicTest[i].title,
