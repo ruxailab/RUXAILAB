@@ -19,10 +19,8 @@ export default class TestController extends Controller {
         });
     }
 
-    deleteTest(document) {
-        return super.delete("test", document).then((res) => {
-            return res;
-        });
+    async deleteTest(payload) {
+        return await super.delete("tests", payload.id)
     }
 
     async updateTest(payload) {
