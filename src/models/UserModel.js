@@ -24,4 +24,16 @@
         static toUser(data) {
             return new User(data)
         }
+
+        toFirestore() {
+            return {
+                id: this.id,
+                accessLevel: this.accessLevel,
+                email: this.email,
+                notifications: this.notifications,
+                myAnswers: this.myAnswers,
+                myTemplates: this.myTemplates,
+                myTests: this.myTests,
+            }
+        }
     }

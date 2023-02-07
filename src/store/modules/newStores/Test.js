@@ -81,26 +81,17 @@ export default {
 
         async createNewTest({ commit }, payload) {
             commit("setLoading", true);
-            console.log(payload);
             let ob = {
                 testTitle: payload.data.title,
                 testDescription: payload.data.description,
+                testAdmin: payload.data.testAdmin
             };
-            console.log(" puta ESSE É O PAYLOAD " + payload);
-            console.log(payload.data.type);
             let objectTest = null;
             if (payload.data.type === "HEURISTICS") {
-                console.log(" puta ESSE É O PAYLOAD " + payload);
-                console.log(payload.data.type);
                 objectTest = new HeuristicTest(ob);
-                console.log(objectTest);
                 //payload = Object.assign(payload, { collection: "Tests" });
             } else {
-                console.log(" puta ESSE É O PAYLOAD " + payload);
-                console.log(payload.data.type);
-                console.log("User Test");
                 objectTest = new UserTest(ob);
-                console.log(objectTest);
             }
             try {
                 await TestCont.createTest(
@@ -206,6 +197,17 @@ export default {
             } catch (e) {
                 console.error("Error in updateTest", e);
                 // commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+
+        async acceptTestCollaboration({ commit }, payload) {
+            commit("setLoading", true);
+            try {
+                await TestCont.acceptTestCollaboration(payload)
+            } catch (e) {
+                console.error("Error accept test collaboration", e);
             } finally {
                 commit("setLoading", false);
             }
