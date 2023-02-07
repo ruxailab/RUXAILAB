@@ -669,7 +669,8 @@ export default {
       return this.$store.state.Users.users;
     },
     cooperatorsEdit() {
-      return [...this.test.cooperators] ?? [];
+      if (this.test.cooperators) return [...this.test.cooperators];
+      return [];
     },
     filteredUsers() {
       // let hasUser = null;
