@@ -32,9 +32,9 @@
 </template>
 
 <script>
-import Heuristic from "@/models/Heuristic";
-import HeuristicQuestion from "@/models/HeuristicQuestion";
-import HeuristicController from "../../controllers/HeuristicController";
+// import Heuristic from "@/models/Heuristic";
+// import HeuristicQuestion from "@/models/HeuristicQuestion";
+// import HeuristicController from "../../controllers/HeuristicController";
 
 export default {
     data() {
@@ -49,8 +49,9 @@ export default {
 
     methods: {
         async changeToJSON() {
-            const testId = this.$store.state.Tests.currentTest;
+            const testId = this.$store.state.Tests.Test.id;
             console.log(testId);
+            console.log(this.$store.state.Tests.Test);
             let lines = "";
             let currentline = "";
             let csv = "";
@@ -101,43 +102,32 @@ export default {
                         heuristicOcurrencies = heuristicOcurrencies + 1;
                         let auxQuestions = [];
                         for (j = 0; j < auxHeuristic.length; ++j) {
-                            let auxQuestion = new HeuristicQuestion({
+                            let auxQuestion = {
                                 id: auxHeuristic[j].QID,
                                 title: auxHeuristic[j].QUESTION,
                                 descriptions: auxHeuristic[j].QUESTION,
                                 text: auxHeuristic[j].QUESTION,
-                            });
+                            };
                             auxQuestions.push(auxQuestion);
                         }
-                        let setHeuristics = new Heuristic({
+                        let setHeuristics = {
                             heuristicId: heuristicOcurrencies,
                             heuristicQuestions: auxQuestions,
                             heuristicTitle: auxHeuristic[0].HEURISTIC,
 
                             heuristicTotal: auxQuestions.length,
-                        });
+                        };
+                        // Object.assign();
                         heuristicTest.push(setHeuristics);
                         console.log(setHeuristics);
                     }
                 }
-                this.$store.dispatch("saveCurrentTest", heuristicTest);
-                for (i = 0; i < heuristicTest.length; i++) {
-                    let aux = Array.of(heuristicTest[i].total);
-                    for (j = 0; j < heuristicTest[i].total; j++) {
-                        aux[j] = {
-                            id: heuristicTest[i].questions[j].id,
-                            res: heuristicTest[i].questions[j].title,
-                            com: heuristicTest[i].questions[j].descriptions,
-                        };
-                    }
-                    await new HeuristicController().createCsvHeuris({
-                        testId: testId,
-                        id: heuristicTest[i].id,
-                        questions: aux,
-                        title: heuristicTest[i].title,
-                        total: heuristicTest[i].total,
-                    });
-                }
+                // heuristicTest.push({ id: testId });
+                console.log(heuristicTest);
+                // this.$store.dispatch("updateTest", heuristicTest);
+                this.$store.state.Tests.Test.testStructure = heuristicTest;
+                console.log(this.$store.state.Tests.Test);
+                this.$store.dispatch("updateTest", this.test);
             };
         },
     },
@@ -162,7 +152,7 @@ export default {
     },
     computed: {
         test() {
-            return this.$store.getters.tests;
+            return this.$store.getters.test;
         },
         user() {
             return this.$store.getters.user;

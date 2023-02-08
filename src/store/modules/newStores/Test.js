@@ -155,7 +155,7 @@ export default {
         async deleteTest({ commit }, payload) {
             //Connect to controllers
             try {
-                console.log('deleting')
+                console.log("deleting");
                 const res = await TestCont.deleteTest(payload);
                 commit("SET_TESTS", res);
             } catch {
@@ -201,7 +201,7 @@ export default {
         async updateTest({ commit }, payload) {
             commit("setLoading", true);
             try {
-                console.log(payload.toFirestore())
+                console.log(payload);
                 await TestCont.updateTest(payload);
             } catch (e) {
                 console.error("Error in updateTest", e);

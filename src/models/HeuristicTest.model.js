@@ -28,7 +28,7 @@ export default class Heuristic extends Test {
             heuristics: this.heuristics,
             testType: this.testType,
             testStructure: [],
-            testOptions: []
+            testOptions: [],
         });
     }
     static toHeuristicTest(data) {
