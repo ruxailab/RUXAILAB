@@ -1,14 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import Auth from "@/store/modules/newStores/Auth";
-import Templates from "@/store/modules/newStores/Template";
-import Tests from "@/store/modules/newStores/Test";
-import Users from "@/store/modules/newStores/User";
-import Database from "@/store/modules/newStores/Database";
-import Cooperators from "@/store/modules/newStores/Cooperators";
-import Reports from "@/store/modules/newStores/Reports";
-import Heuristic from "@/store/modules/newStores/Heuristic";
-import Answer from "@/store/modules/newStores/Answer";
+import Auth from "@/store/modules/Auth";
+import Templates from "@/store/modules/Template";
+import Tests from "@/store/modules/Test";
+import Users from "@/store/modules/User";
+import Database from "@/store/modules/Database";
+import Cooperators from "@/store/modules/Cooperators";
+import Reports from "@/store/modules/Reports";
+import Heuristic from "@/store/modules/Heuristic";
+import Answer from "@/store/modules/Answer";
 
 
 Vue.use(Vuex);
