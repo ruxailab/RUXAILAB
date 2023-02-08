@@ -21,4 +21,18 @@ export default class AnswerController extends Controller {
         userToUpdate.myAnswers[index] = Object.assign(userToUpdate.myAnswers[index], payload.data)
         return userController.update(userToUpdate.id, userToUpdate.toFirestore())
     }
+
+    async removeUserAnswer(payload) {
+        const userToUpdate = await userController.getById(payload.cooperatorId)
+        const index = userToUpdate.myAnswers.findIndex((a) => a.testDocId === payload.testDocId)
+
+        // Delete answers document
+        const answerDocumentId = userToUpdate.myAnswers[index].answerDocId
+        console.log(answerDocumentId)
+        await super.delete(COLLECTION, answerDocumentId)
+
+        // Remove it from user
+        userToUpdate.myAnswers.splice(index, 1)
+        return userController.update(userToUpdate.id, userToUpdate.toFirestore())
+    }
 }

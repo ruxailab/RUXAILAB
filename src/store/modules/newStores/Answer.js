@@ -24,5 +24,19 @@ export default {
                 commit("setLoading", false);
             }
         },
+        async removeTestFromCooperator({ commit }, payload) {
+            commit("setLoading", true);
+            try {
+                await answerController.removeUserAnswer({
+                    cooperatorId: payload.cooperator.userDocId,
+                    testDocId: payload.test.id
+                })
+            } catch (e) {
+                console.error("Error in updateTest", e);
+                // commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        }
     }
 };
