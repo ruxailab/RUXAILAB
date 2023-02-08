@@ -15,12 +15,19 @@
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
       <CardSignIn
-        @logined="setTest(), (logined = true)"
+        @logined="
+          setTest();
+          logined = true;
+        "
         @change="selected = !selected"
         v-if="selected"
       />
       <CardSignUp
-        @logined="(flagNewUser = true), (logined = true)"
+        @logined="
+          flagNewUser = true;
+          logined = true;
+          setTest();
+        "
         @change="selected = !selected"
         v-else
       />
@@ -244,10 +251,7 @@ export default {
       });
     },
     async setTest() {
-      console.log("HELP ME - USER", this.user);
-      console.log("HELP ME - TEST", this.test);
-      console.log("HELP ME - COOPERATORS", this.test.cooperators);
-      console.log("HELP ME - TOKEN", this.token);
+      console.log("CHAMA FILHO", this.user);
       if (this.user.myAnswers && this.test) {
         // Check if test has already been accepted by user
         let alreadyAccepted = this.user.myAnswers.find(
@@ -260,8 +264,9 @@ export default {
           );
 
           if (invitation) {
-            //User invited and he has account
-            if (this.user.uid == invitation.id) {
+            console.log('iNVITATION', invitation)
+            // User invited and he has account
+            if (this.user.email == invitation.email) {
               // Accept Collaboration
               await this.$store.dispatch("acceptTestCollaboration", {
                 test: this.test,
@@ -270,29 +275,11 @@ export default {
               this.flagToken = false;
             }
             //User invited and he doesn't have account
-            else if (invitation.id == null) {
+            else {
               alert(
-                "TODO: User invited does not have account or it is not logged in"
+                "User needs to signup using same e-mail of invitation"
               );
-              // this.$store
-              //     .dispatch("pushMyCoops", {
-              //         docId: this.user.uid,
-              //         element: payload,
-              //     })
-              //     .then(() => {
-              //         invitation.id = this.user.uid;
-              //         invitation.accepted = true;
-              //         this.$store
-              //             .dispatch("updateCooperatorObject", {
-              //                 docId: this.cooperators.id,
-              //                 elementId: this.token,
-              //                 identifier: "token",
-              //                 element: invitation,
-              //             })
-              //             .then(() => {
-              //                 this.flagToken = false;
-              //             });
-              //     });
+              await this.$store.dispatch('logout')
             }
           } else {
             this.$store.commit("setError", "Invalid invitation");
@@ -305,16 +292,6 @@ export default {
   },
   computed: {
     test() {
-      // let search = this.selectedTest || this.id;
-
-      // if (this.user && !this.flagToken) {
-      //     if (this.user.myTests.find((mt) => mt.id == search)) {
-      //         this.setIsCoops(false);
-      //     } else {
-      //         this.setIsCoops(true);
-      //     }
-      // }
-
       return this.$store.getters.test;
     },
 
@@ -476,17 +453,6 @@ export default {
       }
 
       return 1; // return guest as default
-
-      // if user is superadmin grant full access
-      // if (this.user?.accessLevel == 0) return 0;
-
-      // let id = this.selectedTest || this.test?.id;
-      // if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
-
-      // let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
-      // if (myCoop) return myCoop.accessLevel;
-
-      // return 1 //default to 1 -> Guest
     },
   },
 
@@ -511,21 +477,6 @@ export default {
             this.$store.dispatch("getCooperators", {
               id: this.test.cooperators,
             });
-        }
-      }
-    },
-    cooperators() {
-      if (this.cooperators && this.token) {
-        let invitation = this.cooperators.cooperators.find(
-          (coop) => coop.token == this.token
-        );
-        if (!invitation) {
-          this.$router
-            .push("/")
-            .then(() => {
-              this.$store.commit("setError", "Invalid invitation");
-            })
-            .catch(() => {});
         }
       }
     },

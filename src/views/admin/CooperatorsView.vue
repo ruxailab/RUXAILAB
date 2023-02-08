@@ -258,7 +258,9 @@ export default {
 
       // Notify users
       this.cooperatorsEdit.forEach((guest) => {
-        this.notifyCooperator(guest);
+        if (!guest.accepted) {
+          this.notifyCooperator(guest);
+        }
       });
 
       this.selectedCoops = [];
@@ -485,18 +487,34 @@ export default {
       let token = uidgen.generateSync();
 
       this.selectedCoops.forEach((coop) => {
-        this.cooperatorsEdit.push({
-          userDocId: coop.id,
-          userName: "",
-          email: coop.email,
-          invited: true,
-          accepted: false,
-          accessLevel: this.roleOptions[this.selectedRole].value,
-          token: token,
-          progress: 0,
-          answerStatus: "",
-          updateDate: "",
-        });
+        // If it is not a user that exists on the platform
+        if (!coop.id) {
+          this.cooperatorsEdit.push({
+            userDocId: null,
+            userName: "",
+            email: coop,
+            invited: true,
+            accepted: false,
+            accessLevel: this.roleOptions[this.selectedRole].value,
+            token: token,
+            progress: 0,
+            answerStatus: "",
+            updateDate: "",
+          });
+        } else {
+          this.cooperatorsEdit.push({
+            userDocId: coop.id,
+            userName: "",
+            email: coop.email,
+            invited: true,
+            accepted: false,
+            accessLevel: this.roleOptions[this.selectedRole].value,
+            token: token,
+            progress: 0,
+            answerStatus: "",
+            updateDate: "",
+          });
+        }
       });
       this.submit();
     },

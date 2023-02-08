@@ -54,8 +54,9 @@ export default class TestController extends Controller {
         await userController.update(userToUpdate.id, userToUpdate.toFirestore())
 
         const testToUpdate = payload.test
-        const index = testToUpdate.cooperators.findIndex((c) => c.userDocId === userToUpdate.id)
+        const index = testToUpdate.cooperators.findIndex((c) => c.email === userToUpdate.email)
         testToUpdate.cooperators[index].accepted = true
+        testToUpdate.cooperators[index].userDocId = userToUpdate.id
 
         // Update invitation on test to accepted
         return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
