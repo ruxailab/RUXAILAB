@@ -111,11 +111,11 @@ export default {
                             auxQuestions.push(auxQuestion);
                         }
                         let setHeuristics = {
-                            heuristicId: heuristicOcurrencies,
-                            heuristicQuestions: auxQuestions,
-                            heuristicTitle: auxHeuristic[0].HEURISTIC,
+                            id: heuristicOcurrencies,
+                            questions: auxQuestions,
+                            title: auxHeuristic[0].HEURISTIC,
 
-                            heuristicTotal: auxQuestions.length,
+                            total: auxQuestions.length,
                         };
                         // Object.assign();
                         heuristicTest.push(setHeuristics);
