@@ -193,6 +193,7 @@ import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
 import LeaveAlert from "../../components/atoms/LeaveAlert.vue";
 import { cooperatorsHeaders } from "@/utils/headers";
 import { roleOptionsItems } from "@/utils/items";
+import Notification from "@/models/Notification";
 
 const UIDGenerator = require("uid-generator");
 
@@ -266,221 +267,29 @@ export default {
       this.selectedCoops = [];
       this.$refs.combobox.blur();
     },
-    // async remove(guest) {
-    // if (guest.accessLevel.value != 2) {
-    // this.$store
-    //   .dispatch("removeMyCoops", {
-    //     docId: guest.id,
-    //     element: {
-    //       id: this.test.id,
-    //     },
-    //   })
-    //   .then(() => {
-    //     Remove element array
-    //     this.$store
-    //       .dispatch("removeCooperator", {
-    //         docId: this.id,
-    //         element: {
-    //           id: guest.id,
-    //         },
-    //       })
-    //       .then(() => {
-    //         this.$store.commit(
-    //           "setSuccess",
-    //           "Cooperator successfuly removed"
-    //         );
-    //       })
-    //       .catch((err) => {
-    //         this.$store.commit("setError", err);
-    //       });
-    //   });
-    // } else {
-    //   this.$store
-    //     .dispatch("removeMyAnswers", {
-    //       docId: guest.id,
-    //       element: {
-    //         id: this.test.id,
-    //       },
-    //     })
-    //     .then(() => {
-    //       this.$store
-    //         .dispatch("removeReport", {
-    //           docId: this.test.reports,
-    //           element: {
-    //             id: guest.id,
-    //           },
-    //           param: "reports",
-    //         })
-    //         .then(() => {
-    //           this.$store
-    //             .dispatch("removeCooperator", {
-    //               docId: this.id,
-    //               element: {
-    //                 id: guest.id,
-    //               },
-    //             })
-    //             .then(() => {
-    //               this.$store.commit(
-    //                 "setSuccess",
-    //                 "Cooperator successfuly removed"
-    //               );
-    //             })
-    //             .catch((err) => {
-    //               this.$store.commit("setError", err);
-    //             });
-    //         });
-    //     });
-    // }
-    // },
-    // edit(guest) {
-    //   this.$store
-    //     .dispatch("updateCooperator", {
-    //       docId: this.id,
-    //       elementId: guest.guest.id,
-    //       element: guest.current,
-    //       param: "accessLevel",
-    //     })
-    //     .then(() => {
-    //       // Cooperator was Tester
-    //       if (guest.previous.value == 2) {
-    //         this.$store
-    //           .dispatch("removeMyAnswers", {
-    //             docId: guest.guest.id,
-    //             element: {
-    //               id: this.test.id,
-    //             },
-    //           })
-    //           .then(() => {
-    //             this.$store.dispatch("removeReport", {
-    //               docId: this.test.reports,
-    //               element: {
-    //                 id: guest.id,
-    //               },
-    //               param: "reports",
-    //             });
-    //             let test = Object.assign({}, this.test);
-    //             this.$store
-    //               .dispatch("pushMyCoops", {
-    //                 docId: guest.guest.id,
-    //                 element: Object.assign(test, {
-    //                   accessLevel: guest.current.value,
-    //                 }),
-    //               })
-    //               .then(() =>
-    //                 this.$store.commit("setSuccess", "Role successfuly updated")
-    //               )
-    //               .catch((err) => this.$store.commit("setError", err));
-    //           });
-    //       } else if (
-    //         //It'll be a Tester
-    //         (guest.previous.value == 1 || guest.previous.value == 0) &&
-    //         guest.current.value == 2
-    //       ) {
-    //         this.$store
-    //           .dispatch("removeMyCoops", {
-    //             docId: guest.guest.id,
-    //             element: {
-    //               id: this.test.id,
-    //             },
-    //           })
-    //           .then(() => {
-    //             let test = Object.assign({}, this.test);
-    //             this.$store.dispatch("pushMyAnswers", {
-    //               docId: guest.guest.id,
-    //               element: Object.assign(test, {
-    //                 answersSheet: Object.assign(this.test.answersSheet, {
-    //                   submitted: false,
-    //                 }),
-    //                 accessLevel: {
-    //                   text: "Evaluator",
-    //                   value: 2,
-    //                 },
-    //                 author: this.test.admin.email,
-    //                 date: new Date().toDateString(),
-    //               }),
-    //             });
-
-    //             let item = Object.assign(
-    //               {},
-    //               {
-    //                 uid: guest.guest.id,
-    //                 email: guest.guest.email,
-    //                 log: {
-    //                   date: new Date().toLocaleString("en-Us"),
-    //                   progress: 0,
-    //                   status: "In progress",
-    //                 },
-    //               }
-    //             );
-    //             this.$store.dispatch("pushLog", {
-    //               docId: this.test.reports,
-    //               element: item,
-    //             });
-    //           })
-    //           .then(() =>
-    //             this.$store.commit("setSuccess", "Role successfuly updated")
-    //           )
-    //           .catch((err) => this.$store.commit("setError", err));
-    //       } else if (guest.previous.value != 2 && guest.current.value != 2) {
-    //         this.$store
-    //           .dispatch("updateAccessLevel", {
-    //             docId: guest.guest.id,
-    //             elementId: this.id,
-    //             element: guest.current.value,
-    //             param: "accessLevel",
-    //           })
-    //           .then(() =>
-    //             this.$store.commit("setSuccess", "Role successfuly updated")
-    //           )
-    //           .catch((err) => this.$store.commit("setError", err));
-    //       }
-    //     });
-    // },
     notifyCooperator(guest) {
-      // TODO: Send Notification
+      // Notify user on the platform in case it is already registered
+      if (guest.userDocId) {
+        let path = "";
+        if (guest.accessLevel.value >= 2) {
+          path = "testview";
+        } else {
+          path = "managerview";
+        }
+        this.$store.dispatch("addNotification", {
+          userId: guest.userDocId,
+          notification: new Notification({
+            title: `Cooperation Invite!`,
+            description: `You have been invited to test ${this.test.testTitle}!`,
+            redirectsTo: `${path}/${this.test.id}/${guest.token}`,
+            read: false,
+          }),
+        });
+      }
       this.sendInvitationMail(guest);
     },
     reinvite(guest) {
-      const uidgen = new UIDGenerator();
-      let invitationID = uidgen.generateSync();
-      let inv = {
-        id: invitationID,
-        to: {
-          id: guest.id,
-          email: guest.email,
-          accessLevel: guest.accessLevel.value,
-        },
-        from: {
-          id: this.user.uid,
-          email: this.user.email,
-        },
-        test: {
-          id: this.test.id,
-          title: this.test.title,
-          type: this.test.type,
-          reports: this.test.reports,
-          answers: this.test.answers,
-          cooperators: this.test.cooperators,
-        },
-      };
-      this.$store
-        .dispatch("pushNotification", {
-          docId: inv.to.id,
-          element: inv,
-          param: "notifications",
-        })
-        .then(() => {
-          this.$store
-            .dispatch("updateCooperator", {
-              docId: this.id,
-              elementId: guest.id,
-              element: null,
-              param: "accepted",
-            })
-            .then(() => {
-              guest.accepted = null;
-            });
-        });
+      this.notifyCooperator(guest);
     },
     saveInvitations() {
       const uidgen = new UIDGenerator();

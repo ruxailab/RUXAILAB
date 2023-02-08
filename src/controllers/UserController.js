@@ -37,4 +37,18 @@ export default class UserController extends Controller {
         return new User(Object.assign({ id: res.id }, res.data()))
     }
 
+    async addNotification(payload) {
+        // Add Notification to User
+        const userToUpdate = await this.getById(payload.userId)
+        userToUpdate.notifications.push(payload.notification.toFirestore())
+        return this.update(payload.userId, userToUpdate.toFirestore())
+    }
+
+    async markNotificationAsRead(payload) {
+        const userToUpdate = new User(payload.user)
+        const index = userToUpdate.notifications.findIndex((n) => n.title === payload.notification.title)
+        userToUpdate.notifications[index].read = true
+        return this.update(userToUpdate.id, userToUpdate.toFirestore())
+    }
+
 }
