@@ -540,11 +540,18 @@ export default {
         `Are you sure you want to remove ${coop.email} from your cooperators?`
       );
       if (ok) {
+        // Remove from test
         let index = this.cooperatorsEdit.indexOf(coop);
         this.cooperatorsEdit.splice(index, 1);
         this.test.cooperators = this.cooperatorsEdit;
 
         await this.$store.dispatch("updateTest", this.test);
+
+        // Remove from cooperator
+        await this.$store.dispatch("removeTestFromCooperator", {
+          test: this.test,
+          cooperator: coop,
+        });
       }
     },
     removeFromList(coop) {
