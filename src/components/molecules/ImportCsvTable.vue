@@ -6,7 +6,7 @@
             </v-row>
             <v-divider></v-divider>
             <v-row>
-                <v-row class="pa-7" justify="center" align="center">
+                <v-row class="px-8" justify="center" align="center">
                     <v-file-input
                         v-model="csvFile"
                         class="d-flex justify-center "
