@@ -264,7 +264,6 @@ export default {
             this.$router.push("/createtest").catch(() => {});
         },
         goTo(test) {
-            console.log(this.$store.state);
             this.$router
                 .push(
                     (this.$store.state.Auth.user.accessLevel <= 1
@@ -330,7 +329,6 @@ export default {
         return test.title.toLowerCase().includes(this.search.toLowerCase());
       });
 */
-            console.log(this.allTests);
             return this.allTests;
         },
         filteredMyTests() {
@@ -461,7 +459,6 @@ export default {
         },
     },
     created() {
-        console.log("gettingTests");
         this.$store.dispatch("getAllTest");
     },
 };

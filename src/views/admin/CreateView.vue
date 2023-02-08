@@ -103,10 +103,8 @@ export default {
       let d = new Date();
       //let heuristicTest = new HeuristicTest()
       //let object = this.object;
-      console.log(this.test);
       let successful = true;
       //Send db
-      console.log("ai");
       await this.$store
         .dispatch("createNewTest", {
           collection: "tests",
@@ -118,83 +116,10 @@ export default {
             }).toFirestore(),
           }),
         })
-        .then((id) => {
-          console.log(id);
-          //this.testID = id;
-          /*
-          this.$store.dispatch("createAnswers", {
-              data: {
-                test: {
-                  id: id,
-                  title: object.title,
-                  type: object.type,
-                },
-                answers: [],
-                answersSheet: object.answersSheet,
-              },
-            })/*
-            .then((idAnswers) => {
-              this.$store.dispatch("setAnswerID", {
-                docId: id,
-                data: idAnswers,
-              });
-              this.$store
-                .dispatch("createReport", {
-                  data: {
-                    test: {
-                      id: id,
-                      title: object.title,
-                      type: object.type,
-                      answers: idAnswers,
-                    },
-                    reports: [],
-                  },
-                })
-                .then((idReport) => {
-                  this.$store.dispatch("setReportID", {
-                    docId: id,
-                    data: idReport,
-                  });
-                  this.$store
-                    .dispatch("createCooperators", {
-                      data: {
-                        test: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                        },
-                        cooperators: [],
-                      },
-                    })
-                    .then((idCooperators) => {
-                      this.$store.dispatch("setCooperatorsID", {
-                        docId: id,
-                        data: idCooperators,
-                      });
-                      this.$store.dispatch("pushMyTest", {
-                        docId: this.user.uid,
-                        element: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                          reports: idReport,
-                          answers: idAnswers,
-                          cooperators: idCooperators,
-                          accessLevel: 0,
-                          date: d.toDateString(),
-                          nCoops: 0,
-                        },
-                        param: "myTests",
-                      });
-                    });
-                });
-            });*/
-        })
         .catch((err) => {
           console.error("Error", err);
           successful = false;
         });
-      console.log(this.$store.state.Tests.Test);
 
       if (successful) this.sendManager(this.$store.state.Tests.Test);
     },

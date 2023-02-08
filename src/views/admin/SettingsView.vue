@@ -232,7 +232,6 @@ export default {
             delete element.template;
           }
 
-          // console.log("mytest", element);
           this.$store.dispatch("updateMyTest", {
             docId: this.object.admin.id,
             element: element,
@@ -292,9 +291,7 @@ export default {
           this.reports.test.title = this.object.title;
           this.cooperators.test.title = this.object.title;
 
-          console.log(this.answers);
           delete this.answers.id;
-          console.log("Delete ID", this.answers);
           delete this.reports.id;
           delete this.cooperators.id;
           this.$store.dispatch("updateTestAnswer", {
@@ -325,14 +322,12 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
-      console.log(item)
       await this.$store.dispatch("deleteTest", item)
       this.$router.push({name:'TestList'})
 
     },
     async createTemplate() {  
       let template = new Template(this.template)
-      console.log('ai')
       if (this.test.testType == "HEURISTICS") {
         template.testStructure= this.test.testStructure,
         template.testOptions= this.test.testOptions,
@@ -365,7 +360,6 @@ export default {
       this.templateDescription = "";
     },
     setLeavingAlert(){
-      console.log('oie')
       this.$store.commit('SET_DIALOG_LEAVE',true)
     }
   },
@@ -383,7 +377,6 @@ export default {
       }
     },
     cooperators: async function () {
-      console.log(this.cooperators)
       if (this.cooperators !== null && this.cooperators !== {}) {
         let isOwner =
           this.user.myTests.find((test) => test.id == this.id) == undefined
@@ -463,14 +456,10 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-   
-    console.log('check')
     if (this.$store.getters.localChanges) {
-      console.log('settingdialog')
       this.$store.commit('SET_DIALOG_LEAVE', true)
       this.$store.commit('SET_PATH_TO',to.name)
     } else {
-      console.log('next')
       next();
     }
     

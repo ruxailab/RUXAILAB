@@ -141,7 +141,6 @@ export default {
         async deleteTest({ commit }, payload) {
             //Connect to controllers
             try {
-                console.log('deleting')
                 const res = await TestCont.deleteTest(payload);
                 commit("SET_TESTS", res);
             } catch {
@@ -187,7 +186,6 @@ export default {
         async updateTest({ commit }, payload) {
             commit("setLoading", true);
             try {
-                console.log(payload.toFirestore())
                 await TestCont.updateTest(payload);
             } catch (e) {
                 console.error("Error in updateTest", e);
@@ -243,7 +241,6 @@ export default {
             //Connect to controllers
             try {
                 const res = await TestCont.getTest(payload);
-                console.log(res);
                 commit("SET_TEST", res);
             } catch {
                 console.log("Error in getObjectTest");
@@ -254,14 +251,12 @@ export default {
         },
 
         async getAnswers({ dispatch, commit }, payload) {
-            console.log("getAnswers");
             commit("setLoading", true);
             payload = Object.assign(payload, { collection: "answers" });
 
             let ans = await dispatch("getObject", payload).catch((err) =>
                 commit("setError", "Error in getAnswers." + err)
             );
-            console.log("puta getAnswers");
             commit("setAnswers", ans);
         },
 
@@ -361,7 +356,6 @@ export default {
         },
 
         async getAllTest({ commit }) {
-            console.log("gettingtests");
             commit("setLoading", true);
 
             //Connect to controllers

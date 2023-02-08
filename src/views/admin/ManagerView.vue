@@ -251,7 +251,6 @@ export default {
       });
     },
     async setTest() {
-      console.log("CHAMA FILHO", this.user);
       if (this.user.myAnswers && this.test) {
         // Check if test has already been accepted by user
         let alreadyAccepted = this.user.myAnswers.find(
@@ -264,7 +263,6 @@ export default {
           );
 
           if (invitation) {
-            console.log('iNVITATION', invitation)
             // User invited and he has account
             if (this.user.email == invitation.email) {
               // Accept Collaboration

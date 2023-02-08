@@ -584,11 +584,9 @@ export default {
   },
   computed: {
     csvHeuristics() {
-      console.log(this.$store.state.Tests.Test.testStructure);
       return this.$store.state.Tests.Test.testStructure;
     },
     heuristics() {
-      console.log("ID --->" + this.$store.state.Tests.Test.testStructure);
       return this.$store.state.Tests.Test.testStructure
         ? this.$store.state.Tests.Test.testStructure
         : [];
@@ -597,8 +595,6 @@ export default {
     arrayQuestions() {
       let aux = [];
       let array = Array.from(this.heuristics[this.itemSelect].questions);
-      console.log("puta");
-      console.log(array);
       array.forEach((el) => {
         aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
       });
