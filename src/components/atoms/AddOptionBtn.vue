@@ -99,7 +99,6 @@ export default {
   },
   methods: {
     validate() {
-      console.log('hola')
       if (this.$refs.form.validate()) {
         if (this.hasValue && this.option.value == null) {
           alert("Please enter a value for this option.");

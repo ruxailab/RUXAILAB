@@ -15,10 +15,9 @@ export default class AuthController {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log("User SingUp: " + user);
                 return user;
             })
-            .catch(console.log("Error in SingUp"));
+            .catch(console.error("Error in SingUp"));
     }
 
     //SignIn
@@ -27,11 +26,9 @@ export default class AuthController {
         return signInWithEmailAndPassword(auth, email, password).then(
             (userCredential) => {
                 const user = userCredential.user;
-                console.log("User SingIn: " + user);
                 return user;
             }
         );
-        //           .catch(console.log("Error in SingIn"));
     }
 
     //Get Current User
@@ -53,20 +50,4 @@ export default class AuthController {
             console.log("signOut successful");
         });
     }
-
-    //Authentication state and get user data
-
-    // async authGetStateChanged(){
-    //   onAuthStateChanged(auth, (user)=>{
-    //     if(user){
-    //       const uid = user.uid;
-    //       console.log("User is signed in")
-    //       console.log(uid)
-    //       return uid
-    //     }
-    //     else{
-    //       console.log("User is signed out")
-    //     }
-    //   })
-    // }
 }

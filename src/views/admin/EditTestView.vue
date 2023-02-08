@@ -134,9 +134,6 @@ export default {
   }),
   methods: {
     async submit() {
-      console.log("hello");
-      console.log(this.$store.state.Heuristic.heuristicStructure);
-      console.log(this.object);
       this.object.testStructure = this.$store.state.Tests.Test.testStructure;
       const auxT = new Test(this.object);
       this.$store.dispatch("updateTest", auxT);
@@ -185,7 +182,6 @@ export default {
       this.valids[index] = valid;
     },
     validateAll() {
-      console.log("iaiiiii");
       if (this.test.type === "User" && !this.valids[0]) {
         this.$store.commit(
           "setError",
