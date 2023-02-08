@@ -261,7 +261,6 @@ export default {
           let invitation = this.test.cooperators.find(
             (coop) => coop.token == this.token
           );
-
           if (invitation) {
             // User invited and he has account
             if (this.user.email == invitation.email) {
@@ -280,6 +279,7 @@ export default {
               await this.$store.dispatch('logout')
             }
           } else {
+            alert('Invalid Invitation')
             this.$store.commit("setError", "Invalid invitation");
           }
         } else {
