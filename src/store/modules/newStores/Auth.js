@@ -50,16 +50,17 @@ export default {
          * @returns {void}
          */
 
-        async signup({ commit }, payload){
+        async signup({ commit }, payload) {
             commit("setLoading", true);
-            try{
+            try {
                 const response = await createUserWithEmailAndPassword(auth, payload.email, payload.password)
                 if (response) {
-                    commit('SET_USER', response.user)
+                    const dbUser = await new UserController().getById(response.user.uid)
+                    commit('SET_USER', dbUser)
                 } else {
                     throw new Error('Signup failed')
                 }
-            } catch (err){
+            } catch (err) {
                 console.error("Error when creating user", err);
                 commit("setError", err);
             } finally {
@@ -67,10 +68,10 @@ export default {
             }
         },
 
-        async signin({ commit }, payload){
+        async signin({ commit }, payload) {
             console.log(payload, commit)
             commit("setLoading", true);
-            try{
+            try {
                 const response = await signInWithEmailAndPassword(auth, payload.email, payload.password)
                 if (response) {
                     const dbUser = await new UserController().getById(response.user.uid)
@@ -78,16 +79,16 @@ export default {
                 } else {
                     throw new Error('Login failed')
                 }
-            } catch (err){
+            } catch (err) {
                 console.error("Error signing in: " + err);
                 commit("setError", err);
-            } finally{
+            } finally {
                 commit("setLoading", false);
             }
         },
 
-        async logout({ commit }){
-            try{
+        async logout({ commit }) {
+            try {
                 await signOut(auth)
                 commit('SET_USER', null)
             } catch (err) {
@@ -104,7 +105,7 @@ export default {
                 try {
                     const dbUser = await new UserController().getById(user.uid)
                     commit('SET_USER', dbUser)
-                } catch(e) {
+                } catch (e) {
                     console.error(e)
                 }
 
@@ -112,7 +113,7 @@ export default {
         },
 
     }
-   
+
 }
 
         // async authSingUp({ commit }, payload) {
@@ -146,13 +147,13 @@ export default {
     //     },
 
     //     /**
-    //  *This action connects a User to the platform, using the API 
+    //  *This action connects a User to the platform, using the API
     //  and creates the observer for the User's metadata in the db
-    //  * 
+    //  *
     //  * @action signin=SET_USERS
-    //  * @param {object} payload - Data to create a new User 
+    //  * @param {object} payload - Data to create a new User
     //  * @param {string} payload.email - the User email
-    //  * @param {string} payload.password - the User password 
+    //  * @param {string} payload.password - the User password
     //  * @returns {void}
     // */
 
