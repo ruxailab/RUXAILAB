@@ -29,7 +29,6 @@ export default new Vuex.Store({
           state.error = payload
         },
         SET_DIALOG_LEAVE(state,payload){
-          console.log('aqui')
           state.dialogLeave = payload
         },
         SET_LOCAL_CHANGES(state,payload){

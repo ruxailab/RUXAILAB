@@ -41,7 +41,6 @@ methods: {
     this.$store.commit('SET_DIALOG_LEAVE', false)
   },
   discardChanges(){
-    console.log( this.$store.state.pathTo)
     this.$store.commit('SET_LOCAL_CHANGES',false)
     this.$router.push({name: this.$store.state.pathTo})
   }

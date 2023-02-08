@@ -52,8 +52,6 @@ export default {
         async changeToJSON() {
             const testId = this.test.id;
 
-            console.log(testId);
-
             let lines = "";
             let currentline = "";
             let csv = "";
@@ -125,29 +123,20 @@ export default {
                             auxQuestions.length
                         );
                         heuristicTest.push(setHeuristics);
-                        console.log(setHeuristics);
                     }
                 }
 
-                console.log(this.test);
-
                 this.$store.dispatch("saveCurrentTest", heuristicTest);
-                console.log(testId);
-                console.log(heuristicTest);
-                console.log(heuristicTest);
 
                 for (i = 0; i < heuristicTest.length; i++) {
-                    console.log(heuristicTest[i].id);
                     let aux = Array.of(heuristicTest[i].total);
                     for (j = 0; j < heuristicTest[i].total; j++) {
-                        console.log(heuristicTest[i].questions[j]);
 
                         aux[j] = {
                             id: heuristicTest[i].questions[j].id,
                             res: heuristicTest[i].questions[j].title,
                             com: heuristicTest[i].questions[j].descriptions,
                         };
-                        console.log("auxiliar: " + aux);
                     }
                     await new HeuristicController().createCsvHeuris({
                         testId: testId,

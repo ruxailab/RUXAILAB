@@ -28,7 +28,6 @@ export default class AnswerController extends Controller {
 
         // Delete answers document
         const answerDocumentId = userToUpdate.myAnswers[index].answerDocId
-        console.log(answerDocumentId)
         await super.delete(COLLECTION, answerDocumentId)
 
         // Remove it from user
