@@ -20,31 +20,13 @@ export default class TestController extends Controller {
     }
 
     async deleteTest(payload) {
-        return await super.delete("tests", payload.id)
+        return await super.delete("tests", payload.id);
     }
 
     async updateTest(payload) {
-        console.log('ai')
+        console.log("ai");
         return await super.update("tests", payload.id, payload.toFirestore());
     }
-
-    // async updateObject({ commit }, payload) {
-    //     //----> firebase update example
-    //     // DatabaseReference hopperRef = usersRef.child("gracehop");
-    //     // Map<String, Object> hopperUpdates = new HashMap<>();
-    //     // hopperUpdates.put("nickname", "Amazing Grace");
-    //     // hopperRef.updateChildrenAsync(hopperUpdates);
-    //     //---->old code
-    //     // try {
-    //     //     var docRef = await api.database.updateObject(payload);
-    //     //     return docRef;
-    //     // } catch (err) {
-    //     //     console.error("Error in updateObject:", err);
-    //     //     commit("setError", "Error updating object in database");
-    //     // } finally {
-    //     //     commit("setLoading", false);
-    //     // }
-    // }
 
     //------------------GET OBJECTS - ID------------------
 
@@ -60,7 +42,7 @@ export default class TestController extends Controller {
     //GetObject of TestAdmin
     getObjectTestAdmin(parameter, condition) {
         return super
-            .read("test", parameter, condition)
+            .read("tests", parameter, condition)
             .then((response) => {
                 let res = response.map(TestAdmin.toTestAdmin);
                 console.log("TestAdminController res: ", res);
@@ -74,7 +56,7 @@ export default class TestController extends Controller {
     //GetObject of TestStructure
     getObjectTestStructure(parameter, condition) {
         return super
-            .read("test", parameter, condition)
+            .read("tests", parameter, condition)
             .then((response) => {
                 let res = response.map(TestStructure.toTestStructure);
                 console.log("TestStructureController res: ", res);
@@ -88,7 +70,7 @@ export default class TestController extends Controller {
     //GetObject of TestStructureOptions
     getObjectTestStructureOptions(parameter, condition) {
         return super
-            .read("test", parameter, condition)
+            .read("tests", parameter, condition)
             .then((response) => {
                 let res = response.map(
                     TestStructureOptions.toTestStructureOptions
@@ -104,7 +86,7 @@ export default class TestController extends Controller {
     //GetObject of TestTemplateDoc
     getObjectTestTemplateDoc(parameter, condition) {
         return super
-            .read("test", parameter, condition)
+            .read("tests", parameter, condition)
             .then((response) => {
                 let res = response.map(TestTemplateDoc.toTestTemplateDoc);
                 console.log("TestTemplateDocController res: ", res);
@@ -134,7 +116,7 @@ export default class TestController extends Controller {
     //GetObject of TestAdmin
     getAllObjectTestAdmin() {
         return super
-            .readAll("test")
+            .readAll("tests")
             .then((response) => {
                 let res = response.map(TestAdmin.toTestAdmin);
                 console.log("TestAdminController res: ", res);
