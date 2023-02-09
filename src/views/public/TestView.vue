@@ -1,8 +1,8 @@
 <template>
-  <div v-if="test || (test && test.type === 'User')">
+  <div v-if="test && test.testType === 'HEURISTICS'">
     <Snackbar />
 
-    <!-- Submit Alert Dialog -->
+    <!-- Submit TEST ANSWER Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title
@@ -30,11 +30,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!----------------------------------------------------------------------------------------->
 
+    <!-- LOADER -->
     <v-overlay v-model="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
 
+    <!-- DEALING WITH USER SIGNIN AND SIGNUP -->
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
         @logined="logined = true"
@@ -72,6 +75,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!---------------------------------------------------------------------------------------------->
 
     <!-- Start Screen -->
     <v-row
@@ -79,9 +83,10 @@
       class="background background-img pa-0 ma-0"
       align="center"
     >
+      {{ currentUserTestAnswer }}
       <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{ test.title }}</h1>
-        <p align="justify" class="description">{{ test.description }}</p>
+        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
+        <p align="justify" class="description">{{ test.testDescription }}</p>
         <v-row justify="center" class>
           <v-btn color="white" outlined rounded @click="start = !start"
             >Start Test</v-btn
@@ -124,10 +129,10 @@
           <span>Save</span>
         </v-tooltip>
 
-        <v-tooltip left v-if="answersSheet.heuristics">
+        <v-tooltip left v-if="currentUserTestAnswer">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              :disabled="answersSheet.progress < 100"
+              :disabled="currentUserTestAnswer.progress < 100"
               class="white--text"
               @click="dialog = true"
               fab
@@ -142,7 +147,7 @@
           <span>Submit</span>
         </v-tooltip>
 
-         <v-tooltip left v-else>
+        <v-tooltip left v-else>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               class="white--text"
@@ -173,17 +178,17 @@
               <v-col class="pa-0 ma-0" cols="8">
                 <div class="idText">{{ test.id }}</div>
                 <v-clamp class="titleText" autoresize :max-lines="2">{{
-                  test.title
+                  test.testTitle
                 }}</v-clamp>
               </v-col>
-              <v-col v-if="test.type === 'Heuristics'">
+              <v-col>
                 <v-progress-circular
                   rotate="-90"
-                  :value="answersSheet.progress"
+                  :value="currentUserTestAnswer.progress"
                   color="#fca326"
                   :size="50"
                   class="mt-2"
-                  >{{ answersSheet.progress }}</v-progress-circular
+                  >{{ currentUserTestAnswer.progress }}</v-progress-circular
                 >
               </v-col>
             </v-row>
@@ -198,58 +203,10 @@
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
         >
           <div v-for="(item, n) in items" :key="n">
-            <!--Pre Test-->
-            <v-list-group
-              @click="index = item.id"
-              v-if="item.id == 0"
-              :value="index == 0 ? true : false"
-              no-action
-            >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
-              >
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </template>
-
-              <v-list-item
-                v-for="(preTest, i) in item.value"
-                :key="i"
-                @click="preTestIndex = i"
-              >
-                <v-list-item-icon>
-                  <v-icon
-                    :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'"
-                    >{{ preTest.icon }}</v-icon
-                  >
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title
-                    :style="
-                      preTestIndex == preTest.id
-                        ? 'color: white'
-                        : 'color:#fca326'
-                    "
-                    >{{ preTest.title }}</v-list-item-title
-                  >
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-group>
             <!--Heuris-->
             <v-list
               @click="index = item.id"
-              v-else-if="item.id == 1 && test.type == 'Heuristics'"
+              v-if="item.id == 1"
               :value="index == 1 ? true : false"
             >
               <div v-if="mini">
@@ -261,14 +218,14 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <v-list-item-icon>
+                      <!-- <v-list-item-icon>
                         <v-progress-circular
                           rotate="-90"
                           v-if="
-                            test.type === 'Heuristics' &&
-                              progress(answersSheet.heuristics[i]) != 100
+                            test.testType === 'HEURISTICS' &&
+                              progress(testAnswerDocument.heuristicAnswers[i]) != 100
                           "
-                          :value="progress(answersSheet.heuristics[i])"
+                          :value="progress(testAnswerDocument.heuristicAnswers[i])"
                           :size="24"
                           :width="3"
                           :color="heurisIndex == i ? '#ffffff' : '#fca326'"
@@ -278,7 +235,7 @@
                           :color="heurisIndex == i ? '#ffffff' : '#fca326'"
                           >{{ heuris.icon }}</v-icon
                         >
-                      </v-list-item-icon>
+                      </v-list-item-icon> -->
 
                       <v-list-item-content>
                         <v-list-item-title
@@ -301,14 +258,14 @@
                   @click="heurisIndex = i"
                   link
                 >
-                  <v-list-item-icon>
+                  <!-- <v-list-item-icon>
                     <v-progress-circular
                       rotate="-90"
                       v-if="
-                        test.type === 'Heuristics' &&
-                          progress(answersSheet.heuristics[i]) != 100
+                        test.testType === 'HEURISTICS' &&
+                          progress(testAnswerDocument.heuristicAnswers[i]) != 100
                       "
-                      :value="progress(answersSheet.heuristics[i])"
+                      :value="progress(testAnswerDocument.heuristicAnswers[i])"
                       :size="24"
                       :width="3"
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
@@ -318,7 +275,7 @@
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
                       >{{ heuris.icon }}</v-icon
                     >
-                  </v-list-item-icon>
+                  </v-list-item-icon> -->
 
                   <v-list-item-content>
                     <v-list-item-title
@@ -331,71 +288,6 @@
                 </v-list-item>
               </div>
             </v-list>
-            <!--Tasks--->
-            <v-list-group
-              @click="index = item.id"
-              v-else-if="item.id == 1 && test.type == 'User'"
-              :value="index == 1 ? true : false"
-              no-action
-            >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
-              >
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </template>
-              <v-tooltip right v-for="(task, i) in item.value" :key="i">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item
-                    @click="heurisIndex = i"
-                    link
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    <v-list-item-icon>
-                      <v-icon
-                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        >{{ task.icon }}</v-icon
-                      >
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        :style="
-                          heurisIndex == i ? 'color: white' : 'color:#fca326'
-                        "
-                        >{{ task.title }}</v-list-item-title
-                      >
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group>
-            <!--Post Test-->
-            <v-list-item @click="index = item.id" v-else-if="item.id == 2">
-              <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                  item.icon
-                }}</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </v-list-item-content>
-            </v-list-item>
           </div>
         </v-list>
 
@@ -409,52 +301,18 @@
       </v-navigation-drawer>
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
-        <!-- Consent - Pre Test -->
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 0"
-          title="Pre Test - Consent"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.consent"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-
-        <!-- Form - Pre Test -->
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 1"
-          title="Pre Test - Form"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-
         <!-- Heuristics -->
         <ShowInfo
-          v-if="index == 1 && test.type === 'Heuristics'"
-          :title="test.heuristics[heurisIndex].title"
+          v-if="index == 1"
+          :title="test.testStructure[heurisIndex].title"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{
-              test.heuristics[heurisIndex].title
+              test.testStructure[heurisIndex].title
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
             <v-row
-              v-for="(question, i) in test.heuristics[heurisIndex].questions"
+              v-for="(question, i) in test.testStructure[heurisIndex].questions"
               :key="i"
               justify="center"
             >
@@ -471,17 +329,14 @@
                 </v-row>
 
                 <AddCommentBtn
-                  :comment="answersSheet.heuristics[heurisIndex].questions[i]"
                   :heurisIndex="heurisIndex"
+                  :comment="currentUserTestAnswer"
                 >
                   <v-select
                     slot="answer"
-                    v-if="answersSheet !== undefined"
-                    :items="test.options"
+                    v-if="currentUserTestAnswer !== undefined"
+                    :items="test.testOptions"
                     @change="calcProgress()"
-                    v-model="
-                      answersSheet.heuristics[heurisIndex].questions[i].res
-                    "
                     label="Respuestas/Answers"
                     outlined
                     dense
@@ -491,63 +346,35 @@
             </v-row>
           </div>
         </ShowInfo>
-
-        <!-- Tasks -->
-        <ShowInfo
-          v-if="index == 1 && test.type === 'User'"
-          :title="test.tasks[heurisIndex].name"
-        >
-          <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{
-              test.tasks[heurisIndex].name
-            }}</v-card-title>
-            <v-divider class="mb-5"></v-divider>
-            <ViewTask
-              :item="test.tasks[heurisIndex]"
-              @updatedAnswer="updateAnswer"
-            />
-          </div>
-        </ShowInfo>
-
-        <!-- Post Test -->
-        <ShowInfo v-if="index == 2" title="Post Test">
-          <iframe
-            slot="content"
-            :src="test.postTest.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
       </v-col>
     </v-row>
+  </div>
+  <div v-else-if="test && test.testType === 'USER'">
+    <UserTestView />
   </div>
 </template>
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import ViewTask from "@/components/molecules/ViewTask.vue";
 import AddCommentBtn from "@/components/atoms/AddCommentBtn";
 import HelpBtn from "@/components/atoms/QuestionHelpBtn";
 import VClamp from "vue-clamp";
 import Snackbar from "@/components/atoms/Snackbar";
 import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
+import UserTestView from "@/views/public/UserTestView.vue";
 
 export default {
   props: ["id", "token"],
   components: {
     ShowInfo,
-    ViewTask,
     AddCommentBtn,
     HelpBtn,
     VClamp,
     Snackbar,
     CardSignIn,
     CardSignUp,
+    UserTestView,
   },
   data: () => ({
     logined: null,
@@ -565,36 +392,12 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
+    isPreview: false,
+    previewtestAnswerDocument: null,
   }),
   watch: {
-    cooperators() {
-      if (this.cooperators && this.token) {
-        let invitation = this.cooperators.cooperators.find(
-          (coop) => coop.token == this.token
-        );
-        if (!invitation) {
-          this.$router
-            .push("/")
-            .then(() => {
-              this.$store.commit("setError", "Invalid invitation");
-            })
-            .catch(() => {});
-        }
-      }
-    },
     test: async function() {
-      if (this.test !== null && this.test !== undefined)
-        await this.mappingSteps();
-      if (this.test && this.token) {
-        if (!this.$store.getters.cooperators)
-          this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
-          });
-        else if (this.$store.getters.cooperators !== this.test.cooperators)
-          this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
-          });
-      }
+      await this.mappingSteps();
     },
     items() {
       if (this.items.length) {
@@ -620,105 +423,40 @@ export default {
       this.calcProgress();
     },
     mappingSteps() {
-      if (this.test.type === "User") {
-        //PreTest
-        if (this.validate(this.test.preTest.consent))
-          this.items.push({
-            title: "Pre Test",
-            icon: "mdi-checkbox-blank-circle-outline",
-            value: [
-              {
-                title: "Consent",
-                icon: "mdi-checkbox-blank-circle-outline",
-                id: 0,
-              },
-            ],
-            id: 0,
-          });
-
-        if (this.validate(this.test.preTest.form)) {
-          if (this.items.length) {
-            this.items[0].value.push({
-              title: "Form",
-              icon: "mdi-checkbox-blank-circle-outline",
-              id: 1,
-            });
-          } else {
-            this.items.push({
-              title: "Pre Test",
-              icon: "mdi-checkbox-blank-circle-outline",
-              value: [
-                {
-                  title: "Form",
-                  icon: "mdi-checkbox-blank-circle-outline",
-                  id: 1,
-                },
-              ],
-              id: 0,
-            });
-          }
-        }
-
-        //Tasks
-        if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
-          this.items.push({
-            title: "Tasks",
-            icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.tasks.map((i) => {
-              return {
-                title: i.name,
-                icon: "mdi-checkbox-blank-circle-outline",
-              };
-            }),
-            id: 1,
-          });
-
-        //PostTest
-        if (this.validate(this.test.postTest.form))
-          this.items.push({
-            title: "Post Test",
-            icon: "mdi-checkbox-blank-circle-outline",
-            value: this.test.postTest,
-            id: 2,
-          });
-      } else if (this.test.type === "HEURISTICS") {
-        //Heuristics
-        if (
-          this.validate(this.test.heuristics) &&
-          this.test.heuristics.length !== 0
-        )
-          this.items.push({
-            title: "HEURISTICS",
-            icon: "mdi-checkbox-marked-circle-outline",
-            value: this.test.heuristics.map((i) => {
-              return {
-                title: i.title,
-                icon: "mdi-checkbox-marked-circle-outline",
-              };
-            }),
-            id: 1,
-          });
-      }
+      //Heuristics
+      if (
+        this.validate(this.test.testStructure) &&
+        this.test.testStructure.length !== 0
+      )
+        this.items.push({
+          title: "HEURISTICS",
+          icon: "mdi-checkbox-marked-circle-outline",
+          value: this.test.testStructure.map((i) => {
+            return {
+              title: i.title,
+              icon: "mdi-checkbox-marked-circle-outline",
+            };
+          }),
+          id: 1,
+        });
     },
     validate(object) {
       return object !== null && object !== undefined && object !== "";
     },
     calcProgress() {
+      console.log("hello", this.currentUserTestAnswer);
       var qtd = 0;
-
-      if (this.answersSheet.heuristics) {
-        this.answersSheet.heuristics.forEach((h) => {
-          qtd += h.questions.filter((q) => q.res !== "").length;
+      if (this.currentUserTestAnswer.heuristicQuestions) {
+        this.currentUserTestAnswer.heuristicQuestions.forEach((h) => {
+          qtd += h.heuristicQuestions.filter((q) => q.res !== "").length;
         });
 
-        this.answersSheet.progress = (
-          (qtd * 100) /
-          this.answersSheet.total
-        ).toFixed(1);
-      } else if (this.test.answersSheet.tasks) {
-        // TODO: Implement progress system for User Tests
-        this.answersSheet.total = this.answersSheet.tasks.length;
-        this.answersSheet.progress = 0;
+        if (qtd > 0) {
+          this.currentUserTestAnswer.progress = (
+            (qtd * 100) /
+            this.currentUserTestAnswer.total
+          ).toFixed(1);
+        }
       }
     },
     submitLog(save) {
@@ -726,18 +464,21 @@ export default {
         (answer) => answer.id == this.id
       );
 
-      if (!save) newAnswer.answersSheet.submitted = true;
+      if (!save) newAnswer.testAnswerDocument.submitted = true;
 
       var log = {
         date: new Date().toLocaleString("en-US"),
-        progress: this.answersSheet.progress,
-        status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
+        progress: this.testAnswerDocument.progress,
+        status:
+          this.testAnswerDocument.progress != 100 ? "In progress" : "Completed",
       };
-      log.status = newAnswer.answersSheet.submitted ? "Submitted" : log.status;
+      log.status = newAnswer.testAnswerDocument.submitted
+        ? "Submitted"
+        : log.status;
 
-      if (this.answersSheet.tasks) {
-        this.answersSheet.tasks = Object.assign({}, this.test.tasks);
-        newAnswer.answersSheet = this.answersSheet;
+      if (this.testAnswerDocument.tasks) {
+        this.testAnswerDocument.tasks = Object.assign({}, this.test.tasks);
+        newAnswer.testAnswerDocument = this.testAnswerDocument;
       }
 
       this.$store
@@ -751,7 +492,7 @@ export default {
             this.$store
               .dispatch("pushAnswers", {
                 docId: newAnswer.answers,
-                element: Object.assign(this.answersSheet, {
+                element: Object.assign(this.testAnswerDocument, {
                   uid: this.user.uid,
                   email: this.user.email,
                 }),
@@ -779,11 +520,11 @@ export default {
           if (save) this.$store.commit("setError", err);
         });
 
-      if (newAnswer.answersSheet.tasks) {
+      if (newAnswer.testAnswerDocument.tasks) {
         this.$store
           .dispatch("pushAnswers", {
             docId: newAnswer.answers,
-            element: Object.assign(this.answersSheet, {
+            element: Object.assign(this.testAnswerDocument, {
               uid: this.user.uid,
               email: this.user.email,
             }),
@@ -798,7 +539,8 @@ export default {
     },
     progress(item) {
       return (
-        (item.questions.filter((q) => q.res !== "").length * 100) / item.total
+        (item.heuristicQuestions.filter((q) => q.res !== "").length * 100) /
+        item.total
       );
     },
     setExistUser() {
@@ -810,123 +552,124 @@ export default {
       });
     },
     setTest() {
-      if (this.user.myAnswers) {
-        this.fromlink = false;
-        let exist = this.user.myAnswers.find((test) => test.id == this.id);
-        if (!exist) {
-          let payload = Object.assign(
-            {},
-            {
-              id: this.test.id,
-              title: this.test.title,
-              type: this.test.type,
-              reports: this.test.reports,
-              answers: this.test.answers,
-              cooperators: this.test.cooperators,
-              answersSheet: Object.assign(this.test.answersSheet, {
-                submitted: false,
-              }),
-              accessLevel: {
-                text: "Evaluator",
-                value: 2,
-              },
-            }
-          );
-          //Get invitation
-          let coop = this.cooperators.cooperators.find(
-            (coop) => coop.token == this.token
-          );
+      alert("settest?");
+      // if (this.user.myAnswers) {
+      //   this.fromlink = false;
+      //   let exist = this.user.myAnswers.find((test) => test.id == this.id);
+      //   if (!exist) {
+      //     let payload = Object.assign(
+      //       {},
+      //       {
+      //         id: this.test.id,
+      //         title: this.test.title,
+      //         type: this.test.testType,
+      //         reports: this.test.reports,
+      //         answers: this.test.answers,
+      //         cooperators: this.test.cooperators,
+      //         testAnswerDocument: Object.assign(this.test.testAnswerDocument, {
+      //           submitted: false,
+      //         }),
+      //         accessLevel: {
+      //           text: "Evaluator",
+      //           value: 2,
+      //         },
+      //       }
+      //     );
+      //     //Get invitation
+      //     let coop = this.cooperators.cooperators.find(
+      //       (coop) => coop.token == this.token
+      //     );
 
-          if (coop) {
-            //User invited and he has account
-            if (this.user.uid == coop.id) {
-              this.$store
-                .dispatch("pushMyAnswers", {
-                  docId: this.user.uid,
-                  element: payload,
-                })
-                .then(() => {
-                  //Update invitation to accepted
-                  this.$store.dispatch("updateCooperator", {
-                    docId: this.test.cooperators,
-                    elementId: this.user.uid,
-                    element: true,
-                    param: "accepted",
-                  });
+      //     if (coop) {
+      //       //User invited and he has account
+      //       if (this.user.uid == coop.id) {
+      //         this.$store
+      //           .dispatch("pushMyAnswers", {
+      //             docId: this.user.uid,
+      //             element: payload,
+      //           })
+      //           .then(() => {
+      //             //Update invitation to accepted
+      //             this.$store.dispatch("updateCooperator", {
+      //               docId: this.test.cooperators,
+      //               elementId: this.user.uid,
+      //               element: true,
+      //               param: "accepted",
+      //             });
 
-                  //Remove notification
-                  let inv = this.user.notifications.find(
-                    (not) => not.test.id == this.id
-                  );
-                  this.$store.dispatch("removeNotification", {
-                    docId: this.user.uid,
-                    element: inv,
-                  });
+      //             //Remove notification
+      //             let inv = this.user.notifications.find(
+      //               (not) => not.test.id == this.id
+      //             );
+      //             this.$store.dispatch("removeNotification", {
+      //               docId: this.user.uid,
+      //               element: inv,
+      //             });
 
-                  //Update state reports
-                  var log = {
-                    date: new Date().toLocaleString("en-US"),
-                    progress: 0,
-                    status: "In progress",
-                  };
-                  this.$store.dispatch("updateLog", {
-                    docId: this.test.reports,
-                    elementId: this.user.uid,
-                    element: log,
-                  });
-                });
-            }
-            //User invited and he doesn't have account
-            else if (coop.id == null) {
-              this.$store
-                .dispatch("pushMyAnswers", {
-                  docId: this.user.uid,
-                  element: payload,
-                })
-                .then(() => {
-                  //Update Invitation insert User ID and invitation accepted
-                  this.$store
-                    .dispatch("updateCooperator", {
-                      docId: this.test.cooperators,
-                      elementId: this.token,
-                      element: this.user.uid,
-                      identifier: "token",
-                      param: "id",
-                    })
-                    .then(() => {
-                      this.$store.dispatch("updateCooperator", {
-                        docId: this.test.cooperators,
-                        elementId: this.token,
-                        identifier: "token",
-                        element: true,
-                        param: "accepted",
-                      });
-                    });
+      //             //Update state reports
+      //             var log = {
+      //               date: new Date().toLocaleString("en-US"),
+      //               progress: 0,
+      //               status: "In progress",
+      //             };
+      //             this.$store.dispatch("updateLog", {
+      //               docId: this.test.reports,
+      //               elementId: this.user.uid,
+      //               element: log,
+      //             });
+      //           });
+      //       }
+      //       //User invited and he doesn't have account
+      //       else if (coop.id == null) {
+      //         this.$store
+      //           .dispatch("pushMyAnswers", {
+      //             docId: this.user.uid,
+      //             element: payload,
+      //           })
+      //           .then(() => {
+      //             //Update Invitation insert User ID and invitation accepted
+      //             this.$store
+      //               .dispatch("updateCooperator", {
+      //                 docId: this.test.cooperators,
+      //                 elementId: this.token,
+      //                 element: this.user.uid,
+      //                 identifier: "token",
+      //                 param: "id",
+      //               })
+      //               .then(() => {
+      //                 this.$store.dispatch("updateCooperator", {
+      //                   docId: this.test.cooperators,
+      //                   elementId: this.token,
+      //                   identifier: "token",
+      //                   element: true,
+      //                   param: "accepted",
+      //                 });
+      //               });
 
-                  //Insert User at state reports
-                  let item = Object.assign(
-                    {},
-                    {
-                      uid: this.user.uid,
-                      email: this.user.email,
-                      log: {
-                        date: new Date().toLocaleString("en-Us"),
-                        progress: 0,
-                        status: "In progress",
-                      },
-                    }
-                  );
-                  this.$store.dispatch("pushLog", {
-                    docId: this.test.reports,
-                    element: item,
-                  });
-                });
-            }
-          } else {
-            this.$store.commit("setError", "Invalid invitation");
-          }
-        }
-      }
+      //             //Insert User at state reports
+      //             let item = Object.assign(
+      //               {},
+      //               {
+      //                 uid: this.user.uid,
+      //                 email: this.user.email,
+      //                 log: {
+      //                   date: new Date().toLocaleString("en-Us"),
+      //                   progress: 0,
+      //                   status: "In progress",
+      //                 },
+      //               }
+      //             );
+      //             this.$store.dispatch("pushLog", {
+      //               docId: this.test.reports,
+      //               element: item,
+      //             });
+      //           });
+      //       }
+      //     } else {
+      //       this.$store.commit("setError", "Invalid invitation");
+      //     }
+      //   }
+      // }
     },
   },
   computed: {
@@ -937,34 +680,40 @@ export default {
       if (this.$store.getters.user) this.setExistUser();
       return this.$store.getters.user;
     },
-    answersSheet: {
-      get() {
-        if (this.user !== null && this.user !== undefined) {
-          let x = this.user.myAnswers.find((answer) => answer.id == this.id);
-          if (x) {
-            if(x.answersSheet.tasks) {
-              /* eslint-disable*/
-              this.test.answersSheet = Object.assign({},x.answersSheet)
-              this.test.tasks = Object.assign({}, x.answersSheet.tasks)
-              return this.test.answersSheet
-            }
-            return x.answersSheet;
-          } else {
-            return this.test.answersSheet;
-          }
-        } else {
-          return null;
-        }
-      },
-      set(item) {
-        return item;
-      },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer;
     },
+    // testAnswerDocument: {
+    //   get() {
+    //     if (this.user !== null && this.user !== undefined) {
+    //       let x = this.user.myAnswers.find((answer) => answer.id == this.id);
+    //       if (x) {
+    //         if(x.testAnswerDocument.tasks) {
+    //           /* eslint-disable*/
+    //           this.test.testAnswerDocument = Object.assign({},x.testAnswerDocument)
+    //           this.test.tasks = Object.assign({}, x.testAnswerDocument.tasks)
+    //           return this.test.testAnswerDocument
+    //         }
+    //         return x.testAnswerDocument;
+    //       } else {
+    //         return this.test.testAnswerDocument;
+    //       }
+    //     } else {
+    //       return null;
+    //     }
+    //   },
+    //   set(item) {
+    //     return item;
+    //   },
+    // },
     showBtn() {
-      if (this.answersSheet !== undefined && this.answersSheet !== null) {
-        if (!this.answersSheet.submitted) return true;
+      if (
+        this.testAnswerDocument !== undefined &&
+        this.testAnswerDocument !== null
+      ) {
+        if (!this.testAnswerDocument.submitted) return true;
       }
-      if (this.test.type == "User") {
+      if (this.test.testType == "User") {
         return true;
       }
       return false;
@@ -979,13 +728,13 @@ export default {
   async created() {
     if (!this.$store.test) {
       await this.$store.dispatch("getTest", { id: this.id });
-      //TODO: WTF?
-      /*
-      await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
-      });
-      */
     }
+
+    if (this.$route.query.preview === "true") {
+      this.isPreview = true;
+    }
+
+    await this.$store.dispatch("getCurrentTestAnswerDoc");
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
