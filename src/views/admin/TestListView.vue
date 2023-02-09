@@ -1,6 +1,7 @@
 <template>
     <v-container style="display: contents">
         <Snackbar />
+        {{ storeTemplates }}
         <!-- {{ allTests }}
         <br />
         <br />
@@ -11,6 +12,7 @@
         <br />
         <br />
         {{ showOnExplore }} -->
+        {{ this.exploreTemplates }}
         <v-tooltip left>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -115,7 +117,7 @@
                         v-if="mainIndex == 2"
                     >
                         <v-tab>Personal</v-tab>
-                        <v-tab>Explore</v-tab>
+                        <v-tab @click="setupTempDialog">Explore</v-tab>
 
                         <v-spacer></v-spacer>
                     </v-tabs>
@@ -319,9 +321,12 @@ export default {
             if (this.page <= 1) this.disablePrevious = true;
             this.disableNext = false;
         },
-        setupTempDialog(temp) {
-            this.temp = Object.assign({}, temp);
+        setupTempDialog() {
+            this.$store.dispatch("getAllTemplates", {});
+            this.temp = this.$store.state.Templates;
+            // this.temp = Object.assign({}, temp);
             this.tempDialog = true;
+            console.log(this.temp);
         },
     },
     computed: {
@@ -332,13 +337,6 @@ export default {
             return this.$store.state.Tests.Tests;
         },
         filteredAllTests() {
-            /*
-      let arr = [];
-
-      arr = this.allTests.filter((test) => {
-        return test.title.toLowerCase().includes(this.search.toLowerCase());
-      });
-*/
             console.log(this.allTests);
             return this.allTests;
         },
@@ -386,7 +384,7 @@ export default {
             return test.author == this.user.email;
           }) || []
         );
-        
+
       }
 
       return [];
@@ -453,11 +451,12 @@ export default {
         showOnExplore() {
             // let array = [];
             let temps = null;
-            let start = (this.page - 1) * this.itemsPerPage;
-            let finish = this.page * this.itemsPerPage;
-
-            temps = this.exploreTemplates.slice(start, finish);
-
+            // let start = (this.page - 1) * this.itemsPerPage;
+            // let finish = this.page * this.itemsPerPage;
+            console.log("tales");
+            console.log(this.$store.state.Templates);
+            // temps = this.exploreTemplates.slice(start, finish);
+            temps = this.$store.state.Templates.Templates;
             return temps;
         },
         showTempDetails() {
