@@ -1,7 +1,16 @@
 <template>
     <v-container style="display: contents">
         <Snackbar />
-        {{ allTests }}
+        <!-- {{ allTests }}
+        <br />
+        <br />
+        {{ user }}
+        <br />
+        <br />
+        {{ filteredMyTemps }}
+        <br />
+        <br />
+        {{ showOnExplore }} -->
         <v-tooltip left>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -61,8 +70,8 @@
                         class="hidden-sm-and-down"
                     >
                         <v-tab>Tests</v-tab>
-                        <!-- <v-tab>Answers</v-tab>-->
-                        <!--<v-tab>Templates</v-tab> -->
+                        <v-tab>Answers</v-tab>
+                        <v-tab>Templates</v-tab>
 
                         <v-spacer></v-spacer>
 
@@ -90,28 +99,28 @@
                         v-if="mainIndex !== 2"
                     >
                         <v-tab>All</v-tab>
-                        <!-- <v-tab>Personal</v-tab>-->
-                        <!-- <v-tab>Others</v-tab>-->
+                        <v-tab>Personal</v-tab>
+                        <v-tab>Others</v-tab>
 
                         <v-spacer></v-spacer>
                     </v-tabs>
                     <v-divider class="hidden-sm-and-down"></v-divider>
 
-                    <!-- Desktop Templates Sub tabs
-          <v-tabs
-            v-model="subIndex"
-            background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
-            v-if="mainIndex == 2"
-          >
-            <v-tab>Personal</v-tab>
-            <v-tab>Explore</v-tab>
+                    <!-- Desktop Templates Sub tabs -->
+                    <v-tabs
+                        v-model="subIndex"
+                        background-color="transparent"
+                        color="black"
+                        class="hidden-sm-and-down"
+                        v-if="mainIndex == 2"
+                    >
+                        <v-tab>Personal</v-tab>
+                        <v-tab>Explore</v-tab>
 
-            <v-spacer></v-spacer>
-          </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
- -->
+                        <v-spacer></v-spacer>
+                    </v-tabs>
+                    <v-divider class="hidden-sm-and-down"></v-divider>
+
                     <!-- Mobile Main Button -->
                     <v-select
                         dense
@@ -142,26 +151,27 @@
                     <!-- Tests -> All -->
                     <List
                         @clicked="goTo"
+                        v-if="mainIndex == 0 && subIndex == 0"
                         :items="filteredAllTests"
                         type="myCoops"
                     ></List>
 
-                    <!-- Tests -> Personal 
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredMyTests"
-            type="myTests"
-          ></List>
--->
-                    <!-- Tests -> Others 
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 2"
-            :items="filteredMyCoops"
-            type="myCoops"
-          ></List>
--->
+                    <!-- Tests -> Personal  -->
+                    <List
+                        @clicked="goTo"
+                        v-if="mainIndex == 0 && subIndex == 1"
+                        :items="filteredMyTests"
+                        type="myTests"
+                    ></List>
+
+                    <!-- Tests -> Others  -->
+                    <List
+                        @clicked="goTo"
+                        v-if="mainIndex == 0 && subIndex == 2"
+                        :items="filteredMyCoops"
+                        type="myCoops"
+                    ></List>
+
                     <!-- Answers -> All 
           <List
             @clicked="goTo"
@@ -186,27 +196,26 @@
             type="answers"
           ></List>
 -->
-                    <!-- Templates -> Personal 
-          <List
-            @clicked="setupTempDialog"
-            v-if="mainIndex == 2 && subIndex == 0"
-            :items="filteredMyTemps"
-            type="template"
-          ></List>
--->
-                    <!-- Templates -> Explore
-          <List
-            @clicked="setupTempDialog"
-            v-if="mainIndex == 2 && subIndex == 1"
-            :items="showOnExplore"
-            type="template"
-            :hasPagination="true"
-            @nextPage="nextPage()"
-            :disableNext="disableNext"
-            @previousPage="previousPage()"
-            :disablePrevious="disablePrevious"
-          ></List>
-           -->
+                    <!-- Templates -> Personal  -->
+                    <List
+                        @clicked="setupTempDialog"
+                        v-if="mainIndex == 2 && subIndex == 0"
+                        :items="filteredMyTemps"
+                        type="template"
+                    ></List>
+
+                    <!-- Templates -> Explore -->
+                    <List
+                        @clicked="setupTempDialog"
+                        v-if="mainIndex == 2 && subIndex == 1"
+                        :items="showOnExplore"
+                        type="template"
+                        :hasPagination="true"
+                        @nextPage="nextPage()"
+                        :disableNext="disableNext"
+                        @previousPage="previousPage()"
+                        :disablePrevious="disablePrevious"
+                    ></List>
                 </v-col>
             </v-row>
 
@@ -422,7 +431,7 @@ export default {
             return this.$store.getters.templates || [];
         },
         myTempsHeaders() {
-            return this.user.myTemps.map((temp) => {
+            return this.user.myTemplates.map((temp) => {
                 return {
                     header: temp,
                 };
