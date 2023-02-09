@@ -27,16 +27,6 @@ export default class Controller {
 
     //model to define in Controller
     async read(path, parameter, condition) {
-        /*
-        console.log(
-            "path: ",
-            path,
-            "parameter: ",
-            parameter,
-            "condition: " + condition
-        );
-        console.log(condition);
-        */
         const q = query(
             collection(db, path),
             where(parameter, "==", condition)
@@ -56,7 +46,6 @@ export default class Controller {
      * @throws a Firebase exception.
      */
     async getById(path) {
-        // return getDoc(doc(db, ...path));
         const docRef = doc(db, path[0], path[1]);
         return getDoc(docRef);
     }
@@ -72,10 +61,10 @@ export default class Controller {
     }
 
     async update(col, docId, payload) {
-        const ref = doc(db, `${col}/${docId}`)
-        return updateDoc(ref, payload)
+        const ref = doc(db, `${col}/${docId}`);
+        return updateDoc(ref, payload);
     }
-    
+
     async delete(col, docId) {
         return deleteDoc(doc(db, col, docId));
     }
