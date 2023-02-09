@@ -92,7 +92,7 @@ export default {
             try {
                 await TestCont.createTest(
                     payload.collection,
-                    objectTest.toFirestore()
+                    objectTest
                 ).then((res) => {
                     commit("SET_TEST", res.id);
                     return res.id;

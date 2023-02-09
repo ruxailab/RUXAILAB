@@ -17,10 +17,12 @@ export default class TestController extends Controller {
         super();
     }
 
-    async createTest(document, data) {
-        return await super.create(document, data).then((res) => {
-            return res;
-        });
+    async createTest(document, payload) {
+        // Create answers doc for test
+        const answerDoc = await answerController.createAnswer(new Answer({ type: payload.testType }))
+        payload.answersDocId = answerDoc.id
+
+        return await super.create(document, payload.toFirestore())
     }
 
     async deleteTest(payload) {
