@@ -34,12 +34,8 @@ export default class TestController extends Controller {
     }
 
     async acceptTestCollaboration(payload) {
-        // Create answer document
-        const answer = new Answer({ type: payload.test.testType })
-        const res = await answerController.createAnswer(answer)
-        const docId = res.id
         const userAnswer = new UserAnswer({
-            answerDocId: docId,
+            answerDocId: payload.test.answersDocId,
             accessLevel: payload.cooperator.accessLevel,
             progress: 0,
             testAuthorName: '',
