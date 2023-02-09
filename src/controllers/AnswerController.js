@@ -2,6 +2,7 @@
 
 import Controller from "@/controllers/BaseController";
 import UserController from "./UserController";
+import Answer from "@/models/Answer";
 const COLLECTION = "answers";
 
 const userController = new UserController()
@@ -9,6 +10,10 @@ const userController = new UserController()
 export default class AnswerController extends Controller {
     constructor() {
         super();
+    }
+    async getAnswerById(payload) {
+        const res = await super.readOne(COLLECTION, payload)
+        return new Answer({ id: res.id, ...res.data() })
     }
 
     async createAnswer(payload) {
