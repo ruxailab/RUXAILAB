@@ -23,8 +23,8 @@ export default class Answer {
     toFirestore() {
         return {
             type: this.type ?? '',
-            heuristicAnswers: this.heuristicAnswers ?? [],
-            taskAnswers: this.taskAnswers ?? []
+            heuristicAnswers: this.heuristicAnswers ?? {},
+            taskAnswers: this.taskAnswers ?? {}
         }
     }
 }
