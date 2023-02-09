@@ -181,7 +181,7 @@ export default {
           {
             title: "Preview",
             icon: "mdi-file-eye",
-            path: `/testview/${this.test.id}`,
+            path: `/testview/${this.test.id}?preview=true`,
             id: 2,
           },
           {

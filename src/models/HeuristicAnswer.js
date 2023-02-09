@@ -18,12 +18,12 @@ export default class HeuristicAnswer {
         userDocId
     } = {}
     ) {
-        this.heuristicId = heuristicId;
-        this.heuristicQuestions = heuristicQuestions;
-        this.progress = progress;
-        this.total = total;
-        this.submitted = submitted;
-        this.userDocId = userDocId;
+        this.heuristicId = heuristicId ?? null;
+        this.heuristicQuestions = heuristicQuestions ?? [];
+        this.progress = progress ?? 0;
+        this.total = total ?? 0;
+        this.submitted = submitted ?? false;
+        this.userDocId = userDocId ?? null;
     }
     static toHeuristicAnswer(data) {
         return new HeuristicAnswer(data)
