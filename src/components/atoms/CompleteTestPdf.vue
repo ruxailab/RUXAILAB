@@ -1,9 +1,18 @@
 <template>
     <div class="whole-test">
         <div class="whole-test-title">{{ this.test.title }}</div>
-        <v-for heuristic in heuristics>
-            <div class="heuristic-title">{{ this.test.heuristic.title }}</div>
-            <v-for question in questions> </v-for>
-        </v-for>
+        <div v-for="heuristic in heuristics">
+            <div class="heuristic-title">{{ heuristic.title }}</div>
+            <div v-for="question in questions">title: {{ question.title }}</div>
+        </div>
     </div>
 </template>
+<script>
+export default {
+    data: () => ({
+        heuristics: {
+            title: "teste",
+        },
+    }),
+};
+</script>
