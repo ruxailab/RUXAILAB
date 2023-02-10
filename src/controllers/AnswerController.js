@@ -39,4 +39,14 @@ export default class AnswerController extends Controller {
         userToUpdate.myAnswers.splice(index, 1)
         return userController.update(userToUpdate.id, userToUpdate.toFirestore())
     }
+
+    async saveTestAnswer(payload, answerDocId) {
+        console.log('é pra salvar isso aqui', answerDocId)
+
+        const fieldToUpdate = {
+            [`heuristicAnswers.${payload.userDocId}`]: payload.toFirestore()
+        }
+        console.log('field', fieldToUpdate)
+        await super.update(COLLECTION, answerDocId, fieldToUpdate)
+    }
 }
