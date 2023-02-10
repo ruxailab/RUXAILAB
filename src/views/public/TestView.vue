@@ -582,8 +582,10 @@ export default {
         });
       }
     },
-    setTest() {
-      alert("settest?");
+    async setTest() {
+      this.logined = true
+      await this.$store.dispatch("getCurrentTestAnswerDoc");
+      this.populateWithHeuristicQuestions();
       // if (this.user.myAnswers) {
       //   this.fromlink = false;
       //   let exist = this.user.myAnswers.find((test) => test.id == this.id);
@@ -714,29 +716,6 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer;
     },
-    // testAnswerDocument: {
-    //   get() {
-    //     if (this.user !== null && this.user !== undefined) {
-    //       let x = this.user.myAnswers.find((answer) => answer.id == this.id);
-    //       if (x) {
-    //         if(x.testAnswerDocument.tasks) {
-    //           /* eslint-disable*/
-    //           this.test.testAnswerDocument = Object.assign({},x.testAnswerDocument)
-    //           this.test.tasks = Object.assign({}, x.testAnswerDocument.tasks)
-    //           return this.test.testAnswerDocument
-    //         }
-    //         return x.testAnswerDocument;
-    //       } else {
-    //         return this.test.testAnswerDocument;
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   },
-    //   set(item) {
-    //     return item;
-    //   },
-    // },
     showSaveBtn() {
       if (this.isPreview) return false;
       return true;
