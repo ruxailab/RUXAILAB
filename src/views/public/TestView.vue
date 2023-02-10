@@ -45,7 +45,7 @@
         v-if="selected"
       />
       <CardSignUp
-        @logined="logined = true"
+        @logined="logined = true; setTest()"
         @change="selected = !selected"
         v-else
       />
