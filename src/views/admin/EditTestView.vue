@@ -28,7 +28,7 @@
     </v-dialog>
 
     <!-- Save button -->
-    <v-tooltip left>
+    <v-tooltip left v-if="accessLevel === 0">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           large
@@ -238,6 +238,24 @@ export default {
     },
   },
   computed: {
+    accessLevel() {
+      // If user is superadmin
+      if (this.user) {
+        if (this.user.accessLevel == 0) return 0;
+        // Check if user is collaborator or owner
+        const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
+        if (isTestOwner) return 0;
+
+        const isCooperator = this.user.myAnswers.find(
+          (a) => a.testDocId === this.test.id
+        );
+        if (isCooperator) {
+          return isCooperator.accessLevel;
+        }
+      }
+
+      return 1; // return guest as default
+    },
     loading() {
       return this.$store.getters.loading;
     },
