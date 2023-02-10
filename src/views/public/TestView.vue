@@ -24,7 +24,7 @@
           <v-btn
             class="red white--text ml-1"
             text
-            @click="submitLog(false), (dialog = false)"
+            @click="submitAnswer(false), (dialog = false)"
             >Submit</v-btn
           >
         </v-card-actions>
@@ -83,7 +83,6 @@
       class="background background-img pa-0 ma-0"
       align="center"
     >
-      {{ currentUserTestAnswer }}
       <v-col cols="6" class="ml-5">
         <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
         <p align="justify" class="description">{{ test.testDescription }}</p>
@@ -97,7 +96,7 @@
 
     <v-row v-else class="nav pa-0 ma-0" dense>
       <v-speed-dial
-        v-if="showBtn"
+        v-if="showSaveBtn"
         v-model="fab"
         fixed
         class="mr-3"
@@ -115,7 +114,7 @@
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              @click="submitLog(true)"
+              @click="submitAnswer(true)"
               fab
               dark
               small
@@ -330,16 +329,25 @@
 
                 <AddCommentBtn
                   :heurisIndex="heurisIndex"
-                  :comment="currentUserTestAnswer"
+                  :answerHeu="
+                    currentUserTestAnswer.heuristicQuestions[heurisIndex]
+                      .heuristicQuestions[i]
+                  "
+                  @updateComment="
+                    (comment) => updateComment(comment, heurisIndex, i)
+                  "
                 >
                   <v-select
                     slot="answer"
                     v-if="currentUserTestAnswer !== undefined"
                     :items="test.testOptions"
-                    @change="calcProgress()"
                     label="Respuestas/Answers"
                     outlined
                     dense
+                    v-model="
+                      currentUserTestAnswer.heuristicQuestions[heurisIndex]
+                        .heuristicQuestions[i].heuristicAnswer
+                    "
                   ></v-select>
                 </AddCommentBtn>
               </v-col>
@@ -363,6 +371,8 @@ import Snackbar from "@/components/atoms/Snackbar";
 import CardSignIn from "@/components/atoms/CardSignIn";
 import CardSignUp from "@/components/atoms/CardSignUp";
 import UserTestView from "@/views/public/UserTestView.vue";
+import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
+import Heuristic from "@/models/Heuristic";
 
 export default {
   props: ["id", "token"],
@@ -419,6 +429,11 @@ export default {
     },
   },
   methods: {
+    updateComment(comment, heurisIndex, answerIndex) {
+      this.currentUserTestAnswer.heuristicQuestions[
+        heurisIndex
+      ].heuristicQuestions[answerIndex].heuristicComment = comment;
+    },
     updateAnswer() {
       this.calcProgress();
     },
@@ -444,98 +459,86 @@ export default {
       return object !== null && object !== undefined && object !== "";
     },
     calcProgress() {
-      console.log("hello", this.currentUserTestAnswer);
-      var qtd = 0;
-      if (this.currentUserTestAnswer.heuristicQuestions) {
-        this.currentUserTestAnswer.heuristicQuestions.forEach((h) => {
-          qtd += h.heuristicQuestions.filter((q) => q.res !== "").length;
-        });
-
-        if (qtd > 0) {
-          this.currentUserTestAnswer.progress = (
-            (qtd * 100) /
-            this.currentUserTestAnswer.total
-          ).toFixed(1);
-        }
-      }
+      // TODO: Calculate progress
     },
-    submitLog(save) {
-      let newAnswer = this.user.myAnswers.find(
-        (answer) => answer.id == this.id
-      );
+    submitAnswer(save) {
+      console.log("SAVE", save);
+      // let newAnswer = this.user.myAnswers.find(
+      //   (answer) => answer.id == this.id
+      // );
 
-      if (!save) newAnswer.testAnswerDocument.submitted = true;
+      // if (!save) newAnswer.testAnswerDocument.submitted = true;
 
-      var log = {
-        date: new Date().toLocaleString("en-US"),
-        progress: this.testAnswerDocument.progress,
-        status:
-          this.testAnswerDocument.progress != 100 ? "In progress" : "Completed",
-      };
-      log.status = newAnswer.testAnswerDocument.submitted
-        ? "Submitted"
-        : log.status;
+      // var log = {
+      //   date: new Date().toLocaleString("en-US"),
+      //   progress: this.testAnswerDocument.progress,
+      //   status:
+      //     this.testAnswerDocument.progress != 100 ? "In progress" : "Completed",
+      // };
+      // log.status = newAnswer.testAnswerDocument.submitted
+      //   ? "Submitted"
+      //   : log.status;
 
-      if (this.testAnswerDocument.tasks) {
-        this.testAnswerDocument.tasks = Object.assign({}, this.test.tasks);
-        newAnswer.testAnswerDocument = this.testAnswerDocument;
-      }
+      // if (this.testAnswerDocument.tasks) {
+      //   this.testAnswerDocument.tasks = Object.assign({}, this.test.tasks);
+      //   newAnswer.testAnswerDocument = this.testAnswerDocument;
+      // }
 
-      this.$store
-        .dispatch("updateLog", {
-          docId: newAnswer.reports,
-          elementId: this.user.uid,
-          element: log,
-        })
-        .then(() => {
-          if (!save) {
-            this.$store
-              .dispatch("pushAnswers", {
-                docId: newAnswer.answers,
-                element: Object.assign(this.testAnswerDocument, {
-                  uid: this.user.uid,
-                  email: this.user.email,
-                }),
-              })
-              .then(() => {
-                this.$store.commit("setSuccess", "Test succesfully submitted");
-              })
-              .catch((err) => {
-                this.$store.commit("setError", err);
-              });
-          }
-        });
+      // this.$store
+      //   .dispatch("updateLog", {
+      //     docId: newAnswer.reports,
+      //     elementId: this.user.uid,
+      //     element: log,
+      //   })
+      //   .then(() => {
+      //     if (!save) {
+      //       this.$store
+      //         .dispatch("pushAnswers", {
+      //           docId: newAnswer.answers,
+      //           element: Object.assign(this.testAnswerDocument, {
+      //             uid: this.user.uid,
+      //             email: this.user.email,
+      //           }),
+      //         })
+      //         .then(() => {
+      //           this.$store.commit("setSuccess", "Test succesfully submitted");
+      //         })
+      //         .catch((err) => {
+      //           this.$store.commit("setError", err);
+      //         });
+      //     }
+      //   });
 
-      newAnswer.date = new Date().toDateString();
-      this.$store
-        .dispatch("updateMyAnswers", {
-          docId: this.user.uid,
-          element: newAnswer,
-        })
-        .then(() => {
-          if (save)
-            this.$store.commit("setSuccess", "Project succesfully saved");
-        })
-        .catch((err) => {
-          if (save) this.$store.commit("setError", err);
-        });
+      // newAnswer.date = new Date().toDateString();
+      // this.$store
+      //   .dispatch("updateMyAnswers", {
+      //     docId: this.user.uid,
+      //     element: newAnswer,
+      //   })
+      //   .then(() => {
+      //     if (save)
+      //       this.$store.commit("setSuccess", "Project succesfully saved");
+      //   })
+      //   .catch((err) => {
+      //     if (save) this.$store.commit("setError", err);
+      //   });
 
-      if (newAnswer.testAnswerDocument.tasks) {
-        this.$store
-          .dispatch("pushAnswers", {
-            docId: newAnswer.answers,
-            element: Object.assign(this.testAnswerDocument, {
-              uid: this.user.uid,
-              email: this.user.email,
-            }),
-          })
-          .then(() => {
-            this.$store.commit("setSuccess", "Test succesfully submitted");
-          })
-          .catch((err) => {
-            this.$store.commit("setError", err);
-          });
-      }
+      // if (newAnswer.testAnswerDocument.tasks) {
+      //   this.$store
+      //     .dispatch("pushAnswers", {
+      //       docId: newAnswer.answers,
+      //       element: Object.assign(this.testAnswerDocument, {
+      //         uid: this.user.uid,
+      //         email: this.user.email,
+      //       }),
+      //     })
+      //     .then(() => {
+      //       this.$store.commit("setSuccess", "Test succesfully submitted");
+      //     })
+      //     .catch((err) => {
+      //       this.$store.commit("setError", err);
+      //     });
+      // }
     },
     progress(item) {
       return (
@@ -550,6 +553,27 @@ export default {
       this.$store.dispatch("logout").then(() => {
         this.noExistUser = true;
       });
+    },
+    populateWithHeuristicQuestions() {
+      if (this.currentUserTestAnswer.heuristicQuestions.length <= 0) {
+        this.test.testStructure.forEach((heu) => {
+          this.currentUserTestAnswer.heuristicQuestions.push(
+            new Heuristic({
+              heuristicTitle: heu.title,
+              heuristicId: heu.id,
+              heuristicQuestions: heu.questions.map(
+                (h) =>
+                  new HeuristicQuestionAnswer({
+                    heuristicId: h.id,
+                    heuristicAnswer: "",
+                    heuristicComment: "",
+                  })
+              ),
+              heuristicTotal: heu.total,
+            })
+          );
+        });
+      }
     },
     setTest() {
       alert("settest?");
@@ -706,17 +730,9 @@ export default {
     //     return item;
     //   },
     // },
-    showBtn() {
-      if (
-        this.testAnswerDocument !== undefined &&
-        this.testAnswerDocument !== null
-      ) {
-        if (!this.testAnswerDocument.submitted) return true;
-      }
-      if (this.test.testType == "User") {
-        return true;
-      }
-      return false;
+    showSaveBtn() {
+      if (this.isPreview) return true;
+      return true;
     },
     cooperators() {
       return this.$store.getters.cooperators;
@@ -735,6 +751,7 @@ export default {
     }
 
     await this.$store.dispatch("getCurrentTestAnswerDoc");
+    this.populateWithHeuristicQuestions();
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
