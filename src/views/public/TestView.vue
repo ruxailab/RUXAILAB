@@ -738,7 +738,7 @@ export default {
     //   },
     // },
     showSaveBtn() {
-      if (this.isPreview) return true;
+      if (this.isPreview) return false;
       return true;
     },
     cooperators() {
