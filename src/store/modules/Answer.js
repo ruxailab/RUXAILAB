@@ -14,9 +14,13 @@ export default {
         currentUserTestAnswer(state, rootState) {
             if (state.testAnswerDocument) {
                 if (state.testAnswerDocument.type === 'HEURISTICS') {
-                    return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`] ?? new HeuristicAnswer()
+                    return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`] ? HeuristicAnswer.toHeuristicAnswer(state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]) : new HeuristicAnswer({
+                        userDocId: rootState.user.id,
+                    })
                 } else if (state.type === 'USER') {
-                    return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`] ?? new TaskAnswer()
+                    return TaskAnswer.toTaskAnswer(state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]) ?? new TaskAnswer({
+                        userDocId: rootState.user.id,
+                    })
                 }
             }
             return {}
@@ -62,6 +66,17 @@ export default {
                 })
             } catch (e) {
                 console.error("Error in updateTest", e);
+                // commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+        async saveTestAnswer({ commit }, payload) {
+            commit("setLoading", true);
+            try {
+                await answerController.saveTestAnswer(payload.data, payload.answerDocId)
+            } catch (e) {
+                console.error("Error in save test answer", e);
                 // commit("setError", true);
             } finally {
                 commit("setLoading", false);

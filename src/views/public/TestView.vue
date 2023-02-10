@@ -24,7 +24,7 @@
           <v-btn
             class="red white--text ml-1"
             text
-            @click="submitAnswer(false), (dialog = false)"
+            @click="submitAnswer(), (dialog = false)"
             >Submit</v-btn
           >
         </v-card-actions>
@@ -114,7 +114,7 @@
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              @click="submitAnswer(true)"
+              @click="saveAnswer()"
               fab
               dark
               small
@@ -461,8 +461,15 @@ export default {
     calcProgress() {
       // TODO: Calculate progress
     },
-    submitAnswer(save) {
-      console.log("SAVE", save);
+    async saveAnswer() {
+      console.log("save answer", this.test);
+      await this.$store.dispatch("saveTestAnswer", {
+        data: this.currentUserTestAnswer,
+        answerDocId: this.test.answersDocId,
+      });
+    },
+    submitAnswer() {
+      console.log("SUBMIT");
       // let newAnswer = this.user.myAnswers.find(
       //   (answer) => answer.id == this.id
       // );
