@@ -402,8 +402,6 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
-    isPreview: false,
-    previewtestAnswerDocument: null,
   }),
   watch: {
     test: async function() {
@@ -717,7 +715,6 @@ export default {
       return this.$store.getters.currentUserTestAnswer;
     },
     showSaveBtn() {
-      if (this.isPreview) return false;
       return true;
     },
     cooperators() {
@@ -730,10 +727,6 @@ export default {
   async created() {
     if (!this.$store.test) {
       await this.$store.dispatch("getTest", { id: this.id });
-    }
-
-    if (this.$route.query.preview === "true") {
-      this.isPreview = true;
     }
 
     await this.$store.dispatch("getCurrentTestAnswerDoc");
