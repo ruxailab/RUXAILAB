@@ -379,7 +379,7 @@ export default {
         domain: domain,
       };
 
-      if (guest.accessLevel.value >= 2) {
+      if (guest.accessLevel === 1) {
         email = Object.assign(email, {
           path: "testview",
           token: guest.token,
