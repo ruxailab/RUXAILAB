@@ -45,7 +45,10 @@
         v-if="selected"
       />
       <CardSignUp
-        @logined="logined = true; setTest()"
+        @logined="
+          logined = true;
+          setTest();
+        "
         @change="selected = !selected"
         v-else
       />
@@ -131,7 +134,6 @@
         <v-tooltip left v-if="currentUserTestAnswer">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              :disabled="currentUserTestAnswer.progress < 100"
               class="white--text"
               @click="dialog = true"
               fab
@@ -460,14 +462,14 @@ export default {
       // TODO: Calculate progress
     },
     async saveAnswer() {
-      console.log("save answer", this.test);
       await this.$store.dispatch("saveTestAnswer", {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
       });
     },
-    submitAnswer() {
-      console.log("SUBMIT");
+    async submitAnswer() {
+      this.currentUserTestAnswer.submitted = true;
+      await this.saveAnswer();
       // let newAnswer = this.user.myAnswers.find(
       //   (answer) => answer.id == this.id
       // );
@@ -581,126 +583,9 @@ export default {
       }
     },
     async setTest() {
-      this.logined = true
+      this.logined = true;
       await this.$store.dispatch("getCurrentTestAnswerDoc");
       this.populateWithHeuristicQuestions();
-      // if (this.user.myAnswers) {
-      //   this.fromlink = false;
-      //   let exist = this.user.myAnswers.find((test) => test.id == this.id);
-      //   if (!exist) {
-      //     let payload = Object.assign(
-      //       {},
-      //       {
-      //         id: this.test.id,
-      //         title: this.test.title,
-      //         type: this.test.testType,
-      //         reports: this.test.reports,
-      //         answers: this.test.answers,
-      //         cooperators: this.test.cooperators,
-      //         testAnswerDocument: Object.assign(this.test.testAnswerDocument, {
-      //           submitted: false,
-      //         }),
-      //         accessLevel: {
-      //           text: "Evaluator",
-      //           value: 2,
-      //         },
-      //       }
-      //     );
-      //     //Get invitation
-      //     let coop = this.cooperators.cooperators.find(
-      //       (coop) => coop.token == this.token
-      //     );
-
-      //     if (coop) {
-      //       //User invited and he has account
-      //       if (this.user.uid == coop.id) {
-      //         this.$store
-      //           .dispatch("pushMyAnswers", {
-      //             docId: this.user.uid,
-      //             element: payload,
-      //           })
-      //           .then(() => {
-      //             //Update invitation to accepted
-      //             this.$store.dispatch("updateCooperator", {
-      //               docId: this.test.cooperators,
-      //               elementId: this.user.uid,
-      //               element: true,
-      //               param: "accepted",
-      //             });
-
-      //             //Remove notification
-      //             let inv = this.user.notifications.find(
-      //               (not) => not.test.id == this.id
-      //             );
-      //             this.$store.dispatch("removeNotification", {
-      //               docId: this.user.uid,
-      //               element: inv,
-      //             });
-
-      //             //Update state reports
-      //             var log = {
-      //               date: new Date().toLocaleString("en-US"),
-      //               progress: 0,
-      //               status: "In progress",
-      //             };
-      //             this.$store.dispatch("updateLog", {
-      //               docId: this.test.reports,
-      //               elementId: this.user.uid,
-      //               element: log,
-      //             });
-      //           });
-      //       }
-      //       //User invited and he doesn't have account
-      //       else if (coop.id == null) {
-      //         this.$store
-      //           .dispatch("pushMyAnswers", {
-      //             docId: this.user.uid,
-      //             element: payload,
-      //           })
-      //           .then(() => {
-      //             //Update Invitation insert User ID and invitation accepted
-      //             this.$store
-      //               .dispatch("updateCooperator", {
-      //                 docId: this.test.cooperators,
-      //                 elementId: this.token,
-      //                 element: this.user.uid,
-      //                 identifier: "token",
-      //                 param: "id",
-      //               })
-      //               .then(() => {
-      //                 this.$store.dispatch("updateCooperator", {
-      //                   docId: this.test.cooperators,
-      //                   elementId: this.token,
-      //                   identifier: "token",
-      //                   element: true,
-      //                   param: "accepted",
-      //                 });
-      //               });
-
-      //             //Insert User at state reports
-      //             let item = Object.assign(
-      //               {},
-      //               {
-      //                 uid: this.user.uid,
-      //                 email: this.user.email,
-      //                 log: {
-      //                   date: new Date().toLocaleString("en-Us"),
-      //                   progress: 0,
-      //                   status: "In progress",
-      //                 },
-      //               }
-      //             );
-      //             this.$store.dispatch("pushLog", {
-      //               docId: this.test.reports,
-      //               element: item,
-      //             });
-      //           });
-      //       }
-      //     } else {
-      //       this.$store.commit("setError", "Invalid invitation");
-      //     }
-      //   }
-      // }
     },
   },
   computed: {
@@ -715,6 +600,7 @@ export default {
       return this.$store.getters.currentUserTestAnswer;
     },
     showSaveBtn() {
+      if (this.currentUserTestAnswer.submitted) return false;
       return true;
     },
     cooperators() {
