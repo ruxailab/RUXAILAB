@@ -134,6 +134,7 @@
         <v-tooltip left v-if="currentUserTestAnswer">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              :disabled="calculatedProgress < 100"
               class="white--text"
               @click="dialog = true"
               fab
@@ -185,11 +186,11 @@
               <v-col>
                 <v-progress-circular
                   rotate="-90"
-                  :value="currentUserTestAnswer.progress"
+                  :value="calculatedProgress"
                   color="#fca326"
                   :size="50"
                   class="mt-2"
-                  >{{ currentUserTestAnswer.progress }}</v-progress-circular
+                  >{{ calculatedProgress }}</v-progress-circular
                 >
               </v-col>
             </v-row>
@@ -259,14 +260,10 @@
                   @click="heurisIndex = i"
                   link
                 >
-                  <!-- <v-list-item-icon>
+                  <v-list-item-icon>
                     <v-progress-circular
                       rotate="-90"
-                      v-if="
-                        test.testType === 'HEURISTICS' &&
-                          progress(testAnswerDocument.heuristicAnswers[i]) != 100
-                      "
-                      :value="progress(testAnswerDocument.heuristicAnswers[i])"
+                      v-if="!heuris.done"
                       :size="24"
                       :width="3"
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
@@ -276,7 +273,7 @@
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
                       >{{ heuris.icon }}</v-icon
                     >
-                  </v-list-item-icon> -->
+                  </v-list-item-icon>
 
                   <v-list-item-content>
                     <v-list-item-title
@@ -350,6 +347,7 @@
                       currentUserTestAnswer.heuristicQuestions[heurisIndex]
                         .heuristicQuestions[i].heuristicAnswer
                     "
+                    @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
               </v-col>
@@ -404,6 +402,7 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
+    calculatedProgress: 0,
   }),
   watch: {
     test: async function() {
@@ -434,9 +433,6 @@ export default {
         heurisIndex
       ].heuristicQuestions[answerIndex].heuristicComment = comment;
     },
-    updateAnswer() {
-      this.calcProgress();
-    },
     mappingSteps() {
       //Heuristics
       if (
@@ -450,6 +446,9 @@ export default {
             return {
               title: i.title,
               icon: "mdi-checkbox-marked-circle-outline",
+              done: false,
+              total: i.total,
+              id: i.id,
             };
           }),
           id: 1,
@@ -458,10 +457,25 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== "";
     },
-    calcProgress() {
-      // TODO: Calculate progress
+    calculateProgress() {
+      const total = this.currentUserTestAnswer.total;
+      let x = 0;
+
+      // check progress inside questions
+      this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
+        heuQ.heuristicQuestions.forEach((question) => {
+          if (question.heuristicAnswer != null) {
+            // increment counter for all questions inside all heuristics
+            x++;
+          }
+        });
+      });
+
+      const percent = ((100 * x) / total).toFixed(1);
+      this.calculatedProgress = percent;
     },
     async saveAnswer() {
+      this.currentUserTestAnswer.progress = this.calculatedProgress;
       await this.$store.dispatch("saveTestAnswer", {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
@@ -470,88 +484,6 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true;
       await this.saveAnswer();
-      // let newAnswer = this.user.myAnswers.find(
-      //   (answer) => answer.id == this.id
-      // );
-
-      // if (!save) newAnswer.testAnswerDocument.submitted = true;
-
-      // var log = {
-      //   date: new Date().toLocaleString("en-US"),
-      //   progress: this.testAnswerDocument.progress,
-      //   status:
-      //     this.testAnswerDocument.progress != 100 ? "In progress" : "Completed",
-      // };
-      // log.status = newAnswer.testAnswerDocument.submitted
-      //   ? "Submitted"
-      //   : log.status;
-
-      // if (this.testAnswerDocument.tasks) {
-      //   this.testAnswerDocument.tasks = Object.assign({}, this.test.tasks);
-      //   newAnswer.testAnswerDocument = this.testAnswerDocument;
-      // }
-
-      // this.$store
-      //   .dispatch("updateLog", {
-      //     docId: newAnswer.reports,
-      //     elementId: this.user.uid,
-      //     element: log,
-      //   })
-      //   .then(() => {
-      //     if (!save) {
-      //       this.$store
-      //         .dispatch("pushAnswers", {
-      //           docId: newAnswer.answers,
-      //           element: Object.assign(this.testAnswerDocument, {
-      //             uid: this.user.uid,
-      //             email: this.user.email,
-      //           }),
-      //         })
-      //         .then(() => {
-      //           this.$store.commit("setSuccess", "Test succesfully submitted");
-      //         })
-      //         .catch((err) => {
-      //           this.$store.commit("setError", err);
-      //         });
-      //     }
-      //   });
-
-      // newAnswer.date = new Date().toDateString();
-      // this.$store
-      //   .dispatch("updateMyAnswers", {
-      //     docId: this.user.uid,
-      //     element: newAnswer,
-      //   })
-      //   .then(() => {
-      //     if (save)
-      //       this.$store.commit("setSuccess", "Project succesfully saved");
-      //   })
-      //   .catch((err) => {
-      //     if (save) this.$store.commit("setError", err);
-      //   });
-
-      // if (newAnswer.testAnswerDocument.tasks) {
-      //   this.$store
-      //     .dispatch("pushAnswers", {
-      //       docId: newAnswer.answers,
-      //       element: Object.assign(this.testAnswerDocument, {
-      //         uid: this.user.uid,
-      //         email: this.user.email,
-      //       }),
-      //     })
-      //     .then(() => {
-      //       this.$store.commit("setSuccess", "Test succesfully submitted");
-      //     })
-      //     .catch((err) => {
-      //       this.$store.commit("setError", err);
-      //     });
-      // }
-    },
-    progress(item) {
-      return (
-        (item.heuristicQuestions.filter((q) => q.res !== "").length * 100) /
-        item.total
-      );
     },
     setExistUser() {
       this.noExistUser = false;
@@ -562,6 +494,7 @@ export default {
       });
     },
     populateWithHeuristicQuestions() {
+      let totalQuestions = 0;
       if (this.currentUserTestAnswer.heuristicQuestions.length <= 0) {
         this.test.testStructure.forEach((heu) => {
           this.currentUserTestAnswer.heuristicQuestions.push(
@@ -572,14 +505,18 @@ export default {
                 (h) =>
                   new HeuristicQuestionAnswer({
                     heuristicId: h.id,
-                    heuristicAnswer: "",
+                    heuristicAnswer: null,
                     heuristicComment: "",
                   })
               ),
               heuristicTotal: heu.total,
             })
           );
+
+          totalQuestions += heu.questions.length ?? 0;
         });
+
+        this.currentUserTestAnswer.total = totalQuestions;
       }
     },
     async setTest() {
@@ -617,6 +554,7 @@ export default {
 
     await this.$store.dispatch("getCurrentTestAnswerDoc");
     this.populateWithHeuristicQuestions();
+    this.calculateProgress();
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
