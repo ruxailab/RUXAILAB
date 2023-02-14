@@ -220,14 +220,19 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <!-- <v-list-item-icon>
+                      <v-list-item-icon>
                         <v-progress-circular
                           rotate="-90"
                           v-if="
-                            test.testType === 'HEURISTICS' &&
-                              progress(testAnswerDocument.heuristicAnswers[i]) != 100
+                            perHeuristicProgress(
+                              currentUserTestAnswer.heuristicQuestions[i]
+                            ) != 100
                           "
-                          :value="progress(testAnswerDocument.heuristicAnswers[i])"
+                          :value="
+                            perHeuristicProgress(
+                              currentUserTestAnswer.heuristicQuestions[i]
+                            )
+                          "
                           :size="24"
                           :width="3"
                           :color="heurisIndex == i ? '#ffffff' : '#fca326'"
@@ -237,7 +242,7 @@
                           :color="heurisIndex == i ? '#ffffff' : '#fca326'"
                           >{{ heuris.icon }}</v-icon
                         >
-                      </v-list-item-icon> -->
+                      </v-list-item-icon>
 
                       <v-list-item-content>
                         <v-list-item-title
@@ -263,7 +268,16 @@
                   <v-list-item-icon>
                     <v-progress-circular
                       rotate="-90"
-                      v-if="!heuris.done"
+                      v-if="
+                        perHeuristicProgress(
+                          currentUserTestAnswer.heuristicQuestions[i]
+                        ) != 100
+                      "
+                      :value="
+                        perHeuristicProgress(
+                          currentUserTestAnswer.heuristicQuestions[i]
+                        )
+                      "
                       :size="24"
                       :width="3"
                       :color="heurisIndex == i ? '#ffffff' : '#fca326'"
@@ -442,13 +456,13 @@ export default {
         this.items.push({
           title: "HEURISTICS",
           icon: "mdi-checkbox-marked-circle-outline",
-          value: this.test.testStructure.map((i) => {
+          value: this.test.testStructure.map((option) => {
             return {
-              title: i.title,
+              title: option.title,
               icon: "mdi-checkbox-marked-circle-outline",
               done: false,
-              total: i.total,
-              id: i.id,
+              total: option.total,
+              id: option.id,
             };
           }),
           id: 1,
@@ -473,6 +487,14 @@ export default {
 
       const percent = ((100 * x) / total).toFixed(1);
       this.calculatedProgress = percent;
+    },
+    perHeuristicProgress(item) {
+      const value =
+        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== null)
+          .length *
+          100) /
+        item.heuristicTotal;
+      return value.toFixed(1);
     },
     async saveAnswer() {
       this.currentUserTestAnswer.progress = this.calculatedProgress;
