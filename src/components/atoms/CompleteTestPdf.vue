@@ -1,7 +1,11 @@
 <template>
     <div class="whole-test">
-        <div class="whole-test-title">{{ title }}</div>
+        <button @click="makePdf()">pdf</button>
+        <div id="makepdf" class="whole-test-title">{{ title }}</div>
         <div v-for="(heuristic, index) in heuristics" :key="heuristic.id">
+            <button @click="teste()">tales</button>
+            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+            <image id="image1"></image>
             <br />
 
             <div class="heuristic">
@@ -17,15 +21,7 @@
                         <div class="heuristic-question-answers">
                             <div class="answer1">
                                 {{ question.resp1 }} - {{ question.value1 }}
-                            </div>
-                            <div class="answer2">
                                 {{ question.resp2 }} - {{ question.value2 }}
-                                <div
-                                    class="pie animate"
-                                    style="--p:`${question.value1}`;--c:orange"
-                                >
-                                    60%
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -36,6 +32,7 @@
     </div>
 </template>
 <script>
+import Chart from "chart.js";
 export default {
     data: () => ({
         title: "Havaluacion heuristica",
@@ -48,7 +45,7 @@ export default {
                         title:
                             "La aplicación incluye de forma visible el título de la página, de la sección o del sitio?",
                         resp1: "si",
-                        value1: "80",
+                        value1: "8",
                         resp2: "no",
                         value2: "2",
                     },
@@ -134,7 +131,65 @@ export default {
                 ],
             },
         ],
+        barColors: [
+            "#b91d47",
+            "#F6F614",
+            "#41CA2B",
+            "#00aba9",
+            "#2b5797",
+            "#e8c3b9",
+            "#1e7145",
+            "#712BCA",
+            "#B81818",
+        ],
     }),
+    methods: {
+        teste() {
+            console.log(this.heuristics[1].questions);
+            let auxTitle = [];
+            let auxAnsw = [];
+            let auxValue = [];
+            for (let i = 0; i < this.heuristics.length; i++) {
+                for (let j = 0; j < this.heuristics[i].questions.length; j++) {
+                    auxTitle.push(this.heuristics[i].questions[j].title);
+                    auxAnsw.push(this.heuristics[i].questions[j].resp1);
+                    auxValue.push(
+                        parseInt(this.heuristics[i].questions[j].value1)
+                    );
+                }
+            }
+            console.log(this.heuristics[0].questions[0].value1);
+            console.log(auxValue);
+            new Chart("myChart", {
+                type: "pie",
+                data: {
+                    labels: auxTitle,
+                    datasets: [
+                        {
+                            backgroundColor: this.barColors,
+                            data: auxValue,
+                        },
+                    ],
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: this.heuristics[0].title,
+                    },
+                },
+            });
+
+            let canvas = document.getElementById("myChart");
+            let image = new Image();
+            image.src = canvas.toDataURL();
+
+            document.getElementById("image1").appendChild(image);
+        },
+
+        makePdf() {
+            window.print();
+        },
+    },
 };
 </script>
 
@@ -164,64 +219,5 @@ export default {
     display: block;
     width: 10%;
     justify-content: space-between;
-}
-
-@property --p {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-}
-
-.pie {
-    --p: 20;
-    --b: 22px;
-    --c: darkred;
-    --w: 150px;
-
-    width: var(--w);
-    aspect-ratio: 1;
-    position: relative;
-    display: inline-grid;
-    margin: 5px;
-    place-content: center;
-    font-size: 25px;
-    font-weight: bold;
-    font-family: sans-serif;
-}
-.pie:before,
-.pie:after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-}
-.pie:before {
-    inset: 0;
-    background: radial-gradient(farthest-side, var(--c) 98%, #0000) top/var(--b)
-            var(--b) no-repeat,
-        conic-gradient(var(--c) calc(var(--p) * 1%), #0000 0);
-    -webkit-mask: radial-gradient(
-        farthest-side,
-        #0000 calc(99% - var(--b)),
-        #000 calc(100% - var(--b))
-    );
-    mask: radial-gradient(
-        farthest-side,
-        #0000 calc(99% - var(--b)),
-        #000 calc(100% - var(--b))
-    );
-}
-.pie:after {
-    inset: calc(50% - var(--b) / 2);
-    background: var(--c);
-    transform: rotate(calc(var(--p) * 3.6deg))
-        translateY(calc(50% - var(--w) / 2));
-}
-.animate {
-    animation: p 1s 0.5s both;
-}
-@keyframes p {
-    from {
-        --p: 0;
-    }
 }
 </style>
