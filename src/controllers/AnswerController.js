@@ -41,12 +41,9 @@ export default class AnswerController extends Controller {
     }
 
     async saveTestAnswer(payload, answerDocId) {
-        console.log('é pra salvar isso aqui', answerDocId)
-
         const fieldToUpdate = {
             [`heuristicAnswers.${payload.userDocId}`]: payload.toFirestore()
         }
-        console.log('field', fieldToUpdate)
         await super.update(COLLECTION, answerDocId, fieldToUpdate)
     }
 }
