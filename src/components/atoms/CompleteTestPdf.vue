@@ -1,11 +1,15 @@
 <template>
     <div class="whole-test">
-        <button @click="makePdf()">pdf</button>
+        <button @click="makePdf('makepdf')">pdf</button>
         <div id="makepdf" class="whole-test-title">{{ title }}</div>
+        <!-- <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+        <image id="image1"></image> -->
+
+        <!-- <button @click="convertToImage()">Convert to Image Element</button>
+        <div id="imageContainer"></div>
+        <button @click="teste()">tales</button> -->
+
         <div v-for="(heuristic, index) in heuristics" :key="heuristic.id">
-            <button @click="teste()">tales</button>
-            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-            <image id="image1"></image>
             <br />
 
             <div class="heuristic">
@@ -19,9 +23,20 @@
                     <div class="heuristic-question">
                         {{ index + 1 }} - {{ question.title }}
                         <div class="heuristic-question-answers">
-                            <div class="answer1">
-                                {{ question.resp1 }} - {{ question.value1 }}
-                                {{ question.resp2 }} - {{ question.value2 }}
+                            <div class="answers">
+                                <div class="answers-option">
+                                    {{ resp1 }} -
+                                    {{ question.value1 }}
+                                </div>
+                                <div class="answers-option">
+                                    {{ resp2 }} - {{ question.value2 }}
+                                </div>
+                                <div class="answers-option">
+                                    {{ resp3 }} - {{ question.value2 }}
+                                </div>
+                                <div class="answers-option">
+                                    {{ resp4 }} - {{ question.value2 }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -32,7 +47,7 @@
     </div>
 </template>
 <script>
-import Chart from "chart.js";
+// import Chart from "chart.js";
 export default {
     data: () => ({
         title: "Havaluacion heuristica",
@@ -44,10 +59,13 @@ export default {
                     {
                         title:
                             "La aplicación incluye de forma visible el título de la página, de la sección o del sitio?",
-                        resp1: "si",
+                        resp1: "Si/Yes",
                         value1: "8",
-                        resp2: "no",
+                        resp2: "Ni Sí, ni No / Neither",
                         value2: "2",
+                        resp3: "No",
+                        resp4:
+                            "No aplica-No es problema / Not applicable-It is not a problem",
                     },
                     {
                         title: "El usuario sabe en todo momento dónde está?",
@@ -131,64 +149,85 @@ export default {
                 ],
             },
         ],
-        barColors: [
-            "#b91d47",
-            "#F6F614",
-            "#41CA2B",
-            "#00aba9",
-            "#2b5797",
-            "#e8c3b9",
-            "#1e7145",
-            "#712BCA",
-            "#B81818",
-        ],
+
+        resp1: "Si/Yes",
+        resp2: "Ni Sí, ni No / Neither",
+        resp3: "No",
+        resp4: "No aplica-No es problema / Not applicable-It is not a problem",
+
+        // barColors: [
+        //     "#b91d47",
+        //     "#F6F614",
+        //     "#41CA2B",
+        //     "#00aba9",
+        //     "#2b5797",
+        //     "#e8c3b9",
+        //     "#1e7145",
+        //     "#712BCA",
+        //     "#B81818",
+        // ],
     }),
     methods: {
-        teste() {
-            console.log(this.heuristics[1].questions);
-            let auxTitle = [];
-            let auxAnsw = [];
-            let auxValue = [];
-            for (let i = 0; i < this.heuristics.length; i++) {
-                for (let j = 0; j < this.heuristics[i].questions.length; j++) {
-                    auxTitle.push(this.heuristics[i].questions[j].title);
-                    auxAnsw.push(this.heuristics[i].questions[j].resp1);
-                    auxValue.push(
-                        parseInt(this.heuristics[i].questions[j].value1)
-                    );
-                }
-            }
-            console.log(this.heuristics[0].questions[0].value1);
-            console.log(auxValue);
-            new Chart("myChart", {
-                type: "pie",
-                data: {
-                    labels: auxTitle,
-                    datasets: [
-                        {
-                            backgroundColor: this.barColors,
-                            data: auxValue,
-                        },
-                    ],
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: this.heuristics[0].title,
-                    },
-                },
-            });
+        // teste() {
+        //     console.log(this.heuristics[1].questions);
+        //     let auxTitle = [];
+        //     let auxAnsw = [];
+        //     let auxValue = [];
+        //     for (let i = 0; i < this.heuristics.length; i++) {
+        //         for (let j = 0; j < this.heuristics[i].questions.length; j++) {
+        //             auxTitle.push(this.heuristics[i].questions[j].title);
+        //             auxAnsw.push(this.heuristics[i].questions[j].resp1);
+        //             auxValue.push(
+        //                 parseInt(this.heuristics[i].questions[j].value1)
+        //             );
+        //         }
+        //     }
+        //     console.log(this.heuristics[0].questions[0].value1);
+        //     console.log(auxValue);
+        //     new Chart("myChart", {
+        //         type: "pie",
+        //         data: {
+        //             labels: auxTitle,
+        //             datasets: [
+        //                 {
+        //                     backgroundColor: this.barColors,
+        //                     data: auxValue,
+        //                 },
+        //             ],
+        //         },
+        //         options: {
+        //             title: {
+        //                 display: true,
+        //                 text: this.heuristics[0].title,
+        //             },
+        //         },
+        //     });
 
-            let canvas = document.getElementById("myChart");
-            let image = new Image();
-            image.src = canvas.toDataURL();
+        //     let canvas = document.getElementById("myChart");
+        //     let image = new Image();
+        //     image.src = canvas.toDataURL();
 
-            document.getElementById("image1").appendChild(image);
-        },
+        //     document.getElementById("image1").appendChild(image);
+        // },
 
-        makePdf() {
+        makePdf(divName) {
+            console.log(divName);
+            console.log(document);
             window.print();
         },
+        // convertToImage() {
+        //     // Get the canvas element
+        //     var canvas = document.getElementById("myChart");
+        //     // Get the 2D rendering context for the canvas
+
+        //     // Create a new image element
+        //     var img = new Image();
+        //     // Set the source of the image to the data URI for the canvas
+        //     img.src = canvas.toDataURL("image/png");
+        //     // Add the image to the page
+        //     var container = document.getElementById("imageContainer");
+        //     container.appendChild(img);
+        // },
     },
 };
 </script>
@@ -208,6 +247,8 @@ export default {
 .heuristic-title {
     color: orange;
     font-size: x-large;
+    background-color: rgb(240, 238, 238);
+    padding-left: 10px;
 }
 .heuristic-question {
     font-weight: bold;
@@ -219,5 +260,55 @@ export default {
     display: block;
     width: 10%;
     justify-content: space-between;
+}
+
+.answers {
+    min-width: 800px;
+}
+
+@media print {
+    header {
+        display: none !important;
+    }
+    .print {
+        background-color: white;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        display: block;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
+    }
+    @page {
+        margin-top: 2cm;
+        margin-bottom: 2cm;
+        margin-left: 2cm;
+        margin-right: 2cm;
+    }
+    canvas {
+        visibility: hidden;
+    }
+    .question-page {
+        page-break-after: always;
+    }
+    .buttonIsHidden {
+        visibility: hidden;
+    }
+
+    .img-container {
+        text-align: center !important;
+    }
+
+    p {
+        page-break-inside: avoid;
+    }
+
+    .heuristic-question {
+        page-break-after: always;
+    }
 }
 </style>
