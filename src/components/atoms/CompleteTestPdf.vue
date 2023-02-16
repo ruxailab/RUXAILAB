@@ -24,18 +24,73 @@
                         {{ index + 1 }} - {{ question.title }}
                         <div class="heuristic-question-answers">
                             <div class="answers">
-                                <div class="answers-option">
+                                <div
+                                    class="answers-option"
+                                    v-if="question.comments1 != 0"
+                                >
                                     {{ resp1 }} -
                                     {{ question.value1 }}
+                                    <ul>
+                                        <li
+                                            v-for="(comment,
+                                            index) in question.comments1"
+                                            :key="comment.id"
+                                        >
+                                            {{ index + 1 }} - {{ comment }}
+                                            <br />
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="answers-option">
-                                    {{ resp2 }} - {{ question.value2 }}
+                                <div
+                                    class="answers-option "
+                                    v-if="question.comments2 != 0"
+                                >
+                                    {{ resp2 }} -
+                                    {{ question.value2 }}
+                                    <ul>
+                                        <li
+                                            v-for="(comment,
+                                            index) in question.comments2"
+                                            :key="comment.id"
+                                        >
+                                            {{ index + 1 }} - {{ comment }}
+                                            <br />
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="answers-option">
-                                    {{ resp3 }} - {{ question.value2 }}
+                                <div
+                                    class="answers-option"
+                                    v-if="question.comments3 != 0"
+                                >
+                                    {{ resp3 }} -
+                                    {{ question.value3 }}
+                                    <ul>
+                                        <li
+                                            v-for="(comment,
+                                            index) in question.comments3"
+                                            :key="comment.id"
+                                        >
+                                            {{ index + 1 }} - {{ comment }}
+                                            <br />
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="answers-option">
-                                    {{ resp4 }} - {{ question.value2 }}
+                                <div
+                                    class="answers-option"
+                                    v-if="question.comments4 != 0"
+                                >
+                                    {{ resp4 }} -
+                                    {{ question.value4 }}
+                                    <ul>
+                                        <li
+                                            v-for="(comment,
+                                            index) in question.comments4"
+                                            :key="comment.id"
+                                        >
+                                            {{ index + 1 }} - {{ comment }}
+                                            <br />
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -59,49 +114,116 @@ export default {
                     {
                         title:
                             "La aplicación incluye de forma visible el título de la página, de la sección o del sitio?",
-                        resp1: "Si/Yes",
+
                         value1: "8",
-                        resp2: "Ni Sí, ni No / Neither",
                         value2: "2",
-                        resp3: "No",
-                        resp4:
-                            "No aplica-No es problema / Not applicable-It is not a problem",
+                        value3: "0",
+                        value4: "0",
+
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title: "El usuario sabe en todo momento dónde está?",
-                        resp1: "si",
+
                         value1: "3",
-                        resp2: "no",
+
                         value2: "7",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title:
                             "El usuario sabe en todo momento qué está haciendo el sistema o aplicación?",
-                        resp1: "si",
+
                         value1: "1",
-                        resp2: "no",
+
                         value2: "9",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title: "Los enlaces están claramente definidos?",
-                        resp1: "si",
+
                         value1: "6",
-                        resp2: "no",
+
                         value2: "4",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title:
                             "Todas las acciones pueden verse directamente? (Sin requerir acciones adicionales)s",
-                        resp1: "si",
+
                         value1: "5",
-                        resp2: "no",
+
                         value2: "5",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
-                ],
-                allComments: [
-                    "Puta",
-                    "Esse programa é maravilhoso",
-                    "na verdade não achei bom",
                 ],
             },
             {
@@ -112,40 +234,90 @@ export default {
                     {
                         title:
                             "La información aparece de una manera lógica para el usuario común?",
-                        resp1: "si",
+
                         value1: "10",
-                        resp2: "no",
+
                         value2: "0",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title:
                             "El diseño de los iconos se correspone con objetos cotidianos?",
-                        resp1: "si",
                         value1: "2",
-                        resp2: "no",
                         value2: "2",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title:
                             "Cada icono realiza la acción que el usuario espera?",
-                        resp1: "si",
                         value1: "4",
-                        resp2: "no",
                         value2: "5",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
                     {
                         title:
                             "Se utilizan frases y conceptos familiares para el usuario?",
-                        resp1: "si",
+
                         value1: "1",
-                        resp2: "no",
                         value2: "4",
+                        value3: "0",
+                        value4: "0",
+                        comments1: [
+                            "A todo momento o título é visível",
+                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
+                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "asdfasdfa",
+                            "asdfasdfasdfasdfasdfasdf",
+                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                        ],
+                        comments2: ["puta", "tales"],
+                        comments3: [],
+                        comments4: [],
                     },
-                ],
-                allComments: [
-                    "Puta",
-                    "Esse programa é maravilhoso",
-                    "na verdade não achei bom",
                 ],
             },
         ],
@@ -233,6 +405,11 @@ export default {
 </script>
 
 <style>
+ul,
+li {
+    width: 100%;
+    margin: 1rem;
+}
 .whole-test-title {
     padding: 5px;
     font-weight: bold;
@@ -246,11 +423,12 @@ export default {
 }
 .heuristic-title {
     color: orange;
-    font-size: x-large;
+    font-size: xx-large;
     background-color: rgb(240, 238, 238);
     padding-left: 10px;
 }
 .heuristic-question {
+    font-size: x-large;
     font-weight: bold;
 
     padding-left: 50px;
@@ -258,15 +436,37 @@ export default {
 .heuristic-question-answers {
     padding-left: 22px;
     display: block;
-    width: 10%;
-    justify-content: space-between;
+    width: 100%;
+    justify-content: space-around;
 }
 
 .answers {
-    min-width: 800px;
+    width: 100%;
+    font-size: large;
+    padding-top: 2%;
+
+    /* display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 2fr repeat(4, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px; */
 }
 
 @media print {
+    * {
+        visibility: hidden;
+    }
+    .whole-test-title,
+    .heuristic,
+    .heuristic-title,
+    .heuristic-question,
+    .heuristic-question-answers,
+    .answers,
+    .answers-option,
+    ul,
+    li {
+        visibility: visible !important;
+    }
     header {
         display: none !important;
     }
@@ -289,25 +489,15 @@ export default {
         margin-left: 2cm;
         margin-right: 2cm;
     }
-    canvas {
-        visibility: hidden;
-    }
-    .question-page {
-        page-break-after: always;
-    }
-    .buttonIsHidden {
-        visibility: hidden;
-    }
-
-    .img-container {
-        text-align: center !important;
-    }
 
     p {
         page-break-inside: avoid;
     }
 
     .heuristic-question {
+        page-break-after: always;
+    }
+    .answers-option {
         page-break-after: always;
     }
 }
