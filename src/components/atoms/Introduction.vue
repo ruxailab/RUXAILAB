@@ -1,11 +1,11 @@
 <template>
     <section>
+        <teste></teste>
         <!-- Desktop -->
         <v-container
             style="display:contents; background-color:#f4b700; height:300px"
             class="hidden-sm-and-down"
         >
-            <teste></teste>
             <v-img src="@/assets/landing/introductionDesktop.svg">
                 <v-container>
                     <v-row align="center" class="mb-10">
