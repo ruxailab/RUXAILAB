@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 
 export default class Controller {
-    constructor() {}
+    constructor() { }
 
     // path - collection
     // data - document to insert (object)
@@ -25,18 +25,9 @@ export default class Controller {
         return getDoc(ref);
     }
 
-    //model to define in Controller
-    async read(path, parameter, condition) {
-        const q = query(
-            collection(db, path),
-            where(parameter, "==", condition)
-        );
-        const querySnapshot = await getDocs(q);
-        const res = [];
-        querySnapshot.forEach((doc) => {
-            res.push(doc.data());
-        });
-        return res;
+    async query(col, params) {
+        const q = query(collection(db, col), where(params.field, params.condition, params.value))
+        return getDocs(q);
     }
 
     /**
@@ -65,7 +56,7 @@ export default class Controller {
         const ref = doc(db, `${col}/${docId}`)
         return updateDoc(ref, payload)
     }
-    
+
     async delete(col, docId) {
         return deleteDoc(doc(db, col, docId));
     }
