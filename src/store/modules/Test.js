@@ -13,14 +13,14 @@ const testController = new TestController();
 export default {
     state: {
         Test: null,
-        Tests: null,
+        tests: null,
         testStructure: null,
         answersId: null,
         module: "test",
     },
     getters: {
         tests(state) {
-            return state.Tests;
+            return state.tests;
         },
         test(state) {
             return state.Test;
@@ -40,7 +40,7 @@ export default {
             state.Test = payload;
         },
         SET_TESTS(state, payload) {
-            state.Tests = payload;
+            state.tests = payload;
         },
     },
     actions: {
@@ -80,7 +80,6 @@ export default {
             let objectTest = null;
             if (payload.data.testType === "HEURISTICS") {
                 objectTest = new HeuristicTest(ob);
-                //payload = Object.assign(payload, { collection: "Tests" });
             } else {
                 objectTest = new UserTest(ob);
             }
@@ -213,7 +212,6 @@ export default {
         async getTest({ commit }, payload) {
             commit("setLoading", true);
 
-            payload = Object.assign(payload, { collection: "Tests" });
             //Connect to controllers
             try {
                 const res = await testController.getTest(payload);
@@ -231,7 +229,7 @@ export default {
 
             //Connect to controllers
             try {
-                const res = await testController.getAllObjectTest();
+                const res = await testController.getAllTests();
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in getAllTest");
@@ -240,6 +238,19 @@ export default {
                 commit("setLoading", false);
             }
         },
+
+        async getTestsByAdminId({ commit }, payload) {
+            try {
+                commit("setLoading", true);
+                const res = await testController.getTestsByAdminId(payload);
+                commit("SET_TESTS", res);
+            } catch (e) {
+                console.error("Error in gettestsbyadminid", e);
+                commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        }
     },
     coops(state) {
         return state.test.coop;

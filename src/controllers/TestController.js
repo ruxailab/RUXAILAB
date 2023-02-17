@@ -60,7 +60,15 @@ export default class TestController extends Controller {
         return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
     }
 
-    //------------------GET OBJECTS - ID------------------
+    async getTestsByAdminId(payload) {
+        const q = {
+            field: 'testAdmin.userDocId',
+            value: payload,
+            condition: '=='
+        }
+        const res = await super.query(COLLECTION, q)
+        return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
+    }
 
     //GetObject of Test
     async getTest(parameter) {
@@ -70,7 +78,7 @@ export default class TestController extends Controller {
     }
 
     //GetObject of Test
-    async getAllObjectTest() {
+    async getAllTests() {
         return await super
             .readAll("tests")
             .then((response) => {
