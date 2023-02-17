@@ -284,10 +284,7 @@ export default {
     },
   },
   async created() {
-    //await this.$store.dispatch("getAnswers", { id: this.test.answersDocId});
     await this.$store.dispatch("getTest", { id: this.id });
-
-    //this.setIntro();
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
