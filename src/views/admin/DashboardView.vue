@@ -459,7 +459,7 @@ export default {
         },
     },
     created() {
-        this.$store.dispatch("getAllTest");
+        this.$store.dispatch("getAllTests");
     },
 };
 </script>

@@ -8,12 +8,7 @@ import TestController from "@/controllers/TestController.js";
 import HeuristicTest from "@/models/HeuristicTest.model.js";
 import UserTest from "@/models/UserTest";
 
-//merda do tales
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-// import { doc, arrayUnion } from "firebase/firestore";
-import { db } from "@/firebase/index";
-
-const TestCont = new TestController();
+const testController = new TestController();
 
 export default {
     state: {
@@ -90,7 +85,7 @@ export default {
                 objectTest = new UserTest(ob);
             }
             try {
-                await TestCont.createTest(
+                await testController.createTest(
                     payload.collection,
                     objectTest
                 ).then((res) => {
@@ -141,7 +136,7 @@ export default {
         async deleteTest({ commit }, payload) {
             //Connect to controllers
             try {
-                const res = await TestCont.deleteTest(payload);
+                const res = await testController.deleteTest(payload);
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in deleteTest");
@@ -186,7 +181,7 @@ export default {
         async updateTest({ commit }, payload) {
             commit("setLoading", true);
             try {
-                await TestCont.updateTest(payload);
+                await testController.updateTest(payload);
             } catch (e) {
                 console.error("Error in updateTest", e);
                 // commit("setError", true);
@@ -198,31 +193,12 @@ export default {
         async acceptTestCollaboration({ commit }, payload) {
             commit("setLoading", true);
             try {
-                await TestCont.acceptTestCollaboration(payload)
+                await testController.acceptTestCollaboration(payload)
             } catch (e) {
                 console.error("Error accept test collaboration", e);
             } finally {
                 commit("setLoading", false);
             }
-        },
-
-        async updateObject(data) {
-            await updateDoc(doc(db, "test", data.id), {
-                heuristics: arrayUnion({
-                    id: data.id,
-                    title: data.testTitle,
-                    questions: data.questions,
-                    total: data.total,
-                }),
-            });
-        },
-        updateTestAnswer({ dispatch, commit }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "answers" });
-
-            dispatch("updateObject", payload).catch((err) =>
-                commit("setError", "Error in updateTestAnswer." + err)
-            );
         },
 
         /**
@@ -240,7 +216,7 @@ export default {
             payload = Object.assign(payload, { collection: "Tests" });
             //Connect to controllers
             try {
-                const res = await TestCont.getTest(payload);
+                const res = await testController.getTest(payload);
                 commit("SET_TEST", res);
             } catch {
                 console.log("Error in getObjectTest");
@@ -250,200 +226,15 @@ export default {
             }
         },
 
-        async getAnswers({ dispatch, commit }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "answers" });
-
-            let ans = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getAnswers." + err)
-            );
-            commit("setAnswers", ans);
-        },
-
-        async getObjectTestAdmin({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-
-            payload = Object.assign(payload, { collection: "Tests" });
-
-            var Test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectTestAdmin." + err)
-            );
-
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getObjectTestAdmin();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getObjectTestAdmin");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getObjectTestStructure({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-
-            payload = Object.assign(payload, { collection: "Tests" });
-
-            var Test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectTestStructure." + err)
-            );
-
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getObjectTestStructure();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getObjectTestStructure");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getObjectTestStructureOptions({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-
-            payload = Object.assign(payload, { collection: "Tests" });
-
-            var Test = await dispatch("getObject", payload).catch((err) =>
-                commit(
-                    "setError",
-                    "Error in getObjectTestStructureOptions." + err
-                )
-            );
-
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getObjectTestStructureOptions();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getObjectTestStructureOptions");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getObjectTestTemplateDoc({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-
-            payload = Object.assign(payload, { collection: "Tests" });
-
-            var Test = await dispatch("getObject", payload).catch((err) =>
-                commit("setError", "Error in getObjectTestTemplateDoc." + err)
-            );
-
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getObjectTestTemplateDoc();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getObjectTestTemplateDoc");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getAllTest({ commit }) {
+        async getAllTests({ commit }) {
             commit("setLoading", true);
 
             //Connect to controllers
             try {
-                const res = await TestCont.getAllObjectTest();
+                const res = await testController.getAllObjectTest();
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in getAllTest");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getAllTestAdmin({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
-            var Test = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllTestAdmin." + err)
-            );
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getAllTestAdmin();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getAllTestAdmin");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getAllTestStructure({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
-            var Test = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllTestStructure." + err)
-            );
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getAllTestStructure();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getAllTestStructure");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getAllTestStructureOptions({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
-            var Test = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllTestStructureOptions." + err)
-            );
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getAllTestStructureOptions();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getAllTestStructureOptions");
-                commit("setError", true);
-            } finally {
-                commit("setLoading", false);
-            }
-        },
-
-        async getAllTestTemplateDoc({ commit, dispatch }, payload) {
-            commit("setLoading", true);
-            payload = Object.assign(payload, { collection: "Tests" });
-            var Test = await dispatch("getAllObjects", payload).catch((err) =>
-                commit("setError", "Error in getAllTestTemplateDoc." + err)
-            );
-            commit("SET_TESTS", Test);
-
-            //Connect to controllers
-            try {
-                const res = await TestCont.getAllTestTemplateDoc();
-                commit("SET_TESTS", res);
-            } catch {
-                console.log("Error in getAllTestTemplateDoc");
                 commit("setError", true);
             } finally {
                 commit("setLoading", false);
