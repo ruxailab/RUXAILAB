@@ -570,9 +570,7 @@ export default {
     },
   },
   async created() {
-    if (!this.$store.test) {
-      await this.$store.dispatch("getTest", { id: this.id });
-    }
+    await this.$store.dispatch("getTest", { id: this.id });
 
     await this.$store.dispatch("getCurrentTestAnswerDoc");
     this.populateWithHeuristicQuestions();
