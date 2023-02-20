@@ -34,7 +34,6 @@ export default class TestController extends Controller {
     }
 
     async acceptTestCollaboration(payload) {
-        console.log(payload)
         const userAnswer = new UserAnswer({
             answerDocId: payload.test.answersDocId,
             accessLevel: payload.cooperator.accessLevel,
@@ -49,13 +48,14 @@ export default class TestController extends Controller {
 
         // Update answers inside collaborator
         const userToUpdate = payload.cooperator
-        userToUpdate.myAnswers.push(userAnswer.toFirestore())
+        userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
         await userController.update(userToUpdate.id, userToUpdate.toFirestore())
 
         const testToUpdate = payload.test
         const index = testToUpdate.cooperators.findIndex((c) => c.email === userToUpdate.email)
         testToUpdate.cooperators[index].accepted = true
         testToUpdate.cooperators[index].userDocId = userToUpdate.id
+        testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1
 
         // Update invitation on test to accepted
         return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())

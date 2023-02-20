@@ -10,17 +10,30 @@ exports.onTestCreate = functions.firestore.document('tests/{docId}').onCreate(as
   const test = snap.data()
 
   return await admin.firestore().collection('users').doc(userId).update({
-    myTests: admin.firestore.FieldValue.arrayUnion({
+    [`myTests.${snap.id}`]: {
       testDocId: snap.id,
       testTitle: test.testTitle,
       testType: test.testType,
       numberColaborators: 0,
-      existReport: false,
-      isComplete: false,
-      testProgress: 0,
       creationDate: test.creationDate ?? null,
-      updateDate: test.updateDate ?? Date.now(),
-    })
+      updateDate: Date.now(),
+    }
+  })
+})
+
+exports.onTestUpdate = functions.firestore.document('tests/{docId}').onUpdate(async (snap, context) => {
+  const userId = snap.after.data().testAdmin.userDocId
+  const test = snap.after.data()
+
+  return await admin.firestore().collection('users').doc(userId).update({
+    [`myTests.${snap.after.id}`]: {
+      testDocId: snap.after.id,
+      testTitle: test.testTitle,
+      testType: test.testType,
+      numberColaborators: test.numberColaborators ?? 0,
+      creationDate: test.creationDate,
+      updateDate: Date.now(),
+    }
   })
 })
 
@@ -33,8 +46,8 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
       .set({
         email: user.email,
         accessLevel: 1,
-        myTests: [],
-        myAnswers: [],
+        myTests: {},
+        myAnswers: {},
         myTemplates: [],
         notifications: [],
       });

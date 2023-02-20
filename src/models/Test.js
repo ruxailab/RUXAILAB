@@ -26,6 +26,7 @@ export default class Test {
         creationDate,
         updateDate,
         templateDoc,
+        numberColaborators,
     } = {}) {
         this.id = id ?? null;
         this.testAdmin = testAdmin ?? null;
@@ -39,6 +40,7 @@ export default class Test {
         this.creationDate = creationDate ?? null;
         this.updateDate = updateDate ?? null;
         this.templateDoc = templateDoc ?? null;
+        this.numberColaborators = numberColaborators ?? 0
     }
     static toTest(data) {
         return new Test(data);
@@ -56,6 +58,7 @@ export default class Test {
             creationDate: this.creationDate,
             updateDate: this.updateDate,
             templateDoc: this.templateDoc,
+            numberColaborators: this.numberColaborators ?? 0
         };
     }
 }
