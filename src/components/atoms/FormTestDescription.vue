@@ -9,7 +9,7 @@
           :rules="titleRequired"
           counter="100"
           outlined
-          @input="$store.commit('SET_LOCAL_CHANGES',true)"
+          @input="$store.commit('SET_LOCAL_CHANGES', true)"
           dense
         ></v-text-field>
         <v-select
@@ -28,8 +28,14 @@
           label="Description"
           outlined
           dense
-          @input="$store.commit('SET_LOCAL_CHANGES',true)"
+          @input="$store.commit('SET_LOCAL_CHANGES', true)"
         ></v-textarea>
+        <v-checkbox
+          label="Make test public to all users (readonly)"
+          v-model="test.isPublic"
+          color="#F9A826"
+          @change="$store.commit('SET_LOCAL_CHANGES', true)"
+        ></v-checkbox>
       </v-col>
     </v-row>
   </v-form>
@@ -50,7 +56,7 @@ export default {
   data: () => ({
     titleRequired: [
       (v) => !!v || "Field Required",
-      (v) => v.length <= 100 || "Max 100 characters",
+      (v) => (v && v.length <= 100) || "Max 100 characters",
     ],
     typeRequired: [(v) => !!v || "Field Required"],
     types: [
@@ -71,5 +77,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

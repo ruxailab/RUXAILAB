@@ -440,7 +440,7 @@ export default {
       if (this.user) {
         if (this.user.accessLevel == 0) return 0;
         // Check if user is collaborator or owner
-        const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
+        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id;
         if (isTestOwner) return 0;
         const answers = [];
         const answersEntries = Object.entries(this.user.myAnswers);
