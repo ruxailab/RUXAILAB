@@ -22,23 +22,8 @@ export default class User {
         this.myTests = myTests;
     }
     static toUser(data) {
-        const answers = []
-        const tests = []
-
-        const answersEntries = Object.entries(data.myAnswers);
-        answersEntries.forEach((a) => {
-            answers.push(a[1]);
-        });
-
-        const testsEntries = Object.entries(data.myTests);
-        testsEntries.forEach((a) => {
-            tests.push(a[1]);
-        });
-
         return new User({
             ...data,
-            myAnswers: answers,
-            myTests: tests,
         })
     }
 

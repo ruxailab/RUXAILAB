@@ -246,7 +246,13 @@ export default {
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
         if (isTestOwner) return 0;
 
-        const isCooperator = this.user.myAnswers.find(
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers);
+        answersEntries.forEach((a) => {
+            answers.push(a[1]);
+        });
+
+        const isCooperator = answers.find(
           (a) => a.testDocId === this.test.id
         );
         if (isCooperator) {

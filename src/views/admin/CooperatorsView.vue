@@ -353,6 +353,7 @@ export default {
         let index = this.cooperatorsEdit.indexOf(coop);
         this.cooperatorsEdit.splice(index, 1);
         this.test.cooperators = this.cooperatorsEdit;
+        this.test.numberColaborators = this.test.numberColaborators - 1;
 
         await this.$store.dispatch("updateTest", this.test);
 
