@@ -60,21 +60,20 @@ export default class TestController extends Controller {
         return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
     }
 
-    async getTestsByAdminId(payload) {
-        const q = {
-            field: 'testAdmin.userDocId',
-            value: payload,
-            condition: '=='
-        }
-        const res = await super.query(COLLECTION, q)
-        return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
-    }
-
-    //GetObject of Test
     async getTest(parameter) {
         const res = await super.readOne(COLLECTION, parameter.id);
         if (!res.exists()) return null;
         return Test.toTest(Object.assign({ id: res.id }, res.data()));
+    }
+
+    async getPublicTests() {
+        const q = {
+            field: 'isPublic',
+            value: true,
+            condition: '=='
+        }
+        const res = await super.query(COLLECTION, q)
+        return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
     }
 
     //GetObject of Test
