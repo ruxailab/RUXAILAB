@@ -303,7 +303,6 @@
                           <v-row justify="end" class="ma-0 pa-0">
                             <AddDescBtn
                               ref="descBtn"
-                              @change="emitChange"
                               :question="
                                 heuristics[itemSelect].questions[questionSelect]
                               "
@@ -476,7 +475,6 @@ export default {
         ].descriptions.indexOf(item),
         1
       );
-      //this.emitChange();
     },
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
@@ -531,7 +529,6 @@ export default {
             this.questionSelect
           ].title = this.itemEdit.titleEdit;
         }
-        //this.emitChange();
       }
     },
   },
