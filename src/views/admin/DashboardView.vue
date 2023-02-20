@@ -274,13 +274,34 @@ export default {
       this.$router.push("/createtest");
     },
     goTo(test) {
-      this.$router
-        .push(
-          (this.$store.state.Auth.user.accessLevel <= 1
-            ? "/managerview/"
-            : "/testview/") + test.id
-        )
-        .catch(() => {});
+      // if it is from the my tests tab
+      if (this.mainIndex === 0) {
+        if (this.subIndex === 0) {
+          this.$router.push({
+            name: "ManagerView",
+            params: { id: test.testDocId },
+          });
+        }
+        // if it is the shared with me tests
+        else if (this.subIndex === 1) {
+          if (test.accessLevel >= 2) {
+            this.$router.push({
+              name: "TestView",
+              params: { id: test.testDocId },
+            });
+          } else {
+            this.$router.push({
+              name: "ManagerView",
+              params: { id: test.testDocId },
+            });
+          }
+        } else if (this.subIndex === 2) {
+          this.$router.push({
+            name: "TestView",
+            params: { id: test.id },
+          });
+        }
+      }
     },
     nextPage() {
       this.page++;

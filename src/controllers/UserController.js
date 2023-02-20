@@ -46,7 +46,7 @@ export default class UserController extends Controller {
 
     async markNotificationAsRead(payload) {
         const userToUpdate = new User(payload.user)
-        const index = userToUpdate.notifications.findIndex((n) => n.title === payload.notification.title)
+        const index = userToUpdate.notifications.findIndex((n) => n.createdDate === payload.notification.createdDate)
         userToUpdate.notifications[index].read = true
         return this.update(userToUpdate.id, userToUpdate.toFirestore())
     }
