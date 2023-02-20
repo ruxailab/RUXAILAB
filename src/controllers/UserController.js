@@ -34,7 +34,7 @@ export default class UserController extends Controller {
 
     async getById(docId) {
         const res = await super.readOne(COLLECTION, docId)
-        return new User(Object.assign({ id: res.id }, res.data()))
+        return new User.toUser(Object.assign({ id: res.id }, res.data()))
     }
 
     async addNotification(payload) {

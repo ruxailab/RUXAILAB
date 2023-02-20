@@ -267,8 +267,7 @@ export default {
         async getTestsAdminByUser({ commit, rootState }) {
             try {
                 commit("setLoading", true);
-                const res = rootState.Auth.user.myTests
-                commit("SET_TESTS", res);
+                commit("SET_TESTS", rootState.Auth.user.myTests);
             } catch (e) {
                 console.error("Error in get tests by admin", e);
                 commit("setError", true);

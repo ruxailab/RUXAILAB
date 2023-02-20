@@ -11,16 +11,6 @@ export default class Heuristic extends Test {
         this.testStructure = [];
         this.testOptions = [];
         this.testType = "HEURISTICS";
-        let date = new Date();
-        let current_date =
-            date.getFullYear() +
-            "-" +
-            (date.getMonth() + 1) +
-            "-" +
-            date.getDate();
-        let current_time =
-            date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        this.creationDate = current_date + " - " + current_time;
     }
 
     toFirestore() {
@@ -29,7 +19,8 @@ export default class Heuristic extends Test {
             testType: this.testType,
             testStructure: [],
             testOptions: [],
-            testAdmin: this.testAdmin
+            testAdmin: this.testAdmin,
+            updateDate: Date.now()
         });
     }
     static toHeuristicTest(data) {

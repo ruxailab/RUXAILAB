@@ -11,18 +11,18 @@ import {
 export default class AuthController {
     //Register new users
 
-    async authSingUp(email, password) {
+    async authSignUp(email, password) {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 return user;
             })
-            .catch(console.error("Error in SingUp"));
+            .catch(console.error("Error in SignUp"));
     }
 
     //SignIn
 
-    async authSingIn(email, password) {
+    async authSignIn(email, password) {
         return signInWithEmailAndPassword(auth, email, password).then(
             (userCredential) => {
                 const user = userCredential.user;
