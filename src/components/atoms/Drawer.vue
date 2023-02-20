@@ -140,7 +140,8 @@ export default {
   }),
   methods: {
     async changeTest(testName) {
-      const testId = this.testsList.find((t) => t.testTitle === testName)?.testDocId
+      const testId = this.testsList.find((t) => t.testTitle === testName)
+        ?.testDocId;
       await this.$store.dispatch("getTest", { id: testId });
       this.$router.replace({ name: "ManagerView", params: { id: testId } });
     },
@@ -196,12 +197,18 @@ export default {
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
-          {
+        ];
+        
+        if (this.userAccessLevelOnTest <= 2) {
+          items.push({
             title: "Preview",
             icon: "mdi-file-eye",
             path: `/testview/${this.test.id}`,
             id: 2,
-          },
+          });
+        }
+
+        items.push(
           {
             title: "Reports",
             icon: "mdi-book-multiple",
@@ -219,8 +226,8 @@ export default {
             icon: "mdi-chart-bar",
             path: `/analyticsview/${this.test.answers}`,
             id: 5,
-          },
-        ];
+          }
+        );
 
         if (this.userAccessLevelOnTest == 0) {
           items.push({

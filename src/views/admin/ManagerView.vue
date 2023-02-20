@@ -454,7 +454,7 @@ export default {
         }
       }
 
-      return 1; // return guest as default
+      return 3;
     },
   },
 

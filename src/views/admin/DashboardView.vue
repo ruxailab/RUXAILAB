@@ -297,7 +297,7 @@ export default {
           }
         } else if (this.subIndex === 2) {
           this.$router.push({
-            name: "TestView",
+            name: "ManagerView",
             params: { id: test.id },
           });
         }
