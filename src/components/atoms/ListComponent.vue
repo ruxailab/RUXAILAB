@@ -33,7 +33,7 @@
                 Me
               </strong>
               <strong v-else>{{
-                item.testAdmin ? item.testAdmin.email : item.testAuthorName
+                item.testAdmin ? item.testAdmin.email : item.testAuthorEmail
               }}</strong>
               on
               <strong>{{ item.creationDate }}</strong>

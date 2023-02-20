@@ -300,7 +300,6 @@ export default {
         if (!coop.id) {
           this.cooperatorsEdit.push({
             userDocId: null,
-            userName: "",
             email: coop,
             invited: true,
             accepted: false,
@@ -308,12 +307,12 @@ export default {
             token: token,
             progress: 0,
             answerStatus: "",
-            updateDate: "",
+            updateDate: this.test.updateDate,
+            testAuthorEmail: this.test.testAdmin.email,
           });
         } else {
           this.cooperatorsEdit.push({
             userDocId: coop.id,
-            userName: "",
             email: coop.email,
             invited: true,
             accepted: false,
@@ -321,7 +320,8 @@ export default {
             token: token,
             progress: 0,
             answerStatus: "",
-            updateDate: "",
+            updateDate: this.test.updateDate,
+            testAuthorEmail: this.test.testAdmin.email,
           });
         }
       });
@@ -403,83 +403,9 @@ export default {
 
         await this.$store.dispatch("updateTest", this.test);
       }
-      //   this.$store
-      //     .dispatch("removeCooperator", {
-      //       docId: this.id,
-      //       element: {
-      //         id: guest.id,
-      //       },
-      //     })
-      //     .then(() => {
-      //       if (guest.id) {
-      //         this.$store.dispatch("removeNotification", {
-      //           docId: guest.id,
-      //           element: { id: guest.invitation },
-      //         });
-      //       }
-      //       if (guest.accessLevel.value >= 2 && guest.id) {
-      //         this.$store.dispatch("removeReport", {
-      //           docId: this.test.reports,
-      //           element: {
-      //             id: guest.id,
-      //           },
-      //           param: "reports",
-      //         });
-      //       }
-      //     });
-      //   this.cooperatorsEdit.splice(this.cooperatorsEdit.indexOf(guest), 1);
-
-      //   //update nCoops
-      //   this.$store.dispatch("updateMyTest", {
-      //     docId: this.test.admin.id,
-      //     element: {
-      //       accessLevel: 0,
-      //       answers: this.test.answers,
-      //       cooperators: this.test.cooperators,
-      //       date: this.test.date,
-      //       id: this.test.id,
-      //       reports: this.test.reports,
-      //       title: this.test.title,
-      //       type: this.test.type,
-      //       nCoops: this.cooperatorsEdit.length,
-      //     },
-      //   });
     },
   },
   watch: {
-    // cooperators: async function() {
-    //   if (this.cooperators !== null && this.cooperators !== undefined) {
-    //     this.cooperatorsEdit = Array.from(this.cooperators.cooperators);
-    //     if (!this.$store.test) {
-    //       await this.$store.dispatch("getTest", {
-    //         id: this.cooperators.test.id,
-    //       });
-    //     }
-
-    //     let isOwner =
-    //       this.user.myTests.find((test) => test.cooperators == this.id) ==
-    //       undefined
-    //         ? false
-    //         : true;
-
-    //     let hasAccess = false;
-    //     if (!isOwner) {
-    //       hasAccess =
-    //         this.cooperators.cooperators.find(
-    //           (coop) =>
-    //             coop.email == this.user.email && coop.accessLevel.value == 0
-    //         ) == undefined
-    //           ? false
-    //           : true;
-    //     }
-
-    //     // grant access if user is superadmin
-    //     if (this.user?.accessLevel == 0) hasAccess = true;
-
-    //     if (hasAccess || isOwner) this.showCoops = true;
-    //     this.verified = true;
-    //   }
-    // },
     loading() {
       if (!this.loading) {
         if (this.cooperatorsEdit.length == 0) this.intro = true;

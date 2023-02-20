@@ -49,25 +49,6 @@ export default {
       return docId;
     },
     /**
-     * This action obtains the cooperator's document, 
-     * using the generic action   getObject,
-     * passing the cooperator's data
-     * 
-     * @action getCooperators=setCooperators
-     * @param {object} payload - cooperator data
-     * @param {string} payload.id - cooperator document identification
-     * @returns {void}
-     */
-    async getCooperators({ dispatch, commit }, payload) {
-      commit("setLoading", true)
-      payload = Object.assign(payload, { collection: "cooperators" });
-
-      let coop = await dispatch("getObject", payload)
-        .catch((err) => commit("setError", "Error in getCooperators." + err));
-
-      commit("setCooperators", coop);
-    },
-    /**
      * This action invite a new cooperator to document,
      * using the generic action   pushObject, passing the cooperator data
      * 
