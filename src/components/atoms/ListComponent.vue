@@ -61,11 +61,11 @@
               <v-tooltip top v-else-if="type === 'sharedWithMe'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-row v-bind="attrs" v-on="on">
-                    <div class="caption">{{ item.testProgress }}%</div>
+                    <div class="caption">{{ item.progress }}%</div>
 
                     <v-progress-circular
                       rotate="-90"
-                      :value="item.testProgress"
+                      :value="item.progress"
                       color="grey darken-1"
                       :size="20"
                       class="ml-1"
