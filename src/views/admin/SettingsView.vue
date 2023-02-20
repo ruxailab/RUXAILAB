@@ -177,10 +177,10 @@ export default {
     AccessNotAllowed,
   },
   data: () => ({
-    template:{
-      title:'',
-      description:'',
-      isPublic:false
+    template: {
+      title: "",
+      description: "",
+      isPublic: false,
     },
     object: null,
     change: false,
@@ -206,9 +206,6 @@ export default {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
-      await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
-      });
 
       delete this.object.id;
 
@@ -228,7 +225,7 @@ export default {
             element = Object.assign(element, {
               template: this.object.template,
             });
-          else if("template" in this.myObject) {
+          else if ("template" in this.myObject) {
             delete element.template;
           }
 
@@ -322,36 +319,31 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
-      await this.$store.dispatch("deleteTest", item)
-      this.$router.push({name:'TestList'})
-
+      await this.$store.dispatch("deleteTest", item);
+      this.$router.push({ name: "TestList" });
     },
-    async createTemplate() {  
-      let template = new Template(this.template)
+    async createTemplate() {
+      let template = new Template(this.template);
       if (this.test.testType == "HEURISTICS") {
-        template.testStructure= this.test.testStructure,
-        template.testOptions= this.test.testOptions,
-        template.answersSheet= this.test.answersDocId,
-        template.type= this.test.testType,
-        template.authorDocId= this.$store.getters.user.id
-        template.authorEmail= this.$store.getters.user.email
-        template.creationDate= new Date().toDateString(),
-        template.version = "1.0.0"
-        template.testId = this.test.id
-      }
-      
-      else if (this.test.testType == "User") {
+        (template.testStructure = this.test.testStructure),
+          (template.testOptions = this.test.testOptions),
+          (template.answersSheet = this.test.answersDocId),
+          (template.type = this.test.testType),
+          (template.authorDocId = this.$store.getters.user.id);
+        template.authorEmail = this.$store.getters.user.email;
+        (template.creationDate = new Date().toDateString()),
+          (template.version = "1.0.0");
+        template.testId = this.test.id;
+      } else if (this.test.testType == "User") {
         template = Object.assign(template, {
-        tasks: this.test.tasks,
-        preTest: this.test.preTest,
-        postTest: this.test.postTest,
-        type: this.test.type,
-      })
+          tasks: this.test.tasks,
+          preTest: this.test.preTest,
+          postTest: this.test.postTest,
+          type: this.test.type,
+        });
       }
-      await this.$store.dispatch("createTemplate", template)  
+      await this.$store.dispatch("createTemplate", template);
       //this.submit();
-  
-    
     },
     closeDialog() {
       this.tempDialog = false;
@@ -359,44 +351,14 @@ export default {
       this.templateTitle = "";
       this.templateDescription = "";
     },
-    setLeavingAlert(){
-      this.$store.commit('SET_DIALOG_LEAVE',true)
-    }
+    setLeavingAlert() {
+      this.$store.commit("SET_DIALOG_LEAVE", true);
+    },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
-        if (
-          this.cooperators == [] ||
-          this.cooperators.id !== this.test.cooperators
-        )
-          this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
-          });
-      }
-    },
-    cooperators: async function () {
-      if (this.cooperators !== null && this.cooperators !== {}) {
-        let isOwner =
-          this.user.myTests.find((test) => test.id == this.id) == undefined
-            ? false
-            : true;
-        let hasAccess = false;
-        if (!isOwner)
-          hasAccess =
-            this.cooperators.cooperators.find(
-              (coop) =>
-                coop.email == this.user.email && coop.accessLevel.value == 0
-            ) == undefined
-              ? false
-              : true;
-
-        // grant access if user is superadmin
-        if(this.user?.accessLevel == 0) hasAccess = true;
-
-        if (hasAccess || isOwner) this.showSettings = true;
-        this.loadingPage = false;
       }
     },
   },
@@ -445,24 +407,19 @@ export default {
       return null;
     },
   },
-  created() {
+  async created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      this.$store.dispatch("getTest", { id: this.id }).then(() => {
-        this.$store.dispatch("getCooperators", {
-          id: this.test.cooperators,
-        });
-      });
+      await this.$store.dispatch("getTest", { id: this.id });
     }
   },
 
   beforeRouteLeave(to, from, next) {
     if (this.$store.getters.localChanges) {
-      this.$store.commit('SET_DIALOG_LEAVE', true)
-      this.$store.commit('SET_PATH_TO',to.name)
+      this.$store.commit("SET_DIALOG_LEAVE", true);
+      this.$store.commit("SET_PATH_TO", to.name);
     } else {
       next();
     }
-    
   },
   beforeMount() {
     window.addEventListener("beforeunload", this.preventNav);

@@ -14,14 +14,14 @@
             <!-- Title -->
             <v-list-item-title v-if="type === 'template'">
               <!-- {{ item.testType }} -->
-              <v-chip outlined style="color: grey" small class="ml-1">{{
+              <v-chip label outlined style="color: grey" small class="ml-1">{{
                 item.header.type || item.body.type
               }}</v-chip>
             </v-list-item-title>
             <v-list-item-title v-else>
               {{ item.testTitle }}
               <!-- Tales -->
-              <v-chip outlined style="color: grey" small class="ml-1">{{
+              <v-chip label outlined style="color: grey" small class="ml-1">{{
                 item.testType
               }}</v-chip>
             </v-list-item-title>
@@ -35,8 +35,6 @@
               <strong v-else>{{
                 item.testAdmin ? item.testAdmin.email : item.testAuthorEmail
               }}</strong>
-              on
-              <strong>{{ item.creationDate }}</strong>
             </v-list-item-subtitle>
             <div
               class="hidden-sm-and-down"
@@ -81,8 +79,20 @@
 
           <!-- Actions -->
           <v-list-item-action class="hidden-sm-and-down">
+            <v-list-item-action-text
+              v-if="item.accessLevel != null && item.accessLevel != undefined"
+            >
+              <v-chip
+                label
+                outlined
+                class="my-1"
+                :color="getAccessLevelColor(item.accessLevel)"
+                >{{ getAccessLevelText(item.accessLevel) }}</v-chip
+              >
+            </v-list-item-action-text>
             <v-list-item-action-text v-if="item.updateDate"
-              >Last Updated on {{ item.updateDate }}</v-list-item-action-text
+              >Last Updated on
+              {{ getFormattedDate(item.updateDate) }}</v-list-item-action-text
             >
             <v-list-item-action-text v-if="type === 'template'">
               <v-chip outlined small class="ml-1"
@@ -149,6 +159,24 @@ export default {
   },
   data: () => ({}),
   methods: {
+    getFormattedDate(date) {
+      const d = new Date(date);
+      return d.toLocaleString();
+    },
+    getAccessLevelText(accessLevel) {
+      return accessLevel === 0
+        ? "Administrator"
+        : accessLevel === 1
+        ? "Evaluator"
+        : "Guest";
+    },
+    getAccessLevelColor(accessLevel) {
+      return accessLevel === 0
+        ? "primary"
+        : accessLevel === 1
+        ? "secondary"
+        : "warning";
+    },
     generateColor() {
       let hue = Math.floor(Math.random() * 360);
       let color = "hsl(" + hue + ", 80%, 80%)";
