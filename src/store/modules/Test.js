@@ -225,10 +225,9 @@ export default {
         },
 
         async getAllTests({ commit }) {
-            commit("setLoading", true);
-
             //Connect to controllers
             try {
+                commit("setLoading", true);
                 const res = await testController.getAllTests();
                 commit("SET_TESTS", res);
             } catch {
@@ -239,13 +238,39 @@ export default {
             }
         },
 
-        async getTestsByAdminId({ commit }, payload) {
+        async getSharedWithMeTests({ commit, rootState }) {
             try {
                 commit("setLoading", true);
-                const res = await testController.getTestsByAdminId(payload);
+                const res = rootState.Auth.user.myAnswers
                 commit("SET_TESTS", res);
             } catch (e) {
-                console.error("Error in gettestsbyadminid", e);
+                console.log("Error in get public tests", e);
+                commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+
+        async getPublicTests({ commit }) {
+            try {
+                commit("setLoading", true);
+                const res = await testController.getPublicTests()
+                commit("SET_TESTS", res);
+            } catch {
+                console.log("Error in get public tests");
+                commit("setError", true);
+            } finally {
+                commit("setLoading", false);
+            }
+        },
+
+        async getTestsAdminByUser({ commit, rootState }) {
+            try {
+                commit("setLoading", true);
+                const res = rootState.Auth.user.myTests
+                commit("SET_TESTS", res);
+            } catch (e) {
+                console.error("Error in get tests by admin", e);
                 commit("setError", true);
             } finally {
                 commit("setLoading", false);
