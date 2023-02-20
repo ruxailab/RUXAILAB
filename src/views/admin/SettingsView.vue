@@ -166,6 +166,7 @@ import ShowInfo from "@/components/organisms/ShowInfo";
 import LeaveAlert from "@/components/atoms/LeaveAlert";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
 import Template from "@/models/Template";
+import Test from "@/models/Test";
 
 export default {
   props: ["id"],
@@ -183,7 +184,6 @@ export default {
       isPublic: false,
     },
     object: null,
-    change: false,
     valids: [false, true, true],
     dialogAlert: false,
     dialogDel: false,
@@ -204,114 +204,104 @@ export default {
       this.valids[index] = valid;
     },
     async submit() {
-      await this.$store.dispatch("getAnswers", { id: this.test.answers });
-      await this.$store.dispatch("getReports", { id: this.test.reports });
-
-      delete this.object.id;
-
-      this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object,
-        })
-        .then(() => {
-          let element = this.myObject;
-
-          //update attributes
-          element.title = this.object.title;
-          element.description = this.object.description;
-
-          if ("template" in this.object)
-            element = Object.assign(element, {
-              template: this.object.template,
-            });
-          else if ("template" in this.myObject) {
-            delete element.template;
-          }
-
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: element,
-          });
-
-          this.cooperators.cooperators.forEach((coop) => {
-            let isAdmin = coop.accessLevel.value <= 1;
-            if (isAdmin) {
-              element = Object.assign(
-                {},
-                {
-                  id: this.id,
-                  title: this.object.title,
-                  type: this.object.type,
-                  reports: this.object.reports,
-                  answers: this.object.answers,
-                  cooperators: this.object.cooperators,
-                  accessLevel: coop.accessLevel,
-                }
-              );
-            } else {
-              element = Object.assign(
-                {},
-                {
-                  id: this.id,
-                  title: this.object.title,
-                  type: this.object.type,
-                  reports: this.object.reports,
-                  answers: this.object.answers,
-                  cooperators: this.object.cooperators,
-                  accessLevel: coop.accessLevel,
-                  author: this.test.admin.email,
-                  answersSheet: this.test.answersSheet,
-                  date: new Date().toLocaleString("en-Us"),
-                }
-              );
-            }
-
-            if ("template" in this.object && isAdmin)
-              element = Object.assign(element, {
-                template: this.object.template,
-              });
-
-            if (isAdmin)
-              this.$store.dispatch("updateMyCoops", {
-                docId: coop.id,
-                element: element,
-              });
-            else
-              this.$store.dispatch("updateMyAnswers", {
-                docId: coop.id,
-                element: element,
-              });
-          });
-
-          this.answers.test.title = this.object.title;
-          this.reports.test.title = this.object.title;
-          this.cooperators.test.title = this.object.title;
-
-          delete this.answers.id;
-          delete this.reports.id;
-          delete this.cooperators.id;
-          this.$store.dispatch("updateTestAnswer", {
-            docId: this.test.answers,
-            data: this.answers,
-          });
-
-          this.$store.dispatch("updateTestReport", {
-            docId: this.test.reports,
-            data: this.reports,
-          });
-
-          this.$store.dispatch("updateTestCooperators", {
-            docId: this.test.cooperators,
-            data: this.cooperators,
-          });
-
-          this.$store.commit("setSuccess", "Test updated succesfully");
-          this.change = false; //reset change
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+      console.log(this.object);
+      await this.$store.dispatch("updateTest", new Test(this.object));
+      this.$store.commit("SET_LOCAL_CHANGES", false);
+      // await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      // await this.$store.dispatch("getReports", { id: this.test.reports });
+      // delete this.object.id;
+      // this.$store
+      //   .dispatch("updateTest", {
+      //     docId: this.id,
+      //     data: this.object,
+      //   })
+      //   .then(() => {
+      //     let element = this.myObject;
+      //     //update attributes
+      //     element.title = this.object.title;
+      //     element.description = this.object.description;
+      //     if ("template" in this.object)
+      //       element = Object.assign(element, {
+      //         template: this.object.template,
+      //       });
+      //     else if ("template" in this.myObject) {
+      //       delete element.template;
+      //     }
+      //     this.$store.dispatch("updateMyTest", {
+      //       docId: this.object.admin.id,
+      //       element: element,
+      //     });
+      //     this.cooperators.cooperators.forEach((coop) => {
+      //       let isAdmin = coop.accessLevel.value <= 1;
+      //       if (isAdmin) {
+      //         element = Object.assign(
+      //           {},
+      //           {
+      //             id: this.id,
+      //             title: this.object.title,
+      //             type: this.object.type,
+      //             reports: this.object.reports,
+      //             answers: this.object.answers,
+      //             cooperators: this.object.cooperators,
+      //             accessLevel: coop.accessLevel,
+      //           }
+      //         );
+      //       } else {
+      //         element = Object.assign(
+      //           {},
+      //           {
+      //             id: this.id,
+      //             title: this.object.title,
+      //             type: this.object.type,
+      //             reports: this.object.reports,
+      //             answers: this.object.answers,
+      //             cooperators: this.object.cooperators,
+      //             accessLevel: coop.accessLevel,
+      //             author: this.test.admin.email,
+      //             answersSheet: this.test.answersSheet,
+      //             date: new Date().toLocaleString("en-Us"),
+      //           }
+      //         );
+      //       }
+      //       if ("template" in this.object && isAdmin)
+      //         element = Object.assign(element, {
+      //           template: this.object.template,
+      //         });
+      //       if (isAdmin)
+      //         this.$store.dispatch("updateMyCoops", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //       else
+      //         this.$store.dispatch("updateMyAnswers", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //     });
+      //     this.answers.test.title = this.object.title;
+      //     this.reports.test.title = this.object.title;
+      //     this.cooperators.test.title = this.object.title;
+      //     delete this.answers.id;
+      //     delete this.reports.id;
+      //     delete this.cooperators.id;
+      //     this.$store.dispatch("updateTestAnswer", {
+      //       docId: this.test.answers,
+      //       data: this.answers,
+      //     });
+      //     this.$store.dispatch("updateTestReport", {
+      //       docId: this.test.reports,
+      //       data: this.reports,
+      //     });
+      //     this.$store.dispatch("updateTestCooperators", {
+      //       docId: this.test.cooperators,
+      //       data: this.cooperators,
+      //     });
+      //     this.$store.commit("setSuccess", "Test updated succesfully");
+      //     this.change = false; //reset change
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("setError", err);
+      //   });
     },
     preventNav(event) {
       if (!this.change) return;
@@ -343,7 +333,6 @@ export default {
         });
       }
       await this.$store.dispatch("createTemplate", template);
-      //this.submit();
     },
     closeDialog() {
       this.tempDialog = false;
@@ -363,6 +352,9 @@ export default {
     },
   },
   computed: {
+    change() {
+      return this.$store.state.localChanges;
+    },
     test() {
       return this.$store.getters.test;
     },
