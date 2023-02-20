@@ -41,6 +41,7 @@
           @click="validateAll()"
           v-bind="attrs"
           v-on="on"
+          style="z-index:100"
         >
           <v-icon large>mdi-content-save</v-icon>
         </v-btn>
