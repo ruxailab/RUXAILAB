@@ -242,7 +242,13 @@ export default {
             try {
                 commit("setLoading", true);
                 const res = rootState.Auth.user.myAnswers
-                commit("SET_TESTS", res);
+                const tests = []
+
+                const testsEntries = Object.entries(res);
+                testsEntries.forEach((a) => {
+                    tests.push(a[1]);
+                });
+                commit("SET_TESTS", tests);
             } catch (e) {
                 console.log("Error in get public tests", e);
                 commit("setError", true);
@@ -267,7 +273,13 @@ export default {
         async getTestsAdminByUser({ commit, rootState }) {
             try {
                 commit("setLoading", true);
-                commit("SET_TESTS", rootState.Auth.user.myTests);
+                const tests = []
+
+                const testsEntries = Object.entries(rootState.Auth.user.myTests);
+                testsEntries.forEach((a) => {
+                    tests.push(a[1]);
+                });
+                commit("SET_TESTS", tests);
             } catch (e) {
                 console.error("Error in get tests by admin", e);
                 commit("setError", true);
