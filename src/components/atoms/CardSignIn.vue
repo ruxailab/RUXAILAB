@@ -60,7 +60,7 @@ export default {
     methods: {
         async onSignIn() {
             const authC = new AuthController();
-            await authC.authSingIn(this.email, this.password);
+            await authC.authSignIn(this.email, this.password);
             // await this.$store
             //   .dispatch("signin", {
             //     email: this.email,

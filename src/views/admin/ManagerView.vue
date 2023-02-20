@@ -273,13 +273,11 @@ export default {
             }
             //User invited and he doesn't have account
             else {
-              alert(
-                "User needs to signup using same e-mail of invitation"
-              );
-              await this.$store.dispatch('logout')
+              alert("User needs to signup using same e-mail of invitation");
+              await this.$store.dispatch("logout");
             }
           } else {
-            alert('Invalid Invitation')
+            alert("Invalid Invitation");
             this.$store.commit("setError", "Invalid invitation");
           }
         } else {
@@ -442,9 +440,7 @@ export default {
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
         if (isTestOwner) return 0;
 
-        const isCooperator = this.user.myAnswers.find(
-          (a) => a.testDocId === this.test.id
-        );
+        const isCooperator = this.user.myAnswers.find((a) => a.testDocId === this.test.id);
         if (isCooperator) {
           return isCooperator.accessLevel;
         }
