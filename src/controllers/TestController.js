@@ -34,11 +34,12 @@ export default class TestController extends Controller {
     }
 
     async acceptTestCollaboration(payload) {
+        console.log(payload)
         const userAnswer = new UserAnswer({
             answerDocId: payload.test.answersDocId,
             accessLevel: payload.cooperator.accessLevel,
             progress: 0,
-            testAuthorName: '',
+            testAuthorEmail: payload.test.testAdmin.email,
             testDocId: payload.test.id,
             testType: payload.test.testType,
             testTitle: payload.test.testTitle,
@@ -76,7 +77,6 @@ export default class TestController extends Controller {
         return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
     }
 
-    //GetObject of Test
     async getAllTests() {
         return await super
             .readAll("tests")
