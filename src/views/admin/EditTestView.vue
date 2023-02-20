@@ -260,7 +260,7 @@ export default {
         }
       }
 
-      return 1; // return guest as default
+      return 3;
     },
     loading() {
       return this.$store.getters.loading;
