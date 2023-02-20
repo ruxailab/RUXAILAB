@@ -252,10 +252,13 @@ export default {
     },
     async setTest() {
       if (this.user.myAnswers && this.test) {
+        const answers = [];
+        const answersEntries = Object.entries(this.user.myAnswers);
+        answersEntries.forEach((a) => {
+          answers.push(a[1]);
+        });
         // Check if test has already been accepted by user
-        let alreadyAccepted = this.user.myAnswers.find(
-          (a) => a.testDocId == this.test.id
-        );
+        let alreadyAccepted = answers.find((a) => a.testDocId == this.test.id);
         if (!alreadyAccepted) {
           //Get invitation
           let invitation = this.test.cooperators.find(
@@ -439,8 +442,13 @@ export default {
         // Check if user is collaborator or owner
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
         if (isTestOwner) return 0;
+        const answers = [];
+        const answersEntries = Object.entries(this.user.myAnswers);
+        answersEntries.forEach((a) => {
+          answers.push(a[1]);
+        });
 
-        const isCooperator = this.user.myAnswers.find((a) => a.testDocId === this.test.id);
+        const isCooperator = answers.find((a) => a.testDocId === this.test.id);
         if (isCooperator) {
           return isCooperator.accessLevel;
         }
