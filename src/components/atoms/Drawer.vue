@@ -18,13 +18,12 @@
               class="pa-0 ma-0"
               dark
               dense
-              v-model="selectedTest"
-              item-value="id"
-              item-text="title"
+              item-text="testTitle"
               :items="testsList"
               :label="test.testTitle"
               background-color="#343344"
               style="max-width: 240px"
+              @change="changeTest"
             ></v-overflow-btn>
           </v-col>
         </v-row>
@@ -42,14 +41,19 @@
               v-on="on"
             >
               <v-list-item-icon>
-                <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">{{
-                  item.icon
-                }}</v-icon>
+                <v-icon
+                  :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
+                  >{{ item.icon }}</v-icon
+                >
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
-                  :style="currentIndexSelect == item.id ? 'color: #fca326' : 'color:#bababa'"
+                  :style="
+                    currentIndexSelect == item.id
+                      ? 'color: #fca326'
+                      : 'color:#bababa'
+                  "
                   >{{ item.title }}</v-list-item-title
                 >
               </v-list-item-content>
@@ -66,14 +70,19 @@
           @click="(currentIndexSelect = n), go(item)"
         >
           <v-list-item-icon>
-            <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">{{
-              item.icon
-            }}</v-icon>
+            <v-icon
+              :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
+              >{{ item.icon }}</v-icon
+            >
           </v-list-item-icon>
 
           <v-list-item-content>
             <v-list-item-title
-              :style="currentIndexSelect == item.id ? 'color: #fca326' : 'color:#bababa'"
+              :style="
+                currentIndexSelect == item.id
+                  ? 'color: #fca326'
+                  : 'color:#bababa'
+              "
               >{{ item.title }}</v-list-item-title
             >
           </v-list-item-content>
@@ -127,10 +136,14 @@ export default {
   data: () => ({
     drawer: true,
     mini: true,
-    selectedTest: null,
     isSettingsBtnActive: false,
   }),
   methods: {
+    async changeTest(testName) {
+      const testId = this.testsList.find((t) => t.testTitle === testName)?.testDocId
+      await this.$store.dispatch("getTest", { id: testId });
+      this.$router.replace({ name: "ManagerView", params: { id: testId } });
+    },
     go(item) {
       if (item.id == undefined) this.$router.push(item).catch(() => {});
       else {
@@ -144,8 +157,13 @@ export default {
       return this.$store.state.Tests.Test;
     },
     testsList() {
-      if (!this.isCoops) return this.$store.getters.user.myTests;
-      else return this.$store.getters.user.myCoops;
+      const tests = [];
+
+      const testsEntries = Object.entries(this.$store.getters.user.myTests);
+      testsEntries.forEach((a) => {
+        tests.push(a[1]);
+      });
+      return tests;
     },
     currentIndexSelect: {
       get() {

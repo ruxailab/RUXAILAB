@@ -27,6 +27,7 @@ export default class Test {
         updateDate,
         templateDoc,
         numberColaborators,
+        isPublic,
     } = {}) {
         this.id = id ?? null;
         this.testAdmin = testAdmin ?? null;
@@ -40,7 +41,8 @@ export default class Test {
         this.creationDate = creationDate ?? null;
         this.updateDate = updateDate ?? null;
         this.templateDoc = templateDoc ?? null;
-        this.numberColaborators = numberColaborators ?? 0
+        this.numberColaborators = numberColaborators ?? 0;
+        this.isPublic = isPublic ?? false
     }
     static toTest(data) {
         return new Test(data);
@@ -58,7 +60,8 @@ export default class Test {
             creationDate: this.creationDate,
             updateDate: this.updateDate,
             templateDoc: this.templateDoc,
-            numberColaborators: this.numberColaborators ?? 0
+            numberColaborators: this.numberColaborators,
+            isPublic: this.isPublic
         };
     }
 }
