@@ -10,7 +10,7 @@ exports.onTestCreate = functions.firestore.document('tests/{docId}').onCreate(as
   const test = snap.data()
 
   return await admin.firestore().collection('users').doc(userId).update({
-    myTest: admin.firestore.FieldValue.arrayUnion({
+    myTests: admin.firestore.FieldValue.arrayUnion({
       testDocId: snap.id,
       testTitle: test.testTitle,
       testType: test.testType,
@@ -19,10 +19,9 @@ exports.onTestCreate = functions.firestore.document('tests/{docId}').onCreate(as
       isComplete: false,
       testProgress: 0,
       creationDate: test.creationDate ?? null,
-      upateDate: test.upateDate ?? null
+      updateDate: test.updateDate ?? Date.now(),
     })
   })
-
 })
 
 exports.processSignUp = functions.auth.user().onCreate(async (user) => {

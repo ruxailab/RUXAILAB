@@ -1,7 +1,8 @@
 <template>
   <v-container style="display: contents">
     <Snackbar />
-    {{ tests }}
+
+    <!-- CREATE TEST BTN -->
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -12,7 +13,7 @@
           bottom
           right
           color="#F9A826"
-          @click="pushCreate()"
+          @click="goToCreateTestRoute()"
           v-bind="attrs"
           v-on="on"
         >
@@ -22,9 +23,11 @@
       <span>Create new test</span>
     </v-tooltip>
 
+    <!-- LOADING -->
     <v-overlay v-model="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
@@ -58,7 +61,7 @@
           >
             <v-tab>Tests</v-tab>
             <!-- <v-tab>Answers</v-tab>-->
-            <!--<v-tab>Templates</v-tab> -->
+            <v-tab>Templates</v-tab>
 
             <v-spacer></v-spacer>
 
@@ -83,9 +86,9 @@
             class="hidden-sm-and-down"
             v-if="mainIndex !== 2"
           >
-            <v-tab>All</v-tab>
-            <!-- <v-tab>Personal</v-tab>-->
-            <!-- <v-tab>Others</v-tab>-->
+            <v-tab>My tests</v-tab>
+            <v-tab>Shared with me</v-tab>
+            <v-tab>Public tests</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
@@ -133,25 +136,30 @@
             v-else
           ></v-select>
 
-          <!-- Tests -> All -->
-          <List @clicked="goTo" :items="filteredTests" type="myCoops"></List>
+          <!-- Tests -> Personal  -->
+          <List
+            @clicked="goTo"
+            v-if="mainIndex == 0 && subIndex == 0"
+            :items="filteredTests"
+            type="myTests"
+          ></List>
 
-          <!-- Tests -> Personal 
+          <!-- Tests -> Others  -->
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredMyTests"
-            type="myTests"
+            :items="filteredTests"
+            type="sharedWithMe"
           ></List>
--->
-          <!-- Tests -> Others 
+
+          <!-- Tests -> Public Tests -->
           <List
+            v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
             @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 2"
-            :items="filteredMyCoops"
-            type="myCoops"
+            :items="filteredTests"
+            type="publicTests"
           ></List>
--->
+
           <!-- Answers -> All 
           <List
             @clicked="goTo"
@@ -250,8 +258,20 @@ export default {
     temp: {},
   }),
   methods: {
-    pushCreate() {
-      this.$router.push("/createtest").catch(() => {});
+    async getMyPersonalTests() {
+      await this.$store.dispatch("getTestsAdminByUser");
+    },
+    async getPublicTests() {
+      await this.$store.dispatch("getPublicTests");
+    },
+    async getPublicTemplates() {
+      await this.$store.dispatch("getPublicTemplates");
+    },
+    async getSharedWithMeTests() {
+      await this.$store.dispatch("getSharedWithMeTests", this.user.id);
+    },
+    goToCreateTestRoute() {
+      this.$router.push("/createtest");
     },
     goTo(test) {
       this.$router
@@ -318,91 +338,7 @@ export default {
 
       return arr ?? this.tests;
     },
-    filteredMyTests() {
-      /*
-      if (this.user)
-        return (
-          this.user.myTests.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-      */
-      return this.tests;
-    },
-    filteredMyCoops() {
-      /*
-      if (this.user)
-        return (
-          this.user.myCoops.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-        */
-      return this.tests;
-    },
-    filteredMyAnswers() {
-      /*
-      if (this.user)
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-        */
-      return this.tests;
-    },
-    personalAnswers() {
-      /*
-      if (this.user) {
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.author == this.user.email;
-          }) || []
-        );
-        
-      }
 
-      return [];
-        */
-      return this.tests;
-    },
-    filteredPersonalAnswers() {
-      /*
-      if (this.user)
-        return (
-          this.personalAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-        */
-      return [];
-    },
-    otherAnswers() {
-      /*
-      if (this.user) {
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.author !== this.user.email;
-          }) || []
-        );
-      }
-*/
-      return [];
-    },
-    filteredOtherAnswers() {
-      /*
-      if (this.user)
-        return (
-          this.otherAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-        */
-      return [];
-    },
     storeTemplates() {
       return this.$store.getters.templates || [];
     },
@@ -441,12 +377,37 @@ export default {
     },
   },
   watch: {
-    mainIndex() {
+    async mainIndex(val) {
       this.subIndex = 0; //reset subIndex when main idex change
+
+      // If it is on tab tests
+      if (val == 0) {
+        await this.getPublicTests();
+      }
+
+      // If it is on tab templates
+      if (val == 1) {
+        await this.getPublicTemplates();
+      }
+    },
+    async subIndex(val) {
+      // If it is on tab tests
+      if (val == 0) {
+        await this.getMyPersonalTests();
+      }
+
+      // If it is on tab templates
+      if (val == 1) {
+        await this.getSharedWithMeTests();
+      }
+
+      if (val == 2) {
+        await this.getPublicTests();
+      }
     },
   },
   async created() {
-    await this.$store.dispatch("getTestsByAdminId", this.user.id);
+    await this.getMyPersonalTests();
   },
 };
 </script>
