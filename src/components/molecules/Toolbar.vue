@@ -232,7 +232,7 @@ export default {
         items.push({
           title: "Cooperators",
           icon: "mdi-account-group",
-          path: `/cooperatorsview/${this.test.cooperators}`,
+          path: `/cooperators/${this.test.cooperators}`,
           id: 6,
         });
       }
@@ -258,12 +258,14 @@ export default {
       return this.$store.getters.test;
     },
     accessLevel() {
+      /*
       let id = this.test?.id;
       
-      if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
+      //if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
       let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
       if (myCoop) return myCoop.accessLevel;
+      */
 
       return 1; //default to 1 -> Guest
     },

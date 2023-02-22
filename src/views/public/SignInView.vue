@@ -91,13 +91,11 @@ export default {
     methods: {
          async onSignIn() {
             try{
-            console.log("chegou no signin");
             await this.$store.dispatch("signin", {
                 email: this.email,
                 password: this.password,
             })
             .then(() => {
-                console.log("fez login")
                 this.$router.push('/testslist').catch(() => {});
                 });
             if (this.user) {

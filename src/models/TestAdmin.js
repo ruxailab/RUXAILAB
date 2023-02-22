@@ -15,4 +15,11 @@ export default class TestAdmin{
     static toTestAdmin(data) {
         return new TestAdmin(data)
     }
+
+    toFirestore() {
+        return {
+            email: this.email,
+            userDocId: this.userDocId
+        }
+    }
 }

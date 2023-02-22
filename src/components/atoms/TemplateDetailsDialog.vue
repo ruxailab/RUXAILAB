@@ -79,14 +79,14 @@ export default {
       if (this.template) {
         let template = this.template.body;
         let type = this.template?.header?.type;
-        if (type == "Heuristics") {
+        if (type == "HEURISTICS") {
           let id = 0;
           let heuristics = template.heuristics;
           let options = template.options;
           if (heuristics) {
             items.push({
               id: id++,
-              name: "Heuristics",
+              name: "HEURISTICS",
               children: heuristics.map((h) => {
                 return {
                   id: id++,

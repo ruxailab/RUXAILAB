@@ -11,27 +11,24 @@ import {
 export default class AuthController {
     //Register new users
 
-    async authSingUp(email, password) {
+    async authSignUp(email, password) {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log("User SingUp: " + user);
                 return user;
             })
-            .catch(console.log("Error in SingUp"));
+            .catch(console.error("Error in SignUp"));
     }
 
     //SignIn
 
-    async authSingIn(email, password) {
+    async authSignIn(email, password) {
         return signInWithEmailAndPassword(auth, email, password).then(
             (userCredential) => {
                 const user = userCredential.user;
-                console.log("User SingIn: " + user);
                 return user;
             }
         );
-        //           .catch(console.log("Error in SingIn"));
     }
 
     //Get Current User
@@ -53,20 +50,4 @@ export default class AuthController {
             console.log("signOut successful");
         });
     }
-
-    //Authentication state and get user data
-
-    // async authGetStateChanged(){
-    //   onAuthStateChanged(auth, (user)=>{
-    //     if(user){
-    //       const uid = user.uid;
-    //       console.log("User is signed in")
-    //       console.log(uid)
-    //       return uid
-    //     }
-    //     else{
-    //       console.log("User is signed out")
-    //     }
-    //   })
-    // }
 }

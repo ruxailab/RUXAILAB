@@ -45,6 +45,7 @@
 import AddOptionBtn from "../atoms/AddOptionBtn";
 
 export default {
+  /*
   props: {
     options: {
       type: Array,
@@ -53,7 +54,7 @@ export default {
         return [];
       },
     },
-  },
+  },*/
   data: () => ({
     headers: [
       {
@@ -120,6 +121,11 @@ export default {
       this.$emit("change");
     },
   },
+  computed:{
+    options(){
+      return this.$store.state.Tests.Test.testOptions
+    }
+  },
   components: {
     AddOptionBtn,
   },
@@ -127,14 +133,4 @@ export default {
 </script>
 
 <style scoped>
-.subtitleView {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
 </style>

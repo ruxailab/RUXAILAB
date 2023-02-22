@@ -2,6 +2,7 @@
   <v-container style="display: contents">
     <Snackbar />
 
+    <!-- CREATE TEST BTN -->
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -12,7 +13,7 @@
           bottom
           right
           color="#F9A826"
-          @click="pushCreate()"
+          @click="goToCreateTestRoute()"
           v-bind="attrs"
           v-on="on"
         >
@@ -22,9 +23,11 @@
       <span>Create new test</span>
     </v-tooltip>
 
+    <!-- LOADING -->
     <v-overlay v-model="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
@@ -57,7 +60,7 @@
             class="hidden-sm-and-down"
           >
             <v-tab>Tests</v-tab>
-            <v-tab>Answers</v-tab>
+            <!-- <v-tab>Answers</v-tab>-->
             <v-tab>Templates</v-tab>
 
             <v-spacer></v-spacer>
@@ -83,15 +86,15 @@
             class="hidden-sm-and-down"
             v-if="mainIndex !== 2"
           >
-            <v-tab>All</v-tab>
-            <v-tab>Personal</v-tab>
-            <v-tab>Others</v-tab>
+            <v-tab>My tests</v-tab>
+            <v-tab>Shared with me</v-tab>
+            <v-tab>Public tests</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
-          <!-- Desktop Templates Sub tabs -->
+          <!-- Desktop Templates Sub tabs
           <v-tabs
             v-model="subIndex"
             background-color="transparent"
@@ -105,7 +108,7 @@
             <v-spacer></v-spacer>
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
-
+ -->
           <!-- Mobile Main Button -->
           <v-select
             dense
@@ -133,63 +136,63 @@
             v-else
           ></v-select>
 
-          <!-- Tests -> All -->
+          <!-- Tests -> Personal  -->
           <List
             @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 0"
-            :items="filteredAllTests"
-            type="myCoops"
-          ></List>
-
-          <!-- Tests -> Personal -->
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredMyTests"
+            :items="filteredTests"
             type="myTests"
           ></List>
 
-          <!-- Tests -> Others -->
+          <!-- Tests -> Others  -->
           <List
             @clicked="goTo"
-            v-if="mainIndex == 0 && subIndex == 2"
-            :items="filteredMyCoops"
-            type="myCoops"
+            v-if="mainIndex == 0 && subIndex == 1"
+            :items="filteredTests"
+            type="sharedWithMe"
           ></List>
 
-          <!-- Answers -> All -->
+          <!-- Tests -> Public Tests -->
+          <List
+            v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
+            @clicked="goTo"
+            :items="filteredTests"
+            type="publicTests"
+          ></List>
+
+          <!-- Answers -> All 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 0"
             :items="filteredMyAnswers"
             type="answers"
           ></List>
-
-          <!-- Answers -> Personal -->
+-->
+          <!-- Answers -> Personal 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 1"
             :items="filteredPersonalAnswers"
             type="answers"
           ></List>
-
-          <!-- Answers -> Ohters -->
+-->
+          <!-- Answers -> Ohters 
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 2"
             :items="filteredOtherAnswers"
             type="answers"
           ></List>
-
-          <!-- Templates -> Personal -->
+-->
+          <!-- Templates -> Personal 
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 0"
             :items="filteredMyTemps"
             type="template"
           ></List>
-
-          <!-- Templates -> Explore -->
+-->
+          <!-- Templates -> Explore
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 1"
@@ -201,6 +204,7 @@
             @previousPage="previousPage()"
             :disablePrevious="disablePrevious"
           ></List>
+           -->
         </v-col>
       </v-row>
 
@@ -254,15 +258,50 @@ export default {
     temp: {},
   }),
   methods: {
-    pushCreate() {
-      this.$router.push("/createtest").catch(() => {});
+    async getMyPersonalTests() {
+      await this.$store.dispatch("getTestsAdminByUser");
+    },
+    async getPublicTests() {
+      await this.$store.dispatch("getPublicTests");
+    },
+    async getPublicTemplates() {
+      await this.$store.dispatch("getPublicTemplates");
+    },
+    async getSharedWithMeTests() {
+      await this.$store.dispatch("getSharedWithMeTests", this.user.id);
+    },
+    goToCreateTestRoute() {
+      this.$router.push("/createtest");
     },
     goTo(test) {
-      this.$router
-        .push(
-          (test.accessLevel <= 1 ? "/managerview/" : "/testview/") + test.id
-        )
-        .catch(() => {});
+      // if it is from the my tests tab
+      if (this.mainIndex === 0) {
+        if (this.subIndex === 0) {
+          this.$router.push({
+            name: "ManagerView",
+            params: { id: test.testDocId },
+          });
+        }
+        // if it is the shared with me tests
+        else if (this.subIndex === 1) {
+          if (test.accessLevel >= 2) {
+            this.$router.push({
+              name: "TestView",
+              params: { id: test.testDocId },
+            });
+          } else {
+            this.$router.push({
+              name: "ManagerView",
+              params: { id: test.testDocId },
+            });
+          }
+        } else if (this.subIndex === 2) {
+          this.$router.push({
+            name: "ManagerView",
+            params: { id: test.id },
+          });
+        }
+      }
     },
     nextPage() {
       this.page++;
@@ -308,105 +347,19 @@ export default {
     user() {
       return this.$store.getters.user;
     },
-    allTests() {
-      let array = [];
-
-      if (this.user) {
-        this.user.myTests.forEach((test) => {
-          let obj = Object.assign(test, { author: this.user.email });
-          array.push(obj);
-        });
-
-        let hasTest = null;
-
-        if (this.user.myCoops) {
-          this.user.myCoops.forEach((test) => {
-            hasTest = array.find((t) => t.id == test.id);
-
-            if (hasTest == undefined)
-              //if test not added to array
-              array.push(test);
-          });
-        }
-      }
-      return array;
+    tests() {
+      return this.$store.state.Tests.tests;
     },
-    filteredAllTests() {
-      let arr = [];
+    filteredTests() {
+      let arr = null;
 
-      arr = this.allTests.filter((test) => {
-        return test.title.toLowerCase().includes(this.search.toLowerCase());
+      arr = this.tests?.filter((test) => {
+        return test.testTitle.toLowerCase().includes(this.search.toLowerCase());
       });
 
-      return arr;
+      return arr ?? this.tests;
     },
-    filteredMyTests() {
-      if (this.user)
-        return (
-          this.user.myTests.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-    },
-    filteredMyCoops() {
-      if (this.user)
-        return (
-          this.user.myCoops.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-    },
-    filteredMyAnswers() {
-      if (this.user)
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-    },
-    personalAnswers() {
-      if (this.user) {
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.author == this.user.email;
-          }) || []
-        );
-      }
 
-      return [];
-    },
-    filteredPersonalAnswers() {
-      if (this.user)
-        return (
-          this.personalAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-    },
-    otherAnswers() {
-      if (this.user) {
-        return (
-          this.user.myAnswers.filter((test) => {
-            return test.author !== this.user.email;
-          }) || []
-        );
-      }
-
-      return [];
-    },
-    filteredOtherAnswers() {
-      if (this.user)
-        return (
-          this.otherAnswers.filter((test) => {
-            return test.title.toLowerCase().includes(this.search.toLowerCase());
-          }) || []
-        );
-      return [];
-    },
     storeTemplates() {
       return this.$store.getters.templates || [];
     },
@@ -445,19 +398,37 @@ export default {
     },
   },
   watch: {
-    mainIndex() {
+    async mainIndex(val) {
       this.subIndex = 0; //reset subIndex when main idex change
+
+      // If it is on tab tests
+      if (val == 0) {
+        await this.getPublicTests();
+      }
+
+      // If it is on tab templates
+      if (val == 1) {
+        await this.getPublicTemplates();
+      }
+    },
+    async subIndex(val) {
+      // If it is on tab tests
+      if (val == 0) {
+        await this.getMyPersonalTests();
+      }
+
+      // If it is on tab templates
+      if (val == 1) {
+        await this.getSharedWithMeTests();
+      }
+
+      if (val == 2) {
+        await this.getPublicTests();
+      }
     },
   },
-  created() {
-    this.$store
-      .dispatch(
-        "getPaginationTemplates",
-        Object.assign({}, { itemsPerPage: this.itemsPerPage })
-      )
-      .then(() => {
-        this.exploreTemplates.push(...this.paginatedTemps);
-      });
+  async created() {
+    await this.getMyPersonalTests();
   },
 };
 </script>

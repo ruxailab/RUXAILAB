@@ -1,38 +1,63 @@
 <template>
   <div v-if="user.notifications">
-    <v-badge
-      color="red"
-      bottom
-      overlap
-      :content="user.notifications.length"
-      :value="user.notifications.length"
-    >
-      <v-btn
-        v-if="user.notifications.length == 0"
-        small
-        icon
-        @click="openDropdown"
-        class="mr-1"
-      >
-        <v-icon size="20">mdi-bell-outline</v-icon>
-      </v-btn>
+    <v-menu :position-x="x" :position-y="y" absolute offset-y min-width="200">
+      <template v-slot:activator="{ on, attrs }">
+        <v-badge
+          color="red"
+          bottom
+          overlap
+          :content="checkIfHasNewNotifications()"
+          :value="checkIfHasNewNotifications()"
+        >
+          <v-btn
+            v-if="checkIfHasNewNotifications() === 0"
+            small
+            icon
+            class="mr-1"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon size="20">mdi-bell-outline</v-icon>
+          </v-btn>
 
-      <v-btn v-else small icon @click="openDropdown" class="mr-1">
-        <v-icon size="20">mdi-bell-ring</v-icon>
-      </v-btn>
-    </v-badge>
+          <v-btn v-else small icon v-bind="attrs" v-on="on" class="mr-1">
+            <v-icon size="20">mdi-bell-ring</v-icon>
+          </v-btn>
+        </v-badge>
+      </template>
+      <div v-if="user.notifications.length > 0">
+        <v-list
+          v-for="(notification, i) in user.notifications"
+          :key="i"
+          dense
+          class="ma-0 py-1"
+          style="border-radius: 0px !important;"
+        >
+          <v-list-item
+            dense
+            style="font-size: 14px; font: Roboto"
+            class="px-2"
+            @click="goToNotificationRedirect(notification)"
+            :disabled="notification.read"
+          >
+            <v-list-item-content>
+              <v-list-item-title style="font-weight: bold">{{
+                notification.title
+              }}</v-list-item-title>
+              <v-list-item-subtitle>{{
+                notification.description
+              }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-icon v-if="!notification.read">
+              <v-chip x-small color="success" outlined label>NEW!</v-chip>
+            </v-list-item-icon>
+          </v-list-item>
 
-    <v-menu
-      v-model="showMenu"
-      :position-x="x"
-      :position-y="y"
-      absolute
-      max-width="300px"
-      offset-y
-    >
-      <v-list v-if="user.notifications.length > 0" class="menu-scroll">
+          <div class="divider"></div>
+        </v-list>
+      </div>
+      <!-- <v-list v-if="user.notifications.length > 0" class="menu-scroll" two-line>
         <v-list-item
-          @click="nothing()"
           v-for="(notification, n) in user.notifications"
           :key="n"
           style="cursor: default"
@@ -68,7 +93,7 @@
             >
           </v-row>
         </v-list-item>
-      </v-list>
+      </v-list> -->
 
       <v-list v-else>
         <v-list-item>
@@ -84,97 +109,23 @@
 <script>
 export default {
   data: () => ({
-    showMenu: false,
     x: 0,
-    y: 0
+    y: 50,
   }),
   methods: {
-    openDropdown(e) {
-      e.preventDefault();
-      this.showMenu = false;
-      this.x = e.clientX;
-      this.y = e.clientY;
-      this.$nextTick(() => {
-        this.showMenu = true;
+    async goToNotificationRedirect(notification) {
+      // Mark notification as read
+      await this.$store.dispatch("markNotificationAsRead", {
+        notification: notification,
+        user: this.user,
       });
+      // Redirect to notification url
+      this.$router.push(notification.redirectsTo);
     },
-    async acceptNotification(item) {
-      this.$store.dispatch("removeNotification", {
-        docId: this.user.uid,
-        element: item
-      });
-      if (item.to.accessLevel < 2) {
-        // joinTest
-        this.$store.dispatch("pushMyCoops", {
-          docId: this.user.uid,
-          element: Object.assign(item.test, {
-            accessLevel: item.to.accessLevel,
-            date: new Date().toDateString()
-          })
-        });
-      } else {
-        //answer
-        await this.$store.dispatch("getTest", { id: item.test.id });
-        this.$store.dispatch("pushMyAnswers", {
-          docId: this.user.uid,
-          element: Object.assign(item.test, {
-            answersSheet: Object.assign(this.test.answersSheet ? this.test.answersSheet : {}, {
-              submitted: false
-            }),
-            accessLevel: {
-              text: "Evaluator",
-              value: 2
-            },
-            date: new Date().toDateString()
-          })
-        });
-
-        //update log
-        var log = {
-          date: new Date().toLocaleString("en-US"),
-          progress: 0,
-          status: "In progress"
-        };
-        this.$store.dispatch("updateLog", {
-          docId: item.test.reports,
-          elementId: this.user.uid,
-          element: log
-        });
-      }
-      this.$store.dispatch("updateCooperator", {
-        docId: item.test.cooperators,
-        elementId: item.to.id,
-        element: true,
-        param: "accepted"
-      });
+    checkIfHasNewNotifications() {
+      const newNot = this.user.notifications.filter((n) => n.read === false);
+      return newNot.length ?? 0;
     },
-    denyNotification(item) {
-      if (item.to.accessLevel >= 2) {
-        var log = {
-          date: new Date().toLocaleString("en-US"),
-          progress: 0,
-          status: "Denied"
-        };
-        this.$store.dispatch("updateLog", {
-          docId: item.test.reports,
-          elementId: this.user.uid,
-          element: log
-        });
-      }
-      this.$store.dispatch("updateCooperator", {
-        docId: item.test.cooperators,
-        elementId: item.to.id,
-        element: false,
-        param: "accepted"
-      });
-    },
-    removeNotification(notif) {
-      this.$store.dispatch("removeNotification", {
-        docId: this.user.uid,
-        element: notif
-      });
-    },
-    nothing() {} //this function is here for menu styling only
   },
   computed: {
     user() {
@@ -182,31 +133,14 @@ export default {
     },
     test() {
       return this.$store.getters.test;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.menu-scroll {
-  max-height: 400px;
-  overflow: auto;
-}
-/* width */
-.menu-scroll::-webkit-scrollbar {
-  width: 9px;
-}
-/* Track */
-.menu-scroll::-webkit-scrollbar-track {
-  background: none;
-}
-/* Handle */
-.menu-scroll::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
-}
-/* Handle on hover */
-.menu-scroll::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+.divider {
+  background: #c4c4c4 !important;
+  height: 1.5px;
 }
 </style>

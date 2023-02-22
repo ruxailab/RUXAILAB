@@ -8,12 +8,12 @@
         <v-tooltip bottom v-if="!show">
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="show = !show" icon v-bind="attrs" v-on="on">
-              <v-icon :color="comment.com ? '#F9A826' : ''"
+              <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''"
                 >mdi-comment-plus-outline</v-icon
               >
             </v-btn>
           </template>
-          <span v-if="comment.com">Show comment</span>
+          <span v-if="answerHeu.heuristicComment">Show comment</span>
           <span v-else>Add comment</span>
         </v-tooltip>
         <v-tooltip bottom v-else>
@@ -32,10 +32,11 @@
           dense
           auto-grow
           v-if="show"
-          v-model="comment.com"
+          v-model="answerHeu.heuristicComment"
           clearable
           clear-icon="mdi-close"
           label="Comment"
+          @change="updateComment"
         ></v-textarea>
       </v-col>
     </v-row>
@@ -45,7 +46,7 @@
 <script>
 export default {
   props: {
-    comment: {
+    answerHeu: {
       type: Object,
       require: true
     },
@@ -59,6 +60,11 @@ export default {
   watch: {
     heurisIndex() {
       this.show = false; //close comment when changing heuristic
+    }
+  },
+  methods:{
+    updateComment(input) {
+      this.$emit('updateComment', input)
     }
   }
 };

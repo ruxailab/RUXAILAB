@@ -1,9 +1,9 @@
-     /**
-     * Create a Answer.
-     * @param {string} type - The type value.
-     * @param {Object[]} heuristicAnswers  - An array of HeuristicAnswer value.
-     * @param {Object[]} taskAnswers  - An array of TaskAnswer value.
-     */
+/**
+* Create a Answer.
+* @param {string} type - The type value.
+* @param {Object[]} heuristicAnswers  - An array of HeuristicAnswer value.
+* @param {Object[]} taskAnswers  - An array of TaskAnswer value.
+*/
 
 export default class Answer {
     constructor({
@@ -18,5 +18,13 @@ export default class Answer {
     }
     static toAnswer(data) {
         return new Answer(data)
+    }
+
+    toFirestore() {
+        return {
+            type: this.type ?? '',
+            heuristicAnswers: this.heuristicAnswers ?? {},
+            taskAnswers: this.taskAnswers ?? {}
+        }
     }
 }

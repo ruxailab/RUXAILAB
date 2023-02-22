@@ -1,5 +1,5 @@
 import EditTest from "@/views/admin/EditTestView.vue";
-import TestList from "@/views/admin/TestListView.vue";
+import TestList from "@/views/admin/DashboardView.vue";
 import AnswerView from "@/views/admin/AnswerView.vue";
 import ManagerView from "@/views/admin/ManagerView.vue";
 import ReportView from "@/views/admin/ReportView.vue";
@@ -19,56 +19,56 @@ export default [
   },
   {
     path: "/managerview/:id/:token?",
-    name: "Manager View",
+    name: "ManagerView",
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
     children: [
       {
         path: "/reportview/:id",
-        name: "Report View",
+        name: "ReportView",
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
         path: "/answerview/:id",
-        name: "Answer View",
+        name: "AnswerView",
         props: true,
         meta: { authorize: [0, 1] },
         component: AnswerView,
       },
       {
         path: "/edittest/:id",
-        name: "Edit Test",
+        name: "EditTest",
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
         path: "/settingsview/:id",
-        name: "Settings View",
+        name: "SettingsView",
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
-        path: "/cooperatorsview/:id",
-        name: "Cooperators View",
+        path: "/cooperators/:id",
+        name: "CooperatorsView",
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
       },
       {
         path: "/analyticsview/:id/:heuristic?",
-        name: "Analytics View",
+        name: "AnalyticsView",
         props: true,
         meta: { authorize: [0, 1] },
         component: AnalyticsView
       },
       {
         path: "/templateview/:id",
-        name: "Template View",
+        name: "TemplateView",
         props: true,
         meta: { authorize: [0, 1] },
         component: TemplateView

@@ -8,12 +8,12 @@
      * @param {string} testTitle - The testTitle value.
      * @param {string} testDocId - The testDocId value.
      * @param {string} updateDate - The updateDate value.
-     * @param {string} testAuthorName - The testAuthorName value.
+     * @param {string} testAuthorEmail - The testAuthorEmail value.
     */
 
 export default class UserAnswer{
     constructor({
-        answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorName
+        answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorEmail
     } = {}
     ) {
         this.answerDocId = answerDocId;
@@ -24,9 +24,23 @@ export default class UserAnswer{
         this.testTitle = testTitle;
         this.testDocId = testDocId;
         this.updateDate = updateDate;
-        this.testAuthorName = testAuthorName;
+        this.testAuthorEmail = testAuthorEmail;
     }
     static toUserAnswer(data) {
         return new UserAnswer(data)
+    }
+
+    toFirestore() {
+        return {
+            answerDocId: this.answerDocId,
+            accessLevel: this.accessLevel,
+            progress: this.progress,
+            total: this.total,
+            testType: this.testType,
+            testTitle: this.testTitle,
+            testDocId: this.testDocId,
+            updateDate: this.updateDate,
+            testAuthorEmail: this.testAuthorEmail
+        }
     }
 }

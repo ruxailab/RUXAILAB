@@ -1,7 +1,7 @@
 const roleOptionsItems = [
   { text: "Administrator", value: 0 },
-  { text: "Guest", value: 1 },
-  { text: "Evaluator", value: 2 },
+  { text: "Evaluator", value: 1 },
+  { text: "Guest", value: 2 },
 ]
 
 const testListButtonItems = [
