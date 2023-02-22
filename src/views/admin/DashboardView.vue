@@ -159,49 +159,20 @@
             type="publicTests"
           ></List>
 
-          <!-- Answers -> All 
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 1 && subIndex == 0"
-            :items="filteredMyAnswers"
-            type="answers"
-          ></List>
--->
-          <!-- Answers -> Personal 
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 1 && subIndex == 1"
-            :items="filteredPersonalAnswers"
-            type="answers"
-          ></List>
--->
-          <!-- Answers -> Ohters 
-          <List
-            @clicked="goTo"
-            v-if="mainIndex == 1 && subIndex == 2"
-            :items="filteredOtherAnswers"
-            type="answers"
-          ></List>
--->
           <!-- Templates -> Personal -->
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 1 && subIndex == 0"
-            :items="filteredMyTemps"
-            type="template"
+            :items="filteredTemplates"
+            type="myTemplates"
           ></List>
 
-          <!-- Templates -> Explore -->
+          <!-- Templates -> Public Templates -->
           <List
             @clicked="setupTempDialog"
             v-if="mainIndex == 1 && subIndex == 1"
-            :items="showOnExplore"
-            type="template"
-            :hasPagination="true"
-            @nextPage="nextPage()"
-            :disableNext="disableNext"
-            @previousPage="previousPage()"
-            :disablePrevious="disablePrevious"
+            :items="filteredTemplates"
+            type="publicTemplates"
           ></List>
         </v-col>
       </v-row>
@@ -265,6 +236,9 @@ export default {
     async getPublicTemplates() {
       await this.$store.dispatch("getPublicTemplates");
     },
+    async getMyTemplates() {
+      await this.$store.dispatch("getTemplatesOfUser");
+    },
     async getSharedWithMeTests() {
       await this.$store.dispatch("getSharedWithMeTests", this.user.id);
     },
@@ -301,41 +275,41 @@ export default {
         }
       }
     },
-    nextPage() {
-      this.page++;
-      this.disablePrevious = false;
-      if (this.paginatedTemps.length) {
-        //if length == 0 got all templates in database
-        if (this.page > this.lastPage)
-          this.$store
-            .dispatch(
-              "getPaginationTemplates",
-              Object.assign(
-                {},
-                {
-                  itemsPerPage: 2,
-                  last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
-                }
-              )
-            )
-            .then(() => {
-              this.exploreTemplates.push(...this.paginatedTemps);
-              this.lastPage++;
-              if (this.paginatedTemps.length == 0) {
-                this.page--; //no more templates to show, go back one page
-                alert("No more templates to show");
-                this.disableNext = true;
-              }
-            });
-      } else if (this.page == this.lastPage - 1) {
-        this.disableNext = true;
-      }
-    },
-    previousPage() {
-      this.page--;
-      if (this.page <= 1) this.disablePrevious = true;
-      this.disableNext = false;
-    },
+    // nextPage() {
+    //   this.page++;
+    //   this.disablePrevious = false;
+    //   if (this.paginatedTemps.length) {
+    //     //if length == 0 got all templates in database
+    //     if (this.page > this.lastPage)
+    //       this.$store
+    //         .dispatch(
+    //           "getPaginationTemplates",
+    //           Object.assign(
+    //             {},
+    //             {
+    //               itemsPerPage: 2,
+    //               last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
+    //             }
+    //           )
+    //         )
+    //         .then(() => {
+    //           this.exploreTemplates.push(...this.paginatedTemps);
+    //           this.lastPage++;
+    //           if (this.paginatedTemps.length == 0) {
+    //             this.page--; //no more templates to show, go back one page
+    //             alert("No more templates to show");
+    //             this.disableNext = true;
+    //           }
+    //         });
+    //   } else if (this.page == this.lastPage - 1) {
+    //     this.disableNext = true;
+    //   }
+    // },
+    // previousPage() {
+    //   this.page--;
+    //   if (this.page <= 1) this.disablePrevious = true;
+    //   this.disableNext = false;
+    // },
     setupTempDialog(temp) {
       this.temp = Object.assign({}, temp);
       this.tempDialog = true;
@@ -358,58 +332,40 @@ export default {
       return arr ?? this.tests;
     },
 
-    storeTemplates() {
-      return this.$store.getters.templates || [];
+    templates() {
+      return this.$store.state.Templates.templates || [];
     },
-    myTempsHeaders() {
-      return this.user.myTemps.map((temp) => {
-        return {
-          header: temp,
-        };
-      });
-    },
-    filteredMyTemps() {
-      return this.myTempsHeaders.filter((temp) => {
-        return temp.header.title
+    filteredTemplates() {
+      return this.templates.filter((temp) =>
+        temp.header.templateTitle
           .toLowerCase()
-          .includes(this.search.toLowerCase());
-      });
+          .includes(this.search.toLowerCase())
+      );
     },
     loading() {
       return this.$store.getters.loading;
     },
-    paginatedTemps() {
-      return this.$store.getters.paginatedTemps;
-    },
-    showOnExplore() {
-      // let array = [];
-      let temps = null;
-      let start = (this.page - 1) * this.itemsPerPage;
-      let finish = this.page * this.itemsPerPage;
+    // paginatedTemps() {
+    //   return this.$store.getters.paginatedTemps;
+    // },
+    // showOnExplore() {
+    //   // let array = [];
+    //   let temps = null;
+    //   let start = (this.page - 1) * this.itemsPerPage;
+    //   let finish = this.page * this.itemsPerPage;
 
-      temps = this.exploreTemplates.slice(start, finish);
+    //   temps = this.exploreTemplates.slice(start, finish);
 
-      return temps;
-    },
+    //   return temps;
+    // },
     showTempDetails() {
       return !(this.mainIndex == 2 && this.subIndex == 0); //dont show on this tab
     },
   },
   watch: {
     async mainIndex(val) {
-      this.subIndex = 0; //reset subIndex when main idex change
+      this.subIndex = 0; //reset subIndex when main index change
 
-      // If it is on tab tests
-      if (val == 0) {
-        await this.getPublicTests();
-      }
-
-      // If it is on tab templates
-      if (val == 1) {
-        await this.getPublicTemplates();
-      }
-    },
-    async subIndex(val) {
       // If it is on tab tests
       if (val == 0) {
         await this.getMyPersonalTests();
@@ -417,11 +373,32 @@ export default {
 
       // If it is on tab templates
       if (val == 1) {
-        await this.getSharedWithMeTests();
+        await this.getMyTemplates();
       }
+    },
+    async subIndex(val) {
+      if (this.mainIndex == 0) {
+        // If it is on tab tests
+        if (val == 0) {
+          await this.getMyPersonalTests();
+        }
 
-      if (val == 2) {
-        await this.getPublicTests();
+        // If it is on tab templates
+        if (val == 1) {
+          await this.getSharedWithMeTests();
+        }
+
+        if (val == 2) {
+          await this.getPublicTests();
+        }
+      } else if (this.mainIndex == 1) {
+        if (val == 0) {
+          await this.getMyTemplates();
+        }
+
+        if (val == 1) {
+          await this.getPublicTemplates();
+        }
       }
     },
   },

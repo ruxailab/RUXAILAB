@@ -45,6 +45,17 @@ export default {
             } finally {
                 commit('setLoading', false)
             }
+        },
+        async getTemplatesOfUser({ commit, rootState }) {
+            try {
+                commit("setLoading", true);
+                const res = await templateController.getTemplatesOfUser(rootState.Auth.user.id)
+                commit('SET_TEMPLATES', res)
+            } catch (e) {
+                console.error(e)
+            } finally {
+                commit('setLoading', false)
+            }
         }
     }
 }

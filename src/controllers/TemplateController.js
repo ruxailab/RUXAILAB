@@ -20,4 +20,14 @@ export default class TemplateController extends Controller {
     const res = await super.query(COLLECTION, q)
     return res.docs.map((t) => Template.toTemplate(Object.assign({ id: t.id }, t.data())))
   }
+
+  async getTemplatesOfUser(userDocId) {
+    const q = {
+      field: 'header.templateAuthor.userDocId',
+      value: userDocId,
+      condition: '=='
+    }
+    const res = await super.query(COLLECTION, q)
+    return res.docs.map((t) => Template.toTemplate(Object.assign({ id: t.id }, t.data())))
+  }
 }
