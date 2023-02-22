@@ -56,6 +56,16 @@ export default {
             } finally {
                 commit('setLoading', false)
             }
+        },
+        async deleteTemplate({ commit }, payload) {
+            try {
+                commit("setLoading", true);
+                await templateController.deleteTemplate(payload)
+            } catch (e) {
+                console.error(e)
+            } finally {
+                commit('setLoading', false)
+            }
         }
     }
 }

@@ -8,13 +8,14 @@
 
 export default class TemplateBody {
     constructor({
-        testDescription, testTitle, testType, testStructure
+        testDescription, testTitle, testType, testStructure, testOptions,
     } = {}
     ) {
         this.testDescription = testDescription;
         this.testTitle = testTitle;
         this.testType = testType;
         this.testStructure = testStructure;
+        this.testOptions = testOptions;
     }
     static toTemplateBody(data) {
         return new TemplateBody(data)
@@ -24,7 +25,8 @@ export default class TemplateBody {
             testDescription: this.testDescription,
             testTitle: this.testTitle,
             testType: this.testType,
-            testStructure: this.testStructure
+            testStructure: this.testStructure,
+            testOptions: this.testOptions
         }
     }
 }
