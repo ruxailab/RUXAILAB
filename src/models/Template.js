@@ -20,6 +20,7 @@ export default class Template {
     }
     static toTemplate(data) {
         return new Template({
+            id: data.id ?? null,
             body: TemplateBody.toTemplateBody(data.body),
             header: TemplateHeader.toTemplateHeader(data.header)
         })
