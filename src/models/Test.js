@@ -51,7 +51,7 @@ export default class Test {
         return {
             testTitle: this.testTitle,
             testDescription: this.testDescription,
-            testAdmin: this.testAdmin,
+            testAdmin: this.testAdmin.toFirestore(),
             testType: this.testType,
             testStructure: this.testStructure,
             testOptions: this.testOptions,
