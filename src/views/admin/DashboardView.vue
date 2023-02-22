@@ -84,7 +84,7 @@
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex !== 2"
+            v-if="mainIndex === 0"
           >
             <v-tab>My tests</v-tab>
             <v-tab>Shared with me</v-tab>
@@ -94,13 +94,13 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
 
-          <!-- Desktop Templates Sub tabs
+          <!-- Desktop Templates Sub tabs -->
           <v-tabs
             v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex == 2"
+            v-if="mainIndex == 1"
           >
             <v-tab>Personal</v-tab>
             <v-tab>Explore</v-tab>
@@ -108,7 +108,6 @@
             <v-spacer></v-spacer>
           </v-tabs>
           <v-divider class="hidden-sm-and-down"></v-divider>
- -->
           <!-- Mobile Main Button -->
           <v-select
             dense
@@ -184,18 +183,18 @@
             type="answers"
           ></List>
 -->
-          <!-- Templates -> Personal 
+          <!-- Templates -> Personal -->
           <List
             @clicked="setupTempDialog"
-            v-if="mainIndex == 2 && subIndex == 0"
+            v-if="mainIndex == 1 && subIndex == 0"
             :items="filteredMyTemps"
             type="template"
           ></List>
--->
-          <!-- Templates -> Explore
+
+          <!-- Templates -> Explore -->
           <List
             @clicked="setupTempDialog"
-            v-if="mainIndex == 2 && subIndex == 1"
+            v-if="mainIndex == 1 && subIndex == 1"
             :items="showOnExplore"
             type="template"
             :hasPagination="true"
@@ -204,7 +203,6 @@
             @previousPage="previousPage()"
             :disablePrevious="disablePrevious"
           ></List>
-           -->
         </v-col>
       </v-row>
 
