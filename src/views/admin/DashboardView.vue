@@ -181,6 +181,7 @@
         :dialog="tempDialog"
         :showDetails="showTempDetails"
         :template="temp"
+        @reloadTemplates="reloadTemplates()"
         @close="tempDialog = false"
       />
     </div>
@@ -241,6 +242,11 @@ export default {
     },
     async getSharedWithMeTests() {
       await this.$store.dispatch("getSharedWithMeTests", this.user.id);
+    },
+    reloadTemplates() {
+      this.getMyTemplates();
+      this.mainIndex = 1;
+      this.subIndex = 0
     },
     goToCreateTestRoute() {
       this.$router.push("/createtest");
