@@ -4,30 +4,51 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 admin.initializeApp();
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+
+exports.onTestCreate = functions.firestore.document('tests/{docId}').onCreate(async (snap, context) => {
+  const userId = snap.data().testAdmin.userDocId
+  const test = snap.data()
+
+  return await admin.firestore().collection('users').doc(userId).update({
+    [`myTests.${snap.id}`]: {
+      testDocId: snap.id,
+      testTitle: test.testTitle,
+      testType: test.testType,
+      numberColaborators: 0,
+      creationDate: test.creationDate ?? null,
+      updateDate: Date.now(),
+    }
+  })
+})
+
+exports.onTestUpdate = functions.firestore.document('tests/{docId}').onUpdate(async (snap, context) => {
+  const userId = snap.after.data().testAdmin.userDocId
+  const test = snap.after.data()
+
+  return await admin.firestore().collection('users').doc(userId).update({
+    [`myTests.${snap.after.id}`]: {
+      testDocId: snap.after.id,
+      testTitle: test.testTitle,
+      testType: test.testType,
+      numberColaborators: test.numberColaborators ?? 0,
+      creationDate: test.creationDate,
+      updateDate: Date.now(),
+    }
+  })
+})
 
 exports.processSignUp = functions.auth.user().onCreate(async (user) => {
-  const customClaims = {
-    accessLevel: 1,
-  };
   try {
-    await admin.auth().setCustomUserClaims(user.uid, customClaims);
-    admin
+    await admin
       .firestore()
       .collection("users")
       .doc(user.uid)
       .set({
         email: user.email,
-        accessLevel: customClaims.accessLevel,
-        myTests: [],
-        myCoops: [],
-        myAnswers: [],
-        myTemps: [],
+        accessLevel: 1,
+        myTests: {},
+        myAnswers: {},
+        myTemplates: [],
         notifications: [],
       });
   } catch (err) {
@@ -37,9 +58,7 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
 
 exports.setUserRole = functions.https.onCall(async (data) => {
   try {
-    var _ = await admin.auth().setCustomUserClaims(data.uid, data.customClaims);
-
-    return admin
+    return await admin
       .firestore()
       .collection("users")
       .doc(data.uid)
@@ -53,15 +72,9 @@ exports.setUserRole = functions.https.onCall(async (data) => {
 
 exports.deleteAuth = functions.https.onCall(async (data, context) => {
   try {
-    admin
+    return await admin
       .auth()
       .deleteUser(data.id)
-      .then(() => {
-        return;
-      })
-      .catch((err) => console.error(err));
-
-    return 0;
   } catch (err) {
     return err;
   }

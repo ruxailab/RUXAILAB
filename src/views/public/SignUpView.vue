@@ -110,16 +110,14 @@ export default {
   methods: {
 
     onSignUp() {
-      console.log("chegou no login")
-      if (this.valid)
-      console.log("validado")
+      if (this.valid){
         this.$store.dispatch('signup', {
           email: this.email,
           password: this.password
         }).then(() => {
-          console.log("fez login")
           this.$router.push('/testslist').catch(() => {});
         });
+      }
       if (this.user) {
         this.$router.push("/").catch(() => {}).catch(() => {});
       }

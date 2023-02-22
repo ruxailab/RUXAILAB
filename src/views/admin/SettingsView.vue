@@ -1,35 +1,9 @@
 <template>
-  <v-container v-if="test && showSettings">
+  <v-container v-if="true">
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialogAlert" width="600" persistent>
-      <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title
-          >Are you sure you want to leave?</v-card-title
-        >
-
-        <v-card-text
-          >Are you sure you want to leave? All your changes will be
-          discarded.</v-card-text
-        >
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false"
-            >Stay</v-btn
-          >
-          <v-btn
-            class="error accent-4 white--text ml-1"
-            text
-            @click="(change = false), $router.push(go)"
-            >Leave</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <LeaveAlert></LeaveAlert>
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -51,7 +25,7 @@
             class="red white--text ml-1"
             :loading="loading"
             text
-            @click="deleteTest(object), (loading = true)"
+            @click="deleteTest(object)"
             >Delete</v-btn
           >
         </v-card-actions>
@@ -60,6 +34,7 @@
 
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
+      {{ template }}
       <v-card>
         <p class="dialog-title ma-2 pa-2">Create Template</p>
         <v-divider></v-divider>
@@ -68,7 +43,7 @@
             <v-col cols="12">
               <v-text-field
                 autofocus
-                v-model="templateTitle"
+                v-model="template.title"
                 label="Title"
                 :rules="titleRequired"
                 counter="100"
@@ -78,7 +53,7 @@
               ></v-text-field>
 
               <v-textarea
-                v-model="templateDescription"
+                v-model="template.description"
                 label="Description"
                 outlined
                 dense
@@ -87,7 +62,7 @@
 
               <v-checkbox
                 label="Make template public to all users"
-                v-model="publicTemplate"
+                v-model="template.isPublic"
                 color="#F9A826"
               ></v-checkbox>
             </v-col>
@@ -97,7 +72,7 @@
             <v-spacer></v-spacer>
             <v-btn class="error" @click="closeDialog()">Cancel</v-btn>
             <v-btn
-              @click="createTemplate(), (tempDialog = false)"
+              @click="createTemplate()"
               text
               :disabled="hasTemplate ? true : false"
               class="success"
@@ -188,7 +163,10 @@
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
+import LeaveAlert from "@/components/atoms/LeaveAlert";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
+import Template from "@/models/Template";
+import Test from "@/models/Test";
 
 export default {
   props: ["id"],
@@ -196,11 +174,16 @@ export default {
     FormTestDescription,
     Snackbar,
     ShowInfo,
+    LeaveAlert,
     AccessNotAllowed,
   },
   data: () => ({
+    template: {
+      title: "",
+      description: "",
+      isPublic: false,
+    },
     object: null,
-    change: false,
     valids: [false, true, true],
     dialogAlert: false,
     dialogDel: false,
@@ -221,120 +204,104 @@ export default {
       this.valids[index] = valid;
     },
     async submit() {
-      await this.$store.dispatch("getAnswers", { id: this.test.answers });
-      await this.$store.dispatch("getReports", { id: this.test.reports });
-      await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
-      });
-
-      delete this.object.id;
-
-      this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object,
-        })
-        .then(() => {
-          let element = this.myObject;
-
-          //update attributes
-          element.title = this.object.title;
-          element.description = this.object.description;
-
-          if ("template" in this.object)
-            element = Object.assign(element, {
-              template: this.object.template,
-            });
-          else if("template" in this.myObject) {
-            delete element.template;
-          }
-
-          // console.log("mytest", element);
-          this.$store.dispatch("updateMyTest", {
-            docId: this.object.admin.id,
-            element: element,
-          });
-
-          this.cooperators.cooperators.forEach((coop) => {
-            let isAdmin = coop.accessLevel.value <= 1;
-            if (isAdmin) {
-              element = Object.assign(
-                {},
-                {
-                  id: this.id,
-                  title: this.object.title,
-                  type: this.object.type,
-                  reports: this.object.reports,
-                  answers: this.object.answers,
-                  cooperators: this.object.cooperators,
-                  accessLevel: coop.accessLevel,
-                }
-              );
-            } else {
-              element = Object.assign(
-                {},
-                {
-                  id: this.id,
-                  title: this.object.title,
-                  type: this.object.type,
-                  reports: this.object.reports,
-                  answers: this.object.answers,
-                  cooperators: this.object.cooperators,
-                  accessLevel: coop.accessLevel,
-                  author: this.test.admin.email,
-                  answersSheet: this.test.answersSheet,
-                  date: new Date().toLocaleString("en-Us"),
-                }
-              );
-            }
-
-            if ("template" in this.object && isAdmin)
-              element = Object.assign(element, {
-                template: this.object.template,
-              });
-
-            if (isAdmin)
-              this.$store.dispatch("updateMyCoops", {
-                docId: coop.id,
-                element: element,
-              });
-            else
-              this.$store.dispatch("updateMyAnswers", {
-                docId: coop.id,
-                element: element,
-              });
-          });
-
-          this.answers.test.title = this.object.title;
-          this.reports.test.title = this.object.title;
-          this.cooperators.test.title = this.object.title;
-
-          console.log(this.answers);
-          delete this.answers.id;
-          console.log("Delete ID", this.answers);
-          delete this.reports.id;
-          delete this.cooperators.id;
-          this.$store.dispatch("updateTestAnswer", {
-            docId: this.test.answers,
-            data: this.answers,
-          });
-
-          this.$store.dispatch("updateTestReport", {
-            docId: this.test.reports,
-            data: this.reports,
-          });
-
-          this.$store.dispatch("updateTestCooperators", {
-            docId: this.test.cooperators,
-            data: this.cooperators,
-          });
-
-          this.$store.commit("setSuccess", "Test updated succesfully");
-          this.change = false; //reset change
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+      console.log(this.object);
+      await this.$store.dispatch("updateTest", new Test(this.object));
+      this.$store.commit("SET_LOCAL_CHANGES", false);
+      // await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      // await this.$store.dispatch("getReports", { id: this.test.reports });
+      // delete this.object.id;
+      // this.$store
+      //   .dispatch("updateTest", {
+      //     docId: this.id,
+      //     data: this.object,
+      //   })
+      //   .then(() => {
+      //     let element = this.myObject;
+      //     //update attributes
+      //     element.title = this.object.title;
+      //     element.description = this.object.description;
+      //     if ("template" in this.object)
+      //       element = Object.assign(element, {
+      //         template: this.object.template,
+      //       });
+      //     else if ("template" in this.myObject) {
+      //       delete element.template;
+      //     }
+      //     this.$store.dispatch("updateMyTest", {
+      //       docId: this.object.admin.id,
+      //       element: element,
+      //     });
+      //     this.cooperators.cooperators.forEach((coop) => {
+      //       let isAdmin = coop.accessLevel.value <= 1;
+      //       if (isAdmin) {
+      //         element = Object.assign(
+      //           {},
+      //           {
+      //             id: this.id,
+      //             title: this.object.title,
+      //             type: this.object.type,
+      //             reports: this.object.reports,
+      //             answers: this.object.answers,
+      //             cooperators: this.object.cooperators,
+      //             accessLevel: coop.accessLevel,
+      //           }
+      //         );
+      //       } else {
+      //         element = Object.assign(
+      //           {},
+      //           {
+      //             id: this.id,
+      //             title: this.object.title,
+      //             type: this.object.type,
+      //             reports: this.object.reports,
+      //             answers: this.object.answers,
+      //             cooperators: this.object.cooperators,
+      //             accessLevel: coop.accessLevel,
+      //             author: this.test.admin.email,
+      //             answersSheet: this.test.answersSheet,
+      //             date: new Date().toLocaleString("en-Us"),
+      //           }
+      //         );
+      //       }
+      //       if ("template" in this.object && isAdmin)
+      //         element = Object.assign(element, {
+      //           template: this.object.template,
+      //         });
+      //       if (isAdmin)
+      //         this.$store.dispatch("updateMyCoops", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //       else
+      //         this.$store.dispatch("updateMyAnswers", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //     });
+      //     this.answers.test.title = this.object.title;
+      //     this.reports.test.title = this.object.title;
+      //     this.cooperators.test.title = this.object.title;
+      //     delete this.answers.id;
+      //     delete this.reports.id;
+      //     delete this.cooperators.id;
+      //     this.$store.dispatch("updateTestAnswer", {
+      //       docId: this.test.answers,
+      //       data: this.answers,
+      //     });
+      //     this.$store.dispatch("updateTestReport", {
+      //       docId: this.test.reports,
+      //       data: this.reports,
+      //     });
+      //     this.$store.dispatch("updateTestCooperators", {
+      //       docId: this.test.cooperators,
+      //       data: this.cooperators,
+      //     });
+      //     this.$store.commit("setSuccess", "Test updated succesfully");
+      //     this.change = false; //reset change
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("setError", err);
+      //   });
     },
     preventNav(event) {
       if (!this.change) return;
@@ -342,145 +309,30 @@ export default {
       event.returnValue = "";
     },
     async deleteTest(item) {
-      await this.$store.dispatch("getTest", { id: item.id });
-      await this.$store.dispatch("getAnswers", { id: item.answers });
-      await this.$store.dispatch("getReports", { id: item.reports });
-      await this.$store.dispatch("getCooperators", { id: item.cooperators });
-
-      this.$store
-        .dispatch("deleteTest", item)
-        .then(() => {
-          //Remove test from myTests
-          this.$store
-            .dispatch("removeMyTest", {
-              docId: this.test.admin.id,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-              param: "myTests",
-            })
-            .then(() => {
-              this.loading = false;
-              this.$router
-                .push("/testslist")
-                .then(() => {
-                  this.$store.commit(
-                    "setSuccess",
-                    "Project successfully deleted"
-                  );
-                })
-                .catch(() => {});
-            })
-            .catch((err) => {
-              this.$store.commit("setError", err);
-            });
-
-          //Remove report from collection
-          this.$store.dispatch("deleteReport", { id: item.reports });
-
-          // Remove all myAnswers
-          this.reports.reports.forEach((rep) => {
-            this.$store.dispatch("removeMyAnswers", {
-              docId: rep.uid,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-            });
-          });
-
-          //Remove all answers
-          this.$store.dispatch("deleteAnswers", { id: item.answers });
-
-          //Remove all myCoops
-          this.cooperators.cooperators.forEach((guest) => {
-            this.$store.dispatch("removeMyCoops", {
-              docId: guest.id,
-              element: {
-                id: item.id,
-                title: item.title,
-                type: item.type,
-              },
-            });
-          });
-
-          //Remove all Cooperators
-          this.$store.dispatch("deleteCooperators", { id: item.cooperators });
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+      await this.$store.dispatch("deleteTest", item);
+      this.$router.push({ name: "TestList" });
     },
-    createTemplate() {
-      //create template
-      if (this.$refs.tempform.validate()) {
-        let template = {};
-        let header = {
-          author: Object.assign(
-            {},
-            {
-              email: this.$store.getters.user.email,
-              id: this.$store.getters.user.uid,
-            }
-          ),
-          version: "1.0.0",
-          date: new Date().toDateString(),
-          title: this.templateTitle,
-          description: this.templateDescription,
-          isPublic: this.publicTemplate,
-        };
-
-        if (this.test.type == "Heuristics") {
-          template = Object.assign(template, {
-            heuristics: this.test.heuristics,
-            options: this.test.options,
-            answersSheet: this.test.answersSheet,
-            type: this.test.type,
-          });
-        } else if (this.test.type == "User") {
-          template = Object.assign(template, {
-            tasks: this.test.tasks,
-            preTest: this.test.preTest,
-            postTest: this.test.postTest,
-            type: this.test.type,
-          });
-        }
-
-        let payload = {
-          data: { body: template, header: header, testId: this.test.id },
-        };
-
-        this.$store.dispatch("createTemplate", payload).then((id) => {
-          this.object = Object.assign(this.object, {
-            template: Object.assign(
-              {},
-              {
-                id: id,
-                upToDate: true,
-              }
-            ),
-          });
-
-          let el = {};
-
-          Object.keys(payload.data.header).forEach((key) => {
-            el[key] = payload.data.header[key];
-          });
-
-          el = Object.assign(el, { type: payload.data.body.type, id: id });
-
-          this.$store.dispatch("pushMyTemps", {
-            docId: this.user.uid,
-            element: el,
-            param: "myTemps",
-          });
-
-          this.submit();
+    async createTemplate() {
+      let template = new Template(this.template);
+      if (this.test.testType == "HEURISTICS") {
+        (template.testStructure = this.test.testStructure),
+          (template.testOptions = this.test.testOptions),
+          (template.answersSheet = this.test.answersDocId),
+          (template.type = this.test.testType),
+          (template.authorDocId = this.$store.getters.user.id);
+        template.authorEmail = this.$store.getters.user.email;
+        (template.creationDate = new Date().toDateString()),
+          (template.version = "1.0.0");
+        template.testId = this.test.id;
+      } else if (this.test.testType == "User") {
+        template = Object.assign(template, {
+          tasks: this.test.tasks,
+          preTest: this.test.preTest,
+          postTest: this.test.postTest,
+          type: this.test.type,
         });
       }
+      await this.$store.dispatch("createTemplate", template);
     },
     closeDialog() {
       this.tempDialog = false;
@@ -488,45 +340,21 @@ export default {
       this.templateTitle = "";
       this.templateDescription = "";
     },
+    setLeavingAlert() {
+      this.$store.commit("SET_DIALOG_LEAVE", true);
+    },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
-        if (
-          this.cooperators == [] ||
-          this.cooperators.id !== this.test.cooperators
-        )
-          this.$store.dispatch("getCooperators", {
-            id: this.test.cooperators,
-          });
-      }
-    },
-    cooperators: async function () {
-      if (this.cooperators !== null && this.cooperators !== {}) {
-        let isOwner =
-          this.user.myTests.find((test) => test.id == this.id) == undefined
-            ? false
-            : true;
-        let hasAccess = false;
-        if (!isOwner)
-          hasAccess =
-            this.cooperators.cooperators.find(
-              (coop) =>
-                coop.email == this.user.email && coop.accessLevel.value == 0
-            ) == undefined
-              ? false
-              : true;
-
-        // grant access if user is superadmin
-        if(this.user?.accessLevel == 0) hasAccess = true;
-
-        if (hasAccess || isOwner) this.showSettings = true;
-        this.loadingPage = false;
       }
     },
   },
   computed: {
+    change() {
+      return this.$store.state.localChanges;
+    },
     test() {
       return this.$store.getters.test;
     },
@@ -543,8 +371,8 @@ export default {
       return this.$store.getters.cooperators || {};
     },
     dialogText() {
-      if (this.object)
-        return `Are you sure you want to delete your test "${this.object.title}"? This action can't be undone.`;
+      if (this.test)
+        return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`;
 
       return `Are you sure you want to delete this test? This action can't be undone`; //in case object isnt loaded
     },
@@ -571,19 +399,16 @@ export default {
       return null;
     },
   },
-  created() {
+  async created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      this.$store.dispatch("getTest", { id: this.id }).then(() => {
-        this.$store.dispatch("getCooperators", {
-          id: this.test.cooperators,
-        });
-      });
+      await this.$store.dispatch("getTest", { id: this.id });
     }
   },
+
   beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialogAlert = true;
-      this.go = to.path;
+    if (this.$store.getters.localChanges) {
+      this.$store.commit("SET_DIALOG_LEAVE", true);
+      this.$store.commit("SET_PATH_TO", to.name);
     } else {
       next();
     }

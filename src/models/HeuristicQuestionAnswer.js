@@ -19,4 +19,12 @@ export default class HeuristicQuestionAnswer{
     static toHeuristicQuestionAnswer(data) {
         return new HeuristicQuestionAnswer(data)
     }
+
+    toFirestore() {
+        return {
+            heuristicId: this.heuristicId,
+            heuristicAnswer: this.heuristicAnswer,
+            heuristicComment: this.heuristicComment
+        }
+    }
 }

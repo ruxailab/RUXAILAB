@@ -1,9 +1,9 @@
 import { db } from "@/firebase";
 import {
     doc,
-    setDoc,
     updateDoc,
     getDoc,
+    addDoc,
     query,
     where,
     getDocs,
@@ -12,29 +12,22 @@ import {
 } from "firebase/firestore";
 
 export default class Controller {
-    constructor() {}
+    constructor() { }
 
     // path - collection
     // data - document to insert (object)
-
-    async create(path, document, data) {
-        await setDoc(doc(db, path, document), data);
+    async create(col, payload) {
+        return addDoc(collection(db, col), payload);
     }
 
-    //model to define in Controller
+    async readOne(col, docId) {
+        const ref = doc(db, `${col}/${docId}`);
+        return getDoc(ref);
+    }
 
-    async read(path, parameter, condition) {
-        const q = query(
-            collection(db, path),
-            where(parameter, "==", condition)
-        );
-        const querySnapshot = await getDocs(q);
-        const res = [];
-        querySnapshot.forEach((doc) => {
-            res.push(doc.data());
-        });
-        console.log("CONTROLLER RESPONSE ====>>>>", res);
-        return res;
+    async query(col, params) {
+        const q = query(collection(db, col), where(params.field, params.condition, params.value))
+        return getDocs(q);
     }
 
     /**
@@ -46,7 +39,6 @@ export default class Controller {
     async getById(path) {
         // return getDoc(doc(db, ...path));
         const docRef = doc(db, path[0], path[1]);
-        console.log(docRef);
         return getDoc(docRef);
     }
 
@@ -55,18 +47,17 @@ export default class Controller {
         const querySnapshot = await getDocs(q);
         const res = [];
         querySnapshot.forEach((doc) => {
-            res.push(doc.data());
+            res.push(Object.assign(doc.data(), { id: doc.id }));
         });
-        console.log("CONTROLLER RESPONSE ====>>>>", res);
         return res;
     }
 
-    async update(path, document, payload) {
-        const uploadFile = doc(db, path, document);
-        await updateDoc(uploadFile, payload);
+    async update(col, docId, payload) {
+        const ref = doc(db, `${col}/${docId}`)
+        return updateDoc(ref, payload)
     }
 
-    async delete(path, document) {
-        await deleteDoc(doc(db, path, document));
+    async delete(col, docId) {
+        return deleteDoc(doc(db, col, docId));
     }
 }

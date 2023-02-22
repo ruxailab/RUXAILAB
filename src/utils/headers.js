@@ -7,7 +7,7 @@ const cooperatorsHeaders = [
 ]
 
 const heuristicsStatisticsHeaders = [
-  { text: "Heuristics", align: "start", sortable: false, value: "name" },
+  { text: "HEURISTICS", align: "start", sortable: false, value: "name" },
   { text: "Average", value: "average", align: "center", sortable: false },
   { text: "Standard deviation", value: "sd", align: "center", sortable: false },
   { text: "Max", value: "max", align: "center", sortable: false },

@@ -1,151 +1,91 @@
 // imports
 
 import Test from "@/models/Test";
-import TestAdmin from "@/models/TestAdmin";
-import TestStructure from "@/models/TestStructure";
-import TestStructureOptions from "@/models/TestStructureOptions";
-import TestTemplateDoc from "@/models/TestTemplateDoc";
 
-import Controller from '@/controllers/BaseController'
+import Controller from "@/controllers/BaseController";
+import AnswerController from "./AnswerController";
+import Answer from "@/models/Answer";
+import UserAnswer from "@/models/UserAnswer";
+import UserController from "./UserController";
 
-export default class TestController extends Controller{
-  constructor() {
-    super()
-  }
+const COLLECTION = "tests";
+const answerController = new AnswerController()
+const userController = new UserController()
 
-  createNewTest(document, data){
-    return super.create("test", document, data).then((res)=> {
-      return res
-    })
-  }
+export default class TestController extends Controller {
+    constructor() {
+        super();
+    }
 
-  deleteTest(document){
-    return super.delete("test", document).then((res)=> {
-      return res
-    })
-  }
+    async createTest(document, payload) {
+        // Create answers doc for test
+        const answerDoc = await answerController.createAnswer(new Answer({ type: payload.testType }))
+        payload.answersDocId = answerDoc.id
 
-  updateTest(document, payload){
-    return super.delete("test", document, payload).then((res)=> {
-      return res
-    })
-  }
+        return await super.create(document, payload.toFirestore())
+    }
 
-  //------------------GET OBJECTS - ID------------------
+    async deleteTest(payload) {
+        return await super.delete(COLLECTION, payload.id)
+    }
 
-  //GetObject of Test
-  getObjectTest(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(Test.toTest)
-      console.log("TestController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestController error: ", err)
-    })  
-  }
+    async updateTest(payload) {
+        return await super.update(COLLECTION, payload.id, payload.toFirestore());
+    }
 
-  //GetObject of TestAdmin
-  getObjectTestAdmin(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(TestAdmin.toTestAdmin)
-      console.log("TestAdminController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestAdminController error: ", err)
-    })  
-  }
+    async acceptTestCollaboration(payload) {
+        const userAnswer = new UserAnswer({
+            answerDocId: payload.test.answersDocId,
+            accessLevel: payload.cooperator.accessLevel,
+            progress: 0,
+            testAuthorEmail: payload.test.testAdmin.email,
+            testDocId: payload.test.id,
+            testType: payload.test.testType,
+            testTitle: payload.test.testTitle,
+            total: 0,
+            updateDate: Date.now()
+        })
 
-  //GetObject of TestStructure
-  getObjectTestStructure(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(TestStructure.toTestStructure)
-      console.log("TestStructureController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestStructureController error: ", err)
-    })  
-  }
+        // Update answers inside collaborator
+        const userToUpdate = payload.cooperator
+        userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
+        await userController.update(userToUpdate.id, userToUpdate.toFirestore())
 
-  //GetObject of TestStructureOptions
-  getObjectTestStructureOptions(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(TestStructureOptions.toTestStructureOptions)
-      console.log("TestStructureOptionsController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestStructureOptionsController error: ", err)
-    })  
-  }
+        const testToUpdate = payload.test
+        const index = testToUpdate.cooperators.findIndex((c) => c.email === userToUpdate.email)
+        testToUpdate.cooperators[index].accepted = true
+        testToUpdate.cooperators[index].userDocId = userToUpdate.id
+        testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1
 
-  //GetObject of TestTemplateDoc
-  getObjectTestTemplateDoc(parameter, condition){
-    return super.read("test", parameter, condition).then((response) => {
-      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
-      console.log("TestTemplateDocController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestTemplateDocController error: ", err)
-    })  
-  }
+        // Update invitation on test to accepted
+        return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
+    }
 
-  // ----------------GET ALL OBJECTS----------------
+    async getTest(parameter) {
+        const res = await super.readOne(COLLECTION, parameter.id);
+        if (!res.exists()) return null;
+        return Test.toTest(Object.assign({ id: res.id }, res.data()));
+    }
 
-  //GetObject of Test
-  getAllObjectTest(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(Test.toTest)
-      console.log("TestController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestController error: ", err)
-    })  
-  }
+    async getPublicTests() {
+        const q = {
+            field: 'isPublic',
+            value: true,
+            condition: '=='
+        }
+        const res = await super.query(COLLECTION, q)
+        return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
+    }
 
-   //GetObject of TestAdmin
-   getAllObjectTestAdmin(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(TestAdmin.toTestAdmin)
-      console.log("TestAdminController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestAdminController error: ", err)
-    })  
-  }
-
-   //GetObject of TestStructure
-   getAllObjectTestStructure(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(TestStructure.toTestStructure)
-      console.log("TestStructureController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestStructureController error: ", err)
-    })  
-  }
-
-   //GetObject of TestStructureOptions
-   getAllObjectTestStructureOptions(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(TestStructureOptions.toTestStructureOptions)
-      console.log("TestStructureOptionsController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestStructureOptionsController error: ", err)
-    })  
-  }
-
-   //GetObject of TestTemplateDoc
-   getAllObjectTestTemplateDoc(){
-    return super.readAll("test").then((response) => {
-      let res = response.map(TestTemplateDoc.toTestTemplateDoc)
-      console.log("TestTemplateDocController res: ", res)
-      return res
-    }).catch((err) => { 
-      console.log("TestTemplateDocController error: ", err)
-    })  
-  }
-
+    async getAllTests() {
+        return await super
+            .readAll("tests")
+            .then((response) => {
+                let res = response.map(Test.toTest);
+                return res;
+            })
+            .catch((err) => {
+                console.log("TestController error: ", err);
+            });
+    }
 }
-  
-
-// "_" before attibutes and mehtods turn them into PRIVATE
