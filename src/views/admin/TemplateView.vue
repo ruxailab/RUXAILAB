@@ -58,12 +58,6 @@
       </v-card>
     </v-dialog>
 
-    <TemplateDetails
-      :dialog="dialogDetails"
-      :template="template"
-      @close="dialogDetails = false"
-    />
-
     <ShowInfo title="Template">
       <v-alert
         type="warning"
@@ -187,14 +181,12 @@
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo";
 import SnackBar from "@/components/atoms/Snackbar";
-import TemplateDetails from "@/components/atoms/TemplateDetailsDialog";
 
 export default {
   props: ["id"],
   components: {
     ShowInfo,
     SnackBar,
-    TemplateDetails,
   },
   data: () => ({
     change: false,

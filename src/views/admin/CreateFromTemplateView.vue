@@ -34,7 +34,7 @@
         <v-divider class="mb-1"></v-divider>
         <List
           @clicked="openTemp"
-          type="template"
+          type="publicTemplates"
           :items="filteredTemplates"
         ></List>
       </v-col>
@@ -53,6 +53,8 @@
 <script>
 import List from "@/components/atoms/ListComponent";
 import TempDialog from "@/components/molecules/TemplateInfoDialog";
+import TestAdmin from "@/models/TestAdmin";
+import Test from "@/models/Test";
 
 export default {
   components: {
@@ -64,8 +66,6 @@ export default {
     dialog: false,
     searching: false,
     search: "",
-    testID: null,
-    object: {},
   }),
   methods: {
     openTemp(item) {
@@ -73,121 +73,21 @@ export default {
       this.dialog = true;
     },
     async submit() {
-      await this.testAssembly(); // build Test
-      let d = new Date();
-      let object = this.object;
-      let successful = true;
-      //Send db
-      await this.$store
-        .dispatch("createTest", {
-          collection: "test",
-          data: Object.assign(object, { date: d.toDateString() }),
-        })
-        .then((id) => {
-          this.testID = id;
-          this.$store
-            .dispatch("createAnswers", {
-              data: {
-                test: {
-                  id: id,
-                  title: object.title,
-                  type: object.type,
-                },
-                answers: [],
-                answersSheet: object.answersSheet,
-                options: object.options,
-              },
-            })
-            .then((idAnswers) => {
-              this.$store.dispatch("setAnswerID", {
-                docId: id,
-                data: idAnswers,
-              });
-              this.$store
-                .dispatch("createReport", {
-                  data: {
-                    test: {
-                      id: id,
-                      title: object.title,
-                      type: object.type,
-                      answers: idAnswers,
-                    },
-                    reports: [],
-                  },
-                })
-                .then((idReport) => {
-                  this.$store.dispatch("setReportID", {
-                    docId: id,
-                    data: idReport,
-                  });
-                  this.$store
-                    .dispatch("createCooperators", {
-                      data: {
-                        test: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                        },
-                        cooperators: [],
-                      },
-                    })
-                    .then((idCooperators) => {
-                      this.$store.dispatch("setCooperatorsID", {
-                        docId: id,
-                        data: idCooperators,
-                      });
-                      this.$store.dispatch("pushMyTest", {
-                        docId: this.user.uid,
-                        element: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                          reports: idReport,
-                          answers: idAnswers,
-                          cooperators: idCooperators,
-                          accessLevel: 0,
-                          date: d.toDateString(),
-                          nCoops: 0,
-                        },
-                        param: "myTests",
-                      });
-                    });
-                });
-            });
-        })
-        .catch((err) => {
-          console.error("Error", err);
-          successful = false;
-        });
-
-      if (successful) this.sendManager(this.testID);
-    },
-    testAssembly() {
-      //Make object test
-      //Assigning admin info
-
-      if (this.id === null || this.id === undefined) {
-        this.object = Object.assign(this.object, {
-          admin: {
-            id: this.user.uid,
-            email: this.user.email,
-          },
-        });
-      }
-
-      //Assigning test info
-      this.object = Object.assign(this.object, {
-        title: this.temp.header.title,
-        description: this.temp.header.description,
-        type: this.temp.header.type,
-      });
-      this.object = Object.assign(this.object, {
-        date: new Date().toDateString(),
+      const test = new Test({
+        ...this.temp.body,
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        templateDoc: this.temp.id,
+        creationDate: Date.now(),
+        updateDate: Date.now(),
       });
 
-      //assigning tasks/heuristics
-      let selectTemplate = this.templates.find((t) => t.id == this.temp.id);
-      this.object = Object.assign(this.object, selectTemplate.body);
+      const testId = await this.$store.dispatch("createNewTest", test);
+
+      this.sendManager(testId);
     },
     sendManager(id) {
       this.$router.push(`/managerview/${id}`).catch(() => {});
@@ -195,12 +95,12 @@ export default {
   },
   computed: {
     templates() {
-      return this.$store.getters.templates || [];
+      return this.$store.state.Templates.templates;
     },
     filteredTemplates() {
       if (this.templates !== null) {
         return this.templates.filter((temp) => {
-          return temp.header.title
+          return temp.header.templateTitle
             .toLowerCase()
             .includes(this.search.toLowerCase());
         });
@@ -216,14 +116,12 @@ export default {
     dialog() {
       if (!this.dialog) {
         this.temp = {};
-
-        this.object = {};
         this.selectTemplate = null;
       }
     },
   },
   async created() {
-    await this.$store.dispatch("getTemplates");
+    await this.$store.dispatch("getCurrentUserAndPublicTemplates");
   },
 };
 </script>
