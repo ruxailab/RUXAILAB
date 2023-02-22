@@ -79,6 +79,7 @@
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
 import TestAdmin from "@/models/TestAdmin";
+import Test from "@/models/Test";
 
 export default {
   components: {
@@ -99,86 +100,21 @@ export default {
       this.$router.push("/fromtemplate");
     },
     async submit() {
-      //await this.testAssembly(); // build Test
-      let d = new Date();
-      //let heuristicTest = new HeuristicTest()
-      //let object = this.object;
-      let successful = true;
-      //Send db
-      await this.$store
-        .dispatch("createNewTest", {
-          collection: "tests",
-          data: Object.assign(this.test, {
-            date: d.toDateString(),
-            testAdmin: new TestAdmin({
-              email: this.user.email,
-              userDocId: this.user.id,
-            }).toFirestore(),
-          }),
-        })
-        .catch((err) => {
-          console.error("Error", err);
-          successful = false;
-        });
-
-      if (successful) this.sendManager(this.$store.state.Tests.Test);
-    },
-    //TODO: TAKE CARE; THIS IS HORRIBLE!
-    /*
-    testAssembly() {
-      //Make object test
-      //Assigning admin info
-
-      if (this.id === null || this.id === undefined) {
-        this.object = Object.assign(this.object, {
-          admin: {
-            id: this.user.uid,
-            email: this.user.email,
-          },
-        });
-      }
-
-      //Assigning test info
-      this.object = Object.assign(this.object, this.test);
-      this.object = Object.assign(this.object, {
-        date: new Date().toDateString(),
+      const test = new Test({
+        ...this.test,
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        creationDate: Date.now(),
+        updateDate: Date.now(),
       });
 
-      //assigning tasks/heuristics
-      if (this.test.type === "User") {
-        //assigning pre-test info
-        this.object = Object.assign(this.object, {
-          preTest: {
-            consent: null,
-            form: null,
-          },
-        });
+      const testId = await this.$store.dispatch("createNewTest", test);
 
-        this.object = Object.assign(this.object, {
-          tasks: [],
-          answersSheet: null,
-        });
-
-        //assigning post test
-        this.object = Object.assign(this.object, {
-          postTest: {
-            form: null,
-          },
-        });
-      } else if (this.test.type === "HEURISTICS") {
-        this.object = Object.assign(this.object, {
-          heuristics: [],
-          answersSheet: {
-            total: 0,
-            progress: 0,
-            heuristics: [],
-          },
-        });
-
-        this.object = Object.assign(this.object, { options: [] });
-      }
+      this.sendManager(testId);
     },
-    */
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
     },
