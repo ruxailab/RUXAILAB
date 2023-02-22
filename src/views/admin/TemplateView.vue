@@ -271,9 +271,6 @@ export default {
     async submit() {
       await this.$store.dispatch("getAnswers", { id: this.test.answers });
       await this.$store.dispatch("getReports", { id: this.test.reports });
-      await this.$store.dispatch("getCooperators", {
-        id: this.test.cooperators,
-      });
 
       this.$store
         .dispatch("updateTest", {
@@ -346,7 +343,7 @@ export default {
         this.template.body[key] = this.test[key];
       });
     },
-    isNumber: function (evt) {
+    isNumber: function(evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (
@@ -376,12 +373,12 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test);
       }
     },
-    templateStore: async function () {
+    templateStore: async function() {
       if (this.templateStore !== null && this.templateStore !== undefined) {
         this.template = await Object.assign({}, this.templateStore);
       }

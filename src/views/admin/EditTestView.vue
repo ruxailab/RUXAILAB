@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -28,7 +28,7 @@
     </v-dialog>
 
     <!-- Save button -->
-    <v-tooltip left v-if="change">
+    <v-tooltip left v-if="accessLevel === 0">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           large
@@ -41,6 +41,7 @@
           @click="validateAll()"
           v-bind="attrs"
           v-on="on"
+          style="z-index:100"
         >
           <v-icon large>mdi-content-save</v-icon>
         </v-btn>
@@ -58,63 +59,71 @@
       <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
-    <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
+    <!--
+        <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
+          <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />  -->
 
-    <ShowInfo v-if="test && intro == false" title="Test Edit">
-      <!-- Heuristics tests -->
-      <!--TODO: change hard coded type-->
-      <EditHeuristicsTest
-        v-if="test.type == 'Heuristics'"
-        type="tabs"
-        @tabClicked="setIndex"
-        slot="top"
-      />
+    <!--
+        <ShowInfo v-if="test" title="Test Edit">  -->
+    <!-- Heuristics tests -->
+    <!--TODO: change hard coded type
+            <EditHeuristicsTest
+                v-if="test.testType == "HEURISTICS""
+                type="tabs"
+                @tabClicked="setIndex"
+                slot="top"
+            />
+        -->
+    <v-row>
+      <v-col cols="12">
+        <EditHeuristicsTest
+          v-if="test.testType === 'HEURISTICS'"
+          type="content"
+          :object="object"
+          :index="index"
+          @change="change = true"
+          slot="content"
+        />
+      </v-col>
+      <!-- User tests
+            <EditUserTest
+                v-if="test.type === 'User'"
+                type="tabs"
+                @tabClicked="setIndex"
+                slot="top"
+            />
 
-      <EditHeuristicsTest
-        v-if="test.type === 'Heuristics'"
-        type="content"
-        :object="object"
-        :index="index"
-        @change="change = true"
-        slot="content"
-      />
-
-      <!-- User tests -->
-      <EditUserTest
-        v-if="test.type === 'User'"
-        type="tabs"
-        @tabClicked="setIndex"
-        slot="top"
-      />
-
-      <EditUserTest
-        v-if="test.type === 'User'"
-        :object="object"
-        :index="index"
-        type="content"
-        @change="change = true"
-        @valForm="validate"
-        slot="content"
-      />
-    </ShowInfo>
-  </div>
+            <EditUserTest
+                v-if="test.type === 'User'"
+                :object="object"
+                :index="index"
+                type="content"
+                @change="change = true"
+                @valForm="validate"
+                slot="content"
+            />
+             -->
+      <!-- </ShowInfo>  -->
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import Snackbar from "@/components/atoms/Snackbar";
-import ShowInfo from "@/components/organisms/ShowInfo";
-import IntroEdit from "@/components/molecules/IntroEdit.vue";
+//import ShowInfo from "@/components/organisms/ShowInfo";
+//import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
-import EditUserTest from "@/components/organisms/EditUserTest";
+import Test from "@/models/Test";
+//import EditUserTest from "@/components/organisms/EditUserTest";
 
 export default {
   props: ["id"],
   components: {
     Snackbar,
-    ShowInfo,
-    IntroEdit,
+    //ShowInfo,
+    // IntroEdit,
     EditHeuristicsTest,
-    EditUserTest,
+    //EditUserTest,
   },
   data: () => ({
     index: 0,
@@ -126,39 +135,11 @@ export default {
   }),
   methods: {
     async submit() {
-      let today = new Date();
-
-      if (this.object.date !== today.toDateString())
-        this.object.date = today.toDateString(); //update date if not the same as last update
-
-      if ("template" in this.object) this.object.template.upToDate = false; //flag as outdated
-      this.object.answersSheet = await this.mountAnswerSheet(); //update object answersheet
-      this.$store
-        .dispatch("updateTest", {
-          docId: this.id,
-          data: this.object,
-        })
-        .then(async () => {
-          this.answers.answersSheet = await this.mountAnswerSheet();
-          if (this.test.type === "Heuristics")
-            Object.assign(this.answers, { options: this.object.options });
-          this.$store
-            .dispatch("updateTestAnswer", {
-              docId: this.test.answers,
-              data: this.answers,
-            })
-            .then(() => {
-              this.$store.commit("setSuccess", "Test updated succesfully");
-              this.change = false;
-            })
-            .catch((err) => {
-              this.$store.commit("setError", err);
-            });
-        })
-        .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+      this.object.testStructure = this.$store.state.Tests.Test.testStructure;
+      const auxT = new Test(this.object);
+      this.$store.dispatch("updateTest", auxT);
     },
+
     mountAnswerSheet() {
       let aux = {
         heuristics: [],
@@ -208,7 +189,7 @@ export default {
           "Please fill all fields in Pre Test correctly or leave them empty"
         );
       } else if (
-        this.test.type === "Heuristics" &&
+        this.test.type === "HEURISTICS" &&
         this.object.options.length == 1
       ) {
         this.$store.commit(
@@ -231,7 +212,7 @@ export default {
     },
     async setIntro() {
       this.object = await Object.assign(this.object, this.test);
-      if (this.test.type === "Heuristics") {
+      if (this.test.type === "HEURISTICS") {
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
           this.intro = true;
         else this.intro = false;
@@ -258,6 +239,30 @@ export default {
     },
   },
   computed: {
+    accessLevel() {
+      // If user is superadmin
+      if (this.user) {
+        if (this.user.accessLevel == 0) return 0;
+        // Check if user is collaborator or owner
+        const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
+        if (isTestOwner) return 0;
+
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers);
+        answersEntries.forEach((a) => {
+            answers.push(a[1]);
+        });
+
+        const isCooperator = answers.find(
+          (a) => a.testDocId === this.test.id
+        );
+        if (isCooperator) {
+          return isCooperator.accessLevel;
+        }
+      }
+
+      return 3;
+    },
     loading() {
       return this.$store.getters.loading;
     },
@@ -287,8 +292,6 @@ export default {
   },
   async created() {
     await this.$store.dispatch("getTest", { id: this.id });
-    await this.$store.dispatch("getAnswers", { id: this.test?.answers });
-    this.setIntro();
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {

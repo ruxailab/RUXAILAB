@@ -19,7 +19,9 @@
                 ></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text">
-                <div class="card-title">Create a blank test</div>
+                <div class="card-title">
+                  Create a blank test
+                </div>
                 <div>
                   Create a blank test to begin with a completely new and fresh
                   template.
@@ -44,7 +46,9 @@
                 ></v-img>
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
-                <div class="card-title">Create from template</div>
+                <div class="card-title">
+                  Create from template
+                </div>
                 <div>
                   Create a test based on a template created by one of our users.
                 </div>
@@ -74,6 +78,7 @@
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
+import TestAdmin from "@/models/TestAdmin";
 
 export default {
   components: {
@@ -94,94 +99,32 @@ export default {
       this.$router.push("/fromtemplate");
     },
     async submit() {
-      await this.testAssembly(); // build Test
+      //await this.testAssembly(); // build Test
       let d = new Date();
-      let object = this.object;
+      //let heuristicTest = new HeuristicTest()
+      //let object = this.object;
       let successful = true;
       //Send db
       await this.$store
-        .dispatch("createTest", {
-          collection: "test",
-          data: Object.assign(object, { date: d.toDateString() }),
-        })
-        .then((id) => {
-          this.testID = id;
-          this.$store
-            .dispatch("createAnswers", {
-              data: {
-                test: {
-                  id: id,
-                  title: object.title,
-                  type: object.type,
-                },
-                answers: [],
-                answersSheet: object.answersSheet,
-              },
-            })
-            .then((idAnswers) => {
-              this.$store.dispatch("setAnswerID", {
-                docId: id,
-                data: idAnswers,
-              });
-              this.$store
-                .dispatch("createReport", {
-                  data: {
-                    test: {
-                      id: id,
-                      title: object.title,
-                      type: object.type,
-                      answers: idAnswers,
-                    },
-                    reports: [],
-                  },
-                })
-                .then((idReport) => {
-                  this.$store.dispatch("setReportID", {
-                    docId: id,
-                    data: idReport,
-                  });
-                  this.$store
-                    .dispatch("createCooperators", {
-                      data: {
-                        test: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                        },
-                        cooperators: [],
-                      },
-                    })
-                    .then((idCooperators) => {
-                      this.$store.dispatch("setCooperatorsID", {
-                        docId: id,
-                        data: idCooperators,
-                      });
-                      this.$store.dispatch("pushMyTest", {
-                        docId: this.user.uid,
-                        element: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                          reports: idReport,
-                          answers: idAnswers,
-                          cooperators: idCooperators,
-                          accessLevel: 0,
-                          date: d.toDateString(),
-                          nCoops: 0,
-                        },
-                        param: "myTests",
-                      });
-                    });
-                });
-            });
+        .dispatch("createNewTest", {
+          collection: "tests",
+          data: Object.assign(this.test, {
+            date: d.toDateString(),
+            testAdmin: new TestAdmin({
+              email: this.user.email,
+              userDocId: this.user.id,
+            }).toFirestore(),
+          }),
         })
         .catch((err) => {
           console.error("Error", err);
           successful = false;
         });
-      console.log(this.object.type);
-      if (successful) this.sendManager(this.testID);
+
+      if (successful) this.sendManager(this.$store.state.Tests.Test);
     },
+    //TODO: TAKE CARE; THIS IS HORRIBLE!
+    /*
     testAssembly() {
       //Make object test
       //Assigning admin info
@@ -222,7 +165,7 @@ export default {
             form: null,
           },
         });
-      } else if (this.test.type === "Heuristics") {
+      } else if (this.test.type === "HEURISTICS") {
         this.object = Object.assign(this.object, {
           heuristics: [],
           answersSheet: {
@@ -235,6 +178,7 @@ export default {
         this.object = Object.assign(this.object, { options: [] });
       }
     },
+    */
     sendManager(id) {
       this.$router.push(`/managerview/${id}`);
     },
