@@ -5,8 +5,6 @@
 
 //import TestController
 import TestController from "@/controllers/TestController.js";
-import HeuristicTest from "@/models/HeuristicTest.model.js";
-import UserTest from "@/models/UserTest";
 
 const testController = new TestController();
 
@@ -76,23 +74,14 @@ export default {
 
         async createNewTest({ commit }, payload) {
             commit("setLoading", true);
-            let ob = payload.data
-            let objectTest = null;
-            if (payload.data.testType === "HEURISTICS") {
-                objectTest = new HeuristicTest(ob);
-            } else {
-                objectTest = new UserTest(ob);
-            }
             try {
-                await testController.createTest(
-                    payload.collection,
-                    objectTest
-                ).then((res) => {
-                    commit("SET_TEST", res.id);
-                    return res.id;
-                });
+                const res = await testController.createTest(
+                    payload
+                )
+                commit("SET_TEST", res.id);
+                return res.id;
             } catch (err) {
-                console.log("erro");
+                console.log("erro", err);
                 commit("setError", true);
             } finally {
                 commit("setLoading", false);
