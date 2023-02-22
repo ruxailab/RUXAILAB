@@ -24,51 +24,45 @@
             <v-row align="center" justify="space-between">
               <v-col cols="10" v-if="template.header">
                 <p class="dialog-title ma-0">
-                  {{ template.header.title }}
+                  {{ template.header.templateTitle }}
                 </p>
                 <div class="caption ma-0">
                   Created by {{ author }}
                   {{
-                    template.header.version == "1.0.0"
-                      ? ` on ${template.header.date}`
-                      : ` - Last updated: ${template.header.date}`
+                    template.header.templateVersion == "1.0.0"
+                      ? ` on ${getFormattedDate(template.header.creationDate)}`
+                      : ` - Last updated: ${getFormattedDate(
+                          template.header.updateDate
+                        )}`
                   }}
-                  (Version: {{ template.header.version }})
+                  (Version: {{ template.header.templateVersion }})
                 </div>
-              </v-col>
-
-              <v-col cols="1" v-if="showDetails">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="detailsDialog = true"
-                    >
-                      <v-icon>mdi-information-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Detailed information</span>
-                </v-tooltip>
               </v-col>
             </v-row>
 
             <v-divider class="my-2"></v-divider>
 
-            <div
-              style="margin: 0px 0px 30px 0px"
-              v-if="template.header.description"
-            >
+            <div style="margin: 0px 0px 30px 0px">
               {{
-                template.header.description
-                  ? template.header.description
+                template.header.templateDescription
+                  ? template.header.templateDescription
                   : "Template has no description."
               }}
             </div>
 
-            <v-row justify="end" class="ma-0 pa-0">
-              <v-btn class="error mr-2" @click="reset()">
+            <v-row justify="space-between" class="ma-0 pa-0">
+              <v-btn
+                color="error"
+                outlined
+                @click="deleteTemplate()"
+                v-if="!allowCreate && isMyTemplate"
+                >Delete template
+                <v-icon right>mdi-delete</v-icon>
+              </v-btn>
+              <v-btn
+                :class="`${allowCreate ? 'error' : 'primary'} mr-2`"
+                @click="reset()"
+              >
                 {{ allowCreate ? "Cancel" : "Close" }}</v-btn
               >
               <v-btn
@@ -108,24 +102,15 @@
         </v-stepper-items>
       </v-stepper>
     </v-dialog>
-
-    <TempDetails
-      v-if="showDetails"
-      :dialog="detailsDialog"
-      :template="template"
-      @close="detailsDialog = false"
-    />
   </div>
 </template>
 
 <script>
 import FormTestDescription from "@/components/atoms/FormTestDescription";
-import TempDetails from "@/components/atoms/TemplateDetailsDialog";
 
 export default {
   components: {
     FormTestDescription,
-    TempDetails,
   },
   props: {
     dialog: {
@@ -142,40 +127,62 @@ export default {
       type: Boolean,
       default: () => false,
     },
-    showDetails: {
-      type: Boolean,
-      default: () => true,
-    },
   },
   data: () => ({
     step: 1,
-    detailsDialog: false,
+    isMyTemplate: false,
   }),
   methods: {
+    async deleteTemplate() {
+      if (
+        confirm(
+          "Are you sure to delete this template? This action can not be undone!"
+        )
+      ) {
+        await this.$store.dispatch("deleteTemplate", this.template.id);
+        this.reset()
+      }
+    },
     reset() {
       this.$emit("close");
       this.$refs.form.resetVal();
       this.step = 1;
+      this.$emit("reloadTemplates")
     },
     validate() {
       if (this.$refs.form.valida()) {
         this.$emit("submitTemplate");
       }
     },
+    getFormattedDate(date) {
+      const d = new Date(date);
+      return d.toLocaleString();
+    },
+  },
+  watch: {
+    template() {
+      this.isMyTemplate =
+        this.template?.header?.templateAuthor?.userDocId === this.user.id
+          ? true
+          : false;
+    },
   },
   computed: {
     mountTest() {
-      const test = this.template.header;
-      if (!test.type) {
-        test.type = this.template.body.type;
+      const test = this.template.body;
+      if (!test.testType) {
+        test.testType = this.template.body.testType;
       }
-      return test
+      return test;
     },
     author() {
-      return this.template?.header?.author?.email || "";
+      return this.template?.header?.templateAuthor.userEmail || "";
     },
     title() {
-      return this.template?.header?.title || "";
+      return this.template?.header?.templateTitle || "";
+    },
+    user() {
+      return this.$store.state.Auth.user;
     },
   },
 };
