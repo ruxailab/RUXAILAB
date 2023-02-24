@@ -1,20 +1,44 @@
-     /**
-     * Create a TestStructure.
-     * @param {Object[]} heuristicList - An array of Heuristic value.
-     * @param {Object[]} options  - An array of TestStructureOptions value.
-     * @param {Object[]} userTasks - An array of UserTask value.
-     */
+import Heuristic from './Heuristic'
+import TestStructureOptions from './TestStructureOptions'
+import UserTask from './UserTask'
 
-export default class TestStructure{
-    constructor({
-        heuristicList, options, userTasks
-    } = {}
-    ) {
-        this.heuristicList = heuristicList;
-        this.options = options;
-        this.userTasks = userTasks;
-    }
-    static toTestStructure(data) {
-        return new TestStructure(data)
-    }
+/**
+ * Represents the test structure.
+ */
+export default class TestStructure {
+  /**
+   * @param {Partial<TestStructure>} partial
+   */
+  constructor({ heuristicList, options, userTasks } = {}) {
+    /**
+     * Defines an array of Heuristic value.
+     *
+     * @type {Heuristic>[]}
+     */
+    this.heuristicList = heuristicList ?? []
+
+    /**
+     * Defines an array of test structure options.
+     *
+     * @type {TestStructureOptions}
+     */
+    this.options = options
+
+    /**
+     * Defines an array of user tasks.
+     *
+     * @type {UserTask[]}
+     */
+    this.userTasks = userTasks
+  }
+
+  /**
+   * Creates a new test structure according to the given map.
+   *
+   * @param {Partial<TestStructure>} map a map to be converted.
+   * @returns a new test structure map.
+   */
+  static toTestStructure(map) {
+    return new TestStructure(map)
+  }
 }
