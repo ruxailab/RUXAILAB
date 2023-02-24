@@ -3,7 +3,7 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: ['plugin:vue/essential', 'eslint:recommended'],
+  extends: ['plugin:vue/recommended', '@vue/airbnb'],
   parserOptions: {
     parser: 'babel-eslint',
   },
@@ -11,14 +11,11 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-unused-vars': 'off',
-    semi: ['warning', 'all'],
-    'max-len': 'off',
+    semi: ['warn', 'never'],
+    'prefer-const': 'warn',
+    indent: 'off',
+    'object-curly-newline': 'off',
     'linebreak-style': 'off',
-    camelcase: [
-      'error',
-      { properties: 'never', ignoreDestructuring: true, ignoreImports: true },
-    ],
-    'arrow-parens': ['warn', 'always'],
-    'vue/multiline-html-element-content-newline': 'off',
+    'vue/max-attributes-per-line': 'off',
   },
 }
