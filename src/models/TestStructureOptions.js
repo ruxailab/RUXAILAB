@@ -1,18 +1,32 @@
-     /**
-     * Create a TestStructureOptions.
-     * @param {string} text - The text value.
-     * @param {number} value - The value value.
+/**
+ * Represents the test structure options.
+ */
+export default class TestStructureOptions {
+  /**
+   * @param {Partial<TestStructureOptions>} partial
+   */
+  constructor({ text, value } = {}) {
+    /**
+     * Defines the option text.
+     *
+     * @type {string}
      */
+    this.text = text;
 
-export default class TestStructureOptions{
-    constructor({
-        text, value
-    } = {}
-    ) {
-        this.text = text;
-        this.value = value;
-    }
-    static toTestStructureOptions(data) {
-        return new TestStructureOptions(data)
-    }
+    /**
+     * Defines the option value.
+     *
+     * @type {number}
+     */
+    this.value = value;
+  }
+
+  /**
+   * Creates a new text structure option model from the given map.
+   * @param {Partial<TestStructureOptions>} map a map to be converted.
+   * @returns a new text structure option model.
+   */
+  static toTestStructureOptions(map) {
+    return new TestStructureOptions(map);
+  }
 }
