@@ -47,13 +47,7 @@ export default {
         async signup({ commit }, payload) {
             commit("setLoading", true);
             try {
-                const response = await createUserWithEmailAndPassword(auth, payload.email, payload.password)
-                if (response) {
-                    const dbUser = await new UserController().getById(response.user.uid)
-                    commit('SET_USER', dbUser)
-                } else {
-                    throw new Error('Signup failed')
-                }
+                await createUserWithEmailAndPassword(auth, payload.email, payload.password)
             } catch (err) {
                 console.error("Error when creating user", err);
                 commit("setError", err);

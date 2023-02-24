@@ -48,7 +48,6 @@ exports.processSignUp = functions.auth.user().onCreate(async (user) => {
         accessLevel: 1,
         myTests: {},
         myAnswers: {},
-        myTemplates: [],
         notifications: [],
       });
   } catch (err) {
