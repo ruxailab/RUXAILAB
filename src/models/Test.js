@@ -12,6 +12,8 @@
  * @param {Object} templateDoc - The TestTemplateDoc value.
  */
 
+import TestAdmin from "./TestAdmin";
+
 export default class Test {
     constructor({
         id,
@@ -45,7 +47,7 @@ export default class Test {
         this.isPublic = isPublic ?? false
     }
     static toTest(data) {
-        return new Test(data);
+        return new Test({ ...data, testAdmin: TestAdmin.toTestAdmin(data.testAdmin) });
     }
     toFirestore() {
         return {
