@@ -1,40 +1,91 @@
-     /**
-     * Create a Cooperators.
-     * @param {string} userDocId - The userDocId value.
-     * @param {string} userName - The userName value.
-     * @param {string} userEmail - The userEmail value.
-     * @param {number} accessLevel - The accessLevel value.
-     * @param {boolean} invited - The invited value.
-     * @param {boolean} accepted - The accepted value.
-     * @param {number} progress - The progress value.
-     * @param {string} answerStatus - The answerStatus value.
-     * @param {string} updateDate - The updateDate value.
-     */
-
+/**
+ * Represents the cooperators model.
+ */
 export default class Cooperators {
-    constructor({
-        userDocId,
-        userName,
-        userEmail,
-        accessLevel,
-        invited,
-        accepted,
-        progress,
-        answerStatus,
-        updateDate
-    } = {}
-    ) {
-        this.userDocId = userDocId;
-        this.userName = userName;
-        this.userEmail = userEmail;
-        this.accessLevel = accessLevel;
-        this.invited = invited;
-        this.accepted = accepted;
-        this.progress = progress;
-        this.answerStatus = answerStatus;
-        this.updateDate = updateDate;
-    }
-    static toCooperators(data) {
-        return new Cooperators(data)
-    }
+  /**
+   * @param {Partial<Cooperators>} partial
+   */
+  constructor({
+    userDocId,
+    userName,
+    userEmail,
+    accessLevel,
+    invited,
+    accepted,
+    progress,
+    answerStatus,
+    updateDate,
+  } = {}) {
+    /**
+     * Defines the user document id.
+     *
+     * @type {string}
+     */
+    this.userDocId = userDocId
+
+    /**
+     * Defines the user name.
+     *
+     * @type {string}
+     */
+    this.userName = userName
+
+    /**
+     * Defines the user email.
+     *
+     * @type {string}
+     */
+    this.userEmail = userEmail
+
+    /**
+     * Defines the cooperator access level.
+     *
+     * @type {number}
+     */
+    this.accessLevel = accessLevel
+
+    /**
+     * Defines whether the cooperator was invited.
+     *
+     * @type {boolean}
+     */
+    this.invited = invited
+
+    /**
+     * Defines whether the cooperator was accepted.
+     *
+     * @type {boolean}
+     */
+    this.accepted = accepted
+
+    /**
+     * Defines the cooperator progress.
+     *
+     * @type {number}
+     */
+    this.progress = progress
+
+    /**
+     * Defines the answer status.
+     *
+     * @type {string}
+     */
+    this.answerStatus = answerStatus
+
+    /**
+     * Defines a timestamp of the cooperator last updated date.
+     *
+     * @type {number}
+     */
+    this.updateDate = updateDate
+  }
+
+  /**
+   * Creates a new cooperators model from the given map.
+   * @param {Partial<Cooperators>} map the map to be converted.
+   * @returns a new cooperators model.
+   */
+  static toCooperators(map) {
+    return new Cooperators(map)
+  }
 }
