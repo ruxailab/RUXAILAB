@@ -136,7 +136,7 @@ export default {
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure;
-      const auxT = new Test(this.object);
+      const auxT = Test.toTest(this.object);
       this.$store.dispatch("updateTest", auxT);
     },
 
