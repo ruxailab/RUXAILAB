@@ -15,7 +15,7 @@ export default [
   },
   {
     path: "/signin",
-    name: "Sign In",
+    name: "SignIn",
     meta: { authorize: [] },
     component: SignIn,
   },
