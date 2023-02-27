@@ -1,6 +1,5 @@
 <template>
     <section>
-        <teste></teste>
         <!-- Desktop -->
         <v-container
             style="display:contents; background-color:#f4b700; height:300px"
@@ -158,7 +157,6 @@ section {
 </style>
 
 <script>
-import teste from "@/components/atoms/CompleteTestPdf.vue";
 export default {
     data: () => ({}),
     methods: {
@@ -176,9 +174,6 @@ export default {
         csvHeuristics() {
             return this.$store.state.Tests.currentTest;
         },
-    },
-    components: {
-        teste,
     },
 };
 //remover

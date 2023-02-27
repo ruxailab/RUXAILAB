@@ -121,14 +121,14 @@ export default {
                         value4: "0",
 
                         comments1: [
-                            "A todo momento o título é visível",
-                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
                         ],
                         comments2: ["puta", "tales"],
                         comments3: [],
@@ -143,14 +143,14 @@ export default {
                         value3: "0",
                         value4: "0",
                         comments1: [
-                            "A todo momento o título é visível",
-                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
                         ],
                         comments2: ["puta", "tales"],
                         comments3: [],
@@ -166,14 +166,14 @@ export default {
                         value3: "0",
                         value4: "0",
                         comments1: [
-                            "A todo momento o título é visível",
-                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
                         ],
                         comments2: ["puta", "tales"],
                         comments3: [],
@@ -188,14 +188,14 @@ export default {
                         value3: "0",
                         value4: "0",
                         comments1: [
-                            "A todo momento o título é visível",
-                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
                         ],
                         comments2: ["puta", "tales"],
                         comments3: [],
@@ -213,14 +213,17 @@ export default {
                         comments1: [
                             "A todo momento o título é visível",
                             "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
                         ],
-                        comments2: ["puta", "tales"],
+                        comments2: [
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
+                        ],
                         comments3: [],
                         comments4: [],
                     },
@@ -240,18 +243,18 @@ export default {
                         value2: "0",
                         value3: "0",
                         value4: "0",
-                        comments1: [
-                            "A todo momento o título é visível",
-                            "dfjasdfnasdnfkajsndfjasdofkaokdfa",
-                            "asdkfnalksdlkm,ml,smkmodflaknsudnfasjsssssssssssssssss",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                            "asdfasdfa",
-                            "asdfasdfasdfasdfasdfasdf",
-                            "werqfgxcbnhgjygsdfSDGFSHFHJDASDFASFA",
-                        ],
+                        comments1: [],
                         comments2: ["puta", "tales"],
-                        comments3: [],
+                        comments3: [
+                            "I recently discovered a new type of fruit that's called a kiwano, and it tastes like a mix of cucumber and kiwi! It has a spiky exterior that's yellow and orange, and the flesh is green with edible seeds. It's so unique and refreshing, and I love adding it to salads or smoothies.",
+                            "Have you ever tried bubble tea before? It's a Taiwanese drink that has tea, milk, and chewy tapioca pearls. It's a fun and tasty drink that comes in all sorts of flavors like taro, matcha, or mango. The tapioca pearls add a nice texture to the drink, and it's perfect for a hot day.",
+                            "I recently watched a documentary about the Great Barrier Reef, and it's such a fascinating and beautiful place. It's home to thousands of species of fish, coral, and other marine life, and it's one of the natural wonders of the world. It's also facing many challenges like coral bleaching and climate change, so it's important that we protect it for future generations.",
+                            "I went on a hike last weekend and saw the most amazing sunset. The sky was painted with shades of pink, purple, and orange, and it was so peaceful and serene. It reminded me of the beauty of nature and how important it is to take time to appreciate it.",
+                            "I recently started learning how to code, and it's been challenging but also very rewarding. It's amazing to see how a few lines of code can create a website or an app, and I'm excited to see where this new skill will take me.",
+                            "I love watching cooking shows and trying out new recipes. One of my favorite dishes to make is homemade pizza with fresh ingredients like tomatoes, basil, and mozzarella cheese. It's a fun and delicious activity to do with friends or family, and you can customize it to your liking.",
+                            "I'm a big fan of reading, and I just finished a novel called 'The Nightingale' by Kristin Hannah. It's a historical fiction set in World War II and tells the story of two sisters who navigate the challenges of war and occupation. It's a heartbreaking but inspiring story, and it made me appreciate the sacrifices of those who lived through that time.",
+                            "I recently visited a museum dedicated to the history of space exploration, and it was mind-blowing. I saw real rockets, spacesuits, and artifacts from the Apollo missions. It made me realize how far we've come in our understanding of the universe, and how much more we have to discover.",
+                        ],
                         comments4: [],
                     },
                     {
@@ -327,17 +330,17 @@ export default {
         resp3: "No",
         resp4: "No aplica-No es problema / Not applicable-It is not a problem",
 
-        // barColors: [
-        //     "#b91d47",
-        //     "#F6F614",
-        //     "#41CA2B",
-        //     "#00aba9",
-        //     "#2b5797",
-        //     "#e8c3b9",
-        //     "#1e7145",
-        //     "#712BCA",
-        //     "#B81818",
-        // ],
+        barColors: [
+            "#b91d47",
+            "#F6F614",
+            "#41CA2B",
+            "#00aba9",
+            "#2b5797",
+            "#e8c3b9",
+            "#1e7145",
+            "#712BCA",
+            "#B81818",
+        ],
     }),
     methods: {
         // teste() {
@@ -410,6 +413,9 @@ li {
     width: 100%;
     margin: 1rem;
 }
+.whole-test {
+    display: hidden !important;
+}
 .whole-test-title {
     padding: 5px;
     font-weight: bold;
@@ -424,7 +430,6 @@ li {
 .heuristic-title {
     color: orange;
     font-size: xx-large;
-    background-color: rgb(240, 238, 238);
     padding-left: 10px;
 }
 .heuristic-question {
@@ -467,6 +472,10 @@ li {
     li {
         visibility: visible !important;
     }
+
+    canvas {
+        display: none;
+    }
     header {
         display: none !important;
     }
@@ -493,7 +502,11 @@ li {
     p {
         page-break-inside: avoid;
     }
-
+    li {
+        max-width: 95%;
+        text-align: justify;
+        margin-left: 0;
+    }
     .heuristic-question {
         page-break-after: always;
     }
@@ -502,3 +515,8 @@ li {
     }
 }
 </style>
+
+<!-- import teste from "@/components/atoms/CompleteTestPdf.vue";
+components: {
+        teste,
+    }, -->
