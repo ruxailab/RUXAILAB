@@ -294,7 +294,6 @@ export default {
     methods: {
         toggleVisibility() {
             this.pdfIsVisible = !this.pdfIsVisible;
-            window.open(CompleteTestPdf);
         },
 
         removeSelectedCoops(index) {
