@@ -1,7 +1,4 @@
-import Cooperators from './Cooperators'
 import TestAdmin from './TestAdmin'
-import TestStructure from './TestStructure'
-import TestTemplateDoc from './TestTemplateDoc'
 
 /**
  * Represents the test model.
