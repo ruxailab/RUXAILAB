@@ -338,6 +338,8 @@ export default {
             window.print();
             document.body.innerHTML = "";
             // document.body.innerHTML = originalContent;
+            window.location.reload();
+            // history.go(-2);
             // console.log(divName);
             // console.log(document);
             // window.print();
