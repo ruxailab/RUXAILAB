@@ -5,7 +5,7 @@
 
 // import TestController
 import TestController from '@/controllers/TestController'
-import Test from '../../models/Test'
+// import Test from '../../models/Test'
 
 const testController = new TestController()
 
