@@ -5,21 +5,29 @@
     color="#FCA326"
     class="pb-0 mb-0"
   >
-    <v-tab @click="tabClicked(0)">Pre Test</v-tab>
-    <v-tab @click="tabClicked(1)">Tasks</v-tab>
-    <v-tab @click="tabClicked(2)">Post Test</v-tab>
+    <v-tab @click="tabClicked(0)">
+      Pre Test
+    </v-tab>
+    <v-tab @click="tabClicked(1)">
+      Tasks
+    </v-tab>
+    <v-tab @click="tabClicked(2)">
+      Post Test
+    </v-tab>
   </v-tabs>
 
   <div v-else-if="type == 'content'">
     <v-card v-if="index == 0" style="background: #f5f7ff">
-      <v-card-title class="subtitleView">Pre Test</v-card-title>
-      <v-divider></v-divider>
-      <v-row justify="space-around" v-if="object.preTest">
+      <v-card-title class="subtitleView">
+        Pre Test
+      </v-card-title>
+      <v-divider />
+      <v-row v-if="object.preTest" justify="space-around">
         <v-col cols="10">
           <FormPreTest
-            :preTest="object.preTest"
+            :pre-test="object.preTest"
+            :val-index="0"
             @valForm="emitValForm"
-            :valIndex="0"
             @change="emitChange()"
           />
         </v-col>
@@ -29,13 +37,15 @@
     <ListTasks v-if="index == 1" :tasks="object.tasks" @change="emitChange()" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
-      <v-card-title class="subtitleView">Post Test</v-card-title>
-      <v-divider></v-divider>
+      <v-card-title class="subtitleView">
+        Post Test
+      </v-card-title>
+      <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
           <FormPostTest
-            :postTest="object.postTest"
-            :valIndex="1"
+            :post-test="object.postTest"
+            :val-index="1"
             @input="object.postTest = $event"
             @valForm="emitValForm"
             @change="emitChange()"
@@ -47,9 +57,9 @@
 </template>
 
 <script>
-import FormPreTest from "@/components/atoms/FormPreTest";
-import FormPostTest from "@/components/atoms/FormPostTest";
-import ListTasks from "@/components/molecules/ListTasks";
+import FormPreTest from "@/components/atoms/FormPreTest"
+import FormPostTest from "@/components/atoms/FormPostTest"
+import ListTasks from "@/components/molecules/ListTasks"
 
 export default {
   components: {
@@ -62,30 +72,32 @@ export default {
       type: String,
       required: true,
     },
+    // eslint-disable-next-line vue/require-default-prop
     index: {
       type: Number,
     },
+    // eslint-disable-next-line vue/require-default-prop
     object: {
       type: Object,
     },
   },
   data: () => ({}),
-  methods: {
-    tabClicked(index) {
-      this.$emit("tabClicked", index);
-    },
-    emitChange() {
-      this.$emit("change");
-    },
-    emitValForm(valid, index) {
-      this.$emit("valForm", valid, index);
-    },
-  },
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
-      console.error(this.type + " type in EditUserTest.vue is not valid.");
+      console.error(this.type + " type in EditUserTest.vue is not valid.")
   },
-};
+  methods: {
+    tabClicked(index) {
+      this.$emit("tabClicked", index)
+    },
+    emitChange() {
+      this.$emit("change")
+    },
+    emitValForm(valid, index) {
+      this.$emit("valForm", valid, index)
+    },
+  },
+}
 </script>
 
 <style scoped>
