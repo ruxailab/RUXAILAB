@@ -212,19 +212,19 @@ export default {
           {
             title: "Reports",
             icon: "mdi-book-multiple",
-            path: `/reportview/${this.test.reports}`,
+            path: `/reportview/${this.test.id}`,
             id: 3,
           },
           {
             title: "Answers",
             icon: "mdi-order-bool-ascending-variant",
-            path: `/answerview/${this.test.answers}`,
+            path: `/answerview/${this.test.id}`,
             id: 4,
           },
           {
             title: "Analytics",
             icon: "mdi-chart-bar",
-            path: `/analyticsview/${this.test.answers}`,
+            path: `/analyticsview/${this.test.id}`,
             id: 5,
           }
         );
