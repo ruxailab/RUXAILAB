@@ -1,69 +1,160 @@
+import TestAdmin from './TestAdmin'
+
 /**
- * Create a Test.
- * @param {Object} testAdmin - The TestAdmin value.
- * @param {string} testDescription - The testDescription value.
- * @param {string} testTitle - The testTitle value.
- * @param {string} testType - The testType value.
- * @param {Object} testStructure - The TestStructure value.  ---->
- * @param {string} answersDocId - The answersDocId value.
- * @param {Object[]} cooperators - An array of Cooperators value.
- * @param {string} creationDate - The creationDate value.
- * @param {string} updateDate - The updateDate value.
- * @param {Object} templateDoc - The TestTemplateDoc value.
+ * Represents the test model.
  */
-
-import TestAdmin from "./TestAdmin";
-
 export default class Test {
-    constructor({
-        id,
-        testAdmin,
-        testDescription,
-        testTitle,
-        testType,
-        testStructure,
-        testOptions,
-        answersDocId,
-        cooperators,
-        creationDate,
-        updateDate,
-        templateDoc,
-        numberColaborators,
-        isPublic,
-    } = {}) {
-        this.id = id ?? null;
-        this.testAdmin = testAdmin ?? null;
-        this.testDescription = testDescription ?? null;
-        this.testTitle = testTitle ?? null;
-        this.testType = testType ?? null;
-        this.testStructure = testStructure ?? [];
-        this.testOptions = testOptions ?? [];
-        this.answersDocId = answersDocId ?? null;
-        this.cooperators = cooperators ?? null;
-        this.creationDate = creationDate ?? null;
-        this.updateDate = updateDate ?? null;
-        this.templateDoc = templateDoc ?? null;
-        this.numberColaborators = numberColaborators ?? 0;
-        this.isPublic = isPublic ?? false
+  /**
+   * @param {Partial<Test>} partial
+   */
+  constructor({
+    id,
+    testAdmin,
+    testDescription,
+    testTitle,
+    testType,
+    testStructure,
+    testOptions,
+    answersDocId,
+    cooperators,
+    creationDate,
+    updateDate,
+    templateDoc,
+    numberColaborators,
+    isPublic,
+  } = {}) {
+    /**
+     * Defines the test id.
+     *
+     * @type {string}
+     */
+    this.id = id ?? null
+
+    /**
+     * Defines the test admin.
+     *
+     * @type {TestAdmin}
+     */
+    this.testAdmin = testAdmin ?? null
+
+    /**
+     * Defines the test description.
+     *
+     * @type {string}
+     */
+    this.testDescription = testDescription ?? null
+
+    /**
+     * Defines the test title.
+     *
+     * @type {string}
+     */
+    this.testTitle = testTitle ?? null
+
+    /**
+     * Defines the test type.
+     *
+     * @type {string}
+     */
+    this.testType = testType ?? null
+
+    /**
+     * Defines the test structure.
+     *
+     * @type {TestStructure[]}
+     */
+    this.testStructure = testStructure ?? []
+
+    /**
+     * Defines the test options.
+     *
+     * @type {TestStructureOptions[]}
+     */
+    this.testOptions = testOptions ?? []
+
+    /**
+     * Defines the answers document id.
+     *
+     * @type {string}
+     */
+    this.answersDocId = answersDocId ?? null
+
+    /**
+     * Defines the test cooperators.
+     *
+     * @type {Cooperators}
+     */
+    this.cooperators = cooperators ?? null
+
+    /**
+     * Defines a timestamp of the test creation date.
+     *
+     * @type {number}
+     */
+    this.creationDate = creationDate ?? null
+
+    /**
+     * Defines a timestamp of the test last updated date.
+     *
+     * @type {number}
+     */
+    this.updateDate = updateDate ?? null
+
+    /**
+     * Defines the test template document.
+     *
+     * @type {TestTemplateDoc}
+     */
+    this.templateDoc = templateDoc ?? null
+
+    /**
+     * Defines the amount of collaborators.
+     *
+     * @type {number}
+     */
+    this.numberColaborators = numberColaborators ?? 0
+
+    /**
+     * Defines whether the test is public.
+     *
+     * @type {boolean}
+     */
+    this.isPublic = isPublic ?? false
+  }
+
+  /**
+   * Creates a new test model from the given map.
+   *
+   * @param {Partial<Test>} map the map to be converted.
+   * @returns a new test model.
+   */
+  static toTest(map) {
+    return new Test({
+      ...map,
+      testAdmin: TestAdmin.toTestAdmin(map.testAdmin),
+    })
+  }
+
+  /**
+   * Converts the current model into a map.
+   *
+   * @returns a map that represents the current model.
+   */
+  toFirestore() {
+    return {
+      testTitle: this.testTitle,
+      testDescription: this.testDescription,
+      testAdmin: this.testAdmin.toFirestore(),
+      testType: this.testType,
+      testStructure: this.testStructure,
+      testOptions: this.testOptions,
+      answersDocId: this.answersDocId,
+      cooperators: this.cooperators,
+      creationDate: this.creationDate,
+      updateDate: this.updateDate,
+      templateDoc: this.templateDoc,
+      numberColaborators: this.numberColaborators,
+      isPublic: this.isPublic,
     }
-    static toTest(data) {
-        return new Test({ ...data, testAdmin: TestAdmin.toTestAdmin(data.testAdmin) });
-    }
-    toFirestore() {
-        return {
-            testTitle: this.testTitle,
-            testDescription: this.testDescription,
-            testAdmin: this.testAdmin.toFirestore(),
-            testType: this.testType,
-            testStructure: this.testStructure,
-            testOptions: this.testOptions,
-            answersDocId: this.answersDocId,
-            cooperators: this.cooperators,
-            creationDate: this.creationDate,
-            updateDate: this.updateDate,
-            templateDoc: this.templateDoc,
-            numberColaborators: this.numberColaborators,
-            isPublic: this.isPublic
-        };
-    }
+  }
 }
