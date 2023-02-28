@@ -91,15 +91,16 @@
         />
       </v-col>
       <!-- User tests -->
-      <!-- <EditUserTest
-        v-if="test.type === 'User'"
+      {{test}}
+      <EditUserTest
+        v-if="test.testType === 'User'"
         slot="top"
         type="tabs"
         @tabClicked="setIndex"
-      /> -->
+      />
 
       <EditUserTest
-        v-if="test.type === 'User'"
+        v-if="test.testType === 'User'"
         slot="content"
         :object="object"
         :index="index"

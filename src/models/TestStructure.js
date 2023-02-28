@@ -1,7 +1,3 @@
-import Heuristic from './Heuristic'
-import TestStructureOptions from './TestStructureOptions'
-import UserTask from './UserTask'
-
 /**
  * Represents the test structure.
  */
