@@ -420,7 +420,7 @@ export default {
   }),
   watch: {
     test: async function() {
-      await this.mappingSteps();
+      this.mappingSteps();
     },
     items() {
       if (this.items.length) {

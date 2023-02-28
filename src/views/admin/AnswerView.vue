@@ -204,7 +204,7 @@
                         }"
                       >
                         <v-chip
-                          v-if="header.value != 'HEURISTICS'"
+                          v-if="header.value != 'heuristic'"
                           :key="header.value"
                           :color="
                             getColor(item[header.value], item.max, item.min)
@@ -295,16 +295,14 @@ export default {
 
         //Get Evaluator answers
         let evaluatorIndex = 1;
-        console.log("aa", this.answers);
         this.answers.forEach((evaluator) => {
-          console.log(evaluator);
           let SelectEvaluator = this.resultEvaluator.find(
             (e) => e.userDocId == `Ev${evaluatorIndex}`
           );
           if (!SelectEvaluator) {
             this.resultEvaluator.push({
               userDocId: evaluator.userDocId,
-              email: 'noemail@email.com',
+              email: "noemail@email.com",
               id: `Ev${evaluatorIndex}`,
               heuristics: [],
               result: 0,
@@ -320,18 +318,20 @@ export default {
 
             let noAplication = 0;
             let noReply = 0;
-            let res = heuristic.heuristicQuestions.reduce((totalQuestions, question) => {
-                console.log('res=>',res)
-              //grouping of answers
-              if (question.heuristicAnswer === null) {
-                noAplication++;
-              } //count answers no aplication
-              if (question.heuristicAnswer === "") noReply++;
-              return totalQuestions + Number(question.heuristicAnswer); //sum of responses
-            }, 0);
+            let res = heuristic.heuristicQuestions.reduce(
+              (totalQuestions, question) => {
+                //grouping of answers
+                if (question.heuristicAnswer === null) {
+                  noAplication++;
+                } //count answers no aplication
+                if (question.heuristicAnswer === "") noReply++;
+                return totalQuestions + Number(question.heuristicAnswer); //sum of responses
+              },
+              0
+            );
             if (noAplication == heuristic.heuristicQuestions.length) res = null;
 
-            SelectEvaluator.heuristicQuestions.push({
+            SelectEvaluator.heuristics.push({
               id: `H${heurisIndex}`,
               result: res,
               totalQuestions: heuristic.heuristicTotal,
@@ -345,7 +345,7 @@ export default {
 
         //Calc Final result
         this.resultEvaluator.forEach((ev) => {
-          ev.result = this.calcFinalResult(ev.heuristicQuestions);
+          ev.result = this.calcFinalResult(ev.heuristics);
         });
       }
     },
@@ -354,7 +354,7 @@ export default {
       let qtdQuestion = 0;
       let qtdNoAplication = 0;
       let maxOption = Math.max(
-        ...this.answers.options.map((item) => item.value)
+        ...this.test.testOptions.map((item) => item.value)
       );
       array.forEach((res) => {
         (result += res.result), (qtdQuestion += res.totalQuestions);
@@ -416,14 +416,14 @@ export default {
         header: [],
         items: [],
       };
-      let options = this.answers.options.map((op) => op.value);
+      let options = this.test.testOptions.map((op) => op.value);
       let max = Math.max(...options);
       let min = Math.min(...options);
 
       table.header.push({
         text: "HEURISTICS",
         align: "start",
-        value: "HEURISTICS",
+        value: "heuristic",
       });
 
       if (this.resultEvaluator) {
@@ -621,8 +621,8 @@ export default {
         (this.answers !== null || this.answers.length > 0)
       ) {
         this.statistics();
-        // if (this.answers.answers.length == 0) this.intro = true;
-        // else this.intro = false;
+        if (this.answers.length == 0) this.intro = true;
+        else this.intro = false;
       }
     },
     index() {
