@@ -4,31 +4,32 @@
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title
-          >Are you sure you want to leave?</v-card-title
-        >
+        <v-card-title class="headline error accent-4 white--text" primary-title>
+          Are you sure you want to leave?
+        </v-card-title>
 
         <v-card-text>All your changes will be discarded</v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Stay</v-btn
-          >
+          <v-spacer />
+          <v-btn class="grey lighten-3" text @click="dialog = false">
+            Stay
+          </v-btn>
           <v-btn
             class="error accent-4 white--text ml-1"
             text
             @click="(change = false), $router.push(go)"
-            >Leave</v-btn
           >
+            Leave
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Save button -->
-    <v-tooltip left v-if="accessLevel === 0">
+    <v-tooltip v-if="accessLevel === 0" left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           large
@@ -38,25 +39,29 @@
           bottom
           right
           color="#F9A826"
-          @click="validateAll()"
           v-bind="attrs"
-          v-on="on"
           style="z-index:100"
+          @click="validateAll()"
+          v-on="on"
         >
-          <v-icon large>mdi-content-save</v-icon>
+          <v-icon large>
+            mdi-content-save
+          </v-icon>
         </v-btn>
       </template>
       <span>Save</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
-    <v-overlay class="text-center" v-model="loading">
+    <v-overlay v-model="loading" class="text-center">
       <v-progress-circular
         indeterminate
         color="#fca326"
         size="50"
-      ></v-progress-circular>
-      <div class="white-text mt-3">Loading Test</div>
+      />
+      <div class="white-text mt-3">
+        Loading Test
+      </div>
     </v-overlay>
 
     <!--
@@ -78,86 +83,155 @@
       <v-col cols="12">
         <EditHeuristicsTest
           v-if="test.testType === 'HEURISTICS'"
+          slot="content"
           type="content"
           :object="object"
           :index="index"
           @change="change = true"
-          slot="content"
         />
       </v-col>
-      <!-- User tests
-            <EditUserTest
-                v-if="test.type === 'User'"
-                type="tabs"
-                @tabClicked="setIndex"
-                slot="top"
-            />
+      <!-- User tests -->
+      <!-- <EditUserTest
+        v-if="test.type === 'User'"
+        slot="top"
+        type="tabs"
+        @tabClicked="setIndex"
+      /> -->
 
-            <EditUserTest
-                v-if="test.type === 'User'"
-                :object="object"
-                :index="index"
-                type="content"
-                @change="change = true"
-                @valForm="validate"
-                slot="content"
-            />
-             -->
+      <EditUserTest
+        v-if="test.type === 'User'"
+        slot="content"
+        :object="object"
+        :index="index"
+        type="content"
+        @change="change = true"
+        @valForm="validate"
+      />
+            
       <!-- </ShowInfo>  -->
     </v-row>
   </v-container>
 </template>
 
 <script>
-import Snackbar from "@/components/atoms/Snackbar";
+import Snackbar from "@/components/atoms/Snackbar"
 //import ShowInfo from "@/components/organisms/ShowInfo";
 //import IntroEdit from "@/components/molecules/IntroEdit.vue";
-import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest";
-import Test from "@/models/Test";
-//import EditUserTest from "@/components/organisms/EditUserTest";
+import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest"
+import Test from "@/models/Test"
+import EditUserTest from "@/components/organisms/EditUserTest"
 
 export default {
-  props: ["id"],
   components: {
     Snackbar,
     //ShowInfo,
     // IntroEdit,
     EditHeuristicsTest,
-    //EditUserTest,
+    EditUserTest,
   },
+  // eslint-disable-next-line vue/require-prop-types
+  props: ["id"],
   data: () => ({
     index: 0,
     object: {},
     valids: [true, true],
     change: false,
     dialog: false,
-    intro: null,
+    intro: false,
   }),
+  computed: {
+    accessLevel() {
+      // If user is superadmin
+      if (this.user) {
+        if (this.user.accessLevel == 0) return 0
+        // Check if user is collaborator or owner
+        const isTestOwner = this.test.testAdmin.userDocId === this.user.id
+        if (isTestOwner) return 0
+
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers)
+        answersEntries.forEach((a) => {
+            answers.push(a[1])
+        })
+
+        const isCooperator = answers.find(
+          (a) => a.testDocId === this.test.id
+        )
+        if (isCooperator) {
+          return isCooperator.accessLevel
+        }
+      }
+
+      return 3
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
+    user() {
+      return this.$store.getters.user
+    },
+    test() {
+      return this.$store.getters.test
+    },
+    answers() {
+      return this.$store.getters.answers || []
+    },
+    totalQuestions() {
+      let result = 0
+      if (this.object?.heuristics) {
+        this.object?.heuristics.forEach((h) => {
+          result += h.total
+        })
+      } else if (this.object?.tasks) {
+        this.object?.tasks.forEach((h) => {
+          result += h.total
+        })
+      }
+
+      return result
+    },
+  },
+  watch: {
+    test: async function() {
+      if (this.test !== null && this.test !== undefined) {
+        // this.setIntro()
+      }
+    },
+  },
+  async created() {
+    await this.$store.dispatch("getTest", { id: this.id })
+  },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav)
+  },
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav)
+  },
   methods: {
     async submit() {
-      this.object.testStructure = this.$store.state.Tests.Test.testStructure;
-      const auxT = Test.toTest(this.object);
-      this.$store.dispatch("updateTest", auxT);
+      this.object.testStructure = this.$store.state.Tests.Test.testStructure
+      const auxT = Test.toTest(this.object)
+      this.$store.dispatch("updateTest", auxT)
     },
 
     mountAnswerSheet() {
-      let aux = {
+      const aux = {
         heuristics: [],
         tasks: [],
         progress: 0,
         total: this.totalQuestions,
-      };
+      }
 
       if (this.object?.heuristics) {
         this.object.heuristics.forEach((heuris) => {
-          let questions = Array.from(heuris.questions);
-          let arrayQuestions = [];
+          const questions = Array.from(heuris.questions)
+          const arrayQuestions = []
 
           questions.forEach((el) => {
             arrayQuestions.push(
               Object.assign({}, { id: el.id, res: "", com: "" })
-            );
-          });
+            )
+          })
 
           aux.heuristics.push(
             Object.assign(
@@ -168,26 +242,26 @@ export default {
                 questions: arrayQuestions,
               }
             )
-          );
-        });
+          )
+        })
 
-        delete aux.tasks;
+        delete aux.tasks
       } else if (this.object?.tasks) {
-        aux.tasks = [...this.object.tasks];
-        delete aux.heuristics;
+        aux.tasks = [...this.object.tasks]
+        delete aux.heuristics
       }
 
-      return aux;
+      return aux
     },
     validate(valid, index) {
-      this.valids[index] = valid;
+      this.valids[index] = valid
     },
     validateAll() {
       if (this.test.type === "User" && !this.valids[0]) {
         this.$store.commit(
           "setError",
           "Please fill all fields in Pre Test correctly or leave them empty"
-        );
+        )
       } else if (
         this.test.type === "HEURISTICS" &&
         this.object.options.length == 1
@@ -195,117 +269,49 @@ export default {
         this.$store.commit(
           "setError",
           "Please create at least 2 options or none at all"
-        );
+        )
       } else if (this.test.type === "User" && !this.valids[1]) {
         this.$store.commit(
           "setError",
           "Please fill all fields in Post Test correctly or leave them empty"
-        );
+        )
       } else {
-        this.submit();
+        this.submit()
       }
     },
     preventNav(event) {
-      if (!this.change) return;
-      event.preventDefault();
-      event.returnValue = "";
+      if (!this.change) return
+      event.preventDefault()
+      event.returnValue = ""
     },
     async setIntro() {
-      this.object = await Object.assign(this.object, this.test);
-      if (this.test.type === "HEURISTICS") {
-        if (this.test.heuristics.length == 0 && this.test.options.length == 0)
-          this.intro = true;
-        else this.intro = false;
-      } else if (this.test.type === "User") {
-        if (
-          this.test.tasks.length == 0 &&
-          this.test.postTest.form == null &&
-          this.test.preTest.consent == null &&
-          this.test.preTest.form == null
-        )
-          this.intro = true;
-        else this.intro = false;
-      }
+      this.object = await Object.assign(this.object, this.test)
+      // if (this.test.type === "HEURISTICS") {
+      //   if (this.test.heuristics.length == 0 && this.test.options.length == 0)
+      //     this.intro = true
+      //   else this.intro = false
+      // } else if (this.test.type === "User") {
+      //   if (
+      //     this.test.tasks.length == 0 &&
+      //     this.test.postTest.form == null &&
+      //     this.test.preTest.consent == null &&
+      //     this.test.preTest.form == null
+      //   )
+      //     this.intro = true
+      //   else this.intro = false
+      // }
     },
     setIndex(ind) {
-      this.index = ind;
+      this.index = ind
     },
-  },
-  watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.setIntro();
-      }
-    },
-  },
-  computed: {
-    accessLevel() {
-      // If user is superadmin
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0;
-        // Check if user is collaborator or owner
-        const isTestOwner = this.test.testAdmin.userDocId === this.user.id;
-        if (isTestOwner) return 0;
-
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers);
-        answersEntries.forEach((a) => {
-            answers.push(a[1]);
-        });
-
-        const isCooperator = answers.find(
-          (a) => a.testDocId === this.test.id
-        );
-        if (isCooperator) {
-          return isCooperator.accessLevel;
-        }
-      }
-
-      return 3;
-    },
-    loading() {
-      return this.$store.getters.loading;
-    },
-    user() {
-      return this.$store.getters.user;
-    },
-    test() {
-      return this.$store.getters.test;
-    },
-    answers() {
-      return this.$store.getters.answers || [];
-    },
-    totalQuestions() {
-      let result = 0;
-      if (this.object?.heuristics) {
-        this.object?.heuristics.forEach((h) => {
-          result += h.total;
-        });
-      } else if (this.object?.tasks) {
-        this.object?.tasks.forEach((h) => {
-          result += h.total;
-        });
-      }
-
-      return result;
-    },
-  },
-  async created() {
-    await this.$store.dispatch("getTest", { id: this.id });
   },
   beforeRouteLeave(to, from, next) {
     if (this.change) {
-      this.dialog = true;
-      this.go = to.path;
+      this.dialog = true
+      this.go = to.path
     } else {
-      next();
+      next()
     }
   },
-  beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav);
-  },
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav);
-  },
-};
+}
 </script>
