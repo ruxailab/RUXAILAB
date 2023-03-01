@@ -319,7 +319,7 @@ export default {
           {
             title: "Reports",
             icon: "mdi-book-multiple",
-            path: `/reportview/${this.test.reports}`,
+            path: `/reportview/${this.test.answersDocId}`,
             id: 3,
           },
           {
@@ -397,7 +397,7 @@ export default {
           description: "Take a look at how your evaluators are doing.",
           cardStyle:
             "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
-          path: `/reportview/${this.test.reports}`,
+          path: `/reportview/${this.test.answersDocId}`,
         },
         {
           image: "IntroAnswer.svg",
