@@ -5,12 +5,20 @@ import Test from "./Test";
  */
 
 export default class Heuristic extends Test {
-    constructor({ heuristics, testTitle, testDescription, testAdmin } = {}) {
-        super({ testTitle, testDescription, testAdmin });
+    constructor({ heuristics, testTitle, testDescription } = {}) {
+        super({ testTitle, testDescription });
         this.heuristics = heuristics ?? null;
-        this.testStructure = [];
-        this.testOptions = [];
-        this.testType = "HEURISTICS";
+        this.testType = "heuristic";
+        let date = new Date();
+        let current_date =
+            date.getFullYear() +
+            "-" +
+            (date.getMonth() + 1) +
+            "-" +
+            date.getDate();
+        let current_time =
+            date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        this.creationDate = current_date + " - " + current_time;
     }
 
     toFirestore() {
