@@ -5,17 +5,25 @@
         <v-list-item @click="emitClick(item)" :ripple="false" v-if="item">
           <!-- Avatar -->
           <v-list-item-avatar tile style="border-radius: 5px" size="40">
-            <v-avatar tile :color="generateColor()" style="color: #545454">{{
-              item.testTitle[0].toUpperCase()
-            }}</v-avatar>
+            <v-avatar tile :color="generateColor()" style="color: #545454">
+              <span
+                v-if="type === 'myTemplates' || type === 'publicTemplates'"
+                >{{ item.header.templateTitle[0].toUpperCase() }}</span
+              >
+              <span v-else>{{
+                item.testTitle[0].toUpperCase()
+              }}</span></v-avatar
+            >
           </v-list-item-avatar>
 
           <v-list-item-content>
             <!-- Title -->
-            <v-list-item-title v-if="type === 'template'">
-              <!-- {{ item.testType }} -->
+            <v-list-item-title
+              v-if="type === 'myTemplates' || type === 'publicTemplates'"
+            >
+              {{ item.header.templateTitle }}
               <v-chip label outlined style="color: grey" small class="ml-1">{{
-                item.header.type || item.body.type
+                item.header.templateType
               }}</v-chip>
             </v-list-item-title>
             <v-list-item-title v-else>
@@ -29,11 +37,15 @@
             <!-- Subtitle -->
             <v-list-item-subtitle>
               Created by
-              <strong v-if="type === 'myTests'">
+              <strong v-if="type === 'myTests' || type === 'myTemplates'">
                 Me
               </strong>
               <strong v-else>{{
-                item.testAdmin ? item.testAdmin.email : item.testAuthorEmail
+                item.testAdmin
+                  ? item.testAdmin.email
+                  : item.header
+                  ? item.header.templateAuthor.userEmail
+                  : ""
               }}</strong>
             </v-list-item-subtitle>
             <div
@@ -94,9 +106,11 @@
               >Last Updated on
               {{ getFormattedDate(item.updateDate) }}</v-list-item-action-text
             >
-            <v-list-item-action-text v-if="type === 'template'">
-              <v-chip outlined small class="ml-1"
-                >Version: {{ item.header.version }}</v-chip
+            <v-list-item-action-text
+              v-if="type === 'myTemplates' || type === 'publicTemplates'"
+            >
+              <v-chip outlined small class="ml-1" label
+                >Version: {{ item.header.templateVersion }}</v-chip
               >
             </v-list-item-action-text>
           </v-list-item-action>
@@ -118,7 +132,9 @@
           "
           >No tests found</span
         >
-        <span v-else-if="type === 'template'">No templates found</span>
+        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
+          >No templates found</span
+        >
       </v-row>
     </v-list>
     <!-- <v-row v-if="hasPagination" justify="center" class="mt-5">
@@ -194,7 +210,13 @@ export default {
     },
   },
   beforeUpdate() {
-    let availableTypes = ["myTests", "publicTests", "sharedWithMe", "template"];
+    let availableTypes = [
+      "myTests",
+      "publicTests",
+      "sharedWithMe",
+      "myTemplates",
+      "publicTemplates",
+    ];
 
     if (!availableTypes.includes(this.type)) {
       console.error(this.type + " type in ListTests.vue is not valid.");
