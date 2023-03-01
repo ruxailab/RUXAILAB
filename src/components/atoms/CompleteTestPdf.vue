@@ -2,13 +2,6 @@
     <div class="whole-test">
         <button @click="makePdf('makepdf')">pdf</button>
         <div id="makepdf" class="whole-test-title">{{ title }}</div>
-        <!-- <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-        <image id="image1"></image> -->
-
-        <!-- <button @click="convertToImage()">Convert to Image Element</button>
-        <div id="imageContainer"></div>
-        <button @click="teste()">tales</button> -->
-
         <div v-for="(heuristic, index) in heuristics" :key="heuristic.id">
             <br />
 
@@ -343,66 +336,11 @@ export default {
         ],
     }),
     methods: {
-        // teste() {
-        //     console.log(this.heuristics[1].questions);
-        //     let auxTitle = [];
-        //     let auxAnsw = [];
-        //     let auxValue = [];
-        //     for (let i = 0; i < this.heuristics.length; i++) {
-        //         for (let j = 0; j < this.heuristics[i].questions.length; j++) {
-        //             auxTitle.push(this.heuristics[i].questions[j].title);
-        //             auxAnsw.push(this.heuristics[i].questions[j].resp1);
-        //             auxValue.push(
-        //                 parseInt(this.heuristics[i].questions[j].value1)
-        //             );
-        //         }
-        //     }
-        //     console.log(this.heuristics[0].questions[0].value1);
-        //     console.log(auxValue);
-        //     new Chart("myChart", {
-        //         type: "pie",
-        //         data: {
-        //             labels: auxTitle,
-        //             datasets: [
-        //                 {
-        //                     backgroundColor: this.barColors,
-        //                     data: auxValue,
-        //                 },
-        //             ],
-        //         },
-        //         options: {
-        //             title: {
-        //                 display: true,
-        //                 text: this.heuristics[0].title,
-        //             },
-        //         },
-        //     });
-
-        //     let canvas = document.getElementById("myChart");
-        //     let image = new Image();
-        //     image.src = canvas.toDataURL();
-
-        //     document.getElementById("image1").appendChild(image);
-        // },
-
         makePdf(divName) {
             console.log(divName);
             console.log(document);
             window.print();
         },
-        // convertToImage() {
-        //     // Get the canvas element
-        //     var canvas = document.getElementById("myChart");
-        //     // Get the 2D rendering context for the canvas
-
-        //     // Create a new image element
-        //     var img = new Image();
-        //     // Set the source of the image to the data URI for the canvas
-        //     img.src = canvas.toDataURL("image/png");
-        //     // Add the image to the page
-        //     var container = document.getElementById("imageContainer");
-        //     container.appendChild(img);
-        // },
     },
 };
 </script>
@@ -449,12 +387,6 @@ li {
     width: 100%;
     font-size: large;
     padding-top: 2%;
-
-    /* display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: 2fr repeat(4, 1fr);
-    grid-column-gap: 0px;
-    grid-row-gap: 0px; */
 }
 
 @media print {
@@ -515,8 +447,3 @@ li {
     }
 }
 </style>
-
-<!-- import teste from "@/components/atoms/CompleteTestPdf.vue";
-components: {
-        teste,
-    }, -->
