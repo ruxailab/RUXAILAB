@@ -15,10 +15,10 @@ export default class Heuristic {
         heuristicQuestions,
         heuristicTotal,
     } = {}) {
-        this.heuristicId = heuristicId;
-        this.heuristicTitle = heuristicTitle;
-        this.heuristicQuestions = heuristicQuestions;
-        this.heuristicTotal = heuristicTotal;
+        this.id = heuristicId;
+        this.title = heuristicTitle;
+        this.questions = heuristicQuestions;
+        this.total = heuristicTotal;
     }
     static toHeuristic(data) {
         return new Heuristic({

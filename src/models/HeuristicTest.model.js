@@ -20,7 +20,7 @@ export default class Heuristic extends Test {
             testStructure: [],
             testOptions: [],
             testAdmin: this.testAdmin,
-            updateDate: Date.now()
+            updateDate: Date.now(),
         });
     }
     static toHeuristicTest(data) {
