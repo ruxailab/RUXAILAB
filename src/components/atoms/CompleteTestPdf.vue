@@ -1,6 +1,6 @@
 <template>
-    <div class="whole-test" ref="wholeTest">
-        <button @click="makePdf('whole-test')">pdf</button>
+    <div class="whole-test">
+        <button @click="makePdf('makepdf')">pdf</button>
         <div id="makepdf" class="whole-test-title">{{ title }}</div>
         <!-- <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
         <image id="image1"></image> -->
@@ -329,24 +329,80 @@ export default {
         resp2: "Ni Sí, ni No / Neither",
         resp3: "No",
         resp4: "No aplica-No es problema / Not applicable-It is not a problem",
+
+        barColors: [
+            "#b91d47",
+            "#F6F614",
+            "#41CA2B",
+            "#00aba9",
+            "#2b5797",
+            "#e8c3b9",
+            "#1e7145",
+            "#712BCA",
+            "#B81818",
+        ],
     }),
     methods: {
-        makePdf() {
-            let printableContent = this.$refs.wholeTest.innerHTML;
-            // let originalContent = document.body.innerHTML;
-            document.body.innerHTML = printableContent;
+        // teste() {
+        //     console.log(this.heuristics[1].questions);
+        //     let auxTitle = [];
+        //     let auxAnsw = [];
+        //     let auxValue = [];
+        //     for (let i = 0; i < this.heuristics.length; i++) {
+        //         for (let j = 0; j < this.heuristics[i].questions.length; j++) {
+        //             auxTitle.push(this.heuristics[i].questions[j].title);
+        //             auxAnsw.push(this.heuristics[i].questions[j].resp1);
+        //             auxValue.push(
+        //                 parseInt(this.heuristics[i].questions[j].value1)
+        //             );
+        //         }
+        //     }
+        //     console.log(this.heuristics[0].questions[0].value1);
+        //     console.log(auxValue);
+        //     new Chart("myChart", {
+        //         type: "pie",
+        //         data: {
+        //             labels: auxTitle,
+        //             datasets: [
+        //                 {
+        //                     backgroundColor: this.barColors,
+        //                     data: auxValue,
+        //                 },
+        //             ],
+        //         },
+        //         options: {
+        //             title: {
+        //                 display: true,
+        //                 text: this.heuristics[0].title,
+        //             },
+        //         },
+        //     });
+
+        //     let canvas = document.getElementById("myChart");
+        //     let image = new Image();
+        //     image.src = canvas.toDataURL();
+
+        //     document.getElementById("image1").appendChild(image);
+        // },
+
+        makePdf(divName) {
+            console.log(divName);
+            console.log(document);
             window.print();
-            document.body.innerHTML = "";
-            // document.body.innerHTML = originalContent;
-            window.location.reload();
-            // history.go(-2);
-            // console.log(divName);
-            // console.log(document);
-            // window.print();
         },
-    },
-    created() {
-        this.$on("executeFunction", this.makePdf);
+        // convertToImage() {
+        //     // Get the canvas element
+        //     var canvas = document.getElementById("myChart");
+        //     // Get the 2D rendering context for the canvas
+
+        //     // Create a new image element
+        //     var img = new Image();
+        //     // Set the source of the image to the data URI for the canvas
+        //     img.src = canvas.toDataURL("image/png");
+        //     // Add the image to the page
+        //     var container = document.getElementById("imageContainer");
+        //     container.appendChild(img);
+        // },
     },
 };
 </script>
@@ -404,10 +460,7 @@ li {
 @media print {
     * {
         visibility: hidden;
-        z-index: 10;
-        margin-left: 0 !important;
     }
-    .whole-test,
     .whole-test-title,
     .heuristic,
     .heuristic-title,

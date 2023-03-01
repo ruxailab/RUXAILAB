@@ -1,12 +1,12 @@
-import Controller from '@/controllers/BaseController';
+import Controller from "@/controllers/BaseController";
 const COLLECTION = "templatese";
 
 export default class TemplateController extends Controller {
-  constructor() {
-    super()
-  }
+    constructor() {
+        super();
+    }
 
-  async createTemplate(data) {
-    return await super.create(COLLECTION, data)
-  }
+    async createTemplate(data) {
+        return await super.create(COLLECTION, data);
+    }
 }

@@ -1,17 +1,17 @@
-     /**
-     * Create a Template.
-     * @param {Object} body - The TemplateBody value.
-     * @param {Object} header - The TemplateHeader value.
-     */
+/**
+ * Create a Template.
+ * @param {Object} body - The TemplateBody value.
+ * @param {Object} header - The TemplateHeader value.
+ */
 
-export default class Template{
+export default class Template {
     constructor({
         id,
         creationDate,
         description,
-        title, 
+        title,
         type,
-        version, 
+        version,
         authorEmail,
         authorDocId,
         isPublic,
@@ -19,8 +19,7 @@ export default class Template{
         testStructure,
         testOptions,
         testId,
-        } = {}
-    ) {
+    } = {}) {
         this.id = id;
         this.creationDate = creationDate;
         this.description = description;
@@ -30,28 +29,34 @@ export default class Template{
         this.authorEmail = authorEmail;
         this.authorDocId = authorDocId;
         this.isPublic = isPublic;
-        this.answersSheet = answersSheet;
-        this.testStructure= testStructure;
-        this.testOptions = testOptions;
-        this.testId = testId
+
+        this.test = [
+            (this.testId = testId),
+            (this.testStructure = testStructure),
+            (this.testOptions = testOptions),
+            (this.type = type),
+            (this.answersSheet = answersSheet),
+        ];
     }
     static toTemplate(data) {
-        return new Template(data)
+        return new Template(data);
     }
     toFirestore() {
         return {
-           creationDate: this.creationDate,
-           description:  this.description,
-            title:  this.title,
-           type: this.type,
-           version: this.version,
-           authorEmail: this.authorEmail,
-           authorDocId:   this.authorDocId,
-           isPublic: this.isPublic,
-           answersSheet: this.answersSheet,
-           testStructure: this.testStructure,
-           testOptions:  this.testOptions,
-           testId:  this.testId,
+            creationDate: this.creationDate,
+            description: this.description,
+            title: this.title,
+            version: this.version,
+            authorEmail: this.authorEmail,
+            authorDocId: this.authorDocId,
+            isPublic: this.isPublic,
+            test: {
+                testId: this.testId,
+                testStructure: this.testStructure,
+                testOptions: this.testOptions,
+                type: this.type,
+                answersSheet: this.answersSheet,
+            },
         };
     }
 }
