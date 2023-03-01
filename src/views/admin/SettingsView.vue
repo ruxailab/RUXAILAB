@@ -34,7 +34,6 @@
 
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
-      {{ template }}
       <v-card>
         <p class="dialog-title ma-2 pa-2">Create Template</p>
         <v-divider></v-divider>
@@ -43,7 +42,7 @@
             <v-col cols="12">
               <v-text-field
                 autofocus
-                v-model="template.title"
+                v-model="template.templateTitle"
                 label="Title"
                 :rules="titleRequired"
                 counter="100"
@@ -53,7 +52,7 @@
               ></v-text-field>
 
               <v-textarea
-                v-model="template.description"
+                v-model="template.templateDescription"
                 label="Description"
                 outlined
                 dense
@@ -62,7 +61,7 @@
 
               <v-checkbox
                 label="Make template public to all users"
-                v-model="template.isPublic"
+                v-model="template.isTemplatePublic"
                 color="#F9A826"
               ></v-checkbox>
             </v-col>
@@ -165,8 +164,11 @@ import Snackbar from "@/components/atoms/Snackbar";
 import ShowInfo from "@/components/organisms/ShowInfo";
 import LeaveAlert from "@/components/atoms/LeaveAlert";
 import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
-import Template from "@/models/Template";
 import Test from "@/models/Test";
+import TemplateHeader from "@/models/TemplateHeader";
+import TemplateAuthor from "@/models/TemplateAuthor";
+import TemplateBody from "@/models/TemplateBody";
+import Template from "@/models/Template";
 
 export default {
   props: ["id"],
@@ -313,26 +315,29 @@ export default {
       this.$router.push({ name: "TestList" });
     },
     async createTemplate() {
-      let template = new Template(this.template);
-      if (this.test.testType == "HEURISTICS") {
-        (template.testStructure = this.test.testStructure),
-          (template.testOptions = this.test.testOptions),
-          (template.answersSheet = this.test.answersDocId),
-          (template.type = this.test.testType),
-          (template.authorDocId = this.$store.getters.user.id);
-        template.authorEmail = this.$store.getters.user.email;
-        (template.creationDate = new Date().toDateString()),
-          (template.version = "1.0.0");
-        template.testId = this.test.id;
-      } else if (this.test.testType == "User") {
-        template = Object.assign(template, {
-          tasks: this.test.tasks,
-          preTest: this.test.preTest,
-          postTest: this.test.postTest,
-          type: this.test.type,
-        });
-      }
+      let tempHeader = new TemplateHeader({
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+        isTemplatePublic: this.template.isTemplatePublic,
+        templateDescription: this.template.templateDescription,
+        templateTitle: this.template.templateTitle,
+        templateType: this.test.testType,
+        templateVersion: "1.0.0",
+        templateAuthor: new TemplateAuthor({
+          userEmail: this.test.testAdmin.email,
+          userDocId: this.test.testAdmin.userDocId,
+        }),
+      });
+
+      let tempBody = new TemplateBody(this.test);
+      const template = new Template({
+        id: null,
+        header: tempHeader,
+        body: tempBody,
+      });
+
       await this.$store.dispatch("createTemplate", template);
+      this.closeDialog()
     },
     closeDialog() {
       this.tempDialog = false;
