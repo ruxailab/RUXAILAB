@@ -108,18 +108,14 @@ export default {
   },
 
   methods: {
-
-    onSignUp() {
+    async onSignUp() {
       if (this.valid){
-        this.$store.dispatch('signup', {
+        await this.$store.dispatch('signup', {
           email: this.email,
           password: this.password
-        }).then(() => {
-          this.$router.push('/testslist').catch(() => {});
-        });
-      }
-      if (this.user) {
-        this.$router.push("/").catch(() => {}).catch(() => {});
+        })
+
+        this.$router.push({name: 'SignIn'})
       }
     }
   },
