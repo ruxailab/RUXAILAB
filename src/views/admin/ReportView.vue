@@ -39,7 +39,7 @@
     </v-overlay>
 
     <Intro
-      v-if="reports.reports.length == 0 && !loading"
+      v-if="reports.length == 0 && !loading"
       @goToCoops="goToCoops()"
     />
     <ShowInfo title="Reports" v-else>
@@ -53,7 +53,7 @@
         <v-data-table
           style="background: #f5f7ff"
           :headers="headers"
-          :items="reports.reports"
+          :items="reports"
           :items-per-page="10"
           height="420px"
           dense
@@ -74,7 +74,10 @@
           </template>
 
           <template v-slot:item.progress="{ item }">
-            <div>{{ item.log.progress }}%</div>
+            <div>{{ item.progress }}%</div>
+          </template>
+          <template v-slot:item.submitted="{ item }">
+            <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
           </template>
         </v-data-table>
       </div>
@@ -96,10 +99,10 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: "Evaluator", value: "email" },
+      { text: "Evaluator", value: "userDocId" },
       { text: "Last Update", value: "log.date" },
       { text: "Progress", value: "progress", justify: "center" },
-      { text: "Status", value: "log.status" },
+      { text: "Status", value: "submitted" },
       { text: "More", value: "more", justify: "end" },
     ],
     loading: true,
@@ -108,6 +111,9 @@ export default {
     report: null,
   }),
   methods: {
+    checkIfIsSubmitted(status) {
+      return status == true ? 'submitted' : 'in progress'
+    },
     removeReport(report) {
       this.$store
         .dispatch("removeReport", {
@@ -139,7 +145,7 @@ export default {
   },
   computed: {
     reports() {
-      return this.$store.getters.reports || Object.assign({}, { reports: [] });
+      return [this.$store.getters.currentUserTestAnswer];
     },
     test() {
       return this.$store.getters.test;
@@ -157,17 +163,18 @@ export default {
   },
   watch: {
     reports() {
-      if (Object.keys(this.reports).length) this.loading = false;
+      if (Object.values(this.reports).length) this.loading = false;
     },
   },
   async created() {
-    await this.$store.dispatch("getReports", { id: this.id });
+    await this.$store.dispatch("getCurrentTestAnswerDoc")
+    /* await this.$store.dispatch("getReports", { id: this.id });
 
     await this.$store.dispatch("getTest", { id: this.reports.test.id });
 
     await this.$store.dispatch("getAnswers", { id: this.test.answers });
 
-    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
+    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
 };
 </script>
