@@ -12,9 +12,6 @@
 
 <script>
 import Toolbar from './components/molecules/Toolbar'
-import Vue from 'vue'
-
-alert(`Vue version : ${Vue.version}`)
 
 export default {
   name: 'App',
