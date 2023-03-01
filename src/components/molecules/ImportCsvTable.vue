@@ -1,8 +1,12 @@
 <template>
-    <div id="FileUpload">
-        <v-row justify="center">
-            <v-col class="ma-10" cols="10">
-                <v-row class="ma-2" justify="center" align="center">
+    <div style="background-color:#F5F7FF" id="FileUpload">
+        <v-col justify="center">
+            <v-row class="px-6 pt-6">
+                <p class="subtitleView">Import your CSV file here</p>
+            </v-row>
+            <v-divider></v-divider>
+            <v-row>
+                <v-row class="px-8" justify="center" align="center">
                     <v-file-input
                         v-model="csvFile"
                         class="d-flex justify-center "
@@ -26,17 +30,12 @@
                         </v-icon>
                     </v-btn>
                 </v-row>
-            </v-col>
-        </v-row>
+            </v-row>
+        </v-col>
     </div>
 </template>
 
 <script>
-import Heuristic from "@/models/Heuristic";
-import HeuristicQuestion from "@/models/HeuristicQuestion";
-import HeuristicController from "../../controllers/HeuristicController";
-
-
 export default {
     data() {
         return {
@@ -50,103 +49,87 @@ export default {
 
     methods: {
         async changeToJSON() {
-            const testId = this.test.id;
-
-            let lines = "";
-            let currentline = "";
-            let csv = "";
-            let headers = "";
-            let result = [];
-            let result2 = [];
-            let reader = new FileReader();
-
-            reader.readAsBinaryString(this.csvFile);
-
-            reader.onload = async () => {
-                csv = reader.result;
-                lines = csv.split("\r" + "\n");
-                headers = lines[0].split(";");
-                headers[0] = headers[0].slice(3);
-
-                for (var i = 1; i < lines.length; i++) {
-                    if (!lines[i]) continue;
-                    let obj = {};
-                    currentline = lines[i];
-                    var re = /"/g;
-                    currentline = re[Symbol.replace](currentline, "");
-                    currentline = currentline.split(";");
-
-                    for (var j = 0; j < headers.length; j++) {
-                        if (j == 0 || j == 1 || j == 2 || j == 3) {
-                            let head = headers[j];
-                            let value = currentline[j];
-                            obj[head] = value;
+            let confirmationText =
+                "If you accept, all your present heuristics will be replaced for the ones on .csv file";
+            if (confirm(confirmationText) == true) {
+                const testId = this.$store.state.Tests.Test.id;
+                console.log(testId);
+                console.log(this.$store.state.Tests.Test);
+                let lines = "";
+                let currentline = "";
+                let csv = "";
+                let headers = "";
+                let result = [];
+                let result2 = [];
+                let reader = new FileReader();
+                reader.readAsBinaryString(this.csvFile);
+                reader.onload = async () => {
+                    csv = reader.result;
+                    lines = csv.split("\r" + "\n");
+                    headers = lines[0].split(";");
+                    headers[0] = headers[0].slice(3);
+                    for (var i = 1; i < lines.length; i++) {
+                        if (!lines[i]) continue;
+                        let obj = {};
+                        currentline = lines[i];
+                        var re = /"/g;
+                        currentline = re[Symbol.replace](currentline, "");
+                        currentline = currentline.split(";");
+                        for (var j = 0; j < headers.length; j++) {
+                            if (j == 0 || j == 1 || j == 2 || j == 3) {
+                                let head = headers[j];
+                                let value = currentline[j];
+                                obj[head] = value;
+                            }
                         }
+                        result.push(obj);
                     }
-                    result.push(obj);
-                }
-                result = JSON.stringify(result);
-                result2 = JSON.parse(result.toString());
-
-                function getQuestionsFromHeuristic(
-                    heuristicArray,
-                    heuristicId
-                ) {
-                    return heuristicArray.filter(
-                        (element) => element.HID == heuristicId
-                    );
-                }
-                let heuristicTest = [];
-                let heuristicOcurrencies = 0;
-
-                for (i = 0; i < result2.length; i++) {
-                    let auxHeuristic = getQuestionsFromHeuristic(
-                        result2,
-                        i + 1
-                    );
-                    if (auxHeuristic.length > 0) {
-                        heuristicOcurrencies = heuristicOcurrencies + 1;
-                        let auxQuestions = [];
-                        for (j = 0; j < auxHeuristic.length; j++) {
-                            let auxQuestion = new HeuristicQuestion(
-                                auxHeuristic[j].QID,
-                                auxHeuristic[j].QUESTION,
-                                auxHeuristic[j].QUESTION,
-                                auxHeuristic[j].QUESTION
-                            );
-                            auxQuestions.push(auxQuestion);
-                        }
-                        let setHeuristics = new Heuristic(
-                            heuristicOcurrencies,
-                            auxHeuristic[0].HEURISTIC,
-                            auxQuestions,
-                            auxQuestions.length
+                    result = JSON.stringify(result);
+                    result2 = JSON.parse(result.toString());
+                    function getQuestionsFromHeuristic(
+                        heuristicArray,
+                        heuristicId
+                    ) {
+                        return heuristicArray.filter(
+                            (element) => element.HID == heuristicId
                         );
-                        heuristicTest.push(setHeuristics);
                     }
-                }
+                    let heuristicTest = [];
+                    let heuristicOcurrencies = 0;
+                    for (i = 0; i < result2.length; i++) {
+                        let auxHeuristic = getQuestionsFromHeuristic(
+                            result2,
+                            i + 1
+                        );
+                        if (auxHeuristic.length > 0) {
+                            heuristicOcurrencies = heuristicOcurrencies + 1;
+                            let auxQuestions = [];
+                            for (j = 0; j < auxHeuristic.length; ++j) {
+                                let auxQuestion = {
+                                    id: auxHeuristic[j].QID,
+                                    title: auxHeuristic[j].QUESTION,
+                                    descriptions: auxHeuristic[j].QUESTION,
+                                    text: auxHeuristic[j].QUESTION,
+                                };
+                                auxQuestions.push(auxQuestion);
+                            }
+                            let setHeuristics = {
+                                id: heuristicOcurrencies,
+                                questions: auxQuestions,
+                                title: auxHeuristic[0].HEURISTIC,
 
-                this.$store.dispatch("saveCurrentTest", heuristicTest);
+                                total: auxQuestions.length,
+                            };
 
-                for (i = 0; i < heuristicTest.length; i++) {
-                    let aux = Array.of(heuristicTest[i].total);
-                    for (j = 0; j < heuristicTest[i].total; j++) {
-
-                        aux[j] = {
-                            id: heuristicTest[i].questions[j].id,
-                            res: heuristicTest[i].questions[j].title,
-                            com: heuristicTest[i].questions[j].descriptions,
-                        };
+                            heuristicTest.push(setHeuristics);
+                            console.log(setHeuristics);
+                        }
                     }
-                    await new HeuristicController().createCsvHeuris({
-                        testId: testId,
-                        id: heuristicTest[i].id,
-                        questions: aux,
-                        title: heuristicTest[i].title,
-                        total: heuristicTest[i].total,
-                    });
-                }
-            };
+                    this.$store.state.Tests.Test.testStructure = heuristicTest;
+                    console.log(this.$store.state.Tests.Test);
+                    this.$store.dispatch("updateTest", this.test);
+                };
+            }
         },
     },
     watch: {
@@ -154,7 +137,6 @@ export default {
             const l = this.loader;
             this[l] = !this[l];
             // const alertFunc = alert("Your file has been uploaded!");
-
             if (this.csvFile != null) {
                 setTimeout(() => (this[l] = false), 3000);
                 setTimeout(() => (this.csvFile = null), 3000);
@@ -182,3 +164,9 @@ export default {
     },
 };
 </script>
+
+<style>
+.csv-box {
+    background-color: white;
+}
+</style>

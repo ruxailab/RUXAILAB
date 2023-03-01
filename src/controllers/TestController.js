@@ -9,8 +9,8 @@ import UserAnswer from "@/models/UserAnswer";
 import UserController from "./UserController";
 
 const COLLECTION = "tests";
-const answerController = new AnswerController()
-const userController = new UserController()
+const answerController = new AnswerController();
+const userController = new UserController();
 
 export default class TestController extends Controller {
     constructor() {
@@ -19,18 +19,24 @@ export default class TestController extends Controller {
 
     async createTest(document, payload) {
         // Create answers doc for test
-        const answerDoc = await answerController.createAnswer(new Answer({ type: payload.testType }))
-        payload.answersDocId = answerDoc.id
+        const answerDoc = await answerController.createAnswer(
+            new Answer({ type: payload.testType })
+        );
+        payload.answersDocId = answerDoc.id;
 
-        return await super.create(document, payload.toFirestore())
+        return await super.create(document, payload.toFirestore());
     }
 
     async deleteTest(payload) {
-        return await super.delete(COLLECTION, payload.id)
+        return await super.delete(COLLECTION, payload.id);
     }
 
     async updateTest(payload) {
-        return await super.update(COLLECTION, payload.id, payload.toFirestore());
+        return await super.update(
+            COLLECTION,
+            payload.id,
+            payload.toFirestore()
+        );
     }
 
     async acceptTestCollaboration(payload) {
@@ -43,22 +49,33 @@ export default class TestController extends Controller {
             testType: payload.test.testType,
             testTitle: payload.test.testTitle,
             total: 0,
-            updateDate: Date.now()
-        })
+            updateDate: Date.now(),
+        });
 
         // Update answers inside collaborator
-        const userToUpdate = payload.cooperator
-        userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
-        await userController.update(userToUpdate.id, userToUpdate.toFirestore())
+        const userToUpdate = payload.cooperator;
+        userToUpdate.myAnswers[
+            `${userAnswer.testDocId}`
+        ] = userAnswer.toFirestore();
+        await userController.update(
+            userToUpdate.id,
+            userToUpdate.toFirestore()
+        );
 
-        const testToUpdate = payload.test
-        const index = testToUpdate.cooperators.findIndex((c) => c.email === userToUpdate.email)
-        testToUpdate.cooperators[index].accepted = true
-        testToUpdate.cooperators[index].userDocId = userToUpdate.id
-        testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1
+        const testToUpdate = payload.test;
+        const index = testToUpdate.cooperators.findIndex(
+            (c) => c.email === userToUpdate.email
+        );
+        testToUpdate.cooperators[index].accepted = true;
+        testToUpdate.cooperators[index].userDocId = userToUpdate.id;
+        testToUpdate.numberColaborators = testToUpdate.numberColaborators + 1;
 
         // Update invitation on test to accepted
-        return await super.update(COLLECTION, testToUpdate.id, testToUpdate.toFirestore())
+        return await super.update(
+            COLLECTION,
+            testToUpdate.id,
+            testToUpdate.toFirestore()
+        );
     }
 
     async getTest(parameter) {
@@ -69,12 +86,14 @@ export default class TestController extends Controller {
 
     async getPublicTests() {
         const q = {
-            field: 'isPublic',
+            field: "isPublic",
             value: true,
-            condition: '=='
-        }
-        const res = await super.query(COLLECTION, q)
-        return res.docs.map((t) => Test.toTest(Object.assign({ id: t.id }, t.data())))
+            condition: "==",
+        };
+        const res = await super.query(COLLECTION, q);
+        return res.docs.map((t) =>
+            Test.toTest(Object.assign({ id: t.id }, t.data()))
+        );
     }
 
     async getAllTests() {
