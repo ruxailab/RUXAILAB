@@ -76,7 +76,7 @@ export default {
 
         async createNewTest({ commit }, payload) {
             commit("setLoading", true);
-            let ob = payload.data
+            let ob = payload.data;
             let objectTest = null;
             if (payload.data.testType === "HEURISTICS") {
                 objectTest = new HeuristicTest(ob);
@@ -84,13 +84,12 @@ export default {
                 objectTest = new UserTest(ob);
             }
             try {
-                await testController.createTest(
-                    payload.collection,
-                    objectTest
-                ).then((res) => {
-                    commit("SET_TEST", res.id);
-                    return res.id;
-                });
+                await testController
+                    .createTest(payload.collection, objectTest)
+                    .then((res) => {
+                        commit("SET_TEST", res.id);
+                        return res.id;
+                    });
             } catch (err) {
                 console.log("erro");
                 commit("setError", true);
@@ -192,7 +191,7 @@ export default {
         async acceptTestCollaboration({ commit }, payload) {
             commit("setLoading", true);
             try {
-                await testController.acceptTestCollaboration(payload)
+                await testController.acceptTestCollaboration(payload);
             } catch (e) {
                 console.error("Error accept test collaboration", e);
             } finally {
@@ -241,8 +240,8 @@ export default {
         async getSharedWithMeTests({ commit, rootState }) {
             try {
                 commit("setLoading", true);
-                const res = rootState.Auth.user.myAnswers
-                const tests = []
+                const res = rootState.Auth.user.myAnswers;
+                const tests = [];
 
                 const testsEntries = Object.entries(res);
                 testsEntries.forEach((a) => {
@@ -260,7 +259,7 @@ export default {
         async getPublicTests({ commit }) {
             try {
                 commit("setLoading", true);
-                const res = await testController.getPublicTests()
+                const res = await testController.getPublicTests();
                 commit("SET_TESTS", res);
             } catch {
                 console.log("Error in get public tests");
@@ -273,9 +272,11 @@ export default {
         async getTestsAdminByUser({ commit, rootState }) {
             try {
                 commit("setLoading", true);
-                const tests = []
+                const tests = [];
 
-                const testsEntries = Object.entries(rootState.Auth.user.myTests);
+                const testsEntries = Object.entries(
+                    rootState.Auth.user.myTests
+                );
                 testsEntries.forEach((a) => {
                     tests.push(a[1]);
                 });
@@ -286,7 +287,7 @@ export default {
             } finally {
                 commit("setLoading", false);
             }
-        }
+        },
     },
     coops(state) {
         return state.test.coop;
