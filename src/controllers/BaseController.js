@@ -37,7 +37,6 @@ export default class Controller {
      * @throws a Firebase exception.
      */
     async getById(path) {
-        // return getDoc(doc(db, ...path));
         const docRef = doc(db, path[0], path[1]);
         return getDoc(docRef);
     }
@@ -53,8 +52,8 @@ export default class Controller {
     }
 
     async update(col, docId, payload) {
-        const ref = doc(db, `${col}/${docId}`)
-        return updateDoc(ref, payload)
+        const ref = doc(db, `${col}/${docId}`);
+        return updateDoc(ref, payload);
     }
 
     async delete(col, docId) {
