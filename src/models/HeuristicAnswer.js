@@ -4,7 +4,7 @@
 * @param {number} progress - The progress value.
 * @param {number} total - The total value.
 * @param {boolean} submitted - The submitted value.
-* @param {string} userDocId - The userDocId value.
+* @param {Object} userDoc - An object with the user doc id and email.
 * @param {number} lastUpdate - The date of the last update.
 */
 
@@ -16,7 +16,7 @@ export default class HeuristicAnswer {
         progress,
         total,
         submitted,
-        userDocId,
+        userDoc,
         lastUpdate
     } = {}
     ) {
@@ -24,7 +24,7 @@ export default class HeuristicAnswer {
         this.progress = progress ?? 0;
         this.total = total ?? 0;
         this.submitted = submitted ?? false;
-        this.userDocId = userDocId ?? null;
+        this.userDoc = userDoc ?? null;
         this.lastUpdate = lastUpdate ?? null;
     }
     static toHeuristicAnswer(data) {
@@ -40,8 +40,8 @@ export default class HeuristicAnswer {
             progress: this.progress,
             total: this.total,
             submitted: this.submitted,
-            userDocId: this.userDocId,
-            lastUpdate: this.lastUpdate
+            userDoc: this.userDoc,
+            lastUpdate: (new Date).toISOString(),
         }
     }
 }

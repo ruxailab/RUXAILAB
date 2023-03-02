@@ -24,7 +24,10 @@ export default {
               state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
             )
           : new HeuristicAnswer({
-              userDocId: rootState.user.id,
+              userDoc: {
+                id: rootState.user.id,
+                email: rootState.user.email
+              }
             })
       }
 
@@ -34,7 +37,10 @@ export default {
             state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
           ) ??
           new TaskAnswer({
-            userDocId: rootState.user.id,
+            userDoc: {
+              id: rootState.user.id,
+              email: rootState.user.email
+            }
           })
         )
       }
