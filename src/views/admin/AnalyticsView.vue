@@ -1,21 +1,16 @@
 <template>
   <div v-if="answers">
-    <IntroAnalytics
-      @goToCoops="goToCoops()"
-      v-if="answers != null && intro == true"
-    />
-    <ShowInfo
-      title="Analytics"
-      v-if="answers != null && intro == false && test"
-    >
+    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops()" />
+
+    <ShowInfo v-if="answers != null && !intro && test" title="Analytics">
       <div slot="content" class="ma-0 pa-0">
         <v-card style="background: #f5f7ff">
-          <v-row class="ma-0 pa-0" v-if="resultHeuristics">
+          <v-row v-if="resultHeuristics" class="ma-0 pa-0">
             <!--Heuristics List-->
             <v-col class="ma-0 pa-0" cols="2">
               <v-list dense height="560px" outlined>
                 <v-subheader>Heuristics</v-subheader>
-                <v-divider></v-divider>
+                <v-divider />
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
                     <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
@@ -30,15 +25,20 @@
                 </v-list>
               </v-list>
             </v-col>
-            <v-divider vertical inset></v-divider>
+            <v-divider vertical inset />
             <!--Questions List-->
-            <v-col class="ma-0 pa-0" cols="2" v-if="heuristicSelect != null">
+            <v-col
+              v-if="
+                heuristicSelect !== null && test.testStructure[heuristicSelect]
+              "
+              class="ma-0 pa-0"
+              cols="2"
+            >
               <v-list dense height="560px" outlined>
-                <v-subheader
-                  >{{ test.heuristics[heuristicSelect].title }} -
-                  Questions</v-subheader
-                >
-                <v-divider></v-divider>
+                <v-subheader>
+                  {{ test.testStructure[heuristicSelect].title }} - Questions
+                </v-subheader>
+                <v-divider />
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="questionSelect" color="#fca326">
                     <v-list-item :value="-1">
@@ -68,24 +68,33 @@
             </v-col>
             <!--Content-->
             <v-col
+              v-if="
+                questionSelect !== null &&
+                  heuristicSelect !== null &&
+                  test.testStructure[heuristicSelect]
+              "
               class="ma-0 pa-0"
-              v-if="questionSelect != null && heuristicSelect != null"
             >
               <v-card height="560px" elevation-0>
-                <v-subheader class="pa-2" v-if="questionSelect != -1">{{
-                  test.heuristics[heuristicSelect].questions[questionSelect]
-                    .title
-                }}</v-subheader>
-                <v-subheader class="pa-2" v-else>Data Table</v-subheader>
-                <v-divider></v-divider>
+                <v-subheader v-if="questionSelect != -1" class="pa-2">
+                  {{
+                    test.testStructure[heuristicSelect].questions[
+                      questionSelect
+                    ].title
+                  }}
+                </v-subheader>
+                <v-subheader v-else class="pa-2">
+                  Data Table
+                </v-subheader>
+                <v-divider />
                 <v-row v-if="questionSelect == -1">
                   <v-col>
                     <v-text-field
+                      v-model="search"
                       class="mx-3"
                       append-icon="mdi-magnify"
                       label="Search"
-                      v-model="search"
-                    ></v-text-field>
+                    />
                     <v-data-table
                       class="elevation-1"
                       :headers="headersHeuristic"
@@ -111,26 +120,28 @@
                     </v-data-table>
                   </v-col>
                 </v-row>
-                <v-row class="ma-0 pa-0" v-else>
+                <v-row v-else class="ma-0 pa-0">
                   <v-tabs
+                    v-model="ind"
                     background-color="transparent"
                     color="grey darken-2"
                     class="mt-2"
                     centered
-                    v-model="ind"
                   >
                     <v-tab
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 0"
-                      >Comments</v-tab
                     >
+                      Comments
+                    </v-tab>
                     <v-tab
                       class="tab-text"
                       style="text-transform: none !important"
                       @click="ind = 1"
-                      >Graphic</v-tab
                     >
+                      Graphic
+                    </v-tab>
                   </v-tabs>
                   <v-col v-if="ind == 1">
                     <v-row justify="center">
@@ -191,176 +202,190 @@
 </template>
 
 <script>
-import ShowInfo from "@/components/organisms/ShowInfo";
-import BarChart from "@/components/atoms/BarChart.vue";
-import IntroAnalytics from "@/components/molecules/IntroAnalytics.vue";
+import ShowInfo from '@/components/organisms/ShowInfo.vue'
+import BarChart from '@/components/atoms/BarChart.vue'
+import IntroAnalytics from '@/components/molecules/IntroAnalytics.vue'
+
 export default {
-  props: ["id", "HEURISTICS"],
   components: {
     ShowInfo,
     BarChart,
     IntroAnalytics,
   },
+  // eslint-disable-next-line vue/prop-name-casing, vue/require-prop-types
+  props: ['id', 'HEURISTICS'],
   data: () => ({
-    search: "",
+    search: '',
     ind: 0,
     resultHeuristics: [],
     heuristicSelect: null,
     questionSelect: null,
     intro: null,
   }),
-  methods: {
-    statistics() {
-      const answers = this.answers.answers;
-      this.resultHeuristics = [];
-
-      answers.forEach((evaluator) => {
-        //Get Heuristics for evaluators
-        let heurisIndex = 1;
-        evaluator.heuristics.forEach((heuristic) => {
-          //Get Questions for heuristic
-          let questionIndex = 1;
-          let SelectHeuristic = this.resultHeuristics.find(
-            (h) => h.id == `H${heurisIndex}`
-          );
-          if (!SelectHeuristic) {
-            this.resultHeuristics.push({
-              id: `H${heurisIndex}`,
-              questions: [],
-            });
-            SelectHeuristic = this.resultHeuristics[
-              this.resultHeuristics.length - 1
-            ];
-          }
-          heuristic.questions.forEach((question) => {
-            let selectQuestion = SelectHeuristic.questions.find(
-              (q) => q.id == `Question ${questionIndex}`
-            );
-            if (!selectQuestion) {
-              SelectHeuristic.questions.push({
-                id: `Question ${questionIndex}`,
-                result: [
-                  {
-                    evaluator: evaluator.uid,
-                    response: question.res,
-                    comment: question.com,
-                  },
-                ],
-              });
-            } else {
-              selectQuestion.result.push({
-                evaluator: evaluator.uid,
-                response: question.res,
-                comment: question.com,
-              });
-            }
-            questionIndex++;
-          });
-          heurisIndex++;
-        });
-      });
-    },
-    goToCoops() {
-      this.$emit("goToCoops");
-    },
-  },
   computed: {
     headersHeuristic() {
-      let header = [
+      const header = [
         {
-          text: "ID",
-          align: "start",
-          value: "uid",
+          text: 'ID',
+          align: 'start',
+          value: 'uid',
         },
-      ];
-      if (this.heuristicSelect != null) {
+      ]
+      if (this.heuristicSelect !== null) {
         this.resultHeuristics[this.heuristicSelect].questions.forEach(
           (question) => {
             header.push({
               text: question.id,
-              align: "center",
+              align: 'center',
               value: question.id,
-            });
-          }
-        );
+            })
+          },
+        )
       }
 
-      return header;
+      return header
     },
     itemsHeuristic() {
-      let items = [];
-      if (this.heuristicSelect != null) {
+      const items = []
+      if (this.heuristicSelect !== null) {
         this.resultHeuristics[this.heuristicSelect].questions.forEach(
           (question) => {
             question.result.forEach((result) => {
-              let ev = items.find((item) => item.uid == result.evaluator);
+              let ev = items.find((item) => item.uid === result.evaluator)
               if (!ev) {
-                items.push({ uid: result.evaluator });
-                ev = items[items.length - 1];
+                items.push({ uid: result.evaluator })
+                ev = items[items.length - 1]
               }
-              Object.assign(ev, { [question.id]: result.response });
-            });
-          }
-        );
+              Object.assign(ev, { [question.id]: result.response })
+            })
+          },
+        )
       }
-      return items;
+      return items
     },
     questionGraph() {
-      let options = this.answers.options;
-      let graph = {
+      const { testOptions: options } = this.test
+
+      const graph = {
         label: [...options.map((op) => op.text)],
         data: [...options.map(() => 0)],
-      };
-      if (this.heuristicSelect != null && this.questionSelect != null) {
-        let question = this.resultHeuristics[this.heuristicSelect].questions[
-          this.questionSelect
-        ];
-        question.result.forEach((result) => {
-          let item = options.find((op) => op.value == result.response);
-          if (item) graph.data[graph.label.indexOf(item.text)] += 1;
-        });
       }
-      return graph;
+
+      if (this.heuristicSelect !== null && this.questionSelect !== null) {
+        const question = this.resultHeuristics[this.heuristicSelect].questions[
+          this.questionSelect
+        ]
+
+        question.result.forEach((result) => {
+          const item = options.find((op) => op.value === result.response)
+          if (item) graph.data[graph.label.indexOf(item.text)] += 1
+        })
+      }
+      return graph
     },
     answers() {
-      return this.$store.getters.answers || [];
+      if (!this.$store.getters.testAnswerDocument) {
+        return {}
+      }
+
+      return this.$store.getters.testAnswerDocument.heuristicAnswers
     },
     loading() {
-      if (this.answers) return true;
-      return false;
+      return !Object.values(this.answers).length
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
   },
   watch: {
     answers() {
-      if (this.answers !== null || this.answers.length > 0) {
-        this.statistics();
+      if (Object.values(this.answers).length) {
+        this.statistics()
 
-        if (this.answers.answers.length == 0) this.intro = true;
-        else this.intro = false;
+        this.intro = !Object.values(this.answers).length
       }
     },
     heuristicSelect() {
-      this.questionSelect = -1;
+      this.questionSelect = -1
     },
     questionSelect() {
-      this.ind = 0;
+      this.ind = 0
     },
   },
   updated() {
-    if (this.heuristic != null && this.heuristic != undefined) {
-      this.heuristicSelect = Number(this.heuristic);
+    if (this.heuristic) {
+      this.heuristicSelect = Number(this.heuristic)
     }
   },
   async created() {
-    await this.$store.dispatch("getAnswers", { id: this.id });
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
 
-    let testId = this.answers.test.id;
-    await this.$store.dispatch("getTest", { id: testId });
+    // const testId = this.answers.test.id
+    // await this.$store.dispatch('getTest', { id: testId })
   },
-};
+  methods: {
+    statistics() {
+      this.resultHeuristics = []
+
+      let index = 0
+
+      for (const uid in this.answers) {
+        if (!this.answers[uid]) {
+          continue
+        }
+
+        const heuristic = this.answers[uid]
+
+        let SelectHeuristic = this.resultHeuristics.find(
+          (h) => h.id === `H${index}`,
+        )
+
+        if (!SelectHeuristic) {
+          this.resultHeuristics.push({
+            id: `H${index}`,
+            questions: [],
+          })
+
+          SelectHeuristic = this.resultHeuristics[
+            this.resultHeuristics.length - 1
+          ]
+        }
+
+        heuristic.heuristicQuestions.forEach((hQuestion) => {
+          hQuestion.heuristicQuestions.forEach((question, qIndex) => {
+            const selectQuestion = SelectHeuristic.questions.find(
+              (q) => q.id === `Question ${qIndex}`,
+            )
+
+            if (!selectQuestion) {
+              SelectHeuristic.questions.push({
+                id: `Question ${qIndex}`,
+                result: [
+                  {
+                    evaluator: uid,
+                    response: question.heuristicAnswer,
+                    comment: question.heuristicComment,
+                  },
+                ],
+              })
+            } else {
+              selectQuestion.result.push({
+                evaluator: uid,
+                response: question.heuristicAnswer,
+                comment: question.heuristicComment,
+              })
+            }
+          })
+        })
+
+        index++
+      }
+    },
+    goToCoops() {
+      this.$emit('goToCoops')
+    },
+  },
+}
 </script>
 
 <style scoped>
