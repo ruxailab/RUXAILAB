@@ -99,8 +99,8 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: "Evaluator", value: "userDocId" },
-      { text: "Last Update", value: "log.date" },
+      { text: "Evaluator", value: "userDoc.email" },
+      { text: "Last Update", value: "lastUpdate" },
       { text: "Progress", value: "progress", justify: "center" },
       { text: "Status", value: "submitted" },
       { text: "More", value: "more", justify: "end" },
