@@ -5,6 +5,7 @@
 * @param {number} total - The total value.
 * @param {boolean} submitted - The submitted value.
 * @param {string} userDocId - The userDocId value.
+* @param {number} lastUpdate - The date of the last update.
 */
 
 import Heuristic from "@/models/Heuristic";
@@ -15,7 +16,8 @@ export default class HeuristicAnswer {
         progress,
         total,
         submitted,
-        userDocId
+        userDocId,
+        lastUpdate
     } = {}
     ) {
         this.heuristicQuestions = heuristicQuestions ?? [];
@@ -23,6 +25,7 @@ export default class HeuristicAnswer {
         this.total = total ?? 0;
         this.submitted = submitted ?? false;
         this.userDocId = userDocId ?? null;
+        this.lastUpdate = lastUpdate ?? null;
     }
     static toHeuristicAnswer(data) {
         return new HeuristicAnswer({
@@ -37,7 +40,8 @@ export default class HeuristicAnswer {
             progress: this.progress,
             total: this.total,
             submitted: this.submitted,
-            userDocId: this.userDocId
+            userDocId: this.userDocId,
+            lastUpdate: this.lastUpdate
         }
     }
 }
