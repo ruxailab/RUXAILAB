@@ -21,6 +21,12 @@
       <v-card-title class="subtitleView">
         Pre Test
       </v-card-title>
+
+      <a :href="url">Click here to complete the consent form!</a>
+      <!-- <a :href="link">Link</a>
+
+      {{ link() }} -->
+
       <v-divider />
       <v-row v-if="object.preTest" justify="space-around">
         <v-col cols="10">
@@ -80,12 +86,23 @@ export default {
     object: {
       type: Object,
     },
+
   },
-  data: () => ({}),
+  data: () => ({
+    url: 'https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform'
+  }),
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
       console.error(this.type + " type in EditUserTest.vue is not valid.")
   },
+  // link(){
+  //   return{
+  //     link: 'https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform'
+  //   }
+  // },
+  
+  
+
   methods: {
     tabClicked(index) {
       this.$emit("tabClicked", index)
