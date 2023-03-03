@@ -22,10 +22,14 @@
         Pre Test
       </v-card-title>
 
-      <a :href="url">Click here to complete the consent form!</a>
-      <!-- <a :href="link">Link</a>
+      <v-card-text class="subtitleView">
+        A consent form is a document used to obtain permission from an individual before they participate in a particular activity or before their personal data is collected, processed, or shared.
+      </v-card-text>
 
-      {{ link() }} -->
+      <v-card-actions class="subtitleView">
+        <a :href="urlPreTest" target="_blank">Click here to complete the consent form!</a>
+      </v-card-actions>
+      
 
       <v-divider />
       <v-row v-if="object.preTest" justify="space-around">
@@ -46,6 +50,16 @@
       <v-card-title class="subtitleView">
         Post Test
       </v-card-title>
+
+      <v-card-text class="subtitleView">
+        The purpose of this form is to collect user feedback on the usability of the service after user testing. The responses can help identify areas for improvement for the service and guide future design decisions.
+      </v-card-text>
+
+      <v-card-actions class="subtitleView">
+        <a :href="urlPosTest" target="_blank">Click here to complete the form!</a>
+      </v-card-actions>
+
+
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
@@ -89,7 +103,8 @@ export default {
 
   },
   data: () => ({
-    url: 'https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform'
+    urlPreTest: 'https://forms.gle/EZJFb7Qbw1xNtck9A',
+    urlPosTest: 'https://forms.gle/VEUGMHh2DfNPceBk6'
   }),
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
