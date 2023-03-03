@@ -21,18 +21,23 @@
       <v-card-title class="subtitleView">
         Pre Test
       </v-card-title>
-
-      <v-card-text class="subtitleView">
-        A consent form is a document used to obtain permission from an individual before they participate in a particular activity or before their personal data is collected, processed, or shared.
-      </v-card-text>
-
-      <v-card-actions class="subtitleView">
-        <a :href="urlPreTest" target="_blank">Click here to complete the consent form!</a>
-      </v-card-actions>
-      
+    
 
       <v-divider />
-      <v-row v-if="object.preTest" justify="space-around">
+
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <v-card-text class="subtitleView">
+            A consent form is a document used to obtain permission from an individual before they participate in a particular activity or before their personal data is collected, processed, or shared.
+          </v-card-text>
+
+          <v-card-actions class="subtitleView">
+            <a :href="urlPreTest" target="_blank">Click here to complete the Pre Test form!</a>
+          </v-card-actions>
+        </v-col>
+      </v-row>
+
+      <!-- <v-row v-if="object.preTest" justify="space-around">
         <v-col cols="10">
           <FormPreTest
             :pre-test="object.preTest"
@@ -41,7 +46,7 @@
             @change="emitChange()"
           />
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-card>
 
     <ListTasks v-if="index == 1" :tasks="object.tasks" @change="emitChange()" />
@@ -51,25 +56,23 @@
         Post Test
       </v-card-title>
 
-      <v-card-text class="subtitleView">
-        The purpose of this form is to collect user feedback on the usability of the service after user testing. The responses can help identify areas for improvement for the service and guide future design decisions.
-      </v-card-text>
-
-      <v-card-actions class="subtitleView">
-        <a :href="urlPosTest" target="_blank">Click here to complete the form!</a>
-      </v-card-actions>
-
-
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
-          <FormPostTest
+          <v-card-text class="subtitleView">
+            The purpose of this form is to collect user feedback on the usability of the service after user testing. The responses can help identify areas for improvement for the service and guide future design decisions.
+          </v-card-text>
+
+          <v-card-actions class="subtitleView">
+            <a :href="urlPosTest" target="_blank">Click here to complete the Post Test form!</a>
+          </v-card-actions>
+          <!-- <FormPostTest
             :post-test="object.postTest"
             :val-index="1"
             @input="object.postTest = $event"
             @valForm="emitValForm"
             @change="emitChange()"
-          />
+          /> -->
         </v-col>
       </v-row>
     </v-card>
@@ -77,14 +80,14 @@
 </template>
 
 <script>
-import FormPreTest from "@/components/atoms/FormPreTest"
-import FormPostTest from "@/components/atoms/FormPostTest"
+// import FormPreTest from "@/components/atoms/FormPreTest"
+// import FormPostTest from "@/components/atoms/FormPostTest"
 import ListTasks from "@/components/molecules/ListTasks"
 
 export default {
   components: {
-    FormPreTest,
-    FormPostTest,
+    // FormPreTest,
+    //FormPostTest,
     ListTasks,
   },
   props: {
