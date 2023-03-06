@@ -6,6 +6,7 @@
 * @param {boolean} submitted - The submitted value.
 * @param {Object} userDoc - An object with the user doc id and email.
 * @param {string} lastUpdate - The date of the last update.
+* @param {boolean} visibility - If the heuristicAnswer is visible or not.
 */
 
 import Heuristic from "@/models/Heuristic";
@@ -17,7 +18,8 @@ export default class HeuristicAnswer {
         total,
         submitted,
         userDoc,
-        lastUpdate
+        lastUpdate,
+        visibility
     } = {}
     ) {
         this.heuristicQuestions = heuristicQuestions ?? [];
@@ -26,6 +28,7 @@ export default class HeuristicAnswer {
         this.submitted = submitted ?? false;
         this.userDoc = userDoc ?? null;
         this.lastUpdate = lastUpdate ?? null;
+        this.visibility = visibility ?? true;
     }
     static toHeuristicAnswer(data) {
         return new HeuristicAnswer({
@@ -42,6 +45,7 @@ export default class HeuristicAnswer {
             submitted: this.submitted,
             userDoc: this.userDoc,
             lastUpdate: (new Date).toISOString(),
+            visibility: this.visibility,
         }
     }
 }
