@@ -21,8 +21,7 @@
       <v-card-title class="subtitleView">
         Pre Test
       </v-card-title>
-    
-
+  
       <v-divider />
 
       <v-row justify="space-around">
@@ -113,12 +112,7 @@ export default {
     if (this.type !== "content" && this.type != "tabs")
       console.error(this.type + " type in EditUserTest.vue is not valid.")
   },
-  // link(){
-  //   return{
-  //     link: 'https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform'
-  //   }
-  // },
-  
+
   
 
   methods: {
