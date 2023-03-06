@@ -49,12 +49,15 @@
         </p>
       </v-row>
 
-      <div slot="content" class="ma-0 pa-0">
+      <div v-if="loadingTable"></div>
+      <div slot="content" class="ma-0 pa-0" v-else>
         <v-data-table
           style="background: #f5f7ff"
           :headers="headers"
           :items="reports"
           :items-per-page="10"
+          :loading="loadingTable"
+          loading-text="Loading...please wait"
           height="420px"
           dense
         >
@@ -145,7 +148,7 @@ export default {
   },
   computed: {
     reports() {
-      return [this.$store.getters.currentUserTestAnswer];
+      return this.$store.getters.currentUserTestAnswer
     },
     test() {
       return this.$store.getters.test;
@@ -160,6 +163,13 @@ export default {
     answers() {
       return this.$store.getters.answers || {};
     },
+    loadingTable() {
+      if(this.reports[0] == undefined || this.reports[0] == null) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   watch: {
     reports() {

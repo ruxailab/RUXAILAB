@@ -5,7 +5,7 @@
 * @param {number} total - The total value.
 * @param {boolean} submitted - The submitted value.
 * @param {Object} userDoc - An object with the user doc id and email.
-* @param {number} lastUpdate - The date of the last update.
+* @param {string} lastUpdate - The date of the last update.
 */
 
 import Heuristic from "@/models/Heuristic";
