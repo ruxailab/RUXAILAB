@@ -19,16 +19,11 @@ export default {
       }
 
       if (state.testAnswerDocument.type === 'HEURISTICS') {
-        return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
-          ? HeuristicAnswer.toHeuristicAnswer(
-              state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
-            )
-          : new HeuristicAnswer({
-              userDoc: {
-                id: rootState.user.id,
-                email: rootState.user.email
-              }
-            })
+        var reports = []
+        Object.keys(state.testAnswerDocument.heuristicAnswers).forEach((key) => {
+          reports.push(HeuristicAnswer.toHeuristicAnswer(state.testAnswerDocument.heuristicAnswers[key]))
+        })
+        return reports
       }
 
       if (state.type === 'USER') {
