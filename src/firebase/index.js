@@ -12,6 +12,7 @@ import {
   getFunctions,
   // connectFunctionsEmulator
 } from 'firebase/functions'
+import { getStorage } from 'firebase/storage'
 
 const isProduction = false
 
@@ -34,6 +35,7 @@ const firebaseConfig = isProduction
       messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV,
       appId: process.env.VUE_APP_FIREBASE_APP_ID_DEV,
       measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID_DEV,
+      storageBucket: '',
     }
 
 const firebaseApp = initializeApp(firebaseConfig)
@@ -42,8 +44,10 @@ const db = getFirestore(firebaseApp)
 const analytics = getAnalytics(firebaseApp)
 const fbFunctions = getFunctions(firebaseApp)
 
+const storage = getStorage(firebaseApp, 'gs://retlab-dev.appspot.com/tests')
+
 // connectFirestoreEmulator(db, 'localhost', 8081);
 // connectAuthEmulator(auth, "http://localhost:9099");
 // connectFunctionsEmulator(fbFunctions, "localhost", 5001);
 
-export { auth, db, analytics, fbFunctions }
+export { auth, db, analytics, fbFunctions, storage }
