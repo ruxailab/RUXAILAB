@@ -463,6 +463,18 @@ export default {
                         "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
                     path: `/analyticsview/${this.test.answers}`,
                 },
+                {
+                    image: "IntroAnalytics.svg",
+                    title: "Final Report",
+                    imageStyle: "height: 250px",
+                    // bottom: "#2666E1",
+                    bottom: "#000",
+                    description:
+                        "Analyze comments and answers from your evaluators.",
+                    cardStyle:
+                        "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
+                    path: `/analyticsview/${this.test.answers}`,
+                },
             ];
         },
         user() {
