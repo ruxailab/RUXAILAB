@@ -1,5 +1,6 @@
 <template>
     <section>
+        <Import></Import>
         <!-- Desktop -->
         <v-container
             style="display:contents; background-color:#f4b700; height:300px"
@@ -157,6 +158,8 @@ section {
 </style>
 
 <script>
+import Import from "@/components/atoms/ImportImage.vue"
+
 export default {
     data: () => ({}),
     methods: {
@@ -175,6 +178,9 @@ export default {
             return this.$store.state.Tests.currentTest;
         },
     },
+    components:{
+        Import
+    }
 };
 //remover
 </script>
