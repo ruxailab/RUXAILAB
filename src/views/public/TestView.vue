@@ -364,6 +364,7 @@
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
+                <div><input type="file" name="my-image" id="image" accept="image/gif, image/jpeg, image/png" /></div>
               </v-col>
             </v-row>
           </div>
