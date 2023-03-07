@@ -2,15 +2,16 @@
   <div class="drag-area">
     <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
     <input
-      class="description-input"
+      class="custom-file-input"
       type="file"
       name="my-image"
       id="image"
       accept="image/gif, image/jpeg, image/png"
       @change="uploadFile()"
     />
+    <!-- <input type="text" v-model="text" />
     <button @click="downloadImage()">download</button>
-    <img id="imagem" />
+    <img id="imagem" /> -->
   </div>
 </template>
 
@@ -26,9 +27,6 @@ export default {
 
       var file = fileInput.files[0]
       console.log(file)
-      // const fileType = new File(['foo'], file.name, {
-      //   type: 'image',
-      // })
 
       const storageRef = ref(storage, 'tests/' + file.name) //file.name precisa ser substituído por test.id e é necessário acrescentar o número da heurística
       uploadBytes(storageRef, file).then((snapshot) => {
@@ -38,7 +36,7 @@ export default {
     async downloadImage() {
       // Create a reference to the file we want to download
       const storage = getStorage()
-      const starsRef = ref(storage, 'tests/Red_rose.jpg')
+      const starsRef = ref(storage, 'tests/' + this.text)
       // Get the download URL
       getDownloadURL(starsRef)
         .then((url) => {
@@ -92,5 +90,36 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+.custom-file-input {
+  color: transparent;
+}
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Select some files';
+  color: black;
+  display: inline-block;
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active {
+  outline: 0;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
 </style>
