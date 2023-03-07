@@ -30,7 +30,8 @@ export default class TestController extends Controller {
     }
 
     async updateTest(payload) {
-        return await super.update(COLLECTION, payload.id, payload.toFirestore());
+        console.log("payload", payload)
+        return await super.update(COLLECTION, payload.id, payload.toFirestore())
     }
 
     async acceptTestCollaboration(payload) {
