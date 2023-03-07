@@ -110,7 +110,8 @@ export default {
       timer: false,
       recordScreen: false,
       camera: false
-    }
+    },
+    // taskUser: []
   }),
   watch: {
     tasks() {
@@ -134,6 +135,26 @@ export default {
         this.$emit("change")
       } else {
         this.tasks.push(this.task)
+        console.log("tasksss", this.task)
+        
+        // this.tasks.forEach((tests) => {
+        //   const taskUser = Array.from(tests)
+        //   console.log(taskUser)
+        //   return taskUser
+        // })
+
+        // taskUser.push(this.tasks)
+        // console.log(taskUser)
+
+        // this.object.heuristics.forEach((heuris) => {
+        //   const questions = Array.from(heuris.questions)
+        //   const arrayQuestions = []
+
+        //   questions.forEach((el) => {
+        //     arrayQuestions.push(
+        //       Object.assign({}, { id: el.id, res: "", com: "" })
+        //     )
+        //   })
       }
       this.task = {
         name: "",
