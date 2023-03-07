@@ -7,51 +7,64 @@
       name="my-image"
       id="image"
       accept="image/gif, image/jpeg, image/png"
-      @change="uploadFile(file)"
+      @change="uploadFile()"
     />
-    <button @click="uploadImage()">UPLOAD</button>
+    <button @click="downloadImage()">download</button>
+    <img id="imagem" />
   </div>
 </template>
 
 <script>
-import { file } from 'babel-types'
-import { getStorage, ref, uploadBytes } from 'firebase/storage'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export default {
   data: () => ({}),
   methods: {
-    async uploadFile(file) {
-      // console.log(storage)
-      // const file = event.target.files[0]
-      // const storageRef = storage.ref()
-      // console.log(storage)
-      // const fileRef = storageRef.child(file.name)
-      // await fileRef.put(file)
-      // console.log('File uploaded')
-      // const downloadURL = await fileRef.getDownloadURL()
-      // console.log('File URL:', downloadURL)
+    async uploadFile() {
+      const fileInput = document.getElementById('image')
       const storage = getStorage()
-      const storageRef = ref(storage, '/tests/' + file.name)
 
-      // 'file' comes from the Blob or File API
+      var file = fileInput.files[0]
+      console.log(file)
+      // const fileType = new File(['foo'], file.name, {
+      //   type: 'image',
+      // })
+
+      const storageRef = ref(storage, 'tests/' + file.name) //file.name precisa ser substituído por test.id e é necessário acrescentar o número da heurística
       uploadBytes(storageRef, file).then((snapshot) => {
-        console.log('Uploaded a blob or file!', snapshot)
+        console.log('Uploaded file!', snapshot)
       })
     },
-    // uploadImage(img) {
-    //   // Create a reference to 'image.jpg'
-    //   const imageRef = ref(storage, img)
-
-    //   // Create a reference to 'images/mountains.jpg'
-    //   const imagesRef = ref(storage, 'tests/' + img)
-
-    //   // While the file names are the same, the references point to different files
-    //   imageRef.name === imagesRef.name // true
-    //   imageRef.fullPath === imagesRef.fullPath // false
-    //   uploadBytes(storageRef, file).then((snapshot) => {
-    //     console.log('Uploaded a blob or file!')
-    //   })
-    // },
+    async downloadImage() {
+      // Create a reference to the file we want to download
+      const storage = getStorage()
+      const starsRef = ref(storage, 'tests/Red_rose.jpg')
+      // Get the download URL
+      getDownloadURL(starsRef)
+        .then((url) => {
+          // Insert url into an <img> tag to "download"
+          console.log(url)
+          const image = document.getElementById('imagem')
+          image.src = url
+          // document.image.appendChild(image)
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case 'storage/object-not-found':
+              // File doesn't exist
+              break
+            case 'storage/unauthorized':
+              // User doesn't have permission to access the object
+              break
+            case 'storage/canceled':
+              // User canceled the upload
+              break
+            case 'storage/unknown':
+              // Unknown error occurred, inspect the server response
+              break
+          }
+        })
+    },
   },
   computed: {
     test() {
