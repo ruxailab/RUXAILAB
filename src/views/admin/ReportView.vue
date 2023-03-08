@@ -38,23 +38,23 @@
       <div class="white-text mt-3">Loading Reports</div>
     </v-overlay>
 
-    <Intro
-      v-if="reports.length == 0 && !loading"
-      @goToCoops="goToCoops()"
-    />
+    <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
     <ShowInfo title="Reports" v-else>
       <v-row justify="end" dense slot="top" class="mr-3">
         <p class="subtitleView">
-          Last Updated: {{ new Date().toLocaleString("en") }}
+          Last Updated: {{ new Date().toLocaleString('en') }}
         </p>
       </v-row>
 
-      <div slot="content" class="ma-0 pa-0">
+      <div v-if="loadingTable"></div>
+      <div slot="content" class="ma-0 pa-0" v-else>
         <v-data-table
           style="background: #f5f7ff"
           :headers="headers"
           :items="reports"
           :items-per-page="10"
+          :loading="loadingTable"
+          loading-text="Loading...please wait"
           height="420px"
           dense
         >
@@ -66,8 +66,8 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="(dialog = true), (report = item)">
-                  <v-list-item-title>Remove Report</v-list-item-title>
+                <v-list-item @click=";(dialog = true), (report = item)">
+                  <v-list-item-title>Hide report</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -79,6 +79,10 @@
           <template v-slot:item.submitted="{ item }">
             <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
           </template>
+          <template v-slot:item.visibility="{ item }">
+            <v-icon v-if="item.visibility == true">mdi-eye-outline</v-icon>
+            <v-icon v-else>mdi-eye-off-outline</v-icon>
+          </template>
         </v-data-table>
       </div>
     </ShowInfo>
@@ -86,12 +90,12 @@
 </template>
 
 <script>
-import ShowInfo from "@/components/organisms/ShowInfo";
-import Intro from "@/components/molecules/IntroReports";
-import Snackbar from "@/components/atoms/Snackbar";
+import ShowInfo from '@/components/organisms/ShowInfo'
+import Intro from '@/components/molecules/IntroReports'
+import Snackbar from '@/components/atoms/Snackbar'
 
 export default {
-  props: ["id"],
+  props: ['id'],
   components: {
     ShowInfo,
     Intro,
@@ -99,11 +103,12 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: "Evaluator", value: "userDocId" },
-      { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "progress", justify: "center" },
-      { text: "Status", value: "submitted" },
-      { text: "More", value: "more", justify: "end" },
+      { text: 'Visibility', value: 'visibility', justify: 'center' },
+      { text: 'Evaluator', value: 'userDoc.email' },
+      { text: 'Last Update', value: 'lastUpdate' },
+      { text: 'Progress', value: 'progress', justify: 'center' },
+      { text: 'Status', value: 'submitted' },
+      { text: 'More', value: 'more', justify: 'end' },
     ],
     loading: true,
     dialog: false,
@@ -115,7 +120,10 @@ export default {
       return status == true ? 'submitted' : 'in progress'
     },
     removeReport(report) {
-      this.$store
+      report.visibility = false
+      this.loadingBtn = false
+      this.dialog = false
+      /* this.$store
         .dispatch("removeReport", {
           docId: this.id,
           element: {
@@ -137,37 +145,49 @@ export default {
         })
         .catch((err) => {
           this.$store.commit("setError", err);
-        });
+        }); */
     },
     goToCoops() {
-      this.$emit("goToCoops");
+      this.$emit('goToCoops')
+    },
+    getVisibility(visibility) {
+      if (visibility == true) {
+        return 'blue'
+      }
     },
   },
   computed: {
     reports() {
-      return [this.$store.getters.currentUserTestAnswer];
+      return this.$store.getters.currentUserTestAnswer
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
     dialogText() {
       return (
-        "Are you sure you want to delete " +
-        (this.report !== null ? this.report.email : "") +
+        'Are you sure you want to delete ' +
+        (this.report !== null ? this.report.email : '') +
         `'s report? This action can't be undone`
-      );
+      )
     },
     answers() {
-      return this.$store.getters.answers || {};
+      return this.$store.getters.answers || {}
+    },
+    loadingTable() {
+      if (this.reports[0] == undefined || this.reports[0] == null) {
+        return true
+      } else {
+        return false
+      }
     },
   },
   watch: {
     reports() {
-      if (Object.values(this.reports).length) this.loading = false;
+      if (Object.values(this.reports).length) this.loading = false
     },
   },
   async created() {
-    await this.$store.dispatch("getCurrentTestAnswerDoc")
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
     /* await this.$store.dispatch("getReports", { id: this.id });
 
     await this.$store.dispatch("getTest", { id: this.reports.test.id });
@@ -176,7 +196,7 @@ export default {
 
     if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
-};
+}
 </script>
 
 <style scoped>
