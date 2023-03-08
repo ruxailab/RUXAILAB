@@ -74,7 +74,6 @@ export default {
   
         let reps = await dispatch("getObject", payload)
           .catch((err) => commit("setError", "Error in getReports." + err));
-  
         commit("setReports", reps);
       },
       /**
