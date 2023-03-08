@@ -115,12 +115,8 @@ import Snackbar from '@/components/atoms/Snackbar'
 //import ShowInfo from "@/components/organisms/ShowInfo";
 //import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest'
-import Test from '@/models/Test'
+
 import EditUserTest from '@/components/organisms/EditUserTest'
-<<<<<<< HEAD
-=======
-import { object } from 'firebase-functions/lib/providers/storage'
->>>>>>> so
 
 export default {
   components: {
@@ -209,13 +205,9 @@ export default {
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
-<<<<<<< HEAD
-      const auxT = Test.toTest(this.object)
-=======
       let auxT = Object.assign(this.test, this.object)
       // const auxT = Test.toTest(this.object)
       // console.log(auxT)
->>>>>>> so
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -261,26 +253,14 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid
     },
-<<<<<<< HEAD
-    async validateAll() {
-      this.object = await Object.assign(this.object, this.test)
-      console.log('Validate All')
-      console.log(this.object)
-      if (this.test.testType === 'User' && !this.valids[0]) {
-=======
     validateAll() {
       if (this.test.type === 'User' && !this.valids[0]) {
->>>>>>> so
         this.$store.commit(
           'setError',
           'Please fill all fields in Pre Test correctly or leave them empty',
         )
       } else if (
-<<<<<<< HEAD
-        this.test.testType === 'HEURISTICS' &&
-=======
         this.test.type === 'HEURISTICS' &&
->>>>>>> so
         this.object.options.length == 1
       ) {
         this.$store.commit(
