@@ -1,0 +1,56 @@
+{
+  "name": "research-workflow",
+  "version": "0.1.0",
+  
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "doc": "jsdoc -c conf.json"
+  },
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "chart.js": "^2.9.3",
+    "core-js": "^3.6.4",
+    "csvtojson": "^2.0.10",
+    "email-templates": "^7.1.1",
+    "firebase": "^9.14.0",
+    "firebase-admin": "^9.2.0",
+    "firebase-functions": "^3.11.0",
+    "handlebars": "^4.7.6",
+    "jsdoc-vuex-plugin": "^1.0.0",
+    "nodemailer": "^6.4.11",
+    "stylus-loader": "^3.0.2",
+    "tiptap": "^1.32.2",
+    "tiptap-extensions": "^1.35.2",
+    "uid-generator": "^2.0.0",
+    "vue": "^2.6.12",
+    "vue-chartjs": "^3.5.1",
+    "vue-clamp": "^0.3.1",
+    "vue-i18n": "^8.21.1",
+    "vue-router": "^3.4.3",
+    "vuetify": "^2.3.10",
+    "vuex": "^3.5.1",
+    "webpack": "^4.44.2"
+  },
+  "devDependencies": {
+    "@intlify/vue-i18n-loader": "^1.0.0",
+    "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-eslint": "~4.3.0",
+    "@vue/cli-plugin-router": "~4.3.0",
+    "@vue/cli-plugin-vuex": "~4.3.0",
+    "@vue/cli-service": "~4.3.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "jsdoc": "^3.6.6",
+    "sass": "^1.26.11",
+    "sass-loader": "^8.0.0",
+    "vue-cli-plugin-i18n": "~1.0.1",
+    "vue-cli-plugin-vuetify": "^2.0.7",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify-loader": "^1.6.0"
+  }
+}
