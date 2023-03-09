@@ -396,7 +396,7 @@ export default {
           bottom: '#000',
           description: 'Take a look at how your evaluators are doing.',
           cardStyle:
-            'background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden',
+            'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
           path: `/reportview/${this.test.answersDocId}`,
         },
         {
@@ -420,6 +420,16 @@ export default {
           cardStyle:
             'background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden',
           path: `/analyticsview/${this.test.answers}`,
+        },
+        {
+          image: 'FinalReport.png',
+          title: 'Final Report',
+          imageStyle: 'height: 250px',
+          bottom: '#000',
+          description: 'Add additional data to your test',
+          cardStyle:
+            'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
+          path: `/finalreportview/${this.test.id}`,
         },
       ]
     },
