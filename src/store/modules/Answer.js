@@ -20,9 +20,15 @@ export default {
 
       if (state.testAnswerDocument.type === 'HEURISTICS') {
         var reports = []
-        Object.keys(state.testAnswerDocument.heuristicAnswers).forEach((key) => {
-          reports.push(HeuristicAnswer.toHeuristicAnswer(state.testAnswerDocument.heuristicAnswers[key]))
-        })
+        Object.keys(state.testAnswerDocument.heuristicAnswers).forEach(
+          (key) => {
+            reports.push(
+              HeuristicAnswer.toHeuristicAnswer(
+                state.testAnswerDocument.heuristicAnswers[key],
+              ),
+            )
+          },
+        )
         return reports
       }
 
@@ -34,8 +40,8 @@ export default {
           new TaskAnswer({
             userDoc: {
               id: rootState.user.id,
-              email: rootState.user.email
-            }
+              email: rootState.user.email,
+            },
           })
         )
       }

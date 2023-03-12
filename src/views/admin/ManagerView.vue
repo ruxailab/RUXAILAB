@@ -366,7 +366,6 @@ export default {
           image: 'IntroEdit.svg',
           title: 'Edit',
           imageStyle: 'transform: rotateY(180deg);',
-          // bottom: "#740999",
           bottom: '#000',
           description: 'Start creating and editing your test.',
           cardStyle:
@@ -377,7 +376,6 @@ export default {
           image: 'IntroCoops.svg',
           title: 'Cooperators',
           imageStyle: '',
-          // bottom: "#DBC717",
           bottom: '#000',
           description: 'Invite people to help you in your test.',
           cardStyle:
@@ -392,7 +390,6 @@ export default {
           image: 'IntroReports.svg',
           title: 'Reports',
           imageStyle: 'height: 250px',
-          // bottom: "#E03C3C",
           bottom: '#000',
           description: 'Take a look at how your evaluators are doing.',
           cardStyle:
@@ -403,7 +400,6 @@ export default {
           image: 'IntroAnswer.svg',
           title: 'Answers',
           imageStyle: 'height: 250px',
-          // bottom: "#4DA73E",
           bottom: '#000',
           description: 'See how your evaluators are evaluating your project.',
           cardStyle:
@@ -414,7 +410,6 @@ export default {
           image: 'IntroAnalytics.svg',
           title: 'Analytics',
           imageStyle: 'height: 250px',
-          // bottom: "#2666E1",
           bottom: '#000',
           description: 'Analyze comments and answers from your evaluators.',
           cardStyle:
