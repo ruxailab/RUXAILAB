@@ -314,14 +314,14 @@
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
         <!-- Heuristics -->
-        <ShowInfo v-if="true" :title="test.testStructure[0].title">
+        <ShowInfo v-if="true" :title="test.testStructure[heurisIndex].title">
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{
-              test.testStructure[0].title
+              test.testStructure[heurisIndex].title
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
             <v-row
-              v-for="(question, i) in test.testStructure[0].questions"
+              v-for="(question, i) in test.testStructure[heurisIndex].questions"
               :key="i"
               justify="center"
             >
@@ -355,7 +355,7 @@
                 </AddCommentBtn>
                 <v-row>
                   <ImageImport
-                    :heuristicId="test.testStructure[i]"
+                    :heuristicId="test.testStructure[heurisIndex]"
                     :questionId="currentUserTestAnswer.heuristicQuestions[i].id"
                     :testId="test.id"
                   ></ImageImport>

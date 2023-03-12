@@ -29,6 +29,7 @@ export default {
 
   methods: {
     async uploadFile() {
+      console.log(this.heuristicId)
       const fileInput = document.getElementById('image')
       const storage = getStorage()
 
@@ -40,7 +41,7 @@ export default {
         'tests/' +
           this.testId +
           '/' +
-          this.heuristicId +
+          this.heuristicId.id +
           '/' +
           this.questionId +
           '/' +
