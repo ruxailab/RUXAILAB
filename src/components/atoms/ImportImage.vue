@@ -12,6 +12,7 @@
     <!-- <input type="text" v-model="text" />
     <button @click="downloadImage()">download</button>
     <img id="imagem" /> -->
+    {{ questionId }}
   </div>
 </template>
 
@@ -19,7 +20,13 @@
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export default {
+  props: {
+    heuristicId: { required: true },
+    questionId: { required: true },
+    testId: { required: true },
+  },
   data: () => ({}),
+
   methods: {
     async uploadFile() {
       const fileInput = document.getElementById('image')
@@ -28,7 +35,17 @@ export default {
       var file = fileInput.files[0]
       console.log(file)
 
-      const storageRef = ref(storage, 'tests/' + file.name) //file.name precisa ser substituído por test.id e é necessário acrescentar o número da heurística
+      const storageRef = ref(
+        storage,
+        'tests/' +
+          this.testId +
+          '/' +
+          this.heuristicId +
+          '/' +
+          this.questionId +
+          '/' +
+          file.name,
+      ) //file.name precisa ser substituído por test.id e é necessário acrescentar o número da heurística
       uploadBytes(storageRef, file).then((snapshot) => {
         console.log('Uploaded file!', snapshot)
       })
