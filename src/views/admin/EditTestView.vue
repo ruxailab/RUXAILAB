@@ -257,14 +257,16 @@ export default {
         delete aux.tasks
       } else if (this.object?.tasks) {
 
-        aux.tasks.push(Object.assign(
-          {},
-          {
-            id: tasks.id,
-            total: tasks.total,
-            questions: arrayQuestions
-          }
-        ))
+
+
+        // aux.tasks.push(Object.assign(
+        //   {},
+        //   {
+        //     id: tasks.id,
+        //     total: tasks.total,
+        //     questions: arrayQuestions
+        //   }
+        // ))
         console.log("tasks", aux.tasks) 
 
         //aux.tasks = [...this.object.tasks]
