@@ -37,23 +37,26 @@
         </v-row>
         <v-divider class="mb-4" />
       </template>
-      <template v-slot:[`item.camera`]="{ item }">
-        <v-simple-checkbox v-model="item.camera" disabled />
+      <template v-slot:[`item.hasCamRecord`]="{ item }">
+        <v-simple-checkbox v-model="item.hasCamRecord" disabled />
       </template>
-      <template v-slot:[`item.recordScreen`]="{ item }">
-        <v-simple-checkbox v-model="item.recordScreen" disabled />
+      <template v-slot:[`item.hasAudioRecord`]="{ item }">
+        <v-simple-checkbox v-model="item.hasAudioRecord" disabled />
       </template>
-      <template v-slot:[`item.timer`]="{ item }">
-        <v-simple-checkbox v-model="item.timer" disabled />
+      <template v-slot:[`item.hasScreenRecord`]="{ item }">
+        <v-simple-checkbox v-model="item.hasScreenRecord" disabled />
       </template>
-      <template v-slot:[`item.postTest`]="{ item }">
-        <v-checkbox v-model="item.postTest" disabled />
+      <template v-slot:[`item.hasTimer`]="{ item }">
+        <v-simple-checkbox v-model="item.hasTimer" disabled />
       </template>
-      <template v-slot:[`item.tip`]="{ item }">
-        <v-checkbox v-model="item.tip" disabled />
+      <template v-slot:[`item.hasPost`]="{ item }">
+        <v-checkbox v-model="item.hasPost" disabled />
       </template>
-      <template v-slot:[`item.description`]="{ item }">
-        <v-checkbox v-model="item.description" disabled />
+      <template v-slot:[`item.taskTip`]="{ item }">
+        <v-checkbox v-model="item.taskTip" disabled />
+      </template>
+      <template v-slot:[`item.taskDescription`]="{ item }">
+        <v-checkbox v-model="item.taskDescription" disabled />
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">
@@ -91,25 +94,28 @@ export default {
         text: "Name",
         align: "start",
         sortable: false,
-        value: "name"
+        value: "taskName"
       },
-      { text: "Description", value: "description" },
-      { text: "Tip", value: "tip" },
-      { text: "Post Test", value: "postTest" },
-      { text: "Timer", value: "timer" },
-      { text: "Record Screen", value: "recordScreen" },
-      { text: "Camera", value: "camera" },
+      { text: "Description", value: "taskDescription" },
+      { text: "Tip", value: "taskTip" },
+      { text: "Post Test", value: "hasPost" },
+      { text: "Timer", value: "hasTimer" },
+      { text: "Screen Record", value: "hasScreenRecord" },
+      { text: "Camera", value: "hasCamRecord" },
+      { text: "Eye Tracker", value: "hasEye" },
+      { text: "Audio Record", value: "hasAudioRecord" },
       { text: "Actions", value: "actions", sortable: false }
     ],
     task: {
-      name: "",
-      description: null,
-      tip: null,
-      postTest: null,
-      answer: null,
-      timer: false,
-      recordScreen: false,
-      camera: false
+      taskName: "",
+      taskDescription: null,
+      taskTip: null,
+      hasPost: null,
+      taskType: null,
+      hasTimer: false,
+      hasAudioRecord: false,
+      hasScreenRecord: false,
+      hasCamRecord: false
     },
     // taskUser: []
   }),
@@ -157,14 +163,15 @@ export default {
         //   })
       }
       this.task = {
-        name: "",
-        description: null,
-        tip: null,
-        postTest: null,
-        answer: null,
-        timer: false,
-        recordScreen: false,
-        camera: false
+        taskName: "",
+        taskDescription: null,
+        taskTip: null,
+        hasPost: false,
+        taskType: null,
+        hasTimer: false,
+        hasAudioRecord: false,
+        hasScreenRecord: false,
+        hasCamRecord: false
       }
     }
   }

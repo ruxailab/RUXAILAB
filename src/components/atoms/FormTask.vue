@@ -3,21 +3,21 @@
     <v-row justify="space-around">
       <v-col cols="5">
         <v-text-field
-          v-model="task.name"
+          v-model="task.taskName"
           label="Name"
           :rules="requiredRule"
           outlined
           dense
         />
         <v-textarea
-          v-model="task.description"
+          v-model="task.taskDescription"
           label="Description"
           :rules="requiredRule"
           outlined
           dense
         />
         <v-text-field
-          v-model="task.tip"
+          v-model="task.taskTip"
           label="Tip"
           outlined
           dense
@@ -25,7 +25,7 @@
       </v-col>
       <v-col cols="5">
         <v-radio-group
-          v-model="task.answer"
+          v-model="task.taskType"
           label="Answer type:"
           :mandatory="false"
           :rules="requiredRule"
@@ -35,23 +35,31 @@
           <v-radio label="Post Test" value="form" />
         </v-radio-group>
         <v-text-field
-          v-if="task.answer === 'form'"
-          v-model="task.postTest"
+          v-if="task.taskType === 'form'"
+          v-model="task.hasPost"
           label="Post-test"
           outlined
           dense
         />
         <v-row align="center">
           Timer:
-          <v-switch v-model="task.timer" class="ml-2" />
+          <v-switch v-model="task.hasTimer" class="ml-2" />
         </v-row>
         <v-row align="center">
-          Record Screen:
-          <v-switch v-model="task.recordScreen" class="ml-2" />
+          Screen Record:
+          <v-switch v-model="task.hasScreenRecord" class="ml-2" />
         </v-row>
         <v-row align="center">
           Camera:
-          <v-switch v-model="task.camera" class="ml-2" />
+          <v-switch v-model="task.hasCamRecord" class="ml-2" />
+        </v-row>
+        <v-row align="center">
+          Eye Tracker:
+          <v-switch v-model="task.hasEye" class="ml-2" />
+        </v-row>
+        <v-row align="center">
+          Audio Record:
+          <v-switch v-model="task.hasAudioRecord" class="ml-2" />
         </v-row>
       </v-col>
     </v-row>
