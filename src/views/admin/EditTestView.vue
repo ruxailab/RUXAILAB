@@ -49,7 +49,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Save</span>
+      <span>Save 2.0</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
@@ -257,20 +257,8 @@ export default {
         delete aux.tasks
       } else if (this.object?.tasks) {
 
-
-
-        // aux.tasks.push(Object.assign(
-        //   {},
-        //   {
-        //     id: tasks.id,
-        //     total: tasks.total,
-        //     questions: arrayQuestions
-        //   }
-        // ))
-        console.log("tasks", aux.tasks) 
-
-        //aux.tasks = [...this.object.tasks]
-        //delete aux.heuristics
+        aux.tasks = [...this.object.tasks]
+        delete aux.heuristics
       }
 
       return aux

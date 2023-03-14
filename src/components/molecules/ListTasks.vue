@@ -4,8 +4,8 @@
       height="420"
       style="background: #f5f7ff"
       :headers="headers"
-      :items="tasks"
-      :items-per-page="5"
+      :items="itemsTasks"
+      :items-per-page="5"   
       class="elevation-1"
     >
       <template v-slot:top>
@@ -36,6 +36,9 @@
           </v-col>
         </v-row>
         <v-divider class="mb-4" />
+      </template>
+      <template v-slot:[`item.hasEye`]="{ item }">
+        <v-simple-checkbox v-model="item.hasEye" disabled />
       </template>
       <template v-slot:[`item.hasCamRecord`]="{ item }">
         <v-simple-checkbox v-model="item.hasCamRecord" disabled />
@@ -88,6 +91,7 @@ export default {
   },
   data: () => ({
     dialog: false,
+    itemsTasks: [],
     editedItem: -1,
     headers: [
       {
@@ -117,13 +121,15 @@ export default {
       hasScreenRecord: false,
       hasCamRecord: false
     },
-    // taskUser: []
   }),
   watch: {
     tasks() {
       this.$emit("change")
     }
   },
+  mounted() {
+    this.itemsTasks = [...this.tasks]
+  },  
   methods: {
     editItem(item) {
       this.editedIndex = this.tasks.indexOf(item)
@@ -140,27 +146,8 @@ export default {
         Object.assign(this.tasks[this.editedIndex], this.task)
         this.$emit("change")
       } else {
-        this.tasks.push(this.task)
-        console.log("tasksss", this.task)
-        
-        // this.tasks.forEach((tests) => {
-        //   const taskUser = Array.from(tests)
-        //   console.log(taskUser)
-        //   return taskUser
-        // })
-
-        // taskUser.push(this.tasks)
-        // console.log(taskUser)
-
-        // this.object.heuristics.forEach((heuris) => {
-        //   const questions = Array.from(heuris.questions)
-        //   const arrayQuestions = []
-
-        //   questions.forEach((el) => {
-        //     arrayQuestions.push(
-        //       Object.assign({}, { id: el.id, res: "", com: "" })
-        //     )
-        //   })
+        this.itemsTasks.push(this.task)
+        console.log("itemsTasks", this.itemsTasks)
       }
       this.task = {
         taskName: "",
