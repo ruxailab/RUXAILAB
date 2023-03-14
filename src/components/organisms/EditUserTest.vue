@@ -48,7 +48,7 @@
       </v-row> -->
     </v-card>
 
-    <ListTasks v-if="index == 1" :tasks="object.tasks" @change="emitChange()" />
+    <ListTasks v-if="index == 1" :tasks="object.itemsTasks" @change="emitChange()" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
