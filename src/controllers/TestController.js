@@ -32,6 +32,7 @@ export default class TestController extends Controller {
   }
 
   async updateTest(payload) {
+    console.log('teste')
     return await super.update(COLLECTION, payload.id, payload.toFirestore())
   }
 
