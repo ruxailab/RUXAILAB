@@ -9,9 +9,9 @@
     <button class="control-buttons" @click="makeHighlight()">
       <span class="mdi mdi-format-underline"></span>
     </button>
-    <button class="control-buttons" @click="outDent()">
-      <span class="mdi mdi-keyboard-tab"></span>
-    </button>
+    <!-- <button class="control-buttons" @click="outDent()">
+      <span class="mdi mdi-format-list-bulleted"></span>
+    </button> -->
     <button class="control-buttons" @click="copyAll()">
       <span class="mdi mdi-content-copy"></span>
     </button>
@@ -78,6 +78,9 @@ export default {
     remove() {
       document.execCommand('removeFormat', false, null)
     },
+    // outDent() {
+    //   document.execCommand('insertUnorderedList', false, null)
+    // },
   },
 }
 </script>
