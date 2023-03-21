@@ -4,7 +4,7 @@
       height="420"
       style="background: #f5f7ff"
       :headers="headers"
-      :items="itemsTasks"
+      :items="allTasks"
       :items-per-page="5"   
       class="elevation-1"
     >
