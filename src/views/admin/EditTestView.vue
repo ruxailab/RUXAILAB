@@ -49,7 +49,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Save 2.0</span>
+      <span>Save</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
@@ -91,7 +91,7 @@
         />
       </v-col>
       <!-- User tests -->
-      <!-- {{ test }} -->
+      {{ test }}
       
       <EditUserTest
         v-if="test.testType === 'User'"
