@@ -49,7 +49,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Save</span>
+      <span>Save 2.0</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
@@ -91,7 +91,8 @@
         />
       </v-col>
       <!-- User tests -->
-      {{test}}
+      <!-- {{ test }} -->
+      
       <EditUserTest
         v-if="test.testType === 'User'"
         slot="top"
@@ -108,7 +109,6 @@
         @change="change = true"
         @valForm="validate"
       />
-            
       <!-- </ShowInfo>  -->
     </v-row>
   </v-container>
@@ -147,10 +147,11 @@ export default {
         if (this.user.accessLevel == 0) return 0
         // Check if user is collaborator or owner
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id
+        console.log(isTestOwner)
         if (isTestOwner) return 0
 
         const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
+        const answersEntries = object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
             answers.push(a[1])
         })
@@ -195,7 +196,7 @@ export default {
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
-        // this.setIntro()
+        this.setIntro()
       }
     },
   },
@@ -210,9 +211,16 @@ export default {
   },
   methods: {
     async submit() {
+
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       const auxT = Test.toTest(this.object)
+      console.log(auxT)
       this.$store.dispatch("updateTest", auxT)
+      console.log("saved in firebase")
+
+      
+      this.mountAnswerSheet()
+
     },
 
     mountAnswerSheet() {
@@ -248,6 +256,7 @@ export default {
 
         delete aux.tasks
       } else if (this.object?.tasks) {
+
         aux.tasks = [...this.object.tasks]
         delete aux.heuristics
       }
@@ -258,25 +267,26 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-      if (this.test.type === "User" && !this.valids[0]) {
+      if (this.test.testType === "User" && !this.valids[0]) {
         this.$store.commit(
           "setError",
           "Please fill all fields in Pre Test correctly or leave them empty"
         )
       } else if (
-        this.test.type === "HEURISTICS" &&
+        this.test.testType === "HEURISTICS" &&
         this.object.options.length == 1
       ) {
         this.$store.commit(
           "setError",
           "Please create at least 2 options or none at all"
         )
-      } else if (this.test.type === "User" && !this.valids[1]) {
+      } else if (this.test.testType === "User" && !this.valids[1]) {
         this.$store.commit(
           "setError",
           "Please fill all fields in Post Test correctly or leave them empty"
         )
       } else {
+        console.log("saved")
         this.submit()
       }
     },
@@ -287,20 +297,30 @@ export default {
     },
     async setIntro() {
       this.object = await Object.assign(this.object, this.test)
-      // if (this.test.type === "HEURISTICS") {
-      //   if (this.test.heuristics.length == 0 && this.test.options.length == 0)
-      //     this.intro = true
-      //   else this.intro = false
-      // } else if (this.test.type === "User") {
-      //   if (
-      //     this.test.tasks.length == 0 &&
-      //     this.test.postTest.form == null &&
-      //     this.test.preTest.consent == null &&
-      //     this.test.preTest.form == null
-      //   )
-      //     this.intro = true
-      //   else this.intro = false
-      // }
+      console.log("Object: ", this.object)
+      console.log("testType: ", this.test)
+      if (this.test.testType === "HEURISTICS") {
+        if (this.test.heuristics.length == 0 && this.test.options.length == 0)
+          this.intro = true
+        else this.intro = false
+      } else if (this.test.testType === "User") {
+        console.log("entrou user")
+        // if (this.test.tasks.length() == 0) {
+        //   //   (
+        //   //   this.test.tasks.length == 0 &&
+        //   //   this.test.postTest.form == null &&
+        //   //   this.test.preTest.consent == null &&
+        //   //   this.test.preTest.form == null
+        //   // )
+        //   this.intro = true
+        // }
+        // else {
+        //   this.intro = false
+        // }
+      }
+      else {
+        console.log("saiu")
+      }
     },
     setIndex(ind) {
       this.index = ind

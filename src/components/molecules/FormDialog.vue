@@ -1,61 +1,65 @@
 <template>
   <v-dialog v-model="dialog" width="70%" persistent>
     <v-card class="dataCard">
-      <p class="subtitleView ma-3 pt-3 mb-0 pa-2">New task</p>
-      <v-divider></v-divider>
+      <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
+        New task
+      </p>
+      <v-divider />
       <v-card-text>
-        <FormTask :task="task" ref="form" @validate="submit" />
+        <FormTask ref="form" :task="task" @validate="submit" />
       </v-card-text>
-      <v-divider></v-divider>
+      <v-divider />
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="red lighten-1 white--text"
           text
           @click="$emit('closeDialog'), reset()"
-          >Cancel</v-btn
         >
-        <v-btn color="#f9a826" class="white--text" @click="validate()"
-          >Save</v-btn
-        >
+          Cancel
+        </v-btn>
+        <v-btn color="#f9a826" class="white--text" @click="validate()">
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import FormTask from "../atoms/FormTask";
+import FormTask from "../atoms/FormTask"
 
 export default {
+  components: {
+    FormTask
+  },
   props: {
     dialog: {
       type: Boolean,
       default: false
     },
+    // eslint-disable-next-line vue/require-default-prop
     task: {
       type: Object
     }
   },
-  components: {
-    FormTask
-  },
   data: () => ({}),
   methods: {
     validate() {
-      this.$refs.form.valida();
+      this.$refs.form.valida()
     },
     submit(valid) {
       if (valid) {
-        this.$emit("addTask");
-        this.$emit("closeDialog");
-        this.reset();
+        this.$emit("addTask")
+        this.$emit("closeDialog")
+        this.reset()
       }
     },
     reset() {
-      this.$refs.form.resetVal();
+      this.$refs.form.resetVal()
     }
   }
-};
+}
 </script>
 
 <style scoped>
