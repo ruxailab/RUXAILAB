@@ -122,6 +122,11 @@ export default {
       hasCamRecord: false
     },
   }),
+  computed: {
+    allTasks() {
+      return this.$store.getters.tasks
+    }
+  },
   watch: {
     tasks() {
       this.$emit("change")
@@ -146,8 +151,12 @@ export default {
         Object.assign(this.tasks[this.editedIndex], this.task)
         this.$emit("change")
       } else {
-        this.itemsTasks.push(this.task)
-        console.log("itemsTasks", this.itemsTasks)
+        //this.itemsTasks.push(this.task)
+        //console.log("itemsTasks", this.itemsTasks)
+        this.$store.dispatch('addItemsTasks', this.task).then( () => {
+          console.log("allTasks", this.allTasks)
+        })
+                 
       }
       this.task = {
         taskName: "",
