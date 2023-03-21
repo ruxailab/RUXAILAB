@@ -91,7 +91,7 @@
         />
       </v-col>
       <!-- User tests -->
-      {{ test }}
+      <!-- {{ test }} -->
       
       <EditUserTest
         v-if="test.testType === 'User'"
