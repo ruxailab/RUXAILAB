@@ -91,7 +91,6 @@
         />
       </v-col>
       <!-- User tests -->
-      {{ test }}
       
       <EditUserTest
         v-if="test.testType === 'User'"
@@ -147,7 +146,6 @@ export default {
         if (this.user.accessLevel == 0) return 0
         // Check if user is collaborator or owner
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id
-        console.log(isTestOwner)
         if (isTestOwner) return 0
 
         const answers = []
@@ -214,9 +212,7 @@ export default {
 
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       const auxT = Test.toTest(this.object)
-      console.log(auxT)
       this.$store.dispatch("updateTest", auxT)
-      console.log("saved in firebase")
 
       
       this.mountAnswerSheet()
@@ -286,7 +282,6 @@ export default {
           "Please fill all fields in Post Test correctly or leave them empty"
         )
       } else {
-        console.log("saved")
         this.submit()
       }
     },
@@ -297,14 +292,11 @@ export default {
     },
     async setIntro() {
       this.object = await Object.assign(this.object, this.test)
-      console.log("Object: ", this.object)
-      console.log("testType: ", this.test)
       if (this.test.testType === "HEURISTICS") {
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
           this.intro = true
         else this.intro = false
       } else if (this.test.testType === "User") {
-        console.log("entrou user")
         // if (this.test.tasks.length() == 0) {
         //   //   (
         //   //   this.test.tasks.length == 0 &&
@@ -319,7 +311,7 @@ export default {
         // }
       }
       else {
-        console.log("saiu")
+        
       }
     },
     setIndex(ind) {

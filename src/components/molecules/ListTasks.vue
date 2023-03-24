@@ -137,7 +137,8 @@ export default {
   },  
   methods: {
     editItem(item) {
-      this.editedIndex = this.tasks.indexOf(item)
+      this.editedIndex = this.$store.commit('INDEX_TASK', item)
+      // this.editedIndex = this.tasks.indexOf(item)
       this.task = Object.assign({}, item)
       this.dialog = true
     },
@@ -148,14 +149,11 @@ export default {
     },
     addTask: function() {
       if (this.editedIndex > -1) {
-        Object.assign(this.tasks[this.editedIndex], this.task)
+        Object.assign(this.allTasks[this.editedIndex], this.task)
         this.$emit("change")
       } else {
-        //this.itemsTasks.push(this.task)
-        //console.log("itemsTasks", this.itemsTasks)
-        this.$store.dispatch('addItemsTasks', this.task).then( () => {
-          console.log("allTasks", this.allTasks)
-        })
+        this.itemsTasks.push(this.task)
+        this.$store.dispatch('addItemsTasks', this.task)
                  
       }
       this.task = {

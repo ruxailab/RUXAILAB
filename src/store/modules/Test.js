@@ -16,7 +16,8 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
-    tasks:[]
+    tasks: [],
+    index: null
   },
   getters: {
     tests(state) {
@@ -34,6 +35,10 @@ export default {
     coops(state) {
       return state.Test.coop
     },
+    index(state) {
+      return state.index
+    },
+    
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -43,8 +48,11 @@ export default {
       state.tests = payload
     },
     ADD_TASKS(state, payload) {
-      //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
+    },
+    INDEX_TASK(state, payload) {
+      state.index = state.tasks.indexOf(payload)
+      console.log(state.index)
     }
   },
   actions: {
@@ -217,7 +225,6 @@ export default {
 
       try {
         commit('setLoading', true)
-        console.log("tasks adicionadas: ", payload)
         commit('ADD_TASKS', payload)
       } catch {
         console.log('Error in addItemsTasks')
@@ -225,7 +232,8 @@ export default {
       } finally {
         commit('setLoading', false)
       }
-    }
+    },
+
   },
   coops(state) {
     return state.test.coop
