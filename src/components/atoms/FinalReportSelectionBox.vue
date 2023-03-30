@@ -10,7 +10,7 @@
         <div class="option heuristics">
           <input
             type="checkbox"
-            :id="heuristics.name"
+            :id="'heuristic' + heuristics.id"
             :name="heuristics.name"
           />
           <label :for="heuristics.name">
@@ -42,7 +42,7 @@
 <script>
 export default {
   props: ['id', 'HEURISTICS'],
-  data: () => ({}),
+  data: () => ({ preview: new Object() }),
   computed: {
     test() {
       return this.$store.getters.test
@@ -56,25 +56,34 @@ export default {
       let comments = document.getElementById('comments')
       let results = document.getElementById('results')
       let finalReport = document.getElementById('finalReport')
-      let preview = []
+
+      for (let i = 0; i <= this.test.testStructure.length; i++) {
+        // let auxId = document.getElementById(this.test.testStructure[i].name)
+        let auxId = document.getElementById('heuristic' + i)
+
+        console.log(auxId)
+        // if (auxId) {
+        //   preview.push(this.test.testStructure[i].name)
+        // }
+      }
 
       if (options.checked == true) {
-        preview.push(this.test.testOptions)
+        this.preview.testOptions = this.test.testOptions
       }
       if (comments.checked == true) {
         let answersDocId = this.test.answersDocId
         //need to get only the comments, not the answersDocId
-        preview.push(answersDocId)
+        this.preview.testComments = answersDocId
       }
       if (results.checked == true) {
         let answersDocId = this.test.answersDocId
         //need to get only the results + graphics, not the answersDocId
-        preview.push(answersDocId)
+        this.preview.results = answersDocId
       }
       if (finalReport.checked) {
-        preview.push(this.test.finalReport)
+        this.preview.finalReport = this.test.finalReport
       }
-      console.log(preview)
+      console.log(this.preview)
     },
   },
 }
