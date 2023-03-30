@@ -3,14 +3,14 @@
     <v-row class="mt-4" justify="center">
       <v-col cols="10">
         <v-text-field
+          v-model="postTest.form"
           prepend-inner-icon="mdi-link-variant"
           label="Form"
           :rules="googleLinkRules"
-          v-model="postTest.form"
           outlined
-          @input="$emit('change')"
           dense
-        ></v-text-field>
+          @input="$emit('change')"
+        />
       </v-col>
     </v-row>
   </v-form>
@@ -40,9 +40,9 @@ export default {
   }),
   watch: {
     "postTest.form"() {
-      let valid = this.$refs.form.validate();
-      this.$emit("valForm", valid, this.valIndex);
+      const valid = this.$refs.form.validate()
+      this.$emit("valForm", valid, this.valIndex)
     }
   }
-};
+}
 </script>
