@@ -7,7 +7,9 @@
   >
     <div>{{ snackMessage }}</div>
     <template v-slot:action="{ attrs }">
-      <v-btn text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+      <v-btn text v-bind="attrs" @click="snackbar = false">
+        Close
+      </v-btn>
     </template>
   </v-snackbar>
 </template>
@@ -19,19 +21,19 @@ export default {
   }),
   computed: {
     snackMessage() {
-      return this.$store.getters.snackMessage;
+      return this.$store.getters.snackMessage
     },
     snackColor() {
-      return this.$store.getters.snackColor;
+      return this.$store.getters.snackColor
     }
   },
   watch: {
     snackMessage() {
-      if (this.snackMessage) this.snackbar = true;
+      if (this.snackMessage) this.snackbar = true
     },
     snackbar() {
-      if (!this.snackbar) this.$store.commit("resetSnack");
+      if (!this.snackbar) this.$store.commit("resetSnack")
     }
   }
-};
+}
 </script>

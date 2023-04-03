@@ -21,7 +21,7 @@
       <v-card-title class="subtitleView">
         Pre Test
       </v-card-title>
-  
+
       <v-divider />
 
       <v-row justify="space-around">
@@ -47,7 +47,7 @@
         </v-col>
       </v-row> -->
     </v-card>
-
+    {{ object }}
     <ListTasks v-if="index == 1" :tasks="object.itemsTasks" @change="emitChange()" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
@@ -113,7 +113,7 @@ export default {
       console.error(this.type + " type in EditUserTest.vue is not valid.")
   },
 
-  
+
 
   methods: {
     tabClicked(index) {
