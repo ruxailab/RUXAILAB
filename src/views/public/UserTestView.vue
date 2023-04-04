@@ -29,9 +29,9 @@
     </v-card>
   </v-dialog> -->
 
-  <v-layout align-center justify-center class="background">
-    <v-flex>
-      <div>
+  <div v-if="introStage">
+    <v-layout align-center justify-center class="background">
+      <v-flex>
         <v-card width="400">
           <v-flex pa-2>
             <v-card-title primary-title class="subtitleView">
@@ -41,7 +41,7 @@
             </v-card-title>
 
             <v-card-actions>
-              <v-btn color="green" @click="startQuiz">
+              <v-btn color="green" @click="startTest">
                 START!
               </v-btn>
               <v-btn color="orange">
@@ -50,50 +50,102 @@
             </v-card-actions>
           </v-flex>
         </v-card>
-      </div>
+      </v-flex>
+    </v-layout>
+  </div>
 
-      <!-- <div v-if="questionStage">
-        <question
-          :question="questions[currentQuestion]"
-          :question-number="currentQuestion + 1"
-          @answer="handleAnswer"
-        />
-      </div> -->
+  <div v-else>
+    <v-layout class="backgroundTest">
+      <template>
+        <v-app class="subtitleView">
+          <v-app-bar class="flex-grow-0" app dark>
+            User Test
+          </v-app-bar>
+          <v-navigation-drawer
+            app
+            color="#ffffffb3"
+          >
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-h6">
+                  {{ test.testTitle }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="description">
+                  {{ test.id }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider />
+            <v-list dense nav>
+              <v-list-item v-for="item in tasks" :key="item.title" link>
+                <v-list-item-icon>
+                  <v-icon>{{ item.testTitle }}</v-icon>
+                </v-list-item-icon>
 
-      <!-- <div
+                <!-- <v-list-item-content>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item-content> -->
+              </v-list-item>
+            </v-list>
+          </v-navigation-drawer>
+        </v-app>
+      </template>
+    </v-layout>
+  </div>
+
+
+  <!-- <div
         v-if="resultsStage"
       >
         You got {{ correct }} right out of {{ questions.length }} questions. Your percentage is {{ perc }}%.
       </div> -->
-    </v-flex>
-  </v-layout>
+  <!-- </v-flex> -->
 </template>
 
 
 <script>
-// import ShowInfo from "@/components/organisms/ShowInfo.vue"
+import ShowInfo from "@/components/organisms/ShowInfo.vue"
 // import ViewTask from "@/components/molecules/ViewTask.vue"
-// import AddCommentBtn from "@/components/atoms/AddCommentBtn"
-// import HelpBtn from "@/components/atoms/QuestionHelpBtn"
-// import VClamp from "vue-clamp"
-// import Snackbar from "@/components/atoms/Snackbar"
-// import CardSignIn from "@/components/atoms/CardSignIn"
-// import CardSignUp from "@/components/atoms/CardSignUp"
+import AddCommentBtn from "@/components/atoms/AddCommentBtn"
+import HelpBtn from "@/components/atoms/QuestionHelpBtn"
+import VClamp from "vue-clamp"
+import Snackbar from "@/components/atoms/Snackbar"
+import CardSignIn from "@/components/atoms/CardSignIn"
+import CardSignUp from "@/components/atoms/CardSignUp"
 export default {
-  // components: {
-  //   ShowInfo,
-  //   ViewTask,
-  //   AddCommentBtn,
-  //   HelpBtn,
-  //   VClamp,
-  //   Snackbar,
+  components: {
+    // ShowInfo,
+    // ViewTask,
+    // AddCommentBtn,
+    // HelpBtn,
+    //VClamp,
+    // Snackbar,
     // CardSignIn,
-  //   CardSignUp,
-  // },
+    // CardSignUp,
+  },
   // eslint-disable-next-line vue/require-prop-types
   props: ["id", "token"],
   data: () => ({
     questionStage: false,
+    currentQuestion: 0,
+    questions: [],
+    introStage: true,
+    drawer: false,
+    items: [
+      {
+        title: 'Products',
+        value: 'prod'
+      },
+      {
+        title: 'About',
+        value: 'about'
+      },
+      {
+        title: '...',
+        value: 'etc'
+      },
+    ],
+
     logined: null,
     selected: true,
     fromlink: null,
@@ -106,433 +158,65 @@ export default {
     preTestIndex: null,
     items: [],
     idx: 0,
-    fab: true,
+    fab: false,
     res: 0,
     dialog: false,
-    items: [
-      { title: 'Dashboard', icon: 'mdi-view-dashboard' },
-      { title: 'Photos', icon: 'mdi-image' },
-      { title: 'About', icon: 'mdi-help-box' },
-    ],
-    right: null
+    calculatedProgress: 0,
+
   }),
   computed: {
-//     test() {
-//       return this.$store.getters.test
-//     },
-//     user() {
-//       if (this.$store.getters.user) this.setExistUser()
-//       return this.$store.getters.user
-//     },
-//     answersSheet: {
-//       get() {
-//         if (this.user !== null && this.user !== undefined) {
-//           const x = this.user.myAnswers.find((answer) => answer.id == this.id)
-//           if (x) {
-//             if (x.answersSheet.tasks) {
-//               /* eslint-disable*/
-//               this.test.answersSheet = Object.assign({}, x.answersSheet)
-//               this.test.tasks = Object.assign({}, x.answersSheet.tasks)
-//               return this.test.answersSheet
-//             }
-//             return x.answersSheet;
-//           } else {
-//             return this.test.answersSheet;
-//           }
-//         } else {
-//           return null;
-//         }
-//       },
-//       set(item) {
-//         return item;
-//       },
-//     },
-//     showBtn() {
-//       if (this.answersSheet !== undefined && this.answersSheet !== null) {
-//         if (!this.answersSheet.submitted) return true;
-//       }
-//       if (this.test.type == "User") {
-//         return true;
-//       }
-//       return false;
-//     },
-//     cooperators() {
-//       return this.$store.getters.cooperators;
-//     },
-    // loading() {
-    //   return this.$store.getters.loading
-    // },
+    tasks() {
+      return this.$store.getters.tasks
+    },
+    test() {
+      return this.$store.getters.test
+    },
+    user() {
+      if (this.$store.getters.user) this.setExistUser()
+      return this.$store.getters.users
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
+    cooperators() {
+      return this.$store.getters.cooperators
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
   },
   watch: {
-//     cooperators() {
-//       if (this.cooperators && this.token) {
-//         let invitation = this.cooperators.cooperators.find(
-//           (coop) => coop.token == this.token
-//         );
-//         if (!invitation) {
-//           this.$router
-//             .push("/")
-//             .then(() => {
-//               this.$store.commit("setError", "Invalid invitation");
-//             })
-//             .catch(() => { });
-//         }
-//       }
-//     },
-//     test: async function () {
-//       if (this.test !== null && this.test !== undefined)
-//         await this.mappingSteps();
-//       if (this.test && this.token) {
-//         if (!this.$store.getters.cooperators)
-//           this.$store.dispatch("getCooperators", {
-//             id: this.test.cooperators,
-//           });
-//         else if (this.$store.getters.cooperators !== this.test.cooperators)
-//           this.$store.dispatch("getCooperators", {
-//             id: this.test.cooperators,
-//           });
-//       }
-//     },
-//     items() {
-//       if (this.items.length) {
-//         this.index = this.items[0].id;
-//         if (this.items.find((obj) => obj.id == 0)) {
-//           //se tiver preTest mexe no preTestIndex
-//           this.preTestIndex = this.items[0].value[0].id;
-//         }
-//       }
-//     },
-//     heurisIndex() {
-//       this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
-//     },
-    async user() {
-      if (this.user) {
-        this.noExistUser = false
-        if (this.logined) this.setTest()
-      }
-    },
+    // test: async function () {
+    //   await this.mappingSteps()
+    // },
   },
   methods: {
-    startQuiz() {
-      //this.introStage = false
+    startTest() {
+      this.introStage = false
       this.questionStage = true
-      // console.log(
-      //   "test" + JSON.stringify(this.questions[this.currentQuestion])
-      // )
+      //console.log("test ", this.tasks)
+      console.log("task", this.tasks)
+      this.$store.dispatch("getTest", { id: this.test.id })
     },
-
-//     updateAnswer() {
-//       this.calcProgress();
-//     },
-//     mappingSteps() {
-//       if (this.test.type === "User") {
-//         //PreTest
-//         if (this.validate(this.test.preTest.consent))
-//           this.items.push({
-//             title: "Pre Test",
-//             icon: "mdi-checkbox-blank-circle-outline",
-//             value: [
-//               {
-//                 title: "Consent",
-//                 icon: "mdi-checkbox-blank-circle-outline",
-//                 id: 0,
-//               },
-//             ],
-//             id: 0,
-//           });
-//         if (this.validate(this.test.preTest.form)) {
-//           if (this.items.length) {
-//             this.items[0].value.push({
-//               title: "Form",
-//               icon: "mdi-checkbox-blank-circle-outline",
-//               id: 1,
-//             });
-//           } else {
-//             this.items.push({
-//               title: "Pre Test",
-//               icon: "mdi-checkbox-blank-circle-outline",
-//               value: [
-//                 {
-//                   title: "Form",
-//                   icon: "mdi-checkbox-blank-circle-outline",
-//                   id: 1,
-//                 },
-//               ],
-//               id: 0,
-//             });
-//           }
-//         }
-//         //Tasks
-//         if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
-//           this.items.push({
-//             title: "Tasks",
-//             icon: "mdi-checkbox-blank-circle-outline",
-//             value: this.test.tasks.map((i) => {
-//               return {
-//                 title: i.name,
-//                 icon: "mdi-checkbox-blank-circle-outline",
-//               };
-//             }),
-//             id: 1,
-//           });
-//         //PostTest
-//         if (this.validate(this.test.postTest.form))
-//           this.items.push({
-//             title: "Post Test",
-//             icon: "mdi-checkbox-blank-circle-outline",
-//             value: this.test.postTest,
-//             id: 2,
-//           });
-//       } else if (this.test.type === "Heuristics") {
-//         //Heuristics
-//         if (
-//           this.validate(this.test.heuristics) &&
-//           this.test.heuristics.length !== 0
-//         )
-//           this.items.push({
-//             title: "Heuristics",
-//             icon: "mdi-checkbox-marked-circle-outline",
-//             value: this.test.heuristics.map((i) => {
-//               return {
-//                 title: i.title,
-//                 icon: "mdi-checkbox-marked-circle-outline",
-//               };
-//             }),
-//             id: 1,
-//           });
-//       }
-//     },
-//     validate(object) {
-//       return object !== null && object !== undefined && object !== "";
-//     },
-//     calcProgress() {
-//       var qtd = 0;
-//       if (this.answersSheet.heuristics) {
-//         this.answersSheet.heuristics.forEach((h) => {
-//           qtd += h.questions.filter((q) => q.res !== "").length;
-//         });
-//         this.answersSheet.progress = (
-//           (qtd * 100) /
-//           this.answersSheet.total
-//         ).toFixed(1);
-//       } else if (this.test.answersSheet.tasks) {
-//         // TODO: Implement progress system for User Tests
-//         this.answersSheet.total = this.answersSheet.tasks.length;
-//         this.answersSheet.progress = 0;
-//       }
-//     },
-//     submitLog(save) {
-//       let newAnswer = this.user.myAnswers.find(
-//         (answer) => answer.id == this.id
-//       );
-//       if (!save) newAnswer.answersSheet.submitted = true;
-//       var log = {
-//         date: new Date().toLocaleString("en-US"),
-//         progress: this.answersSheet.progress,
-//         status: this.answersSheet.progress != 100 ? "In progress" : "Completed",
-//       };
-//       log.status = newAnswer.answersSheet.submitted ? "Submitted" : log.status;
-//       if (this.answersSheet.tasks) {
-//         this.answersSheet.tasks = Object.assign({}, this.test.tasks);
-//         newAnswer.answersSheet = this.answersSheet;
-//       }
-//       this.$store
-//         .dispatch("updateLog", {
-//           docId: newAnswer.reports,
-//           elementId: this.user.uid,
-//           element: log,
-//         })
-//         .then(() => {
-//           if (!save) {
-//             this.$store
-//               .dispatch("pushAnswers", {
-//                 docId: newAnswer.answers,
-//                 element: Object.assign(this.answersSheet, {
-//                   uid: this.user.uid,
-//                   email: this.user.email,
-//                 }),
-//               })
-//               .then(() => {
-//                 this.$store.commit("setSuccess", "Test succesfully submitted");
-//               })
-//               .catch((err) => {
-//                 this.$store.commit("setError", err);
-//               });
-//           }
-//         });
-//       newAnswer.date = new Date().toDateString();
-//       this.$store
-//         .dispatch("updateMyAnswers", {
-//           docId: this.user.uid,
-//           element: newAnswer,
-//         })
-//         .then(() => {
-//           if (save)
-//             this.$store.commit("setSuccess", "Project succesfully saved");
-//         })
-//         .catch((err) => {
-//           if (save) this.$store.commit("setError", err);
-//         });
-//       if (newAnswer.answersSheet.tasks) {
-//         this.$store
-//           .dispatch("pushAnswers", {
-//             docId: newAnswer.answers,
-//             element: Object.assign(this.answersSheet, {
-//               uid: this.user.uid,
-//               email: this.user.email,
-//             }),
-//           })
-//           .then(() => {
-//             this.$store.commit("setSuccess", "Test succesfully submitted");
-//           })
-//           .catch((err) => {
-//             this.$store.commit("setError", err);
-//           });
-//       }
-//     },
-//     progress(item) {
-//       return (
-//         (item.questions.filter((q) => q.res !== "").length * 100) / item.total
-//       );
-//     },
-//     setExistUser() {
-//       this.noExistUser = false;
-//     },
-//     signOut() {
-//       this.$store.dispatch("logout").then(() => {
-//         this.noExistUser = true;
-//       });
-//     },
-    setTest() {
-      if (this.user.myAnswers) {
-        this.fromlink = false
-        const exist = this.user.myAnswers.find((test) => test.id == this.id)
-        if (!exist) {
-          const payload = Object.assign(
-            {},
-            {
-              id: this.test.id,
-              title: this.test.title,
-              type: this.test.type,
-              reports: this.test.reports,
-              answers: this.test.answers,
-              cooperators: this.test.cooperators,
-              answersSheet: Object.assign(this.test.answersSheet, {
-                submitted: false,
-              }),
-              accessLevel: {
-                text: "Evaluator",
-                value: 2,
-              },
-            }
-          )
-          //Get invitation
-          const coop = this.cooperators.cooperators.find(
-            (coop) => coop.token == this.token
-          )
-          if (coop) {
-            //User invited and he has account
-            if (this.user.uid == coop.id) {
-              this.$store
-                .dispatch("pushMyAnswers", {
-                  docId: this.user.uid,
-                  element: payload,
-                })
-                .then(() => {
-                  //Update invitation to accepted
-                  this.$store.dispatch("updateCooperator", {
-                    docId: this.test.cooperators,
-                    elementId: this.user.uid,
-                    element: true,
-                    param: "accepted",
-                  })
-                  //Remove notification
-                  const inv = this.user.notifications.find(
-                    (not) => not.test.id == this.id
-                  )
-                  this.$store.dispatch("removeNotification", {
-                    docId: this.user.uid,
-                    element: inv,
-                  })
-                  //Update state reports
-                  var log = {
-                    date: new Date().toLocaleString("en-US"),
-                    progress: 0,
-                    status: "In progress",
-                  }
-                  this.$store.dispatch("updateLog", {
-                    docId: this.test.reports,
-                    elementId: this.user.uid,
-                    element: log,
-                  })
-                })
-            }
-            //User invited and he doesn't have account
-            else if (coop.id == null) {
-              this.$store
-                .dispatch("pushMyAnswers", {
-                  docId: this.user.uid,
-                  element: payload,
-                })
-                .then(() => {
-                  //Update Invitation insert User ID and invitation accepted
-                  this.$store
-                    .dispatch("updateCooperator", {
-                      docId: this.test.cooperators,
-                      elementId: this.token,
-                      element: this.user.uid,
-                      identifier: "token",
-                      param: "id",
-                    })
-                    .then(() => {
-                      this.$store.dispatch("updateCooperator", {
-                        docId: this.test.cooperators,
-                        elementId: this.token,
-                        identifier: "token",
-                        element: true,
-                        param: "accepted",
-                      })
-                    })
-                  //Insert User at state reports
-                  const item = Object.assign(
-                    {},
-                    {
-                      uid: this.user.uid,
-                      email: this.user.email,
-                      log: {
-                        date: new Date().toLocaleString("en-Us"),
-                        progress: 0,
-                        status: "In progress",
-                      },
-                    }
-                  )
-                  this.$store.dispatch("pushLog", {
-                    docId: this.test.reports,
-                    element: item,
-                  })
-                })
-            }
-          } else {
-            this.$store.commit("setError", "Invalid invitation")
-          }
-        }
-      }
-    },
-//   },
-//   async created() {
-//     if (!this.$store.test) {
-//       await this.$store.dispatch("getTest", { id: this.id });
-//       await this.$store.dispatch("getCooperators", {
-//         id: this.test.cooperators,
-//       });
-//     }
-//   },
-//   beforeRouteEnter(to, from, next) {
-//     if (to.params.token)
-//       next((vm) => {
-//         vm.fromlink = true;
-//       });
-//     next();
+    // mappingSteps() {
+    //   if (
+    //     this.validate(this.test.testStructure) &&
+    //     this.test.testStructure.length !== 0
+    //   )
+    //     this.items.push({
+    //       title: "User",
+    //       icon: "mdi-checkbox-marked-circle-outline",
+    //       value: this.test.testStructure.map((option) => {
+    //         return {
+    //           title: option.title,
+    //           //icon: "mdi-checkbox-marked-circle-outline",
+    //           done: false,
+    //           total: option.total,
+    //           id: option.id,
+    //         }
+    //       }),
+    //     })
+    // },
   },
 }
 </script>
@@ -585,7 +269,7 @@ export default {
   font-size: 18.1818px;
   line-height: 21px;
   align-items: flex-end;
-  color: #ffffff;
+  color: #000000;
 }
 
 .nav {
@@ -611,7 +295,7 @@ export default {
 }
 
 .titleText {
-  color: rgba(255, 255, 255, 0.7);
+  color: #ffffffb3;
   font-size: 16px;
   margin-left: 15px;
   padding: 10px;

@@ -1,11 +1,11 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table 
+    <v-data-table
       height="420"
       style="background: #f5f7ff"
       :headers="headers"
       :items="allTasks"
-      :items-per-page="5"   
+      :items-per-page="5"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -134,7 +134,7 @@ export default {
   },
   mounted() {
     this.itemsTasks = [...this.tasks]
-  },  
+  },
   methods: {
     editItem(item) {
       this.editedIndex = this.$store.commit('INDEX_TASK', item)
@@ -154,7 +154,7 @@ export default {
       } else {
         this.itemsTasks.push(this.task)
         this.$store.dispatch('addItemsTasks', this.task)
-                 
+
       }
       this.task = {
         taskName: "",

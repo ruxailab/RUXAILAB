@@ -38,7 +38,7 @@ export default {
     index(state) {
       return state.index
     },
-    
+
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -147,7 +147,9 @@ export default {
 
       // Connect to controllers
       try {
+        console.log("payload", payload)
         const res = await testController.getTest(payload)
+        console.log(res)
         commit('SET_TEST', res)
       } catch {
         console.log('Error in getObjectTest')
@@ -162,6 +164,7 @@ export default {
       try {
         commit('setLoading', true)
         const res = await testController.getAllTests()
+        console.log(res)
         commit('SET_TESTS', res)
       } catch {
         console.log('Error in getAllTest')
