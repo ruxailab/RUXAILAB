@@ -8,17 +8,17 @@
 
     <v-card>
       <v-card-title class="headline grey lighten-2 text-center" primary-title>
-        {{ task.name }} - Tip
+        {{ task.taskName }} - Tip
       </v-card-title>
 
       <v-card-text class="pa-3" style="text-align: center">
-        {{ task.tip }}
+        {{ task.taskTip }}
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="primary" text @click="dialog = false">
           Ok
         </v-btn>
@@ -35,14 +35,14 @@ export default {
       required: true,
       default: function() {
         return {
-          name: "",
-          tip: ""
-        };
+          taskName: "",
+          taskTip: ""
+        }
       }
     }
   },
   data: () => ({
     dialog: false
   })
-};
+}
 </script>

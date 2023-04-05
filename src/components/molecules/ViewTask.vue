@@ -1,23 +1,23 @@
 <template>
   <v-container>
-    <v-row v-if="!postTest" class="fill-height" align="center" justify="center">
-      <v-col cols="12">
+    <v-row class="full-content" align="center" justify="center">
+      <v-col>
         <v-row justify="center">
-          <h1>{{ item.name }}</h1>
+          <h1>{{ item.taskName }}</h1>
         </v-row>
         <v-spacer />
-        <v-row v-if="item.tip !== null" justify="end">
+        <v-row v-if="item.taskTip !== null" justify="end">
           <TipButton :task="item" />
         </v-row>
         <v-spacer />
         <v-row justify="center">
           <p class="paragraph">
-            {{ item.description }}
+            {{ item.taskDescription }}
           </p>
         </v-row>
         <v-spacer />
         <v-row justify="center">
-          <v-btn v-if="item.timer === true" color="success">
+          <v-btn v-if="item.hasTimer === true" color="success">
             <v-icon left>
               mdi-timer
             </v-icon>Start
@@ -25,9 +25,9 @@
         </v-row>
         <v-spacer />
         <v-row class="paragraph" justify="space-around">
-          <v-col v-if="item.answer === 'textArea'">
+          <v-col v-if="item.taskType === 'textArea'">
             <v-textarea
-              :id="'id-'+item.name"
+              :id="'id-'+item.taskName"
               v-model="item.res"
               outlined
               label="answer"
@@ -36,7 +36,7 @@
           </v-col>
           <v-col>
             <v-textarea
-              :id="'id-'+item.name"
+              :id="'id-'+item.taskName"
               v-model="item.obs"
               outlined
               label="observation (optional)"
@@ -46,7 +46,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row v-else class="fill-height" align="center" justify="center">
+    <!-- <v-row v-else class="fill-height" align="center" justify="center">
       <iframe
         :src="item.postTest"
         width="100%"
@@ -55,7 +55,7 @@
         marginheight="0"
         marginwidth="0"
       >Carregando…</iframe>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -70,10 +70,10 @@ export default {
       type: Object,
       required: true,
     },
-    postTest: {
-      type: Boolean,
-      default: false,
-    },
+    // postTest: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
   methods: {
     updated() {
@@ -82,3 +82,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+
+.full-content{
+  height: 100%;
+  width: 100%;
+}
+
+</style>

@@ -86,47 +86,35 @@
                 v-for="(item, index) in items"
                 :key="item[index]"
                 link
+                @click="indexTaskView(index)"
               >
                 <v-list-item-icon>
                   <v-icon>{{ icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
-                  <v-list-item-title>{{ test.testStructure[index].taskName }}</v-list-item-title>
+                  <v-list-item-title>
+                    {{ test.testStructure[index].taskName }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
-
-            <!-- <v-list dense nav>
-              <v-list-item v-for="item in tasks" :key="item.title" link>
-                <v-list-item-icon>
-                  <v-icon>{{ item.testTitle }}</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.testTitle }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list> -->
           </v-navigation-drawer>
+          <v-main>
+            <ViewTask
+              :item="test.testStructure[indexTask]"
+            />
+          </v-main>
         </v-app>
       </template>
     </v-layout>
   </div>
-
-
-  <!-- <div
-        v-if="resultsStage"
-      >
-        You got {{ correct }} right out of {{ questions.length }} questions. Your percentage is {{ perc }}%.
-      </div> -->
-  <!-- </v-flex> -->
 </template>
 
 
 <script>
 import ShowInfo from "@/components/organisms/ShowInfo.vue"
-// import ViewTask from "@/components/molecules/ViewTask.vue"
+import ViewTask from "@/components/molecules/ViewTask.vue"
 import AddCommentBtn from "@/components/atoms/AddCommentBtn"
 import HelpBtn from "@/components/atoms/QuestionHelpBtn"
 import VClamp from "vue-clamp"
@@ -136,7 +124,7 @@ import CardSignUp from "@/components/atoms/CardSignUp"
 export default {
   components: {
     // ShowInfo,
-    // ViewTask,
+    ViewTask,
     // AddCommentBtn,
     // HelpBtn,
     //VClamp,
@@ -153,8 +141,12 @@ export default {
     introStage: true,
     drawer: false,
     icon: 'mdi-help-box',
-    items: ["Legal", "Ola", "Teste"],
+    items: ["Legal", "Ola", "Teste", "Olaaa"],
     right: null,
+    indexTask: 0,
+    itemsTask: [],
+
+
 
     logined: null,
     selected: true,
@@ -162,7 +154,7 @@ export default {
     drawer: true,
     start: true, //change to true
     mini: false,
-    index: null,
+    // index: null,
     noExistUser: true,
     heurisIndex: 0,
     preTestIndex: null,
@@ -207,6 +199,11 @@ export default {
 
       this.$store.dispatch("getTest", { id: this.test.id })
     },
+    indexTaskView(payload) {
+      console.log("payload index", payload)
+      this.indexTask = payload
+
+    }
     // mappingSteps() {
     //   if (
     //     this.validate(this.test.testStructure) &&
