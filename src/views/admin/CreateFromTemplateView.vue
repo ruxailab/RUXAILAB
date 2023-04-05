@@ -2,10 +2,11 @@
   <div>
     <v-row justify="center">
       <v-col cols="10">
-        <v-row align="center" v-if="!searching">
+        <v-row v-if="!searching" align="center">
           <span class="titleText ml-3 mb-2">Create from template</span>
 
           <v-text-field
+            v-model="search"
             full-width
             dense
             class="ml-4 mt-6 hidden-sm-and-down"
@@ -13,48 +14,47 @@
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
-            v-model="search"
-          ></v-text-field>
-          <v-spacer class="hidden-md-and-up"></v-spacer>
+          />
+          <v-spacer class="hidden-md-and-up" />
           <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-row>
         <v-text-field
-          :autofocus="searching"
-          @blur="searching = false"
           v-else
+          v-model="search"
+          :autofocus="searching"
           dense
           label="Search"
           prepend-inner-icon="mdi-magnify"
           outlined
           color="grey darken-2"
-          v-model="search"
-        ></v-text-field>
-        <v-divider class="mb-1"></v-divider>
+          @blur="searching = false"
+        />
+        <v-divider class="mb-1" />
         <List
-          @clicked="openTemp"
           type="publicTemplates"
           :items="filteredTemplates"
-        ></List>
+          @clicked="openTemp"
+        />
       </v-col>
     </v-row>
     <TempDialog
       v-if="temp"
       :dialog="dialog"
       :template="temp"
+      :allow-create="true"
       @submitTemplate="submit"
       @close="dialog = false"
-      :allowCreate="true"
     />
   </div>
 </template>
 
 <script>
-import List from "@/components/atoms/ListComponent";
-import TempDialog from "@/components/molecules/TemplateInfoDialog";
-import TestAdmin from "@/models/TestAdmin";
-import Test from "@/models/Test";
+import List from "@/components/atoms/ListComponent"
+import TempDialog from "@/components/molecules/TemplateInfoDialog"
+import TestAdmin from "@/models/TestAdmin"
+import Test from "@/models/Test"
 
 export default {
   components: {
@@ -67,10 +67,40 @@ export default {
     searching: false,
     search: "",
   }),
+  computed: {
+    templates() {
+      return this.$store.state.Templates.templates
+    },
+    filteredTemplates() {
+      if (this.templates !== null) {
+        return this.templates.filter((temp) => {
+          return temp.header.templateTitle
+            .toLowerCase()
+            .includes(this.search.toLowerCase())
+        })
+      }
+
+      return []
+    },
+    user() {
+      return this.$store.getters.user
+    },
+  },
+  watch: {
+    dialog() {
+      if (!this.dialog) {
+        this.temp = {}
+        this.selectTemplate = null
+      }
+    },
+  },
+  async created() {
+    await this.$store.dispatch("getCurrentUserAndPublicTemplates")
+  },
   methods: {
     openTemp(item) {
-      this.temp = JSON.parse(JSON.stringify(item)); //deep copy
-      this.dialog = true;
+      this.temp = JSON.parse(JSON.stringify(item)) //deep copy
+      this.dialog = true
     },
     async submit() {
       const test = new Test({
@@ -83,47 +113,17 @@ export default {
         templateDoc: this.temp.id,
         creationDate: Date.now(),
         updateDate: Date.now(),
-      });
+      })
 
-      const testId = await this.$store.dispatch("createNewTest", test);
+      const testId = await this.$store.dispatch("createNewTest", test)
 
-      this.sendManager(testId);
+      this.sendManager(testId)
     },
     sendManager(id) {
-      this.$router.push(`/managerview/${id}`).catch(() => {});
+      this.$router.push(`/managerview/${id}`).catch(() => {})
     },
   },
-  computed: {
-    templates() {
-      return this.$store.state.Templates.templates;
-    },
-    filteredTemplates() {
-      if (this.templates !== null) {
-        return this.templates.filter((temp) => {
-          return temp.header.templateTitle
-            .toLowerCase()
-            .includes(this.search.toLowerCase());
-        });
-      }
-
-      return [];
-    },
-    user() {
-      return this.$store.getters.user;
-    },
-  },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.temp = {};
-        this.selectTemplate = null;
-      }
-    },
-  },
-  async created() {
-    await this.$store.dispatch("getCurrentUserAndPublicTemplates");
-  },
-};
+}
 </script>
 
 <style scoped>

@@ -154,6 +154,8 @@ export default {
       } else {
         this.itemsTasks.push(this.task)
         this.$store.dispatch('addItemsTasks', this.task)
+        //this.$store.dispatch('getTest', this.task)
+        // this.$store.dispatch('updateTestStructure', this.task)
 
       }
       this.task = {

@@ -13,7 +13,7 @@ export default {
   state: {
     Test: null,
     tests: null,
-    testStructure: null,
+    testStructure: [],
     answersId: null,
     module: 'test',
     tasks: [],
@@ -53,6 +53,9 @@ export default {
     INDEX_TASK(state, payload) {
       state.index = state.tasks.indexOf(payload)
       console.log(state.index)
+    },
+    SET_TESTSTRUCTURE(state, payload) {
+      state.Test.testStructure.push(payload)
     }
   },
   actions: {
@@ -228,7 +231,10 @@ export default {
 
       try {
         commit('setLoading', true)
+       // const result = Object.map((payload) => ({ Test.testStructure: 'MarketShare' }));
+       // console.log("this.Test", Test)
         commit('ADD_TASKS', payload)
+        commit('SET_TESTSTRUCTURE', payload)
       } catch {
         console.log('Error in addItemsTasks')
         commit('setError', true)
@@ -236,6 +242,20 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    // async updateTestStructure({ commit }, payload) {
+    //   try {
+    //     commit('setLoading', true)
+    //     const res = this.Test.testStructure.push(payload)
+    //     commit('SET_TEST', res)
+    //     console.log("test + teststructure", this.Test)
+    //   } catch {
+    //     console.log('Error in updateTestStructure')
+    //     commit('setError', true)
+    //   } finally {
+    //     commit('setLoading', false)
+    //   }
+    // }
 
   },
   coops(state) {

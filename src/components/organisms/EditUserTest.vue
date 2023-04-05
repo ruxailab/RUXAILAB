@@ -47,7 +47,7 @@
         </v-col>
       </v-row> -->
     </v-card>
-    {{ object }}
+    {{ object.testStructure }}
     <ListTasks v-if="index == 1" :tasks="object.itemsTasks" @change="emitChange()" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
