@@ -76,17 +76,38 @@
               </v-list-item-content>
             </v-list-item>
             <v-divider />
-            <v-list dense nav>
+
+
+            <v-list
+              dense
+              nav
+            >
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="item[index]"
+                link
+              >
+                <v-list-item-icon>
+                  <v-icon>{{ icon }}</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{ test.testStructure[index].taskName }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+
+            <!-- <v-list dense nav>
               <v-list-item v-for="item in tasks" :key="item.title" link>
                 <v-list-item-icon>
                   <v-icon>{{ item.testTitle }}</v-icon>
                 </v-list-item-icon>
 
-                <!-- <v-list-item-content>
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item-content> -->
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.testTitle }}</v-list-item-title>
+                </v-list-item-content>
               </v-list-item>
-            </v-list>
+            </v-list> -->
           </v-navigation-drawer>
         </v-app>
       </template>
@@ -131,20 +152,9 @@ export default {
     questions: [],
     introStage: true,
     drawer: false,
-    items: [
-      {
-        title: 'Products',
-        value: 'prod'
-      },
-      {
-        title: 'About',
-        value: 'about'
-      },
-      {
-        title: '...',
-        value: 'etc'
-      },
-    ],
+    icon: 'mdi-help-box',
+    items: ["Legal", "Ola", "Teste"],
+    right: null,
 
     logined: null,
     selected: true,
@@ -156,7 +166,7 @@ export default {
     noExistUser: true,
     heurisIndex: 0,
     preTestIndex: null,
-    items: [],
+    //items: [],
     idx: 0,
     fab: false,
     res: 0,
@@ -194,8 +204,7 @@ export default {
     startTest() {
       this.introStage = false
       this.questionStage = true
-      //console.log("test ", this.tasks)
-      console.log("task", this.tasks)
+
       this.$store.dispatch("getTest", { id: this.test.id })
     },
     // mappingSteps() {
