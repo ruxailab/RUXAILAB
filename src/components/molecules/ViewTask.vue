@@ -16,14 +16,54 @@
           </p>
         </v-row>
         <v-spacer />
+        <!-- Criar link para hasPost aqui com v-if -->
         <v-row justify="center">
           <v-btn v-if="item.hasTimer === true" color="success">
             <v-icon left>
               mdi-timer
-            </v-icon>Start
+            </v-icon>Timer
           </v-btn>
         </v-row>
         <v-spacer />
+        <br>
+        <v-spacer />
+        <v-row justify="center">
+          <v-col>
+            <v-btn v-if="item.hasEye === true" color="purple">
+              <v-icon left>
+                mdi-eye
+              </v-icon>Eye Tracker
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn v-if="item.hasScreenRecord === true" color="red">
+              <v-icon left>
+                mdi-laptop
+              </v-icon>Screen Record
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-spacer />
+        <br>
+        <v-spacer />
+        <v-row justify="center">
+          <v-col>
+            <v-btn v-if="item.hasAudioRecord === true" color="#f2a9be">
+              <v-icon left>
+                mdi-volume-high
+              </v-icon>Audio Record
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn v-if="item.hasCamRecord === true" color="blue">
+              <v-icon left>
+                mdi-camera
+              </v-icon>Camera Record
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-spacer />
+
         <v-row class="paragraph" justify="space-around">
           <v-col v-if="item.taskType === 'textArea'">
             <v-textarea

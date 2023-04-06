@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="500">
     <template v-slot:activator="{ on }">
-      <v-btn color="green" class="white--text" rounded v-on="on">
+      <v-btn color="orange" class="white--text" rounded v-on="on">
         Tip
       </v-btn>
     </template>

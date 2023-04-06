@@ -44,9 +44,6 @@
               <v-btn color="green" @click="startTest">
                 START!
               </v-btn>
-              <v-btn color="orange">
-                More Information
-              </v-btn>
             </v-card-actions>
           </v-flex>
         </v-card>
