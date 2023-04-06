@@ -4,7 +4,7 @@
       height="420"
       style="background: #f5f7ff"
       :headers="headers"
-      :items="allTasks"
+      :items="test.testStructure"
       :items-per-page="5"
       class="elevation-1"
     >
@@ -125,7 +125,10 @@ export default {
   computed: {
     allTasks() {
       return this.$store.getters.tasks
-    }
+    },
+    test() {
+      return this.$store.getters.test
+    },
   },
   watch: {
     tasks() {
@@ -138,7 +141,7 @@ export default {
   methods: {
     editItem(item) {
       this.editedIndex = this.$store.commit('INDEX_TASK', item)
-      // this.editedIndex = this.tasks.indexOf(item)
+      //this.editedIndex = this.tasks.indexOf(item)
       this.task = Object.assign({}, item)
       this.dialog = true
     },

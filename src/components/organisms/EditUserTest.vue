@@ -47,8 +47,8 @@
         </v-col>
       </v-row> -->
     </v-card>
-    {{ object.testStructure }}
-    <ListTasks v-if="index == 1" :tasks="object.itemsTasks" @change="emitChange()" />
+    <!-- {{ object.testStructure }} -->
+    <ListTasks v-if="index == 1" :tasks="object.testStructure" @change="emitChange()" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
@@ -108,11 +108,15 @@ export default {
     urlPreTest: 'https://forms.gle/EZJFb7Qbw1xNtck9A',
     urlPosTest: 'https://forms.gle/VEUGMHh2DfNPceBk6'
   }),
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+  },
   mounted() {
     if (this.type !== "content" && this.type != "tabs")
       console.error(this.type + " type in EditUserTest.vue is not valid.")
   },
-
 
 
   methods: {
