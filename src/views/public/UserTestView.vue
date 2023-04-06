@@ -136,34 +136,28 @@ export default {
   props: ["id", "token"],
   data: () => ({
     questionStage: false,
-    currentQuestion: 0,
-    questions: [],
     introStage: true,
-    drawer: false,
-    icon: 'mdi-help-box',
-    items: ["Legal", "Ola", "Teste", "Olaaa"],
-    right: null,
-    indexTask: 0,
-    itemsTask: [],
-
-
-
-    logined: null,
-    selected: true,
-    fromlink: null,
     drawer: true,
-    start: true, //change to true
-    mini: false,
-    // index: null,
-    noExistUser: true,
-    heurisIndex: 0,
-    preTestIndex: null,
-    //items: [],
-    idx: 0,
-    fab: false,
-    res: 0,
-    dialog: false,
-    calculatedProgress: 0,
+    icon: 'mdi-help-box',
+    items: [],
+    indexTask: 0,
+
+
+    // right: null,
+    // logined: null,
+    // selected: true,
+    // fromlink: null,
+    // drawer: true,
+    // start: true, //change to true
+    // mini: false,
+    // noExistUser: true,
+    // heurisIndex: 0,
+    // preTestIndex: null,
+    // idx: 0,
+    // fab: false,
+    // res: 0,
+    // dialog: false,
+    // calculatedProgress: 0,
 
   }),
   computed: {
@@ -196,33 +190,13 @@ export default {
     startTest() {
       this.introStage = false
       this.questionStage = true
-
+      this.items = [...this.test.testStructure]
       this.$store.dispatch("getTest", { id: this.test.id })
     },
     indexTaskView(payload) {
-      console.log("payload index", payload)
       this.indexTask = payload
 
     }
-    // mappingSteps() {
-    //   if (
-    //     this.validate(this.test.testStructure) &&
-    //     this.test.testStructure.length !== 0
-    //   )
-    //     this.items.push({
-    //       title: "User",
-    //       icon: "mdi-checkbox-marked-circle-outline",
-    //       value: this.test.testStructure.map((option) => {
-    //         return {
-    //           title: option.title,
-    //           //icon: "mdi-checkbox-marked-circle-outline",
-    //           done: false,
-    //           total: option.total,
-    //           id: option.id,
-    //         }
-    //       }),
-    //     })
-    // },
   },
 }
 </script>
