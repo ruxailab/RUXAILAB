@@ -18,10 +18,10 @@
         <v-spacer />
         <!-- Criar link para hasPost aqui com v-if -->
         <!-------------- Timer -------------->
-        <v-card>
+        <v-card v-if="item.hasTimer === true">
           <v-row justify="center">
             <v-col>
-              <v-card-title v-if="item.hasTimer === true" color="success">
+              <v-card-title class="Title">
                 <v-icon left>
                   mdi-timer
                 </v-icon>Timer
@@ -31,13 +31,13 @@
               <v-row justify="center">
                 {{ prettyTime }}
               </v-row>
-              <v-btn v-if="!isRunning" @click="start">
+              <v-btn v-if="!isRunning" color="green" @click="start">
                 Start
               </v-btn>
-              <v-btn v-if="isRunning" @click="stop">
+              <v-btn v-if="isRunning" color="blue" @click="stop">
                 Stop
               </v-btn>
-              <v-btn @click="reset">
+              <v-btn color="red" @click="reset">
                 Reset
               </v-btn>
             </v-col>
@@ -190,6 +190,13 @@ export default {
 .full-content{
   height: 100%;
   width: 100%;
+}
+
+.Title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  color: #000000;
 }
 
 </style>
