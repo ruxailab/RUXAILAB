@@ -104,6 +104,64 @@
             />
           </v-col>
         </v-row>
+        <!-- --------------------------------------------------------------- -->
+        <v-row class="nav pa-0 ma-0" dense>
+          <v-speed-dial
+            v-model="fab"
+            fixed
+            class="mr-3"
+            bottom
+            right
+            open-on-hover
+            :transition="transition"
+          >
+            <template v-slot:activator>
+              <v-btn
+                slot="activator"
+                v-model="fab"
+                large color="#F9A826"
+                dark fab class="btn-fix"
+              >
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else large>
+                  mdi-hammer-screwdriver
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-tooltip left>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  slot="activator"
+                  color="#F9A826"
+                  dark fab class="btn-fix"
+                  v-on="on"
+                >
+                  <v-icon>mdi-content-save</v-icon>
+                </v-btn>
+              </template>
+              <span>Save</span>
+            </v-tooltip>
+            <v-tooltip left>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  slot="activator"
+                  color="#F9A826"
+                  dark fab class="btn-fix"
+                  v-on="on"
+                >
+                  <v-icon>mdi-file-move</v-icon>
+                </v-btn>
+              </template>
+              <span>Submit</span>
+            </v-tooltip>
+          </v-speed-dial>
+        </v-row>
+
+
+
+
         <!-- <v-row v-else class="fill-height" align="center" justify="center">
       <iframe
         :src="item.postTest"
@@ -136,11 +194,16 @@ export default {
     // },
   },
   data: () => ({
+    //Timer
     isRunning: false,
     minutes: 0,
     seconds: 0,
     time: 0,
     timer: null,
+
+    //Save button
+    fab: false,
+    transition: 'slide-y-reverse-transition',
   }),
   computed: {
 		prettyTime () {

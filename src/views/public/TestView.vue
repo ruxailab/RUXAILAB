@@ -2,7 +2,7 @@
   <div v-if="test && test.testType === 'User'">
     <UserTestView />
   </div>
-  
+
   <div v-else-if="test && test.testType === 'HEURISTICS'">
     <Snackbar />
 
