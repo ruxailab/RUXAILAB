@@ -53,7 +53,7 @@ export default {
   width: 100vw;
   height: 100vh;
   margin-left: -5vh;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
 }
 

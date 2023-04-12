@@ -1,103 +1,69 @@
 <template>
   <div>
-    <div class="final-report-box" v-if="!textIsDone">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <h1 style="font: Roboto">{{ title }}</h1>
-          </div>
-        </div>
-        <div class="row">
-          <TextControls></TextControls>
-          <div class="col left">
-            <!-- <button class="cloud-button" @click="setInnerHtml()">set</button> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <div contenteditable id="myTextarea" class="form-control">
-              <!-- {{ this.test.finalReport }} -->
-            </div>
-          </div>
-        </div>
-      </div>
-      <v-btn
-        large
-        dark
-        fab
-        fixed
-        bottom
-        color="#F9A826"
-        style="z-index:1000, margin-right:0"
-        @click="update()"
-      >
-        <v-icon large>
-          mdi-content-save
-        </v-icon>
-      </v-btn>
-    </div>
-    <div v-if="textIsDone">
-      <DocumentSelection></DocumentSelection>
-    </div>
-    <v-btn
-      large
-      dark
-      fixed
-      bottom
-      right
-      color="#F9A826"
-      style="z-index:1000"
-      @click="textIsDone = !textIsDone"
-      >Next step</v-btn
-    >
-
-    <v-stepper v-model="e1">
+    <v-stepper v-model="step" class="final-report-box">
       <v-stepper-header>
-        <v-stepper-step :complete="e1 > 1" step="1"
-          >FINAL REPORT</v-stepper-step
-        >
-
+        <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
         <v-divider></v-divider>
-
-        <v-stepper-step :complete="e1 > 2" step="2"
-          >SELECTION BOX</v-stepper-step
-        >
-
+        <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
         <v-divider></v-divider>
-
-        <v-stepper-step step="3">PREVIEW</v-stepper-step>
+        <v-stepper-step :complete="step > 3" step="3"></v-stepper-step>
       </v-stepper-header>
 
       <v-stepper-items>
-        <v-stepper-content step="1">
-          <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
+        <v-stepper-content step="1" class="align-mid">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <h1 style="font: Roboto">{{ title }}</h1>
+              </div>
+            </div>
+            <div class="row">
+              <TextControls></TextControls>
+              <div class="col left">
+                <!-- <button class="cloud-button" @click="setInnerHtml()">set</button> -->
+              </div>
+            </div>
 
-          <v-btn color="primary" @click="e1 = 2">
-            Continue
-          </v-btn>
-
-          <v-btn flat>Cancel</v-btn>
+            <div class="row">
+              <div class="col">
+                <div contenteditable id="myTextarea" class="form-control">
+                  <!-- {{ this.test.finalReport }} -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <v-btn
+            large
+            dark
+            fab
+            fixed
+            bottom
+            color="#F9A826"
+            style="z-index:1000, margin-right:0"
+            @click="update()"
+          >
+            <v-icon large>
+              mdi-content-save
+            </v-icon>
+          </v-btn> -->
+          <v-btn color="primary" class="teste" @click="step++, update()"
+            >Next</v-btn
+          >
         </v-stepper-content>
 
         <v-stepper-content step="2">
-          <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
-
-          <v-btn color="primary" @click="e1 = 3">
-            Continue
-          </v-btn>
-
-          <v-btn flat>Cancel</v-btn>
+          <DocumentSelection></DocumentSelection>
+          <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
+          <v-btn color="secondary" class="teste2" @click="step--"
+            >Previous</v-btn
+          >
         </v-stepper-content>
 
         <v-stepper-content step="3">
-          <v-card class="mb-5" color="grey lighten-1" height="200px"></v-card>
-
-          <v-btn color="primary" @click="e1 = 1">
-            Continue
-          </v-btn>
-
-          <v-btn flat>Cancel</v-btn>
+          <p>Review your information before submitting.</p>
+          <!-- espaço para prévia do pdf e download -->
+          <v-btn color="primary" @click="submitForm()">Submit</v-btn>
+          <v-btn color="secondary" @click="step--">Previous</v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -115,6 +81,7 @@ export default {
     inputText: '',
     object: {},
     textIsDone: false,
+    step: 1,
   }),
   mounted() {
     document.getElementById('myTextarea').innerHTML = this.test.finalReport
@@ -139,31 +106,25 @@ export default {
       this.object.finalReport = text
       let auxT = Object.assign(this.test, this.object)
       this.$store.dispatch('updateTest', auxT)
-
-      // if (this.test !== null && this.test !== undefined) {
-      //   let contenteditable = document.getElementById('myTextarea'),
-      //     text = contenteditable.innerHTML
-      //   this.object.finalReport = text
-      //   this.object = await Object.assign(
-      //     this.test.finalReport,
-      //     this.object.finalReport,
-      //   )
-      //   console.log(this.object)
-      //   await this.$store.dispatch('updateTest', new Test(this.object))
-      //   this.$store.commit('SET_LOCAL_CHANGES', false)
-      // } else {
-      //   console.log('test is null or undefined')
-      // }
     },
   },
 }
 </script>
 
 <style scoped>
-* {
+/* * {
   padding: 0;
+} */
+.teste {
+  position: fixed;
+  right: 8%;
+  bottom: 10%;
 }
-
+.teste2 {
+  position: fixed;
+  right: 8%;
+  bottom: 3%;
+}
 .cloud-button {
   padding: 10px;
 }
@@ -173,15 +134,15 @@ export default {
 
 .final-report-box {
   background-color: whitesmoke;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   padding: 0;
 }
 .form-control {
   background-color: white;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-  width: 85vw;
-  height: 70vh;
+  width: 85%;
+  height: 65vh;
   resize: none;
   padding: 20px;
   border-radius: 12px;
