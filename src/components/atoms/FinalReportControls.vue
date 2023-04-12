@@ -87,7 +87,7 @@ export default {
 
 <style>
 .controls {
-  left: 0;
+  margin-left: 10px;
   width: fit-content;
 }
 
