@@ -151,7 +151,7 @@ export default {
         if (isTestOwner) return 0
 
         const answers = []
-        const answersEntries = object.entries(this.user.myAnswers)
+        const answersEntries = this.object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
             answers.push(a[1])
         })
