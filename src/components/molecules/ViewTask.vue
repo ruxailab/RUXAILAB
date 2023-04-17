@@ -31,10 +31,10 @@
               <v-row justify="center">
                 {{ prettyTime }}
               </v-row>
-              <v-btn v-if="!isRunning" color="green" @click="start">
+              <v-btn v-if="!isRunningTimer" color="green" @click="start">
                 Start
               </v-btn>
-              <v-btn v-if="isRunning" color="blue" @click="stop">
+              <v-btn v-if="isRunningTimer" color="blue" @click="stop">
                 Stop
               </v-btn>
               <v-btn color="red" @click="reset">
@@ -104,6 +104,9 @@
             />
           </v-col>
         </v-row>
+
+
+
         <!-- --------------------------------------------------------------- -->
         <v-row class="nav pa-0 ma-0" dense>
           <v-speed-dial
@@ -136,6 +139,7 @@
                   slot="activator"
                   color="#F9A826"
                   dark fab class="btn-fix"
+                  @click="saveAnswer()"
                   v-on="on"
                 >
                   <v-icon>mdi-content-save</v-icon>
@@ -149,6 +153,7 @@
                   slot="activator"
                   color="#F9A826"
                   dark fab class="btn-fix"
+                  @click="submitAnswer()"
                   v-on="on"
                 >
                   <v-icon>mdi-file-move</v-icon>
@@ -195,7 +200,7 @@ export default {
   },
   data: () => ({
     //Timer
-    isRunning: false,
+    isRunningTimer: false,
     minutes: 0,
     seconds: 0,
     time: 0,
@@ -211,15 +216,36 @@ export default {
 			 const minutes = parseInt(time)
 			 const seconds = Math.round((time - minutes) * 60)
 			 return minutes+":"+seconds
-		}
-	},
+    },
+    allAnswer() {
+      return {
+
+      }
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
+    test() {
+      return this.$store.getters.test
+    },
+  },
+  watch: {
+    async created() {
+      await this.$store.dispatch("getTest", { id: this.id })
+      await this.$store.dispatch("getCurrentTestAnswerDoc").then((res) => {
+        console.log(res)
+      })
+      // this.populateWithHeuristicQuestions()
+      // this.calculateProgress()
+    },
+  },
 
   methods: {
     updated() {
       this.$emit("updatedAnswer", this.item)
     },
     start() {
-      this.isRunning = true
+      this.isRunningTimer = true
       if (!this.timer) {
         this.timer = setInterval(() => {
           if (this.time < 60) {
@@ -232,7 +258,7 @@ export default {
       }
     },
     stop() {
-      this.isRunning = false
+      this.isRunningTimer = false
       clearInterval(this.timer)
       this.timer = null
     },
@@ -241,6 +267,22 @@ export default {
       this.time = 0
       this.seconds = 0
       this.minutes = 0
+    },
+    saveAnswer() {
+      console.log("SaveAnswer")
+      this.$store.dispatch("getCurrentTestAnswerDoc").then((res) => {
+        console.log(res)
+      })
+      console.log(this.currentUserTestAnswer)
+      //this.currentUserTestAnswer.progress = this.calculatedProgress
+      this.$store.dispatch("saveTestAnswer", {
+        data: this.currentUserTestAnswer,
+        answerDocId: this.test.answersDocId,
+      })
+    },
+    submitAnswer() {
+      this.currentUserTestAnswer.submitted = true
+      this.saveAnswer()
     },
 
   },

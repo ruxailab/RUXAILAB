@@ -55,12 +55,13 @@
     <v-layout class="backgroundTest">
       <template>
         <v-app class="subtitleView">
-          <v-app-bar class="flex-grow-0" app dark>
+          <v-app-bar class="flex-grow" app dark>
             User Test
           </v-app-bar>
           <v-navigation-drawer
             app
             color="#ffffffb3"
+            permanent
           >
             <v-list-item>
               <v-list-item-content>
@@ -75,10 +76,7 @@
             <v-divider />
 
 
-            <v-list
-              dense
-              nav
-            >
+            <v-list>
               <v-list-item
                 v-for="(item, index) in items"
                 :key="item[index]"
@@ -135,7 +133,7 @@ export default {
     questionStage: false,
     introStage: true,
     drawer: true,
-    icon: 'mdi-help-box',
+    icon: 'mdi-subdirectory-arrow-right',
     items: [],
     indexTask: 0,
 

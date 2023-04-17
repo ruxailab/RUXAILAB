@@ -12,9 +12,9 @@ export default class Answer {
         taskAnswers
     } = {}
     ) {
-        this.type = type;
-        this.heuristicAnswers = heuristicAnswers;
-        this.taskAnswers = taskAnswers;
+        this.type = type
+        this.heuristicAnswers = heuristicAnswers
+        this.taskAnswers = taskAnswers
     }
     static toAnswer(data) {
         return new Answer(data)

@@ -1,15 +1,15 @@
 // import Answer from "@/models/Answer"
 
-import Controller from "@/controllers/BaseController";
-import UserController from "./UserController";
-import Answer from "@/models/Answer";
-const COLLECTION = "answers";
+import Controller from "@/controllers/BaseController"
+import UserController from "./UserController"
+import Answer from "@/models/Answer"
+const COLLECTION = "answers"
 
 const userController = new UserController()
 
 export default class AnswerController extends Controller {
     constructor() {
-        super();
+        super()
     }
     async getAnswerById(payload) {
         const res = await super.readOne(COLLECTION, payload)
@@ -17,7 +17,7 @@ export default class AnswerController extends Controller {
     }
 
     async createAnswer(payload) {
-        return await super.create(COLLECTION, payload.toFirestore());
+        return await super.create(COLLECTION, payload.toFirestore())
     }
 
     async updateUserAnswer(payload) {
