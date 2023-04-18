@@ -67,12 +67,8 @@
         <br>
         <v-spacer />
         <v-row justify="center">
-          <v-col>
-            <v-btn v-if="item.hasAudioRecord === true" color="#f2a9be">
-              <v-icon left>
-                mdi-volume-high
-              </v-icon>Audio Record
-            </v-btn>
+          <v-col v-if="item.hasAudioRecord === true" justify="end">
+            <AudioButton :task="item" />
           </v-col>
           <v-col>
             <v-btn v-if="item.hasCamRecord === true" color="blue">
@@ -184,9 +180,11 @@
 
 <script>
 import TipButton from "../atoms/TipButton"
+import AudioButton from "../atoms/AudioButton"
 export default {
   components: {
     TipButton,
+    AudioButton
   },
   props: {
     item: {
