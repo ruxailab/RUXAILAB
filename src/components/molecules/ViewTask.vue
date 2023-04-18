@@ -18,6 +18,7 @@
         <v-spacer />
         <!-- Criar link para hasPost aqui com v-if -->
         <!-------------- Timer -------------->
+
         <v-card v-if="item.hasTimer === true">
           <v-row justify="center">
             <v-col>
@@ -47,6 +48,11 @@
         <!----------------------------------->
         <br>
         <v-spacer />
+        <v-row v-if="item.hasAudioRecord === true" justify="center">
+          <AudioButton :task="item" />
+        </v-row>
+        <br>
+
         <v-row v-if="item.hasEye === true" justify="center">
           <EyeButton :task="item" />
         </v-row>
@@ -71,9 +77,9 @@
         <v-spacer />
         <br>
         <v-spacer />
-        <v-row v-if="item.hasAudioRecord === true" justify="center">
+        <!-- <v-row v-if="item.hasAudioRecord === true" justify="center">
           <AudioButton :task="item" />
-        </v-row>
+        </v-row> -->
         <br>
         <v-row v-if="item.hasCamRecord === true" justify="center">
           <CameraButton :task="item" />
