@@ -26,6 +26,7 @@
     "tiptap-extensions": "^1.35.2",
     "uid-generator": "^2.0.0",
     "vue": "^2.6.12",
+    "vue-audio-recorder": "^3.0.1",
     "vue-chartjs": "^3.5.1",
     "vue-clamp": "^0.3.1",
     "vue-i18n": "^8.21.1",

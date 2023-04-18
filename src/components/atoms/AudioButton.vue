@@ -15,17 +15,18 @@
 
       <v-card-text class="pa-3" style="text-align: center">
         <v-col>
-          <v-btn v-if="!isRunningTimer" color="green" @click="startAudioRecording">
-            Start
+          <v-btn v-if="!isRunningAudio" color="green" @click="startAudioRecording">
+            <v-icon> mdi-volume-high </v-icon>
           </v-btn>
-          <v-btn v-if="isRunningTimer" color="blue" @click="stopAudioRecording">
-            Stop
+          <v-btn v-if="isRunningAudio" color="blue" @click="stopAudioRecording">
+            <v-icon> mdi-microphone </v-icon>
           </v-btn>
-          <v-btn color="red" @click="reset">
+          <!-- <v-btn color="red" @click="reset">
             Reset
-          </v-btn>
+          </v-btn> -->
         </v-col>
-        {{ audioBlobs }}
+        <audio controls />
+        <!-- {{ audioBlobs }} -->
       </v-card-text>
 
       <v-divider />

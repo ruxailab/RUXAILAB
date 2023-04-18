@@ -47,7 +47,16 @@
         <!----------------------------------->
         <br>
         <v-spacer />
-        <v-row justify="center">
+        <v-row v-if="item.hasEye === true" justify="center">
+          <EyeButton :task="item" />
+        </v-row>
+        <br>
+        <v-row v-if="item.hasScreenRecord === true" justify="center">
+          <ScreenButton :task="item" />
+        </v-row>
+
+
+        <!-- <v-row justify="center">
           <v-col>
             <v-btn v-if="item.hasEye === true" color="purple">
               <v-icon left>
@@ -55,28 +64,19 @@
               </v-icon>Eye Tracker
             </v-btn>
           </v-col>
-          <v-col>
-            <v-btn v-if="item.hasScreenRecord === true" color="red">
-              <v-icon left>
-                mdi-laptop
-              </v-icon>Screen Record
-            </v-btn>
-          </v-col>
-        </v-row>
+          <v-row v-if="item.hasScreenRecord === true" justify="center">
+            <ScreenButton :task="item" />
+          </v-row>
+        </v-row> -->
         <v-spacer />
         <br>
         <v-spacer />
-        <v-row justify="center">
-          <v-col v-if="item.hasAudioRecord === true" justify="end">
-            <AudioButton :task="item" />
-          </v-col>
-          <v-col>
-            <v-btn v-if="item.hasCamRecord === true" color="blue">
-              <v-icon left>
-                mdi-camera
-              </v-icon>Camera Record
-            </v-btn>
-          </v-col>
+        <v-row v-if="item.hasAudioRecord === true" justify="center">
+          <AudioButton :task="item" />
+        </v-row>
+        <br>
+        <v-row v-if="item.hasCamRecord === true" justify="center">
+          <CameraButton :task="item" />
         </v-row>
         <v-spacer />
 
@@ -181,10 +181,17 @@
 <script>
 import TipButton from "../atoms/TipButton"
 import AudioButton from "../atoms/AudioButton"
+import CameraButton from "../atoms/CameraButton"
+import ScreenButton from "../atoms/ScreenButton"
+import EyeButton from "../atoms/EyeButton"
+
 export default {
   components: {
     TipButton,
-    AudioButton
+    AudioButton,
+    CameraButton,
+    ScreenButton,
+    EyeButton
   },
   props: {
     item: {

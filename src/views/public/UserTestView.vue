@@ -61,9 +61,8 @@
           <v-navigation-drawer
             app
             color="#ffffffb3"
-            permanent
           >
-            <v-list-item>
+            <v-list-item flat dense>
               <v-list-item-content>
                 <v-list-item-title class="text-h6">
                   {{ test.testTitle }}
