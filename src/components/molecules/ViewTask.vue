@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="full-content" align="center" justify="center">
+    <div class="full-content" align="center" justify="center">
       <v-col>
         <v-row justify="center">
           <h1>{{ item.taskName }}</h1>
@@ -52,7 +52,10 @@
           <AudioButton :task="item" />
         </v-row>
         <br>
-
+        <v-row v-if="item.hasCamRecord === true" justify="center">
+          <CameraButton :task="item" />
+        </v-row>
+        <br>
         <v-row v-if="item.hasEye === true" justify="center">
           <EyeButton :task="item" />
         </v-row>
@@ -81,9 +84,7 @@
           <AudioButton :task="item" />
         </v-row> -->
         <br>
-        <v-row v-if="item.hasCamRecord === true" justify="center">
-          <CameraButton :task="item" />
-        </v-row>
+
         <v-spacer />
 
         <v-row class="paragraph" justify="space-around">
@@ -180,7 +181,7 @@
       >Carregando…</iframe>
     </v-row> -->
       </v-col>
-    </v-row>
+    </div>
   </v-container>
 </template>
 
