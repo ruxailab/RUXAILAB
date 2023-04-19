@@ -44,9 +44,6 @@ export default {
     recordedChunks: [],
     recordedAudio: null,
   }),
-  created() {
-    this.device = navigator.mediaDevices.getUserMedia({ audio: true })
-  },
   methods: {
     startRecording() {
       this.isRunningAudio = true

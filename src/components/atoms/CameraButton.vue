@@ -17,10 +17,10 @@
         </v-btn>
       </v-col>
       <v-col v-if="media_recorder==null" justify="center">
-        Please, click the button to record the video!
+        Please, click the button to start camera recording!
       </v-col>
       <v-col v-else justify="center">
-        <video controls :src="media_recorder" />
+        <video controls :src="media_recorder" style="width: 360px" />
       </v-col>
     </v-row>
   </v-card>
@@ -44,15 +44,10 @@ export default {
   data: () => ({
     dialog: false,
     isRunningCamera: false,
-    mediaStream: null,
-    videoPlayer: null,
     recorder: null,
     media_recorder: null,
     blobs_recorded: []
   }),
-  created() {
-    this.device = navigator.mediaDevices.getUserMedia({ video: true })
-  },
   methods: {
     async start() {
       this.isRunningCamera = true

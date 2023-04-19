@@ -56,9 +56,9 @@
           <CameraButton :task="item" />
         </v-row>
         <br>
-        <v-row v-if="item.hasEye === true" justify="center">
+        <!-- <v-row v-if="item.hasEye === true" justify="center">
           <EyeButton :task="item" />
-        </v-row>
+        </v-row> -->
         <br>
         <v-row v-if="item.hasScreenRecord === true" justify="center">
           <ScreenButton :task="item" />
@@ -190,7 +190,7 @@ import TipButton from "../atoms/TipButton"
 import AudioButton from "../atoms/AudioButton"
 import CameraButton from "../atoms/CameraButton"
 import ScreenButton from "../atoms/ScreenButton"
-import EyeButton from "../atoms/EyeButton"
+// import EyeButton from "../atoms/EyeButton"
 
 export default {
   components: {
@@ -198,7 +198,7 @@ export default {
     AudioButton,
     CameraButton,
     ScreenButton,
-    EyeButton
+    // EyeButton
   },
   props: {
     item: {
