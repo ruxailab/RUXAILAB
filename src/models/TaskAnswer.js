@@ -12,12 +12,12 @@
      * @param {number} progress - The progress value.
      * @param {number} total - The total value.
      * @param {boolean} submitted - The submitted value.
-     * @param {Object} userDoc - An object with the user doc id and email.
+     * @param {Object} userDocId - An object with the user doc id and email.
      */
 
 export default class TaskAnswer{
     constructor({
-        taskId, taskAnswer, taskObservations, taskTime, post_testSheetURL, pre_testSheetURL,audioRecordURL, screenRecordURL, webcamRecordURL, progress, total, submitted, userDoc
+        taskId, taskAnswer, taskObservations, taskTime, post_testSheetURL, pre_testSheetURL,audioRecordURL, screenRecordURL, webcamRecordURL, progress, total, submitted, userDocId
     } = {}
     ) {
         this.taskId = taskId;
@@ -32,7 +32,7 @@ export default class TaskAnswer{
         this.progress = progress;
         this.total = total;
         this.submitted = submitted;
-        this.userDoc = userDoc;
+        this.userDocId = userDocId;
     }
     static toTaskAnswer(data) {
         return new TaskAnswer(data)
