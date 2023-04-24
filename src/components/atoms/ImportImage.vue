@@ -1,19 +1,14 @@
 <template>
-  <div>
-    <div>
-      <!-- <span class="icon mdi mdi-upload"></span> -->
-      <input
-        class="custom-file-input"
-        type="file"
-        name="my-image"
-        id="image"
-        accept="image/gif, image/jpeg, image/png"
-        @change="uploadFile()"
-      />
-    </div>
-    <!-- <input type="text" v-model="text" />
-    <button @click="downloadImage()">download</button>
-    <img id="imagem" /> -->
+  <div class="input">
+    <v-file-input
+      class="ml-2 "
+      type="file"
+      name="my-image"
+      id="image"
+      accept="image/gif, image/jpeg, image/png"
+      placeholder="Input an image of your choice referent to the asking question."
+      @change="uploadFile()"
+    ></v-file-input>
   </div>
 </template>
 
@@ -99,38 +94,8 @@ export default {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-.custom-file-input {
-  color: transparent;
-  width: 10%;
-}
-.custom-file-input::-webkit-file-upload-button {
-  visibility: hidden;
-}
-.custom-file-input::before {
-  content: '.';
-  background-image: url(../../assets/upload.png);
-  /* content: '⬆'; */
-  color: black;
-  display: inline-block;
-  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
-  border: 1px solid #999;
-  border-radius: 3px;
 
-  outline: none;
-  white-space: nowrap;
-  -webkit-user-select: none;
-  cursor: pointer;
-  text-shadow: 1px 1px #fff;
-  /* font-weight: 700; */
-  font-size: 2rem;
-}
-.custom-file-input:hover::before {
-  border-color: black;
-}
-.custom-file-input:active {
-  outline: 0;
-}
-.custom-file-input:active::before {
-  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+.input {
+  width: 90%;
 }
 </style>

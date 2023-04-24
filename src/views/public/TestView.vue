@@ -254,6 +254,7 @@
                       </v-list-item-content>
                     </v-list-item>
                   </template>
+
                   <span>{{ heuris.title }}</span>
                 </v-tooltip>
               </div>
@@ -364,6 +365,16 @@
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
+                <v-row v-if="test">
+                  <!-- :questionId="currentUserTestAnswer.heuristicQuestions[i].id" -->
+                  <ImageImport
+                    :heuristicId="test.testStructure[heurisIndex]"
+                    :questionId="
+                      currentUserTestAnswer.heuristicQuestions[0].heuristicId
+                    "
+                    :testId="test.id"
+                  ></ImageImport>
+                </v-row>
               </v-col>
             </v-row>
           </div>
@@ -387,6 +398,7 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import UserTestView from '@/views/public/UserTestView.vue'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
+import ImageImport from '@/components/atoms/ImportImage.vue'
 
 export default {
   props: ['id', 'token'],
@@ -399,6 +411,7 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
+    ImageImport,
   },
   data: () => ({
     logined: null,
@@ -443,6 +456,7 @@ export default {
   },
   methods: {
     updateComment(comment, heurisIndex, answerIndex) {
+      console.log(this.currentUserTestAnswer.heuristicQuestions)
       this.currentUserTestAnswer.heuristicQuestions[
         heurisIndex
       ].heuristicQuestions[answerIndex].heuristicComment = comment
