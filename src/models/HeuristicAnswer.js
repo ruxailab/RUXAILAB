@@ -4,9 +4,8 @@
  * @param {number} progress - The progress value.
  * @param {number} total - The total value.
  * @param {boolean} submitted - The submitted value.
- * @param {Object} userDocId - An object with the user doc id and email.
- * @param {string} lastUpdate - The date of the last update.
- * @param {boolean} visibility - If the heuristicAnswer is visible or not.
+ * @param {string} userDocId - The userDocId value.
+ * @param {number} lastUpdate - The date of the last update.
  */
 
 import Heuristic from '@/models/Heuristic'
@@ -19,7 +18,6 @@ export default class HeuristicAnswer {
     submitted,
     userDocId,
     lastUpdate,
-    visibility,
   } = {}) {
     this.heuristicQuestions = heuristicQuestions ?? []
     this.progress = progress ?? 0
@@ -27,7 +25,6 @@ export default class HeuristicAnswer {
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
-    this.visibility = visibility ?? true
   }
   static toHeuristicAnswer(data) {
     return new HeuristicAnswer({
@@ -45,8 +42,7 @@ export default class HeuristicAnswer {
       total: this.total,
       submitted: this.submitted,
       userDocId: this.userDocId,
-      lastUpdate: new Date().toISOString(),
-      visibility: this.visibility,
+      lastUpdate: this.lastUpdate,
     }
   }
 }

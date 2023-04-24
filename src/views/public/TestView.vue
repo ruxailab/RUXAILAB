@@ -208,8 +208,8 @@
             <!--Heuris-->
             <v-list
               @click="index = item.id"
-              v-if="item.id == 2"
-              :value="index == 2 ? true : false"
+              v-if="item.id == 1"
+              :value="index == 1 ? true : false"
             >
               <div v-if="mini">
                 <v-tooltip right v-for="(heuris, i) in item.value" :key="i">
@@ -314,7 +314,10 @@
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
         <!-- Heuristics -->
-        <ShowInfo v-if="true" :title="test.testStructure[heurisIndex].title">
+        <ShowInfo
+          v-if="index == 1"
+          :title="test.testStructure[heurisIndex].title"
+        >
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{
               test.testStructure[heurisIndex].title
@@ -338,9 +341,14 @@
                 </v-row>
 
                 <AddCommentBtn
-                  :heurisIndex="0"
-                  :answerHeu="currentUserTestAnswer.heuristicQuestions[i].text"
-                  @updateComment="(comment) => updateComment(comment, 0, i)"
+                  :heurisIndex="heurisIndex"
+                  :answerHeu="
+                    currentUserTestAnswer.heuristicQuestions[heurisIndex]
+                      .heuristicQuestions[i]
+                  "
+                  @updateComment="
+                    (comment) => updateComment(comment, heurisIndex, i)
+                  "
                 >
                   <v-select
                     slot="answer"
@@ -349,17 +357,13 @@
                     label="Respuestas/Answers"
                     outlined
                     dense
-                    v-model="currentUserTestAnswer.heuristicQuestions[i].text"
+                    v-model="
+                      currentUserTestAnswer.heuristicQuestions[heurisIndex]
+                        .heuristicQuestions[i].heuristicAnswer
+                    "
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
-                <v-row>
-                  <ImageImport
-                    :heuristicId="test.testStructure[heurisIndex]"
-                    :questionId="currentUserTestAnswer.heuristicQuestions[i].id"
-                    :testId="test.id"
-                  ></ImageImport>
-                </v-row>
               </v-col>
             </v-row>
           </div>
@@ -383,7 +387,6 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import UserTestView from '@/views/public/UserTestView.vue'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
-import ImageImport from '@/components/atoms/ImportImage.vue'
 
 export default {
   props: ['id', 'token'],
@@ -396,7 +399,6 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
-    ImageImport,
   },
   data: () => ({
     logined: null,
@@ -415,7 +417,6 @@ export default {
     res: 0,
     dialog: false,
     calculatedProgress: 0,
-    x: 0,
   }),
   watch: {
     test: async function() {
@@ -429,7 +430,6 @@ export default {
           this.preTestIndex = this.items[0].value[0].id
         }
       }
-      this.preTestIndex = this.items[0].value[0].id
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
@@ -450,9 +450,8 @@ export default {
     mappingSteps() {
       //Heuristics
       if (
-        // this.validate(this.test.testStructure) &&
-        // this.test.testStructure.length !== 0
-        this.validate(this.test.testStructure)
+        this.validate(this.test.testStructure) &&
+        this.test.testStructure.length !== 0
       )
         this.items.push({
           title: 'HEURISTICS',
@@ -466,42 +465,35 @@ export default {
               id: option.id,
             }
           }),
-
-          id: 2,
+          id: 1,
         })
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
     calculateProgress() {
-      console.log(this.items)
-      console.log(this.test)
-      console.log(this.currentUserTestAnswer)
-      // const total = this.currentUserTestAnswer.heuristicQuestions.length
-      const total = 5
-      console.log(total)
-      // let x = 0
+      const total = this.currentUserTestAnswer.total
+      let x = 0
 
-      // // check progress inside questions
+      // check progress inside questions
       this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
-        this.x++
-        console.log(this.x)
-        // heuQ.heuristicQuestions.forEach((question) => {
-        //   if (question.heuristicAnswer != null) {
-        //     // increment counter for all questions inside all heuristics
-        //     this.x++
-        //   }
-        // })
+        heuQ.heuristicQuestions.forEach((question) => {
+          if (question.heuristicAnswer != null) {
+            // increment counter for all questions inside all heuristics
+            x++
+          }
+        })
       })
 
-      const percent = (100 * (1 / total) - 20).toFixed(1)
+      const percent = ((100 * x) / total).toFixed(1)
       this.calculatedProgress = percent
-      console.log('calculateProgress')
     },
     perHeuristicProgress(item) {
-      const value = 1 / 5
-      // (item.heuristicQuestions.length * 100) / item.heuristicQuestions.length
-      console.log(value)
+      const value =
+        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== null)
+          .length *
+          100) /
+        item.heuristicTotal
       return value.toFixed(1)
     },
     async saveAnswer() {
@@ -525,9 +517,7 @@ export default {
     },
     populateWithHeuristicQuestions() {
       let totalQuestions = 0
-      this.currentUserTestAnswer.heuristicQuestions = this.test.testStructure[0].questions
       if (this.currentUserTestAnswer.heuristicQuestions.length <= 0) {
-        console.log('puta')
         this.test.testStructure.forEach((heu) => {
           this.currentUserTestAnswer.heuristicQuestions.push(
             new Heuristic({
