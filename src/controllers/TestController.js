@@ -31,10 +31,10 @@ export default class TestController extends Controller {
     return await super.delete(COLLECTION, payload.id)
   }
 
-  async updateTest(payload) {
-    console.log('teste')
-    return await super.update(COLLECTION, payload.id, payload.toFirestore())
-  }
+    async updateTest(payload) {
+        console.log("payload", payload)
+        return await super.update(COLLECTION, payload.id, payload.toFirestore())
+    }
 
   async acceptTestCollaboration(payload) {
     const userAnswer = new UserAnswer({
