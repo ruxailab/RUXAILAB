@@ -1,6 +1,6 @@
-import Controller from '@/controllers/BaseController';
-import Template from '@/models/Template';
-const COLLECTION = "templates";
+import Controller from '@/controllers/BaseController'
+import Template from '@/models/Template'
+const COLLECTION = 'templates'
 
 export default class TemplateController extends Controller {
   constructor() {
@@ -15,20 +15,24 @@ export default class TemplateController extends Controller {
     const q = {
       field: 'header.isTemplatePublic',
       value: true,
-      condition: '=='
+      condition: '==',
     }
     const res = await super.query(COLLECTION, q)
-    return res.docs.map((t) => Template.toTemplate(Object.assign({ id: t.id }, t.data())))
+    return res.docs.map((t) =>
+      Template.toTemplate(Object.assign({ id: t.id }, t.data())),
+    )
   }
 
   async getTemplatesOfUser(userDocId) {
     const q = {
       field: 'header.templateAuthor.userDocId',
       value: userDocId,
-      condition: '=='
+      condition: '==',
     }
     const res = await super.query(COLLECTION, q)
-    return res.docs.map((t) => Template.toTemplate(Object.assign({ id: t.id }, t.data())))
+    return res.docs.map((t) =>
+      Template.toTemplate(Object.assign({ id: t.id }, t.data())),
+    )
   }
 
   async deleteTemplate(templateId) {

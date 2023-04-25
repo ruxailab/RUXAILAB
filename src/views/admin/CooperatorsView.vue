@@ -49,7 +49,7 @@
               :key="i"
               @click:close="removeSelectedCoops(i)"
               close
-              >{{ typeof coop == "object" ? coop.email : coop }}</v-chip
+              >{{ typeof coop == 'object' ? coop.email : coop }}</v-chip
             >
             <v-row class="ma-0 pa-0 pt-3" align="center">
               <v-col class="ma-0 pa-0" cols="12" md="10">
@@ -186,19 +186,17 @@
 </template>
 
 <script>
-import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import Snackbar from "@/components/atoms/Snackbar";
-import Intro from "@/components/molecules/IntroCoops";
-import AccessNotAllowed from "@/components/atoms/AccessNotAllowed";
-import LeaveAlert from "../../components/atoms/LeaveAlert.vue";
-import { cooperatorsHeaders } from "@/utils/headers";
-import { roleOptionsItems } from "@/utils/items";
-import Notification from "@/models/Notification";
-
-const UIDGenerator = require("uid-generator");
-
+import ShowInfo from '@/components/organisms/ShowInfo.vue'
+import Snackbar from '@/components/atoms/Snackbar'
+import Intro from '@/components/molecules/IntroCoops'
+import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
+import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
+import { cooperatorsHeaders } from '@/utils/headers'
+import { roleOptionsItems } from '@/utils/items'
+import Notification from '@/models/Notification'
+const UIDGenerator = require('uid-generator')
 export default {
-  props: ["id"],
+  props: ['id'],
   components: {
     ShowInfo,
     Snackbar,
@@ -211,7 +209,7 @@ export default {
     headers: cooperatorsHeaders,
     roleOptions: roleOptionsItems,
     intro: null,
-    email: "",
+    email: '',
     selectedCoops: [],
     comboboxModel: [],
     comboboxKey: 0,
@@ -222,61 +220,56 @@ export default {
   }),
   methods: {
     removeSelectedCoops(index) {
-      this.selectedCoops.splice(index, 1);
+      this.selectedCoops.splice(index, 1)
     },
     async changeRole(item, event) {
-      let index = this.cooperatorsEdit.indexOf(item);
-      let newCoop = Object.assign({}, item);
-      newCoop.accessLevel = event.value;
-
+      let index = this.cooperatorsEdit.indexOf(item)
+      let newCoop = Object.assign({}, item)
+      newCoop.accessLevel = event.value
       const currentAccessLevelText = this.roleOptions.find(
-        (r) => r.value === item.accessLevel
-      ).text;
-
+        (r) => r.value === item.accessLevel,
+      ).text
       if (item.accessLevel !== event.value) {
         let ok = confirm(
-          `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`
-        );
+          `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`,
+        )
         if (ok) {
           // UPDATE TEST WITH NEW COLLABORATOR ROLE
-          this.test.cooperators[index] = newCoop;
-          await this.$store.dispatch("updateTest", this.test);
-
+          this.test.cooperators[index] = newCoop
+          await this.$store.dispatch('updateTest', this.test)
           // UPDATE COOPERATOR ARRAY 'MYANSWERS' TO HAVE NEW ACCESSROLE
-          await this.$store.dispatch("updateUserAnswer", {
+          await this.$store.dispatch('updateUserAnswer', {
             testDocId: this.test.id,
             cooperatorId: newCoop.userDocId,
             data: { accessLevel: newCoop.accessLevel },
-          });
+          })
         } else {
-          this.dataTableKey++; //forces data table re-render without changing user role
+          this.dataTableKey++ //forces data table re-render without changing user role
         }
       }
     },
     async submit() {
-      this.test.cooperators = [...this.cooperatorsEdit];
-      await this.$store.dispatch("updateTest", this.test);
-
+      this.test.cooperators = [...this.cooperatorsEdit]
+      await this.$store.dispatch('updateTest', this.test)
       // Notify users
       this.cooperatorsEdit.forEach((guest) => {
         if (!guest.accepted) {
-          this.notifyCooperator(guest);
+          this.notifyCooperator(guest)
         }
-      });
-
-      this.selectedCoops = [];
-      this.$refs.combobox.blur();
+      })
+      this.selectedCoops = []
+      this.$refs.combobox.blur()
     },
     notifyCooperator(guest) {
       // Notify user on the platform in case it is already registered
       if (guest.userDocId) {
-        let path = "";
+        let path = ''
         if (guest.accessLevel.value >= 2) {
-          path = "testview";
+          path = 'testview'
         } else {
-          path = "managerview";
+          path = 'managerview'
         }
-        this.$store.dispatch("addNotification", {
+        this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
             title: `Cooperation Invite!`,
@@ -284,17 +277,16 @@ export default {
             redirectsTo: `${path}/${this.test.id}/${guest.token}`,
             read: false,
           }),
-        });
+        })
       }
-      this.sendInvitationMail(guest);
+      this.sendInvitationMail(guest)
     },
     reinvite(guest) {
-      this.notifyCooperator(guest);
+      this.notifyCooperator(guest)
     },
     saveInvitations() {
-      const uidgen = new UIDGenerator();
-      let token = uidgen.generateSync();
-
+      const uidgen = new UIDGenerator()
+      let token = uidgen.generateSync()
       this.selectedCoops.forEach((coop) => {
         // If it is not a user that exists on the platform
         if (!coop.id) {
@@ -306,10 +298,10 @@ export default {
             accessLevel: this.roleOptions[this.selectedRole].value,
             token: token,
             progress: 0,
-            answerStatus: "",
+            answerStatus: '',
             updateDate: this.test.updateDate,
             testAuthorEmail: this.test.testAdmin.email,
-          });
+          })
         } else {
           this.cooperatorsEdit.push({
             userDocId: coop.id,
@@ -319,126 +311,120 @@ export default {
             accessLevel: this.roleOptions[this.selectedRole].value,
             token: token,
             progress: 0,
-            answerStatus: "",
+            answerStatus: '',
             updateDate: this.test.updateDate,
             testAuthorEmail: this.test.testAdmin.email,
-          });
+          })
         }
-      });
-      this.submit();
+      })
+      this.submit()
     },
     validateEmail() {
-      this.email = this.comboboxModel.pop();
-      this.comboboxKey++;
-
-      if (typeof this.email !== "object" && this.email !== undefined) {
+      this.email = this.comboboxModel.pop()
+      this.comboboxKey++
+      if (typeof this.email !== 'object' && this.email !== undefined) {
         //if is object then no need to validate
         if (this.email.length) {
-          if (!this.email.includes("@") || !this.email.includes(".")) {
-            alert(this.email + " is not a valid email");
+          if (!this.email.includes('@') || !this.email.includes('.')) {
+            alert(this.email + ' is not a valid email')
           } else if (!this.selectedCoops.includes(this.email)) {
-            this.selectedCoops.push(this.email);
+            this.selectedCoops.push(this.email)
           }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
-        this.selectedCoops.push(this.email);
+        this.selectedCoops.push(this.email)
       }
     },
     async removeCoop(coop) {
       let ok = confirm(
-        `Are you sure you want to remove ${coop.email} from your cooperators?`
-      );
+        `Are you sure you want to remove ${coop.email} from your cooperators?`,
+      )
       if (ok) {
         // Remove from test
-        let index = this.cooperatorsEdit.indexOf(coop);
-        this.cooperatorsEdit.splice(index, 1);
-        this.test.cooperators = this.cooperatorsEdit;
-        this.test.numberColaborators = this.test.numberColaborators - 1;
-
-        await this.$store.dispatch("updateTest", this.test);
-
+        let index = this.cooperatorsEdit.indexOf(coop)
+        this.cooperatorsEdit.splice(index, 1)
+        this.test.cooperators = this.cooperatorsEdit
+        this.test.numberColaborators = this.test.numberColaborators - 1
+        await this.$store.dispatch('updateTest', this.test)
         // Remove from cooperator
-        await this.$store.dispatch("removeTestFromCooperator", {
+        await this.$store.dispatch('removeTestFromCooperator', {
           test: this.test,
           cooperator: coop,
-        });
+        })
       }
     },
     removeFromList(coop) {
-      let index = this.cooperatorsEdit.indexOf(coop);
-      this.cooperatorsEdit.splice(index, 1);
+      let index = this.cooperatorsEdit.indexOf(coop)
+      this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
-      let domain = window.location.href;
-      domain = domain.replace(window.location.pathname, "");
-
+      let domain = window.location.href
+      domain = domain.replace(window.location.pathname, '')
       let email = {
         testId: this.test.id,
         from: this.user.email,
         testTitle: this.test.testTitle,
         guest: guest,
         domain: domain,
-      };
-
+      }
       if (guest.accessLevel === 1) {
         email = Object.assign(email, {
-          path: "testview",
+          path: 'testview',
           token: guest.token,
-        });
+        })
       } else {
         email = Object.assign(email, {
-          path: "managerview",
+          path: 'managerview',
           token: guest.token,
-        });
+        })
       }
-      await this.$store.dispatch("sendEmailInvitation", email);
+      await this.$store.dispatch('sendEmailInvitation', email)
     },
     async cancelInvitation(guest) {
       let ok = confirm(
-        `Are you sure you want to cancel ${guest.email} from your cooperators?`
-      );
+        `Are you sure you want to cancel ${guest.email} from your cooperators?`,
+      )
       if (ok) {
-        let index = this.cooperatorsEdit.indexOf(guest);
-        this.cooperatorsEdit.splice(index, 1);
-        this.test.cooperators = this.cooperatorsEdit;
-
-        await this.$store.dispatch("updateTest", this.test);
+        let index = this.cooperatorsEdit.indexOf(guest)
+        this.cooperatorsEdit.splice(index, 1)
+        this.test.cooperators = this.cooperatorsEdit
+        await this.$store.dispatch('updateTest', this.test)
       }
     },
   },
   watch: {
     loading() {
       if (!this.loading) {
-        if (this.cooperatorsEdit.length == 0) this.intro = true;
-        else this.intro = false;
+        if (this.cooperatorsEdit.length == 0) this.intro = true
+        else this.intro = false
       }
     },
   },
   computed: {
     dialog() {
-      return this.$store.state.dialog;
+      return this.$store.state.dialog
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
     user() {
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     users() {
-      return this.$store.state.Users.users;
+      return this.$store.state.Users.users
     },
     cooperatorsEdit() {
-      if (this.test.cooperators) return [...this.test.cooperators];
-      return [];
+      if (this.test.cooperators) return [...this.test.cooperators]
+      return []
     },
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
   },
   created() {
-    this.$store.dispatch("getAllUsers");
+    this.$store.dispatch('getAllUsers')
   },
-};
+}
 </script>
 
 <style scoped>
