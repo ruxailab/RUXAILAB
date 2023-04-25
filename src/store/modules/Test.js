@@ -16,6 +16,7 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
+    tasks:[]
   },
   getters: {
     tests(state) {
@@ -25,7 +26,7 @@ export default {
       return state.Test
     },
     tasks(state) {
-      return state.Test.Tasks
+      return state.tasks
     },
     heuristicsTest(state) {
       return state.Test.HeuristicsTest
@@ -41,6 +42,10 @@ export default {
     SET_TESTS(state, payload) {
       state.tests = payload
     },
+    ADD_TASKS(state, payload) {
+      //state.tasks.push(payload)
+      state.tasks = [...state.tasks, payload]
+    }
   },
   actions: {
     /**
@@ -207,6 +212,20 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async addItemsTasks({ commit }, payload) {
+
+      try {
+        commit('setLoading', true)
+        console.log("tasks adicionadas: ", payload)
+        commit('ADD_TASKS', payload)
+      } catch {
+        console.log('Error in addItemsTasks')
+        commit('setError', true)
+      } finally {
+        commit('setLoading', false)
+      }
+    }
   },
   coops(state) {
     return state.test.coop
