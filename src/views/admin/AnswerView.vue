@@ -142,7 +142,7 @@
                 <RadarChart
                   :labels="
                     evaluatorStatistics.items.map(
-                      (item) => `${item.evaluator} - ${item.result}%`
+                      (item) => `${item.evaluator} - ${item.result}%`,
                     )
                   "
                   :data="evaluatorStatistics.items.map((item) => item.result)"
@@ -244,6 +244,11 @@
                           >
                         </div>
                       </template>
+                      <template v-slot:item.percentage="{ item }">
+                        <div style="padding-top:2px; padding-bottom:2px">
+                          {{ item.percentage }}%
+                        </div>
+                      </template>
                     </v-data-table>
                   </v-col>
                   <!-- Bottom Tab 3 -->
@@ -269,13 +274,13 @@
 </template>
 
 <script>
-import BarChart from "@/components/atoms/BarChart.vue";
-import RadarChart from "@/components/atoms/RadarChart.vue";
-import ShowInfo from "@/components/organisms/ShowInfo";
-import IntroAnswer from "@/components/molecules/IntroAnswer";
+import BarChart from '@/components/atoms/BarChart.vue'
+import RadarChart from '@/components/atoms/RadarChart.vue'
+import ShowInfo from '@/components/organisms/ShowInfo'
+import IntroAnswer from '@/components/molecules/IntroAnswer'
 
 export default {
-  props: ["id"],
+  props: ['id'],
   components: {
     BarChart,
     RadarChart,
@@ -290,46 +295,46 @@ export default {
   }),
   methods: {
     statistics() {
-      if (this.testAnswerDocument?.type === "HEURISTICS") {
-        this.resultEvaluator = [];
+      if (this.testAnswerDocument?.type === 'HEURISTICS') {
+        this.resultEvaluator = []
 
         //Get Evaluator answers
-        let evaluatorIndex = 1;
+        let evaluatorIndex = 1
         this.answers.forEach((evaluator) => {
           let SelectEvaluator = this.resultEvaluator.find(
-            (e) => e.userDocId == `Ev${evaluatorIndex}`
-          );
+            (e) => e.userDocId == `Ev${evaluatorIndex}`,
+          )
           if (!SelectEvaluator) {
             this.resultEvaluator.push({
               userDocId: evaluator.userDocId,
-              email: "noemail@email.com",
+              email: 'noemail@email.com',
               id: `Ev${evaluatorIndex}`,
               heuristics: [],
               result: 0,
-            });
+            })
             SelectEvaluator = this.resultEvaluator[
               this.resultEvaluator.length - 1
-            ];
+            ]
           }
           //Get Heuristics for evaluators
-          let heurisIndex = 1;
+          let heurisIndex = 1
           evaluator.heuristicQuestions.forEach((heuristic) => {
             //Get Questions for heuristic
 
-            let noAplication = 0;
-            let noReply = 0;
+            let noAplication = 0
+            let noReply = 0
             let res = heuristic.heuristicQuestions.reduce(
               (totalQuestions, question) => {
                 //grouping of answers
                 if (question.heuristicAnswer === null) {
-                  noAplication++;
+                  noAplication++
                 } //count answers no aplication
-                if (question.heuristicAnswer === "") noReply++;
-                return totalQuestions + Number(question.heuristicAnswer); //sum of responses
+                if (question.heuristicAnswer === '') noReply++
+                return totalQuestions + Number(question.heuristicAnswer) //sum of responses
               },
-              0
-            );
-            if (noAplication == heuristic.heuristicQuestions.length) res = null;
+              0,
+            )
+            if (noAplication == heuristic.heuristicQuestions.length) res = null
 
             SelectEvaluator.heuristics.push({
               id: `H${heurisIndex}`,
@@ -337,77 +342,77 @@ export default {
               totalQuestions: heuristic.heuristicTotal,
               totalNoAplication: noAplication,
               totalNoReply: noReply,
-            });
-            heurisIndex++;
-          });
-          evaluatorIndex++;
-        });
+            })
+            heurisIndex++
+          })
+          evaluatorIndex++
+        })
 
         //Calc Final result
         this.resultEvaluator.forEach((ev) => {
-          ev.result = this.calcFinalResult(ev.heuristics);
-        });
+          ev.result = this.calcFinalResult(ev.heuristics)
+        })
       }
     },
     calcFinalResult(array) {
-      let result = 0;
-      let qtdQuestion = 0;
-      let qtdNoAplication = 0;
+      let result = 0
+      let qtdQuestion = 0
+      let qtdNoAplication = 0
       let maxOption = Math.max(
-        ...this.test.testOptions.map((item) => item.value)
-      );
+        ...this.test.testOptions.map((item) => item.value),
+      )
       array.forEach((res) => {
-        (result += res.result), (qtdQuestion += res.totalQuestions);
-        qtdNoAplication += res.totalNoAplication;
-      });
-      let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption;
+        ;(result += res.result), (qtdQuestion += res.totalQuestions)
+        qtdNoAplication += res.totalNoAplication
+      })
+      let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
 
-      return ((result * 100) / perfectResult).toFixed(1);
+      return ((result * 100) / perfectResult).toFixed(1)
     },
     standardDeviation(array) {
       let average = array.reduce(
         (total, value) => total + value / array.length,
-        0
-      );
+        0,
+      )
       return Math.sqrt(
         array.reduce(
           (total, valor) => total + Math.pow(average - valor, 2) / array.length,
-          0
-        )
-      );
+          0,
+        ),
+      )
     },
     percentage(value, result) {
-      return (value * 100) / result;
+      return (value * 100) / result
     },
     getColor(value, max, min) {
-      max = Number(max);
-      min = Number(min);
-      let h = (max - min) / 5;
+      max = Number(max)
+      min = Number(min)
+      let h = (max - min) / 5
 
-      if (value == null) return "grey";
-      else if (value <= min + h) return "red";
-      else if (value <= min + 2 * h) return "amber";
-      else if (value <= min + 3 * h) return "orange lighten-1";
-      else if (value <= min + 4 * h) return "lime";
-      else return "green";
+      if (value == null) return 'grey'
+      else if (value <= min + h) return 'red'
+      else if (value <= min + 2 * h) return 'amber'
+      else if (value <= min + 3 * h) return 'orange lighten-1'
+      else if (value <= min + 4 * h) return 'lime'
+      else return 'green'
     },
     getColorPorcentage(value) {
-      if (value <= 20) return "red";
-      else if (value <= 40) return "ambar";
-      else if (value <= 60) return "orange lighten-1";
-      else if (value <= 80) return "lime";
-      else return "green";
+      if (value <= 20) return 'red'
+      else if (value <= 40) return 'ambar'
+      else if (value <= 60) return 'orange lighten-1'
+      else if (value <= 80) return 'lime'
+      else return 'green'
     },
     goToDataHeuristic(item) {
       let selectHeruristc = this.heuristicsEvaluator.items.indexOf(
-        this.heuristicsEvaluator.items.find((h) => h.heuristic === item)
-      );
+        this.heuristicsEvaluator.items.find((h) => h.heuristic === item),
+      )
       this.$router
         .push(`/analyticsview/${this.id}/${selectHeruristc}`)
-        .catch(() => {});
+        .catch(() => {})
     },
     goToCoops() {
-      this.$emit("goToCoops");
+      this.$emit('goToCoops')
     },
   },
   computed: {
@@ -415,141 +420,153 @@ export default {
       let table = {
         header: [],
         items: [],
-      };
-      let options = this.test.testOptions.map((op) => op.value);
-      let max = Math.max(...options);
-      let min = Math.min(...options);
+      }
+      let options = this.test.testOptions.map((op) => op.value)
+      let max = Math.max(...options)
+      let min = Math.min(...options)
 
       table.header.push({
-        text: "HEURISTICS",
-        align: "start",
-        value: "heuristic",
-      });
+        text: 'HEURISTICS',
+        align: 'start',
+        value: 'heuristic',
+      })
 
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
-          let header = table.header.find((h) => h.text == evaluator.id);
+          let header = table.header.find((h) => h.text == evaluator.id)
           if (!header) {
             table.header.push({
               text: evaluator.id,
-              align: "center",
+              align: 'center',
               value: evaluator.id,
-            });
+            })
           }
           evaluator.heuristics.forEach((heuristic) => {
-            let item = table.items.find((i) => i.heuristic == heuristic.id);
+            let item = table.items.find((i) => i.heuristic == heuristic.id)
             if (item) {
               Object.assign(item, {
                 [evaluator.id]: heuristic.result,
-              });
+              })
             } else {
               table.items.push({
                 heuristic: heuristic.id,
                 max: max * heuristic.totalQuestions,
                 min: min * heuristic.totalQuestions,
                 [evaluator.id]: heuristic.result,
-              });
+              })
             }
-          });
-        });
+          })
+        })
       }
-      return table;
+      return table
     },
     heuristicsStatistics() {
       let table = {
         header: [],
         items: [],
-      };
+      }
 
       table.header = [
         {
-          text: "HEURISTICS",
-          align: "start",
+          text: 'HEURISTICS',
+          align: 'start',
           sortable: false,
-          value: "name",
+          value: 'name',
         },
         {
-          text: "Average",
-          value: "average",
-          align: "center",
+          text: 'Average',
+          value: 'average',
+          align: 'center',
           sortable: false,
         },
         {
-          text: "Standard deviation",
-          value: "sd",
-          align: "center",
+          text: 'Standard deviation',
+          value: 'sd',
+          align: 'center',
           sortable: false,
         },
-        { text: "Max", value: "max", align: "center", sortable: false },
-        { text: "Min", value: "min", align: "center", sortable: false },
-      ];
+        {
+          text: 'Percentage',
+          value: 'percentage',
+          align: 'center',
+          sortable: false,
+        },
+        { text: 'Max', value: 'max', align: 'center', sortable: false },
+        { text: 'Min', value: 'min', align: 'center', sortable: false },
+      ]
 
       if (this.heuristicsEvaluator.items) {
         this.heuristicsEvaluator.items.forEach((item) => {
           let results = Object.entries(item)
-            .filter((item) => item[0].includes("Ev"))
-            .map((item) => item[1]);
-
+            .filter((item) => item[0].includes('Ev'))
+            .map((item) => item[1])
+          console.log(results)
+          let valueToConvert = results
+              .reduce((total, value) => total + value / results.length, 0)
+              .toFixed(2),
+            convertedValue =
+              ((valueToConvert - item.min) / (item.max - item.min)) * 100
           table.items.push({
             name: item.heuristic,
             max: Math.max(item.max).toFixed(2),
             min: Math.min(item.min).toFixed(2),
+            percentage: convertedValue,
             sd: this.standardDeviation(results).toFixed(2),
             average: results
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
-          });
-        });
+          })
+        })
       }
 
-      return table;
+      return table
     },
     evaluatorStatistics() {
       let table = {
         header: [],
         items: [],
-      };
+      }
 
       table.header = [
         {
-          text: "Evaluator",
-          align: "start",
+          text: 'Evaluator',
+          align: 'start',
           sortable: false,
-          value: "evaluator",
+          value: 'evaluator',
         },
         {
-          text: "Usability Percentage",
-          value: "result",
-          align: "center",
+          text: 'Usability Percentage',
+          value: 'result',
+          align: 'center',
         },
         {
-          text: "Applicable Question",
-          value: "aplication",
-          align: "center",
+          text: 'Applicable Question',
+          value: 'aplication',
+          align: 'center',
         },
         {
-          text: "No Applicable Question",
-          value: "noAplication",
-          align: "center",
+          text: 'No Applicable Question',
+          value: 'noAplication',
+          align: 'center',
         },
         {
-          text: "Conclusion Percentage",
-          value: "answered",
-          align: "center",
+          text: 'Conclusion Percentage',
+          value: 'answered',
+          align: 'center',
         },
-      ];
+      ]
 
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
-          let totalNoAplication = 0;
-          let totalNoReply = 0;
-          let totalQuestions = 0;
+          let totalNoAplication = 0
+          let totalNoReply = 0
+          let totalQuestions = 0
 
           evaluator.heuristics.forEach((heuristic) => {
-            totalNoAplication += heuristic.totalNoAplication;
-            totalNoReply += heuristic.totalNoReply;
-            totalQuestions += heuristic.totalQuestions;
-          });
+            totalNoAplication += heuristic.totalNoAplication
+            totalNoReply += heuristic.totalNoReply
+            totalQuestions += heuristic.totalQuestions
+          })
 
           table.items.push({
             evaluator: evaluator.id,
@@ -558,13 +575,13 @@ export default {
             noAplication: totalNoAplication,
             answered: this.percentage(
               totalQuestions - totalNoReply,
-              totalQuestions
+              totalQuestions,
             ).toFixed(2),
-          });
-        });
+          })
+        })
       }
 
-      return table;
+      return table
     },
     finalResult() {
       let testData = {
@@ -572,46 +589,46 @@ export default {
         max: null,
         min: null,
         sd: null,
-      };
+      }
 
       if (this.evaluatorStatistics.items.length) {
         let res = this.evaluatorStatistics.items.reduce((total, value) => {
-          return total + value.result / this.evaluatorStatistics.items.length;
-        }, 0);
+          return total + value.result / this.evaluatorStatistics.items.length
+        }, 0)
 
-        testData.average = `${Math.fround(res).toFixed(1)}%`;
+        testData.average = `${Math.fround(res).toFixed(1)}%`
 
         testData.max = `${Math.max(
-          ...this.evaluatorStatistics.items.map((item) => item.result)
-        ).toFixed(1)}%`;
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
 
         testData.min = `${Math.min(
-          ...this.evaluatorStatistics.items.map((item) => item.result)
-        ).toFixed(1)}%`;
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
 
         testData.sd = `${this.standardDeviation(
-          this.evaluatorStatistics.items.map((item) => item.result)
-        ).toFixed(1)}%`;
+          this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
       }
 
-      return testData;
+      return testData
     },
     testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument;
+      return this.$store.state.Answer.testAnswerDocument
     },
     answers() {
       if (this.testAnswerDocument) {
-        return this.testAnswerDocument.type === "HEURISTICS"
+        return this.testAnswerDocument.type === 'HEURISTICS'
           ? Object.values(this.testAnswerDocument.heuristicAnswers)
-          : Object.values(this.testAnswerDocument.taskAnswers);
+          : Object.values(this.testAnswerDocument.taskAnswers)
       }
-      return [];
+      return []
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
   },
   watch: {
@@ -620,19 +637,19 @@ export default {
         this.testAnswerDocument &&
         (this.answers !== null || this.answers.length > 0)
       ) {
-        this.statistics();
-        if (this.answers.length == 0) this.intro = true;
-        else this.intro = false;
+        this.statistics()
+        if (this.answers.length == 0) this.intro = true
+        else this.intro = false
       }
     },
     index() {
-      this.ind = 0;
+      this.ind = 0
     },
   },
   async created() {
-    await this.$store.dispatch("getCurrentTestAnswerDoc");
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
-};
+}
 </script>
 
 <style scoped>

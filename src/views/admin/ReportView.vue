@@ -46,15 +46,12 @@
         </p>
       </v-row>
 
-      <div v-if="loadingTable"></div>
-      <div slot="content" class="ma-0 pa-0" v-else>
+      <div slot="content" class="ma-0 pa-0">
         <v-data-table
           style="background: #f5f7ff"
           :headers="headers"
           :items="reports"
           :items-per-page="10"
-          :loading="loadingTable"
-          loading-text="Loading...please wait"
           height="420px"
           dense
         >
@@ -67,7 +64,7 @@
               </template>
               <v-list>
                 <v-list-item @click=";(dialog = true), (report = item)">
-                  <v-list-item-title>Hide report</v-list-item-title>
+                  <v-list-item-title>Remove Report</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -79,10 +76,6 @@
           <template v-slot:item.submitted="{ item }">
             <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
           </template>
-          <template v-slot:item.visibility="{ item }">
-            <v-icon v-if="item.visibility == true">mdi-eye-outline</v-icon>
-            <v-icon v-else>mdi-eye-off-outline</v-icon>
-          </template>
         </v-data-table>
       </div>
     </ShowInfo>
@@ -93,7 +86,6 @@
 import ShowInfo from '@/components/organisms/ShowInfo'
 import Intro from '@/components/molecules/IntroReports'
 import Snackbar from '@/components/atoms/Snackbar'
-
 export default {
   props: ['id'],
   components: {
@@ -103,9 +95,8 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: 'Visibility', value: 'visibility', justify: 'center' },
-      { text: 'Evaluator', value: 'userDoc.email' },
-      { text: 'Last Update', value: 'lastUpdate' },
+      { text: 'Evaluator', value: 'userDocId' },
+      { text: 'Last Update', value: 'log.date' },
       { text: 'Progress', value: 'progress', justify: 'center' },
       { text: 'Status', value: 'submitted' },
       { text: 'More', value: 'more', justify: 'end' },
@@ -120,45 +111,36 @@ export default {
       return status == true ? 'submitted' : 'in progress'
     },
     removeReport(report) {
-      report.visibility = false
-      this.loadingBtn = false
-      this.dialog = false
-      /* this.$store
-        .dispatch("removeReport", {
+      this.$store
+        .dispatch('removeReport', {
           docId: this.id,
           element: {
             id: report.uid,
           },
-          param: "reports",
+          param: 'reports',
         })
         .then(() => {
           //remove from answers
-          if (report.log.status == "Submitted")
-            this.$store.dispatch("removeUserAnswer", {
+          if (report.log.status == 'Submitted')
+            this.$store.dispatch('removeUserAnswer', {
               docId: this.answers.id,
               element: Object.assign({}, { id: report.uid }),
-            });
-
-          this.$store.commit("setSuccess", "Report successfully deleted");
-          this.loadingBtn = false;
-          this.dialog = false;
+            })
+          this.$store.commit('setSuccess', 'Report successfully deleted')
+          this.loadingBtn = false
+          this.dialog = false
         })
         .catch((err) => {
-          this.$store.commit("setError", err);
-        }); */
+          this.$store.commit('setError', err)
+        })
     },
     goToCoops() {
       this.$emit('goToCoops')
     },
-    getVisibility(visibility) {
-      if (visibility == true) {
-        return 'blue'
-      }
-    },
   },
   computed: {
     reports() {
-      return this.$store.getters.currentUserTestAnswer
+      return [this.$store.getters.currentUserTestAnswer]
     },
     test() {
       return this.$store.getters.test
@@ -173,13 +155,6 @@ export default {
     answers() {
       return this.$store.getters.answers || {}
     },
-    loadingTable() {
-      if (this.reports[0] == undefined || this.reports[0] == null) {
-        return true
-      } else {
-        return false
-      }
-    },
   },
   watch: {
     reports() {
@@ -189,11 +164,8 @@ export default {
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     /* await this.$store.dispatch("getReports", { id: this.id });
-
     await this.$store.dispatch("getTest", { id: this.reports.test.id });
-
     await this.$store.dispatch("getAnswers", { id: this.test.answers });
-
     if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
 }

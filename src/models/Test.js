@@ -22,6 +22,7 @@ export default class Test {
     templateDoc,
     numberColaborators,
     isPublic,
+    finalReport,
   } = {}) {
     /**
      * Defines the test id.
@@ -120,6 +121,13 @@ export default class Test {
      * @type {boolean}
      */
     this.isPublic = isPublic ?? false
+
+    /**
+     * Allow to add extra info after finish the test.
+     *
+     * @type {string}
+     */
+    this.finalReport = finalReport ?? null
   }
 
   /**
@@ -155,6 +163,7 @@ export default class Test {
       templateDoc: this.templateDoc,
       numberColaborators: this.numberColaborators,
       isPublic: this.isPublic,
+      finalReport: this.finalReport,
     }
   }
 }
