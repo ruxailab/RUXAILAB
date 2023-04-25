@@ -1,26 +1,26 @@
 <template>
-  <v-form ref="form" v-if="preTest">
+  <v-form v-if="preTest" ref="form">
     <v-row>
       <v-col>
         <v-card-text>
           <v-text-field
+            v-model="preTest.consent"
             prepend-inner-icon="mdi-link-variant"
             label="Consent"
-            v-model="preTest.consent"
             :rules="googleLinkRules"
-            @input="$emit('change')"
             outlined
             dense
-          ></v-text-field>
+            @input="$emit('change')"
+          />
           <v-text-field
+            v-model="preTest.form"
             prepend-inner-icon="mdi-link-variant"
             label="Form"
-            v-model="preTest.form"
             :rules="googleLinkRules"
-            @input="$emit('change')"
             outlined
             dense
-          ></v-text-field>
+            @input="$emit('change')"
+          />
         </v-card-text>
       </v-col>
     </v-row>
@@ -44,21 +44,21 @@ export default {
       v =>
         v == null ||
         v == "" ||
-        v.indexOf("https://docs.google.com/forms/") == 0 ||
-        v.indexOf("docs.google.com/forms/") == 0 ||
+        v.indexOf("https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform") == 0 ||
+        // v.indexOf("docs.google.com/forms/") == 0 ||
         "Google forms link required"
     ],
     valids: [true, true]
   }),
   watch: {
     "preTest.consent"() {
-      let valid = this.$refs.form.validate();
-      this.$emit("valForm", valid, this.valIndex);
+      const valid = this.$refs.form.validate()
+      this.$emit("valForm", valid, this.valIndex)
     },
     "preTest.form"() {
-      let valid = this.$refs.form.validate();
-      this.$emit("valForm", valid, this.valIndex);
+      const valid = this.$refs.form.validate()
+      this.$emit("valForm", valid, this.valIndex)
     }
   }
-};
+}
 </script>

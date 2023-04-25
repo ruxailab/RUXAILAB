@@ -3,24 +3,24 @@
     <v-row justify="space-around" class="pa-2">
       <v-col cols="12" md="5">
         <v-text-field
-          :autofocus="lock ? false : true"
           v-model="test.testTitle"
+          :autofocus="lock ? false : true"
           label="Title"
           :rules="titleRequired"
           counter="100"
           outlined
-          @input="$store.commit('SET_LOCAL_CHANGES', true)"
           dense
-        ></v-text-field>
+          @input="$store.commit('SET_LOCAL_CHANGES', true)"
+        />
         <v-select
+          v-model="test.testType"
           :disabled="lock"
           :items="types"
-          v-model="test.testType"
           label="Type"
           :rules="typeRequired"
           dense
           outlined
-        ></v-select>
+        />
       </v-col>
       <v-col cols="12" md="5">
         <v-textarea
@@ -29,13 +29,13 @@
           outlined
           dense
           @input="$store.commit('SET_LOCAL_CHANGES', true)"
-        ></v-textarea>
+        />
         <v-checkbox
-          label="Make test public to all users (readonly)"
           v-model="test.isPublic"
+          label="Make test public to all users (readonly)"
           color="#F9A826"
           @change="$store.commit('SET_LOCAL_CHANGES', true)"
-        ></v-checkbox>
+        />
       </v-col>
     </v-row>
   </v-form>
@@ -66,15 +66,15 @@ export default {
   }),
   methods: {
     valida() {
-      let valid = this.$refs.form.validate();
-      this.$emit("valForm", valid, 0);
-      return valid;
+      const valid = this.$refs.form.validate()
+      this.$emit("valForm", valid, 0)
+      return valid
     },
     resetVal() {
-      this.$refs.form.resetValidation(); //used on emits
+      this.$refs.form.resetValidation() //used on emits
     },
   },
-};
+}
 </script>
 
 <style></style>
