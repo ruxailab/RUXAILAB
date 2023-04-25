@@ -49,7 +49,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Save</span>
+      <span>Save 2.0</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
@@ -87,7 +87,9 @@
         />
       </v-col>
       <!-- User tests -->
+
       {{ test }}
+
       <EditUserTest
         v-if="test.testType === 'User'"
         slot="top"
@@ -143,10 +145,11 @@ export default {
         if (this.user.accessLevel == 0) return 0
         // Check if user is collaborator or owner
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id
+        console.log(isTestOwner)
         if (isTestOwner) return 0
 
         const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
+        const answersEntries = this.object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
           answers.push(a[1])
         })
@@ -189,7 +192,7 @@ export default {
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
-        // this.setIntro()
+        this.setIntro()
       }
     },
   },
@@ -204,11 +207,14 @@ export default {
   },
   methods: {
     async submit() {
+
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
+
       let auxT = Object.assign(this.test, this.object)
       // const auxT = Test.toTest(this.object)
       // console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
+
     },
 
     mountAnswerSheet() {
@@ -244,6 +250,7 @@ export default {
 
         delete aux.tasks
       } else if (this.object?.tasks) {
+
         aux.tasks = [...this.object.tasks]
         delete aux.heuristics
       }
@@ -254,25 +261,32 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
+
       if (this.test.type === 'User' && !this.valids[0]) {
+
         this.$store.commit(
           'setError',
           'Please fill all fields in Pre Test correctly or leave them empty',
         )
       } else if (
+
         this.test.type === 'HEURISTICS' &&
+
         this.object.options.length == 1
       ) {
         this.$store.commit(
           'setError',
           'Please create at least 2 options or none at all',
         )
+
       } else if (this.test.type === 'User' && !this.valids[1]) {
+
         this.$store.commit(
           'setError',
           'Please fill all fields in Post Test correctly or leave them empty',
         )
       } else {
+        console.log("saved")
         this.submit()
       }
     },
@@ -284,6 +298,7 @@ export default {
     async setIntro() {
       console.log('Set Intro')
       this.object = await Object.assign(this.object, this.test)
+
     },
     setIndex(ind) {
       this.index = ind
