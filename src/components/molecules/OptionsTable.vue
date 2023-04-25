@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import AddOptionBtn from "../atoms/AddOptionBtn";
+import AddOptionBtn from '../atoms/AddOptionBtn'
 
 export default {
   /*
@@ -58,15 +58,21 @@ export default {
   data: () => ({
     headers: [
       {
-        text: "Text",
-        align: "start",
-        value: "text",
+        text: 'Text',
+        align: 'start',
+        value: 'text',
       },
-      { text: "Value", align: "end", value: "value" },
-      { text: "Edit/Delete", value: "actions", align: "end", sortable: false },
+      {
+        text: 'Description',
+        align: 'end',
+        value: 'description',
+      },
+      { text: 'Value', align: 'end', value: 'value' },
+      { text: 'Edit/Delete', value: 'actions', align: 'end', sortable: false },
     ],
     option: {
-      text: "",
+      text: '',
+      description: '',
       value: null,
     },
     dialog: false,
@@ -76,61 +82,60 @@ export default {
   methods: {
     updateOptions() {
       if (this.editIndex == -1) {
-        this.options.push(this.option);
+        this.options.push(this.option)
       } else {
-        Object.assign(this.options[this.editIndex], this.option);
-        this.editIndex = -1;
+        Object.assign(this.options[this.editIndex], this.option)
+        this.editIndex = -1
       }
 
       this.option = {
-        text: "",
+        text: '',
         value: null,
-      };
-      this.hasValue = true;
+      }
+      this.hasValue = true
     },
     changeDialog(payload) {
-      this.dialog = payload;
+      this.dialog = payload
     },
     deleteItem(item) {
-      this.options.splice(this.options.indexOf(item), 1);
+      this.options.splice(this.options.indexOf(item), 1)
     },
     editItem(item) {
-      this.editIndex = this.options.indexOf(item);
-      this.option.text = this.options[this.editIndex].text;
-      this.option.value = this.options[this.editIndex].value;
+      this.editIndex = this.options.indexOf(item)
+      this.option.text = this.options[this.editIndex].text
+      this.option.value = this.options[this.editIndex].value
 
-      if (this.option.value == null) this.hasValue = false;
-      else this.hasValue = true;
-      this.dialog = true;
+      if (this.option.value == null) this.hasValue = false
+      else this.hasValue = true
+      this.dialog = true
     },
     emitChange() {
-      this.$emit("change");
+      this.$emit('change')
     },
   },
   watch: {
     dialog() {
       if (!this.dialog) {
         this.option = {
-          text: "",
+          text: '',
           value: null,
-        };
-        this.hasValue = true;
+        }
+        this.hasValue = true
       }
     },
     options() {
-      this.$emit("change");
+      this.$emit('change')
     },
   },
-  computed:{
-    options(){
+  computed: {
+    options() {
       return this.$store.state.Tests.Test.testOptions
-    }
+    },
   },
   components: {
     AddOptionBtn,
   },
-};
+}
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
