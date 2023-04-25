@@ -38,6 +38,18 @@
                 </v-col>
               </v-row>
 
+              <v-row justify="center" align="center">
+                <v-col cols="9">
+                  <v-text-field
+                    maxLength="100"
+                    counter="100"
+                    v-model="option.description"
+                    label="Option description"
+                    :rules="textRequired"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
               <v-row justify="center">
                 <v-checkbox
                   v-model="hasValueState"
@@ -85,15 +97,15 @@ export default {
     },
   },
   data: () => ({
-    textRequired: [(v) => !!v || "Text is required"],
+    textRequired: [(v) => !!v || 'Text is required'],
   }),
   computed: {
     hasValueState: {
       get() {
-        return this.hasValue;
+        return this.hasValue
       },
       set() {
-        this.$emit("changeHasValue");
+        this.$emit('changeHasValue')
       },
     },
   },
@@ -101,31 +113,31 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         if (this.hasValue && this.option.value == null) {
-          alert("Please enter a value for this option.");
+          alert('Please enter a value for this option.')
         } else {
           if (!this.hasValue) {
-            this.option.value = null;
+            this.option.value = null
           }
 
-          this.$emit("dialog", false);
-          this.$emit("addOption");
-          this.$emit("change");
-          this.resetVal();
+          this.$emit('dialog', false)
+          this.$emit('addOption')
+          this.$emit('change')
+          this.resetVal()
         }
       }
     },
     resetVal() {
-      this.$refs.form.resetValidation();
+      this.$refs.form.resetValidation()
     },
   },
   watch: {
     dialog() {
       if (!this.dialog) {
-        this.hasValue = true;
+        this.hasValue = true
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

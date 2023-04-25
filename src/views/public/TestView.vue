@@ -46,8 +46,8 @@
       />
       <CardSignUp
         @logined="
-          logined = true;
-          setTest();
+          logined = true
+          setTest()
         "
         @change="selected = !selected"
         v-else
@@ -225,12 +225,12 @@
                           rotate="-90"
                           v-if="
                             perHeuristicProgress(
-                              currentUserTestAnswer.heuristicQuestions[i]
+                              currentUserTestAnswer.heuristicQuestions[i],
                             ) != 100
                           "
                           :value="
                             perHeuristicProgress(
-                              currentUserTestAnswer.heuristicQuestions[i]
+                              currentUserTestAnswer.heuristicQuestions[i],
                             )
                           "
                           :size="24"
@@ -254,6 +254,7 @@
                       </v-list-item-content>
                     </v-list-item>
                   </template>
+
                   <span>{{ heuris.title }}</span>
                 </v-tooltip>
               </div>
@@ -270,12 +271,12 @@
                       rotate="-90"
                       v-if="
                         perHeuristicProgress(
-                          currentUserTestAnswer.heuristicQuestions[i]
+                          currentUserTestAnswer.heuristicQuestions[i],
                         ) != 100
                       "
                       :value="
                         perHeuristicProgress(
-                          currentUserTestAnswer.heuristicQuestions[i]
+                          currentUserTestAnswer.heuristicQuestions[i],
                         )
                       "
                       :size="24"
@@ -364,6 +365,16 @@
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
+                <v-row v-if="test">
+                  <!-- :questionId="currentUserTestAnswer.heuristicQuestions[i].id" -->
+                  <ImageImport
+                    :heuristicId="test.testStructure[heurisIndex]"
+                    :questionId="
+                      currentUserTestAnswer.heuristicQuestions[0].heuristicId
+                    "
+                    :testId="test.id"
+                  ></ImageImport>
+                </v-row>
               </v-col>
             </v-row>
           </div>
@@ -377,19 +388,20 @@
 </template>
 
 <script>
-import ShowInfo from "@/components/organisms/ShowInfo.vue";
-import AddCommentBtn from "@/components/atoms/AddCommentBtn";
-import HelpBtn from "@/components/atoms/QuestionHelpBtn";
-import VClamp from "vue-clamp";
-import Snackbar from "@/components/atoms/Snackbar";
-import CardSignIn from "@/components/atoms/CardSignIn";
-import CardSignUp from "@/components/atoms/CardSignUp";
-import UserTestView from "@/views/public/UserTestView.vue";
-import HeuristicQuestionAnswer from "@/models/HeuristicQuestionAnswer";
-import Heuristic from "@/models/Heuristic";
+import ShowInfo from '@/components/organisms/ShowInfo.vue'
+import AddCommentBtn from '@/components/atoms/AddCommentBtn'
+import HelpBtn from '@/components/atoms/QuestionHelpBtn'
+import VClamp from 'vue-clamp'
+import Snackbar from '@/components/atoms/Snackbar'
+import CardSignIn from '@/components/atoms/CardSignIn'
+import CardSignUp from '@/components/atoms/CardSignUp'
+import UserTestView from '@/views/public/UserTestView.vue'
+import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
+import Heuristic from '@/models/Heuristic'
+import ImageImport from '@/components/atoms/ImportImage.vue'
 
 export default {
-  props: ["id", "token"],
+  props: ['id', 'token'],
   components: {
     ShowInfo,
     AddCommentBtn,
@@ -399,6 +411,7 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
+    ImageImport,
   },
   data: () => ({
     logined: null,
@@ -420,32 +433,33 @@ export default {
   }),
   watch: {
     test: async function() {
-      this.mappingSteps();
+      this.mappingSteps()
     },
     items() {
       if (this.items.length) {
-        this.index = this.items[0].id;
+        this.index = this.items[0].id
         if (this.items.find((obj) => obj.id == 0)) {
           //se tiver preTest mexe no preTestIndex
-          this.preTestIndex = this.items[0].value[0].id;
+          this.preTestIndex = this.items[0].value[0].id
         }
       }
     },
     heurisIndex() {
-      this.$refs.rightView.scrollTop = 0; //faz scroll pra cima qnd muda a heuristica
+      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
     },
     async user() {
       if (this.user) {
-        this.noExistUser = false;
-        if (this.logined) this.setTest();
+        this.noExistUser = false
+        if (this.logined) this.setTest()
       }
     },
   },
   methods: {
     updateComment(comment, heurisIndex, answerIndex) {
+      console.log(this.currentUserTestAnswer.heuristicQuestions)
       this.currentUserTestAnswer.heuristicQuestions[
         heurisIndex
-      ].heuristicQuestions[answerIndex].heuristicComment = comment;
+      ].heuristicQuestions[answerIndex].heuristicComment = comment
     },
     mappingSteps() {
       //Heuristics
@@ -454,69 +468,69 @@ export default {
         this.test.testStructure.length !== 0
       )
         this.items.push({
-          title: "HEURISTICS",
-          icon: "mdi-checkbox-marked-circle-outline",
+          title: 'HEURISTICS',
+          icon: 'mdi-checkbox-marked-circle-outline',
           value: this.test.testStructure.map((option) => {
             return {
               title: option.title,
-              icon: "mdi-checkbox-marked-circle-outline",
+              icon: 'mdi-checkbox-marked-circle-outline',
               done: false,
               total: option.total,
               id: option.id,
-            };
+            }
           }),
           id: 1,
-        });
+        })
     },
     validate(object) {
-      return object !== null && object !== undefined && object !== "";
+      return object !== null && object !== undefined && object !== ''
     },
     calculateProgress() {
-      const total = this.currentUserTestAnswer.total;
-      let x = 0;
+      const total = this.currentUserTestAnswer.total
+      let x = 0
 
       // check progress inside questions
       this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
         heuQ.heuristicQuestions.forEach((question) => {
           if (question.heuristicAnswer != null) {
             // increment counter for all questions inside all heuristics
-            x++;
+            x++
           }
-        });
-      });
+        })
+      })
 
-      const percent = ((100 * x) / total).toFixed(1);
-      this.calculatedProgress = percent;
+      const percent = ((100 * x) / total).toFixed(1)
+      this.calculatedProgress = percent
     },
     perHeuristicProgress(item) {
       const value =
         (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== null)
           .length *
           100) /
-        item.heuristicTotal;
-      return value.toFixed(1);
+        item.heuristicTotal
+      return value.toFixed(1)
     },
     async saveAnswer() {
-      this.currentUserTestAnswer.progress = this.calculatedProgress;
-      await this.$store.dispatch("saveTestAnswer", {
+      this.currentUserTestAnswer.progress = this.calculatedProgress
+      await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
-      });
+      })
     },
     async submitAnswer() {
-      this.currentUserTestAnswer.submitted = true;
-      await this.saveAnswer();
+      this.currentUserTestAnswer.submitted = true
+      await this.saveAnswer()
     },
     setExistUser() {
-      this.noExistUser = false;
+      this.noExistUser = false
     },
     signOut() {
-      this.$store.dispatch("logout").then(() => {
-        this.noExistUser = true;
-      });
+      this.$store.dispatch('logout').then(() => {
+        this.noExistUser = true
+      })
     },
     populateWithHeuristicQuestions() {
-      let totalQuestions = 0;
+      let totalQuestions = 0
       if (this.currentUserTestAnswer.heuristicQuestions.length <= 0) {
         this.test.testStructure.forEach((heu) => {
           this.currentUserTestAnswer.heuristicQuestions.push(
@@ -528,62 +542,62 @@ export default {
                   new HeuristicQuestionAnswer({
                     heuristicId: h.id,
                     heuristicAnswer: null,
-                    heuristicComment: "",
-                  })
+                    heuristicComment: '',
+                  }),
               ),
               heuristicTotal: heu.total,
-            })
-          );
+            }),
+          )
 
-          totalQuestions += heu.questions.length ?? 0;
-        });
+          totalQuestions += heu.questions.length ?? 0
+        })
 
-        this.currentUserTestAnswer.total = totalQuestions;
+        this.currentUserTestAnswer.total = totalQuestions
       }
     },
     async setTest() {
-      this.logined = true;
-      await this.$store.dispatch("getCurrentTestAnswerDoc");
-      this.populateWithHeuristicQuestions();
+      this.logined = true
+      await this.$store.dispatch('getCurrentTestAnswerDoc')
+      this.populateWithHeuristicQuestions()
     },
   },
   computed: {
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
     user() {
-      if (this.$store.getters.user) this.setExistUser();
-      return this.$store.getters.user;
+      if (this.$store.getters.user) this.setExistUser()
+      return this.$store.getters.user
     },
     currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer;
+      return this.$store.getters.currentUserTestAnswer
     },
     showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false;
-      return true;
+      if (this.currentUserTestAnswer.submitted) return false
+      return true
     },
     cooperators() {
-      return this.$store.getters.cooperators;
+      return this.$store.getters.cooperators
     },
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
   },
   async created() {
-    await this.$store.dispatch("getTest", { id: this.id });
+    await this.$store.dispatch('getTest', { id: this.id })
 
-    await this.$store.dispatch("getCurrentTestAnswerDoc");
-    this.populateWithHeuristicQuestions();
-    this.calculateProgress();
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+    this.populateWithHeuristicQuestions()
+    this.calculateProgress()
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
       next((vm) => {
-        vm.fromlink = true;
-      });
-    next();
+        vm.fromlink = true
+      })
+    next()
   },
-};
+}
 </script>
 
 <style scoped>
@@ -602,7 +616,7 @@ export default {
 }
 
 .background:before {
-  content: "";
+  content: '';
   position: absolute;
   z-index: -1;
   top: 0;
