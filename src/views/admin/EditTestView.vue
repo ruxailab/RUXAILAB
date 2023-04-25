@@ -88,6 +88,7 @@
       </v-col>
       <!-- User tests -->
 
+
       {{ test }}
 
       <EditUserTest
@@ -262,7 +263,9 @@ export default {
     },
     validateAll() {
 
+
       if (this.test.type === 'User' && !this.valids[0]) {
+
 
         this.$store.commit(
           'setError',
@@ -270,7 +273,9 @@ export default {
         )
       } else if (
 
+
         this.test.type === 'HEURISTICS' &&
+
 
         this.object.options.length == 1
       ) {
@@ -279,7 +284,9 @@ export default {
           'Please create at least 2 options or none at all',
         )
 
+
       } else if (this.test.type === 'User' && !this.valids[1]) {
+
 
         this.$store.commit(
           'setError',
