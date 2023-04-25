@@ -88,6 +88,9 @@
       </v-col>
       <!-- User tests -->
 
+
+      {{ test }}
+
       <EditUserTest
         v-if="test.testType === 'User'"
         slot="top"
@@ -260,14 +263,19 @@ export default {
     },
     validateAll() {
 
-      if (this.test.testType === "User" && !this.valids[0]) {
+
+      if (this.test.type === 'User' && !this.valids[0]) {
+
+
         this.$store.commit(
           'setError',
           'Please fill all fields in Pre Test correctly or leave them empty',
         )
       } else if (
 
-        this.test.testType === "HEURISTICS" &&
+
+        this.test.type === 'HEURISTICS' &&
+
 
         this.object.options.length == 1
       ) {
@@ -276,7 +284,10 @@ export default {
           'Please create at least 2 options or none at all',
         )
 
-      } else if (this.test.testType === "User" && !this.valids[1]) {
+
+      } else if (this.test.type === 'User' && !this.valids[1]) {
+
+
         this.$store.commit(
           'setError',
           'Please fill all fields in Post Test correctly or leave them empty',
