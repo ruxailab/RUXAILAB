@@ -234,19 +234,14 @@
                       class="elevation-1 cardStyle"
                       dense
                     >
-                      <template v-slot:item.average="{ item }">
+                      <template v-slot:item.percentage="{ item }">
                         <div style="padding-top:2px; padding-bottom:2px">
                           <v-chip
                             style="width: 35%"
                             :color="getColor(item.average, item.max, item.min)"
                             dark
-                            >{{ item.average }}</v-chip
+                            >{{ item.percentage }}</v-chip
                           >
-                        </div>
-                      </template>
-                      <template v-slot:item.percentage="{ item }">
-                        <div style="padding-top:2px; padding-bottom:2px">
-                          {{ item.percentage }}%
                         </div>
                       </template>
                     </v-data-table>
@@ -474,11 +469,12 @@ export default {
           value: 'name',
         },
         {
-          text: 'Average',
-          value: 'average',
+          text: 'Percentage (%)',
+          value: 'percentage',
           align: 'center',
           sortable: false,
         },
+
         {
           text: 'Standard deviation',
           value: 'sd',
@@ -486,8 +482,8 @@ export default {
           sortable: false,
         },
         {
-          text: 'Percentage',
-          value: 'percentage',
+          text: 'Average',
+          value: 'average',
           align: 'center',
           sortable: false,
         },
