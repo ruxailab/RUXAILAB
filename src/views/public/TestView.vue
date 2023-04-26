@@ -364,7 +364,7 @@
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
-                <v-row v-if="test">
+                <v-row>
                   <!-- :questionId="currentUserTestAnswer.heuristicQuestions[i].id" -->
                   <ImageImport
                     :heuristicId="test.testStructure[heurisIndex]"
