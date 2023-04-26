@@ -140,6 +140,7 @@
 
               <v-col cols="10" v-if="ind == 1">
                 <RadarChart
+                  v-if="evaluatorStatistics.items.length >= 3"
                   :labels="
                     evaluatorStatistics.items.map(
                       (item) => `${item.evaluator} - ${item.result}%`,
@@ -147,6 +148,12 @@
                   "
                   :data="evaluatorStatistics.items.map((item) => item.result)"
                 />
+                <v-card>
+                  <v-card-text class="text-center body-1">
+                    The graphic can only be generated with 3 or more evaluators,
+                    please colect more data from your research to procede.
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
           </v-card>
