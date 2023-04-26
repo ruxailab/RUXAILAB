@@ -260,12 +260,9 @@ export default {
       this.isRunningTimer = true
       if (!this.timer) {
         this.timer = setInterval(() => {
-          if (this.time < 60) {
+
             this.time++
-          } else {
-            alert("Timeout reached!")
-            this.stop()
-          }
+          
         }, 1000)
       }
     },
