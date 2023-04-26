@@ -20,7 +20,7 @@
           <v-btn
             class="error accent-4 white--text ml-1"
             text
-            @click="(change = false), $router.push(go)"
+            @click=";(change = false), $router.push(go)"
           >
             Leave
           </v-btn>
@@ -54,11 +54,7 @@
 
     <!-- Loading Overlay -->
     <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Loading Test
       </div>
@@ -91,7 +87,7 @@
         />
       </v-col>
       <!-- User tests -->
-      
+
       <EditUserTest
         v-if="test.testType === 'User'"
         slot="top"
@@ -108,18 +104,19 @@
         @change="change = true"
         @valForm="validate"
       />
+
       <!-- </ShowInfo>  -->
     </v-row>
   </v-container>
 </template>
 
 <script>
-import Snackbar from "@/components/atoms/Snackbar"
+import Snackbar from '@/components/atoms/Snackbar'
 //import ShowInfo from "@/components/organisms/ShowInfo";
 //import IntroEdit from "@/components/molecules/IntroEdit.vue";
-import EditHeuristicsTest from "@/components/organisms/EditHeuristicsTest"
-import Test from "@/models/Test"
-import EditUserTest from "@/components/organisms/EditUserTest"
+import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest'
+
+import EditUserTest from '@/components/organisms/EditUserTest'
 
 export default {
   components: {
@@ -130,7 +127,7 @@ export default {
     EditUserTest,
   },
   // eslint-disable-next-line vue/require-prop-types
-  props: ["id"],
+  props: ['id'],
   data: () => ({
     index: 0,
     object: {},
@@ -149,14 +146,12 @@ export default {
         if (isTestOwner) return 0
 
         const answers = []
-        const answersEntries = object.entries(this.user.myAnswers)
+        const answersEntries = this.object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
-            answers.push(a[1])
+          answers.push(a[1])
         })
 
-        const isCooperator = answers.find(
-          (a) => a.testDocId === this.test.id
-        )
+        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
         if (isCooperator) {
           return isCooperator.accessLevel
         }
@@ -199,22 +194,23 @@ export default {
     },
   },
   async created() {
-    await this.$store.dispatch("getTest", { id: this.id })
+    await this.$store.dispatch('getTest', { id: this.id })
   },
   beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav)
+    window.addEventListener('beforeunload', this.preventNav)
   },
   beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav)
+    window.removeEventListener('beforeunload', this.preventNav)
   },
   methods: {
     async submit() {
-
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       const auxT = Test.toTest(this.object)
-      this.$store.dispatch("updateTest", auxT)
+      console.log(auxT)
+      this.$store.dispatch('updateTest', auxT)
+      console.log('saved in firebase')
 
-      
+
       this.mountAnswerSheet()
 
     },
@@ -234,7 +230,7 @@ export default {
 
           questions.forEach((el) => {
             arrayQuestions.push(
-              Object.assign({}, { id: el.id, res: "", com: "" })
+              Object.assign({}, { id: el.id, res: '', com: '' }),
             )
           })
 
@@ -245,14 +241,13 @@ export default {
                 id: heuris.id,
                 total: heuris.total,
                 questions: arrayQuestions,
-              }
-            )
+              },
+            ),
           )
         })
 
         delete aux.tasks
       } else if (this.object?.tasks) {
-
         aux.tasks = [...this.object.tasks]
         delete aux.heuristics
       }
@@ -263,23 +258,23 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-      if (this.test.testType === "User" && !this.valids[0]) {
+      if (this.test.type === 'User' && !this.valids[0]) {
         this.$store.commit(
-          "setError",
-          "Please fill all fields in Pre Test correctly or leave them empty"
+          'setError',
+          'Please fill all fields in Pre Test correctly or leave them empty',
         )
       } else if (
-        this.test.testType === "HEURISTICS" &&
+        this.test.type === 'HEURISTICS' &&
         this.object.options.length == 1
       ) {
         this.$store.commit(
-          "setError",
-          "Please create at least 2 options or none at all"
+          'setError',
+          'Please create at least 2 options or none at all',
         )
-      } else if (this.test.testType === "User" && !this.valids[1]) {
+      } else if (this.test.type === 'User' && !this.valids[1]) {
         this.$store.commit(
-          "setError",
-          "Please fill all fields in Post Test correctly or leave them empty"
+          'setError',
+          'Please fill all fields in Post Test correctly or leave them empty',
         )
       } else {
         this.submit()
@@ -288,15 +283,16 @@ export default {
     preventNav(event) {
       if (!this.change) return
       event.preventDefault()
-      event.returnValue = ""
+      event.returnValue = ''
     },
     async setIntro() {
+      console.log('Set Intro')
       this.object = await Object.assign(this.object, this.test)
-      if (this.test.testType === "HEURISTICS") {
+      if (this.test.testType === 'HEURISTICS') {
         if (this.test.heuristics.length == 0 && this.test.options.length == 0)
           this.intro = true
         else this.intro = false
-      } else if (this.test.testType === "User") {
+      } else if (this.test.testType === 'User') {
         // if (this.test.tasks.length() == 0) {
         //   //   (
         //   //   this.test.tasks.length == 0 &&
@@ -311,7 +307,7 @@ export default {
         // }
       }
       else {
-        
+
       }
     },
     setIndex(ind) {

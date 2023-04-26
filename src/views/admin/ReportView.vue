@@ -38,14 +38,11 @@
       <div class="white-text mt-3">Loading Reports</div>
     </v-overlay>
 
-    <Intro
-      v-if="reports.reports.length == 0 && !loading"
-      @goToCoops="goToCoops()"
-    />
+    <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
     <ShowInfo title="Reports" v-else>
       <v-row justify="end" dense slot="top" class="mr-3">
         <p class="subtitleView">
-          Last Updated: {{ new Date().toLocaleString("en") }}
+          Last Updated: {{ new Date().toLocaleString('en') }}
         </p>
       </v-row>
 
@@ -53,7 +50,7 @@
         <v-data-table
           style="background: #f5f7ff"
           :headers="headers"
-          :items="reports.reports"
+          :items="reports"
           :items-per-page="10"
           height="420px"
           dense
@@ -66,7 +63,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="(dialog = true), (report = item)">
+                <v-list-item @click=";(dialog = true), (report = item)">
                   <v-list-item-title>Remove Report</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -74,7 +71,10 @@
           </template>
 
           <template v-slot:item.progress="{ item }">
-            <div>{{ item.log.progress }}%</div>
+            <div>{{ item.progress }}%</div>
+          </template>
+          <template v-slot:item.submitted="{ item }">
+            <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
           </template>
         </v-data-table>
       </div>
@@ -83,12 +83,11 @@
 </template>
 
 <script>
-import ShowInfo from "@/components/organisms/ShowInfo";
-import Intro from "@/components/molecules/IntroReports";
-import Snackbar from "@/components/atoms/Snackbar";
-
+import ShowInfo from '@/components/organisms/ShowInfo'
+import Intro from '@/components/molecules/IntroReports'
+import Snackbar from '@/components/atoms/Snackbar'
 export default {
-  props: ["id"],
+  props: ['id'],
   components: {
     ShowInfo,
     Intro,
@@ -96,11 +95,11 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: "Evaluator", value: "email" },
-      { text: "Last Update", value: "log.date" },
-      { text: "Progress", value: "progress", justify: "center" },
-      { text: "Status", value: "log.status" },
-      { text: "More", value: "more", justify: "end" },
+      { text: 'Evaluator', value: 'userDocId' },
+      { text: 'Last Update', value: 'log.date' },
+      { text: 'Progress', value: 'progress', justify: 'center' },
+      { text: 'Status', value: 'submitted' },
+      { text: 'More', value: 'more', justify: 'end' },
     ],
     loading: true,
     dialog: false,
@@ -108,68 +107,68 @@ export default {
     report: null,
   }),
   methods: {
+    checkIfIsSubmitted(status) {
+      return status == true ? 'submitted' : 'in progress'
+    },
     removeReport(report) {
       this.$store
-        .dispatch("removeReport", {
+        .dispatch('removeReport', {
           docId: this.id,
           element: {
             id: report.uid,
           },
-          param: "reports",
+          param: 'reports',
         })
         .then(() => {
           //remove from answers
-          if (report.log.status == "Submitted")
-            this.$store.dispatch("removeUserAnswer", {
+          if (report.log.status == 'Submitted')
+            this.$store.dispatch('removeUserAnswer', {
               docId: this.answers.id,
               element: Object.assign({}, { id: report.uid }),
-            });
-
-          this.$store.commit("setSuccess", "Report successfully deleted");
-          this.loadingBtn = false;
-          this.dialog = false;
+            })
+          this.$store.commit('setSuccess', 'Report successfully deleted')
+          this.loadingBtn = false
+          this.dialog = false
         })
         .catch((err) => {
-          this.$store.commit("setError", err);
-        });
+          this.$store.commit('setError', err)
+        })
     },
     goToCoops() {
-      this.$emit("goToCoops");
+      this.$emit('goToCoops')
     },
   },
   computed: {
     reports() {
-      return this.$store.getters.reports || Object.assign({}, { reports: [] });
+      return [this.$store.getters.currentUserTestAnswer]
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
     dialogText() {
       return (
-        "Are you sure you want to delete " +
-        (this.report !== null ? this.report.email : "") +
+        'Are you sure you want to delete ' +
+        (this.report !== null ? this.report.email : '') +
         `'s report? This action can't be undone`
-      );
+      )
     },
     answers() {
-      return this.$store.getters.answers || {};
+      return this.$store.getters.answers || {}
     },
   },
   watch: {
     reports() {
-      if (Object.keys(this.reports).length) this.loading = false;
+      if (Object.values(this.reports).length) this.loading = false
     },
   },
   async created() {
-    await this.$store.dispatch("getReports", { id: this.id });
-
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+    /* await this.$store.dispatch("getReports", { id: this.id });
     await this.$store.dispatch("getTest", { id: this.reports.test.id });
-
     await this.$store.dispatch("getAnswers", { id: this.test.answers });
-
-    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {});
+    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
-};
+}
 </script>
 
 <style scoped>

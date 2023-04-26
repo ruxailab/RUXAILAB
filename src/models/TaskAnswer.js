@@ -1,19 +1,19 @@
-     /**
-     * Create a TaskAnswer.
-     * @param {string} taskId - The taskId value.
-     * @param {string} taskAnswer - The taskAnswer value.
-     * @param {string} taskObservations - The taskObservations value.
-     * @param {string} taskTime - The taskTime value.
-     * @param {string} post_testSheetURL - The post_testSheetURL value.
-     * @param {string} pre_testSheetURL - The pre_testSheetURL value.
-     * @param {string} audioRecordURL - The audioRecordURL value.
-     * @param {string} screenRecordURL - The screenRecordURL value.
-     * @param {string} webcamRecordURL - The webcamRecordURL value.
-     * @param {number} progress - The progress value.
-     * @param {number} total - The total value.
-     * @param {boolean} submitted - The submitted value.
-     * @param {string} userDocId - The userDocId value.
-     */
+/**
+ * Create a TaskAnswer.
+ * @param {string} taskId - The taskId value.
+ * @param {string} taskAnswer - The taskAnswer value.
+ * @param {string} taskObservations - The taskObservations value.
+ * @param {string} taskTime - The taskTime value.
+ * @param {string} post_testSheetURL - The post_testSheetURL value.
+ * @param {string} pre_testSheetURL - The pre_testSheetURL value.
+ * @param {string} audioRecordURL - The audioRecordURL value.
+ * @param {string} screenRecordURL - The screenRecordURL value.
+ * @param {string} webcamRecordURL - The webcamRecordURL value.
+ * @param {number} progress - The progress value.
+ * @param {number} total - The total value.
+ * @param {boolean} submitted - The submitted value.
+ * @param {string} userDocId - The userDocId value.
+ */
 
 export default class TaskAnswer{
     constructor({

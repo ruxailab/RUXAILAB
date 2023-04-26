@@ -16,17 +16,17 @@
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
       <CardSignIn
         @logined="
-          setTest();
-          logined = true;
+          setTest()
+          logined = true
         "
         @change="selected = !selected"
         v-if="selected"
       />
       <CardSignUp
         @logined="
-          flagNewUser = true;
-          logined = true;
-          setTest();
+          flagNewUser = true
+          logined = true
+          setTest()
         "
         @change="selected = !selected"
         v-else
@@ -204,9 +204,9 @@
 </template>
 
 <script>
-import CardSignIn from "@/components/atoms/CardSignIn";
-import CardSignUp from "@/components/atoms/CardSignUp";
-import Drawer from "@/components/atoms/Drawer.vue";
+import CardSignIn from '@/components/atoms/CardSignIn'
+import CardSignUp from '@/components/atoms/CardSignUp'
+import Drawer from '@/components/atoms/Drawer.vue'
 
 export default {
   components: {
@@ -229,258 +229,263 @@ export default {
   }),
   methods: {
     pushToTest() {
-      this.$router.push("/managerview/" + this.selectedTest).catch(() => {});
-      this.index = 0;
+      this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
+      this.index = 0
     },
     go(item) {
-      if (item.id == undefined) this.$router.push(item).catch(() => {});
+      if (item.id == undefined) this.$router.push(item).catch(() => {})
       else {
-        if (item.id == 2) window.open(item.path);
-        else this.$router.push(item.path).catch(() => {});
+        if (item.id == 2) window.open(item.path)
+        else this.$router.push(item.path).catch(() => {})
       }
     },
     setIsCoops(payload) {
-      this.isCoops = payload;
+      this.isCoops = payload
     },
     setFlag(flag, value) {
-      this[flag] = value;
+      this[flag] = value
     },
     signOut() {
-      this.$store.dispatch("logout").then(() => {
-        this.setFlag("flagUser", false);
-      });
+      this.$store.dispatch('logout').then(() => {
+        this.setFlag('flagUser', false)
+      })
     },
     async setTest() {
       if (this.user.myAnswers && this.test) {
-        const answers = [];
-        const answersEntries = Object.entries(this.user.myAnswers);
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
-          answers.push(a[1]);
-        });
+          answers.push(a[1])
+        })
         // Check if test has already been accepted by user
-        let alreadyAccepted = answers.find((a) => a.testDocId == this.test.id);
+        let alreadyAccepted = answers.find((a) => a.testDocId == this.test.id)
         if (!alreadyAccepted) {
           //Get invitation
           let invitation = this.test.cooperators.find(
-            (coop) => coop.token == this.token
-          );
+            (coop) => coop.token == this.token,
+          )
           if (invitation) {
             // User invited and he has account
             if (this.user.email == invitation.email) {
               // Accept Collaboration
-              await this.$store.dispatch("acceptTestCollaboration", {
+              await this.$store.dispatch('acceptTestCollaboration', {
                 test: this.test,
                 cooperator: this.user,
-              });
-              this.flagToken = false;
+              })
+              this.flagToken = false
             }
             //User invited and he doesn't have account
             else {
-              alert("User needs to signup using same e-mail of invitation");
-              await this.$store.dispatch("logout");
+              alert('User needs to signup using same e-mail of invitation')
+              await this.$store.dispatch('logout')
             }
           } else {
-            alert("Invalid Invitation");
-            this.$store.commit("setError", "Invalid invitation");
+            alert('Invalid Invitation')
+            this.$store.commit('setError', 'Invalid invitation')
           }
         } else {
-          this.flagToken = false;
+          this.flagToken = false
         }
       }
     },
   },
   computed: {
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
 
     items() {
-      let items;
+      let items
       if (this.test) {
         items = [
           {
-            title: "Manager",
-            icon: "mdi-home",
+            title: 'Manager',
+            icon: 'mdi-home',
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
           {
-            title: "Test",
-            icon: "mdi-file-document-edit",
+            title: 'Test',
+            icon: 'mdi-file-document-edit',
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
           {
-            title: "Preview",
-            icon: "mdi-file-eye",
+            title: 'Preview',
+            icon: 'mdi-file-eye',
             path: `/testview/${this.test.id}`,
             id: 2,
           },
           {
-            title: "Reports",
-            icon: "mdi-book-multiple",
-            path: `/reportview/${this.test.reports}`,
+            title: 'Reports',
+            icon: 'mdi-book-multiple',
+            path: `/reportview/${this.test.answersDocId}`,
             id: 3,
           },
           {
-            title: "Answers",
-            icon: "mdi-order-bool-ascending-variant",
+            title: 'Answers',
+            icon: 'mdi-order-bool-ascending-variant',
             path: `/answerview/${this.test.answers}`,
             id: 4,
           },
           {
-            title: "Analytics",
-            icon: "mdi-chart-bar",
+            title: 'Analytics',
+            icon: 'mdi-chart-bar',
             path: `/analyticsview/${this.test.answers}`,
             id: 5,
           },
-        ];
+        ]
 
         if (this.accessLevel == 0) {
           items.push({
-            title: "Cooperators",
-            icon: "mdi-account-group",
+            title: 'Cooperators',
+            icon: 'mdi-account-group',
             path: `/cooperators/${this.test.cooperators}`,
             id: 6,
-          });
+          })
         }
 
         if (this.test.template) {
           items.push({
-            title: "Template",
-            icon: "mdi-file-compare",
+            title: 'Template',
+            icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
             id: 7,
-          });
+          })
         }
       }
 
-      return items;
+      return items
     },
     isSettings() {
-      return this.$route.path.includes("/settings");
+      return this.$route.path.includes('/settings')
     },
     topCards() {
       return [
         {
-          image: "IntroEdit.svg",
-          title: "Edit",
-          imageStyle: "transform: rotateY(180deg);",
-          // bottom: "#740999",
-          bottom: "#000",
-          description: "Start creating and editing your test.",
+          image: 'IntroEdit.svg',
+          title: 'Edit',
+          imageStyle: 'transform: rotateY(180deg);',
+          bottom: '#000',
+          description: 'Start creating and editing your test.',
           cardStyle:
-            "background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden",
+            'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
           path: `/edittest/${this.test.id}`,
         },
         {
-          image: "IntroCoops.svg",
-          title: "Cooperators",
-          imageStyle: "",
-          // bottom: "#DBC717",
-          bottom: "#000",
-          description: "Invite people to help you in your test.",
+          image: 'IntroCoops.svg',
+          title: 'Cooperators',
+          imageStyle: '',
+          bottom: '#000',
+          description: 'Invite people to help you in your test.',
           cardStyle:
-            "background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden",
+            'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
           path: `/cooperators/${this.test.cooperators}`,
         },
-      ];
+      ]
     },
     bottomCards() {
       return [
         {
-          image: "IntroReports.svg",
-          title: "Reports",
-          imageStyle: "height: 250px",
-          // bottom: "#E03C3C",
-          bottom: "#000",
-          description: "Take a look at how your evaluators are doing.",
+          image: 'IntroReports.svg',
+          title: 'Reports',
+          imageStyle: 'height: 250px',
+          bottom: '#000',
+          description: 'Take a look at how your evaluators are doing.',
           cardStyle:
-            "background-image: radial-gradient(circle at top right, #ec6618, #f54e42); overflow: hidden",
-          path: `/reportview/${this.test.reports}`,
+            'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
+          path: `/reportview/${this.test.answersDocId}`,
         },
         {
-          image: "IntroAnswer.svg",
-          title: "Answers",
-          imageStyle: "height: 250px",
-          // bottom: "#4DA73E",
-          bottom: "#000",
-          description: "See how your evaluators are evaluating your project.",
+          image: 'IntroAnswer.svg',
+          title: 'Answers',
+          imageStyle: 'height: 250px',
+          bottom: '#000',
+          description: 'See how your evaluators are evaluating your project.',
           cardStyle:
-            "background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden",
+            'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
           path: `/answerview/${this.test.answersDocId}`,
         },
         {
-          image: "IntroAnalytics.svg",
-          title: "Analytics",
-          imageStyle: "height: 250px",
-          // bottom: "#2666E1",
-          bottom: "#000",
-          description: "Analyze comments and answers from your evaluators.",
+          image: 'IntroAnalytics.svg',
+          title: 'Analytics',
+          imageStyle: 'height: 250px',
+          bottom: '#000',
+          description: 'Analyze comments and answers from your evaluators.',
           cardStyle:
-            "background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden",
+            'background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden',
           path: `/analyticsview/${this.test.answers}`,
         },
-      ];
+        {
+          image: 'FinalReport.png',
+          title: 'Final Report',
+          imageStyle: 'height: 250px',
+          bottom: '#000',
+          description: 'Add additional data to your test',
+          cardStyle:
+            'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
+          path: `/finalreportview/${this.test.id}`,
+        },
+      ]
     },
     user() {
       if (this.$store.getters.user) {
-        this.setFlag("flagUser", true);
+        this.setFlag('flagUser', true)
       }
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     cooperators() {
-      return this.$store.getters.cooperators;
+      return this.$store.getters.cooperators
     },
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
     accessLevel() {
       // If user is superadmin
       if (this.user) {
-        if (this.user.accessLevel == 0) return 0;
+        if (this.user.accessLevel == 0) return 0
         // Check if user is collaborator or owner
-        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id;
-        if (isTestOwner) return 0;
-        const answers = [];
-        const answersEntries = Object.entries(this.user.myAnswers);
+        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
+        if (isTestOwner) return 0
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
-          answers.push(a[1]);
-        });
+          answers.push(a[1])
+        })
 
-        const isCooperator = answers.find((a) => a.testDocId === this.test.id);
+        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
         if (isCooperator) {
-          return isCooperator.accessLevel;
+          return isCooperator.accessLevel
         }
       }
 
-      return 3;
+      return 3
     },
   },
 
   watch: {
     user() {
       if (this.user) {
-        this.setFlag("flagUser", true);
+        this.setFlag('flagUser', true)
       }
       if (this.user.myCoops && this.flagNewUser) {
-        this.setTest();
-        this.flagNewUser = false;
+        this.setTest()
+        this.flagNewUser = false
       }
     },
   },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
       next((vm) => {
-        vm.setFlag("flagToken", true);
-        vm.token = to.params.token;
-      });
-    next();
+        vm.setFlag('flagToken', true)
+        vm.token = to.params.token
+      })
+    next()
   },
   async created() {
-    await this.$store.dispatch("getTest", { id: this.$route.params.id });
+    await this.$store.dispatch('getTest', { id: this.$route.params.id })
   },
-};
+}
 </script>
 
 <style>

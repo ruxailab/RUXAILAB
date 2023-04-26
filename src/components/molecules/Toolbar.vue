@@ -192,47 +192,47 @@ export default {
     managerItems() {
       const items = [
         {
-          title: "Manager",
-          icon: "mdi-home",
+          title: 'Manager',
+          icon: 'mdi-home',
           path: `/managerview/${this.test.id}`,
           id: 0,
         },
         {
-          title: "Test",
-          icon: "mdi-file-document-edit",
+          title: 'Test',
+          icon: 'mdi-file-document-edit',
           path: `/edittest/${this.test.id}`,
           id: 1,
         },
         {
-          title: "Preview",
-          icon: "mdi-file-eye",
+          title: 'Preview',
+          icon: 'mdi-file-eye',
           path: `/testview/${this.test.id}`,
           id: 2,
         },
         {
-          title: "Reports",
-          icon: "mdi-book-multiple",
+          title: 'Reports',
+          icon: 'mdi-book-multiple',
           path: `/reportview/${this.test.reports}`,
           id: 3,
         },
         {
-          title: "Answers",
-          icon: "mdi-order-bool-ascending-variant",
-          path: `/answerview/${this.test.answers}`,
+          title: 'Answers',
+          icon: 'mdi-order-bool-ascending-variant',
+          path: `/answerview/${this.test.answersDocId}`,
           id: 4,
         },
         {
-          title: "Analytics",
-          icon: "mdi-chart-bar",
-          path: `/analyticsview/${this.test.answers}`,
+          title: 'Analytics',
+          icon: 'mdi-chart-bar',
+          path: `/analyticsview/${this.test.answersDocId}`,
           id: 5,
         },
       ]
 
-      if (this.accessLevel == 0) {
+      if (this.accessLevel === 0) {
         items.push({
-          title: "Cooperators",
-          icon: "mdi-account-group",
+          title: 'Cooperators',
+          icon: 'mdi-account-group',
           path: `/cooperators/${this.test.cooperators}`,
           id: 6,
         })
@@ -240,16 +240,16 @@ export default {
 
       if (this.test.template) {
         items.push({
-          title: "Template",
-          icon: "mdi-file-compare",
+          title: 'Template',
+          icon: 'mdi-file-compare',
           path: `/templateview/${this.test.template.id}`,
           id: 7,
         })
       }
 
       items.push({
-        title: "Settings",
-        icon: "mdi-cog",
+        title: 'Settings',
+        icon: 'mdi-cog',
         path: `/settingsview/${this.test.id}`,
         id: 8,
       })
@@ -261,7 +261,7 @@ export default {
     accessLevel() {
       /*
       let id = this.test?.id;
-      
+
       //if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
 
       let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
