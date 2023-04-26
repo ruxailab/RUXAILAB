@@ -36,7 +36,7 @@
         <v-tooltip right v-for="(item, n) in items" :key="n">
           <template v-slot:activator="{ on, attrs }">
             <v-list-item
-              @click="(currentIndexSelect = n), go(item)"
+              @click=";(currentIndexSelect = n), go(item)"
               v-bind="attrs"
               v-on="on"
             >
@@ -67,7 +67,7 @@
         <v-list-item
           v-for="(item, n) in items"
           :key="n"
-          @click="(currentIndexSelect = n), go(item)"
+          @click=";(currentIndexSelect = n), go(item)"
         >
           <v-list-item-icon>
             <v-icon
@@ -132,7 +132,7 @@
 </template>
 <script>
 export default {
-  props: ["userAccessLevelOnTest"],
+  props: ['userAccessLevelOnTest'],
   data: () => ({
     drawer: true,
     mini: true,
@@ -141,115 +141,121 @@ export default {
   methods: {
     async changeTest(testName) {
       const testId = this.testsList.find((t) => t.testTitle === testName)
-        ?.testDocId;
-      await this.$store.dispatch("getTest", { id: testId });
-      this.$router.replace({ name: "ManagerView", params: { id: testId } });
+        ?.testDocId
+      await this.$store.dispatch('getTest', { id: testId })
+      this.$router.replace({ name: 'ManagerView', params: { id: testId } })
     },
     go(item) {
-      if (item.id == undefined) this.$router.push(item).catch(() => {});
+      if (item.id == undefined) this.$router.push(item).catch(() => {})
       else {
-        if (item.id == 2) window.open(item.path);
-        else this.$router.push(item.path).catch(() => {});
+        if (item.id == 2) window.open(item.path)
+        else this.$router.push(item.path).catch(() => {})
       }
     },
   },
   computed: {
     test() {
-      return this.$store.state.Tests.Test;
+      return this.$store.state.Tests.Test
     },
     testsList() {
-      const tests = [];
+      const tests = []
 
-      const testsEntries = Object.entries(this.$store.getters.user.myTests);
+      const testsEntries = Object.entries(this.$store.getters.user.myTests)
       testsEntries.forEach((a) => {
-        tests.push(a[1]);
-      });
-      return tests;
+        tests.push(a[1])
+      })
+      return tests
     },
     currentIndexSelect: {
       get() {
         if (this.items) {
           return this.items.indexOf(
             this.items.find((item) =>
-              item.path.split("/").includes(this.$route.path.split("/")[1])
-            )
-          );
+              item.path.split('/').includes(this.$route.path.split('/')[1]),
+            ),
+          )
         }
-        return 0;
+        return 0
       },
       set(item) {
-        return item;
+        return item
       },
     },
     items() {
-      let items;
+      let items
       if (this.test) {
         items = [
           {
-            title: "Manager",
-            icon: "mdi-home",
+            title: 'Manager',
+            icon: 'mdi-home',
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
           {
-            title: "Test",
-            icon: "mdi-file-document-edit",
+            title: 'Test',
+            icon: 'mdi-file-document-edit',
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
-        ];
-        
+        ]
+
         if (this.userAccessLevelOnTest <= 2) {
           items.push({
-            title: "Preview",
-            icon: "mdi-file-eye",
+            title: 'Preview',
+            icon: 'mdi-file-eye',
             path: `/testview/${this.test.id}`,
             id: 2,
-          });
+          })
         }
 
         items.push(
           {
-            title: "Reports",
-            icon: "mdi-book-multiple",
+            title: 'Reports',
+            icon: 'mdi-book-multiple',
             path: `/reportview/${this.test.id}`,
             id: 3,
           },
           {
-            title: "Answers",
-            icon: "mdi-order-bool-ascending-variant",
+            title: 'Answers',
+            icon: 'mdi-order-bool-ascending-variant',
             path: `/answerview/${this.test.id}`,
             id: 4,
           },
           {
-            title: "Analytics",
-            icon: "mdi-chart-bar",
+            title: 'Analytics',
+            icon: 'mdi-chart-bar',
             path: `/analyticsview/${this.test.id}`,
             id: 5,
-          }
-        );
+          },
+          {
+            title: 'Final Report',
+            icon: 'mdi-file-document',
+            path: `/finalreportview/${this.test.id}`,
+            id: 6,
+          },
+        )
 
         if (this.userAccessLevelOnTest == 0) {
           items.push({
-            title: "Cooperators",
-            icon: "mdi-account-group",
+            title: 'Cooperators',
+            icon: 'mdi-account-group',
             path: `/cooperators/${this.test.id}`,
-            id: 6,
-          });
+            id: 7,
+          })
         }
 
         if (this.test.template) {
           items.push({
-            title: "Template",
-            icon: "mdi-file-compare",
+            title: 'Template',
+            icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
-            id: 7,
-          });
+            id: 8,
+          })
         }
       }
 
-      return items;
+      return items
     },
   },
-};
+}
 </script>
