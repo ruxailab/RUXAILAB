@@ -31,7 +31,6 @@
       </v-card>
     </v-dialog>
     <!----------------------------------------------------------------------------------------->
-
     <!-- LOADER -->
     <v-overlay v-model="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -399,7 +398,6 @@ import UserTestView from '@/views/public/UserTestView.vue'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import ImageImport from '@/components/atoms/ImportImage.vue'
-
 export default {
   props: ['id', 'token'],
   components: {
@@ -488,7 +486,6 @@ export default {
     calculateProgress() {
       const total = this.currentUserTestAnswer.total
       let x = 0
-
       // check progress inside questions
       this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
         heuQ.heuristicQuestions.forEach((question) => {
@@ -498,7 +495,6 @@ export default {
           }
         })
       })
-
       const percent = ((100 * x) / total).toFixed(1)
       this.calculatedProgress = percent
     },
@@ -548,10 +544,8 @@ export default {
               heuristicTotal: heu.total,
             }),
           )
-
           totalQuestions += heu.questions.length ?? 0
         })
-
         this.currentUserTestAnswer.total = totalQuestions
       }
     },
@@ -585,7 +579,6 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
-
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.populateWithHeuristicQuestions()
     this.calculateProgress()
@@ -599,7 +592,6 @@ export default {
   },
 }
 </script>
-
 <style scoped>
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
@@ -608,13 +600,11 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
-
 .backgroundTest {
   background-color: #e8eaf2;
   height: 94%;
   overflow: scroll;
 }
-
 .background:before {
   content: '';
   position: absolute;
@@ -629,7 +619,6 @@ export default {
   background-position: right 0px top -20px;
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .titleView {
   font-family: Roboto;
   font-style: normal;
@@ -675,7 +664,6 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-
   /*
   height: 2.9em;
   overflow: hidden;
@@ -684,7 +672,6 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; */
 }
-
 /* Right side scroll bar */
 /* width */
 .right-view::-webkit-scrollbar {
@@ -703,7 +690,6 @@ export default {
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
-
 /* Nav bar list scroll bar */
 /* width */
 .nav-list::-webkit-scrollbar {
