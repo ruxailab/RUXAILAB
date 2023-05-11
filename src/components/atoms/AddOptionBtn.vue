@@ -38,17 +38,13 @@
                 </v-col>
               </v-row>
 
-              <v-row justify="center" align="center">
-                <v-col cols="9">
-                  <v-text-field
-                    maxLength="100"
-                    counter="100"
-                    v-model="option.description"
-                    label="Option description"
-                    :rules="textRequired"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+              <v-text-field
+                maxLength="100"
+                counter="100"
+                v-model="option.description"
+                label="Option description"
+                :rules="textRequired"
+              ></v-text-field>
 
               <v-row justify="center">
                 <v-checkbox
