@@ -1,7 +1,6 @@
 {
   "name": "research-workflow",
   "version": "0.1.0",
-  
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,6 +10,7 @@
     "doc": "jsdoc -c conf.json"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "bluebird": "^3.7.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
