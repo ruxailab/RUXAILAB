@@ -84,8 +84,14 @@ export default {
   data: () => ({
     formattedDate: '',
   }),
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+  },
   methods: {
     submitPdf() {
+      console.log(this.test.testAdmin.email)
       const date = new Date() // Get current date
       const dayOfMonth = date.getDate() // Get day of the month
       const monthNames = [
@@ -131,12 +137,14 @@ export default {
       axios
         .post(
           'http://localhost:8000/api/endpoint',
-          // { item: ['olá', 'tudo bem?'] },
           {
             items: [
-              { name: 'Product 1', date: this.formattedDate, price: 10.0 },
+              {
+                title: this.test.testTitle,
+                date: this.formattedDate,
+                aut: 'Tales Augusto Sartório Furlan',
+              },
             ],
-            total: 40.0,
           },
           { responseType: 'blob' },
         )
