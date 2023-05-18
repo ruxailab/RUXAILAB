@@ -319,9 +319,6 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
-
-    // const testId = this.answers.test.id
-    // await this.$store.dispatch('getTest', { id: testId })
   },
   methods: {
     statistics() {
