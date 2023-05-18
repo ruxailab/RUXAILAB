@@ -28,7 +28,23 @@
       </div>
       <div class="option">
         <input type="checkbox" id="results" name="results" />
-        <label for="results"> Answers results</label>
+        <label for="results"> Statistics</label>
+      </div>
+      <div class="option">
+        <input
+          type="checkbox"
+          id="evaluators-results"
+          name="evaluators-results"
+        />
+        <label for="results"> Answers by evaluators</label>
+      </div>
+      <div class="option">
+        <input
+          type="checkbox"
+          id="heuristics-results"
+          name="heuristics-results"
+        />
+        <label for="results"> Answers by heuristics</label>
       </div>
       <div class="option">
         <input type="checkbox" id="finalReport" name="finalReport" />
@@ -51,35 +67,46 @@ export default {
   watch: {},
 
   methods: {
-    genPreview() {
+    async genPreview() {
       let options = document.getElementById('options')
       let comments = document.getElementById('comments')
       let results = document.getElementById('results')
       let finalReport = document.getElementById('finalReport')
+      let evaluatorsResults = document.getElementById('evaluators-results')
+      let heuristicsResults = document.getElementById('heuristics-results')
 
       for (let i = 0; i <= this.test.testStructure.length; i++) {
-        // let auxId = document.getElementById(this.test.testStructure[i].name)
         let auxId = document.getElementById('heuristic' + i)
 
         console.log(auxId)
-        // if (auxId) {
-        //   preview.push(this.test.testStructure[i].name)
-        // }
       }
-
+      //test options
       if (options.checked == true) {
         this.preview.testOptions = this.test.testOptions
-      }
+      } //end of test options
+
+      //test comments
       if (comments.checked == true) {
-        let answersDocId = this.test.answersDocId
-        //need to get only the comments, not the answersDocId
+        await this.$store.dispatch('getCurrentTestAnswerDoc')
+        let answersDocId = this.$store.getters.testAnswerDocument
+          .heuristicAnswers
         this.preview.testComments = answersDocId
-      }
+      } //end of test comments
+
+      //test statistics
       if (results.checked == true) {
         let answersDocId = this.test.answersDocId
+        console.log(this.$store.getters.testAnswerDocument)
         //need to get only the results + graphics, not the answersDocId
         this.preview.results = answersDocId
-      }
+      } //end of test statistics
+
+      //Evaluators results
+      if (evaluatorsResults.checked == true) {
+        console.log(this.$store.getters.testAnswerDocument)
+        //table
+        //graphics
+      } //end of test statistics
       if (finalReport.checked) {
         this.preview.finalReport = this.test.finalReport
       }

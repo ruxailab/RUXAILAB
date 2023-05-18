@@ -418,6 +418,39 @@ export default {
     },
   },
   computed: {
+    finalResult() {
+      let testData = {
+        average: null,
+        max: null,
+        min: null,
+        sd: null,
+      }
+
+      if (this.evaluatorStatistics.items.length) {
+        let res = this.evaluatorStatistics.items.reduce((total, value) => {
+          return total + value.result / this.evaluatorStatistics.items.length
+        }, 0)
+
+        testData.average = `${Math.fround(res).toFixed(1)}%`
+
+        testData.max = `${Math.max(
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+
+        testData.min = `${Math.min(
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+
+        testData.sd = `${this.standardDeviation(
+          this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+      }
+      console.log('test data' + testData)
+      return testData
+    },
+    evaluatorStatistics() {
+      return this.$store.state.Answer.evaluatorStatistics
+    },
     heuristicsEvaluator() {
       let table = {
         header: [],
@@ -513,7 +546,7 @@ export default {
             name: item.heuristic,
             max: Math.max(item.max).toFixed(2),
             min: Math.min(item.min).toFixed(2),
-            percentage: convertedValue,
+            percentage: convertedValue.toFixed(2),
             sd: this.standardDeviation(results).toFixed(2),
             average: results
               .reduce((total, value) => total + value / results.length, 0)
@@ -524,98 +557,7 @@ export default {
 
       return table
     },
-    evaluatorStatistics() {
-      let table = {
-        header: [],
-        items: [],
-      }
 
-      table.header = [
-        {
-          text: 'Evaluator',
-          align: 'start',
-          sortable: false,
-          value: 'evaluator',
-        },
-        {
-          text: 'Usability Percentage',
-          value: 'result',
-          align: 'center',
-        },
-        {
-          text: 'Applicable Question',
-          value: 'aplication',
-          align: 'center',
-        },
-        {
-          text: 'No Applicable Question',
-          value: 'noAplication',
-          align: 'center',
-        },
-        {
-          text: 'Conclusion Percentage',
-          value: 'answered',
-          align: 'center',
-        },
-      ]
-
-      if (this.resultEvaluator) {
-        this.resultEvaluator.forEach((evaluator) => {
-          let totalNoAplication = 0
-          let totalNoReply = 0
-          let totalQuestions = 0
-
-          evaluator.heuristics.forEach((heuristic) => {
-            totalNoAplication += heuristic.totalNoAplication
-            totalNoReply += heuristic.totalNoReply
-            totalQuestions += heuristic.totalQuestions
-          })
-
-          table.items.push({
-            evaluator: evaluator.id,
-            result: evaluator.result,
-            aplication: totalQuestions - totalNoAplication,
-            noAplication: totalNoAplication,
-            answered: this.percentage(
-              totalQuestions - totalNoReply,
-              totalQuestions,
-            ).toFixed(2),
-          })
-        })
-      }
-
-      return table
-    },
-    finalResult() {
-      let testData = {
-        average: null,
-        max: null,
-        min: null,
-        sd: null,
-      }
-
-      if (this.evaluatorStatistics.items.length) {
-        let res = this.evaluatorStatistics.items.reduce((total, value) => {
-          return total + value.result / this.evaluatorStatistics.items.length
-        }, 0)
-
-        testData.average = `${Math.fround(res).toFixed(1)}%`
-
-        testData.max = `${Math.max(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.min = `${Math.min(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.sd = `${this.standardDeviation(
-          this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-      }
-
-      return testData
-    },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
@@ -651,6 +593,10 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
+    this.$store.dispatch('processStatistics', {
+      resultEvaluator: this.resultEvaluator,
+      percentage: this.percentage,
+    })
   },
 }
 </script>
