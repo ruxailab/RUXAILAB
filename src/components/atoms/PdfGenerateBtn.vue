@@ -79,6 +79,11 @@ export default {
 
 <script>
 import axios from 'axios'
+import {
+  standardDeviation,
+  calcFinalResult,
+  finalResult,
+} from '@/utils/statistics'
 
 export default {
   data: () => ({
@@ -91,6 +96,12 @@ export default {
   },
   methods: {
     submitPdf() {
+      let x = finalResult()
+      let y = calcFinalResult()
+      let z = standardDeviation()
+      console.log(x)
+      // console.log(y)
+      // console.log(z)
       console.log(this.test.testAdmin.email)
       const date = new Date() // Get current date
       const dayOfMonth = date.getDate() // Get day of the month
@@ -143,6 +154,7 @@ export default {
                 title: this.test.testTitle,
                 date: this.formattedDate,
                 aut: 'Tales Augusto Sartório Furlan',
+                finalReport: '',
               },
             ],
           },
