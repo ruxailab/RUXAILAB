@@ -228,6 +228,19 @@ export default {
     item: 0,
   }),
   methods: {
+    standardDeviation(array) {
+      let average = array.reduce(
+        (total, value) => total + value / array.length,
+        0,
+      )
+      return Math.sqrt(
+        array.reduce(
+          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
+          0,
+        ),
+      )
+    },
+
     pushToTest() {
       this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
       this.index = 0
@@ -461,6 +474,40 @@ export default {
 
       return 3
     },
+    finalResult() {
+      let testData = {
+        average: null,
+        max: null,
+        min: null,
+        sd: null,
+      }
+
+      if (this.evaluatorStatistics.items.length) {
+        let res = this.evaluatorStatistics.items.reduce((total, value) => {
+          return total + value.result / this.evaluatorStatistics.items.length
+        }, 0)
+
+        testData.average = `${Math.fround(res).toFixed(1)}%`
+
+        testData.max = `${Math.max(
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+
+        testData.min = `${Math.min(
+          ...this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+
+        testData.sd = `${this.standardDeviation(
+          this.evaluatorStatistics.items.map((item) => item.result),
+        ).toFixed(1)}%`
+      }
+      console.log('test data' + testData)
+
+      return testData
+    },
+    evaluatorStatistics() {
+      return this.$store.state.Answer.evaluatorStatistics
+    },
   },
 
   watch: {
@@ -484,6 +531,10 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
+    this.$store.dispatch('processStatistics', {
+      resultEvaluator: this.resultEvaluator,
+      percentage: this.percentage,
+    })
   },
 }
 </script>
