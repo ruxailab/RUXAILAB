@@ -284,6 +284,7 @@ import IntroAnswer from '@/components/molecules/IntroAnswer'
 import {
   standardDeviation,
   calcFinalResult,
+  percentage,
   finalResult,
   statistics,
 } from '@/utils/statistics'
@@ -489,6 +490,7 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.$store.dispatch('processStatistics', {
       resultEvaluator: this.resultEvaluator,
+      percentage: percentage(),
     })
   },
 }
