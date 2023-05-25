@@ -39,8 +39,6 @@ function calcFinalResult(array) {
 }
 
 function answers() {
-  console.log('answers')
-  console.log(store.getters.testAnswerDocument.heuristicAnswers)
   if (store.getters.testAnswerDocument) {
     return store.getters.testAnswerDocument.type === 'HEURISTICS'
       ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
@@ -51,16 +49,21 @@ function answers() {
 
 //final statistics
 
+function created(resultEvaluator) {
+  // await store.dispatch('getCurrentTestAnswerDoc')
+  store.dispatch('processStatistics', {
+    resultEvaluator: resultEvaluator,
+  })
+}
+
 function statistics() {
   if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
     let resultEvaluator = []
     let answersA = answers()
-    console.log('answersA')
-    console.log(answersA)
+
     //Get Evaluator answers
     let evaluatorIndex = 1
     answersA.forEach((evaluator) => {
-      console.log(evaluator)
       let SelectEvaluator = resultEvaluator.find(
         (e) => e.userDocId == `Ev${evaluatorIndex}`,
       )
@@ -77,7 +80,6 @@ function statistics() {
       //Get Heuristics for evaluators
       let heurisIndex = 1
       evaluator.heuristicQuestions.forEach((heuristic) => {
-        console.log(heuristic)
         //Get Questions for heuristic
 
         let noAplication = 0
@@ -111,12 +113,13 @@ function statistics() {
     resultEvaluator.forEach((ev) => {
       ev.result = calcFinalResult(ev.heuristics)
     })
-    return resultEvaluator
+
+    created(resultEvaluator)
+    // Update the store with the evaluator statistics
   }
 }
 
 function finalResult() {
-  console.log('fR')
   let evaluatorStatistics = store.state.Answer.evaluatorStatistics
 
   if (evaluatorStatistics.items.length) {
