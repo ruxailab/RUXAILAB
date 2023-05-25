@@ -40,8 +40,10 @@
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <DocumentSelection></DocumentSelection>
+            <DocumentSelection @data-updated="handleData"></DocumentSelection>
+
             <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
+
             <v-btn color="secondary" class="teste2" @click="step--"
               >Previous</v-btn
             >
@@ -49,7 +51,7 @@
 
           <v-stepper-content step="3">
             <p>Review your information before submitting.</p>
-            <PdfGenerator></PdfGenerator>
+            <PdfGenerator :data="selectedTestElements"></PdfGenerator>
             <!-- espaço para prévia do pdf e download -->
             <v-btn color="primary" @click="submitForm()">Submit</v-btn>
             <v-btn color="secondary" @click="step--">Previous</v-btn>
@@ -74,6 +76,7 @@ export default {
     object: {},
     textIsDone: false,
     step: 1,
+    selectedTestElements: null,
   }),
   mounted() {
     document.getElementById('myTextarea').innerHTML = this.test.finalReport
@@ -87,6 +90,9 @@ export default {
   components: { TextControls, DocumentSelection, PdfGenerator, ShowInfo },
 
   methods: {
+    handleData(data) {
+      console.log('Data received in parent:', data)
+    },
     setInnerHtml() {
       document.getElementById('myTextarea').innerHTML = this.test.finalReport
     },

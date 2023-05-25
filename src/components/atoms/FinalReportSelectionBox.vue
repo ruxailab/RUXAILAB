@@ -107,10 +107,16 @@ export default {
         //table
         //graphics
       } //end of test statistics
+      if (heuristicsResults.checked == true) {
+        console.log(this.$store.getters.testAnswerDocument)
+        //table
+        //graphics
+      } //end of test statistics
       if (finalReport.checked) {
         this.preview.finalReport = this.test.finalReport
       }
       console.log(this.preview)
+      this.$emit('selectedELement', this.preview)
     },
   },
 }

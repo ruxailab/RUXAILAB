@@ -42,7 +42,7 @@
                         <v-card-text>
                           <v-row align="center" justify="center">
                             <p class="display-3">
-                              {{ finalResult.average }}
+                              {{ showFinalResult.average }}
                             </p>
                           </v-row>
                         </v-card-text>
@@ -61,7 +61,7 @@
 
                           <v-list-item-title>Max</v-list-item-title>
                           <v-list-item-subtitle class="text-right">{{
-                            finalResult.max
+                            showFinalResult.max
                           }}</v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
@@ -70,7 +70,7 @@
                           </v-list-item-icon>
                           <v-list-item-title>Min</v-list-item-title>
                           <v-list-item-subtitle class="text-right">{{
-                            finalResult.min
+                            showFinalResult.min
                           }}</v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
@@ -81,7 +81,7 @@
                             >Standard deviation</v-list-item-title
                           >
                           <v-list-item-subtitle class="text-right">{{
-                            finalResult.sd
+                            showFinalResult.sd
                           }}</v-list-item-subtitle>
                         </v-list-item>
                       </v-list>
@@ -281,6 +281,13 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 
+import {
+  standardDeviation,
+  calcFinalResult,
+  finalResult,
+  statistics,
+} from '@/utils/statistics'
+
 export default {
   props: ['id'],
   components: {
@@ -296,97 +303,8 @@ export default {
     intro: null,
   }),
   methods: {
-    statistics() {
-      if (this.testAnswerDocument?.type === 'HEURISTICS') {
-        this.resultEvaluator = []
-
-        //Get Evaluator answers
-        let evaluatorIndex = 1
-        this.answers.forEach((evaluator) => {
-          let SelectEvaluator = this.resultEvaluator.find(
-            (e) => e.userDocId == `Ev${evaluatorIndex}`,
-          )
-          if (!SelectEvaluator) {
-            this.resultEvaluator.push({
-              userDocId: evaluator.userDocId,
-              email: 'noemail@email.com',
-              id: `Ev${evaluatorIndex}`,
-              heuristics: [],
-              result: 0,
-            })
-            SelectEvaluator = this.resultEvaluator[
-              this.resultEvaluator.length - 1
-            ]
-          }
-          //Get Heuristics for evaluators
-          let heurisIndex = 1
-          evaluator.heuristicQuestions.forEach((heuristic) => {
-            //Get Questions for heuristic
-
-            let noAplication = 0
-            let noReply = 0
-            let res = heuristic.heuristicQuestions.reduce(
-              (totalQuestions, question) => {
-                //grouping of answers
-                if (question.heuristicAnswer === null) {
-                  noAplication++
-                } //count answers no aplication
-                if (question.heuristicAnswer === '') noReply++
-                return totalQuestions + Number(question.heuristicAnswer) //sum of responses
-              },
-              0,
-            )
-            if (noAplication == heuristic.heuristicQuestions.length) res = null
-
-            SelectEvaluator.heuristics.push({
-              id: `H${heurisIndex}`,
-              result: res,
-              totalQuestions: heuristic.heuristicTotal,
-              totalNoAplication: noAplication,
-              totalNoReply: noReply,
-            })
-            heurisIndex++
-          })
-          evaluatorIndex++
-        })
-
-        //Calc Final result
-        this.resultEvaluator.forEach((ev) => {
-          ev.result = this.calcFinalResult(ev.heuristics)
-        })
-      }
-    },
-    calcFinalResult(array) {
-      let result = 0
-      let qtdQuestion = 0
-      let qtdNoAplication = 0
-      let maxOption = Math.max(
-        ...this.test.testOptions.map((item) => item.value),
-      )
-      array.forEach((res) => {
-        ;(result += res.result), (qtdQuestion += res.totalQuestions)
-        qtdNoAplication += res.totalNoAplication
-      })
-      let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
-
-      return ((result * 100) / perfectResult).toFixed(1)
-    },
-    standardDeviation(array) {
-      let average = array.reduce(
-        (total, value) => total + value / array.length,
-        0,
-      )
-      return Math.sqrt(
-        array.reduce(
-          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
-          0,
-        ),
-      )
-    },
-    percentage(value, result) {
-      return (value * 100) / result
-    },
     getColor(value, max, min) {
+      //✓
       max = Number(max)
       min = Number(min)
       let h = (max - min) / 5
@@ -399,6 +317,7 @@ export default {
       else return 'green'
     },
     getColorPorcentage(value) {
+      //✓
       if (value <= 20) return 'red'
       else if (value <= 40) return 'ambar'
       else if (value <= 60) return 'orange lighten-1'
@@ -406,6 +325,7 @@ export default {
       else return 'green'
     },
     goToDataHeuristic(item) {
+      //✓
       let selectHeruristc = this.heuristicsEvaluator.items.indexOf(
         this.heuristicsEvaluator.items.find((h) => h.heuristic === item),
       )
@@ -414,41 +334,16 @@ export default {
         .catch(() => {})
     },
     goToCoops() {
+      //✓
       this.$emit('goToCoops')
     },
   },
   computed: {
-    finalResult() {
-      let testData = {
-        average: null,
-        max: null,
-        min: null,
-        sd: null,
-      }
-
-      if (this.evaluatorStatistics.items.length) {
-        let res = this.evaluatorStatistics.items.reduce((total, value) => {
-          return total + value.result / this.evaluatorStatistics.items.length
-        }, 0)
-
-        testData.average = `${Math.fround(res).toFixed(1)}%`
-
-        testData.max = `${Math.max(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.min = `${Math.min(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.sd = `${this.standardDeviation(
-          this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-      }
-      console.log('test data' + testData)
-      return testData
+    showFinalResult() {
+      return finalResult()
     },
     evaluatorStatistics() {
+      console.log(this.$store.state.Answer.evaluatorStatistics)
       return this.$store.state.Answer.evaluatorStatistics
     },
     heuristicsEvaluator() {
@@ -536,7 +431,6 @@ export default {
           let results = Object.entries(item)
             .filter((item) => item[0].includes('Ev'))
             .map((item) => item[1])
-          console.log(results)
           let valueToConvert = results
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
@@ -547,7 +441,7 @@ export default {
             max: Math.max(item.max).toFixed(2),
             min: Math.min(item.min).toFixed(2),
             percentage: convertedValue.toFixed(2),
-            sd: this.standardDeviation(results).toFixed(2),
+            sd: standardDeviation(results).toFixed(2),
             average: results
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
@@ -582,7 +476,7 @@ export default {
         this.testAnswerDocument &&
         (this.answers !== null || this.answers.length > 0)
       ) {
-        this.statistics()
+        statistics()
         if (this.answers.length == 0) this.intro = true
         else this.intro = false
       }
@@ -595,7 +489,6 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.$store.dispatch('processStatistics', {
       resultEvaluator: this.resultEvaluator,
-      percentage: this.percentage,
     })
   },
 }

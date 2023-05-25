@@ -1,6 +1,7 @@
 import AnswerController from '@/controllers/AnswerController'
 import HeuristicAnswer from '@/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
+import { percentage } from '@/utils/statistics'
 
 const answerController = new AnswerController()
 
@@ -162,9 +163,10 @@ export default {
             result: evaluator.result,
             aplication: totalQuestions - totalNoAplication,
             noAplication: totalNoAplication,
-            answered: payload
-              .percentage(totalQuestions - totalNoReply, totalQuestions)
-              .toFixed(2),
+            answered: percentage(
+              totalQuestions - totalNoReply,
+              totalQuestions,
+            ).toFixed(2),
           })
         })
       }
