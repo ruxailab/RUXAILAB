@@ -207,6 +207,7 @@
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
+import { statistics } from '@/utils/statistics'
 
 export default {
   components: {
@@ -474,40 +475,6 @@ export default {
 
       return 3
     },
-    finalResult() {
-      let testData = {
-        average: null,
-        max: null,
-        min: null,
-        sd: null,
-      }
-
-      if (this.evaluatorStatistics.items.length) {
-        let res = this.evaluatorStatistics.items.reduce((total, value) => {
-          return total + value.result / this.evaluatorStatistics.items.length
-        }, 0)
-
-        testData.average = `${Math.fround(res).toFixed(1)}%`
-
-        testData.max = `${Math.max(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.min = `${Math.min(
-          ...this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-
-        testData.sd = `${this.standardDeviation(
-          this.evaluatorStatistics.items.map((item) => item.result),
-        ).toFixed(1)}%`
-      }
-      console.log('test data' + testData)
-
-      return testData
-    },
-    evaluatorStatistics() {
-      return this.$store.state.Answer.evaluatorStatistics
-    },
   },
 
   watch: {
@@ -529,10 +496,11 @@ export default {
       })
     next()
   },
+
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
-    this.$store.dispatch('processStatistics', {
-      resultEvaluator: this.resultEvaluator,
+    await this.$store.dispatch('processStatistics', {
+      resultEvaluator: statistics(),
       percentage: this.percentage,
     })
   },
