@@ -50,7 +50,6 @@ function answers() {
 //final statistics
 
 function created(resultEvaluator) {
-  // await store.dispatch('getCurrentTestAnswerDoc')
   store.dispatch('processStatistics', {
     resultEvaluator: resultEvaluator,
   })
@@ -114,13 +113,15 @@ function statistics() {
       ev.result = calcFinalResult(ev.heuristics)
     })
 
-    created(resultEvaluator)
-    // Update the store with the evaluator statistics
+    // created(resultEvaluator)
+    console.log(resultEvaluator)
+    return resultEvaluator
   }
 }
 
 function finalResult() {
   let evaluatorStatistics = store.state.Answer.evaluatorStatistics
+  console.log(store.state.Answer)
 
   if (evaluatorStatistics.items.length) {
     let res = evaluatorStatistics.items.reduce((total, value) => {
