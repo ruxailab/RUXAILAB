@@ -12,8 +12,6 @@
           <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
           <v-divider></v-divider>
           <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step :complete="step > 3" step="3"></v-stepper-step>
         </v-stepper-header>
 
         <v-stepper-items style="background-color:#F5F5F5">
@@ -40,21 +38,15 @@
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <DocumentSelection @data-updated="handleData"></DocumentSelection>
+            <div>
+              <DocumentSelection></DocumentSelection>
 
-            <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
+              <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
 
-            <v-btn color="secondary" class="teste2" @click="step--"
-              >Previous</v-btn
-            >
-          </v-stepper-content>
-
-          <v-stepper-content step="3">
-            <p>Review your information before submitting.</p>
-            <PdfGenerator :data="selectedTestElements"></PdfGenerator>
-            <!-- espaço para prévia do pdf e download -->
-            <v-btn color="primary" @click="submitForm()">Submit</v-btn>
-            <v-btn color="secondary" @click="step--">Previous</v-btn>
+              <v-btn color="secondary" class="teste2" @click="step--"
+                >Previous</v-btn
+              >
+            </div>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -65,7 +57,6 @@
 <script>
 import TextControls from '@/components/atoms/FinalReportControls.vue'
 import DocumentSelection from '@/components/molecules/FinalReportDocumentSelection.vue'
-import PdfGenerator from '@/components/atoms/PdfGenerateBtn.vue'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
@@ -87,17 +78,13 @@ export default {
     },
   },
   watch: {},
-  components: { TextControls, DocumentSelection, PdfGenerator, ShowInfo },
+  components: { TextControls, DocumentSelection, ShowInfo },
 
   methods: {
-    handleData(data) {
-      console.log('Data received in parent:', data)
-    },
     setInnerHtml() {
       document.getElementById('myTextarea').innerHTML = this.test.finalReport
     },
     async update() {
-      console.log('olá')
       let contenteditable = document.getElementById('myTextarea'),
         text = contenteditable.innerHTML
 

@@ -51,7 +51,6 @@
         <label for="finalReport"> Final Report</label>
       </div>
     </div>
-    <v-btn @click="genPreview"> Generate preview</v-btn>
   </div>
 </template>
 
@@ -124,6 +123,7 @@ export default {
 
 <style>
 .selection-box {
+  margin-left: 0px;
   width: 30vw;
   height: 80vh;
 

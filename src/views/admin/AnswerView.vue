@@ -281,13 +281,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 
-import {
-  standardDeviation,
-  calcFinalResult,
-  percentage,
-  finalResult,
-  statistics,
-} from '@/utils/statistics'
+import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
 export default {
   props: ['id'],
@@ -389,6 +383,7 @@ export default {
           })
         })
       }
+      console.log('Result evaluator' + table)
       return table
     },
     heuristicsStatistics() {
@@ -488,10 +483,6 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
-    this.$store.dispatch('processStatistics', {
-      resultEvaluator: this.resultEvaluator,
-      percentage: percentage(),
-    })
   },
 }
 </script>

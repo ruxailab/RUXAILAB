@@ -51,10 +51,7 @@ export default {
       state.answers = payload
     },
     SET_EVALUATOR_STATISTICS(state, payload) {
-      state.evaluatorStatistics = payload
-    },
-
-    SET_ANSWERS_FINAL_REPORT(state, payload) {
+      console.log(payload)
       state.evaluatorStatistics = payload
     },
   },
@@ -130,12 +127,12 @@ export default {
           align: 'center',
         },
         {
-          text: 'Applicable Question',
+          text: 'Applicable Question(s)',
           value: 'aplication',
           align: 'center',
         },
         {
-          text: 'No Applicable Question',
+          text: 'No Applicable Question(s)',
           value: 'noAplication',
           align: 'center',
         },
@@ -158,6 +155,7 @@ export default {
             totalQuestions += heuristic.totalQuestions
           })
 
+          console.log(table)
           table.items.push({
             evaluator: evaluator.id,
             result: evaluator.result,
@@ -170,11 +168,9 @@ export default {
           })
         })
       }
-      console.log('ola')
+      console.log('processStatistics')
+      console.log(table)
       commit('SET_EVALUATOR_STATISTICS', table)
-    },
-    async generateFinalResult({ commit }, payload) {
-      commit('SET_ANSWERS_FINAL_REPORT', testData)
     },
   },
 }
