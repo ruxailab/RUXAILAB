@@ -18,8 +18,8 @@ const heuristicsStatisticsHeaders = [
 const evaluatorStatisticsHeaders = [
   { text: 'Evaluator', align: 'start', sortable: false, value: 'evaluator' },
   { text: 'Usability Percentage', value: 'result', align: 'center' },
-  { text: 'Applicable Question', value: 'aplication', align: 'center' },
-  { text: 'No Applicable Question', value: 'noAplication', align: 'center' },
+  { text: 'Applicable Question(s)', value: 'aplication', align: 'center' },
+  { text: 'No Applicable Question(s)', value: 'noAplication', align: 'center' },
   { text: 'Conclusion Percentage', value: 'answered', align: 'center' },
 ]
 
