@@ -45,16 +45,6 @@
 import AddOptionBtn from '../atoms/AddOptionBtn'
 
 export default {
-  /*
-  props: {
-    options: {
-      type: Array,
-      required: true,
-      default: function() {
-        return [];
-      },
-    },
-  },*/
   data: () => ({
     headers: [
       {

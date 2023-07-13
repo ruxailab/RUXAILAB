@@ -207,7 +207,7 @@
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
-import { statistics } from '@/utils/statistics'
+import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
 export default {
   components: {
@@ -305,6 +305,10 @@ export default {
   },
   computed: {
     test() {
+      this.$store.dispatch('processStatistics', {
+        resultEvaluator: statistics(),
+        percentage: this.percentage,
+      })
       return this.$store.getters.test
     },
 
@@ -499,10 +503,7 @@ export default {
 
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
-    await this.$store.dispatch('processStatistics', {
-      resultEvaluator: statistics(),
-      percentage: this.percentage,
-    })
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
 }
 </script>
