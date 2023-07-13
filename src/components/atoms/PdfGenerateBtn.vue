@@ -14,6 +14,17 @@ export default {
     statistics: '',
   }),
   computed: {
+    testAnswerDocument() {
+      return this.$store.state.Answer.testAnswerDocument
+    },
+    answers() {
+      if (this.testAnswerDocument) {
+        return this.testAnswerDocument.type === 'HEURISTICS'
+          ? Object.values(this.testAnswerDocument.heuristicAnswers)
+          : Object.values(this.testAnswerDocument.taskAnswers)
+      }
+      return []
+    },
     test() {
       return this.$store.getters.test
     },
@@ -23,7 +34,9 @@ export default {
     submitPdf() {
       console.log(this.test)
 
-      // console.log(z)
+      console.log('puta')
+      console.log(this.test.testOptions)
+      console.log(this.answers)
       console.log(this.test.testAdmin.email)
       const date = new Date() // Get current date
       const dayOfMonth = date.getDate() // Get day of the month
@@ -65,7 +78,7 @@ export default {
       }
 
       this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
-      console.log(this.$store.state.Answer.evaluatorStatistics)
+
       this.statistics = finalResult()
 
       axios
@@ -78,6 +91,7 @@ export default {
                 date: this.formattedDate,
                 finalReport: this.test.finalReport,
                 allOptions: this.test.testOptions,
+                allAnswers: this.answers,
                 testStructure: this.test.testStructure,
                 gstatistics: this.statistics,
                 statisticstable: this.$store.state.Answer.evaluatorStatistics,
