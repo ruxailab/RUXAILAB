@@ -279,7 +279,7 @@ export default {
       handler(to) {
         const parentRoute = to.matched[0]
         if (parentRoute) {
-          if (parentRoute.name === 'Manager View') this.isManager = true
+          if (parentRoute.name === 'ManagerView') this.isManager = true
           else this.isManager = false
         }
       },

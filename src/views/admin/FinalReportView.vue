@@ -1,56 +1,49 @@
 <template>
   <v-container>
     <ShowInfo style="padding: 0!important;" title="Final Report"></ShowInfo>
-    <v-divider />
-    <div class="mt-3">
-      <v-stepper
-        style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
-        v-model="step"
-        class="final-report-box"
-      >
-        <v-stepper-header background-color="transparent">
-          <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
-        </v-stepper-header>
 
-        <v-stepper-items style="background-color:#F5F5F5">
-          <v-stepper-content step="1" class="align-mid">
-            <div class="container">
-              <div class="row"></div>
-              <div class="row">
-                <TextControls></TextControls>
-              </div>
+    <v-stepper
+      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
+      v-model="step"
+      class="final-report-box"
+    >
+      <v-stepper-header background-color="transparent">
+        <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
+        <v-divider></v-divider>
+        <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
+      </v-stepper-header>
 
-              <div class="row">
-                <div class="col">
-                  <div
-                    contenteditable
-                    id="myTextarea"
-                    class="form-control"
-                  ></div>
-                </div>
+      <v-stepper-items style="background-color:#F5F5F5">
+        <v-stepper-content step="1" class="align-mid">
+          <div class="container">
+            <div class="row">
+              <TextControls></TextControls>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <div contenteditable id="myTextarea" class="form-control"></div>
               </div>
             </div>
-            <v-btn color="primary" class="teste" @click="step++, update()"
-              >Next</v-btn
+          </div>
+          <v-btn color="primary" class="teste" @click="step++, update()"
+            >Next</v-btn
+          >
+        </v-stepper-content>
+
+        <v-stepper-content step="2">
+          <div>
+            <DocumentSelection></DocumentSelection>
+
+            <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
+
+            <v-btn color="secondary" class="teste2" @click="step--"
+              >Previous</v-btn
             >
-          </v-stepper-content>
-
-          <v-stepper-content step="2">
-            <div>
-              <DocumentSelection></DocumentSelection>
-
-              <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
-
-              <v-btn color="secondary" class="teste2" @click="step--"
-                >Previous</v-btn
-              >
-            </div>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
-    </div>
+          </div>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
   </v-container>
 </template>
 
@@ -70,7 +63,7 @@ export default {
     selectedTestElements: null,
   }),
   mounted() {
-    document.getElementById('myTextarea').innerHTML = this.test.finalReport
+    this.setInnerHtml()
   },
   computed: {
     test() {
@@ -82,7 +75,10 @@ export default {
 
   methods: {
     setInnerHtml() {
-      document.getElementById('myTextarea').innerHTML = this.test.finalReport
+      const textarea = document.getElementById('myTextarea')
+      if (textarea) {
+        textarea.innerHTML = this.test.finalReport
+      }
     },
     async update() {
       let contenteditable = document.getElementById('myTextarea'),
