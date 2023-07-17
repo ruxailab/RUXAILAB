@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import IntroComp from "@/components/atoms/IntrosComponent";
+import IntroComp from '@/components/atoms/IntrosComponent'
 
 export default {
   data: () => ({}),
@@ -23,39 +23,39 @@ export default {
   },
   methods: {
     goToCoops() {
-      this.$emit("goToCoops");
+      this.$emit('goToCoops')
     },
     goToDoc() {
-      this.$router.push("/analytics/documentation").catch(() => {});
+      this.$router.push('/analytics/documentation').catch(() => {})
     },
     goToDisc() {
-      window.open("https://discord.gg/XHhnXBjgRh");
+      window.open('https://discord.gg/XHhnXBjgRh')
     },
     callFunc(func) {
-      this[func]();
+      this[func]()
     },
   },
   computed: {
     items() {
       return [
         {
-          iconColor: "#59b9d4",
-          icon: "mdi-file-document",
-          title: "Read documentation",
+          iconColor: '#59b9d4',
+          icon: 'mdi-file-document',
+          title: 'Read documentation',
           subtitle:
-            "Click to access the documentation on how to use the analytics page.",
-          func: "goToDoc",
+            'Click to access the documentation on how to use the analytics page.',
+          func: 'goToDoc',
         },
 
         {
-          iconColor: "#59b9d4",
-          icon: "mdi-emoticon-happy",
-          title: "Join the comunity!",
-          subtitle: "You will find support on our discord server.",
-          func: "goToDisc",
+          iconColor: '#59b9d4',
+          icon: 'mdi-emoticon-happy',
+          title: 'Join the comunity!',
+          subtitle: 'You will find support on our discord server.',
+          func: 'goToDisc',
         },
-      ];
+      ]
     },
   },
-};
+}
 </script>

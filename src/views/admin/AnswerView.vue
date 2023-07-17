@@ -338,7 +338,6 @@ export default {
       return finalResult()
     },
     evaluatorStatistics() {
-      console.log(this.$store.state.Answer.evaluatorStatistics)
       return this.$store.state.Answer.evaluatorStatistics
     },
     heuristicsEvaluator() {
@@ -383,7 +382,6 @@ export default {
           })
         })
       }
-      console.log('Result evaluator' + table)
       return table
     },
     heuristicsStatistics() {
@@ -444,7 +442,7 @@ export default {
           })
         })
       }
-
+      console.log(this.heuristicsEvaluator)
       return table
     },
 
