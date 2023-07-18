@@ -294,7 +294,7 @@ export default {
   data: () => ({
     tab: 0,
     ind: 0,
-    resultEvaluator: [],
+    resultEvaluator: statistics(),
     intro: null,
   }),
   methods: {
@@ -354,7 +354,7 @@ export default {
         align: 'start',
         value: 'heuristic',
       })
-
+      console.log('result evaluators ' + this.resultEvaluator)
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
           let header = table.header.find((h) => h.text == evaluator.id)
@@ -458,6 +458,10 @@ export default {
       return []
     },
     test() {
+      this.$store.dispatch('processStatistics', {
+        resultEvaluator: statistics(),
+        percentage: this.percentage,
+      })
       return this.$store.getters.test
     },
     loading() {
