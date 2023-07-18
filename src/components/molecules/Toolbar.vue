@@ -229,6 +229,12 @@ export default {
           path: `/analyticsview/${this.test.answersDocId}`,
           id: 5,
         },
+        {
+          title: 'Final Report',
+          icon: 'mdi-file-document',
+          path: `/finalreportview/${this.test.id}`,
+          id: 6,
+        },
       ]
 
       if (this.accessLevel === 0) {

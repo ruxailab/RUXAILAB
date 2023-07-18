@@ -168,8 +168,6 @@ export default {
           })
         })
       }
-      console.log('processStatistics')
-      console.log(table)
       commit('SET_EVALUATOR_STATISTICS', table)
     },
   },
