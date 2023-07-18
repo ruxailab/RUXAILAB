@@ -116,7 +116,7 @@ export default {
 .final-report-box {
   background-color: whitesmoke;
   width: 100%;
-  height: 100vh;
+  height: 70vh;
   padding: 0;
 }
 .form-control {
@@ -135,5 +135,13 @@ export default {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+}
+
+.vertical-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%; /* Position the vertical bar at the middle of the container */
+  border-left: 1px solid #ccc; /* Define the appearance of the vertical bar */
 }
 </style>

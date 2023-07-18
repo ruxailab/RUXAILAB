@@ -1,54 +1,62 @@
 <template>
-  <div
-    class="selection-box"
-    style=" flex-direction: column; align-items: center;"
-  >
+  <div class="selection-box">
     <h2>SELECT YOUR PDF ELEMENTS</h2>
-    <div style="display: flex; flex-direction: column;">
-      Test heuristics:
-      <!-- <div v-for="heuristics in this.test.testStructure" :key="heuristics.id">
-        <div class="option heuristics">
-          <input
-            type="checkbox"
-            :id="'heuristic' + heuristics.id"
-            :name="heuristics.name"
-          />
-          <label :for="heuristics.name">
-            Heuristic {{ heuristics.id }} - {{ heuristics.title }}</label
+    <div class="flex-container">
+      <div class="column with-border">
+        <div v-if="showSlider" class="slider-container">
+          <div class="slidder-section">
+            <input
+              type="range"
+              v-model="sliderValue"
+              :min="0"
+              :max="Math.max(0, heuristics.length - 5)"
+              step="1"
+              class="heuristics-slider"
+            />
+            <div class="heuristics-slider-label">
+              Heuristics {{ sliderValueMin }} to {{ sliderValueMax }}
+            </div>
+          </div>
+          <div
+            v-for="heuristic in visibleHeuristics"
+            :key="heuristic.id"
+            class="option"
           >
+            <input
+              type="checkbox"
+              :id="'heuristic' + heuristic.id"
+              :name="heuristic.name"
+            />
+            <label :for="'heuristic' + heuristic.id">
+              {{ heuristic.id }} - {{ heuristic.title }}
+            </label>
+          </div>
         </div>
-      </div> -->
-      <div class="option">
-        <input type="checkbox" id="options" name="options" />
-        <label for="options"> Test options</label>
+        <div v-else>
+          Heuristics:
+          <div
+            v-for="heuristic in heuristics"
+            :key="heuristic.id"
+            class="option"
+          >
+            <input
+              type="checkbox"
+              :id="'heuristic' + heuristic.id"
+              :name="heuristic.name"
+            />
+
+            <label :for="'heuristic' + heuristic.id">
+              {{ heuristic.id }} - {{ heuristic.title }}
+            </label>
+          </div>
+        </div>
       </div>
-      <div class="option">
-        <input type="checkbox" id="comments" name="comments" />
-        <label for="comments"> Answers comments</label>
-      </div>
-      <div class="option">
-        <input type="checkbox" id="results" name="results" />
-        <label for="results"> Statistics</label>
-      </div>
-      <div class="option">
-        <input
-          type="checkbox"
-          id="evaluators-results"
-          name="evaluators-results"
-        />
-        <label for="results"> Answers by evaluators</label>
-      </div>
-      <div class="option">
-        <input
-          type="checkbox"
-          id="heuristics-results"
-          name="heuristics-results"
-        />
-        <label for="results"> Answers by heuristics</label>
-      </div>
-      <div class="option">
-        <input type="checkbox" id="finalReport" name="finalReport" />
-        <label for="finalReport"> Final Report</label>
+
+      <div class="column with-margin">
+        <div v-for="option in options" :key="option.id" class="option">
+          <input type="checkbox" :id="option.id" :name="option.name" />
+          <label class="option" :for="option.id">{{ option.label }}</label>
+        </div>
       </div>
     </div>
 
@@ -62,8 +70,34 @@ import { finalResult } from '@/utils/statistics'
 
 export default {
   props: ['id', 'HEURISTICS'],
-  data: () => ({ preview: new Object(), formattedDate: '', statistics: '' }),
+  data: () => ({
+    preview: new Object(),
+    formattedDate: '',
+    statistics: '',
+    currentHeuristicIndex: 0,
+    showSlider: false,
+    sliderValue: 0,
+  }),
+  mounted() {
+    window.addEventListener('resize', this.checkHeuristicsSlider)
+    this.checkHeuristicsSlider()
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkHeuristicsSlider)
+  },
   computed: {
+    sliderValueMin() {
+      return Number(this.sliderValue) + 1
+    },
+    sliderValueMax() {
+      return Math.min(Number(this.sliderValue) + 5, this.heuristics.length)
+    },
+    visibleHeuristics() {
+      return this.heuristics.slice(
+        Number(this.sliderValue),
+        Number(this.sliderValue) + 5,
+      )
+    },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
@@ -78,10 +112,36 @@ export default {
     test() {
       return this.$store.getters.test
     },
+    heuristics() {
+      return this.test.testStructure
+    },
+    options() {
+      return [
+        { id: 'options', name: 'options', label: 'Test options' },
+        { id: 'comments', name: 'comments', label: 'Answers comments' },
+        { id: 'results', name: 'results', label: 'Statistics' },
+        {
+          id: 'evaluators-results',
+          name: 'evaluators-results',
+          label: 'Answers by evaluators',
+        },
+        {
+          id: 'heuristics-results',
+          name: 'heuristics-results',
+          label: 'Answers by heuristics',
+        },
+        { id: 'finalReport', name: 'finalReport', label: 'Final Report' },
+      ]
+    },
   },
-  watch: {},
-
   methods: {
+    checkHeuristicsSlider() {
+      const containerWidth = this.$el.querySelector('.column').offsetWidth
+      const heuristicWidth = 200 // Adjust this value based on your needs
+      const numVisibleHeuristics = Math.floor(containerWidth / heuristicWidth)
+      this.showSlider = this.heuristics.length > numVisibleHeuristics + 5
+    },
+
     async genPreview() {
       let options = document.getElementById('options')
       let comments = document.getElementById('comments')
@@ -102,10 +162,7 @@ export default {
 
       //test comments
       if (comments.checked == true) {
-        await this.$store.dispatch('getCurrentTestAnswerDoc')
-        let answersDocId = this.$store.getters.testAnswerDocument
-          .heuristicAnswers
-        this.preview.testComments = answersDocId
+        this.preview.testComments = this.test.answersDocId
       } else this.preview.testComments = '' //end of test comments
 
       //test statistics
@@ -132,6 +189,7 @@ export default {
     finalResult,
 
     async submitPdf() {
+      console.log(this.test.testStructure)
       await this.genPreview()
       const date = new Date() // Get current date
       const dayOfMonth = date.getDate() // Get day of the month
@@ -175,17 +233,22 @@ export default {
       this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
 
       this.statistics = finalResult()
-      console.log(this.answers)
+      console.log(this.test.testDescription)
       axios
         .post(
           'http://localhost:8000/api/endpoint',
           {
             items: [
               {
-                title: this.test.testTitle, //
-                date: this.formattedDate, //
+                title: this.test.testTitle, //---------------basic pdf elements section  |
+                date: this.formattedDate, //                                             |
+                creationDate: this.test.creationDate, //                                 |
+                testDescription: this.test.testDescription, //                            |
+                creatorEmail: this.test.testAdmin.email, //-------------------------------|
+
                 finalReport: this.preview.finalReport, //
                 allOptions: this.preview.testOptions, //
+
                 allAnswers: this.answers,
                 testStructure: this.test.testStructure,
                 gstatistics: this.statistics,
@@ -213,21 +276,53 @@ export default {
 </script>
 
 <style>
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+.slidder-section {
+  display: flex; /* Display the slider and label side by side */
+  align-items: center; /* Align items vertically at the center */
+  margin: 1rem 0; /* Add margin to create space between sections */
+}
+
+.heuristics-slider-label {
+  font-size: medium;
+  margin-left: 1rem; /* Add margin to create space between slider and label */
+}
+
+.heuristics-slider {
+  max-width: 10vw;
+  margin: 0 1rem; /* Add margin to create space between slider and other elements */
+}
+
+.with-border {
+  border-right: 1px solid #ccc; /* Adjust the color and width as needed */
+}
+
+.with-margin {
+  margin-left: 1rem;
+}
 .selection-box {
   margin-left: 0px;
-  width: 30vw;
-  height: 80vh;
-
-  background-color: white;
-  /* background-color: rgb(247, 246, 246); */
-
   padding: 1rem;
   border-radius: 36px 0px 0 0;
 }
-.option {
-  font-size: small;
-  padding: 1rem;
+
+.flex-container {
+  display: flex;
 }
+
+.column {
+  flex: 1;
+}
+
+.option {
+  font-size: medium;
+  padding: 0.5rem;
+}
+
 .heuristics {
   margin-left: 2rem;
 }
