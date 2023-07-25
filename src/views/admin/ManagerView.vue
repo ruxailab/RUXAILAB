@@ -207,7 +207,7 @@
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
-import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
+import { statistics } from '@/utils/statistics'
 
 export default {
   components: {

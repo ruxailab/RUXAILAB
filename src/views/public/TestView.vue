@@ -364,16 +364,6 @@
                     @change="calculateProgress()"
                   ></v-select>
                 </AddCommentBtn>
-                <v-row>
-                  <!-- :questionId="currentUserTestAnswer.heuristicQuestions[i].id" -->
-                  <ImageImport
-                    :heuristicId="test.testStructure[heurisIndex]"
-                    :questionId="
-                      currentUserTestAnswer.heuristicQuestions[0].heuristicId
-                    "
-                    :testId="test.id"
-                  ></ImageImport>
-                </v-row>
               </v-col>
             </v-row>
           </div>
@@ -397,7 +387,6 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import UserTestView from '@/views/public/UserTestView.vue'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
-import ImageImport from '@/components/atoms/ImportImage.vue'
 export default {
   props: ['id', 'token'],
   components: {
@@ -409,7 +398,6 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
-    ImageImport,
   },
   data: () => ({
     logined: null,
@@ -454,10 +442,15 @@ export default {
   },
   methods: {
     updateComment(comment, heurisIndex, answerIndex) {
-      console.log(this.currentUserTestAnswer.heuristicQuestions)
-      this.currentUserTestAnswer.heuristicQuestions[
-        heurisIndex
-      ].heuristicQuestions[answerIndex].heuristicComment = comment
+      if (comment != '' && comment != undefined) {
+        this.currentUserTestAnswer.heuristicQuestions[
+          heurisIndex
+        ].heuristicQuestions[answerIndex].heuristicComment = comment
+      } else {
+        this.currentUserTestAnswer.heuristicQuestions[
+          heurisIndex
+        ].heuristicQuestions[answerIndex].answerImageUrl = this.currentImageUrl
+      }
     },
     mappingSteps() {
       //Heuristics
@@ -539,6 +532,7 @@ export default {
                     heuristicId: h.id,
                     heuristicAnswer: null,
                     heuristicComment: '',
+                    answerImageUrl: '',
                   }),
               ),
               heuristicTotal: heu.total,
@@ -575,6 +569,9 @@ export default {
     },
     loading() {
       return this.$store.getters.loading
+    },
+    currentImageUrl() {
+      return this.$store.state.Tests.currentImageUrl
     },
   },
   async created() {
