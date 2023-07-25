@@ -136,12 +136,4 @@ export default {
   gap: 10px;
   margin-top: 10px;
 }
-
-.vertical-bar {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%; /* Position the vertical bar at the middle of the container */
-  border-left: 1px solid #ccc; /* Define the appearance of the vertical bar */
-}
 </style>

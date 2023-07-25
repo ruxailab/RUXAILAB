@@ -168,6 +168,7 @@ export default {
           })
         })
       }
+
       commit('SET_EVALUATOR_STATISTICS', table)
     },
   },
