@@ -2,21 +2,25 @@
   <div class="selection-box">
     <h2>SELECT YOUR PDF ELEMENTS</h2>
     <div class="flex-container">
-      <div class="column with-border">
-        <div v-if="showSlider" class="slider-container">
-          <div class="slidder-section">
-            <input
-              type="range"
-              v-model="sliderValue"
-              :min="0"
-              :max="Math.max(0, heuristics.length - 5)"
-              step="1"
-              class="heuristics-slider"
-            />
-            <div class="heuristics-slider-label">
-              Heuristics {{ sliderValueMin }} to {{ sliderValueMax }}
-            </div>
+      <div class="column with-border" style="max-height: 28vh;">
+        <input
+          type="range"
+          v-model="sliderValue"
+          :min="0"
+          :max="Math.max(0, heuristics.length - 5)"
+          step="1"
+          class="heuristics-slider"
+        />
+        <div class="slidder-section">
+          <div class="heuristics-slider-label">
+            Heuristics {{ sliderValueMin }} to {{ sliderValueMax }}
           </div>
+        </div>
+        <div
+          v-if="showSlider"
+          class="slider-container"
+          style="overflow: scroll;max-height: 100%;"
+        >
           <div
             v-for="heuristic in visibleHeuristics"
             :key="heuristic.id"
@@ -60,13 +64,17 @@
       </div>
     </div>
 
-    <v-btn @click="submitPdf">Generate PDF</v-btn>
+    <v-btn @click="submitPdf" :disabled="isLoading">
+      <!-- Disable the button while loading -->
+      <span v-if="!isLoading">Generate PDF</span>
+      <span v-else>Loading...</span>
+    </v-btn>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import { finalResult } from '@/utils/statistics'
+import { finalResult, statistics } from '@/utils/statistics'
 
 export default {
   props: ['id', 'HEURISTICS'],
@@ -77,6 +85,7 @@ export default {
     currentHeuristicIndex: 0,
     showSlider: false,
     sliderValue: 0,
+    isLoading: false, // New data property to track loading state
   }),
   mounted() {
     window.addEventListener('resize', this.checkHeuristicsSlider)
@@ -135,6 +144,59 @@ export default {
     },
   },
   methods: {
+    heuristicsEvaluator() {
+      let table = {
+        header: [],
+        items: [],
+      }
+
+      // Your existing data
+      let testOptions = this.test.testOptions // Provide your testOptions array here
+      let resultEvaluator = statistics() // Provide your resultEvaluator array here
+
+      // Code to calculate max and min values
+      let options = testOptions.map((op) => op.value)
+      let max = Math.max(...options)
+      let min = Math.min(...options)
+
+      // Add "HEURISTICS" to the table header
+      table.header.push({
+        text: 'HEURISTICS',
+        value: 'heuristic',
+      })
+
+      // Process each evaluator in resultEvaluator
+      if (resultEvaluator) {
+        resultEvaluator.forEach((evaluator) => {
+          let header = table.header.find((h) => h.text === evaluator.id)
+          if (!header) {
+            table.header.push({
+              text: evaluator.id,
+              value: evaluator.id,
+            })
+          }
+          evaluator.heuristics.forEach((heuristic) => {
+            console.log(heuristic)
+            let item = table.items.find((i) => i.heuristic === heuristic.id)
+            if (item) {
+              Object.assign(item, {
+                [evaluator.id]: heuristic.result,
+              })
+            } else {
+              table.items.push({
+                heuristic: heuristic.id,
+                max: max * heuristic.totalQuestions,
+                min: min * heuristic.totalQuestions,
+                [evaluator.id]: heuristic.result,
+              })
+            }
+          })
+        })
+      }
+
+      return table
+    },
+
     checkHeuristicsSlider() {
       const containerWidth = this.$el.querySelector('.column').offsetWidth
       const heuristicWidth = 200 // Adjust this value based on your needs
@@ -162,14 +224,12 @@ export default {
 
       //test comments
       if (comments.checked == true) {
-        this.preview.testComments = this.test.answersDocId
-      } else this.preview.testComments = '' //end of test comments
+        this.preview.testComments = true
+      } else this.preview.testComments = false //end of test comments
 
       //test statistics
       if (results.checked == true) {
         let answersDocId = this.test.answersDocId
-        console.log(this.$store.getters.testAnswerDocument)
-        //need to get only the results + graphics, not the answersDocId
         this.preview.results = answersDocId
       } else this.preview.results = '' //end of test statistics
 
@@ -189,87 +249,95 @@ export default {
     finalResult,
 
     async submitPdf() {
-      console.log(this.test.testStructure)
-      await this.genPreview()
-      const date = new Date() // Get current date
-      const dayOfMonth = date.getDate() // Get day of the month
-      const monthNames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ]
-      const monthName = monthNames[date.getMonth()] // Get month name
-      const year = date.getFullYear() // Get year
+      this.isLoading = true // Set isLoading to true to indicate PDF generation is in progress
+      let heuristicEvaluator = this.heuristicsEvaluator()
+      console.log(heuristicEvaluator)
+      try {
+        console.log(this.answers)
+        await this.genPreview()
+        const date = new Date() // Get current date
+        const dayOfMonth = date.getDate() // Get day of the month
+        const monthNames = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ]
+        const monthName = monthNames[date.getMonth()] // Get month name
+        const year = date.getFullYear() // Get year
 
-      // Add ordinal suffix to day of month (e.g. 1st, 2nd, 3rd)
-      let dayOfMonthStr
-      switch (dayOfMonth) {
-        case 1:
-        case 21:
-        case 31:
-          dayOfMonthStr = dayOfMonth + 'st'
-          break
-        case 2:
-        case 22:
-          dayOfMonthStr = dayOfMonth + 'nd'
-          break
-        case 3:
-        case 23:
-          dayOfMonthStr = dayOfMonth + 'rd'
-          break
-        default:
-          dayOfMonthStr = dayOfMonth + 'th'
+        // Add ordinal suffix to day of month (e.g. 1st, 2nd, 3rd)
+        let dayOfMonthStr
+        switch (dayOfMonth) {
+          case 1:
+          case 21:
+          case 31:
+            dayOfMonthStr = dayOfMonth + 'st'
+            break
+          case 2:
+          case 22:
+            dayOfMonthStr = dayOfMonth + 'nd'
+            break
+          case 3:
+          case 23:
+            dayOfMonthStr = dayOfMonth + 'rd'
+            break
+          default:
+            dayOfMonthStr = dayOfMonth + 'th'
+        }
+
+        this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
+        console.log(this.$store.state.Answer.evaluatorStatistics)
+        this.statistics = finalResult()
+        await axios
+          .post(
+            'http://localhost:8000/api/endpoint',
+            {
+              items: [
+                {
+                  title: this.test.testTitle, //---------------basic pdf elements section  |
+                  date: this.formattedDate, //                                             |
+                  creationDate: this.test.creationDate, //                                 |
+                  testDescription: this.test.testDescription, //                            |
+                  creatorEmail: this.test.testAdmin.email, //-------------------------------|
+
+                  finalReport: this.preview.finalReport, //
+                  allOptions: this.preview.testOptions, //
+
+                  allAnswers: this.answers,
+                  testStructure: this.test.testStructure,
+                  gstatistics: this.statistics,
+                  statisticstable: this.$store.state.Answer.evaluatorStatistics,
+                  testComments: this.preview.testComments,
+                },
+              ],
+            },
+            { responseType: 'blob' },
+          )
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', 'heuristic-test.pdf')
+            document.body.appendChild(link)
+            link.click()
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.isLoading = false // Set isLoading back to false after the PDF generation is complete or encountered an error.
       }
-
-      this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
-
-      this.statistics = finalResult()
-      console.log(this.test.testDescription)
-      axios
-        .post(
-          'http://localhost:8000/api/endpoint',
-          {
-            items: [
-              {
-                title: this.test.testTitle, //---------------basic pdf elements section  |
-                date: this.formattedDate, //                                             |
-                creationDate: this.test.creationDate, //                                 |
-                testDescription: this.test.testDescription, //                            |
-                creatorEmail: this.test.testAdmin.email, //-------------------------------|
-
-                finalReport: this.preview.finalReport, //
-                allOptions: this.preview.testOptions, //
-
-                allAnswers: this.answers,
-                testStructure: this.test.testStructure,
-                gstatistics: this.statistics,
-                statisticstable: this.$store.state.Answer.evaluatorStatistics,
-              },
-            ],
-          },
-          { responseType: 'blob' },
-        )
-        .then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', 'heuristic-test.pdf')
-          document.body.appendChild(link)
-          link.click()
-          console.log(response)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
     },
   },
 }
