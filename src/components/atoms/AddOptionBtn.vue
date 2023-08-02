@@ -17,7 +17,7 @@
           <v-col cols="11">
             <v-form ref="form">
               <v-row justify="center" align="center">
-                <v-col cols="9">
+                <v-col cols="6">
                   <v-text-field
                     maxLength="100"
                     counter="100"
@@ -27,7 +27,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="2">
+                <v-col cols="6">
                   <v-text-field
                     v-model.number="option.value"
                     label="Value"
@@ -38,13 +38,18 @@
                 </v-col>
               </v-row>
 
-              <v-text-field
-                maxLength="100"
-                counter="100"
-                v-model="option.description"
-                label="Option description"
-                :rules="textRequired"
-              ></v-text-field>
+              <!-- New row for Option description -->
+              <v-row justify="center" align="center">
+                <v-col cols="12">
+                  <v-text-field
+                    maxLength="100"
+                    counter="100"
+                    v-model="option.description"
+                    label="Option description"
+                    :rules="textRequired"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
               <v-row justify="center">
                 <v-checkbox
