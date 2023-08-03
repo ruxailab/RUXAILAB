@@ -240,7 +240,10 @@ export default {
 
       if (heuristicsResults.checked == true) {
         console.log(this.$store.getters.testAnswerDocument)
-      } //end of test statistics
+        this.preview.heuristicEvaluator = this.heuristicsEvaluator()
+        console.log(this.preview.heuristicEvaluator)
+      } else this.preview.heuristicEvaluator = '' //end of test statistics
+
       if (finalReport.checked) {
         this.preview.finalReport = this.test.finalReport //
       }
@@ -250,8 +253,7 @@ export default {
 
     async submitPdf() {
       this.isLoading = true // Set isLoading to true to indicate PDF generation is in progress
-      let heuristicEvaluator = this.heuristicsEvaluator()
-      console.log(heuristicEvaluator)
+      console.log(this.test.testStructure)
       try {
         console.log(this.answers)
         await this.genPreview()
@@ -295,7 +297,6 @@ export default {
         }
 
         this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
-        console.log(this.$store.state.Answer.evaluatorStatistics)
         this.statistics = finalResult()
         await axios
           .post(
@@ -314,8 +315,11 @@ export default {
 
                   allAnswers: this.answers,
                   testStructure: this.test.testStructure,
+
                   gstatistics: this.statistics,
                   statisticstable: this.$store.state.Answer.evaluatorStatistics,
+                  heuristicStatistics: this.preview.heuristicEvaluator,
+
                   testComments: this.preview.testComments,
                 },
               ],
