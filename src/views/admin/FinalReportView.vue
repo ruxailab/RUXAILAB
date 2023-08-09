@@ -35,8 +35,6 @@
           <div>
             <DocumentSelection></DocumentSelection>
 
-            <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
-
             <v-btn color="secondary" class="teste2" @click="step--"
               >Previous</v-btn
             >
@@ -116,7 +114,7 @@ export default {
 .final-report-box {
   background-color: whitesmoke;
   width: 100%;
-  height: 70vh;
+
   padding: 0;
 }
 .form-control {
