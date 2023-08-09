@@ -67,6 +67,7 @@ function statistics() {
         (e) => e.userDocId == `Ev${evaluatorIndex}`,
       )
       if (!SelectEvaluator) {
+        console.log(store.getters)
         resultEvaluator.push({
           userDocId: evaluator.userDocId,
           email: 'noemail@email.com',
