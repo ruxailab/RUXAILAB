@@ -8,7 +8,7 @@
           v-model="sliderValue"
           :min="0"
           :max="Math.max(0, heuristics.length - 5)"
-          step="1"
+          step="5"
           class="heuristics-slider"
         />
         <div class="slidder-section">
@@ -19,7 +19,7 @@
         <div
           v-if="showSlider"
           class="slider-container"
-          style="overflow: scroll;max-height: 100%;"
+          style="overflow: scroll;max-height: 90%;"
         >
           <div
             v-for="heuristic in visibleHeuristics"
@@ -64,13 +64,11 @@
           <label class="option" :for="option.id">{{ option.label }}</label>
         </div>
       </div>
+      <v-btn @click="submitPdf" :disabled="isLoading" class="bottom-button">
+        <span v-if="!isLoading">Generate PDF</span>
+        <span v-else>Loading...</span>
+      </v-btn>
     </div>
-
-    <v-btn @click="submitPdf" :disabled="isLoading">
-      <!-- Disable the button while loading -->
-      <span v-if="!isLoading">Generate PDF</span>
-      <span v-else>Loading...</span>
-    </v-btn>
   </div>
 </template>
 
@@ -202,7 +200,7 @@ export default {
 
     checkHeuristicsSlider() {
       const containerWidth = this.$el.querySelector('.column').offsetWidth
-      const heuristicWidth = 200 // Adjust this value based on your needs
+      const heuristicWidth = 200
       const numVisibleHeuristics = Math.floor(containerWidth / heuristicWidth)
       this.showSlider = this.heuristics.length > numVisibleHeuristics + 5
     },
@@ -358,34 +356,6 @@ export default {
 </script>
 
 <style>
-.slider-container {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-}
-.slidder-section {
-  display: flex; /* Display the slider and label side by side */
-  align-items: center; /* Align items vertically at the center */
-  margin: 1rem 0; /* Add margin to create space between sections */
-}
-
-.heuristics-slider-label {
-  font-size: medium;
-  margin-left: 1rem; /* Add margin to create space between slider and label */
-}
-
-.heuristics-slider {
-  max-width: 10vw;
-  margin: 0 1rem; /* Add margin to create space between slider and other elements */
-}
-
-.with-border {
-  border-right: 1px solid #ccc; /* Adjust the color and width as needed */
-}
-
-.with-margin {
-  margin-left: 1rem;
-}
 .selection-box {
   margin-left: 0px;
   padding: 1rem;
@@ -394,6 +364,8 @@ export default {
 
 .flex-container {
   display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to new lines */
+  gap: 1rem; /* Add some space between items */
 }
 
 .column {
@@ -404,8 +376,71 @@ export default {
   font-size: medium;
   padding: 0.5rem;
 }
+.bottom-button {
+  align-self: flex-end;
+  margin-top: 1rem; /* Add space at the top */
+  margin-bottom: 1rem;
+}
 
-.heuristics {
-  margin-left: 2rem;
+/* Larger screens */
+@media (min-width: 768px) {
+  .flex-container {
+    flex-direction: row; /* Horizontal layout for larger screens */
+  }
+
+  .column {
+    flex: 0.5; /* Each column takes half of the available width */
+    max-width: 50%; /* Limit column width to 50% */
+  }
+
+  .slidder-section {
+    align-items: center;
+    margin: 0; /* Reset margin for this section */
+  }
+
+  .heuristics-slider-label {
+    font-size: medium;
+    margin-left: 0.5rem;
+  }
+
+  .heuristics-slider {
+    max-width: 15vw;
+    margin: 0 0.5rem;
+  }
+}
+
+/* Smaller screens */
+@media (max-width: 767px) {
+  .flex-container {
+    flex-direction: column; /* Vertical layout for smaller screens */
+  }
+
+  .column {
+    flex: none; /* Reset flex property to allow natural width */
+    max-width: 100%; /* Allow column to take full width */
+  }
+
+  .column.with-border {
+    order: 0; /* Move this column below the other column on small screens */
+  }
+
+  /* Adjust the height and overflow of the slider container */
+  .slider-container {
+    max-height: 20vh !important; /* Adjust the height as needed */
+    overflow-y: auto !important; /* Enable vertical scrolling */
+    overflow-x: hidden !important; /* Hide horizontal scrolling */
+    margin-top: 1rem; /* Add space at the top */
+    font-size: 10px;
+
+    background-color: #ebebeb;
+    border-radius: 12px;
+    padding: 0.25rem;
+  }
+
+  .bottom-button {
+    align-self: flex-start !important;
+    margin-top: 1rem; /* Add space at the top */
+    margin-bottom: 1rem;
+  }
 }
 </style>
