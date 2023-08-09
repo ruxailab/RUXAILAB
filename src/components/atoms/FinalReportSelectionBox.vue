@@ -30,6 +30,8 @@
               type="checkbox"
               :id="'heuristic' + heuristic.id"
               :name="heuristic.name"
+              v-model="selectedHeuristics"
+              :value="heuristic.id"
             />
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
@@ -86,6 +88,8 @@ export default {
     showSlider: false,
     sliderValue: 0,
     isLoading: false, // New data property to track loading state
+    selectedHeuristics: [],
+    cooperatorsEmail: [],
   }),
   mounted() {
     window.addEventListener('resize', this.checkHeuristicsSlider)
@@ -176,7 +180,6 @@ export default {
             })
           }
           evaluator.heuristics.forEach((heuristic) => {
-            console.log(heuristic)
             let item = table.items.find((i) => i.heuristic === heuristic.id)
             if (item) {
               Object.assign(item, {
@@ -212,11 +215,6 @@ export default {
       let evaluatorsResults = document.getElementById('evaluators-results')
       let heuristicsResults = document.getElementById('heuristics-results')
 
-      for (let i = 0; i <= this.test.testStructure.length; i++) {
-        let auxId = document.getElementById('heuristic' + i)
-
-        console.log(auxId)
-      }
       //test options
       if (options.checked == true) {
         this.preview.testOptions = this.test.testOptions
@@ -233,15 +231,13 @@ export default {
         this.preview.results = answersDocId
       } else this.preview.results = '' //end of test statistics
 
-      //Evaluators results
+      //Statistics
       if (evaluatorsResults.checked == true) {
-        console.log(this.$store.getters.testAnswerDocument)
-      } //end of test statistics
+        this.preview.statistics = true
+      } else this.preview.statistics = false //end of test statistics
 
       if (heuristicsResults.checked == true) {
-        console.log(this.$store.getters.testAnswerDocument)
         this.preview.heuristicEvaluator = this.heuristicsEvaluator()
-        console.log(this.preview.heuristicEvaluator)
       } else this.preview.heuristicEvaluator = '' //end of test statistics
 
       if (finalReport.checked) {
@@ -252,10 +248,10 @@ export default {
     finalResult,
 
     async submitPdf() {
+      console.log(this.preview.heuristicEvaluator)
       this.isLoading = true // Set isLoading to true to indicate PDF generation is in progress
-      console.log(this.test.testStructure)
+      console.log(this.selectedHeuristics)
       try {
-        console.log(this.answers)
         await this.genPreview()
         const date = new Date() // Get current date
         const dayOfMonth = date.getDate() // Get day of the month
@@ -298,6 +294,17 @@ export default {
 
         this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
         this.statistics = finalResult()
+        console.log(this.test)
+
+        this.test.cooperators.forEach((element) => {
+          console.log(element)
+          this.cooperatorsEmail.push(element.email) // Use push to add emails to the array
+        })
+        console.log(this.cooperatorsEmail)
+        this.preview.cooperatorsEmail = this.cooperatorsEmail
+        this.cooperatorsEmail = []
+        console.log(this.preview)
+        //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
           .post(
             'http://localhost:8000/api/endpoint',
@@ -305,9 +312,10 @@ export default {
               items: [
                 {
                   title: this.test.testTitle, //---------------basic pdf elements section  |
-                  date: this.formattedDate, //                                             |
-                  creationDate: this.test.creationDate, //                                 |
-                  testDescription: this.test.testDescription, //                            |
+                  date: this.formattedDate,
+                  creationDate: this.test.creationDate,
+                  testDescription: this.test.testDescription,
+                  cooperatorsEmail: this.preview.cooperatorsEmail,
                   creatorEmail: this.test.testAdmin.email, //-------------------------------|
 
                   finalReport: this.preview.finalReport, //
@@ -315,7 +323,9 @@ export default {
 
                   allAnswers: this.answers,
                   testStructure: this.test.testStructure,
+                  selectedHeuristics: this.selectedHeuristics,
 
+                  statistics: this.preview.statistics,
                   gstatistics: this.statistics,
                   statisticstable: this.$store.state.Answer.evaluatorStatistics,
                   heuristicStatistics: this.preview.heuristicEvaluator,
