@@ -294,13 +294,29 @@ export default {
         this.statistics = finalResult()
         console.log(this.test)
 
-        this.test.cooperators.forEach((element) => {
-          console.log(element)
-          this.cooperatorsEmail.push(element.email) // Use push to add emails to the array
-        })
-        console.log(this.cooperatorsEmail)
-        this.preview.cooperatorsEmail = this.cooperatorsEmail
-        this.cooperatorsEmail = []
+        if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
+          if (this.test.cooperators.length > 0) {
+            this.test.cooperators.forEach((element) => {
+              if (element && element.email) {
+                console.log(element)
+                this.cooperatorsEmail.push(element.email) // Extract and push emails to the array
+              }
+            })
+
+            console.log(this.cooperatorsEmail) // Log the extracted email addresses
+
+            // Assign the extracted email addresses to the preview object
+            this.preview.cooperatorsEmail = this.cooperatorsEmail
+
+            // Reset the cooperatorsEmail array to an empty array
+            this.cooperatorsEmail = []
+          } else {
+            console.log('No cooperators found.')
+          }
+        } else {
+          console.log('Invalid cooperators data.')
+          this.preview.cooperatorsEmail = ''
+        }
         console.log(this.preview)
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
