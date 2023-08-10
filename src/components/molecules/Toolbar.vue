@@ -237,7 +237,7 @@ export default {
         },
       ]
 
-      if (this.accessLevel === 0) {
+      if (this.isManager) {
         items.push({
           title: 'Cooperators',
           icon: 'mdi-account-group',
