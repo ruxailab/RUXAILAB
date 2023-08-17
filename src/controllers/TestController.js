@@ -28,17 +28,14 @@ export default class TestController extends Controller {
   }
 
   async deleteTest(payload) {
+    await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
     return await super.delete(COLLECTION, payload.id)
   }
-
-
 
   async updateTest(payload) {
     console.log('teste')
     return await super.update(COLLECTION, payload.id, payload.toFirestore())
   }
-
-
 
   async acceptTestCollaboration(payload) {
     const userAnswer = new UserAnswer({
