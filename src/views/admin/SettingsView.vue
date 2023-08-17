@@ -128,9 +128,7 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left>
-                mdi-trash-can-outline
-              </v-icon>Delete Test
+              <v-icon left> mdi-trash-can-outline </v-icon>Delete Test
             </v-btn>
           </v-row>
         </v-card>
@@ -161,11 +159,7 @@
     </ShowInfo>
   </v-container>
   <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
-    <v-progress-circular
-      indeterminate
-      color="#fca326"
-      size="50"
-    />
+    <v-progress-circular indeterminate color="#fca326" size="50" />
     <div class="white-text mt-3">
       Loading Settings
     </div>
@@ -174,16 +168,16 @@
 </template>
 
 <script>
-import FormTestDescription from "@/components/atoms/FormTestDescription"
-import Snackbar from "@/components/atoms/Snackbar"
-import ShowInfo from "@/components/organisms/ShowInfo"
-import LeaveAlert from "@/components/atoms/LeaveAlert"
-import AccessNotAllowed from "@/components/atoms/AccessNotAllowed"
-import Test from "@/models/Test"
-import TemplateHeader from "@/models/TemplateHeader"
-import TemplateAuthor from "@/models/TemplateAuthor"
-import TemplateBody from "@/models/TemplateBody"
-import Template from "@/models/Template"
+import FormTestDescription from '@/components/atoms/FormTestDescription'
+import Snackbar from '@/components/atoms/Snackbar'
+import ShowInfo from '@/components/organisms/ShowInfo'
+import LeaveAlert from '@/components/atoms/LeaveAlert'
+import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
+import Test from '@/models/Test'
+import TemplateHeader from '@/models/TemplateHeader'
+import TemplateAuthor from '@/models/TemplateAuthor'
+import TemplateBody from '@/models/TemplateBody'
+import Template from '@/models/Template'
 
 export default {
   components: {
@@ -194,11 +188,11 @@ export default {
     AccessNotAllowed,
   },
   // eslint-disable-next-line vue/require-prop-types
-  props: ["id"],
+  props: ['id'],
   data: () => ({
     template: {
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       isPublic: false,
     },
     object: null,
@@ -207,12 +201,12 @@ export default {
     dialogDel: false,
     loading: false,
     loadingPage: true,
-    templateTitle: "",
-    templateDescription: "",
+    templateTitle: '',
+    templateDescription: '',
     tempDialog: false,
     titleRequired: [
-      (v) => !!v || "Field Required",
-      (v) => v.length <= 100 || "Max 100 characters",
+      (v) => !!v || 'Field Required',
+      (v) => v.length <= 100 || 'Max 100 characters',
     ],
     showSettings: false,
     publicTemplate: true,
@@ -244,7 +238,7 @@ export default {
     },
     hasTemplate() {
       if (this.object)
-        if ("template" in this.object) {
+        if ('template' in this.object) {
           if (this.object.template !== null) return true
         }
 
@@ -274,14 +268,14 @@ export default {
   },
   async created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
-      await this.$store.dispatch("getTest", { id: this.id })
+      await this.$store.dispatch('getTest', { id: this.id })
     }
   },
   beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav)
+    window.addEventListener('beforeunload', this.preventNav)
   },
   beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav)
+    window.removeEventListener('beforeunload', this.preventNav)
   },
   methods: {
     validate(valid, index) {
@@ -289,8 +283,8 @@ export default {
     },
     async submit() {
       console.log(this.object)
-      await this.$store.dispatch("updateTest", new Test(this.object))
-      this.$store.commit("SET_LOCAL_CHANGES", false)
+      await this.$store.dispatch('updateTest', new Test(this.object))
+      this.$store.commit('SET_LOCAL_CHANGES', false)
       // await this.$store.dispatch("getAnswers", { id: this.test.answers });
       // await this.$store.dispatch("getReports", { id: this.test.reports });
       // delete this.object.id;
@@ -331,21 +325,21 @@ export default {
       //           }
       //         );
       //       } else {
-              // element = Object.assign(
-              //   {},
-              //   {
-              //     id: this.id,
-              //     title: this.object.title,
-              //     type: this.object.type,
-              //     reports: this.object.reports,
-              //     answers: this.object.answers,
-              //     cooperators: this.object.cooperators,
-              //     accessLevel: coop.accessLevel,
-              //     author: this.test.admin.email,
-              //     answersSheet: this.test.answersSheet,
-              //     date: new Date().toLocaleString("en-Us"),
-              //   }
-              // );
+      // element = Object.assign(
+      //   {},
+      //   {
+      //     id: this.id,
+      //     title: this.object.title,
+      //     type: this.object.type,
+      //     reports: this.object.reports,
+      //     answers: this.object.answers,
+      //     cooperators: this.object.cooperators,
+      //     accessLevel: coop.accessLevel,
+      //     author: this.test.admin.email,
+      //     answersSheet: this.test.answersSheet,
+      //     date: new Date().toLocaleString("en-Us"),
+      //   }
+      // );
       //       }
       //       if ("template" in this.object && isAdmin)
       //         element = Object.assign(element, {
@@ -386,19 +380,24 @@ export default {
       //   .catch((err) => {
       //     this.$store.commit("setError", err);
       //   });
-
-      
-    
-
     },
     preventNav(event) {
       if (!this.change) return
       event.preventDefault()
-      event.returnValue = ""
+      event.returnValue = ''
     },
     async deleteTest(item) {
-      await this.$store.dispatch("deleteTest", item)
-      this.$router.push({ name: "TestList" })
+      console.log(item)
+      this.auxUser = { ...this.user } // Create a copy of user object
+
+      // Remove the test with the given ID from auxUser.myTests
+      delete this.auxUser.myTests[item.id]
+
+      console.log(this.auxUser)
+      item.auxUser = this.auxUser
+      await this.$store.dispatch('deleteTest', item)
+
+      this.$router.push({ name: 'TestList' })
     },
     async createTemplate() {
       const tempHeader = new TemplateHeader({
@@ -408,7 +407,7 @@ export default {
         templateDescription: this.template.templateDescription,
         templateTitle: this.template.templateTitle,
         templateType: this.test.testType,
-        templateVersion: "1.0.0",
+        templateVersion: '1.0.0',
         templateAuthor: new TemplateAuthor({
           userEmail: this.test.testAdmin.email,
           userDocId: this.test.testAdmin.userDocId,
@@ -422,24 +421,24 @@ export default {
         body: tempBody,
       })
 
-      await this.$store.dispatch("createTemplate", template)
+      await this.$store.dispatch('createTemplate', template)
       this.closeDialog()
     },
     closeDialog() {
       this.tempDialog = false
       this.$refs.tempform.resetValidation()
-      this.templateTitle = ""
-      this.templateDescription = ""
+      this.templateTitle = ''
+      this.templateDescription = ''
     },
     setLeavingAlert() {
-      this.$store.commit("SET_DIALOG_LEAVE", true)
+      this.$store.commit('SET_DIALOG_LEAVE', true)
     },
   },
 
   beforeRouteLeave(to, from, next) {
     if (this.$store.getters.localChanges) {
-      this.$store.commit("SET_DIALOG_LEAVE", true)
-      this.$store.commit("SET_PATH_TO", to.name)
+      this.$store.commit('SET_DIALOG_LEAVE', true)
+      this.$store.commit('SET_PATH_TO', to.name)
     } else {
       next()
     }
