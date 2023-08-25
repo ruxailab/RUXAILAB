@@ -1,6 +1,7 @@
 import AnswerController from '@/controllers/AnswerController'
 import HeuristicAnswer from '@/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
+import { percentage } from '@/utils/statistics'
 
 const answerController = new AnswerController()
 
@@ -8,6 +9,8 @@ export default {
   state: {
     testAnswerDocument: null,
     answers: [],
+    evaluatorStatistics: [],
+    finalReport: [],
   },
   getters: {
     testAnswerDocument(state) {
@@ -46,6 +49,10 @@ export default {
     },
     SET_ANSWERS(state, payload) {
       state.answers = payload
+    },
+    SET_EVALUATOR_STATISTICS(state, payload) {
+      console.log(payload)
+      state.evaluatorStatistics = payload
     },
   },
   actions: {
@@ -100,6 +107,69 @@ export default {
       } finally {
         commit('setLoading', false)
       }
+    },
+    async processStatistics({ commit }, payload) {
+      let table = {
+        header: [],
+        items: [],
+      }
+
+      table.header = [
+        {
+          text: 'Evaluator',
+          align: 'start',
+          sortable: false,
+          value: 'evaluator',
+        },
+        {
+          text: 'Usability Percentage',
+          value: 'result',
+          align: 'center',
+        },
+        {
+          text: 'Applicable Question(s)',
+          value: 'aplication',
+          align: 'center',
+        },
+        {
+          text: 'No Applicable Question(s)',
+          value: 'noAplication',
+          align: 'center',
+        },
+        {
+          text: 'Conclusion Percentage',
+          value: 'answered',
+          align: 'center',
+        },
+      ]
+
+      if (payload.resultEvaluator) {
+        payload.resultEvaluator.forEach((evaluator) => {
+          let totalNoAplication = 0
+          let totalNoReply = 0
+          let totalQuestions = 0
+
+          evaluator.heuristics.forEach((heuristic) => {
+            totalNoAplication += heuristic.totalNoAplication
+            totalNoReply += heuristic.totalNoReply
+            totalQuestions += heuristic.totalQuestions
+          })
+
+          console.log(table)
+          table.items.push({
+            evaluator: evaluator.id,
+            result: evaluator.result,
+            aplication: totalQuestions - totalNoAplication,
+            noAplication: totalNoAplication,
+            answered: percentage(
+              totalQuestions - totalNoReply,
+              totalQuestions,
+            ).toFixed(2),
+          })
+        })
+      }
+
+      commit('SET_EVALUATOR_STATISTICS', table)
     },
   },
 }

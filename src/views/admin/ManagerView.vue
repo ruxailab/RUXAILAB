@@ -207,6 +207,7 @@
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
+import { statistics } from '@/utils/statistics'
 
 export default {
   components: {
@@ -228,6 +229,19 @@ export default {
     item: 0,
   }),
   methods: {
+    standardDeviation(array) {
+      let average = array.reduce(
+        (total, value) => total + value / array.length,
+        0,
+      )
+      return Math.sqrt(
+        array.reduce(
+          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
+          0,
+        ),
+      )
+    },
+
     pushToTest() {
       this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
       this.index = 0
@@ -291,6 +305,10 @@ export default {
   },
   computed: {
     test() {
+      this.$store.dispatch('processStatistics', {
+        resultEvaluator: statistics(),
+        percentage: this.percentage,
+      })
       return this.$store.getters.test
     },
 
@@ -482,8 +500,10 @@ export default {
       })
     next()
   },
+
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
 }
 </script>

@@ -228,7 +228,7 @@ export default {
 
           questions.forEach((el) => {
             arrayQuestions.push(
-              Object.assign({}, { id: el.id, res: '', com: '' }),
+              Object.assign({}, { id: el.id, res: '', com: '', imgUrl: '' }),
             )
           })
 
