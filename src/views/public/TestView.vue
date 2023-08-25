@@ -501,6 +501,7 @@ export default {
     },
     async saveAnswer() {
       this.currentUserTestAnswer.progress = this.calculatedProgress
+      console.log(this.currentUserTestAnswer)
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
