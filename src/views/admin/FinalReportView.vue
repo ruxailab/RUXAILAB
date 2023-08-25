@@ -1,90 +1,67 @@
 <template>
-  <div>
-    <v-stepper v-model="step" class="final-report-box">
-      <v-stepper-header>
+  <v-container>
+    <ShowInfo style="padding: 0!important;" title="Final Report"></ShowInfo>
+
+    <v-stepper
+      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
+      v-model="step"
+      class="final-report-box"
+    >
+      <v-stepper-header background-color="transparent">
         <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
         <v-divider></v-divider>
         <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
-        <v-divider></v-divider>
-        <v-stepper-step :complete="step > 3" step="3"></v-stepper-step>
       </v-stepper-header>
 
-      <v-stepper-items>
+      <v-stepper-items style="background-color:#F5F5F5">
         <v-stepper-content step="1" class="align-mid">
           <div class="container">
             <div class="row">
-              <div class="col">
-                <h1 style="font: Roboto">{{ title }}</h1>
-              </div>
-            </div>
-            <div class="row">
               <TextControls></TextControls>
-              <div class="col left">
-                <!-- <button class="cloud-button" @click="setInnerHtml()">set</button> -->
-              </div>
             </div>
 
             <div class="row">
               <div class="col">
-                <div contenteditable id="myTextarea" class="form-control">
-                  <!-- {{ this.test.finalReport }} -->
-                </div>
+                <div contenteditable id="myTextarea" class="form-control"></div>
               </div>
             </div>
           </div>
-          <!-- <v-btn
-            large
-            dark
-            fab
-            fixed
-            bottom
-            color="#F9A826"
-            style="z-index:1000, margin-right:0"
-            @click="update()"
-          >
-            <v-icon large>
-              mdi-content-save
-            </v-icon>
-          </v-btn> -->
           <v-btn color="primary" class="teste" @click="step++, update()"
             >Next</v-btn
           >
         </v-stepper-content>
 
         <v-stepper-content step="2">
-          <DocumentSelection></DocumentSelection>
-          <v-btn color="primary" class="teste" @click="step++">Next</v-btn>
-          <v-btn color="secondary" class="teste2" @click="step--"
-            >Previous</v-btn
-          >
-        </v-stepper-content>
+          <div>
+            <DocumentSelection></DocumentSelection>
 
-        <v-stepper-content step="3">
-          <p>Review your information before submitting.</p>
-          <!-- espaço para prévia do pdf e download -->
-          <v-btn color="primary" @click="submitForm()">Submit</v-btn>
-          <v-btn color="secondary" @click="step--">Previous</v-btn>
+            <v-btn color="secondary" class="teste2" @click="step--"
+              >Previous</v-btn
+            >
+          </div>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
-  </div>
+  </v-container>
 </template>
 
 <script>
 import TextControls from '@/components/atoms/FinalReportControls.vue'
 import DocumentSelection from '@/components/molecules/FinalReportDocumentSelection.vue'
+import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
   props: ['id', 'HEURISTICS'],
   data: () => ({
-    title: 'FINAL REPORT',
+    title: 'Final report',
     inputText: '',
     object: {},
     textIsDone: false,
     step: 1,
+    selectedTestElements: null,
   }),
   mounted() {
-    document.getElementById('myTextarea').innerHTML = this.test.finalReport
+    this.setInnerHtml()
   },
   computed: {
     test() {
@@ -92,14 +69,16 @@ export default {
     },
   },
   watch: {},
-  components: { TextControls, DocumentSelection },
+  components: { TextControls, DocumentSelection, ShowInfo },
 
   methods: {
     setInnerHtml() {
-      document.getElementById('myTextarea').innerHTML = this.test.finalReport
+      const textarea = document.getElementById('myTextarea')
+      if (textarea) {
+        textarea.innerHTML = this.test.finalReport
+      }
     },
     async update() {
-      console.log('olá')
       let contenteditable = document.getElementById('myTextarea'),
         text = contenteditable.innerHTML
 
@@ -135,13 +114,13 @@ export default {
 .final-report-box {
   background-color: whitesmoke;
   width: 100%;
-  height: 100vh;
+
   padding: 0;
 }
 .form-control {
   background-color: white;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
-  width: 85%;
+  width: 100%;
   height: 65vh;
   resize: none;
   padding: 20px;

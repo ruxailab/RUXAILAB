@@ -16,7 +16,8 @@ export default {
     testStructure: null,
     answersId: null,
     module: 'test',
-    tasks:[]
+    tasks: [],
+    currentImageUrl: '',
   },
   getters: {
     tests(state) {
@@ -45,7 +46,13 @@ export default {
     ADD_TASKS(state, payload) {
       //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
-    }
+    },
+    SET_CURRENT_IMAGE_URL(state, payload) {
+      state.currentImageUrl = payload
+    },
+    updateCurrentImageUrl(state, url) {
+      state.currentImageUrl = url // Update currentImageUrl with the new URL
+    },
   },
   actions: {
     /**
@@ -214,10 +221,9 @@ export default {
     },
 
     async addItemsTasks({ commit }, payload) {
-
       try {
         commit('setLoading', true)
-        console.log("tasks adicionadas: ", payload)
+        console.log('tasks adicionadas: ', payload)
         commit('ADD_TASKS', payload)
       } catch {
         console.log('Error in addItemsTasks')
@@ -225,7 +231,10 @@ export default {
       } finally {
         commit('setLoading', false)
       }
-    }
+    },
+    setCurrentImageUrl({ commit }, payload) {
+      commit('SET_CURRENT_IMAGE_URL', payload)
+    },
   },
   coops(state) {
     return state.test.coop

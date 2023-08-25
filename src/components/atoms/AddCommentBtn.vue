@@ -38,34 +38,52 @@
           label="Comment"
           @change="updateComment"
         ></v-textarea>
+        <ImageImport
+          v-if="show"
+          :heuristicId="this.test.testStructure[heurisIndex]"
+          :questionId="this.answerHeu.heuristicId"
+          :testId="this.$store.getters.test.id"
+          @imageUploaded="handleImageUploaded"
+        ></ImageImport>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import ImageImport from '@/components/atoms/ImportImage.vue'
 export default {
   props: {
     answerHeu: {
       type: Object,
-      require: true
+      require: true,
     },
     heurisIndex: {
-      type: Number
-    }
+      type: Number,
+    },
   },
+  components: { ImageImport },
   data: () => ({
-    show: false
+    show: false,
   }),
   watch: {
     heurisIndex() {
-      this.show = false; //close comment when changing heuristic
-    }
+      this.show = false //close comment when changing heuristic
+    },
   },
-  methods:{
+  methods: {
     updateComment(input) {
       this.$emit('updateComment', input)
-    }
-  }
-};
+    },
+    handleImageUploaded() {
+      // Handle the image URL from the event emitted by ImportImage
+      this.updateComment('')
+    },
+  },
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+  },
+}
 </script>
