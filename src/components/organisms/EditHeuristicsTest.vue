@@ -10,26 +10,6 @@
       <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
       <OptionsTable v-if="index == 1" :options="object.options" />
       <ImportCsvTable v-if="index == 2" :options="object.importCsv" />
-      <!--
-      <Heuristic
-        v-if="index == 0"
-        :heuristics="currentTest"
-        @change="emitChange"
-      />
-  
-      <OptionsTable
-        v-if="index == 1"
-        :options="object.options"
-        @change="emitChange()"
-      />
-  
-  
-      <ImportCsvTable
-        v-if="index == 2"
-        :options="object.importCsv"
-        @change="emitChange()"
-      />
-      -->
     </div>
   </div>
 </template>
@@ -61,21 +41,13 @@ export default {
   methods: {
     tabClicked(index) {
       this.index = index;
-      //this.$emit("tabClicked", index);
     },
-    /*
-    emitChange() {
-      this.$emit("change");
-    },*/
+
   },
   computed: {
     currentTest() {
       return this.$store.state.Tests.Test.testStructure;
     },
-  } /*
-  mounted() {
-    if (this.type !== "content" && this.type != "tabs")
-      console.error(this.type + " type in EditHeuristicTest.vue is not valid.");
-  },*/,
+  } 
 };
 </script>
