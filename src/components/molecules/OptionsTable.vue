@@ -5,7 +5,7 @@
       style="background: #f5f7ff;"
       :headers="headers"
       :items="options"
-      :items-per-page="5"
+      :items-per-page="-1"
     >
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small @click="editItem(item)">
