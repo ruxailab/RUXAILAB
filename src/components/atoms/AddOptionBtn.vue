@@ -32,8 +32,10 @@
                     v-model.number="option.value"
                     label="Value"
                     :disabled="!hasValue"
-                    type="float"
+                    type="number"
                     placeholder="Ex. 0.5"
+                    :rules="valueRequired"
+                    :step="0.5"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -109,22 +111,24 @@ export default {
         this.$emit('changeHasValue')
       },
     },
+    valueRequired() {
+      if (this.hasValue || (this.option.value !== null && this.option.value >= 0)) {
+        return [(v) => v !== '' && v !== null && v >= 0 || 'Value must be a positive number'];
+      } else {
+        return [];
+      }
+    },
   },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        if (this.hasValue && this.option.value == null) {
-          alert('Please enter a value for this option.')
-        } else {
-          if (!this.hasValue) {
-            this.option.value = null
-          }
-
-          this.$emit('dialog', false)
-          this.$emit('addOption')
-          this.$emit('change')
-          this.resetVal()
+        if (!this.hasValue) {
+          this.option.value = null
         }
+        this.$emit('dialog', false)
+        this.$emit('addOption')
+        this.$emit('change')
+        this.resetVal()
       }
     },
     resetVal() {
