@@ -71,7 +71,7 @@
           </template>
 
           <template v-slot:item.progress="{ item }">
-            <div>{{ item.progress }}%</div>
+            <div>{{ item.progress }}</div>
           </template>
           <template v-slot:item.submitted="{ item }">
             <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
@@ -167,7 +167,23 @@ export default {
   },
   computed: {
     reports() {
-      return [this.$store.getters.currentUserTestAnswer]
+      const rawReports = this.$store.getters.testAnswerDocument.heuristicAnswers
+      const processedReports = []
+
+      for (const userId in rawReports) {
+        const report = rawReports[userId]
+        const processedReport = {
+          userDocId: report.userDocId,
+          total: report.total,
+          submitted: this.checkIfIsSubmitted(report.submitted),
+          progress: parseFloat(report.progress).toFixed(2) + '%',
+          lastUpdate: this.formatDate(report.lastUpdate),
+        }
+
+        processedReports.push(processedReport)
+      }
+
+      return processedReports
     },
     test() {
       return this.$store.getters.test
@@ -191,10 +207,6 @@ export default {
   async created() {
     console.log(this.reports)
     await this.$store.dispatch('getCurrentTestAnswerDoc')
-    /* await this.$store.dispatch("getReports", { id: this.id });
-    await this.$store.dispatch("getTest", { id: this.reports.test.id });
-    await this.$store.dispatch("getAnswers", { id: this.test.answers });
-    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
 }
 </script>
