@@ -33,7 +33,7 @@
           <v-btn
             class="lighten-2"
             text
-            @click="(dialogEdit = false), (itemEdit = null)"
+            @click=";(dialogEdit = false), (itemEdit = null)"
             >Cancel</v-btn
           >
           <v-btn class="white--text" color="#fca326" @click="validateEdit()"
@@ -90,7 +90,11 @@
         >
         <v-row justify="center">
           <v-col cols="10">
-            <v-form ref="formHeuris" @keyup.native.enter="addHeuris()" v-if="heuristicForm">
+            <v-form
+              ref="formHeuris"
+              @keyup.native.enter="addHeuris()"
+              v-if="heuristicForm"
+            >
               <v-text-field
                 v-model="heuristicForm.title"
                 dense
@@ -264,7 +268,7 @@
                     <v-list-item
                       @click="
                         editQuestions(
-                          heuristics[itemSelect].questions[questionSelect]
+                          heuristics[itemSelect].questions[questionSelect],
                         )
                       "
                     >
@@ -340,7 +344,7 @@
           <v-col class="ma-10" cols="10">
             <v-row justify="center" align="center">
               <p class="subtitleView">
-                You don't have heuristic yet, start one.
+                You don't have any heuristic, create one to proceed.
               </p>
             </v-row>
             <v-row class="ma-4" justify="center" align="center">
@@ -356,9 +360,9 @@
 </template>
 
 <script>
-import AddDescBtn from "@/components/atoms/AddDescBtn";
+import AddDescBtn from '@/components/atoms/AddDescBtn'
 
-import VClamp from "vue-clamp";
+import VClamp from 'vue-clamp'
 
 export default {
   components: {
@@ -375,79 +379,79 @@ export default {
     heuristicForm: null,
     headers: [
       {
-        text: "Title",
-        align: "start",
-        value: "title",
+        text: 'Title',
+        align: 'start',
+        value: 'title',
       },
-      { text: "Actions", value: "actions", align: "end", sortable: false },
+      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
     ],
     dialog: false,
     dialogEdit: false,
     dialogHeuris: false,
     dialogQuestion: false,
     editIndex: -1,
-    nameRequired: [(v) => !!v || "Name is required"],
-    questionRequired: [(v) => !!v || "Question has to be filled"],
+    nameRequired: [(v) => !!v || 'Name is required'],
+    questionRequired: [(v) => !!v || 'Question has to be filled'],
   }),
   methods: {
     deleteHeuristic(item) {
       let config = confirm(
-        `Are you sure delete the heuristic ${this.heuristics[item].title}?`
-      );
+        `Are you sure delete the heuristic ${this.heuristics[item].title}?`,
+      )
 
       if (config) {
-        this.heuristics.splice(item, 1);
-        this.itemSelect = null;
-        this.questionSelect = null;
+        this.heuristics.splice(item, 1)
+        this.itemSelect = null
+        this.questionSelect = null
       }
-      this.menuQuestions = false;
-      this.menuHeuristics = false;
+      this.menuQuestions = false
+      this.menuHeuristics = false
     },
     deleteQuestion(item) {
       if (this.heuristics[this.itemSelect].questions.length > 1) {
         let config = confirm(
           `Are you sure delete the Question ${
             this.heuristics[this.itemSelect].questions[item].title
-          }?`
-        );
+          }?`,
+        )
 
         if (config) {
-          this.heuristics[this.itemSelect].questions.splice(item, 1);
-          this.questionSelect = null;
+          this.heuristics[this.itemSelect].questions.splice(item, 1)
+          this.questionSelect = null
 
           this.heuristics[this.itemSelect].total = this.heuristics[
             this.itemSelect
-          ].questions.length;
+          ].questions.length
         }
       } else {
-        alert("Sorry, but you can't delete all heuristics questions");
+        alert("Sorry, but you can't delete all heuristics questions")
       }
 
-      this.menuQuestions = false;
-      this.menuHeuristics = false;
+      this.menuQuestions = false
+      this.menuHeuristics = false
     },
     editHeuris(item) {
       this.itemEdit = {
-        title: "Edit Heuristic",
+        title: 'Edit Heuristic',
         titleEdit: item.title,
         rule: this.nameRequired,
         id: item.id,
-      };
-      this.dialogEdit = true;
+      }
+      this.dialogEdit = true
     },
     editQuestions(item) {
       this.itemEdit = {
-        title: "Edit Question",
+        title: 'Edit Question',
         titleEdit: item.title,
         rule: this.questionRequired,
-      };
-      this.dialogEdit = true;
+      }
+      this.dialogEdit = true
     },
     editDescription(desc) {
       let ind = this.heuristics[this.itemSelect].questions[
         this.questionSelect
-      ].descriptions.indexOf(desc);
-      this.$refs.descBtn.editSetup(ind);
+      ].descriptions.indexOf(desc)
+      this.$refs.descBtn.editSetup(ind)
     } /*
     emitChange() {
       console.log('0')
@@ -461,10 +465,10 @@ export default {
           this.heuristics[this.itemSelect].questions[
             this.heuristics[this.itemSelect].questions.length - 1
           ].id + 1,
-        title: "",
+        title: '',
         descriptions: [],
-      };
-      this.dialogQuestion = true;
+      }
+      this.dialogQuestion = true
     },
     deleteItem(item) {
       this.heuristics[this.itemSelect].questions[
@@ -473,61 +477,61 @@ export default {
         this.heuristics[this.itemSelect].questions[
           this.questionSelect
         ].descriptions.indexOf(item),
-        1
-      );
+        1,
+      )
     },
     addHeuris() {
       if (this.$refs.formHeuris.validate()) {
-        this.dialogHeuris = false;
+        this.dialogHeuris = false
 
-        this.heuristics.push(Object.assign({}, this.heuristicForm));
-        this.itemSelect = this.heuristics.length - 1;
+        this.heuristics.push(Object.assign({}, this.heuristicForm))
+        this.itemSelect = this.heuristics.length - 1
 
-        this.heuristics.total = this.totalQuestions;
+        this.heuristics.total = this.totalQuestions
 
-        this.$refs.formHeuris.resetValidation();
+        this.$refs.formHeuris.resetValidation()
 
         //this.$emit("change");
       }
     },
     closeDialog(dialogName) {
-      this[dialogName] = false;
+      this[dialogName] = false
 
       if (this.$refs.formHeuris) {
-        this.$refs.formHeuris.resetValidation();
-        this.$refs.formHeuris.reset();
+        this.$refs.formHeuris.resetValidation()
+        this.$refs.formHeuris.reset()
       }
       if (this.$refs.formQuestion) {
-        this.$refs.formQuestion.resetValidation();
-        this.$refs.formQuestion.reset();
-        this.newQuestion = null;
+        this.$refs.formQuestion.resetValidation()
+        this.$refs.formQuestion.reset()
+        this.newQuestion = null
       }
     },
     addQuestion() {
       if (this.$refs.formQuestion.validate()) {
-        this.dialogQuestion = false;
+        this.dialogQuestion = false
 
-        this.heuristics[this.itemSelect].questions.push(this.newQuestion);
-        this.newQuestion = null;
+        this.heuristics[this.itemSelect].questions.push(this.newQuestion)
+        this.newQuestion = null
 
         this.heuristics[this.itemSelect].total = this.heuristics[
           this.itemSelect
-        ].questions.length;
+        ].questions.length
 
-        this.$refs.formQuestion.resetValidation();
+        this.$refs.formQuestion.resetValidation()
         // this.$emit("change");
       }
     },
     validateEdit() {
       if (this.$refs.formEdit.validate()) {
-        this.dialogEdit = false;
+        this.dialogEdit = false
 
-        if (this.itemEdit.title === "Edit Heuristic") {
-          this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit;
+        if (this.itemEdit.title === 'Edit Heuristic') {
+          this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit
         } else {
           this.heuristics[this.itemSelect].questions[
             this.questionSelect
-          ].title = this.itemEdit.titleEdit;
+          ].title = this.itemEdit.titleEdit
         }
       }
     },
@@ -537,106 +541,106 @@ export default {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuristicForm = {
           id: this.heuristics[this.heuristics.length - 1].id + 1,
-          title: "",
+          title: '',
           total: 0,
           questions: [
             {
               id: 0,
-              title: "",
+              title: '',
               descriptions: [],
             },
           ],
-        };
-        this.heuristicForm.total = this.heuristicForm.questions.length;
+        }
+        this.heuristicForm.total = this.heuristicForm.questions.length
       }
       if (this.dialogHeuris) {
         //when dialog opens everything is reset
         if (this.$refs.formHeuris) {
-          this.$refs.formHeuris.resetValidation();
-          this.$refs.formHeuris.reset();
+          this.$refs.formHeuris.resetValidation()
+          this.$refs.formHeuris.reset()
         }
       }
     },
     itemSelect() {
-      if (this.itemSelect != null) this.questionSelect = 0;
-      else this.questionSelect = null;
+      if (this.itemSelect != null) this.questionSelect = 0
+      else this.questionSelect = null
     },
 
     loader() {
-      const l = this.loader;
-      this[l] = !this[l];
+      const l = this.loader
+      this[l] = !this[l]
       // const alertFunc = alert("Your file has been uploaded!");
 
       if (this.csvFile != null) {
-        setTimeout(() => (this[l] = false), 3000);
-        setTimeout(() => (this.csvFile = null), 3000);
+        setTimeout(() => (this[l] = false), 3000)
+        setTimeout(() => (this.csvFile = null), 3000)
         // setTimeout(alertFunc, 3000);
-        this.loader = null;
+        this.loader = null
       } else {
-        setTimeout(() => (this[l] = false), 3000);
-        alert("No csv file selected. \nPlease select one before procede.");
-        this.loader = null;
+        setTimeout(() => (this[l] = false), 3000)
+        alert('No csv file selected. \nPlease select one before procede.')
+        this.loader = null
       }
     },
   },
   computed: {
     csvHeuristics() {
-      return this.$store.state.Tests.Test.testStructure;
+      return this.$store.state.Tests.Test.testStructure
     },
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
         ? this.$store.state.Tests.Test.testStructure
-        : [];
+        : []
     },
 
     arrayQuestions() {
-      let aux = [];
-      let array = Array.from(this.heuristics[this.itemSelect].questions);
+      let aux = []
+      let array = Array.from(this.heuristics[this.itemSelect].questions)
       array.forEach((el) => {
-        aux.push(Object.assign({}, { id: el.id, res: "", com: "" }));
-      });
-      return [];
+        aux.push(Object.assign({}, { id: el.id, res: '', com: '' }))
+      })
+      return []
     },
     totalQuestions() {
-      let result = 0;
+      let result = 0
       this.heuristics.forEach((h) => {
-        result += h.total;
-      });
-      return result;
+        result += h.total
+      })
+      return result
     },
   },
   async created() {
-    await this.$store.dispatch("getTest", { id: this.$route.params.id });
+    await this.$store.dispatch('getTest', { id: this.$route.params.id })
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
         total: 0,
-        title: "",
+        title: '',
         questions: [
           {
             id: 0,
-            title: "",
+            title: '',
             descriptions: [],
           },
         ],
-      };
+      }
     } else {
       this.heuristicForm = {
         id: 0,
         total: 0,
-        title: "",
+        title: '',
         questions: [
           {
             id: 0,
-            title: "",
+            title: '',
             descriptions: [],
           },
         ],
-      };
+      }
     }
-    this.heuristicForm.total = this.heuristicForm.questions.length;
+    this.heuristicForm.total = this.heuristicForm.questions.length
   },
-};
+}
 </script>
 
 <style scoped>
@@ -688,7 +692,7 @@ export default {
 
 .csv-btn:hover {
   height: 10vh;
-  content: "test";
+  content: 'test';
 }
 
 .csv-model {
