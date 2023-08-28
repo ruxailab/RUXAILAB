@@ -177,7 +177,6 @@
           <v-list-item>
             <v-row dense align="center" justify="space-around">
               <v-col class="pa-0 ma-0" cols="8">
-                <div class="idText">{{ test.id }}</div>
                 <v-clamp class="titleText" autoresize :max-lines="2">{{
                   test.testTitle
                 }}</v-clamp>
@@ -490,6 +489,9 @@ export default {
       })
       const percent = ((100 * x) / total).toFixed(1)
       this.calculatedProgress = percent
+      if (isNaN(this.calculatedProgress)) {
+        this.calculatedProgress = 0
+      }
     },
     perHeuristicProgress(item) {
       const value =

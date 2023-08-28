@@ -76,6 +76,9 @@
           <template v-slot:item.submitted="{ item }">
             <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
           </template>
+          <template v-slot:item.lastUpdate="{ item }">
+            <div>{{ formatDate(item.lastUpdate) }}</div>
+          </template>
         </v-data-table>
       </div>
     </ShowInfo>
@@ -96,7 +99,7 @@ export default {
   data: () => ({
     headers: [
       { text: 'Evaluator', value: 'userDocId' },
-      { text: 'Last Update', value: 'log.date' },
+      { text: 'Last Update', value: 'lastUpdate' },
       { text: 'Progress', value: 'progress', justify: 'center' },
       { text: 'Status', value: 'submitted' },
       { text: 'More', value: 'more', justify: 'end' },
@@ -134,6 +137,30 @@ export default {
           this.$store.commit('setError', err)
         })
     },
+    formatDate(timestamp) {
+      const currentDate = new Date()
+      const startDate = new Date(timestamp)
+
+      const yearDiff = currentDate.getFullYear() - startDate.getFullYear()
+      const monthDiff = currentDate.getMonth() - startDate.getMonth()
+      const dayDiff = currentDate.getDate() - startDate.getDate()
+      const hourDiff = currentDate.getHours() - startDate.getHours()
+      const minuteDiff = currentDate.getMinutes() - startDate.getMinutes()
+
+      if (yearDiff > 0) {
+        return `${yearDiff} year${yearDiff !== 1 ? 's' : ''} ago`
+      } else if (monthDiff > 0) {
+        return `${monthDiff} month${monthDiff !== 1 ? 's' : ''} ago`
+      } else if (dayDiff > 0) {
+        return `${dayDiff} day${dayDiff !== 1 ? 's' : ''} ago`
+      } else if (hourDiff > 0) {
+        return `${hourDiff} hour${hourDiff !== 1 ? 's' : ''} ago`
+      } else if (minuteDiff > 0) {
+        return `${minuteDiff} minute${minuteDiff !== 1 ? 's' : ''} ago`
+      } else {
+        return 'Now'
+      }
+    },
     goToCoops() {
       this.$emit('goToCoops')
     },
@@ -162,6 +189,7 @@ export default {
     },
   },
   async created() {
+    console.log(this.reports)
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     /* await this.$store.dispatch("getReports", { id: this.id });
     await this.$store.dispatch("getTest", { id: this.reports.test.id });
