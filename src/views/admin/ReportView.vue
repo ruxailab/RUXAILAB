@@ -138,6 +138,7 @@ export default {
         })
     },
     formatDate(timestamp) {
+      console.log(timestamp)
       const currentDate = new Date()
       const startDate = new Date(timestamp)
 
@@ -177,7 +178,7 @@ export default {
           total: report.total,
           submitted: this.checkIfIsSubmitted(report.submitted),
           progress: parseFloat(report.progress).toFixed(2) + '%',
-          lastUpdate: this.formatDate(report.lastUpdate),
+          lastUpdate: report.lastUpdate,
         }
 
         processedReports.push(processedReport)
