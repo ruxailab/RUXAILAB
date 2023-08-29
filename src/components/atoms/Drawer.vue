@@ -140,15 +140,16 @@ export default {
   }),
   methods: {
     async changeTest(testName) {
-      const testId = this.testsList.find((t) => t.testTitle === testName)
-        ?.testDocId
+      const testId = this.testsList.find(
+        (t) => t.testTitle === testName,
+      )?.testDocId
       await this.$store.dispatch('getTest', { id: testId })
       this.$router.replace({ name: 'ManagerView', params: { id: testId } })
     },
     go(item) {
       if (item.id == undefined) this.$router.push(item).catch(() => {})
       else {
-        if (item.id == 2) window.open(item.path)
+        if (item.path == `/testview/${this.test.id}`) window.open(item.path)
         else this.$router.push(item.path).catch(() => {})
       }
     },
@@ -191,57 +192,91 @@ export default {
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
-          {
-            title: 'Test',
-            icon: 'mdi-file-document-edit',
-            path: `/edittest/${this.test.id}`,
-            id: 1,
-          },
         ]
 
         if (this.userAccessLevelOnTest <= 2) {
-          items.push({
-            title: 'Preview',
-            icon: 'mdi-file-eye',
-            path: `/testview/${this.test.id}`,
-            id: 2,
-          })
+          if (this.userAccessLevelOnTest == 0) {
+            items.push(
+              {
+                title: 'Test',
+                icon: 'mdi-file-document-edit',
+                path: `/edittest/${this.test.id}`,
+                id: 1,
+              },
+              {
+                title: 'Preview',
+                icon: 'mdi-file-eye',
+                path: `/testview/${this.test.id}`,
+                id: 2,
+              },
+            )
+          } else if (this.userAccessLevelOnTest == 1) {
+            items.push({
+              title: 'Answer Test',
+              icon: 'mdi-file-document',
+              path: `/testview/${this.test.id}`,
+              id: 1,
+            })
+          }
         }
-
-        items.push(
-          {
-            title: 'Reports',
-            icon: 'mdi-book-multiple',
-            path: `/reportview/${this.test.id}`,
-            id: 3,
-          },
-          {
-            title: 'Answers',
-            icon: 'mdi-order-bool-ascending-variant',
-            path: `/answerview/${this.test.id}`,
-            id: 4,
-          },
-          {
-            title: 'Analytics',
-            icon: 'mdi-chart-bar',
-            path: `/analyticsview/${this.test.id}`,
-            id: 5,
-          },
-          {
-            title: 'Final Report',
-            icon: 'mdi-file-document',
-            path: `/finalreportview/${this.test.id}`,
-            id: 6,
-          },
-        )
-
         if (this.userAccessLevelOnTest == 0) {
-          items.push({
-            title: 'Cooperators',
-            icon: 'mdi-account-group',
-            path: `/cooperators/${this.test.id}`,
-            id: 7,
-          })
+          items.push(
+            {
+              title: 'Reports',
+              icon: 'mdi-book-multiple',
+              path: `/reportview/${this.test.id}`,
+              id: 3,
+            },
+            {
+              title: 'Answers',
+              icon: 'mdi-order-bool-ascending-variant',
+              path: `/answerview/${this.test.id}`,
+              id: 4,
+            },
+            {
+              title: 'Analytics',
+              icon: 'mdi-chart-bar',
+              path: `/analyticsview/${this.test.id}`,
+              id: 5,
+            },
+          )
+        } else if (this.userAccessLevelOnTest == 1) {
+          items.push(
+            {
+              title: 'Reports',
+              icon: 'mdi-book-multiple',
+              path: `/reportview/${this.test.id}`,
+              id: 2,
+            },
+            {
+              title: 'Answers',
+              icon: 'mdi-order-bool-ascending-variant',
+              path: `/answerview/${this.test.id}`,
+              id: 3,
+            },
+            {
+              title: 'Analytics',
+              icon: 'mdi-chart-bar',
+              path: `/analyticsview/${this.test.id}`,
+              id: 4,
+            },
+          )
+        }
+        if (this.userAccessLevelOnTest == 0) {
+          items.push(
+            {
+              title: 'Final Report',
+              icon: 'mdi-file-document',
+              path: `/finalreportview/${this.test.id}`,
+              id: 6,
+            },
+            {
+              title: 'Cooperators',
+              icon: 'mdi-account-group',
+              path: `/cooperators/${this.test.id}`,
+              id: 7,
+            },
+          )
         }
 
         if (this.test.template) {
