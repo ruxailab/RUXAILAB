@@ -202,7 +202,7 @@ export default {
   },
   watch: {
     reports() {
-      if (Object.values(this.reports).length) this.loading = false
+      if (Object.values(this.reports)) this.loading = false
     },
   },
   async created() {
