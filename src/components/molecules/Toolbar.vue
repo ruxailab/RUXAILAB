@@ -97,7 +97,7 @@
     </v-btn>
 
     <v-btn
-      v-if="this.$route.path !== '/'"
+      v-if="this.$route.path == '/testslist'"
       text
       color="#f9a826"
       class="console-button mx-1 hidden-sm-and-down"
@@ -105,6 +105,17 @@
     >
       Go to Home
     </v-btn>
+
+        <v-btn
+      v-if="this.$route.path !== '/' && this.$route.path !== '/testslist'"
+      text
+      color="#f9a826"
+      class="console-button mx-1 hidden-sm-and-down"
+      @click="goTo('/testslist')"
+    >
+      Return to Console
+    </v-btn>
+    
 
     <NotificationBtn v-if="user" class="mx-2" />
 
