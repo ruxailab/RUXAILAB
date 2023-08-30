@@ -13,7 +13,6 @@
       <v-list-item>
         <v-row dense>
           <v-col class="pa-0 ma-0">
-            <div class="idText">{{ test.id }}</div>
             <v-overflow-btn
               class="pa-0 ma-0"
               dark
