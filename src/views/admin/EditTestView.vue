@@ -49,7 +49,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Save 2.0</span>
+      <span>Save</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
