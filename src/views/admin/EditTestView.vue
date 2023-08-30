@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <div>{{ testAnswerDoc }}</div>
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -171,6 +172,9 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || []
+    },
+    testAnswerDoc() {
+      return this.$store.getters.testAnswerDocument
     },
     totalQuestions() {
       let result = 0
