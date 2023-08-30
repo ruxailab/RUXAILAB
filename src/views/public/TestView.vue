@@ -106,7 +106,7 @@
         right
         open-on-hover
       >
-        <template v-slot:activator v-if="this.accessLevel == 1">
+        <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
             <v-icon v-if="fab">mdi-close</v-icon>
             <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
@@ -417,7 +417,7 @@ export default {
     calculatedProgress: 0,
   }),
   watch: {
-    test: async function () {
+    test: async function() {
       this.mappingSteps()
     },
     items() {
@@ -475,7 +475,6 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
-
     calculateProgress() {
       const total = this.currentUserTestAnswer.total
       let x = 0
@@ -554,24 +553,6 @@ export default {
     },
   },
   computed: {
-        accessLevel() {
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0
-        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
-        if (isTestOwner) return 0
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
-        })
-
-        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
-        if (isCooperator) {
-          return isCooperator.accessLevel
-        }
-      }
-      return 2
-    },
     test() {
       return this.$store.getters.test
     },
