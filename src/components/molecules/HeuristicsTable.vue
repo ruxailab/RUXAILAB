@@ -193,7 +193,6 @@
                     </v-col>
                   </v-row>
                 </template>
-                <v-divider class="mb-4"></v-divider>
                 <v-spacer></v-spacer>
                 <v-menu v-model="menuHeuristics" offset-x>
                   <template v-slot:activator="{ on, attrs }">
