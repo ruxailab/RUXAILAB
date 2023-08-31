@@ -8,10 +8,18 @@
       :items-per-page="-1"
     >
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small @click="editItem(item)">
+        <v-icon
+          :disabled="testAnswerDocLength > 0 ? true : false"
+          small
+          @click="editItem(item)"
+        >
           mdi-pencil
         </v-icon>
-        <v-icon small @click="deleteItem(item)">
+        <v-icon
+          :disabled="testAnswerDocLength > 0 ? true : false"
+          small
+          @click="deleteItem(item)"
+        >
           mdi-delete
         </v-icon>
       </template>
@@ -120,6 +128,13 @@ export default {
   computed: {
     options() {
       return this.$store.state.Tests.Test.testOptions
+    },
+    testAnswerDocLength() {
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
     },
   },
   components: {

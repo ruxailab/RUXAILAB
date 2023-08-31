@@ -67,7 +67,6 @@ function statistics() {
         (e) => e.userDocId == `Ev${evaluatorIndex}`,
       )
       if (!SelectEvaluator) {
-        console.log(store.getters)
         resultEvaluator.push({
           userDocId: evaluator.userDocId,
           email: 'noemail@email.com',
@@ -115,14 +114,12 @@ function statistics() {
     })
 
     // created(resultEvaluator)
-    console.log(resultEvaluator)
     return resultEvaluator
   }
 }
 
 function finalResult() {
   let evaluatorStatistics = store.state.Answer.evaluatorStatistics
-  console.log(store.state.Answer)
 
   if (evaluatorStatistics.items.length) {
     let res = evaluatorStatistics.items.reduce((total, value) => {

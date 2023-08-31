@@ -357,7 +357,6 @@ export default {
         align: 'start',
         value: 'heuristic',
       })
-      console.log('result evaluators ' + this.resultEvaluator)
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
           let header = table.header.find((h) => h.text == evaluator.id)
@@ -445,7 +444,6 @@ export default {
           })
         })
       }
-      console.log(this.heuristicsEvaluator)
       return table
     },
 

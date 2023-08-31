@@ -51,7 +51,6 @@ export default {
       state.answers = payload
     },
     SET_EVALUATOR_STATISTICS(state, payload) {
-      console.log(payload)
       state.evaluatorStatistics = payload
     },
   },
@@ -155,7 +154,6 @@ export default {
             totalQuestions += heuristic.totalQuestions
           })
 
-          console.log(table)
           table.items.push({
             evaluator: evaluator.id,
             result: evaluator.result,

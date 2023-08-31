@@ -6,6 +6,7 @@
       class="white--text"
       small
       @click="$emit('dialog', true)"
+      disabled
       >Add new Heuristic</v-btn
     >
 
@@ -84,39 +85,38 @@ export default {
   },
   data: () => ({
     id: 0,
-    nameRequired: [(v) => !!v || "Name is required"],
-    questionRequired: [(v) => !!v || "Question has to be filled"],
+    nameRequired: [(v) => !!v || 'Name is required'],
+    questionRequired: [(v) => !!v || 'Question has to be filled'],
   }),
   methods: {
     addQuestion() {
       if (this.heuris.questions.length > 0)
-        this.id =
-          this.heuris.questions[this.heuris.questions.length - 1].id + 1;
-      else this.id = 0;
-      this.heuris.questions.push({ id: this.id, text: "" });
-      this.heuris.total = this.heuris.questions.length;
+        this.id = this.heuris.questions[this.heuris.questions.length - 1].id + 1
+      else this.id = 0
+      this.heuris.questions.push({ id: this.id, text: '' })
+      this.heuris.total = this.heuris.questions.length
     },
     removeQuestion(i) {
-      this.heuris.questions.splice(i, 1);
-      this.heuris.total = this.heuris.questions.length;
+      this.heuris.questions.splice(i, 1)
+      this.heuris.total = this.heuris.questions.length
     },
     validate() {
       if (this.$refs.form.validate()) {
         if (this.heuris.questions.length == 0) {
-          alert("Please add at least one question to your heuristic");
+          alert('Please add at least one question to your heuristic')
         } else {
-          this.$emit("dialog", false);
-          this.$emit("addHeuris");
-          this.$emit("change");
-          this.resetVal();
+          this.$emit('dialog', false)
+          this.$emit('addHeuris')
+          this.$emit('change')
+          this.resetVal()
         }
       }
     },
     resetVal() {
-      this.$refs.form.resetValidation();
+      this.$refs.form.resetValidation()
     },
   },
-};
+}
 </script>
 
 <style scoped>

@@ -17,11 +17,12 @@
             truncate-length="15"
             placeholder="Import your CSV testfile here."
             ref="myFile"
+            :disabled="testAnswerDocLength > 0 ? true : false"
           >
           </v-file-input>
           <v-btn
             :loading="loadingUpdate"
-            :disabled="loadingUpdate"
+            :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
             color="blue-grey"
             class="ma-2 white--text"
             @click="changeToJSON"
@@ -159,6 +160,13 @@ export default {
     },
     csvHeuristics() {
       return this.$store.state.Tests.currentTest
+    },
+    testAnswerDocLength() {
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
     },
   },
 }
