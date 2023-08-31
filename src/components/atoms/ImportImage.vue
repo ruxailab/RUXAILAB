@@ -1,15 +1,23 @@
 <template>
   <div class="input">
     <v-file-input
-      class="ml-2 "
+      class="ml-2"
       type="file"
       name="my-image"
       :id="`${this.heuristicId.id}${this.questionId}`"
       accept="image/gif, image/jpeg, image/png"
-      placeholder="Input an image of your choice referent to the topic."
+      :placeholder="imageUploaded ? url : 'Input an image of your choice referent to the topic'"
       @change="uploadFile()"
     ></v-file-input>
     <!-- Add the image field to display the inputted image -->
+    <v-row justify="center">
+      <v-img
+        max-height="225"
+        :src="this.url"
+        v-if="imageUploaded"
+        contain
+      ></v-img>
+    </v-row>
   </div>
 </template>
 
@@ -23,10 +31,19 @@ export default {
     testId: { required: true },
   },
   data: () => ({
-    imageUrl: {},
+    url: {},
     object: {},
+    imageUploaded: false,
   }),
 
+  mounted() {
+    this.url =
+      this.currentUserTestAnswer.heuristicQuestions[
+        this.heuristicId.id
+      ].heuristicQuestions[this.questionId].answerImageUrl
+    this.imageUploaded = true
+    console.log(this.url)
+  },
   methods: {
     async uploadFile() {
       let fileInput = document.getElementById(
@@ -52,13 +69,14 @@ export default {
 
       await uploadBytes(storageRef, file)
 
-      const url = await getDownloadURL(storageRef)
+      this.url = await getDownloadURL(storageRef)
+      console.log(this.testId)
+      console.log('URL:  ', this.url)
+      // Update the imageUrl for the corresponding heuristicId and questionId
+      this.$store.commit('updateCurrentImageUrl', this.url)
 
       // Update the imageUrl for the corresponding heuristicId and questionId
-      this.$store.commit('updateCurrentImageUrl', url)
-
-      // Update the imageUrl for the corresponding heuristicId and questionId
-
+      this.imageUploaded = true
       this.$emit('imageUploaded')
     },
   },
@@ -83,5 +101,9 @@ export default {
 
 .input {
   width: 100%;
+}
+.image-container {
+  width: 100%;
+  height: 100%;
 }
 </style>
