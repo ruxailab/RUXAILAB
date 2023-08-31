@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <div>{{ testAnswerDoc.heuristicAnswers }}</div>
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
