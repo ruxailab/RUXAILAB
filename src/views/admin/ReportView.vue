@@ -114,11 +114,14 @@ export default {
       return status == true ? 'submitted' : 'in progress'
     },
     removeReport(report) {
+      console.log(report)
+      console.log(this.id)
+
       this.$store
         .dispatch('removeReport', {
           docId: this.id,
           element: {
-            id: report.uid,
+            id: report.userDocId,
           },
           param: 'reports',
         })
@@ -138,7 +141,6 @@ export default {
         })
     },
     formatDate(timestamp) {
-      console.log(timestamp)
       const currentDate = new Date()
       const startDate = new Date(timestamp)
 
@@ -206,7 +208,6 @@ export default {
     },
   },
   async created() {
-    console.log(this.reports)
     await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
 }

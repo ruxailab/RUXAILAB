@@ -1,11 +1,11 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table 
+    <v-data-table
       height="420"
       style="background: #f5f7ff"
       :headers="headers"
       :items="allTasks"
-      :items-per-page="5"   
+      :items-per-page="5"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -74,11 +74,11 @@
 </template>
 
 <script>
-import FormDialog from "./FormDialog"
+import FormDialog from './FormDialog'
 
 export default {
   components: {
-    FormDialog
+    FormDialog,
   },
   props: {
     tasks: {
@@ -86,8 +86,8 @@ export default {
       requeired: true,
       default: function() {
         return []
-      }
-    }
+      },
+    },
   },
   data: () => ({
     dialog: false,
@@ -95,23 +95,23 @@ export default {
     editedItem: -1,
     headers: [
       {
-        text: "Name",
-        align: "start",
+        text: 'Name',
+        align: 'start',
         sortable: false,
-        value: "taskName"
+        value: 'taskName',
       },
-      { text: "Description", value: "taskDescription" },
-      { text: "Tip", value: "taskTip" },
-      { text: "Post Test", value: "hasPost" },
-      { text: "Timer", value: "hasTimer" },
-      { text: "Screen Record", value: "hasScreenRecord" },
-      { text: "Camera", value: "hasCamRecord" },
-      { text: "Eye Tracker", value: "hasEye" },
-      { text: "Audio Record", value: "hasAudioRecord" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: 'Description', value: 'taskDescription' },
+      { text: 'Tip', value: 'taskTip' },
+      { text: 'Post Test', value: 'hasPost' },
+      { text: 'Timer', value: 'hasTimer' },
+      { text: 'Screen Record', value: 'hasScreenRecord' },
+      { text: 'Camera', value: 'hasCamRecord' },
+      { text: 'Eye Tracker', value: 'hasEye' },
+      { text: 'Audio Record', value: 'hasAudioRecord' },
+      { text: 'Actions', value: 'actions', sortable: false },
     ],
     task: {
-      taskName: "",
+      taskName: '',
       taskDescription: null,
       taskTip: null,
       hasPost: null,
@@ -119,22 +119,22 @@ export default {
       hasTimer: false,
       hasAudioRecord: false,
       hasScreenRecord: false,
-      hasCamRecord: false
+      hasCamRecord: false,
     },
   }),
   computed: {
     allTasks() {
       return this.$store.getters.tasks
-    }
+    },
   },
   watch: {
     tasks() {
-      this.$emit("change")
-    }
+      this.$emit('change')
+    },
   },
   mounted() {
     this.itemsTasks = [...this.tasks]
-  },  
+  },
   methods: {
     editItem(item) {
       this.editedIndex = this.tasks.indexOf(item)
@@ -143,23 +143,20 @@ export default {
     },
     deleteItem(item) {
       const index = this.tasks.indexOf(item)
-      confirm("Are you sure you want to delete this task?") &&
+      confirm('Are you sure you want to delete this task?') &&
         this.tasks.splice(index, 1)
     },
     addTask: function() {
       if (this.editedIndex > -1) {
         Object.assign(this.tasks[this.editedIndex], this.task)
-        this.$emit("change")
+        this.$emit('change')
       } else {
-        //this.itemsTasks.push(this.task)
-        //console.log("itemsTasks", this.itemsTasks)
-        this.$store.dispatch('addItemsTasks', this.task).then( () => {
-          console.log("allTasks", this.allTasks)
+        this.$store.dispatch('addItemsTasks', this.task).then(() => {
+          console.log('allTasks', this.allTasks)
         })
-                 
       }
       this.task = {
-        taskName: "",
+        taskName: '',
         taskDescription: null,
         taskTip: null,
         hasPost: false,
@@ -167,10 +164,10 @@ export default {
         hasTimer: false,
         hasAudioRecord: false,
         hasScreenRecord: false,
-        hasCamRecord: false
+        hasCamRecord: false,
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
