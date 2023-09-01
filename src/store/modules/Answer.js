@@ -97,6 +97,7 @@ export default {
       }
     },
     async saveTestAnswer({ commit }, payload) {
+      console.log(payload)
       commit('setLoading', true)
       try {
         await answerController.saveTestAnswer(payload.data, payload.answerDocId)
