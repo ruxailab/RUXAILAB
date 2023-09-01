@@ -6,7 +6,11 @@
       name="my-image"
       :id="`${this.heuristicId.id}${this.questionId}`"
       accept="image/gif, image/jpeg, image/png"
-      :placeholder="imageUploaded ? url : 'Input an image of your choice referent to the topic'"
+      :placeholder="
+        imageUploaded
+          ? 'Input an image of your choice referent to the topic'
+          : url
+      "
       @change="uploadFile()"
     ></v-file-input>
     <!-- Add the image field to display the inputted image -->
@@ -37,12 +41,12 @@ export default {
   }),
 
   mounted() {
-    this.url =
-      this.currentUserTestAnswer.heuristicQuestions[
+      this.url = this.currentUserTestAnswer.heuristicQuestions[
         this.heuristicId.id
       ].heuristicQuestions[this.questionId].answerImageUrl
+      console.log(this.currentUserTestAnswer)
+
     this.imageUploaded = true
-    console.log(this.url)
   },
   methods: {
     async uploadFile() {

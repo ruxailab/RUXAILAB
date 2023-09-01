@@ -174,7 +174,7 @@ export default {
         }
       }
 
-      return 3
+      return 1
     },
     loading() {
       return this.$store.getters.loading

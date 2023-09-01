@@ -40,6 +40,7 @@
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { log } from 'firebase-functions/lib/logger'
 
 export default {
   data() {
@@ -49,7 +50,7 @@ export default {
       csvFile: null,
       heuristicForm: null,
       refs: this.$refs,
-      loadingUpdate: false, // Add the loadingUpdate property
+      loadingUpdate: false,
     }
   },
 
@@ -66,7 +67,6 @@ export default {
             const csv = reader.result
             const lines = csv.split('\r\n') // Split lines using '\r\n' for cross-platform compatibility
             const headers = lines[0].split(';').map((header) => header.trim()) // Trim headers
-
             const heuristicMap = new Map()
 
             for (let i = 1; i < lines.length; i++) {
@@ -74,6 +74,7 @@ export default {
               if (!currentline) continue
 
               const currentFields = currentline.split(';')
+
               const heuristicId = currentFields[0]
               const heuristicTitle = currentFields[1]
               const questionId = currentFields[2]
@@ -81,22 +82,31 @@ export default {
 
               if (!heuristicMap.has(heuristicId)) {
                 heuristicMap.set(heuristicId, {
-                  id: heuristicId,
+                  id: parseInt(heuristicId) -1,
                   title: heuristicTitle,
                   questions: [],
+                  total: 0, // Inicializa o total com 0
                 })
               }
 
               const heuristicEntry = heuristicMap.get(heuristicId)
               heuristicEntry.questions.push({
-                id: questionId,
+                id: parseInt(questionId) -1,
                 title: questionText,
                 descriptions: questionText,
                 text: questionText,
+                answerImageUrl: '',
               })
+
+              // Atualize o valor total da heurística se o valor atual for maior
+              heuristicEntry.total = Math.max(
+                heuristicEntry.total,
+                parseInt(questionId),
+              )
             }
 
             const heuristicTest = Array.from(heuristicMap.values())
+
             this.$store.state.Tests.Test.testStructure = heuristicTest
             this.$store.dispatch('updateTest', this.test)
           }
