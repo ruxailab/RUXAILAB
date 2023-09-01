@@ -477,7 +477,7 @@ export default {
         }
       }
 
-      return 3
+      return 1
     },
   },
 
