@@ -151,7 +151,7 @@
                 <v-card>
                   <v-card-text
                     class="text-center body-1"
-                    v-if="this.test.cooperators.length >= 3"
+                    v-if="this.test.cooperators.length <= 3"
                   >
                     The graphic can only be generated with 3 or more evaluators,
                     please colect more data from your research to procede.
