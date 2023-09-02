@@ -25,7 +25,10 @@
           </v-btn>
         </v-badge>
       </template>
-      <div v-if="user.notifications.length > 0">
+      <div
+        v-if="user.notifications.length > 0"
+        style="max-height: 50vh;overflow-y: scroll;"
+      >
         <v-list
           v-for="(notification, i) in user.notifications"
           :key="i"
@@ -115,27 +118,27 @@ export default {
   methods: {
     async goToNotificationRedirect(notification) {
       // Mark notification as read
-      await this.$store.dispatch("markNotificationAsRead", {
+      await this.$store.dispatch('markNotificationAsRead', {
         notification: notification,
         user: this.user,
-      });
+      })
       // Redirect to notification url
-      this.$router.push(notification.redirectsTo);
+      this.$router.push(notification.redirectsTo)
     },
     checkIfHasNewNotifications() {
-      const newNot = this.user.notifications.filter((n) => n.read === false);
-      return newNot.length ?? 0;
+      const newNot = this.user.notifications.filter((n) => n.read === false)
+      return newNot.length ?? 0
     },
   },
   computed: {
     user() {
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     test() {
-      return this.$store.getters.test;
+      return this.$store.getters.test
     },
   },
-};
+}
 </script>
 
 <style scoped>
