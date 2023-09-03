@@ -70,6 +70,9 @@
             </v-menu>
           </template>
 
+          <template v-slot:item.userDocId="{ item }">
+            <div>{{ getCooperatorEmail(item.userDocId) }}</div>
+          </template>
           <template v-slot:item.progress="{ item }">
             <div>{{ item.progress }}</div>
           </template>
@@ -114,9 +117,6 @@ export default {
       return status == true ? 'submitted' : 'in progress'
     },
     removeReport(report) {
-      console.log(report)
-      console.log(this.id)
-
       this.$store
         .dispatch('removeReport', {
           docId: this.id,
@@ -167,6 +167,29 @@ export default {
     goToCoops() {
       this.$emit('goToCoops')
     },
+    getCooperatorEmail(userDocId) {
+      let cooperatorEmail = null
+      if (userDocId === this.user.id) {
+        return 'You'
+      } else if (
+        this.test.cooperators &&
+        Array.isArray(this.test.cooperators)
+      ) {
+        for (const element of this.test.cooperators) {
+          if (element && element.email && element.userDocId === userDocId) {
+            if (element.email === this.user.email) {
+              return 'You'
+            } else {
+              cooperatorEmail = element.email
+              break
+            }
+          } else {
+            return 'Guest'
+          }
+        }
+      }
+      return cooperatorEmail
+    },
   },
   computed: {
     reports() {
@@ -187,6 +210,9 @@ export default {
       }
 
       return processedReports
+    },
+    user() {
+      return this.$store.getters.user
     },
     test() {
       return this.$store.getters.test
