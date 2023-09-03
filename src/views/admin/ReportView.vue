@@ -114,7 +114,7 @@ export default {
   }),
   methods: {
     checkIfIsSubmitted(status) {
-      return status == true ? 'submitted' : 'in progress'
+      return status ? 'submitted' : 'in progress'
     },
     removeReport(report) {
       this.$store
