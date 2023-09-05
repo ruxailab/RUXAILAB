@@ -145,6 +145,30 @@
             <v-list dense height="560px" outlined>
               <v-subheader>Heuristics</v-subheader>
               <v-divider></v-divider>
+              <v-col cols="12" class="pt-0 pl-0 pr-0 pb-0">
+                <v-text-field
+                  v-model="search"
+                  filled
+                  color="orange"
+                  append-icon="mdi-magnify"
+                  single-line
+                  hide-details
+                  dense
+                  ><template v-slot:label>
+                    <span>Search heuristics...</span>
+                  </template></v-text-field
+                >
+              </v-col>
+              <!-- <v-btn
+                class="ml-auto"
+                depressed
+                small
+                icon
+                color="orange"
+                v-if="search == false"
+                ><v-icon>mdi-magnify</v-icon></v-btn
+              > -->
+              <v-divider></v-divider>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
@@ -161,11 +185,14 @@
                   >
                 </v-list-item-content>
               </v-list-item>
-              <v-divider></v-divider>
               <v-list dense height="470px" outlined class="list-scroll">
                 <v-list-item-group v-model="itemSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in heuristics" :key="i">
-                    <v-list-item-content>
+                  <v-list-item v-for="(item, i) in filteredHeuristics" :key="i">
+                    <v-list-item-content
+                      v-if="
+                        item.title.toLowerCase().includes(search.toLowerCase())
+                      "
+                    >
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-content>
                     <v-list-item-icon v-if="i == itemSelect">
@@ -411,6 +438,8 @@ export default {
     itemEdit: null,
     newQuestion: null,
     heuristicForm: null,
+    search: '',
+    filteredHeuristics: [],
     headers: [
       {
         text: 'Title',
@@ -427,7 +456,15 @@ export default {
     nameRequired: [(v) => !!v || 'Name is required'],
     questionRequired: [(v) => !!v || 'Question has to be filled'],
   }),
+  mounted() {
+    this.updateFilteredHeuristics()
+  },
   methods: {
+    updateFilteredHeuristics() {
+      this.filteredHeuristics = this.heuristics.filter((item) =>
+        item.title.toLowerCase().includes(this.search.toLowerCase()),
+      )
+    },
     deleteHeuristic(item) {
       let config = confirm(
         `Are you sure delete the heuristic ${this.heuristics[item].title}?`,
@@ -565,6 +602,9 @@ export default {
     },
   },
   watch: {
+    search() {
+      this.updateFilteredHeuristics()
+    },
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuristicForm = {
@@ -680,12 +720,14 @@ export default {
 
 <style scoped>
 .disabledBtn {
-  color: rgba(134, 125, 125, 0.438) !important;
+  color: rgba(75, 65, 65, 0.438) !important;
 }
 .disabledBtnBackground {
-  background-color: rgba(185, 185, 185, 0.308);
+  background-color: #F0F0F0;
 }
-
+.search-bar {
+  color: #dbdde4;
+}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
