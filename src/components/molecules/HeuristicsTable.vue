@@ -141,34 +141,8 @@
         <v-divider></v-divider>
         <v-row class="ma-0 pa-0" v-if="heuristics.length">
           <!--Heuristics List-->
-          <v-col class="ma-0 pa-0" cols="3">
-            <v-list dense height="560px" outlined>
-              <v-subheader>Heuristics</v-subheader>
-              <v-divider></v-divider>
-              <v-col cols="12" class="pt-0 pl-0 pr-0 pb-0">
-                <v-text-field
-                  v-model="search"
-                  filled
-                  color="orange"
-                  append-icon="mdi-magnify"
-                  single-line
-                  hide-details
-                  dense
-                  ><template v-slot:label>
-                    <span>Search heuristics...</span>
-                  </template></v-text-field
-                >
-              </v-col>
-              <!-- <v-btn
-                class="ml-auto"
-                depressed
-                small
-                icon
-                color="orange"
-                v-if="search == false"
-                ><v-icon>mdi-magnify</v-icon></v-btn
-              > -->
-              <v-divider></v-divider>
+          <v-col class="ma-0 pa-0" cols="4">
+            <v-list dense height="560px" class="pt-0" outlined>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
@@ -181,20 +155,58 @@
                   <v-list-item-title
                     style="color: #fca326 "
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                    >Add new heuristic</v-list-item-title
+                    ><strong>Add new heuristic</strong></v-list-item-title
                   >
                 </v-list-item-content>
+                <!-- <v-btn
+                  icon
+                  value="center"
+                  ><v-icon color="">mdi-magnify</v-icon></v-btn> -->
               </v-list-item>
-              <v-list dense height="470px" outlined class="list-scroll">
-                <v-list-item-group v-model="itemSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in filteredHeuristics" :key="i">
-                    <v-list-item-content
-                      v-if="
-                        item.title.toLowerCase().includes(search.toLowerCase())
-                      "
+
+              <v-divider></v-divider>
+
+              <v-subheader>
+                <v-text-field
+                  v-model="search"
+                  solo
+                  flat
+                  prepend-icon="mdi-magnify"
+                  color="orange"
+                  class="ml-2"
+                  single-line
+                  hide-details
+                  dense
+                  ><template v-slot:label>
+                    <span class="ml-2" style="font-size: 12px;">
+                      Search heuristics...</span
                     >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </template></v-text-field
+                ></v-subheader
+              >
+              <v-divider></v-divider>
+              <v-list dense height="470px" class="list-scroll">
+                <v-list-item-group v-model="itemSelect" color="#fca326">
+                  <template v-if="filteredHeuristics.length === 0">
+                    <center class="mt-16" style="color: #A7A7A7;">
+                      <strong>No heuristics found</strong><br>
+                      <h5>You must have typen something wrong...</h5><br>
+                      <v-icon>mdi-duck</v-icon>
+                    </center>
+                  </template>
+                  <v-list-item
+                    v-else
+                    v-for="(item, i) in filteredHeuristics"
+                    :key="i"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.id }} - {{ item.title }}
+                      </v-list-item-title>
                     </v-list-item-content>
+                    <v-list-item-icon v-if="i != itemSelect">
+                      <div style=""><v-btn></v-btn></div>
+                    </v-list-item-icon>
                     <v-list-item-icon v-if="i == itemSelect">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-list-item-icon>
@@ -207,8 +219,8 @@
           <v-divider vertical></v-divider>
 
           <!--Questions List-->
-          <v-col class="ma-0 pa-0" cols="3" v-if="itemSelect != null">
-            <v-list dense height="560px" outlined>
+          <v-col class="ma-0 pa-0" cols="4" v-if="itemSelect != null">
+            <v-list dense height="560px">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2"
                   >{{ heuristics[itemSelect].title }} - Questions</v-clamp
@@ -285,7 +297,7 @@
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
-              <v-list dense height="470px" outlined class="list-scroll">
+              <v-list dense height="470px" class="list-scroll">
                 <v-list-item-group v-model="questionSelect" color="#fca326">
                   <v-list-item
                     v-for="(item, i) in heuristics[itemSelect].questions"
@@ -439,6 +451,7 @@ export default {
     newQuestion: null,
     heuristicForm: null,
     search: '',
+    searchBar: false,
     filteredHeuristics: [],
     headers: [
       {
@@ -461,9 +474,16 @@ export default {
   },
   methods: {
     updateFilteredHeuristics() {
-      this.filteredHeuristics = this.heuristics.filter((item) =>
-        item.title.toLowerCase().includes(this.search.toLowerCase()),
-      )
+      this.filteredHeuristics = this.heuristics.filter((item) => {
+        const searchLower = this.search.toLowerCase()
+        const idString = item.id.toString()
+
+        return (
+          item.title.toLowerCase().includes(searchLower) ||
+          idString.includes(searchLower) ||
+          idString === searchLower
+        )
+      })
     },
     deleteHeuristic(item) {
       let config = confirm(
@@ -628,6 +648,7 @@ export default {
           this.$refs.formHeuris.reset()
         }
       }
+      this.updateFilteredHeuristics()
     },
     itemSelect() {
       if (this.itemSelect != null) this.questionSelect = 0
@@ -723,7 +744,7 @@ export default {
   color: rgba(75, 65, 65, 0.438) !important;
 }
 .disabledBtnBackground {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
 }
 .search-bar {
   color: #dbdde4;
