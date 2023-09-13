@@ -6,6 +6,10 @@
       class="white--text"
       small
       @click=";(dialog = true), resetIndex()"
+      :disabled="testAnswerDocLength > 0 ? true : false"
+      :class="{
+        disabledBtnBackground: testAnswerDocLength > 0,
+      }"
       >Add a new Description</v-btn
     >
 
@@ -138,10 +142,25 @@ export default {
       this.$refs.textbox.setContent(this.desc.text)
     },
   },
+  computed: {
+    testAnswerDocLength() {
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
 }
 </script>
 
 <style scoped>
+.disabledBtn {
+  color: rgba(134, 125, 125, 0.438) !important;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308);
+}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
