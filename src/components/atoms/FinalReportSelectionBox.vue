@@ -2,8 +2,13 @@
   <div class="selection-box">
     <h2>SELECT YOUR PDF ELEMENTS</h2>
     <div class="flex-container">
-      <div class="column with-border" style="max-height: 28vh;">
+      <div
+        v-if="heuristics.length !== 0"
+        class="column with-border"
+        style="max-height: 28vh;"
+      >
         <input
+          v-if="heuristics.length > 5"
           type="range"
           v-model="sliderValue"
           :min="0"
@@ -55,6 +60,11 @@
               {{ heuristic.id }} - {{ heuristic.title }}
             </label>
           </div>
+        </div>
+      </div>
+      <div v-else class="column with-border" style="max-height: 28vh;">
+        <div style="margin-top:10%">
+          Please create Heuristics so you can select them here.
         </div>
       </div>
 
@@ -246,9 +256,8 @@ export default {
     finalResult,
 
     async submitPdf() {
-      console.log(this.preview.heuristicEvaluator)
       this.isLoading = true // Set isLoading to true to indicate PDF generation is in progress
-      console.log(this.selectedHeuristics)
+
       try {
         await this.genPreview()
         const date = new Date() // Get current date
@@ -292,18 +301,14 @@ export default {
 
         this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
         this.statistics = finalResult()
-        console.log(this.test)
 
         if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
           if (this.test.cooperators.length > 0) {
             this.test.cooperators.forEach((element) => {
               if (element && element.email) {
-                console.log(element)
                 this.cooperatorsEmail.push(element.email) // Extract and push emails to the array
               }
             })
-
-            console.log(this.cooperatorsEmail) // Log the extracted email addresses
 
             // Assign the extracted email addresses to the preview object
             this.preview.cooperatorsEmail = this.cooperatorsEmail
@@ -317,7 +322,6 @@ export default {
           console.log('Invalid cooperators data.')
           this.preview.cooperatorsEmail = ''
         }
-        console.log(this.preview)
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
           .post(
@@ -417,6 +421,7 @@ export default {
   .heuristics-slider-label {
     font-size: medium;
     margin-left: 0.5rem;
+    margin: 1rem;
   }
 
   .heuristics-slider {

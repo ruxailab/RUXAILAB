@@ -151,7 +151,7 @@
                 <v-card>
                   <v-card-text
                     class="text-center body-1"
-                    v-if="this.test.cooperators.length >= 3"
+                    v-if="this.test.cooperators.length <= 3"
                   >
                     The graphic can only be generated with 3 or more evaluators,
                     please colect more data from your research to procede.
@@ -357,7 +357,6 @@ export default {
         align: 'start',
         value: 'heuristic',
       })
-      console.log('result evaluators ' + this.resultEvaluator)
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
           let header = table.header.find((h) => h.text == evaluator.id)
@@ -445,7 +444,6 @@ export default {
           })
         })
       }
-      console.log(this.heuristicsEvaluator)
       return table
     },
 
