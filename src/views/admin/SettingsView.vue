@@ -282,7 +282,6 @@ export default {
       this.valids[index] = valid
     },
     async submit() {
-      console.log(this.object)
       await this.$store.dispatch('updateTest', new Test(this.object))
       this.$store.commit('SET_LOCAL_CHANGES', false)
       // await this.$store.dispatch("getAnswers", { id: this.test.answers });
@@ -387,13 +386,11 @@ export default {
       event.returnValue = ''
     },
     async deleteTest(item) {
-      console.log(item)
       this.auxUser = { ...this.user } // Create a copy of user object
 
       // Remove the test with the given ID from auxUser.myTests
       delete this.auxUser.myTests[item.id]
 
-      console.log(this.auxUser)
       item.auxUser = this.auxUser
       await this.$store.dispatch('deleteTest', item)
 
