@@ -37,7 +37,7 @@
     "webpack": "^4.44.2"
   },
   "devDependencies": {
-    "@intlify/vue-i18n-loader": "^1.0.0",
+    "@intlify/vue-i18n-loader": "^1.1.0",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-eslint": "~4.3.0",
     "@vue/cli-plugin-router": "~4.3.0",
