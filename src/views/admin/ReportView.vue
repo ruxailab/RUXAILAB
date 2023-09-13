@@ -70,11 +70,17 @@
             </v-menu>
           </template>
 
+          <template v-slot:item.userDocId="{ item }">
+            <div>{{ getCooperatorEmail(item.userDocId) }}</div>
+          </template>
           <template v-slot:item.progress="{ item }">
-            <div>{{ item.progress }}%</div>
+            <div>{{ item.progress }}</div>
           </template>
           <template v-slot:item.submitted="{ item }">
             <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
+          </template>
+          <template v-slot:item.lastUpdate="{ item }">
+            <div>{{ formatDate(item.lastUpdate) }}</div>
           </template>
         </v-data-table>
       </div>
@@ -96,7 +102,7 @@ export default {
   data: () => ({
     headers: [
       { text: 'Evaluator', value: 'userDocId' },
-      { text: 'Last Update', value: 'log.date' },
+      { text: 'Last Update', value: 'lastUpdate' },
       { text: 'Progress', value: 'progress', justify: 'center' },
       { text: 'Status', value: 'submitted' },
       { text: 'More', value: 'more', justify: 'end' },
@@ -108,14 +114,14 @@ export default {
   }),
   methods: {
     checkIfIsSubmitted(status) {
-      return status == true ? 'submitted' : 'in progress'
+      return status ? 'submitted' : 'in progress'
     },
     removeReport(report) {
       this.$store
         .dispatch('removeReport', {
           docId: this.id,
           element: {
-            id: report.uid,
+            id: report.userDocId,
           },
           param: 'reports',
         })
@@ -134,13 +140,79 @@ export default {
           this.$store.commit('setError', err)
         })
     },
+    formatDate(timestamp) {
+      const currentDate = new Date()
+      const startDate = new Date(timestamp)
+
+      const yearDiff = currentDate.getFullYear() - startDate.getFullYear()
+      const monthDiff = currentDate.getMonth() - startDate.getMonth()
+      const dayDiff = currentDate.getDate() - startDate.getDate()
+      const hourDiff = currentDate.getHours() - startDate.getHours()
+      const minuteDiff = currentDate.getMinutes() - startDate.getMinutes()
+
+      if (yearDiff > 0) {
+        return `${yearDiff} year${yearDiff !== 1 ? 's' : ''} ago`
+      } else if (monthDiff > 0) {
+        return `${monthDiff} month${monthDiff !== 1 ? 's' : ''} ago`
+      } else if (dayDiff > 0) {
+        return `${dayDiff} day${dayDiff !== 1 ? 's' : ''} ago`
+      } else if (hourDiff > 0) {
+        return `${hourDiff} hour${hourDiff !== 1 ? 's' : ''} ago`
+      } else if (minuteDiff > 0) {
+        return `${minuteDiff} minute${minuteDiff !== 1 ? 's' : ''} ago`
+      } else {
+        return 'Now'
+      }
+    },
     goToCoops() {
       this.$emit('goToCoops')
+    },
+    getCooperatorEmail(userDocId) {
+      let cooperatorEmail = null
+      if (userDocId === this.user.id) {
+        return 'You'
+      } else if (
+        this.test.cooperators &&
+        Array.isArray(this.test.cooperators)
+      ) {
+        for (const element of this.test.cooperators) {
+          if (element && element.email && element.userDocId === userDocId) {
+            if (element.email === this.user.email) {
+              return 'You'
+            } else {
+              cooperatorEmail = element.email
+              break
+            }
+          } else {
+            return 'Guest'
+          }
+        }
+      }
+      return cooperatorEmail
     },
   },
   computed: {
     reports() {
-      return [this.$store.getters.currentUserTestAnswer]
+      const rawReports = this.$store.getters.testAnswerDocument.heuristicAnswers
+      const processedReports = []
+
+      for (const userId in rawReports) {
+        const report = rawReports[userId]
+        const processedReport = {
+          userDocId: report.userDocId,
+          total: report.total,
+          submitted: this.checkIfIsSubmitted(report.submitted),
+          progress: parseFloat(report.progress).toFixed(2) + '%',
+          lastUpdate: report.lastUpdate,
+        }
+
+        processedReports.push(processedReport)
+      }
+
+      return processedReports
+    },
+    user() {
+      return this.$store.getters.user
     },
     test() {
       return this.$store.getters.test
@@ -158,15 +230,11 @@ export default {
   },
   watch: {
     reports() {
-      if (Object.values(this.reports).length) this.loading = false
+      if (Object.values(this.reports)) this.loading = false
     },
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
-    /* await this.$store.dispatch("getReports", { id: this.id });
-    await this.$store.dispatch("getTest", { id: this.reports.test.id });
-    await this.$store.dispatch("getAnswers", { id: this.test.answers });
-    if (!this.$store.getters.users) this.$store.dispatch("getUsers", {}); */
   },
 }
 </script>

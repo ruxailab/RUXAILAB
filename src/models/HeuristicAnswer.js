@@ -17,14 +17,14 @@ export default class HeuristicAnswer {
     total,
     submitted,
     userDocId,
-    lastUpdate,
+    lastUpdate
   } = {}) {
     this.heuristicQuestions = heuristicQuestions ?? []
     this.progress = progress ?? 0
     this.total = total ?? 0
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
-    this.lastUpdate = lastUpdate ?? null
+    this.lastUpdate = lastUpdate ?? 0
   }
   static toHeuristicAnswer(data) {
     return new HeuristicAnswer({

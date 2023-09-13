@@ -55,6 +55,7 @@ export default class AnswerController extends Controller {
   }
 
   async saveTestAnswer(payload, answerDocId) {
+    payload.lastUpdate = Date.now();
     const fieldToUpdate = {
       [`heuristicAnswers.${payload.userDocId}`]: payload.toFirestore(),
     }
