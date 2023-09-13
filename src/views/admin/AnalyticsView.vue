@@ -1,6 +1,6 @@
 <template>
-  <div v-if="answers">
-    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops()" />
+  <div v-if="answers"> 
+    <IntroAnalytics v-if="answers != null && intro == true" @goToCoops="goToCoops()" />
 
     <ShowInfo v-if="answers != null && !intro && test" title="Analytics">
       <div slot="content" class="ma-0 pa-0">
@@ -299,7 +299,7 @@ export default {
   },
   watch: {
     answers() {
-      if (Object.values(this.answers).length) {
+      if (Object.values(this.answers)) {
         this.statistics()
 
         this.intro = !Object.values(this.answers).length
