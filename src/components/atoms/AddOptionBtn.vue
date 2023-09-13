@@ -6,6 +6,10 @@
       class="white--text"
       small
       @click="$emit('dialog', true)"
+      :disabled="testAnswerDocLength > 0 ? true : false"
+      :class="{
+        disabledBtnBackground: testAnswerDocLength > 0,
+      }"
       >Add a new Option</v-btn
     >
 
@@ -32,8 +36,10 @@
                     v-model.number="option.value"
                     label="Value"
                     :disabled="!hasValue"
-                    type="float"
+                    type="number"
                     placeholder="Ex. 0.5"
+                    :rules="valueRequired"
+                    :step="0.5"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -101,6 +107,13 @@ export default {
     textRequired: [(v) => !!v || 'Text is required'],
   }),
   computed: {
+    testAnswerDocLength() {
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
     hasValueState: {
       get() {
         return this.hasValue
@@ -109,22 +122,31 @@ export default {
         this.$emit('changeHasValue')
       },
     },
+    valueRequired() {
+      if (
+        this.hasValue ||
+        (this.option.value !== null && this.option.value >= 0)
+      ) {
+        return [
+          (v) =>
+            (v !== '' && v !== null && v >= 0) ||
+            'Value must be a positive number',
+        ]
+      } else {
+        return []
+      }
+    },
   },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        if (this.hasValue && this.option.value == null) {
-          alert('Please enter a value for this option.')
-        } else {
-          if (!this.hasValue) {
-            this.option.value = null
-          }
-
-          this.$emit('dialog', false)
-          this.$emit('addOption')
-          this.$emit('change')
-          this.resetVal()
+        if (!this.hasValue) {
+          this.option.value = null
         }
+        this.$emit('dialog', false)
+        this.$emit('addOption')
+        this.$emit('change')
+        this.resetVal()
       }
     },
     resetVal() {
@@ -142,6 +164,12 @@ export default {
 </script>
 
 <style scoped>
+.disabledBtn {
+  color: rgba(134, 125, 125, 0.438) !important;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308);
+}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
