@@ -36,7 +36,6 @@ export default class TemplateController extends Controller {
   }
 
   async deleteTemplate(templateId) {
-    console.log(templateId)
     return await super.delete(COLLECTION, templateId)
   }
 }

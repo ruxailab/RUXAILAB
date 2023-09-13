@@ -51,7 +51,6 @@ export default {
       state.answers = payload
     },
     SET_EVALUATOR_STATISTICS(state, payload) {
-      console.log(payload)
       state.evaluatorStatistics = payload
     },
   },
@@ -98,6 +97,7 @@ export default {
       }
     },
     async saveTestAnswer({ commit }, payload) {
+      console.log(payload)
       commit('setLoading', true)
       try {
         await answerController.saveTestAnswer(payload.data, payload.answerDocId)
@@ -155,7 +155,6 @@ export default {
             totalQuestions += heuristic.totalQuestions
           })
 
-          console.log(table)
           table.items.push({
             evaluator: evaluator.id,
             result: evaluator.result,
