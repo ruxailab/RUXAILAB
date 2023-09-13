@@ -43,13 +43,23 @@
           style="z-index:100"
           @click="validateAll()"
           v-on="on"
+          :disabled="testAnswerDocLength > 0 ? true : false"
+          :class="{
+            disabledBtnBackground: testAnswerDocLength > 0,
+            disabledBtn: testAnswerDocLength > 0,
+          }"
         >
-          <v-icon large>
+          <v-icon
+            large
+            :class="{
+              disabledBtn: testAnswerDocLength > 0,
+            }"
+          >
             mdi-content-save
           </v-icon>
         </v-btn>
       </template>
-      <span>Save 2.0</span>
+      <span>Save</span>
     </v-tooltip>
 
     <!-- Loading Overlay -->
@@ -137,13 +147,19 @@ export default {
     intro: false,
   }),
   computed: {
+    testAnswerDocLength() {
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
     accessLevel() {
       // If user is superadmin
       if (this.user) {
         if (this.user.accessLevel == 0) return 0
         // Check if user is collaborator or owner
         const isTestOwner = this.test.testAdmin.userDocId === this.user.id
-        console.log(isTestOwner)
         if (isTestOwner) return 0
 
         const answers = []
@@ -158,7 +174,7 @@ export default {
         }
       }
 
-      return 3
+      return 1
     },
     loading() {
       return this.$store.getters.loading
@@ -171,6 +187,9 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || []
+    },
+    testAnswerDoc() {
+      return this.$store.getters.testAnswerDocument
     },
     totalQuestions() {
       let result = 0
@@ -208,8 +227,6 @@ export default {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
 
       let auxT = Object.assign(this.test, this.object)
-      // const auxT = Test.toTest(this.object)
-      // console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -275,7 +292,6 @@ export default {
           'Please fill all fields in Post Test correctly or leave them empty',
         )
       } else {
-        console.log('saved')
         this.submit()
       }
     },
@@ -285,7 +301,6 @@ export default {
       event.returnValue = ''
     },
     async setIntro() {
-      console.log('Set Intro')
       this.object = await Object.assign(this.object, this.test)
     },
     setIndex(ind) {
@@ -302,3 +317,12 @@ export default {
   },
 }
 </script>
+
+<style>
+.disabledBtn {
+  color: rgba(134, 125, 125, 0.438) !important;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308) !important;
+}
+</style>
