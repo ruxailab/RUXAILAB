@@ -50,7 +50,7 @@
     "sass": "^1.67.0",
     "sass-loader": "^8.0.0",
     "vue-cli-plugin-i18n": "~1.0.1",
-    "vue-cli-plugin-vuetify": "^2.0.7",
+    "vue-cli-plugin-vuetify": "^2.5.8",
     "vue-template-compiler": "^2.6.12",
     "vuetify-loader": "^1.6.0"
   }
