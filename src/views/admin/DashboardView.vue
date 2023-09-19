@@ -88,7 +88,7 @@
           >
             <v-tab>My tests</v-tab>
             <v-tab>Shared with me</v-tab>
-            <!-- <v-tab>Public tests</v-tab> -->
+            <v-tab>Public tests</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
@@ -152,12 +152,12 @@
           ></List>
 
           <!-- Tests -> Public Tests -->
-          <!-- <List
+          <List
             v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
             @clicked="goTo"
             :items="filteredTests"
             type="publicTests"
-          ></List> -->
+          ></List>
 
           <!-- Templates -> Personal -->
           <List
