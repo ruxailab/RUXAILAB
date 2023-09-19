@@ -10,7 +10,7 @@
         color="#fca326"
         size="50"
       ></v-progress-circular>
-      <div class="white-text mt-3">Loading Test</div>
+      <div class="white-text mt-3">{{ $t('common.loading') }}</div>
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
@@ -41,14 +41,16 @@
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()"
-            >Continue as {{ user.email }}</v-btn
-          >
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+            {{ $t('common.continueAs') }} {{ user.email }}
+          </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
-            Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
+            {{ $t('common.notUser', { userEmail: user.email }) }}
+            <a style="color: #f9a826" @click="signOut()">{{
+              $t('common.changeAccount')
+            }}</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -66,7 +68,7 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
-                  Manager
+                  {{ $t('titles.manager') }}
                 </div>
                 <v-img
                   class="hidden-md-and-up"
@@ -93,7 +95,7 @@
           <div>
             <v-container class="card-container">
               <div class="presentation-text">
-                Edit and invite people to your test
+                {{ $t('common.editAndInvite') }}
               </div>
 
               <!-- Top Cards -->
@@ -132,9 +134,9 @@
                         'border-top': '.3px solid #505050',
                       }"
                     >
-                      <h2>{{ item.title }}</h2>
+                      <h2>{{ $t(`titles.${item.title}`) }}</h2>
                       <div>
-                        {{ item.description }}
+                        {{ $t(`descriptions.${item.description}`) }}
                       </div>
                     </div>
                   </v-card>
@@ -142,7 +144,7 @@
               </v-row>
 
               <div class="presentation-text mt-5">
-                Analyze your project and evaluators
+                {{ $t('common.analyzeProject') }}
               </div>
 
               <!-- Bottom Cards -->
@@ -186,9 +188,9 @@
                         'border-top': '.3px solid #505050',
                       }"
                     >
-                      <h2>{{ item.title }}</h2>
+                      <h2>{{ $t(`titles.${item.title}`) }}</h2>
                       <div>
-                        {{ item.description }}
+                        {{ $t(`descriptions.${item.description}`) }}
                       </div>
                     </div>
                   </v-card>
@@ -247,9 +249,9 @@ export default {
       this.index = 0
     },
     go(item) {
-      if (item.id == undefined) this.$router.push(item).catch(() => {})
+      if (item.id === undefined) this.$router.push(item).catch(() => {})
       else {
-        if (item.id == 2) window.open(item.path)
+        if (item.id === 2) window.open(item.path)
         else this.$router.push(item.path).catch(() => {})
       }
     },
@@ -271,16 +273,16 @@ export default {
         answersEntries.forEach((a) => {
           answers.push(a[1])
         })
-        // Check if test has already been accepted by user
-        let alreadyAccepted = answers.find((a) => a.testDocId == this.test.id)
+        // Check if test has already been accepted by the user
+        let alreadyAccepted = answers.find((a) => a.testDocId === this.test.id)
         if (!alreadyAccepted) {
-          //Get invitation
+          // Get invitation
           let invitation = this.test.cooperators.find(
-            (coop) => coop.token == this.token,
+            (coop) => coop.token === this.token,
           )
           if (invitation) {
-            // User invited and he has account
-            if (this.user.email == invitation.email) {
+            // User invited, and they have an account
+            if (this.user.email === invitation.email) {
               // Accept Collaboration
               await this.$store.dispatch('acceptTestCollaboration', {
                 test: this.test,
@@ -288,14 +290,14 @@ export default {
               })
               this.flagToken = false
             }
-            //User invited and he doesn't have account
+            // User invited, but they don't have an account
             else {
-              alert('User needs to signup using same e-mail of invitation')
+              alert($t('errors.signupWithInvitationEmail'))
               await this.$store.dispatch('logout')
             }
           } else {
-            alert('Invalid Invitation')
-            this.$store.commit('setError', 'Invalid invitation')
+            alert($t('errors.invalidInvitation'))
+            this.$store.commit('setError', $t('errors.invalidInvitation'))
           }
         } else {
           this.flagToken = false
@@ -317,37 +319,37 @@ export default {
       if (this.test) {
         items = [
           {
-            title: 'Manager',
+            title: $t('titles.manager'),
             icon: 'mdi-home',
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
           {
-            title: 'Test',
+            title: $t('titles.test'),
             icon: 'mdi-file-document-edit',
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
           {
-            title: 'Preview',
+            title: $t('titles.preview'),
             icon: 'mdi-file-eye',
             path: `/testview/${this.test.id}`,
             id: 2,
           },
           {
-            title: 'Reports',
+            title: $t('titles.reports'),
             icon: 'mdi-book-multiple',
             path: `/reportview/${this.test.answersDocId}`,
             id: 3,
           },
           {
-            title: 'Answers',
+            title: $t('titles.answers'),
             icon: 'mdi-order-bool-ascending-variant',
-            path: `/answerview/${this.test.answers}`,
+            path: `/answerview/${this.test.answersDocId}`,
             id: 4,
           },
           {
-            title: 'Analytics',
+            title: $t('titles.analytics'),
             icon: 'mdi-chart-bar',
             path: `/analyticsview/${this.test.answers}`,
             id: 5,
@@ -356,7 +358,7 @@ export default {
 
         if (this.accessLevel == 0) {
           items.push({
-            title: 'Cooperators',
+            title: $t('titles.cooperators'),
             icon: 'mdi-account-group',
             path: `/cooperators/${this.test.cooperators}`,
             id: 6,
@@ -365,7 +367,7 @@ export default {
 
         if (this.test.template) {
           items.push({
-            title: 'Template',
+            title: $t('titles.template'),
             icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
             id: 7,
@@ -382,20 +384,20 @@ export default {
       return [
         {
           image: 'IntroEdit.svg',
-          title: 'Edit',
+          title: 'test',
           imageStyle: 'transform: rotateY(180deg);',
           bottom: '#000',
-          description: 'Start creating and editing your test.',
+          description: 'edit',
           cardStyle:
             'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
           path: `/edittest/${this.test.id}`,
         },
         {
           image: 'IntroCoops.svg',
-          title: 'Cooperators',
+          title: 'cooperators',
           imageStyle: '',
           bottom: '#000',
-          description: 'Invite people to help you in your test.',
+          description: 'cooperators',
           cardStyle:
             'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
           path: `/cooperators/${this.test.cooperators}`,
@@ -406,40 +408,40 @@ export default {
       return [
         {
           image: 'IntroReports.svg',
-          title: 'Reports',
+          title: 'reports',
           imageStyle: 'height: 250px',
           bottom: '#000',
-          description: 'Take a look at how your evaluators are doing.',
+          description: 'reports',
           cardStyle:
             'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
           path: `/reportview/${this.test.answersDocId}`,
         },
         {
           image: 'IntroAnswer.svg',
-          title: 'Answers',
+          title: 'answers',
           imageStyle: 'height: 250px',
           bottom: '#000',
-          description: 'See how your evaluators are evaluating your project.',
+          description: 'answers',
           cardStyle:
             'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
           path: `/answerview/${this.test.answersDocId}`,
         },
         {
           image: 'IntroAnalytics.svg',
-          title: 'Analytics',
+          title: 'analytics',
           imageStyle: 'height: 250px',
           bottom: '#000',
-          description: 'Analyze comments and answers from your evaluators.',
+          description: 'analytics',
           cardStyle:
             'background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden',
           path: `/analyticsview/${this.test.answers}`,
         },
         {
           image: 'FinalReport.png',
-          title: 'Final Report',
+          title: 'finalReport',
           imageStyle: 'height: 250px',
           bottom: '#000',
-          description: 'Add additional data to your test',
+          description: 'finalReport',
           cardStyle:
             'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
           path: `/finalreportview/${this.test.id}`,
@@ -459,10 +461,10 @@ export default {
       return this.$store.getters.loading
     },
     accessLevel() {
-      // If user is superadmin
+      // If the user is a superadmin
       if (this.user) {
         if (this.user.accessLevel == 0) return 0
-        // Check if user is collaborator or owner
+        // Check if the user is a collaborator or owner
         const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
         if (isTestOwner) return 0
         const answers = []
@@ -507,7 +509,6 @@ export default {
   },
 }
 </script>
-
 <style>
 .background {
   background-color: #e8eaf2;
