@@ -174,15 +174,16 @@
                   single-line
                   hide-details
                   dense
-                  ><template v-slot:label>
+                >
+                  <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
                       Search heuristics...</span
-                    >
-                  </template></v-text-field
-                ></v-subheader
-              >
-              <v-divider></v-divider>
-              <v-list height="470px" class="list-scroll">
+                    > </template
+                  >'
+                </v-text-field>
+              </v-subheader>
+              <v-divider />
+              <v-list dense height="470px" class="list-scroll">
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">
@@ -193,40 +194,67 @@
                     </center>
                   </template>
                   <v-list-item
-                    v-else
                     v-for="(item, i) in filteredHeuristics"
+                    v-else
                     :key="i"
+                    class=" pb-0 pt-0"
+                    small
                   >
-                    <v-list-item-content>
-                      <v-list-item-title>
+                    <v-list-item-content
+                      style="margin: 0px!important; padding:0px!important; justify-content:space-between"
+                    >
+                      <v-list-item-title
+                        style="margin: 0px!important; padding:0px!important;"
+                      >
                         {{ item.id }} - {{ item.title }}
                       </v-list-item-title>
                     </v-list-item-content>
-                    <v-list-item-action v-if="i != itemSelect">
-                      <v-btn
-                        icon
-                        @click.stop="moveItemUp(i)"
-                        :disabled="
-                          item.id == 0 || testAnswerDocLength > 0 ? true : false
-                        "
+                    <div
+                      style="display: flex; align-items: center; justify-content: center!important"
+                    >
+                      <v-list-item-action
+                        v-if="i != itemSelect"
+                        style="margin: 0px !important; padding:0px !important;"
                       >
-                        <v-icon small>mdi-arrow-up</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                    <v-list-item-action v-if="i != itemSelect">
-                      <v-btn
-                        icon
-                        @click.stop="moveItemDown(i)"
-                        :disabled="
-                          testAnswerDocLength > 0
-                            ? true
-                            : false || i === filteredHeuristics.length - 1
-                        "
-                      >
-                        <v-icon small>mdi-arrow-down</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                    <v-list-item-icon class="mt-4 mb-4" v-if="i == itemSelect">
+                        <v-btn
+                          icon
+                          small
+                          style="margin: 0px!important; padding:0px!important;"
+                          :disabled="
+                            item.id == 0 || testAnswerDocLength > 0
+                              ? true
+                              : false
+                          "
+                          @click.stop="moveItemUp(i)"
+                        >
+                          <v-icon
+                            x-small
+                            style="margin: 0px!important; padding:0px!important;"
+                            >mdi-arrow-up</v-icon
+                          >
+                        </v-btn>
+                      </v-list-item-action>
+                      <v-list-item-action v-if="i != itemSelect">
+                        <v-btn
+                          icon
+                          small
+                          style="margin: 0px!important; padding:0px!important;"
+                          @click.stop="moveItemDown(i)"
+                          :disabled="
+                            testAnswerDocLength > 0
+                              ? true
+                              : false || i === filteredHeuristics.length - 1
+                          "
+                        >
+                          <v-icon
+                            x-small
+                            style="margin: 0px!important; padding:0px!important;"
+                            >mdi-arrow-down</v-icon
+                          >
+                        </v-btn>
+                      </v-list-item-action>
+                    </div>
+                    <v-list-item-icon class="mt-2 mb-2" v-if="i == itemSelect">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-list-item-icon>
                   </v-list-item>
@@ -553,8 +581,9 @@ export default {
           this.heuristics[this.itemSelect].questions.splice(item, 1)
           this.questionSelect = null
 
-          this.heuristics[this.itemSelect].total =
-            this.heuristics[this.itemSelect].questions.length
+          this.heuristics[this.itemSelect].total = this.heuristics[
+            this.itemSelect
+          ].questions.length
         }
       } else {
         alert("Sorry, but you can't delete all heuristics questions")
@@ -581,11 +610,9 @@ export default {
       this.dialogEdit = true
     },
     editDescription(desc) {
-
-      let ind =
-        this.heuristics[this.itemSelect].questions[
-          this.questionSelect
-        ].descriptions.indexOf(desc)
+      let ind = this.heuristics[this.itemSelect].questions[
+        this.questionSelect
+      ].descriptions.indexOf(desc)
       this.$refs.descBtn.editSetup(ind)
     },
     setupQuestion() {
@@ -643,9 +670,9 @@ export default {
         this.heuristics[this.itemSelect].questions.push(this.newQuestion)
         this.newQuestion = null
 
-        this.heuristics[this.itemSelect].total =
-          this.heuristics[this.itemSelect].questions.length
-
+        this.heuristics[this.itemSelect].total = this.heuristics[
+          this.itemSelect
+        ].questions.length
 
         this.$refs.formQuestion.resetValidation()
         // this.$emit("change");
@@ -740,15 +767,13 @@ export default {
         result += h.total
       })
       return result
-
     },
     testAnswerDocLength() {
-      let heuristicAnswers =
-        this.$store.getters.testAnswerDocument.heuristicAnswers
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
       let heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
-
     },
   },
   async created() {
