@@ -141,7 +141,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         if (!this.hasValue) {
-          this.option.value = null
+          this.option.value = -1
         }
         this.$emit('dialog', false)
         this.$emit('addOption')
