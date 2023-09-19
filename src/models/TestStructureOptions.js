@@ -18,7 +18,7 @@ export default class TestStructureOptions {
      *
      * @type {number}
      */
-    this.value = value;
+    this.value = value ?? '';
   }
 
   /**

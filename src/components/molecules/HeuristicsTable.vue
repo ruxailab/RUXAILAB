@@ -206,6 +206,7 @@
                       <v-btn
                         icon
                         @click.stop="moveItemUp(i)"
+                        v-if="searchBar == false"
                         :disabled="
                           item.id == 0 || testAnswerDocLength > 0 ? true : false
                         "
@@ -217,6 +218,7 @@
                       <v-btn
                         icon
                         @click.stop="moveItemDown(i)"
+                        v-if="searchBar == false"
                         :disabled="
                           testAnswerDocLength > 0
                             ? true
@@ -502,6 +504,14 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
+
+        this.heuristics[index] = itemAbove
+        this.heuristics[index - 1] = itemToMove
+
+        itemToMove.id = index - 1
+        itemAbove.id = index
+
+        console.log(this.heuristics)
       }
     },
     moveItemDown(index) {
@@ -514,19 +524,42 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
+
+        this.heuristics[index] = itemBelow
+        this.heuristics[index + 1] = itemToMove
+
+        itemToMove.id = index + 1
+        itemBelow.id = index
+
+        console.log(this.heuristics)
       }
     },
     updateFilteredHeuristics() {
-      this.filteredHeuristics = this.heuristics.filter((item) => {
-        const searchLower = this.search.toLowerCase()
-        const idString = item.id.toString()
+      if (this.search == '') {
+        this.searchBar = false
+        this.filteredHeuristics = this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
 
-        return (
-          item.title.toLowerCase().includes(searchLower) ||
-          idString.includes(searchLower) ||
-          idString === searchLower
-        )
-      })
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      } else {
+        this.searchBar = true
+        this.filteredHeuristics = this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      }
     },
     deleteHeuristic(item) {
       let config = confirm(
@@ -553,8 +586,9 @@ export default {
           this.heuristics[this.itemSelect].questions.splice(item, 1)
           this.questionSelect = null
 
-          this.heuristics[this.itemSelect].total =
-            this.heuristics[this.itemSelect].questions.length
+          this.heuristics[this.itemSelect].total = this.heuristics[
+            this.itemSelect
+          ].questions.length
         }
       } else {
         alert("Sorry, but you can't delete all heuristics questions")
@@ -582,10 +616,10 @@ export default {
     },
     editDescription(desc) {
 
-      let ind =
-        this.heuristics[this.itemSelect].questions[
-          this.questionSelect
-        ].descriptions.indexOf(desc)
+      let ind = this.heuristics[this.itemSelect].questions[
+        this.questionSelect
+      ].descriptions.indexOf(desc)
+
       this.$refs.descBtn.editSetup(ind)
     },
     setupQuestion() {
@@ -643,8 +677,9 @@ export default {
         this.heuristics[this.itemSelect].questions.push(this.newQuestion)
         this.newQuestion = null
 
-        this.heuristics[this.itemSelect].total =
-          this.heuristics[this.itemSelect].questions.length
+        this.heuristics[this.itemSelect].total = this.heuristics[
+          this.itemSelect
+        ].questions.length
 
 
         this.$refs.formQuestion.resetValidation()
@@ -743,8 +778,8 @@ export default {
 
     },
     testAnswerDocLength() {
-      let heuristicAnswers =
-        this.$store.getters.testAnswerDocument.heuristicAnswers
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
       let heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
