@@ -210,7 +210,7 @@
                       </v-list-item-title>
                     </v-list-item-content>
                     <div
-                      style="display: flex; align-items: center; justify-content: center!important"
+                      style="display: flex; align-items: center; justify-content: center !important"
                     >
                       <v-list-item-action
                         v-if="i != itemSelect"
