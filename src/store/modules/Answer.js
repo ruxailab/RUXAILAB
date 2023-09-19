@@ -150,9 +150,13 @@ export default {
           let totalQuestions = 0
 
           evaluator.heuristics.forEach((heuristic) => {
-            totalNoAplication += heuristic.totalNoAplication
+            if (heuristic.result === -1) {
+              totalQuestions - 1;
+              totalNoAplication += 1;
+            }
             totalNoReply += heuristic.totalNoReply
             totalQuestions += heuristic.totalQuestions
+            console.log(heuristic);
           })
 
           table.items.push({
