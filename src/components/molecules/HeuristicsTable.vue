@@ -438,7 +438,7 @@
           <v-col class="ma-10" cols="10">
             <v-row justify="center" align="center">
               <p class="subtitleView">
-                You don't have heuristic yet, start one.
+                You don't have any heuristic, create one to proceed.
               </p>
             </v-row>
             <v-row class="ma-4" justify="center" align="center">
@@ -615,9 +615,11 @@ export default {
       this.dialogEdit = true
     },
     editDescription(desc) {
+
       let ind = this.heuristics[this.itemSelect].questions[
         this.questionSelect
       ].descriptions.indexOf(desc)
+
       this.$refs.descBtn.editSetup(ind)
     },
     setupQuestion() {
@@ -678,6 +680,7 @@ export default {
         this.heuristics[this.itemSelect].total = this.heuristics[
           this.itemSelect
         ].questions.length
+
 
         this.$refs.formQuestion.resetValidation()
         // this.$emit("change");
@@ -772,6 +775,7 @@ export default {
         result += h.total
       })
       return result
+
     },
     testAnswerDocLength() {
       let heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -779,6 +783,7 @@ export default {
       let heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
+
     },
   },
   async created() {
