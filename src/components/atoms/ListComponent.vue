@@ -1,17 +1,16 @@
 <template>
   <div>
     <v-list v-if="items" class="py-0">
-      <div v-for="(item, n) in items" :key="n">
+      <div v-for="(item, n) in sortedItems" :key="n">
         <v-list-item v-if="item" :ripple="false" @click="emitClick(item)">
           <!-- Avatar -->
           <v-list-item-avatar tile style="border-radius: 5px" size="40">
             <v-avatar tile :color="generateColor()" style="color: #545454">
               <span
                 v-if="type === 'myTemplates' || type === 'publicTemplates'"
-              >{{ item.header.templateTitle[0].toUpperCase() }}</span>
-              <span v-else>{{
-                item.testTitle[0].toUpperCase()
-              }}</span>
+                >{{ item.header.templateTitle[0].toUpperCase() }}</span
+              >
+              <span v-else>{{ item.testTitle[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
 
@@ -22,18 +21,14 @@
             >
               {{ item.header.templateTitle }}
               <v-chip label outlined style="color: grey" small class="ml-1">
-                {{
-                  item.header.templateType
-                }}
+                {{ item.header.templateType }}
               </v-chip>
             </v-list-item-title>
             <v-list-item-title v-else>
               {{ item.testTitle }}
               <!-- Tales -->
               <v-chip label outlined style="color: grey" small class="ml-1">
-                {{
-                  item.testType
-                }}
+                {{ item.testType }}
               </v-chip>
             </v-list-item-title>
 
@@ -47,8 +42,8 @@
                 item.testAdmin
                   ? item.testAdmin.email
                   : item.header
-                    ? item.header.templateAuthor.userEmail
-                    : ""
+                  ? item.header.templateAuthor.userEmail
+                  : ''
               }}</strong>
             </v-list-item-subtitle>
             <div
@@ -66,7 +61,7 @@
                     {{
                       item.numberColaborators >= 0
                         ? item.numberColaborators
-                        : "-"
+                        : '-'
                     }}
                     <v-icon class="ml-1">
                       mdi-account-multiple
@@ -78,9 +73,7 @@
               <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-row v-bind="attrs" v-on="on">
-                    <div class="caption">
-                      {{ item.progress }}%
-                    </div>
+                    <div class="caption">{{ item.progress }}%</div>
 
                     <v-progress-circular
                       rotate="-90"
@@ -138,18 +131,13 @@
               type === 'publicTests' ||
               type === 'sharedWithMe'
           "
-        >No tests found</span>
-        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'">No templates found</span>
+          >No tests found</span
+        >
+        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
+          >No templates found</span
+        >
       </v-row>
     </v-list>
-    <!-- <v-row v-if="hasPagination" justify="center" class="mt-5">
-      <v-btn :disabled="disablePrevious" icon @click="emitPreviousPage()"
-        ><v-icon>mdi-arrow-left</v-icon></v-btn
-      >
-      <v-btn :disabled="disableNext" icon class="ml-3" @click="emitNextPage()"
-        ><v-icon>mdi-arrow-right</v-icon></v-btn
-      >
-    </v-row> -->
   </div>
 </template>
 
@@ -179,17 +167,30 @@ export default {
     },
   },
   data: () => ({}),
+  computed: {
+    // Compute the sorted items based on the updateDate property in descending order
+    sortedItems() {
+      return this.items.slice().sort((a, b) => {
+        // Parse the update dates as Date objects
+        const dateA = new Date(a.updateDate)
+        const dateB = new Date(b.updateDate)
+
+        // Sort in descending order
+        return dateB - dateA
+      })
+    },
+  },
   beforeUpdate() {
     const availableTypes = [
-      "myTests",
-      "publicTests",
-      "sharedWithMe",
-      "myTemplates",
-      "publicTemplates",
+      'myTests',
+      'publicTests',
+      'sharedWithMe',
+      'myTemplates',
+      'publicTemplates',
     ]
 
     if (!availableTypes.includes(this.type)) {
-      console.error(this.type + " type in ListTests.vue is not valid.")
+      console.error(this.type + ' type in ListTests.vue is not valid.')
     }
   },
   methods: {
@@ -199,32 +200,32 @@ export default {
     },
     getAccessLevelText(accessLevel) {
       return accessLevel === 0
-        ? "Administrator"
+        ? 'Administrator'
         : accessLevel === 1
-        ? "Evaluator"
-        : "Guest"
+        ? 'Evaluator'
+        : 'Guest'
     },
     getAccessLevelColor(accessLevel) {
       return accessLevel === 0
-        ? "primary"
+        ? 'primary'
         : accessLevel === 1
-        ? "secondary"
-        : "warning"
+        ? 'secondary'
+        : 'warning'
     },
     generateColor() {
       const hue = Math.floor(Math.random() * 360)
-      const color = "hsl(" + hue + ", 80%, 80%)"
+      const color = 'hsl(' + hue + ', 80%, 80%)'
 
       return color
     },
     emitClick(item) {
-      this.$emit("clicked", item)
+      this.$emit('clicked', item)
     },
     emitNextPage() {
-      this.$emit("nextPage")
+      this.$emit('nextPage')
     },
     emitPreviousPage() {
-      this.$emit("previousPage")
+      this.$emit('previousPage')
     },
   },
 }

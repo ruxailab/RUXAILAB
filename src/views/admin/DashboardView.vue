@@ -189,9 +189,9 @@
 </template>
 
 <script>
-import Snackbar from "@/components/atoms/Snackbar";
-import List from "@/components/atoms/ListComponent";
-import TempDialog from "@/components/molecules/TemplateInfoDialog";
+import Snackbar from '@/components/atoms/Snackbar'
+import List from '@/components/atoms/ListComponent'
+import TempDialog from '@/components/molecules/TemplateInfoDialog'
 
 export default {
   components: {
@@ -200,23 +200,23 @@ export default {
     TempDialog,
   },
   data: () => ({
-    search: "",
+    search: '',
     mainIndex: 0,
     subIndex: 0,
     searching: false,
     buttonItems: [
-      { text: "Tests", value: 0 },
-      { text: "Answers", value: 1 },
-      { text: "Templates", value: 2 },
+      { text: 'Tests', value: 0 },
+      { text: 'Answers', value: 1 },
+      { text: 'Templates', value: 2 },
     ],
     testButtonItems: [
-      { text: "All", value: 0 },
-      { text: "Personal", value: 1 },
-      { text: "Others", value: 2 },
+      { text: 'All', value: 0 },
+      { text: 'Personal', value: 1 },
+      { text: 'Others', value: 2 },
     ],
     templateButtonItems: [
-      { text: "Personal", value: 0 },
-      { text: "Explore", value: 1 },
+      { text: 'Personal', value: 0 },
+      { text: 'Explore', value: 1 },
     ],
     page: 1,
     lastPage: 1,
@@ -229,55 +229,55 @@ export default {
   }),
   methods: {
     async getMyPersonalTests() {
-      await this.$store.dispatch("getTestsAdminByUser");
+      await this.$store.dispatch('getTestsAdminByUser')
     },
     async getPublicTests() {
-      await this.$store.dispatch("getPublicTests");
+      await this.$store.dispatch('getPublicTests')
     },
     async getPublicTemplates() {
-      await this.$store.dispatch("getPublicTemplates");
+      await this.$store.dispatch('getPublicTemplates')
     },
     async getMyTemplates() {
-      await this.$store.dispatch("getTemplatesOfUser");
+      await this.$store.dispatch('getTemplatesOfUser')
     },
     async getSharedWithMeTests() {
-      await this.$store.dispatch("getSharedWithMeTests", this.user.id);
+      await this.$store.dispatch('getSharedWithMeTests', this.user.id)
     },
     reloadTemplates() {
-      this.getMyTemplates();
-      this.mainIndex = 1;
+      this.getMyTemplates()
+      this.mainIndex = 1
       this.subIndex = 0
     },
     goToCreateTestRoute() {
-      this.$router.push("/createtest");
+      this.$router.push('/createtest')
     },
     goTo(test) {
       // if it is from the my tests tab
       if (this.mainIndex === 0) {
         if (this.subIndex === 0) {
           this.$router.push({
-            name: "ManagerView",
+            name: 'ManagerView',
             params: { id: test.testDocId },
-          });
+          })
         }
         // if it is the shared with me tests
         else if (this.subIndex === 1) {
           if (test.accessLevel >= 2) {
             this.$router.push({
-              name: "TestView",
+              name: 'TestView',
               params: { id: test.testDocId },
-            });
+            })
           } else {
             this.$router.push({
-              name: "ManagerView",
+              name: 'ManagerView',
               params: { id: test.testDocId },
-            });
+            })
           }
         } else if (this.subIndex === 2) {
           this.$router.push({
-            name: "ManagerView",
+            name: 'ManagerView',
             params: { id: test.id },
-          });
+          })
         }
       }
     },
@@ -317,39 +317,39 @@ export default {
     //   this.disableNext = false;
     // },
     setupTempDialog(temp) {
-      this.temp = Object.assign({}, temp);
-      this.tempDialog = true;
+      this.temp = Object.assign({}, temp)
+      this.tempDialog = true
     },
   },
   computed: {
     user() {
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     tests() {
-      return this.$store.state.Tests.tests;
+      return this.$store.state.Tests.tests
     },
     filteredTests() {
-      let arr = null;
+      let arr = null
 
       arr = this.tests?.filter((test) => {
-        return test.testTitle.toLowerCase().includes(this.search.toLowerCase());
-      });
+        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
+      })
 
-      return arr ?? this.tests;
+      return arr ?? this.tests
     },
 
     templates() {
-      return this.$store.state.Templates.templates || [];
+      return this.$store.state.Templates.templates || []
     },
     filteredTemplates() {
       return this.templates.filter((temp) =>
         temp.header.templateTitle
           .toLowerCase()
-          .includes(this.search.toLowerCase())
-      );
+          .includes(this.search.toLowerCase()),
+      )
     },
     loading() {
-      return this.$store.getters.loading;
+      return this.$store.getters.loading
     },
     // paginatedTemps() {
     //   return this.$store.getters.paginatedTemps;
@@ -365,53 +365,53 @@ export default {
     //   return temps;
     // },
     showTempDetails() {
-      return !(this.mainIndex == 2 && this.subIndex == 0); //dont show on this tab
+      return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
   },
   watch: {
     async mainIndex(val) {
-      this.subIndex = 0; //reset subIndex when main index change
+      this.subIndex = 0 //reset subIndex when main index change
 
       // If it is on tab tests
       if (val == 0) {
-        await this.getMyPersonalTests();
+        await this.getMyPersonalTests()
       }
 
       // If it is on tab templates
       if (val == 1) {
-        await this.getMyTemplates();
+        await this.getMyTemplates()
       }
     },
     async subIndex(val) {
       if (this.mainIndex == 0) {
         // If it is on tab tests
         if (val == 0) {
-          await this.getMyPersonalTests();
+          await this.getMyPersonalTests()
         }
 
         // If it is on tab templates
         if (val == 1) {
-          await this.getSharedWithMeTests();
+          await this.getSharedWithMeTests()
         }
 
         if (val == 2) {
-          await this.getPublicTests();
+          await this.getPublicTests()
         }
       } else if (this.mainIndex == 1) {
         if (val == 0) {
-          await this.getMyTemplates();
+          await this.getMyTemplates()
         }
 
         if (val == 1) {
-          await this.getPublicTemplates();
+          await this.getPublicTemplates()
         }
       }
     },
   },
   async created() {
-    await this.getMyPersonalTests();
+    await this.getMyPersonalTests()
   },
-};
+}
 </script>
 
 <style scoped>
