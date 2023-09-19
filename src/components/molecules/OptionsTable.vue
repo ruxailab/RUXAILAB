@@ -4,7 +4,7 @@
       height="420px"
       style="background: #f5f7ff;"
       :headers="headers"
-      :items="options"
+      :items="optionsWithFormattedValue"
       :items-per-page="-1"
     >
       <template v-slot:[`item.actions`]="{ item }">
@@ -128,6 +128,15 @@ export default {
   computed: {
     options() {
       return this.$store.state.Tests.Test.testOptions
+    },
+    optionsWithFormattedValue() {
+      return this.options.map((option) => {
+        if (option.value === -1) {
+          return { ...option, value: 'No value' }
+        } else {
+          return option
+        }
+      })
     },
     testAnswerDocLength() {
       let heuristicAnswers = this.$store.getters.testAnswerDocument
