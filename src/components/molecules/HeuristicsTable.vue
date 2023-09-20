@@ -197,8 +197,10 @@
                     v-for="(item, i) in filteredHeuristics"
                     v-else
                     :key="i"
-                    class=" pb-0 pt-0"
+                    class="pb-0 pt-0"
                     small
+                    @mouseenter="hoveredItem = i"
+                    @mouseleave="hoveredItem = null"
                   >
                     <v-list-item-content
                       style="margin: 0px!important; padding:0px!important; justify-content:space-between"
@@ -213,7 +215,7 @@
                       style="display: flex; align-items: center; justify-content: center !important"
                     >
                       <v-list-item-action
-                        v-if="i != itemSelect"
+                        v-if="hoveredItem === i && i != itemSelect"
                         style="margin: 0px !important; padding:0px !important;"
                       >
                         <v-btn
@@ -233,8 +235,6 @@
                             >mdi-arrow-up</v-icon
                           >
                         </v-btn>
-                      </v-list-item-action>
-                      <v-list-item-action v-if="i != itemSelect">
                         <v-btn
                           icon
                           small
@@ -515,6 +515,7 @@ export default {
     editIndex: -1,
     nameRequired: [(v) => !!v || 'Name is required'],
     questionRequired: [(v) => !!v || 'Question has to be filled'],
+    hoveredItem: null,
   }),
   mounted() {
     this.updateFilteredHeuristics()
