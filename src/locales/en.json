@@ -37,5 +37,11 @@
   "errors": {
     "invalidInvitation": "Invalid Invitation",
     "signupWithInvitationEmail": "User needs to signup using the same email as the invitation."
+  },
+  "Introduction": {
+    "title": "UX Remote LAB",
+    "subtitle": "What about doing Usability Tests in remote?",
+    "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
+    "cta": "Get started"
   }
 }
