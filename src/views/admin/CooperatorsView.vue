@@ -156,6 +156,12 @@
 
                   <v-list>
                     <v-list-item
+                      @click=";(messageModel = true), (selectedUser = item)"
+                      link
+                    >
+                      <v-list-item-title>Send a message</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item
                       @click="reinvite(item)"
                       link
                       v-if="item.accepted == false"
@@ -182,6 +188,59 @@
       </v-container>
     </v-row>
     <AccessNotAllowed v-if="!loading && verified" />
+    <div class="text-center">
+      <v-dialog v-model="messageModel" max-width="500">
+        <v-card class="rounded-lg">
+          <v-card-title
+            style="background-color: #F9A826; color: white;"
+            class="rounded-top-lg"
+          >
+            <v-icon color="white" class="mr-2">mdi-email</v-icon>
+            Send a Message
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="messageTitle"
+              required
+              label="Title"
+              hint="Type a title for your message"
+              outlined
+              class="rounded-lg mt-4"
+            ></v-text-field>
+            <v-textarea
+              v-model="messageContent"
+              required
+              label="Content"
+              hint="Type the content of your message"
+              outlined
+              class="rounded-lg"
+            ></v-textarea>
+          </v-card-text>
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red"
+              outlined
+              text
+              class="rounded-lg"
+              @click="messageModel = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="orange"
+              dark
+              class="rounded-lg"
+              @click="sendMessage(selectedUser, messageTitle, messageContent)"
+            >
+              Send
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -217,6 +276,10 @@ export default {
     showCoops: false,
     verified: false,
     dataTableKey: 0,
+    messageModel: false,
+    selectedUser: [],
+    messageTitle: '',
+    messageContent: '',
   }),
   methods: {
     removeSelectedCoops(index) {
@@ -275,11 +338,33 @@ export default {
             title: `Cooperation Invite!`,
             description: `You have been invited to test ${this.test.testTitle}!`,
             redirectsTo: `${path}/${this.test.id}/${guest.token}`,
+            author: `${this.test.testAdmin.email}`,
             read: false,
           }),
         })
       }
       this.sendInvitationMail(guest)
+    },
+    sendMessage(guest, messageTitle, messageContent) {
+      this.messageModel = false
+      if (guest.userDocId) {
+        let path = ''
+        if (guest.accessLevel.value >= 2) {
+          path = 'testview'
+        } else {
+          path = 'managerview'
+        }
+        this.$store.dispatch('addNotification', {
+          userId: guest.userDocId,
+          notification: new Notification({
+            title: `${messageTitle}`,
+            description: `${messageContent}`,
+            redirectsTo: `/`,
+            read: false,
+            author: `${this.test.testAdmin.email}`,
+          }),
+        })
+      }
     },
     reinvite(guest) {
       this.notifyCooperator(guest)
