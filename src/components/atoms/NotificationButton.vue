@@ -50,6 +50,10 @@
               <v-list-item-subtitle>{{
                 notification.description
               }}</v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Sent by {{
+                notification.author
+              }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-icon v-if="!notification.read">
               <v-chip x-small color="success" outlined label>NEW!</v-chip>
@@ -59,45 +63,6 @@
           <div class="divider"></div>
         </v-list>
       </div>
-      <!-- <v-list v-if="user.notifications.length > 0" class="menu-scroll" two-line>
-        <v-list-item
-          v-for="(notification, n) in user.notifications"
-          :key="n"
-          style="cursor: default"
-        >
-          <v-row justify="center" class="mb-2">
-            <v-col cols="12">
-              <v-list-item-title
-                v-if="notification.to.accessLevel != 2"
-                class="text-wrap text-center"
-                >{{ notification.from.email }} has invited you to colaborate on
-                his test: "{{ notification.test.title }}"</v-list-item-title
-              >
-              <v-list-item-title v-else class="text-wrap text-center"
-                >{{ notification.from.email }} has invited you to reply test:
-                "{{ notification.test.title }}"</v-list-item-title
-              >
-            </v-col>
-
-            <v-btn
-              small
-              color="success"
-              @click="acceptNotification(notification)"
-              >Accept</v-btn
-            >
-            <v-btn
-              small
-              class="ml-2"
-              color="error"
-              @click="
-                removeNotification(notification), denyNotification(notification)
-              "
-              >Deny</v-btn
-            >
-          </v-row>
-        </v-list-item>
-      </v-list> -->
-
       <v-list v-else>
         <v-list-item>
           <v-list-item-title class="caption"
