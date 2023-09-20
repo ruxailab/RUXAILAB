@@ -36,5 +36,11 @@
   "errors": {
     "invalidInvitation": "convite inválido",
     "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite."
+  },
+  "Introduction": {
+    "title": "UX LAB Remoto",
+    "subtitle": "Que tal fazer testes de usabilidade remotamente?",
+    "description": "Junte-se ao nosso projeto OpenSource e comece a criar seu próprio LAB de usabilidade e compartilhe com amigos. Pesquisar nunca foi tão fácil!",
+    "cta": "Começar"
   }
 }
