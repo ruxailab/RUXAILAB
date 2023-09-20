@@ -9,6 +9,7 @@ export default class Notification {
         title,
         description,
         redirectsTo,
+        author,
         read
     } = {}
     ) {
@@ -16,6 +17,7 @@ export default class Notification {
         this.description = description;
         this.redirectsTo = redirectsTo;
         this.createdDate = Date.now()
+        this.author = author;
         this.read = read
     }
     static toNotification(data) {
@@ -28,6 +30,7 @@ export default class Notification {
             description: this.description,
             redirectsTo: this.redirectsTo,
             createdDate: this.createdDate,
+            author: this.author,
             read: this.read
         }
     }
