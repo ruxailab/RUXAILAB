@@ -371,9 +371,10 @@ export default {
     },
     saveInvitations() {
       const uidgen = new UIDGenerator()
-      let token = uidgen.generateSync()
+      const tokens = {}
+
       this.selectedCoops.forEach((coop) => {
-        // If it is not a user that exists on the platform
+        const token = uidgen.generateSync()
         if (!coop.id) {
           this.cooperatorsEdit.push({
             userDocId: null,
@@ -394,13 +395,14 @@ export default {
             invited: true,
             accepted: false,
             accessLevel: this.roleOptions[this.selectedRole].value,
-            token: token,
+            token: token, // Atribua o token gerado para este colaborador
             progress: 0,
             answerStatus: '',
             updateDate: this.test.updateDate,
             testAuthorEmail: this.test.testAdmin.email,
           })
         }
+        tokens[coop.id || coop] = token
       })
       this.submit()
     },
