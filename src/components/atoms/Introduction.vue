@@ -10,15 +10,13 @@
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
               <h1 class="display-3 font-weight-regular mb-4 white--text">
-                UX Remote LAB
+                {{ $t('Introduction.title') }}
               </h1>
               <h4 class="display-1 white--text mb-4">
-                What about doing Usability Tests in remote?
+                {{ $t('Introduction.subtitle') }}
               </h4>
               <p class="white--text mb-4" style="width: 80%" align="justify">
-                Join our OpenSource project and start creating your own
-                usability LAB and share it with friends. Researching has never
-                been easier!
+                {{ $t('Introduction.description') }}
               </p>
               <v-btn
                 color="white"
@@ -26,7 +24,7 @@
                 rounded
                 class="mb-2"
                 @click="goTo('/signup')"
-                >Get started</v-btn
+                >{{ $t('Introduction.cta') }}</v-btn
               >
             </v-col>
           </v-row>
@@ -39,7 +37,7 @@
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
           <h1 class="display-3 font-weight-regular white--text text-center">
-            UX Remote LAB
+            {{ $t('Introduction.title') }}
           </h1>
         </div>
         <v-img
@@ -50,14 +48,13 @@
         ></v-img>
         <div style="background-color: #f4b700" class="mx-1">
           <h4 class="display-1 white--text mb-4 text-center">
-            What about doing Usability Tests in remote?
+            {{ $t('Introduction.subtitle') }}
           </h4>
         </div>
         <div style="background-color: #f4b700" class="mx-3">
           <v-row justify="center">
             <p class="white--text mb-4 mx-4 text-center">
-              Join our OpenSource project and start creating your own usability
-              LAB and share it with friends. Researching has never been easier!
+              {{ $t('Introduction.description') }}
             </p>
             <v-btn
               color="white"
@@ -65,7 +62,7 @@
               rounded
               class="mb-2"
               @click="goTo('/signup')"
-              >Get started</v-btn
+              >{{ $t('Introduction.cta') }}</v-btn
             >
           </v-row>
         </div>
