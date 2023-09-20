@@ -51,9 +51,8 @@
                 notification.description
               }}</v-list-item-subtitle>
               <v-list-item-subtitle>
-                Sent by {{
-                notification.author
-              }}</v-list-item-subtitle>
+                Sent by {{ notification.author }}</v-list-item-subtitle
+              >
             </v-list-item-content>
             <v-list-item-icon v-if="!notification.read">
               <v-chip x-small color="success" outlined label>NEW!</v-chip>
@@ -65,9 +64,12 @@
       </div>
       <v-list v-else>
         <v-list-item>
-          <v-list-item-title class="caption"
-            >You don't have any notifications yet</v-list-item-title
-          >
+          <template>
+            <center class="mt-3 pa-1" style="color: #a7a7a7">
+              <strong>You don't have notifications yet</strong><br/>
+              <v-icon class="mt-2 mb-3">mdi-duck</v-icon>
+            </center>
+          </template>
         </v-list-item>
       </v-list>
     </v-menu>
