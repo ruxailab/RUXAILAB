@@ -20,7 +20,7 @@
           <v-icon large>mdi-plus</v-icon>
         </v-btn>
       </template>
-      <span>Create new test</span>
+      <span>{{ $t('Dashboard.createNewTest') }}</span>
     </v-tooltip>
 
     <!-- LOADING -->
@@ -33,7 +33,7 @@
         <v-col cols="10">
           <!-- Mobile search button -->
           <v-row align="center" v-if="!searching">
-            <span class="titleText ml-3">Tests</span>
+            <span class="titleText ml-3">{{ $t('Dashboard.tests') }}</span>
             <v-spacer></v-spacer>
             <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
@@ -44,7 +44,7 @@
             @blur="searching = false"
             v-else
             dense
-            label="Search"
+            :label="$t('Dashboard.search')"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
@@ -59,16 +59,16 @@
             color="black"
             class="hidden-sm-and-down"
           >
-            <v-tab>Tests</v-tab>
+            <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
             <!-- <v-tab>Answers</v-tab>-->
-            <v-tab>Templates</v-tab>
+            <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
 
             <v-spacer></v-spacer>
 
             <v-text-field
               dense
               class="mt-1"
-              label="Search"
+              :label="$t('Dashboard.search')"
               prepend-inner-icon="mdi-magnify"
               :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
               outlined
@@ -86,9 +86,9 @@
             class="hidden-sm-and-down"
             v-if="mainIndex === 0"
           >
-            <v-tab>My tests</v-tab>
-            <v-tab>Shared with me</v-tab>
-            <v-tab>Public tests</v-tab>
+            <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
+            <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
+            <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
@@ -102,8 +102,8 @@
             class="hidden-sm-and-down"
             v-if="mainIndex == 1"
           >
-            <v-tab>Personal</v-tab>
-            <v-tab>Explore</v-tab>
+            <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
+            <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
 
             <v-spacer></v-spacer>
           </v-tabs>
