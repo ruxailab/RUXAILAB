@@ -42,5 +42,16 @@
     "subtitle": "Que tal fazer testes de usabilidade remotamente?",
     "description": "Junte-se ao nosso projeto OpenSource e comece a criar seu próprio LAB de usabilidade e compartilhe com amigos. Pesquisar nunca foi tão fácil!",
     "cta": "Começar"
+  },
+  "Dashboard": {
+    "createNewTest": "Criar novo teste",
+    "tests": "Testes",
+    "templates": "Modelos",
+    "search": "Pesquisar",
+    "myTests": "Meus testes",
+    "sharedWithMe": "Compartilhados comigo",
+    "publicTests": "Testes públicos",
+    "personal": "Pessoais",
+    "explore": "Explorar"
   }
 }
