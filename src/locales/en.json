@@ -43,5 +43,16 @@
     "subtitle": "What about doing Usability Tests in remote?",
     "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
     "cta": "Get started"
+  },
+  "Dashboard": {
+    "createNewTest": "Create new test",
+    "tests": "Tests",
+    "templates": "Templates",
+    "search": "Search",
+    "myTests": "My tests",
+    "sharedWithMe": "Shared with me",
+    "publicTests": "Public tests",
+    "personal": "Personal",
+    "explore": "Explore"
   }
 }
