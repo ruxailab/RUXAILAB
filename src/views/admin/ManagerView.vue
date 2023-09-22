@@ -210,6 +210,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
+import router from '@/router'
 
 export default {
   components: {
@@ -289,15 +290,18 @@ export default {
                 cooperator: this.user,
               })
               this.flagToken = false
+              this.$router.push({ path: `/testview/${this.test.id}` })
             }
             // User invited, but they don't have an account
             else {
               alert($t('errors.signupWithInvitationEmail'))
               await this.$store.dispatch('logout')
+              this.$router.push({ path: `/` })
             }
           } else {
             alert($t('errors.invalidInvitation'))
             this.$store.commit('setError', $t('errors.invalidInvitation'))
+            this.$router.push({ path: `/` })
           }
         } else {
           this.flagToken = false
