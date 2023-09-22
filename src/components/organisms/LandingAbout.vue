@@ -62,7 +62,9 @@
           :)
         </p>
         <v-row class="hidden-sm-and-down">
-          <v-btn outlined rounded class="mt-2">See the Code</v-btn>
+          <v-btn outlined rounded class="mt-2" @click="goToGithub()"
+            >See the Code</v-btn
+          >
         </v-row>
         <v-row justify="center" class="hidden-md-and-up">
           <v-btn outlined rounded class="mt-2">See the Code</v-btn>
@@ -75,6 +77,16 @@
     </v-row>
   </v-container>
 </template>
+
+<script>
+export default {
+  methods: {
+    goToGithub(){
+      window.location.href = 'https://github.com/uramakilab/remote-usability-lab';
+    },
+  },
+}
+</script>
 
 <style scoped>
 .background-blob-desktop {
