@@ -81,8 +81,11 @@
 <script>
 export default {
   methods: {
-    goToGithub(){
-      window.location.href = 'https://github.com/uramakilab/remote-usability-lab';
+    goToGithub() {
+      window.open(
+        'https://github.com/uramakilab/remote-usability-lab',
+        '_blank',
+      )
     },
   },
 }
