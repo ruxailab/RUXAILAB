@@ -5,65 +5,70 @@
       color="#f9a826"
       class="white--text"
       small
-      @click=";(dialog = true), resetIndex()"
       :disabled="testAnswerDocLength > 0 ? true : false"
       :class="{
         disabledBtnBackground: testAnswerDocLength > 0,
       }"
-      >Add a new Description</v-btn
+      @click=";(dialog = true), resetIndex()"
     >
+      {{ $t('heuristicsTable.addNewDescription') }}
+    </v-btn>
 
-    <v-dialog width="700" v-model="dialog" persistent>
+    <v-dialog v-model="dialog" width="700" persistent>
       <v-card class="dataCard">
-        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add a new Description</p>
-        <v-divider></v-divider>
+        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
+          {{ $t('heuristicsTable.addNewDescription') }}
+        </p>
+        <v-divider />
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form" @submit.prevent="validate()">
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field
-                    :rules="rule"
                     v-model="desc.title"
+                    :rules="rule"
                     dense
                     outlined
-                    label="Title"
-                  ></v-text-field>
+                    :label="$t('common.title')"
+                  />
 
-                  <div>Description:</div>
+                  <div>{{ $t('common.description') }}:</div>
                   <TextBox
+                    ref="textbox"
                     @mounted="setDescriptionText"
                     @updateHtml="updateText"
-                    ref="textbox"
                   />
                 </v-col>
               </v-row>
             </v-form>
           </v-col>
         </v-row>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="reset()" small text color="red lighten-1 white--text"
-            >Cancel</v-btn
-          >
+          <v-spacer />
+          <v-btn small text color="red lighten-1 white--text" @click="reset()">
+            {{ $t('common.cancel') }}
+          </v-btn>
 
           <v-btn
             v-if="editIndex !== null"
-            @click="validate()"
             small
             color="#f9a826"
             class="white--text"
-            >Confirm</v-btn
+            @click="validate()"
           >
+            {{ $t('common.confirm') }}
+          </v-btn>
           <v-btn
             v-else
-            @click="validate()"
             small
             color="#f9a826"
             class="white--text"
-            >Add</v-btn
+            @click="validate()"
           >
+            {{ $t('common.add') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -74,14 +79,14 @@
 import TextBox from '@/components/atoms/TextBox'
 
 export default {
+  components: {
+    TextBox,
+  },
   props: {
     question: {
       type: Object,
       required: true,
     },
-  },
-  components: {
-    TextBox,
   },
   data: () => ({
     dialog: false,
@@ -93,9 +98,18 @@ export default {
     editIndex: null,
     isMounted: false,
   }),
+  computed: {
+    testAnswerDocLength() {
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
   methods: {
     validate() {
-      let valid = this.$refs.form.validate()
+      const valid = this.$refs.form.validate()
       if (valid && this.desc.text.length > 0) {
         if (this.editIndex == null) this.question.descriptions.push(this.desc)
         // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
@@ -140,15 +154,6 @@ export default {
     setDescriptionText() {
       this.isMounted = true
       this.$refs.textbox.setContent(this.desc.text)
-    },
-  },
-  computed: {
-    testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
     },
   },
 }
