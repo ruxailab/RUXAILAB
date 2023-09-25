@@ -13,7 +13,14 @@
     "notUser": "Not {userEmail}?",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
-    "analyzeProject": "Analyze your project and evaluators"
+    "analyzeProject": "Analyze your project and evaluators",
+    "comment": "Comment",
+    "inputImage": "Input an image of your choice referent to the topic",
+    "title": "Title",
+    "description": "Description",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "add": "Add"
   },
   "titles": {
     "manager": "Manager",
@@ -54,5 +61,13 @@
     "publicTests": "Public tests",
     "personal": "Personal",
     "explore": "Explore"
+  },
+  "AddCommentBtn": {
+    "showComment": "Show comment",
+    "addComment": "Add comment",
+    "hideTextArea": "Hide text area"
+  },
+  "heuristicsTable": {
+    "addNewDescription": "Add a new Description"
   }
 }
