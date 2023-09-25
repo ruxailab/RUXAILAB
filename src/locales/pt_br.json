@@ -53,5 +53,43 @@
     "publicTests": "Testes públicos",
     "personal": "Pessoais",
     "explore": "Explorar"
+  },
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "Editar Heurística",
+      "editQuestion": "Editar Pergunta",
+      "newQuestion": "Nova Pergunta",
+      "creatingHeuristic": "Criando uma heurística",
+      "currentHeuristics": "Heurísticas Atuais",
+      "addNewHeuristic": "Adicionar nova heurística",
+      "searchHeuristics": "Buscar heurísticas...",
+      "noHeuristicsFound": "Nenhuma heurística encontrada",
+      "addNewQuestion": "Adicionar nova pergunta",
+      "questions": "Perguntas",
+      "descriptions": "Descrições",
+      "actions": "Ações",
+      "cancel": "Cancelar",
+      "ok": "OK",
+      "add": "Adicionar",
+      "deleteHeuristic": "Excluir heurística",
+      "deleteQuestion": "Excluir pergunta"
+    },
+    "placeholders": {
+      "titleHeuristic": "Título da Heurística",
+      "titleYourHeuristic": "Dê um título à sua heurística",
+      "titleYourQuestion": "Dê um título à sua pergunta",
+      "titleQuestion": "Título da Pergunta",
+      "titleNewQuestion": "Título da nova pergunta"
+    },
+    "messages": {
+      "noHeuristics": "Você não tem nenhuma heurística, crie uma para continuar.",
+      "youMustHave": "Você deve ter digitado algo errado...",
+      "noHeuristicsDeleteAll": "Desculpe, mas você não pode excluir todas as perguntas de heurísticas",
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar."
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "questionRequired": "Question needs to be answered"
+    }
   }
 }
