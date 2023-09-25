@@ -20,9 +20,12 @@ npm run build
 npm run lint
 ```
 
+### Don't update this packages
+```
+vue
+vue-template-compiler
+vuetify-loader
+``` 
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
-
-
