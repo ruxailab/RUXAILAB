@@ -5,42 +5,45 @@
       color="#f9a826"
       class="white--text"
       small
-      @click="$emit('dialog', true)"
       :disabled="testAnswerDocLength > 0 ? true : false"
       :class="{
         disabledBtnBackground: testAnswerDocLength > 0,
       }"
-      >Add a new Option</v-btn
+      @click="$emit('dialog', true)"
     >
+      {{ $t('HeuristicsTable.titles.addOption') }}
+    </v-btn>
 
-    <v-dialog width="500" v-model="dialog" persistent>
+    <v-dialog v-model="dialog" width="500" persistent>
       <v-card class="dataCard">
-        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add a new Option</p>
-        <v-divider></v-divider>
+        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
+          {{ $t('HeuristicsTable.titles.addOption') }}
+        </p>
+        <v-divider />
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form">
               <v-row justify="center" align="center">
                 <v-col cols="6">
                   <v-text-field
-                    maxLength="100"
-                    counter="100"
                     v-model="option.text"
-                    label="Text"
+                    max-length="100"
+                    counter="100"
+                    :label="$t('common.text')"
                     :rules="textRequired"
-                  ></v-text-field>
+                  />
                 </v-col>
 
                 <v-col cols="6">
                   <v-text-field
                     v-model.number="option.value"
-                    label="Value"
+                    :label="$t('common.value')"
                     :disabled="!hasValue"
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
                     :step="0.5"
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
 
@@ -48,38 +51,39 @@
               <v-row justify="center" align="center">
                 <v-col cols="12">
                   <v-text-field
-                    maxLength="100"
-                    counter="100"
                     v-model="option.description"
-                    label="Option description"
+                    max-length="100"
+                    counter="100"
+                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
                     :rules="textRequired"
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
 
               <v-row justify="center">
                 <v-checkbox
                   v-model="hasValueState"
-                  label="Has Value"
-                ></v-checkbox>
+                  :label="$t('HeuristicsTable.titles.hasValue')"
+                />
               </v-row>
             </v-form>
           </v-col>
         </v-row>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
-            @click="$emit('dialog', false), resetVal()"
             small
             text
             color="red lighten-1 white--text"
-            >Cancel</v-btn
+            @click="$emit('dialog', false), resetVal()"
           >
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
 
-          <v-btn @click="validate()" small color="#f9a826" class="white--text"
-            >Save</v-btn
-          >
+          <v-btn small color="#f9a826" class="white--text" @click="validate()">
+            {{ $t('common.save') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -87,6 +91,7 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   props: {
     option: {
@@ -104,13 +109,13 @@ export default {
     },
   },
   data: () => ({
-    textRequired: [(v) => !!v || 'Text is required'],
+    textRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.textRequired')],
   }),
   computed: {
     testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
     },
@@ -130,10 +135,17 @@ export default {
         return [
           (v) =>
             (v !== '' && v !== null && v >= 0) ||
-            'Value must be a positive number',
+            i18n.t('HeuristicsTable.validation.textRequired'),
         ]
       } else {
         return []
+      }
+    },
+  },
+  watch: {
+    dialog() {
+      if (!this.dialog) {
+        this.hasValue = true
       }
     },
   },
@@ -151,13 +163,6 @@ export default {
     },
     resetVal() {
       this.$refs.form.resetValidation()
-    },
-  },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.hasValue = true
-      }
     },
   },
 }

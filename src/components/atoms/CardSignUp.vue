@@ -2,56 +2,60 @@
   <v-card color="#f5f7ff">
     <v-row class="ma-0 pa-0">
       <v-col cols="12" align-self="center">
-        <div class="card-title">Sign-Up</div>
+        <div class="card-title">
+          {{ $t('SIGNIN.sign-up') }}
+        </div>
 
-        <div class="divider"></div>
+        <div class="divider" />
 
-        <v-form class="mx-3" v-model="valid" @keyup.native.enter="onSignUp()">
+        <v-form v-model="valid" class="mx-3" @keyup.native.enter="onSignUp()">
           <v-text-field
+            v-model="email"
             dense
             outlined
-            label="E-mail"
+            :label="$t('SIGNIN.email')"
             :rules="emailRules"
             prepend-inner-icon="mdi-account-circle"
-            v-model="email"
-          ></v-text-field>
+          />
 
           <v-text-field
+            v-model="password"
             dense
             outlined
-            label="Password"
+            :label="$t('SIGNIN.password')"
             prepend-inner-icon="mdi-lock"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            @click:append="showPassword = !showPassword"
             :type="showPassword ? 'text' : 'password'"
             :rules="passwordRules"
-            v-model="password"
-          ></v-text-field>
+            @click:append="showPassword = !showPassword"
+          />
 
           <v-text-field
+            v-model="confirmpassword"
             dense
             outlined
-            label="Confirm Password"
+            :label="$t('SIGNIN.confirmPassword')"
             prepend-inner-icon="mdi-lock"
             :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            @click:append="showConfirmPassword = !showConfirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
-            v-model="confirmpassword"
             :rules="[comparePassword]"
-          ></v-text-field>
+            @click:append="showConfirmPassword = !showConfirmPassword"
+          />
         </v-form>
         <v-card-actions class="justify-center mt-4">
           <v-btn
             color="#F9A826"
             rounded
             class="white--text"
-            @click="onSignUp()"
             :loading="loading"
-          >Sign-up</v-btn>
+            @click="onSignUp()"
+          >
+            {{ $t('SIGNIN.sign-up') }}
+          </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-1">
           <p>
-            <a style="color: #F9A826" @click="$emit('change')">Already have an account? Sign in</a>
+            <a style="color: #F9A826" @click="$emit('change')" />
           </p>
         </v-card-actions>
       </v-col>
@@ -60,47 +64,48 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   data: () => ({
     valid: true,
-    email: "",
+    email: '',
     emailRules: [
-      v => !!v || "Email is required",
-      v => /.+@.+\..+/.test(v) || "Invalid email"
+      (v) => !!v || i18n.t('errors.emailIsRequired'),
+      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
     ],
-    password: "",
+    password: '',
     passwordRules: [
-      v => !!v || "Password is required",
-      v => v.length >= 6 || "Password must be at least 6 characters"
+      (v) => !!v || i18n.t('errors.passwordIsRequired'),
+      (v) => v.length >= 6 || i18n.t('errors.passwordValidate'),
     ],
-    confirmpassword: "",
+    confirmpassword: '',
     showPassword: false,
-    showConfirmPassword: false
+    showConfirmPassword: false,
   }),
   computed: {
     comparePassword() {
       return () =>
-        (this.confirmpassword == this.password && this.confirmpassword != "") ||
-        "Different passwords";
+        (this.confirmpassword === this.password && this.confirmpassword !== '') ||
+        i18n.t('errors.differentPasswords')
     },
     loading() {
-      return this.$store.getters.loading;
-    }
+      return this.$store.getters.loading
+    },
   },
   methods: {
     async onSignUp() {
       if (this.valid)
         await this.$store
-          .dispatch("signup", {
+          .dispatch('signup', {
             email: this.email,
-            password: this.password
+            password: this.password,
           })
           .then(() => {
-            this.$emit("logined");
-          });
-    }
-  }
-};
+            this.$emit('logined')
+          })
+    },
+  },
+}
 </script>
 
 <style scoped>
