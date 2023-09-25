@@ -13,7 +13,8 @@
     "changeAccount": "Cambiar cuenta",
     "editAndInvite": "Editar e invitar personas a tu prueba",
     "analyzeProject": "Analiza tu proyecto y evaluadores",
-    "comment": "Comentario"
+    "comment": "Comentario",
+    "inputImage": "Ingrese una imagen de su elección referente al tema"
   },
   "titles": {
     "manager": "Gerente",
