@@ -1,9 +1,57 @@
 {
-    "language":"Idioma",
-    "SIGNIN":{
-        "sign-in":"Registrarse",
-        "email":"Correo electrónico",
-        "password":"Contraseña",
-        "dont-have-account":"¿No tienes una cuenta? Regístrate"
-      }
+  "language": "Idioma",
+  "SIGNIN": {
+    "sign-in": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "dont-have-account": "¿No tienes una cuenta? Regístrate"
+  },
+  "common": {
+    "loading": "Cargando prueba",
+    "continueAs": "Continuar como",
+    "notUser": "¿No eres {userEmail}?",
+    "changeAccount": "Cambiar cuenta",
+    "editAndInvite": "Editar e invitar personas a tu prueba",
+    "analyzeProject": "Analiza tu proyecto y evaluadores"
+  },
+  "titles": {
+    "manager": "Gerente",
+    "test": "Prueba",
+    "preview": "Vista previa",
+    "reports": "Informes",
+    "answers": "Respuestas",
+    "analytics": "Analítica",
+    "cooperators": "Cooperadores",
+    "template": "Plantilla",
+    "finalReport": "Reporte Final"
+  },
+  "descriptions": {
+    "edit": "Comienza a crear y editar tu prueba.",
+    "cooperators": "Invita a personas a ayudarte en tu prueba.",
+    "reports": "Mira cómo están haciendo tus evaluadores.",
+    "answers": "Ve cómo tus evaluadores están evaluando tu proyecto.",
+    "analytics": "Analiza los comentarios y respuestas de tus evaluadores.",
+    "finalReport": "Agrega datos adicionales a tu prueba."
+  },
+  "errors": {
+    "invalidInvitation": "Invitación inválida",
+    "signupWithInvitationEmail": "El usuario necesita registrarse utilizando el mismo correo electrónico que la invitación."
+  },
+  "Introduction": {
+    "title": "UX LAB Remoto",
+    "subtitle": "¿Qué tal realizar pruebas de usabilidad en remoto?",
+    "description": "Únete a nuestro proyecto OpenSource y comienza a crear tu propio LAB de usabilidad y compártelo con amigos. ¡Investigar nunca ha sido tan fácil!",
+    "cta": "Comenzar"
+  },
+  "Dashboard": {
+    "createNewTest": "Crear nuevo examen",
+    "tests": "Examenes",
+    "templates": "Plantillas",
+    "search": "Buscar",
+    "myTests": "Mis exámenes",
+    "sharedWithMe": "Compartido conmigo",
+    "publicTests": "Exámenes públicos",
+    "personal": "Personal",
+    "explore": "Explorar"
+  }
 }

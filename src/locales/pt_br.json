@@ -1,9 +1,57 @@
 {
-    "language":"Idioma",
-    "SIGNIN":{
-        "sign-in":"Entrar",
-        "email":"E-mail",
-        "password":"Senha",
-        "dont-have-account":"Ainda não possui conta? Cadastre-se"
-      }
+  "language": "Língua",
+  "SIGNIN": {
+    "sign-in": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "dont-have-account": "Ainda não tem uma conta? Inscreva-se"
+  },
+  "common": {
+    "loading": "Carregando Teste",
+    "continueAs": "Continuar como",
+    "notUser": "Não é {userEmail}?",
+    "changeAccount": "Mudar de conta",
+    "editAndInvite": "Editar e convidar pessoas para o seu teste",
+    "analyzeProject": "Analise o seu projeto e avaliadores"
+  },
+  "titles": {
+    "manager": "Gerenciamento",
+    "test": "Teste",
+    "preview": "Visualizar",
+    "reports": "Relatórios",
+    "answers": "Respostas",
+    "analytics": "Analítica",
+    "cooperators": "Cooperadores",
+    "template": "Modelo",
+    "finalReport": "Relatório final"
+  },
+  "descriptions": {
+    "edit": "Comece a criar e editar o seu teste.",
+    "cooperators": "Convide pessoas para ajudar no seu teste.",
+    "reports": "Veja como os seus avaliadores estão se saindo.",
+    "answers": "Veja como os seus avaliadores estão avaliando o seu projeto.",
+    "analytics": "Analise os comentários e respostas dos seus avaliadores.",
+    "finalReport": "Adicione dados adicionais ao seu teste."
+  },
+  "errors": {
+    "invalidInvitation": "convite inválido",
+    "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite."
+  },
+  "Introduction": {
+    "title": "UX LAB Remoto",
+    "subtitle": "Que tal fazer testes de usabilidade remotamente?",
+    "description": "Junte-se ao nosso projeto OpenSource e comece a criar seu próprio LAB de usabilidade e compartilhe com amigos. Pesquisar nunca foi tão fácil!",
+    "cta": "Começar"
+  },
+  "Dashboard": {
+    "createNewTest": "Criar novo teste",
+    "tests": "Testes",
+    "templates": "Modelos",
+    "search": "Pesquisar",
+    "myTests": "Meus testes",
+    "sharedWithMe": "Compartilhados comigo",
+    "publicTests": "Testes públicos",
+    "personal": "Pessoais",
+    "explore": "Explorar"
+  }
 }

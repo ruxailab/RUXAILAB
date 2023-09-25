@@ -30,11 +30,20 @@ function calcFinalResult(array) {
   let maxOption = Math.max(
     ...store.getters.test.testOptions.map((item) => item.value),
   )
+
   array.forEach((res) => {
-    ;(result += res.result), (qtdQuestion += res.totalQuestions)
+    let individualResult = res.result
+    if (individualResult === -1) {
+      individualResult = 0
+    }
+
+    result += individualResult
+    qtdQuestion += res.totalQuestions
     qtdNoAplication += res.totalNoAplication
   })
+
   let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
+  console.log(result)
   return ((result * 100) / perfectResult).toFixed(1)
 }
 
@@ -98,7 +107,7 @@ function statistics() {
 
         SelectEvaluator.heuristics.push({
           id: `H${heurisIndex}`,
-          result: res,
+          result: res == -1 ? 0 : res,
           totalQuestions: heuristic.heuristicTotal,
           totalNoAplication: noAplication,
           totalNoReply: noReply,
@@ -120,7 +129,7 @@ function statistics() {
 
 function finalResult() {
   let evaluatorStatistics = store.state.Answer.evaluatorStatistics
-
+  console.log(evaluatorStatistics);
   if (evaluatorStatistics.items.length) {
     let res = evaluatorStatistics.items.reduce((total, value) => {
       return total + value.result / evaluatorStatistics.items.length
