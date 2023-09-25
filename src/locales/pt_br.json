@@ -14,7 +14,12 @@
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
     "analyzeProject": "Analise o seu projeto e avaliadores",
     "comment": "Comentário",
-    "inputImage": "Insira uma imagem de sua escolha referente ao tópico"
+    "inputImage": "Insira uma imagem de sua escolha referente ao tópico",
+    "title": "Título",
+    "description": "Descrição",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "add": "Adicionar"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -60,5 +65,8 @@
     "showComment": "Mostrar comentário",
     "addComment": "Adicionar comentário",
     "hideTextArea": "Ocultar área de texto"
+  },
+  "heuristicsTable": {
+    "addNewDescription": "Adicionar descrição"
   }
 }
