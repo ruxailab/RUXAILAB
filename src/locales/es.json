@@ -4,7 +4,10 @@
     "sign-in": "Registrarse",
     "email": "Correo electrónico",
     "password": "Contraseña",
-    "dont-have-account": "¿No tienes una cuenta? Regístrate"
+    "dont-have-account": "¿No tienes una cuenta? Regístrate",
+    "sign-up": "Inscribirse",
+    "confirmPassword": "Confirmar Contraseña",
+    "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
   },
   "common": {
     "loading": "Cargando prueba",
@@ -19,7 +22,11 @@
     "description": "Descripción",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
-    "add": "Agregar"
+    "add": "Agregar",
+    "text": "Texto",
+    "value": "Valor",
+    "save": "Ahorrar",
+    "editDelete": "Editar/Borrar"
   },
   "titles": {
     "manager": "Gerente",
@@ -42,7 +49,12 @@
   },
   "errors": {
     "invalidInvitation": "Invitación inválida",
-    "signupWithInvitationEmail": "El usuario necesita registrarse utilizando el mismo correo electrónico que la invitación."
+    "signupWithInvitationEmail": "El usuario necesita registrarse utilizando el mismo correo electrónico que la invitación.",
+    "emailIsRequired": "E-mail é obrigatório",
+    "invalidEmail": "Email inválido",
+    "passwordRequired": "Se requiere contraseña",
+    "passwordValidate": "La contraseña debe tener al menos 6 caracteres",
+    "differentPasswords": "Diferentes contraseñas"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -81,14 +93,17 @@
       "add": "Agregar",
       "deleteHeuristic": "Eliminar heurística",
       "deleteQuestion": "Eliminar pregunta",
-      "addNewDescription": "Agregar descripción"
+      "addNewDescription": "Agregar descripción",
+      "addOption": "Agregar una nueva opción",
+      "hasValue": "Tiene valor"
     },
     "placeholders": {
       "titleHeuristic": "Título Heurística",
       "titleYourHeuristic": "Título de tu heurística",
       "titleYourQuestion": "Título de tu Pregunta",
       "titleQuestion": "Título Pregunta",
-      "titleNewQuestion": "Título de nueva pregunta"
+      "titleNewQuestion": "Título de nueva pregunta",
+      "optionDescription": "Descripción de la opción"
     },
     "messages": {
       "noHeuristics": "No tienes ninguna heurística, crea una para continuar.",
@@ -98,7 +113,9 @@
     },
     "validation": {
       "nameRequired": "El nombre es obligatorio",
-      "questionRequired": "La pregunta debe estar completa"
+      "questionRequired": "La pregunta debe estar completa",
+      "textRequired": "Se requiere texto",
+      "positiveValue": "El valor debe ser un número positivo."
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentario",
