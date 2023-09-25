@@ -105,5 +105,10 @@
       "addComment": "Add comment",
       "hideTextArea": "Hide text area"
     }
+  },
+  "AcessNotAllowed": {
+    "notAllowed": "Access not allowed",
+    "noAccess": "You do not have access to the page you're trying to access.",
+    "goHome": "Go to Home"
   }
 }
