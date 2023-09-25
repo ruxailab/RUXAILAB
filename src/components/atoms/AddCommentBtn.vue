@@ -13,8 +13,8 @@
               </v-icon>
             </v-btn>
           </template>
-          <span v-if="answerHeu.heuristicComment">{{ $t('AddCommentBtn.showComment') }}</span>
-          <span v-else>{{ $t('AddCommentBtn.addComment') }}</span>
+          <span v-if="answerHeu.heuristicComment">{{ $t('HeuristicsTable.AddCommentBtn.showComment') }}</span>
+          <span v-else>{{ $t('HeuristicsTable.AddCommentBtn.addComment') }}</span>
         </v-tooltip>
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -22,7 +22,7 @@
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
-          <span>{{ $t('AddCommentBtn.hideTextArea') }}</span>
+          <span>{{ $t('HeuristicsTable.AddCommentBtn.hideTextArea') }}</span>
         </v-tooltip>
       </v-col>
 
