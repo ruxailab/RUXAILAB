@@ -94,7 +94,7 @@ export default {
       (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
     ],
     passwordRules: [
-      (v) => !!v || i18n.t('errors.passwordIsRequired'),
+      (v) => !!v || i18n.t('errors.passwordRequired'),
       (v) => v.length >= 6 || i18n.t('errors.passwordValidate'),
     ],
     confirmpassword: '',
