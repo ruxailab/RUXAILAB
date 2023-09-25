@@ -75,7 +75,7 @@ export default {
     ],
     password: '',
     passwordRules: [
-      (v) => !!v || i18n.t('errors.passwordIsRequired'),
+      (v) => !!v || i18n.t('errors.passwordRequired'),
       (v) => v.length >= 6 || i18n.t('errors.passwordValidate'),
     ],
     confirmpassword: '',
