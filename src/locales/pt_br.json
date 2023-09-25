@@ -4,7 +4,10 @@
     "sign-in": "Entrar",
     "email": "E-mail",
     "password": "Senha",
-    "dont-have-account": "Ainda não tem uma conta? Inscreva-se"
+    "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
+    "sign-up": "inscrever-se",
+    "confirmPassword": "Confirme sua senha",
+    "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
   "common": {
     "loading": "Carregando Teste",
@@ -19,7 +22,11 @@
     "description": "Descrição",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
-    "add": "Adicionar"
+    "add": "Adicionar",
+    "text": "Texto",
+    "value": "Valor",
+    "save": "Salvar",
+    "editDelete": "Editar/Apagar"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -41,8 +48,13 @@
     "finalReport": "Adicione dados adicionais ao seu teste."
   },
   "errors": {
-    "invalidInvitation": "convite inválido",
-    "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite."
+    "invalidInvitation": "Convite inválido",
+    "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite.",
+    "emailIsRequired": "Correo electronico es requerido",
+    "invalidEmail": "Email inválido",
+    "passwordRequired": "Senha requerida",
+    "passwordValidate": "A senha deve ter pelo menos 6 caracteres",
+    "differentPasswords": "Senhas diferentes"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -81,14 +93,17 @@
       "add": "Adicionar",
       "deleteHeuristic": "Excluir heurística",
       "deleteQuestion": "Excluir pergunta",
-      "addNewDescription": "Adicionar descrição"
+      "addNewDescription": "Adicionar descrição",
+      "addOption": "Adicionar uma nova opção",
+      "hasValue": "Tem valor"
     },
     "placeholders": {
       "titleHeuristic": "Título da Heurística",
       "titleYourHeuristic": "Dê um título à sua heurística",
       "titleYourQuestion": "Dê um título à sua pergunta",
       "titleQuestion": "Título da Pergunta",
-      "titleNewQuestion": "Título da nova pergunta"
+      "titleNewQuestion": "Título da nova pergunta",
+      "optionDescription": "Descrição da opção"
     },
     "messages": {
       "noHeuristics": "Você não tem nenhuma heurística, crie uma para continuar.",
@@ -98,12 +113,14 @@
     },
     "validation": {
       "nameRequired": "Name is required",
-      "questionRequired": "Question needs to be answered"
+      "questionRequired": "Question needs to be answered",
+      "textRequired": "O texto é obrigatório"
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentário",
       "addComment": "Adicionar comentário",
-      "hideTextArea": "Ocultar área de texto"
+      "hideTextArea": "Ocultar área de texto",
+      "positiveValue": "O valor precisa ser um número positivo"
     }
   },
   "AccessNotAllowed": {
