@@ -1,35 +1,37 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <v-overlay
-      class="text-center"
-      v-model="loading"
       v-if="this.$route.path.includes('manager')"
+      v-model="loading"
+      class="text-center"
     >
       <v-progress-circular
         indeterminate
         color="#fca326"
         size="50"
-      ></v-progress-circular>
-      <div class="white-text mt-3">{{ $t('common.loading') }}</div>
+      />
+      <div class="white-text mt-3">
+        {{ $t('common.loading') }}
+      </div>
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
       <CardSignIn
+        v-if="selected"
         @logined="
           setTest()
           logined = true
         "
         @change="selected = !selected"
-        v-if="selected"
       />
       <CardSignUp
+        v-else
         @logined="
           flagNewUser = true
           logined = true
           setTest()
         "
         @change="selected = !selected"
-        v-else
       />
     </v-dialog>
 
@@ -37,7 +39,9 @@
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>mdi-account</v-icon>
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
@@ -56,8 +60,8 @@
       </v-card>
     </v-dialog>
 
-    <v-row class="nav pa-0 ma-0" dense v-if="test">
-      <drawer :userAccessLevelOnTest="[accessLevel]"></drawer>
+    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+      <drawer :user-access-level-on-test="[accessLevel]" />
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
@@ -75,7 +79,7 @@
                   style="max-height: 40vh"
                   contain
                   src="@/assets/manager/IntroManager.svg"
-                ></v-img>
+                />
                 <div
                   style="font-size: 22px"
                   class="white--text mb-4 mobile-center"
@@ -89,7 +93,7 @@
                 max-width="40%"
                 max-height="85%"
                 src="@/assets/manager/IntroManager.svg"
-              ></v-img>
+              />
             </v-row>
           </div>
           <div>
@@ -100,14 +104,14 @@
 
               <!-- Top Cards -->
               <v-row justify="center" justify-md="space-around">
-                <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
+                <v-col v-for="(item, n) in topCards" :key="n" cols="12" md="6">
                   <v-card
                     class="rounded-xl cards-animation"
                     height="270px"
                     :style="item.cardStyle"
-                    @click="go(item.path)"
                     :ripple="false"
                     color="#F2F3F4"
+                    @click="go(item.path)"
                   >
                     <v-row
                       style="height: 200px"
@@ -119,7 +123,7 @@
                         :style="item.imageStyle"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
-                      ></v-img>
+                      />
                     </v-row>
 
                     <div
@@ -150,18 +154,18 @@
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col
-                  cols="12"
-                  md="4"
                   v-for="(item, i) in bottomCards"
                   :key="i"
+                  cols="12"
+                  md="4"
                 >
                   <v-card
                     class="rounded-xl cards-animation"
                     height="270px"
                     :style="item.cardStyle"
-                    @click="go(item.path)"
                     hover
                     :ripple="false"
+                    @click="go(item.path)"
                   >
                     <v-row
                       style="height: 200px"
@@ -173,7 +177,7 @@
                         height="150"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
-                      ></v-img>
+                      />
                     </v-row>
 
                     <div
@@ -199,7 +203,7 @@
             </v-container>
           </div>
         </div>
-        <router-view @goToCoops="go(items[6])" v-else></router-view>
+        <router-view v-else @goToCoops="go(items[6])" />
       </v-col>
     </v-row>
   </v-container>
@@ -213,6 +217,11 @@ export default {
     email: '',
     password: '',
   }),
+  computed: {
+    loading() {
+      return this.$store.getters.loading
+    },
+  },
   methods: {
     async onSignIn() {
       const authC = new AuthController()
@@ -225,11 +234,6 @@ export default {
       //   .then(() => {
       //     this.$emit("logined");
       //   });
-    },
-  },
-  computed: {
-    loading() {
-      return this.$store.getters.loading
     },
   },
 }
