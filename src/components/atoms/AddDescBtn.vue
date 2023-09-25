@@ -11,13 +11,13 @@
       }"
       @click=";(dialog = true), resetIndex()"
     >
-      {{ $t('heuristicsTable.addNewDescription') }}
+      {{ $t('HeuristicsTable.titles.addNewDescription') }}
     </v-btn>
 
     <v-dialog v-model="dialog" width="700" persistent>
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
-          {{ $t('heuristicsTable.addNewDescription') }}
+          {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
         <v-row justify="center" class="ma-0">

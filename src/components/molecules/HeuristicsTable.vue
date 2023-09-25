@@ -17,9 +17,9 @@
                 v-model="itemEdit.titleEdit"
                 dense
                 :label="
-                  itemEdit.title === 'Edit Heuristic'
-                    ? 'Title Heuristic'
-                    : 'Title Question'
+                  itemEdit.title === $t('HeuristicsTable.titles.editHeuristic')
+                    ? $t('HeuristicsTable.placeholders.titleHeuristic')
+                    : $t('HeuristicsTable.placeholders.titleQuestion')
                 "
                 outlined
                 class="mx-3"
@@ -36,10 +36,12 @@
             text
             @click=";(dialogEdit = false), (itemEdit = null)"
           >
-            Cancel
+            {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
           <v-btn class="white--text" color="#fca326" @click="validateEdit()">
-            Ok
+            {{
+              $t('HeuristicsTable.titles.ok')
+            }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -50,35 +52,39 @@
       <v-card v-if="newQuestion">
         <v-card-title
           class="headline white--text"
-          style="background-color: #fca326"
           primary-title
         >
-          New Question
+          <v-row class="ma-0 mt-3">
+            <v-col cols="10">
+              <v-form ref="formQuestion" @submit.prevent="addQuestion()">
+                <v-text-field
+                  v-model="newQuestion.title"
+                  dense
+                  :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
+                  outlined
+                  class="mx-2"
+                  :rules="questionRequired"
+                  autofocus
+                />
+              </v-form>
+            </v-col>
+          </v-row>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              class="lighten-2"
+              text
+              @click="closeDialog('dialogQuestion')"
+            >
+              {{ $t('HeuristicsTable.titles.cancel') }}
+            </v-btn>
+            <v-btn class="white--text" color="#fca326" @click="addQuestion()">
+              {{
+                $t('HeuristicsTable.titles.add')
+              }}
+            </v-btn>
+          </v-card-actions>
         </v-card-title>
-        <v-row class="ma-0 mt-3">
-          <v-col cols="10">
-            <v-form ref="formQuestion" @submit.prevent="addQuestion()">
-              <v-text-field
-                v-model="newQuestion.title"
-                dense
-                label="Title new question"
-                outlined
-                class="mx-2"
-                :rules="questionRequired"
-                autofocus
-              />
-            </v-form>
-          </v-col>
-        </v-row>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn class="lighten-2" text @click="closeDialog('dialogQuestion')">
-            Cancel
-          </v-btn>
-          <v-btn class="white--text" color="#fca326" @click="addQuestion()">
-            Add
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -90,7 +96,7 @@
           style="background-color: #fca326"
           primary-title
         >
-          Creating a heuristic
+          {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
         </v-card-title>
         <v-row justify="center">
           <v-col cols="10">
@@ -102,7 +108,7 @@
               <v-text-field
                 v-model="heuristicForm.title"
                 dense
-                label="Title your heuristic"
+                :label="$t('HeuristicsTable.placeholders.titleYourHeuristic')"
                 outlined
                 class="mx-2"
                 :rules="nameRequired"
@@ -112,7 +118,7 @@
               <v-text-field
                 v-model="heuristicForm.questions[0].title"
                 dense
-                label="Title first question"
+                :label="$t('HeuristicsTable.placeholders.titleYourQuestion')"
                 outlined
                 class="mx-2"
                 :rules="questionRequired"
@@ -124,10 +130,14 @@
         <v-card-actions>
           <v-spacer />
           <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">
-            Cancel
+            {{
+              $t('HeuristicsTable.titles.cancel')
+            }}
           </v-btn>
           <v-btn class="white--text" color="#fca326" @click="addHeuris()">
-            Add
+            {{
+              $t('HeuristicsTable.titles.add')
+            }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -139,7 +149,9 @@
     <v-col cols="12">
       <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
         <v-card-title class="subtitleView">
-          Current Heuristics
+          {{
+            $t('HeuristicsTable.titles.currentHeuristics')
+          }}
         </v-card-title>
         <v-divider />
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
@@ -161,17 +173,13 @@
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
-                    <strong>Add new heuristic</strong>
+                    <strong>{{
+                      $t('HeuristicsTable.titles.addNewHeuristic')
+                    }}</strong>
                   </v-list-item-title>
                 </v-list-item-content>
-                <!-- <v-btn
-                  icon
-                  value="center"
-                  ><v-icon color="">mdi-magnify</v-icon></v-btn> -->
               </v-list-item>
-
               <v-divider />
-
               <v-subheader>
                 <v-text-field
                   v-model="search"
@@ -186,7 +194,7 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      Search heuristics...</span>
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
                   </template>'
                 </v-text-field>
               </v-subheader>
@@ -195,9 +203,10 @@
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">
-                      <strong>No heuristics found</strong><br>
-                      <h5>You must have typen something wrong...</h5>
-                      <br>
+                      <strong>{{
+                        $t('HeuristicsTable.titles.noHeuristicsFound')
+                      }}</strong><br>
+                      <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
                     </center>
                   </template>
                   <template v-else>
@@ -309,13 +318,14 @@
             <v-list dense height="560px">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
-                  {{ heuristics[itemSelect].title }} - Questions
+                  {{ heuristics[itemSelect].title }} -
+                  {{ $t('HeuristicsTable.titles.questions') }}
                 </v-clamp>
                 <template v-slot:top>
                   <v-row class>
                     <v-col class="ml-2 mb-1 pa-4 pb-0">
                       <p class="subtitleView">
-                        Descriptions
+                        {{ $t('HeuristicsTable.titles.descriptions') }}
                       </p>
                     </v-col>
                     <v-col class="mr-2 mb-1 pb-0 pa-4">
@@ -349,7 +359,11 @@
                       <v-list-item-icon>
                         <v-icon>mdi-pencil</v-icon>
                       </v-list-item-icon>
-                      <v-list-item-title>Edit heuristic</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsTable.titles.editHeuristic')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
                     <v-list-item
                       :disabled="testAnswerDocLength > 0 ? true : false"
@@ -358,7 +372,11 @@
                       <v-list-item-icon>
                         <v-icon>mdi-delete</v-icon>
                       </v-list-item-icon>
-                      <v-list-item-title>Delete heuristic</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsTable.titles.deleteHeuristic')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -382,7 +400,9 @@
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
-                    Add new question
+                    {{
+                      $t('HeuristicsTable.titles.addNewQuestion')
+                    }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -435,7 +455,11 @@
                       <v-list-item-icon>
                         <v-icon>mdi-pencil</v-icon>
                       </v-list-item-icon>
-                      <v-list-item-title>Edit question</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsTable.titles.editQuestion')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
                     <v-list-item
                       :disabled="testAnswerDocLength > 0 ? true : false"
@@ -444,7 +468,11 @@
                       <v-list-item-icon>
                         <v-icon>mdi-delete</v-icon>
                       </v-list-item-icon>
-                      <v-list-item-title>Delete question</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsTable.titles.deleteQuestion')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -465,7 +493,7 @@
                       <v-row class>
                         <v-col class="ml-2 mb-1 pa-4 pb-0">
                           <p class="subtitleView">
-                            Descriptions
+                            {{ $t('HeuristicsTable.titles.descriptions') }}
                           </p>
                         </v-col>
                         <v-col class="mr-2 mb-1 pb-0 pa-4">
@@ -513,7 +541,7 @@
           <v-col class="ma-10" cols="10">
             <v-row justify="center" align="center">
               <p class="subtitleView">
-                You don't have any heuristic, create one to proceed.
+                {{ $t('HeuristicsTable.messages.noHeuristics') }}
               </p>
             </v-row>
             <v-row class="ma-4" justify="center" align="center">
