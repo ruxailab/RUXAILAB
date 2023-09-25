@@ -12,7 +12,8 @@
     "notUser": "¿No eres {userEmail}?",
     "changeAccount": "Cambiar cuenta",
     "editAndInvite": "Editar e invitar personas a tu prueba",
-    "analyzeProject": "Analiza tu proyecto y evaluadores"
+    "analyzeProject": "Analiza tu proyecto y evaluadores",
+    "comment": "Comentario"
   },
   "titles": {
     "manager": "Gerente",
@@ -53,5 +54,10 @@
     "publicTests": "Exámenes públicos",
     "personal": "Personal",
     "explore": "Explorar"
+  },
+  "AddCommentBtn": {
+    "showComment": "Mostrar comentario",
+    "addComment": "Agregar comentario",
+    "hideTextArea": "Ocultar área de texto"
   }
 }

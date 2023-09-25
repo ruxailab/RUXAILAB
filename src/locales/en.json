@@ -13,7 +13,8 @@
     "notUser": "Not {userEmail}?",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
-    "analyzeProject": "Analyze your project and evaluators"
+    "analyzeProject": "Analyze your project and evaluators",
+    "comment": "Comment"
   },
   "titles": {
     "manager": "Manager",
@@ -54,5 +55,10 @@
     "publicTests": "Public tests",
     "personal": "Personal",
     "explore": "Explore"
+  },
+  "AddCommentBtn": {
+    "showComment": "Show comment",
+    "addComment": "Add comment",
+    "hideTextArea": "Hide text area"
   }
 }

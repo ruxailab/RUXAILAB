@@ -12,7 +12,8 @@
     "notUser": "Não é {userEmail}?",
     "changeAccount": "Mudar de conta",
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
-    "analyzeProject": "Analise o seu projeto e avaliadores"
+    "analyzeProject": "Analise o seu projeto e avaliadores",
+    "comment": "Comentário"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -53,5 +54,10 @@
     "publicTests": "Testes públicos",
     "personal": "Pessoais",
     "explore": "Explorar"
+  },
+  "AddCommentBtn": {
+    "showComment": "Mostrar comentário",
+    "addComment": "Adicionar comentário",
+    "hideTextArea": "Ocultar área de texto"
   }
 }
