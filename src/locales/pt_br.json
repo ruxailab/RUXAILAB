@@ -12,7 +12,14 @@
     "notUser": "Não é {userEmail}?",
     "changeAccount": "Mudar de conta",
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
-    "analyzeProject": "Analise o seu projeto e avaliadores"
+    "analyzeProject": "Analise o seu projeto e avaliadores",
+    "comment": "Comentário",
+    "inputImage": "Insira uma imagem de sua escolha referente ao tópico",
+    "title": "Título",
+    "description": "Descrição",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "add": "Adicionar"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -68,11 +75,13 @@
       "questions": "Perguntas",
       "descriptions": "Descrições",
       "actions": "Ações",
+      "titles": "Título",
       "cancel": "Cancelar",
       "ok": "OK",
       "add": "Adicionar",
       "deleteHeuristic": "Excluir heurística",
-      "deleteQuestion": "Excluir pergunta"
+      "deleteQuestion": "Excluir pergunta",
+      "addNewDescription": "Adicionar descrição"
     },
     "placeholders": {
       "titleHeuristic": "Título da Heurística",
@@ -90,6 +99,11 @@
     "validation": {
       "nameRequired": "Name is required",
       "questionRequired": "Question needs to be answered"
+    },
+    "AddCommentBtn": {
+      "showComment": "Mostrar comentário",
+      "addComment": "Adicionar comentário",
+      "hideTextArea": "Ocultar área de texto"
     }
   }
 }
