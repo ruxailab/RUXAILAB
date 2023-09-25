@@ -4,23 +4,29 @@
     "sign-in": "Sign-In",
     "email": "E-mail",
     "password": "Password",
-    "dont-have-account": "Don't have an account yet? Sign up"
+    "dont-have-account": "Don't have an account yet? Sign up",
+    "sign-up": "Sign-Up",
+    "confirmPassword": "Confirme sua senha",
+    "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
-
   "common": {
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
-    "analyzeProject": "Analyze your project and evaluators",
+    "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
     "inputImage": "Input an image of your choice referent to the topic",
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "add": "Add"
+    "add": "Add",
+    "text": "Text",
+    "value": "Value",
+    "save": "Save",
+    "editDelete": "Edit/Delete"
   },
   "titles": {
     "manager": "Manager",
@@ -43,7 +49,12 @@
   },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
-    "signupWithInvitationEmail": "User needs to signup using the same email as the invitation."
+    "signupWithInvitationEmail": "User needs to signup using the same email as the invitation.",
+    "emailIsRequired": "Email is required",
+    "invalidEmail": "Invalid email",
+    "passwordRequired": "Password is required",
+    "passwordValidate": "Password must be at least 6 characters",
+    "differentPasswords": "Different passwords"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -76,19 +87,23 @@
       "questions": "Questions",
       "descriptions": "Descriptions",
       "actions": "Actions",
+      "titles": "Title",
       "cancel": "Cancel",
       "ok": "Ok",
       "add": "Add",
       "deleteHeuristic": "Delete heuristic",
       "deleteQuestion": "Delete question",
-      "addNewDescription": "Add a new Description"
+      "addNewDescription": "Add a new Description",
+      "addOption": "Add a new Option",
+      "hasValue": "Has Value"
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
       "titleYourHeuristic": "Title your heuristic",
       "titleYourQuestion": "Title your Question",
       "titleQuestion": "Title Question",
-      "titleNewQuestion": "Title new question"
+      "titleNewQuestion": "Title new question",
+      "optionDescription": "Option Description"
     },
     "messages": {
       "noHeuristics": "You don't have any heuristic, create one to proceed.",
@@ -98,7 +113,9 @@
     },
     "validation": {
       "nameRequired": "O nome é obrigatório",
-      "questionRequired": "A pergunta deve ser preenchida"
+      "questionRequired": "A pergunta deve ser preenchida",
+      "textRequired": "Text is required",
+      "positiveValue": "Value must be a positive number"
     },
     "AddCommentBtn": {
       "showComment": "Show comment",
