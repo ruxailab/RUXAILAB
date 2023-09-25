@@ -61,12 +61,54 @@
     "personal": "Personal",
     "explore": "Explorar"
   },
-  "AddCommentBtn": {
-    "showComment": "Mostrar comentario",
-    "addComment": "Agregar comentario",
-    "hideTextArea": "Ocultar área de texto"
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "Editar Heurística",
+      "editQuestion": "Editar Pregunta",
+      "newQuestion": "Nueva Pregunta",
+      "creatingHeuristic": "Creando una heurística",
+      "currentHeuristics": "Heurísticas Actuales",
+      "addNewHeuristic": "Agregar nueva heurística",
+      "searchHeuristics": "Buscar heurísticas...",
+      "noHeuristicsFound": "No se encontraron heurísticas",
+      "addNewQuestion": "Agregar nueva pregunta",
+      "questions": "Preguntas",
+      "descriptions": "Descripciones",
+      "actions": "Acciones",
+      "titles": "Título",
+      "cancel": "Cancelar",
+      "ok": "Aceptar",
+      "add": "Agregar",
+      "deleteHeuristic": "Eliminar heurística",
+      "deleteQuestion": "Eliminar pregunta",
+      "addNewDescription": "Agregar descripción"
+    },
+    "placeholders": {
+      "titleHeuristic": "Título Heurística",
+      "titleYourHeuristic": "Título de tu heurística",
+      "titleYourQuestion": "Título de tu Pregunta",
+      "titleQuestion": "Título Pregunta",
+      "titleNewQuestion": "Título de nueva pregunta"
+    },
+    "messages": {
+      "noHeuristics": "No tienes ninguna heurística, crea una para continuar.",
+      "youMustHave": "Debes haber escrito algo mal...",
+      "noHeuristicsDeleteAll": "Lo siento, pero no puedes eliminar todas las preguntas de heurísticas",
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar."
+    },
+    "validation": {
+      "nameRequired": "El nombre es obligatorio",
+      "questionRequired": "La pregunta debe estar completa"
+    },
+    "AddCommentBtn": {
+      "showComment": "Mostrar comentario",
+      "addComment": "Agregar comentario",
+      "hideTextArea": "Ocultar área de texto"
+    }
   },
-  "heuristicsTable": {
-    "addNewDescription": "Agregar descripción"
+  "AcessNotAllowed": {
+    "notAllowed": "Acceso no permitido",
+    "noAccess": "No tienes acceso a la página que estás intentando acceder.",
+    "goHome": "Ir a la página de inicio"
   }
 }

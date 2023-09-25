@@ -62,12 +62,53 @@
     "personal": "Personal",
     "explore": "Explore"
   },
-  "AddCommentBtn": {
-    "showComment": "Show comment",
-    "addComment": "Add comment",
-    "hideTextArea": "Hide text area"
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "Edit Heuristic",
+      "editQuestion": "Edit Question",
+      "newQuestion": "New Question",
+      "creatingHeuristic": "Creating a heuristic",
+      "currentHeuristics": "Current Heuristics",
+      "addNewHeuristic": "Add new heuristic",
+      "searchHeuristics": "Search heuristics...",
+      "noHeuristicsFound": "No heuristics found",
+      "addNewQuestion": "Add new question",
+      "questions": "Questions",
+      "descriptions": "Descriptions",
+      "actions": "Actions",
+      "cancel": "Cancel",
+      "ok": "Ok",
+      "add": "Add",
+      "deleteHeuristic": "Delete heuristic",
+      "deleteQuestion": "Delete question",
+      "addNewDescription": "Add a new Description"
+    },
+    "placeholders": {
+      "titleHeuristic": "Title Heuristic",
+      "titleYourHeuristic": "Title your heuristic",
+      "titleYourQuestion": "Title your Question",
+      "titleQuestion": "Title Question",
+      "titleNewQuestion": "Title new question"
+    },
+    "messages": {
+      "noHeuristics": "You don't have any heuristic, create one to proceed.",
+      "youMustHave": "You must have typen something wrong...",
+      "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
+      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding."
+    },
+    "validation": {
+      "nameRequired": "O nome é obrigatório",
+      "questionRequired": "A pergunta deve ser preenchida"
+    },
+    "AddCommentBtn": {
+      "showComment": "Show comment",
+      "addComment": "Add comment",
+      "hideTextArea": "Hide text area"
+    }
   },
-  "heuristicsTable": {
-    "addNewDescription": "Add a new Description"
+  "AcessNotAllowed": {
+    "notAllowed": "Access not allowed",
+    "noAccess": "You do not have access to the page you're trying to access.",
+    "goHome": "Go to Home"
   }
 }
