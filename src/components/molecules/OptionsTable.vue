@@ -27,14 +27,16 @@
       <template v-slot:top>
         <v-row class>
           <v-col class="ml-2 mb-1 pa-4 pb-0">
-            <p class="subtitleView">Current Options</p>
+            <p class="subtitleView">
+              Current Options
+            </p>
           </v-col>
           <v-col class="mr-2 mb-1 pb-0 pa-4">
             <v-row justify="end" class="ma-0 pa-0">
               <AddOptionBtn
                 :option="option"
                 :dialog="dialog"
-                :hasValue="hasValue"
+                :has-value="hasValue"
                 @changeHasValue="hasValue = !hasValue"
                 @addOption="updateOptions"
                 @dialog="changeDialog"
@@ -43,30 +45,34 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-divider class="mb-4"></v-divider>
+        <v-divider class="mb-4" />
       </template>
     </v-data-table>
   </div>
 </template>
 
 <script>
+import i18n from '@/i18n'
 import AddOptionBtn from '../atoms/AddOptionBtn'
 
 export default {
+  components: {
+    AddOptionBtn,
+  },
   data: () => ({
     headers: [
       {
-        text: 'Text',
+        text: i18n.t('common.text'),
         align: 'start',
         value: 'text',
       },
       {
-        text: 'Description',
+        text: i18n.t('common.description'),
         align: 'end',
         value: 'description',
       },
-      { text: 'Value', align: 'end', value: 'value' },
-      { text: 'Edit/Delete', value: 'actions', align: 'end', sortable: false },
+      { text: i18n.t('common.value'), align: 'end', value: 'value' },
+      { text: i18n.t('common.editDelete'), value: 'actions', align: 'end', sortable: false },
     ],
     option: {
       text: '',
@@ -77,6 +83,41 @@ export default {
     editIndex: -1,
     hasValue: true,
   }),
+  computed: {
+    options() {
+      return this.$store.state.Tests.Test.testOptions
+    },
+    optionsWithFormattedValue() {
+      return this.options.map((option) => {
+        if (option.value === -1) {
+          return { ...option, value: 'No value' }
+        } else {
+          return option
+        }
+      })
+    },
+    testAnswerDocLength() {
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
+  watch: {
+    dialog() {
+      if (!this.dialog) {
+        this.option = {
+          text: '',
+          value: null,
+        }
+        this.hasValue = true
+      }
+    },
+    options() {
+      this.$emit('change')
+    },
+  },
   methods: {
     updateOptions() {
       if (this.editIndex == -1) {
@@ -103,51 +144,13 @@ export default {
       this.option.text = this.options[this.editIndex].text
       this.option.value = this.options[this.editIndex].value
 
-      if (this.option.value == null) this.hasValue = false
+      if (this.option.value === null) this.hasValue = false
       else this.hasValue = true
       this.dialog = true
     },
     emitChange() {
       this.$emit('change')
     },
-  },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.option = {
-          text: '',
-          value: null,
-        }
-        this.hasValue = true
-      }
-    },
-    options() {
-      this.$emit('change')
-    },
-  },
-  computed: {
-    options() {
-      return this.$store.state.Tests.Test.testOptions
-    },
-    optionsWithFormattedValue() {
-      return this.options.map((option) => {
-        if (option.value === -1) {
-          return { ...option, value: 'No value' }
-        } else {
-          return option
-        }
-      })
-    },
-    testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
-    },
-  },
-  components: {
-    AddOptionBtn,
   },
 }
 </script>
