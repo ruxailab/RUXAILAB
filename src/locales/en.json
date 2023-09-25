@@ -1,9 +1,58 @@
 {
-  "language":"Language",
-  "SIGNIN":{
-    "sign-in":"Sign-In",
-    "email":"E-mail",
-    "password":"Password",
-    "dont-have-account":"Don't have an account yet? Sign up"
+  "language": "Language",
+  "SIGNIN": {
+    "sign-in": "Sign-In",
+    "email": "E-mail",
+    "password": "Password",
+    "dont-have-account": "Don't have an account yet? Sign up"
+  },
+
+  "common": {
+    "loading": "Loading Test",
+    "continueAs": "Continue as",
+    "notUser": "Not {userEmail}?",
+    "changeAccount": "Change account",
+    "editAndInvite": "Edit and invite people to your test",
+    "analyzeProject": "Analyze your project and evaluators"
+  },
+  "titles": {
+    "manager": "Manager",
+    "test": "Test",
+    "preview": "Preview",
+    "reports": "Reports",
+    "answers": "Answers",
+    "analytics": "Analytics",
+    "cooperators": "Cooperators",
+    "template": "Template",
+    "finalReport": "Final Report"
+  },
+  "descriptions": {
+    "edit": "Start creating and editing your test.",
+    "cooperators": "Invite people to help you in your test.",
+    "reports": "Take a look at how your evaluators are doing.",
+    "answers": "See how your evaluators are evaluating your project.",
+    "analytics": "Analyze comments and answers from your evaluators.",
+    "finalReport": "Add additional data to your test."
+  },
+  "errors": {
+    "invalidInvitation": "Invalid Invitation",
+    "signupWithInvitationEmail": "User needs to signup using the same email as the invitation."
+  },
+  "Introduction": {
+    "title": "UX Remote LAB",
+    "subtitle": "What about doing Usability Tests in remote?",
+    "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
+    "cta": "Get started"
+  },
+  "Dashboard": {
+    "createNewTest": "Create new test",
+    "tests": "Tests",
+    "templates": "Templates",
+    "search": "Search",
+    "myTests": "My tests",
+    "sharedWithMe": "Shared with me",
+    "publicTests": "Public tests",
+    "personal": "Personal",
+    "explore": "Explore"
   }
 }

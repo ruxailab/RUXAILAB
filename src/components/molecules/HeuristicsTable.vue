@@ -7,8 +7,9 @@
           class="headline white--text"
           style="background-color: #fca326"
           primary-title
-          >{{ itemEdit.title }}</v-card-title
         >
+          {{ itemEdit.title }}
+        </v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
             <v-form ref="formEdit" @submit.prevent="validateEdit()">
@@ -24,21 +25,22 @@
                 class="mx-3"
                 :rules="itemEdit.rule"
                 autofocus
-              ></v-text-field>
+              />
             </v-form>
           </v-col>
         </v-row>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             class="lighten-2"
             text
             @click=";(dialogEdit = false), (itemEdit = null)"
-            >Cancel</v-btn
           >
-          <v-btn class="white--text" color="#fca326" @click="validateEdit()"
-            >Ok</v-btn
-          >
+            Cancel
+          </v-btn>
+          <v-btn class="white--text" color="#fca326" @click="validateEdit()">
+            Ok
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -50,8 +52,9 @@
           class="headline white--text"
           style="background-color: #fca326"
           primary-title
-          >New Question</v-card-title
         >
+          New Question
+        </v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
             <v-form ref="formQuestion" @submit.prevent="addQuestion()">
@@ -63,37 +66,38 @@
                 class="mx-2"
                 :rules="questionRequired"
                 autofocus
-              ></v-text-field>
+              />
             </v-form>
           </v-col>
         </v-row>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog('dialogQuestion')"
-            >Cancel</v-btn
-          >
-          <v-btn class="white--text" color="#fca326" @click="addQuestion()"
-            >Add</v-btn
-          >
+          <v-spacer />
+          <v-btn class="lighten-2" text @click="closeDialog('dialogQuestion')">
+            Cancel
+          </v-btn>
+          <v-btn class="white--text" color="#fca326" @click="addQuestion()">
+            Add
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!--Card Create New Heuristic-->
-    <v-dialog v-model="dialogHeuris" width="800" persistent
-      ><v-card style="overflow: hidden">
+    <v-dialog v-model="dialogHeuris" width="800" persistent>
+      <v-card style="overflow: hidden">
         <v-card-title
           class="headline white--text"
           style="background-color: #fca326"
           primary-title
-          >Creating a heuristic</v-card-title
         >
+          Creating a heuristic
+        </v-card-title>
         <v-row justify="center">
           <v-col cols="10">
             <v-form
+              v-if="heuristicForm"
               ref="formHeuris"
               @keyup.native.enter="addHeuris()"
-              v-if="heuristicForm"
             >
               <v-text-field
                 v-model="heuristicForm.title"
@@ -103,7 +107,7 @@
                 class="mx-2"
                 :rules="nameRequired"
                 autofocus
-              ></v-text-field>
+              />
 
               <v-text-field
                 v-model="heuristicForm.questions[0].title"
@@ -112,31 +116,33 @@
                 outlined
                 class="mx-2"
                 :rules="questionRequired"
-              ></v-text-field>
+              />
             </v-form>
           </v-col>
         </v-row>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')"
-            >Cancel</v-btn
-          >
-          <v-btn class="white--text" color="#fca326" @click="addHeuris()"
-            >Add</v-btn
-          >
+          <v-spacer />
+          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">
+            Cancel
+          </v-btn>
+          <v-btn class="white--text" color="#fca326" @click="addHeuris()">
+            Add
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialog" width="800" persistent> </v-dialog>
+    <v-dialog v-model="dialog" width="800" persistent />
 
     <!-- Main -->
     <v-col cols="12">
       <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
-        <v-card-title class="subtitleView">Current Heuristics</v-card-title>
-        <v-divider></v-divider>
-        <v-row class="ma-0 pa-0" v-if="heuristics.length">
+        <v-card-title class="subtitleView">
+          Current Heuristics
+        </v-card-title>
+        <v-divider />
+        <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="4">
             <v-list dense height="560px" class="pt-0" outlined>
@@ -146,14 +152,17 @@
                 @click="dialogHeuris = true"
               >
                 <v-list-item-icon>
-                  <v-icon style=" color=#fca326">mdi-plus</v-icon>
+                  <v-icon style=" color=#fca326">
+                    mdi-plus
+                  </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                    ><strong>Add new heuristic</strong></v-list-item-title
                   >
+                    <strong>Add new heuristic</strong>
+                  </v-list-item-title>
                 </v-list-item-content>
                 <!-- <v-btn
                   icon
@@ -161,7 +170,7 @@
                   ><v-icon color="">mdi-magnify</v-icon></v-btn> -->
               </v-list-item>
 
-              <v-divider></v-divider>
+              <v-divider />
 
               <v-subheader>
                 <v-text-field
@@ -174,82 +183,140 @@
                   single-line
                   hide-details
                   dense
-                  ><template v-slot:label>
+                >
+                  <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      Search heuristics...</span
-                    >
-                  </template></v-text-field
-                ></v-subheader
-              >
-              <v-divider></v-divider>
-              <v-list height="470px" class="list-scroll">
+                      Search heuristics...</span>
+                  </template>'
+                </v-text-field>
+              </v-subheader>
+              <v-divider />
+              <v-list dense height="470px" class="list-scroll">
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">
-                      <strong>No heuristics found</strong><br />
+                      <strong>No heuristics found</strong><br>
                       <h5>You must have typen something wrong...</h5>
-                      <br />
-                      <v-icon>mdi-duck</v-icon>
+                      <br>
                     </center>
                   </template>
-                  <v-list-item
-                    v-else
-                    v-for="(item, i) in filteredHeuristics"
-                    :key="i"
-                  >
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ item.id }} - {{ item.title }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action v-if="i != itemSelect">
-                      <v-btn
-                        icon
-                        @click.stop="moveItemUp(i)"
-                        v-if="searchBar == false"
-                        :disabled="
-                          item.id == 0 || testAnswerDocLength > 0 ? true : false
+                  <template v-else>
+                    <v-list-item
+                      v-for="(item, i) in filteredHeuristics"
+                      :key="i"
+                      class="pb-0 pt-0"
+                      small
+                      @mouseenter="hoveredItem = i"
+                      @mouseleave="hoveredItem = null"
+                    >
+                      <v-list-item-content
+                        style="
+                          margin: 0px !important;
+                          padding: 0px !important;
+                          justify-content: space-between;
                         "
                       >
-                        <v-icon small>mdi-arrow-up</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                    <v-list-item-action v-if="i != itemSelect">
-                      <v-btn
-                        icon
-                        @click.stop="moveItemDown(i)"
-                        v-if="searchBar == false"
-                        :disabled="
-                          testAnswerDocLength > 0
-                            ? true
-                            : false || i === filteredHeuristics.length - 1
+                        <v-list-item-title
+                          style="
+                            margin: 0px !important;
+                            padding: 0px !important;
+                          "
+                        >
+                          {{ item.id }} - {{ item.title }}
+                        </v-list-item-title>
+                      </v-list-item-content>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: center !important;
                         "
                       >
-                        <v-icon small>mdi-arrow-down</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                    <v-list-item-icon class="mt-4 mb-4" v-if="i == itemSelect">
-                      <v-icon>mdi-chevron-right</v-icon>
-                    </v-list-item-icon>
-                  </v-list-item>
+                        <v-list-item-action
+                          v-if="hoveredItem === i && i != itemSelect"
+                          style="
+                            margin: 0px !important;
+                            padding: 0px !important;
+                          "
+                        >
+                          <v-btn
+                            icon
+                            small
+                            style="
+                              margin: 0px !important;
+                              padding: 0px !important;
+                            "
+                            :disabled="
+                              item.id == 0 || testAnswerDocLength > 0
+                                ? true
+                                : false
+                            "
+                            @click.stop="moveItemUp(i)"
+                          >
+                            <v-icon
+                              x-small
+                              style="
+                                margin: 0px !important;
+                                padding: 0px !important;
+                              "
+                            >
+                              mdi-arrow-up
+                            </v-icon>
+                          </v-btn>
+                          <v-btn
+                            icon
+                            small
+                            style="
+                              margin: 0px !important;
+                              padding: 0px !important;
+                            "
+                            :disabled="
+                              testAnswerDocLength > 0
+                                ? true
+                                : false || i === filteredHeuristics.length - 1
+                            "
+                            @click.stop="moveItemDown(i)"
+                          >
+                            <v-icon
+                              x-small
+                              style="
+                                margin: 0px !important;
+                                padding: 0px !important;
+                              "
+                            >
+                              mdi-arrow-down
+                            </v-icon>
+                          </v-btn>
+                        </v-list-item-action>
+                      </div>
+                      <v-list-item-icon
+                        v-if="i == itemSelect"
+                        class="mt-2 mb-2"
+                      >
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                  </template>
                 </v-list-item-group>
               </v-list>
             </v-list>
           </v-col>
 
-          <v-divider vertical></v-divider>
+          <v-divider vertical />
 
           <!--Questions List-->
-          <v-col class="ma-0 pa-0" cols="4" v-if="itemSelect != null">
+          <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
             <v-list dense height="560px">
               <v-subheader>
-                <v-clamp autoresize :max-lines="2"
-                  >{{ heuristics[itemSelect].title }} - Questions</v-clamp
-                >
+                <v-clamp autoresize :max-lines="2">
+                  {{ heuristics[itemSelect].title }} - Questions
+                </v-clamp>
                 <template v-slot:top>
                   <v-row class>
                     <v-col class="ml-2 mb-1 pa-4 pb-0">
-                      <p class="subtitleView">Descriptions</p>
+                      <p class="subtitleView">
+                        Descriptions
+                      </p>
                     </v-col>
                     <v-col class="mr-2 mb-1 pb-0 pa-4">
                       <v-row justify="end" class="ma-0 pa-0">
@@ -263,7 +330,7 @@
                     </v-col>
                   </v-row>
                 </template>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-menu v-model="menuHeuristics" offset-x>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
@@ -276,8 +343,8 @@
                   >
                     <!--Edit Heuris Flag -->
                     <v-list-item
-                      @click="editHeuris(heuristics[itemSelect])"
                       :disabled="testAnswerDocLength > 0 ? true : false"
+                      @click="editHeuris(heuristics[itemSelect])"
                     >
                       <v-list-item-icon>
                         <v-icon>mdi-pencil</v-icon>
@@ -285,8 +352,8 @@
                       <v-list-item-title>Edit heuristic</v-list-item-title>
                     </v-list-item>
                     <v-list-item
-                      @click="deleteHeuristic(itemSelect)"
                       :disabled="testAnswerDocLength > 0 ? true : false"
+                      @click="deleteHeuristic(itemSelect)"
                     >
                       <v-list-item-icon>
                         <v-icon>mdi-delete</v-icon>
@@ -296,28 +363,30 @@
                   </v-list>
                 </v-menu>
               </v-subheader>
-              <v-divider></v-divider>
+              <v-divider />
               <v-list-item
-                @click="setupQuestion()"
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+                @click="setupQuestion()"
               >
                 <v-list-item-icon>
                   <v-icon
                     color="#fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                    >mdi-plus</v-icon
                   >
+                    mdi-plus
+                  </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                    >Add new question</v-list-item-title
                   >
+                    Add new question
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-divider></v-divider>
+              <v-divider />
               <v-list dense height="470px" class="list-scroll">
                 <v-list-item-group v-model="questionSelect" color="#fca326">
                   <v-list-item
@@ -335,13 +404,13 @@
               </v-list>
             </v-list>
           </v-col>
-          <v-divider vertical></v-divider>
+          <v-divider vertical />
           <!--Questions content-->
-          <v-col class="ma-0 pa-0" v-if="questionSelect != null">
+          <v-col v-if="questionSelect != null" class="ma-0 pa-0">
             <v-card height="560px" elevation="0">
               <v-subheader class="pa-2">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
@@ -356,12 +425,12 @@
                     }"
                   >
                     <v-list-item
+                      :disabled="testAnswerDocLength > 0 ? true : false"
                       @click="
                         editQuestions(
                           heuristics[itemSelect].questions[questionSelect],
                         )
                       "
-                      :disabled="testAnswerDocLength > 0 ? true : false"
                     >
                       <v-list-item-icon>
                         <v-icon>mdi-pencil</v-icon>
@@ -369,8 +438,8 @@
                       <v-list-item-title>Edit question</v-list-item-title>
                     </v-list-item>
                     <v-list-item
-                      @click="deleteQuestion(questionSelect)"
                       :disabled="testAnswerDocLength > 0 ? true : false"
+                      @click="deleteQuestion(questionSelect)"
                     >
                       <v-list-item-icon>
                         <v-icon>mdi-delete</v-icon>
@@ -380,7 +449,7 @@
                   </v-list>
                 </v-menu>
               </v-subheader>
-              <v-divider></v-divider>
+              <v-divider />
               <v-row>
                 <v-col>
                   <v-data-table
@@ -395,7 +464,9 @@
                     <template v-slot:top>
                       <v-row class>
                         <v-col class="ml-2 mb-1 pa-4 pb-0">
-                          <p class="subtitleView">Descriptions</p>
+                          <p class="subtitleView">
+                            Descriptions
+                          </p>
                         </v-col>
                         <v-col class="mr-2 mb-1 pb-0 pa-4">
                           <v-row justify="end" class="ma-0 pa-0">
@@ -408,7 +479,7 @@
                           </v-row>
                         </v-col>
                       </v-row>
-                      <v-divider class="mb-4"></v-divider>
+                      <v-divider class="mb-4" />
                     </template>
 
                     <template v-slot:item.actions="{ item }">
@@ -420,10 +491,14 @@
                           class="mr-2"
                           @click="editDescription(item)"
                         >
-                          <v-icon small>mdi-pencil</v-icon>
+                          <v-icon small>
+                            mdi-pencil
+                          </v-icon>
                         </v-btn>
                         <v-btn icon small @click="deleteItem(item)">
-                          <v-icon small>mdi-delete</v-icon>
+                          <v-icon small>
+                            mdi-delete
+                          </v-icon>
                         </v-btn>
                       </v-row>
                     </template>
@@ -434,7 +509,7 @@
           </v-col>
         </v-row>
 
-        <v-row justify="center" v-else>
+        <v-row v-else justify="center">
           <v-col class="ma-10" cols="10">
             <v-row justify="center" align="center">
               <p class="subtitleView">
@@ -442,8 +517,10 @@
               </p>
             </v-row>
             <v-row class="ma-4" justify="center" align="center">
-              <v-btn @click="dialogHeuris = true" icon x-large color="grey">
-                <v-icon size="100">mdi-plus-circle-outline</v-icon>
+              <v-btn icon x-large color="grey" @click="dialogHeuris = true">
+                <v-icon size="100">
+                  mdi-plus-circle-outline
+                </v-icon>
               </v-btn>
             </v-row>
           </v-col>
@@ -489,9 +566,125 @@ export default {
     editIndex: -1,
     nameRequired: [(v) => !!v || 'Name is required'],
     questionRequired: [(v) => !!v || 'Question has to be filled'],
+    hoveredItem: null,
   }),
+  computed: {
+    csvHeuristics() {
+      return this.$store.state.Tests.Test.testStructure
+    },
+    heuristics() {
+      return this.$store.state.Tests.Test.testStructure
+        ? this.$store.state.Tests.Test.testStructure
+        : []
+    },
+
+    arrayQuestions() {
+      const aux = []
+      const array = Array.from(this.heuristics[this.itemSelect].questions)
+      array.forEach((el) => {
+        aux.push(Object.assign({}, { id: el.id, res: '', com: '' }))
+      })
+      return []
+    },
+    totalQuestions() {
+      let result = 0
+      this.heuristics.forEach((h) => {
+        result += h.total
+      })
+      return result
+    },
+    testAnswerDocLength() {
+      const heuristicAnswers =
+        this.$store.getters.testAnswerDocument.heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
+  watch: {
+    search() {
+      this.updateFilteredHeuristics()
+    },
+    dialogHeuris() {
+      if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
+        this.heuristicForm = {
+          id: this.heuristics[this.heuristics.length - 1].id + 1,
+          title: '',
+          total: 0,
+          questions: [
+            {
+              id: 0,
+              title: '',
+              descriptions: [],
+            },
+          ],
+        }
+        this.heuristicForm.total = this.heuristicForm.questions.length
+      }
+      if (this.dialogHeuris) {
+        //when dialog opens everything is reset
+        if (this.$refs.formHeuris) {
+          this.$refs.formHeuris.resetValidation()
+          this.$refs.formHeuris.reset()
+        }
+      }
+      this.updateFilteredHeuristics()
+    },
+    itemSelect() {
+      if (this.itemSelect !== null) this.questionSelect = 0
+      else this.questionSelect = null
+    },
+
+    loader() {
+      const l = this.loader
+      this[l] = !this[l]
+      // const alertFunc = alert("Your file has been uploaded!");
+
+      if (this.csvFile !== null) {
+        setTimeout(() => (this[l] = false), 3000)
+        setTimeout(() => (this.csvFile = null), 3000)
+        // setTimeout(alertFunc, 3000);
+        this.loader = null
+      } else {
+        setTimeout(() => (this[l] = false), 3000)
+        alert('No csv file selected. \nPlease select one before procede.')
+        this.loader = null
+      }
+    },
+  },
   mounted() {
     this.updateFilteredHeuristics()
+  },
+  async created() {
+    await this.$store.dispatch('getTest', { id: this.$route.params.id })
+    if (this.heuristics.length) {
+      this.heuristicForm = {
+        id: this.heuristics[this.heuristics.length - 1].id + 1,
+        total: 0,
+        title: '',
+        questions: [
+          {
+            id: 0,
+            title: '',
+            descriptions: [],
+          },
+        ],
+      }
+    } else {
+      this.heuristicForm = {
+        id: 0,
+        total: 0,
+        title: '',
+        questions: [
+          {
+            id: 0,
+            title: '',
+            descriptions: [],
+          },
+        ],
+      }
+    }
+    this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
     moveItemUp(index) {
@@ -535,7 +728,7 @@ export default {
       }
     },
     updateFilteredHeuristics() {
-      if (this.search == '') {
+      if (this.search === '') {
         this.searchBar = false
         this.filteredHeuristics = this.heuristics.filter((item) => {
           const searchLower = this.search.toLowerCase()
@@ -562,7 +755,7 @@ export default {
       }
     },
     deleteHeuristic(item) {
-      let config = confirm(
+      const config = confirm(
         `Are you sure delete the heuristic ${this.heuristics[item].title}?`,
       )
 
@@ -576,7 +769,7 @@ export default {
     },
     deleteQuestion(item) {
       if (this.heuristics[this.itemSelect].questions.length > 1) {
-        let config = confirm(
+        const config = confirm(
           `Are you sure delete the Question ${
             this.heuristics[this.itemSelect].questions[item].title
           }?`,
@@ -586,12 +779,11 @@ export default {
           this.heuristics[this.itemSelect].questions.splice(item, 1)
           this.questionSelect = null
 
-          this.heuristics[this.itemSelect].total = this.heuristics[
-            this.itemSelect
-          ].questions.length
+          this.heuristics[this.itemSelect].total =
+            this.heuristics[this.itemSelect].questions.length
         }
       } else {
-        alert("Sorry, but you can't delete all heuristics questions")
+        alert('Sorry, but you can\'t delete all heuristics questions')
       }
 
       this.menuQuestions = false
@@ -615,11 +807,10 @@ export default {
       this.dialogEdit = true
     },
     editDescription(desc) {
-
-      let ind = this.heuristics[this.itemSelect].questions[
-        this.questionSelect
-      ].descriptions.indexOf(desc)
-
+      const ind =
+        this.heuristics[this.itemSelect].questions[
+          this.questionSelect
+        ].descriptions.indexOf(desc)
       this.$refs.descBtn.editSetup(ind)
     },
     setupQuestion() {
@@ -677,10 +868,8 @@ export default {
         this.heuristics[this.itemSelect].questions.push(this.newQuestion)
         this.newQuestion = null
 
-        this.heuristics[this.itemSelect].total = this.heuristics[
-          this.itemSelect
-        ].questions.length
-
+        this.heuristics[this.itemSelect].total =
+          this.heuristics[this.itemSelect].questions.length
 
         this.$refs.formQuestion.resetValidation()
         // this.$emit("change");
@@ -699,123 +888,6 @@ export default {
         }
       }
     },
-  },
-  watch: {
-    search() {
-      this.updateFilteredHeuristics()
-    },
-    dialogHeuris() {
-      if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
-        this.heuristicForm = {
-          id: this.heuristics[this.heuristics.length - 1].id + 1,
-          title: '',
-          total: 0,
-          questions: [
-            {
-              id: 0,
-              title: '',
-              descriptions: [],
-            },
-          ],
-        }
-        this.heuristicForm.total = this.heuristicForm.questions.length
-      }
-      if (this.dialogHeuris) {
-        //when dialog opens everything is reset
-        if (this.$refs.formHeuris) {
-          this.$refs.formHeuris.resetValidation()
-          this.$refs.formHeuris.reset()
-        }
-      }
-      this.updateFilteredHeuristics()
-    },
-    itemSelect() {
-      if (this.itemSelect != null) this.questionSelect = 0
-      else this.questionSelect = null
-    },
-
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
-      // const alertFunc = alert("Your file has been uploaded!");
-
-      if (this.csvFile != null) {
-        setTimeout(() => (this[l] = false), 3000)
-        setTimeout(() => (this.csvFile = null), 3000)
-        // setTimeout(alertFunc, 3000);
-        this.loader = null
-      } else {
-        setTimeout(() => (this[l] = false), 3000)
-        alert('No csv file selected. \nPlease select one before procede.')
-        this.loader = null
-      }
-    },
-  },
-  computed: {
-    csvHeuristics() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-    heuristics() {
-      return this.$store.state.Tests.Test.testStructure
-        ? this.$store.state.Tests.Test.testStructure
-        : []
-    },
-
-    arrayQuestions() {
-      let aux = []
-      let array = Array.from(this.heuristics[this.itemSelect].questions)
-      array.forEach((el) => {
-        aux.push(Object.assign({}, { id: el.id, res: '', com: '' }))
-      })
-      return []
-    },
-    totalQuestions() {
-      let result = 0
-      this.heuristics.forEach((h) => {
-        result += h.total
-      })
-      return result
-
-    },
-    testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
-
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
-    if (this.heuristics.length) {
-      this.heuristicForm = {
-        id: this.heuristics[this.heuristics.length - 1].id + 1,
-        total: 0,
-        title: '',
-        questions: [
-          {
-            id: 0,
-            title: '',
-            descriptions: [],
-          },
-        ],
-      }
-    } else {
-      this.heuristicForm = {
-        id: 0,
-        total: 0,
-        title: '',
-        questions: [
-          {
-            id: 0,
-            title: '',
-            descriptions: [],
-          },
-        ],
-      }
-    }
-    this.heuristicForm.total = this.heuristicForm.questions.length
   },
 }
 </script>
