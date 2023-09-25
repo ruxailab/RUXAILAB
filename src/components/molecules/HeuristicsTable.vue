@@ -35,20 +35,11 @@
             class="lighten-2"
             text
             @click=";(dialogEdit = false), (itemEdit = null)"
-<<<<<<< HEAD
             >{{ $t('HeuristicsTable.titles.cancel') }}</v-btn
           >
           <v-btn class="white--text" color="#fca326" @click="validateEdit()">{{
             $t('HeuristicsTable.titles.ok')
           }}</v-btn>
-=======
-          >
-            Cancel
-          </v-btn>
-          <v-btn class="white--text" color="#fca326" @click="validateEdit()">
-            Ok
-          </v-btn>
->>>>>>> develop
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -60,13 +51,8 @@
           class="headline white--text"
           style="background-color: #fca326"
           primary-title
-<<<<<<< HEAD
           >{{ $t('HeuristicsTable.titles.newQuestion') }}</v-card-title
-=======
->>>>>>> develop
         >
-          New Question
-        </v-card-title>
         <v-row class="ma-0 mt-3">
           <v-col cols="10">
             <v-form ref="formQuestion" @submit.prevent="addQuestion()">
@@ -83,7 +69,6 @@
           </v-col>
         </v-row>
         <v-card-actions>
-<<<<<<< HEAD
           <v-spacer></v-spacer>
           <v-btn
             class="lighten-2"
@@ -94,15 +79,6 @@
           <v-btn class="white--text" color="#fca326" @click="addQuestion()">{{
             $t('HeuristicsTable.titles.add')
           }}</v-btn>
-=======
-          <v-spacer />
-          <v-btn class="lighten-2" text @click="closeDialog('dialogQuestion')">
-            Cancel
-          </v-btn>
-          <v-btn class="white--text" color="#fca326" @click="addQuestion()">
-            Add
-          </v-btn>
->>>>>>> develop
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -114,13 +90,8 @@
           class="headline white--text"
           style="background-color: #fca326"
           primary-title
-<<<<<<< HEAD
           >{{ $t('HeuristicsTable.titles.creatingHeuristic') }}</v-card-title
-=======
->>>>>>> develop
         >
-          Creating a heuristic
-        </v-card-title>
         <v-row justify="center">
           <v-col cols="10">
             <v-form
@@ -151,7 +122,6 @@
         </v-row>
 
         <v-card-actions>
-<<<<<<< HEAD
           <v-spacer></v-spacer>
           <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">{{
             $t('HeuristicsTable.titles.cancel')
@@ -159,15 +129,6 @@
           <v-btn class="white--text" color="#fca326" @click="addHeuris()">{{
             $t('HeuristicsTable.titles.ok')
           }}</v-btn>
-=======
-          <v-spacer />
-          <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">
-            Cancel
-          </v-btn>
-          <v-btn class="white--text" color="#fca326" @click="addHeuris()">
-            Add
-          </v-btn>
->>>>>>> develop
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -177,19 +138,11 @@
     <!-- Main -->
     <v-col cols="12">
       <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
-<<<<<<< HEAD
         <v-card-title class="subtitleView">{{
           $t('HeuristicsTable.titles.currentHeuristics')
         }}</v-card-title>
         <v-divider></v-divider>
         <v-row class="ma-0 pa-0" v-if="heuristics.length">
-=======
-        <v-card-title class="subtitleView">
-          Current Heuristics
-        </v-card-title>
-        <v-divider />
-        <v-row v-if="heuristics.length" class="ma-0 pa-0">
->>>>>>> develop
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="4">
             <v-list dense height="560px" class="pt-0" outlined>
@@ -207,15 +160,10 @@
                   <v-list-item-title
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-<<<<<<< HEAD
                     ><strong>{{
                       $t('HeuristicsTable.titles.addNewHeuristic')
                     }}</strong></v-list-item-title
-=======
->>>>>>> develop
                   >
-                    <strong>Add new heuristic</strong>
-                  </v-list-item-title>
                 </v-list-item-content>
                 <!-- <v-btn
                   icon
@@ -239,14 +187,9 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-<<<<<<< HEAD
                       {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
                     > </template
                   >'
-=======
-                      Search heuristics...</span>
-                  </template>'
->>>>>>> develop
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -254,7 +197,6 @@
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">
-<<<<<<< HEAD
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
                       }}</strong
@@ -262,11 +204,6 @@
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
                       <br />
                       <v-icon>mdi-duck</v-icon>
-=======
-                      <strong>No heuristics found</strong><br>
-                      <h5>You must have typen something wrong...</h5>
-                      <br>
->>>>>>> develop
                     </center>
                   </template>
                   <template v-else>
@@ -377,25 +314,15 @@
           <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
             <v-list dense height="560px">
               <v-subheader>
-<<<<<<< HEAD
                 <v-clamp autoresize :max-lines="2"
                   >{{ heuristics[itemSelect].title }} -
                   {{ $t('HeuristicsTable.titles.Questions') }}</v-clamp
                 >
-=======
-                <v-clamp autoresize :max-lines="2">
-                  {{ heuristics[itemSelect].title }} - Questions
-                </v-clamp>
->>>>>>> develop
                 <template v-slot:top>
                   <v-row class>
                     <v-col class="ml-2 mb-1 pa-4 pb-0">
                       <p class="subtitleView">
-<<<<<<< HEAD
                         {{ $t('HeuristicsTable.titles.descriptions') }}
-=======
-                        Descriptions
->>>>>>> develop
                       </p>
                     </v-col>
                     <v-col class="mr-2 mb-1 pb-0 pa-4">
@@ -465,15 +392,10 @@
                   <v-list-item-title
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
-<<<<<<< HEAD
                     >{{
                       $t('HeuristicsTable.titles.addNewQuestion')
                     }}</v-list-item-title
-=======
->>>>>>> develop
                   >
-                    Add new question
-                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider />
@@ -559,11 +481,7 @@
                       <v-row class>
                         <v-col class="ml-2 mb-1 pa-4 pb-0">
                           <p class="subtitleView">
-<<<<<<< HEAD
                             {{ $t('HeuristicsTable.titles.descriptions') }}
-=======
-                            Descriptions
->>>>>>> develop
                           </p>
                         </v-col>
                         <v-col class="mr-2 mb-1 pb-0 pa-4">
