@@ -14,7 +14,12 @@
     "editAndInvite": "Editar e invitar personas a tu prueba",
     "analyzeProject": "Analiza tu proyecto y evaluadores",
     "comment": "Comentario",
-    "inputImage": "Ingrese una imagen de su elección referente al tema"
+    "inputImage": "Ingrese una imagen de su elección referente al tema",
+    "title": "Título",
+    "description": "Descripción",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "add": "Agregar"
   },
   "titles": {
     "manager": "Gerente",
@@ -60,5 +65,8 @@
     "showComment": "Mostrar comentario",
     "addComment": "Agregar comentario",
     "hideTextArea": "Ocultar área de texto"
+  },
+  "heuristicsTable": {
+    "addNewDescription": "Agregar descripción"
   }
 }
