@@ -65,10 +65,18 @@
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
+                  v-if="this.accessLevel == 0"
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
                   {{ $t('titles.manager') }}
+                </div>
+                <div
+                  v-else
+                  class="display-3 mb-4 white--text mobile-center"
+                  style="font-size: 60px; font-weight: 500"
+                >
+                  {{ this.test.testTitle}}
                 </div>
                 <v-img
                   class="hidden-md-and-up"
@@ -94,12 +102,16 @@
           </div>
           <div>
             <v-container class="card-container">
-              <div class="presentation-text">
+              <div class="presentation-text" v-if="this.accessLevel == 0">
                 {{ $t('common.editAndInvite') }}
               </div>
 
               <!-- Top Cards -->
-              <v-row justify="center" justify-md="space-around">
+              <v-row
+                justify="center"
+                justify-md="space-around"
+                v-if="this.accessLevel == 0"
+              >
                 <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
                   <v-card
                     class="rounded-xl cards-animation"
@@ -409,7 +421,7 @@ export default {
       ]
     },
     bottomCards() {
-      return [
+      let bottomCards = [
         {
           image: 'IntroReports.svg',
           title: 'reports',
@@ -440,7 +452,9 @@ export default {
             'background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden',
           path: `/analyticsview/${this.test.answers}`,
         },
-        {
+      ]
+      if (this.accessLevel == 0) {
+        bottomCards.push({
           image: 'FinalReport.png',
           title: 'finalReport',
           imageStyle: 'height: 250px',
@@ -449,8 +463,9 @@ export default {
           cardStyle:
             'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
           path: `/finalreportview/${this.test.id}`,
-        },
-      ]
+        })
+      }
+      return bottomCards
     },
     user() {
       if (this.$store.getters.user) {
