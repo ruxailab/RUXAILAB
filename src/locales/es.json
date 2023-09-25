@@ -12,7 +12,14 @@
     "notUser": "¿No eres {userEmail}?",
     "changeAccount": "Cambiar cuenta",
     "editAndInvite": "Editar e invitar personas a tu prueba",
-    "analyzeProject": "Analiza tu proyecto y evaluadores"
+    "analyzeProject": "Analiza tu proyecto y evaluadores",
+    "comment": "Comentario",
+    "inputImage": "Ingrese una imagen de su elección referente al tema",
+    "title": "Título",
+    "description": "Descripción",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "add": "Agregar"
   },
   "titles": {
     "manager": "Gerente",
@@ -73,7 +80,8 @@
       "ok": "Aceptar",
       "add": "Agregar",
       "deleteHeuristic": "Eliminar heurística",
-      "deleteQuestion": "Eliminar pregunta"
+      "deleteQuestion": "Eliminar pregunta",
+      "addNewDescription": "Agregar descripción"
     },
     "placeholders": {
       "titleHeuristic": "Título Heurística",
@@ -91,6 +99,11 @@
     "validation": {
       "nameRequired": "El nombre es obligatorio",
       "questionRequired": "La pregunta debe estar completa"
+    },
+    "AddCommentBtn": {
+      "showComment": "Mostrar comentario",
+      "addComment": "Agregar comentario",
+      "hideTextArea": "Ocultar área de texto"
+    }
   }
- }
 }
