@@ -1,26 +1,26 @@
 <template>
   <div class="input">
     <v-file-input
+      :id="`${this.heuristicId.id}${this.questionId}`"
       class="ml-2"
       type="file"
       name="my-image"
-      :id="`${this.heuristicId.id}${this.questionId}`"
       accept="image/gif, image/jpeg, image/png"
       :placeholder="
         imageUploaded
-          ? 'Input an image of your choice referent to the topic'
+          ? $t('common.inputImage')
           : url
       "
       @change="uploadFile()"
-    ></v-file-input>
+    />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
       <v-img
+        v-if="imageUploaded"
         max-height="225"
         :src="this.url"
-        v-if="imageUploaded"
         contain
-      ></v-img>
+      />
     </v-row>
   </div>
 </template>
@@ -39,6 +39,14 @@ export default {
     object: {},
     imageUploaded: false,
   }),
+  computed: {
+    test() {
+      return this.$store.state.Tests.Test
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
+  },
 
   mounted() {
       this.url = this.currentUserTestAnswer.heuristicQuestions[
@@ -50,15 +58,15 @@ export default {
   },
   methods: {
     async uploadFile() {
-      let fileInput = document.getElementById(
+      const fileInput = document.getElementById(
         `${this.heuristicId.id}${this.questionId}`,
       )
 
-      let storage = getStorage()
+      const storage = getStorage()
 
-      let file = fileInput.files[0]
+      const file = fileInput.files[0]
 
-      let storageRef = ref(
+      const storageRef = ref(
         storage,
         'tests/' +
           this.testId +
@@ -82,14 +90,6 @@ export default {
       // Update the imageUrl for the corresponding heuristicId and questionId
       this.imageUploaded = true
       this.$emit('imageUploaded')
-    },
-  },
-  computed: {
-    test() {
-      return this.$store.state.Tests.Test
-    },
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
     },
   },
 }
