@@ -1,14 +1,14 @@
 <template>
   <v-navigation-drawer
-    clipped
     v-model="drawer"
+    clipped
     :mini-variant="mini"
     permanent
     color="#3F3D56"
     class="hidden-sm-and-down"
   >
     <!-- Navigation header -->
-    <div class="header" v-if="!mini">
+    <div v-if="!mini" class="header">
       <!--- CHANGE CURRENT TEST SELECTOR -->
       <v-list-item>
         <v-row dense>
@@ -23,27 +23,28 @@
               background-color="#343344"
               style="max-width: 240px"
               @change="changeTest"
-            ></v-overflow-btn>
+            />
           </v-col>
         </v-row>
       </v-list-item>
     </div>
 
     <!-- Navigation options -->
-    <v-list flat dense v-if="items">
+    <v-list v-if="items" flat dense>
       <div v-if="mini">
-        <v-tooltip right v-for="(item, n) in items" :key="n">
+        <v-tooltip v-for="(item, n) in items" :key="n" right>
           <template v-slot:activator="{ on, attrs }">
             <v-list-item
-              @click=";(currentIndexSelect = n), go(item)"
               v-bind="attrs"
+              @click=";(currentIndexSelect = n), go(item)"
               v-on="on"
             >
               <v-list-item-icon>
                 <v-icon
                   :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
-                  >{{ item.icon }}</v-icon
                 >
+                  {{ item.icon }}
+                </v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
@@ -53,12 +54,13 @@
                       ? 'color: #fca326'
                       : 'color:#bababa'
                   "
-                  >{{ item.title }}</v-list-item-title
                 >
+                  {{ $t(`titles.drawer.${item.title}`) }}
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </template>
-          <span>{{ item.title }}</span>
+          <span>{{ $t(`titles.drawer.${item.title}`) }}</span>
         </v-tooltip>
       </div>
 
@@ -71,8 +73,9 @@
           <v-list-item-icon>
             <v-icon
               :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
-              >{{ item.icon }}</v-icon
             >
+              {{ item.icon }}
+            </v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -82,48 +85,53 @@
                   ? 'color: #fca326'
                   : 'color:#bababa'
               "
-              >{{ item.title }}</v-list-item-title
             >
+              {{ $t(`titles.drawer.${item.title}`) }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </div>
     </v-list>
 
     <!-- Navigation footer -->
-    <div class="footer" v-if="!mini">
+    <div v-if="!mini" class="footer">
       <v-btn
-        icon
-        @click="go(`/settingsview/${test.id}`)"
-        class="ml-3"
         v-if="userAccessLevelOnTest == 0"
+        icon
+        class="ml-3"
+        @click="go(`/settingsview/${test.id}`)"
       >
-        <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'"
-          >mdi-cog</v-icon
-        >
+        <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">
+          mdi-cog
+        </v-icon>
       </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn icon @click.stop="mini = !mini" class="mr-2">
-        <v-icon color="white">mdi-chevron-left</v-icon>
+      <v-spacer />
+      <v-btn icon class="mr-2" @click.stop="mini = !mini">
+        <v-icon color="white">
+          mdi-chevron-left
+        </v-icon>
       </v-btn>
     </div>
 
     <div
+      v-else
       class="footer"
       :style="userAccessLevelOnTest == 0 ? 'height:16%' : ''"
-      v-else
     >
       <v-col>
         <v-btn
+          v-if="userAccessLevelOnTest == 0"
           icon
           @click="go(`/settingsview/${test.id}`)"
-          v-if="userAccessLevelOnTest == 0"
         >
-          <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'"
-            >mdi-cog</v-icon
-          >
+          <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">
+            mdi-cog
+          </v-icon>
         </v-btn>
-        <v-btn icon @click.stop="mini = !mini" class="mt-2">
-          <v-icon color="white">mdi-chevron-right</v-icon>
+        <v-btn icon class="mt-2" @click.stop="mini = !mini">
+          <v-icon color="white">
+            mdi-chevron-right
+          </v-icon>
         </v-btn>
       </v-col>
     </div>
@@ -137,22 +145,6 @@ export default {
     mini: true,
     isSettingsBtnActive: false,
   }),
-  methods: {
-    async changeTest(testName) {
-      const testId = this.testsList.find(
-        (t) => t.testTitle === testName,
-      )?.testDocId
-      await this.$store.dispatch('getTest', { id: testId })
-      this.$router.replace({ name: 'ManagerView', params: { id: testId } })
-    },
-    go(item) {
-      if (item.id == undefined) this.$router.push(item).catch(() => {})
-      else {
-        if (item.path == `/testview/${this.test.id}`) window.open(item.path)
-        else this.$router.push(item.path).catch(() => {})
-      }
-    },
-  },
   computed: {
     test() {
       return this.$store.state.Tests.Test
@@ -289,6 +281,22 @@ export default {
       }
 
       return items
+    },
+  },
+  methods: {
+    async changeTest(testName) {
+      const testId = this.testsList.find(
+        (t) => t.testTitle === testName,
+      )?.testDocId
+      await this.$store.dispatch('getTest', { id: testId })
+      this.$router.replace({ name: 'ManagerView', params: { id: testId } })
+    },
+    go(item) {
+      if (item.id == undefined) this.$router.push(item).catch(() => {})
+      else {
+        if (item.path == `/testview/${this.test.id}`) window.open(item.path)
+        else this.$router.push(item.path).catch(() => {})
+      }
     },
   },
 }
