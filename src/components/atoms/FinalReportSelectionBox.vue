@@ -316,10 +316,8 @@ export default {
             // Reset the cooperatorsEmail array to an empty array
             this.cooperatorsEmail = []
           } else {
-            console.log('No cooperators found.')
           }
         } else {
-          console.log('Invalid cooperators data.')
           this.preview.cooperatorsEmail = ''
         }
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email

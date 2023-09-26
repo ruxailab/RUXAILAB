@@ -27,8 +27,6 @@ export default {
         commit('setLoading', true)
         await templateController.createTemplate(payload)
       } catch (e) {
-        console.log('Error in createTemplate')
-        console.log(e)
         commit('setError', true)
       } finally {
         commit('setLoading', false)
