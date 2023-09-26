@@ -152,7 +152,6 @@ export default {
         this.$emit('change')
       } else {
         this.$store.dispatch('addItemsTasks', this.task).then(() => {
-          console.log('allTasks', this.allTasks)
         })
       }
       this.task = {
