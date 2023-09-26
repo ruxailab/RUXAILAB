@@ -63,11 +63,9 @@ export default {
                 if (response) {
                     const dbUser = await new UserController().getById(response.user.uid)
                     commit('SET_USER', dbUser)
-                } else {
-                    throw new Error('Login failed')
                 }
             } catch (err) {
-                console.error("Error signing in: " + err);
+                alert("Invalid Email or Password!");
                 commit("setError", err);
             } finally {
                 commit("setLoading", false);
