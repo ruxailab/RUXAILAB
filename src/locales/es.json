@@ -37,7 +37,18 @@
     "analytics": "Analítica",
     "cooperators": "Cooperadores",
     "template": "Plantilla",
-    "finalReport": "Reporte Final"
+    "finalReport": "Reporte Final",
+    "drawer": {
+      "Manager": "Gerente",
+      "Test": "Prueba",
+      "Preview": "Vista previa",
+      "Reports": "Informes",
+      "Answers": "Respuestas",
+      "Analytics": "Analítica",
+      "Cooperators": "Cooperadores",
+      "Template": "Plantilla",
+      "Final Report": "Reporte Final"
+    }
   },
   "descriptions": {
     "edit": "Comienza a crear y editar tu prueba.",

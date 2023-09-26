@@ -37,7 +37,18 @@
     "analytics": "Analítica",
     "cooperators": "Cooperadores",
     "template": "Modelo",
-    "finalReport": "Relatório final"
+    "finalReport": "Relatório final",
+    "drawer": {
+      "Manager": "Gerenciamento",
+      "Test": "Teste",
+      "Preview": "Visualizar",
+      "Reports": "Relatórios",
+      "Answers": "Respostas",
+      "Analytics": "Analítica",
+      "Cooperators": "Cooperadores",
+      "Template": "Modelo",
+      "Final Report": "Relatório final"
+    }
   },
   "descriptions": {
     "edit": "Comece a criar e editar o seu teste.",
