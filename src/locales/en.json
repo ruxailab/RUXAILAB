@@ -37,7 +37,18 @@
     "analytics": "Analytics",
     "cooperators": "Cooperators",
     "template": "Template",
-    "finalReport": "Final Report"
+    "finalReport": "Final Report",
+    "drawer": {
+      "Manager": "Manager",
+      "Test": "Test",
+      "Preview": "Preview",
+      "Reports": "Reports",
+      "Answers": "Answers",
+      "Analytics": "Analytics",
+      "Cooperators": "Cooperators",
+      "Template": "Template",
+      "Final Report": "Final Report"
+    }
   },
   "descriptions": {
     "edit": "Start creating and editing your test.",
