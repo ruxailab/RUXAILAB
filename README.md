@@ -11,12 +11,7 @@
 </div>
 
 <hr />
-
-[![NPM version][npm-version-image]][npm-url]
-[![MIT License][license-image]][license-url]
-[![This project uses Percy.io for visual regression testing.][percy-image]](percy-url)
-
-<div align="center">
+<div>
   <table >
     <tr>
       <td><img src="public/HomePic.png" alt="User Friendly" width="350"/></td>
