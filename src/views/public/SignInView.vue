@@ -86,8 +86,9 @@ export default {
           email: this.email,
           password: this.password,
         })
-
-        // Autenticação bem-sucedida, você pode redirecionar ou realizar outras ações necessárias.
+        if (this.$store.getters.user) {
+          this.$router.push('/testslist').catch(() => {})
+        }
       } catch (error) {
         console.error('Erro de autenticação:', error)
       }
