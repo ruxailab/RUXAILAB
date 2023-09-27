@@ -6,7 +6,7 @@
           src="@/assets/accessNotAllowed.svg"
           contain
           max-height="250"
-        ></v-img>
+        />
         <div class="text-center" style="font-size: 50px; color: grey">
           {{ $t('AccessNotAllowed.notAllowed') }}
         </div>
@@ -14,9 +14,9 @@
           {{ $t('AccessNotAllowed.noAccess') }}
         </div>
         <v-row justify="center" class="mt-4">
-          <v-btn style="color: #f9a826" outlined rounded @click="goBack()"
-            >{{ $t('AccessNotAllowed.goHome') }}</v-btn
-          >
+          <v-btn style="color: #f9a826" outlined rounded @click="goBack()">
+            {{ $t('AccessNotAllowed.goHome') }}
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -27,8 +27,8 @@
 export default {
   methods: {
     goBack() {
-      this.$router.push("/testslist");
+      this.$router.push('/testslist')
     },
   },
-};
+}
 </script>
