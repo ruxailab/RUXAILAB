@@ -157,6 +157,30 @@
       "docSubtitle": "Click to access the documentation on how to use the page ",
       "discTitle": "Join the comunity!",
       "discSubtitle": "You will find support on our discord server."
+    },
+    "finalReport": {
+      "select": "SELECT YOUR PDF ELEMENTS",
+      "heuristic": "Heuristic",
+      "to": "to",
+      "createHeuristics": "Please create Heuristics so you can select them here.",
+      "pdf": "Generate PDF",
+      "options": {
+        "options": "Test options",
+        "comments": "Answers comments",
+        "statistics": "Statistics",
+        "answersByEvaluator": "Answers by evaluators",
+        "answersByHeuristics": "Answers by heuristics",
+        "finalReport": "Final Report",
+        "loading": "Loading..."
+      }
     }
+  },
+  "alerts": {
+    "copy": "Copy successful",
+    "noCopy": "Copy unsuccessful"
+  },
+  "buttons": {
+    "next": "Next",
+    "previous": "Previous"
   }
 }
