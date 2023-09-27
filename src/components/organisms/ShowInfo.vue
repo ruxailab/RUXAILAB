@@ -1,17 +1,17 @@
 <template>
   <v-container style="overflow: scrol; justify-content: center">
     <v-row justify="space-around">
-      <v-col cols="12"
-        ><h1>{{ title }}</h1></v-col
-      >
-      <slot name="top"></slot>
+      <v-col cols="12">
+        <h1>{{ $t('titles.drawer.' + title) }}</h1>
+      </v-col>
+      <slot name="top" />
     </v-row>
-    <v-divider></v-divider>
-    <slot name="warning"></slot>
+    <v-divider />
+    <slot name="warning" />
     <v-row justify="center">
       <v-col cols="12">
         <v-card class="dataCard ma-0 pa-0">
-          <slot name="content"></slot>
+          <slot name="content" />
         </v-card>
       </v-col>
     </v-row>
@@ -22,10 +22,10 @@
 export default {
   props: {
     title: {
-      type:String
-    }
-  }
-};
+      type:String,
+    },
+  },
+}
 </script>
 
 <style scoped>
