@@ -34,10 +34,22 @@
     "preview": "Visualizar",
     "reports": "Relatórios",
     "answers": "Respostas",
-    "analytics": "Analítica",
+    "analytics": "Análises",
     "cooperators": "Cooperadores",
     "template": "Modelo",
-    "finalReport": "Relatório final"
+    "finalReport": "Relatório final",
+    "drawer": {
+      "Manager": "Gerenciamento",
+      "Test": "Teste",
+      "Preview": "Visualizar",
+      "Reports": "Relatórios",
+      "Answers": "Respostas",
+      "Analytics": "Análises",
+      "Cooperators": "Cooperadores",
+      "Template": "Modelo",
+      "Final Report": "Relatório final",
+      "Answer Test": "Responder teste"
+    }
   },
   "descriptions": {
     "edit": "Comece a criar e editar o seu teste.",
@@ -45,7 +57,16 @@
     "reports": "Veja como os seus avaliadores estão se saindo.",
     "answers": "Veja como os seus avaliadores estão avaliando o seu projeto.",
     "analytics": "Analise os comentários e respostas dos seus avaliadores.",
-    "finalReport": "Adicione dados adicionais ao seu teste."
+    "finalReport": "Adicione dados adicionais ao seu teste.",
+    "intro": {
+      "reports": "Acompanhe o progresso e o status das respostas dos seus avaliadores enquanto eles concluem o seu teste.",
+      "answers": "Obtenha feedback rapidamente sobre seu projeto analisando dados das respostas de outros usuários.",
+      "analytics": "Dê uma olhada profunda em seu teste e veja o que as pessoas estão dizendo sobre ele.",
+      "invite": "Convide avaliadores para responder seu teste!",
+      "cooperators": "Adicione colaboradores que possam ajudá-lo a melhorar seu projeto e coletar dados para seus estudos.",
+      "start": "Comece!",
+      "edit": "Crie e personalize suas tarefas e heurísticas de acordo com suas necessidades de pesquisa."
+    }
   },
   "errors": {
     "invalidInvitation": "Convite inválido",
@@ -127,5 +148,39 @@
     "notAllowed": "Acesso não permitido",
     "noAccess": "Você não tem acesso à página que está tentando acessar.",
     "goHome": "Ir para a página inicial"
+  },
+  "pages": {
+    "intros": {
+      "click": "Clique aqui!",
+      "learnMore": "Saiba mais",
+      "docTitle": "Ler documentação",
+      "docSubtitle": "Clique para acessar a documentação sobre como usar a página de ",
+      "discTitle": "Junte-se à comunidade!",
+      "discSubtitle": "Você encontrará suporte em nosso servidor discord."
+    },
+    "finalReport": {
+      "select": "SELECIONE SEUS ELEMENTOS PDF",
+      "heuristic": "Heurística",
+      "to": "para",
+      "createHeuristics": "Por favor, crie heurísticas para que você possa selecioná-las aqui.",
+      "pdf": "Gerar PDF",
+      "options": {
+        "options": "Opções de teste",
+        "comments": "Responde aos comentários",
+        "statistics": "Estatísticas",
+        "answersByEvaluator": "Respostas dos avaliadores",
+        "answersByHeuristics": "Respostas por heurística",
+        "finalReport": "Relatório Final",
+        "loading": "Carregando..."
+      }
+    }
+  },
+  "alerts": {
+    "copy": "Cópia bem sucedida",
+    "noCopy": "Cópia malsucedida"
+  },
+  "buttons": {
+    "next": "Próximo",
+    "previous": "Anterior"
   }
 }

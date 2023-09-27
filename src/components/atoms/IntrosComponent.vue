@@ -1,5 +1,5 @@
 <template>
-  <v-container style="display:contents; background-color:#f4b700">
+  <v-container style="display: contents; background-color: #f4b700">
     <div class="background-gradient" :style="backgroundImage">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
@@ -7,14 +7,14 @@
             class="display-3mb-4 white--text mobile-center"
             style="font-size: 60px; font-weight: 500"
           >
-            {{ title }}
+            {{ $t('titles.drawer.' + title) }}
           </div>
           <v-img
             class="mb-5 hidden-md-and-up"
             contain
             :src="require('../../assets/manager/' + image)"
             max-height="350"
-          ></v-img>
+          />
           <div style="font-size: 22px" class="white--text mb-4 mobile-center">
             {{ main }}
           </div>
@@ -23,7 +23,9 @@
             style="cursor: pointer"
             @click="emitClick()"
           >
-            <button class="edit-btn rounded-lg">Click here!</button>
+            <button class="edit-btn rounded-lg">
+              {{ $t('pages.intros.click') }}
+            </button>
           </span>
         </div>
 
@@ -33,26 +35,28 @@
           max-width="40%"
           max-height="400"
           :src="require('../../assets/manager/' + image)"
-        ></v-img>
+        />
       </v-row>
     </div>
 
     <v-col>
       <v-row justify="center" class="ml-0">
         <v-col cols="12" md="8">
-          <div class="learn-text">Learn More</div>
+          <div class="learn-text">
+            {{ $t('pages.intros.learnMore') }}
+          </div>
           <v-card
             elevation="4"
             class="ma-0 pa-0"
-            style="border-radius: 10px!important"
+            style="border-radius: 10px !important"
           >
             <v-list class="ma-0 pa-0">
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item
                   class="py-5"
-                  @click="emitCallFunc(item.func)"
                   :ripple="false"
-                  style="border-radius: 10px!important"
+                  style="border-radius: 10px !important"
+                  @click="emitCallFunc(item.func)"
                 >
                   <v-list-item-avatar size="50" :color="item.iconColor">
                     <v-icon dark size="35" v-text="item.icon" />
@@ -60,14 +64,14 @@
 
                   <v-list-item-content>
                     <v-list-item-title
-                      style="font-size: 25px;"
+                      style="font-size: 25px"
                       v-text="item.title"
                     />
                     <v-list-item-subtitle v-text="item.subtitle" />
                   </v-list-item-content>
                 </v-list-item>
 
-                <v-divider></v-divider>
+                <v-divider />
               </div>
             </v-list>
           </v-card>
@@ -106,20 +110,20 @@ export default {
     },
   },
   data: () => ({}),
-  methods: {
-    emitClick() {
-      this.$emit("linkClicked");
-    },
-    emitCallFunc(func) {
-      this.$emit("callFunc", func);
-    },
-  },
   computed: {
     backgroundImage() {
-      return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`;
+      return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`
     },
   },
-};
+  methods: {
+    emitClick() {
+      this.$emit('linkClicked')
+    },
+    emitCallFunc(func) {
+      this.$emit('callFunc', func)
+    },
+  },
+}
 </script>
 
 <style scoped>
