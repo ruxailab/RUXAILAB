@@ -43,7 +43,6 @@ function calcFinalResult(array) {
   })
 
   let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
-  console.log(result)
   return ((result * 100) / perfectResult).toFixed(1)
 }
 
@@ -129,7 +128,6 @@ function statistics() {
 
 function finalResult() {
   let evaluatorStatistics = store.state.Answer.evaluatorStatistics
-  console.log(evaluatorStatistics);
   if (evaluatorStatistics.items.length) {
     let res = evaluatorStatistics.items.reduce((total, value) => {
       return total + value.result / evaluatorStatistics.items.length

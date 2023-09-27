@@ -52,7 +52,6 @@ export default {
       this.url = this.currentUserTestAnswer.heuristicQuestions[
         this.heuristicId.id
       ].heuristicQuestions[this.questionId].answerImageUrl
-      console.log(this.currentUserTestAnswer)
 
     this.imageUploaded = true
   },
@@ -82,12 +81,8 @@ export default {
       await uploadBytes(storageRef, file)
 
       this.url = await getDownloadURL(storageRef)
-      console.log(this.testId)
-      console.log('URL:  ', this.url)
-      // Update the imageUrl for the corresponding heuristicId and questionId
       this.$store.commit('updateCurrentImageUrl', this.url)
 
-      // Update the imageUrl for the corresponding heuristicId and questionId
       this.imageUploaded = true
       this.$emit('imageUploaded')
     },
