@@ -26,7 +26,9 @@
     "text": "Texto",
     "value": "Valor",
     "save": "Ahorrar",
-    "editDelete": "Editar/Borrar"
+    "editDelete": "Editar/Borrar",
+    "type": "Tipo",
+    "noNotifications": "Aún no tienes notificaciones"
   },
   "titles": {
     "manager": "Gerente",
@@ -144,7 +146,7 @@
       "hideTextArea": "Ocultar área de texto"
     }
   },
-  "AcessNotAllowed": {
+  "AccessNotAllowed": {
     "notAllowed": "Acceso no permitido",
     "noAccess": "No tienes acceso a la página que estás intentando acceder.",
     "goHome": "Ir a la página de inicio"
@@ -191,11 +193,24 @@
       "version": "Versión:",
       "noTests": "No se encontraron pruebas",
       "noTemplates": "No se encontraron plantillas"
+    },
+    "createTest": {
+      "title": "Crear una nueva prueba",
+      "blanckTitle": "Crear una prueba en blanco",
+      "blanckSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
+      "templateTitle": "Crear a partir de plantilla",
+      "templateSubtitle": "Crea una prueba basada en una plantilla creada por uno de nuestros usuarios.",
+      "create": "Crear prueba",
+      "templateInfo": "Información de plantilla",
+      "deleteTemplate": "Eliminar plantilla",
+      "noDescription": "La plantilla no tiene descripción.",
+      "public": "Hacer la prueba pública para todos los usuarios (solo lectura)"
     }
   },
   "alerts": {
     "copy": "Copia exitosa",
-    "noCopy": "Copia fallida"
+    "noCopy": "Copia fallida",
+    "deleteTemplate": "¿Estás seguro de eliminar esta plantilla? ¡Esta acción no se puede deshacer!"
   },
   "buttons": {
     "next": "Siguiente",
@@ -204,6 +219,9 @@
     "username": "Nombre de usuario",
     "goToConsole": "Ir a la consola",
     "signout": "Desconectar",
-    "returnToConsole": "Volver a la consola"
+    "returnToConsole": "Volver a la consola",
+    "create": "Crear",
+    "cancel": "Cancelar",
+    "close": "Cerca"
   }
 }
