@@ -72,7 +72,7 @@ export default {
 
         return res.id
       } catch (err) {
-
+        console.log('erro', err)
         commit('setError', true)
 
         return null
@@ -94,6 +94,7 @@ export default {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
       } catch {
+        console.log('Error in deleteTest')
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -147,6 +148,7 @@ export default {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
       } catch {
+        console.log('Error in getTest')
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -160,6 +162,7 @@ export default {
         const res = await testController.getAllTests()
         commit('SET_TESTS', res)
       } catch {
+        console.log('Error in getAllTests')
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -178,6 +181,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
+        console.log('Error in getSharedWithMeTests: ',e)
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -190,6 +194,7 @@ export default {
         const res = await testController.getPublicTests()
         commit('SET_TESTS', res)
       } catch {
+        console.log('Error in getPublicTests')
         commit('setError', true)
       } finally {
         commit('setLoading', false)

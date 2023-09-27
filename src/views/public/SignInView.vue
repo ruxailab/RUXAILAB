@@ -103,6 +103,7 @@ export default {
             }
             }
             catch (err) {
+                 console.log("Error. " + err.message)
             }
         },
     },
