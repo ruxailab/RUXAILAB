@@ -98,7 +98,6 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
   return await transporter
     .sendMail(mail)
     .then((info) => {
-      console.log("Success on send email ", info);
       return `Message sent: ${info.messageId} `;
     })
     .catch((e) => {
