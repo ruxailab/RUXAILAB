@@ -3,23 +3,44 @@
     :colors="['#32bde7', '#2488e0']"
     :title="'Analytics'"
     :image="'IntroAnalytics.svg'"
-    :main="
-      'Take a deep look into your test and see what people are saying about it.'
-    "
-    :link="'Invite evaluators to answer your test!'"
-    @linkClicked="goToCoops()"
+    :main="$t('descriptions.intro.analytics')"
+    :link="$t('descriptions.intro.invite')"
     :items="items"
+    @linkClicked="goToCoops()"
     @callFunc="callFunc"
-  ></IntroComp>
+  />
 </template>
 
 <script>
 import IntroComp from '@/components/atoms/IntrosComponent'
+import i18n from '@/i18n'
 
 export default {
-  data: () => ({}),
   components: {
     IntroComp,
+  },
+  data: () => ({}),
+  computed: {
+    items() {
+      return [
+        {
+          iconColor: '#59b9d4',
+          icon: 'mdi-file-document',
+          title: i18n.t('pages.intros.docTitle'),
+          subtitle:
+          i18n.t('pages.intros.docSubtitle') + i18n.t('titles.analytics'),
+          func: 'goToDoc',
+        },
+
+        {
+          iconColor: '#59b9d4',
+          icon: 'mdi-emoticon-happy',
+          title: i18n.t('pages.intros.discTitle'),
+          subtitle: i18n.t('pages.intros.discSubtitle'),
+          func: 'goToDisc',
+        },
+      ]
+    },
   },
   methods: {
     goToCoops() {
@@ -33,28 +54,6 @@ export default {
     },
     callFunc(func) {
       this[func]()
-    },
-  },
-  computed: {
-    items() {
-      return [
-        {
-          iconColor: '#59b9d4',
-          icon: 'mdi-file-document',
-          title: 'Read documentation',
-          subtitle:
-            'Click to access the documentation on how to use the analytics page.',
-          func: 'goToDoc',
-        },
-
-        {
-          iconColor: '#59b9d4',
-          icon: 'mdi-emoticon-happy',
-          title: 'Join the comunity!',
-          subtitle: 'You will find support on our discord server.',
-          func: 'goToDisc',
-        },
-      ]
     },
   },
 }
