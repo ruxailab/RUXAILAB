@@ -173,6 +173,24 @@
         "finalReport": "Final Report",
         "loading": "Loading..."
       }
+    },
+    "landing": {
+      "feedbackTitle": "Quickly get feedback on your projects",
+      "feedbackSubtitle1": "UX Remote LAB has been created to give a set of tools for different UX experts that want to create their own UX tests and perform it with the users.",
+      "feedbackSubtitle2": "COVID-19 has shown to the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
+      "uxTitle": "Start your own UX LAB",
+      "uxSubtitle1": "If you are a researcher, a company, or a professional that you want to perform an UX test, here you will find several tools to help to analyze and track your tests using different UX techniques.",
+      "uxSubtitle2": "Help us to grow up this Open Source community and join us on GitHub! :)",
+      "footer": "We are looking for new partners to help us to grow the project! Feel free to contact us on "
+    },
+    "listTests": {
+      "createdBy": "Created by",
+      "me": "Me",
+      "progress": "Progress",
+      "updated": "Last Updated on",
+      "version": "Version:",
+      "noTests": "No tests found",
+      "noTemplates": "No templates found"
     }
   },
   "alerts": {
@@ -181,6 +199,11 @@
   },
   "buttons": {
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "seeCode": "See the code",
+    "username": "Username",
+    "goToConsole": "Go to Console",
+    "signout": "Sign-out",
+    "returnToConsole": "Return to Console"
   }
 }
