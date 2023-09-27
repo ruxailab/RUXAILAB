@@ -1,43 +1,43 @@
 <template>
   <v-container>
-    <ShowInfo style="padding: 0!important;" title="Final Report"></ShowInfo>
+    <ShowInfo style="padding: 0!important;" title="Final Report" />
 
     <v-stepper
-      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
       v-model="step"
+      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
       class="final-report-box"
     >
       <v-stepper-header background-color="transparent">
-        <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
-        <v-divider></v-divider>
-        <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
+        <v-stepper-step :complete="step > 1" step="1" />
+        <v-divider />
+        <v-stepper-step :complete="step > 2" step="2" />
       </v-stepper-header>
 
       <v-stepper-items style="background-color:#F5F5F5">
         <v-stepper-content step="1" class="align-mid">
           <div class="container">
             <div class="row">
-              <TextControls></TextControls>
+              <TextControls />
             </div>
 
             <div class="row">
               <div class="col">
-                <div contenteditable id="myTextarea" class="form-control"></div>
+                <div id="myTextarea" contenteditable class="form-control" />
               </div>
             </div>
           </div>
-          <v-btn color="primary" class="teste" @click="step++, update()"
-            >Next</v-btn
-          >
+          <v-btn color="primary" class="teste" @click="step++, update()">
+            {{ $t('buttons.next') }}
+          </v-btn>
         </v-stepper-content>
 
         <v-stepper-content step="2">
           <div>
-            <DocumentSelection></DocumentSelection>
+            <DocumentSelection />
 
-            <v-btn color="secondary" class="teste2" @click="step--"
-              >Previous</v-btn
-            >
+            <v-btn color="secondary" class="teste2" @click="step--">
+              {{ $t('buttons.previous') }}
+            </v-btn>
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -51,6 +51,7 @@ import DocumentSelection from '@/components/molecules/FinalReportDocumentSelecti
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
+  components: { TextControls, DocumentSelection, ShowInfo },
   props: ['id', 'HEURISTICS'],
   data: () => ({
     title: 'Final report',
@@ -60,16 +61,15 @@ export default {
     step: 1,
     selectedTestElements: null,
   }),
-  mounted() {
-    this.setInnerHtml()
-  },
   computed: {
     test() {
       return this.$store.getters.test
     },
   },
   watch: {},
-  components: { TextControls, DocumentSelection, ShowInfo },
+  mounted() {
+    this.setInnerHtml()
+  },
 
   methods: {
     setInnerHtml() {
@@ -79,11 +79,11 @@ export default {
       }
     },
     async update() {
-      let contenteditable = document.getElementById('myTextarea'),
+      const contenteditable = document.getElementById('myTextarea'),
         text = contenteditable.innerHTML
 
       this.object.finalReport = text
-      let auxT = Object.assign(this.test, this.object)
+      const auxT = Object.assign(this.test, this.object)
       this.$store.dispatch('updateTest', auxT)
     },
   },
