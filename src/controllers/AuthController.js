@@ -36,9 +36,7 @@ export default class AuthController {
     async authGetCurrentUser() {
         const user = auth.currentUser;
         if (user) {
-            console.log("User is signed in");
         } else {
-            console.log("User is signed out");
         }
         return user;
     }
@@ -47,7 +45,6 @@ export default class AuthController {
 
     async authSignOut() {
         return signOut(auth).then(() => {
-            console.log("signOut successful");
         });
     }
 }

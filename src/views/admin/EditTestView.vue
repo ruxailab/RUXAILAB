@@ -225,7 +225,6 @@ export default {
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
-      console.log(this.object.testStructure);
       let auxT = Object.assign(this.test, this.object)
       this.$store.dispatch('updateTest', auxT)
     },
