@@ -57,7 +57,16 @@
     "reports": "Mira cómo están haciendo tus evaluadores.",
     "answers": "Ve cómo tus evaluadores están evaluando tu proyecto.",
     "analytics": "Analiza los comentarios y respuestas de tus evaluadores.",
-    "finalReport": "Agrega datos adicionales a tu prueba."
+    "finalReport": "Agrega datos adicionales a tu prueba.",
+    "intro": {
+      "reports": "Realice un seguimiento del progreso de sus evaluadores y del estado de sus respuestas mientras completan su prueba.",
+      "answers": "Obtén rápidamente comentarios sobre tu proyecto analizando los datos de las respuestas de otros usuarios.",
+      "analytics": "Eche un vistazo profundo a su prueba y vea lo que la gente dice al respecto.",
+      "invite": "¡Invita a los evaluadores a responder tu prueba!",
+      "cooperators": "Agrega cooperadores que puedan ayudarte a mejorar tu proyecto y recopilar datos para tus estudios.",
+      "start": "¡Empieza!",
+      "edit": "Crea y personaliza tus tareas y heurísticas para tus necesidades de investigación."
+    }
   },
   "errors": {
     "invalidInvitation": "Invitación inválida",
@@ -139,5 +148,15 @@
     "notAllowed": "Acceso no permitido",
     "noAccess": "No tienes acceso a la página que estás intentando acceder.",
     "goHome": "Ir a la página de inicio"
+  },
+  "pages": {
+    "intros": {
+      "click": "¡Haga clic aquí!",
+      "learnMore": "Aprende más",
+      "docTitle": "Leer documentación",
+      "docSubtitle": "Haga clic para acceder a la documentación sobre cómo utilizar la página de ",
+      "discTitle": "¡Únete a la comunidad!",
+      "discSubtitle": "Encontrarás soporte en nuestro servidor de Discord."
+    }
   }
 }

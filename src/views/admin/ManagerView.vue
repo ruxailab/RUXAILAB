@@ -226,6 +226,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -260,37 +261,37 @@ export default {
       if (this.test) {
         items = [
           {
-            title: $t('titles.manager'),
+            title: i18n.t('titles.manager'),
             icon: 'mdi-home',
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
           {
-            title: $t('titles.test'),
+            title: i18n.t('titles.test'),
             icon: 'mdi-file-document-edit',
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
           {
-            title: $t('titles.preview'),
+            title: i18n.t('titles.preview'),
             icon: 'mdi-file-eye',
             path: `/testview/${this.test.id}`,
             id: 2,
           },
           {
-            title: $t('titles.reports'),
+            title: i18n.t('titles.reports'),
             icon: 'mdi-book-multiple',
             path: `/reportview/${this.test.answersDocId}`,
             id: 3,
           },
           {
-            title: $t('titles.answers'),
+            title: i18n.t('titles.answers'),
             icon: 'mdi-order-bool-ascending-variant',
             path: `/answerview/${this.test.answersDocId}`,
             id: 4,
           },
           {
-            title: $t('titles.analytics'),
+            title: i18n.t('titles.analytics'),
             icon: 'mdi-chart-bar',
             path: `/analyticsview/${this.test.answers}`,
             id: 5,
@@ -299,7 +300,7 @@ export default {
 
         if (this.accessLevel == 0) {
           items.push({
-            title: $t('titles.cooperators'),
+            title: i18n.t('titles.cooperators'),
             icon: 'mdi-account-group',
             path: `/cooperators/${this.test.cooperators}`,
             id: 6,
@@ -308,7 +309,7 @@ export default {
 
         if (this.test.template) {
           items.push({
-            title: $t('titles.template'),
+            title: i18n.t('titles.template'),
             icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
             id: 7,
@@ -506,13 +507,13 @@ export default {
             }
             // User invited, but they don't have an account
             else {
-              alert($t('errors.signupWithInvitationEmail'))
+              alert(i18n.t('errors.signupWithInvitationEmail'))
               await this.$store.dispatch('logout')
               this.$router.push({ path: '/' })
             }
           } else {
-            alert($t('errors.invalidInvitation'))
-            this.$store.commit('setError', $t('errors.invalidInvitation'))
+            alert(i18n.t('errors.invalidInvitation'))
+            this.$store.commit('setError', i18n.t('errors.invalidInvitation'))
             this.$router.push({ path: '/' })
           }
         } else {

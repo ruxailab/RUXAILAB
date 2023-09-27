@@ -4,58 +4,59 @@
     :title="'Answers'"
     :image="'IntroAnswer.svg'"
     :main="
-      'Quickly get feedback on you project by analyzing data from other users\' answers.'
+    $t('descriptions.intro.answers')
     "
-    :link="'Invite evaluators to answer your test!'"
-    @linkClicked="goToCoops()"
+    :link="$t('descriptions.intro.invite')"
     :items="items"
+    @linkClicked="goToCoops()"
     @callFunc="callFunc"
-  ></IntroComp>
+  />
 </template>
 
 <script>
-import IntroComp from "@/components/atoms/IntrosComponent";
+import IntroComp from '@/components/atoms/IntrosComponent'
+import i18n from '@/i18n'
 
 export default {
-  data: () => ({}),
   components: {
     IntroComp,
   },
-  methods: {
-    goToCoops() {
-      this.$emit("goToCoops");
-    },
-    goToDoc() {
-      this.$router.push("/answers/documentation").catch(() => {});
-    },
-    goToDisc() {
-      window.open("https://discord.gg/XHhnXBjgRh");
-    },
-    callFunc(func) {
-      this[func]();
-    },
-  },
+  data: () => ({}),
   computed: {
     items() {
       return [
         {
-          iconColor: "#4bbdaf",
-          icon: "mdi-file-document",
-          title: "Read documentation",
+          iconColor: '#4bbdaf',
+          icon: 'mdi-file-document',
+          title: i18n.t('pages.intros.docTitle'),
           subtitle:
-            "Click to access the documentation on how to use the answers page.",
-          func: "goToDoc",
+          i18n.t('pages.intros.docSubtitle')  + i18n.t('titles.answers'),
+          func: 'goToDoc',
         },
 
         {
-          iconColor: "#4bbdaf",
-          icon: "mdi-emoticon-happy",
-          title: "Join the comunity!",
-          subtitle: "You will find support on our discord server.",
-          func: "goToDisc",
+          iconColor: '#4bbdaf',
+          icon: 'mdi-emoticon-happy',
+          title: i18n.t('pages.intros.discTitle'),
+          subtitle: i18n.t('pages.intros.discSubtitle'),
+          func: 'goToDisc',
         },
-      ];
+      ]
     },
   },
-};
+  methods: {
+    goToCoops() {
+      this.$emit('goToCoops')
+    },
+    goToDoc() {
+      this.$router.push('/answers/documentation').catch(() => {})
+    },
+    goToDisc() {
+      window.open('https://discord.gg/XHhnXBjgRh')
+    },
+    callFunc(func) {
+      this[func]()
+    },
+  },
+}
 </script>
