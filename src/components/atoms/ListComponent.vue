@@ -8,8 +8,7 @@
             <v-avatar tile :color="generateColor()" style="color: #545454">
               <span
                 v-if="type === 'myTemplates' || type === 'publicTemplates'"
-                >{{ item.header.templateTitle[0].toUpperCase() }}</span
-              >
+              >{{ item.header.templateTitle[0].toUpperCase() }}</span>
               <span v-else>{{ item.testTitle[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
@@ -34,16 +33,16 @@
 
             <!-- Subtitle -->
             <v-list-item-subtitle>
-              Created by
+              {{ $t('pages.listTests.createdBy') }}
               <strong v-if="type === 'myTests' || type === 'myTemplates'">
-                Me
+                {{ $t('pages.listTests.me') }}
               </strong>
               <strong v-else>{{
                 item.testAdmin
                   ? item.testAdmin.email
                   : item.header
-                  ? item.header.templateAuthor.userEmail
-                  : ''
+                    ? item.header.templateAuthor.userEmail
+                    : ''
               }}</strong>
             </v-list-item-subtitle>
             <div
@@ -68,12 +67,14 @@
                     </v-icon>
                   </v-row>
                 </template>
-                <span>Cooperators</span>
+                <span>{{ $t('titles.cooperators') }}</span>
               </v-tooltip>
               <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-row v-bind="attrs" v-on="on">
-                    <div class="caption">{{ item.progress }}%</div>
+                    <div class="caption">
+                      {{ item.progress }}%
+                    </div>
 
                     <v-progress-circular
                       rotate="-90"
@@ -84,7 +85,7 @@
                     />
                   </v-row>
                 </template>
-                <span>Progress</span>
+                <span>{{ $t('pages.listTests.progress') }}</span>
               </v-tooltip>
             </div>
           </v-list-item-content>
@@ -104,14 +105,14 @@
               </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="item.updateDate">
-              Last Updated on
+              {{ $t('pages.listTests.updated') }}
               {{ getFormattedDate(item.updateDate) }}
             </v-list-item-action-text>
             <v-list-item-action-text
               v-if="type === 'myTemplates' || type === 'publicTemplates'"
             >
               <v-chip outlined small class="ml-1" label>
-                Version: {{ item.header.templateVersion }}
+                {{ $t('pages.listTests.version') }} {{ item.header.templateVersion }}
               </v-chip>
             </v-list-item-action-text>
           </v-list-item-action>
@@ -131,11 +132,8 @@
               type === 'publicTests' ||
               type === 'sharedWithMe'
           "
-          >No tests found</span
-        >
-        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
-          >No templates found</span
-        >
+        >{{ $t('pages.listTests.noTests') }}</span>
+        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'">{{ $t('pages.listTests.noTemplates') }}</span>
       </v-row>
     </v-list>
   </div>
@@ -190,7 +188,7 @@ export default {
     ]
 
     if (!availableTypes.includes(this.type)) {
-      console.error(this.type + ' type in ListTests.vue is not valid.')
+      console.error(this.type + ' type in listTests.vue is not valid.')
     }
   },
   methods: {
