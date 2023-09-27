@@ -96,6 +96,7 @@ export default class TestController extends Controller {
         return res
       })
       .catch((err) => {
+        console.log('TestController error: ', err)
       })
   }
 }
