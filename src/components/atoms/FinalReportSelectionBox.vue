@@ -1,30 +1,31 @@
 <template>
   <div class="selection-box">
-    <h2>SELECT YOUR PDF ELEMENTS</h2>
+    <h2>{{ $t('pages.finalReport.select') }}</h2>
     <div class="flex-container">
       <div
         v-if="heuristics.length !== 0"
         class="column with-border"
-        style="max-height: 28vh;"
+        style="max-height: 28vh"
       >
         <input
           v-if="heuristics.length > 5"
-          type="range"
           v-model="sliderValue"
+          type="range"
           :min="0"
           :max="Math.max(0, heuristics.length - 5)"
           step="5"
           class="heuristics-slider"
-        />
+        >
         <div class="slidder-section">
           <div class="heuristics-slider-label">
-            Heuristics {{ sliderValueMin }} to {{ sliderValueMax }}
+            {{ $t('pages.finalReport.heuristic') }} {{ sliderValueMin }}
+            {{ $t('pages.finalReport.to') }} {{ sliderValueMax }}
           </div>
         </div>
         <div
           v-if="showSlider"
           class="slider-container"
-          style="overflow: scroll;max-height: 90%;"
+          style="overflow: scroll; max-height: 90%"
         >
           <div
             v-for="heuristic in visibleHeuristics"
@@ -32,29 +33,29 @@
             class="option"
           >
             <input
-              type="checkbox"
               :id="'heuristic' + heuristic.id"
-              :name="heuristic.name"
               v-model="selectedHeuristics"
+              type="checkbox"
+              :name="heuristic.name"
               :value="heuristic.id"
-            />
+            >
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
             </label>
           </div>
         </div>
         <div v-else>
-          Heuristics:
+          {{ $t('pages.finalReport.heuristic') + 's:' }}
           <div
             v-for="heuristic in heuristics"
             :key="heuristic.id"
             class="option"
           >
             <input
-              type="checkbox"
               :id="'heuristic' + heuristic.id"
+              type="checkbox"
               :name="heuristic.name"
-            />
+            >
 
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
@@ -62,21 +63,21 @@
           </div>
         </div>
       </div>
-      <div v-else class="column with-border" style="max-height: 28vh;">
-        <div style="margin-top:10%">
-          Please create Heuristics so you can select them here.
+      <div v-else class="column with-border" style="max-height: 28vh">
+        <div style="margin-top: 10%">
+          {{ $t('pages.finalReport.createHeuristics') }}
         </div>
       </div>
 
       <div class="column with-margin">
         <div v-for="option in options" :key="option.id" class="option">
-          <input type="checkbox" :id="option.id" :name="option.name" />
+          <input :id="option.id" type="checkbox" :name="option.name">
           <label class="option" :for="option.id">{{ option.label }}</label>
         </div>
       </div>
-      <v-btn @click="submitPdf" :disabled="isLoading" class="bottom-button">
-        <span v-if="!isLoading">Generate PDF</span>
-        <span v-else>Loading...</span>
+      <v-btn :disabled="isLoading" class="bottom-button" @click="submitPdf">
+        <span v-if="!isLoading">{{ $t('pages.finalReport.pdf') }}</span>
+        <span v-else>{{ $t('pages.finalReport.options.loading') }}</span>
       </v-btn>
     </div>
   </div>
@@ -85,6 +86,7 @@
 <script>
 import axios from 'axios'
 import { finalResult, statistics } from '@/utils/statistics'
+import i18n from '@/i18n'
 
 export default {
   props: ['id', 'HEURISTICS'],
@@ -99,13 +101,6 @@ export default {
     selectedHeuristics: [],
     cooperatorsEmail: [],
   }),
-  mounted() {
-    window.addEventListener('resize', this.checkHeuristicsSlider)
-    this.checkHeuristicsSlider()
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkHeuristicsSlider)
-  },
   computed: {
     sliderValueMin() {
       return Number(this.sliderValue) + 1
@@ -138,38 +133,45 @@ export default {
     },
     options() {
       return [
-        { id: 'options', name: 'options', label: 'Test options' },
-        { id: 'comments', name: 'comments', label: 'Answers comments' },
-        { id: 'results', name: 'results', label: 'Statistics' },
+        { id: 'options', name: 'options', label: i18n.t('pages.finalReport.options.options')  },
+        { id: 'comments', name: 'comments', label: i18n.t('pages.finalReport.options.comments')  },
+        { id: 'results', name: 'results', label: i18n.t('pages.finalReport.options.statistics')  },
         {
           id: 'evaluators-results',
           name: 'evaluators-results',
-          label: 'Answers by evaluators',
+          label: i18n.t('pages.finalReport.options.answersByEvaluator') ,
         },
         {
           id: 'heuristics-results',
           name: 'heuristics-results',
-          label: 'Answers by heuristics',
+          label: i18n.t('pages.finalReport.options.answersByHeuristics') ,
         },
-        { id: 'finalReport', name: 'finalReport', label: 'Final Report' },
+        { id: 'finalReport', name: 'finalReport', label: i18n.t('pages.finalReport.options.finalReport')  },
       ]
     },
   },
+  mounted() {
+    window.addEventListener('resize', this.checkHeuristicsSlider)
+    this.checkHeuristicsSlider()
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkHeuristicsSlider)
+  },
   methods: {
     heuristicsEvaluator() {
-      let table = {
+      const table = {
         header: [],
         items: [],
       }
 
       // Your existing data
-      let testOptions = this.test.testOptions // Provide your testOptions array here
-      let resultEvaluator = statistics() // Provide your resultEvaluator array here
+      const testOptions = this.test.testOptions // Provide your testOptions array here
+      const resultEvaluator = statistics() // Provide your resultEvaluator array here
 
       // Code to calculate max and min values
-      let options = testOptions.map((op) => op.value)
-      let max = Math.max(...options)
-      let min = Math.min(...options)
+      const options = testOptions.map((op) => op.value)
+      const max = Math.max(...options)
+      const min = Math.min(...options)
 
       // Add "HEURISTICS" to the table header
       table.header.push({
@@ -180,7 +182,7 @@ export default {
       // Process each evaluator in resultEvaluator
       if (resultEvaluator) {
         resultEvaluator.forEach((evaluator) => {
-          let header = table.header.find((h) => h.text === evaluator.id)
+          const header = table.header.find((h) => h.text === evaluator.id)
           if (!header) {
             table.header.push({
               text: evaluator.id,
@@ -188,7 +190,7 @@ export default {
             })
           }
           evaluator.heuristics.forEach((heuristic) => {
-            let item = table.items.find((i) => i.heuristic === heuristic.id)
+            const item = table.items.find((i) => i.heuristic === heuristic.id)
             if (item) {
               Object.assign(item, {
                 [evaluator.id]: heuristic.result,
@@ -216,12 +218,12 @@ export default {
     },
 
     async genPreview() {
-      let options = document.getElementById('options')
-      let comments = document.getElementById('comments')
-      let results = document.getElementById('results')
-      let finalReport = document.getElementById('finalReport')
-      let evaluatorsResults = document.getElementById('evaluators-results')
-      let heuristicsResults = document.getElementById('heuristics-results')
+      const options = document.getElementById('options')
+      const comments = document.getElementById('comments')
+      const results = document.getElementById('results')
+      const finalReport = document.getElementById('finalReport')
+      const evaluatorsResults = document.getElementById('evaluators-results')
+      const heuristicsResults = document.getElementById('heuristics-results')
 
       //test options
       if (options.checked == true) {
@@ -235,7 +237,7 @@ export default {
 
       //test statistics
       if (results.checked == true) {
-        let answersDocId = this.test.answersDocId
+        const answersDocId = this.test.answersDocId
         this.preview.results = answersDocId
       } else this.preview.results = '' //end of test statistics
 
