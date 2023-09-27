@@ -3,60 +3,58 @@
     :colors="['#eff31a', '#eecf22']"
     :title="'Cooperators'"
     :image="'IntroCoops.svg'"
-    :main="
-      'Add cooperators who can help you improve your project and gather data for your studies.'
-    "
-    :link="'Get started!'"
-    @linkClicked="closeIntro()"
+    :main="$t('descriptions.intro.cooperators')"
+    :link="$t('descriptions.intro.start')"
     :items="items"
+    @linkClicked="closeIntro()"
     @callFunc="callFunc"
-  >
-  </IntroComp>
+  />
 </template>
 
 <script>
-import IntroComp from "@/components/atoms/IntrosComponent";
+import IntroComp from '@/components/atoms/IntrosComponent'
+import i18n from '@/i18n'
 
 export default {
-  data: () => ({}),
   components: {
     IntroComp,
   },
-  methods: {
-    goToDoc() {
-      this.$router.push("/cooperators/documentation").catch(() => {});
-    },
-    goToDisc() {
-      window.open("https://discord.gg/XHhnXBjgRh");
-    },
-    closeIntro() {
-      this.$emit("closeIntro");
-    },
-    callFunc(func) {
-      this[func]();
-    },
-  },
+  data: () => ({}),
   computed: {
     items() {
       return [
         {
-          iconColor: "#daf01a",
-          icon: "mdi-file-document",
-          title: "Read documentation",
+          iconColor: '#daf01a',
+          icon: 'mdi-file-document',
+          title: i18n.t('pages.intros.docTitle'),
           subtitle:
-            "Click to access the documentation on how to use the cooperators page.",
-          func: "goToDoc",
+            i18n.t('pages.intros.docSubtitle') + i18n.t('titles.cooperators'),
+          func: 'goToDoc',
         },
 
         {
-          iconColor: "#daf01a",
-          icon: "mdi-emoticon-happy",
-          title: "Join the comunity!",
-          subtitle: "You will find support on our discord server.",
-          func: "goToDisc",
+          iconColor: '#daf01a',
+          icon: 'mdi-emoticon-happy',
+          title: i18n.t('pages.intros.discTitle'),
+          subtitle: i18n.t('pages.intros.discSubtitle'),
+          func: 'goToDisc',
         },
-      ];
+      ]
     },
   },
-};
+  methods: {
+    goToDoc() {
+      this.$router.push('/cooperators/documentation').catch(() => {})
+    },
+    goToDisc() {
+      window.open('https://discord.gg/XHhnXBjgRh')
+    },
+    closeIntro() {
+      this.$emit('closeIntro')
+    },
+    callFunc(func) {
+      this[func]()
+    },
+  },
+}
 </script>
