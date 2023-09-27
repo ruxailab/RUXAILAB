@@ -3,28 +3,27 @@
     <h2
       style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
     >
-      Create a new test
+      {{ $t('pages.createTest.title') }}
     </h2>
 
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card class="card" flat @click="dialog = true" :ripple="false">
+          <v-card class="card" flat :ripple="false" @click="dialog = true">
             <v-row align="center">
               <v-col cols="12" md="5">
                 <v-img
                   contain
                   src="@/assets/createView/blankCanvas.svg"
                   max-height="200"
-                ></v-img>
+                />
               </v-col>
               <v-col cols="12" md="6" class="card-text">
                 <div class="card-title">
-                  Create a blank test
+                  {{ $t('pages.createTest.blanckTitle') }}
                 </div>
                 <div>
-                  Create a blank test to begin with a completely new and fresh
-                  template.
+                  {{ $t('pages.createTest.blanckSubtitle') }}
                 </div>
               </v-col>
             </v-row>
@@ -34,8 +33,8 @@
           <v-card
             class="card"
             flat
-            @click="pushToFromTemplate()"
             :ripple="false"
+            @click="pushToFromTemplate()"
           >
             <v-row align="center">
               <v-col cols="12" md="5">
@@ -43,14 +42,14 @@
                   contain
                   src="@/assets/createView/createFromTemplate.svg"
                   max-height="200"
-                ></v-img>
+                />
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
                 <div class="card-title">
-                  Create from template
+                  {{ $t('pages.createTest.templateTitle') }}
                 </div>
                 <div>
-                  Create a test based on a template created by one of our users.
+                  {{ $t('pages.createTest.templateSubtitle') }}
                 </div>
               </v-col>
             </v-row>
@@ -62,13 +61,19 @@
     <v-dialog v-model="dialog" max-width="80%">
       <v-card color="#e8eaf2">
         <v-container>
-          <p class="dialog-title ma-2 pa-2">Create Test</p>
-          <v-divider></v-divider>
-          <FormTestDescription :test="test" ref="form" :lock="false" />
+          <p class="dialog-title ma-2 pa-2">
+            {{ $t('pages.createTest.create') }}
+          </p>
+          <v-divider />
+          <FormTestDescription ref="form" :test="test" :lock="false" />
           <v-card-actions class="ma-0 pa-2">
-            <v-spacer></v-spacer>
-            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
-            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
+            <v-spacer />
+            <v-btn color="black" text @click="dialog = false">
+              {{ $t('buttons.create') }}
+            </v-btn>
+            <v-btn color="#F9A826" @click="validate()">
+              {{ $t('buttons.cancel') }}
+            </v-btn>
           </v-card-actions>
         </v-container>
       </v-card>
@@ -77,9 +82,9 @@
 </template>
 
 <script>
-import FormTestDescription from "@/components/atoms/FormTestDescription";
-import TestAdmin from "@/models/TestAdmin";
-import Test from "@/models/Test";
+import FormTestDescription from '@/components/atoms/FormTestDescription'
+import TestAdmin from '@/models/TestAdmin'
+import Test from '@/models/Test'
 
 export default {
   components: {
@@ -89,15 +94,35 @@ export default {
     dialog: false,
     object: {},
     test: {
-      title: "",
-      description: "",
-      type: "",
+      title: '',
+      description: '',
+      type: '',
     },
     testID: null,
   }),
+  computed: {
+    user() {
+      return this.$store.getters.user
+    },
+  },
+  watch: {
+    dialog() {
+      this.test = {
+        title: '',
+        description: '',
+        type: '',
+      }
+      this.object = {}
+
+      if (!this.dialog) {
+        this.$refs.form.resetVal()
+        this.dialog = false
+      }
+    },
+  },
   methods: {
     pushToFromTemplate() {
-      this.$router.push("/fromtemplate");
+      this.$router.push('/fromtemplate')
     },
     async submit() {
       const test = new Test({
@@ -109,42 +134,22 @@ export default {
         }),
         creationDate: Date.now(),
         updateDate: Date.now(),
-      });
+      })
 
-      const testId = await this.$store.dispatch("createNewTest", test);
+      const testId = await this.$store.dispatch('createNewTest', test)
 
-      this.sendManager(testId);
+      this.sendManager(testId)
     },
     sendManager(id) {
-      this.$router.push(`/managerview/${id}`);
+      this.$router.push(`/managerview/${id}`)
     },
     validate() {
       if (this.$refs.form.valida()) {
-        this.submit();
+        this.submit()
       }
     },
   },
-  watch: {
-    dialog() {
-      this.test = {
-        title: "",
-        description: "",
-        type: "",
-      };
-      this.object = {};
-
-      if (!this.dialog) {
-        this.$refs.form.resetVal();
-        this.dialog = false;
-      }
-    },
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-  },
-};
+}
 </script>
 
 <style scoped>

@@ -6,28 +6,25 @@
       class="my-10 background-blob-mobile1"
     >
       <h4 class="display-1 text-center mb-3 mx-1 hidden-md-and-up">
-        Quickly get feedback on your projects
+        {{ $t('pages.landing.feedbackTitle') }}
       </h4>
       <v-col cols="12" md="5">
         <v-img
           src="@/assets/landing/aboutTop.png"
           max-height="350"
           contain
-        ></v-img>
+        />
       </v-col>
       <v-col cols="12" md="6">
         <h4 class="display-1 text-left mb-3 hidden-sm-and-down">
-          Quickly get feedback on your projects
+          {{ $t('pages.landing.feedbackTitle') }}
         </h4>
 
         <p align="justify" style="line-height: 1.6">
-          UX Remote LAB has been created to give a set of tools for different UX
-          experts that want to create their own UX tests and perform it with the
-          users.
+          {{ $t('pages.landing.feedbackSubtitle1') }}
         </p>
         <p align="justify" style="line-height: 1.6">
-          COVID-19 has shown to the world that sometimes the physical presence
-          of real users is not possible so we are here to solve this problem!
+          {{ $t('pages.landing.feedbackSubtitle2') }}
         </p>
       </v-col>
     </v-row>
@@ -39,10 +36,10 @@
     >
       <v-col cols="12" md="5">
         <h4 class="display-1 text-left mb-3 hidden-sm-and-down">
-          Start your own UX LAB
+          {{ $t('pages.landing.uxTitle') }}
         </h4>
         <h4 class="display-1 text-center mb-3 hidden-md-and-up">
-          Start your own UX LAB
+          {{ $t('pages.landing.uxTitle') }}
         </h4>
 
         <v-img
@@ -50,29 +47,28 @@
           max-height="350"
           contain
           class="mb-4 hidden-md-and-up"
-        ></v-img>
+        />
 
         <p align="justify" style="line-height: 1.6">
-          If you are a researcher, a company, or a professional that you want to
-          perform an UX test, here you will find several tools to help to
-          analyze and track your tests using different UX techniques.
+          {{ $t('pages.landing.uxSubtitle1') }}
         </p>
         <p align="justify" style="line-height: 1.6">
-          Help us to grow up this Open Source community and join us on gitlab!
-          :)
+          {{ $t('pages.landing.uxSubtitle2') }}
         </p>
         <v-row class="hidden-sm-and-down">
-          <v-btn outlined rounded class="mt-2" @click="goToGithub()"
-            >See the Code</v-btn
-          >
+          <v-btn outlined rounded class="mt-2" @click="goToGithub()">
+            {{ $t('buttons.seeCode') }}
+          </v-btn>
         </v-row>
         <v-row justify="center" class="hidden-md-and-up">
-          <v-btn outlined rounded class="mt-2">See the Code</v-btn>
+          <v-btn outlined rounded class="mt-2">
+            {{ $t('buttons.seeCode') }}
+          </v-btn>
         </v-row>
       </v-col>
 
       <v-col cols="12" md="5" class="hidden-sm-and-down">
-        <v-img src="@/assets/landing/aboutBottom.png"></v-img>
+        <v-img src="@/assets/landing/aboutBottom.png" />
       </v-col>
     </v-row>
   </v-container>
