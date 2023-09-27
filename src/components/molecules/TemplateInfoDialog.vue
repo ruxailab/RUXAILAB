@@ -1,102 +1,111 @@
 <template>
   <div>
     <v-dialog
+      v-if="template.header"
       v-model="dialog"
       max-width="80%"
-      v-if="template.header"
       persistent
     >
       <v-stepper v-model="step" style="background-color: #e8eaf2">
         <v-stepper-header>
-          <v-stepper-step color="#F9A826" :complete="step > 1" step="1"
-            >Template Info</v-stepper-step
-          >
+          <v-stepper-step color="#F9A826" :complete="step > 1" step="1">
+            {{ $t('pages.createTest.templateInfo') }}
+          </v-stepper-step>
 
-          <v-divider></v-divider>
+          <v-divider />
 
-          <v-stepper-step color="#F9A826" step="2" v-if="allowCreate"
-            >Create From Template</v-stepper-step
-          >
+          <v-stepper-step v-if="allowCreate" color="#F9A826" step="2">
+            {{ $t('pages.createTest.templateTitle') }}
+          </v-stepper-step>
         </v-stepper-header>
 
         <v-stepper-items>
           <v-stepper-content step="1">
             <v-row align="center" justify="space-between">
-              <v-col cols="10" v-if="template.header">
+              <v-col v-if="template.header" cols="10">
                 <p class="dialog-title ma-0">
                   {{ template.header.templateTitle }}
                 </p>
                 <div class="caption ma-0">
-                  Created by {{ author }}
+                  {{ $t('pages.listTests.createdBy') }} {{ author }}
                   {{
-                    template.header.templateVersion == "1.0.0"
+                    template.header.templateVersion == '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                          template.header.updateDate
-                        )}`
+                        template.header.updateDate,
+                      )}`
                   }}
-                  (Version: {{ template.header.templateVersion }})
+                  ({{ $t('pages.listTests.version') + ' ' + template.header.templateVersion }})
                 </div>
               </v-col>
             </v-row>
 
-            <v-divider class="my-2"></v-divider>
+            <v-divider class="my-2" />
 
             <div style="margin: 0px 0px 30px 0px">
               {{
                 template.header.templateDescription
                   ? template.header.templateDescription
-                  : "Template has no description."
+                  : $t('pages.createTest.noDescription')
               }}
             </div>
 
             <v-row justify="space-between" class="ma-0 pa-0">
               <v-btn
+                v-if="!allowCreate && isMyTemplate"
                 color="error"
                 outlined
                 @click="deleteTemplate()"
-                v-if="!allowCreate && isMyTemplate"
-                >Delete template
-                <v-icon right>mdi-delete</v-icon>
+              >
+                {{ $t('pages.createTests.deleteTemplate') }}
+                <v-icon right>
+                  mdi-delete
+                </v-icon>
               </v-btn>
               <v-btn
                 :class="`${allowCreate ? 'error' : 'primary'} mr-2`"
                 @click="reset()"
               >
-                {{ allowCreate ? "Cancel" : "Close" }}</v-btn
-              >
+                {{ allowCreate ? $t('buttons.cancel') : $t('buttons.close') }}
+              </v-btn>
               <v-btn
+                v-if="allowCreate"
                 class="success"
                 color="primary"
                 @click="step = 2"
-                v-if="allowCreate"
-                >Continue</v-btn
               >
+                {{ $t('buttons.next') }}
+              </v-btn>
             </v-row>
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <p class="dialog-title ma-0">Create Test</p>
-            <v-divider class="my-2"></v-divider>
+            <p class="dialog-title ma-0">
+              {{ $t('pages.createTest.create') }}
+            </p>
+            <v-divider class="my-2" />
             <!-- TODO: CHECK HERE -->
             <FormTestDescription
+              ref="form"
               style="margin: 0px 0px 20px 0px"
               :test="mountTest"
-              ref="form"
               :lock="true"
             />
             <v-row justify="end" class="ma-0 pa-0">
               <v-btn
-                @click="step = 1"
                 class="warning"
                 style="position: absolute; left: 24px"
-                >Go Back</v-btn
+                @click="step = 1"
               >
+                {{ $t('buttons.previous') }}
+              </v-btn>
 
-              <v-btn class="error mr-2" @click="reset()">Cancel</v-btn>
-              <v-btn class="success" color="primary" @click="validate()"
-                >Create</v-btn
-              >
+              <v-btn class="error mr-2" @click="reset()">
+                {{ $t('buttons.cancel') }}
+              </v-btn>
+              <v-btn class="success" color="primary" @click="validate()">
+                {{ $t('buttons.create') }}
+              </v-btn>
             </v-row>
           </v-stepper-content>
         </v-stepper-items>
@@ -106,7 +115,7 @@
 </template>
 
 <script>
-import FormTestDescription from "@/components/atoms/FormTestDescription";
+import FormTestDescription from '@/components/atoms/FormTestDescription'
 
 export default {
   components: {
@@ -132,31 +141,22 @@ export default {
     step: 1,
     isMyTemplate: false,
   }),
-  methods: {
-    async deleteTemplate() {
-      if (
-        confirm(
-          "Are you sure to delete this template? This action can not be undone!"
-        )
-      ) {
-        await this.$store.dispatch("deleteTemplate", this.template.id);
-        this.reset()
+  computed: {
+    mountTest() {
+      const test = this.template.body
+      if (!test.testType) {
+        test.testType = this.template.body.testType
       }
+      return test
     },
-    reset() {
-      this.$emit("close");
-      this.$refs.form.resetVal();
-      this.step = 1;
-      this.$emit("reloadTemplates")
+    author() {
+      return this.template?.header?.templateAuthor.userEmail || ''
     },
-    validate() {
-      if (this.$refs.form.valida()) {
-        this.$emit("submitTemplate");
-      }
+    title() {
+      return this.template?.header?.templateTitle || ''
     },
-    getFormattedDate(date) {
-      const d = new Date(date);
-      return d.toLocaleString();
+    user() {
+      return this.$store.state.Auth.user
     },
   },
   watch: {
@@ -164,26 +164,35 @@ export default {
       this.isMyTemplate =
         this.template?.header?.templateAuthor?.userDocId === this.user.id
           ? true
-          : false;
+          : false
     },
   },
-  computed: {
-    mountTest() {
-      const test = this.template.body;
-      if (!test.testType) {
-        test.testType = this.template.body.testType;
+  methods: {
+    async deleteTemplate() {
+      if (
+        confirm(
+          'Are you sure to delete this template? This action can not be undone!',
+        )
+      ) {
+        await this.$store.dispatch('deleteTemplate', this.template.id)
+        this.reset()
       }
-      return test;
     },
-    author() {
-      return this.template?.header?.templateAuthor.userEmail || "";
+    reset() {
+      this.$emit('close')
+      this.$refs.form.resetVal()
+      this.step = 1
+      this.$emit('reloadTemplates')
     },
-    title() {
-      return this.template?.header?.templateTitle || "";
+    validate() {
+      if (this.$refs.form.valida()) {
+        this.$emit('submitTemplate')
+      }
     },
-    user() {
-      return this.$store.state.Auth.user;
+    getFormattedDate(date) {
+      const d = new Date(date)
+      return d.toLocaleString()
     },
   },
-};
+}
 </script>
