@@ -73,7 +73,7 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
-                  {{ $t('titles.manager') }}
+                  {{ $t('titles.                                                                                                                        ') }}
                 </div>
                 <div
                   v-else
