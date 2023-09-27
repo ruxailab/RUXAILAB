@@ -1,35 +1,37 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
     <v-overlay
-      class="text-center"
-      v-model="loading"
       v-if="this.$route.path.includes('manager')"
+      v-model="loading"
+      class="text-center"
     >
       <v-progress-circular
         indeterminate
         color="#fca326"
         size="50"
-      ></v-progress-circular>
-      <div class="white-text mt-3">{{ $t('common.loading') }}</div>
+      />
+      <div class="white-text mt-3">
+        {{ $t('common.loading') }}
+      </div>
     </v-overlay>
 
     <v-dialog :value="flagToken && !flagUser" width="500" persistent>
       <CardSignIn
+        v-if="selected"
         @logined="
           setTest()
           logined = true
         "
         @change="selected = !selected"
-        v-if="selected"
       />
       <CardSignUp
+        v-else
         @logined="
           flagNewUser = true
           logined = true
           setTest()
         "
         @change="selected = !selected"
-        v-else
       />
     </v-dialog>
 
@@ -37,7 +39,9 @@
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>mdi-account</v-icon>
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
@@ -56,8 +60,8 @@
       </v-card>
     </v-dialog>
 
-    <v-row class="nav pa-0 ma-0" dense v-if="test">
-      <drawer :userAccessLevelOnTest="[accessLevel]"></drawer>
+    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+      <drawer :user-access-level-on-test="[accessLevel]" />
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
@@ -76,14 +80,14 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
-                  {{ this.test.testTitle}}
+                  {{ this.test.testTitle }}
                 </div>
                 <v-img
                   class="hidden-md-and-up"
                   style="max-height: 40vh"
                   contain
                   src="@/assets/manager/IntroManager.svg"
-                ></v-img>
+                />
                 <div
                   style="font-size: 22px"
                   class="white--text mb-4 mobile-center"
@@ -97,29 +101,29 @@
                 max-width="40%"
                 max-height="85%"
                 src="@/assets/manager/IntroManager.svg"
-              ></v-img>
+              />
             </v-row>
           </div>
           <div>
             <v-container class="card-container">
-              <div class="presentation-text" v-if="this.accessLevel == 0">
+              <div v-if="this.accessLevel == 0" class="presentation-text">
                 {{ $t('common.editAndInvite') }}
               </div>
 
               <!-- Top Cards -->
               <v-row
+                v-if="this.accessLevel == 0"
                 justify="center"
                 justify-md="space-around"
-                v-if="this.accessLevel == 0"
               >
-                <v-col cols="12" md="6" v-for="(item, n) in topCards" :key="n">
+                <v-col v-for="(item, n) in topCards" :key="n" cols="12" md="6">
                   <v-card
                     class="rounded-xl cards-animation"
                     height="270px"
                     :style="item.cardStyle"
-                    @click="go(item.path)"
                     :ripple="false"
                     color="#F2F3F4"
+                    @click="go(item.path)"
                   >
                     <v-row
                       style="height: 200px"
@@ -131,7 +135,7 @@
                         :style="item.imageStyle"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
-                      ></v-img>
+                      />
                     </v-row>
 
                     <div
@@ -162,18 +166,18 @@
               <!-- Bottom Cards -->
               <v-row justify="center" justify-md="space-around">
                 <v-col
-                  cols="12"
-                  md="4"
                   v-for="(item, i) in bottomCards"
                   :key="i"
+                  cols="12"
+                  md="4"
                 >
                   <v-card
                     class="rounded-xl cards-animation"
                     height="270px"
                     :style="item.cardStyle"
-                    @click="go(item.path)"
                     hover
                     :ripple="false"
+                    @click="go(item.path)"
                   >
                     <v-row
                       style="height: 200px"
@@ -185,7 +189,7 @@
                         height="150"
                         contain
                         :src="require('../../assets/manager/' + item.image)"
-                      ></v-img>
+                      />
                     </v-row>
 
                     <div
@@ -211,7 +215,7 @@
             </v-container>
           </div>
         </div>
-        <router-view @goToCoops="go(items[6])" v-else></router-view>
+        <router-view v-else @goToCoops="go(items[6])" />
       </v-col>
     </v-row>
   </v-container>
@@ -222,7 +226,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
-import router from '@/router'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -243,84 +247,6 @@ export default {
     selectedTest: null,
     item: 0,
   }),
-  methods: {
-    standardDeviation(array) {
-      let average = array.reduce(
-        (total, value) => total + value / array.length,
-        0,
-      )
-      return Math.sqrt(
-        array.reduce(
-          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
-          0,
-        ),
-      )
-    },
-
-    pushToTest() {
-      this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
-      this.index = 0
-    },
-    go(item) {
-      if (item.id === undefined) this.$router.push(item).catch(() => {})
-      else {
-        if (item.id === 2) window.open(item.path)
-        else this.$router.push(item.path).catch(() => {})
-      }
-    },
-    setIsCoops(payload) {
-      this.isCoops = payload
-    },
-    setFlag(flag, value) {
-      this[flag] = value
-    },
-    signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.setFlag('flagUser', false)
-      })
-    },
-    async setTest() {
-      if (this.user.myAnswers && this.test) {
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
-        })
-        // Check if test has already been accepted by the user
-        let alreadyAccepted = answers.find((a) => a.testDocId === this.test.id)
-        if (!alreadyAccepted) {
-          // Get invitation
-          let invitation = this.test.cooperators.find(
-            (coop) => coop.token === this.token,
-          )
-          if (invitation) {
-            // User invited, and they have an account
-            if (this.user.email === invitation.email) {
-              // Accept Collaboration
-              await this.$store.dispatch('acceptTestCollaboration', {
-                test: this.test,
-                cooperator: this.user,
-              })
-              this.flagToken = false
-              this.$router.push({ path: `/testview/${this.test.id}` })
-            }
-            // User invited, but they don't have an account
-            else {
-              alert($t('errors.signupWithInvitationEmail'))
-              await this.$store.dispatch('logout')
-              this.$router.push({ path: `/` })
-            }
-          } else {
-            alert($t('errors.invalidInvitation'))
-            this.$store.commit('setError', $t('errors.invalidInvitation'))
-            this.$router.push({ path: `/` })
-          }
-        } else {
-          this.flagToken = false
-        }
-      }
-    },
-  },
   computed: {
     test() {
       this.$store.dispatch('processStatistics', {
@@ -335,37 +261,37 @@ export default {
       if (this.test) {
         items = [
           {
-            title: $t('titles.manager'),
+            title: i18n.t('titles.manager'),
             icon: 'mdi-home',
             path: `/managerview/${this.test.id}`,
             id: 0,
           },
           {
-            title: $t('titles.test'),
+            title: i18n.t('titles.test'),
             icon: 'mdi-file-document-edit',
             path: `/edittest/${this.test.id}`,
             id: 1,
           },
           {
-            title: $t('titles.preview'),
+            title: i18n.t('titles.preview'),
             icon: 'mdi-file-eye',
             path: `/testview/${this.test.id}`,
             id: 2,
           },
           {
-            title: $t('titles.reports'),
+            title: i18n.t('titles.reports'),
             icon: 'mdi-book-multiple',
             path: `/reportview/${this.test.answersDocId}`,
             id: 3,
           },
           {
-            title: $t('titles.answers'),
+            title: i18n.t('titles.answers'),
             icon: 'mdi-order-bool-ascending-variant',
             path: `/answerview/${this.test.answersDocId}`,
             id: 4,
           },
           {
-            title: $t('titles.analytics'),
+            title: i18n.t('titles.analytics'),
             icon: 'mdi-chart-bar',
             path: `/analyticsview/${this.test.answers}`,
             id: 5,
@@ -374,7 +300,7 @@ export default {
 
         if (this.accessLevel == 0) {
           items.push({
-            title: $t('titles.cooperators'),
+            title: i18n.t('titles.cooperators'),
             icon: 'mdi-account-group',
             path: `/cooperators/${this.test.cooperators}`,
             id: 6,
@@ -383,7 +309,7 @@ export default {
 
         if (this.test.template) {
           items.push({
-            title: $t('titles.template'),
+            title: i18n.t('titles.template'),
             icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
             id: 7,
@@ -421,7 +347,7 @@ export default {
       ]
     },
     bottomCards() {
-      let bottomCards = [
+      const bottomCards = [
         {
           image: 'IntroReports.svg',
           title: 'reports',
@@ -513,6 +439,89 @@ export default {
       }
     },
   },
+
+  async created() {
+    await this.$store.dispatch('getTest', { id: this.$route.params.id })
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+  },
+  methods: {
+    standardDeviation(array) {
+      const average = array.reduce(
+        (total, value) => total + value / array.length,
+        0,
+      )
+      return Math.sqrt(
+        array.reduce(
+          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
+          0,
+        ),
+      )
+    },
+
+    pushToTest() {
+      this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
+      this.index = 0
+    },
+    go(item) {
+      if (item.id === undefined) this.$router.push(item).catch(() => {})
+      else {
+        if (item.id === 2) window.open(item.path)
+        else this.$router.push(item.path).catch(() => {})
+      }
+    },
+    setIsCoops(payload) {
+      this.isCoops = payload
+    },
+    setFlag(flag, value) {
+      this[flag] = value
+    },
+    signOut() {
+      this.$store.dispatch('logout').then(() => {
+        this.setFlag('flagUser', false)
+      })
+    },
+    async setTest() {
+      if (this.user.myAnswers && this.test) {
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers)
+        answersEntries.forEach((a) => {
+          answers.push(a[1])
+        })
+        // Check if test has already been accepted by the user
+        const alreadyAccepted = answers.find((a) => a.testDocId === this.test.id)
+        if (!alreadyAccepted) {
+          // Get invitation
+          const invitation = this.test.cooperators.find(
+            (coop) => coop.token === this.token,
+          )
+          if (invitation) {
+            // User invited, and they have an account
+            if (this.user.email === invitation.email) {
+              // Accept Collaboration
+              await this.$store.dispatch('acceptTestCollaboration', {
+                test: this.test,
+                cooperator: this.user,
+              })
+              this.flagToken = false
+              this.$router.push({ path: `/testview/${this.test.id}` })
+            }
+            // User invited, but they don't have an account
+            else {
+              alert(i18n.t('errors.signupWithInvitationEmail'))
+              await this.$store.dispatch('logout')
+              this.$router.push({ path: '/' })
+            }
+          } else {
+            alert(i18n.t('errors.invalidInvitation'))
+            this.$store.commit('setError', i18n.t('errors.invalidInvitation'))
+            this.$router.push({ path: '/' })
+          }
+        } else {
+          this.flagToken = false
+        }
+      }
+    },
+  },
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
       next((vm) => {
@@ -520,11 +529,6 @@ export default {
         vm.token = to.params.token
       })
     next()
-  },
-
-  async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
 }
 </script>
