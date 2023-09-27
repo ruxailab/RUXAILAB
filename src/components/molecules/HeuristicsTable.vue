@@ -39,9 +39,7 @@
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
           <v-btn class="white--text" color="#fca326" @click="validateEdit()">
-            {{
-              $t('HeuristicsTable.titles.ok')
-            }}
+            {{ $t('HeuristicsTable.titles.ok') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -50,10 +48,7 @@
     <!--Dialog Create New Question-->
     <v-dialog v-model="dialogQuestion" width="800" persistent>
       <v-card v-if="newQuestion">
-        <v-card-title
-          class="headline white--text"
-          primary-title
-        >
+        <v-card-title class="headline white--text" primary-title>
           <v-row class="ma-0 mt-3">
             <v-col cols="10">
               <v-form ref="formQuestion" @submit.prevent="addQuestion()">
@@ -79,9 +74,7 @@
               {{ $t('HeuristicsTable.titles.cancel') }}
             </v-btn>
             <v-btn class="white--text" color="#fca326" @click="addQuestion()">
-              {{
-                $t('HeuristicsTable.titles.add')
-              }}
+              {{ $t('HeuristicsTable.titles.add') }}
             </v-btn>
           </v-card-actions>
         </v-card-title>
@@ -130,14 +123,10 @@
         <v-card-actions>
           <v-spacer />
           <v-btn class="lighten-2" text @click="closeDialog('dialogHeuris')">
-            {{
-              $t('HeuristicsTable.titles.cancel')
-            }}
+            {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
           <v-btn class="white--text" color="#fca326" @click="addHeuris()">
-            {{
-              $t('HeuristicsTable.titles.add')
-            }}
+            {{ $t('HeuristicsTable.titles.add') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -149,9 +138,7 @@
     <v-col cols="12">
       <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
         <v-card-title class="subtitleView">
-          {{
-            $t('HeuristicsTable.titles.currentHeuristics')
-          }}
+          {{ $t('HeuristicsTable.titles.currentHeuristics') }}
         </v-card-title>
         <v-divider />
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
@@ -194,8 +181,9 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
-                  </template>'
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
+                    > </template
+                  >'
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -205,7 +193,8 @@
                     <center class="mt-16" style="color: #a7a7a7">
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
-                      }}</strong><br>
+                      }}</strong
+                      ><br />
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
                     </center>
                   </template>
@@ -360,9 +349,7 @@
                         <v-icon>mdi-pencil</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>
-                        {{
-                          $t('HeuristicsTable.titles.editHeuristic')
-                        }}
+                        {{ $t('HeuristicsTable.titles.editHeuristic') }}
                       </v-list-item-title>
                     </v-list-item>
                     <v-list-item
@@ -373,9 +360,7 @@
                         <v-icon>mdi-delete</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>
-                        {{
-                          $t('HeuristicsTable.titles.deleteHeuristic')
-                        }}
+                        {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -400,9 +385,7 @@
                     style="color: #fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
-                    {{
-                      $t('HeuristicsTable.titles.addNewQuestion')
-                    }}
+                    {{ $t('HeuristicsTable.titles.addNewQuestion') }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -456,9 +439,7 @@
                         <v-icon>mdi-pencil</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>
-                        {{
-                          $t('HeuristicsTable.titles.editQuestion')
-                        }}
+                        {{ $t('HeuristicsTable.titles.editQuestion') }}
                       </v-list-item-title>
                     </v-list-item>
                     <v-list-item
@@ -469,9 +450,7 @@
                         <v-icon>mdi-delete</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>
-                        {{
-                          $t('HeuristicsTable.titles.deleteQuestion')
-                        }}
+                        {{ $t('HeuristicsTable.titles.deleteQuestion') }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -485,7 +464,7 @@
                     :headers="headers"
                     :items="
                       heuristics[itemSelect].questions[questionSelect]
-                        .descriptions
+                        .questions
                     "
                     :items-per-page="5"
                   >
@@ -622,8 +601,8 @@ export default {
       return result
     },
     testAnswerDocLength() {
-      const heuristicAnswers =
-        this.$store.getters.testAnswerDocument.heuristicAnswers
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
       const heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
@@ -659,8 +638,9 @@ export default {
       this.updateFilteredHeuristics()
     },
     itemSelect() {
-      if (this.itemSelect !== null) this.questionSelect = 0
-      else this.questionSelect = null
+      if (this.itemSelect !== null) 
+      this.questionSelect = null
+      else this.itemSelect = null
     },
 
     loader() {
@@ -731,8 +711,6 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
-
-        console.log(this.heuristics)
       }
     },
     moveItemDown(index) {
@@ -751,8 +729,6 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
-
-        console.log(this.heuristics)
       }
     },
     updateFilteredHeuristics() {
@@ -807,11 +783,12 @@ export default {
           this.heuristics[this.itemSelect].questions.splice(item, 1)
           this.questionSelect = null
 
-          this.heuristics[this.itemSelect].total =
-            this.heuristics[this.itemSelect].questions.length
+          this.heuristics[this.itemSelect].total = this.heuristics[
+            this.itemSelect
+          ].questions.length
         }
       } else {
-        alert('Sorry, but you can\'t delete all heuristics questions')
+        alert("Sorry, but you can't delete all heuristics questions")
       }
 
       this.menuQuestions = false
@@ -835,10 +812,9 @@ export default {
       this.dialogEdit = true
     },
     editDescription(desc) {
-      const ind =
-        this.heuristics[this.itemSelect].questions[
-          this.questionSelect
-        ].descriptions.indexOf(desc)
+      const ind = this.heuristics[this.itemSelect].questions[
+        this.questionSelect
+      ].descriptions.indexOf(desc)
       this.$refs.descBtn.editSetup(ind)
     },
     setupQuestion() {
@@ -896,8 +872,9 @@ export default {
         this.heuristics[this.itemSelect].questions.push(this.newQuestion)
         this.newQuestion = null
 
-        this.heuristics[this.itemSelect].total =
-          this.heuristics[this.itemSelect].questions.length
+        this.heuristics[this.itemSelect].total = this.heuristics[
+          this.itemSelect
+        ].questions.length
 
         this.$refs.formQuestion.resetValidation()
         // this.$emit("change");
