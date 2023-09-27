@@ -26,7 +26,9 @@
     "text": "Text",
     "value": "Value",
     "save": "Save",
-    "editDelete": "Edit/Delete"
+    "editDelete": "Edit/Delete",
+    "type": "Type",
+    "noNotifications": "You don't have notifications yet"
   },
   "titles": {
     "manager": "Manager",
@@ -144,7 +146,7 @@
       "hideTextArea": "Hide text area"
     }
   },
-  "AcessNotAllowed": {
+  "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
     "goHome": "Go to Home"
@@ -191,11 +193,24 @@
       "version": "Version:",
       "noTests": "No tests found",
       "noTemplates": "No templates found"
+    },
+    "createTest": {
+      "title": "Create a new test",
+      "blanckTitle": "Create a blank test",
+      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "templateTitle": "Create from template",
+      "templateSubtitle": "Create a test based on a template created by one of our users.",
+      "create": "Create test",
+      "templateInfo": "Template Info",
+      "deleteTemplate": "Delete template",
+      "noDescription": "Template has no description.",
+      "public": "Make test public to all users (readonly)"
     }
   },
   "alerts": {
     "copy": "Copy successful",
-    "noCopy": "Copy unsuccessful"
+    "noCopy": "Copy unsuccessful",
+    "deleteTemplate": "Are you sure to delete this template? This action can not be undone!"
   },
   "buttons": {
     "next": "Next",
@@ -204,6 +219,9 @@
     "username": "Username",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
-    "returnToConsole": "Return to Console"
+    "returnToConsole": "Return to Console",
+    "cancel": "Cancel",
+    "create": "Create",
+    "close": "Close"
   }
 }
