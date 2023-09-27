@@ -4,6 +4,7 @@ import SignUp from '@/views/public/SignUpView.vue'
 import Home from '@/views/public/HomeView.vue'
 import LandingPage from '@/views/public/LandingPageView.vue'
 import PageNotFound from '@/views/public/PageNotFoundView.vue'
+import Help from '@/views/public/Help.vue'
 
 export default [
   {
@@ -30,6 +31,12 @@ export default [
     name: 'Home',
     meta: { authorize: [] },
     component: Home,
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    meta: { authorize: [] },
+    component: Help,
   },
   {
     path: '/',
