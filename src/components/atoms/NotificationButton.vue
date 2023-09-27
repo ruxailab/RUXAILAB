@@ -67,7 +67,7 @@
           <template>
             <center class="mt-3 pa-1" style="color: #a7a7a7">
               <strong>You don't have notifications yet</strong><br/>
-              <v-icon class="mt-2 mb-3">mdi-duck</v-icon>
+              <v-icon class="mt-2 mb-3">mdi-bell-off</v-icon>
             </center>
           </template>
         </v-list-item>
