@@ -57,7 +57,16 @@
     "reports": "Take a look at how your evaluators are doing.",
     "answers": "See how your evaluators are evaluating your project.",
     "analytics": "Analyze comments and answers from your evaluators.",
-    "finalReport": "Add additional data to your test."
+    "finalReport": "Add additional data to your test.",
+    "intro": {
+      "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
+      "answers": "Quickly get feedback on you project by analyzing data from other users' answers.",
+      "analytics": "Take a deep look into your test and see what people are saying about it.",
+      "invite": "Invite evaluators to answer your test!",
+      "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
+      "start": "Get started!",
+      "edit": "Create and customize your tasks and heuristics for your research needs."
+    }
   },
   "errors": {
     "invalidInvitation": "Invalid Invitation",
@@ -139,5 +148,15 @@
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
     "goHome": "Go to Home"
+  },
+  "pages": {
+    "intros": {
+      "click": "Click here!",
+      "learnMore": "Learn More",
+      "docTitle": "Read documentation",
+      "docSubtitle": "Click to access the documentation on how to use the page ",
+      "discTitle": "Join the comunity!",
+      "discSubtitle": "You will find support on our discord server."
+    }
   }
 }
