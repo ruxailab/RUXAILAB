@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   props: {
     test: {
@@ -55,19 +56,19 @@ export default {
   },
   data: () => ({
     titleRequired: [
-      (v) => !!v || "Field Required",
-      (v) => (v && v.length <= 100) || "Max 100 characters",
+      (v) => !!v || i18n.t('errors.fieldRequired'),
+      (v) => (v && v.length <= 100) || 'Max 100 characters',
     ],
-    typeRequired: [(v) => !!v || "Field Required"],
+    typeRequired: [(v) => !!v || i18n.t('errors.fieldRequired')],
     types: [
       // { text: "Usability User Test", value: "User" },
-      { text: "Usability Heuristic Evaluation", value: "HEURISTICS" },
+      { text: i18n.t('titles.heuristic'), value: 'HEURISTICS' },
     ],
   }),
   methods: {
     valida() {
       const valid = this.$refs.form.validate()
-      this.$emit("valForm", valid, 0)
+      this.$emit('valForm', valid, 0)
       return valid
     },
     resetVal() {

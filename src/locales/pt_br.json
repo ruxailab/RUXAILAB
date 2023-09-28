@@ -50,8 +50,10 @@
       "Cooperators": "Cooperadores",
       "Template": "Modelo",
       "Final Report": "Relatório final",
-      "Answer Test": "Responder teste"
-    }
+      "Answer Test": "Responder teste",
+      "Settings": "Configurações"
+    },
+    "heuristic": "Avaliação Heurística de Usabilidade"
   },
   "descriptions": {
     "edit": "Comece a criar e editar o seu teste.",
@@ -77,7 +79,8 @@
     "invalidEmail": "Email inválido",
     "passwordRequired": "Senha requerida",
     "passwordValidate": "A senha deve ter pelo menos 6 caracteres",
-    "differentPasswords": "Senhas diferentes"
+    "differentPasswords": "Senhas diferentes",
+    "fieldRequired": "Campo requerido"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -210,7 +213,8 @@
   "alerts": {
     "copy": "Cópia bem sucedida",
     "noCopy": "Cópia malsucedida",
-    "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!"
+    "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!",
+    "deleteTest": "Tem certeza de que deseja excluir este teste?"
   },
   "buttons": {
     "next": "Próximo",
