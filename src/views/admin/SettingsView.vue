@@ -9,7 +9,7 @@
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title>
-          Are you sure you want to delete this test?
+          {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -19,7 +19,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn class="grey lighten-3" text @click="dialogDel = false">
-            Cancel
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
             class="red white--text ml-1"
@@ -27,7 +27,7 @@
             text
             @click="deleteTest(object)"
           >
-            Delete
+            {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -73,7 +73,7 @@
           <v-card-actions>
             <v-spacer />
             <v-btn class="error" @click="closeDialog()">
-              Cancel
+              {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn
               text
@@ -81,7 +81,7 @@
               class="success"
               @click="createTemplate()"
             >
-              Create
+              {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -128,7 +128,9 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left> mdi-trash-can-outline </v-icon>Delete Test
+              <v-icon left>
+                mdi-trash-can-outline
+              </v-icon>Delete Test
             </v-btn>
           </v-row>
         </v-card>
@@ -153,7 +155,7 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Save</span>
+          <span>{{ $t('buttons.save') }}</span>
         </v-tooltip>
       </div>
     </ShowInfo>
@@ -178,6 +180,7 @@ import TemplateHeader from '@/models/TemplateHeader'
 import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -205,7 +208,7 @@ export default {
     templateDescription: '',
     tempDialog: false,
     titleRequired: [
-      (v) => !!v || 'Field Required',
+      (v) => !!v || i18n.t('errors.fieldRequired'),
       (v) => v.length <= 100 || 'Max 100 characters',
     ],
     showSettings: false,
@@ -234,7 +237,7 @@ export default {
       if (this.test)
         return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
 
-      return `Are you sure you want to delete this test? This action can't be undone` //in case object isnt loaded
+      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
     },
     hasTemplate() {
       if (this.object)
