@@ -69,10 +69,10 @@
           <v-card-actions class="ma-0 pa-2">
             <v-spacer />
             <v-btn color="black" text @click="dialog = false">
-              {{ $t('buttons.create') }}
+              {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn color="#F9A826" @click="validate()">
-              {{ $t('buttons.cancel') }}
+              {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
         </v-container>
