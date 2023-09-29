@@ -1,28 +1,28 @@
 <script>
-import { Radar } from "vue-chartjs";
+import { Radar } from 'vue-chartjs'
 
 export default {
+  extends: Radar,
   props: {
     labels: {
       type: Array,
       required:true,
       default: function() {
-        return [];
-      }
+        return []
+      },
     },
     data: {
       type:Array,
       required:true,
        default: function() {
-        return [];
-      }
-    }
+        return []
+      },
+    },
   },
-  extends: Radar,
   watch: {
     data() {
-      this.$data._chart.update();
-    }
+      this.$data._chart.update()
+    },
   },
   mounted() {
     this.renderChart(
@@ -30,13 +30,13 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: "Usability Percentage",
-            backgroundColor: "rgba(39, 71, 196,0.2)",
-            borderColor: "rgba(39, 71, 196,1)",
-            pointBackgroundColor: "rgba(39, 71, 196,1)",
-            data: this.data
-          }
-        ]
+            label: 'Usability Percentage',
+            backgroundColor: 'rgba(39, 71, 196,0.2)',
+            borderColor: 'rgba(39, 71, 196,1)',
+            pointBackgroundColor: 'rgba(39, 71, 196,1)',
+            data: this.data,
+          },
+        ],
       },
       {
         responsive: true,
@@ -44,11 +44,11 @@ export default {
         scale: {
           ticks: {
             suggestedMin: 0,
-            suggestedMax: 100
-          }
-        }
-      }
-    );
-  }
-};
+            suggestedMax: 100,
+          },
+        },
+      },
+    )
+  },
+}
 </script>
