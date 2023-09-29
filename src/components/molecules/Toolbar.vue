@@ -77,8 +77,19 @@
       </div>
     </v-navigation-drawer>
 
-    <v-toolbar-title style="cursor: pointer" @click="goTo('/testslist')">
+    <v-toolbar-title
+      v-if="this.$route.path != '/help'"
+      style="cursor: pointer"
+      @click="goTo('/testslist')"
+    >
       Remote Testing Lab
+    </v-toolbar-title>
+    <v-toolbar-title
+      v-else
+      style="cursor: pointer"
+      @click="goTo('/testslist')"
+    >
+      Help Center
     </v-toolbar-title>
 
     <v-spacer />
@@ -116,6 +127,7 @@
       {{ $t('buttons.returnToConsole') }}
     </v-btn>
 
+    <HelpButton class="mx-2" />
     <NotificationBtn v-if="user" class="mx-2" />
 
     <!-- Sign-in Desktop -->
@@ -184,11 +196,13 @@
 <script>
 import LocaleChanger from '@/components/atoms/LocaleChanger.vue'
 import NotificationBtn from '../atoms/NotificationButton.vue'
+import HelpButton from '../atoms/HelpButton.vue'
 
 export default {
   components: {
     NotificationBtn,
     LocaleChanger,
+    HelpButton,
   },
   data: () => ({
     drawer: false,
