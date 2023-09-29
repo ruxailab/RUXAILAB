@@ -7,7 +7,7 @@
       elevation="0"
       rounded="0"
     >
-      <v-col cols="12" sm="6" md="4">
+      <v-col cols="12" sm="6" md="4" style="user-select: none;">
         <div class="mt-12 display-3 bold font-weight-bold" style="color: white;">
           Help Center
         </div>
@@ -100,61 +100,61 @@ export default {
         {
           title: 'How do I create a test?',
           content:
-            'Initiate the creation of a heuristic test by clicking on the plus icon, selecting Heuristic Test, specifying project particulars, and proceeding to the dedicated manager page.',
+            'To initiate the creation of a heuristic test by clicking on the plus icon, selecting Heuristic Test, specifying project particulars, and proceeding to the dedicated manager page.',
           isCollapsed: true, // Initially collapsed
         },
         {
-          title: 'How I setup my test?',
+          title: 'How I setup my Heuristic test?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To initiate the setup of your Heuristics test you como to edit test and press the plus icon button,add title and the first question to your heuristic, go to options and create the answer options and the values, then save the modifications.',
           isCollapsed: true,
         },
         {
           title: 'How I delete my test?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To delete your test, tou go to the left bar and goes to options button, and click in DELETE TEST button.',
           isCollapsed: true,
         },
         {
           title: 'How to create a template?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To create a template of your test, tou go to the left bar and goes to options button, and click in CREATE TEMPLATE button.',
           isCollapsed: true,
         },
         {
           title: 'How to use a template?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To use a template, you go to the tests page, in templates in PERSONAL is yours templates and explore is the publics.',
           isCollapsed: true,
         },
         {
           title: 'How to create a CSV?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To create a CSV you go on Edit Test click in .CSV IMPORT button and edit the CSV with your heuristics.',
           isCollapsed: true,
         },
         {
           title: 'How to import my CSV?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To import a your CSV you go on Edit Test click in UPDATE button and select your CSV file with the heuristics.',
           isCollapsed: true,
         },
         {
           title: 'How to invite cooperators?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To invite a cooperator you go in your test in manager page and select Cooperators on left bar, click in Select cooperator and write the email of your cooperator, choose the role of the cooperator and send in bottom right.',
           isCollapsed: true,
         },
         {
           title: 'How to analyse the results?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To analyse your results you go in your test in manager page and select Answers on left bar, and you can visualize statistics, evaluators and heuristics.',
           isCollapsed: true,
         },
         {
           title: 'How to send a message to my cooperators?',
           content:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Et repudiandae possimus corrupti voluptatem exercitationem magni quia adipisci animi, praesentium ullam autem nostrum magnam repellat quos sequi officiis ab sapiente! Minima.',
+            'To send a message you go in your test in manager page and select Cooperators on left bar, click on a three dots icon of a cooperator and select Send a message and write a message with Title and Content.',
           isCollapsed: true,
         },
       ],
