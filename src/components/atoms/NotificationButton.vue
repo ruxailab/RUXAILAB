@@ -17,11 +17,15 @@
             v-bind="attrs"
             v-on="on"
           >
-            <v-icon size="20">mdi-bell-outline</v-icon>
+            <v-icon size="20">
+              mdi-bell-outline
+            </v-icon>
           </v-btn>
 
-          <v-btn v-else small icon v-bind="attrs" v-on="on" class="mr-1">
-            <v-icon size="20">mdi-bell-ring</v-icon>
+          <v-btn v-else small icon v-bind="attrs" class="mr-1" v-on="on">
+            <v-icon size="20">
+              mdi-bell-ring
+            </v-icon>
           </v-btn>
         </v-badge>
       </template>
@@ -40,33 +44,39 @@
             dense
             style="font-size: 14px; font: Roboto"
             class="px-2"
-            @click="goToNotificationRedirect(notification)"
             :disabled="notification.read"
+            @click="goToNotificationRedirect(notification)"
           >
             <v-list-item-content>
-              <v-list-item-title style="font-weight: bold">{{
-                notification.title
-              }}</v-list-item-title>
-              <v-list-item-subtitle>{{
-                notification.description
-              }}</v-list-item-subtitle>
+              <v-list-item-title style="font-weight: bold">
+                {{
+                  notification.title
+                }}
+              </v-list-item-title>
               <v-list-item-subtitle>
-                Sent by {{ notification.author }}</v-list-item-subtitle
-              >
+                {{
+                  notification.description
+                }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle>
+                Sent by {{ notification.author }}
+              </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-icon v-if="!notification.read">
-              <v-chip x-small color="success" outlined label>NEW!</v-chip>
+              <v-chip x-small color="success" outlined label>
+                NEW!
+              </v-chip>
             </v-list-item-icon>
           </v-list-item>
 
-          <div class="divider"></div>
+          <div class="divider" />
         </v-list>
       </div>
       <v-list v-else>
         <v-list-item>
           <template>
             <center class="mt-3 pa-1" style="color: #a7a7a7">
-              <strong>You don't have notifications yet</strong><br/>
+              <strong>{{ $t('common.noNotifications') }}</strong><br/>
               <v-icon class="mt-2 mb-3">mdi-bell-off</v-icon>
             </center>
           </template>
@@ -82,6 +92,14 @@ export default {
     x: 0,
     y: 50,
   }),
+  computed: {
+    user() {
+      return this.$store.getters.user
+    },
+    test() {
+      return this.$store.getters.test
+    },
+  },
   methods: {
     async goToNotificationRedirect(notification) {
       // Mark notification as read
@@ -95,14 +113,6 @@ export default {
     checkIfHasNewNotifications() {
       const newNot = this.user.notifications.filter((n) => n.read === false)
       return newNot.length ?? 0
-    },
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
     },
   },
 }

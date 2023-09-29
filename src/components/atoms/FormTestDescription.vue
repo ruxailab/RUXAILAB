@@ -5,7 +5,7 @@
         <v-text-field
           v-model="test.testTitle"
           :autofocus="lock ? false : true"
-          label="Title"
+          :label="$t('common.title')"
           :rules="titleRequired"
           counter="100"
           outlined
@@ -16,7 +16,7 @@
           v-model="test.testType"
           :disabled="lock"
           :items="types"
-          label="Type"
+          :label="$t('common.type')"
           :rules="typeRequired"
           dense
           outlined
@@ -25,14 +25,14 @@
       <v-col cols="12" md="5">
         <v-textarea
           v-model="test.testDescription"
-          label="Description"
+          :label="$t('common.description')"
           outlined
           dense
           @input="$store.commit('SET_LOCAL_CHANGES', true)"
         />
         <v-checkbox
           v-model="test.isPublic"
-          label="Make test public to all users (readonly)"
+          :label="$t('pages.createTest.public')"
           color="#F9A826"
           @change="$store.commit('SET_LOCAL_CHANGES', true)"
         />
@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   props: {
     test: {
@@ -55,19 +56,19 @@ export default {
   },
   data: () => ({
     titleRequired: [
-      (v) => !!v || "Field Required",
-      (v) => (v && v.length <= 100) || "Max 100 characters",
+      (v) => !!v || i18n.t('errors.fieldRequired'),
+      (v) => (v && v.length <= 100) || 'Max 100 characters',
     ],
-    typeRequired: [(v) => !!v || "Field Required"],
+    typeRequired: [(v) => !!v || i18n.t('errors.fieldRequired')],
     types: [
       // { text: "Usability User Test", value: "User" },
-      { text: "Usability Heuristic Evaluation", value: "HEURISTICS" },
+      { text: i18n.t('titles.heuristic'), value: 'HEURISTICS' },
     ],
   }),
   methods: {
     valida() {
       const valid = this.$refs.form.validate()
-      this.$emit("valForm", valid, 0)
+      this.$emit('valForm', valid, 0)
       return valid
     },
     resetVal() {
