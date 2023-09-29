@@ -1,12 +1,12 @@
 <template>
-  <SelectionBox></SelectionBox>
+  <SelectionBox />
 </template>
 
 <script>
 import SelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
 export default {
-  props: ['id', 'HEURISTICS'],
 
   components: { SelectionBox },
+  props: ['id', 'HEURISTICS'],
 }
 </script>

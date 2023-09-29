@@ -16,10 +16,10 @@
           text
           @click="$emit('closeDialog'), reset()"
         >
-          Cancel
+          {{ $t('buttons.cancel') }}
         </v-btn>
         <v-btn color="#f9a826" class="white--text" @click="validate()">
-          Save
+          {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -27,21 +27,21 @@
 </template>
 
 <script>
-import FormTask from "../atoms/FormTask"
+import FormTask from '../atoms/FormTask'
 
 export default {
   components: {
-    FormTask
+    FormTask,
   },
   props: {
     dialog: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // eslint-disable-next-line vue/require-default-prop
     task: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data: () => ({}),
   methods: {
@@ -50,15 +50,15 @@ export default {
     },
     submit(valid) {
       if (valid) {
-        this.$emit("addTask")
-        this.$emit("closeDialog")
+        this.$emit('addTask')
+        this.$emit('closeDialog')
         this.reset()
       }
     },
     reset() {
       this.$refs.form.resetVal()
-    }
-  }
+    },
+  },
 }
 </script>
 
