@@ -196,6 +196,8 @@
                       }}</strong
                       ><br />
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
+                      <br />
+                      <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>
                   <template v-else>
@@ -463,8 +465,7 @@
                     height="350px"
                     :headers="headers"
                     :items="
-                      heuristics[itemSelect].questions[questionSelect]
-                        .questions
+                      heuristics[itemSelect].questions[questionSelect].questions
                     "
                     :items-per-page="5"
                   >
@@ -638,8 +639,7 @@ export default {
       this.updateFilteredHeuristics()
     },
     itemSelect() {
-      if (this.itemSelect !== null) 
-      this.questionSelect = null
+      if (this.itemSelect !== null) this.questionSelect = null
       else this.itemSelect = null
     },
 
