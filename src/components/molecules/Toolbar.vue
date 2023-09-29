@@ -28,7 +28,7 @@
 
         <v-col>
           <v-list-item-content v-if="user">
-            <v-list-item-title>Username</v-list-item-title>
+            <v-list-item-title>{{ $t('buttons.username') }}</v-list-item-title>
             <div class="caption">
               {{ user.email }}
             </div>
@@ -44,7 +44,7 @@
           <v-list-item-icon>
             <v-icon>mdi-console</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>Go to Console</v-list-item-title>
+          <v-list-item-title>{{ $t('buttons.goToConsole') }}</v-list-item-title>
         </v-list-item>
       </v-list>
 
@@ -72,7 +72,7 @@
           style="text-transform: none !important; font: Roboto; font-size: 17px"
           @click.stop="signOut()"
         >
-          Sign-out
+          {{ $t('buttons.signout') }}
         </v-btn>
       </div>
     </v-navigation-drawer>
@@ -104,7 +104,7 @@
       class="console-button mx-1 hidden-sm-and-down"
       @click="goTo('/testslist')"
     >
-      Go to Console
+      {{ $t('buttons.goToConsole') }}
     </v-btn>
 
     <v-btn
@@ -114,7 +114,7 @@
       class="console-button mx-1 hidden-sm-and-down"
       @click="goTo('/')"
     >
-      Go to Home
+      {{ $t('AccessNotAllowed.goHome') }}
     </v-btn>
 
     <v-btn
@@ -124,7 +124,7 @@
       class="console-button mx-1 hidden-sm-and-down"
       @click="goTo('/testslist')"
     >
-      Return to Console
+      {{ $t('buttons.returnToConsole') }}
     </v-btn>
 
     <HelpButton class="mx-2" />
@@ -138,8 +138,7 @@
       @click="goTo('/signin')"
     >
       <v-icon left> mdi-lock </v-icon>
-
-      Sign-in
+      {{ $t('SIGNIN.sign-in') }}
     </v-btn>
 
     <!-- Sign-in Mobile -->
@@ -172,7 +171,7 @@
           <v-list-item dense style="font-size: 14px; font: Roboto" class="px-2">
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold">
-                Username
+                {{ $t('buttons.username') }}
               </v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -186,7 +185,7 @@
             class="px-2"
             @click="signOut(), (menu = false)"
           >
-            Sign-out
+            {{ $t('buttons.signout') }}
           </v-list-item>
         </v-list>
       </v-menu>
