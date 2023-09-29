@@ -75,8 +75,9 @@
       <v-list v-else>
         <v-list-item>
           <template>
-            <center class="mt-1 pa-1" style="color: #a7a7a7">
-              <strong>{{ $t('common.noNotifications') }}</strong>
+            <center class="mt-3 pa-1" style="color: #a7a7a7">
+              <strong>{{ $t('common.noNotifications') }}</strong><br/>
+              <v-icon class="mt-2 mb-3">mdi-bell-off</v-icon>
             </center>
           </template>
         </v-list-item>
