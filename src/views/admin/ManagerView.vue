@@ -5,11 +5,7 @@
       v-model="loading"
       class="text-center"
     >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         {{ $t('common.loading') }}
       </div>
@@ -488,7 +484,9 @@ export default {
           answers.push(a[1])
         })
         // Check if test has already been accepted by the user
-        const alreadyAccepted = answers.find((a) => a.testDocId === this.test.id)
+        const alreadyAccepted = answers.find(
+          (a) => a.testDocId === this.test.id,
+        )
         if (!alreadyAccepted) {
           // Get invitation
           const invitation = this.test.cooperators.find(
