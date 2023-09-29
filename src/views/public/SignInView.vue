@@ -125,5 +125,5 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
-}
+    }
 </style>
