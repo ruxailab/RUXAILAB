@@ -61,7 +61,7 @@ export default {
         // output whether or not copy was successful
         success ? alert(i18n.t('alerts.copy')) : alert(i18n.t('alerts.noCopy'))
       } catch (e) {
-        alert('An error has occurred')
+        alert(i18n.t('alerts.errorOccurred'))
       }
     },
     center() {
