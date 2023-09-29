@@ -26,7 +26,9 @@
     "text": "Texto",
     "value": "Valor",
     "save": "Salvar",
-    "editDelete": "Editar/Apagar"
+    "editDelete": "Editar/Apagar",
+    "type": "Tipo",
+    "noNotifications": "Você não tem notificações ainda"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -48,8 +50,10 @@
       "Cooperators": "Cooperadores",
       "Template": "Modelo",
       "Final Report": "Relatório final",
-      "Answer Test": "Responder teste"
-    }
+      "Answer Test": "Responder teste",
+      "Settings": "Configurações"
+    },
+    "heuristic": "Avaliação Heurística de Usabilidade"
   },
   "descriptions": {
     "edit": "Comece a criar e editar o seu teste.",
@@ -75,7 +79,8 @@
     "invalidEmail": "Email inválido",
     "passwordRequired": "Senha requerida",
     "passwordValidate": "A senha deve ter pelo menos 6 caracteres",
-    "differentPasswords": "Senhas diferentes"
+    "differentPasswords": "Senhas diferentes",
+    "fieldRequired": "Campo requerido"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -173,14 +178,54 @@
         "finalReport": "Relatório Final",
         "loading": "Carregando..."
       }
+    },
+    "landing": {
+      "feedbackTitle": "Receba feedback rapidamente sobre seus projetos",
+      "feedbackSubtitle1": "UX Remote LAB foi criado para fornecer um conjunto de ferramentas para diferentes especialistas em UX que desejam criar seus próprios testes de UX e realizá-los com os usuários.",
+      "feedbackSubtitle2": "COVID-19 mostrou ao mundo que às vezes a presença física de usuários reais não é possível então estamos aqui para resolver esse problema!",
+      "uxTitle": "Comece seu próprio UX LAB",
+      "uxSubtitle1": "Se você é um pesquisador, uma empresa ou um profissional que deseja realizar um teste de UX, aqui você encontrará diversas ferramentas para ajudar a analisar e acompanhar seus testes utilizando diferentes técnicas de UX.",
+      "uxSubtitle2": "Ajude-nos a desenvolver esta comunidade Open Source e junte-se a nós no GitHub! :)",
+      "footer": "Estamos à procura de novos parceiros que nos ajudem a fazer crescer o projeto! Sinta-se à vontade para nos contatar em "
+    },
+    "listTests": {
+      "createdBy": "Criado por",
+      "me": "Eu",
+      "progress": "Progresso",
+      "updated": "Última atualização em",
+      "version": "Versão:",
+      "noTests": "Nenhum teste encontrado",
+      "noTemplates": "Nenhum modelo encontrado"
+    },
+    "createTest": {
+      "title": "Criar um novo teste",
+      "blanckTitle": "Criar um teste em branco",
+      "blanckSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
+      "templateTitle": "Criar a partir do modelo",
+      "templateSubtitle": "Crie um teste baseado em um modelo criado por um de nossos usuários.",
+      "create": "Criar teste",
+      "templateInfo": "Informações do modelo",
+      "deleteTemplate": "Excluir modelo",
+      "noDescription": "O modelo não possui descrição.",
+      "public": "Tornar o teste público para todos os usuários (somente leitura)"
     }
   },
   "alerts": {
     "copy": "Cópia bem sucedida",
-    "noCopy": "Cópia malsucedida"
+    "noCopy": "Cópia malsucedida",
+    "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!",
+    "deleteTest": "Tem certeza de que deseja excluir este teste?"
   },
   "buttons": {
     "next": "Próximo",
-    "previous": "Anterior"
+    "previous": "Anterior",
+    "seeCode": "Veja o código",
+    "username": "Nome de usuário",
+    "goToConsole": "Ir para o console",
+    "signout": "Sair",
+    "returnToConsole": "Retornar ao console",
+    "create": "Criar",
+    "cancel": "Cancelar",
+    "close": "Fechar"
   }
 }

@@ -26,7 +26,9 @@
     "text": "Text",
     "value": "Value",
     "save": "Save",
-    "editDelete": "Edit/Delete"
+    "editDelete": "Edit/Delete",
+    "type": "Type",
+    "noNotifications": "You don't have notifications yet"
   },
   "titles": {
     "manager": "Manager",
@@ -48,8 +50,10 @@
       "Cooperators": "Cooperators",
       "Template": "Template",
       "Final Report": "Final Report",
-      "Answer Test": "Answer Test"
-    }
+      "Answer Test": "Answer Test",
+      "Settings": "Settings"
+    },
+    "heuristic": "Usability Heuristic Evaluation"
   },
   "descriptions": {
     "edit": "Start creating and editing your test.",
@@ -75,7 +79,8 @@
     "invalidEmail": "Invalid email",
     "passwordRequired": "Password is required",
     "passwordValidate": "Password must be at least 6 characters",
-    "differentPasswords": "Different passwords"
+    "differentPasswords": "Different passwords",
+    "fieldRequired": "Field required"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -144,7 +149,7 @@
       "hideTextArea": "Hide text area"
     }
   },
-  "AcessNotAllowed": {
+  "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
     "goHome": "Go to Home"
@@ -173,14 +178,54 @@
         "finalReport": "Final Report",
         "loading": "Loading..."
       }
+    },
+    "landing": {
+      "feedbackTitle": "Quickly get feedback on your projects",
+      "feedbackSubtitle1": "UX Remote LAB has been created to give a set of tools for different UX experts that want to create their own UX tests and perform it with the users.",
+      "feedbackSubtitle2": "COVID-19 has shown to the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
+      "uxTitle": "Start your own UX LAB",
+      "uxSubtitle1": "If you are a researcher, a company, or a professional that you want to perform an UX test, here you will find several tools to help to analyze and track your tests using different UX techniques.",
+      "uxSubtitle2": "Help us to grow up this Open Source community and join us on GitHub! :)",
+      "footer": "We are looking for new partners to help us to grow the project! Feel free to contact us on "
+    },
+    "listTests": {
+      "createdBy": "Created by",
+      "me": "Me",
+      "progress": "Progress",
+      "updated": "Last Updated on",
+      "version": "Version:",
+      "noTests": "No tests found",
+      "noTemplates": "No templates found"
+    },
+    "createTest": {
+      "title": "Create a new test",
+      "blanckTitle": "Create a blank test",
+      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "templateTitle": "Create from template",
+      "templateSubtitle": "Create a test based on a template created by one of our users.",
+      "create": "Create test",
+      "templateInfo": "Template Info",
+      "deleteTemplate": "Delete template",
+      "noDescription": "Template has no description.",
+      "public": "Make test public to all users (readonly)"
     }
   },
   "alerts": {
     "copy": "Copy successful",
-    "noCopy": "Copy unsuccessful"
+    "noCopy": "Copy unsuccessful",
+    "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
+    "deleteTest": "Are you sure you want to delete this test?"
   },
   "buttons": {
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "seeCode": "See the code",
+    "username": "Username",
+    "goToConsole": "Go to Console",
+    "signout": "Sign-out",
+    "returnToConsole": "Return to Console",
+    "cancel": "Cancel",
+    "create": "Create",
+    "close": "Close"
   }
 }
