@@ -4,24 +4,25 @@
       <v-card-title
         class="headline error accent-4 white--text"
         primary-title
-        >Are you sure you want to leave?</v-card-title
       >
-      <v-card-text
-        >Are you sure you want to leave? All your changes will be
-        discarded</v-card-text
-      >
-      <v-divider></v-divider>
+        {{ $t('alerts.leave') }}
+      </v-card-title>
+      <v-card-text>
+        {{ $t('alerts.sureLeave') }}
+      </v-card-text>
+      <v-divider />
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn class="grey lighten-3" text @click="setDialog()"
-          >Stay</v-btn
-        >
+        <v-spacer />
+        <v-btn class="grey lighten-3" text @click="setDialog()">
+          {{ $t('buttons.stay') }}
+        </v-btn>
         <v-btn
           class="error accent-4 white--text ml-1"
           text
           @click="setDialog(),discardChanges()"
-          >Leave</v-btn
         >
+          {{ $t('buttons.leave') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -30,7 +31,7 @@
 <script>
 
 export default {
-name: "LeaveAlert",
+name: 'LeaveAlert',
 computed:{
   dialogLeaveStatus(){
       return this.$store.getters.getDialogLeaveStatus
@@ -43,7 +44,7 @@ methods: {
   discardChanges(){
     this.$store.commit('SET_LOCAL_CHANGES',false)
     this.$router.push({name: this.$store.state.pathTo})
-  }
-}
+  },
+},
 }
 </script>

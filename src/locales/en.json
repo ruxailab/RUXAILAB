@@ -138,10 +138,11 @@
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding."
     },
     "validation": {
-      "nameRequired": "O nome é obrigatório",
-      "questionRequired": "A pergunta deve ser preenchida",
+      "nameRequired": "Name is mandatory",
+      "questionRequired": "The question must be filled",
       "textRequired": "Text is required",
-      "positiveValue": "Value must be a positive number"
+      "positiveValue": "Value must be a positive number",
+      "addQuestion": "Please add at least one question to your heuristic"
     },
     "AddCommentBtn": {
       "showComment": "Show comment",
@@ -214,7 +215,13 @@
     "copy": "Copy successful",
     "noCopy": "Copy unsuccessful",
     "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
-    "deleteTest": "Are you sure you want to delete this test?"
+    "deleteTest": "Are you sure you want to delete this test?",
+    "addDescription": "Please add a descritpion",
+    "errorOccurred": "An error has occurred",
+    "leave": "Are you sure you want to leave?",
+    "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
+    "imageURL": "Type the image URL:",
+    "deleteHeuristic": "Are you sure delete the heuristic "
   },
   "buttons": {
     "next": "Next",
@@ -226,6 +233,13 @@
     "returnToConsole": "Return to Console",
     "cancel": "Cancel",
     "create": "Create",
-    "close": "Close"
+    "close": "Close",
+    "stay": "Stay",
+    "leave": "Leave",
+    "help": "Help"
+  },
+  "inputs": {
+    "consent": "Consent",
+    "form": "Form"
   }
 }

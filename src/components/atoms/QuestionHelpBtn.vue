@@ -1,32 +1,38 @@
 <template>
   <div>
-    <v-tooltip bottom v-if="question.descriptions.length > 0">
+    <v-tooltip v-if="question.descriptions.length > 0" bottom>
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon>
-          <v-icon v-bind="attrs" v-on="on" @click="dialog = true"
-            >mdi-help-circle-outline</v-icon
-          >
+          <v-icon v-bind="attrs" v-on="on" @click="dialog = true">
+            mdi-help-circle-outline
+          </v-icon>
         </v-btn>
       </template>
-      <span>Help</span>
+      <span>{{ $t('buttons.help') }}</span>
     </v-tooltip>
 
     <v-dialog v-model="dialog" width="85%">
       <v-card>
         <div style="display: flex; justify-content: flex-end">
-          <v-btn small icon @click="dialog = false" class="ma-1">
-            <v-icon color="error">mdi-close</v-icon>
+          <v-btn small icon class="ma-1" @click="dialog = false">
+            <v-icon color="error">
+              mdi-close
+            </v-icon>
           </v-btn>
         </div>
-        <div class="titleView pl-2 pb-2">{{ question.title }}</div>
+        <div class="titleView pl-2 pb-2">
+          {{ question.title }}
+        </div>
 
         <div v-for="(description, i) in question.descriptions" :key="i">
-          <div class="subtitleView mx-4 mb-1 mt-5">{{ description.title }}</div>
+          <div class="subtitleView mx-4 mb-1 mt-5">
+            {{ description.title }}
+          </div>
           <TextBox
             class="mx-4"
             :text="description.text"
             :editable="false"
-          ></TextBox>
+          />
         </div>
       </v-card>
     </v-dialog>
@@ -34,23 +40,23 @@
 </template>
 
 <script>
-import TextBox from "@/components/atoms/TextBox";
+import TextBox from '@/components/atoms/TextBox'
 
 export default {
+  components: {
+    TextBox,
+  },
   props: {
     question: {
       type: Object,
-      required: true
-    }
-  },
-  components: {
-    TextBox
+      required: true,
+    },
   },
   data: () => ({
     dialog: false,
   }),
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style scoped>
