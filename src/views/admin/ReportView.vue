@@ -169,22 +169,10 @@ export default {
     },
     getCooperatorEmail(userDocId) {
       let cooperatorEmail = null
-      if (userDocId === this.user.id) {
-        return 'You'
-      } else if (
-        this.test.cooperators &&
-        Array.isArray(this.test.cooperators)
-      ) {
+      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
         for (const element of this.test.cooperators) {
           if (element && element.email && element.userDocId === userDocId) {
-            if (element.email === this.user.email) {
-              return 'You'
-            } else {
-              cooperatorEmail = element.email
-              break
-            }
-          } else {
-            return 'Guest'
+            cooperatorEmail = element.email
           }
         }
       }
