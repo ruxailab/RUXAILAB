@@ -24,8 +24,9 @@
                 rounded
                 class="mb-2"
                 @click="goTo('/signup')"
-                >{{ $t('Introduction.cta') }}</v-btn
               >
+                {{ $t('Introduction.cta') }}
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -45,7 +46,7 @@
           class="mb-4"
           max-height="350"
           contain
-        ></v-img>
+        />
         <div style="background-color: #f4b700" class="mx-1">
           <h4 class="display-1 white--text mb-4 text-center">
             {{ $t('Introduction.subtitle') }}
@@ -62,15 +63,16 @@
               rounded
               class="mb-2"
               @click="goTo('/signup')"
-              >{{ $t('Introduction.cta') }}</v-btn
             >
+              {{ $t('Introduction.cta') }}
+            </v-btn>
           </v-row>
         </div>
         <!-- div for margin at bottom -->
-        <div style="background-color: #f4b700; height: 40px"></div>
+        <div style="background-color: #f4b700; height: 40px" />
       </div>
 
-      <div style="height: 10px"></div>
+      <div style="height: 10px" />
     </v-container>
 
     <div class="svg-border-waves text-white">
@@ -146,12 +148,8 @@ section {
 
 <script>
 export default {
+  components: {},
   data: () => ({}),
-  methods: {
-    goTo(path) {
-      this.$router.push(path).catch(() => {})
-    },
-  },
   computed: {
     test() {
       return this.$store.getters.test
@@ -163,7 +161,11 @@ export default {
       return this.$store.state.Tests.currentTest
     },
   },
-  components: {},
+  methods: {
+    goTo(path) {
+      this.$router.push(path).catch(() => {})
+    },
+  },
 }
 //remover
 </script>
