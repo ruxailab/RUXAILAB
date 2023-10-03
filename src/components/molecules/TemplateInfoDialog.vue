@@ -116,6 +116,7 @@
 
 <script>
 import FormTestDescription from '@/components/atoms/FormTestDescription'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -171,7 +172,7 @@ export default {
     async deleteTemplate() {
       if (
         confirm(
-          'Are you sure to delete this template? This action can not be undone!',
+          i18n.t('alerts.deleteTest'),
         )
       ) {
         await this.$store.dispatch('deleteTemplate', this.template.id)

@@ -21,28 +21,28 @@ export default {
   props: {
     postTest: {
       type: Object,
-      required: true
+      required: true,
     },
     valIndex: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     googleLinkRules: [
-      v =>
+      (v) =>
         v == null ||
-        v == "" ||
-        v.indexOf("https://docs.google.com/forms/") == 0 ||
-        v.indexOf("docs.google.com/forms/") == 0 ||
-        "Google forms link required"
-    ]
+        v == '' ||
+        v.indexOf('https://docs.google.com/forms/') == 0 ||
+        v.indexOf('docs.google.com/forms/') == 0 ||
+        'Google forms link required',
+    ],
   }),
   watch: {
-    "postTest.form"() {
+    'postTest.form'() {
       const valid = this.$refs.form.validate()
-      this.$emit("valForm", valid, this.valIndex)
-    }
-  }
+      this.$emit('valForm', valid, this.valIndex)
+    },
+  },
 }
 </script>

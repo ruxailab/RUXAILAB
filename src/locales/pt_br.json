@@ -138,9 +138,10 @@
       "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar."
     },
     "validation": {
-      "nameRequired": "Name is required",
-      "questionRequired": "Question needs to be answered",
-      "textRequired": "O texto é obrigatório"
+      "nameRequired": "Nome é requerido",
+      "questionRequired": "A pergunta deve ser preenchida",
+      "textRequired": "O texto é obrigatório",
+      "addQuestion": "Por favor adicione pelo menos uma pergunta à sua heurística"
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentário",
@@ -214,7 +215,13 @@
     "copy": "Cópia bem sucedida",
     "noCopy": "Cópia malsucedida",
     "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!",
-    "deleteTest": "Tem certeza de que deseja excluir este teste?"
+    "deleteTest": "Tem certeza de que deseja excluir este teste?",
+    "addDescription": "Por favor adicione uma descrição",
+    "errorOccurred": "Ocorreu um erro",
+    "leave": "Tem certeza que deseja sair?",
+    "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
+    "imageURL": "Digite o URL da imagem:",
+    "deleteHeuristic": "Tem certeza de excluir a heurística "
   },
   "buttons": {
     "next": "Próximo",
@@ -226,6 +233,13 @@
     "returnToConsole": "Retornar ao console",
     "create": "Criar",
     "cancel": "Cancelar",
-    "close": "Fechar"
+    "close": "Fechar",
+    "leave": "Sair",
+    "stay": "Ficar",
+    "help": "Ajuda"
+  },
+  "inputs": {
+    "consent": "Consentimento",
+    "form": "Formulário"
   }
 }
