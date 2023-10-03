@@ -6,7 +6,7 @@
           <v-text-field
             v-model="preTest.consent"
             prepend-inner-icon="mdi-link-variant"
-            label="Consent"
+            :label="$t('inputs.consent')"
             :rules="googleLinkRules"
             outlined
             dense
@@ -15,7 +15,7 @@
           <v-text-field
             v-model="preTest.form"
             prepend-inner-icon="mdi-link-variant"
-            label="Form"
+            :label="$t('inputs.form')"
             :rules="googleLinkRules"
             outlined
             dense
@@ -32,33 +32,33 @@ export default {
   props: {
     preTest: {
       type: Object,
-      required: true
+      required: true,
     },
     valIndex: {
       type: Number,
-      required: true 
-    }
+      required: true,
+    },
   },
   data: () => ({
     googleLinkRules: [
-      v =>
+      (v) =>
         v == null ||
-        v == "" ||
-        v.indexOf("https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform") == 0 ||
+        v == '' ||
+        v.indexOf('https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform') == 0 ||
         // v.indexOf("docs.google.com/forms/") == 0 ||
-        "Google forms link required"
+        'Google forms link required',
     ],
-    valids: [true, true]
+    valids: [true, true],
   }),
   watch: {
-    "preTest.consent"() {
+    'preTest.consent'() {
       const valid = this.$refs.form.validate()
-      this.$emit("valForm", valid, this.valIndex)
+      this.$emit('valForm', valid, this.valIndex)
     },
-    "preTest.form"() {
+    'preTest.form'() {
       const valid = this.$refs.form.validate()
-      this.$emit("valForm", valid, this.valIndex)
-    }
-  }
+      this.$emit('valForm', valid, this.valIndex)
+    },
+  },
 }
 </script>

@@ -15,10 +15,10 @@
         {{ task.tip }}
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="primary" text @click="dialog = false">
           Ok
         </v-btn>
@@ -35,14 +35,14 @@ export default {
       required: true,
       default: function() {
         return {
-          name: "",
-          tip: ""
-        };
-      }
-    }
+          name: '',
+          tip: '',
+        }
+      },
+    },
   },
   data: () => ({
-    dialog: false
-  })
-};
+    dialog: false,
+  }),
+}
 </script>
