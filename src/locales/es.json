@@ -141,7 +141,8 @@
       "nameRequired": "El nombre es obligatorio",
       "questionRequired": "La pregunta debe estar completa",
       "textRequired": "Se requiere texto",
-      "positiveValue": "El valor debe ser un número positivo."
+      "positiveValue": "El valor debe ser un número positivo.",
+      "addQuestion": "Por favor agregue al menos una pregunta a su heurística"
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentario",
@@ -214,7 +215,13 @@
     "copy": "Copia exitosa",
     "noCopy": "Copia fallida",
     "deleteTemplate": "¿Estás seguro de eliminar esta plantilla? ¡Esta acción no se puede deshacer!",
-    "deleteTest": "¿Estás seguro de que quieres eliminar esta prueba?"
+    "deleteTest": "¿Estás seguro de que quieres eliminar esta prueba?",
+    "addDescription": "Por favor agregue una descripción",
+    "errorOccurred": "Se ha producido un error",
+    "leave": "¿Estás seguro de que quieres irte?",
+    "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
+    "imageURL": "Escriba la URL de la imagen:",
+    "deleteHeuristic": "¿Estás seguro de eliminar el heurístico "
   },
   "buttons": {
     "next": "Siguiente",
@@ -226,6 +233,13 @@
     "returnToConsole": "Volver a la consola",
     "create": "Crear",
     "cancel": "Cancelar",
-    "close": "Cerca"
+    "close": "Cerca",
+    "leave": "Dejar",
+    "stay": "Quédate",
+    "help": "Ayuda"
+  },
+  "inputs": {
+    "consent": "Consentimiento",
+    "form": "Forma"
   }
 }

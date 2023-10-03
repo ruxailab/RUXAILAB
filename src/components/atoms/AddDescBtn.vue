@@ -77,6 +77,7 @@
 
 <script>
 import TextBox from '@/components/atoms/TextBox'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -94,7 +95,7 @@ export default {
       title: '',
       text: '',
     },
-    rule: [(v) => !!v || 'Title Required'],
+    rule: [(v) => !!v || i18n.t('errors.fieldRequired')],
     editIndex: null,
     isMounted: false,
   }),
@@ -123,7 +124,7 @@ export default {
         this.reset()
         this.$emit('change')
       } else if (valid && this.desc.text.length == 0) {
-        alert('Please add a descritpion')
+        alert(i18n.t('alerts.addDescription'))
       }
     },
     reset() {
