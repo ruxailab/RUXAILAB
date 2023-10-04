@@ -478,11 +478,9 @@ export default {
     calculateProgress() {
       const total = this.currentUserTestAnswer.total
       let x = 0
-      // check progress inside questions
       this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
         heuQ.heuristicQuestions.forEach((question) => {
-          if (question.heuristicAnswer != null) {
-            // increment counter for all questions inside all heuristics
+          if (question.heuristicAnswer !== '') {
             x++
           }
         })
@@ -495,7 +493,7 @@ export default {
     },
     perHeuristicProgress(item) {
       const value =
-        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== null)
+        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '')
           .length *
           100) /
         item.heuristicTotal
