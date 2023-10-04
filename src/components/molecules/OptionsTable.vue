@@ -89,7 +89,7 @@ export default {
     },
     optionsWithFormattedValue() {
       return this.options.map((option) => {
-        if (option.value === -1) {
+        if (option.value === null) {
           return { ...option, value: 'No value' }
         } else {
           return option
