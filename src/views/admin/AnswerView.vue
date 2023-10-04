@@ -38,7 +38,7 @@
                     <!-- Average -->
                     <v-col cols="4">
                       <v-row justify="center">
-                        <v-card-title>Usability Percentage</v-card-title>
+                        <v-card-title class="mt-4">Usability Percentage</v-card-title>
                         <v-card-text>
                           <v-row align="center" justify="center">
                             <p class="display-3">
