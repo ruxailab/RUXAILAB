@@ -14,7 +14,7 @@ export default class HeuristicQuestionAnswer {
     answerImageUrl,
   } = {}) {
     this.heuristicId = heuristicId
-    this.heuristicAnswer = heuristicAnswer
+    this.heuristicAnswer = heuristicAnswer ?? ''
     this.heuristicComment = heuristicComment
     this.answerImageUrl = answerImageUrl
   }
