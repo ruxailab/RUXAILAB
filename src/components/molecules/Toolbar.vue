@@ -247,12 +247,6 @@ export default {
           id: 4,
         },
         {
-          title: 'Analytics',
-          icon: 'mdi-chart-bar',
-          path: `/analyticsview/${this.test.answersDocId}`,
-          id: 5,
-        },
-        {
           title: 'Final Report',
           icon: 'mdi-file-document',
           path: `/finalreportview/${this.test.id}`,
