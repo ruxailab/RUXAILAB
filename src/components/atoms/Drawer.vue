@@ -224,12 +224,6 @@ export default {
               path: `/answerview/${this.test.id}`,
               id: 4,
             },
-            {
-              title: 'Analytics',
-              icon: 'mdi-chart-bar',
-              path: `/analyticsview/${this.test.id}`,
-              id: 5,
-            },
           )
         } else if (this.userAccessLevelOnTest == 1) {
           items.push(
@@ -244,12 +238,6 @@ export default {
               icon: 'mdi-order-bool-ascending-variant',
               path: `/answerview/${this.test.id}`,
               id: 3,
-            },
-            {
-              title: 'Analytics',
-              icon: 'mdi-chart-bar',
-              path: `/analyticsview/${this.test.id}`,
-              id: 4,
             },
           )
         }

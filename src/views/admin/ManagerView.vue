@@ -286,12 +286,6 @@ export default {
             path: `/answerview/${this.test.answersDocId}`,
             id: 4,
           },
-          {
-            title: i18n.t('titles.analytics'),
-            icon: 'mdi-chart-bar',
-            path: `/analyticsview/${this.test.answers}`,
-            id: 5,
-          },
         ]
 
         if (this.accessLevel == 0) {
@@ -363,16 +357,6 @@ export default {
           cardStyle:
             'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
           path: `/answerview/${this.test.answersDocId}`,
-        },
-        {
-          image: 'IntroAnalytics.svg',
-          title: 'analytics',
-          imageStyle: 'height: 250px',
-          bottom: '#000',
-          description: 'analytics',
-          cardStyle:
-            'background-image: radial-gradient(circle at top right, #32bde7, #2488e0); overflow: hidden',
-          path: `/analyticsview/${this.test.answers}`,
         },
       ]
       if (this.accessLevel == 0) {
