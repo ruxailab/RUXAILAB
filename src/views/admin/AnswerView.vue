@@ -20,6 +20,7 @@
           <v-tab @click="tab = 0">Statistics</v-tab>
           <v-tab @click="tab = 1">Evaluators</v-tab>
           <v-tab @click="tab = 2">Heuristics</v-tab>
+          <v-tab @click="tab = 3">Analytics</v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
@@ -128,7 +129,10 @@
                   class="elevation-1 cardStyle mx-2"
                 >
                   <template v-slot:item.result="{ item }">
-                    <v-chip :color="getColorPorcentage(item.result)" dark
+                    <v-chip v-if="isNaN(item.result)" :color="getColorPorcentage(item.result)" dark
+                      >0.0%</v-chip
+                    >
+                    <v-chip v-else :color="getColorPorcentage(item.result)" dark
                       >{{ item.result }}%</v-chip
                     >
                   </template>
@@ -272,6 +276,7 @@
               </v-col>
             </v-row>
           </v-card>
+          <AnalyticsView v-if="tab == 3"/>
         </div>
       </ShowInfo>
     </v-row>
@@ -283,6 +288,7 @@ import BarChart from '@/components/atoms/BarChart.vue'
 import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
+import AnalyticsView from './AnalyticsView.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -293,6 +299,7 @@ export default {
     RadarChart,
     ShowInfo,
     IntroAnswer,
+    AnalyticsView
   },
   data: () => ({
     tab: 0,
@@ -305,13 +312,13 @@ export default {
       //✓
       max = Number(max)
       min = Number(min)
-      let h = (max - min) / 5
+      let h = (max - min) / max
 
       if (value == null) return 'grey'
-      else if (value <= min + h) return 'red'
-      else if (value <= min + 2 * h) return 'amber'
-      else if (value <= min + 3 * h) return 'orange lighten-1'
-      else if (value <= min + 4 * h) return 'lime'
+      else if (value === 0) return 'red'
+      else if (value <= min + 1 * h) return 'amber'
+      else if (value <= min + 2 * h) return 'orange lighten-1'
+      else if (value <= min + 3 * h) return 'lime'
       else return 'green'
     },
     getColorPorcentage(value) {
