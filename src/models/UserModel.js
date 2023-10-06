@@ -27,7 +27,6 @@ export default class User {
 
     toFirestore() {
         return {
-            id: this.id,
             accessLevel: this.accessLevel,
             email: this.email,
             notifications: this.notifications,
