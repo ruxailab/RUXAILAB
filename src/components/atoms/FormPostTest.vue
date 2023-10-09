@@ -3,7 +3,7 @@
     <v-row class="mt-4" justify="center">
       <v-col cols="10">
         <v-text-field
-          v-model="postTest.form"
+          v-model="Object.postTest"
           prepend-inner-icon="mdi-link-variant"
           label="Form"
           :rules="googleLinkRules"
@@ -18,17 +18,10 @@
 
 <script>
 export default {
-  props: {
-    postTest: {
-      type: Object,
-      required: true,
-    },
-    valIndex: {
-      type: Number,
-      required: true,
-    },
-  },
   data: () => ({
+    Object: {
+      postTest: ''
+    },
     googleLinkRules: [
       (v) =>
         v == null ||
