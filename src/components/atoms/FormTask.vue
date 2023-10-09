@@ -8,20 +8,19 @@
           :rules="requiredRule"
           outlined
           dense
-        />
+        ></v-text-field>
         <v-textarea
           v-model="task.taskDescription"
           label="Description"
           :rules="requiredRule"
           outlined
           dense
-        />
+        ></v-textarea>
         <v-text-field
           v-model="task.taskTip"
-          label="Tip"
-          outlined
+          label="Tip"          outlined
           dense
-        />
+        ></v-text-field>
       </v-col>
       <v-col cols="5">
         <v-radio-group
@@ -30,9 +29,9 @@
           :mandatory="false"
           :rules="requiredRule"
         >
-          <v-radio label="No answer" value="null" />
-          <v-radio label="Text Area" value="textArea" />
-          <v-radio label="Post Test" value="form" />
+          <v-radio label="No answer" value="null"></v-radio>
+          <v-radio label="Text Area" value="textArea"></v-radio>
+          <v-radio label="Post Test" value="form"></v-radio>
         </v-radio-group>
         <v-text-field
           v-if="task.taskType === 'form'"
@@ -40,7 +39,7 @@
           label="Post-test"
           outlined
           dense
-        />
+        ></v-text-field>
         <v-row align="center">
           Timer:
           <v-switch v-model="task.hasTimer" class="ml-2" />
@@ -71,25 +70,24 @@ export default {
   props: {
     task: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      requiredRule: [v => !!v || "Field Required"]
+      requiredRule: [(v) => !!v || 'Field Required'],
     }
   },
   methods: {
     valida() {
-      const valid = this.$refs.form.validate()
-      this.$emit("validate", valid)
+      let valid = this.$refs.form.validate()
+      this.$emit('validate', valid)
     },
     resetVal() {
       this.$refs.form.resetValidation()
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-</style>
+<style></style>
