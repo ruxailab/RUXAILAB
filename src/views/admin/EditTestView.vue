@@ -97,25 +97,23 @@
         />
       </v-col>
       <!-- User tests -->
-
       <EditUserTest
         v-if="test.testType === 'User'"
-        slot="top"
         type="tabs"
         @tabClicked="setIndex"
+        slot="top"
       />
 
       <EditUserTest
         v-if="test.testType === 'User'"
-        slot="content"
+slot="content"
         :object="object"
         :index="index"
         type="content"
         @change="change = true"
         @valForm="validate"
       />
-
-      <!-- </ShowInfo>  -->
+      <!-- </ShowInfo> -->
     </v-row>
   </v-container>
 </template>
@@ -226,6 +224,7 @@ export default {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       let auxT = Object.assign(this.test, this.object)
+      console.table(this.test);
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -272,20 +271,20 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-      if (this.test.type === 'User' && !this.valids[0]) {
+      if (this.test.testType === 'User' && !this.valids[0]) {
         this.$store.commit(
           'setError',
           'Please fill all fields in Pre Test correctly or leave them empty',
         )
       } else if (
-        this.test.type === 'HEURISTICS' &&
+        this.test.testType === 'HEURISTICS' &&
         this.object.options.length == 1
       ) {
         this.$store.commit(
           'setError',
           'Please create at least 2 options or none at all',
         )
-      } else if (this.test.type === 'User' && !this.valids[1]) {
+      } else if (this.test.testType === 'User' && !this.valids[1]) {
         this.$store.commit(
           'setError',
           'Please fill all fields in Post Test correctly or leave them empty',
