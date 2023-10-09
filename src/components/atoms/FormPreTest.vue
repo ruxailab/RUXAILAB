@@ -1,10 +1,10 @@
 <template>
-  <v-form v-if="preTest" ref="form">
-    <v-row>
-      <v-col>
+  <v-form ref="form">
+    <v-row class="mt-4" justify="center">
+      <v-col cols="10">
         <v-card-text>
           <v-text-field
-            v-model="preTest.consent"
+            v-model="Object.consent"
             prepend-inner-icon="mdi-link-variant"
             :label="$t('inputs.consent')"
             :rules="googleLinkRules"
@@ -13,7 +13,7 @@
             @input="$emit('change')"
           />
           <v-text-field
-            v-model="preTest.form"
+            v-model="Object.preForm"
             prepend-inner-icon="mdi-link-variant"
             :label="$t('inputs.form')"
             :rules="googleLinkRules"
@@ -29,23 +29,17 @@
 
 <script>
 export default {
-  props: {
-    preTest: {
-      type: Object,
-      required: true,
-    },
-    valIndex: {
-      type: Number,
-      required: true,
-    },
-  },
   data: () => ({
+    Object:{
+      consent: '',
+      preForm: ''
+    },
     googleLinkRules: [
       (v) =>
         v == null ||
         v == '' ||
-        v.indexOf('https://docs.google.com/forms/d/e/1FAIpQLSfEyOVr9Mf8pk9waTY4xtkr_o_iWUoQUvWTTkhXiFT2iS5B4A/viewform') == 0 ||
-        // v.indexOf("docs.google.com/forms/") == 0 ||
+        v.indexOf('https://docs.google.com/forms/') == 0 ||
+        v.indexOf('docs.google.com/forms/') == 0 ||
         'Google forms link required',
     ],
     valids: [true, true],
