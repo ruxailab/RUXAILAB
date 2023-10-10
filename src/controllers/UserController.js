@@ -65,19 +65,13 @@ export default class UserController extends Controller {
   
     async removeTestFromUser(userId, testIdToRemove) {
       try {
-        // Fetch the user data
         const userDoc = await super.readOne('users', userId);
-  
-        // Check if the user exists
         if (!userDoc.exists()) {
           console.log("User not found.");
           return;
         }
-  
-        // Get the user data
         const userData = userDoc.data();
-  
-        // Remove the reference to the test from the user's data
+
         if (userData.myTests[testIdToRemove]) {
           delete userData.myTests[testIdToRemove];
         }
@@ -85,7 +79,6 @@ export default class UserController extends Controller {
           delete userData.myAnswers[testIdToRemove];
         }
   
-        // Update the user's data in the database
         await super.update('users', userId, userData);
   
         console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`);
