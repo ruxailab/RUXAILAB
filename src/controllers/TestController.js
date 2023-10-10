@@ -27,9 +27,34 @@ export default class TestController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
 
+  // async deleteTest(payload) {
+  //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+  //   return await super.delete(COLLECTION, payload.id)
+  // }
   async deleteTest(payload) {
-    await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
-    return await super.delete(COLLECTION, payload.id)
+    console.log(payload)
+    try {
+
+      const testToDelete = await super.readOne(COLLECTION, payload.id);
+  
+      if (!testToDelete.exists()) {
+        console.log("Test not found.");
+        return null;
+      }
+  
+      await super.delete(COLLECTION, payload.id);
+  
+      const collaborators = testToDelete.data().cooperators;
+  
+      for (const collaborator of collaborators) {
+        await userController.removeTestFromUser(collaborator.userDocId, payload.id);
+      }
+      await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+       return await super.delete(COLLECTION, payload.id)
+    } catch (error) {
+      console.error("Error deleting test:", error);
+      throw error;
+    }
   }
 
   async updateTest(payload) {
