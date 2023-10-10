@@ -72,8 +72,14 @@ export default {
           commit('SET_USER', dbUser)
         }
       } catch (err) {
-        alert('Invalid Email or Password!')
-        commit('setError', err)
+        console.error(err)
+        if (err.code === 'auth/invalid-email') {
+          alert('Este usuário não existe.')
+        } else if (err.code === 'auth/wrong-password') {
+          alert('Senha incorreta.')
+        } else {
+          alert('Usuário ou senha incorretos.')
+        }
       } finally {
         commit('setLoading', false)
       }
@@ -84,7 +90,6 @@ export default {
         await signOut(auth)
         commit('SET_USER', null)
       } catch (err) {
-        console.error('Error logging out.', err)
       } finally {
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit('setLoading', false)
