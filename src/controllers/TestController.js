@@ -34,22 +34,18 @@ export default class TestController extends Controller {
   async deleteTest(payload) {
     console.log(payload)
     try {
-      // Get the test data before deleting it
+
       const testToDelete = await super.readOne(COLLECTION, payload.id);
   
-      // Check if the test exists
       if (!testToDelete.exists()) {
         console.log("Test not found.");
         return null;
       }
   
-      // Delete the test
       await super.delete(COLLECTION, payload.id);
   
-      // Retrieve the list of collaborators (invited users)
       const collaborators = testToDelete.data().cooperators;
   
-      // Loop through the collaborators and update their data
       for (const collaborator of collaborators) {
         await userController.removeTestFromUser(collaborator.userDocId, payload.id);
       }
