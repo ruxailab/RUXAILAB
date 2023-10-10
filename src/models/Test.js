@@ -1,4 +1,5 @@
 import TestAdmin from './TestAdmin'
+// import Cooperators from '@/models/Cooperators'
 
 /**
  * Represents the test model.
@@ -140,6 +141,7 @@ export default class Test {
     return new Test({
       ...map,
       testAdmin: TestAdmin.toTestAdmin(map.testAdmin),
+      // cooperators: Cooperators.toCooperators(map.cooperators),
     })
   }
 
@@ -158,6 +160,7 @@ export default class Test {
       testOptions: this.testOptions,
       answersDocId: this.answersDocId,
       cooperators: this.cooperators,
+      // cooperators: this.cooperators.toFirestore(),
       creationDate: this.creationDate,
       updateDate: this.updateDate,
       templateDoc: this.templateDoc,
