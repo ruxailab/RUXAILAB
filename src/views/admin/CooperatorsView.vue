@@ -384,7 +384,6 @@ export default {
             accessLevel: this.roleOptions[this.selectedRole].value,
             token: token,
             progress: 0,
-            answerStatus: '',
             updateDate: this.test.updateDate,
             testAuthorEmail: this.test.testAdmin.email,
           })
@@ -397,7 +396,6 @@ export default {
             accessLevel: this.roleOptions[this.selectedRole].value,
             token: token, // Atribua o token gerado para este colaborador
             progress: 0,
-            answerStatus: '',
             updateDate: this.test.updateDate,
             testAuthorEmail: this.test.testAdmin.email,
           })
