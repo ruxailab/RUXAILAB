@@ -5,31 +5,23 @@
     color="#FCA326"
     class="pb-0 mb-0"
   >
-    <v-tab @click="tabClicked(0)">
-      Pre Test
-    </v-tab>
-    <v-tab @click="tabClicked(1)">
-      Tasks
-    </v-tab>
-    <v-tab @click="tabClicked(2)">
-      Post Test
-    </v-tab>
+    <v-tab @click="tabClicked(0)"> Pre Test </v-tab>
+    <v-tab @click="tabClicked(1)"> Tasks </v-tab>
+    <v-tab @click="tabClicked(2)"> Post Test </v-tab>
   </v-tabs>
 
   <v-col cols="12" v-else-if="type == 'content'">
-      <v-card v-if="index == 0" style="background: #f5f7ff;">
-        <v-card-title class="subtitleView">
-          Pre Test
-        </v-card-title>
+    <v-card v-if="index == 0" style="background: #f5f7ff">
+      <v-card-title class="subtitleView"> Pre Test </v-card-title>
 
-        <v-divider />
-        <FormPreTest
-          :pre-test="object.preTest"
-          :val-index="0"
-          @valForm="emitValForm"
-          @change="emitChange()"
-        />
-      </v-card>
+      <v-divider />
+      <FormPreTest
+        :preTest="Object"
+        :val-index="0"
+        @valForm="emitValForm"
+        @change="emitChange()"
+      />
+    </v-card>
     <ListTasks
       v-if="index == 1"
       :tasks="object.itemsTasks"
@@ -37,17 +29,13 @@
     />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
-      <v-card-title class="subtitleView">
-        Post Test
-      </v-card-title>
+      <v-card-title class="subtitleView"> Post Test </v-card-title>
 
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
           <FormPostTest
-            :post-test="object.postTest"
             :val-index="1"
-            @input="object.postTest = $event"
             @valForm="emitValForm"
             @change="emitChange()"
           />
@@ -82,7 +70,8 @@ export default {
       type: Object,
     },
   },
-  data: () => ({}),
+  data: () => ({
+  }),
   mounted() {
     if (this.type !== 'content' && this.type != 'tabs')
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
@@ -91,9 +80,6 @@ export default {
   methods: {
     tabClicked(index) {
       this.$emit('tabClicked', index)
-    },
-    emitChange() {
-      this.$emit('change')
     },
     emitValForm(valid, index) {
       this.$emit('valForm', valid, index)
