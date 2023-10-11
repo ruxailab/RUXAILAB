@@ -4,22 +4,22 @@
       <v-col cols="10">
         <v-card-text>
           <v-text-field
-            v-model="Object.consent"
+            v-model="object.consentUrl"
             prepend-inner-icon="mdi-link-variant"
-            :label="$t('inputs.consent')"
+            label="Consent"
             :rules="googleLinkRules"
             outlined
             dense
-            @input="$emit('change')"
+            @input="emitConsentChange()"
           />
           <v-text-field
-            v-model="Object.preForm"
+            v-model="object.preFormUrl"
             prepend-inner-icon="mdi-link-variant"
-            :label="$t('inputs.form')"
+            label="Pre Form"
             :rules="googleLinkRules"
             outlined
             dense
-            @input="$emit('change')"
+            @input="emitPreFormChange()"
           />
         </v-card-text>
       </v-col>
@@ -30,9 +30,9 @@
 <script>
 export default {
   data: () => ({
-    Object:{
-      consent: '',
-      preForm: ''
+    object: {
+      consentUrl: '',
+      preFormUrl: '',
     },
     googleLinkRules: [
       (v) =>
@@ -42,17 +42,27 @@ export default {
         v.indexOf('docs.google.com/forms/') == 0 ||
         'Google forms link required',
     ],
-    valids: [true, true],
   }),
-  watch: {
-    'preTest.consent'() {
-      const valid = this.$refs.form.validate()
-      this.$emit('valForm', valid, this.valIndex)
+  methods: {
+    emitConsentChange() {
+      const isValueValid = this.$refs.form.validate()
+
+      if (isValueValid) {
+        this.$store.dispatch('setPreTest', this.object)
+      }
     },
-    'preTest.form'() {
-      const valid = this.$refs.form.validate()
-      this.$emit('valForm', valid, this.valIndex)
+    emitPreFormChange() {
+      const isValueValid = this.$refs.form.validate()
+
+      if (isValueValid) {
+        this.$store.dispatch('setPreTest', this.object)
+      }
     },
+  },
+  created() {
+    let preTestStore = this.$store.getters.preTest
+    this.object.consentUrl = preTestStore.consentUrl
+    this.object.preFormUrl = preTestStore.preFormUrl
   },
 }
 </script>
