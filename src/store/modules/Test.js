@@ -18,6 +18,13 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
+    preTest: {
+      consentUrl: '',
+      preFormUrl: ''
+    },
+    postTest: {
+      postTestUrl: ''
+    },
   },
   getters: {
     tests(state) {
@@ -35,6 +42,12 @@ export default {
     coops(state) {
       return state.Test.coop
     },
+    preTest(state) {
+      return state.preTest
+    },
+    postTest(state) {
+      return state.postTest
+    }
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -50,9 +63,16 @@ export default {
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
     },
+    SET_POST_TEST(state, payload) {
+      state.postTest = payload
+    },
+    SET_PRE_TEST(state, payload) {
+      state.preTest = payload;
+    },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
     },
+
   },
   actions: {
     /**
@@ -181,7 +201,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
-        console.log('Error in getSharedWithMeTests: ',e)
+        console.log('Error in getSharedWithMeTests: ', e)
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -232,17 +252,31 @@ export default {
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
     },
-  },
-  coops(state) {
-    return state.test.coop
-  },
-  snackColor(state) {
-    return state.snackColor
-  },
-  snackMessage(state) {
-    return state.snackMessage
-  },
-  managerIDs(state) {
-    return state.managerIDs
-  },
+    setPostTest({ commit }, payload) {
+      try {
+        commit('SET_POST_TEST', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setPreTest({ commit }, payload) {
+      try {
+        commit('SET_PRE_TEST', payload);
+      } catch {
+        commit('setError', true)
+      }
+    },
+    coops(state) {
+      return state.test.coop
+    },
+    snackColor(state) {
+      return state.snackColor
+    },
+    snackMessage(state) {
+      return state.snackMessage
+    },
+    managerIDs(state) {
+      return state.managerIDs
+    },
+  }
 }
