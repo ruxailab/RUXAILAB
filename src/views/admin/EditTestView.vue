@@ -40,7 +40,7 @@
           right
           color="#F9A826"
           v-bind="attrs"
-          style="z-index:100"
+          style="z-index: 100"
           @click="validateAll()"
           v-on="on"
           :disabled="testAnswerDocLength > 0 ? true : false"
@@ -65,9 +65,7 @@
     <!-- Loading Overlay -->
     <v-overlay v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Loading Test
-      </div>
+      <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
     <!--
@@ -106,7 +104,7 @@
 
       <EditUserTest
         v-if="test.testType === 'User'"
-slot="content"
+        slot="content"
         :object="object"
         :index="index"
         type="content"
@@ -146,8 +144,8 @@ export default {
   }),
   computed: {
     testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
+      let heuristicAnswers =
+        this.$store.getters.testAnswerDocument.heuristicAnswers
       let heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
@@ -205,7 +203,7 @@ export default {
     },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro()
       }
@@ -223,8 +221,12 @@ export default {
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
+      if (this.test.testType == 'User') {
+        this.object.testStructure.preTest = this.$store.getters.preTest
+        this.object.testStructure.postTest = this.$store.getters.postTest
+      }
       let auxT = Object.assign(this.test, this.object)
-      console.table(this.test);
+      console.log(auxT);
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -271,27 +273,7 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-      if (this.test.testType === 'User' && !this.valids[0]) {
-        this.$store.commit(
-          'setError',
-          'Please fill all fields in Pre Test correctly or leave them empty',
-        )
-      } else if (
-        this.test.testType === 'HEURISTICS' &&
-        this.object.options.length == 1
-      ) {
-        this.$store.commit(
-          'setError',
-          'Please create at least 2 options or none at all',
-        )
-      } else if (this.test.testType === 'User' && !this.valids[1]) {
-        this.$store.commit(
-          'setError',
-          'Please fill all fields in Post Test correctly or leave them empty',
-        )
-      } else {
         this.submit()
-      }
     },
     preventNav(event) {
       if (!this.change) return
