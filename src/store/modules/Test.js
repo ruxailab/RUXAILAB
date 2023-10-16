@@ -47,7 +47,16 @@ export default {
     },
     postTest(state) {
       return state.postTest
-    }
+    },
+    consentUrl(state) {
+      return state.preTest.consentUrl;
+    },
+    preFormUrl(state) {
+      return state.preTest.preFormUrl;
+    },
+    postTestUrl(state) {
+      return state.postTest.postTestUrl;
+    },
   },
   mutations: {
     SET_TEST(state, payload) {
