@@ -39,9 +39,13 @@ export default {
       }
     },
   },
-  created() {
-    let postTestStore = this.$store.getters.postTest
-    this.object.postTestUrl = postTestStore.postTestUrl
+  computed: {
+    testStructure(){
+      return this.$store.state.Tests.Test.testStructure
+    }
+  },
+  mounted() {
+    this.object.postTestUrl = this.testStructure.postTest.postTestUrl
   },
 }
 </script>
