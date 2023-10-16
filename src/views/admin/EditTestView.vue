@@ -144,8 +144,8 @@ export default {
   }),
   computed: {
     testAnswerDocLength() {
-      let heuristicAnswers =
-        this.$store.getters.testAnswerDocument.heuristicAnswers
+      let heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
       let heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
@@ -203,7 +203,7 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.setIntro()
       }
@@ -222,11 +222,14 @@ export default {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       if (this.test.testType == 'User') {
-        this.object.testStructure.preTest = this.$store.getters.preTest
-        this.object.testStructure.postTest = this.$store.getters.postTest
+        this.object.testStructure = {
+          userTasks: this.$store.getters.tasks,
+          preTest: this.$store.getters.preTest,
+          postTest: this.$store.getters.postTest
+        }
       }
       let auxT = Object.assign(this.test, this.object)
-      console.log(auxT);
+      console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -273,7 +276,7 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-        this.submit()
+      this.submit()
     },
     preventNav(event) {
       if (!this.change) return

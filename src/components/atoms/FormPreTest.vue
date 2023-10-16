@@ -59,10 +59,14 @@ export default {
       }
     },
   },
+  computed: {
+    testStructure(){
+      return this.$store.state.Tests.Test.testStructure
+    }
+  },
   created() {
-    let preTestStore = this.$store.getters.preTest
-    this.object.consentUrl = preTestStore.consentUrl
-    this.object.preFormUrl = preTestStore.preFormUrl
+    this.object.consentUrl = this.testStructure.preTest.consentUrl
+    this.object.preFormUrl = this.testStructure.preTest.preFormUrl
   },
 }
 </script>
