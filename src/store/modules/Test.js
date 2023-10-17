@@ -20,7 +20,7 @@ export default {
     currentImageUrl: '',
     preTest: {
       consentUrl: '',
-      preFormUrl: ''
+      preTestUrl: ''
     },
     postTest: {
       postTestUrl: ''
@@ -51,8 +51,8 @@ export default {
     consentUrl(state) {
       return state.preTest.consentUrl;
     },
-    preFormUrl(state) {
-      return state.preTest.preFormUrl;
+    preTestUrl(state) {
+      return state.preTest.preTestUrl;
     },
     postTestUrl(state) {
       return state.postTest.postTestUrl;
@@ -66,8 +66,7 @@ export default {
       state.tests = payload
     },
     ADD_TASKS(state, payload) {
-      //state.tasks.push(payload)
-      state.tasks = [...state.tasks, payload]
+      state.tasks = payload
     },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
