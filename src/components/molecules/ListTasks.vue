@@ -82,7 +82,7 @@ export default {
   },
   props: {
     tasks: {
-      type: Array,
+      type: Object,
       requeired: true,
       default: function() {
         return []
@@ -133,6 +133,10 @@ export default {
     },
   },
   mounted() {
+    this.$store.dispatch(
+      'addItemsTasks',
+      this.$store.state.Tests.Test.testStructure.userTasks,
+    )
     this.itemsTasks = [...this.tasks]
   },
   methods: {
@@ -146,13 +150,12 @@ export default {
       confirm('Are you sure you want to delete this task?') &&
         this.tasks.splice(index, 1)
     },
-    addTask: function() {
+    addTask() {
       if (this.editedIndex > -1) {
         Object.assign(this.tasks[this.editedIndex], this.task)
         this.$emit('change')
       } else {
-        this.$store.dispatch('addItemsTasks', this.task).then(() => {
-        })
+        this.$store.dispatch('addItemsTasks', this.task).then(() => {})
       }
       this.task = {
         taskName: '',
