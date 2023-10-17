@@ -15,17 +15,14 @@
       <v-card-title class="subtitleView"> Pre Test </v-card-title>
 
       <v-divider />
-      <FormPreTest
-        :preTest="Object"
-        :val-index="0"
-        @valForm="emitValForm"
-        @change="emitChange()"
-      />
+      <FormPreTest :object="formData" @input="updateData" />
     </v-card>
+
     <ListTasks
       v-if="index == 1"
       :tasks="object.itemsTasks"
       @change="emitChange()"
+      @input="updateData"
     />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
@@ -34,11 +31,7 @@
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
-          <FormPostTest
-            :val-index="1"
-            @valForm="emitValForm"
-            @change="emitChange()"
-          />
+          <FormPostTest :object="formData" @input="updateData" />
         </v-col>
       </v-row>
     </v-card>
@@ -61,18 +54,39 @@ export default {
       type: String,
       required: true,
     },
-    // eslint-disable-next-line vue/require-default-prop
     index: {
       type: Number,
     },
-    // eslint-disable-next-line vue/require-default-prop
     object: {
       type: Object,
     },
   },
-  data: () => ({
-  }),
+  data() {
+    return {
+      formData: {
+        preTest: {
+          preTestUrl: '',
+          consentUrl: '',
+        },
+        postTest: {
+          postTestUrl: '',
+        },
+      },
+    }
+  },
+  computed: {
+    testStructure() {
+      return this.$store.state.Tests.Test.testStructure
+    },
+  },
   mounted() {
+    this.$store.dispatch(
+      'setPostTest',
+      this.$store.state.Tests.Test.testStructure.postTest,
+    )
+    this.formData.preTest.preTestUrl = this.testStructure.preTest.preTestUrl
+    this.formData.preTest.consentUrl = this.testStructure.preTest.consentUrl
+    this.formData.postTest.postTestUrl = this.testStructure.postTest.postTestUrl
     if (this.type !== 'content' && this.type != 'tabs')
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
   },
@@ -81,8 +95,13 @@ export default {
     tabClicked(index) {
       this.$emit('tabClicked', index)
     },
-    emitValForm(valid, index) {
-      this.$emit('valForm', valid, index)
+    updateData(data) {
+      if (this.index == 0) {
+        this.$store.dispatch('setPreTest', data)
+      }
+      if (this.index == 2) {
+        this.$store.dispatch('setPostTest', data)
+      }
     },
   },
 }

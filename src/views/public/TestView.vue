@@ -421,40 +421,6 @@
       </v-navigation-drawer>
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
-        <!-- Consent - Pre Test -->
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 0"
-          title="Pre Test - Consent"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.consent"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-
-        <!-- Form - Pre Test -->
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 1"
-          title="Pre Test - Form"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-
         <!-- Heuristics -->
         <ShowInfo
           v-if="index == 1"
@@ -511,6 +477,39 @@
           </div>
         </ShowInfo>
 
+        <!-- Consent - Pre Test -->
+        <ShowInfo
+          v-if="index == 0 && preTestIndex == 0"
+          title="Pre Test - Consent"
+        >
+          <iframe
+            slot="content"
+            :src="test.preTest.consent"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+            >Carregando…</iframe
+          >
+        </ShowInfo>
+
+        <!-- Form - Pre Test -->
+        <ShowInfo
+          v-if="index == 0 && preTestIndex == 1"
+          title="Pre Test - Form"
+        >
+          <iframe
+            slot="content"
+            :src="test.preTest.form"
+            width="100%"
+            height="900"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+            >Carregando…</iframe
+          >
+        </ShowInfo>
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"

@@ -3,13 +3,12 @@
     <v-row class="mt-4" justify="center">
       <v-col cols="10">
         <v-text-field
-          v-model="object.postTestUrl"
+          v-model="object.postTest.postTestUrl"
           prepend-inner-icon="mdi-link-variant"
-          label="Form"
+          label="Post Form"
           :rules="googleLinkRules"
           outlined
           dense
-          @input="emitChange()"
         />
       </v-col>
     </v-row>
@@ -18,10 +17,10 @@
 
 <script>
 export default {
+  props: {
+    object: Object,
+  },
   data: () => ({
-    object: {
-      postTestUrl: '',
-    },
     googleLinkRules: [
       (v) =>
         v == null ||
@@ -31,21 +30,16 @@ export default {
         'Google forms link required',
     ],
   }),
-  methods: {
-    emitChange() {
-      const isValueValid = this.$refs.form.validate()
-      if (isValueValid) {
-        this.$store.dispatch('setPostTest', this.object)
-      }
+  watch: {
+    object: {
+      deep: true,
+      handler() {
+        const isValueValid = this.$refs.form.validate()
+        if (isValueValid) {
+          this.$emit('input', this.object.postTest)
+        }
+      },
     },
-  },
-  computed: {
-    testStructure(){
-      return this.$store.state.Tests.Test.testStructure
-    }
-  },
-  mounted() {
-    this.object.postTestUrl = this.testStructure.postTest.postTestUrl
   },
 }
 </script>
