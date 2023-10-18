@@ -63,6 +63,7 @@ export default {
   },
   data() {
     return {
+      //initialize formData properties
       formData: {
         preTest: {
           preTestUrl: '',
@@ -78,15 +79,15 @@ export default {
     testStructure() {
       return this.$store.state.Tests.Test.testStructure
     },
+    preTest() {
+      return this.$store.state.Tests.Test.testStructure.preTest
+    },
+    postTest() {
+      return this.$store.state.Tests.Test.testStructure.postTest
+    },
   },
   mounted() {
-    this.$store.dispatch(
-      'setPostTest',
-      this.$store.state.Tests.Test.testStructure.postTest,
-    )
-    this.formData.preTest.preTestUrl = this.testStructure.preTest.preTestUrl
-    this.formData.preTest.consentUrl = this.testStructure.preTest.consentUrl
-    this.formData.postTest.postTestUrl = this.testStructure.postTest.postTestUrl
+    this.getForms()
     if (this.type !== 'content' && this.type != 'tabs')
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
   },
@@ -102,6 +103,13 @@ export default {
       if (this.index == 2) {
         this.$store.dispatch('setPostTest', data)
       }
+    },
+    getForms() {
+      // Get forms from Test and set to local variables
+      this.$store.dispatch('setPostTest', this.postTest)
+      this.formData.preTest.preTestUrl = this.preTest.preTestUrl
+      this.formData.preTest.consentUrl = this.preTest.consentUrl
+      this.formData.postTest.postTestUrl = this.postTest.postTestUrl
     },
   },
 }

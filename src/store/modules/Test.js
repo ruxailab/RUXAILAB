@@ -66,7 +66,8 @@ export default {
       state.tests = payload
     },
     ADD_TASKS(state, payload) {
-      state.tasks = payload
+      //state.tasks.push(payload)
+      state.tasks = [...state.tasks, payload]
     },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
