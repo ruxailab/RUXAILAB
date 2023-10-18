@@ -6,14 +6,14 @@
           v-model="object.preTest.consentUrl"
           prepend-inner-icon="mdi-link-variant"
           label="Consent"
-            :rules="googleLinkRules"
-            outlined
-            dense
-          />
-          <v-text-field
-            v-model="object.preTest.preTestUrl"
-            prepend-inner-icon="mdi-link-variant"
-            label="Pre Form"
+          :rules="googleLinkRules"
+          outlined
+          dense
+        />
+        <v-text-field
+          v-model="object.preTest.preTestUrl"
+          prepend-inner-icon="mdi-link-variant"
+          label="Pre Form"
           :rules="googleLinkRules"
           outlined
           dense
