@@ -40,7 +40,7 @@
           right
           color="#F9A826"
           v-bind="attrs"
-          style="z-index:100"
+          style="z-index: 100"
           @click="validateAll()"
           v-on="on"
           :disabled="testAnswerDocLength > 0 ? true : false"
@@ -65,9 +65,7 @@
     <!-- Loading Overlay -->
     <v-overlay v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Loading Test
-      </div>
+      <div class="white-text mt-3">Loading Test</div>
     </v-overlay>
 
     <!--
@@ -97,12 +95,11 @@
         />
       </v-col>
       <!-- User tests -->
-
       <EditUserTest
         v-if="test.testType === 'User'"
-        slot="top"
         type="tabs"
         @tabClicked="setIndex"
+        slot="top"
       />
 
       <EditUserTest
@@ -114,8 +111,7 @@
         @change="change = true"
         @valForm="validate"
       />
-
-      <!-- </ShowInfo>  -->
+      <!-- </ShowInfo> -->
     </v-row>
   </v-container>
 </template>
@@ -225,7 +221,15 @@ export default {
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
+      if (this.test.testType == 'User') {
+        this.object.testStructure = {
+          userTasks: this.$store.getters.tasks,
+          preTest: this.$store.getters.preTest,
+          postTest: this.$store.getters.postTest
+        }
+      }
       let auxT = Object.assign(this.test, this.object)
+      console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
     },
 
@@ -272,27 +276,7 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
-      if (this.test.type === 'User' && !this.valids[0]) {
-        this.$store.commit(
-          'setError',
-          'Please fill all fields in Pre Test correctly or leave them empty',
-        )
-      } else if (
-        this.test.type === 'HEURISTICS' &&
-        this.object.options.length == 1
-      ) {
-        this.$store.commit(
-          'setError',
-          'Please create at least 2 options or none at all',
-        )
-      } else if (this.test.type === 'User' && !this.valids[1]) {
-        this.$store.commit(
-          'setError',
-          'Please fill all fields in Post Test correctly or leave them empty',
-        )
-      } else {
-        this.submit()
-      }
+      this.submit()
     },
     preventNav(event) {
       if (!this.change) return
