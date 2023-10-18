@@ -23,12 +23,16 @@ export default class AuthController {
     //SignIn
 
     async authSignIn(email, password) {
+        try{
         return signInWithEmailAndPassword(auth, email, password).then(
             (userCredential) => {
                 const user = userCredential.user;
                 return user;
             }
         );
+        }catch(e){
+            console.error(e)
+        }
     }
 
     //Get Current User
