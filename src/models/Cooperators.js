@@ -7,14 +7,14 @@ export default class Cooperators {
    */
   constructor({
     userDocId,
-    userName,
-    userEmail,
+    email,
     accessLevel,
     invited,
     accepted,
     progress,
-    answerStatus,
     updateDate,
+    testAuthorEmail,
+    token,
   } = {}) {
     /**
      * Defines the user document id.
@@ -24,18 +24,11 @@ export default class Cooperators {
     this.userDocId = userDocId
 
     /**
-     * Defines the user name.
-     *
-     * @type {string}
-     */
-    this.userName = userName
-
-    /**
      * Defines the user email.
      *
      * @type {string}
      */
-    this.userEmail = userEmail
+    this.email = email
 
     /**
      * Defines the cooperator access level.
@@ -66,18 +59,25 @@ export default class Cooperators {
     this.progress = progress
 
     /**
-     * Defines the answer status.
-     *
-     * @type {string}
-     */
-    this.answerStatus = answerStatus
-
-    /**
      * Defines a timestamp of the cooperator last updated date.
      *
      * @type {number}
      */
     this.updateDate = updateDate
+
+    /**
+     * Defines a timestamp of the cooperator last updated date.
+     *
+     * @type {String}
+     */
+    this.testAuthorEmail = testAuthorEmail
+
+    /**
+     * Defines a timestamp of the cooperator last updated date.
+     *
+     * @type {String}
+     */
+    this.token = token
   }
 
   /**
@@ -87,5 +87,24 @@ export default class Cooperators {
    */
   static toCooperators(map) {
     return new Cooperators(map)
+  }
+
+  /**
+   * Creates a Firestore map from the current model.
+   *
+   * @returns a map that represents the current model.
+   */
+  toFirestore() {
+    return {
+      userDocId: this.userDocId,
+      email: this.email,
+      accessLevel: this.accessLevel,
+      invited: this.invited,
+      accepted: this.accepted,
+      progress: this.progress,
+      updateDate: this.updateDate,
+      testAuthorEmail: this.testAuthorEmail,
+      token: this.token,
+    }
   }
 }
