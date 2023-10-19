@@ -9,15 +9,15 @@
 
 export default class User {
     constructor({
-        id, accessLevel, email, notifications, myAnswers, myTests
-    } = {}
+        id, accessLevel, email, notifications, myAnswers, myTests,
+    } = {},
     ) {
         this.id = id
-        this.accessLevel = accessLevel;
-        this.email = email;
-        this.notifications = notifications;
-        this.myAnswers = myAnswers;
-        this.myTests = myTests;
+        this.accessLevel = accessLevel
+        this.email = email
+        this.notifications = notifications
+        this.myAnswers = myAnswers
+        this.myTests = myTests
     }
     static toUser(data) {
         return new User({
