@@ -1,28 +1,13 @@
 <template>
-  <v-navigation-drawer
-    v-model="drawer"
-    clipped
-    :mini-variant="mini"
-    permanent
-    color="#3F3D56"
-    class="hidden-sm-and-down"
-  >
+  <v-navigation-drawer v-model="drawer" clipped :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down">
     <!-- Navigation header -->
     <div v-if="!mini" class="header">
       <!--- CHANGE CURRENT TEST SELECTOR -->
       <v-list-item>
         <v-row dense>
           <v-col class="pa-0 ma-0">
-            <v-overflow-btn
-              class="pa-0 ma-0"
-              dark
-              dense
-              item-text="testTitle"
-              :items="testsList"
-              :label="test.testTitle"
-              background-color="#343344"
-              style="max-width: 240px"
-              @change="changeTest"
+            <v-overflow-btn class="pa-0 ma-0" dark dense item-text="testTitle" :items="testsList" :label="test.testTitle"
+                            background-color="#343344" style="max-width: 240px" @change="changeTest"
             />
           </v-col>
         </v-row>
@@ -34,26 +19,18 @@
       <div v-if="mini">
         <v-tooltip v-for="(item, n) in items" :key="n" right>
           <template v-slot:activator="{ on, attrs }">
-            <v-list-item
-              v-bind="attrs"
-              @click=";(currentIndexSelect = n), go(item)"
-              v-on="on"
-            >
+            <v-list-item v-bind="attrs" @click="; (currentIndexSelect = n), go(item)" v-on="on">
               <v-list-item-icon>
-                <v-icon
-                  :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
-                >
+                <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">
                   {{ item.icon }}
                 </v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title
-                  :style="
-                    currentIndexSelect == item.id
-                      ? 'color: #fca326'
-                      : 'color:#bababa'
-                  "
+                <v-list-item-title :style="currentIndexSelect == item.id
+                  ? 'color: #fca326'
+                  : 'color:#bababa'
+                "
                 >
                   {{ $t(`titles.drawer.${item.title}`) }}
                 </v-list-item-title>
@@ -65,26 +42,18 @@
       </div>
 
       <div v-else>
-        <v-list-item
-          v-for="(item, n) in items"
-          :key="n"
-          @click=";(currentIndexSelect = n), go(item)"
-        >
+        <v-list-item v-for="(item, n) in items" :key="n" @click="; (currentIndexSelect = n), go(item)">
           <v-list-item-icon>
-            <v-icon
-              :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'"
-            >
+            <v-icon :color="currentIndexSelect == item.id ? '#fca326' : '#bababa'">
               {{ item.icon }}
             </v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title
-              :style="
-                currentIndexSelect == item.id
-                  ? 'color: #fca326'
-                  : 'color:#bababa'
-              "
+            <v-list-item-title :style="currentIndexSelect == item.id
+              ? 'color: #fca326'
+              : 'color:#bababa'
+            "
             >
               {{ $t(`titles.drawer.${item.title}`) }}
             </v-list-item-title>
@@ -95,12 +64,7 @@
 
     <!-- Navigation footer -->
     <div v-if="!mini" class="footer">
-      <v-btn
-        v-if="userAccessLevelOnTest == 0"
-        icon
-        class="ml-3"
-        @click="go(`/settingsview/${test.id}`)"
-      >
+      <v-btn v-if="userAccessLevelOnTest == 0" icon class="ml-3" @click="go(`/settingsview/${test.id}`)">
         <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">
           mdi-cog
         </v-icon>
@@ -113,17 +77,9 @@
       </v-btn>
     </div>
 
-    <div
-      v-else
-      class="footer"
-      :style="userAccessLevelOnTest == 0 ? 'height:16%' : ''"
-    >
+    <div v-else class="footer" :style="userAccessLevelOnTest == 0 ? 'height:16%' : ''">
       <v-col>
-        <v-btn
-          v-if="userAccessLevelOnTest == 0"
-          icon
-          @click="go(`/settingsview/${test.id}`)"
-        >
+        <v-btn v-if="userAccessLevelOnTest == 0" icon @click="go(`/settingsview/${test.id}`)">
           <v-icon :color="isSettingsBtnActive ? '#fca326' : 'white'">
             mdi-cog
           </v-icon>
@@ -139,7 +95,7 @@
 </template>
 <script>
 export default {
-  props: ['userAccessLevelOnTest'],
+  props: { userAccessLevelOnTest: { type: Number, default: 2 } },
   data: () => ({
     drawer: true,
     mini: true,
@@ -280,10 +236,10 @@ export default {
       this.$router.replace({ name: 'ManagerView', params: { id: testId } })
     },
     go(item) {
-      if (item.id == undefined) this.$router.push(item).catch(() => {})
+      if (item.id == undefined) this.$router.push(item).catch(() => { })
       else {
         if (item.path == `/testview/${this.test.id}`) window.open(item.path)
-        else this.$router.push(item.path).catch(() => {})
+        else this.$router.push(item.path).catch(() => { })
       }
     },
   },
