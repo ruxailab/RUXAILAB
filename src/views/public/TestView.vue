@@ -128,8 +128,8 @@
       <v-navigation-drawer v-model="drawer" clipped :mini-variant="mini" permanent color="#3F3D56">
         <div v-if="!mini" class="header">
           <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
+            <v-row dense align="center" justify="space-around" class="ma-0 mt-3">
+              <v-col cols="8">
                 <v-clamp class="titleText" autoresize :max-lines="2">
                   {{
                     test.testTitle
