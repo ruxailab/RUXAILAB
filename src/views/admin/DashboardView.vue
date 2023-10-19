@@ -43,10 +43,10 @@
           </v-row>
           <v-text-field
             v-else
+            v-model="search"
             :autofocus="searching"
             dense
             :label="$t('Dashboard.search')"
-            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"

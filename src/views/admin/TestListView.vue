@@ -51,10 +51,10 @@
           </v-row>
           <v-text-field
             v-else
+            v-model="search"
             :autofocus="searching"
             dense
             label="Search"
-            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
