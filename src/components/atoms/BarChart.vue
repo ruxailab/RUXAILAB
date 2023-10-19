@@ -8,7 +8,10 @@ export default {
       type: String,
       default: 'Data One',
     },
-    data: {},
+    data: {
+      type: Array,
+      default: () => [],
+    },
     legend: {
       type: String,
       default: 'Legend',
