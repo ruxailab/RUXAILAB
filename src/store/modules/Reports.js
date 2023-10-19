@@ -36,7 +36,7 @@ export default {
       commit('setLoading', true)
       payload = Object.assign(payload, { collection: 'reports' })
 
-      let docRef = dispatch('createObject', payload)
+      const docRef = dispatch('createObject', payload)
         .then((doc) => {
           return doc.id
         })
@@ -73,7 +73,7 @@ export default {
       commit('setLoading', true)
       payload = Object.assign(payload, { collection: 'reports' })
 
-      let reps = await dispatch('getObject', payload).catch((err) =>
+      const reps = await dispatch('getObject', payload).catch((err) =>
         commit('setError', 'Error in getReports.' + err),
       )
       commit('setReports', reps)

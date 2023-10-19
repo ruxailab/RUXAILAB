@@ -15,9 +15,14 @@ module.exports = {
     quotes: ['warn', 'single'],
     'prefer-const': 'warn',
     indent: 'off',
-    eqeqeq: 'warn',
+    eqeqeq: 'off',
     'no-plusplus': 'off',
-    'max-len': 'warn',
+    'max-len': ['warn', {
+      'code': 200,
+      'ignoreStrings': true,
+      'ignoreComments': true,
+      'ignoreTemplateLiterals': true,
+    }],
     'no-empty': 'warn',
     'arrow-parens': 'warn',
     'no-trailing-spaces': 'warn',
@@ -30,5 +35,9 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'operator-linebreak': 'off',
     'vue/max-attributes-per-line': 'off',
+
+    'vue/require-prop-types':'warn',
+    'vue/require-default-prop':'warn',
+    'vue/prop-name-casing': 'warn',
   },
 }

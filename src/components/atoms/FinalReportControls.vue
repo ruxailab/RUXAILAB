@@ -36,7 +36,6 @@
 <script>
 import i18n from '@/i18n'
 export default {
-  props: ['id', 'HEURISTICS'],
   data: () => ({ title: 'Enter your text here:', inputText: '' }),
   computed: {},
   watch: {},

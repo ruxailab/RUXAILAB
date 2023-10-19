@@ -15,12 +15,12 @@ import Snackbar from '@/components/atoms/Snackbar'
 //import UserController from "../../controllers/UserController";
 
 export default {
-  data: () => ({}),
   components: {
     Intro,
     About,
     Footer,
     Snackbar,
   },
+  data: () => ({}),
 }
 </script>
