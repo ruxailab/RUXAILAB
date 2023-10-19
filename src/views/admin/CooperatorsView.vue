@@ -59,10 +59,10 @@
             <v-row class="ma-0 pa-0 pt-3" align="center">
               <v-col class="ma-0 pa-0" cols="12" md="10">
                 <v-combobox
-                  v-model="comboboxModel"
                   :key="comboboxKey"
-                  :hide-no-data="false"
                   ref="combobox"
+                  v-model="comboboxModel"
+                  :hide-no-data="false"
                   :autofocus="comboboxKey == 0 ? false : true"
                   style="background: #f5f7ff"
                   :items="users"
@@ -119,6 +119,7 @@
               <template v-slot:item.accessLevel="{ item }">
                 <v-select
                   :ref="'select' + cooperatorsEdit.indexOf(item)"
+                  :key="dataTableKey"
                   color="#fca326"
                   style="max-width: 200px"
                   :value="item.accessLevel"
@@ -127,7 +128,6 @@
                   :items="roleOptions"
                   :v-text="item.accessLevel.text"
                   :disabled="!item.invited || item.accepted ? false : true"
-                  :key="dataTableKey"
                   class="mt-3"
                   @change="changeRole(item, $event)"
                 />
