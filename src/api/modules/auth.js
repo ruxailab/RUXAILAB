@@ -1,5 +1,5 @@
-import { auth } from "@/firebase"
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth"
+import { auth } from '@/firebase'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 
 export default {
     signUp: async (payload) =>{
@@ -15,5 +15,5 @@ export default {
     },
     singOut:() =>{
         return signOut(auth)
-    }
+    },
 }

@@ -4,7 +4,7 @@
 
     <v-main>
       <v-container fluid class="pa-0">
-        <router-view></router-view>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
@@ -15,10 +15,10 @@ import Toolbar from './components/molecules/Toolbar'
 
 export default {
   name: 'App',
-  data: () => ({}),
   components: {
     Toolbar,
   },
+  data: () => ({}),
   watch: {
     $route: {
       immediate: true,
