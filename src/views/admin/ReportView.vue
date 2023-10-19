@@ -101,7 +101,7 @@ export default {
     Intro,
     Snackbar,
   },
-  props: ['id'],
+  props: { id: { type: String, default: '' } },
   data: () => ({
     headers: [
       { text: 'Evaluator', value: 'userDocId' },
