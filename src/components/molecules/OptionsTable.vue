@@ -26,20 +26,20 @@
 
       <template v-slot:top>
         <v-row class="ma-0" align="center">
-            <v-card-title class="subtitleView">
-              Current Options
-            </v-card-title>
-            <v-row justify="end" class="ma-0 pa-0 mr-4">
-              <AddOptionBtn
-                :option="option"
-                :dialog="dialog"
-                :has-value="hasValue"
-                @changeHasValue="hasValue = !hasValue"
-                @addOption="updateOptions"
-                @dialog="changeDialog"
-                @change="emitChange()"
-              />
-            </v-row>
+          <v-card-title class="subtitleView">
+            Current Options
+          </v-card-title>
+          <v-row justify="end" class="ma-0 pa-0 mr-4">
+            <AddOptionBtn
+              :option="option"
+              :dialog="dialog"
+              :has-value="hasValue"
+              @changeHasValue="hasValue = !hasValue"
+              @addOption="updateOptions"
+              @dialog="changeDialog"
+              @change="emitChange()"
+            />
+          </v-row>
         </v-row>
         <v-divider class="mb-4" />
       </template>

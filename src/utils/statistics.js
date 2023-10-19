@@ -2,7 +2,7 @@ import store from '@/store'
 
 //final Statistic
 //final Result
-let testData = {
+const testData = {
   average: null,
   max: null,
   min: null,
@@ -14,7 +14,7 @@ function percentage(value, result) {
 }
 
 function standardDeviation(array) {
-  let average = array.reduce((total, value) => total + value / array.length, 0)
+  const average = array.reduce((total, value) => total + value / array.length, 0)
   return Math.sqrt(
     array.reduce(
       (total, valor) => total + Math.pow(average - valor, 2) / array.length,
@@ -27,7 +27,7 @@ function calcFinalResult(array) {
   let result = 0
   let qtdQuestion = 0
   let qtdNoAplication = 0
-  let maxOption = Math.max(
+  const maxOption = Math.max(
     ...store.getters.test.testOptions.map((item) => item.value),
   )
 
@@ -42,7 +42,7 @@ function calcFinalResult(array) {
     qtdNoAplication += res.totalNoAplication
   })
 
-  let perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
+  const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
   return ((result * 100) / perfectResult).toFixed(1)
 }
 
@@ -65,8 +65,8 @@ function created(resultEvaluator) {
 
 function statistics() {
   if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
-    let resultEvaluator = []
-    let answersA = answers()
+    const resultEvaluator = []
+    const answersA = answers()
 
     //Get Evaluator answers
     let evaluatorIndex = 1
@@ -127,9 +127,9 @@ function statistics() {
 }
 
 function finalResult() {
-  let evaluatorStatistics = store.state.Answer.evaluatorStatistics
+  const evaluatorStatistics = store.state.Answer.evaluatorStatistics
   if (evaluatorStatistics.items.length) {
-    let res = evaluatorStatistics.items.reduce((total, value) => {
+    const res = evaluatorStatistics.items.reduce((total, value) => {
       return total + value.result / evaluatorStatistics.items.length
     }, 0)
 
