@@ -80,10 +80,12 @@ export default {
     },
     items: {
       type: Array,
+      default: () => [],
       require: true,
     },
     colors: {
       type: Array,
+      default: ()=>[],
       require: true,
     },
   },
