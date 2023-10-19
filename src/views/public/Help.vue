@@ -23,10 +23,12 @@
             <v-list-item v-for="(item, index) in itemsLeft" :key="index">
               <v-list-item-content>
                 <v-list-item-title class="title" @click="toggleCollapse(index)">
-                  <v-icon small v-if="!item.isCollapsed"
-                    >mdi-chevron-down</v-icon
-                  >
-                  <v-icon small v-else>mdi-chevron-right</v-icon>
+                  <v-icon v-if="!item.isCollapsed" small>
+                    mdi-chevron-down
+                  </v-icon>
+                  <v-icon v-else small>
+                    mdi-chevron-right
+                  </v-icon>
                   {{ item.title }}
                 </v-list-item-title>
                 <v-expand-transition>
@@ -42,7 +44,7 @@
                           max-height="250"
                           max-width="400"
                           src="@/assets/CreateTest.gif"
-                        ></v-img>
+                        />
                       </div>
                     </v-col>
                   </v-row>
@@ -59,10 +61,12 @@
                   class="title"
                   @click="toggleCollapse(index + 5)"
                 >
-                  <v-icon small v-if="!item.isCollapsed"
-                    >mdi-chevron-down</v-icon
-                  >
-                  <v-icon small v-else>mdi-chevron-right</v-icon>
+                  <v-icon v-if="!item.isCollapsed" small>
+                    mdi-chevron-down
+                  </v-icon>
+                  <v-icon v-else small>
+                    mdi-chevron-right
+                  </v-icon>
                   {{ item.title }}
                 </v-list-item-title>
                 <v-expand-transition>
@@ -78,7 +82,7 @@
                           max-height="250"
                           max-width="400"
                           src="https://im2.ezgif.com/tmp/ezgif-2-1b8014c1f0.gif"
-                        ></v-img>
+                        />
                       </div>
                     </v-col>
                   </v-row>

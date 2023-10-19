@@ -1,35 +1,45 @@
 <template>
   <div v-if="answers">
     <v-overlay :value="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <IntroAnswer
       v-if="answers != null && intro == true"
       @goToCoops="goToCoops"
-    ></IntroAnswer>
-    <v-row justify="center" class="ma-0 mt-4" v-else-if="answers != null && intro == false">
+    />
+    <v-row v-else-if="answers != null && intro == false" justify="center" class="ma-0 mt-4">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <v-tabs
           slot="top"
+          v-model="tab"
           background-color="transparent"
           color="#FCA326"
-          v-model="tab"
           class="ml-4"
         >
-          <v-tab @click="tab = 0">Statistics</v-tab>
-          <v-tab @click="tab = 1">Evaluators</v-tab>
-          <v-tab @click="tab = 2">Heuristics</v-tab>
-          <v-tab @click="tab = 3">Analytics</v-tab>
+          <v-tab @click="tab = 0">
+            Statistics
+          </v-tab>
+          <v-tab @click="tab = 1">
+            Evaluators
+          </v-tab>
+          <v-tab @click="tab = 2">
+            Heuristics
+          </v-tab>
+          <v-tab @click="tab = 3">
+            Analytics
+          </v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
         <div slot="content" class="ma-0 pa-0">
           <!-- Tab 1 - Statistics -->
           <v-card v-if="tab == 0" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Statistics</v-card-title>
+            <v-card-title class="subtitleView">
+              Statistics
+            </v-card-title>
 
-            <v-divider></v-divider>
+            <v-divider />
 
             <v-row justify="space-around" class="ma-0">
               <!-- Top Card -->
@@ -39,7 +49,9 @@
                     <!-- Average -->
                     <v-col cols="4">
                       <v-row justify="center" class="ma-0">
-                        <v-card-title class="mt-4">Usability Percentage</v-card-title>
+                        <v-card-title class="mt-4">
+                          Usability Percentage
+                        </v-card-title>
                         <v-card-text>
                           <v-row align="center" justify="center">
                             <p class="display-3">
@@ -50,7 +62,7 @@
                       </v-row>
                     </v-col>
 
-                    <v-divider vertical></v-divider>
+                    <v-divider vertical />
 
                     <!-- Info -->
                     <v-col>
@@ -61,29 +73,35 @@
                           </v-list-item-icon>
 
                           <v-list-item-title>Max</v-list-item-title>
-                          <v-list-item-subtitle class="text-right">{{
-                            showFinalResult.max
-                          }}</v-list-item-subtitle>
+                          <v-list-item-subtitle class="text-right">
+                            {{
+                              showFinalResult.max
+                            }}
+                          </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
                           <v-list-item-icon>
                             <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
                           </v-list-item-icon>
                           <v-list-item-title>Min</v-list-item-title>
-                          <v-list-item-subtitle class="text-right">{{
-                            showFinalResult.min
-                          }}</v-list-item-subtitle>
+                          <v-list-item-subtitle class="text-right">
+                            {{
+                              showFinalResult.min
+                            }}
+                          </v-list-item-subtitle>
                         </v-list-item>
                         <v-list-item>
                           <v-list-item-icon>
                             <v-icon>mdi-plus-minus</v-icon>
                           </v-list-item-icon>
-                          <v-list-item-title
-                            >Standard deviation</v-list-item-title
-                          >
-                          <v-list-item-subtitle class="text-right">{{
-                            showFinalResult.sd
-                          }}</v-list-item-subtitle>
+                          <v-list-item-title>
+                            Standard deviation
+                          </v-list-item-title>
+                          <v-list-item-subtitle class="text-right">
+                            {{
+                              showFinalResult.sd
+                            }}
+                          </v-list-item-subtitle>
                         </v-list-item>
                       </v-list>
                     </v-col>
@@ -95,9 +113,11 @@
 
           <!-- Tab 2 - Evaluators -->
           <v-card v-if="tab == 1" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Evaluators</v-card-title>
+            <v-card-title class="subtitleView">
+              Evaluators
+            </v-card-title>
 
-            <v-divider></v-divider>
+            <v-divider />
 
             <v-tabs
               background-color="transparent"
@@ -109,18 +129,20 @@
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 0"
-                >Table</v-tab
               >
+                Table
+              </v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 1"
-                >Graphic</v-tab
               >
+                Graphic
+              </v-tab>
             </v-tabs>
 
             <v-row justify="center">
-              <v-col cols="10" v-if="ind == 0">
+              <v-col v-if="ind == 0" cols="10">
                 <v-data-table
                   dense
                   :headers="evaluatorStatistics.header"
@@ -129,20 +151,20 @@
                   class="elevation-1 cardStyle mx-2"
                 >
                   <template v-slot:item.result="{ item }">
-                    <v-chip v-if="isNaN(item.result)" :color="getColorPorcentage(item.result)" dark
-                      >0.0%</v-chip
-                    >
-                    <v-chip v-else :color="getColorPorcentage(item.result)" dark
-                      >{{ item.result }}%</v-chip
-                    >
+                    <v-chip v-if="isNaN(item.result)" :color="getColorPorcentage(item.result)" dark>
+                      0.0%
+                    </v-chip>
+                    <v-chip v-else :color="getColorPorcentage(item.result)" dark>
+                      {{ item.result }}%
+                    </v-chip>
                   </template>
-                  <template v-slot:item.answered="{ item }"
-                    >{{ item.answered }}%</template
-                  >
+                  <template v-slot:item.answered="{ item }">
+                    {{ item.answered }}%
+                  </template>
                 </v-data-table>
               </v-col>
 
-              <v-col cols="10" v-if="ind == 1">
+              <v-col v-if="ind == 1" cols="10">
                 <RadarChart
                   v-if="evaluatorStatistics.items.length >= 3"
                   :labels="
@@ -154,8 +176,8 @@
                 />
                 <v-card>
                   <v-card-text
-                    class="text-center body-1"
                     v-if="this.test.cooperators.length <= 3"
+                    class="text-center body-1"
                   >
                     The graphic can only be generated with 3 or more evaluators,
                     please colect more data from your research to procede.
@@ -167,9 +189,11 @@
 
           <!-- Tab 3 - Heuristics-->
           <v-card v-if="tab == 2" style="background: #f5f7ff">
-            <v-card-title class="subtitleView">Heuristics Data</v-card-title>
+            <v-card-title class="subtitleView">
+              Heuristics Data
+            </v-card-title>
 
-            <v-divider></v-divider>
+            <v-divider />
 
             <!-- Bottom Tabs -->
             <v-tabs
@@ -182,20 +206,23 @@
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 0"
-                >Answers by Evaluator</v-tab
               >
+                Answers by Evaluator
+              </v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 1"
-                >Answers By Heuristics</v-tab
               >
+                Answers By Heuristics
+              </v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 2"
-                >Graphic</v-tab
               >
+                Graphic
+              </v-tab>
             </v-tabs>
 
             <!-- Bottom Tab Content -->
@@ -203,7 +230,7 @@
               <v-col cols="10">
                 <v-row>
                   <!-- Bottom Tab 1 -->
-                  <v-col cols="12" v-if="ind == 0">
+                  <v-col v-if="ind == 0" cols="12">
                     <v-data-table
                       :headers="heuristicsEvaluator.header"
                       :items="heuristicsEvaluator.items"
@@ -225,22 +252,24 @@
                           "
                           dark
                           class="chip"
-                          >{{
+                        >
+                          {{
                             item[header.value] ? item[header.value] : 0
-                          }}</v-chip
-                        >
+                          }}
+                        </v-chip>
                         <v-btn
-                          text
                           v-else
-                          @click="goToDataHeuristic(item.heuristic)"
                           :key="header.value"
-                          >{{ item[header.value] }}</v-btn
+                          text
+                          @click="goToDataHeuristic(item.heuristic)"
                         >
+                          {{ item[header.value] }}
+                        </v-btn>
                       </template>
                     </v-data-table>
                   </v-col>
                   <!-- Bottom Tab 2 -->
-                  <v-col cols="12" v-if="ind == 1">
+                  <v-col v-if="ind == 1" cols="12">
                     <v-data-table
                       :headers="heuristicsStatistics.header"
                       :items="heuristicsStatistics.items"
@@ -254,14 +283,15 @@
                             style="width: 35%"
                             :color="getColor(item.average, item.max, item.min)"
                             dark
-                            >{{ item.percentage }}</v-chip
                           >
+                            {{ item.percentage }}
+                          </v-chip>
                         </div>
                       </template>
                     </v-data-table>
                   </v-col>
                   <!-- Bottom Tab 3 -->
-                  <v-col cols="12" v-if="ind == 2">
+                  <v-col v-if="ind == 2" cols="12">
                     <BarChart
                       :labels="
                         heuristicsStatistics.items.map((item) => item.name)
@@ -276,7 +306,7 @@
               </v-col>
             </v-row>
           </v-card>
-          <AnalyticsView v-if="tab == 3"/>
+          <AnalyticsView v-if="tab == 3" />
         </div>
       </ShowInfo>
     </v-row>
@@ -293,56 +323,20 @@ import AnalyticsView from './AnalyticsView.vue'
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
 export default {
-  props: ['id'],
   components: {
     BarChart,
     RadarChart,
     ShowInfo,
     IntroAnswer,
-    AnalyticsView
+    AnalyticsView,
   },
+  props: ['id'],
   data: () => ({
     tab: 0,
     ind: 0,
     resultEvaluator: statistics(),
     intro: null,
   }),
-  methods: {
-    getColor(value, max, min) {
-      //✓
-      max = Number(max)
-      min = Number(min)
-      let h = (max - min) / max
-
-      if (value == null) return 'grey'
-      else if (value === 0) return 'red'
-      else if (value <= min + 1 * h) return 'amber'
-      else if (value <= min + 2 * h) return 'orange lighten-1'
-      else if (value <= min + 3 * h) return 'lime'
-      else return 'green'
-    },
-    getColorPorcentage(value) {
-      //✓
-      if (value <= 20) return 'red'
-      else if (value <= 40) return 'ambar'
-      else if (value <= 60) return 'orange lighten-1'
-      else if (value <= 80) return 'lime'
-      else return 'green'
-    },
-    goToDataHeuristic(item) {
-      //✓
-      let selectHeruristc = this.heuristicsEvaluator.items.indexOf(
-        this.heuristicsEvaluator.items.find((h) => h.heuristic === item),
-      )
-      this.$router
-        .push(`/analyticsview/${this.id}/${selectHeruristc}`)
-        .catch(() => {})
-    },
-    goToCoops() {
-      //✓
-      this.$emit('goToCoops')
-    },
-  },
   computed: {
     showFinalResult() {
       return finalResult()
@@ -351,13 +345,13 @@ export default {
       return this.$store.state.Answer.evaluatorStatistics
     },
     heuristicsEvaluator() {
-      let table = {
+      const table = {
         header: [],
         items: [],
       }
-      let options = this.test.testOptions.map((op) => op.value)
-      let max = Math.max(...options)
-      let min = Math.min(...options)
+      const options = this.test.testOptions.map((op) => op.value)
+      const max = Math.max(...options)
+      const min = Math.min(...options)
 
       table.header.push({
         text: 'HEURISTICS',
@@ -366,7 +360,7 @@ export default {
       })
       if (this.resultEvaluator) {
         this.resultEvaluator.forEach((evaluator) => {
-          let header = table.header.find((h) => h.text == evaluator.id)
+          const header = table.header.find((h) => h.text == evaluator.id)
           if (!header) {
             table.header.push({
               text: evaluator.id,
@@ -375,7 +369,7 @@ export default {
             })
           }
           evaluator.heuristics.forEach((heuristic) => {
-            let item = table.items.find((i) => i.heuristic == heuristic.id)
+            const item = table.items.find((i) => i.heuristic == heuristic.id)
             if (item) {
               Object.assign(item, {
                 [evaluator.id]: heuristic.result,
@@ -394,7 +388,7 @@ export default {
       return table
     },
     heuristicsStatistics() {
-      let table = {
+      const table = {
         header: [],
         items: [],
       }
@@ -431,10 +425,10 @@ export default {
 
       if (this.heuristicsEvaluator.items) {
         this.heuristicsEvaluator.items.forEach((item) => {
-          let results = Object.entries(item)
+          const results = Object.entries(item)
             .filter((item) => item[0].includes('Ev'))
             .map((item) => item[1])
-          let valueToConvert = results
+          const valueToConvert = results
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
             convertedValue =
@@ -493,6 +487,42 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
+  },
+  methods: {
+    getColor(value, max, min) {
+      //✓
+      max = Number(max)
+      min = Number(min)
+      const h = (max - min) / max
+
+      if (value == null) return 'grey'
+      else if (value === 0) return 'red'
+      else if (value <= min + 1 * h) return 'amber'
+      else if (value <= min + 2 * h) return 'orange lighten-1'
+      else if (value <= min + 3 * h) return 'lime'
+      else return 'green'
+    },
+    getColorPorcentage(value) {
+      //✓
+      if (value <= 20) return 'red'
+      else if (value <= 40) return 'ambar'
+      else if (value <= 60) return 'orange lighten-1'
+      else if (value <= 80) return 'lime'
+      else return 'green'
+    },
+    goToDataHeuristic(item) {
+      //✓
+      const selectHeruristc = this.heuristicsEvaluator.items.indexOf(
+        this.heuristicsEvaluator.items.find((h) => h.heuristic === item),
+      )
+      this.$router
+        .push(`/analyticsview/${this.id}/${selectHeruristc}`)
+        .catch(() => {})
+    },
+    goToCoops() {
+      //✓
+      this.$emit('goToCoops')
+    },
   },
 }
 </script>

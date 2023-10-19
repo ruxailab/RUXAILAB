@@ -114,7 +114,7 @@ export default class Controller {
   async update(col, docId, payload) {
     try {
       const ref = doc(db, `${col}/${docId}`)
-      console.log('Update:', payload);
+      console.log('Update:', payload)
       return updateDoc(ref, payload)
     } catch(e) {
       console.log(e)

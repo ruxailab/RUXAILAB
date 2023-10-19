@@ -37,7 +37,7 @@ export default {
     },
     async getObject({ commit }, payload) {
       try {
-        let x = await new Controller().read(
+        const x = await new Controller().read(
           payload.collection,
           'id',
           payload.id,
