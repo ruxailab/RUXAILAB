@@ -7,15 +7,15 @@
       v-if="answers != null && intro == true"
       @goToCoops="goToCoops"
     ></IntroAnswer>
-    <v-row justify="center" v-else-if="answers != null && intro == false">
+    <v-row justify="center" class="ma-0 mt-4" v-else-if="answers != null && intro == false">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <v-tabs
           slot="top"
           background-color="transparent"
           color="#FCA326"
-          class="pb-0 mb-0"
           v-model="tab"
+          class="ml-4"
         >
           <v-tab @click="tab = 0">Statistics</v-tab>
           <v-tab @click="tab = 1">Evaluators</v-tab>
@@ -31,14 +31,14 @@
 
             <v-divider></v-divider>
 
-            <v-row justify="space-around">
+            <v-row justify="space-around" class="ma-0">
               <!-- Top Card -->
               <v-col cols="10">
                 <v-card class="cardStyle">
-                  <v-row justify="space-around">
+                  <v-row justify="space-around" class="ma-0">
                     <!-- Average -->
                     <v-col cols="4">
-                      <v-row justify="center">
+                      <v-row justify="center" class="ma-0">
                         <v-card-title class="mt-4">Usability Percentage</v-card-title>
                         <v-card-text>
                           <v-row align="center" justify="center">
