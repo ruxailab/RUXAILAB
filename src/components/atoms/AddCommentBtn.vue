@@ -45,6 +45,7 @@ export default {
   props: {
     answerHeu: {
       type: Object,
+      default: ()=>{},
       require: true,
     },
     heurisIndex: {
