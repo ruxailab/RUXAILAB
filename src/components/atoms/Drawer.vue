@@ -95,7 +95,7 @@
 </template>
 <script>
 export default {
-  props: { userAccessLevelOnTest: { type: Number, default: 2 } },
+  props: { userAccessLevelOnTest: { type: Array, default: () => [2] } },
   data: () => ({
     drawer: true,
     mini: true,
