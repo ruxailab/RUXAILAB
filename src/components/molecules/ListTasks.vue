@@ -10,14 +10,14 @@
     >
       <!-- Table Header -->
       <template v-slot:top>
-        <v-row>
+        <v-row align="center" class="ma-0">
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
               Current Tasks
             </p>
           </v-col>
-          <v-col class="mr-2 mb-1 pb-0 pa-4">
-            <v-row justify="end" class="ma-0 pa-0">
+          <v-col>
+            <v-row justify="end" class="mx-0">
               <v-btn
                 rounded
                 color="#f9a826"
