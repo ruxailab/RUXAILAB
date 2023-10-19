@@ -13,18 +13,18 @@
 
 export default class UserAnswer{
     constructor({
-        answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorEmail
-    } = {}
+        answerDocId, accessLevel, progress, total, testType, testTitle, testDocId, updateDate, testAuthorEmail,
+    } = {},
     ) {
-        this.answerDocId = answerDocId;
-        this.accessLevel = accessLevel;
-        this.progress = progress;
-        this.total = total;
-        this.testType = testType;
-        this.testTitle = testTitle;
-        this.testDocId = testDocId;
-        this.updateDate = updateDate;
-        this.testAuthorEmail = testAuthorEmail;
+        this.answerDocId = answerDocId
+        this.accessLevel = accessLevel
+        this.progress = progress
+        this.total = total
+        this.testType = testType
+        this.testTitle = testTitle
+        this.testDocId = testDocId
+        this.updateDate = updateDate
+        this.testAuthorEmail = testAuthorEmail
     }
     static toUserAnswer(data) {
         return new UserAnswer(data)
@@ -40,7 +40,7 @@ export default class UserAnswer{
             testTitle: this.testTitle,
             testDocId: this.testDocId,
             updateDate: this.updateDate,
-            testAuthorEmail: this.testAuthorEmail
+            testAuthorEmail: this.testAuthorEmail,
         }
     }
 }

@@ -41,13 +41,13 @@
           color="#F9A826"
           v-bind="attrs"
           style="z-index: 100"
-          @click="validateAll()"
-          v-on="on"
           :disabled="testAnswerDocLength > 0 ? true : false"
           :class="{
             disabledBtnBackground: testAnswerDocLength > 0,
             disabledBtn: testAnswerDocLength > 0,
           }"
+          @click="validateAll()"
+          v-on="on"
         >
           <v-icon
             large
@@ -65,7 +65,9 @@
     <!-- Loading Overlay -->
     <v-overlay v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">Loading Test</div>
+      <div class="white-text mt-3">
+        Loading Test
+      </div>
     </v-overlay>
 
     <!--
@@ -97,9 +99,9 @@
       <!-- User tests -->
       <EditUserTest
         v-if="test.testType === 'User'"
+        slot="top"
         type="tabs"
         @tabClicked="setIndex"
-        slot="top"
       />
 
       <EditUserTest
@@ -144,9 +146,9 @@ export default {
   }),
   computed: {
     testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
 
       return heuristicAnswersCount
     },
@@ -225,10 +227,10 @@ export default {
         this.object.testStructure = {
           userTasks: this.$store.getters.tasks,
           preTest: this.$store.getters.preTest,
-          postTest: this.$store.getters.postTest
+          postTest: this.$store.getters.postTest,
         }
       }
-      let auxT = Object.assign(this.test, this.object)
+      const auxT = Object.assign(this.test, this.object)
       console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
     },

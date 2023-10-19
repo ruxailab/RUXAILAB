@@ -90,6 +90,7 @@ export default {
         await signOut(auth)
         commit('SET_USER', null)
       } catch (err) {
+        console.error(err)
       } finally {
         //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit('setLoading', false)
