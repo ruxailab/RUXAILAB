@@ -12,7 +12,7 @@
         <br />
         <br />
         {{ showOnExplore }} -->
-    {{ this.exploreTemplates }}
+    {{ exploreTemplates }}
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn

@@ -18,9 +18,10 @@ module.exports = {
     eqeqeq: 'off',
     'no-plusplus': 'off',
     'max-len': ['warn', {
-      'code': 150,
+      'code': 200,
       'ignoreStrings': true,
       'ignoreComments': true,
+      'ignoreTemplateLiterals': true,
     }],
     'no-empty': 'warn',
     'arrow-parens': 'warn',
@@ -34,5 +35,9 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'operator-linebreak': 'off',
     'vue/max-attributes-per-line': 'off',
+
+    'vue/require-prop-types':'off',
+    'vue/require-default-prop':'warn',
+    'vue/prop-name-casing': 'off',
   },
 }
