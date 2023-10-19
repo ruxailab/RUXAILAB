@@ -8,7 +8,9 @@
         class="mr-1"
         @click="$router.push('/help')"
       >
-        <v-icon size="20">mdi-help-circle-outline</v-icon>
+        <v-icon size="20">
+          mdi-help-circle-outline
+        </v-icon>
       </v-btn>
     </template>
   </div>

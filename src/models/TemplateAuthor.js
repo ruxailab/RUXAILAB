@@ -6,11 +6,11 @@
 
 export default class TemplateAuthor {
     constructor({
-        userEmail, userDocId
-    } = {}
+        userEmail, userDocId,
+    } = {},
     ) {
-        this.userEmail = userEmail;
-        this.userDocId = userDocId;
+        this.userEmail = userEmail
+        this.userDocId = userDocId
     }
     static toTemplateAuthor(data) {
         return new TemplateAuthor(data)
@@ -18,7 +18,7 @@ export default class TemplateAuthor {
     toFirestore() {
         return {
             userEmail: this.userEmail,
-            userDocId: this.userDocId
+            userDocId: this.userDocId,
         }
     }
 }

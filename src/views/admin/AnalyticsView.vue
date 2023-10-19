@@ -1,5 +1,5 @@
 <template>
-  <div v-if="answers"> 
+  <div v-if="answers">
     <IntroAnalytics v-if="answers != null && intro == true" @goToCoops="goToCoops()" />
 
     <ShowInfo v-if="answers != null && !intro && test" title="Analytics">

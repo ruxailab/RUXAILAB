@@ -11,13 +11,13 @@ export default class HeuristicQuestion{
         id,
         title,
         descriptions,
-        text
-    } = {}
+        text,
+    } = {},
     ) {
-        this.id = id;
-        this.title = title;
-        this.descriptions = descriptions;
-        this.text = text;
+        this.id = id
+        this.title = title
+        this.descriptions = descriptions
+        this.text = text
     }
     static toHeuristicQuestion(data) {
         return new HeuristicQuestion(data)
