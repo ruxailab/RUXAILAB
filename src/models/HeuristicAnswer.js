@@ -17,7 +17,7 @@ export default class HeuristicAnswer {
     total,
     submitted,
     userDocId,
-    lastUpdate
+    lastUpdate,
   } = {}) {
     this.heuristicQuestions = heuristicQuestions ?? []
     this.progress = progress ?? 0

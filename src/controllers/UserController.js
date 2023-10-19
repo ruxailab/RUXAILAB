@@ -62,31 +62,31 @@ export default class UserController extends Controller {
       throw new Error('Notification not found.')
     }
   }
-  
+
     async removeTestFromUser(userId, testIdToRemove) {
       try {
-        const userDoc = await super.readOne('users', userId);
+        const userDoc = await super.readOne('users', userId)
         if (!userDoc.exists()) {
-          console.log("User not found.");
-          return;
+          console.log('User not found.')
+          return
         }
-        const userData = userDoc.data();
+        const userData = userDoc.data()
 
         if (userData.myTests[testIdToRemove]) {
-          delete userData.myTests[testIdToRemove];
+          delete userData.myTests[testIdToRemove]
         }
         if (userData.myAnswers[testIdToRemove]) {
-          delete userData.myAnswers[testIdToRemove];
+          delete userData.myAnswers[testIdToRemove]
         }
-  
-        await super.update('users', userId, userData);
-  
-        console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`);
+
+        await super.update('users', userId, userData)
+
+        console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
       } catch (error) {
-        console.error("Error removing test from user:", error);
-        throw error;
+        console.error('Error removing test from user:', error)
+        throw error
       }
     }
 
-  
+
 }

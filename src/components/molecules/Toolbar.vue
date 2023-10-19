@@ -23,7 +23,9 @@
     >
       <v-row align="center" class="ma-0" justify="center">
         <v-list-item-avatar>
-          <v-icon large dark> mdi-account-circle </v-icon>
+          <v-icon large dark>
+            mdi-account-circle
+          </v-icon>
         </v-list-item-avatar>
 
         <v-col>
@@ -137,13 +139,17 @@
       class="hidden-sm-and-down"
       @click="goTo('/signin')"
     >
-      <v-icon left> mdi-lock </v-icon>
+      <v-icon left>
+        mdi-lock
+      </v-icon>
       {{ $t('SIGNIN.sign-in') }}
     </v-btn>
 
     <!-- Sign-in Mobile -->
     <v-btn v-if="!user" icon class="hidden-md-and-up" @click="goTo('/signin')">
-      <v-icon size="20"> mdi-lock </v-icon>
+      <v-icon size="20">
+        mdi-lock
+      </v-icon>
     </v-btn>
 
     <!-- Profile Button Desktop -->
@@ -163,8 +169,12 @@
             v-on="on"
             @click="menu = !menu"
           >
-            <v-icon class="mr-1" dark> mdi-account-circle </v-icon>
-            <v-icon small> mdi-chevron-down </v-icon>
+            <v-icon class="mr-1" dark>
+              mdi-account-circle
+            </v-icon>
+            <v-icon small>
+              mdi-chevron-down
+            </v-icon>
           </v-btn>
         </template>
         <v-list dense class="ma-0 py-1" style="border-radius: 0px !important">

@@ -61,7 +61,7 @@ export default {
     ],
     typeRequired: [(v) => !!v || i18n.t('errors.fieldRequired')],
     types: [
-      { text: "Usability User Test", value: "User" },
+      { text: 'Usability User Test', value: 'User' },
       { text: i18n.t('titles.heuristic'), value: 'HEURISTICS' },
     ],
   }),

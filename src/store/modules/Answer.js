@@ -108,7 +108,7 @@ export default {
       }
     },
     async processStatistics({ commit }, payload) {
-      let table = {
+      const table = {
         header: [],
         items: [],
       }

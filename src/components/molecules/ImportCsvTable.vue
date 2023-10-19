@@ -1,25 +1,24 @@
 <template>
-  <div style="background-color:#F5F7FF" id="FileUpload">
+  <div id="FileUpload" style="background-color:#F5F7FF">
     <v-col justify="center">
       <v-row class="px-6 pt-2">
         <v-btn class="mb-3" @click="downloadTemplate">
-          Donwload CSV template</v-btn
-        >
+          Donwload CSV template
+        </v-btn>
       </v-row>
-      <v-divider></v-divider>
+      <v-divider />
       <v-row>
         <v-row class="px-8" justify="center" align="center">
           <v-file-input
+            ref="myFile"
             v-model="csvFile"
             class="d-flex justify-center "
             accept=".csv"
             show-size
             truncate-length="15"
             placeholder="Import your CSV testfile here."
-            ref="myFile"
             :disabled="testAnswerDocLength > 0 ? true : false"
-          >
-          </v-file-input>
+          />
           <v-btn
             :loading="loadingUpdate"
             :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
@@ -53,12 +52,47 @@ export default {
       loadingUpdate: false,
     }
   },
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+    user() {
+      return this.$store.getters.user
+    },
+    csvHeuristics() {
+      return this.$store.state.Tests.currentTest
+    },
+    testAnswerDocLength() {
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
+  watch: {
+    loader() {
+      const l = this.loader
+      this[l] = !this[l]
+      // const alertFunc = alert("Your file has been uploaded!");
+      if (this.csvFile != null) {
+        setTimeout(() => (this[l] = false), 3000)
+        setTimeout(() => (this.csvFile = null), 3000)
+        // setTimeout(alertFunc, 3000);
+        this.loader = null
+      } else {
+        setTimeout(() => (this[l] = false), 3000)
+        alert('No csv file selected. \nPlease select one before procede.')
+        this.loader = null
+      }
+    },
+  },
 
   methods: {
     async changeToJSON() {
       this.loadingUpdate = true
       try {
-        let confirmationText =
+        const confirmationText =
           'If you accept, all your present heuristics will be replaced by the ones in the .csv file'
         if (confirm(confirmationText)) {
           const reader = new FileReader()
@@ -142,41 +176,6 @@ export default {
               break
           }
         })
-    },
-  },
-  watch: {
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
-      // const alertFunc = alert("Your file has been uploaded!");
-      if (this.csvFile != null) {
-        setTimeout(() => (this[l] = false), 3000)
-        setTimeout(() => (this.csvFile = null), 3000)
-        // setTimeout(alertFunc, 3000);
-        this.loader = null
-      } else {
-        setTimeout(() => (this[l] = false), 3000)
-        alert('No csv file selected. \nPlease select one before procede.')
-        this.loader = null
-      }
-    },
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    csvHeuristics() {
-      return this.$store.state.Tests.currentTest
-    },
-    testAnswerDocLength() {
-      let heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      let heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
     },
   },
 }
