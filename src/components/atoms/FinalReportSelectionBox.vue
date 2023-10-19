@@ -59,7 +59,6 @@ import { finalResult, statistics } from '@/utils/statistics'
 import i18n from '@/i18n'
 
 export default {
-  props: ['id', 'HEURISTICS'],
   data: () => ({
     preview: new Object(),
     formattedDate: '',
