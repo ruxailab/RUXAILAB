@@ -45,49 +45,6 @@
                     : ''
               }}</strong>
             </v-list-item-subtitle>
-            <div
-              class="hidden-sm-and-down"
-              style="position: absolute; right: 25%"
-            >
-              <v-tooltip v-if="type === 'myTests'" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-row
-                    class="ma-0 pa-0"
-                    v-bind="attrs"
-                    align="center"
-                    v-on="on"
-                  >
-                    {{
-                      item.numberColaborators >= 0
-                        ? item.numberColaborators
-                        : '-'
-                    }}
-                    <v-icon class="ml-1">
-                      mdi-account-multiple
-                    </v-icon>
-                  </v-row>
-                </template>
-                <span>{{ $t('titles.cooperators') }}</span>
-              </v-tooltip>
-              <v-tooltip v-else-if="type === 'sharedWithMe'" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-row v-bind="attrs" v-on="on">
-                    <div class="caption">
-                      {{ item.progress }}%
-                    </div>
-
-                    <v-progress-circular
-                      rotate="-90"
-                      :value="item.progress"
-                      color="grey darken-1"
-                      :size="20"
-                      class="ml-1"
-                    />
-                  </v-row>
-                </template>
-                <span>{{ $t('pages.listTests.progress') }}</span>
-              </v-tooltip>
-            </div>
           </v-list-item-content>
 
           <!-- Actions -->
@@ -105,14 +62,59 @@
               </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="item.updateDate">
-              {{ $t('pages.listTests.updated') }}
-              {{ getFormattedDate(item.updateDate) }}
+              <v-row class="ma-0" align="center">
+                <div class="hidden-sm-and-down">
+                  <v-tooltip v-if="type === 'myTests'" top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-row
+                        class="ma-0 pa-0 mr-4"
+                        v-bind="attrs"
+                        align="center"
+                        v-on="on"
+                      >
+                        {{
+                          item.numberColaborators >= 0
+                            ? item.numberColaborators
+                            : '-'
+                        }}
+                        <v-icon class="ml-1">
+                          mdi-account-multiple
+                        </v-icon>
+                      </v-row>
+                    </template>
+                    <span>{{ $t('titles.cooperators') }}</span>
+                  </v-tooltip>
+                  <v-tooltip v-else-if="type === 'sharedWithMe'" top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-row v-bind="attrs" v-on="on">
+                        <div class="caption">
+                          {{ item.progress }}%
+                        </div>
+
+                        <v-progress-circular
+                          rotate="-90"
+                          :value="item.progress"
+                          color="grey darken-1"
+                          :size="20"
+                          class="ml-1"
+                        />
+                      </v-row>
+                    </template>
+                    <span>{{ $t('pages.listTests.progress') }}</span>
+                  </v-tooltip>
+                </div>
+                <div>
+                  {{ $t('pages.listTests.updated') }}
+                  {{ getFormattedDate(item.updateDate) }}
+                </div>
+              </v-row>
             </v-list-item-action-text>
             <v-list-item-action-text
               v-if="type === 'myTemplates' || type === 'publicTemplates'"
             >
               <v-chip outlined small class="ml-1" label>
-                {{ $t('pages.listTests.version') }} {{ item.header.templateVersion }}
+                {{ $t('pages.listTests.version') }}
+                {{ item.header.templateVersion }}
               </v-chip>
             </v-list-item-action-text>
           </v-list-item-action>
@@ -133,7 +135,9 @@
               type === 'sharedWithMe'
           "
         >{{ $t('pages.listTests.noTests') }}</span>
-        <span v-else-if="type === 'myTemplates' || type === 'publicTemplates'">{{ $t('pages.listTests.noTemplates') }}</span>
+        <span
+          v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
+        >{{ $t('pages.listTests.noTemplates') }}</span>
       </v-row>
     </v-list>
   </div>
