@@ -1,46 +1,40 @@
 <template>
   <div style="background-color:#F5F7FF" id="FileUpload">
-    <v-col justify="center">
-      <v-row class="px-6 pt-2">
-        <v-btn class="mb-3" @click="downloadTemplate">
-          Donwload CSV template</v-btn
-        >
-      </v-row>
-      <v-divider></v-divider>
-      <v-row>
-        <v-row class="px-8" justify="center" align="center">
-          <v-file-input
-            v-model="csvFile"
-            class="d-flex justify-center "
-            accept=".csv"
-            show-size
-            truncate-length="15"
-            placeholder="Import your CSV testfile here."
-            ref="myFile"
-            :disabled="testAnswerDocLength > 0 ? true : false"
-          >
-          </v-file-input>
-          <v-btn
-            :loading="loadingUpdate"
-            :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
-            color="blue-grey"
-            class="ma-2 white--text"
-            @click="changeToJSON"
-          >
-            Update
-            <v-icon right dark>
-              mdi-cloud-upload
-            </v-icon>
-          </v-btn>
-        </v-row>
-      </v-row>
-    </v-col>
+    <v-btn class="ma-4" @click="downloadTemplate" color="primary" outlined>
+      Donwload CSV template</v-btn
+    >
+    <v-divider></v-divider>
+
+    <v-row class="my-0 mx-4" align="center">
+      <v-file-input
+        v-model="csvFile"
+        class="d-flex justify-center "
+        accept=".csv"
+        show-size
+        truncate-length="15"
+        placeholder="Import your CSV testfile here."
+        ref="myFile"
+        :disabled="testAnswerDocLength > 0 ? true : false"
+      >
+      </v-file-input>
+      <v-btn
+        :loading="loadingUpdate"
+        :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
+        color="blue-grey"
+        class="ml-6 white--text"
+        @click="changeToJSON"
+      >
+        Update
+        <v-icon right dark>
+          mdi-cloud-upload
+        </v-icon>
+      </v-btn>
+    </v-row>
   </div>
 </template>
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
-import { log } from 'firebase-functions/lib/logger'
 
 export default {
   data() {
@@ -82,7 +76,7 @@ export default {
 
               if (!heuristicMap.has(heuristicId)) {
                 heuristicMap.set(heuristicId, {
-                  id: parseInt(heuristicId) -1,
+                  id: parseInt(heuristicId) - 1,
                   title: heuristicTitle,
                   questions: [],
                   total: 0, // Inicializa o total com 0
@@ -91,7 +85,7 @@ export default {
 
               const heuristicEntry = heuristicMap.get(heuristicId)
               heuristicEntry.questions.push({
-                id: parseInt(questionId) -1,
+                id: parseInt(questionId) - 1,
                 title: questionText,
                 descriptions: questionText,
                 text: questionText,
@@ -182,7 +176,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .csv-box {
   background-color: white;
 }
