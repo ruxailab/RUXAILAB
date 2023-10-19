@@ -7,7 +7,7 @@
       v-if="answers != null && intro == true"
       @goToCoops="goToCoops"
     />
-    <v-row v-else-if="answers != null && intro == false" justify="center">
+    <v-row v-else-if="answers != null && intro == false" justify="center" class="ma-0 mt-4">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <v-tabs
@@ -15,7 +15,7 @@
           v-model="tab"
           background-color="transparent"
           color="#FCA326"
-          class="pb-0 mb-0"
+          class="ml-4"
         >
           <v-tab @click="tab = 0">
             Statistics
@@ -41,14 +41,14 @@
 
             <v-divider />
 
-            <v-row justify="space-around">
+            <v-row justify="space-around" class="ma-0">
               <!-- Top Card -->
               <v-col cols="10">
                 <v-card class="cardStyle">
-                  <v-row justify="space-around">
+                  <v-row justify="space-around" class="ma-0">
                     <!-- Average -->
                     <v-col cols="4">
-                      <v-row justify="center">
+                      <v-row justify="center" class="ma-0">
                         <v-card-title class="mt-4">
                           Usability Percentage
                         </v-card-title>
