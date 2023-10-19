@@ -1,5 +1,5 @@
 <template>
-  <v-container style="display: contents">
+  <v-container class="mt-8">
     <Snackbar />
 
     <!-- CREATE TEST BTN -->
@@ -35,7 +35,7 @@
         <v-col cols="10">
           <!-- Mobile search button -->
           <v-row v-if="!searching" align="center">
-            <span class="titleText ml-3">{{ $t('Dashboard.tests') }}</span>
+            <span class="titleText ml-3 mb-2">{{ $t('Dashboard.tests') }}</span>
             <v-spacer />
             <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
@@ -59,7 +59,7 @@
             v-model="mainIndex"
             background-color="transparent"
             color="black"
-            class="hidden-sm-and-down"
+            class="hidden-sm-and-down mt-4"
           >
             <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
             <!-- <v-tab>Answers</v-tab>-->

@@ -1,14 +1,14 @@
 <template>
-  <v-container style="overflow: scrol; justify-content: center">
-    <v-row justify="space-around">
+  <v-container>
+    <v-row class="ma-0">
       <v-col cols="12">
         <h1>{{ $t('titles.drawer.' + title) }}</h1>
+        <v-divider />
       </v-col>
       <slot name="top" />
     </v-row>
-    <v-divider />
     <slot name="warning" />
-    <v-row justify="center">
+    <v-row justify="center" class="ma-0">
       <v-col cols="12">
         <v-card class="dataCard ma-0 pa-0">
           <slot name="content" />
