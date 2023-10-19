@@ -32,7 +32,7 @@
                 heuristicSelect !== null && test.testStructure[heuristicSelect]
               "
               class="ma-0 pa-0"
-              cols="2"
+              cols="3"
             >
               <v-list dense height="560px" outlined>
                 <v-subheader>
