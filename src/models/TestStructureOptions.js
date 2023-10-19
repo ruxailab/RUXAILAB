@@ -11,14 +11,14 @@ export default class TestStructureOptions {
      *
      * @type {string}
      */
-    this.text = text;
+    this.text = text
 
     /**
      * Defines the option value.
      *
      * @type {number}
      */
-    this.value = value ?? '';
+    this.value = value ?? ''
   }
 
   /**
@@ -27,6 +27,6 @@ export default class TestStructureOptions {
    * @returns a new text structure option model.
    */
   static toTestStructureOptions(map) {
-    return new TestStructureOptions(map);
+    return new TestStructureOptions(map)
   }
 }

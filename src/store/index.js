@@ -1,17 +1,17 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import Auth from "@/store/modules/Auth";
-import Templates from "@/store/modules/Template";
-import Tests from "@/store/modules/Test";
-import Users from "@/store/modules/User";
-import Database from "@/store/modules/Database";
-import Cooperators from "@/store/modules/Cooperators";
-import Reports from "@/store/modules/Reports";
-import Heuristic from "@/store/modules/Heuristic";
-import Answer from "@/store/modules/Answer";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import Auth from '@/store/modules/Auth'
+import Templates from '@/store/modules/Template'
+import Tests from '@/store/modules/Test'
+import Users from '@/store/modules/User'
+import Database from '@/store/modules/Database'
+import Cooperators from '@/store/modules/Cooperators'
+import Reports from '@/store/modules/Reports'
+import Heuristic from '@/store/modules/Heuristic'
+import Answer from '@/store/modules/Answer'
 
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
@@ -36,7 +36,7 @@ export default new Vuex.Store({
         },
         SET_PATH_TO(state,payload){
           state.pathTo = payload
-        }
+        },
     },
     getters:{
       getDialogLeaveStatus(state){
@@ -44,7 +44,7 @@ export default new Vuex.Store({
       },
       localChanges(state){
         return state.localChanges
-      }
+      },
     },
     modules: {
         Auth,
@@ -57,4 +57,4 @@ export default new Vuex.Store({
       Heuristic,
       Answer,
     },
-});
+})

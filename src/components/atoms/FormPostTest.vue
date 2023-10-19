@@ -2,13 +2,8 @@
   <v-form ref="form">
     <v-row class="mt-4" justify="center">
       <v-col cols="10">
-        <v-text-field
-          v-model="object.postTest.postTestUrl"
-          prepend-inner-icon="mdi-link-variant"
-          label="Post Form"
-          :rules="googleLinkRules"
-          outlined
-          dense
+        <v-text-field v-model="object.postTest.postTestUrl" prepend-inner-icon="mdi-link-variant" label="Post Form"
+                      :rules="googleLinkRules" outlined dense
         />
       </v-col>
     </v-row>
@@ -18,7 +13,10 @@
 <script>
 export default {
   props: {
-    object: Object,
+    object: {
+      type: Object,
+      default: () => { },
+    },
   },
   data: () => ({
     googleLinkRules: [

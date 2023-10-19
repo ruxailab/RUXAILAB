@@ -1,12 +1,12 @@
 // imports
 
-import { auth } from "@/firebase";
+import { auth } from '@/firebase'
 
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-} from "firebase/auth";
+} from 'firebase/auth'
 
 export default class AuthController {
     //Register new users
@@ -14,23 +14,23 @@ export default class AuthController {
     async authSignUp(email, password) {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user = userCredential.user;
-                return user;
+                const user = userCredential.user
+                return user
             })
-            .catch(console.error("Error in SignUp"));
+            .catch(console.error('Error in SignUp'))
     }
 
     //SignIn
 
     async authSignIn(email, password) {
-        try{
-        return signInWithEmailAndPassword(auth, email, password).then(
-            (userCredential) => {
-                const user = userCredential.user;
-                return user;
-            }
-        );
-        }catch(e){
+        try {
+            return signInWithEmailAndPassword(auth, email, password).then(
+                (userCredential) => {
+                    const user = userCredential.user
+                    return user
+                },
+            )
+        } catch (e) {
             console.error(e)
         }
     }
@@ -38,17 +38,18 @@ export default class AuthController {
     //Get Current User
 
     async authGetCurrentUser() {
-        const user = auth.currentUser;
+        const user = auth.currentUser
         if (user) {
+            return user
         } else {
+            console.error('user is null')
         }
-        return user;
     }
 
     //SignOut
 
     async authSignOut() {
         return signOut(auth).then(() => {
-        });
+        })
     }
 }

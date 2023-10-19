@@ -20,10 +20,10 @@ export default {
     currentImageUrl: '',
     preTest: {
       consentUrl: '',
-      preTestUrl: ''
+      preTestUrl: '',
     },
     postTest: {
-      postTestUrl: ''
+      postTestUrl: '',
     },
   },
   getters: {
@@ -49,13 +49,13 @@ export default {
       return state.postTest
     },
     consentUrl(state) {
-      return state.preTest.consentUrl;
+      return state.preTest.consentUrl
     },
     preTestUrl(state) {
-      return state.preTest.preTestUrl;
+      return state.preTest.preTestUrl
     },
     postTestUrl(state) {
-      return state.postTest.postTestUrl;
+      return state.postTest.postTestUrl
     },
   },
   mutations: {
@@ -76,7 +76,7 @@ export default {
       state.postTest = payload
     },
     SET_PRE_TEST(state, payload) {
-      state.preTest = payload;
+      state.preTest = payload
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -270,7 +270,7 @@ export default {
     },
     setPreTest({ commit }, payload) {
       try {
-        commit('SET_PRE_TEST', payload);
+        commit('SET_PRE_TEST', payload)
       } catch {
         commit('setError', true)
       }
@@ -287,5 +287,5 @@ export default {
     managerIDs(state) {
       return state.managerIDs
     },
-  }
+  },
 }

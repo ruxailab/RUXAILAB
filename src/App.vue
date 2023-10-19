@@ -3,7 +3,7 @@
     <Toolbar />
     <v-main>
       <v-container fluid class="pa-0">
-        <router-view></router-view>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
@@ -14,10 +14,11 @@ import Toolbar from './components/molecules/Toolbar'
 
 export default {
   name: 'RUXAILAB',
-  data: () => ({}),
   components: {
     Toolbar,
   },
+  data: () => ({}),
+  data: () => ({}),
   watch: {
     $route: {
       immediate: true,
