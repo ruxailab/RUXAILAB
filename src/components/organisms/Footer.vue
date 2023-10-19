@@ -11,7 +11,7 @@
 
       <v-card-text class="white--text">
         {{ new Date().getFullYear() }} —
-        <strong>Research Workflow</strong>
+        <strong>RUXAILAB</strong>
       </v-card-text>
     </v-card>
   </v-footer>
