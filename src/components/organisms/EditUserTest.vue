@@ -60,6 +60,7 @@ export default {
     },
     object: {
       type: Object,
+      default: () => { },
     },
   },
   data() {
