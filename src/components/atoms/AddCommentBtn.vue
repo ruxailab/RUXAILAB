@@ -40,8 +40,8 @@
         />
         <ImageImport
           v-if="show"
-          :heuristic-id="this.test.testStructure[heurisIndex]"
-          :question-id="this.answerHeu.heuristicId"
+          :heuristic-id="test.testStructure[heurisIndex]"
+          :question-id="answerHeu.heuristicId"
           :test-id="this.$store.getters.test.id"
           @imageUploaded="handleImageUploaded"
         />

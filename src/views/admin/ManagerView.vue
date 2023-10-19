@@ -65,7 +65,7 @@
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
-                  v-if="this.accessLevel == 0"
+                  v-if="accessLevel == 0"
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
@@ -76,7 +76,7 @@
                   class="display-3 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
-                  {{ this.test.testTitle }}
+                  {{ test.testTitle }}
                 </div>
                 <v-img
                   class="hidden-md-and-up"
@@ -102,13 +102,13 @@
           </div>
           <div>
             <v-container class="card-container">
-              <div v-if="this.accessLevel == 0" class="presentation-text">
+              <div v-if="accessLevel == 0" class="presentation-text">
                 {{ $t('common.editAndInvite') }}
               </div>
 
               <!-- Top Cards -->
               <v-row
-                v-if="this.accessLevel == 0"
+                v-if="accessLevel == 0"
                 justify="center"
                 justify-md="space-around"
               >

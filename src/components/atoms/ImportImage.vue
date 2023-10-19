@@ -1,7 +1,7 @@
 <template>
   <div class="input">
     <v-file-input
-      :id="`${this.heuristicId.id}${this.questionId}`"
+      :id="`${heuristicId.id}${questionId}`"
       class="ml-2"
       type="file"
       name="my-image"
@@ -18,7 +18,7 @@
       <v-img
         v-if="imageUploaded"
         max-height="225"
-        :src="this.url"
+        :src="url"
         contain
       />
     </v-row>
