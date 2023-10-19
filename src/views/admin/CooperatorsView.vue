@@ -275,7 +275,7 @@ export default {
     AccessNotAllowed,
     LeaveAlert,
   },
-  props: ['id'],
+  props: { id: { type: String, default: '' } },
   data: () => ({
     object: null,
     headers: cooperatorsHeaders,

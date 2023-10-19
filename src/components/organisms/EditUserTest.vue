@@ -1,10 +1,5 @@
 <template>
-  <v-tabs
-    v-if="type == 'tabs'"
-    background-color="transparent"
-    color="#FCA326"
-    class="pb-0 mb-0"
-  >
+  <v-tabs v-if="type == 'tabs'" background-color="transparent" color="#FCA326" class="pb-0 mb-0">
     <v-tab @click="tabClicked(0)">
       Pre Test
     </v-tab>
@@ -26,12 +21,7 @@
       <FormPreTest :object="formData" @input="updateData" />
     </v-card>
 
-    <ListTasks
-      v-if="index == 1"
-      :tasks="object.itemsTasks"
-      @change="emitChange()"
-      @input="updateData"
-    />
+    <ListTasks v-if="index == 1" :tasks="object.itemsTasks" @change="emitChange()" @input="updateData" />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
@@ -66,6 +56,7 @@ export default {
     },
     index: {
       type: Number,
+      default: 0,
     },
     object: {
       type: Object,
