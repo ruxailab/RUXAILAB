@@ -31,7 +31,7 @@ export default {
             })
       }
 
-      if (state.type === 'USER') {
+      if (state.testAnswerDocument.type === 'User') {
         return (
           TaskAnswer.toTaskAnswer(
             state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
