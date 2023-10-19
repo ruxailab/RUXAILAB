@@ -36,8 +36,8 @@ module.exports = {
     'operator-linebreak': 'off',
     'vue/max-attributes-per-line': 'off',
 
-    'vue/require-prop-types':'off',
+    'vue/require-prop-types':'warn',
     'vue/require-default-prop':'warn',
-    'vue/prop-name-casing': 'off',
+    'vue/prop-name-casing': 'warn',
   },
 }
