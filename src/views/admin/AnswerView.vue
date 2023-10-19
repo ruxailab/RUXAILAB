@@ -176,7 +176,7 @@
                 />
                 <v-card>
                   <v-card-text
-                    v-if="this.test.cooperators.length <= 3"
+                    v-if="test.cooperators.length <= 3"
                     class="text-center body-1"
                   >
                     The graphic can only be generated with 3 or more evaluators,
