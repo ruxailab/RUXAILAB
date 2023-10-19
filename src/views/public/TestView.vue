@@ -1,206 +1,211 @@
 <template>
-  <div v-if="test || (test && test.testType === 'User')">
-    <Snackbar />
+  <div v-if="test">
+    <div v-if="test.testType == 'HEURISTICS'">
+      <Snackbar />
 
-    <!-- Submit Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
-        <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to submit this test?</v-card-title
-        >
-
-        <v-card-text
-          >Are you sure you want to submit your test. You can only do it
-          once.</v-card-text
-        >
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Cancel</v-btn
+      <!-- Submit Alert Dialog -->
+      <v-dialog v-model="dialog" width="600" persistent>
+        <v-card>
+          <v-card-title class="headline error white--text" primary-title
+            >Are you sure you want to submit this test?</v-card-title
           >
-          <v-btn
-            class="red white--text ml-1"
-            text
-            @click="submitAnswer(), (dialog = false)"
-            >Submit</v-btn
+
+          <v-card-text
+            >Are you sure you want to submit your test. You can only do it
+            once.</v-card-text
           >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
-    <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </v-overlay>
+          <v-divider></v-divider>
 
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        @logined="logined = true"
-        @change="selected = !selected"
-        v-if="selected"
-      />
-      <CardSignUp
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-        v-else
-      />
-    </v-dialog>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn class="grey lighten-3" text @click="dialog = false"
+              >Cancel</v-btn
+            >
+            <v-btn
+              class="red white--text ml-1"
+              text
+              @click="submitAnswer(), (dialog = false)"
+              >Submit</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
-      <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>mdi-account</v-icon>
-          </v-avatar>
-        </v-row>
-        <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()"
-            >Continue as {{ user.email }}</v-btn
-          >
-        </v-card-actions>
-        <v-card-actions class="justify-center mt-4">
-          <p>
-            Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
-          </p>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-overlay v-model="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
 
-    <!-- Start Screen -->
-    <v-row
-      v-if="test && start"
-      class="background background-img pa-0 ma-0"
-      align="center"
-    >
-      <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
-        <p align="justify" class="description">{{ test.testDescription }}</p>
-        <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="start = !start"
-            >Start Test</v-btn
-          >
-        </v-row>
-      </v-col>
-    </v-row>
+      <v-dialog :value="fromlink && noExistUser" width="500" persistent>
+        <CardSignIn
+          @logined="logined = true"
+          @change="selected = !selected"
+          v-if="selected"
+        />
+        <CardSignUp
+          @logined="
+            logined = true
+            setTest()
+          "
+          @change="selected = !selected"
+          v-else
+        />
+      </v-dialog>
 
-    <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial
-        v-if="showSaveBtn"
-        v-model="fab"
-        fixed
-        class="mr-3"
-        bottom
-        right
-        open-on-hover
+      <v-dialog
+        :value="fromlink && !noExistUser && !logined"
+        width="500"
+        persistent
       >
-        <template v-slot:activator>
-          <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
-          </v-btn>
-        </template>
-
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="saveAnswer()"
-              fab
-              dark
-              small
-              color="#F9A826"
-              v-bind="attrs"
-              v-on="on"
+        <v-card v-if="user">
+          <v-row class="ma-0 pa-0 pt-5" justify="center">
+            <v-avatar
+              class="justify-center"
+              color="orange lighten-4"
+              size="150"
             >
-              <v-icon>mdi-content-save</v-icon>
-            </v-btn>
-          </template>
-          <span>Save</span>
-        </v-tooltip>
-
-        <v-tooltip left v-if="currentUserTestAnswer">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              :disabled="calculatedProgress < 100"
-              class="white--text"
-              @click="dialog = true"
-              fab
-              small
-              color="#F9A826"
-              v-bind="attrs"
-              v-on="on"
+              <v-icon size="120" dark>mdi-account</v-icon>
+            </v-avatar>
+          </v-row>
+          <v-card-actions class="justify-center mt-4">
+            <v-btn color="#F9A826" class="white--text" @click="setTest()"
+              >Continue as {{ user.email }}</v-btn
             >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
+          </v-card-actions>
+          <v-card-actions class="justify-center mt-4">
+            <p>
+              Not {{ user.email }}?
+              <a style="color: #f9a826" @click="signOut()">Change account</a>
+            </p>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-        <v-tooltip left v-else>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              class="white--text"
-              @click="dialog = true"
-              fab
-              small
-              color="#F9A826"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-      </v-speed-dial>
-
-      <v-navigation-drawer
-        clipped
-        v-model="drawer"
-        :mini-variant="mini"
-        permanent
-        color="#3F3D56"
+      <!-- Start Screen -->
+      <v-row
+        v-if="test && start"
+        class="background background-img pa-0 ma-0"
+        align="center"
       >
-        <div class="header" v-if="!mini">
-          <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <v-clamp class="titleText" autoresize :max-lines="2">{{
-                  test.testTitle
-                }}</v-clamp>
-              </v-col>
-              <v-col>
-                <v-progress-circular
-                  rotate="-90"
-                  :value="calculatedProgress"
-                  color="#fca326"
-                  :size="50"
-                  class="mt-2"
-                  >{{ calculatedProgress }}</v-progress-circular
-                >
-              </v-col>
-            </v-row>
-          </v-list-item>
-        </div>
+        <v-col cols="6" class="ml-5">
+          <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
+          <p align="justify" class="description">{{ test.testDescription }}</p>
+          <v-row justify="center" class>
+            <v-btn color="white" outlined rounded @click="start = !start"
+              >Start Test</v-btn
+            >
+          </v-row>
+        </v-col>
+      </v-row>
 
-        <v-list
-          class="nav-list"
-          flat
-          dense
-          max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+      <v-row v-else class="nav pa-0 ma-0" dense>
+        <v-speed-dial
+          v-if="showSaveBtn"
+          v-model="fab"
+          fixed
+          class="mr-3"
+          bottom
+          right
+          open-on-hover
         >
-          <div v-for="(item, n) in items" :key="n">
-            <!--Pre Test-->
+          <template v-slot:activator>
+            <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
+              <v-icon v-if="fab">mdi-close</v-icon>
+              <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
+            </v-btn>
+          </template>
+
+          <v-tooltip left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                @click="saveAnswer()"
+                fab
+                dark
+                small
+                color="#F9A826"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-content-save</v-icon>
+              </v-btn>
+            </template>
+            <span>Save</span>
+          </v-tooltip>
+
+          <v-tooltip left v-if="currentUserTestAnswer">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                :disabled="calculatedProgress < 100"
+                class="white--text"
+                @click="dialog = true"
+                fab
+                small
+                color="#F9A826"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </template>
+            <span>Submit</span>
+          </v-tooltip>
+
+          <v-tooltip left v-else>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="white--text"
+                @click="dialog = true"
+                fab
+                small
+                color="#F9A826"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </template>
+            <span>Submit</span>
+          </v-tooltip>
+        </v-speed-dial>
+
+        <v-navigation-drawer
+          clipped
+          v-model="drawer"
+          :mini-variant="mini"
+          permanent
+          color="#3F3D56"
+        >
+          <div class="header" v-if="!mini">
+            <v-list-item>
+              <v-row dense align="center" justify="space-around">
+                <v-col class="pa-0 ma-0" cols="8">
+                  <v-clamp class="titleText" autoresize :max-lines="2">{{
+                    test.testTitle
+                  }}</v-clamp>
+                </v-col>
+                <v-col>
+                  <v-progress-circular
+                    rotate="-90"
+                    :value="calculatedProgress"
+                    color="#fca326"
+                    :size="50"
+                    class="mt-2"
+                    >{{ calculatedProgress }}</v-progress-circular
+                  >
+                </v-col>
+              </v-row>
+            </v-list-item>
+          </div>
+
+          <v-list
+            class="nav-list"
+            flat
+            dense
+            max-height="85%"
+            style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+          >
+            <div v-for="(item, n) in items" :key="n">
+              <!-- Pre Test
             <v-list-group
               @click="index = item.id"
               v-if="item.id == 0"
@@ -247,103 +252,107 @@
                   >
                 </v-list-item-content>
               </v-list-item>
-            </v-list-group>
-            <!--Heuris-->
-            <v-list
-              @click="index = item.id"
-              v-if="item.id == 1"
-              :value="index == 1 ? true : false"
-            >
-              <div v-if="mini">
-                <v-tooltip right v-for="(heuris, i) in item.value" :key="i">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-list-item
-                      @click="heurisIndex = i"
-                      link
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-list-item-icon>
-                        <v-progress-circular
-                          rotate="-90"
-                          v-if="
-                            perHeuristicProgress(
-                              currentUserTestAnswer.heuristicQuestions[i],
-                            ) != 100
-                          "
-                          :value="
-                            perHeuristicProgress(
-                              currentUserTestAnswer.heuristicQuestions[i],
-                            )
-                          "
-                          :size="24"
-                          :width="3"
-                          :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        ></v-progress-circular>
-                        <v-icon
-                          v-else
-                          :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                          >{{ heuris.icon }}</v-icon
-                        >
-                      </v-list-item-icon>
+            </v-list-group> -->
 
-                      <v-list-item-content>
-                        <v-list-item-title
-                          :style="
-                            heurisIndex == i ? 'color: white' : 'color:#fca326'
-                          "
-                          >{{ heuris.title }}</v-list-item-title
-                        >
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-                  <span>{{ heuris.title }}</span>
-                </v-tooltip>
-              </div>
+              <!--Heuris-->
+              <v-list
+                @click="index = item.id"
+                v-if="item.id == 1"
+                :value="index == 1 ? true : false"
+              >
+                <div v-if="mini">
+                  <v-tooltip right v-for="(heuris, i) in item.value" :key="i">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-list-item
+                        @click="heurisIndex = i"
+                        link
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-list-item-icon>
+                          <v-progress-circular
+                            rotate="-90"
+                            v-if="
+                              perHeuristicProgress(
+                                currentUserTestAnswer.heuristicQuestions[i],
+                              ) != 100
+                            "
+                            :value="
+                              perHeuristicProgress(
+                                currentUserTestAnswer.heuristicQuestions[i],
+                              )
+                            "
+                            :size="24"
+                            :width="3"
+                            :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                          ></v-progress-circular>
+                          <v-icon
+                            v-else
+                            :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                            >{{ heuris.icon }}</v-icon
+                          >
+                        </v-list-item-icon>
 
-              <div v-else>
-                <v-list-item
-                  v-for="(heuris, i) in item.value"
-                  :key="i"
-                  @click="heurisIndex = i"
-                  link
-                >
-                  <v-list-item-icon>
-                    <v-progress-circular
-                      rotate="-90"
-                      v-if="
-                        perHeuristicProgress(
-                          currentUserTestAnswer.heuristicQuestions[i],
-                        ) != 100
-                      "
-                      :value="
-                        perHeuristicProgress(
-                          currentUserTestAnswer.heuristicQuestions[i],
-                        )
-                      "
-                      :size="24"
-                      :width="3"
-                      :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                    ></v-progress-circular>
-                    <v-icon
-                      v-else
-                      :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                      >{{ heuris.icon }}</v-icon
-                    >
-                  </v-list-item-icon>
+                        <v-list-item-content>
+                          <v-list-item-title
+                            :style="
+                              heurisIndex == i
+                                ? 'color: white'
+                                : 'color:#fca326'
+                            "
+                            >{{ heuris.title }}</v-list-item-title
+                          >
+                        </v-list-item-content>
+                      </v-list-item>
+                    </template>
+                    <span>{{ heuris.title }}</span>
+                  </v-tooltip>
+                </div>
 
-                  <v-list-item-content>
-                    <v-list-item-title
-                      :style="
-                        heurisIndex == i ? 'color: white' : 'color:#fca326'
-                      "
-                      >{{ heuris.title }}</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </div>
-            </v-list>
-            <!--Tasks--->
+                <div v-else>
+                  <v-list-item
+                    v-for="(heuris, i) in item.value"
+                    :key="i"
+                    @click="heurisIndex = i"
+                    link
+                  >
+                    <v-list-item-icon>
+                      <v-progress-circular
+                        rotate="-90"
+                        v-if="
+                          perHeuristicProgress(
+                            currentUserTestAnswer.heuristicQuestions[i],
+                          ) != 100
+                        "
+                        :value="
+                          perHeuristicProgress(
+                            currentUserTestAnswer.heuristicQuestions[i],
+                          )
+                        "
+                        :size="24"
+                        :width="3"
+                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                      ></v-progress-circular>
+                      <v-icon
+                        v-else
+                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                        >{{ heuris.icon }}</v-icon
+                      >
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :style="
+                          heurisIndex == i ? 'color: white' : 'color:#fca326'
+                        "
+                        >{{ heuris.title }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                </div>
+              </v-list>
+
+              <!-- Tasks-
             <v-list-group
               @click="index = item.id"
               v-if="item.id == 1 && test.testType == 'User'"
@@ -392,8 +401,8 @@
                 </template>
                 <span>{{ task.title }}</span>
               </v-tooltip>
-            </v-list-group>
-            <!--Post Test-->
+            </v-list-group> -->
+              <!-- Post Test
             <v-list-item @click="index = item.id" v-else-if="item.id == 2">
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
@@ -407,77 +416,78 @@
                   >{{ item.title }}</v-list-item-title
                 >
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
+            </div>
+          </v-list>
+
+          <div class="footer">
+            <v-spacer></v-spacer>
+            <v-btn icon @click.stop="mini = !mini" class="mr-2">
+              <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
+              <v-icon v-else color="white">mdi-chevron-left</v-icon>
+            </v-btn>
           </div>
-        </v-list>
+        </v-navigation-drawer>
 
-        <div class="footer">
-          <v-spacer></v-spacer>
-          <v-btn icon @click.stop="mini = !mini" class="mr-2">
-            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
-            <v-icon v-else color="white">mdi-chevron-left</v-icon>
-          </v-btn>
-        </div>
-      </v-navigation-drawer>
+        <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
+          <!-- Heuristics -->
+          <ShowInfo
+            v-if="index == 1"
+            :title="test.testStructure[heurisIndex].title"
+          >
+            <div slot="content" class="ma-0 pa-0">
+              <v-card-title class="subtitleView">{{
+                test.testStructure[heurisIndex].title
+              }}</v-card-title>
+              <v-divider class="mb-5"></v-divider>
+              <v-row
+                v-for="(question, i) in test.testStructure[heurisIndex]
+                  .questions"
+                :key="i"
+                justify="center"
+              >
+                <v-col cols="10">
+                  <v-row justify="space-around" align="center">
+                    <v-col cols="11">
+                      <p class="subtitleView">
+                        {{ i + 1 }}) {{ question.title }}
+                      </p>
+                    </v-col>
+                    <v-col cols="1">
+                      <HelpBtn :question="question" />
+                    </v-col>
+                  </v-row>
 
-      <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
-        <!-- Heuristics -->
-        <ShowInfo
-          v-if="index == 1"
-          :title="test.testStructure[heurisIndex].title"
-        >
-          <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{
-              test.testStructure[heurisIndex].title
-            }}</v-card-title>
-            <v-divider class="mb-5"></v-divider>
-            <v-row
-              v-for="(question, i) in test.testStructure[heurisIndex].questions"
-              :key="i"
-              justify="center"
-            >
-              <v-col cols="10">
-                <v-row justify="space-around" align="center">
-                  <v-col cols="11">
-                    <p class="subtitleView">
-                      {{ i + 1 }}) {{ question.title }}
-                    </p>
-                  </v-col>
-                  <v-col cols="1">
-                    <HelpBtn :question="question" />
-                  </v-col>
-                </v-row>
-
-                <AddCommentBtn
-                  :heurisIndex="heurisIndex"
-                  :answerHeu="
-                    currentUserTestAnswer.heuristicQuestions[heurisIndex]
-                      .heuristicQuestions[i]
-                  "
-                  @updateComment="
-                    (comment) => updateComment(comment, heurisIndex, i)
-                  "
-                >
-                  <v-select
-                    slot="answer"
-                    v-if="currentUserTestAnswer !== undefined"
-                    :items="test.testOptions"
-                    label="Respuestas/Answers"
-                    outlined
-                    dense
-                    v-model="
+                  <AddCommentBtn
+                    :heurisIndex="heurisIndex"
+                    :answerHeu="
                       currentUserTestAnswer.heuristicQuestions[heurisIndex]
-                        .heuristicQuestions[i].heuristicAnswer
+                        .heuristicQuestions[i]
                     "
-                    @change="calculateProgress()"
-                  ></v-select>
-                </AddCommentBtn>
-              </v-col>
-            </v-row>
-          </div>
-        </ShowInfo>
+                    @updateComment="
+                      (comment) => updateComment(comment, heurisIndex, i)
+                    "
+                  >
+                    <v-select
+                      slot="answer"
+                      v-if="currentUserTestAnswer !== undefined"
+                      :items="test.testOptions"
+                      label="Respuestas/Answers"
+                      outlined
+                      dense
+                      v-model="
+                        currentUserTestAnswer.heuristicQuestions[heurisIndex]
+                          .heuristicQuestions[i].heuristicAnswer
+                      "
+                      @change="calculateProgress()"
+                    ></v-select>
+                  </AddCommentBtn>
+                </v-col>
+              </v-row>
+            </div>
+          </ShowInfo>
 
-        <!-- Consent - Pre Test -->
+          <!-- Consent - Pre Test 
         <ShowInfo
           v-if="index == 0 && preTestIndex == 0"
           title="Pre Test - Consent"
@@ -494,7 +504,7 @@
           >
         </ShowInfo>
 
-        <!-- Form - Pre Test -->
+         Form - Pre Test 
         <ShowInfo
           v-if="index == 0 && preTestIndex == 1"
           title="Pre Test - Form"
@@ -510,7 +520,7 @@
             >Carregando…</iframe
           >
         </ShowInfo>
-        <!-- Tasks -->
+         Tasks 
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
           :title="test.tasks[heurisIndex].name"
@@ -527,7 +537,7 @@
           </div>
         </ShowInfo>
 
-        <!-- Post Test -->
+         Post Test 
         <ShowInfo v-if="index == 2" title="Post Test">
           <iframe
             slot="content"
@@ -539,9 +549,13 @@
             marginwidth="0"
             >Carregando…</iframe
           >
-        </ShowInfo>
-      </v-col>
-    </v-row>
+        </ShowInfo> -->
+        </v-col>
+      </v-row>
+    </div>
+    <div v-if="test.testType == 'User'">
+      <UserTestView />
+    </div>
   </div>
 </template>
 
@@ -555,6 +569,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
+import UserTestView from './UserTestView.vue'
 export default {
   props: ['id', 'token'],
   components: {
@@ -565,6 +580,7 @@ export default {
     Snackbar,
     CardSignIn,
     CardSignUp,
+    UserTestView
   },
   data: () => ({
     logined: null,
@@ -623,7 +639,8 @@ export default {
       //Heuristics
       if (
         this.validate(this.test.testStructure) &&
-        this.test.testStructure.length !== 0
+        this.test.testStructure.length !== 0 &&
+        this.test.testType == 'HEURISTICS'
       )
         this.items.push({
           title: 'HEURISTICS',
