@@ -11,8 +11,7 @@
           </v-card-title>
 
           <v-card-text>
-            Are you sure you want to submit your test. You can only do it
-            once.
+            Are you sure you want to submit your test. You can only do it once.
           </v-card-text>
 
           <v-divider />
@@ -191,9 +190,7 @@
               <v-row dense align="center" justify="space-around">
                 <v-col class="pa-0 ma-0" cols="8">
                   <v-clamp class="titleText" autoresize :max-lines="2">
-                    {{
-                      test.testTitle
-                    }}
+                    {{ test.testTitle }}
                   </v-clamp>
                 </v-col>
                 <v-col>
@@ -219,55 +216,6 @@
             style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
           >
             <div v-for="(item, n) in items" :key="n">
-              <!-- Pre Test
-            <v-list-group
-              @click="index = item.id"
-              v-if="item.id == 0"
-              :value="index == 0 ? true : false"
-              no-action
-            >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
-              >
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </template>
-
-              <v-list-item
-                v-for="(preTest, i) in item.value"
-                :key="i"
-                @click="preTestIndex = i"
-              >
-                <v-list-item-icon>
-                  <v-icon
-                    :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'"
-                    >{{ preTest.icon }}</v-icon
-                  >
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title
-                    :style="
-                      preTestIndex == preTest.id
-                        ? 'color: white'
-                        : 'color:#fca326'
-                    "
-                    >{{ preTest.title }}</v-list-item-title
-                  >
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-group> -->
-
               <!--Heuris-->
               <v-list
                 v-if="item.id == 1"
@@ -370,71 +318,20 @@
                 </div>
               </v-list>
 
-              <!-- Tasks-
-            <v-list-group
-              @click="index = item.id"
-              v-if="item.id == 1 && test.testType == 'User'"
-              :value="index == 1 ? true : false"
-              no-action
-            >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
-              >
-              <template v-slot:activator>
+              <v-list-item @click="index = item.id" v-else-if="item.id == 2">
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
                     item.icon
                   }}</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </template>
-              <v-tooltip right v-for="(task, i) in item.value" :key="i">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item
-                    @click="heurisIndex = i"
-                    link
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    <v-list-item-icon>
-                      <v-icon
-                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        >{{ task.icon }}</v-icon
-                      >
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        :style="
-                          heurisIndex == i ? 'color: white' : 'color:#fca326'
-                        "
-                        >{{ task.title }}</v-list-item-title
-                      >
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group> -->
-              <!-- Post Test
-            <v-list-item @click="index = item.id" v-else-if="item.id == 2">
-              <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                  item.icon
-                }}</v-icon>
-              </v-list-item-icon>
 
-              <v-list-item-content>
-                <v-list-item-title
-                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
-                >
-              </v-list-item-content>
-            </v-list-item> -->
+                <v-list-item-content>
+                  <v-list-item-title
+                    :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                    >{{ item.title }}</v-list-item-title
+                  >
+                </v-list-item-content>
+              </v-list-item>
             </div>
           </v-list>
 
@@ -459,9 +356,7 @@
           >
             <div slot="content" class="ma-0 pa-0">
               <v-card-title class="subtitleView">
-                {{
-                  test.testStructure[heurisIndex].title
-                }}
+                {{ test.testStructure[heurisIndex].title }}
               </v-card-title>
               <v-divider class="mb-5" />
               <v-row
@@ -510,70 +405,6 @@
               </v-row>
             </div>
           </ShowInfo>
-
-          <!-- Consent - Pre Test
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 0"
-          title="Pre Test - Consent"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.consent"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-
-         Form - Pre Test
-        <ShowInfo
-          v-if="index == 0 && preTestIndex == 1"
-          title="Pre Test - Form"
-        >
-          <iframe
-            slot="content"
-            :src="test.preTest.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo>
-         Tasks
-        <ShowInfo
-          v-if="index == 1 && test.testType === 'User'"
-          :title="test.tasks[heurisIndex].name"
-        >
-          <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{
-              test.tasks[heurisIndex].name
-            }}</v-card-title>
-            <v-divider class="mb-5"></v-divider>
-            <ViewTask
-              :item="test.tasks[heurisIndex]"
-              @updatedAnswer="updateAnswer"
-            />
-          </div>
-        </ShowInfo>
-
-         Post Test
-        <ShowInfo v-if="index == 2" title="Post Test">
-          <iframe
-            slot="content"
-            :src="test.postTest.form"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo> -->
         </v-col>
       </v-row>
     </div>
