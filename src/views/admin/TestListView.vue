@@ -23,42 +23,44 @@
           bottom
           right
           color="#F9A826"
-          @click="pushCreate()"
           v-bind="attrs"
+          @click="pushCreate()"
           v-on="on"
         >
-          <v-icon large>mdi-plus</v-icon>
+          <v-icon large>
+            mdi-plus
+          </v-icon>
         </v-btn>
       </template>
       <span>Create new test</span>
     </v-tooltip>
 
     <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
           <!-- Mobile search button -->
-          <v-row align="center" v-if="!searching">
+          <v-row v-if="!searching" align="center">
             <span class="titleText ml-3">Tests</span>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
           <v-text-field
-            :autofocus="searching"
-            @blur="searching = false"
             v-else
+            :autofocus="searching"
             dense
             label="Search"
+            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
-            v-model="search"
-          ></v-text-field>
-          <v-divider class="mb-1"></v-divider>
+            @blur="searching = false"
+          />
+          <v-divider class="mb-1" />
 
           <!-- Desktop Main Tabs -->
           <v-tabs
@@ -71,9 +73,10 @@
             <v-tab>Answers</v-tab>
             <v-tab>Templates</v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
 
             <v-text-field
+              v-model="search"
               dense
               class="mt-1"
               label="Search"
@@ -81,94 +84,95 @@
               :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
               outlined
               color="grey darken-2"
-              v-model="search"
-            ></v-text-field>
+            />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
 
           <!-- Desktop Tests/Answers Sub tabs -->
           <v-tabs
+            v-if="mainIndex !== 2"
             v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex !== 2"
           >
             <v-tab>All</v-tab>
             <v-tab>Personal</v-tab>
             <v-tab>Others</v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
 
           <!-- Desktop Templates Sub tabs -->
           <v-tabs
+            v-if="mainIndex == 2"
             v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex == 2"
           >
             <v-tab>Personal</v-tab>
-            <v-tab @click="setupTempDialog">Explore</v-tab>
+            <v-tab @click="setupTempDialog">
+              Explore
+            </v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
 
           <!-- Mobile Main Button -->
           <v-select
+            v-model="mainIndex"
             dense
             outlined
-            v-model="mainIndex"
             class="hidden-md-and-up mx-2"
             :items="buttonItems"
-          ></v-select>
+          />
 
           <!-- Mobile Sub Buttons -->
           <v-select
+            v-if="mainIndex <= 1"
+            v-model="subIndex"
             dense
             outlined
-            v-model="subIndex"
             class="hidden-md-and-up mx-2"
             :items="testButtonItems"
-            v-if="mainIndex <= 1"
-          ></v-select>
+          />
           <v-select
+            v-else
+            v-model="subIndex"
             dense
             outlined
-            v-model="subIndex"
             class="hidden-md-and-up mx-2"
             :items="templateButtonItems"
-            v-else
-          ></v-select>
+          />
 
           <!-- Tests -> All -->
           <List
-            @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 0"
             :items="filteredAllTests"
             type="myCoops"
-          ></List>
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Personal  -->
           <List
-            @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 1"
             :items="filteredMyTests"
             type="myTests"
-          ></List>
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Others  -->
           <List
-            @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 2"
             :items="filteredMyCoops"
             type="myCoops"
-          ></List>
+            @clicked="goTo"
+          />
 
-          <!-- Answers -> All 
+          <!-- Answers -> All
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 0"
@@ -176,7 +180,7 @@
             type="answers"
           ></List>
 -->
-          <!-- Answers -> Personal 
+          <!-- Answers -> Personal
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 1"
@@ -184,7 +188,7 @@
             type="answers"
           ></List>
 -->
-          <!-- Answers -> Ohters 
+          <!-- Answers -> Ohters
           <List
             @clicked="goTo"
             v-if="mainIndex == 1 && subIndex == 2"
@@ -194,30 +198,30 @@
 -->
           <!-- Templates -> Personal  -->
           <List
-            @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 0"
             :items="filteredMyTemps"
             type="template"
-          ></List>
+            @clicked="setupTempDialog"
+          />
 
           <!-- Templates -> Explore -->
           <List
-            @clicked="setupTempDialog"
             v-if="mainIndex == 2 && subIndex == 1"
             :items="showOnExplore"
             type="template"
-            :hasPagination="true"
+            :has-pagination="true"
+            :disable-next="disableNext"
+            :disable-previous="disablePrevious"
+            @clicked="setupTempDialog"
             @nextPage="nextPage()"
-            :disableNext="disableNext"
             @previousPage="previousPage()"
-            :disablePrevious="disablePrevious"
-          ></List>
+          />
         </v-col>
       </v-row>
 
       <TempDialog
         :dialog="tempDialog"
-        :showDetails="showTempDetails"
+        :show-details="showTempDetails"
         :template="temp"
         @close="tempDialog = false"
       />
@@ -264,61 +268,6 @@ export default {
     tempDialog: false,
     temp: {},
   }),
-  methods: {
-    pushCreate() {
-      this.$router.push('/createtest').catch(() => {})
-    },
-    goTo(test) {
-      this.$router
-        .push(
-          (this.$store.state.Auth.user.accessLevel <= 1
-            ? '/managerview/'
-            : '/testview/') + test.id,
-        )
-        .catch(() => {})
-    },
-    nextPage() {
-      this.page++
-      this.disablePrevious = false
-      if (this.paginatedTemps.length) {
-        //if length == 0 got all templates in database
-        if (this.page > this.lastPage)
-          this.$store
-            .dispatch(
-              'getPaginationTemplates',
-              Object.assign(
-                {},
-                {
-                  itemsPerPage: 2,
-                  last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
-                },
-              ),
-            )
-            .then(() => {
-              this.exploreTemplates.push(...this.paginatedTemps)
-              this.lastPage++
-              if (this.paginatedTemps.length == 0) {
-                this.page-- //no more templates to show, go back one page
-                alert('No more templates to show')
-                this.disableNext = true
-              }
-            })
-      } else if (this.page == this.lastPage - 1) {
-        this.disableNext = true
-      }
-    },
-    previousPage() {
-      this.page--
-      if (this.page <= 1) this.disablePrevious = true
-      this.disableNext = false
-    },
-    setupTempDialog() {
-      this.$store.dispatch('getAllTemplates', {})
-      this.temp = this.$store.state.Templates
-      // this.temp = Object.assign({}, temp);
-      this.tempDialog = true
-    },
-  },
   computed: {
     user() {
       return this.$store.getters.user
@@ -457,6 +406,61 @@ export default {
   },
   created() {
     this.$store.dispatch('getAllTest')
+  },
+  methods: {
+    pushCreate() {
+      this.$router.push('/createtest').catch(() => {})
+    },
+    goTo(test) {
+      this.$router
+        .push(
+          (this.$store.state.Auth.user.accessLevel <= 1
+            ? '/managerview/'
+            : '/testview/') + test.id,
+        )
+        .catch(() => {})
+    },
+    nextPage() {
+      this.page++
+      this.disablePrevious = false
+      if (this.paginatedTemps.length) {
+        //if length == 0 got all templates in database
+        if (this.page > this.lastPage)
+          this.$store
+            .dispatch(
+              'getPaginationTemplates',
+              Object.assign(
+                {},
+                {
+                  itemsPerPage: 2,
+                  last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
+                },
+              ),
+            )
+            .then(() => {
+              this.exploreTemplates.push(...this.paginatedTemps)
+              this.lastPage++
+              if (this.paginatedTemps.length == 0) {
+                this.page-- //no more templates to show, go back one page
+                alert('No more templates to show')
+                this.disableNext = true
+              }
+            })
+      } else if (this.page == this.lastPage - 1) {
+        this.disableNext = true
+      }
+    },
+    previousPage() {
+      this.page--
+      if (this.page <= 1) this.disablePrevious = true
+      this.disableNext = false
+    },
+    setupTempDialog() {
+      this.$store.dispatch('getAllTemplates', {})
+      this.temp = this.$store.state.Templates
+      // this.temp = Object.assign({}, temp);
+      this.tempDialog = true
+    },
   },
 }
 </script>

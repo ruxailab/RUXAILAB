@@ -5,42 +5,45 @@
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to delete this report?</v-card-title
-        >
+        <v-card-title class="headline error white--text" primary-title>
+          Are you sure you want to delete this report?
+        </v-card-title>
 
         <v-card-text>{{ dialogText }}</v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Cancel</v-btn
-          >
+          <v-spacer />
+          <v-btn class="grey lighten-3" text @click="dialog = false">
+            Cancel
+          </v-btn>
           <v-btn
             class="red white--text ml-1"
             :loading="loadingBtn"
             text
             @click="removeReport(report), (loadingBtn = true)"
-            >Delete</v-btn
           >
+            Delete
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-overlay class="text-center" v-model="loading">
+    <v-overlay v-model="loading" class="text-center">
       <v-progress-circular
         indeterminate
         color="#fca326"
         size="50"
-      ></v-progress-circular>
-      <div class="white-text mt-3">Loading Reports</div>
+      />
+      <div class="white-text mt-3">
+        Loading Reports
+      </div>
     </v-overlay>
 
     <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
-    <ShowInfo title="Reports" v-else>
-      <v-row justify="end" dense slot="top" class="mr-3">
+    <ShowInfo v-else title="Reports">
+      <v-row slot="top" justify="end" dense class="mr-3">
         <p class="subtitleView">
           Last Updated: {{ new Date().toLocaleString('en') }}
         </p>
@@ -93,12 +96,12 @@ import ShowInfo from '@/components/organisms/ShowInfo'
 import Intro from '@/components/molecules/IntroReports'
 import Snackbar from '@/components/atoms/Snackbar'
 export default {
-  props: ['id'],
   components: {
     ShowInfo,
     Intro,
     Snackbar,
   },
+  props: ['id'],
   data: () => ({
     headers: [
       { text: 'Evaluator', value: 'userDocId' },
@@ -112,6 +115,51 @@ export default {
     loadingBtn: false,
     report: null,
   }),
+  computed: {
+    reports() {
+      const rawReports = this.$store.getters.testAnswerDocument.heuristicAnswers
+      const processedReports = []
+
+      for (const userId in rawReports) {
+        const report = rawReports[userId]
+        const processedReport = {
+          userDocId: report.userDocId,
+          total: report.total,
+          submitted: this.checkIfIsSubmitted(report.submitted),
+          progress: parseFloat(report.progress).toFixed(2) + '%',
+          lastUpdate: report.lastUpdate,
+        }
+
+        processedReports.push(processedReport)
+      }
+
+      return processedReports
+    },
+    user() {
+      return this.$store.getters.user
+    },
+    test() {
+      return this.$store.getters.test
+    },
+    dialogText() {
+      return (
+        'Are you sure you want to delete ' +
+        (this.report !== null ? this.report.email : '') +
+        '\'s report? This action can\'t be undone'
+      )
+    },
+    answers() {
+      return this.$store.getters.answers || {}
+    },
+  },
+  watch: {
+    reports() {
+      if (Object.values(this.reports)) this.loading = false
+    },
+  },
+  async created() {
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+  },
   methods: {
     checkIfIsSubmitted(status) {
       return status ? 'submitted' : 'in progress'
@@ -178,51 +226,6 @@ export default {
       }
       return cooperatorEmail
     },
-  },
-  computed: {
-    reports() {
-      const rawReports = this.$store.getters.testAnswerDocument.heuristicAnswers
-      const processedReports = []
-
-      for (const userId in rawReports) {
-        const report = rawReports[userId]
-        const processedReport = {
-          userDocId: report.userDocId,
-          total: report.total,
-          submitted: this.checkIfIsSubmitted(report.submitted),
-          progress: parseFloat(report.progress).toFixed(2) + '%',
-          lastUpdate: report.lastUpdate,
-        }
-
-        processedReports.push(processedReport)
-      }
-
-      return processedReports
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    dialogText() {
-      return (
-        'Are you sure you want to delete ' +
-        (this.report !== null ? this.report.email : '') +
-        `'s report? This action can't be undone`
-      )
-    },
-    answers() {
-      return this.$store.getters.answers || {}
-    },
-  },
-  watch: {
-    reports() {
-      if (Object.values(this.reports)) this.loading = false
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
 }
 </script>

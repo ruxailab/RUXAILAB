@@ -6,7 +6,7 @@
  * @param {number} total -Total number of heuristics
  */
 
-import HeuristicQuestionAnswer from "./HeuristicQuestionAnswer";
+import HeuristicQuestionAnswer from './HeuristicQuestionAnswer'
 
 export default class Heuristic {
     constructor({
@@ -15,16 +15,16 @@ export default class Heuristic {
         heuristicQuestions,
         heuristicTotal,
     } = {}) {
-        this.heuristicId = heuristicId;
-        this.heuristicTitle = heuristicTitle;
-        this.heuristicQuestions = heuristicQuestions;
-        this.heuristicTotal = heuristicTotal;
+        this.heuristicId = heuristicId
+        this.heuristicTitle = heuristicTitle
+        this.heuristicQuestions = heuristicQuestions
+        this.heuristicTotal = heuristicTotal
     }
     static toHeuristic(data) {
         return new Heuristic({
             ...data,
-            heuristicQuestions: data.heuristicQuestions.map((h) => HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h))
-        });
+            heuristicQuestions: data.heuristicQuestions.map((h) => HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h)),
+        })
     }
 
     toFirestore() {
@@ -32,7 +32,7 @@ export default class Heuristic {
             heuristicId: this.heuristicId,
             heuristicTitle: this.heuristicTitle,
             heuristicQuestions: this.heuristicQuestions.map((h) => h.toFirestore()),
-            heuristicTotal: this.heuristicTotal
+            heuristicTotal: this.heuristicTotal,
         }
     }
 }
