@@ -4,7 +4,7 @@
     :title="'Answers'"
     :image="'IntroAnswer.svg'"
     :main="
-    $t('descriptions.intro.answers')
+      $t('descriptions.intro.answers')
     "
     :link="$t('descriptions.intro.invite')"
     :items="items"
