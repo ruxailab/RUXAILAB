@@ -13,11 +13,13 @@
           bottom
           right
           color="#F9A826"
-          @click="goToCreateTestRoute()"
           v-bind="attrs"
+          @click="goToCreateTestRoute()"
           v-on="on"
         >
-          <v-icon large>mdi-plus</v-icon>
+          <v-icon large>
+            mdi-plus
+          </v-icon>
         </v-btn>
       </template>
       <span>{{ $t('Dashboard.createNewTest') }}</span>
@@ -25,32 +27,32 @@
 
     <!-- LOADING -->
     <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
 
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
           <!-- Mobile search button -->
-          <v-row align="center" v-if="!searching">
+          <v-row v-if="!searching" align="center">
             <span class="titleText ml-3">{{ $t('Dashboard.tests') }}</span>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
           <v-text-field
-            :autofocus="searching"
-            @blur="searching = false"
             v-else
+            :autofocus="searching"
             dense
             :label="$t('Dashboard.search')"
+            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
-            v-model="search"
-          ></v-text-field>
-          <v-divider class="mb-1"></v-divider>
+            @blur="searching = false"
+          />
+          <v-divider class="mb-1" />
 
           <!-- Desktop Main Tabs -->
           <v-tabs
@@ -63,9 +65,10 @@
             <!-- <v-tab>Answers</v-tab>-->
             <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
 
             <v-text-field
+              v-model="search"
               dense
               class="mt-1"
               :label="$t('Dashboard.search')"
@@ -73,113 +76,112 @@
               :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
               outlined
               color="grey darken-2"
-              v-model="search"
-            ></v-text-field>
+            />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
 
           <!-- Desktop Tests/Answers Sub tabs -->
           <v-tabs
+            v-if="mainIndex === 0"
             v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex === 0"
           >
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
             <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
 
           <!-- Desktop Templates Sub tabs -->
           <v-tabs
+            v-if="mainIndex == 1"
             v-model="subIndex"
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            v-if="mainIndex == 1"
           >
             <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
             <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down"></v-divider>
+          <v-divider class="hidden-sm-and-down" />
           <!-- Mobile Main Button -->
           <v-select
+            v-model="mainIndex"
             dense
             outlined
-            v-model="mainIndex"
             class="hidden-md-and-up mx-2"
             :items="buttonItems"
-          ></v-select>
+          />
 
           <!-- Mobile Sub Buttons -->
           <v-select
+            v-if="mainIndex <= 1"
+            v-model="subIndex"
             dense
             outlined
-            v-model="subIndex"
             class="hidden-md-and-up mx-2"
             :items="testButtonItems"
-            v-if="mainIndex <= 1"
-          ></v-select>
+          />
           <v-select
+            v-else
+            v-model="subIndex"
             dense
             outlined
-            v-model="subIndex"
             class="hidden-md-and-up mx-2"
             :items="templateButtonItems"
-            v-else
-          ></v-select>
+          />
 
           <!-- Tests -> Personal  -->
           <List
-            @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 0"
             :items="filteredTests"
             type="myTests"
-          ></List>
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Others  -->
           <List
-            @clicked="goTo"
             v-if="mainIndex == 0 && subIndex == 1"
             :items="filteredTests"
             type="sharedWithMe"
-          ></List>
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Public Tests -->
           <List
             v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
-            @clicked="goTo"
             :items="filteredTests"
             type="publicTests"
-          ></List>
+            @clicked="goTo"
+          />
 
           <!-- Templates -> Personal -->
           <List
-            @clicked="setupTempDialog"
             v-if="mainIndex == 1 && subIndex == 0"
             :items="filteredTemplates"
             type="myTemplates"
-          ></List>
+            @clicked="setupTempDialog"
+          />
 
           <!-- Templates -> Public Templates -->
           <List
-            @clicked="setupTempDialog"
             v-if="mainIndex == 1 && subIndex == 1"
             :items="filteredTemplates"
             type="publicTemplates"
-          ></List>
+            @clicked="setupTempDialog"
+          />
         </v-col>
       </v-row>
 
       <TempDialog
         :dialog="tempDialog"
-        :showDetails="showTempDetails"
+        :show-details="showTempDetails"
         :template="temp"
         @reloadTemplates="reloadTemplates()"
         @close="tempDialog = false"
@@ -227,6 +229,96 @@ export default {
     tempDialog: false,
     temp: {},
   }),
+  computed: {
+    user() {
+      return this.$store.getters.user
+    },
+    tests() {
+      return this.$store.state.Tests.tests
+    },
+    filteredTests() {
+      let arr = null
+
+      arr = this.tests?.filter((test) => {
+        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
+      })
+
+      return arr ?? this.tests
+    },
+
+    templates() {
+      return this.$store.state.Templates.templates || []
+    },
+    filteredTemplates() {
+      return this.templates.filter((temp) =>
+        temp.header.templateTitle
+          .toLowerCase()
+          .includes(this.search.toLowerCase()),
+      )
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
+    // paginatedTemps() {
+    //   return this.$store.getters.paginatedTemps;
+    // },
+    // showOnExplore() {
+    //   // let array = [];
+    //   let temps = null;
+    //   let start = (this.page - 1) * this.itemsPerPage;
+    //   let finish = this.page * this.itemsPerPage;
+
+    //   temps = this.exploreTemplates.slice(start, finish);
+
+    //   return temps;
+    // },
+    showTempDetails() {
+      return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
+    },
+  },
+  watch: {
+    async mainIndex(val) {
+      this.subIndex = 0 //reset subIndex when main index change
+
+      // If it is on tab tests
+      if (val == 0) {
+        await this.getMyPersonalTests()
+      }
+
+      // If it is on tab templates
+      if (val == 1) {
+        await this.getMyTemplates()
+      }
+    },
+    async subIndex(val) {
+      if (this.mainIndex == 0) {
+        // If it is on tab tests
+        if (val == 0) {
+          await this.getMyPersonalTests()
+        }
+
+        // If it is on tab templates
+        if (val == 1) {
+          await this.getSharedWithMeTests()
+        }
+
+        if (val == 2) {
+          await this.getPublicTests()
+        }
+      } else if (this.mainIndex == 1) {
+        if (val == 0) {
+          await this.getMyTemplates()
+        }
+
+        if (val == 1) {
+          await this.getPublicTemplates()
+        }
+      }
+    },
+  },
+  async created() {
+    await this.getMyPersonalTests()
+  },
   methods: {
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
@@ -320,96 +412,6 @@ export default {
       this.temp = Object.assign({}, temp)
       this.tempDialog = true
     },
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    tests() {
-      return this.$store.state.Tests.tests
-    },
-    filteredTests() {
-      let arr = null
-
-      arr = this.tests?.filter((test) => {
-        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-
-      return arr ?? this.tests
-    },
-
-    templates() {
-      return this.$store.state.Templates.templates || []
-    },
-    filteredTemplates() {
-      return this.templates.filter((temp) =>
-        temp.header.templateTitle
-          .toLowerCase()
-          .includes(this.search.toLowerCase()),
-      )
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    // paginatedTemps() {
-    //   return this.$store.getters.paginatedTemps;
-    // },
-    // showOnExplore() {
-    //   // let array = [];
-    //   let temps = null;
-    //   let start = (this.page - 1) * this.itemsPerPage;
-    //   let finish = this.page * this.itemsPerPage;
-
-    //   temps = this.exploreTemplates.slice(start, finish);
-
-    //   return temps;
-    // },
-    showTempDetails() {
-      return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
-    },
-  },
-  watch: {
-    async mainIndex(val) {
-      this.subIndex = 0 //reset subIndex when main index change
-
-      // If it is on tab tests
-      if (val == 0) {
-        await this.getMyPersonalTests()
-      }
-
-      // If it is on tab templates
-      if (val == 1) {
-        await this.getMyTemplates()
-      }
-    },
-    async subIndex(val) {
-      if (this.mainIndex == 0) {
-        // If it is on tab tests
-        if (val == 0) {
-          await this.getMyPersonalTests()
-        }
-
-        // If it is on tab templates
-        if (val == 1) {
-          await this.getSharedWithMeTests()
-        }
-
-        if (val == 2) {
-          await this.getPublicTests()
-        }
-      } else if (this.mainIndex == 1) {
-        if (val == 0) {
-          await this.getMyTemplates()
-        }
-
-        if (val == 1) {
-          await this.getPublicTemplates()
-        }
-      }
-    },
-  },
-  async created() {
-    await this.getMyPersonalTests()
   },
 }
 </script>

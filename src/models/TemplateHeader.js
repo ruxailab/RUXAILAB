@@ -10,26 +10,26 @@
 * @param {string} templateType - The templateType value.
 */
 
-import TemplateAuthor from "./TemplateAuthor";
+import TemplateAuthor from './TemplateAuthor'
 
 export default class TemplateHeader {
     constructor({
-        templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType
-    } = {}
+        templateAuthor, creationDate, updateDate, templateDescription, isTemplatePublic, templateTitle, templateVersion, templateType,
+    } = {},
     ) {
-        this.templateAuthor = templateAuthor;
-        this.creationDate = creationDate;
-        this.updateDate = updateDate;
-        this.templateDescription = templateDescription;
-        this.isTemplatePublic = isTemplatePublic ?? false;
-        this.templateTitle = templateTitle;
-        this.templateVersion = templateVersion;
-        this.templateType = templateType;
+        this.templateAuthor = templateAuthor
+        this.creationDate = creationDate
+        this.updateDate = updateDate
+        this.templateDescription = templateDescription
+        this.isTemplatePublic = isTemplatePublic ?? false
+        this.templateTitle = templateTitle
+        this.templateVersion = templateVersion
+        this.templateType = templateType
     }
     static toTemplateHeader(data) {
         return new TemplateHeader({
             ...data,
-            templateAuthor: TemplateAuthor.toTemplateAuthor(data.templateAuthor)
+            templateAuthor: TemplateAuthor.toTemplateAuthor(data.templateAuthor),
         })
     }
     toFirestore() {

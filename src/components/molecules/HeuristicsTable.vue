@@ -194,7 +194,7 @@
                         $t('HeuristicsTable.titles.noHeuristicsFound')
                       }}</strong><br>
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
-                      <br />
+                      <br>
                       <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>

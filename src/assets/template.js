@@ -582,5 +582,5 @@ export default {
 	</body>
 	
 	</html>`
-	}
+	},
 }

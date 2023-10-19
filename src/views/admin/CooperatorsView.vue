@@ -1,12 +1,14 @@
 <template>
   <div>
-    <v-overlay class="text-center" v-model="loading" v-if="loading">
+    <v-overlay v-if="loading" v-model="loading" class="text-center">
       <v-progress-circular
         indeterminate
         color="#fca326"
         size="50"
-      ></v-progress-circular>
-      <div class="white-text mt-3">Loading Cooperators</div>
+      />
+      <div class="white-text mt-3">
+        Loading Cooperators
+      </div>
     </v-overlay>
     <Intro
       v-if="cooperatorsEdit.length == 0 && intro && !loading && showCoops"
@@ -31,49 +33,52 @@
               bottom
               right
               color="#F9A826"
-              @click="saveInvitations()"
               v-bind="attrs"
+              @click="saveInvitations()"
               v-on="on"
             >
-              <v-icon large>mdi-email</v-icon>
+              <v-icon large>
+                mdi-email
+              </v-icon>
             </v-btn>
           </template>
           <span>Send invitations</span>
         </v-tooltip>
 
         <ShowInfo title="Cooperators">
-          <div class="ma-0 pa-0" style="background: #f5f7ff" slot="content">
+          <div slot="content" class="ma-0 pa-0" style="background: #f5f7ff">
             <v-chip
-              class="ml-2 mt-2"
               v-for="(coop, i) in selectedCoops"
               :key="i"
-              @click:close="removeSelectedCoops(i)"
+              class="ml-2 mt-2"
               close
-              >{{ typeof coop == 'object' ? coop.email : coop }}</v-chip
+              @click:close="removeSelectedCoops(i)"
             >
+              {{ typeof coop == 'object' ? coop.email : coop }}
+            </v-chip>
             <v-row class="ma-0 pa-0 pt-3" align="center">
               <v-col class="ma-0 pa-0" cols="12" md="10">
                 <v-combobox
+                  v-model="comboboxModel"
+                  :key="comboboxKey"
                   :hide-no-data="false"
+                  ref="combobox"
                   :autofocus="comboboxKey == 0 ? false : true"
                   style="background: #f5f7ff"
                   :items="users"
                   item-text="email"
                   label="Select cooperator"
-                  @input="validateEmail()"
-                  v-model="comboboxModel"
                   multiple
-                  :key="comboboxKey"
-                  ref="combobox"
                   outlined
                   dense
                   color="#fca326"
                   class="mx-2"
+                  @input="validateEmail()"
                 >
-                  <template v-slot:no-data
-                    >There are no users registered with that email, press enter
-                    to select anyways.</template
-                  >
+                  <template v-slot:no-data>
+                    There are no users registered with that email, press enter
+                    to select anyways.
+                  </template>
                 </v-combobox>
               </v-col>
               <v-col class="ma-0 pa-0" cols="12" md="2">
@@ -85,7 +90,7 @@
                   outlined
                   dense
                   :items="roleOptions"
-                ></v-select>
+                />
               </v-col>
             </v-row>
             <v-data-table
@@ -103,7 +108,9 @@
               <!-- Email -->
               <template v-slot:item.email="{ item }">
                 <v-row align="center">
-                  <v-icon class="mr-2">mdi-account-circle</v-icon>
+                  <v-icon class="mr-2">
+                    mdi-account-circle
+                  </v-icon>
                   <div>{{ item.email }}</div>
                 </v-row>
               </template>
@@ -111,38 +118,42 @@
               <!-- Role -->
               <template v-slot:item.accessLevel="{ item }">
                 <v-select
+                  :ref="'select' + cooperatorsEdit.indexOf(item)"
                   color="#fca326"
                   style="max-width: 200px"
-                  @change="changeRole(item, $event)"
                   :value="item.accessLevel"
-                  :ref="'select' + cooperatorsEdit.indexOf(item)"
                   return-object
                   dense
                   :items="roleOptions"
                   :v-text="item.accessLevel.text"
                   :disabled="!item.invited || item.accepted ? false : true"
-                  class="mt-3"
                   :key="dataTableKey"
-                ></v-select>
+                  class="mt-3"
+                  @change="changeRole(item, $event)"
+                />
               </template>
 
               <!-- Invited -->
               <template v-slot:item.invited="{ item }">
-                <v-icon color="#8EB995" v-if="item.invited"
-                  >mdi-checkbox-marked-circle-outline</v-icon
-                >
-                <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+                <v-icon v-if="item.invited" color="#8EB995">
+                  mdi-checkbox-marked-circle-outline
+                </v-icon>
+                <v-icon v-else color="#F47C7C">
+                  mdi-close-circle-outline
+                </v-icon>
               </template>
 
               <!-- Accepted -->
               <template v-slot:item.accepted="{ item }">
-                <v-icon color="#F9A826" v-if="item.accepted == null"
-                  >mdi-checkbox-blank-circle-outline</v-icon
-                >
-                <v-icon color="#8EB995" v-else-if="item.accepted"
-                  >mdi-checkbox-marked-circle-outline</v-icon
-                >
-                <v-icon color="#F47C7C" v-else>mdi-close-circle-outline</v-icon>
+                <v-icon v-if="item.accepted == null" color="#F9A826">
+                  mdi-checkbox-blank-circle-outline
+                </v-icon>
+                <v-icon v-else-if="item.accepted" color="#8EB995">
+                  mdi-checkbox-marked-circle-outline
+                </v-icon>
+                <v-icon v-else color="#F47C7C">
+                  mdi-close-circle-outline
+                </v-icon>
               </template>
 
               <!-- More -->
@@ -156,26 +167,26 @@
 
                   <v-list>
                     <v-list-item
-                      @click=";(messageModel = true), (selectedUser = item)"
                       link
+                      @click=";(messageModel = true), (selectedUser = item)"
                     >
                       <v-list-item-title>Send a message</v-list-item-title>
                     </v-list-item>
                     <v-list-item
-                      @click="reinvite(item)"
-                      link
                       v-if="item.accepted == false"
+                      link
+                      @click="reinvite(item)"
                     >
                       <v-list-item-title>Re-invite</v-list-item-title>
                     </v-list-item>
 
-                    <v-list-item @click="removeCoop(item)" v-if="item.accepted">
+                    <v-list-item v-if="item.accepted" @click="removeCoop(item)">
                       <v-list-item-title>Remove cooperator</v-list-item-title>
                     </v-list-item>
 
                     <v-list-item
-                      @click="cancelInvitation(item)"
                       v-if="item.invited && !item.accepted"
+                      @click="cancelInvitation(item)"
                     >
                       <v-list-item-title>Cancel invitation</v-list-item-title>
                     </v-list-item>
@@ -195,7 +206,9 @@
             style="background-color: #F9A826; color: white;"
             class="rounded-top-lg"
           >
-            <v-icon color="white" class="mr-2">mdi-email</v-icon>
+            <v-icon color="white" class="mr-2">
+              mdi-email
+            </v-icon>
             Send a Message
           </v-card-title>
           <v-card-text>
@@ -206,7 +219,7 @@
               hint="Type a title for your message"
               outlined
               class="rounded-lg mt-4"
-            ></v-text-field>
+            />
             <v-textarea
               v-model="messageContent"
               required
@@ -214,12 +227,12 @@
               hint="Type the content of your message"
               outlined
               class="rounded-lg"
-            ></v-textarea>
+            />
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="red"
               outlined
@@ -255,7 +268,6 @@ import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
 const UIDGenerator = require('uid-generator')
 export default {
-  props: ['id'],
   components: {
     ShowInfo,
     Snackbar,
@@ -263,6 +275,7 @@ export default {
     AccessNotAllowed,
     LeaveAlert,
   },
+  props: ['id'],
   data: () => ({
     object: null,
     headers: cooperatorsHeaders,
@@ -281,19 +294,51 @@ export default {
     messageTitle: '',
     messageContent: '',
   }),
+  computed: {
+    dialog() {
+      return this.$store.state.dialog
+    },
+    test() {
+      return this.$store.getters.test
+    },
+    user() {
+      return this.$store.getters.user
+    },
+    users() {
+      return this.$store.state.Users.users
+    },
+    cooperatorsEdit() {
+      if (this.test.cooperators) return [...this.test.cooperators]
+      return []
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
+  },
+  watch: {
+    loading() {
+      if (!this.loading) {
+        if (this.cooperatorsEdit.length == 0) this.intro = true
+        else this.intro = false
+      }
+    },
+  },
+  created() {
+    this.$store.dispatch('getAllUsers')
+  },
   methods: {
     removeSelectedCoops(index) {
       this.selectedCoops.splice(index, 1)
     },
     async changeRole(item, event) {
-      let index = this.cooperatorsEdit.indexOf(item)
-      let newCoop = Object.assign({}, item)
+      const index = this.cooperatorsEdit.indexOf(item)
+      const newCoop = Object.assign({}, item)
       newCoop.accessLevel = event.value
       const currentAccessLevelText = this.roleOptions.find(
         (r) => r.value === item.accessLevel,
       ).text
       if (item.accessLevel !== event.value) {
-        let ok = confirm(
+        const ok = confirm(
           `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`,
         )
         if (ok) {
@@ -335,7 +380,7 @@ export default {
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
-            title: `Cooperation Invite!`,
+            title: 'Cooperation Invite!',
             description: `You have been invited to test ${this.test.testTitle}!`,
             redirectsTo: `${path}/${this.test.id}/${guest.token}`,
             author: `${this.test.testAdmin.email}`,
@@ -359,7 +404,7 @@ export default {
           notification: new Notification({
             title: `${messageTitle}`,
             description: `${messageContent}`,
-            redirectsTo: `/`,
+            redirectsTo: '/',
             read: false,
             author: `${this.test.testAdmin.email}`,
           }),
@@ -421,12 +466,12 @@ export default {
       }
     },
     async removeCoop(coop) {
-      let ok = confirm(
+      const ok = confirm(
         `Are you sure you want to remove ${coop.email} from your cooperators?`,
       )
       if (ok) {
         // Remove from test
-        let index = this.cooperatorsEdit.indexOf(coop)
+        const index = this.cooperatorsEdit.indexOf(coop)
         this.cooperatorsEdit.splice(index, 1)
         this.test.cooperators = this.cooperatorsEdit
         this.test.numberColaborators = this.test.numberColaborators - 1
@@ -439,7 +484,7 @@ export default {
       }
     },
     removeFromList(coop) {
-      let index = this.cooperatorsEdit.indexOf(coop)
+      const index = this.cooperatorsEdit.indexOf(coop)
       this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
@@ -466,48 +511,16 @@ export default {
       await this.$store.dispatch('sendEmailInvitation', email)
     },
     async cancelInvitation(guest) {
-      let ok = confirm(
+      const ok = confirm(
         `Are you sure you want to cancel ${guest.email} from your cooperators?`,
       )
       if (ok) {
-        let index = this.cooperatorsEdit.indexOf(guest)
+        const index = this.cooperatorsEdit.indexOf(guest)
         this.cooperatorsEdit.splice(index, 1)
         this.test.cooperators = this.cooperatorsEdit
         await this.$store.dispatch('updateTest', this.test)
       }
     },
-  },
-  watch: {
-    loading() {
-      if (!this.loading) {
-        if (this.cooperatorsEdit.length == 0) this.intro = true
-        else this.intro = false
-      }
-    },
-  },
-  computed: {
-    dialog() {
-      return this.$store.state.dialog
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    users() {
-      return this.$store.state.Users.users
-    },
-    cooperatorsEdit() {
-      if (this.test.cooperators) return [...this.test.cooperators]
-      return []
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-  },
-  created() {
-    this.$store.dispatch('getAllUsers')
   },
 }
 </script>

@@ -5,14 +5,22 @@
     color="#FCA326"
     class="pb-0 mb-0"
   >
-    <v-tab @click="tabClicked(0)"> Pre Test </v-tab>
-    <v-tab @click="tabClicked(1)"> Tasks </v-tab>
-    <v-tab @click="tabClicked(2)"> Post Test </v-tab>
+    <v-tab @click="tabClicked(0)">
+      Pre Test
+    </v-tab>
+    <v-tab @click="tabClicked(1)">
+      Tasks
+    </v-tab>
+    <v-tab @click="tabClicked(2)">
+      Post Test
+    </v-tab>
   </v-tabs>
 
-  <v-col cols="12" v-else-if="type == 'content'">
+  <v-col v-else-if="type == 'content'" cols="12">
     <v-card v-if="index == 0" style="background: #f5f7ff">
-      <v-card-title class="subtitleView"> Pre Test </v-card-title>
+      <v-card-title class="subtitleView">
+        Pre Test
+      </v-card-title>
 
       <v-divider />
       <FormPreTest :object="formData" @input="updateData" />
@@ -26,7 +34,9 @@
     />
 
     <v-card v-if="index == 2" style="background: #f5f7ff">
-      <v-card-title class="subtitleView"> Post Test </v-card-title>
+      <v-card-title class="subtitleView">
+        Post Test
+      </v-card-title>
 
       <v-divider />
       <v-row justify="space-around">

@@ -12,17 +12,17 @@
 
 export default class UserTemplate{
     constructor({
-        templateDocid, templateTitle, templateType, templateVersion, creationDate, updateDate, templateDescription, isPublic
-    } = {}
+        templateDocid, templateTitle, templateType, templateVersion, creationDate, updateDate, templateDescription, isPublic,
+    } = {},
     ) {
-        this.templateDocid = templateDocid;
-        this.templateTitle = templateTitle;
-        this.templateType = templateType;
-        this.templateVersion = templateVersion;
-        this.creationDate = creationDate;
-        this.updateDate = updateDate;
-        this.templateDescription = templateDescription;
-        this.isPublic = isPublic;
+        this.templateDocid = templateDocid
+        this.templateTitle = templateTitle
+        this.templateType = templateType
+        this.templateVersion = templateVersion
+        this.creationDate = creationDate
+        this.updateDate = updateDate
+        this.templateDescription = templateDescription
+        this.isPublic = isPublic
     }
     static toUserTemplate(data) {
         return new UserTemplate(data)
