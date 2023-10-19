@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="ma-0">
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -10,7 +10,7 @@
         >
           {{ itemEdit.title }}
         </v-card-title>
-        <v-row class="ma-0 mt-3">
+        <v-row class="ma-0">
           <v-col cols="10">
             <v-form ref="formEdit" @submit.prevent="validateEdit()">
               <v-text-field
@@ -83,7 +83,7 @@
 
     <!--Card Create New Heuristic-->
     <v-dialog v-model="dialogHeuris" width="800" persistent>
-      <v-card style="overflow: hidden">
+      <v-card>
         <v-card-title
           class="headline white--text"
           style="background-color: #fca326"
@@ -91,7 +91,7 @@
         >
           {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
         </v-card-title>
-        <v-row justify="center">
+        <v-row justify="center" class="ma-0">
           <v-col cols="10">
             <v-form
               v-if="heuristicForm"
@@ -135,8 +135,7 @@
     <v-dialog v-model="dialog" width="800" persistent />
 
     <!-- Main -->
-    <v-col cols="12">
-      <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
+      <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0" width="100%">
         <v-card-title class="subtitleView">
           {{ $t('HeuristicsTable.titles.currentHeuristics') }}
         </v-card-title>
@@ -517,7 +516,7 @@
 
         <v-row v-else justify="center">
           <v-col class="ma-10" cols="10">
-            <v-row justify="center" align="center">
+            <v-row justify="center" align="center" class="ma-0">
               <p class="subtitleView">
                 {{ $t('HeuristicsTable.messages.noHeuristics') }}
               </p>
@@ -532,7 +531,6 @@
           </v-col>
         </v-row>
       </v-card>
-    </v-col>
   </v-row>
 </template>
 
