@@ -10,37 +10,38 @@
                 {{ $t('SIGNIN.sign-in') }}
               </div>
 
-              <div class="divider"></div>
+              <div class="divider" />
 
               <v-form class="mx-3" @keyup.native.enter="onSignIn()">
                 <v-text-field
+                  v-model="email"
                   :label="$t('SIGNIN.email')"
                   outlined
                   prepend-inner-icon="mdi-account-circle"
-                  v-model="email"
                   dense
-                ></v-text-field>
+                />
 
                 <v-text-field
+                  v-model="password"
                   :label="$t('SIGNIN.password')"
                   prepend-inner-icon="mdi-lock"
                   outlined
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
                   :type="showPassword ? 'text' : 'password'"
-                  v-model="password"
                   dense
-                ></v-text-field>
+                  @click:append="showPassword = !showPassword"
+                />
               </v-form>
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   color="#F9A826"
                   rounded
                   class="white--text"
-                  @click="onSignIn()"
                   :loading="loading"
-                  >{{ $t('SIGNIN.sign-in') }}</v-btn
+                  @click="onSignIn()"
                 >
+                  {{ $t('SIGNIN.sign-in') }}
+                </v-btn>
               </v-card-actions>
               <v-card-actions class="justify-center mt-1">
                 <p>
@@ -52,7 +53,7 @@
             </v-col>
 
             <v-col cols="7" class="hidden-sm-and-down" align-self="center">
-              <v-img src="@/assets/signIn.svg"></v-img>
+              <v-img src="@/assets/signIn.svg" />
             </v-col>
           </v-row>
         </v-card>
@@ -66,6 +67,10 @@ import Snackbar from '@/components/atoms/Snackbar'
 //import AuthController from "@/controllers/AuthController";
 
 export default {
+
+  components: {
+    Snackbar,
+  },
   data: () => ({
     showPassword: false,
     email: '',
@@ -93,10 +98,6 @@ export default {
         console.error('Erro de autenticação:', error)
       }
     },
-  },
-
-  components: {
-    Snackbar,
   },
 }
 </script>
