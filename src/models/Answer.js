@@ -9,12 +9,12 @@ export default class Answer {
     constructor({
         type,
         heuristicAnswers,
-        taskAnswers
-    } = {}
+        taskAnswers,
+    } = {},
     ) {
-        this.type = type;
-        this.heuristicAnswers = heuristicAnswers;
-        this.taskAnswers = taskAnswers;
+        this.type = type
+        this.heuristicAnswers = heuristicAnswers
+        this.taskAnswers = taskAnswers
     }
     static toAnswer(data) {
         return new Answer(data)
@@ -24,7 +24,7 @@ export default class Answer {
         return {
             type: this.type ?? '',
             heuristicAnswers: this.heuristicAnswers ?? {},
-            taskAnswers: this.taskAnswers ?? {}
+            taskAnswers: this.taskAnswers ?? {},
         }
     }
 }
