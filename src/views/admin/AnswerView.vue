@@ -330,7 +330,7 @@ export default {
     IntroAnswer,
     AnalyticsView,
   },
-  props: ['id'],
+  props: { id: { type: String, default: '' } },
   data: () => ({
     tab: 0,
     ind: 0,
