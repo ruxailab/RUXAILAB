@@ -4,16 +4,18 @@
       <HeuristicsAnalytics />
     </div>
     <div v-else>
-      aaaaaaaa
+      <UserAnalytics />
     </div>
   </div>
 </template>
 
 <script>
 import HeuristicsAnalytics from '@/components/organisms/HeuristicsAnalytics.vue'
+import UserAnalytics from '@/components/organisms/UserAnalytics.vue'
 export default {
   components: {
     HeuristicsAnalytics,
+    UserAnalytics,
   },
   computed: {
 
