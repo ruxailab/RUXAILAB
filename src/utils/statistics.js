@@ -58,12 +58,12 @@ function answers() {
           postTestUrl: 'https://example.com/posttest_A_1',
           tasks: {
             'taskId_1': {
-              taskAnswer: 'Answer to Task A1',
-              taskObservations: 'Observations for Task A1',
-              taskTime: 'Task A1 Time',
-              audioRecordURL: 'https://example.com/audio_A_1',
-              screenRecordURL: 'https://example.com/screen_A_1',
-              webcamRecordURL: 'https://example.com/webcam_A_1',
+              taskAnswer: '',
+              taskObservations: '',
+              taskTime: '',
+              audioRecordURL: '',
+              screenRecordURL: '',
+              webcamRecordURL: '',
             },
             'taskId_2': {
               taskAnswer: 'Answer to Task A2',
@@ -116,12 +116,12 @@ function answers() {
           postTestUrl: 'https://example.com/posttest_C_1',
           tasks: {
             'taskId_1': {
-              taskAnswer: 'Answer to Task C1',
-              taskObservations: 'Observations for Task C1',
-              taskTime: 'Task C1 Time',
-              audioRecordURL: 'https://example.com/audio_C_1',
-              screenRecordURL: 'https://example.com/screen_C_1',
-              webcamRecordURL: 'https://example.com/webcam_C_1',
+              taskAnswer: '',
+              taskObservations: '',
+              taskTime: '',
+              audioRecordURL: '',
+              screenRecordURL: '',
+              webcamRecordURL: '',
             },
             'taskId_2': {
               taskAnswer: 'Answer to Task C2',
@@ -130,6 +130,14 @@ function answers() {
               audioRecordURL: 'https://example.com/audio_C_2',
               screenRecordURL: 'https://example.com/screen_C_2',
               webcamRecordURL: 'https://example.com/webcam_C_2',
+            },
+            'taskId_3': {
+              taskAnswer: '',
+              taskObservations: '',
+              taskTime: '',
+              audioRecordURL: '',
+              screenRecordURL: '',
+              webcamRecordURL: '',
             },
           },
           progress: 70,
