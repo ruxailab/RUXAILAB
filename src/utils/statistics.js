@@ -76,7 +76,7 @@ function answers() {
           },
           progress: 60,
           total: 100,
-          submitted: false,
+          submitted: true,
           userDocId: 'userDocID_1',
           lastUpdate: new Date(), // Current timestamp
         },
@@ -134,7 +134,7 @@ function answers() {
           },
           progress: 40,
           total: 100,
-          submitted: false,
+          submitted: true,
           userDocId: 'userDocID_3',
           lastUpdate: new Date(), // Current timestamp
         },
@@ -142,10 +142,19 @@ function answers() {
     },
   ]
 
+  const taskAnswersArray = [];
+
+  for (const userAnswer of mockUserAnswers) {
+    const taskAnswers = userAnswer.taskAnswers;
+    for (const userDocId in taskAnswers) {
+      taskAnswersArray.push(taskAnswers[userDocId]);
+    }
+  }
+
   if (store.getters.testAnswerDocument) {
     return store.getters.testAnswerDocument.type === 'HEURISTICS'
       ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
-      : Object.values(mockUserAnswers)
+      : Object.values(taskAnswersArray)
   }
   return []
 }
@@ -162,10 +171,10 @@ function statistics() {
   const resultEvaluator = []
   const answersA = answers()
   if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
-
     //Get Evaluator answers
     let evaluatorIndex = 1
     answersA.forEach((evaluator) => {
+      console.log(evaluator)
       let SelectEvaluator = resultEvaluator.find(
         (e) => e.userDocId == `Ev${evaluatorIndex}`,
       )
@@ -219,7 +228,24 @@ function statistics() {
     // created(resultEvaluator)
     return resultEvaluator
   } else {
-    console.log(answersA)
+    answersA.forEach((evaluator) => {
+      console.log(evaluator)
+      let evaluatorIndex = 1
+      let SelectEvaluator = resultEvaluator.find(
+        (e) => e.userDocId == `Ev${evaluatorIndex}`,
+      )
+      if (!SelectEvaluator) {
+        resultEvaluator.push({
+          userDocId: evaluator.userDocId,
+          email: 'noemail@email.com',
+          id: `Ev${evaluatorIndex}`,
+          heuristics: [],
+          result: 0,
+        })
+        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
+      }
+      console.log(SelectEvaluator)
+    })
   }
 }
 
