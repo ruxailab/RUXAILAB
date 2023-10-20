@@ -380,9 +380,7 @@ export default {
         },
         answers() {
             if (this.testAnswerDocument) {
-                return this.testAnswerDocument.type === 'HEURISTICS'
-                    ? Object.values(this.testAnswerDocument.heuristicAnswers)
-                    : Object.values(this.testAnswerDocument.taskAnswers)
+                return Object.values(this.testAnswerDocument.heuristicAnswers)
             }
             return []
         },
