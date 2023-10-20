@@ -9,24 +9,22 @@
         <ShowInfo title="Answers">
           <!-- Main Tabs -->
           <v-tabs slot="top" v-model="tab" background-color="transparent" color="#FCA326" class="ml-4">
-            <v-tab @click="tab = 0">
+            <!-- <v-tab @click="tab = 0">
               Statistics
-            </v-tab>
-            <v-tab @click="tab = 1">
+            </v-tab> -->
+            <v-tab @click="tab = 0">
               Evaluators
             </v-tab>
-            <v-tab @click="tab = 2">
+            <!-- <v-tab @click="tab = 2">
               Heuristics
             </v-tab>
             <v-tab @click="tab = 3">
               Analytics
-            </v-tab>
+            </v-tab> -->
           </v-tabs>
 
-          <!-- Main Tabs Content -->
           <div slot="content" class="ma-0 pa-0">
-            <!-- Tab 1 - Statistics -->
-            <v-card v-if="tab == 0" style="background: #f5f7ff">
+            <!-- <v-card v-if="tab == 0" style="background: #f5f7ff">
               <v-card-title class="subtitleView">
                 Statistics
               </v-card-title>
@@ -34,11 +32,9 @@
               <v-divider />
 
               <v-row justify="space-around" class="ma-0">
-                <!-- Top Card -->
                 <v-col cols="10">
                   <v-card class="cardStyle">
                     <v-row justify="space-around" class="ma-0">
-                      <!-- Average -->
                       <v-col cols="4">
                         <v-row justify="center" class="ma-0">
                           <v-card-title class="mt-4">
@@ -56,7 +52,6 @@
 
                       <v-divider vertical />
 
-                      <!-- Info -->
                       <v-col>
                         <v-list class="transparent">
                           <v-list-item>
@@ -101,10 +96,9 @@
                   </v-card>
                 </v-col>
               </v-row>
-            </v-card>
+            </v-card> -->
 
-            <!-- Tab 2 - Evaluators -->
-            <v-card v-if="tab == 1" style="background: #f5f7ff">
+            <v-card v-if="tab == 0" style="background: #f5f7ff">
               <v-card-title class="subtitleView">
                 Evaluators
               </v-card-title>
@@ -115,9 +109,9 @@
                 <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
                   Table
                 </v-tab>
-                <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
+                <!-- <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
                   Graphic
-                </v-tab>
+                </v-tab> -->
               </v-tabs>
 
               <v-row justify="center">
@@ -140,7 +134,7 @@
                   </v-data-table>
                 </v-col>
 
-                <v-col v-if="ind == 1" cols="10">
+                <!-- <v-col v-if="ind == 1" cols="10">
                   <RadarChart v-if="evaluatorStatistics.items.length >= 3" :labels="evaluatorStatistics.items.map(
                     (item) => `${item.evaluator} - ${item.result}%`,
                   )
@@ -152,19 +146,17 @@
                       please colect more data from your research to procede.
                     </v-card-text>
                   </v-card>
-                </v-col>
+                </v-col> -->
               </v-row>
             </v-card>
 
-            <!-- Tab 3 - Heuristics-->
-            <v-card v-if="tab == 2" style="background: #f5f7ff">
+            <!-- <v-card v-if="tab == 2" style="background: #f5f7ff">
               <v-card-title class="subtitleView">
                 Heuristics Data
               </v-card-title>
 
               <v-divider />
 
-              <!-- Bottom Tabs -->
               <v-tabs background-color="transparent" color="grey darken-2" class="mt-2" centered>
                 <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
                   Answers by Evaluator
@@ -177,11 +169,9 @@
                 </v-tab>
               </v-tabs>
 
-              <!-- Bottom Tab Content -->
               <v-row justify="center">
                 <v-col cols="10">
                   <v-row>
-                    <!-- Bottom Tab 1 -->
                     <v-col v-if="ind == 0" cols="12">
                       <v-data-table :headers="heuristicsEvaluator.header"
                                     :items="heuristicsEvaluator.items" :items-per-page="15"
@@ -207,7 +197,6 @@
                         </template>
                       </v-data-table>
                     </v-col>
-                    <!-- Bottom Tab 2 -->
                     <v-col v-if="ind == 1" cols="12">
                       <v-data-table :headers="heuristicsStatistics.header"
                                     :items="heuristicsStatistics.items" :items-per-page="15"
@@ -224,7 +213,6 @@
                         </template>
                       </v-data-table>
                     </v-col>
-                    <!-- Bottom Tab 3 -->
                     <v-col v-if="ind == 2" cols="12">
                       <BarChart :labels="heuristicsStatistics.items.map((item) => item.name)
                       " :data="heuristicsStatistics.items.map((item) => item.average)
@@ -235,7 +223,7 @@
                 </v-col>
               </v-row>
             </v-card>
-            <AnalyticsView v-if="tab == 3" />
+            <AnalyticsView v-if="tab == 3" /> -->
           </div>
         </ShowInfo>
       </v-row>
@@ -247,21 +235,21 @@
 </template>
 
 <script>
-import BarChart from '@/components/atoms/BarChart.vue'
-import RadarChart from '@/components/atoms/RadarChart.vue'
+// import BarChart from '@/components/atoms/BarChart.vue'
+// import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
-import AnalyticsView from '@/views/admin/AnalyticsView.vue'
+// import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
 export default {
     components: {
-        BarChart,
-        RadarChart,
+        // BarChart,
+        // RadarChart,
         ShowInfo,
         IntroAnswer,
-        AnalyticsView,
+        // AnalyticsView,
     },
     props: { id: { type: String, default: '' } },
     data: () => ({
@@ -411,8 +399,8 @@ export default {
                                     webcamRecordURL: 'https://example.com/webcam_A_2',
                                 },
                             },
-                            progress: 60,
-                            total: 100,
+                            progress: 100,
+                            total: 10,
                             submitted: false,
                             userDocId: 'userDocID_1',
                             lastUpdate: new Date(), // Current timestamp
@@ -437,7 +425,7 @@ export default {
                                 },
                             },
                             progress: 30,
-                            total: 100,
+                            total: 5,
                             submitted: true,
                             userDocId: 'userDocID_2',
                             lastUpdate: new Date(), // Current timestamp
@@ -469,8 +457,8 @@ export default {
                                     webcamRecordURL: 'https://example.com/webcam_C_2',
                                 },
                             },
-                            progress: 40,
-                            total: 100,
+                            progress: 70,
+                            total: 12,
                             submitted: false,
                             userDocId: 'userDocID_3',
                             lastUpdate: new Date(), // Current timestamp
