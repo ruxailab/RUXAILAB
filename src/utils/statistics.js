@@ -216,8 +216,33 @@ function statistics() {
       })
       evaluatorIndex++
     } else {
-    }
+      console.log('======= fell on else =======')
+      let taskIndex = 1
+      let totalQuestions = 0
+      evaluator.tasks.forEach((task) => {
+        let noAplication = 0
+        let noReply = 0
+        if (task.taskAnswer === null){
+          noAplication++
+        }
+        if (task.taskAnswer === ''){
+          noReply++
+        }
+        totalQuestions++
 
+        if (noAplication == totalQuestions) res = null
+
+        SelectEvaluator.heuristics.push({
+          id: `H${heurisIndex}`,
+          result: res == -1 ? 0 : res,
+          totalQuestions: heuristic.heuristicTotal,
+          totalNoAplication: noAplication,
+          totalNoReply: noReply,
+        })
+        taskIndex++
+      })
+      evaluatorIndex++
+    }
   })
 
   resultEvaluator.forEach((ev) => {
