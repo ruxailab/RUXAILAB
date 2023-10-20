@@ -208,13 +208,13 @@ export default {
     searching: false,
     buttonItems: [
       { text: 'Tests', value: 0 },
-      { text: 'Answers', value: 1 },
-      { text: 'Templates', value: 2 },
+      // { text: 'Answers', value: 1 },
+      { text: 'Templates', value: 1 },
     ],
     testButtonItems: [
-      { text: 'All', value: 0 },
-      { text: 'Personal', value: 1 },
-      { text: 'Others', value: 2 },
+      { text: 'My Tests', value: 0 },
+      { text: 'Shared With Me', value: 1 },
+      { text: 'Public Tests', value: 2 },
     ],
     templateButtonItems: [
       { text: 'Personal', value: 0 },
