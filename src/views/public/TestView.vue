@@ -511,6 +511,7 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.populateWithHeuristicQuestions()
     this.calculateProgress()
+    console.log('Computed: currentUserTestAnswer', this.currentUserTestAnswer)
   },
   methods: {
     updateComment(comment, heurisIndex, answerIndex) {

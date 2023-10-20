@@ -201,7 +201,7 @@
                 :color="index == item.id ? '#ffffff' : '#fca326'"
                 >mdi-chevron-down</v-icon
               >
-              <template v-slot:activatosr>
+              <template v-slot:activator>
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
                     item.icon
@@ -212,35 +212,37 @@
                   >{{ item.title }}</v-list-item-title
                 >
               </template>
-
-              <v-list-item
-                v-for="(preTest, i) in item.value"
-                :key="i"
-                @click="preTestIndex = i"
-              >
-                <v-list-item-icon>
-                  <v-icon
-                    :color="preTestIndex == preTest.id ? '#ffffff' : '#fca326'"
-                    >{{ preTest.icon }}</v-icon
+              <v-tooltip right v-for="(task, i) in item.value" :key="i">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-list-item
+                    @click="heurisIndex = i"
+                    link
+                    v-bind="attrs"
+                    v-on="on"
                   >
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title
-                    :style="
-                      preTestIndex == preTest.id
-                        ? 'color: white'
-                        : 'color:#fca326'
-                    "
-                    >{{ preTest.title }}</v-list-item-title
-                  >
-                </v-list-item-content>
-              </v-list-item>
+                    <v-list-item-icon>
+                      <v-icon
+                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
+                        >{{ task.icon }}</v-icon
+                      >
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :style="
+                          heurisIndex == i ? 'color: white' : 'color:#fca326'
+                        "
+                        >{{ task.title }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
             </v-list-group>
             <!--Tasks--->
             <v-list-group
               @click="index = item.id"
-              v-if="item.id == 1 && test.testType == 'User'"
+              v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
             >
@@ -316,7 +318,10 @@
 
       <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
         <!-- Consent - Pre Test -->
-        <ShowInfo title="Pre Test - Consent">
+        <ShowInfo
+          v-if="index == 0 && preTestIndex == 0"
+          title="Pre Test - Consent"
+        >
           <iframe
             slot="content"
             :src="test.testStructure.preTest.consentUrl"
@@ -336,7 +341,7 @@
         >
           <iframe
             slot="content"
-            :src="test.preTest.form"
+            :src="test.testStructure.preTest.preTestUrl"
             width="100%"
             height="900"
             frameborder="0"
@@ -348,16 +353,15 @@
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
-          :title="test.tasks[heurisIndex].name"
+          :title="test.testStructure.userTasks[heurisIndex].taskName"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{
-              test.tasks[heurisIndex].name
+              test.testStructure.userTasks[heurisIndex].taskName
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
             <ViewTask
-              :item="test.tasks[heurisIndex]"
-              @updatedAnswer="updateAnswer"
+              :item="test.testStructure.userTasks[heurisIndex]"
             />
           </div>
         </ShowInfo>
@@ -366,7 +370,7 @@
         <ShowInfo v-if="index == 2" title="Post Test">
           <iframe
             slot="content"
-            :src="test.postTest.form"
+            :src="test.testStructure.postTest.postTestUrl"
             width="100%"
             height="900"
             frameborder="0"
@@ -386,6 +390,7 @@ import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
+import ViewTask from '@/components/molecules/ViewTask.vue'
 export default {
   props: ['id', 'token'],
   components: {
@@ -394,6 +399,7 @@ export default {
     Snackbar,
     CardSignIn,
     CardSignUp,
+    ViewTask,
   },
   data: () => ({
     logined: null,
@@ -437,6 +443,7 @@ export default {
     },
   },
   created() {
+    this.mappingSteps()
     console.log(this.test.testStructure)
     console.log('items: ', this.items)
     console.log('Computed: test', this.test)
@@ -445,7 +452,6 @@ export default {
   },
   methods: {
     async saveAnswer() {
-      this.currentUserTestAnswer.progress = this.calculatedProgress
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
@@ -464,68 +470,72 @@ export default {
       this.noExistUser = false
     },
     mappingSteps() {
-      if (this.test.type === 'User') {
-        //PreTest
-        if (this.validate(this.test.preTest.consent))
+      //PreTest
+      if (this.validate(this.test.testStructure.preTest.consentUrl)) {
+        this.items.push({
+          title: 'Pre-test',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: [
+            {
+              title: 'Consent',
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: 0,
+            },
+          ],
+          id: 0,
+        })
+      }
+
+      if (this.validate(this.test.testStructure.preTest.preTestUrl)) {
+        if (this.items.length) {
+          this.items[0].value.push({
+            title: 'Form',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            id: 1,
+          })
+        } else {
           this.items.push({
             title: 'Pre Test',
             icon: 'mdi-checkbox-blank-circle-outline',
             value: [
               {
-                title: 'Consent',
+                title: 'Form',
                 icon: 'mdi-checkbox-blank-circle-outline',
-                id: 0,
+                id: 1,
               },
             ],
             id: 0,
           })
-
-        if (this.validate(this.test.preTest.form)) {
-          if (this.items.length) {
-            this.items[0].value.push({
-              title: 'Form',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 1,
-            })
-          } else {
-            this.items.push({
-              title: 'Pre Test',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              value: [
-                {
-                  title: 'Form',
-                  icon: 'mdi-checkbox-blank-circle-outline',
-                  id: 1,
-                },
-              ],
-              id: 0,
-            })
-          }
         }
-
-        //Tasks
-        if (this.validate(this.test.tasks) && this.test.tasks.length !== 0)
-          this.items.push({
-            title: 'Tasks',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: this.test.tasks.map((i) => {
-              return {
-                title: i.name,
-                icon: 'mdi-checkbox-blank-circle-outline',
-              }
-            }),
-            id: 1,
-          })
-
-        //PostTest
-        if (this.validate(this.test.postTest.form))
-          this.items.push({
-            title: 'Post Test',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: this.test.postTest,
-            id: 2,
-          })
       }
+
+      //Tasks
+      if (this.validate(this.test.testStructure.userTasks))
+        this.items.push({
+          title: 'Tasks',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: this.test.testStructure.userTasks.map((i) => {
+            return {
+              title: i.taskName,
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: 2,
+            }
+          }),
+          id: 1,
+        })
+
+      //PostTest
+      if (this.validate(this.test.testStructure.postTest.postTestUrl))
+        this.items.push({
+          title: 'Post Test',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: this.test.testStructure.postTest,
+          id: 2,
+        })
+      console.log('ITEMS', this.items)
+    },
+    validate(object) {
+      return object !== null && object !== undefined && object !== ''
     },
   },
   computed: {
