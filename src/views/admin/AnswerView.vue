@@ -5,16 +5,18 @@
       <HeuristicsTestAnswer />
     </div>
     <div v-else>
-      user
+      <UserTestAnswer />
     </div>
   </div>
 </template>
 
 <script>
 import HeuristicsTestAnswer from '@/components/organisms/HeuristicsTestAnswer.vue'
+import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
 export default {
   components: {
     HeuristicsTestAnswer,
+    UserTestAnswer,
   },
 
   computed: {
