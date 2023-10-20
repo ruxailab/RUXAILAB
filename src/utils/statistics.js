@@ -47,10 +47,105 @@ function calcFinalResult(array) {
 }
 
 function answers() {
+
+  const mockUserAnswers = [
+    {
+      type: 'typeA',
+      taskAnswers: {
+        'userDocID_1': {
+          preTestUrl: 'https://example.com/pretest_A_1',
+          consentUrl: 'https://example.com/consent_A_1',
+          postTestUrl: 'https://example.com/posttest_A_1',
+          tasks: {
+            'taskId_1': {
+              taskAnswer: 'Answer to Task A1',
+              taskObservations: 'Observations for Task A1',
+              taskTime: 'Task A1 Time',
+              audioRecordURL: 'https://example.com/audio_A_1',
+              screenRecordURL: 'https://example.com/screen_A_1',
+              webcamRecordURL: 'https://example.com/webcam_A_1',
+            },
+            'taskId_2': {
+              taskAnswer: 'Answer to Task A2',
+              taskObservations: 'Observations for Task A2',
+              taskTime: 'Task A2 Time',
+              audioRecordURL: 'https://example.com/audio_A_2',
+              screenRecordURL: 'https://example.com/screen_A_2',
+              webcamRecordURL: 'https://example.com/webcam_A_2',
+            },
+          },
+          progress: 60,
+          total: 100,
+          submitted: false,
+          userDocId: 'userDocID_1',
+          lastUpdate: new Date(), // Current timestamp
+        },
+      },
+    },
+    {
+      type: 'typeB',
+      taskAnswers: {
+        'userDocID_2': {
+          preTestUrl: 'https://example.com/pretest_B_1',
+          consentUrl: 'https://example.com/consent_B_1',
+          postTestUrl: 'https://example.com/posttest_B_1',
+          tasks: {
+            'taskId_1': {
+              taskAnswer: 'Answer to Task B1',
+              taskObservations: 'Observations for Task B1',
+              taskTime: 'Task B1 Time',
+              audioRecordURL: 'https://example.com/audio_B_1',
+              screenRecordURL: 'https://example.com/screen_B_1',
+              webcamRecordURL: 'https://example.com/webcam_B_1',
+            },
+          },
+          progress: 30,
+          total: 100,
+          submitted: true,
+          userDocId: 'userDocID_2',
+          lastUpdate: new Date(), // Current timestamp
+        },
+      },
+    },
+    {
+      type: 'typeC',
+      taskAnswers: {
+        'userDocID_3': {
+          preTestUrl: 'https://example.com/pretest_C_1',
+          consentUrl: 'https://example.com/consent_C_1',
+          postTestUrl: 'https://example.com/posttest_C_1',
+          tasks: {
+            'taskId_1': {
+              taskAnswer: 'Answer to Task C1',
+              taskObservations: 'Observations for Task C1',
+              taskTime: 'Task C1 Time',
+              audioRecordURL: 'https://example.com/audio_C_1',
+              screenRecordURL: 'https://example.com/screen_C_1',
+              webcamRecordURL: 'https://example.com/webcam_C_1',
+            },
+            'taskId_2': {
+              taskAnswer: 'Answer to Task C2',
+              taskObservations: 'Observations for Task C2',
+              taskTime: 'Task C2 Time',
+              audioRecordURL: 'https://example.com/audio_C_2',
+              screenRecordURL: 'https://example.com/screen_C_2',
+              webcamRecordURL: 'https://example.com/webcam_C_2',
+            },
+          },
+          progress: 40,
+          total: 100,
+          submitted: false,
+          userDocId: 'userDocID_3',
+          lastUpdate: new Date(), // Current timestamp
+        },
+      },
+    },
+  ]
+
   if (store.getters.testAnswerDocument) {
     return store.getters.testAnswerDocument.type === 'HEURISTICS'
       ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
-      : Object.values(store.getters.testAnswerDocument.taskAnswers)
+      : Object.values(mockUserAnswers)
   }
   return []
 }
@@ -64,9 +159,9 @@ function created(resultEvaluator) {
 }
 
 function statistics() {
+  const resultEvaluator = []
+  const answersA = answers()
   if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
-    const resultEvaluator = []
-    const answersA = answers()
 
     //Get Evaluator answers
     let evaluatorIndex = 1
@@ -123,6 +218,8 @@ function statistics() {
 
     // created(resultEvaluator)
     return resultEvaluator
+  } else {
+    console.log(answersA)
   }
 }
 
