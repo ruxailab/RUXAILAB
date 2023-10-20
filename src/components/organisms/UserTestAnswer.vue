@@ -11,16 +11,16 @@
           <v-tabs slot="top" v-model="tab" background-color="transparent" color="#FCA326" class="ml-4">
             <!-- <v-tab @click="tab = 0">
               Statistics
-            </v-tab> -->
+            </v-tab>
             <v-tab @click="tab = 0">
               Evaluators
             </v-tab>
-            <!-- <v-tab @click="tab = 2">
+            <v-tab @click="tab = 2">
               Heuristics
-            </v-tab>
-            <v-tab @click="tab = 3">
-              Analytics
             </v-tab> -->
+            <v-tab @click="tab = 0">
+              Analytics
+            </v-tab>
           </v-tabs>
 
           <div slot="content" class="ma-0 pa-0">
@@ -98,7 +98,7 @@
               </v-row>
             </v-card> -->
 
-            <v-card v-if="tab == 0" style="background: #f5f7ff">
+            <!-- <v-card v-if="tab == 1" style="background: #f5f7ff">
               <v-card-title class="subtitleView">
                 Evaluators
               </v-card-title>
@@ -109,9 +109,9 @@
                 <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
                   Table
                 </v-tab>
-                <!-- <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
+                <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
                   Graphic
-                </v-tab> -->
+                </v-tab>
               </v-tabs>
 
               <v-row justify="center">
@@ -134,7 +134,7 @@
                   </v-data-table>
                 </v-col>
 
-                <!-- <v-col v-if="ind == 1" cols="10">
+                <v-col v-if="ind == 1" cols="10">
                   <RadarChart v-if="evaluatorStatistics.items.length >= 3" :labels="evaluatorStatistics.items.map(
                     (item) => `${item.evaluator} - ${item.result}%`,
                   )
@@ -146,9 +146,9 @@
                       please colect more data from your research to procede.
                     </v-card-text>
                   </v-card>
-                </v-col> -->
+                </v-col>
               </v-row>
-            </v-card>
+            </v-card> -->
 
             <!-- <v-card v-if="tab == 2" style="background: #f5f7ff">
               <v-card-title class="subtitleView">
@@ -222,8 +222,8 @@
                   </v-row>
                 </v-col>
               </v-row>
-            </v-card>
-            <AnalyticsView v-if="tab == 3" /> -->
+            </v-card>-->
+            <AnalyticsView v-if="tab == 0" />
           </div>
         </ShowInfo>
       </v-row>
@@ -236,20 +236,18 @@
 
 <script>
 // import BarChart from '@/components/atoms/BarChart.vue'
-// import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
-// import AnalyticsView from '@/views/admin/AnalyticsView.vue'
+import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
 export default {
     components: {
         // BarChart,
-        // RadarChart,
         ShowInfo,
         IntroAnswer,
-        // AnalyticsView,
+        AnalyticsView,
     },
     props: { id: { type: String, default: '' } },
     data: () => ({
@@ -489,7 +487,6 @@ export default {
                 this.testAnswerDocument &&
                 (this.answers !== null || this.answers.length > 0)
             ) {
-                console.log('fell on if')
                 statistics()
                 if (this.answers.length == 0) this.intro = true
                 else this.intro = false
