@@ -173,7 +173,6 @@ function statistics() {
 
   let evaluatorIndex = 1
   answersA.forEach((evaluator) => {
-    console.log(evaluator)
     let SelectEvaluator = resultEvaluator.find(
       (e) => e.userDocId == `Ev${evaluatorIndex}`,
     )
@@ -188,7 +187,6 @@ function statistics() {
       SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
     }
     if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
-      console.log('======= fell on if =======')
       let heurisIndex = 1
       evaluator.heuristicQuestions.forEach((heuristic) => {
         let noAplication = 0
@@ -216,31 +214,33 @@ function statistics() {
       })
       evaluatorIndex++
     } else {
-      console.log('======= fell on else =======')
-      let taskIndex = 1
-      let totalQuestions = 0
-      evaluator.tasks.forEach((task) => {
-        let noAplication = 0
-        let noReply = 0
-        if (task.taskAnswer === null){
-          noAplication++
-        }
-        if (task.taskAnswer === ''){
-          noReply++
-        }
-        totalQuestions++
+      var taskIndex = 1
+      var total = 0
+      var noAplication = 0
+      let noReply = 0
+      for (const taskId in evaluator.tasks) {
+        if (evaluator.tasks.hasOwnProperty(taskId)) {
+          const task = evaluator.tasks[taskId]
+          if (task.taskAnswer === '') {
+            noReply++
+          }
+          if (task.taskAnswer === '') {
+            noReply++
+          }
+          total += Number(task.taskAnswer)
 
-        if (noAplication == totalQuestions) res = null
+          if (noAplication == total) total = null
 
-        SelectEvaluator.heuristics.push({
-          id: `H${heurisIndex}`,
-          result: res == -1 ? 0 : res,
-          totalQuestions: heuristic.heuristicTotal,
-          totalNoAplication: noAplication,
-          totalNoReply: noReply,
-        })
-        taskIndex++
-      })
+          SelectEvaluator.heuristics.push({
+            id: `H${taskIndex}`,
+            result: total == -1 ? 0 : total,
+            totalQuestions: evaluator.total,
+            totalNoAplication: noAplication,
+            totalNoReply: noReply,
+          })
+          taskIndex++
+        }
+      }
       evaluatorIndex++
     }
   })
