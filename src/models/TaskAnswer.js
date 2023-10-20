@@ -9,7 +9,6 @@
  * @param {string} audioRecordURL - The audioRecordURL value.
  * @param {string} screenRecordURL - The screenRecordURL value.
  * @param {string} webcamRecordURL - The webcamRecordURL value.
- * @param {number} progress - The progress value.
  * @param {number} total - The total value.
  * @param {boolean} submitted - The submitted value.
  * @param {string} userDocId - The userDocId value.
@@ -21,31 +20,37 @@ export default class TaskAnswer {
     taskAnswer,
     taskObservations,
     taskTime,
-    post_testSheetURL,
-    pre_testSheetURL,
     audioRecordURL,
     screenRecordURL,
     webcamRecordURL,
-    progress,
-    total,
     submitted,
-    userDocId,
   } = {}) {
-    this.taskId = taskId
-    this.taskAnswer = taskAnswer
-    this.taskObservations = taskObservations
-    this.taskTime = taskTime
-    this.post_testSheetURL = post_testSheetURL
-    this.pre_testSheetURL = pre_testSheetURL
-    this.audioRecordURL = audioRecordURL
-    this.screenRecordURL = screenRecordURL
-    this.webcamRecordURL = webcamRecordURL
-    this.progress = progress
-    this.total = total
-    this.submitted = submitted
-    this.userDocId = userDocId
+    this.taskId = taskId ?? null
+    this.taskAnswer = taskAnswer ?? null
+    this.taskObservations = taskObservations ?? null
+    this.taskTime = taskTime ?? null
+    this.audioRecordURL = audioRecordURL ?? null
+    this.screenRecordURL = screenRecordURL ?? null
+    this.webcamRecordURL = webcamRecordURL ?? null
   }
   static toTaskAnswer(data) {
     return new TaskAnswer(data)
+  }
+  toFirestore() {
+    return {
+      toFirestore() {
+        return {
+          taskId: this.taskId,
+          taskAnswer: this.taskAnswer,
+          taskObservations: this.taskObservations,
+          taskTime: this.taskTime,
+          audioRecordURL: this.audioRecordURL,
+          screenRecordURL: this.screenRecordURL,
+          webcamRecordURL: this.webcamRecordURL,
+          submitted: this.submitted,
+          userDocId: this.userDocId,
+        }
+      },
+    }
   }
 }
