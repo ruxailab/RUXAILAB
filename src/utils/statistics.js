@@ -142,12 +142,12 @@ function answers() {
     },
   ]
 
-  const taskAnswersArray = [];
+  const taskAnswersArray = []
 
   for (const userAnswer of mockUserAnswers) {
-    const taskAnswers = userAnswer.taskAnswers;
+    const taskAnswers = userAnswer.taskAnswers
     for (const userDocId in taskAnswers) {
-      taskAnswersArray.push(taskAnswers[userDocId]);
+      taskAnswersArray.push(taskAnswers[userDocId])
     }
   }
 
@@ -170,39 +170,36 @@ function created(resultEvaluator) {
 function statistics() {
   const resultEvaluator = []
   const answersA = answers()
-  if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
-    //Get Evaluator answers
-    let evaluatorIndex = 1
-    answersA.forEach((evaluator) => {
-      console.log(evaluator)
-      let SelectEvaluator = resultEvaluator.find(
-        (e) => e.userDocId == `Ev${evaluatorIndex}`,
-      )
-      if (!SelectEvaluator) {
-        resultEvaluator.push({
-          userDocId: evaluator.userDocId,
-          email: 'noemail@email.com',
-          id: `Ev${evaluatorIndex}`,
-          heuristics: [],
-          result: 0,
-        })
-        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
-      }
-      //Get Heuristics for evaluators
+
+  let evaluatorIndex = 1
+  answersA.forEach((evaluator) => {
+    console.log(evaluator)
+    let SelectEvaluator = resultEvaluator.find(
+      (e) => e.userDocId == `Ev${evaluatorIndex}`,
+    )
+    if (!SelectEvaluator) {
+      resultEvaluator.push({
+        userDocId: evaluator.userDocId,
+        email: 'noemail@email.com',
+        id: `Ev${evaluatorIndex}`,
+        heuristics: [],
+        result: 0,
+      })
+      SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
+    }
+    if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
+      console.log('======= fell on if =======')
       let heurisIndex = 1
       evaluator.heuristicQuestions.forEach((heuristic) => {
-        //Get Questions for heuristic
-
         let noAplication = 0
         let noReply = 0
         let res = heuristic.heuristicQuestions.reduce(
           (totalQuestions, question) => {
-            //grouping of answers
             if (question.heuristicAnswer === null) {
               noAplication++
-            } //count answers no aplication
+            }
             if (question.heuristicAnswer === '') noReply++
-            return totalQuestions + Number(question.heuristicAnswer) //sum of responses
+            return totalQuestions + Number(question.heuristicAnswer)
           },
           0,
         )
@@ -218,35 +215,15 @@ function statistics() {
         heurisIndex++
       })
       evaluatorIndex++
-    })
+    } else {
+    }
 
-    //Calc Final result
-    resultEvaluator.forEach((ev) => {
-      ev.result = calcFinalResult(ev.heuristics)
-    })
+  })
 
-    // created(resultEvaluator)
-    return resultEvaluator
-  } else {
-    answersA.forEach((evaluator) => {
-      console.log(evaluator)
-      let evaluatorIndex = 1
-      let SelectEvaluator = resultEvaluator.find(
-        (e) => e.userDocId == `Ev${evaluatorIndex}`,
-      )
-      if (!SelectEvaluator) {
-        resultEvaluator.push({
-          userDocId: evaluator.userDocId,
-          email: 'noemail@email.com',
-          id: `Ev${evaluatorIndex}`,
-          heuristics: [],
-          result: 0,
-        })
-        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
-      }
-      console.log(SelectEvaluator)
-    })
-  }
+  resultEvaluator.forEach((ev) => {
+    ev.result = calcFinalResult(ev.heuristics)
+  })
+  return resultEvaluator
 }
 
 function finalResult() {
