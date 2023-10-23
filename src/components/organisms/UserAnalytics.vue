@@ -12,9 +12,9 @@
                 <v-divider />
                 <v-list dense height="470px" outlined class="list-scroll">
                   <v-list-item-group v-model="taskSelect" color="#fca326">
-                    <v-list-item v-for="(item, i) in resultTasks" :key="i">
+                    <v-list-item v-for="(item, i) in testTasks" :key="i">
                       <v-list-item-content>
-                        <v-list-item-title>{{ item.type }}</v-list-item-title>
+                        <v-list-item-title>{{ item }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon v-if="i == taskSelect">
                         <v-icon>mdi-chevron-right</v-icon>
@@ -25,97 +25,22 @@
               </v-list>
             </v-col>
             <v-divider vertical inset />
-            <!--Answers List-->
-            <v-col v-if="taskSelect !== null" class="ma-0 pa-0" cols="3">
+            <!--Answer List-->
+            <v-col class="ma-0 pa-0" cols="10">
               <v-list dense height="560px" outlined>
-                <v-subheader>
-                  Answers
-                </v-subheader>
+                <v-subheader>Task {{ testTasks[taskSelect] }} Answers</v-subheader>
                 <v-divider />
-                <v-list dense height="470px" outlined class="list-scroll">
-                  <v-list-item-group v-model="answerSelect" color="#fca326">
-                    <v-list-item v-for="(item, i) in Object.keys(resultTasks[taskSelect].taskAnswers)" :key="i"
-                                 :value="i"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>{{ resultTasks[taskSelect].taskAnswers[item].userDocId }}</v-list-item-title>
-                      </v-list-item-content>
-                      <v-list-item-icon v-if="i === answerSelect">
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </v-list-item-icon>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
+                <div v-for="(item, i) in resultTasks" :key="i">
+                  <v-list-item v-if="containsTask(item.tasks, testTasks[taskSelect]) !== null">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.userDocId }}:
+                        {{ containsTask(item.tasks, testTasks[taskSelect]).taskAnswer }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </div>
               </v-list>
-            </v-col>
-            <!--Content-->
-            <v-col v-if="answerSelect !== null && taskSelect !== null" class="ma-0 pa-0">
-              <v-card v-if="answerSelect != -1" height="560px" elevation-0>
-                <v-subheader class="pa-2">
-                  {{
-                    resultTasks[taskSelect].taskAnswers[answerSelect].userDocId
-                  }}
-                </v-subheader>
-                <!-- <v-subheader v-else class="pa-2">
-                  Data Table
-                </v-subheader> -->
-                <v-divider />
-                <v-row v-if="answerSelect == -1">
-                  <v-col>
-                    <!-- <v-text-field v-model="search" class="mx-3" append-icon="mdi-magnify" label="Search" /> -->
-                    <v-data-table class="elevation-1" :headers="headersHeuristic" :items="itemsHeuristic" :search="search"
-                                  height="360px" dense
-                    >
-                      <template v-for="header in headersHeuristic" v-slot:[`item.${header.value}`]="{ item }">
-                        <div v-if="item[header.value] == null" :key="header.value">
-                          -
-                        </div>
-                        <div v-else :key="header.value">
-                          {{ item[header.value] }}
-                        </div>
-                      </template>
-                    </v-data-table>
-                  </v-col>
-                </v-row>
-                <!-- <v-row class="ma-0 pa-0">
-                  <v-tabs v-model="ind" background-color="transparent" color="grey darken-2" class="mt-2" centered>
-                    <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
-                      Comments
-                    </v-tab>
-                    <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
-                      Graphic
-                    </v-tab>
-                  </v-tabs>
-                  <v-col v-if="ind == 1">
-                    <v-row justify="center">
-                      <v-col cols="10">
-                        <BarChart v-if="questionGraph" :labels="questionGraph.label" :data="questionGraph.data"
-                          legend="Quantity" />
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col v-if="ind == 0">
-                    <v-row class="list-scroll" style="height: 430px" justify="center">
-                      <v-col cols="10">
-                        <v-timeline v-if="resultTasks[taskSelect].questions[
-                          answerSelect
-                        ].result.length
-                          " dense>
-                          <div v-for="(result, index) in resultTasks[
-                            taskSelect
-                          ].questions[answerSelect].result" :key="index">
-                            <v-timeline-item v-if="result.comment" fill-dot color="#fca326" icon="mdi-message-reply-text">
-                              <v-card class="elevation-2">
-                                <v-card-text>{{ result.comment }}</v-card-text>
-                              </v-card>
-                            </v-timeline-item>
-                          </div>
-                        </v-timeline>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row> -->
-              </v-card>
             </v-col>
           </v-row>
         </v-card>
@@ -126,196 +51,101 @@
 
 <script>
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-// import BarChart from '@/components/atoms/BarChart.vue'
-// import IntroAnalytics from '@/components/molecules/IntroAnalytics.vue'
 
 export default {
   components: {
     ShowInfo,
-    // BarChart,
-    // IntroAnalytics,
   },
-  // eslint-disable-next-line vue/prop-name-casing, vue/require-prop-types
-  props: ['id', 'HEURISTICS'],
   data: () => ({
     search: '',
     ind: 0,
-    resultTasks: [{
-      type: 'typeA',
-      taskAnswers: [{
+    testTasks: [
+      'task1',
+      'task2',
+      'task3',
+      'task4',
+    ],
+    resultTasks: [
+      {
         preTestUrl: 'https://example.com/pretest_A_1',
         consentUrl: 'https://example.com/consent_A_1',
         postTestUrl: 'https://example.com/posttest_A_1',
-        tasks: {
-          'taskId_1': {
-            taskAnswer: 'Answer to Task A1',
-            taskObservations: 'Observations for Task A1',
-            taskTime: 'Task A1 Time',
-            audioRecordURL: 'https://example.com/audio_A_1',
-            screenRecordURL: 'https://example.com/screen_A_1',
-            webcamRecordURL: 'https://example.com/webcam_A_1',
-          },
-          'taskId_2': {
-            taskAnswer: 'Answer to Task A2',
-            taskObservations: 'Observations for Task A2',
-            taskTime: 'Task A2 Time',
-            audioRecordURL: 'https://example.com/audio_A_2',
-            screenRecordURL: 'https://example.com/screen_A_2',
-            webcamRecordURL: 'https://example.com/webcam_A_2',
-          },
-        },
+        tasks: [{
+          taskAnswer: 'pretty cool',
+          taskObservations: 'Observations for Task A1',
+          taskTime: 'Task A1 Time',
+          audioRecordURL: 'https://example.com/audio_A_1',
+          screenRecordURL: 'https://example.com/screen_A_1',
+          webcamRecordURL: 'https://example.com/webcam_A_1',
+          taskId: 'task1',
+        }, {
+          taskAnswer: 'cool task',
+          taskObservations: 'Observations for Task A2',
+          taskTime: 'Task A2 Time',
+          audioRecordURL: 'https://example.com/audio_A_2',
+          screenRecordURL: 'https://example.com/screen_A_2',
+          webcamRecordURL: 'https://example.com/webcam_A_2',
+          taskId: 'task2',
+        }],
         progress: 100,
         total: 10,
         submitted: false,
-        userDocId: 'userDocID_1',
+        userDocId: 'Carlos',
         lastUpdate: new Date(), // Current timestamp
-      }],
-    },
-    {
-      type: 'typeB',
-      taskAnswers: [{
+      },
+      {
         preTestUrl: 'https://example.com/pretest_B_1',
         consentUrl: 'https://example.com/consent_B_1',
         postTestUrl: 'https://example.com/posttest_B_1',
-        tasks: {
-          'taskId_1': {
-            taskAnswer: 'Answer to Task B1',
-            taskObservations: 'Observations for Task B1',
-            taskTime: 'Task B1 Time',
-            audioRecordURL: 'https://example.com/audio_B_1',
-            screenRecordURL: 'https://example.com/screen_B_1',
-            webcamRecordURL: 'https://example.com/webcam_B_1',
-          },
-        },
+        tasks: [{
+          taskAnswer: 'awful task',
+          taskObservations: 'Observations for Task B1',
+          taskTime: 'Task B1 Time',
+          audioRecordURL: 'https://example.com/audio_B_1',
+          screenRecordURL: 'https://example.com/screen_B_1',
+          webcamRecordURL: 'https://example.com/webcam_B_1',
+          taskId: 'task4',
+        }],
         progress: 30,
         total: 5,
         submitted: true,
-        userDocId: 'userDocID_2',
+        userDocId: 'Maria',
         lastUpdate: new Date(), // Current timestamp
-      }],
-    },
-    {
-      type: 'typeC',
-      taskAnswers: [{
+      },
+      {
         preTestUrl: 'https://example.com/pretest_C_1',
         consentUrl: 'https://example.com/consent_C_1',
         postTestUrl: 'https://example.com/posttest_C_1',
-        tasks: {
-          'taskId_1': {
-            taskAnswer: 'Answer to Task C1',
-            taskObservations: 'Observations for Task C1',
-            taskTime: 'Task C1 Time',
-            audioRecordURL: 'https://example.com/audio_C_1',
-            screenRecordURL: 'https://example.com/screen_C_1',
-            webcamRecordURL: 'https://example.com/webcam_C_1',
-          },
-          'taskId_2': {
-            taskAnswer: 'Answer to Task C2',
-            taskObservations: 'Observations for Task C2',
-            taskTime: 'Task C2 Time',
-            audioRecordURL: 'https://example.com/audio_C_2',
-            screenRecordURL: 'https://example.com/screen_C_2',
-            webcamRecordURL: 'https://example.com/webcam_C_2',
-          },
-        },
+        tasks: [{
+          taskAnswer: 'mid',
+          taskObservations: 'Observations for Task C1',
+          taskTime: 'Task C1 Time',
+          audioRecordURL: 'https://example.com/audio_C_1',
+          screenRecordURL: 'https://example.com/screen_C_1',
+          webcamRecordURL: 'https://example.com/webcam_C_1',
+          taskId: 'task3',
+        }, {
+          taskAnswer: 'kinda fun',
+          taskObservations: 'Observations for Task C2',
+          taskTime: 'Task C2 Time',
+          audioRecordURL: 'https://example.com/audio_C_2',
+          screenRecordURL: 'https://example.com/screen_C_2',
+          webcamRecordURL: 'https://example.com/webcam_C_2',
+          taskId: 'task2',
+        }],
         progress: 70,
         total: 12,
         submitted: false,
-        userDocId: 'userDocID_3',
+        userDocId: 'Joao',
         lastUpdate: new Date(), // Current timestamp
       }],
-    }],
     taskSelect: null,
     answerSelect: null,
     intro: null,
   }),
   computed: {
     answers() {
-      const mockAnswers = [{
-        type: 'typeA',
-        taskAnswers: [{
-          preTestUrl: 'https://example.com/pretest_A_1',
-          consentUrl: 'https://example.com/consent_A_1',
-          postTestUrl: 'https://example.com/posttest_A_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: 'Answer to Task A1',
-              taskObservations: 'Observations for Task A1',
-              taskTime: 'Task A1 Time',
-              audioRecordURL: 'https://example.com/audio_A_1',
-              screenRecordURL: 'https://example.com/screen_A_1',
-              webcamRecordURL: 'https://example.com/webcam_A_1',
-            },
-            'taskId_2': {
-              taskAnswer: 'Answer to Task A2',
-              taskObservations: 'Observations for Task A2',
-              taskTime: 'Task A2 Time',
-              audioRecordURL: 'https://example.com/audio_A_2',
-              screenRecordURL: 'https://example.com/screen_A_2',
-              webcamRecordURL: 'https://example.com/webcam_A_2',
-            },
-          },
-          progress: 100,
-          total: 10,
-          submitted: false,
-          userDocId: 'userDocID_1',
-          lastUpdate: new Date(), // Current timestamp
-        }],
-      },
-      {
-        type: 'typeB',
-        taskAnswers: [{
-          preTestUrl: 'https://example.com/pretest_B_1',
-          consentUrl: 'https://example.com/consent_B_1',
-          postTestUrl: 'https://example.com/posttest_B_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: 'Answer to Task B1',
-              taskObservations: 'Observations for Task B1',
-              taskTime: 'Task B1 Time',
-              audioRecordURL: 'https://example.com/audio_B_1',
-              screenRecordURL: 'https://example.com/screen_B_1',
-              webcamRecordURL: 'https://example.com/webcam_B_1',
-            },
-          },
-          progress: 30,
-          total: 5,
-          submitted: true,
-          userDocId: 'userDocID_2',
-          lastUpdate: new Date(), // Current timestamp
-        }],
-      },
-      {
-        type: 'typeC',
-        taskAnswers: [{
-          preTestUrl: 'https://example.com/pretest_C_1',
-          consentUrl: 'https://example.com/consent_C_1',
-          postTestUrl: 'https://example.com/posttest_C_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: 'Answer to Task C1',
-              taskObservations: 'Observations for Task C1',
-              taskTime: 'Task C1 Time',
-              audioRecordURL: 'https://example.com/audio_C_1',
-              screenRecordURL: 'https://example.com/screen_C_1',
-              webcamRecordURL: 'https://example.com/webcam_C_1',
-            },
-            'taskId_2': {
-              taskAnswer: 'Answer to Task C2',
-              taskObservations: 'Observations for Task C2',
-              taskTime: 'Task C2 Time',
-              audioRecordURL: 'https://example.com/audio_C_2',
-              screenRecordURL: 'https://example.com/screen_C_2',
-              webcamRecordURL: 'https://example.com/webcam_C_2',
-            },
-          },
-          progress: 70,
-          total: 12,
-          submitted: false,
-          userDocId: 'userDocID_3',
-          lastUpdate: new Date(), // Current timestamp
-        }],
-      }]
+      const mockAnswers = this.resultTasks
       if (this.testAnswerDocument) {
         return Object.values(mockAnswers)
       }
@@ -326,6 +156,13 @@ export default {
     },
   },
   methods: {
+    containsTask(tasks, selectedTask) {
+      const index = tasks.findIndex((task) => task.taskId === selectedTask)
+      if (index !== -1) {
+        return tasks[index]
+      }
+      return null
+    },
     goToCoops() {
       this.$emit('goToCoops')
     },
