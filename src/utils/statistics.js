@@ -47,122 +47,10 @@ function calcFinalResult(array) {
 }
 
 function answers() {
-
-  const mockUserAnswers = [
-    {
-      type: 'typeA',
-      taskAnswers: {
-        'userDocID_1': {
-          preTestUrl: 'https://example.com/pretest_A_1',
-          consentUrl: 'https://example.com/consent_A_1',
-          postTestUrl: 'https://example.com/posttest_A_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: '',
-              taskObservations: '',
-              taskTime: '',
-              audioRecordURL: '',
-              screenRecordURL: '',
-              webcamRecordURL: '',
-            },
-            'taskId_2': {
-              taskAnswer: 'Answer to Task A2',
-              taskObservations: 'Observations for Task A2',
-              taskTime: 'Task A2 Time',
-              audioRecordURL: 'https://example.com/audio_A_2',
-              screenRecordURL: 'https://example.com/screen_A_2',
-              webcamRecordURL: 'https://example.com/webcam_A_2',
-            },
-          },
-          progress: 100,
-          total: 10,
-          submitted: false,
-          userDocId: 'userDocID_1',
-          lastUpdate: new Date(),
-        },
-      },
-    },
-    {
-      type: 'typeB',
-      taskAnswers: {
-        'userDocID_2': {
-          preTestUrl: 'https://example.com/pretest_B_1',
-          consentUrl: 'https://example.com/consent_B_1',
-          postTestUrl: 'https://example.com/posttest_B_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: 'Answer to Task B1',
-              taskObservations: 'Observations for Task B1',
-              taskTime: 'Task B1 Time',
-              audioRecordURL: 'https://example.com/audio_B_1',
-              screenRecordURL: 'https://example.com/screen_B_1',
-              webcamRecordURL: 'https://example.com/webcam_B_1',
-            },
-          },
-          progress: 30,
-          total: 5,
-          submitted: true,
-          userDocId: 'userDocID_2',
-          lastUpdate: new Date(),
-        },
-      },
-    },
-    {
-      type: 'typeC',
-      taskAnswers: {
-        'userDocID_3': {
-          preTestUrl: 'https://example.com/pretest_C_1',
-          consentUrl: 'https://example.com/consent_C_1',
-          postTestUrl: 'https://example.com/posttest_C_1',
-          tasks: {
-            'taskId_1': {
-              taskAnswer: '',
-              taskObservations: '',
-              taskTime: '',
-              audioRecordURL: '',
-              screenRecordURL: '',
-              webcamRecordURL: '',
-            },
-            'taskId_2': {
-              taskAnswer: 'Answer to Task C2',
-              taskObservations: 'Observations for Task C2',
-              taskTime: 'Task C2 Time',
-              audioRecordURL: 'https://example.com/audio_C_2',
-              screenRecordURL: 'https://example.com/screen_C_2',
-              webcamRecordURL: 'https://example.com/webcam_C_2',
-            },
-            'taskId_3': {
-              taskAnswer: '',
-              taskObservations: '',
-              taskTime: '',
-              audioRecordURL: '',
-              screenRecordURL: '',
-              webcamRecordURL: '',
-            },
-          },
-          progress: 70,
-          total: 12,
-          submitted: false,
-          userDocId: 'userDocID_3',
-          lastUpdate: new Date(),
-        },
-      },
-    },
-  ]
-
-  const taskAnswersArray = []
-
-  for (const userAnswer of mockUserAnswers) {
-    const taskAnswers = userAnswer.taskAnswers
-    for (const userDocId in taskAnswers) {
-      taskAnswersArray.push(taskAnswers[userDocId])
-    }
-  }
-
   if (store.getters.testAnswerDocument) {
     return store.getters.testAnswerDocument.type === 'HEURISTICS'
       ? Object.values(store.getters.testAnswerDocument.heuristicAnswers)
-      : Object.values(taskAnswersArray)
+      : Object.values(store.getters.testAnswerDocument.taskAnswers)
   }
   return []
 }
@@ -176,36 +64,41 @@ function created(resultEvaluator) {
 }
 
 function statistics() {
-  const resultEvaluator = []
-  const answersA = answers()
+  if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
+    const resultEvaluator = []
+    const answersA = answers()
 
-  let evaluatorIndex = 1
-  answersA.forEach((evaluator) => {
-    let SelectEvaluator = resultEvaluator.find(
-      (e) => e.userDocId == `Ev${evaluatorIndex}`,
-    )
-    if (!SelectEvaluator) {
-      resultEvaluator.push({
-        userDocId: evaluator.userDocId,
-        email: 'noemail@email.com',
-        id: `Ev${evaluatorIndex}`,
-        heuristics: [],
-        result: 0,
-      })
-      SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
-    }
-    if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
+    //Get Evaluator answers
+    let evaluatorIndex = 1
+    answersA.forEach((evaluator) => {
+      let SelectEvaluator = resultEvaluator.find(
+        (e) => e.userDocId == `Ev${evaluatorIndex}`,
+      )
+      if (!SelectEvaluator) {
+        resultEvaluator.push({
+          userDocId: evaluator.userDocId,
+          email: 'noemail@email.com',
+          id: `Ev${evaluatorIndex}`,
+          heuristics: [],
+          result: 0,
+        })
+        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
+      }
+      //Get Heuristics for evaluators
       let heurisIndex = 1
       evaluator.heuristicQuestions.forEach((heuristic) => {
+        //Get Questions for heuristic
+
         let noAplication = 0
         let noReply = 0
         let res = heuristic.heuristicQuestions.reduce(
           (totalQuestions, question) => {
+            //grouping of answers
             if (question.heuristicAnswer === null) {
               noAplication++
-            }
+            } //count answers no aplication
             if (question.heuristicAnswer === '') noReply++
-            return totalQuestions + Number(question.heuristicAnswer)
+            return totalQuestions + Number(question.heuristicAnswer) //sum of responses
           },
           0,
         )
@@ -221,42 +114,16 @@ function statistics() {
         heurisIndex++
       })
       evaluatorIndex++
-    } else {
-      var taskIndex = 1
-      var total = 0
-      var noAplication = 0
-      let noReply = 0
-      for (const taskId in evaluator.tasks) {
-        if (evaluator.tasks.hasOwnProperty(taskId)) {
-          const task = evaluator.tasks[taskId]
-          if (task.taskAnswer === '') {
-            noReply++
-          }
-          if (task.taskAnswer === '') {
-            noReply++
-          }
-          total += Number(task.taskAnswer)
+    })
 
-          if (noAplication == total) total = null
+    //Calc Final result
+    resultEvaluator.forEach((ev) => {
+      ev.result = calcFinalResult(ev.heuristics)
+    })
 
-          SelectEvaluator.heuristics.push({
-            id: `H${taskIndex}`,
-            result: total == -1 ? 0 : total,
-            totalQuestions: evaluator.total,
-            totalNoAplication: noAplication,
-            totalNoReply: noReply,
-          })
-          taskIndex++
-        }
-      }
-      evaluatorIndex++
-    }
-  })
-
-  resultEvaluator.forEach((ev) => {
-    ev.result = calcFinalResult(ev.heuristics)
-  })
-  return resultEvaluator
+    // created(resultEvaluator)
+    return resultEvaluator
+  }
 }
 
 function finalResult() {
