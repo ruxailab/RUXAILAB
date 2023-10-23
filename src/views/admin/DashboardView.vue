@@ -121,21 +121,22 @@
 
           <!-- Mobile Sub Buttons -->
           <v-select
-            v-if="mainIndex <= 1"
-            v-model="subIndex"
-            dense
-            outlined
-            class="hidden-md-and-up mx-2"
-            :items="testButtonItems"
-          />
+              v-if="mainIndex == 1"
+              v-model="subIndex"
+              dense
+              outlined
+              class="hidden-md-and-up mx-2"
+              :items="templateButtonItems"
+            />
           <v-select
             v-else
             v-model="subIndex"
             dense
             outlined
             class="hidden-md-and-up mx-2"
-            :items="templateButtonItems"
+            :items="testButtonItems"
           />
+
 
           <!-- Tests -> Personal  -->
           <List
@@ -208,13 +209,12 @@ export default {
     searching: false,
     buttonItems: [
       { text: 'Tests', value: 0 },
-      { text: 'Answers', value: 1 },
-      { text: 'Templates', value: 2 },
+      { text: 'Templates', value: 1 },
     ],
     testButtonItems: [
-      { text: 'All', value: 0 },
-      { text: 'Personal', value: 1 },
-      { text: 'Others', value: 2 },
+      { text: 'My Tests', value: 0 },
+      { text: 'Shared With Me', value: 1 },
+      { text: 'Public Tests', value: 2 },
     ],
     templateButtonItems: [
       { text: 'Personal', value: 0 },
