@@ -511,7 +511,6 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.populateWithHeuristicQuestions()
     this.calculateProgress()
-    console.log('Computed: currentUserTestAnswer', this.currentUserTestAnswer)
   },
   methods: {
     updateComment(comment, heurisIndex, answerIndex) {
@@ -581,6 +580,7 @@ export default {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
+        testType: this.test.testType
       })
     },
     async submitAnswer() {

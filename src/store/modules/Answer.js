@@ -32,14 +32,13 @@ export default {
       }
 
       if (state.testAnswerDocument.type === 'User') {
-        return (
-          TaskAnswer.toTaskAnswer(
-            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
-          ) ??
-          new TaskAnswer({
-            userDocId: rootState.user.id,
-          })
-        )
+        return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
+          ? TaskAnswer.toTaskAnswer(
+              state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+            )
+          : new TaskAnswer({
+              userDocId: rootState.user.id,
+            })
       }
     },
   },
@@ -99,7 +98,11 @@ export default {
     async saveTestAnswer({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await answerController.saveTestAnswer(payload.data, payload.answerDocId)
+        await answerController.saveTestAnswer(
+          payload.data,
+          payload.answerDocId,
+          payload.testType,
+        )
       } catch (e) {
         console.error('Error in save test answer', e)
         // commit("setError", true);

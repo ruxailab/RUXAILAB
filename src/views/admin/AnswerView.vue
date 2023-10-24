@@ -491,6 +491,7 @@ export default {
   methods: {
     getColor(value, max, min) {
       //✓
+      value = Math.floor(value)
       max = Number(max)
       min = Number(min)
       const h = (max - min) / max
