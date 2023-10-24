@@ -360,9 +360,7 @@
               test.testStructure.userTasks[heurisIndex].taskName
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
-            <ViewTask
-              :item="test.testStructure.userTasks[heurisIndex]"
-            />
+            <ViewTask :item="test.testStructure.userTasks[heurisIndex]" />
           </div>
         </ShowInfo>
 
@@ -391,6 +389,8 @@ import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import ViewTask from '@/components/molecules/ViewTask.vue'
+import UserTask from '@/models/UserTask'
+import TaskAnswer from '@/models/TaskAnswer'
 export default {
   props: ['id', 'token'],
   components: {
@@ -442,19 +442,36 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+    this.populateUserTasks()
     this.mappingSteps()
-    console.log(this.test.testStructure)
-    console.log('items: ', this.items)
-    console.log('Computed: test', this.test)
-    console.log('Computed: user', this.user)
-    console.log('Computed: currentUserTestAnswer', this.currentUserTestAnswer)
   },
   methods: {
+    populateUserTasks() {
+      let userTasks = this.test.testStructure.userTasks
+      ;(this.currentUserTestAnswer.preTestUrl = this.test.testStructure.preTest.preTestUrl),
+        (this.currentUserTestAnswer.consentUrl = this.test.testStructure.preTest.consentUrl),
+        (this.currentUserTestAnswer.postTestUrl = this.test.testStructure.postTest.postTestUrl)
+      for (let i = 0; i < userTasks.length; i++) {
+        this.currentUserTestAnswer.tasks[i] = new UserTask({
+          taskId: i,
+          taskAnswer: '',
+          taskObservations: '',
+          taskTime: null,
+          audioRecordURL: '',
+          screenRecordURL: '',
+          webcamRecordURL: '',
+        })
+      }
+    },
     async saveAnswer() {
+      populateUserTasks()
+      this.currentUserTestAnswer.lastUpdate = Date.now()
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
+        testType: this.test.testType,
       })
     },
     async submitAnswer() {

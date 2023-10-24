@@ -4,8 +4,8 @@
  * @param {string} taskAnswer - The taskAnswer value.
  * @param {string} taskObservations - The taskObservations value.
  * @param {string} taskTime - The taskTime value.
- * @param {string} post_testSheetURL - The post_testSheetURL value.
- * @param {string} pre_testSheetURL - The pre_testSheetURL value.
+ * @param {string} postTestUrl - The post_testSheetURL value.
+ * @param {string} preTestUrl- The pre_testSheetURL value.
  * @param {string} audioRecordURL - The audioRecordURL value.
  * @param {string} screenRecordURL - The screenRecordURL value.
  * @param {string} webcamRecordURL - The webcamRecordURL value.
@@ -16,41 +16,40 @@
 
 export default class TaskAnswer {
   constructor({
-    taskId,
-    taskAnswer,
-    taskObservations,
-    taskTime,
-    audioRecordURL,
-    screenRecordURL,
-    webcamRecordURL,
+    preTestUrl,
+    consentUrl,
+    postTestUrl,
+    tasks,
+    progress,
+    total,
     submitted,
+    userDocId,
+    lastUpdate,
   } = {}) {
-    this.taskId = taskId ?? null
-    this.taskAnswer = taskAnswer ?? null
-    this.taskObservations = taskObservations ?? null
-    this.taskTime = taskTime ?? null
-    this.audioRecordURL = audioRecordURL ?? null
-    this.screenRecordURL = screenRecordURL ?? null
-    this.webcamRecordURL = webcamRecordURL ?? null
+    this.preTestUrl = preTestUrl ?? ''
+    this.consentUrl = consentUrl ?? ''
+    this.postTestUrl = postTestUrl ?? ''
+    this.tasks = tasks ?? {}
+    this.progress = progress ?? null
+    this.total = total ?? 0
+    this.submitted = submitted ?? null
+    this.userDocId = userDocId ?? ''
+    this.lastUpdate = lastUpdate ?? null
   }
   static toTaskAnswer(data) {
     return new TaskAnswer(data)
   }
   toFirestore() {
     return {
-      toFirestore() {
-        return {
-          taskId: this.taskId,
-          taskAnswer: this.taskAnswer,
-          taskObservations: this.taskObservations,
-          taskTime: this.taskTime,
-          audioRecordURL: this.audioRecordURL,
-          screenRecordURL: this.screenRecordURL,
-          webcamRecordURL: this.webcamRecordURL,
-          submitted: this.submitted,
-          userDocId: this.userDocId,
-        }
-      },
+      preTestUrl: this.preTestUrl,
+      consentUrl: this.consentUrl,
+      postTestUrl: this.postTestUrl,
+      tasks: this.tasks,
+      progress: this.progress,
+      total: this.total,
+      submitted: this.submitted,
+      userDocId: this.userDocId,
+      lastUpdate: this.lastUpdate,
     }
   }
 }
