@@ -76,11 +76,11 @@ export default {
       //initialize formData properties
       formData: {
         preTest: {
-          preTestUrl: '',
-          consentUrl: '',
+          preTestUrl: "",
+          consentUrl: "",
         },
         postTest: {
-          postTestUrl: '',
+          postTestUrl: "",
         },
       },
     }
@@ -116,7 +116,6 @@ export default {
     },
     getForms() {
       // Get forms from Test and set to local variables
-      this.$store.dispatch('setPostTest', this.postTest)
       this.formData.preTest.preTestUrl = this.preTest.preTestUrl
       this.formData.preTest.consentUrl = this.preTest.consentUrl
       this.formData.postTest.postTestUrl = this.postTest.postTestUrl
