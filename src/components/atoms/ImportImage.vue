@@ -1,26 +1,14 @@
 <template>
   <div class="input">
-    <v-file-input
-      :id="`${this.heuristicId.id}${this.questionId}`"
-      class="ml-2"
-      type="file"
-      name="my-image"
-      accept="image/gif, image/jpeg, image/png"
-      :placeholder="
-        imageUploaded
-          ? $t('common.inputImage')
-          : url
-      "
-      @change="uploadFile()"
+    <v-file-input :id="`${heuristicId.id}${questionId}`" class="ml-2" type="file" name="my-image"
+                  accept="image/gif, image/jpeg, image/png" :placeholder="imageUploaded
+                    ? $t('common.inputImage')
+                    : url
+                  " @change="uploadFile()"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
-      <v-img
-        v-if="imageUploaded"
-        max-height="225"
-        :src="this.url"
-        contain
-      />
+      <v-img v-if="imageUploaded" max-height="225" :src="url" contain />
     </v-row>
   </div>
 </template>
@@ -30,9 +18,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export default {
   props: {
-    heuristicId: { required: true },
-    questionId: { required: true },
-    testId: { required: true },
+    heuristicId: { type: String, default: '', required: true },
+    questionId: { type: String, default: '', required: true },
+    testId: { type: String, default: '', required: true },
   },
   data: () => ({
     url: {},
@@ -49,9 +37,9 @@ export default {
   },
 
   mounted() {
-      this.url = this.currentUserTestAnswer.heuristicQuestions[
-        this.heuristicId.id
-      ].heuristicQuestions[this.questionId].answerImageUrl
+    this.url = this.currentUserTestAnswer.heuristicQuestions[
+      this.heuristicId.id
+    ].heuristicQuestions[this.questionId].answerImageUrl
 
     this.imageUploaded = true
   },
@@ -68,14 +56,14 @@ export default {
       const storageRef = ref(
         storage,
         'tests/' +
-          this.testId +
-          '/' +
-          'heuristic_' +
-          this.heuristicId.id +
-          '/' +
-          this.questionId +
-          '/' +
-          file.name,
+        this.testId +
+        '/' +
+        'heuristic_' +
+        this.heuristicId.id +
+        '/' +
+        this.questionId +
+        '/' +
+        file.name,
       )
 
       await uploadBytes(storageRef, file)
@@ -101,6 +89,7 @@ export default {
 .input {
   width: 100%;
 }
+
 .image-container {
   width: 100%;
   height: 100%;

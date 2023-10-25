@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="ma-0">
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -10,7 +10,7 @@
         >
           {{ itemEdit.title }}
         </v-card-title>
-        <v-row class="ma-0 mt-3">
+        <v-row class="ma-0">
           <v-col cols="10">
             <v-form ref="formEdit" @submit.prevent="validateEdit()">
               <v-text-field
@@ -83,7 +83,7 @@
 
     <!--Card Create New Heuristic-->
     <v-dialog v-model="dialogHeuris" width="800" persistent>
-      <v-card style="overflow: hidden">
+      <v-card>
         <v-card-title
           class="headline white--text"
           style="background-color: #fca326"
@@ -91,7 +91,7 @@
         >
           {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
         </v-card-title>
-        <v-row justify="center">
+        <v-row justify="center" class="ma-0">
           <v-col cols="10">
             <v-form
               v-if="heuristicForm"
@@ -213,326 +213,325 @@
                           padding: 0px !important;
                           justify-content: space-between;
                         "
-                      >
-                        <v-list-item-title
-                          style="
+                    >
+                      <v-list-item-title
+                        style="
                             margin: 0px !important;
                             padding: 0px !important;
                           "
-                        >
-                          {{ item.id }} - {{ item.title }}
-                        </v-list-item-title>
-                      </v-list-item-content>
-                      <div
-                        style="
+                      >
+                        {{ item.id }} - {{ item.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                    <div
+                      style="
                           display: flex;
                           align-items: center;
                           justify-content: center !important;
                         "
-                      >
-                        <v-list-item-action
-                          v-if="hoveredItem === i && i != itemSelect"
-                          style="
+                    >
+                      <v-list-item-action
+                        v-if="hoveredItem === i && i != itemSelect"
+                        style="
                             margin: 0px !important;
                             padding: 0px !important;
                           "
-                        >
-                          <v-btn
-                            icon
-                            small
-                            style="
-                              margin: 0px !important;
-                              padding: 0px !important;
-                            "
-                            :disabled="
-                              item.id == 0 || testAnswerDocLength > 0
-                                ? true
-                                : false
-                            "
-                            @click.stop="moveItemUp(i)"
-                          >
-                            <v-icon
-                              x-small
-                              style="
-                                margin: 0px !important;
-                                padding: 0px !important;
-                              "
-                            >
-                              mdi-arrow-up
-                            </v-icon>
-                          </v-btn>
-                          <v-btn
-                            icon
-                            small
-                            style="
-                              margin: 0px !important;
-                              padding: 0px !important;
-                            "
-                            :disabled="
-                              testAnswerDocLength > 0
-                                ? true
-                                : false || i === filteredHeuristics.length - 1
-                            "
-                            @click.stop="moveItemDown(i)"
-                          >
-                            <v-icon
-                              x-small
-                              style="
-                                margin: 0px !important;
-                                padding: 0px !important;
-                              "
-                            >
-                              mdi-arrow-down
-                            </v-icon>
-                          </v-btn>
-                        </v-list-item-action>
-                      </div>
-                      <v-list-item-icon
-                        v-if="i == itemSelect"
-                        class="mt-2 mb-2"
                       >
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </v-list-item-icon>
-                    </v-list-item>
-                  </template>
-                </v-list-item-group>
-              </v-list>
-            </v-list>
-          </v-col>
-
-          <v-divider vertical />
-
-          <!--Questions List-->
-          <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
-            <v-list dense height="560px">
-              <v-subheader>
-                <v-clamp autoresize :max-lines="2">
-                  {{ heuristics[itemSelect].title }} -
-                  {{ $t('HeuristicsTable.titles.questions') }}
-                </v-clamp>
-                <template v-slot:top>
-                  <v-row class>
-                    <v-col class="ml-2 mb-1 pa-4 pb-0">
-                      <p class="subtitleView">
-                        {{ $t('HeuristicsTable.titles.descriptions') }}
-                      </p>
-                    </v-col>
-                    <v-col class="mr-2 mb-1 pb-0 pa-4">
-                      <v-row justify="end" class="ma-0 pa-0">
-                        <AddDescBtn
-                          ref="descBtn"
-                          :question="
-                            heuristics[itemSelect].questions[questionSelect]
-                          "
-                        />
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </template>
-                <v-spacer />
-                <v-menu v-model="menuHeuristics" offset-x>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list
-                    dense
-                    :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-                  >
-                    <!--Edit Heuris Flag -->
-                    <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
-                      @click="editHeuris(heuristics[itemSelect])"
-                    >
-                      <v-list-item-icon>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>
-                        {{ $t('HeuristicsTable.titles.editHeuristic') }}
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
-                      @click="deleteHeuristic(itemSelect)"
-                    >
-                      <v-list-item-icon>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>
-                        {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-subheader>
-              <v-divider />
-              <v-list-item
-                :disabled="testAnswerDocLength > 0 ? true : false"
-                :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-                @click="setupQuestion()"
-              >
-                <v-list-item-icon>
-                  <v-icon
-                    color="#fca326"
-                    :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                  >
-                    mdi-plus
-                  </v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title
-                    style="color: #fca326"
-                    :class="{ disabledBtn: testAnswerDocLength > 0 }"
-                  >
-                    {{ $t('HeuristicsTable.titles.addNewQuestion') }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider />
-              <v-list dense height="470px" class="list-scroll">
-                <v-list-item-group v-model="questionSelect" color="#fca326">
-                  <v-list-item
-                    v-for="(item, i) in heuristics[itemSelect].questions"
-                    :key="i"
-                  >
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-icon v-if="i == questionSelect">
-                      <v-icon>mdi-chevron-right</v-icon>
-                    </v-list-item-icon>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-list>
-          </v-col>
-          <v-divider vertical />
-          <!--Questions content-->
-          <v-col v-if="questionSelect != null" class="ma-0 pa-0">
-            <v-card height="560px" elevation="0">
-              <v-subheader class="pa-2">
-                {{ heuristics[itemSelect].questions[questionSelect].title }}
-                <v-spacer />
-                <v-menu v-model="menuQuestions" offset-x>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list
-                    dense
-                    :disabled="testAnswerDocLength > 0 ? true : false"
-                    :class="{
-                      disabledBtnBackground: testAnswerDocLength > 0,
-                    }"
-                  >
-                    <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
-                      @click="
-                        editQuestions(
-                          heuristics[itemSelect].questions[questionSelect],
-                        )
-                      "
-                    >
-                      <v-list-item-icon>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>
-                        {{ $t('HeuristicsTable.titles.editQuestion') }}
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
-                      @click="deleteQuestion(questionSelect)"
-                    >
-                      <v-list-item-icon>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>
-                        {{ $t('HeuristicsTable.titles.deleteQuestion') }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-subheader>
-              <v-divider />
-              <v-row>
-                <v-col>
-                  <v-data-table
-                    height="350px"
-                    :headers="headers"
-                    :items="
-                      heuristics[itemSelect].questions[questionSelect].questions
-                    "
-                    :items-per-page="5"
-                  >
-                    <template v-slot:top>
-                      <v-row class>
-                        <v-col class="ml-2 mb-1 pa-4 pb-0">
-                          <p class="subtitleView">
-                            {{ $t('HeuristicsTable.titles.descriptions') }}
-                          </p>
-                        </v-col>
-                        <v-col class="mr-2 mb-1 pb-0 pa-4">
-                          <v-row justify="end" class="ma-0 pa-0">
-                            <AddDescBtn
-                              ref="descBtn"
-                              :question="
-                                heuristics[itemSelect].questions[questionSelect]
-                              "
-                            />
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                      <v-divider class="mb-4" />
-                    </template>
-
-                    <template v-slot:item.actions="{ item }">
-                      <!-- table actions -->
-                      <v-row justify="end" class="pr-1">
                         <v-btn
                           icon
                           small
-                          class="mr-2"
-                          @click="editDescription(item)"
+                          style="
+                              margin: 0px !important;
+                              padding: 0px !important;
+                            "
+                          :disabled="
+                            item.id == 0 || testAnswerDocLength > 0
+                              ? true
+                              : false
+                          "
+                          @click.stop="moveItemUp(i)"
                         >
-                          <v-icon small>
-                            mdi-pencil
+                          <v-icon
+                            x-small
+                            style="
+                                margin: 0px !important;
+                                padding: 0px !important;
+                              "
+                          >
+                            mdi-arrow-up
                           </v-icon>
                         </v-btn>
-                        <v-btn icon small @click="deleteItem(item)">
-                          <v-icon small>
-                            mdi-delete
+                        <v-btn
+                          icon
+                          small
+                          style="
+                              margin: 0px !important;
+                              padding: 0px !important;
+                            "
+                          :disabled="
+                            testAnswerDocLength > 0
+                              ? true
+                              : false || i === filteredHeuristics.length - 1
+                          "
+                          @click.stop="moveItemDown(i)"
+                        >
+                          <v-icon
+                            x-small
+                            style="
+                                margin: 0px !important;
+                                padding: 0px !important;
+                              "
+                          >
+                            mdi-arrow-down
                           </v-icon>
                         </v-btn>
-                      </v-row>
-                    </template>
-                  </v-data-table>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-col>
-        </v-row>
+                      </v-list-item-action>
+                    </div>
+                    <v-list-item-icon
+                      v-if="i == itemSelect"
+                      class="mt-2 mb-2"
+                    >
+                      <v-icon>mdi-chevron-right</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
+            </v-list>
+          </v-list>
+        </v-col>
 
-        <v-row v-else justify="center">
-          <v-col class="ma-10" cols="10">
-            <v-row justify="center" align="center">
-              <p class="subtitleView">
-                {{ $t('HeuristicsTable.messages.noHeuristics') }}
-              </p>
-            </v-row>
-            <v-row class="ma-4" justify="center" align="center">
-              <v-btn icon x-large color="grey" @click="dialogHeuris = true">
-                <v-icon size="100">
-                  mdi-plus-circle-outline
+        <v-divider vertical />
+
+        <!--Questions List-->
+        <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
+          <v-list dense height="560px">
+            <v-subheader>
+              <v-clamp autoresize :max-lines="2">
+                {{ heuristics[itemSelect].title }} -
+                {{ $t('HeuristicsTable.titles.questions') }}
+              </v-clamp>
+              <template v-slot:top>
+                <v-row class>
+                  <v-col class="ml-2 mb-1 pa-4 pb-0">
+                    <p class="subtitleView">
+                      {{ $t('HeuristicsTable.titles.descriptions') }}
+                    </p>
+                  </v-col>
+                  <v-col class="mr-2 mb-1 pb-0 pa-4">
+                    <v-row justify="end" class="ma-0 pa-0">
+                      <AddDescBtn
+                        ref="descBtn"
+                        :question="
+                          heuristics[itemSelect].questions[questionSelect]
+                        "
+                      />
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </template>
+              <v-spacer />
+              <v-menu v-model="menuHeuristics" offset-x>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                  dense
+                  :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+                >
+                  <!--Edit Heuris Flag -->
+                  <v-list-item
+                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    @click="editHeuris(heuristics[itemSelect])"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>
+                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    @click="deleteHeuristic(itemSelect)"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-delete</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>
+                      {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-subheader>
+            <v-divider />
+            <v-list-item
+              :disabled="testAnswerDocLength > 0 ? true : false"
+              :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+              @click="setupQuestion()"
+            >
+              <v-list-item-icon>
+                <v-icon
+                  color="#fca326"
+                  :class="{ disabledBtn: testAnswerDocLength > 0 }"
+                >
+                  mdi-plus
                 </v-icon>
-              </v-btn>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title
+                  style="color: #fca326"
+                  :class="{ disabledBtn: testAnswerDocLength > 0 }"
+                >
+                  {{ $t('HeuristicsTable.titles.addNewQuestion') }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider />
+            <v-list dense height="470px" class="list-scroll">
+              <v-list-item-group v-model="questionSelect" color="#fca326">
+                <v-list-item
+                  v-for="(item, i) in heuristics[itemSelect].questions"
+                  :key="i"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-icon v-if="i == questionSelect">
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-list-item-icon>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-list>
+        </v-col>
+        <v-divider vertical />
+        <!--Questions content-->
+        <v-col v-if="questionSelect != null" class="ma-0 pa-0">
+          <v-card height="560px" elevation="0">
+            <v-subheader class="pa-2">
+              {{ heuristics[itemSelect].questions[questionSelect].title }}
+              <v-spacer />
+              <v-menu v-model="menuQuestions" offset-x>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                  dense
+                  :disabled="testAnswerDocLength > 0 ? true : false"
+                  :class="{
+                    disabledBtnBackground: testAnswerDocLength > 0,
+                  }"
+                >
+                  <v-list-item
+                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    @click="
+                      editQuestions(
+                        heuristics[itemSelect].questions[questionSelect],
+                      )
+                    "
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>
+                      {{ $t('HeuristicsTable.titles.editQuestion') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    @click="deleteQuestion(questionSelect)"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-delete</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>
+                      {{ $t('HeuristicsTable.titles.deleteQuestion') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-subheader>
+            <v-divider />
+            <v-row>
+              <v-col>
+                <v-data-table
+                  height="350px"
+                  :headers="headers"
+                  :items="
+                    heuristics[itemSelect].questions[questionSelect].questions
+                  "
+                  :items-per-page="5"
+                >
+                  <template v-slot:top>
+                    <v-row class>
+                      <v-col class="ml-2 mb-1 pa-4 pb-0">
+                        <p class="subtitleView">
+                          {{ $t('HeuristicsTable.titles.descriptions') }}
+                        </p>
+                      </v-col>
+                      <v-col class="mr-2 mb-1 pb-0 pa-4">
+                        <v-row justify="end" class="ma-0 pa-0">
+                          <AddDescBtn
+                            ref="descBtn"
+                            :question="
+                              heuristics[itemSelect].questions[questionSelect]
+                            "
+                          />
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                    <v-divider class="mb-4" />
+                  </template>
+
+                  <template v-slot:item.actions="{ item }">
+                    <!-- table actions -->
+                    <v-row justify="end" class="pr-1">
+                      <v-btn
+                        icon
+                        small
+                        class="mr-2"
+                        @click="editDescription(item)"
+                      >
+                        <v-icon small>
+                          mdi-pencil
+                        </v-icon>
+                      </v-btn>
+                      <v-btn icon small @click="deleteItem(item)">
+                        <v-icon small>
+                          mdi-delete
+                        </v-icon>
+                      </v-btn>
+                    </v-row>
+                  </template>
+                </v-data-table>
+              </v-col>
             </v-row>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row v-else justify="center">
+        <v-col class="ma-10" cols="10">
+          <v-row justify="center" align="center" class="ma-0">
+            <p class="subtitleView">
+              {{ $t('HeuristicsTable.messages.noHeuristics') }}
+            </p>
+          </v-row>
+          <v-row class="ma-4" justify="center" align="center">
+            <v-btn icon x-large color="grey" @click="dialogHeuris = true">
+              <v-icon size="100">
+                mdi-plus-circle-outline
+              </v-icon>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-row>
 </template>
 

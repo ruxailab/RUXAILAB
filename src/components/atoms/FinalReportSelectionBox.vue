@@ -2,19 +2,9 @@
   <div class="selection-box">
     <h2>{{ $t('pages.finalReport.select') }}</h2>
     <div class="flex-container">
-      <div
-        v-if="heuristics.length !== 0"
-        class="column with-border"
-        style="max-height: 28vh"
-      >
-        <input
-          v-if="heuristics.length > 5"
-          v-model="sliderValue"
-          type="range"
-          :min="0"
-          :max="Math.max(0, heuristics.length - 5)"
-          step="5"
-          class="heuristics-slider"
+      <div v-if="heuristics.length !== 0" class="column with-border" style="max-height: 28vh">
+        <input v-if="heuristics.length > 5" v-model="sliderValue" type="range" :min="0"
+               :max="Math.max(0, heuristics.length - 5)" step="5" class="heuristics-slider"
         >
         <div class="slidder-section">
           <div class="heuristics-slider-label">
@@ -22,22 +12,10 @@
             {{ $t('pages.finalReport.to') }} {{ sliderValueMax }}
           </div>
         </div>
-        <div
-          v-if="showSlider"
-          class="slider-container"
-          style="overflow: scroll; max-height: 90%"
-        >
-          <div
-            v-for="heuristic in visibleHeuristics"
-            :key="heuristic.id"
-            class="option"
-          >
-            <input
-              :id="'heuristic' + heuristic.id"
-              v-model="selectedHeuristics"
-              type="checkbox"
-              :name="heuristic.name"
-              :value="heuristic.id"
+        <div v-if="showSlider" class="slider-container" style="overflow: scroll; max-height: 90%">
+          <div v-for="heuristic in visibleHeuristics" :key="heuristic.id" class="option">
+            <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox" :name="heuristic.name"
+                   :value="heuristic.id"
             >
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
@@ -46,16 +24,8 @@
         </div>
         <div v-else>
           {{ $t('pages.finalReport.heuristic') + 's:' }}
-          <div
-            v-for="heuristic in heuristics"
-            :key="heuristic.id"
-            class="option"
-          >
-            <input
-              :id="'heuristic' + heuristic.id"
-              type="checkbox"
-              :name="heuristic.name"
-            >
+          <div v-for="heuristic in heuristics" :key="heuristic.id" class="option">
+            <input :id="'heuristic' + heuristic.id" type="checkbox" :name="heuristic.name">
 
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
@@ -89,7 +59,6 @@ import { finalResult, statistics } from '@/utils/statistics'
 import i18n from '@/i18n'
 
 export default {
-  props: ['id', 'HEURISTICS'],
   data: () => ({
     preview: new Object(),
     formattedDate: '',
@@ -133,20 +102,20 @@ export default {
     },
     options() {
       return [
-        { id: 'options', name: 'options', label: i18n.t('pages.finalReport.options.options')  },
-        { id: 'comments', name: 'comments', label: i18n.t('pages.finalReport.options.comments')  },
-        { id: 'results', name: 'results', label: i18n.t('pages.finalReport.options.statistics')  },
+        { id: 'options', name: 'options', label: i18n.t('pages.finalReport.options.options') },
+        { id: 'comments', name: 'comments', label: i18n.t('pages.finalReport.options.comments') },
+        { id: 'results', name: 'results', label: i18n.t('pages.finalReport.options.statistics') },
         {
           id: 'evaluators-results',
           name: 'evaluators-results',
-          label: i18n.t('pages.finalReport.options.answersByEvaluator') ,
+          label: i18n.t('pages.finalReport.options.answersByEvaluator'),
         },
         {
           id: 'heuristics-results',
           name: 'heuristics-results',
-          label: i18n.t('pages.finalReport.options.answersByHeuristics') ,
+          label: i18n.t('pages.finalReport.options.answersByHeuristics'),
         },
-        { id: 'finalReport', name: 'finalReport', label: i18n.t('pages.finalReport.options.finalReport')  },
+        { id: 'finalReport', name: 'finalReport', label: i18n.t('pages.finalReport.options.finalReport') },
       ]
     },
   },
@@ -318,6 +287,7 @@ export default {
             // Reset the cooperatorsEmail array to an empty array
             this.cooperatorsEmail = []
           } else {
+            console.log('cooperators email not empty')
           }
         } else {
           this.preview.cooperatorsEmail = ''
@@ -384,8 +354,10 @@ export default {
 
 .flex-container {
   display: flex;
-  flex-wrap: wrap; /* Allow items to wrap to new lines */
-  gap: 1rem; /* Add some space between items */
+  flex-wrap: wrap;
+  /* Allow items to wrap to new lines */
+  gap: 1rem;
+  /* Add some space between items */
 }
 
 .column {
@@ -396,26 +368,32 @@ export default {
   font-size: medium;
   padding: 0.5rem;
 }
+
 .bottom-button {
   align-self: flex-end;
-  margin-top: 1rem; /* Add space at the top */
+  margin-top: 1rem;
+  /* Add space at the top */
   margin-bottom: 1rem;
 }
 
 /* Larger screens */
 @media (min-width: 768px) {
   .flex-container {
-    flex-direction: row; /* Horizontal layout for larger screens */
+    flex-direction: row;
+    /* Horizontal layout for larger screens */
   }
 
   .column {
-    flex: 0.5; /* Each column takes half of the available width */
-    max-width: 50%; /* Limit column width to 50% */
+    flex: 0.5;
+    /* Each column takes half of the available width */
+    max-width: 50%;
+    /* Limit column width to 50% */
   }
 
   .slidder-section {
     align-items: center;
-    margin: 0; /* Reset margin for this section */
+    margin: 0;
+    /* Reset margin for this section */
   }
 
   .heuristics-slider-label {
@@ -433,24 +411,32 @@ export default {
 /* Smaller screens */
 @media (max-width: 767px) {
   .flex-container {
-    flex-direction: column; /* Vertical layout for smaller screens */
+    flex-direction: column;
+    /* Vertical layout for smaller screens */
   }
 
   .column {
-    flex: none; /* Reset flex property to allow natural width */
-    max-width: 100%; /* Allow column to take full width */
+    flex: none;
+    /* Reset flex property to allow natural width */
+    max-width: 100%;
+    /* Allow column to take full width */
   }
 
   .column.with-border {
-    order: 0; /* Move this column below the other column on small screens */
+    order: 0;
+    /* Move this column below the other column on small screens */
   }
 
   /* Adjust the height and overflow of the slider container */
   .slider-container {
-    max-height: 20vh !important; /* Adjust the height as needed */
-    overflow-y: auto !important; /* Enable vertical scrolling */
-    overflow-x: hidden !important; /* Hide horizontal scrolling */
-    margin-top: 1rem; /* Add space at the top */
+    max-height: 20vh !important;
+    /* Adjust the height as needed */
+    overflow-y: auto !important;
+    /* Enable vertical scrolling */
+    overflow-x: hidden !important;
+    /* Hide horizontal scrolling */
+    margin-top: 1rem;
+    /* Add space at the top */
     font-size: 10px;
 
     background-color: #ebebeb;
@@ -460,7 +446,8 @@ export default {
 
   .bottom-button {
     align-self: flex-start !important;
-    margin-top: 1rem; /* Add space at the top */
+    margin-top: 1rem;
+    /* Add space at the top */
     margin-bottom: 1rem;
   }
 }
