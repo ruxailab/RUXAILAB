@@ -1,19 +1,3 @@
-/**
- * Create a TaskAnswer.
- * @param {string} taskId - The taskId value.
- * @param {string} taskAnswer - The taskAnswer value.
- * @param {string} taskObservations - The taskObservations value.
- * @param {string} taskTime - The taskTime value.
- * @param {string} postTestUrl - The post_testSheetURL value.
- * @param {string} preTestUrl- The pre_testSheetURL value.
- * @param {string} audioRecordURL - The audioRecordURL value.
- * @param {string} screenRecordURL - The screenRecordURL value.
- * @param {string} webcamRecordURL - The webcamRecordURL value.
- * @param {number} total - The total value.
- * @param {boolean} submitted - The submitted value.
- * @param {string} userDocId - The userDocId value.
- */
-
 export default class TaskAnswer {
   constructor({
     preTestUrl,
@@ -44,7 +28,7 @@ export default class TaskAnswer {
       preTestUrl: this.preTestUrl,
       consentUrl: this.consentUrl,
       postTestUrl: this.postTestUrl,
-      tasks: this.tasks,
+      tasks: Object.fromEntries(Object.entries(this.tasks).map(([key, value]) => [key, value.toFirestore()])),
       progress: this.progress,
       total: this.total,
       submitted: this.submitted,
