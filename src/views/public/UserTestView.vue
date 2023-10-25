@@ -126,7 +126,6 @@
         <v-tooltip left v-if="currentUserTestAnswer">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              :disabled="calculatedProgress < 100"
               class="white--text"
               @click="dialog = true"
               fab
@@ -215,21 +214,20 @@
               <v-tooltip right v-for="(task, i) in item.value" :key="i">
                 <template v-slot:activator="{ on, attrs }">
                   <v-list-item
-                    @click="heurisIndex = i"
+                    @click="taskIndex = i"
                     link
                     v-bind="attrs"
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon
-                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        >{{ task.icon }}</v-icon
-                      >
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">{{
+                        task.icon
+                      }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title
                         :style="
-                          heurisIndex == i ? 'color: white' : 'color:#fca326'
+                          taskIndex == i ? 'color: white' : 'color:#fca326'
                         "
                         >{{ task.title }}</v-list-item-title
                       >
@@ -265,21 +263,20 @@
               <v-tooltip right v-for="(task, i) in item.value" :key="i">
                 <template v-slot:activator="{ on, attrs }">
                   <v-list-item
-                    @click="heurisIndex = i"
+                    @click="taskIndex = i"
                     link
                     v-bind="attrs"
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon
-                        :color="heurisIndex == i ? '#ffffff' : '#fca326'"
-                        >{{ task.icon }}</v-icon
-                      >
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">{{
+                        task.icon
+                      }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title
                         :style="
-                          heurisIndex == i ? 'color: white' : 'color:#fca326'
+                          taskIndex == i ? 'color: white' : 'color:#fca326'
                         "
                         >{{ task.title }}</v-list-item-title
                       >
@@ -353,14 +350,110 @@
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
-          :title="test.testStructure.userTasks[heurisIndex].taskName"
+          :title="test.testStructure.userTasks[taskIndex].taskName"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">{{
-              test.testStructure.userTasks[heurisIndex].taskName
+              test.testStructure.userTasks[taskIndex].taskName
             }}</v-card-title>
             <v-divider class="mb-5"></v-divider>
-            <ViewTask :item="test.testStructure.userTasks[heurisIndex]" />
+            <v-container>
+              <v-row
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <v-col cols="12">
+                  <v-row justify="center">
+                    <h1>
+                      {{ test.testStructure.userTasks[taskIndex].taskName }}
+                    </h1>
+                  </v-row>
+                  <v-spacer />
+                  <v-row
+                    v-if="
+                      test.testStructure.userTasks[taskIndex].taskTip !== null
+                    "
+                    justify="end"
+                  >
+                    <TipButton
+                      :task="test.testStructure.userTasks[taskIndex]"
+                    />
+                  </v-row>
+                  <v-spacer />
+                  <v-row justify="center">
+                    <p class="paragraph">
+                      {{
+                        test.testStructure.userTasks[taskIndex].taskDescription
+                      }}
+                    </p>
+                  </v-row>
+                  <v-spacer />
+                  <v-row justify="center">
+                    <v-btn
+                      v-if="
+                        test.testStructure.userTasks[taskIndex].hasTimer ===
+                          true
+                      "
+                      color="success"
+                    >
+                      <v-icon left> mdi-timer </v-icon>Start
+                    </v-btn>
+                  </v-row>
+                  <v-spacer />
+                  <v-row class="paragraph" justify="space-around">
+                    <v-col
+                      v-if="
+                        test.testStructure.userTasks[taskIndex].taskType ===
+                          'textArea'
+                      "
+                    >
+                      <v-textarea
+                        :id="
+                          'id-' +
+                            test.testStructure.userTasks[taskIndex].taskName
+                        "
+                        v-model="
+                          currentUserTestAnswer.tasks[taskIndex].taskAnswer
+                        "
+                        outlined
+                        label="answer"
+                      />
+                    </v-col>
+                    <v-col>
+                      <v-textarea
+                        :id="
+                          'id-' +
+                            test.testStructure.userTasks[taskIndex].taskName
+                        "
+                        v-model="
+                          currentUserTestAnswer.tasks[taskIndex]
+                            .taskObservations
+                        "
+                        outlined
+                        label="observation (optional)"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+              <v-row
+                v-if="test.testStructure.userTasks[taskIndex].hasPost"
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <iframe
+                  :src="test.testStructure.userTasks[taskIndex].postTest"
+                  width="100%"
+                  height="900"
+                  frameborder="0"
+                  marginheight="0"
+                  marginwidth="0"
+                  >Carregando…</iframe
+                >
+              </v-row>
+            </v-container>
           </div>
         </ShowInfo>
 
@@ -388,9 +481,7 @@ import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
-import ViewTask from '@/components/molecules/ViewTask.vue'
 import UserTask from '@/models/UserTask'
-import TaskAnswer from '@/models/TaskAnswer'
 export default {
   props: ['id', 'token'],
   components: {
@@ -399,7 +490,6 @@ export default {
     Snackbar,
     CardSignIn,
     CardSignUp,
-    ViewTask,
   },
   data: () => ({
     logined: null,
@@ -410,14 +500,13 @@ export default {
     mini: false,
     index: null,
     noExistUser: true,
-    heurisIndex: 0,
+    taskIndex: 0,
     preTestIndex: null,
     items: [],
-    idx: 0,
+    taskAnswers: {},
     fab: false,
     res: 0,
     dialog: false,
-    calculatedProgress: 0,
   }),
   watch: {
     test: async function() {
@@ -432,8 +521,8 @@ export default {
         }
       }
     },
-    heurisIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
+    taskIndex() {
+      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
     },
     async user() {
       if (this.user) {
@@ -444,11 +533,11 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
-    this.populateUserTasks()
-    this.mappingSteps()
+    await this.populateUserTasks()
+    await this.mappingSteps()
   },
   methods: {
-    populateUserTasks() {
+     async populateUserTasks() {
       let userTasks = this.test.testStructure.userTasks
       ;(this.currentUserTestAnswer.preTestUrl = this.test.testStructure.preTest.preTestUrl),
         (this.currentUserTestAnswer.consentUrl = this.test.testStructure.preTest.consentUrl),
@@ -466,7 +555,6 @@ export default {
       }
     },
     async saveAnswer() {
-      populateUserTasks()
       this.currentUserTestAnswer.lastUpdate = Date.now()
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -486,7 +574,7 @@ export default {
     setExistUser() {
       this.noExistUser = false
     },
-    mappingSteps() {
+    async mappingSteps() {
       //PreTest
       if (this.validate(this.test.testStructure.preTest.consentUrl)) {
         this.items.push({
