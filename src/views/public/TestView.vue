@@ -318,18 +318,21 @@
                 </div>
               </v-list>
 
-              <v-list-item @click="index = item.id" v-else-if="item.id == 2">
+              <v-list-item v-else-if="item.id == 2" @click="index = item.id">
                 <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                    {{
+                      item.icon
+                    }}
+                  </v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
                   <v-list-item-title
                     :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                    >{{ item.title }}</v-list-item-title
                   >
+                    {{ item.title }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </div>
@@ -583,7 +586,7 @@ export default {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
-        testType: this.test.testType
+        testType: this.test.testType,
       })
     },
     async submitAnswer() {
