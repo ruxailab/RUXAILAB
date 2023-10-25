@@ -28,7 +28,7 @@
           <v-col v-if="item.taskType === 'textArea'">
             <v-textarea
               :id="'id-'+item.taskName"
-              v-model="item.res"
+              v-model="item.taskResponse"
               outlined
               label="answer"
               @change="updated"
@@ -37,7 +37,7 @@
           <v-col>
             <v-textarea
               :id="'id-'+item.taskName"
-              v-model="item.obs"
+              v-model="item.taskObservations"
               outlined
               label="observation (optional)"
               @change="updated"
