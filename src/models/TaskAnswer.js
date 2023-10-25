@@ -1,3 +1,5 @@
+import UserTask from "./UserTask"
+
 export default class TaskAnswer {
   constructor({
     preTestUrl,
@@ -21,7 +23,7 @@ export default class TaskAnswer {
     this.lastUpdate = lastUpdate ?? null
   }
   static toTaskAnswer(data) {
-    return new TaskAnswer(data)
+    return new TaskAnswer({...data, tasks: Object.fromEntries(Object.entries(data.tasks).map(([key, value]) => [key, UserTask.toUserTask(value)])),})
   }
   toFirestore() {
     return {
