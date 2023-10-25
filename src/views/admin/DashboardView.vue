@@ -43,10 +43,10 @@
           </v-row>
           <v-text-field
             v-else
+            v-model="search"
             :autofocus="searching"
             dense
             :label="$t('Dashboard.search')"
-            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
@@ -54,16 +54,16 @@
           />
           <v-divider class="mb-1" />
 
-            <!-- Desktop Main Tabs -->
-            <v-tabs
-              v-model="mainIndex"
-              background-color="transparent"
-              color="black"
-              class="hidden-sm-and-down mt-4"
-            >
-              <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
-              <!-- <v-tab>Answers</v-tab>-->
-              <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
+          <!-- Desktop Main Tabs -->
+          <v-tabs
+            v-model="mainIndex"
+            background-color="transparent"
+            color="black"
+            class="hidden-sm-and-down mt-4"
+          >
+            <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
+            <!-- <v-tab>Answers</v-tab>-->
+            <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
 
             <v-spacer />
 
@@ -121,13 +121,13 @@
 
           <!-- Mobile Sub Buttons -->
           <v-select
-              v-if="mainIndex == 1"
-              v-model="subIndex"
-              dense
-              outlined
-              class="hidden-md-and-up mx-2"
-              :items="templateButtonItems"
-            />
+            v-if="mainIndex == 1"
+            v-model="subIndex"
+            dense
+            outlined
+            class="hidden-md-and-up mx-2"
+            :items="templateButtonItems"
+          />
           <v-select
             v-else
             v-model="subIndex"

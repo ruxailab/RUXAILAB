@@ -76,11 +76,11 @@ export default {
       //initialize formData properties
       formData: {
         preTest: {
-          preTestUrl: "",
-          consentUrl: "",
+          preTestUrl: '',
+          consentUrl: '',
         },
         postTest: {
-          postTestUrl: "",
+          postTestUrl: '',
         },
       },
     }

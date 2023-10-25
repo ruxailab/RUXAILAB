@@ -51,10 +51,10 @@
           </v-row>
           <v-text-field
             v-else
+            v-model="search"
             :autofocus="searching"
             dense
             label="Search"
-            v-model="search"
             prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
@@ -62,16 +62,16 @@
           />
           <v-divider class="mb-1" />
 
-            <!-- Desktop Main Tabs -->
-            <v-tabs
-              v-model="mainIndex"
-              background-color="transparent"
-              color="black"
-              class="hidden-sm-and-down"
-            >
-              <v-tab>Tests</v-tab>
-              <v-tab>Answers</v-tab>
-              <v-tab>Templates</v-tab>
+          <!-- Desktop Main Tabs -->
+          <v-tabs
+            v-model="mainIndex"
+            background-color="transparent"
+            color="black"
+            class="hidden-sm-and-down"
+          >
+            <v-tab>Tests</v-tab>
+            <v-tab>Answers</v-tab>
+            <v-tab>Templates</v-tab>
 
             <v-spacer />
 

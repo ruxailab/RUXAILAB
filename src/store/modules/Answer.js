@@ -32,7 +32,7 @@ export default {
       }
 
       if (state.testAnswerDocument.type === 'User') {
-        return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
+        return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
           ? TaskAnswer.toTaskAnswer(
               state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
             )
