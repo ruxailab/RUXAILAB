@@ -5,45 +5,46 @@
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title class="headline error white--text" primary-title
-          >Are you sure you want to submit this test?</v-card-title
-        >
+        <v-card-title class="headline error white--text" primary-title>
+          Are you sure you want to submit this test?
+        </v-card-title>
 
-        <v-card-text
-          >Are you sure you want to submit your test. You can only do it
-          once.</v-card-text
-        >
+        <v-card-text>
+          Are you sure you want to submit your test. You can only do it
+          once.
+        </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="grey lighten-3" text @click="dialog = false"
-            >Cancel</v-btn
-          >
+          <v-spacer />
+          <v-btn class="grey lighten-3" text @click="dialog = false">
+            Cancel
+          </v-btn>
           <v-btn
             class="red white--text ml-1"
             text
             @click="submitAnswer(), (dialog = false)"
-            >Submit</v-btn
           >
+            Submit
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
+        v-if="selected"
         @logined="logined = true"
         @change="selected = !selected"
-        v-if="selected"
       />
       <CardSignUp
+        v-else
         @logined="
           logined = true
           setTest()
         "
         @change="selected = !selected"
-        v-else
       />
     </v-dialog>
 
@@ -55,13 +56,15 @@
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>mdi-account</v-icon>
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()"
-            >Continue as {{ user.email }}</v-btn
-          >
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+            Continue as {{ user.email }}
+          </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
@@ -79,12 +82,16 @@
       align="center"
     >
       <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
-        <p align="justify" class="description">{{ test.testDescription }}</p>
+        <h1 class="titleView pb-1">
+          {{ test.testTitle }}
+        </h1>
+        <p align="justify" class="description">
+          {{ test.testDescription }}
+        </p>
         <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="start = !start"
-            >Start Test</v-btn
-          >
+          <v-btn color="white" outlined rounded @click="start = !start">
+            Start Test
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -101,20 +108,24 @@
       >
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon large v-else>mdi-hammer-screwdriver</v-icon>
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon v-else large>
+              mdi-hammer-screwdriver
+            </v-icon>
           </v-btn>
         </template>
 
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              @click="saveAnswer()"
               fab
               dark
               small
               color="#F9A826"
               v-bind="attrs"
+              @click="saveAnswer()"
               v-on="on"
             >
               <v-icon>mdi-content-save</v-icon>
@@ -123,15 +134,15 @@
           <span>Save</span>
         </v-tooltip>
 
-        <v-tooltip left v-if="currentUserTestAnswer">
+        <v-tooltip v-if="currentUserTestAnswer" left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               class="white--text"
-              @click="dialog = true"
               fab
               small
               color="#F9A826"
               v-bind="attrs"
+              @click="dialog = true"
               v-on="on"
             >
               <v-icon>mdi-file-move</v-icon>
@@ -140,15 +151,15 @@
           <span>Submit</span>
         </v-tooltip>
 
-        <v-tooltip left v-else>
+        <v-tooltip v-else left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               class="white--text"
-              @click="dialog = true"
               fab
               small
               color="#F9A826"
               v-bind="attrs"
+              @click="dialog = true"
               v-on="on"
             >
               <v-icon>mdi-file-move</v-icon>
@@ -159,13 +170,13 @@
       </v-speed-dial>
 
       <v-navigation-drawer
-        clipped
         v-model="drawer"
+        clipped
         :mini-variant="mini"
         permanent
         color="#3F3D56"
       >
-        <div class="header" v-if="!mini">
+        <div v-if="!mini" class="header">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
               <v-col class="pa-0 ma-0" cols="10">
@@ -173,8 +184,9 @@
                   class="mx-1 mt-2 text-center titleText"
                   autoresize
                   :max-lines="2"
-                  >{{ test.testTitle }}</v-clamp
                 >
+                  {{ test.testTitle }}
+                </v-clamp>
               </v-col>
             </v-row>
           </v-list-item>
@@ -190,47 +202,54 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
-              @click="index = item.id"
               v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
+              @click="index = item.id"
             >
               <v-icon
                 slot="appendIcon"
                 :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
               >
+                mdi-chevron-down
+              </v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                    {{
+                      item.icon
+                    }}
+                  </v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
                 >
+                  {{ item.title }}
+                </v-list-item-title>
               </template>
-              <v-tooltip right v-for="(task, i) in item.value" :key="i">
+              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
                 <template v-slot:activator="{ on, attrs }">
                   <v-list-item
-                    @click="taskIndex = i"
                     link
                     v-bind="attrs"
+                    @click="taskIndex = i"
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">{{
-                        task.icon
-                      }}</v-icon>
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
+                        {{
+                          task.icon
+                        }}
+                      </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title
                         :style="
                           taskIndex == i ? 'color: white' : 'color:#fca326'
                         "
-                        >{{ task.title }}</v-list-item-title
                       >
+                        {{ task.title }}
+                      </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -239,47 +258,54 @@
             </v-list-group>
             <!--Tasks--->
             <v-list-group
-              @click="index = item.id"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
+              @click="index = item.id"
             >
               <v-icon
                 slot="appendIcon"
                 :color="index == item.id ? '#ffffff' : '#fca326'"
-                >mdi-chevron-down</v-icon
               >
+                mdi-chevron-down
+              </v-icon>
               <template v-slot:activator>
                 <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                    item.icon
-                  }}</v-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                    {{
+                      item.icon
+                    }}
+                  </v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
                 >
+                  {{ item.title }}
+                </v-list-item-title>
               </template>
-              <v-tooltip right v-for="(task, i) in item.value" :key="i">
+              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
                 <template v-slot:activator="{ on, attrs }">
                   <v-list-item
-                    @click="taskIndex = i"
                     link
                     v-bind="attrs"
+                    @click="taskIndex = i"
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">{{
-                        task.icon
-                      }}</v-icon>
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
+                        {{
+                          task.icon
+                        }}
+                      </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title
                         :style="
                           taskIndex == i ? 'color: white' : 'color:#fca326'
                         "
-                        >{{ task.title }}</v-list-item-title
                       >
+                        {{ task.title }}
+                      </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -287,33 +313,40 @@
               </v-tooltip>
             </v-list-group>
             <!--Post Test-->
-            <v-list-item @click="index = item.id" v-else-if="item.id == 2">
+            <v-list-item v-else-if="item.id == 2" @click="index = item.id">
               <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">{{
-                  item.icon
-                }}</v-icon>
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                  {{
+                    item.icon
+                  }}
+                </v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
-                  >{{ item.title }}</v-list-item-title
                 >
+                  {{ item.title }}
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </div>
         </v-list>
 
         <div class="footer">
-          <v-spacer></v-spacer>
-          <v-btn icon @click.stop="mini = !mini" class="mr-2">
-            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
-            <v-icon v-else color="white">mdi-chevron-left</v-icon>
+          <v-spacer />
+          <v-btn icon class="mr-2" @click.stop="mini = !mini">
+            <v-icon v-if="mini" color="white">
+              mdi-chevron-right
+            </v-icon>
+            <v-icon v-else color="white">
+              mdi-chevron-left
+            </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
 
-      <v-col class="backgroundTest pa-0 ma-0 right-view" ref="rightView">
+      <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
         <ShowInfo
           v-if="index == 0 && preTestIndex == 0"
@@ -327,8 +360,7 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-            >Carregando…</iframe
-          >
+          >Carregando…</iframe>
         </ShowInfo>
 
         <!-- Form - Pre Test -->
@@ -344,8 +376,7 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-            >Carregando…</iframe
-          >
+          >Carregando…</iframe>
         </ShowInfo>
         <!-- Tasks -->
         <ShowInfo
@@ -353,10 +384,12 @@
           :title="test.testStructure.userTasks[taskIndex].taskName"
         >
           <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">{{
-              test.testStructure.userTasks[taskIndex].taskName
-            }}</v-card-title>
-            <v-divider class="mb-5"></v-divider>
+            <v-card-title class="subtitleView">
+              {{
+                test.testStructure.userTasks[taskIndex].taskName
+              }}
+            </v-card-title>
+            <v-divider class="mb-5" />
             <v-container>
               <v-row
                 class="fill-height"
@@ -397,7 +430,9 @@
                       "
                       color="success"
                     >
-                      <v-icon left> mdi-timer </v-icon>Start
+                      <v-icon left>
+                        mdi-timer
+                      </v-icon>Start
                     </v-btn>
                   </v-row>
                   <v-spacer />
@@ -450,8 +485,7 @@
                   frameborder="0"
                   marginheight="0"
                   marginwidth="0"
-                  >Carregando…</iframe
-                >
+                >Carregando…</iframe>
               </v-row>
             </v-container>
           </div>
@@ -467,8 +501,7 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-            >Carregando…</iframe
-          >
+          >Carregando…</iframe>
         </ShowInfo>
       </v-col>
     </v-row>
@@ -483,7 +516,6 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import UserTask from '@/models/UserTask'
 export default {
-  props: ['id', 'token'],
   components: {
     ShowInfo,
     VClamp,
@@ -491,6 +523,7 @@ export default {
     CardSignIn,
     CardSignUp,
   },
+  props: ['id', 'token'],
   data: () => ({
     logined: null,
     selected: true,
@@ -508,6 +541,31 @@ export default {
     res: 0,
     dialog: false,
   }),
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+    user() {
+      if (this.$store.getters.user) this.setExistUser()
+      return this.$store.getters.user
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
+    showSaveBtn() {
+      if (this.currentUserTestAnswer.submitted) return false
+      return true
+    },
+    cooperators() {
+      return this.$store.getters.cooperators
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
+    currentImageUrl() {
+      return this.$store.state.Tests.currentImageUrl
+    },
+  },
   watch: {
     test: async function() {
       this.mappingSteps()
@@ -538,7 +596,8 @@ export default {
   },
   methods: {
      async populateUserTasks() {
-      let userTasks = this.test.testStructure.userTasks
+      console.log('abacateapuhouhosodkas');
+      const userTasks = this.test.testStructure.userTasks
       ;(this.currentUserTestAnswer.preTestUrl = this.test.testStructure.preTest.preTestUrl),
         (this.currentUserTestAnswer.consentUrl = this.test.testStructure.preTest.consentUrl),
         (this.currentUserTestAnswer.postTestUrl = this.test.testStructure.postTest.postTestUrl)
@@ -641,31 +700,6 @@ export default {
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
-    },
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      if (this.$store.getters.user) this.setExistUser()
-      return this.$store.getters.user
-    },
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-    showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
-    },
-    cooperators() {
-      return this.$store.getters.cooperators
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
     },
   },
 }
