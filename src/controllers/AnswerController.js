@@ -16,7 +16,6 @@ export default class AnswerController extends Controller {
 
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
-
     return new Answer({ id: res.id, ...res.data() })
   }
 
