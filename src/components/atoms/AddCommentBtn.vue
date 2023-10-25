@@ -27,23 +27,11 @@
       </v-col>
 
       <v-col cols="12" class="py-0">
-        <v-textarea
-          v-if="show"
-          v-model="answerHeu.heuristicComment"
-          outlined
-          dense
-          auto-grow
-          clearable
-          clear-icon="mdi-close"
-          :label="$t('common.comment')"
-          @change="updateComment"
+        <v-textarea v-if="show" v-model="answerHeu.heuristicComment" outlined dense auto-grow clearable
+                    clear-icon="mdi-close" :label="$t('common.comment')" @change="updateComment"
         />
-        <ImageImport
-          v-if="show"
-          :heuristic-id="this.test.testStructure[heurisIndex]"
-          :question-id="this.answerHeu.heuristicId"
-          :test-id="this.$store.getters.test.id"
-          @imageUploaded="handleImageUploaded"
+        <ImageImport v-if="show" :heuristic-id="test.testStructure[heurisIndex]" :question-id="answerHeu.heuristicId"
+                     :test-id="this.$store.getters.test.id" @imageUploaded="handleImageUploaded"
         />
       </v-col>
     </v-row>
@@ -57,10 +45,12 @@ export default {
   props: {
     answerHeu: {
       type: Object,
+      default: ()=>{},
       require: true,
     },
     heurisIndex: {
       type: Number,
+      default: 0,
     },
   },
   data: () => ({
