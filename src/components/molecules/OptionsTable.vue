@@ -1,5 +1,5 @@
 <template>
-  <div class="ma-0 pa-0">
+  <div class="mt-0 pa-0">
     <v-data-table
       height="420px"
       style="background: #f5f7ff;"
@@ -25,25 +25,21 @@
       </template>
 
       <template v-slot:top>
-        <v-row class>
-          <v-col class="ml-2 mb-1 pa-4 pb-0">
-            <p class="subtitleView">
-              Current Options
-            </p>
-          </v-col>
-          <v-col class="mr-2 mb-1 pb-0 pa-4">
-            <v-row justify="end" class="ma-0 pa-0">
-              <AddOptionBtn
-                :option="option"
-                :dialog="dialog"
-                :has-value="hasValue"
-                @changeHasValue="hasValue = !hasValue"
-                @addOption="updateOptions"
-                @dialog="changeDialog"
-                @change="emitChange()"
-              />
-            </v-row>
-          </v-col>
+        <v-row class="ma-0" align="center">
+          <v-card-title class="subtitleView">
+            Current Options
+          </v-card-title>
+          <v-row justify="end" class="ma-0 pa-0 mr-4">
+            <AddOptionBtn
+              :option="option"
+              :dialog="dialog"
+              :has-value="hasValue"
+              @changeHasValue="hasValue = !hasValue"
+              @addOption="updateOptions"
+              @dialog="changeDialog"
+              @change="emitChange()"
+            />
+          </v-row>
         </v-row>
         <v-divider class="mb-4" />
       </template>
@@ -72,7 +68,12 @@ export default {
         value: 'description',
       },
       { text: i18n.t('common.value'), align: 'end', value: 'value' },
-      { text: i18n.t('common.editDelete'), value: 'actions', align: 'end', sortable: false },
+      {
+        text: i18n.t('common.editDelete'),
+        value: 'actions',
+        align: 'end',
+        sortable: false,
+      },
     ],
     option: {
       text: '',
@@ -155,4 +156,15 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+</style>

@@ -119,6 +119,7 @@
               <template v-slot:item.accessLevel="{ item }">
                 <v-select
                   :ref="'select' + cooperatorsEdit.indexOf(item)"
+                  :key="dataTableKey"
                   color="#fca326"
                   style="max-width: 200px"
                   :value="item.accessLevel"
@@ -127,7 +128,6 @@
                   :items="roleOptions"
                   :v-text="item.accessLevel.text"
                   :disabled="!item.invited || item.accepted ? false : true"
-                  :key="dataTableKey"
                   class="mt-3"
                   @change="changeRole(item, $event)"
                 />
@@ -275,7 +275,7 @@ export default {
     AccessNotAllowed,
     LeaveAlert,
   },
-  props: ['id'],
+  props: { id: { type: String, default: '' } },
   data: () => ({
     object: null,
     headers: cooperatorsHeaders,

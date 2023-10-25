@@ -39,7 +39,6 @@
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
-import { log } from 'firebase-functions/lib/logger'
 
 export default {
   data() {
@@ -116,7 +115,7 @@ export default {
 
               if (!heuristicMap.has(heuristicId)) {
                 heuristicMap.set(heuristicId, {
-                  id: parseInt(heuristicId) -1,
+                  id: parseInt(heuristicId) - 1,
                   title: heuristicTitle,
                   questions: [],
                   total: 0, // Inicializa o total com 0
@@ -125,7 +124,7 @@ export default {
 
               const heuristicEntry = heuristicMap.get(heuristicId)
               heuristicEntry.questions.push({
-                id: parseInt(questionId) -1,
+                id: parseInt(questionId) - 1,
                 title: questionText,
                 descriptions: questionText,
                 text: questionText,
@@ -181,7 +180,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .csv-box {
   background-color: white;
 }
