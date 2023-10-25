@@ -30,4 +30,15 @@ export default class UserTask {
   static toUserTask(data) {
     return new UserTask(data)
   }
+  toFirestore() {
+    return {
+      taskId: this.taskId,
+      taskAnswer: this.taskAnswer,
+      taskObservations: this.taskObservations,
+      taskTime: this.taskTime,
+      audioRecordURL: this.audioRecordURL,
+      screenRecordURL: this.screenRecordURL,
+      webcamRecordURL: this.webcamRecordURL,
+    }
+  }
 }
