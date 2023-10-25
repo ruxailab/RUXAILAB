@@ -2,21 +2,11 @@
   <v-form ref="form">
     <v-row class="mt-4" justify="center">
       <v-col cols="10">
-        <v-text-field
-          v-model="object.preTest.consentUrl"
-          prepend-inner-icon="mdi-link-variant"
-          label="Consent"
-          :rules="googleLinkRules"
-          outlined
-          dense
+        <v-text-field v-model="object.preTest.consentUrl" prepend-inner-icon="mdi-link-variant" label="Consent"
+                      :rules="googleLinkRules" outlined dense
         />
-        <v-text-field
-          v-model="object.preTest.preTestUrl"
-          prepend-inner-icon="mdi-link-variant"
-          label="Pre Form"
-          :rules="googleLinkRules"
-          outlined
-          dense
+        <v-text-field v-model="object.preTest.preTestUrl" prepend-inner-icon="mdi-link-variant" label="Pre Form"
+                      :rules="googleLinkRules" outlined dense
         />
       </v-col>
     </v-row>
@@ -26,7 +16,10 @@
 <script>
 export default {
   props: {
-    object: Object,
+    object: {
+      type: Object,
+      default: () => { },
+    },
   },
   data: () => ({
     googleLinkRules: [

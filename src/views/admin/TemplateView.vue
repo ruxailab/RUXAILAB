@@ -18,11 +18,8 @@
           <v-btn class="grey lighten-3" text @click="dialogDel = false">
             Cancel
           </v-btn>
-          <v-btn
-            class="red white--text ml-1"
-            :loading="loading"
-            text
-            @click="deleteTemplate(object), (loading = true), (change = false)"
+          <v-btn class="red white--text ml-1" :loading="loading" text
+                 @click="deleteTemplate(object), (loading = true), (change = false)"
           >
             Delete
           </v-btn>
@@ -49,11 +46,7 @@
           <v-btn class="grey lighten-3" text @click="dialogAlert = false">
             Stay
           </v-btn>
-          <v-btn
-            class="error accent-4 white--text ml-1"
-            text
-            @click="(change = false), $router.push(go)"
-          >
+          <v-btn class="error accent-4 white--text ml-1" text @click="(change = false), $router.push(go)">
             Leave
           </v-btn>
         </v-card-actions>
@@ -61,12 +54,7 @@
     </v-dialog>
 
     <ShowInfo title="Template">
-      <v-alert
-        v-if="!test.template.upToDate"
-        slot="warning"
-        type="warning"
-        dense
-      >
+      <v-alert v-if="!test.template.upToDate" slot="warning" type="warning" dense>
         Your template is not up to date with your test.
       </v-alert>
       <div slot="content">
@@ -195,7 +183,7 @@ export default {
     ShowInfo,
     SnackBar,
   },
-  props: ['id'],
+  props: { id: { type: String, default: '' } },
   data: () => ({
     change: false,
     dialogDel: false,
@@ -419,6 +407,7 @@ export default {
   align-items: center;
   color: #000000;
 }
+
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
@@ -435,20 +424,24 @@ export default {
   height: 508px;
   overflow: auto;
 }
+
 /* Nav bar list scroll bar */
 /* width */
 .list-scroll::-webkit-scrollbar {
   width: 7px;
 }
+
 /* Track */
 .list-scroll::-webkit-scrollbar-track {
   background: none;
 }
+
 /* Handle */
 .list-scroll::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 4px;
 }
+
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;

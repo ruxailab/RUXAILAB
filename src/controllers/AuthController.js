@@ -23,14 +23,14 @@ export default class AuthController {
     //SignIn
 
     async authSignIn(email, password) {
-        try{
-        return signInWithEmailAndPassword(auth, email, password).then(
-            (userCredential) => {
-                const user = userCredential.user
-                return user
-            },
-        )
-        }catch(e){
+        try {
+            return signInWithEmailAndPassword(auth, email, password).then(
+                (userCredential) => {
+                    const user = userCredential.user
+                    return user
+                },
+            )
+        } catch (e) {
             console.error(e)
         }
     }
@@ -40,7 +40,9 @@ export default class AuthController {
     async authGetCurrentUser() {
         const user = auth.currentUser
         if (user) {
+            return user
         } else {
+            console.error('user is null')
         }
         return user
     }
