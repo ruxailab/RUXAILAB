@@ -436,7 +436,10 @@ export default {
     CardSignUp,
     UserTestView,
   },
-  props: ['id', 'token'],
+  props: {
+    id: { type: String, default: '' },
+    token: { type: String, default: '' },
+  },
   data: () => ({
     logined: null,
     selected: true,

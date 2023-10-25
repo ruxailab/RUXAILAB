@@ -52,7 +52,6 @@ import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
   components: { TextControls, DocumentSelection, ShowInfo },
-  props: ['id', 'HEURISTICS'],
   data: () => ({
     title: 'Final report',
     inputText: '',

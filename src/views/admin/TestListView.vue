@@ -12,7 +12,7 @@
         <br />
         <br />
         {{ showOnExplore }} -->
-    {{ this.exploreTemplates }}
+    {{ exploreTemplates }}
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -62,16 +62,16 @@
           />
           <v-divider class="mb-1" />
 
-          <!-- Desktop Main Tabs -->
-          <v-tabs
-            v-model="mainIndex"
-            background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
-          >
-            <v-tab>Tests</v-tab>
-            <v-tab>Answers</v-tab>
-            <v-tab>Templates</v-tab>
+            <!-- Desktop Main Tabs -->
+            <v-tabs
+              v-model="mainIndex"
+              background-color="transparent"
+              color="black"
+              class="hidden-sm-and-down"
+            >
+              <v-tab>Tests</v-tab>
+              <v-tab>Answers</v-tab>
+              <v-tab>Templates</v-tab>
 
             <v-spacer />
 
