@@ -590,31 +590,10 @@ export default {
     },
   },
   async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-    await this.populateUserTasks()
     await this.mappingSteps()
   },
   methods: {
-     async populateUserTasks() {
-      console.log('abacateapuhouhosodkas');
-      const userTasks = this.test.testStructure.userTasks
-      ;(this.currentUserTestAnswer.preTestUrl = this.test.testStructure.preTest.preTestUrl),
-        (this.currentUserTestAnswer.consentUrl = this.test.testStructure.preTest.consentUrl),
-        (this.currentUserTestAnswer.postTestUrl = this.test.testStructure.postTest.postTestUrl)
-      for (let i = 0; i < userTasks.length; i++) {
-        this.currentUserTestAnswer.tasks[i] = new UserTask({
-          taskId: i,
-          taskAnswer: '',
-          taskObservations: '',
-          taskTime: null,
-          audioRecordURL: '',
-          screenRecordURL: '',
-          webcamRecordURL: '',
-        })
-      }
-    },
     async saveAnswer() {
-      this.currentUserTestAnswer.lastUpdate = Date.now()
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
@@ -696,7 +675,6 @@ export default {
           value: this.test.testStructure.postTest,
           id: 2,
         })
-      console.log('ITEMS', this.items)
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
