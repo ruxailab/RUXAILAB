@@ -158,6 +158,17 @@ export default {
           this.$store.state.Tests.Test.testStructure.userTasks,
         )
       }
+      this.task = {
+        taskName: '',
+        taskDescription: null,
+        taskTip: null,
+        hasPost: false,
+        taskType: null,
+        hasTimer: false,
+        hasAudioRecord: false,
+        hasScreenRecord: false,
+        hasCamRecord: false,
+      }
     },
     setAllTasks() {
       this.allTasks = Object.assign(

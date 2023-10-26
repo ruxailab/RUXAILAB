@@ -3,7 +3,6 @@
 import Controller from '@/controllers/BaseController'
 import Answer from '@/models/Answer'
 import UserController from './UserController'
-
 const COLLECTION = 'answers'
 
 const userController = new UserController()
@@ -17,7 +16,6 @@ export default class AnswerController extends Controller {
 
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
-
     return new Answer({ id: res.id, ...res.data() })
   }
 
@@ -54,10 +52,17 @@ export default class AnswerController extends Controller {
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
-  async saveTestAnswer(payload, answerDocId) {
+  async saveTestAnswer(payload, answerDocId, testType) {
     payload.lastUpdate = Date.now()
-    const fieldToUpdate = {
-      [`heuristicAnswers.${payload.userDocId}`]: payload.toFirestore(),
+
+    const fieldToUpdate = {}
+
+    if (testType === 'HEURISTICS') {
+      fieldToUpdate[
+        `heuristicAnswers.${payload.userDocId}`
+      ] = payload.toFirestore()
+    } else if (testType === 'User') {
+      fieldToUpdate[`taskAnswers.${payload.userDocId}`] = payload.toFirestore()
     }
     await super.update(COLLECTION, answerDocId, fieldToUpdate)
   }
