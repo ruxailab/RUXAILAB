@@ -13,6 +13,7 @@
     "loading": "Carregando Teste",
     "continueAs": "Continuar como",
     "notUser": "Não é {userEmail}?",
+    "name": "Nome",
     "changeAccount": "Mudar de conta",
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
     "analyzeProject": "Analise o projeto e avaliadores",
@@ -40,6 +41,7 @@
     "cooperators": "Cooperadores",
     "template": "Modelo",
     "finalReport": "Relatório final",
+    "answerType": "Tipo de resposta:",
     "drawer": {
       "Manager": "Gerenciamento",
       "Test": "Teste",
@@ -231,6 +233,7 @@
     "goToConsole": "Ir para o console",
     "signout": "Sair",
     "returnToConsole": "Retornar ao console",
+    "tip": "Dica",
     "create": "Criar",
     "cancel": "Cancelar",
     "close": "Fechar",
@@ -238,8 +241,18 @@
     "stay": "Ficar",
     "help": "Ajuda"
   },
+  "switches": {
+    "noAnswer": "Sem resposta",
+    "textArea": "Area de texto",
+    "postTest": "Pós teste",
+    "screenRecord": "Gravação de tela",
+    "camera": "Camera",
+    "eyeTracker": "Eye Tracker",
+    "audioRecord": "Gravação de audio"
+  },
   "inputs": {
-    "consent": "Consentimento",
-    "form": "Formulário"
+    "consentForm": "Formulário de consentimento",
+    "preForm": "Pré-Formulário",
+    "postForm": "Pós-Formulário"
   }
 }
