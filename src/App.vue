@@ -17,8 +17,6 @@ export default {
   components: {
     Toolbar,
   },
-  data: () => ({}),
-  data: () => ({}),
   watch: {
     $route: {
       immediate: true,
