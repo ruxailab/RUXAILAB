@@ -252,6 +252,7 @@
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
-    "preForm": "Pré-Formulário"
+    "preForm": "Pré-Formulário",
+    "postForm": "Pós-Formulário"
   }
 }
