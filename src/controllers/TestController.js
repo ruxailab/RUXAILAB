@@ -1,7 +1,6 @@
 // imports
 
 import Test from '@/models/Test'
-
 import Controller from '@/controllers/BaseController'
 import AnswerController from './AnswerController'
 import Answer from '@/models/Answer'
