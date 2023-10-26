@@ -115,19 +115,19 @@
             v-model="mainIndex"
             dense
             outlined
-            class="hidden-md-and-up mx-2"
+            class="hidden-md-and-up mx-2 mt-4"
             :items="buttonItems"
           />
 
           <!-- Mobile Sub Buttons -->
           <v-select
-              v-if="mainIndex == 1"
-              v-model="subIndex"
-              dense
-              outlined
-              class="hidden-md-and-up mx-2"
-              :items="templateButtonItems"
-            />
+            v-if="mainIndex == 1"
+            v-model="subIndex"
+            dense
+            outlined
+            class="hidden-md-and-up mx-2"
+            :items="templateButtonItems"
+          />
           <v-select
             v-else
             v-model="subIndex"

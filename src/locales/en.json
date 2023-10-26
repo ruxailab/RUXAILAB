@@ -6,13 +6,14 @@
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
-    "confirmPassword": "Confirme sua senha",
+    "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
   "common": {
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
+    "name": "Name",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
     "analyzeProject": "Analyze the project and evaluators",
@@ -40,6 +41,7 @@
     "cooperators": "Cooperators",
     "template": "Template",
     "finalReport": "Final Report",
+    "answerType": "Answer type:",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -231,6 +233,7 @@
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
     "returnToConsole": "Return to Console",
+    "tip": "Tip",
     "cancel": "Cancel",
     "create": "Create",
     "close": "Close",
@@ -238,8 +241,18 @@
     "leave": "Leave",
     "help": "Help"
   },
+  "switches": {
+    "noAnswer": "No answer",
+    "textArea": "Text Area",
+    "postTest": "Post Test",
+    "screenRecord": "Screen Record",
+    "camera": "Camera",
+    "eyeTracker": "Eye Tracker",
+    "audioRecord": "Audio Record"
+  },
   "inputs": {
-    "consent": "Consent",
-    "form": "Form"
+    "consentForm": "Consent Form",
+    "preForm": "Pre Form",
+    "postForm": "Post Form"
   }
 }
