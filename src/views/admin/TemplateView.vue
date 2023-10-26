@@ -68,21 +68,46 @@
           <v-form ref="tempform" class="px-5">
             <v-row>
               <v-col cols="6">
-                <v-text-field v-model="template.header.title" label="Title" :rules="titleRequired" counter="100" outlined
-                              dense @input="change = true"
+                <v-text-field
+                  v-model="template.header.title"
+                  label="Title"
+                  :rules="titleRequired"
+                  counter="100"
+                  outlined
+                  dense
+                  @input="change = true"
                 />
 
-                <v-textarea v-model="template.header.description" label="Description" outlined dense
-                            @input="change = true"
+                <v-textarea
+                  v-model="template.header.description"
+                  label="Description"
+                  outlined
+                  dense
+                  @input="change = true"
                 />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="template.header.date" label="Last Update" outlined dense disabled />
-                <v-text-field v-model="template.header.version" label="Version" outlined dense @keypress="isNumber(event)"
-                              @input="change = true"
+                <v-text-field
+                  v-model="template.header.date"
+                  label="Last Update"
+                  outlined
+                  dense
+                  disabled
                 />
-                <v-checkbox v-model="template.header.isPublic" label="Make template public to all users" class="ma-0"
-                            color="#F9A826" @change="change = true"
+                <v-text-field
+                  v-model="template.header.version"
+                  label="Version"
+                  outlined
+                  dense
+                  @keypress="isNumber(event)"
+                  @input="change = true"
+                />
+                <v-checkbox
+                  v-model="template.header.isPublic"
+                  label="Make template public to all users"
+                  class="ma-0"
+                  color="#F9A826"
+                  @change="change = true"
                 />
                 <v-row class="mx-1">
                   <v-btn outlined @click="dialogDetails = true">
@@ -92,7 +117,12 @@
 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn outlined v-bind="attrs" @click="updateTemplate(), (change = true)" v-on="on">
+                      <v-btn
+                        outlined
+                        v-bind="attrs"
+                        @click="updateTemplate(), (change = true)"
+                        v-on="on"
+                      >
                         Update
                       </v-btn>
                     </template>
@@ -105,7 +135,12 @@
           </v-form>
           <v-divider />
           <v-row justify="center">
-            <v-btn color="#f26363" class="white--text my-4" style="justify-self: center" @click="dialogDel = true">
+            <v-btn
+              color="#f26363"
+              class="white--text my-4"
+              style="justify-self: center"
+              @click="dialogDel = true"
+            >
               <v-icon left>
                 mdi-trash-can-outline
               </v-icon>Delete template
@@ -116,7 +151,19 @@
     </ShowInfo>
     <v-tooltip v-if="change" left>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-if="change" large dark fab fixed bottom right color="#F9A826" v-bind="attrs" @click="update()" v-on="on">
+        <v-btn
+          v-if="change"
+          large
+          dark
+          fab
+          fixed
+          bottom
+          right
+          color="#F9A826"
+          v-bind="attrs"
+          @click="update()"
+          v-on="on"
+        >
           <v-icon large>
             mdi-content-save
           </v-icon>
@@ -167,12 +214,12 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test)
       }
     },
-    templateStore: async function () {
+    templateStore: async function() {
       if (this.templateStore !== null && this.templateStore !== undefined) {
         this.template = await Object.assign({}, this.templateStore)
       }
@@ -245,7 +292,7 @@ export default {
               this.dialogDel = false
               this.$router
                 .push(`/managerview/${this.object.id}`)
-                .catch(() => { })
+                .catch(() => {})
             })
         })
     },
@@ -324,7 +371,7 @@ export default {
         this.template.body[key] = this.test[key]
       })
     },
-    isNumber: function (evt) {
+    isNumber: function(evt) {
       evt = evt ? evt : window.event
       var charCode = evt.which ? evt.which : evt.keyCode
       if (

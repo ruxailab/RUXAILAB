@@ -115,7 +115,7 @@
             v-model="mainIndex"
             dense
             outlined
-            class="hidden-md-and-up mx-2"
+            class="hidden-md-and-up mx-2 mt-4"
             :items="buttonItems"
           />
 
