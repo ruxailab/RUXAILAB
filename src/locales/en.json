@@ -251,7 +251,7 @@
     "audioRecord": "Audio Record"
   },
   "inputs": {
-    "consent": "Consent",
-    "form": "Form"
+    "consentForm": "Consent Form",
+    "preForm": "Pre Form"
   }
 }
