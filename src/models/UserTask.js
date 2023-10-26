@@ -1,42 +1,44 @@
 /**
  * Create a UserTask.
- * @param {string} taskName - The taskName value.
- * @param {string} taskType - The taskType value.
- * @param {string} taskDescription - The taskDescription value.
- * @param {string} taskTip - The taskTip value.
- * @param {boolean} hasTimer - The hasTimer value.
- * @param {boolean} hasPost - The hasPost value.
- * @param {boolean} hasEye - The hasEye value.
- * @param {boolean} hasAudioRecord - The hasAudioRecord value.
- * @param {boolean} hasScreenRecord - The hasScreenRecord value.
- * @param {boolean} hasCamRecord - The hasCamRecord value.
+ * @param {Number} taskId - The taskId value.
+ * @param {string} taskAnswer - The taskAnswer value.
+ * @param {string} taskObservations - The taskObservations value.
+ * @param {Number} taskTime - The taskTime value.
+ * @param {string} audioRecordURL - The audioRecordURL value.
+ * @param {string} screenRecordURL - The screenRecordURL value.
+ * @param {string} webcamRecordURL - The webcamRecordURL value.
  */
 
 export default class UserTask {
   constructor({
-    taskName,
-    taskType,
-    taskDescription,
-    taskTip,
-    hasTimer,
-    hasPost,
-    hasEye,
-    hasAudioRecord,
-    hasScreenRecord,
-    hasCamRecord,
+    taskId,
+    taskAnswer,
+    taskObservations,
+    taskTime,
+    audioRecordURL,
+    screenRecordURL,
+    webcamRecordURL,
   } = {}) {
-    this.taskName = taskName
-    this.taskType = taskType
-    this.taskDescription = taskDescription
-    this.taskTip = taskTip
-    this.hasTimer = hasTimer
-    this.hasPost = hasPost
-    this.hasEye = hasEye
-    this.hasAudioRecord = hasAudioRecord
-    this.hasScreenRecord = hasScreenRecord
-    this.hasCamRecord = hasCamRecord
+    this.taskId = taskId ?? null
+    this.taskAnswer = taskAnswer ?? ''
+    this.taskObservations = taskObservations ?? ''
+    this.taskTime = taskTime ?? null
+    this.audioRecordURL = audioRecordURL ?? null
+    this.screenRecordURL = screenRecordURL ?? null
+    this.webcamRecordURL = webcamRecordURL ?? null
   }
   static toUserTask(data) {
     return new UserTask(data)
+  }
+  toFirestore() {
+    return {
+      taskId: this.taskId,
+      taskAnswer: this.taskAnswer,
+      taskObservations: this.taskObservations,
+      taskTime: this.taskTime,
+      audioRecordURL: this.audioRecordURL,
+      screenRecordURL: this.screenRecordURL,
+      webcamRecordURL: this.webcamRecordURL,
+    }
   }
 }
