@@ -146,7 +146,7 @@
                 <v-data-table
                   dense
                   :headers="evaluatorStatistics.header"
-                  :items="evaluatorStatistics.items"
+                  :items="sortedEvaluatorStatistics"
                   :items-per-page="15"
                   class="elevation-1 cardStyle mx-2"
                 >
@@ -166,13 +166,13 @@
 
               <v-col v-if="ind == 1" cols="10">
                 <RadarChart
-                  v-if="evaluatorStatistics.items.length >= 3"
+                  v-if="sortedEvaluatorStatistics.length >= 3"
                   :labels="
-                    evaluatorStatistics.items.map(
+                    sortedEvaluatorStatistics.map(
                       (item) => `${item.evaluator} - ${item.result}%`,
                     )
                   "
-                  :data="evaluatorStatistics.items.map((item) => item.result)"
+                  :data="sortedEvaluatorStatistics.map((item) => item.result)"
                 />
                 <v-card>
                   <v-card-text
@@ -342,9 +342,27 @@ export default {
       return finalResult()
     },
     evaluatorStatistics() {
+      // console.log(this.sortedEvaluatorStatistics)
       return this.$store.state.Answer.evaluatorStatistics
     },
+    sortedEvaluatorStatistics() {
+    return this.evaluatorStatistics.items.slice().sort((a, b) => {
+      const parseDate = (dateStr) => {
+        const [day, month, yearTime] = dateStr.split('/');
+        const [year, time] = yearTime.split(', ');
+        const [hours, minutes, seconds] = time.split(':');
+        // Adjust the date format to 'month/day/year'
+        return new Date(`${month}/${day}/${year} ${time}`);
+      };
+      
+      const dateA = parseDate(a.lastUpdate);
+      const dateB = parseDate(b.lastUpdate);
+      
+      return dateB - dateA; // sort in descending order
+    });
+  },
     heuristicsEvaluator() {
+
       const table = {
         header: [],
         items: [],
@@ -463,6 +481,7 @@ export default {
       this.$store.dispatch('processStatistics', {
         resultEvaluator: statistics(),
         percentage: this.percentage,
+        answers: this.testAnswerDocument.heuristicAnswers,
       })
       return this.$store.getters.test
     },
