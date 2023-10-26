@@ -66,9 +66,11 @@ export default {
     },
     index: {
       type: Number,
+      default: 0,
     },
     object: {
       type: Object,
+      default: () => {},
     },
   },
   data() {

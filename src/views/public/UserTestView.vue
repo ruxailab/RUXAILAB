@@ -523,7 +523,6 @@ export default {
     CardSignIn,
     CardSignUp,
   },
-  props: ['id', 'token'],
   data: () => ({
     logined: null,
     selected: true,

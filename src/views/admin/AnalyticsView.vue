@@ -18,7 +18,6 @@ export default {
     UserAnalytics,
   },
   computed: {
-
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
