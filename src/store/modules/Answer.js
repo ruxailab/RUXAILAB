@@ -1,6 +1,7 @@
 import AnswerController from '@/controllers/AnswerController'
 import HeuristicAnswer from '@/models/HeuristicAnswer'
 import TaskAnswer from '@/models/TaskAnswer'
+import UserTask from '@/models/UserTask'
 import { percentage } from '@/utils/statistics'
 
 const answerController = new AnswerController()
@@ -31,15 +32,28 @@ export default {
             })
       }
 
-      if (state.type === 'USER') {
-        return (
-          TaskAnswer.toTaskAnswer(
-            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
-          ) ??
-          new TaskAnswer({
-            userDocId: rootState.user.id,
-          })
-        )
+      if (state.testAnswerDocument.type === 'User') {
+        return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
+          ? TaskAnswer.toTaskAnswer(
+              state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+            )
+          : new TaskAnswer({
+              userDocId: rootState.user.id,
+              preTestUrl: rootState.test.testStructure.preTest.preTestUrl,
+              consentUrl: rootState.test.testStructure.preTest.consentUrl,
+              postTestUrl: rootState.test.testStructure.postTest.postTestUrl,
+              tasks: {
+                0: new UserTask({
+                  taskId: 0,
+                  taskAnswer: '',
+                  taskObservations: '',
+                  taskTime: null,
+                  audioRecordURL: '',
+                  screenRecordURL: '',
+                  webcamRecordURL: '',
+                }),
+              },
+            })
       }
     },
   },
@@ -99,7 +113,11 @@ export default {
     async saveTestAnswer({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await answerController.saveTestAnswer(payload.data, payload.answerDocId)
+        await answerController.saveTestAnswer(
+          payload.data,
+          payload.answerDocId,
+          payload.testType,
+        )
       } catch (e) {
         console.error('Error in save test answer', e)
         // commit("setError", true);
