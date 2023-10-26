@@ -13,6 +13,7 @@
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
+    "name": "Nombre",
     "changeAccount": "Cambiar cuenta",
     "editAndInvite": "Editar e invitar personas a tu prueba",
     "analyzeProject": "Analiza o proyecto y evaluadores",
@@ -40,6 +41,7 @@
     "cooperators": "Cooperadores",
     "template": "Plantilla",
     "finalReport": "Reporte Final",
+    "answerType": "Tipo de respuesta:",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",
@@ -231,12 +233,22 @@
     "goToConsole": "Ir a la consola",
     "signout": "Desconectar",
     "returnToConsole": "Volver a la consola",
+    "tip": "Consejo",
     "create": "Crear",
     "cancel": "Cancelar",
     "close": "Cerca",
     "leave": "Dejar",
     "stay": "Quédate",
     "help": "Ayuda"
+  },
+  "switches": {
+    "noAnswer": "Sin respuesta",
+    "textArea": "Área de texto",
+    "postTest": "Post Test",
+    "screenRecord": "Registro de pantalla",
+    "camera": "Camera",
+    "eyeTracker": "Eye Tracker",
+    "audioRecord": "Grabación de audio"
   },
   "inputs": {
     "consent": "Consentimiento",
