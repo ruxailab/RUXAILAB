@@ -44,6 +44,7 @@ export default class AuthController {
         } else {
             console.error('user is null')
         }
+        return user
     }
 
     //SignOut
