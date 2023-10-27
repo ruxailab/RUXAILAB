@@ -10,8 +10,7 @@
         </v-card-title>
 
         <v-card-text>
-          Are you sure you want to submit your test. You can only do it
-          once.
+          Are you sure you want to submit your test. You can only do it once.
         </v-card-text>
 
         <v-divider />
@@ -216,9 +215,7 @@
               <template v-slot:activator>
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      item.icon
-                    }}
+                    {{ item.icon }}
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
@@ -237,9 +234,7 @@
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{
-                          task.icon
-                        }}
+                        {{ task.icon }}
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
@@ -272,9 +267,7 @@
               <template v-slot:activator>
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      item.icon
-                    }}
+                    {{ item.icon }}
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-title
@@ -292,10 +285,17 @@
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{
-                          task.icon
-                        }}
+                      <v-icon
+                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
+                        v-if="currentUserTestAnswer.tasks[taskIndex].completed"
+                      >
+                        mdi-check-circle-outline
+                      </v-icon>
+                      <v-icon
+                        v-else
+                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
+                      >
+                        {{ task.icon }}
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
@@ -315,11 +315,21 @@
             <!--Post Test-->
             <v-list-item v-else-if="item.id == 2" @click="index = item.id">
               <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                  {{
-                    item.icon
-                  }}
-                </v-icon>
+                <!-- <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                  {{ item.icon }}
+                </v-icon> -->
+                <v-icon
+                        :color="index == item.id ? '#ffffff' : '#fca326'"
+                        v-if="currentUserTestAnswer.postTestCompleted"
+                      >
+                        mdi-check-circle-outline
+                      </v-icon>
+                      <v-icon
+                        v-else
+                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
+                      >
+                        {{ item.icon }}
+                      </v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
@@ -349,7 +359,7 @@
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
         <ShowInfo
-          v-if="index == 0 && preTestIndex == 0"
+          v-if="index == 0 && taskIndex == 0"
           title="Pre Test - Consent"
         >
           <iframe
@@ -360,12 +370,16 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…
+          </iframe>
         </ShowInfo>
-
+        <v-btn v-if="taskIndex == 0 && index == 0" block color="my-5 pa-4 orange lighten-1" @click="completeConsent()">
+          Done
+        </v-btn>
         <!-- Form - Pre Test -->
+
         <ShowInfo
-          v-if="index == 0 && preTestIndex == 1"
+          v-if="index == 0 && taskIndex == 1"
           title="Pre Test - Form"
         >
           <iframe
@@ -376,8 +390,13 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…</iframe
+          >
         </ShowInfo>
+        <v-btn v-if="taskIndex == 1 && index == 0" block color="my-5 pa-4 orange lighten-1" @click="completePreTest()">
+          Done
+        </v-btn>
+
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
@@ -385,17 +404,11 @@
         >
           <div slot="content" class="ma-0 pa-0">
             <v-card-title class="subtitleView">
-              {{
-                test.testStructure.userTasks[taskIndex].taskName
-              }}
+              {{ test.testStructure.userTasks[taskIndex].taskName }}
             </v-card-title>
             <v-divider class="mb-5" />
             <v-container>
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
+              <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12">
                   <v-row justify="center">
                     <h1>
@@ -430,9 +443,7 @@
                       "
                       color="success"
                     >
-                      <v-icon left>
-                        mdi-timer
-                      </v-icon>Start
+                      <v-icon left> mdi-timer </v-icon>Start
                     </v-btn>
                   </v-row>
                   <v-spacer />
@@ -485,8 +496,18 @@
                   frameborder="0"
                   marginheight="0"
                   marginwidth="0"
-                >Carregando…</iframe>
+                  >Carregando…</iframe
+                >
               </v-row>
+              <div class="pa-2 text-end">
+                <v-btn
+                  block
+                  color="orange lighten-1"
+                  @click="logAlgo(taskIndex)"
+                >
+                  Done
+                </v-btn>
+              </div>
             </v-container>
           </div>
         </ShowInfo>
@@ -501,8 +522,12 @@
             frameborder="0"
             marginheight="0"
             marginwidth="0"
-          >Carregando…</iframe>
+            >Carregando…</iframe
+          >
         </ShowInfo>
+        <v-btn v-if="index == 2" block color="my-5 pa-4 orange lighten-1" @click="completePostTest()">
+          Done
+        </v-btn>
       </v-col>
     </v-row>
   </div>
@@ -603,6 +628,26 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
+    },
+    logAlgo(id) {
+      console.log('antes: ', this.currentUserTestAnswer.tasks[id].completed)
+      this.currentUserTestAnswer.tasks[id].completed = true
+      console.log('depois: ', this.currentUserTestAnswer.tasks[id].completed)
+    },
+    completePreTest(){
+      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
+      this.currentUserTestAnswer.preTestCompleted = true
+      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
+    },
+    completeConsent(){
+      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
+      this.currentUserTestAnswer.consentCompleted = true
+      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
+    },
+    completePostTest(){
+      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
+      this.currentUserTestAnswer.postTestCompleted = true
+      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
     },
     async setTest() {
       this.logined = true
