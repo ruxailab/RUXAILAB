@@ -178,14 +178,21 @@
         <div v-if="!mini" class="header">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="10">
-                <v-clamp
-                  class="mx-1 mt-2 text-center titleText"
-                  autoresize
-                  :max-lines="2"
-                >
+              <v-col class="pa-0 ma-0" cols="8">
+                <v-clamp class="titleText" autoresize :max-lines="2">
                   {{ test.testTitle }}
                 </v-clamp>
+              </v-col>
+              <v-col>
+                <v-progress-circular
+                  rotate="-90"
+                  :value="calculateProgress()"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >
+                  {{ calculateProgress() }}%
+                </v-progress-circular>
               </v-col>
             </v-row>
           </v-list-item>
@@ -285,17 +292,8 @@
                     v-on="on"
                   >
                     <v-list-item-icon>
-                      <v-icon
-                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
-                        v-if="currentUserTestAnswer.tasks[taskIndex].completed"
-                      >
-                        mdi-check-circle-outline
-                      </v-icon>
-                      <v-icon
-                        v-else
-                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
-                      >
-                        {{ task.icon }}
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
+                        {{ items[1].value[i].icon }}
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
@@ -315,21 +313,9 @@
             <!--Post Test-->
             <v-list-item v-else-if="item.id == 2" @click="index = item.id">
               <v-list-item-icon>
-                <!-- <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
-                </v-icon> -->
-                <v-icon
-                        :color="index == item.id ? '#ffffff' : '#fca326'"
-                        v-if="currentUserTestAnswer.postTestCompleted"
-                      >
-                        mdi-check-circle-outline
-                      </v-icon>
-                      <v-icon
-                        v-else
-                        :color="taskIndex == i ? '#ffffff' : '#fca326'"
-                      >
-                        {{ item.icon }}
-                      </v-icon>
+                </v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
@@ -373,15 +359,17 @@
             >Carregando…
           </iframe>
         </ShowInfo>
-        <v-btn v-if="taskIndex == 0 && index == 0" block color="my-5 pa-4 orange lighten-1" @click="completeConsent()">
+        <v-btn
+          v-if="taskIndex == 0 && index == 0"
+          block
+          color="my-5 pa-4 orange lighten-1"
+          @click="completeStep(taskIndex, 'consent')"
+        >
           Done
         </v-btn>
         <!-- Form - Pre Test -->
 
-        <ShowInfo
-          v-if="index == 0 && taskIndex == 1"
-          title="Pre Test - Form"
-        >
+        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre Test - Form">
           <iframe
             slot="content"
             :src="test.testStructure.preTest.preTestUrl"
@@ -393,7 +381,12 @@
             >Carregando…</iframe
           >
         </ShowInfo>
-        <v-btn v-if="taskIndex == 1 && index == 0" block color="my-5 pa-4 orange lighten-1" @click="completePreTest()">
+        <v-btn
+          v-if="taskIndex == 1 && index == 0"
+          block
+          color="my-5 pa-4 orange lighten-1"
+          @click="completeStep(taskIndex, 'preTest')"
+        >
           Done
         </v-btn>
 
@@ -503,7 +496,7 @@
                 <v-btn
                   block
                   color="orange lighten-1"
-                  @click="logAlgo(taskIndex)"
+                  @click="completeStep(taskIndex, 'tasks')"
                 >
                   Done
                 </v-btn>
@@ -525,7 +518,12 @@
             >Carregando…</iframe
           >
         </ShowInfo>
-        <v-btn v-if="index == 2" block color="my-5 pa-4 orange lighten-1" @click="completePostTest()">
+        <v-btn
+          v-if="index == 2"
+          block
+          color="my-5 pa-4 orange lighten-1"
+          @click="completeStep(null, 'postTest')"
+        >
           Done
         </v-btn>
       </v-col>
@@ -617,6 +615,11 @@ export default {
   async created() {
     await this.mappingSteps()
   },
+  async mounted() {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    this.autoComplete() 
+    this.calculateProgress()
+  },
   methods: {
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
@@ -629,25 +632,112 @@ export default {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
     },
-    logAlgo(id) {
-      console.log('antes: ', this.currentUserTestAnswer.tasks[id].completed)
-      this.currentUserTestAnswer.tasks[id].completed = true
-      console.log('depois: ', this.currentUserTestAnswer.tasks[id].completed)
+    completeStep(id, type) {
+      if (type === 'tasks') {
+        this.currentUserTestAnswer.tasks[id].completed = true
+        this.items[1].value[id].icon = 'mdi-check-circle-outline'
+        let allCompleted = true
+
+        for (let i = 0; i < this.items[1].value.length; i++) {
+          if (!this.currentUserTestAnswer.tasks[i].completed) {
+            allCompleted = false
+            break
+          }
+        }
+        if (allCompleted) {
+          this.items[1].icon = 'mdi-check-circle-outline'
+        }
+      }
+      if (type === 'postTest') {
+        this.currentUserTestAnswer.postTestCompleted = true
+        this.items[2].icon = 'mdi-check-circle-outline'
+      }
+      if (type === 'preTest') {
+        this.currentUserTestAnswer.preTestCompleted = true
+        this.items[0].value[id].icon = 'mdi-check-circle-outline'
+        if (
+          this.currentUserTestAnswer.preTestCompleted &&
+          this.currentUserTestAnswer.consentCompleted
+        ) {
+          this.items[0].icon = 'mdi-check-circle-outline'
+        }
+      }
+      if (type === 'consent') {
+        this.currentUserTestAnswer.consentCompleted = true
+        this.items[0].value[id].icon = 'mdi-check-circle-outline'
+        if (
+          this.currentUserTestAnswer.preTestCompleted &&
+          this.currentUserTestAnswer.consentCompleted
+        ) {
+          this.items[0].icon = 'mdi-check-circle-outline'
+        }
+      }
+      this.calculateProgress()
     },
-    completePreTest(){
-      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
-      this.currentUserTestAnswer.preTestCompleted = true
-      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
+    async autoComplete() {
+      // PRE-TEST
+      if (this.currentUserTestAnswer.preTestCompleted) {
+        this.items[0].value[1].icon = 'mdi-check-circle-outline'
+      }
+      if (this.currentUserTestAnswer.consentCompleted) {
+        this.items[0].value[0].icon = 'mdi-check-circle-outline'
+      }
+      if (
+        this.currentUserTestAnswer.preTestCompleted &&
+        this.currentUserTestAnswer.consentCompleted
+      ) {
+        this.items[0].icon = 'mdi-check-circle-outline'
+      }
+      // TASKS
+      let allTasksCompleted = true
+      for (let i = 0; i < this.items[1].value.length; i++) {
+        if (this.currentUserTestAnswer.tasks[i].completed) {
+          this.items[1].value[i].icon = 'mdi-check-circle-outline'
+        }
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          allTasksCompleted = false
+          break
+        }
+      }
+      if (allTasksCompleted) {
+        this.items[1].icon = 'mdi-check-circle-outline'
+      }
+      // POST-TEST
+      if (this.currentUserTestAnswer.postTestCompleted) {
+        this.items[2].icon = 'mdi-check-circle-outline'
+      }
     },
-    completeConsent(){
-      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
-      this.currentUserTestAnswer.consentCompleted = true
-      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
-    },
-    completePostTest(){
-      console.log('antes: ', this.currentUserTestAnswer.preTestCompleted)
-      this.currentUserTestAnswer.postTestCompleted = true
-      console.log('dps: ', this.currentUserTestAnswer.preTestCompleted)
+    calculateProgress() {
+      const totalSteps = 4
+
+      let completedSteps = 0
+
+      if (this.currentUserTestAnswer.preTestCompleted) {
+        completedSteps++
+      }
+
+      if (this.currentUserTestAnswer.consentCompleted) {
+        completedSteps++
+      }
+
+      let tasksCompleted = 0
+      for (let i = 0; i < this.items[1].value.length; i++) {
+        if (this.currentUserTestAnswer.tasks[i].completed) {
+          tasksCompleted++
+        }
+      }
+
+      if (tasksCompleted === this.items[1].value.length) {
+        completedSteps++
+      }
+
+      if (this.currentUserTestAnswer.postTestCompleted) {
+        completedSteps++
+      }
+
+      // Calcular a porcentagem de conclusão
+      const progressPercentage = (completedSteps / totalSteps) * 100
+      return progressPercentage
     },
     async setTest() {
       this.logined = true
