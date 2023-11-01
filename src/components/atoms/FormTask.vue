@@ -41,23 +41,23 @@
           dense
         />
         <v-row align="center">
-          {{$t('switches.postTest')}}
+          {{ $t('switches.postTest') }}
           <v-switch v-model="task.hasTimer" class="ml-2" />
         </v-row>
         <v-row align="center">
-          {{$t('switches.screenRecord')}}
+          {{ $t('switches.screenRecord') }}
           <v-switch v-model="task.hasScreenRecord" class="ml-2" />
         </v-row>
         <v-row align="center">
-          {{$t('switches.camera')}}
+          {{ $t('switches.camera') }}
           <v-switch v-model="task.hasCamRecord" class="ml-2" />
         </v-row>
         <v-row align="center">
-          {{$t('switches.eyeTracker')}}
+          {{ $t('switches.eyeTracker') }}
           <v-switch v-model="task.hasEye" class="ml-2" />
         </v-row>
         <v-row align="center">
-          {{$t('switches.audioRecord')}}
+          {{ $t('switches.audioRecord') }}
           <v-switch v-model="task.hasAudioRecord" class="ml-2" />
         </v-row>
       </v-col>
