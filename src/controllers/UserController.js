@@ -2,6 +2,7 @@
 
 import Controller from '@/controllers/BaseController'
 import User from '@/models/UserModel'
+import { log } from 'handlebars'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -62,6 +63,60 @@ export default class UserController extends Controller {
       throw new Error('Notification not found.')
     }
   }
+    // async removeNotificationFromUser(userId, testIdToRemove){
+    //   try{
+    //     const userDoc = await super.readOne('users', userId)
+    //     console.log(userId)
+    //     if (!userDoc.exists()) {
+    //       console.log('User not found.')
+    //       return
+    //     }
+    //     const userData = userDoc.data()
+    //     console.log(userData.notifications)
+    //     for(let i=0;i<=userData.notifications.length;i++){
+    //       console.log(userData.norifications[i])
+    //       let path = "managerview/"+ testIdToRemove
+    //       console.log(path)
+    //       if (userData.notifications[i].redirectsTo == "managerview/"+ testIdToRemove) {
+    //         delete userData.notifications[i]
+    //       }
+    //     }
+       
+    //   } catch (error) {
+    //     console.error('Error removing test from user:', error)
+    //     throw error
+
+    //   }
+    // }
+    async removeNotificationsForTest(testIdToRemove) {
+      try {
+        const usersSnapshot = await super.query(COLLECTION, {
+          field: 'notifications.redirectsTo',
+          value: 'managerview/' + testIdToRemove,
+          condition: '==',
+        });
+    
+        for (const userDoc of usersSnapshot.docs) {
+          const userData = userDoc.data();
+          const userId = userDoc.id;
+    
+          userData.notifications = userData.notifications.filter(
+            (notification) =>
+              notification.redirectsTo !== 'managerview/' + testIdToRemove
+          );
+          console.log(userData.notifications)
+    
+
+          await super.update(COLLECTION, userId, { notifications: userData.notifications });
+    
+          console.log(`Notifications for test ${testIdToRemove} removed from user ${userId}`);
+        }
+      } catch (error) {
+        console.error('Error removing notifications for the test:', error);
+        throw error;
+      }
+    }
+    
 
     async removeTestFromUser(userId, testIdToRemove) {
       try {
