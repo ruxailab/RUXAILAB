@@ -44,7 +44,6 @@ export default {
     });
   },
     heuristicsEvaluator() {
-
       const table = {
         header: [],
         items: [],
