@@ -166,13 +166,19 @@ export default {
           value: 'answered',
           align: 'center',
         },
+        {text: 'Last Update',
+        value: 'lastUpdate',
+        align: 'center',
+      }
       ]
 
       if (payload.resultEvaluator) {
         payload.resultEvaluator.forEach((evaluator) => {
-          let totalNoAplication = 0
-          let totalNoReply = 0
-          let totalQuestions = 0
+          let totalNoAplication = 0;
+          let totalNoReply = 0;
+          let totalQuestions = 0;
+
+          
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
@@ -189,6 +195,7 @@ export default {
               totalQuestions - totalNoReply,
               totalQuestions,
             ).toFixed(2),
+            lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),
           })
         })
       }
