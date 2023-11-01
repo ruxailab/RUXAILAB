@@ -42,19 +42,27 @@ export default {
               preTestUrl: rootState.test.testStructure.preTest.preTestUrl,
               consentUrl: rootState.test.testStructure.preTest.consentUrl,
               postTestUrl: rootState.test.testStructure.postTest.postTestUrl,
-              tasks: {
-                0: new UserTask({
-                  taskId: 0,
-                  taskAnswer: '',
-                  taskObservations: '',
-                  taskTime: null,
-                  audioRecordURL: '',
-                  screenRecordURL: '',
-                  webcamRecordURL: '',
-                }),
-              },
-            })
-      }
+              preTestCompleted: false,
+              consentCompleted: false,
+              postTestCompleted: false,
+              tasks: (() => {
+                const tasks = {};
+                for (let i = 0; i < rootState.test.testStructure.userTasks.length; i++) {
+                  tasks[i] = new UserTask({
+                    taskId: i,
+                    taskAnswer: '',
+                    taskObservations: '',
+                    taskTime: null,
+                    completed: false,
+                    audioRecordURL: '',
+                    screenRecordURL: '',
+                    webcamRecordURL: '',
+                  });
+                }
+                return tasks;
+              })(),
+            });
+      }      
     },
   },
   mutations: {
@@ -158,13 +166,19 @@ export default {
           value: 'answered',
           align: 'center',
         },
+        {text: 'Last Update',
+        value: 'lastUpdate',
+        align: 'center',
+      }
       ]
 
       if (payload.resultEvaluator) {
         payload.resultEvaluator.forEach((evaluator) => {
-          let totalNoAplication = 0
-          let totalNoReply = 0
-          let totalQuestions = 0
+          let totalNoAplication = 0;
+          let totalNoReply = 0;
+          let totalQuestions = 0;
+
+          
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
@@ -181,6 +195,7 @@ export default {
               totalQuestions - totalNoReply,
               totalQuestions,
             ).toFixed(2),
+            lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),
           })
         })
       }

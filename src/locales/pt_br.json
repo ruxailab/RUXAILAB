@@ -251,7 +251,8 @@
     "audioRecord": "Gravação de audio"
   },
   "inputs": {
-    "consent": "Consentimento",
-    "form": "Formulário"
+    "consentForm": "Formulário de consentimento",
+    "preForm": "Pré-Formulário",
+    "postForm": "Pós-Formulário"
   }
 }
