@@ -248,6 +248,7 @@ export default {
       this.$store.dispatch('processStatistics', {
         resultEvaluator: statistics(),
         percentage: this.percentage,
+        answers: this.$store.state.Answer.testAnswerDocument.heuristicAnswers,
       })
       return this.$store.getters.test
     },
