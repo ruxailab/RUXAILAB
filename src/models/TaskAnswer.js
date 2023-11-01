@@ -5,6 +5,9 @@ export default class TaskAnswer {
     preTestUrl,
     consentUrl,
     postTestUrl,
+    preTestCompleted,
+    consentCompleted,
+    postTestCompleted,
     tasks,
     progress,
     total,
@@ -15,6 +18,9 @@ export default class TaskAnswer {
     this.preTestUrl = preTestUrl ?? ''
     this.consentUrl = consentUrl ?? ''
     this.postTestUrl = postTestUrl ?? ''
+    this.preTestCompleted = preTestCompleted ?? false
+    this.consentCompleted = consentCompleted ?? false
+    this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
     this.total = total ?? 0
@@ -23,14 +29,30 @@ export default class TaskAnswer {
     this.lastUpdate = lastUpdate ?? null
   }
   static toTaskAnswer(data) {
-    return new TaskAnswer({...data, tasks: Object.fromEntries(Object.entries(data.tasks).map(([key, value]) => [key, UserTask.toUserTask(value)]))})
+    return new TaskAnswer({
+      ...data,
+      tasks: Object.fromEntries(
+        Object.entries(data.tasks).map(([key, value]) => [
+          key,
+          UserTask.toUserTask(value),
+        ]),
+      ),
+    })
   }
   toFirestore() {
     return {
       preTestUrl: this.preTestUrl,
       consentUrl: this.consentUrl,
       postTestUrl: this.postTestUrl,
-      tasks: Object.fromEntries(Object.entries(this.tasks).map(([key, value]) => [key, value.toFirestore()])),
+      preTestCompleted: this.preTestCompleted,
+      consentCompleted: this.consentCompleted,
+      postTestCompleted: this.postTestCompleted,
+      tasks: Object.fromEntries(
+        Object.entries(this.tasks).map(([key, value]) => [
+          key,
+          value.toFirestore(),
+        ]),
+      ),
       progress: this.progress,
       total: this.total,
       submitted: this.submitted,

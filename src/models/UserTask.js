@@ -15,6 +15,7 @@ export default class UserTask {
     taskAnswer,
     taskObservations,
     taskTime,
+    completed,
     audioRecordURL,
     screenRecordURL,
     webcamRecordURL,
@@ -23,6 +24,7 @@ export default class UserTask {
     this.taskAnswer = taskAnswer ?? ''
     this.taskObservations = taskObservations ?? ''
     this.taskTime = taskTime ?? null
+    this.completed = completed ?? false
     this.audioRecordURL = audioRecordURL ?? null
     this.screenRecordURL = screenRecordURL ?? null
     this.webcamRecordURL = webcamRecordURL ?? null
@@ -36,6 +38,7 @@ export default class UserTask {
       taskAnswer: this.taskAnswer,
       taskObservations: this.taskObservations,
       taskTime: this.taskTime,
+      completed: this.completed,
       audioRecordURL: this.audioRecordURL,
       screenRecordURL: this.screenRecordURL,
       webcamRecordURL: this.webcamRecordURL,
