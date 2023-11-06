@@ -408,6 +408,15 @@
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
+                  <v-row>
+                    <v-btn class="xl" @click="captureScreen()">
+                      Capture Screen
+                    </v-btn>
+                    <v-btn class="xl" @click="recordScreen()">
+                      Record Screen
+                    </v-btn>
+                    <v-btn v-if="videoUrl != ''" :href="videoUrl">Download video!</v-btn>
+                  </v-row>
                   <v-spacer />
                   <v-row
                     v-if="
@@ -492,6 +501,12 @@
                   >Carregando…</iframe
                 >
               </v-row>
+              <video
+                id="vpreview"
+                class="preview"
+                style="max-width: 700px"
+                autoplay
+              ></video>
               <div class="pa-2 text-end">
                 <v-btn
                   block
@@ -537,7 +552,6 @@ import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
-import UserTask from '@/models/UserTask'
 export default {
   components: {
     ShowInfo,
@@ -547,6 +561,19 @@ export default {
     CardSignUp,
   },
   data: () => ({
+    displayMediaOptions: {
+      video: {
+        displaySurface: 'window',
+        cursor: 'always',
+      },
+      audio: true,
+    },
+    isCapture: false,
+    mediaRecorder: [],
+    chunks: [],
+    isRecording: false,
+    videoUrl: '',
+    isCapture: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -616,7 +643,7 @@ export default {
   },
   async mounted() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
-    this.autoComplete() 
+    this.autoComplete()
     this.calculateProgress()
   },
   methods: {
@@ -672,6 +699,41 @@ export default {
         }
       }
       this.calculateProgress()
+    },
+    async captureScreen() {
+      const videoElem = document.getElementById('vpreview')
+
+      try {
+        videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(
+          this.displayMediaOptions,
+        )
+        this.isCapture = true
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    recordScreen() {
+      if (!this.isRecording) {
+        const videoElem = document.getElementById('vpreview')
+        this.mediaRecorder = new MediaRecorder(videoElem.srcObject)
+        this.mediaRecorder.start()
+        var t = this
+        this.mediaRecorder.ondataavailable = function(e) {
+          t.chunks.push(e.data)
+        }
+
+        this.mediaRecorder.onstop = function() {
+          var blob = new Blob(t.chunks, {
+            type: 'video/mp4; codecs=mpeg4,vorbis',
+          })
+          t.chunks = []
+          t.videoUrl = window.URL.createObjectURL(blob)
+        }
+        this.isRecording = true
+      } else {
+        this.mediaRecorder.stop()
+        this.isRecording = false
+      }
     },
     async autoComplete() {
       // PRE-TEST
