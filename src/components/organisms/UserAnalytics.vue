@@ -28,35 +28,58 @@
                 :items="taskAnswers"
                 item-key="userDocId"
               >
-                <template>
-                  <v-btn text @click="showDialog = true">Show Answers</v-btn>
+                <template v-slot:item.actions="{ item }">
+                  <v-btn color="orange" text @click="viewAnswers(item)"
+                    >Show Answers</v-btn
+                  >
                 </template>
-                <!-- <template v-slot:expanded-item="{ item }">
-                  <v-row>
-                    <v-col cols="6">
-                      <v-card-title>
-                        <span class="font-weight-bold">Answers</span>
-                      </v-card-title>
-                      <v-card-text>{{
-                        item.tasks[taskSelect].taskAnswer
-                      }}</v-card-text>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-card-title>
-                        <span class="font-weight-bold">Observations</span>
-                      </v-card-title>
-                      <v-card-text>{{
-                        item.tasks[taskSelect].taskObservations
-                      }}</v-card-text>
-                    </v-col>
-                  </v-row>
-                </template> -->
               </v-data-table>
             </v-col>
           </v-row>
         </v-card>
       </div>
     </ShowInfo>
+    <template>
+      <v-dialog v-model="showDialog" max-width="600">
+        <v-card>
+          <v-toolbar color="orange" dark>
+            <span class="headline">Answer and Observation</span>
+          </v-toolbar>
+          <v-card-text>
+            <v-row>
+              <v-col cols="6" class="mt-4">
+                <span class="font-weight-bold text-h6" style="color: #252525;"
+                  >Answer</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                  <span v-if="dialogItem">
+                    {{ dialogItem.tasks[taskSelect].taskAnswer }}
+                  </span>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="6" class="mt-4">
+                <span class="font-weight-bold text-h6" style="color: #252525;"
+                  >Observation</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                  <span v-if="dialogItem">
+                    {{ dialogItem.tasks[taskSelect].taskObservations }}
+                  </span>
+                  </div>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn color="orange" text @click="showDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
   </div>
 </template>
 
@@ -69,6 +92,7 @@ export default {
   },
   data: () => ({
     showDialog: false,
+    dialogItem: null,
     search: '',
     taskSelect: 0, // Define o valor inicial de seleção de tarefas
     testTasks: [],
@@ -134,6 +158,10 @@ export default {
         }
       }
       return cooperatorEmail
+    },
+    viewAnswers(item) {
+      this.dialogItem = item
+      this.showDialog = true
     },
   },
 }
