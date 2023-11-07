@@ -211,6 +211,12 @@
       "deleteTemplate": "Delete template",
       "noDescription": "Template has no description.",
       "public": "Make test public to all users (readonly)"
+    },
+    "settings": {
+      "title": "Settings",
+      "currentTest": "Current test",
+      "createTemplate": "CREATE TEMPLATE",
+      "deleteTest": "DELETE TEST"
     }
   },
   "alerts": {
