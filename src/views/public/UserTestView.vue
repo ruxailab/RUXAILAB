@@ -408,14 +408,37 @@
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
-                  <v-row>
-                    <v-btn class="xl" @click="captureScreen()">
-                      Capture Screen
+                  <v-row
+                    v-if="
+                      test.testStructure.userTasks[taskIndex].hasScreenRecord !== false
+                    "
+                  >
+                    <v-btn
+                      class="ml-4 xl"
+                      @click="captureScreen()"
+                      v-if="!isCapture"
+                      color="grey lighten-2"
+                      elevation="0"
+                      ><v-icon left dark>x mdi-monitor-screenshot </v-icon>
+                      Capture
                     </v-btn>
-                    <v-btn class="xl" @click="recordScreen()">
-                      Record Screen
+                    <v-btn
+                      class="ml-4 xl"
+                      v-if="isCapture && videoUrl == ''"
+                      :color="!isRecording ? 'grey lighten-2' : 'red lighten-1'"
+                      :dark="isRecording"
+                      prepend-icon="mdi-monitor-screenshot"
+                      elevation="0"
+                      @click="recordScreen()"
+                    >
+                      <v-icon left dark v-if="!isRecording">
+                        mdi-monitor-screenshot
+                      </v-icon>
+                      <v-icon left dark v-else>
+                        mdi-stop
+                      </v-icon>
+                      {{ isRecording ? 'Stop recording' : 'Start recording' }}
                     </v-btn>
-                    <v-btn v-if="videoUrl != ''" :href="videoUrl">Download video!</v-btn>
                   </v-row>
                   <v-spacer />
                   <v-row
@@ -502,9 +525,10 @@
                 >
               </v-row>
               <video
+                v-if="videoUrl == ''"
                 id="vpreview"
                 class="preview"
-                style="max-width: 700px"
+                style="max-width: 0px"
                 autoplay
               ></video>
               <div class="pa-2 text-end">
@@ -547,6 +571,7 @@
 </template>
 
 <script>
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
@@ -593,6 +618,9 @@ export default {
   computed: {
     test() {
       return this.$store.getters.test
+    },
+    testId() {
+      return this.$store.getters.test.id
     },
     user() {
       if (this.$store.getters.user) this.setExistUser()
@@ -702,7 +730,6 @@ export default {
     },
     async captureScreen() {
       const videoElem = document.getElementById('vpreview')
-
       try {
         videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(
           this.displayMediaOptions,
@@ -717,17 +744,28 @@ export default {
         const videoElem = document.getElementById('vpreview')
         this.mediaRecorder = new MediaRecorder(videoElem.srcObject)
         this.mediaRecorder.start()
-        var t = this
-        this.mediaRecorder.ondataavailable = function(e) {
-          t.chunks.push(e.data)
+        this.mediaRecorder.ondataavailable = (e) => {
+          this.chunks.push(e.data)
         }
 
-        this.mediaRecorder.onstop = function() {
-          var blob = new Blob(t.chunks, {
-            type: 'video/mp4; codecs=mpeg4,vorbis',
-          })
-          t.chunks = []
-          t.videoUrl = window.URL.createObjectURL(blob)
+        this.mediaRecorder.onstop = async () => {
+          const videoBlob = new Blob(this.chunks, { type: 'video/webm' })
+          const storage = getStorage()
+          const storageRef = ref(
+            storage,
+            'tests/' +
+              this.testId +
+              '/' +
+              'task_' +
+              this.taskIndex +
+              '/' +
+              this.videoUrl,
+          )
+          await uploadBytes(storageRef, videoBlob)
+
+          this.videoUrl = await getDownloadURL(storageRef)
+
+          console.log('URL do vídeo:', this.videoUrl)
         }
         this.isRecording = true
       } else {
