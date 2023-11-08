@@ -41,22 +41,19 @@ export default class TestController extends Controller {
         return null
       }
 
-      await super.delete(COLLECTION, payload.id)
-
       const collaborators = testToDelete.data().cooperators
 
+      let promises = [];
+
       for (const collaborator of collaborators) {
-        // await userController.removeNotificationFromUser(collaborator.userDocId, payload.id)
-        
-        
-        //await userController.removeTestFromUser(collaborator.userDocId, payload.id)
-        
-        
         // Add the call to remove notifications for the test being deleted
-        await userController.removeNotificationsForTest(payload.id);
+        promises.push(userController.removeNotificationsForTest(payload.id));
+        promises.push(userController.removeTestFromUser(collaborator.userDocId, payload.id));
       }
+      await Promise.all(promises);
+
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
-       //return await super.delete(COLLECTION, payload.id)
+      await super.delete(COLLECTION, payload.id)
     } catch (error) {
       console.error('Error deleting test:', error)
       throw error
