@@ -211,6 +211,12 @@
       "deleteTemplate": "Excluir modelo",
       "noDescription": "O modelo não possui descrição.",
       "public": "Tornar o teste público para todos os usuários (somente leitura)"
+    },
+    "settings": {
+      "title": "Configurações",
+      "currentTest": "Teste atual",
+      "createTemplate": "CRIAR TEMPLATE",
+      "deleteTest": "EXCLUIR TESTE"
     }
   },
   "alerts": {

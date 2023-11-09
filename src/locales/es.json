@@ -211,6 +211,12 @@
       "deleteTemplate": "Eliminar plantilla",
       "noDescription": "La plantilla no tiene descripción.",
       "public": "Hacer la prueba pública para todos los usuarios (solo lectura)"
+    },
+    "settings": {
+      "title": "Ajustes",
+      "currentTest": "Prueba actual",
+      "createTemplate": "CREAR PLANTILLA",
+      "deleteTest": "ELIMINAR PRUEBA"
     }
   },
   "alerts": {

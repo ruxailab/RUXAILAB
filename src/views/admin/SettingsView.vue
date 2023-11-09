@@ -88,12 +88,12 @@
       </v-card>
     </v-dialog>
 
-    <ShowInfo title="Settings">
+    <ShowInfo :title="$t('pages.settings.title')">
       <div slot="content">
         <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
             <p class="subtitleView">
-              Current Test
+              {{ $t('pages.settings.currentTest') }}
             </p>
           </v-col>
 
@@ -116,7 +116,7 @@
               :disabled="hasTemplate || !object ? true : false"
               @click="tempDialog = true"
             >
-              Create template
+            {{ $t('pages.settings.createTemplate') }}
             </v-btn>
           </v-row>
           <v-divider class="my-3 mx-2" />
@@ -130,7 +130,7 @@
             >
               <v-icon left>
                 mdi-trash-can-outline
-              </v-icon>Delete Test
+              </v-icon> {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </v-row>
         </v-card>
