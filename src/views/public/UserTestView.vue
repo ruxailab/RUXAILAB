@@ -429,7 +429,7 @@
                       :dark="isRecording"
                       prepend-icon="mdi-monitor-screenshot"
                       elevation="0"
-                      @click="recordScreen()"
+                      @click="recordScreen(taskIndex)"
                     >
                       <v-icon left dark v-if="!isRecording">
                         mdi-monitor-screenshot
@@ -739,7 +739,7 @@ export default {
         console.error(err)
       }
     },
-    recordScreen() {
+    recordScreen(taskIndex) {
       if (!this.isRecording) {
         const videoElem = document.getElementById('vpreview')
         this.mediaRecorder = new MediaRecorder(videoElem.srcObject)
@@ -765,7 +765,7 @@ export default {
 
           this.videoUrl = await getDownloadURL(storageRef)
 
-          console.log('URL do vídeo:', this.videoUrl)
+          this.currentUserTestAnswer.tasks[taskIndex].screenRecordURL = this.videoUrl
         }
         this.isRecording = true
       } else {
