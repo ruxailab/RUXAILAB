@@ -408,9 +408,32 @@
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
+                  <v-row>
+                    <video
+                      ref="video"
+                      width="400"
+                      height="300"
+                      autoplay
+                    ></video>
+                    <v-btn
+                      @click="startRecording(taskIndex)"
+                      :disabled="recording"
+                      >Start Recording</v-btn
+                    >
+                    <v-btn @click="stopRecording()" :disabled="!recording"
+                      >Stop Recording</v-btn
+                    >
+                    <a
+                      v-if="recordedVideo"
+                      :href="recordedVideo"
+                      download="recorded-video.webm"
+                      >Download Video</a
+                    >
+                  </v-row>
                   <v-row
                     v-if="
-                      test.testStructure.userTasks[taskIndex].hasScreenRecord !== false
+                      test.testStructure.userTasks[taskIndex]
+                        .hasScreenRecord !== false
                     "
                   >
                     <v-btn
@@ -603,7 +626,7 @@ export default {
     selected: true,
     fromlink: null,
     drawer: true,
-    start: true, //change to true
+    start: true,
     mini: false,
     index: null,
     noExistUser: true,
@@ -614,6 +637,11 @@ export default {
     fab: false,
     res: 0,
     dialog: false,
+    videoStream: null,
+    mediaRecorder: null,
+    recordedChunks: [],
+    recording: false,
+    recordedVideo: null,
   }),
   computed: {
     test() {
@@ -765,7 +793,9 @@ export default {
 
           this.videoUrl = await getDownloadURL(storageRef)
 
-          this.currentUserTestAnswer.tasks[taskIndex].screenRecordURL = this.videoUrl
+          this.currentUserTestAnswer.tasks[
+            taskIndex
+          ].screenRecordURL = this.videoUrl
         }
         this.isRecording = true
       } else {
@@ -913,6 +943,58 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
+    async startRecording(taskIndex) {
+      this.videoStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      })
+      this.$refs.video.srcObject = this.videoStream
+
+      this.recordedChunks = []
+      this.mediaRecorder = new MediaRecorder(this.videoStream)
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data)
+        }
+      }
+
+      this.mediaRecorder.onstop = async () => {
+        const videoBlob = new Blob(this.recordedChunks, { type: 'video/webm' })
+        const storage = getStorage()
+        const storageRef = ref(
+          storage,
+          'tests/' +
+            this.testId +
+            '/' +
+            'task_' +
+            this.taskIndex +
+            '/' +
+            this.recordedVideo,
+        )
+        await uploadBytes(storageRef, videoBlob)
+
+        this.recordedVideo = await getDownloadURL(storageRef)
+
+        this.currentUserTestAnswer.tasks[
+          taskIndex
+        ].webcamRecordURL = this.recordedVideo
+
+        console.log(this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL)
+      }
+
+      this.mediaRecorder.start()
+      this.recording = true
+    },
+    stopRecording() {
+      if (this.mediaRecorder) {
+        this.mediaRecorder.stop()
+        this.videoStream.getTracks().forEach((track) => track.stop())
+        this.recording = false
+      }
+    },
+  },
+  beforeDestroy() {
+    this.stopRecording()
   },
 }
 </script>
