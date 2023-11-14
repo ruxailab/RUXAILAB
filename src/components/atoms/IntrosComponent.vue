@@ -10,16 +10,13 @@
           <div style="font-size: 22px" class="white--text mb-4 mobile-center">
             {{ main }}
           </div>
-          <span class="white--text mobile-center mb-4" style="cursor: pointer" @click="emitClick()">
-            <button class="edit-btn rounded-lg">
-              {{ $t('pages.intros.click') }}
-            </button>
-          </span>
+          <button class="edit-btn rounded-lg white--text" @click="emitClick()">
+            {{ $t('pages.intros.click') }}
+          </button>
         </div>
 
         <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="400"
-               :src="require('../../assets/manager/' + image)"
-        />
+          :src="require('../../assets/manager/' + image)" />
       </v-row>
     </div>
 
@@ -33,8 +30,7 @@
             <v-list class="ma-0 pa-0">
               <div v-for="(item, i) in items" :key="i">
                 <v-list-item class="py-5" :ripple="false" style="border-radius: 10px !important"
-                             @click="emitCallFunc(item.func)"
-                >
+                  @click="emitCallFunc(item.func)">
                   <v-list-item-avatar size="50" :color="item.iconColor">
                     <v-icon dark size="35" v-text="item.icon" />
                   </v-list-item-avatar>
@@ -85,7 +81,7 @@ export default {
     },
     colors: {
       type: Array,
-      default: ()=>[],
+      default: () => [],
       require: true,
     },
   },
