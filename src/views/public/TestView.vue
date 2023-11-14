@@ -512,6 +512,7 @@ export default {
       }
     },
   },
+  
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
