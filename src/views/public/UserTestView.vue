@@ -408,26 +408,31 @@
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
-                  <v-row>
+                  <v-row
+                    v-if="
+                      test.testStructure.userTasks[taskIndex].hasCamRecord !==
+                        false
+                    "
+                  >
                     <video
+                      class="web-cam ml-3"
                       ref="video"
-                      width="400"
-                      height="300"
+                      height="100"
                       autoplay
+                      v-if="recording"
                     ></video>
                     <v-btn
+                      v-if="!recording && recordedVideo == ''"
                       @click="startRecording(taskIndex)"
-                      :disabled="recording"
-                      >Start Recording</v-btn
+                      class="ml-4 xl"
+                      color="grey lighten-2"
+                      elevation="0"
                     >
-                    <v-btn @click="stopRecording()" :disabled="!recording"
-                      >Stop Recording</v-btn
+                      <v-icon class="mr-2">mdi-camera</v-icon>Start
+                      Recording</v-btn
                     >
-                    <a
-                      v-if="recordedVideo"
-                      :href="recordedVideo"
-                      download="recorded-video.webm"
-                      >Download Video</a
+                    <v-btn color="red" icon v-if="recording" @click="stopRecording()"
+                      ><v-icon dark>mdi-stop</v-icon></v-btn
                     >
                   </v-row>
                   <v-row
@@ -437,8 +442,8 @@
                     "
                   >
                     <v-btn
-                      class="ml-4 xl"
                       @click="captureScreen()"
+                      class="ml-4 xl"
                       v-if="!isCapture"
                       color="grey lighten-2"
                       elevation="0"
@@ -641,7 +646,7 @@ export default {
     mediaRecorder: null,
     recordedChunks: [],
     recording: false,
-    recordedVideo: null,
+    recordedVideo: '',
   }),
   computed: {
     test() {
@@ -866,6 +871,7 @@ export default {
 
       // Calcular a porcentagem de conclusão
       const progressPercentage = (completedSteps / totalSteps) * 100
+      this.currentUserTestAnswer.progress = progressPercentage
       return progressPercentage
     },
     async setTest() {
@@ -944,6 +950,7 @@ export default {
       return object !== null && object !== undefined && object !== ''
     },
     async startRecording(taskIndex) {
+      this.recording = true
       this.videoStream = await navigator.mediaDevices.getUserMedia({
         video: true,
       })
@@ -983,7 +990,6 @@ export default {
       }
 
       this.mediaRecorder.start()
-      this.recording = true
     },
     stopRecording() {
       if (this.mediaRecorder) {
@@ -1000,6 +1006,21 @@ export default {
 </script>
 
 <style scoped>
+.web-cam {
+  position: relative;
+  text-align: center;
+  height: 125px;
+  width: 125px;
+  border-radius: 50%;
+  overflow: hidden;
+  mask-image: radial-gradient(circle, white 100%, black 100%);
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -1007,6 +1028,7 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
+
 .backgroundTest {
   background-color: #e8eaf2;
   height: 94%;
