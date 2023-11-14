@@ -46,32 +46,82 @@
             <span class="headline">Answer and Observation</span>
           </v-toolbar>
           <v-card-text>
-            <v-row>
-              <v-col cols="6" class="mt-4">
+            <v-row v-if="dialogItem">
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].taskAnswer != ''"
+                :cols="
+                  dialogItem.tasks[taskSelect].taskObservations != ''
+                    ? '6'
+                    : '12'
+                "
+                class="mt-4"
+              >
                 <span class="font-weight-bold text-h6" style="color: #252525;"
                   >Answer</span
                 >
                 <v-card outlined rounded="6">
                   <div class="ma-6">
-                  <span v-if="dialogItem">
-                    {{ dialogItem.tasks[taskSelect].taskAnswer }}
-                  </span>
+                    <span>
+                      {{ dialogItem.tasks[taskSelect].taskAnswer }}
+                    </span>
                   </div>
                 </v-card>
               </v-col>
-              <v-divider vertical></v-divider>
-              <v-col cols="6" class="mt-4">
+              <v-col
+                :cols="
+                  dialogItem.tasks[taskSelect].taskAnswer != '' ? '6' : '12'
+                "
+                class="mt-4"
+              >
                 <span class="font-weight-bold text-h6" style="color: #252525;"
                   >Observation</span
                 >
                 <v-card outlined rounded="6">
                   <div class="ma-6">
-                  <span v-if="dialogItem">
-                    {{ dialogItem.tasks[taskSelect].taskObservations }}
-                  </span>
+                    <span>
+                      {{ dialogItem.tasks[taskSelect].taskObservations }}
+                    </span>
                   </div>
                 </v-card>
               </v-col>
+              <div v-if="dialogItem" class="mx-auto">
+                <v-col
+                  cols="12"
+                  v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
+                  class="d-flex align-center justify-center"
+                >
+                  <span
+                    class="font-weight-bold text-h6"
+                    style="color: #252525;"
+                    v-if="dialogItem"
+                    >Web Cam Record</span
+                  >
+                  <video
+                    v-if="dialogItem"
+                    :src="dialogItem.tasks[taskSelect].webcamRecordURL"
+                    controls
+                    width="400"
+                  ></video>
+                </v-col>
+              </div>
+              <div v-if="dialogItem">
+                <v-col
+                  cols="12"
+                  v-if="dialogItem.tasks[taskSelect].screenRecordURL"
+                  class="d-flex align-center justify-center flex-column"
+                >
+                  <span
+                    class="font-weight-bold text-h6 mb-2"
+                    style="color: #252525;"
+                    >Screen Record</span
+                  >
+                  <video
+                    :src="dialogItem.tasks[taskSelect].screenRecordURL"
+                    controls
+                    height="250"
+                  ></video>
+                </v-col>
+              </div>
             </v-row>
           </v-card-text>
           <v-card-actions class="justify-end">
