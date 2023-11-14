@@ -95,13 +95,16 @@
 import ShowInfo from '@/components/organisms/ShowInfo'
 import Intro from '@/components/molecules/IntroReports'
 import Snackbar from '@/components/atoms/Snackbar'
+
 export default {
   components: {
     ShowInfo,
     Intro,
     Snackbar,
   },
+
   props: { id: { type: String, default: '' } },
+
   data: () => ({
     headers: [
       { text: 'Evaluator', value: 'userDocId' },
@@ -115,9 +118,12 @@ export default {
     loadingBtn: false,
     report: null,
   }),
+
   computed: {
     reports() {
-      const rawReports = this.$store.getters.testAnswerDocument.heuristicAnswers
+      const type = this.$store.getters.testAnswerDocument.type
+      const rawReports = type === 'User' ? this.$store.getters.testAnswerDocument.taskAnswers : this.$store.getters.testAnswerDocument.heuristicAnswers
+
       const processedReports = []
 
       for (const userId in rawReports) {
@@ -135,12 +141,15 @@ export default {
 
       return processedReports
     },
+
     user() {
       return this.$store.getters.user
     },
+
     test() {
       return this.$store.getters.test
     },
+    
     dialogText() {
       return (
         'Are you sure you want to delete ' +
@@ -152,18 +161,22 @@ export default {
       return this.$store.getters.answers || {}
     },
   },
+
   watch: {
     reports() {
       if (Object.values(this.reports)) this.loading = false
     },
   },
+
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
+
   methods: {
     checkIfIsSubmitted(status) {
       return status ? 'submitted' : 'in progress'
     },
+
     removeReport(report) {
       this.$store
         .dispatch('removeReport', {
@@ -188,6 +201,7 @@ export default {
           this.$store.commit('setError', err)
         })
     },
+
     formatDate(timestamp) {
       const currentDate = new Date()
       const startDate = new Date(timestamp)
@@ -212,9 +226,11 @@ export default {
         return 'Now'
       }
     },
+
     goToCoops() {
       this.$emit('goToCoops')
     },
+
     getCooperatorEmail(userDocId) {
       let cooperatorEmail = null
       if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
