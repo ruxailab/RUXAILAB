@@ -50,7 +50,9 @@
               <v-col
                 v-if="dialogItem.tasks[taskSelect].taskAnswer != ''"
                 :cols="
-                  dialogItem.tasks[taskSelect].taskObservations != '' ? '6' : '12'
+                  dialogItem.tasks[taskSelect].taskObservations != ''
+                    ? '6'
+                    : '12'
                 "
                 class="mt-4"
               >
@@ -82,22 +84,41 @@
                   </div>
                 </v-card>
               </v-col>
-              <div v-if="dialogItem">
+              <div v-if="dialogItem" class="mx-auto">
                 <v-col
                   cols="12"
-                  v-if="dialogItem.tasks[taskSelect].screenRecordURL"
+                  v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
+                  class="d-flex align-center justify-center"
                 >
                   <span
                     class="font-weight-bold text-h6"
                     style="color: #252525;"
                     v-if="dialogItem"
-                    >Screen Record</span
+                    >Web Cam Record</span
                   >
                   <video
                     v-if="dialogItem"
-                    :src="dialogItem.tasks[taskSelect].screenRecordURL"
-                    height="335"
+                    :src="dialogItem.tasks[taskSelect].webcamRecordURL"
                     controls
+                    width="400"
+                  ></video>
+                </v-col>
+              </div>
+              <div v-if="dialogItem">
+                <v-col
+                  cols="12"
+                  v-if="dialogItem.tasks[taskSelect].screenRecordURL"
+                  class="d-flex align-center justify-center flex-column"
+                >
+                  <span
+                    class="font-weight-bold text-h6 mb-2"
+                    style="color: #252525;"
+                    >Screen Record</span
+                  >
+                  <video
+                    :src="dialogItem.tasks[taskSelect].screenRecordURL"
+                    controls
+                    height="250"
                   ></video>
                 </v-col>
               </div>
