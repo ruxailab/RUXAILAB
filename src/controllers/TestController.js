@@ -25,6 +25,7 @@ export default class TestController extends Controller {
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
+  
 
   // async deleteTest(payload) {
   //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
@@ -49,14 +50,14 @@ export default class TestController extends Controller {
         // await userController.removeNotificationFromUser(collaborator.userDocId, payload.id)
         
         
-        //await userController.removeTestFromUser(collaborator.userDocId, payload.id)
+        await userController.removeTestFromUser(collaborator.userDocId, payload.id)
         
         
         // Add the call to remove notifications for the test being deleted
         await userController.removeNotificationsForTest(payload.id);
       }
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
-       //return await super.delete(COLLECTION, payload.id)
+       return await super.delete(COLLECTION, payload.id)
     } catch (error) {
       console.error('Error deleting test:', error)
       throw error
