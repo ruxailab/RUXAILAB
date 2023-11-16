@@ -295,7 +295,7 @@ export default {
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
           .post(
-            'http://localhost:8000/api/endpoint',
+            'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
             {
               items: [
                 {
