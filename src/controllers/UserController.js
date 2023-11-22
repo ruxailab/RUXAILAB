@@ -50,23 +50,32 @@ export default class UserController extends Controller {
       throw new Error('Notification not found.')
     }
   }
-  async removeNotificationsForTest(testId) {
+  async removeNotificationsForTest(testId, cooperators) {
     try {
-      // Fetch all users
-      const usersSnapshot = await super.readAll(COLLECTION);
+      for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
+        let userDocID = cooperators[cooperator].userDocId;
   
-      // Iterate over each user
-      for (const userDoc of usersSnapshot.docs) {
-        const userData = userDoc.data();
-        const userId = userDoc.id;
+        // Lê o documento do usuário diretamente
+        const userDoc = await super.readOne('users', userDocID);
   
-        // Filter out notifications related to the test
-        userData.notifications = userData.notifications.filter(
-          (notification) => notification.redirectsTo.includes(testId)
-        );
+        // Verifica se o documento do usuário existe
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const userId = userDoc.id;
   
-        // Update the user document with the filtered notifications
-        await super.update(COLLECTION, userId, { notifications: userData.notifications });
+          // Verificar se o usuário tem notificações
+          if (userData.notifications && userData.notifications.length > 0) {
+            // Filtrar notificações que têm o testId correspondente
+            userData.notifications = userData.notifications.filter(
+              (notification) => notification.testId !== testId
+            );
+              console.log('depois do filtro: ',userData.notifications);
+            // Atualizar o documento do usuário com as notificações filtradas
+            await super.update('users', userId, { notifications: userData.notifications });
+          }
+        } else {
+          console.log(`User document with ID ${userDocID} not found.`);
+        }
       }
   
       console.log(`Notifications for test ${testId} removed from all users.`);
@@ -75,6 +84,13 @@ export default class UserController extends Controller {
       throw error;
     }
   }
+  
+  
+  
+  
+  
+  
+  
   
     
 
