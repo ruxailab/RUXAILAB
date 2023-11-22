@@ -11,6 +11,7 @@ export default class Notification {
         redirectsTo,
         author,
         read,
+        testId
     } = {},
     ) {
         this.title = title
@@ -19,6 +20,7 @@ export default class Notification {
         this.createdDate = Date.now()
         this.author = author
         this.read = read
+        this.testId = testId
     }
     static toNotification(data) {
         return new Notification(data)
@@ -32,6 +34,7 @@ export default class Notification {
             createdDate: this.createdDate,
             author: this.author,
             read: this.read,
+            testId: this.testId
         }
     }
 }

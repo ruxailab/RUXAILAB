@@ -33,25 +33,29 @@ export default class TestController extends Controller {
   async deleteTest(payload) {
     console.log(payload)
     try {
-
+      console.log('Inicio do delete test')
       const testToDelete = await super.readOne(COLLECTION, payload.id)
-
+      console.log('teste para deletar', testToDelete)
       if (!testToDelete.exists()) {
         console.log('Test not found.')
         return null
       }
 
-      const collaborators = testToDelete.data().cooperators
+      const collaborators = await testToDelete.data()
+      const cooperators = collaborators.cooperators
+      if(cooperators){
+      console.log(cooperators)
+      let promises = []
 
-      let promises = [];
-
-      for (const collaborator of collaborators) {
+      for (const cooperator of cooperators) {
         // Add the call to remove notifications for the test being deleted
-        promises.push(userController.removeNotificationsForTest(payload.id));
-        promises.push(userController.removeTestFromUser(collaborator.userDocId, payload.id));
+        promises.push(
+          userController.removeTestFromUser(cooperator.userDocId, payload.id),
+        )
+        promises.push(userController.removeNotificationsForTest(payload.id,cooperators))
       }
-      await Promise.all(promises);
-
+      await Promise.all(promises)
+    }
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
       await super.delete(COLLECTION, payload.id)
     } catch (error) {
