@@ -410,6 +410,31 @@
                   </v-row>
                   <v-row
                     v-if="
+                      test.testStructure.userTasks[taskIndex].hasAudioRecord !==
+                        false
+                    "
+                  >
+                    <v-btn
+                      v-if="!recordingAudio && recordedAudio == ''"
+                      @click="startAudioRecording(taskIndex)"
+                      class="ml-4 xl"
+                      color="grey lighten-2"
+                      elevation="0"
+                    >
+                      <v-icon class="mr-2">mdi-microphone</v-icon>Start
+                      Recording</v-btn
+                    >
+                    <v-btn
+                      dark
+                      color="red"
+                      class="ml-4 xl"
+                      v-if="recordingAudio"
+                      @click="stopAudioRecording()"
+                      ><v-icon left>mdi-stop</v-icon> stop recording</v-btn
+                    >
+                  </v-row>
+                  <v-row
+                    v-if="
                       test.testStructure.userTasks[taskIndex].hasCamRecord !==
                         false
                     "
@@ -431,7 +456,11 @@
                       <v-icon class="mr-2">mdi-camera</v-icon>Start
                       Recording</v-btn
                     >
-                    <v-btn color="red" icon v-if="recording" @click="stopRecording()"
+                    <v-btn
+                      color="red"
+                      icon
+                      v-if="recording"
+                      @click="stopRecording()"
                       ><v-icon dark>mdi-stop</v-icon></v-btn
                     >
                   </v-row>
@@ -647,6 +676,9 @@ export default {
     recordedChunks: [],
     recording: false,
     recordedVideo: '',
+    audioStream: null,
+    recordingAudio: false,
+    recordedAudio: ''
   }),
   computed: {
     test() {
@@ -996,6 +1028,66 @@ export default {
         this.mediaRecorder.stop()
         this.videoStream.getTracks().forEach((track) => track.stop())
         this.recording = false
+      }
+    },
+    async startAudioRecording(taskIndex) {
+      this.recordingAudio = true
+
+      try {
+        this.audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        })
+
+        this.recordedChunks = []
+        this.mediaRecorder = new MediaRecorder(this.audioStream, {
+          mimeType: 'audio/webm',
+        })
+
+        this.mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.recordedChunks.push(event.data)
+          }
+        }
+
+        this.mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(this.recordedChunks, {
+            type: 'audio/webm',
+          })
+          const storage = getStorage()
+          const storageRef = ref(
+            storage,
+            'tests/' +
+              this.testId +
+              '/' +
+              'task_' +
+              this.taskIndex +
+              '/' +
+              this.recordedAudio,
+          )
+          await uploadBytes(storageRef, audioBlob)
+
+          this.recordedAudio = await getDownloadURL(storageRef)
+
+          this.currentUserTestAnswer.tasks[
+            taskIndex
+          ].audioRecordURL = this.recordedAudio
+
+          console.log(
+            this.currentUserTestAnswer.tasks[taskIndex].audioRecordURL,
+          )
+        }
+
+        this.mediaRecorder.start()
+      } catch (error) {
+        console.error('Error accessing audio stream:', error)
+        this.recordingAudio = false
+      }
+    },
+    stopAudioRecording() {
+      if (this.mediaRecorder) {
+        this.mediaRecorder.stop()
+        this.audioStream.getTracks().forEach((track) => track.stop())
+        this.recordingAudio = false
       }
     },
   },

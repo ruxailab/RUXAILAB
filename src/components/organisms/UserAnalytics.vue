@@ -68,6 +68,7 @@
                 </v-card>
               </v-col>
               <v-col
+                v-if="dialogItem.tasks[taskSelect].taskObservations != ''"
                 :cols="
                   dialogItem.tasks[taskSelect].taskAnswer != '' ? '6' : '12'
                 "
@@ -84,23 +85,24 @@
                   </div>
                 </v-card>
               </v-col>
-              <div v-if="dialogItem" class="mx-auto">
+              <div v-if="dialogItem">
                 <v-col
                   cols="12"
                   v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
-                  class="d-flex align-center justify-center"
+                  class="d-flex align-center justify-center flex-column"
                 >
                   <span
-                    class="font-weight-bold text-h6"
+                    class="font-weight-bold text-h6 my-3"
                     style="color: #252525;"
                     v-if="dialogItem"
                     >Web Cam Record</span
                   >
                   <video
+                    class="my-3"
                     v-if="dialogItem"
                     :src="dialogItem.tasks[taskSelect].webcamRecordURL"
                     controls
-                    width="400"
+                    height="260"
                   ></video>
                 </v-col>
               </div>
@@ -111,15 +113,34 @@
                   class="d-flex align-center justify-center flex-column"
                 >
                   <span
-                    class="font-weight-bold text-h6 mb-2"
+                    class="font-weight-bold text-h6 my-3"
                     style="color: #252525;"
                     >Screen Record</span
                   >
                   <video
                     :src="dialogItem.tasks[taskSelect].screenRecordURL"
                     controls
-                    height="250"
+                    height="260"
                   ></video>
+                </v-col>
+              </div>
+              <div v-if="dialogItem">
+                <v-col
+                  cols="12"
+                  v-if="dialogItem.tasks[taskSelect].audioRecordURL"
+                  class="d-flex align-center justify-center flex-column"
+                >
+                  <span
+                    class="font-weight-bold text-h6 my-3 mx-auto text-center"
+                    style="color: #252525;"
+                  >
+                    Audio Record
+                  </span>
+                  <audio
+                    :src="dialogItem.tasks[taskSelect].audioRecordURL"
+                    controls
+                    class="mx-auto"
+                  ></audio>
                 </v-col>
               </div>
             </v-row>
@@ -144,7 +165,7 @@ export default {
     showDialog: false,
     dialogItem: null,
     search: '',
-    taskSelect: 0, // Define o valor inicial de seleção de tarefas
+    taskSelect: 0,
     testTasks: [],
     taskAnswers: [],
     intro: null,
