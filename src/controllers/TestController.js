@@ -25,6 +25,7 @@ export default class TestController extends Controller {
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
+  
 
   // async deleteTest(payload) {
   //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
