@@ -15,32 +15,29 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 })
-router.beforeEach((to, from, next) => {
-  next((vm) => {
-    // access to component public instance via `vm`
-    vm.$store.commit('SET_LOCAL_CHANGES', false)
-  })
-})
-router.afterEach(() => {
-  // access to component public instance via `vm`
-  store.commit('SET_LOCAL_CHANGES', false)
-})
 
-router.beforeResolve(async (to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const { authorize } = to.meta
-  const signIn = autoSignIn()
-  if (authorize.length > 0 && to.path !== '/signin' && !to.params.token && from.path !== '/signup') {
-    await signIn
 
-    const user = store.state.Auth.user
+  await autoSignIn()
+
+  const user = store.state.Auth.user
+
+  if (
+    authorize.length > 0 &&
+    to.path !== '/signin' &&
+    !to.params.token &&
+    from.path !== '/signup'
+  ) {
     if (!user) {
       return next(redirect())
     }
+
     if (!authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
-    next()
   }
+
   next()
 })
 
