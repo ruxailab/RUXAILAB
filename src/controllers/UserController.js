@@ -9,20 +9,6 @@ export default class UserController extends Controller {
   constructor() {
     super()
   }
-
-  // createNewUser(document, data) {
-  //     return super.create("users", document, data).then((res) => {
-  //         return res;
-  //     });
-
-  // }
-
-  // deleteUser(document) {
-  //     return super.delete("users", document).then((res) => {
-  //         return res;
-  //     });
-  // }
-
   async update(docId, payload) {
     return super.update(COLLECTION, docId, payload)
   }
@@ -46,6 +32,7 @@ export default class UserController extends Controller {
 
   async markNotificationAsRead(payload) {
     const userToUpdate = new User(payload.user)
+    console.log(userToUpdate)
     const index = userToUpdate.notifications.findIndex(
       (n) => n.createdDate === payload.notification.createdDate,
     )
@@ -63,69 +50,60 @@ export default class UserController extends Controller {
       throw new Error('Notification not found.')
     }
   }
-    // async removeNotificationFromUser(userId, testIdToRemove){
-    //   try{
-    //     const userDoc = await super.readOne('users', userId)
-    //     console.log(userId)
-    //     if (!userDoc.exists()) {
-    //       console.log('User not found.')
-    //       return
-    //     }
-    //     const userData = userDoc.data()
-    //     console.log(userData.notifications)
-    //     for(let i=0;i<=userData.notifications.length;i++){
-    //       console.log(userData.norifications[i])
-    //       let path = "managerview/"+ testIdToRemove
-    //       console.log(path)
-    //       if (userData.notifications[i].redirectsTo == "managerview/"+ testIdToRemove) {
-    //         delete userData.notifications[i]
-    //       }
-    //     }
-       
-    //   } catch (error) {
-    //     console.error('Error removing test from user:', error)
-    //     throw error
-
-    //   }
-    // }
-    async removeNotificationsForTest(testIdToRemove) {
-      try {
-        const usersSnapshot = await super.query(COLLECTION, {
-          field: 'notifications.redirectsTo',
-          value: 'managerview/' + testIdToRemove,
-          condition: '==',
-        });
-    
-        for (const userDoc of usersSnapshot.docs) {
+  async removeNotificationsForTest(testId, cooperators) {
+    try {
+      for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
+        let userDocID = cooperators[cooperator].userDocId;
+  
+        // Lê o documento do usuário diretamente
+        const userDoc = await super.readOne('users', userDocID);
+  
+        // Verifica se o documento do usuário existe
+        if (userDoc.exists()) {
           const userData = userDoc.data();
           const userId = userDoc.id;
-    
-          userData.notifications = userData.notifications.filter(
-            (notification) =>
-              notification.redirectsTo !== 'managerview/' + testIdToRemove
-          );
-          console.log(userData.notifications)
-    
-
-          await super.update(COLLECTION, userId, { notifications: userData.notifications });
-    
-          console.log(`Notifications for test ${testIdToRemove} removed from user ${userId}`);
+  
+          // Verificar se o usuário tem notificações
+          if (userData.notifications && userData.notifications.length > 0) {
+            // Filtrar notificações que têm o testId correspondente
+            userData.notifications = userData.notifications.filter(
+              (notification) => notification.testId !== testId
+            );
+              console.log('depois do filtro: ',userData.notifications);
+            // Atualizar o documento do usuário com as notificações filtradas
+            await super.update('users', userId, { notifications: userData.notifications });
+          }
+        } else {
+          console.log(`User document with ID ${userDocID} not found.`);
         }
-      } catch (error) {
-        console.error('Error removing notifications for the test:', error);
-        throw error;
       }
+  
+      console.log(`Notifications for test ${testId} removed from all users.`);
+    } catch (error) {
+      console.error('Error removing notifications for the test:', error);
+      throw error;
     }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
     
 
     async removeTestFromUser(userId, testIdToRemove) {
       try {
         const userDoc = await super.readOne('users', userId)
+
         if (!userDoc.exists()) {
           console.log('User not found.')
           return
         }
         const userData = userDoc.data()
+        console.log(userData)
 
         if (userData.myTests[testIdToRemove]) {
           delete userData.myTests[testIdToRemove]
@@ -134,6 +112,7 @@ export default class UserController extends Controller {
           delete userData.myAnswers[testIdToRemove]
         }
 
+        
         await super.update('users', userId, userData)
 
         console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
