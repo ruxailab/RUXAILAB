@@ -1,11 +1,7 @@
 <template>
   <div>
     <v-overlay v-if="loading" v-model="loading" class="text-center">
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Loading Cooperators
       </div>
@@ -385,6 +381,7 @@ export default {
             redirectsTo: `${path}/${this.test.id}/${guest.token}`,
             author: `${this.test.testAdmin.email}`,
             read: false,
+            testId: this.test.id,
           }),
         })
       }
@@ -401,12 +398,13 @@ export default {
         }
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
-          notification: new Notification({
+          notification: new Notification({  
             title: `${messageTitle}`,
             description: `${messageContent}`,
             redirectsTo: '/',
             read: false,
             author: `${this.test.testAdmin.email}`,
+            testId: this.test.id,
           }),
         })
       }
