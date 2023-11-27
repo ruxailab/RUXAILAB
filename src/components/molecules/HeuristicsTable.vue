@@ -321,6 +321,7 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
+                          @change="emitChange"
                           :question="
                             heuristics[itemSelect].questions[questionSelect]
                           "
@@ -696,6 +697,10 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
+     emitChange() {
+      this.$emit("change");
+      this.$forceUpdate();
+    },
     moveItemUp(index) {
       if (index > 0) {
         const itemToMove = this.filteredHeuristics[index]
@@ -850,7 +855,7 @@ export default {
 
         this.$refs.formHeuris.resetValidation()
 
-        //this.$emit("change");
+        this.$emit("change");
       }
     },
     closeDialog(dialogName) {
@@ -878,7 +883,7 @@ export default {
         ].questions.length
 
         this.$refs.formQuestion.resetValidation()
-        // this.$emit("change");
+        this.$emit("change");
       }
     },
     validateEdit() {
