@@ -102,6 +102,7 @@
         slot="top"
         type="tabs"
         @tabClicked="setIndex"
+        @change="change = true"
       />
 
       <EditUserTest
@@ -292,12 +293,12 @@ export default {
       this.index = ind
     },
   },
-  beforeRouteLeave(to, from, next) {
+beforeRouteLeave(to, from, next) {
     if (this.change) {
-      this.dialog = true
-      this.go = to.path
+      this.dialog = true;
+      this.go = to.path;
     } else {
-      next()
+      next();
     }
   },
 }
