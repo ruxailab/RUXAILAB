@@ -14,6 +14,9 @@
     <v-tab @click="tabClicked(2)">
       Post Test
     </v-tab>
+    <v-tab @click="tabClicked(3)">
+      User Variables
+    </v-tab>
   </v-tabs>
 
   <v-col v-else-if="type == 'content'" cols="12">
@@ -45,6 +48,18 @@
         </v-col>
       </v-row>
     </v-card>
+    <v-card v-if="index == 3" style="background: #f5f7ff">
+      <v-card-title class="subtitleView">
+        User Variables
+      </v-card-title>
+
+      <v-divider />
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <UserVariables :object="formData" @input="updateData" />
+        </v-col>
+      </v-row>
+    </v-card>
   </v-col>
 </template>
 
@@ -52,12 +67,14 @@
 import FormPreTest from '@/components/atoms/FormPreTest'
 import FormPostTest from '@/components/atoms/FormPostTest'
 import ListTasks from '@/components/molecules/ListTasks'
+import UserVariables from '@/components/atoms/UserVariables'
 
 export default {
   components: {
     FormPreTest,
     FormPostTest,
     ListTasks,
+    UserVariables
   },
   props: {
     type: {
@@ -75,7 +92,6 @@ export default {
   },
   data() {
     return {
-      //initialize formData properties
       formData: {
         preTest: {
           preTestUrl: '',
