@@ -13,13 +13,33 @@
                   @click:append="log"
                   label="Description"
                 ></v-text-field>
-                <v-text-field
-                  v-for="(field, index) in items[i].selectionFields"
-                  :key="index"
-                  append-icon="mdi-plus"
-                  @click:append="newSelection(i)"
-                  label="Selection"
-                ></v-text-field>
+                <div>
+                  <v-text-field
+                    v-for="(field, index) in items[i].selectionFields"
+                    v-model="items[i].selectionFields[index]"
+                    :key="index"
+                    label="Selection"
+                    ><template v-slot:append>
+                      <v-icon @click="newSelection(i)">mdi-plus</v-icon>
+                      <v-icon @click="deleteSelection(i)">mdi-trash-can</v-icon>
+                    </template></v-text-field
+                  >
+                  <div
+                    v-if="
+                      items[i].selectionField &&
+                        items[i].selectionFields.length === 0
+                    "
+                  >
+                    <p>
+                      Add first option<v-icon
+                        class="ml-1"
+                        @click="newSelection(i)"
+                        >mdi-plus</v-icon
+                      >
+                    </p>
+                  </div>
+                </div>
+                {{ items }}
               </v-form>
               <v-row>
                 <v-col cols="6">
@@ -57,24 +77,36 @@
           elevation="0"
           color="grey lighten-2"
         >
-          <p class="text-subtitle-1 text-center ma-1">
+          <p class="text-subtitle-1 text-center ma-2">
+            <v-icon>mdi-plus-circle</v-icon>
             Create a new variable
           </p>
         </v-card>
       </v-col>
     </v-row>
-    <v-dialog v-model="show" max-width="600">
+    <v-dialog v-model="show" max-width="600" persistent>
       <v-card>
-        <v-card-title>Create a new variable</v-card-title>
+        <v-card-title class="text-h6 mb-2">Create a new variable</v-card-title>
         <v-card-text>
           <v-text-field
+            filled
+            :rules="[() => !!newItem || 'This field is required']"
+            color="orange"
             v-model="newItem"
-            label="New Variable Name"
+            label="Variable Name"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="saveNewItem">Save</v-btn>
-          <v-btn @click="closeModal">Close</v-btn>
+          <v-btn color="red" class="ml-auto" dark @click="closeModal"
+            ><v-icon class="mr-1">mdi-close</v-icon>Close</v-btn
+          >
+          <v-btn
+            color="green"
+            dark
+            @click="saveNewItem"
+            :disabled="newItem.lenght > 0"
+            ><v-icon class="mr-1">mdi-content-save</v-icon>Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -88,6 +120,9 @@ export default {
     items: [],
     show: false,
   }),
+  created() {
+    console.log(this.items)
+  },
   methods: {
     log() {
       console.log('adicionar + 1')
@@ -99,8 +134,14 @@ export default {
       this.show = false
     },
     selectField(i) {
-      if (this.items[i].selectionFields.length == 0) {
+      if (
+        this.items[i].selectionFields.length == 0 &&
+        this.items[i].selectionField
+      ) {
         this.items[i].selectionFields.push('')
+      }
+      if (this.items[i].selectionField == false) {
+        this.items[i].selectionFields = []
       }
       this.items[i].textField = false
     },
@@ -118,7 +159,7 @@ export default {
         title: this.newItem,
         selectionFields: [],
         selectionField: false,
-        textField: false,
+        textField: true,
       })
       this.newItem = ''
       this.show = false
@@ -128,6 +169,12 @@ export default {
         ...this.items[index],
         selectionFields: [...this.items[index].selectionFields, ''],
       })
+    },
+    deleteSelection(index) {
+      this.items[index].selectionFields.splice(
+        this.items[index].selectionFields.length - 1,
+        1,
+      )
     },
   },
 }
