@@ -39,7 +39,6 @@
                     </p>
                   </div>
                 </div>
-                {{ items }}
               </v-form>
               <v-row>
                 <v-col cols="6">
