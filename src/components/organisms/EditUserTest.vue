@@ -6,7 +6,7 @@
     class="pb-0 mb-0"
   >
     <v-tab @click="tabClicked(0)">
-      Pre Test
+      User Variables
     </v-tab>
     <v-tab @click="tabClicked(1)">
       Tasks
@@ -14,19 +14,20 @@
     <v-tab @click="tabClicked(2)">
       Post Test
     </v-tab>
-    <v-tab @click="tabClicked(3)">
-      User Variables
-    </v-tab>
   </v-tabs>
 
   <v-col v-else-if="type == 'content'" cols="12">
-    <v-card v-if="index == 0" style="background: #f5f7ff">
+        <v-card v-if="index == 0" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        Pre Test
+        User Variables
       </v-card-title>
 
       <v-divider />
-      <FormPreTest :object="formData" @input="updateData" />
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <UserVariables :object="formData" @input="updateData" />
+        </v-col>
+      </v-row>
     </v-card>
 
     <ListTasks
@@ -48,30 +49,16 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-card v-if="index == 3" style="background: #f5f7ff">
-      <v-card-title class="subtitleView">
-        User Variables
-      </v-card-title>
-
-      <v-divider />
-      <v-row justify="space-around">
-        <v-col cols="12">
-          <UserVariables :object="formData" @input="updateData" />
-        </v-col>
-      </v-row>
-    </v-card>
   </v-col>
 </template>
 
 <script>
-import FormPreTest from '@/components/atoms/FormPreTest'
 import FormPostTest from '@/components/atoms/FormPostTest'
 import ListTasks from '@/components/molecules/ListTasks'
 import UserVariables from '@/components/atoms/UserVariables'
 
 export default {
   components: {
-    FormPreTest,
     FormPostTest,
     ListTasks,
     UserVariables
@@ -93,10 +80,7 @@ export default {
   data() {
     return {
       formData: {
-        preTest: {
-          preTestUrl: '',
-          consentUrl: '',
-        },
+        preTest: [],
         postTest: {
           postTestUrl: '',
         },
@@ -115,7 +99,6 @@ export default {
     },
   },
   mounted() {
-    this.getForms()
     if (this.type !== 'content' && this.type != 'tabs')
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
   },
@@ -131,12 +114,6 @@ export default {
       if (this.index == 2) {
         this.$store.dispatch('setPostTest', data)
       }
-    },
-    getForms() {
-      // Get forms from Test and set to local variables
-      this.formData.preTest.preTestUrl = this.preTest.preTestUrl
-      this.formData.preTest.consentUrl = this.preTest.consentUrl
-      this.formData.postTest.postTestUrl = this.postTest.postTestUrl
     },
   },
 }
