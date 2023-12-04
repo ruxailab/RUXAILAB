@@ -11,6 +11,7 @@
               <v-form>
                 <v-text-field
                   @click:append="log"
+                  v-model="items[i].description"
                   label="Description"
                 ></v-text-field>
                 <div>
@@ -19,6 +20,7 @@
                     v-model="items[i].selectionFields[index]"
                     :key="index"
                     label="Selection"
+                    @input="saveState()"
                     ><template v-slot:append>
                       <v-icon @click="newSelection(i)">mdi-plus</v-icon>
                       <v-icon @click="deleteSelection(i)">mdi-trash-can</v-icon>
@@ -45,6 +47,7 @@
                   <v-checkbox
                     label="Selection field"
                     v-model="items[i].selectionField"
+                    @input="saveState"
                     @click="selectField(i)"
                   ></v-checkbox>
                 </v-col>
@@ -56,13 +59,7 @@
                   ></v-checkbox>
                 </v-col>
                 <v-col>
-                  <v-btn
-                    class="mt-5"
-                    icon
-                    v-bind="attrs"
-                    @click="deleteItem(i)"
-                    v-on="on"
-                  >
+                  <v-btn class="mt-5" icon @click="deleteItem(i)">
                     <v-icon>mdi-trash-can</v-icon>
                   </v-btn>
                 </v-col>
@@ -93,17 +90,14 @@
             color="orange"
             v-model="newItem"
             label="Variable Name"
+            @input="saveState"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-btn color="red" class="ml-auto" dark @click="closeModal"
             ><v-icon class="mr-1">mdi-close</v-icon>Close</v-btn
           >
-          <v-btn
-            color="green"
-            dark
-            @click="saveNewItem"
-            :disabled="newItem.lenght > 0"
+          <v-btn color="green" dark @click="saveNewItem(), saveState()"
             ><v-icon class="mr-1">mdi-content-save</v-icon>Save</v-btn
           >
         </v-card-actions>
@@ -119,8 +113,13 @@ export default {
     items: [],
     show: false,
   }),
-  created() {
-    console.log(this.items)
+  mounted() {
+    this.getVariables()
+  },
+  computed: {
+    preTest() {
+      return this.$store.state.Tests.Test.testStructure.preTest
+    },
   },
   methods: {
     log() {
@@ -156,6 +155,7 @@ export default {
     saveNewItem() {
       this.items.push({
         title: this.newItem,
+        description: '',
         selectionFields: [],
         selectionField: false,
         textField: true,
@@ -174,6 +174,15 @@ export default {
         this.items[index].selectionFields.length - 1,
         1,
       )
+    },
+    saveState() {
+      this.$store.dispatch('setPreTest', this.items)
+    },
+    getVariables() {
+      if (this.preTest != undefined) {
+        console.log('puxei da store')
+        this.items = this.preTest
+      }
     },
   },
 }
