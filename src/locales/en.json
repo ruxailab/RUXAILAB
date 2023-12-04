@@ -245,7 +245,8 @@
     "close": "Close",
     "stay": "Stay",
     "leave": "Leave",
-    "help": "Help"
+    "help": "Help",
+    "delete": "Delete"
   },
   "switches": {
     "noAnswer": "No answer",
