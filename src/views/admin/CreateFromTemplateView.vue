@@ -43,7 +43,6 @@
       :dialog="dialog"
       :template="temp"
       :allow-create="true"
-      @submitTemplate="submit"
       @close="dialog = false"
     />
   </div>
@@ -52,8 +51,6 @@
 <script>
 import List from '@/components/atoms/ListComponent'
 import TempDialog from '@/components/molecules/TemplateInfoDialog'
-import TestAdmin from '@/models/TestAdmin'
-import Test from '@/models/Test'
 
 export default {
   components: {
@@ -107,27 +104,6 @@ export default {
     openTemp(item) {
       this.temp = JSON.parse(JSON.stringify(item)) //deep copy
       this.dialog = true
-    },
-
-    async submit() {
-      const test = new Test({
-        ...this.temp.body,
-        id: null,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
-        templateDoc: this.temp.id,
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      })
-
-      const testId = await this.$store.dispatch('createNewTest', test)
-      this.sendManager(testId)
-    },
-
-    sendManager(id) {
-      this.$router.push(`/managerview/${id}`).catch(() => {})
     },
   },
 }
