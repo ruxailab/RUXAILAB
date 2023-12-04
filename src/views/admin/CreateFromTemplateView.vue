@@ -60,16 +60,19 @@ export default {
     List,
     TempDialog,
   },
+
   data: () => ({
     temp: {},
     dialog: false,
     searching: false,
     search: '',
   }),
+
   computed: {
     templates() {
       return this.$store.state.Templates.templates
     },
+
     filteredTemplates() {
       if (this.templates !== null) {
         return this.templates.filter((temp) => {
@@ -81,10 +84,12 @@ export default {
 
       return []
     },
+
     user() {
       return this.$store.getters.user
     },
   },
+
   watch: {
     dialog() {
       if (!this.dialog) {
@@ -93,14 +98,17 @@ export default {
       }
     },
   },
+
   async created() {
     await this.$store.dispatch('getCurrentUserAndPublicTemplates')
   },
+
   methods: {
     openTemp(item) {
       this.temp = JSON.parse(JSON.stringify(item)) //deep copy
       this.dialog = true
     },
+
     async submit() {
       const test = new Test({
         ...this.temp.body,
@@ -115,9 +123,9 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-
       this.sendManager(testId)
     },
+
     sendManager(id) {
       this.$router.push(`/managerview/${id}`).catch(() => {})
     },
