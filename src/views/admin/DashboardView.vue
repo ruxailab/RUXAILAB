@@ -182,8 +182,8 @@
 
       <TempDialog
         :dialog="tempDialog"
-        :show-details="showTempDetails"
         :template="temp"
+        :allow-create="true"
         @reloadTemplates="reloadTemplates()"
         @close="tempDialog = false"
       />
@@ -202,6 +202,7 @@ export default {
     List,
     TempDialog,
   },
+
   data: () => ({
     search: '',
     mainIndex: 0,
@@ -229,13 +230,16 @@ export default {
     tempDialog: false,
     temp: {},
   }),
+
   computed: {
     user() {
       return this.$store.getters.user
     },
+
     tests() {
       return this.$store.state.Tests.tests
     },
+
     filteredTests() {
       let arr = null
 
@@ -249,6 +253,7 @@ export default {
     templates() {
       return this.$store.state.Templates.templates || []
     },
+
     filteredTemplates() {
       return this.templates.filter((temp) =>
         temp.header.templateTitle
@@ -256,12 +261,15 @@ export default {
           .includes(this.search.toLowerCase()),
       )
     },
+
     loading() {
       return this.$store.getters.loading
     },
+
     // paginatedTemps() {
     //   return this.$store.getters.paginatedTemps;
     // },
+    
     // showOnExplore() {
     //   // let array = [];
     //   let temps = null;
@@ -272,77 +280,75 @@ export default {
 
     //   return temps;
     // },
+
     showTempDetails() {
       return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
   },
+
   watch: {
     async mainIndex(val) {
       this.subIndex = 0 //reset subIndex when main index change
 
       // If it is on tab tests
-      if (val == 0) {
-        await this.getMyPersonalTests()
-      }
+      if (val == 0) await this.getMyPersonalTests()
 
       // If it is on tab templates
-      if (val == 1) {
-        await this.getMyTemplates()
-      }
+      if (val == 1) await this.getMyTemplates()
     },
+
     async subIndex(val) {
       if (this.mainIndex == 0) {
         // If it is on tab tests
-        if (val == 0) {
-          await this.getMyPersonalTests()
-        }
+        if (val == 0) await this.getMyPersonalTests()
 
         // If it is on tab templates
-        if (val == 1) {
-          await this.getSharedWithMeTests()
-        }
+        if (val == 1) await this.getSharedWithMeTests()
 
-        if (val == 2) {
-          await this.getPublicTests()
-        }
-      } else if (this.mainIndex == 1) {
-        if (val == 0) {
-          await this.getMyTemplates()
-        }
-
-        if (val == 1) {
-          await this.getPublicTemplates()
-        }
+        if (val == 2) await this.getPublicTests()
+      } 
+      else if (this.mainIndex == 1) {
+        if (val == 0) await this.getMyTemplates()
+        if (val == 1) await this.getPublicTemplates()
       }
     },
   },
+
   async created() {
     await this.getMyPersonalTests()
   },
+
   methods: {
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
+
     async getPublicTests() {
       await this.$store.dispatch('getPublicTests')
     },
+
     async getPublicTemplates() {
       await this.$store.dispatch('getPublicTemplates')
     },
+
     async getMyTemplates() {
       await this.$store.dispatch('getTemplatesOfUser')
     },
+
     async getSharedWithMeTests() {
       await this.$store.dispatch('getSharedWithMeTests', this.user.id)
     },
+
     reloadTemplates() {
       this.getMyTemplates()
       this.mainIndex = 1
       this.subIndex = 0
     },
+
     goToCreateTestRoute() {
       this.$router.push('/createtest')
     },
+
     goTo(test) {
       // if it is from the my tests tab
       if (this.mainIndex === 0) {
@@ -373,6 +379,7 @@ export default {
         }
       }
     },
+
     // nextPage() {
     //   this.page++;
     //   this.disablePrevious = false;
@@ -403,11 +410,13 @@ export default {
     //     this.disableNext = true;
     //   }
     // },
+
     // previousPage() {
     //   this.page--;
     //   if (this.page <= 1) this.disablePrevious = true;
     //   this.disableNext = false;
     // },
+
     setupTempDialog(temp) {
       this.temp = Object.assign({}, temp)
       this.tempDialog = true
