@@ -50,24 +50,27 @@
               }}
             </div>
 
-            <v-row justify="space-between" class="ma-0 pa-0">
+            <v-row justify="end" class="ma-0 pa-0">
               <v-btn
-                v-if="!allowCreate && isMyTemplate"
+                v-if="isMyTemplate"
                 color="error"
                 outlined
+                style="position: absolute; left: 24px"
                 @click="deleteTemplate()"
               >
-                {{ $t('pages.createTests.deleteTemplate') }}
+                {{ $t('buttons.delete') }}
                 <v-icon right>
                   mdi-delete
                 </v-icon>
               </v-btn>
+             
               <v-btn
-                :class="`${allowCreate ? 'error' : 'primary'} mr-2`"
+                class="primary mr-2"
                 @click="reset()"
               >
-                {{ allowCreate ? $t('buttons.cancel') : $t('buttons.close') }}
+                {{ $t('buttons.close') }}
               </v-btn>
+              
               <v-btn
                 v-if="allowCreate"
                 class="success"
@@ -115,7 +118,6 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
 import Test from '@/models/Test'
 import TestAdmin from '@/models/TestAdmin'
 import FormTestDescription from '@/components/atoms/FormTestDescription'
@@ -173,16 +175,13 @@ export default {
 
   watch: {
     template() {
-      this.isMyTemplate =
-        this.template?.header?.templateAuthor?.userDocId === this.user.id
-          ? true
-          : false
+      this.isMyTemplate = this.template?.header?.templateAuthor?.userDocId === this.user.id ? true : false
     },
   },
 
   methods: {
     async deleteTemplate() {
-      if (!confirm( i18n.t('alerts.deleteTest'))) return
+      if (!confirm($t('alerts.deleteTest'))) return
       
       await this.$store.dispatch('deleteTemplate', this.template.id)
       this.reset()
