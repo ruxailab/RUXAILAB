@@ -122,26 +122,31 @@ export default {
   components: {
     FormTestDescription,
   },
+
   props: {
     dialog: {
       type: Boolean,
       required: true,
       default: false,
     },
+
     template: {
       type: Object,
       required: true,
       default: () => {},
     },
+
     allowCreate: {
       type: Boolean,
       default: () => false,
     },
   },
+
   data: () => ({
     step: 1,
     isMyTemplate: false,
   }),
+
   computed: {
     mountTest() {
       const test = this.template.body
@@ -150,16 +155,20 @@ export default {
       }
       return test
     },
+
     author() {
       return this.template?.header?.templateAuthor.userEmail || ''
     },
+
     title() {
       return this.template?.header?.templateTitle || ''
     },
+
     user() {
       return this.$store.state.Auth.user
     },
   },
+
   watch: {
     template() {
       this.isMyTemplate =
@@ -168,28 +177,28 @@ export default {
           : false
     },
   },
+
   methods: {
     async deleteTemplate() {
-      if (
-        confirm(
-          i18n.t('alerts.deleteTest'),
-        )
-      ) {
-        await this.$store.dispatch('deleteTemplate', this.template.id)
-        this.reset()
-      }
+      if (!confirm( i18n.t('alerts.deleteTest'))) return
+
+      await this.$store.dispatch('deleteTemplate', this.template.id)
+      this.reset()
     },
+
     reset() {
       this.$emit('close')
       this.$refs.form.resetVal()
       this.step = 1
       this.$emit('reloadTemplates')
     },
+
     validate() {
       if (this.$refs.form.valida()) {
         this.$emit('submitTemplate')
       }
     },
+
     getFormattedDate(date) {
       const d = new Date(date)
       return d.toLocaleString()
