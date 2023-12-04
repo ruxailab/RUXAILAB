@@ -366,14 +366,14 @@
                 <p>{{ item.title }}</p>
                 <p v-if="item.description">{{ item.description }}</p>
                 <v-text-field
-                v-model="currentUserTestAnswer.preTestAnswer[0].answer"
+                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                   v-if="item.textField"
                   :placeholder="item.title"
                   outlined
                 ></v-text-field>
                 <v-radio-group
                   v-if="item.selectionField"
-                  v-model="column"
+                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                   column
                 >
                   <v-row
