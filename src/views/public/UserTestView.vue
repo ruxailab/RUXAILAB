@@ -345,31 +345,68 @@
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
         <ShowInfo
-          v-if="index == 0 && taskIndex == 0"
+          v-if="index === 0 && taskIndex === 0"
           title="Pre Test - Consent"
         >
-          <iframe
-            slot="content"
-            :src="test.testStructure.preTest.consentUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…
-          </iframe>
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Pre Test</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
+
+            <v-row
+              v-for="(item, index) in test.testStructure.preTest"
+              :key="index"
+            >
+              <v-col cols="5" class="mx-auto py-0">
+                <p>{{ item.title }}</p>
+                <p v-if="item.description">{{ item.description }}</p>
+                <v-text-field
+                v-model="currentUserTestAnswer.preTestAnswer[0].answer"
+                  v-if="item.textField"
+                  :placeholder="item.title"
+                  outlined
+                ></v-text-field>
+                <v-radio-group
+                  v-if="item.selectionField"
+                  v-model="column"
+                  column
+                >
+                  <v-row
+                    v-for="(selection, selectionIndex) in item.selectionFields"
+                    :key="selectionIndex"
+                  >
+                    <v-radio
+                      class="ml-3 mb-1"
+                      :label="selection"
+                      :value="selection"
+                    ></v-radio>
+                  </v-row>
+                  <v-row justify="end"> </v-row>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+            <v-col cols="12">
+              <v-row justify="center">
+                <v-btn
+                  block
+                  color="orange lighten-1"
+                  class="ma-5"
+                  @click="completeStep(taskIndex, 'consent')"
+                  >Done
+                </v-btn>
+              </v-row>
+            </v-col>
+          </div>
         </ShowInfo>
-        <v-btn
-          v-if="taskIndex == 0 && index == 0"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(taskIndex, 'consent')"
-        >
-          Done
-        </v-btn>
+
         <!-- Form - Pre Test -->
 
-        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre Test - Form">
+        <!-- <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre Test - Form">
           <iframe
             slot="content"
             :src="test.testStructure.preTest.preTestUrl"
@@ -380,7 +417,7 @@
             marginwidth="0"
             >Carregando…</iframe
           >
-        </ShowInfo>
+        </ShowInfo> -->
         <v-btn
           v-if="taskIndex == 1 && index == 0"
           block
@@ -678,7 +715,7 @@ export default {
     recordedVideo: '',
     audioStream: null,
     recordingAudio: false,
-    recordedAudio: ''
+    recordedAudio: '',
   }),
   computed: {
     test() {
@@ -821,8 +858,11 @@ export default {
             'tests/' +
               this.testId +
               '/' +
+              this.currentUserTestAnswer.userDocId +
+              '/' +
               'task_' +
               this.taskIndex +
+              'screen_record' +
               '/' +
               this.videoUrl,
           )
@@ -916,27 +956,27 @@ export default {
     },
     async mappingSteps() {
       //PreTest
-      if (this.validate(this.test.testStructure.preTest.consentUrl)) {
-        this.items.push({
-          title: 'Pre-test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: [
-            {
-              title: 'Consent',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 0,
-            },
-          ],
-          id: 0,
-        })
-      }
+      //      if (this.validate(this.test.testStructure.preTest)) {
+      //      this.items.push({
+      //        title: 'Pre-test',
+      //        icon: 'mdi-checkbox-blank-circle-outline',
+      //        value: [
+      //          {
+      //            title: 'Consent',
+      //            icon: 'mdi-checkbox-blank-circle-outline',
+      //            id: 0,
+      //          },
+      //        ],
+      //        id: 0,
+      //      })
+      //    }
 
-      if (this.validate(this.test.testStructure.preTest.preTestUrl)) {
+      if (this.validate(this.test.testStructure.preTest)) {
         if (this.items.length) {
           this.items[0].value.push({
             title: 'Form',
             icon: 'mdi-checkbox-blank-circle-outline',
-            id: 1,
+            id: 0,
           })
         } else {
           this.items.push({
@@ -946,7 +986,7 @@ export default {
               {
                 title: 'Form',
                 icon: 'mdi-checkbox-blank-circle-outline',
-                id: 1,
+                id: 0,
               },
             ],
             id: 0,
@@ -1005,8 +1045,12 @@ export default {
           'tests/' +
             this.testId +
             '/' +
+            this.currentUserTestAnswer.userDocId +
+            '/' +
             'task_' +
             this.taskIndex +
+            '/' +
+            'video' +
             '/' +
             this.recordedVideo,
         )
@@ -1059,8 +1103,11 @@ export default {
             'tests/' +
               this.testId +
               '/' +
+              this.currentUserTestAnswer.userDocId +
+              '/' +
               'task_' +
               this.taskIndex +
+              'audio' +
               '/' +
               this.recordedAudio,
           )

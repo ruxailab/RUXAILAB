@@ -18,10 +18,7 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
-    preTest: {
-      consentUrl: '',
-      preTestUrl: '',
-    },
+    preTest: [],
     postTest: {
       postTestUrl: '',
     },
@@ -50,9 +47,6 @@ export default {
     },
     consentUrl(state) {
       return state.preTest.consentUrl
-    },
-    preTestUrl(state) {
-      return state.preTest.preTestUrl
     },
     postTestUrl(state) {
       return state.postTest.postTestUrl
