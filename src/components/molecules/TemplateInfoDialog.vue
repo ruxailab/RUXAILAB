@@ -115,8 +115,10 @@
 </template>
 
 <script>
-import FormTestDescription from '@/components/atoms/FormTestDescription'
 import i18n from '@/i18n'
+import Test from '@/models/Test'
+import TestAdmin from '@/models/TestAdmin'
+import FormTestDescription from '@/components/atoms/FormTestDescription'
 
 export default {
   components: {
@@ -181,7 +183,7 @@ export default {
   methods: {
     async deleteTemplate() {
       if (!confirm( i18n.t('alerts.deleteTest'))) return
-
+      
       await this.$store.dispatch('deleteTemplate', this.template.id)
       this.reset()
     },
@@ -190,18 +192,29 @@ export default {
       this.$emit('close')
       this.$refs.form.resetVal()
       this.step = 1
-      this.$emit('reloadTemplates')
     },
 
-    validate() {
-      if (this.$refs.form.valida()) {
-        this.$emit('submitTemplate')
-      }
+    async validate() {
+      if (!this.$refs.form.valida()) return
+
+      const test = new Test({
+        ...this.template.body,
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        templateDoc: this.template.id,
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+      })
+
+      const testId = await this.$store.dispatch('createNewTest', test)
+      this.$router.push(`/managerview/${testId}`).catch(() => {})
     },
 
     getFormattedDate(date) {
-      const d = new Date(date)
-      return d.toLocaleString()
+      return new Date(date).toLocaleString()
     },
   },
 }
