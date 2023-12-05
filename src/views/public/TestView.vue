@@ -97,7 +97,7 @@
             {{ test.testDescription }}
           </p>
           <v-row justify="center" class>
-            <v-btn color="white" outlined rounded @click="start = !start">
+            <v-btn color="white" outlined rounded @click="startTest()">
               Start Test
             </v-btn>
           </v-row>
@@ -520,6 +520,13 @@ export default {
     this.calculateProgress()
   },
   methods: {
+    startTest() {
+        if(this.test.testStructure.length == 0) {
+          alert("This test don't have any heuristic")
+          this.$router.push('/managerview/' + this.test.id)
+        }
+      this.start = !this.start
+    },
     updateComment(comment, heurisIndex, answerIndex) {
       if (comment != '' && comment != undefined) {
         this.currentUserTestAnswer.heuristicQuestions[
