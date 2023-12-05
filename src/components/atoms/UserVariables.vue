@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     preTest() {
-      return this.$store.state.Tests.Test.testStructure.preTest
+      return this.$store.getters.preTest
     },
   },
   methods: {
@@ -179,10 +179,7 @@ export default {
       this.$store.dispatch('setPreTest', this.items)
     },
     getVariables() {
-      if (this.preTest != undefined) {
-        console.log('puxei da store')
         this.items = this.preTest
-      }
     },
   },
 }
