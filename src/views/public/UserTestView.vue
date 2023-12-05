@@ -88,7 +88,7 @@
           {{ test.testDescription }}
         </p>
         <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="start = !start">
+          <v-btn color="white" outlined rounded @click="startTest()">
             Start Test
           </v-btn>
         </v-row>
@@ -744,6 +744,9 @@ export default {
     currentImageUrl() {
       return this.$store.state.Tests.currentImageUrl
     },
+    tasks() {
+      return this.$store.getters.tasks
+    },
   },
   watch: {
     test: async function() {
@@ -787,6 +790,13 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
+    },
+    startTest() {
+        if(this.tasks.length == 0) {
+          alert("This test don't have any tasks")
+          this.$router.push('/managerview/' + this.test.id)
+        }
+      this.start = !this.start
     },
     completeStep(id, type) {
       if (type === 'tasks') {
