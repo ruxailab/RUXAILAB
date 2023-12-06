@@ -18,6 +18,7 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
+    consent: '',
     preTest: [],
     postTest: {
       postTestUrl: '',
@@ -45,12 +46,9 @@ export default {
     postTest(state) {
       return state.postTest
     },
-    consentUrl(state) {
-      return state.preTest.consentUrl
-    },
-    postTestUrl(state) {
-      return state.postTest.postTestUrl
-    },
+    consent(state) {
+      return state.consent
+    }
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -71,6 +69,9 @@ export default {
     },
     SET_PRE_TEST(state, payload) {
       state.preTest = payload
+    },
+    SET_CONSENT(state, payload) {
+      state.consent = payload
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -265,6 +266,13 @@ export default {
     setPreTest({ commit }, payload) {
       try {
         commit('SET_PRE_TEST', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setConsent({commit}, payload) {
+      try {
+        commit('SET_CONSENT', payload)
       } catch {
         commit('setError', true)
       }
