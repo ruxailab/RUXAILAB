@@ -53,7 +53,7 @@ export default {
                 }
                 return preTestAnswer
               })(),
-              consentUrl: rootState.test.testStructure.preTest.consentUrl,
+              consent: rootState.test.testStructure.consent,
               postTestUrl: rootState.test.testStructure.postTest.postTestUrl,
               preTestCompleted: false,
               consentCompleted: false,
