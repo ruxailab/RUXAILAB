@@ -3,7 +3,7 @@ import UserTask from './UserTask'
 export default class TaskAnswer {
   constructor({
     preTestAnswer,
-    consentUrl,
+    consent,
     postTestUrl,
     preTestCompleted,
     consentCompleted,
@@ -16,7 +16,7 @@ export default class TaskAnswer {
     lastUpdate,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
-    this.consentUrl = consentUrl ?? ''
+    this.consent = consent ?? ''
     this.postTestUrl = postTestUrl ?? ''
     this.preTestCompleted = preTestCompleted ?? false
     this.consentCompleted = consentCompleted ?? false
@@ -42,7 +42,7 @@ export default class TaskAnswer {
   toFirestore() {
     return {
       preTestAnswer: this.preTestAnswer,
-      consentUrl: this.consentUrl,
+      consent: this.consent,
       postTestUrl: this.postTestUrl,
       preTestCompleted: this.preTestCompleted,
       consentCompleted: this.consentCompleted,
