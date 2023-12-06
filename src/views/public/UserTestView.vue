@@ -344,6 +344,7 @@
 
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
+
         <ShowInfo
           v-if="index === 0 && taskIndex === 0"
           title="Pre Test - Consent"
@@ -352,7 +353,30 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 class="mt-6">{{ test.testTitle }} - Pre Test</h1>
+                  <h1 class="mt-6">{{ test.testTitle }} - Consent Form</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
+
+            <v-row>
+              <v-col cols="5" class="mx-auto py-0">
+                <v-checkbox :label="currentUserTestAnswer.consent"
+                v-model="currentUserTestAnswer.consentCompleted"
+                @click="completeStep(taskIndex, 'consent'), taskIndex = 1">
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </div>
+        </ShowInfo>
+
+        <!-- Form - Pre Test -->
+        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre-Test - Form">
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Pre-Test</h1>
                 </v-row>
               </v-col>
             </v-row>
@@ -403,30 +427,6 @@
             </v-col>
           </div>
         </ShowInfo>
-
-        <!-- Form - Pre Test -->
-
-        <!-- <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre Test - Form">
-          <iframe
-            slot="content"
-            :src="test.testStructure.preTest.preTestUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
-        </ShowInfo> -->
-        <v-btn
-          v-if="taskIndex == 1 && index == 0"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(taskIndex, 'preTest')"
-        >
-          Done
-        </v-btn>
-
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
@@ -792,10 +792,10 @@ export default {
       await this.saveAnswer()
     },
     startTest() {
-        if(this.tasks.length == 0) {
-          alert("This test don't have any tasks")
-          this.$router.push('/managerview/' + this.test.id)
-        }
+      if (this.test.testStructure.length == 0) {
+        alert("This test don't have any task")
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.start = !this.start
     },
     completeStep(id, type) {
@@ -966,20 +966,20 @@ export default {
     },
     async mappingSteps() {
       //PreTest
-      //      if (this.validate(this.test.testStructure.preTest)) {
-      //      this.items.push({
-      //        title: 'Pre-test',
-      //        icon: 'mdi-checkbox-blank-circle-outline',
-      //        value: [
-      //          {
-      //            title: 'Consent',
-      //            icon: 'mdi-checkbox-blank-circle-outline',
-      //            id: 0,
-      //          },
-      //        ],
-      //        id: 0,
-      //      })
-      //    }
+      if (this.validate(this.test.testStructure.preTest)) {
+        this.items.push({
+          title: 'Pre-test',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: [
+            {
+              title: 'Consent',
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: 0,
+            },
+          ],
+          id: 0,
+        })
+      }
 
       if (this.validate(this.test.testStructure.preTest)) {
         if (this.items.length) {
