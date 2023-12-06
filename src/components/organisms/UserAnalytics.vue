@@ -58,7 +58,7 @@
               <v-col cols="12" class="pt-8">
                 <span
                   class="t-5 font-weight-bold text-h6"
-                  style="color: orange;"
+                  style="color: #252525;"
                   >Variables</span
                 >
                 <v-card outlined rounded="6">
@@ -84,7 +84,7 @@
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: orange;"
+                <span class="font-weight-bold text-h6" style="color: #252525;"
                   >Answer</span
                 >
                 <v-card outlined rounded="6">
@@ -102,7 +102,7 @@
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: orange;"
+                <span class="font-weight-bold text-h6" style="color: #252525;"
                   >Observation</span
                 >
                 <v-card outlined rounded="6">

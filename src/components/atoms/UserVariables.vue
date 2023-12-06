@@ -20,7 +20,7 @@
                     v-model="items[i].selectionFields[index]"
                     :key="index"
                     label="Selection"
-                    @input="saveState()"
+                    @change="saveState()"
                     ><template v-slot:append>
                       <v-icon @click="newSelection(i)">mdi-plus</v-icon>
                       <v-icon @click="deleteSelection(i)">mdi-trash-can</v-icon>
@@ -47,7 +47,7 @@
                   <v-checkbox
                     label="Selection field"
                     v-model="items[i].selectionField"
-                    @input="saveState"
+                    @change="saveState"
                     @click="selectField(i)"
                   ></v-checkbox>
                 </v-col>
@@ -90,7 +90,7 @@
             color="orange"
             v-model="newItem"
             label="Variable Name"
-            @input="saveState"
+            @change="saveState"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
@@ -117,9 +117,12 @@ export default {
     this.getVariables()
   },
   computed: {
+    test() {
+      return this.$store.getters.test
+    },
     preTest() {
       return this.$store.getters.preTest
-    },
+    }
   },
   methods: {
     log() {
@@ -163,7 +166,7 @@ export default {
       this.newItem = ''
       this.show = false
     },
-    newSelection(index) {
+    newSelection(index) { 
       this.$set(this.items, index, {
         ...this.items[index],
         selectionFields: [...this.items[index].selectionFields, ''],
@@ -179,7 +182,9 @@ export default {
       this.$store.dispatch('setPreTest', this.items)
     },
     getVariables() {
-        this.items = this.preTest
+      if(this.test.testStructure.preTest) {
+        this.items = this.test.testStructure.preTest
+      }
     },
   },
 }

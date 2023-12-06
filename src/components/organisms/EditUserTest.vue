@@ -6,18 +6,34 @@
     class="pb-0 mb-0"
   >
     <v-tab @click="tabClicked(0)">
-      User Variables
+      Consent
     </v-tab>
     <v-tab @click="tabClicked(1)">
-      Tasks
+      Pre Form
     </v-tab>
     <v-tab @click="tabClicked(2)">
-      Post Test
+      Tasks
+    </v-tab>
+    <v-tab @click="tabClicked(3)">
+      Post Form
     </v-tab>
   </v-tabs>
 
   <v-col v-else-if="type == 'content'" cols="12">
-        <v-card v-if="index == 0" style="background: #f5f7ff">
+    <v-card v-if="index == 0" style="background: #f5f7ff">
+      <v-card-title class="subtitleView">
+        Consent Pre Form
+      </v-card-title>
+
+      <v-divider />
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <UserConsent @input="updateData" />
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <v-card v-if="index == 1" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
         User Variables
       </v-card-title>
@@ -31,15 +47,15 @@
     </v-card>
 
     <ListTasks
-      v-if="index == 1"
+      v-if="index == 2"
       :tasks="object.itemsTasks"
       @change="emitChange()"
       @input="updateData"
     />
 
-    <v-card v-if="index == 2" style="background: #f5f7ff">
+    <v-card v-if="index == 3" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        Post Test
+        Consent Post Form
       </v-card-title>
 
       <v-divider />
@@ -53,15 +69,17 @@
 </template>
 
 <script>
-import FormPostTest from '@/components/atoms/FormPostTest'
 import ListTasks from '@/components/molecules/ListTasks'
+import FormPostTest from '@/components/atoms/FormPostTest'
 import UserVariables from '@/components/atoms/UserVariables'
+import UserConsent from '@/components/atoms/UserConsent'
 
 export default {
   components: {
-    FormPostTest,
     ListTasks,
-    UserVariables
+    UserVariables,
+    UserConsent,
+    FormPostTest,
   },
   props: {
     type: {
