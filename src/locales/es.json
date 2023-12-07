@@ -245,7 +245,8 @@
     "close": "Cerca",
     "leave": "Dejar",
     "stay": "Quédate",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "delete": "Borrar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
