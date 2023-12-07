@@ -245,7 +245,8 @@
     "close": "Fechar",
     "leave": "Sair",
     "stay": "Ficar",
-    "help": "Ajuda"
+    "help": "Ajuda",
+    "delete": "Deletar"
   },
   "switches": {
     "noAnswer": "Sem resposta",

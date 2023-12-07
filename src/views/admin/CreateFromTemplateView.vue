@@ -43,7 +43,6 @@
       :dialog="dialog"
       :template="temp"
       :allow-create="true"
-      @submitTemplate="submit"
       @close="dialog = false"
     />
   </div>
@@ -52,24 +51,25 @@
 <script>
 import List from '@/components/atoms/ListComponent'
 import TempDialog from '@/components/molecules/TemplateInfoDialog'
-import TestAdmin from '@/models/TestAdmin'
-import Test from '@/models/Test'
 
 export default {
   components: {
     List,
     TempDialog,
   },
+
   data: () => ({
     temp: {},
     dialog: false,
     searching: false,
     search: '',
   }),
+
   computed: {
     templates() {
       return this.$store.state.Templates.templates
     },
+
     filteredTemplates() {
       if (this.templates !== null) {
         return this.templates.filter((temp) => {
@@ -81,10 +81,12 @@ export default {
 
       return []
     },
+
     user() {
       return this.$store.getters.user
     },
   },
+
   watch: {
     dialog() {
       if (!this.dialog) {
@@ -93,33 +95,15 @@ export default {
       }
     },
   },
+
   async created() {
     await this.$store.dispatch('getCurrentUserAndPublicTemplates')
   },
+
   methods: {
     openTemp(item) {
       this.temp = JSON.parse(JSON.stringify(item)) //deep copy
       this.dialog = true
-    },
-    async submit() {
-      const test = new Test({
-        ...this.temp.body,
-        id: null,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
-        templateDoc: this.temp.id,
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      })
-
-      const testId = await this.$store.dispatch('createNewTest', test)
-
-      this.sendManager(testId)
-    },
-    sendManager(id) {
-      this.$router.push(`/managerview/${id}`).catch(() => {})
     },
   },
 }
