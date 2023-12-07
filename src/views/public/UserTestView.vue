@@ -208,6 +208,15 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
+              :disabled="
+                currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted,
+              }"
               v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
@@ -238,6 +247,11 @@
                     v-bind="attrs"
                     @click="taskIndex = i"
                     v-on="on"
+                    :disabled="
+                      (currentUserTestAnswer.consentCompleted && i == 0) ||
+                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                        (currentUserTestAnswer.preTestCompleted && i == 1)
+                    "
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -260,6 +274,15 @@
             </v-list-group>
             <!--Tasks--->
             <v-list-group
+              :disabled="
+                !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted,
+              }"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
@@ -290,6 +313,10 @@
                     v-bind="attrs"
                     @click="taskIndex = i"
                     v-on="on"
+                    :disabled="isTaskDisabled(i)"
+                    :class="{
+                      'disabled-group': isTaskDisabled(i),
+                    }"
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -361,9 +388,12 @@
 
             <v-row>
               <v-col cols="5" class="mx-auto py-0">
-                <v-checkbox :label="currentUserTestAnswer.consent"
-                v-model="currentUserTestAnswer.consentCompleted"
-                @click="completeStep(taskIndex, 'consent'), taskIndex = 1">
+                <v-checkbox
+                  :label="currentUserTestAnswer.consent"
+                  v-model="currentUserTestAnswer.consentCompleted"
+                  :disabled="currentUserTestAnswer.consentCompleted"
+                  @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)"
+                >
                 </v-checkbox>
               </v-col>
             </v-row>
@@ -390,12 +420,14 @@
                 <p>{{ item.title }}</p>
                 <p v-if="item.description">{{ item.description }}</p>
                 <v-text-field
+                  :disabled="currentUserTestAnswer.preTestCompleted"
                   v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                   v-if="item.textField"
                   :placeholder="item.title"
                   outlined
                 ></v-text-field>
                 <v-radio-group
+                  :disabled="currentUserTestAnswer.preTestCompleted"
                   v-if="item.selectionField"
                   v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                   column
@@ -405,6 +437,7 @@
                     :key="selectionIndex"
                   >
                     <v-radio
+                      :disabled="currentUserTestAnswer.preTestCompleted"
                       class="ml-3 mb-1"
                       :label="selection"
                       :value="selection"
@@ -420,7 +453,12 @@
                   block
                   color="orange lighten-1"
                   class="ma-5"
-                  @click="completeStep(taskIndex, 'consent')"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  @click="
+                    completeStep(taskIndex, 'preTest'),
+                      (index = 1),
+                      (taskIndex = 0)
+                  "
                   >Done
                 </v-btn>
               </v-row>
@@ -780,6 +818,14 @@ export default {
     this.calculateProgress()
   },
   methods: {
+    isTaskDisabled(taskIndex) {
+      for (let i = 0; i < taskIndex; i++) {
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          return true
+        }
+      }
+      return false
+    },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -803,6 +849,7 @@ export default {
         this.currentUserTestAnswer.tasks[id].completed = true
         this.items[1].value[id].icon = 'mdi-check-circle-outline'
         let allCompleted = true
+        this.$forceUpdate();
 
         for (let i = 0; i < this.items[1].value.length; i++) {
           if (!this.currentUserTestAnswer.tasks[i].completed) {
@@ -1155,6 +1202,10 @@ export default {
 </script>
 
 <style scoped>
+.disabled-group {
+  pointer-events: none;
+  background-color: grey;
+}
 .web-cam {
   position: relative;
   text-align: center;
