@@ -54,7 +54,7 @@ export default {
                 return preTestAnswer
               })(),
               consent: rootState.test.testStructure.consent,
-              postTestUrl: rootState.test.testStructure.postTest.postTestUrl,
+              postTestAnswer: rootState.test.testStructure.postTest,
               preTestCompleted: false,
               consentCompleted: false,
               postTestCompleted: false,
