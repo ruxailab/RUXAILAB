@@ -75,6 +75,22 @@
                   </div>
                 </v-card>
               </v-col>
+              <v-col cols="12" class="pt-8">
+            <span class="t-5 font-weight-bold text-h6" style="color: #252525;">Post-Test Answer</span>
+            <v-card outlined rounded="6">
+              <div class="ma-6">
+                <span
+                  class="ma-1 text-subtitle-1"
+                  style="color: #252525;"
+                  v-for="(question, index) in testStructure.postTest"
+                  :key="index"
+                >
+                  <strong>{{ question.title }}</strong> :
+                  {{ dialogItem.postTestAnswer[index].answer }}
+                </span>
+              </div>
+            </v-card>
+          </v-col>
               <v-col
                 v-if="dialogItem.tasks[taskSelect].taskAnswer != '' "
                 :cols="
