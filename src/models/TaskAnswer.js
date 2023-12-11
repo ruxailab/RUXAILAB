@@ -4,7 +4,7 @@ export default class TaskAnswer {
   constructor({
     preTestAnswer,
     consent,
-    postTestUrl,
+    postTestAnswer,
     preTestCompleted,
     consentCompleted,
     postTestCompleted,
@@ -17,14 +17,14 @@ export default class TaskAnswer {
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
-    this.postTestUrl = postTestUrl ?? ''
+    this.postTestAnswer = postTestAnswer ?? []
     this.preTestCompleted = preTestCompleted ?? false
     this.consentCompleted = consentCompleted ?? false
     this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
     this.total = total ?? 0
-    this.submitted = submitted ?? null
+    this.submitted = submitted ?? false
     this.userDocId = userDocId ?? ''
     this.lastUpdate = lastUpdate ?? null
   }
@@ -43,7 +43,7 @@ export default class TaskAnswer {
     return {
       preTestAnswer: this.preTestAnswer,
       consent: this.consent,
-      postTestUrl: this.postTestUrl,
+      postTestAnswer: this.postTestAnswer,
       preTestCompleted: this.preTestCompleted,
       consentCompleted: this.consentCompleted,
       postTestCompleted: this.postTestCompleted,
