@@ -18,13 +18,9 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
-    preTest: {
-      consentUrl: '',
-      preTestUrl: '',
-    },
-    postTest: {
-      postTestUrl: '',
-    },
+    consent: '',
+    preTest: [],
+    postTest: [],
   },
   getters: {
     tests(state) {
@@ -48,14 +44,8 @@ export default {
     postTest(state) {
       return state.postTest
     },
-    consentUrl(state) {
-      return state.preTest.consentUrl
-    },
-    preTestUrl(state) {
-      return state.preTest.preTestUrl
-    },
-    postTestUrl(state) {
-      return state.postTest.postTestUrl
+    consent(state) {
+      return state.consent
     },
   },
   mutations: {
@@ -78,10 +68,23 @@ export default {
     SET_PRE_TEST(state, payload) {
       state.preTest = payload
     },
+    SET_CONSENT(state, payload) {
+      state.consent = payload
+    },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
     },
-
+    CLEAN_TEST(state) {
+      state.Test = null
+      state.testStructure = null
+      state.answersId = null
+      state.module = 'test'
+      state.tasks = []
+      state.currentImageUrl = ''
+      state.consent = ''
+      state.preTest = []
+      state.postTest = []
+    },
   },
   actions: {
     /**
@@ -271,6 +274,21 @@ export default {
     setPreTest({ commit }, payload) {
       try {
         commit('SET_PRE_TEST', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setConsent({ commit }, payload) {
+      try {
+        commit('SET_CONSENT', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    cleanTest({ commit }) {
+      try {
+        commit('CLEAN_TEST')
+        console.log('clean test');
       } catch {
         commit('setError', true)
       }

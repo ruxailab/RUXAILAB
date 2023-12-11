@@ -203,13 +203,13 @@ export default {
               title: 'Final Report',
               icon: 'mdi-file-document',
               path: `/finalreportview/${this.test.id}`,
-              id: 6,
+              id: 5,
             },
             {
               title: 'Cooperators',
               icon: 'mdi-account-group',
               path: `/cooperators/${this.test.id}`,
-              id: 7,
+              id: 6,
             },
           )
         }
@@ -219,7 +219,7 @@ export default {
             title: 'Template',
             icon: 'mdi-file-compare',
             path: `/templateview/${this.test.template.id}`,
-            id: 8,
+            id: 7,
           })
         }
       }

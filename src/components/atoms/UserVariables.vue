@@ -45,7 +45,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-checkbox
-                    label="Selection answer"
+                    label="Selection field"
                     v-model="items[i].selectionField"
                     @change="saveState"
                     @click="selectField(i)"
@@ -53,7 +53,7 @@
                 </v-col>
                 <v-col cols="5">
                   <v-checkbox
-                    label="Text answer"
+                    label="Text field"
                     v-model="items[i].textField"
                     @click="selectText(i)"
                   ></v-checkbox>
@@ -75,21 +75,21 @@
         >
           <p class="text-subtitle-1 text-center ma-2">
             <v-icon>mdi-plus-circle</v-icon>
-            Create a new post question
+            Create a new variable
           </p>
         </v-card>
       </v-col>
     </v-row>
     <v-dialog v-model="show" max-width="600" persistent>
       <v-card>
-        <v-card-title class="text-h6 mb-2">Write a new post question</v-card-title>
+        <v-card-title class="text-h6 mb-2">Create a new variable</v-card-title>
         <v-card-text>
           <v-text-field
             filled
             :rules="[() => !!newItem || 'This field is required']"
             color="orange"
             v-model="newItem"
-            label="Write a question"
+            label="Variable Name"
             @change="saveState"
           ></v-text-field>
         </v-card-text>
@@ -114,15 +114,15 @@ export default {
     show: false,
   }),
   mounted() {
-    this.getPostTest()
+    this.getVariables()
   },
   computed: {
     test() {
       return this.$store.getters.test
     },
-    postTest() {
-      return this.$store.getters.postTest
-    }
+    preTest() {
+      return this.$store.getters.preTest
+    },
   },
   methods: {
     log() {
@@ -167,7 +167,7 @@ export default {
       this.newItem = ''
       this.show = false
     },
-    newSelection(index) { 
+    newSelection(index) {
       this.$set(this.items, index, {
         ...this.items[index],
         selectionFields: [...this.items[index].selectionFields, ''],
@@ -180,15 +180,13 @@ export default {
       )
     },
     saveState() {
-      this.$store.dispatch('setPostTest', this.items)
+      this.$store.dispatch('setPreTest', this.items)
     },
-    getPostTest() {
-      if(this.test.testStructure.postTest) {
-        this.items = this.test.testStructure.postTest
-        this.$store.dispatch('setPostTest', this.items)
-      }
-      else if(this.postTest) {
-        this.items = this.postTest
+    getVariables() {
+      if (this.test.testStructure.preTest) {
+        this.items = this.test.testStructure.preTest
+      } else if (this.preTest) {
+        this.items = this.preTest
       }
     },
   },
