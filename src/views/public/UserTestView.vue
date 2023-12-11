@@ -338,7 +338,14 @@
               </v-tooltip>
             </v-list-group>
             <!--Post Test-->
-            <v-list-item v-else-if="item.id == 2" @click="index = item.id">
+            <v-list-item
+              v-else-if="item.id == 2"
+              @click="index = item.id"
+              :disabled="!allTasksCompleted"
+              :class="{
+                'disabled-group': !allTasksCompleted,
+              }"
+            >
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
@@ -678,25 +685,66 @@
 
         <!-- Post Test -->
         <ShowInfo v-if="index == 2" title="Post Test">
-          <iframe
-            slot="content"
-            :src="test.testStructure.postTest.postTestUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Post-Test</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
+
+            <v-row
+              v-for="(item, index) in test.testStructure.postTest"
+              :key="index"
+            >
+              <v-col cols="5" class="mx-auto py-0">
+                <p>{{ item.title }}</p>
+                <p v-if="item.description">{{ item.description }}</p>
+                <v-text-field
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  v-if="item.textField"
+                  :placeholder="item.title"
+                  outlined
+                ></v-text-field>
+                <v-radio-group
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  v-if="item.selectionField"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  column
+                >
+                  <v-row
+                    v-for="(selection, selectionIndex) in item.selectionFields"
+                    :key="selectionIndex"
+                  >
+                    <v-radio
+                      :disabled="currentUserTestAnswer.postTestCompleted"
+                      class="ml-3 mb-1"
+                      :label="selection"
+                      :value="selection"
+                    ></v-radio>
+                  </v-row>
+                  <v-row justify="end"> </v-row>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+            <v-col cols="12">
+              <v-row justify="center">
+                <v-btn
+                  block
+                  color="orange lighten-1"
+                  class="ma-5"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  @click="completeStep(taskIndex, 'postTest'), (taskIndex = 3)"
+                >
+                  Done
+                </v-btn>
+              </v-row>
+            </v-col>
+          </div>
         </ShowInfo>
-        <v-btn
-          v-if="index == 2"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(null, 'postTest')"
-        >
-          Done
-        </v-btn>
       </v-col>
     </v-row>
   </div>
@@ -750,6 +798,7 @@ export default {
     mediaRecorder: null,
     recordedChunks: [],
     recording: false,
+    allTasksCompleted: false,
     recordedVideo: '',
     audioStream: null,
     recordingAudio: false,
@@ -848,16 +897,16 @@ export default {
       if (type === 'tasks') {
         this.currentUserTestAnswer.tasks[id].completed = true
         this.items[1].value[id].icon = 'mdi-check-circle-outline'
-        let allCompleted = true
-        this.$forceUpdate();
+        this.allTasksCompleted = true
+        this.$forceUpdate()
 
         for (let i = 0; i < this.items[1].value.length; i++) {
           if (!this.currentUserTestAnswer.tasks[i].completed) {
-            allCompleted = false
+            this.allTasksCompleted = false
             break
           }
         }
-        if (allCompleted) {
+        if (this.allTasksCompleted) {
           this.items[1].icon = 'mdi-check-circle-outline'
         }
       }
@@ -1067,7 +1116,7 @@ export default {
         })
 
       //PostTest
-      if (this.validate(this.test.testStructure.postTest.postTestUrl))
+      if (this.validate(this.test.testStructure.postTest))
         this.items.push({
           title: 'Post Test',
           icon: 'mdi-checkbox-blank-circle-outline',
