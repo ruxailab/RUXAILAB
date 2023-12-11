@@ -41,7 +41,7 @@
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
-          <UserVariables :object="formData" @input="updateData" />
+          <UserVariables @input="updateData" />
         </v-col>
       </v-row>
     </v-card>
@@ -61,7 +61,7 @@
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
-          <FormPostTest :object="formData" @input="updateData" />
+          <FormPostTest @input="updateData" />
         </v-col>
       </v-row>
     </v-card>
@@ -99,9 +99,7 @@ export default {
     return {
       formData: {
         preTest: [],
-        postTest: {
-          postTestUrl: '',
-        },
+        postTest: [],
       },
     }
   },
@@ -109,16 +107,20 @@ export default {
     testStructure() {
       return this.$store.state.Tests.Test.testStructure
     },
-    preTest() {
-      return this.$store.state.Tests.Test.testStructure.preTest
-    },
-    postTest() {
-      return this.$store.state.Tests.Test.testStructure.postTest
-    },
   },
   mounted() {
-    if (this.type !== 'content' && this.type != 'tabs')
+    if (this.type !== 'content' && this.type != 'tabs') {
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
+    }
+    if(this.testStructure.postTest) {
+      this.$store.dispatch('setPostTest', this.testStructure.postTest)
+    }
+    if(this.testStructure.preTest) {
+      this.$store.dispatch('setPreTest', this.testStructure.preTest)
+    }
+    if(this.testStructure.consent) {
+    this.$store.dispatch('setConsent', this.testStructure.consent)
+    }
   },
 
   methods: {

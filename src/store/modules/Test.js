@@ -20,9 +20,7 @@ export default {
     currentImageUrl: '',
     consent: '',
     preTest: [],
-    postTest: {
-      postTestUrl: '',
-    },
+    postTest: [],
   },
   getters: {
     tests(state) {
@@ -48,7 +46,7 @@ export default {
     },
     consent(state) {
       return state.consent
-    }
+    },
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -76,7 +74,17 @@ export default {
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
     },
-
+    CLEAN_TEST(state) {
+      state.Test = null
+      state.testStructure = null
+      state.answersId = null
+      state.module = 'test'
+      state.tasks = []
+      state.currentImageUrl = ''
+      state.consent = ''
+      state.preTest = []
+      state.postTest = []
+    },
   },
   actions: {
     /**
@@ -270,9 +278,17 @@ export default {
         commit('setError', true)
       }
     },
-    setConsent({commit}, payload) {
+    setConsent({ commit }, payload) {
       try {
         commit('SET_CONSENT', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    cleanTest({ commit }) {
+      try {
+        commit('CLEAN_TEST')
+        console.log('clean test');
       } catch {
         commit('setError', true)
       }
