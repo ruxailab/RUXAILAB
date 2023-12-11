@@ -88,7 +88,7 @@
           {{ test.testDescription }}
         </p>
         <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="start = !start">
+          <v-btn color="white" outlined rounded @click="startTest()">
             Start Test
           </v-btn>
         </v-row>
@@ -208,6 +208,15 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
+              :disabled="
+                currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted,
+              }"
               v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
@@ -238,6 +247,11 @@
                     v-bind="attrs"
                     @click="taskIndex = i"
                     v-on="on"
+                    :disabled="
+                      (currentUserTestAnswer.consentCompleted && i == 0) ||
+                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                        (currentUserTestAnswer.preTestCompleted && i == 1)
+                    "
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -260,6 +274,15 @@
             </v-list-group>
             <!--Tasks--->
             <v-list-group
+              :disabled="
+                !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted,
+              }"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
@@ -290,6 +313,10 @@
                     v-bind="attrs"
                     @click="taskIndex = i"
                     v-on="on"
+                    :disabled="isTaskDisabled(i)"
+                    :class="{
+                      'disabled-group': isTaskDisabled(i),
+                    }"
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -311,7 +338,14 @@
               </v-tooltip>
             </v-list-group>
             <!--Post Test-->
-            <v-list-item v-else-if="item.id == 2" @click="index = item.id">
+            <v-list-item
+              v-else-if="item.id == 2"
+              @click="index = item.id"
+              :disabled="!allTasksCompleted"
+              :class="{
+                'disabled-group': !allTasksCompleted,
+              }"
+            >
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{ item.icon }}
@@ -344,52 +378,100 @@
 
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
+
         <ShowInfo
-          v-if="index == 0 && taskIndex == 0"
+          v-if="index === 0 && taskIndex === 0"
           title="Pre Test - Consent"
         >
-          <iframe
-            slot="content"
-            :src="test.testStructure.preTest.consentUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…
-          </iframe>
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Consent Form</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
+
+            <v-row>
+              <v-col cols="5" class="mx-auto py-0">
+                <v-checkbox
+                  :label="currentUserTestAnswer.consent"
+                  v-model="currentUserTestAnswer.consentCompleted"
+                  :disabled="currentUserTestAnswer.consentCompleted"
+                  @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)"
+                >
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </div>
         </ShowInfo>
-        <v-btn
-          v-if="taskIndex == 0 && index == 0"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(taskIndex, 'consent')"
-        >
-          Done
-        </v-btn>
+
         <!-- Form - Pre Test -->
+        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre-Test - Form">
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Pre-Test</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
 
-        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre Test - Form">
-          <iframe
-            slot="content"
-            :src="test.testStructure.preTest.preTestUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
+            <v-row
+              v-for="(item, index) in test.testStructure.preTest"
+              :key="index"
+            >
+              <v-col cols="5" class="mx-auto py-0">
+                <p>{{ item.title }}</p>
+                <p v-if="item.description">{{ item.description }}</p>
+                <v-text-field
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                  v-if="item.textField"
+                  :placeholder="item.title"
+                  outlined
+                ></v-text-field>
+                <v-radio-group
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  v-if="item.selectionField"
+                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                  column
+                >
+                  <v-row
+                    v-for="(selection, selectionIndex) in item.selectionFields"
+                    :key="selectionIndex"
+                  >
+                    <v-radio
+                      :disabled="currentUserTestAnswer.preTestCompleted"
+                      class="ml-3 mb-1"
+                      :label="selection"
+                      :value="selection"
+                    ></v-radio>
+                  </v-row>
+                  <v-row justify="end"> </v-row>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+            <v-col cols="12">
+              <v-row justify="center">
+                <v-btn
+                  block
+                  color="orange lighten-1"
+                  class="ma-5"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  @click="
+                    completeStep(taskIndex, 'preTest'),
+                      (index = 1),
+                      (taskIndex = 0)
+                  "
+                  >Done
+                </v-btn>
+              </v-row>
+            </v-col>
+          </div>
         </ShowInfo>
-        <v-btn
-          v-if="taskIndex == 1 && index == 0"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(taskIndex, 'preTest')"
-        >
-          Done
-        </v-btn>
-
         <!-- Tasks -->
         <ShowInfo
           v-if="index == 1 && test.testType === 'User'"
@@ -603,25 +685,66 @@
 
         <!-- Post Test -->
         <ShowInfo v-if="index == 2" title="Post Test">
-          <iframe
-            slot="content"
-            :src="test.testStructure.postTest.postTestUrl"
-            width="100%"
-            height="900"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            >Carregando…</iframe
-          >
+          <div slot="content" class="ma-0 pa-0">
+            <v-row class="fill-height" align="center" justify="center">
+              <v-col cols="12">
+                <v-row justify="center">
+                  <h1 class="mt-6">{{ test.testTitle }} - Post-Test</h1>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-divider class="my-8" />
+
+            <v-row
+              v-for="(item, index) in test.testStructure.postTest"
+              :key="index"
+            >
+              <v-col cols="5" class="mx-auto py-0">
+                <p>{{ item.title }}</p>
+                <p v-if="item.description">{{ item.description }}</p>
+                <v-text-field
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  v-if="item.textField"
+                  :placeholder="item.title"
+                  outlined
+                ></v-text-field>
+                <v-radio-group
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  v-if="item.selectionField"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  column
+                >
+                  <v-row
+                    v-for="(selection, selectionIndex) in item.selectionFields"
+                    :key="selectionIndex"
+                  >
+                    <v-radio
+                      :disabled="currentUserTestAnswer.postTestCompleted"
+                      class="ml-3 mb-1"
+                      :label="selection"
+                      :value="selection"
+                    ></v-radio>
+                  </v-row>
+                  <v-row justify="end"> </v-row>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+            <v-col cols="12">
+              <v-row justify="center">
+                <v-btn
+                  block
+                  color="orange lighten-1"
+                  class="ma-5"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  @click="completeStep(taskIndex, 'postTest'), (taskIndex = 3)"
+                >
+                  Done
+                </v-btn>
+              </v-row>
+            </v-col>
+          </div>
         </ShowInfo>
-        <v-btn
-          v-if="index == 2"
-          block
-          color="my-5 pa-4 orange lighten-1"
-          @click="completeStep(null, 'postTest')"
-        >
-          Done
-        </v-btn>
       </v-col>
     </v-row>
   </div>
@@ -675,10 +798,11 @@ export default {
     mediaRecorder: null,
     recordedChunks: [],
     recording: false,
+    allTasksCompleted: false,
     recordedVideo: '',
     audioStream: null,
     recordingAudio: false,
-    recordedAudio: ''
+    recordedAudio: '',
   }),
   computed: {
     test() {
@@ -706,6 +830,9 @@ export default {
     },
     currentImageUrl() {
       return this.$store.state.Tests.currentImageUrl
+    },
+    tasks() {
+      return this.$store.getters.tasks
     },
   },
   watch: {
@@ -740,6 +867,14 @@ export default {
     this.calculateProgress()
   },
   methods: {
+    isTaskDisabled(taskIndex) {
+      for (let i = 0; i < taskIndex; i++) {
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          return true
+        }
+      }
+      return false
+    },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -751,19 +886,27 @@ export default {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
     },
+    startTest() {
+      if (this.test.testStructure.length == 0) {
+        alert("This test don't have any task")
+        this.$router.push('/managerview/' + this.test.id)
+      }
+      this.start = !this.start
+    },
     completeStep(id, type) {
       if (type === 'tasks') {
         this.currentUserTestAnswer.tasks[id].completed = true
         this.items[1].value[id].icon = 'mdi-check-circle-outline'
-        let allCompleted = true
+        this.allTasksCompleted = true
+        this.$forceUpdate()
 
         for (let i = 0; i < this.items[1].value.length; i++) {
           if (!this.currentUserTestAnswer.tasks[i].completed) {
-            allCompleted = false
+            this.allTasksCompleted = false
             break
           }
         }
-        if (allCompleted) {
+        if (this.allTasksCompleted) {
           this.items[1].icon = 'mdi-check-circle-outline'
         }
       }
@@ -821,8 +964,11 @@ export default {
             'tests/' +
               this.testId +
               '/' +
+              this.currentUserTestAnswer.userDocId +
+              '/' +
               'task_' +
               this.taskIndex +
+              'screen_record' +
               '/' +
               this.videoUrl,
           )
@@ -916,7 +1062,7 @@ export default {
     },
     async mappingSteps() {
       //PreTest
-      if (this.validate(this.test.testStructure.preTest.consentUrl)) {
+      if (this.validate(this.test.testStructure.preTest)) {
         this.items.push({
           title: 'Pre-test',
           icon: 'mdi-checkbox-blank-circle-outline',
@@ -931,12 +1077,12 @@ export default {
         })
       }
 
-      if (this.validate(this.test.testStructure.preTest.preTestUrl)) {
+      if (this.validate(this.test.testStructure.preTest)) {
         if (this.items.length) {
           this.items[0].value.push({
             title: 'Form',
             icon: 'mdi-checkbox-blank-circle-outline',
-            id: 1,
+            id: 0,
           })
         } else {
           this.items.push({
@@ -946,7 +1092,7 @@ export default {
               {
                 title: 'Form',
                 icon: 'mdi-checkbox-blank-circle-outline',
-                id: 1,
+                id: 0,
               },
             ],
             id: 0,
@@ -970,7 +1116,7 @@ export default {
         })
 
       //PostTest
-      if (this.validate(this.test.testStructure.postTest.postTestUrl))
+      if (this.validate(this.test.testStructure.postTest))
         this.items.push({
           title: 'Post Test',
           icon: 'mdi-checkbox-blank-circle-outline',
@@ -1005,8 +1151,12 @@ export default {
           'tests/' +
             this.testId +
             '/' +
+            this.currentUserTestAnswer.userDocId +
+            '/' +
             'task_' +
             this.taskIndex +
+            '/' +
+            'video' +
             '/' +
             this.recordedVideo,
         )
@@ -1059,8 +1209,11 @@ export default {
             'tests/' +
               this.testId +
               '/' +
+              this.currentUserTestAnswer.userDocId +
+              '/' +
               'task_' +
               this.taskIndex +
+              'audio' +
               '/' +
               this.recordedAudio,
           )
@@ -1098,6 +1251,10 @@ export default {
 </script>
 
 <style scoped>
+.disabled-group {
+  pointer-events: none;
+  background-color: grey;
+}
 .web-cam {
   position: relative;
   text-align: center;

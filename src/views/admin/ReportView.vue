@@ -31,11 +31,7 @@
     </v-dialog>
 
     <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         Loading Reports
       </div>
@@ -80,7 +76,7 @@
             <div>{{ item.progress }}</div>
           </template>
           <template v-slot:item.submitted="{ item }">
-            <div>{{ checkIfIsSubmitted(item.submitted) }}</div>
+            <div>{{ item.submitted }}</div>
           </template>
           <template v-slot:item.lastUpdate="{ item }">
             <div>{{ formatDate(item.lastUpdate) }}</div>
@@ -121,8 +117,19 @@ export default {
 
   computed: {
     reports() {
-      const type = this.$store.getters.testAnswerDocument.type
-      const rawReports = type === 'User' ? this.$store.getters.testAnswerDocument.taskAnswers : this.$store.getters.testAnswerDocument.heuristicAnswers
+      const testAnswerDocument = this.$store.getters.testAnswerDocument
+
+      // Verifica se testAnswerDocument é null ou undefined
+      if (!testAnswerDocument) {
+        return []
+      }
+
+      const type = testAnswerDocument.type
+
+      const rawReports =
+        type === 'User'
+          ? testAnswerDocument.taskAnswers || {}
+          : testAnswerDocument.heuristicAnswers || {}
 
       const processedReports = []
 
@@ -141,6 +148,7 @@ export default {
 
       return processedReports
     },
+    // ... outros métodos
 
     user() {
       return this.$store.getters.user
@@ -149,12 +157,12 @@ export default {
     test() {
       return this.$store.getters.test
     },
-    
+
     dialogText() {
       return (
         'Are you sure you want to delete ' +
         (this.report !== null ? this.report.email : '') +
-        '\'s report? This action can\'t be undone'
+        "'s report? This action can't be undone"
       )
     },
     answers() {
