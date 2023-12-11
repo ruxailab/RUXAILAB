@@ -40,15 +40,59 @@
       </div>
     </ShowInfo>
     <template>
-      <v-dialog v-model="showDialog" max-width="600">
+      <v-dialog
+        v-model="showDialog"
+        max-width="600"
+        fullscreen
+        transition="dialog-bottom-transition"
+      >
         <v-card>
           <v-toolbar color="orange" dark>
             <span class="headline">Answer and Observation</span>
+            <v-btn class="ml-auto" @click="showDialog = false" icon>
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
           </v-toolbar>
           <v-card-text>
             <v-row v-if="dialogItem">
+              <v-col cols="12" class="pt-8">
+                <span
+                  class="t-5 font-weight-bold text-h6"
+                  style="color: #252525;"
+                  >Variables</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                    <span
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525;"
+                      v-for="(question, index) in testStructure.preTest"
+                      :key="index"
+                    >
+                      <strong>{{ question.title }}</strong> :
+                      {{ dialogItem.preTestAnswer[index].answer }}
+                    </span>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col cols="12" class="pt-8">
+            <span class="t-5 font-weight-bold text-h6" style="color: #252525;">Post-Test Answer</span>
+            <v-card outlined rounded="6">
+              <div class="ma-6">
+                <span
+                  class="ma-1 text-subtitle-1"
+                  style="color: #252525;"
+                  v-for="(question, index) in testStructure.postTest"
+                  :key="index"
+                >
+                  <strong>{{ question.title }}</strong> :
+                  {{ dialogItem.postTestAnswer[index].answer }}
+                </span>
+              </div>
+            </v-card>
+          </v-col>
               <v-col
-                v-if="dialogItem.tasks[taskSelect].taskAnswer != ''"
+                v-if="dialogItem.tasks[taskSelect].taskAnswer != '' "
                 :cols="
                   dialogItem.tasks[taskSelect].taskObservations != ''
                     ? '6'
@@ -145,9 +189,6 @@
               </div>
             </v-row>
           </v-card-text>
-          <v-card-actions class="justify-end">
-            <v-btn color="orange" text @click="showDialog = false">Close</v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
     </template>

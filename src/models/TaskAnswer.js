@@ -2,9 +2,9 @@ import UserTask from './UserTask'
 
 export default class TaskAnswer {
   constructor({
-    preTestUrl,
-    consentUrl,
-    postTestUrl,
+    preTestAnswer,
+    consent,
+    postTestAnswer,
     preTestCompleted,
     consentCompleted,
     postTestCompleted,
@@ -15,16 +15,16 @@ export default class TaskAnswer {
     userDocId,
     lastUpdate,
   } = {}) {
-    this.preTestUrl = preTestUrl ?? ''
-    this.consentUrl = consentUrl ?? ''
-    this.postTestUrl = postTestUrl ?? ''
+    this.preTestAnswer = preTestAnswer ?? []
+    this.consent = consent ?? ''
+    this.postTestAnswer = postTestAnswer ?? []
     this.preTestCompleted = preTestCompleted ?? false
     this.consentCompleted = consentCompleted ?? false
     this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
     this.total = total ?? 0
-    this.submitted = submitted ?? null
+    this.submitted = submitted ?? false
     this.userDocId = userDocId ?? ''
     this.lastUpdate = lastUpdate ?? null
   }
@@ -41,9 +41,9 @@ export default class TaskAnswer {
   }
   toFirestore() {
     return {
-      preTestUrl: this.preTestUrl,
-      consentUrl: this.consentUrl,
-      postTestUrl: this.postTestUrl,
+      preTestAnswer: this.preTestAnswer,
+      consent: this.consent,
+      postTestAnswer: this.postTestAnswer,
       preTestCompleted: this.preTestCompleted,
       consentCompleted: this.consentCompleted,
       postTestCompleted: this.postTestCompleted,

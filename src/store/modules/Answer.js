@@ -39,15 +39,32 @@ export default {
             )
           : new TaskAnswer({
               userDocId: rootState.user.id,
-              preTestUrl: rootState.test.testStructure.preTest.preTestUrl,
-              consentUrl: rootState.test.testStructure.preTest.consentUrl,
-              postTestUrl: rootState.test.testStructure.postTest.postTestUrl,
+              preTestAnswer: (() => {
+                const preTestAnswer = []
+                for (
+                  let i = 0;
+                  i < rootState.test.testStructure.preTest.length;
+                  i++
+                ) {
+                  preTestAnswer[i] = {
+                    preTestAnswerId: i,
+                    answer: '',
+                  }
+                }
+                return preTestAnswer
+              })(),
+              consent: rootState.test.testStructure.consent,
+              postTestAnswer: rootState.test.testStructure.postTest,
               preTestCompleted: false,
               consentCompleted: false,
               postTestCompleted: false,
               tasks: (() => {
-                const tasks = {};
-                for (let i = 0; i < rootState.test.testStructure.userTasks.length; i++) {
+                const tasks = {}
+                for (
+                  let i = 0;
+                  i < rootState.test.testStructure.userTasks.length;
+                  i++
+                ) {
                   tasks[i] = new UserTask({
                     taskId: i,
                     taskAnswer: '',
@@ -57,12 +74,12 @@ export default {
                     audioRecordURL: '',
                     screenRecordURL: '',
                     webcamRecordURL: '',
-                  });
+                  })
                 }
-                return tasks;
+                return tasks
               })(),
-            });
-      }      
+            })
+      }
     },
   },
   mutations: {
@@ -166,19 +183,14 @@ export default {
           value: 'answered',
           align: 'center',
         },
-        {text: 'Last Update',
-        value: 'lastUpdate',
-        align: 'center',
-      }
+        { text: 'Last Update', value: 'lastUpdate', align: 'center' },
       ]
 
       if (payload.resultEvaluator) {
         payload.resultEvaluator.forEach((evaluator) => {
-          let totalNoAplication = 0;
-          let totalNoReply = 0;
-          let totalQuestions = 0;
-
-          
+          let totalNoAplication = 0
+          let totalNoReply = 0
+          let totalQuestions = 0
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
