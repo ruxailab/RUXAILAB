@@ -137,7 +137,6 @@
             :items="testButtonItems"
           />
 
-
           <!-- Tests -> Personal  -->
           <List
             v-if="mainIndex == 0 && subIndex == 0"
@@ -318,8 +317,12 @@ export default {
   },
   async created() {
     await this.getMyPersonalTests()
+    await this.cleanTestStore()
   },
   methods: {
+    async cleanTestStore() {
+      await this.$store.dispatch('cleanTest')
+    },
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
