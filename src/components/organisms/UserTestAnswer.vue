@@ -1,27 +1,25 @@
 <template>
   <div>
-    <div v-if="answers">
-      <v-overlay :value="loading">
-        <v-progress-circular indeterminate size="64" />
-      </v-overlay>
-      <IntroAnswer v-if="answers != null && intro == true" @goToCoops="goToCoops" />
-      <v-row v-else-if="answers != null && intro == false" justify="center" class="ma-0 mt-4">
-        <ShowInfo title="Answers">
-          <!-- Main Tabs -->
-          <v-tabs slot="top" v-model="tab" background-color="transparent" color="#FCA326" class="ml-4">
-            <v-tab @click="tab = 0">
-              Analytics
-            </v-tab>
-          </v-tabs>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64" />
+    </v-overlay>
+    <IntroAnswer v-if="intro" @goToCoops="goToCoops" />
+    <v-row v-else-if="hasAnswers" justify="center" class="ma-0 mt-4">
+      <ShowInfo title="Answers">
+        <!-- Main Tabs -->
+        <v-tabs slot="top" v-model="tab" background-color="transparent" color="#FCA326" class="ml-4">
+          <v-tab @click="tab = 0">
+            Analytics
+          </v-tab>
+        </v-tabs>
 
-          <div slot="content" class="ma-0 pa-0">
-            <AnalyticsView v-if="tab == 0" />
-          </div>
-        </ShowInfo>
-      </v-row>
-    </div>
+        <div slot="content" class="ma-0 pa-0">
+          <AnalyticsView v-if="tab === 0" />
+        </div>
+      </ShowInfo>
+    </v-row>
     <div v-else>
-      No answers yet
+      <IntroAnswer />
     </div>
   </div>
 </template>
@@ -47,123 +45,31 @@ export default {
     intro: null,
   }),
   computed: {
-
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
     answers() {
-      const mockAnswers = [
-        {
-          type: 'typeA',
-          taskAnswers: {
-            'userDocID_1': {
-              preTestUrl: 'https://example.com/pretest_A_1',
-              consentUrl: 'https://example.com/consent_A_1',
-              postTestUrl: 'https://example.com/posttest_A_1',
-              tasks: {
-                'taskId_1': {
-                  taskAnswer: 'Answer to Task A1',
-                  taskObservations: 'Observations for Task A1',
-                  taskTime: 'Task A1 Time',
-                  audioRecordURL: 'https://example.com/audio_A_1',
-                  screenRecordURL: 'https://example.com/screen_A_1',
-                  webcamRecordURL: 'https://example.com/webcam_A_1',
-                },
-                'taskId_2': {
-                  taskAnswer: 'Answer to Task A2',
-                  taskObservations: 'Observations for Task A2',
-                  taskTime: 'Task A2 Time',
-                  audioRecordURL: 'https://example.com/audio_A_2',
-                  screenRecordURL: 'https://example.com/screen_A_2',
-                  webcamRecordURL: 'https://example.com/webcam_A_2',
-                },
-              },
-              progress: 100,
-              total: 10,
-              submitted: false,
-              userDocId: 'userDocID_1',
-              lastUpdate: new Date(), // Current timestamp
-            },
-          },
-        },
-        {
-          type: 'typeB',
-          taskAnswers: {
-            'userDocID_2': {
-              preTestUrl: 'https://example.com/pretest_B_1',
-              consentUrl: 'https://example.com/consent_B_1',
-              postTestUrl: 'https://example.com/posttest_B_1',
-              tasks: {
-                'taskId_1': {
-                  taskAnswer: 'Answer to Task B1',
-                  taskObservations: 'Observations for Task B1',
-                  taskTime: 'Task B1 Time',
-                  audioRecordURL: 'https://example.com/audio_B_1',
-                  screenRecordURL: 'https://example.com/screen_B_1',
-                  webcamRecordURL: 'https://example.com/webcam_B_1',
-                },
-              },
-              progress: 30,
-              total: 5,
-              submitted: true,
-              userDocId: 'userDocID_2',
-              lastUpdate: new Date(), // Current timestamp
-            },
-          },
-        },
-        {
-          type: 'typeC',
-          taskAnswers: {
-            'userDocID_3': {
-              preTestUrl: 'https://example.com/pretest_C_1',
-              consentUrl: 'https://example.com/consent_C_1',
-              postTestUrl: 'https://example.com/posttest_C_1',
-              tasks: {
-                'taskId_1': {
-                  taskAnswer: 'Answer to Task C1',
-                  taskObservations: 'Observations for Task C1',
-                  taskTime: 'Task C1 Time',
-                  audioRecordURL: 'https://example.com/audio_C_1',
-                  screenRecordURL: 'https://example.com/screen_C_1',
-                  webcamRecordURL: 'https://example.com/webcam_C_1',
-                },
-                'taskId_2': {
-                  taskAnswer: 'Answer to Task C2',
-                  taskObservations: 'Observations for Task C2',
-                  taskTime: 'Task C2 Time',
-                  audioRecordURL: 'https://example.com/audio_C_2',
-                  screenRecordURL: 'https://example.com/screen_C_2',
-                  webcamRecordURL: 'https://example.com/webcam_C_2',
-                },
-              },
-              progress: 70,
-              total: 12,
-              submitted: false,
-              userDocId: 'userDocID_3',
-              lastUpdate: new Date(), // Current timestamp
-            },
-          },
-        },
-      ]
-
-      if (this.testAnswerDocument) {
-        return Object.values(mockAnswers)
-      }
-      return []
+      return this.testAnswerDocument
+        ? Object.values(this.$store.state.Answer.testAnswerDocument)
+        : []
+    },
+    hasAnswers() {
+      return (
+        this.testAnswerDocument &&
+        Object.keys(this.testAnswerDocument.taskAnswers).length > 0
+      )
     },
     loading() {
       return this.$store.getters.loading
     },
   },
   watch: {
-    answers() {
-      if (
-        this.testAnswerDocument &&
-        (this.answers !== null || this.answers.length > 0)
-      ) {
+    hasAnswers() {
+      if (this.hasAnswers) {
         statistics()
-        if (this.answers.length == 0) this.intro = true
-        else this.intro = false
+        this.intro = false
+      } else {
+        this.intro = true
       }
     },
     index() {
