@@ -122,7 +122,7 @@ export default {
     },
     preTest() {
       return this.$store.getters.preTest
-    }
+    },
   },
   methods: {
     log() {
@@ -157,6 +157,7 @@ export default {
     },
     saveNewItem() {
       this.items.push({
+        answer: '',
         title: this.newItem,
         description: '',
         selectionFields: [],
@@ -166,7 +167,7 @@ export default {
       this.newItem = ''
       this.show = false
     },
-    newSelection(index) { 
+    newSelection(index) {
       this.$set(this.items, index, {
         ...this.items[index],
         selectionFields: [...this.items[index].selectionFields, ''],
@@ -182,8 +183,10 @@ export default {
       this.$store.dispatch('setPreTest', this.items)
     },
     getVariables() {
-      if(this.test.testStructure.preTest) {
+      if (this.test.testStructure.preTest) {
         this.items = this.test.testStructure.preTest
+      } else if (this.preTest) {
+        this.items = this.preTest
       }
     },
   },
