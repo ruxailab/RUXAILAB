@@ -6,42 +6,62 @@
     class="pb-0 mb-0"
   >
     <v-tab @click="tabClicked(0)">
-      Pre Test
+      Consent
     </v-tab>
     <v-tab @click="tabClicked(1)">
-      Tasks
+      Pre Form
     </v-tab>
     <v-tab @click="tabClicked(2)">
-      Post Test
+      Tasks
+    </v-tab>
+    <v-tab @click="tabClicked(3)">
+      Post Form
     </v-tab>
   </v-tabs>
 
   <v-col v-else-if="type == 'content'" cols="12">
     <v-card v-if="index == 0" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        Pre Test
-      </v-card-title>
-
-      <v-divider />
-      <FormPreTest :object="formData" @input="updateData" />
-    </v-card>
-
-    <ListTasks
-      v-if="index == 1"
-      :tasks="object.itemsTasks"
-      @change="emitChange()"
-      @input="updateData"
-    />
-
-    <v-card v-if="index == 2" style="background: #f5f7ff">
-      <v-card-title class="subtitleView">
-        Post Test
+        Consent Pre Form
       </v-card-title>
 
       <v-divider />
       <v-row justify="space-around">
         <v-col cols="12">
-          <FormPostTest :object="formData" @input="updateData" />
+          <UserConsent @input="updateData" />
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <v-card v-if="index == 1" style="background: #f5f7ff">
+      <v-card-title class="subtitleView">
+        User Variables
+      </v-card-title>
+
+      <v-divider />
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <UserVariables @input="updateData" />
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <ListTasks
+      v-if="index == 2"
+      :tasks="object.itemsTasks"
+      @change="emitChange()"
+      @input="updateData"
+    />
+
+    <v-card v-if="index == 3" style="background: #f5f7ff">
+      <v-card-title class="subtitleView">
+        Consent Post Form
+      </v-card-title>
+
+      <v-divider />
+      <v-row justify="space-around">
+        <v-col cols="12">
+          <FormPostTest @input="updateData" />
         </v-col>
       </v-row>
     </v-card>
@@ -49,15 +69,17 @@
 </template>
 
 <script>
-import FormPreTest from '@/components/atoms/FormPreTest'
-import FormPostTest from '@/components/atoms/FormPostTest'
 import ListTasks from '@/components/molecules/ListTasks'
+import FormPostTest from '@/components/atoms/FormPostTest'
+import UserVariables from '@/components/atoms/UserVariables'
+import UserConsent from '@/components/atoms/UserConsent'
 
 export default {
   components: {
-    FormPreTest,
-    FormPostTest,
     ListTasks,
+    UserVariables,
+    UserConsent,
+    FormPostTest,
   },
   props: {
     type: {
@@ -75,15 +97,9 @@ export default {
   },
   data() {
     return {
-      //initialize formData properties
       formData: {
-        preTest: {
-          preTestUrl: '',
-          consentUrl: '',
-        },
-        postTest: {
-          postTestUrl: '',
-        },
+        preTest: [],
+        postTest: [],
       },
     }
   },
@@ -91,17 +107,20 @@ export default {
     testStructure() {
       return this.$store.state.Tests.Test.testStructure
     },
-    preTest() {
-      return this.$store.state.Tests.Test.testStructure.preTest
-    },
-    postTest() {
-      return this.$store.state.Tests.Test.testStructure.postTest
-    },
   },
   mounted() {
-    this.getForms()
-    if (this.type !== 'content' && this.type != 'tabs')
+    if (this.type !== 'content' && this.type != 'tabs') {
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
+    }
+    if(this.testStructure.postTest) {
+      this.$store.dispatch('setPostTest', this.testStructure.postTest)
+    }
+    if(this.testStructure.preTest) {
+      this.$store.dispatch('setPreTest', this.testStructure.preTest)
+    }
+    if(this.testStructure.consent) {
+    this.$store.dispatch('setConsent', this.testStructure.consent)
+    }
   },
 
   methods: {
@@ -115,12 +134,6 @@ export default {
       if (this.index == 2) {
         this.$store.dispatch('setPostTest', data)
       }
-    },
-    getForms() {
-      // Get forms from Test and set to local variables
-      this.formData.preTest.preTestUrl = this.preTest.preTestUrl
-      this.formData.preTest.consentUrl = this.preTest.consentUrl
-      this.formData.postTest.postTestUrl = this.postTest.postTestUrl
     },
   },
 }
