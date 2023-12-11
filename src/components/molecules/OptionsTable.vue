@@ -120,6 +120,9 @@ export default {
     },
   },
   methods: {
+    changeDialog(payload) {
+      this.dialog = payload;
+    },
     updateOptions() {
       if (this.editIndex == -1) {
         this.options.push(this.option)
@@ -133,9 +136,6 @@ export default {
         value: null,
       }
       this.hasValue = true
-    },
-    changeDialog(payload) {
-      this.dialog = payload
     },
     deleteItem(item) {
       this.options.splice(this.options.indexOf(item), 1)
