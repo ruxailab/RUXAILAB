@@ -137,6 +137,7 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
+      console.log(test);
 
       this.sendManager(testId)
     },

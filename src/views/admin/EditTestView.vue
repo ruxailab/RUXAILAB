@@ -225,6 +225,7 @@ export default {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       if (this.test.testType == 'User') {
         this.object.testStructure = {
+          consent: this.$store.getters.consent,
           userTasks: this.$store.getters.tasks,
           preTest: this.$store.getters.preTest,
           postTest: this.$store.getters.postTest,
