@@ -3,7 +3,7 @@
     <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
     <ShowInfo v-if="answers != null && !intro" title="Analytics">
       <div slot="content">
-        <v-card outlined class="task-container">
+        <v-card flat class="task-container">
           <v-row class="ma-0 pa-0">
             <!-- Tasks List -->
             <v-col class="ma-0 pa-0 task-list" cols="3">
@@ -22,7 +22,7 @@
             <v-divider vertical inset />
 
             <!-- Answer List -->
-            <v-col class="ma-0 pa-1 answer-list" cols="9">
+            <v-col class="ma-0 pa-1 answer-list" cols="8">
               <v-data-table
                 :headers="dataHeaders"
                 :items="taskAnswers"
@@ -55,17 +55,23 @@
           </v-toolbar>
           <v-card-text>
             <v-row v-if="dialogItem">
-              <v-col cols="12" class="pt-8">
+              <v-col
+                v-if="dialogItem.preTestAnswer.length > 0"
+                :cols="
+                  dialogItem.tasks[taskSelect].taskTime != '' ? '10' : '12'
+                "
+                class="pt-8"
+              >
                 <span
                   class="t-5 font-weight-bold text-h6"
-                  style="color: #252525;"
+                  style="color: #252525"
                   >Variables</span
                 >
                 <v-card outlined rounded="6">
                   <div class="ma-6">
                     <span
                       class="ma-1 text-subtitle-1"
-                      style="color: #252525;"
+                      style="color: #252525"
                       v-for="(question, index) in testStructure.preTest"
                       :key="index"
                     >
@@ -75,24 +81,50 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col cols="12" class="pt-8">
-            <span class="t-5 font-weight-bold text-h6" style="color: #252525;">Post-Test Answer</span>
-            <v-card outlined rounded="6">
-              <div class="ma-6">
-                <span
-                  class="ma-1 text-subtitle-1"
-                  style="color: #252525;"
-                  v-for="(question, index) in testStructure.postTest"
-                  :key="index"
-                >
-                  <strong>{{ question.title }}</strong> :
-                  {{ dialogItem.postTestAnswer[index].answer }}
-                </span>
-              </div>
-            </v-card>
-          </v-col>
               <v-col
-                v-if="dialogItem.tasks[taskSelect].taskAnswer != '' "
+                v-if="dialogItem.tasks[taskSelect].taskTime != null"
+                cols="2"
+                class="pt-8"
+              >
+                <span
+                  class="t-5 font-weight-bold text-h6"
+                  style="color: #252525"
+                  >Task Time</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                    <p class="text-h6">
+                      {{ formatTime(dialogItem.tasks[taskSelect].taskTime) }}
+                    </p>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col
+                v-if="dialogItem.postTestAnswer.length > 0"
+                cols="12"
+                class="pt-8"
+              >
+                <span
+                  class="t-5 font-weight-bold text-h6"
+                  style="color: #252525"
+                  >Post-Test Answer</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                    <span
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525"
+                      v-for="(question, index) in testStructure.postTest"
+                      :key="index"
+                    >
+                      <strong>{{ question.title }}</strong> :
+                      {{ dialogItem.postTestAnswer[index].answer }}
+                    </span>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col
+                v-if="dialogItem.tasks[taskSelect].taskAnswer != ''"
                 :cols="
                   dialogItem.tasks[taskSelect].taskObservations != ''
                     ? '6'
@@ -100,7 +132,7 @@
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: #252525;"
+                <span class="font-weight-bold text-h6" style="color: #252525"
                   >Answer</span
                 >
                 <v-card outlined rounded="6">
@@ -112,13 +144,30 @@
                 </v-card>
               </v-col>
               <v-col
+                v-if="dialogItem.tasks[taskSelect].postAnswer != ''"
+                cols="12"
+                class="mt-4"
+              >
+                <span class="font-weight-bold text-h6" style="color: #252525"
+                  >Post Question</span
+                >
+                <v-card outlined rounded="6">
+                  <div class="ma-6">
+                    <strong>{{ testStructure.userTasks[taskSelect].hasPost }}</strong> :
+                    <span>
+                      {{ dialogItem.tasks[taskSelect].postAnswer }}
+                    </span>
+                  </div>
+                </v-card>
+              </v-col>
+              <v-col
                 v-if="dialogItem.tasks[taskSelect].taskObservations != ''"
                 :cols="
                   dialogItem.tasks[taskSelect].taskAnswer != '' ? '6' : '12'
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: #252525;"
+                <span class="font-weight-bold text-h6" style="color: #252525"
                   >Observation</span
                 >
                 <v-card outlined rounded="6">
@@ -137,7 +186,7 @@
                 >
                   <span
                     class="font-weight-bold text-h6 my-3"
-                    style="color: #252525;"
+                    style="color: #252525"
                     v-if="dialogItem"
                     >Web Cam Record</span
                   >
@@ -158,7 +207,7 @@
                 >
                   <span
                     class="font-weight-bold text-h6 my-3"
-                    style="color: #252525;"
+                    style="color: #252525"
                     >Screen Record</span
                   >
                   <video
@@ -176,7 +225,7 @@
                 >
                   <span
                     class="font-weight-bold text-h6 my-3 mx-auto text-center"
-                    style="color: #252525;"
+                    style="color: #252525"
                   >
                     Audio Record
                   </span>
@@ -257,6 +306,16 @@ export default {
     console.log(this.taskAnswers)
   },
   methods: {
+    formatTime(time) {
+      var seconds = Math.floor(time / 1000)
+
+      var minutes = Math.floor(seconds / 60)
+      var remainingSeconds = seconds % 60
+
+      return (
+        minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds
+      )
+    },
     goToCoops() {
       this.$emit('goToCoops')
     },
