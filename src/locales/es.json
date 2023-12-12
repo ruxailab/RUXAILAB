@@ -251,7 +251,7 @@
   "switches": {
     "noAnswer": "Sin respuesta",
     "textArea": "Área de texto",
-    "postTest": "Post Test",
+    "timer": "Timer",
     "screenRecord": "Registro de pantalla",
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
