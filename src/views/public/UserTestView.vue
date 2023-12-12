@@ -55,9 +55,7 @@
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>
-              mdi-account
-            </v-icon>
+            <v-icon size="120" dark> mdi-account </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
@@ -107,12 +105,8 @@
       >
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon v-else large>
-              mdi-hammer-screwdriver
-            </v-icon>
+            <v-icon v-if="fab"> mdi-close </v-icon>
+            <v-icon v-else large> mdi-hammer-screwdriver </v-icon>
           </v-btn>
         </template>
 
@@ -210,7 +204,7 @@
             <v-list-group
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
+                currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -249,8 +243,8 @@
                     v-on="on"
                     :disabled="
                       (currentUserTestAnswer.consentCompleted && i == 0) ||
-                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
-                        (currentUserTestAnswer.preTestCompleted && i == 1)
+                      (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                      (currentUserTestAnswer.preTestCompleted && i == 1)
                     "
                   >
                     <v-list-item-icon>
@@ -276,7 +270,7 @@
             <v-list-group
               :disabled="
                 !currentUserTestAnswer.consentCompleted ||
-                  !currentUserTestAnswer.preTestCompleted
+                !currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -366,12 +360,8 @@
         <div class="footer">
           <v-spacer />
           <v-btn icon class="mr-2" @click.stop="mini = !mini">
-            <v-icon v-if="mini" color="white">
-              mdi-chevron-right
-            </v-icon>
-            <v-icon v-else color="white">
-              mdi-chevron-left
-            </v-icon>
+            <v-icon v-if="mini" color="white"> mdi-chevron-right </v-icon>
+            <v-icon v-else color="white"> mdi-chevron-left </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
@@ -477,7 +467,7 @@
           v-if="index == 1 && test.testType === 'User'"
           :title="test.testStructure.userTasks[taskIndex].taskName"
         >
-          <div slot="content" class="ma-0 pa-0">  
+          <div slot="content" class="ma-0 pa-0">
             <v-divider class="mb-5" />
             <v-container>
               <v-row class="fill-height" align="center" justify="center">
@@ -498,7 +488,7 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasAudioRecord !==
-                        false
+                      false
                     "
                   >
                     <v-btn
@@ -523,7 +513,7 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasCamRecord !==
-                        false
+                      false
                     "
                   >
                     <video
@@ -578,9 +568,7 @@
                       <v-icon left dark v-if="!isRecording">
                         mdi-monitor-screenshot
                       </v-icon>
-                      <v-icon left dark v-else>
-                        mdi-stop
-                      </v-icon>
+                      <v-icon left dark v-else> mdi-stop </v-icon>
                       {{ isRecording ? 'Stop recording' : 'Start recording' }}
                     </v-btn>
                   </v-row>
@@ -591,34 +579,31 @@
                     "
                     justify="end"
                   >
-                    <TipButton 
+                    <TipButton
                       :task="test.testStructure.userTasks[taskIndex]"
                     />
                   </v-row>
                   <v-spacer />
-                  <v-row justify="center">
-                    <v-btn
-                      v-if="
-                        test.testStructure.userTasks[taskIndex].hasTimer ===
-                          true
-                      "
-                      color="success"
-                    >
-                      <v-icon left> mdi-timer </v-icon>Start
-                    </v-btn>
+                  <v-row
+                    justify="center"
+                    v-if="
+                      test.testStructure.userTasks[taskIndex].hasTimer === true
+                    "
+                  >
+                    <Timer :taskIndex="taskIndex" @timerStopped="handleTimerStopped" />
                   </v-row>
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
-                          'textArea'
+                        'textArea'
                       "
                     >
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
+                          test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex].taskAnswer
@@ -631,7 +616,7 @@
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
+                          test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex]
@@ -650,15 +635,20 @@
                 align="center"
                 justify="center"
               >
-                <iframe
-                  :src="test.testStructure.userTasks[taskIndex].postTest"
-                  width="100%"
-                  height="900"
-                  frameborder="0"
-                  marginheight="0"
-                  marginwidth="0"
-                  >Carregando…</iframe
-                >
+                <v-col class="text-center">
+                  <p class="text-h5">
+                    {{ test.testStructure.userTasks[taskIndex].hasPost }}
+                  </p>
+
+                  <v-text-field
+                    class="mx-2"
+                    v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
+                    :placeholder="
+                      test.testStructure.userTasks[taskIndex].hasPost
+                    "
+                    outlined
+                  ></v-text-field>
+                </v-col>
               </v-row>
               <video
                 v-if="videoUrl == ''"
@@ -755,6 +745,7 @@ import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import TipButton from '@/components/atoms/TipButton'
+import Timer from '@/components/atoms/Timer'
 export default {
   components: {
     ShowInfo,
@@ -762,7 +753,8 @@ export default {
     Snackbar,
     CardSignIn,
     CardSignUp,
-    TipButton
+    TipButton,
+    Timer,
   },
   data: () => ({
     displayMediaOptions: {
@@ -835,7 +827,7 @@ export default {
     },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       this.mappingSteps()
     },
     items() {
@@ -891,6 +883,9 @@ export default {
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
+    },
+    handleTimerStopped(elapsedTime, taskIndex) {
+      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
     completeStep(id, type) {
       if (type === 'tasks') {
@@ -975,9 +970,8 @@ export default {
 
           this.videoUrl = await getDownloadURL(storageRef)
 
-          this.currentUserTestAnswer.tasks[
-            taskIndex
-          ].screenRecordURL = this.videoUrl
+          this.currentUserTestAnswer.tasks[taskIndex].screenRecordURL =
+            this.videoUrl
         }
         this.isRecording = true
       } else {
@@ -1163,9 +1157,8 @@ export default {
 
         this.recordedVideo = await getDownloadURL(storageRef)
 
-        this.currentUserTestAnswer.tasks[
-          taskIndex
-        ].webcamRecordURL = this.recordedVideo
+        this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL =
+          this.recordedVideo
 
         console.log(this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL)
       }
@@ -1220,9 +1213,8 @@ export default {
 
           this.recordedAudio = await getDownloadURL(storageRef)
 
-          this.currentUserTestAnswer.tasks[
-            taskIndex
-          ].audioRecordURL = this.recordedAudio
+          this.currentUserTestAnswer.tasks[taskIndex].audioRecordURL =
+            this.recordedAudio
 
           console.log(
             this.currentUserTestAnswer.tasks[taskIndex].audioRecordURL,
