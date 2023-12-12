@@ -41,7 +41,7 @@
           dense
         />
         <v-row align="center">
-          {{ $t('switches.postTest') }}
+          {{ $t('switches.timer') }}
           <v-switch v-model="task.hasTimer" class="ml-2" />
         </v-row>
         <v-row align="center">
