@@ -477,10 +477,7 @@
           v-if="index == 1 && test.testType === 'User'"
           :title="test.testStructure.userTasks[taskIndex].taskName"
         >
-          <div slot="content" class="ma-0 pa-0">
-            <v-card-title class="subtitleView">
-              {{ test.testStructure.userTasks[taskIndex].taskName }}
-            </v-card-title>
+          <div slot="content" class="ma-0 pa-0">  
             <v-divider class="mb-5" />
             <v-container>
               <v-row class="fill-height" align="center" justify="center">
@@ -489,6 +486,14 @@
                     <h1>
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
+                  </v-row>
+                  <v-spacer />
+                  <v-row justify="center">
+                    <p class="paragraph">
+                      {{
+                        test.testStructure.userTasks[taskIndex].taskDescription
+                      }}
+                    </p>
                   </v-row>
                   <v-row
                     v-if="
@@ -586,17 +591,9 @@
                     "
                     justify="end"
                   >
-                    <TipButton
+                    <TipButton 
                       :task="test.testStructure.userTasks[taskIndex]"
                     />
-                  </v-row>
-                  <v-spacer />
-                  <v-row justify="center">
-                    <p class="paragraph">
-                      {{
-                        test.testStructure.userTasks[taskIndex].taskDescription
-                      }}
-                    </p>
                   </v-row>
                   <v-spacer />
                   <v-row justify="center">
@@ -757,6 +754,7 @@ import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
+import TipButton from '@/components/atoms/TipButton'
 export default {
   components: {
     ShowInfo,
@@ -764,6 +762,7 @@ export default {
     Snackbar,
     CardSignIn,
     CardSignUp,
+    TipButton
   },
   data: () => ({
     displayMediaOptions: {
