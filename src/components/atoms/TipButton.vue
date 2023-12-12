@@ -17,7 +17,7 @@
         {{ task.taskName }} - TIP
       </v-card-title>
 
-      <v-card-text class="pa-3" style="text-align: center">
+      <v-card-text class="pa-3" style="text-align: center; color: black;">
         {{ task.taskTip }}
       </v-card-text>
 
