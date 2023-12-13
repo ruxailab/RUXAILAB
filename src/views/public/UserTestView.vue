@@ -204,7 +204,7 @@
             <v-list-group
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                currentUserTestAnswer.preTestCompleted
+                  currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -243,8 +243,8 @@
                     v-on="on"
                     :disabled="
                       (currentUserTestAnswer.consentCompleted && i == 0) ||
-                      (!currentUserTestAnswer.consentCompleted && i == 1) ||
-                      (currentUserTestAnswer.preTestCompleted && i == 1)
+                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                        (currentUserTestAnswer.preTestCompleted && i == 1)
                     "
                   >
                     <v-list-item-icon>
@@ -270,7 +270,7 @@
             <v-list-group
               :disabled="
                 !currentUserTestAnswer.consentCompleted ||
-                !currentUserTestAnswer.preTestCompleted
+                  !currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -488,32 +488,19 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasAudioRecord !==
-                      false
+                        false
                     "
                   >
-                    <v-btn
-                      v-if="!recordingAudio && recordedAudio == ''"
-                      @click="startAudioRecording(taskIndex)"
-                      class="ml-4 xl"
-                      color="grey lighten-2"
-                      elevation="0"
-                    >
-                      <v-icon class="mr-2">mdi-microphone</v-icon>Start
-                      Recording</v-btn
-                    >
-                    <v-btn
-                      dark
-                      color="red"
-                      class="ml-4 xl"
-                      v-if="recordingAudio"
-                      @click="stopAudioRecording()"
-                      ><v-icon left>mdi-stop</v-icon> stop recording</v-btn
-                    >
+                    <audio-recorder
+                      :testId="testId"
+                      :currentUserTestAnswer="currentUserTestAnswer"
+                      :taskIndex="taskIndex"
+                    ></audio-recorder>
                   </v-row>
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasCamRecord !==
-                      false
+                        false
                     "
                   >
                     <video
@@ -590,20 +577,23 @@
                       test.testStructure.userTasks[taskIndex].hasTimer === true
                     "
                   >
-                    <Timer :taskIndex="taskIndex" @timerStopped="handleTimerStopped" />
+                    <Timer
+                      :taskIndex="taskIndex"
+                      @timerStopped="handleTimerStopped"
+                    />
                   </v-row>
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
-                        'textArea'
+                          'textArea'
                       "
                     >
                       <v-textarea
                         :id="
                           'id-' +
-                          test.testStructure.userTasks[taskIndex].taskName
+                            test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex].taskAnswer
@@ -616,7 +606,7 @@
                       <v-textarea
                         :id="
                           'id-' +
-                          test.testStructure.userTasks[taskIndex].taskName
+                            test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex]
@@ -746,6 +736,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import TipButton from '@/components/atoms/TipButton'
 import Timer from '@/components/atoms/Timer'
+import AudioRecorder from '@/components/atoms/AudioRecorder'
 export default {
   components: {
     ShowInfo,
@@ -755,6 +746,7 @@ export default {
     CardSignUp,
     TipButton,
     Timer,
+    AudioRecorder,
   },
   data: () => ({
     displayMediaOptions: {
@@ -791,9 +783,6 @@ export default {
     recording: false,
     allTasksCompleted: false,
     recordedVideo: '',
-    audioStream: null,
-    recordingAudio: false,
-    recordedAudio: '',
   }),
   computed: {
     test() {
@@ -827,7 +816,7 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       this.mappingSteps()
     },
     items() {
@@ -970,8 +959,9 @@ export default {
 
           this.videoUrl = await getDownloadURL(storageRef)
 
-          this.currentUserTestAnswer.tasks[taskIndex].screenRecordURL =
-            this.videoUrl
+          this.currentUserTestAnswer.tasks[
+            taskIndex
+          ].screenRecordURL = this.videoUrl
         }
         this.isRecording = true
       } else {
@@ -1157,8 +1147,9 @@ export default {
 
         this.recordedVideo = await getDownloadURL(storageRef)
 
-        this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL =
-          this.recordedVideo
+        this.currentUserTestAnswer.tasks[
+          taskIndex
+        ].webcamRecordURL = this.recordedVideo
 
         console.log(this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL)
       }
@@ -1170,68 +1161,6 @@ export default {
         this.mediaRecorder.stop()
         this.videoStream.getTracks().forEach((track) => track.stop())
         this.recording = false
-      }
-    },
-    async startAudioRecording(taskIndex) {
-      this.recordingAudio = true
-
-      try {
-        this.audioStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        })
-
-        this.recordedChunks = []
-        this.mediaRecorder = new MediaRecorder(this.audioStream, {
-          mimeType: 'audio/webm',
-        })
-
-        this.mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            this.recordedChunks.push(event.data)
-          }
-        }
-
-        this.mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(this.recordedChunks, {
-            type: 'audio/webm',
-          })
-          const storage = getStorage()
-          const storageRef = ref(
-            storage,
-            'tests/' +
-              this.testId +
-              '/' +
-              this.currentUserTestAnswer.userDocId +
-              '/' +
-              'task_' +
-              this.taskIndex +
-              'audio' +
-              '/' +
-              this.recordedAudio,
-          )
-          await uploadBytes(storageRef, audioBlob)
-
-          this.recordedAudio = await getDownloadURL(storageRef)
-
-          this.currentUserTestAnswer.tasks[taskIndex].audioRecordURL =
-            this.recordedAudio
-
-          console.log(
-            this.currentUserTestAnswer.tasks[taskIndex].audioRecordURL,
-          )
-        }
-
-        this.mediaRecorder.start()
-      } catch (error) {
-        console.error('Error accessing audio stream:', error)
-        this.recordingAudio = false
-      }
-    },
-    stopAudioRecording() {
-      if (this.mediaRecorder) {
-        this.mediaRecorder.stop()
-        this.audioStream.getTracks().forEach((track) => track.stop())
-        this.recordingAudio = false
       }
     },
   },
