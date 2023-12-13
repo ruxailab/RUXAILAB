@@ -49,7 +49,6 @@
     <ListTasks
       v-if="index == 2"
       :tasks="object.itemsTasks"
-      @change="emitChange()"
       @input="updateData"
     />
 
