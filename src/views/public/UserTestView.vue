@@ -503,61 +503,23 @@
                         false
                     "
                   >
-                    <video
-                      class="web-cam ml-3"
-                      ref="video"
-                      height="100"
-                      autoplay
-                      v-if="recording"
-                    ></video>
-                    <v-btn
-                      v-if="!recording && recordedVideo == ''"
-                      @click="startRecording(taskIndex)"
-                      class="ml-4 xl"
-                      color="grey lighten-2"
-                      elevation="0"
-                    >
-                      <v-icon class="mr-2">mdi-camera</v-icon>Start
-                      Recording</v-btn
-                    >
-                    <v-btn
-                      color="red"
-                      icon
-                      v-if="recording"
-                      @click="stopRecording()"
-                      ><v-icon dark>mdi-stop</v-icon></v-btn
-                    >
+                    <video-recorder
+                      :testId="testId"
+                      :currentUserTestAnswer="currentUserTestAnswer"
+                      :taskIndex="taskIndex"
+                    ></video-recorder>
                   </v-row>
                   <v-row
                     v-if="
-                      test.testStructure.userTasks[taskIndex]
-                        .hasScreenRecord !== false
+                      test.testStructure.userTasks[taskIndex].hasScreenRecord !=
+                        false
                     "
                   >
-                    <v-btn
-                      @click="captureScreen()"
-                      class="ml-4 xl"
-                      v-if="!isCapture"
-                      color="grey lighten-2"
-                      elevation="0"
-                      ><v-icon left dark>x mdi-monitor-screenshot </v-icon>
-                      Capture
-                    </v-btn>
-                    <v-btn
-                      class="ml-4 xl"
-                      v-if="isCapture && videoUrl == ''"
-                      :color="!isRecording ? 'grey lighten-2' : 'red lighten-1'"
-                      :dark="isRecording"
-                      prepend-icon="mdi-monitor-screenshot"
-                      elevation="0"
-                      @click="recordScreen(taskIndex)"
-                    >
-                      <v-icon left dark v-if="!isRecording">
-                        mdi-monitor-screenshot
-                      </v-icon>
-                      <v-icon left dark v-else> mdi-stop </v-icon>
-                      {{ isRecording ? 'Stop recording' : 'Start recording' }}
-                    </v-btn>
+                    <screen-recorder
+                      :testId="testId"
+                      :currentUserTestAnswer="currentUserTestAnswer"
+                      :taskIndex="taskIndex"
+                    ></screen-recorder>
                   </v-row>
                   <v-spacer />
                   <v-row
@@ -728,7 +690,6 @@
 </template>
 
 <script>
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
@@ -737,8 +698,12 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import TipButton from '@/components/atoms/TipButton'
 import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
+import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
+import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
+
 export default {
   components: {
+    VideoRecorder,
     ShowInfo,
     VClamp,
     Snackbar,
@@ -747,6 +712,7 @@ export default {
     TipButton,
     Timer,
     AudioRecorder,
+    ScreenRecorder,
   },
   data: () => ({
     displayMediaOptions: {
@@ -919,56 +885,7 @@ export default {
       }
       this.calculateProgress()
     },
-    async captureScreen() {
-      const videoElem = document.getElementById('vpreview')
-      try {
-        videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(
-          this.displayMediaOptions,
-        )
-        this.isCapture = true
-      } catch (err) {
-        console.error(err)
-      }
-    },
-    recordScreen(taskIndex) {
-      if (!this.isRecording) {
-        const videoElem = document.getElementById('vpreview')
-        this.mediaRecorder = new MediaRecorder(videoElem.srcObject)
-        this.mediaRecorder.start()
-        this.mediaRecorder.ondataavailable = (e) => {
-          this.chunks.push(e.data)
-        }
 
-        this.mediaRecorder.onstop = async () => {
-          const videoBlob = new Blob(this.chunks, { type: 'video/webm' })
-          const storage = getStorage()
-          const storageRef = ref(
-            storage,
-            'tests/' +
-              this.testId +
-              '/' +
-              this.currentUserTestAnswer.userDocId +
-              '/' +
-              'task_' +
-              this.taskIndex +
-              'screen_record' +
-              '/' +
-              this.videoUrl,
-          )
-          await uploadBytes(storageRef, videoBlob)
-
-          this.videoUrl = await getDownloadURL(storageRef)
-
-          this.currentUserTestAnswer.tasks[
-            taskIndex
-          ].screenRecordURL = this.videoUrl
-        }
-        this.isRecording = true
-      } else {
-        this.mediaRecorder.stop()
-        this.isRecording = false
-      }
-    },
     async autoComplete() {
       // PRE-TEST
       if (this.currentUserTestAnswer.preTestCompleted) {
@@ -1110,59 +1027,6 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
-    async startRecording(taskIndex) {
-      this.recording = true
-      this.videoStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      })
-      this.$refs.video.srcObject = this.videoStream
-
-      this.recordedChunks = []
-      this.mediaRecorder = new MediaRecorder(this.videoStream)
-
-      this.mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          this.recordedChunks.push(event.data)
-        }
-      }
-
-      this.mediaRecorder.onstop = async () => {
-        const videoBlob = new Blob(this.recordedChunks, { type: 'video/webm' })
-        const storage = getStorage()
-        const storageRef = ref(
-          storage,
-          'tests/' +
-            this.testId +
-            '/' +
-            this.currentUserTestAnswer.userDocId +
-            '/' +
-            'task_' +
-            this.taskIndex +
-            '/' +
-            'video' +
-            '/' +
-            this.recordedVideo,
-        )
-        await uploadBytes(storageRef, videoBlob)
-
-        this.recordedVideo = await getDownloadURL(storageRef)
-
-        this.currentUserTestAnswer.tasks[
-          taskIndex
-        ].webcamRecordURL = this.recordedVideo
-
-        console.log(this.currentUserTestAnswer.tasks[taskIndex].webcamRecordURL)
-      }
-
-      this.mediaRecorder.start()
-    },
-    stopRecording() {
-      if (this.mediaRecorder) {
-        this.mediaRecorder.stop()
-        this.videoStream.getTracks().forEach((track) => track.stop())
-        this.recording = false
-      }
-    },
   },
   beforeDestroy() {
     this.stopRecording()
@@ -1175,21 +1039,7 @@ export default {
   pointer-events: none;
   background-color: grey;
 }
-.web-cam {
-  position: relative;
-  text-align: center;
-  height: 125px;
-  width: 125px;
-  border-radius: 50%;
-  overflow: hidden;
-  mask-image: radial-gradient(circle, white 100%, black 100%);
-}
 
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
