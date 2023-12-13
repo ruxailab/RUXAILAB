@@ -22,7 +22,7 @@
             <v-divider vertical inset />
 
             <!-- Answer List -->
-            <v-col class="ma-0 pa-1 answer-list" cols="8">
+            <v-col class="ma-0 pa-1 answer-list" cols="9">
               <v-data-table
                 :headers="dataHeaders"
                 :items="taskAnswers"
