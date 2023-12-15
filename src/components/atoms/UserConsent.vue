@@ -6,7 +6,7 @@
           filled
           v-model="consent"
           name="input-7-4"
-          label="Consent"
+          :label="$t('UserTestTable.titles.consentForm')"
           placeholder="You agree to the following terms and conditions..."
           rows="3"
           @change="saveState()"
