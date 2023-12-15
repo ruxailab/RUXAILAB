@@ -152,6 +152,43 @@
       "hideTextArea": "Ocultar área de texto"
     }
   },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "Formulario de Consentimiento",
+      "userVariables": "Variables del Usuario",
+      "currentTasks": "Tareas Actuales",
+      "postForm": "Formulario Posterior",
+      "writeNewPost": "Escribir una nueva pregunta de post"
+    },
+    "inputs": {
+      "consent": "Consentimiento",
+      "variableName": "Nombre de la Variable",
+      "description": "Descripción",
+      "selection": "Selección",
+      "writeQuestion": "Escribir una pregunta"
+    },
+    "checkboxes": {
+      "selectionField": "Campo de Selección",
+      "textField": "Campo de Texto",
+      "textAnswer": "Respuesta de Texto",
+      "selectionAnswer": "Respuesta de Selección"
+    },
+    "buttons": {
+      "createNewVariable": "Crear una nueva variable",
+      "createNewPost": "Crear una nueva pregunta de post"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "Pre Prueba - Consentimiento",
+      "preTestForm": "Pre Prueba - Formulario",
+      "preTest": "Pre-Prueba",
+      "postTest": "Post-Prueba"
+    },
+    "buttons": {
+      "done": "Listo"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "Acceso no permitido",
     "noAccess": "No tienes acceso a la página que estás intentando acceder.",
