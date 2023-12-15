@@ -204,7 +204,7 @@
             <v-list-group
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
+                currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -243,8 +243,8 @@
                     v-on="on"
                     :disabled="
                       (currentUserTestAnswer.consentCompleted && i == 0) ||
-                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
-                        (currentUserTestAnswer.preTestCompleted && i == 1)
+                      (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                      (currentUserTestAnswer.preTestCompleted && i == 1)
                     "
                   >
                     <v-list-item-icon>
@@ -270,7 +270,7 @@
             <v-list-group
               :disabled="
                 !currentUserTestAnswer.consentCompleted ||
-                  !currentUserTestAnswer.preTestCompleted
+                !currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -371,13 +371,16 @@
 
         <ShowInfo
           v-if="index === 0 && taskIndex === 0"
-          title="Pre Test - Consent"
+         :title="$t('UserTestView.titles.preTestConsent')"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 class="mt-6">{{ test.testTitle }} - Consent Form</h1>
+                  <h1 class="mt-6">
+                    {{ test.testTitle }} -
+                    {{ $t('UserTestTable.titles.consentForm') }}
+                  </h1>
                 </v-row>
               </v-col>
             </v-row>
@@ -398,12 +401,18 @@
         </ShowInfo>
 
         <!-- Form - Pre Test -->
-        <ShowInfo v-if="index == 0 && taskIndex == 1" title="Pre-Test - Form">
+        <ShowInfo
+          v-if="index == 0 && taskIndex == 1"
+          :title="$t('UserTestView.titles.preTestForm')"
+        >
           <div slot="content" class="ma-0 pa-0">
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 class="mt-6">{{ test.testTitle }} - Pre-Test</h1>
+                  <h1 class="mt-6">
+                    {{ test.testTitle }} -
+                    {{ $t('UserTestView.titles.preTest') }}
+                  </h1>
                 </v-row>
               </v-col>
             </v-row>
@@ -456,7 +465,7 @@
                       (index = 1),
                       (taskIndex = 0)
                   "
-                  >Done
+                  >{{ $t('UserTestView.buttons.done') }}
                 </v-btn>
               </v-row>
             </v-col>
@@ -488,7 +497,7 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasAudioRecord !==
-                        false
+                      false
                     "
                   >
                     <audio-recorder
@@ -500,7 +509,7 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasCamRecord !==
-                        false
+                      false
                     "
                   >
                     <video-recorder
@@ -512,7 +521,7 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasScreenRecord !=
-                        false
+                      false
                     "
                   >
                     <screen-recorder
@@ -549,13 +558,13 @@
                     <v-col
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
-                          'textArea'
+                        'textArea'
                       "
                     >
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
+                          test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex].taskAnswer
@@ -568,7 +577,7 @@
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
+                          test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex]
@@ -615,7 +624,7 @@
                   color="orange lighten-1"
                   @click="completeStep(taskIndex, 'tasks')"
                 >
-                  Done
+                  {{ $t('UserTestView.buttons.done') }}
                 </v-btn>
               </div>
             </v-container>
@@ -628,7 +637,7 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 class="mt-6">{{ test.testTitle }} - Post-Test</h1>
+                  <h1 class="mt-6">{{ test.testTitle }} - {{ $t('UserTestTable.titles.postTest') }}</h1>
                 </v-row>
               </v-col>
             </v-row>
@@ -678,7 +687,7 @@
                   :disabled="currentUserTestAnswer.postTestCompleted"
                   @click="completeStep(taskIndex, 'postTest'), (taskIndex = 3)"
                 >
-                  Done
+                  {{ $t('UserTestView.buttons.done') }}
                 </v-btn>
               </v-row>
             </v-col>
@@ -782,7 +791,7 @@ export default {
     },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       this.mappingSteps()
     },
     items() {

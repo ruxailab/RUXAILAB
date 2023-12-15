@@ -152,6 +152,43 @@
       "positiveValue": "O valor precisa ser um número positivo"
     }
   },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "Formulário de Consentimento",
+      "userVariables": "Variáveis do Usuário",
+      "currentTasks": "Tarefas",
+      "postForm": "Pós-Formulário",
+      "writeNewPost": "Escrever uma nova pergunta de postagem"
+    },
+    "inputs": {
+      "consent": "Consentimento",
+      "variableName": "Nome da Variável",
+      "description": "Descrição",
+      "selection": "Seleção",
+      "writeQuestion": "Escrever uma pergunta"
+    },
+    "checkboxes": {
+      "selectionField": "Campo de Seleção",
+      "textField": "Campo de Texto",
+      "textAnswer": "Resposta de Texto",
+      "selectionAnswer": "Resposta de Seleção"
+    },
+    "buttons": {
+      "createNewVariable": "Criar uma nova variável de usuário",
+      "createNewPost": "Criar uma nova pergunta no pós formulário"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "Pré-Teste - Consentimento",
+      "preTestForm": "Pré-Teste - Formulário",
+      "preTest": "Pré-Teste",
+      "postTest": "Pós-Teste"
+    },
+    "buttons": {
+      "done": "Concluído"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "Acesso não permitido",
     "noAccess": "Você não tem acesso à página que está tentando acessar.",
