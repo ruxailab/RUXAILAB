@@ -74,6 +74,7 @@ export default {
                     audioRecordURL: '',
                     screenRecordURL: '',
                     webcamRecordURL: '',
+                    postAnswer: ''
                   })
                 }
                 return tasks

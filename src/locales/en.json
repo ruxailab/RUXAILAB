@@ -251,7 +251,8 @@
   "switches": {
     "noAnswer": "No answer",
     "textArea": "Text Area",
-    "postTest": "Post Test",
+    "timer": "Timer",
+    "postTest": "Post Question",
     "screenRecord": "Screen Record",
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
