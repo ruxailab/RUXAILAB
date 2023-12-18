@@ -152,6 +152,43 @@
       "hideTextArea": "Hide text area"
     }
   },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "Consent Form",
+      "userVariables": "User Variables",
+      "currentTasks": "Current Tasks",
+      "postForm": "Post Form",
+      "writeNewPost": "Write a new post question"
+    },
+    "inputs": {
+      "consent": "Consent",
+      "variableName": "Variable Name",
+      "description": "Description",
+      "selection": "Selection",
+      "writeQuestion": "Write a question"
+    },
+    "checkboxes": {
+      "selectionField": "Selection Field",
+      "textField": "Text Field",
+      "textAnswer": "Text answer",
+      "selectionAnswer": "Selection answer"
+    },
+    "buttons": {
+      "createNewVariable": "Create a new variable",
+      "createNewPost": "Create a new post question"
+    }
+  },
+   "UserTestView": {
+    "titles": {
+      "preTestConsent": "Pre Test - Consent",
+      "preTestForm": "Pre Test - Form",
+      "preTest": "Pre-Test",
+      "postTest":"Post-Test"
+    },
+    "buttons": {
+      "done": "Done"
+    }
+   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
@@ -243,6 +280,7 @@
     "cancel": "Cancel",
     "create": "Create",
     "close": "Close",
+    "save": "Save",
     "stay": "Stay",
     "leave": "Leave",
     "help": "Help",

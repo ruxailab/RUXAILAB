@@ -22,7 +22,7 @@
   <v-col v-else-if="type == 'content'" cols="12">
     <v-card v-if="index == 0" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        Consent Pre Form
+        {{ $t('UserTestTable.titles.consentForm') }}
       </v-card-title>
 
       <v-divider />
@@ -35,7 +35,7 @@
 
     <v-card v-if="index == 1" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        User Variables
+        {{ $t('UserTestTable.titles.userVariables') }}
       </v-card-title>
 
       <v-divider />
@@ -54,7 +54,7 @@
 
     <v-card v-if="index == 3" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
-        Consent Post Form
+        {{ $t('UserTestTable.titles.postForm') }}
       </v-card-title>
 
       <v-divider />
