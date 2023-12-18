@@ -13,7 +13,7 @@
         <v-row align="center" class="ma-0">
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
-              Current Tasks
+              {{ $t('UserTestTable.titles.currentTasks')}}
             </p>
           </v-col>
           <v-col>
