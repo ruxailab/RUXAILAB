@@ -51,9 +51,6 @@
       <template v-slot:[`item.hasScreenRecord`]="{ item }">
         <v-simple-checkbox v-model="item.hasScreenRecord" disabled />
       </template>
-      <template v-slot:[`item.hasTimer`]="{ item }">
-        <v-simple-checkbox v-model="item.hasTimer" disabled />
-      </template>
       <template v-slot:[`item.hasPost`]="{ item }">
         <v-checkbox v-model="item.hasPost" disabled />
       </template>
@@ -108,7 +105,6 @@ export default {
       { text: 'Description', value: 'taskDescription' },
       { text: 'Tip', value: 'taskTip' },
       { text: 'Post Test', value: 'hasPost' },
-      { text: 'Timer', value: 'hasTimer' },
       { text: 'Screen Record', value: 'hasScreenRecord' },
       { text: 'Camera', value: 'hasCamRecord' },
       { text: 'Eye Tracker', value: 'hasEye' },
@@ -122,7 +118,6 @@ export default {
       taskTip: null,
       hasPost: null,
       taskType: null,
-      hasTimer: false,
       hasAudioRecord: false,
       hasScreenRecord: false,
       hasCamRecord: false,
@@ -166,7 +161,6 @@ export default {
         taskTip: null,
         hasPost: false,
         taskType: null,
-        hasTimer: false,
         hasAudioRecord: false,
         hasScreenRecord: false,
         hasCamRecord: false,
