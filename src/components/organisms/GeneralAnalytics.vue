@@ -49,6 +49,21 @@
             </div>
           </v-card>
         </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Task Taking the Longest on Average
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span>
+                {{ findLongestTask().taskName }} with the longest average of
+                <span style="color: red;">{{
+                  findLongestTask().averageTime
+                }}</span>
+              </span>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
     </div>
   </div>
@@ -126,6 +141,27 @@ export default {
       var remainingSeconds = seconds % 60
 
       return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
+    },
+    findLongestTask() {
+      if (!this.taskAnswers.length) return null
+
+      let longestTask = null
+      let longestTime = 0
+
+      this.taskAnswers.forEach((answer) => {
+        const taskTime = answer.tasks[this.taskSelect].taskTime
+
+        if (taskTime > longestTime) {
+          longestTime = taskTime
+          longestTask = this.testStructure.userTasks[this.taskSelect].taskName
+        }
+      })
+      console.log(longestTask)
+      console.log(this.formatTime(longestTime))
+      return {
+        taskName: longestTask,
+        averageTime: this.formatTime(longestTime),
+      }
     },
     goToCoops() {
       this.$emit('goToCoops')
