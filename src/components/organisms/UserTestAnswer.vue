@@ -7,14 +7,22 @@
     <v-row v-else-if="hasAnswers" justify="center" class="ma-0 mt-4">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
-        <v-tabs slot="top" v-model="tab" background-color="transparent" color="#FCA326" class="ml-4">
-          <v-tab @click="tab = 0">
-            Analytics
-          </v-tab>
+        <v-tabs
+          slot="top"
+          v-model="tab"
+          background-color="transparent"
+          color="#FCA326"
+          class="ml-4"
+        >
+          <v-tab @click="tab = 0"> General Analytics </v-tab>
+          <v-tab @click="tab = 1"> Individual Analytics </v-tab>
         </v-tabs>
 
         <div slot="content" class="ma-0 pa-0">
-          <AnalyticsView v-if="tab === 0" />
+          <GeneralAnalytics v-if="tab === 0" />
+        </div>
+        <div slot="content" class="ma-0 pa-0">
+          <AnalyticsView v-if="tab === 1" />
         </div>
       </ShowInfo>
     </v-row>
@@ -28,6 +36,7 @@
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
+import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -36,6 +45,7 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
+    GeneralAnalytics
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
