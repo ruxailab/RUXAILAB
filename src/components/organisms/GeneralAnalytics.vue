@@ -37,6 +37,45 @@
 
       <!-- Analysis Geral -->
       <v-row class="ma-0 pa-0 mt-4">
+        <v-col cols="8">
+          <v-card height="400" class="cards">
+            <v-col cols="6">
+                <v-row
+                  align-content="center"
+                  justify="center"
+                >
+                  <span class="conclusionTitle">Conclusion percentage</span>
+                  <span class="conclusionPercentage mx-auto mb-1"
+                    >{{ getConclusionAverage() }}%</span
+                  >
+                  <br>
+                  <v-col cols="8" class="mx-auto">
+                    <v-progress-linear
+                      rounded
+                      height="6"
+                      color="orange"
+                      :value="getConclusionAverage()"
+                    ></v-progress-linear>
+                  </v-col>
+                    <span class="conclusionTitle">Tests in progress</span>
+                    <span class="conclusionPercentage mx-auto">{{
+                      getTestsInProgress().totalInProgress
+                    }}</span>
+                </v-row>
+            </v-col>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-card height="190" class="mb-5 cards"> </v-card>
+          <v-card height="190" class="cards"> </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-card height="190" class="mb-5 cards"> </v-card>
+          <v-card height="190" class="cards"> </v-card>
+        </v-col>
+        <v-col cols="8">
+          <v-card height="400" class="mb-5 cards"> </v-card>
+        </v-col>
         <v-col cols="12">
           <span class="font-weight-bold text-h6" style="color: #252525">
             Average Time per Task
@@ -349,6 +388,31 @@ export default {
 </script>
 
 <style scoped>
+.cards {
+  border-radius: 20px;
+  box-shadow: 0px 0px 8.2px 0px rgba(0, 0, 0, 0.25);
+}
+
+.conclusionTitle {
+  margin-top: 50px;
+  color: #414d55;
+  text-align: center;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.conclusionPercentage {
+  color: #414d55;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: semi-bold;
+  line-height: normal;
+}
+
 .list-scroll {
   height: 508px;
   overflow: auto;
