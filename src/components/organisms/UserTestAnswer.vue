@@ -18,7 +18,7 @@
           <v-tab @click="tab = 1"> Individual Analytics </v-tab>
         </v-tabs>
 
-        <div slot="content" class="ma-0 pa-0">
+        <div slot="content" style="background-color: #E8EAF2;" class="ma-0 pa-0">
           <GeneralAnalytics v-if="tab === 0" />
         </div>
         <div slot="content" class="ma-0 pa-0">
@@ -45,7 +45,7 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
-    GeneralAnalytics
+    GeneralAnalytics,
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
