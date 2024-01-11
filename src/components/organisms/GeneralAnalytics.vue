@@ -64,6 +64,69 @@
             </div>
           </v-card>
         </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Conclusion average
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span> {{ getConclusionAverage() }}% </span>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Total in progress
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span> {{ getTestsInProgress().totalInProgress }}</span>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Max
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span> {{ maxProgressPerTask() }}</span>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Min
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span> {{ minProgressPerTask() }}</span>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Total Answers
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span> {{ getTotalAnswers() }}</span>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <span class="font-weight-bold text-h6" style="color: #252525">
+            Latest Response
+          </span>
+          <v-card outlined rounded="6">
+            <div class="ma-6">
+              <span>
+                {{ getLatestResponse().cooperatorEmail }} Last Updated:
+                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span
+              >
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
     </div>
   </div>
@@ -111,7 +174,6 @@ export default {
     loading() {
       return !Object.values(this.answers).length
     },
-    // Computed property para calcular a média do tempo
     averageTimePerTask() {
       if (!this.taskAnswers.length) return 0
 
@@ -145,23 +207,131 @@ export default {
     findLongestTask() {
       if (!this.taskAnswers.length) return null
 
-      let longestTask = null
-      let longestTime = 0
+      const taskAverages = {}
 
       this.taskAnswers.forEach((answer) => {
         const taskTime = answer.tasks[this.taskSelect].taskTime
 
-        if (taskTime > longestTime) {
-          longestTime = taskTime
-          longestTask = this.testStructure.userTasks[this.taskSelect].taskName
+        if (!taskAverages[this.taskSelect]) {
+          taskAverages[this.taskSelect] = {
+            totalTime: taskTime,
+            count: 1,
+          }
+        } else {
+          taskAverages[this.taskSelect].totalTime += taskTime
+          taskAverages[this.taskSelect].count += 1
         }
       })
-      console.log(longestTask)
-      console.log(this.formatTime(longestTime))
+
+      for (const task in taskAverages) {
+        const averageTime =
+          taskAverages[task].totalTime / taskAverages[task].count
+        taskAverages[task].averageTime = averageTime
+      }
+
+      let longestTask = null
+      let longestAverageTime = 0
+
+      for (const task in taskAverages) {
+        if (taskAverages[task].averageTime > longestAverageTime) {
+          longestAverageTime = taskAverages[task].averageTime
+          longestTask = task
+          longestTask = this.testStructure.userTasks[task].taskName
+        }
+      }
+
       return {
         taskName: longestTask,
-        averageTime: this.formatTime(longestTime),
+        averageTime: this.formatTime(longestAverageTime),
       }
+    },
+    getConclusionAverage() {
+      if (!this.taskAnswers.length) return null
+
+      let conclusion = null
+      let eachConclusion = 0
+      let totalAnswers = 0
+      this.taskAnswers.forEach((answer) => {
+        eachConclusion += answer.progress
+        totalAnswers++
+      })
+      conclusion = eachConclusion / totalAnswers
+      return conclusion
+    },
+    getTestsInProgress() {
+      if (!this.taskAnswers.length) return null
+
+      let totalProgress = 0
+      let totalCompleted = 0
+      this.taskAnswers.forEach((answer) => {
+        if (answer.submitted) {
+          totalCompleted++
+        } else {
+          totalProgress++
+        }
+      })
+      return {
+        totalInProgress: totalProgress,
+        totalCompleted: totalCompleted,
+      }
+    },
+    maxProgressPerTask() {
+      if (!this.taskAnswers.length) return 0
+
+      const progressArray = this.taskAnswers.map((answer) => {
+        return answer.progress
+      })
+
+      const maxProgress = Math.max(...progressArray)
+
+      return maxProgress
+    },
+    minProgressPerTask() {
+      if (!this.taskAnswers.length) return 0
+
+      const progressArray = this.taskAnswers.map((answer) => {
+        return answer.progress
+      })
+
+      const minProgress = Math.min(...progressArray)
+
+      return minProgress
+    },
+    getTotalAnswers() {
+      return this.taskAnswers.length
+    },
+    getLatestResponse() {
+      if (!this.taskAnswers.length) return null
+
+      let latestResponse = this.taskAnswers[0].userDocId
+      let lastUpdate = this.taskAnswers[0].lastUpdate
+
+      this.taskAnswers.forEach((answer) => {
+        if (answer.lastUpdate > this.taskAnswers[0].lastUpdate) {
+          console.log('entrou no for')
+          latestResponse = answer.userDocId
+          lastUpdate = answer.lastUpdate
+        }
+      })
+
+      return {
+        cooperatorEmail: this.getCooperatorEmail(latestResponse),
+        lastUpdate: lastUpdate,
+      }
+    },
+    getCooperatorEmail(userDocId) {
+      let cooperatorEmail = null
+      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
+        for (const element of this.test.cooperators) {
+          if (element.userDocId === userDocId) {
+            cooperatorEmail = element.email
+          }
+        }
+      }
+      return cooperatorEmail
+    },
+    getFormattedDate(date) {
+      return new Date(date).toLocaleString()
     },
     goToCoops() {
       this.$emit('goToCoops')
@@ -170,7 +340,6 @@ export default {
       this.dialogItem = item
       this.showDialog = true
     },
-    // Método para calcular a média inicial no momento da criação
     calculateAverageTime() {
       const averageTime = this.formatTime(this.averageTimePerTask)
       return `Average Time: ${averageTime}`
