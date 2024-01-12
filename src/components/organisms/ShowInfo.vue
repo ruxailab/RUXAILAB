@@ -23,7 +23,7 @@
 export default {
   props: {
     title: {
-      type:String,
+      type: String,
       default: '',
     },
   },
@@ -51,5 +51,8 @@ h1 {
 }
 .dataCard {
   background: #f5f7ff;
+}
+.v-sheet.v-card:not(.v-sheet--outlined) {
+  box-shadow: none !important;
 }
 </style>
