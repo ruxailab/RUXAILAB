@@ -158,7 +158,7 @@
                 style="text-align: start; min-width: 210px"
                 ><v-icon size="20" class="mr-1 mb-2" color="green">
                   mdi-chevron-double-up</v-icon
-                ><strong>+4</strong> answers/day</span
+                ><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span
               >
             </v-row>
           </v-card>
@@ -193,11 +193,17 @@
         <v-col cols="8">
           <v-card height="400" class="mt-3 cards">
             <v-row>
-            <span class="bottomCardsTitle ml-10 mt-6 mb-5" style="min-width:500px"
+              <span
+                class="bottomCardsTitle ml-10 mt-6 mb-5"
+                style="min-width:500px"
                 >Answers Timeline</span
               >
             </v-row>
-                      <DateChart class="ml-6" style="max-height:300px; max-width:680px;"></DateChart>
+            <DateChart
+              :taskAnswers="taskAnswers"
+              class="ml-6"
+              style="max-height:300px; max-width:680px;"
+            ></DateChart>
           </v-card>
         </v-col>
       </v-row>
@@ -209,7 +215,7 @@
 import DateChart from '../atoms/DateChart.vue'
 export default {
   components: {
-    DateChart
+    DateChart,
   },
   data: () => ({
     showDialog: false,
@@ -400,6 +406,23 @@ export default {
         cooperatorEmail: this.getCooperatorEmail(latestResponse),
         lastUpdate: lastUpdate,
       }
+    },
+    getTasksTodayCount() {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Zerar as horas, minutos, segundos e milissegundos
+
+      let tasksToday = 0
+
+      this.taskAnswers.forEach((answer) => {
+        const answerDate = new Date(answer.lastUpdate)
+        answerDate.setHours(0, 0, 0, 0)
+
+        if (answerDate.getTime() === today.getTime()) {
+          tasksToday++
+        }
+      })
+
+      return tasksToday
     },
     getCooperatorEmail(userDocId) {
       let cooperatorEmail = null
