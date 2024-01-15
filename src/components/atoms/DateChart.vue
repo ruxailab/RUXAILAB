@@ -4,44 +4,94 @@ import { Line, mixins } from 'vue-chartjs';
 export default {
   extends: Line,
   mixins: [mixins.reactiveData],
+  props: {
+    taskAnswers: Array,
+  },
   data() {
     return {
       chartData: {
-        labels: ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"],
-        datasets: [{
-          label: 'Valores ao longo do tempo',
-          data: [10, 20, 15, 25, 18],
-          borderColor: 'orange',
-          borderWidth: 1,
-          fill: false,
-        }],
+        labels: [],
+        datasets: [
+          {
+            label: 'Answers',
+            data: [],
+            borderColor: 'orange',
+            borderWidth: 1,
+            fill: true,
+          },
+        ],
       },
       chartOptions: {
         scales: {
-          x: {
-            type: 'time',
-            time: {
-              unit: 'day',
+          xAxes: [
+            {
+              type: 'time',
+              time: {
+                unit: 'week',
+                displayFormats: {
+                  week: 'DD/MM', 
+                },
+              },
+              title: {
+                display: true,
+                text: 'Data',
+              },
             },
-            title: {
-              display: true,
-              text: 'Datas',
+          ],
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
             },
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Valores',
-            },
-          },
+          ],
         },
-        maintainAspectRatio: false, // Permite ajustar o tamanho do gráfico manualmente
         responsive: true,
+        maintainAspectRatio: false,
       },
     };
   },
   mounted() {
+    this.processDataForChart();
     this.renderChart(this.chartData, this.chartOptions);
+  },
+  methods: {
+    processDataForChart() {
+      const currentDate = new Date();
+      const MonthsAgo = new Date(currentDate);
+      MonthsAgo.setMonth(currentDate.getMonth() - 2);
+
+      const validAnswers = this.taskAnswers.filter(answer => answer.lastUpdate);
+      const filteredAnswers = validAnswers.filter(answer => new Date(answer.lastUpdate) >= MonthsAgo);
+      filteredAnswers.sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate));
+
+      const testsPerDay = {};
+      let currentDateIterator = new Date(MonthsAgo);
+
+      // Inicializar o objeto testsPerDay com zero para todos os dias no período
+      while (currentDateIterator <= currentDate) {
+        const dateKey = currentDateIterator.toISOString().split('T')[0];
+        testsPerDay[dateKey] = 0;
+        currentDateIterator.setDate(currentDateIterator.getDate() + 1);
+      }
+
+      // Preencher testsPerDay com os dados reais
+      filteredAnswers.forEach(answer => {
+        const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0];
+        testsPerDay[dateKey]++;
+      });
+
+      this.chartData.labels = Object.keys(testsPerDay);
+      this.chartData.datasets[0].data = Object.values(testsPerDay);
+
+      // Calcular o número máximo de testes e adicionar uma folga
+      const maxTests = Math.max(...this.chartData.datasets[0].data);
+      const suggestedMax = maxTests + 1;
+
+      // Atualizar configurações do eixo y
+      this.chartOptions.scales.yAxes[0].ticks.suggestedMax = suggestedMax;
+      
+    },
   },
 };
 </script>
