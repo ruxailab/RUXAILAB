@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn
         color="green"
-        class="ml-5 mb-2 mr-auto white--text"
+        class="ml-5 mr-auto white--text"
         variant="tonal"
         v-on="on"
       >
