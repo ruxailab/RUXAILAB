@@ -371,7 +371,7 @@
 
         <ShowInfo
           v-if="index === 0 && taskIndex === 0"
-         :title="$t('UserTestView.titles.preTestConsent')"
+          :title="$t('UserTestView.titles.preTestConsent')"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-row class="fill-height" align="center" justify="center">
@@ -453,22 +453,21 @@
                 </v-radio-group>
               </v-col>
             </v-row>
-            <v-col cols="12">
-              <v-row justify="center">
-                <v-btn
-                  block
-                  color="orange lighten-1"
-                  class="ma-5"
-                  :disabled="currentUserTestAnswer.preTestCompleted"
-                  @click="
-                    completeStep(taskIndex, 'preTest'),
-                      (index = 1),
-                      (taskIndex = 0)
-                  "
-                  >{{ $t('UserTestView.buttons.done') }}
-                </v-btn>
-              </v-row>
-            </v-col>
+
+            <v-row justify="center">
+              <v-btn
+                block
+                color="orange lighten-1"
+                class="ma-3"
+                :disabled="currentUserTestAnswer.preTestCompleted"
+                @click="
+                  completeStep(taskIndex, 'preTest'),
+                    (index = 1),
+                    (taskIndex = 0)
+                "
+                >{{ $t('UserTestView.buttons.done') }}
+              </v-btn>
+            </v-row>
           </div>
         </ShowInfo>
         <!-- Tasks -->
@@ -480,7 +479,7 @@
             <v-divider class="mb-5" />
             <v-container>
               <v-row class="fill-height" align="center" justify="center">
-                <v-col cols="12">
+                <v-col cols="12" class="mb-0 pb-0">
                   <v-row justify="center">
                     <h1>
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
@@ -542,13 +541,9 @@
                     />
                   </v-row>
                   <v-spacer />
-                  <v-row
-                    justify="center"
-                    v-if="
-                      test.testStructure.userTasks[taskIndex].hasTimer === true
-                    "
-                  >
+                  <v-row justify="center">
                     <Timer
+                      ref="timerComponent"
                       :taskIndex="taskIndex"
                       @timerStopped="handleTimerStopped"
                     />
@@ -556,6 +551,7 @@
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
+                    class="mb-0 pb-0"
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
                         'textArea'
@@ -573,7 +569,7 @@
                         label="answer"
                       />
                     </v-col>
-                    <v-col>
+                    <v-col class="mb-0 pb-0">
                       <v-textarea
                         :id="
                           'id-' +
@@ -622,7 +618,7 @@
                 <v-btn
                   block
                   color="orange lighten-1"
-                  @click="completeStep(taskIndex, 'tasks')"
+                  @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
                 >
                   {{ $t('UserTestView.buttons.done') }}
                 </v-btn>
@@ -637,7 +633,10 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 class="mt-6">{{ test.testTitle }} - {{ $t('UserTestTable.titles.postTest') }}</h1>
+                  <h1 class="mt-6">
+                    {{ test.testTitle }} -
+                    {{ $t('UserTestTable.titles.postTest') }}
+                  </h1>
                 </v-row>
               </v-col>
             </v-row>
@@ -847,6 +846,11 @@ export default {
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
+    },
+    callTimerSave() {
+      const timerComponent = this.$refs.timerComponent
+
+      timerComponent.stopTimer()
     },
     handleTimerStopped(elapsedTime, taskIndex) {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
