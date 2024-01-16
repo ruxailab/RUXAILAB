@@ -41,10 +41,6 @@
           dense
         />
         <v-row align="center">
-          {{ $t('switches.timer') }}
-          <v-switch v-model="task.hasTimer" class="ml-2" />
-        </v-row>
-        <v-row align="center">
           {{ $t('switches.screenRecord') }}
           <v-switch v-model="task.hasScreenRecord" class="ml-2" />
         </v-row>
