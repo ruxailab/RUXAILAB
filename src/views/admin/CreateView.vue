@@ -1,15 +1,16 @@
 <template>
   <div>
-    <h2
-      style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
+    <span
+      class="Title"
+      style="display: flex; justify-content: center; margin: 50px 0px"
     >
       {{ $t('pages.createTest.title') }}
-    </h2>
+    </span>
 
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card class="card" flat :ripple="false" @click="dialog = true">
+          <v-card hover class="card" :ripple="false" @click="dialog = true">
             <v-row align="center">
               <v-col cols="12" md="5">
                 <v-img
@@ -31,8 +32,8 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-card
+            hover
             class="card"
-            flat
             :ripple="false"
             @click="pushToFromTemplate()"
           >
@@ -137,7 +138,7 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      console.log(test);
+      console.log(test)
 
       this.sendManager(testId)
     },
@@ -164,7 +165,19 @@ export default {
   align-items: center;
   color: #000000;
 }
+.Title {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  color: #f99726;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
 .card {
+  border-radius: 20px;
   border: 1px solid rgb(201, 201, 201);
   padding: 30px;
   height: 250px;
