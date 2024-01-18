@@ -10,7 +10,7 @@
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card hover class="card" :ripple="false" @click="dialog = true">
+          <v-card hover class="card" :ripple="false" @click="$router.push('/createBlank')">
             <v-row align="center">
               <v-col cols="12" md="5">
                 <v-img
@@ -58,39 +58,14 @@
         </v-col>
       </v-row>
     </v-row>
-
-    <v-dialog v-model="dialog" max-width="80%">
-      <v-card color="#e8eaf2">
-        <v-container>
-          <p class="dialog-title ma-2 pa-2">
-            {{ $t('pages.createTest.create') }}
-          </p>
-          <v-divider />
-          <FormTestDescription ref="form" :test="test" :lock="false" />
-          <v-card-actions class="ma-0 pa-2">
-            <v-spacer />
-            <v-btn color="black" text @click="dialog = false">
-              {{ $t('buttons.cancel') }}
-            </v-btn>
-            <v-btn color="#F9A826" @click="validate()">
-              {{ $t('buttons.create') }}
-            </v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import FormTestDescription from '@/components/atoms/FormTestDescription'
 import TestAdmin from '@/models/TestAdmin'
 import Test from '@/models/Test'
 
 export default {
-  components: {
-    FormTestDescription,
-  },
   data: () => ({
     dialog: false,
     object: {},

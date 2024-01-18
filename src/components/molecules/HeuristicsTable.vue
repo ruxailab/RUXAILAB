@@ -181,8 +181,9 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
-                  </template>'
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
+                    > </template
+                  >'
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -192,9 +193,10 @@
                     <center class="mt-16" style="color: #a7a7a7">
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
-                      }}</strong><br>
+                      }}</strong
+                      ><br />
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
-                      <br>
+                      <br />
                       <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>
@@ -572,8 +574,12 @@ export default {
     dialogHeuris: false,
     dialogQuestion: false,
     editIndex: -1,
-    nameRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired')],
-    questionRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired')],
+    nameRequired: [
+      (v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired'),
+    ],
+    questionRequired: [
+      (v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired'),
+    ],
     hoveredItem: null,
   }),
   computed: {
@@ -639,9 +645,7 @@ export default {
       this.updateFilteredHeuristics()
     },
     itemSelect() {
-      if (this.itemSelect !== null)
-      this.questionSelect = null
-
+      if (this.itemSelect !== null) this.questionSelect = null
       else this.itemSelect = null
     },
 
@@ -697,9 +701,9 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-     emitChange() {
-      this.$emit("change");
-      this.$forceUpdate();
+    emitChange() {
+      this.$emit('change')
+      this.$forceUpdate()
     },
     moveItemUp(index) {
       if (index > 0) {
@@ -794,7 +798,7 @@ export default {
           ].questions.length
         }
       } else {
-        alert('Sorry, but you can\'t delete all heuristics questions')
+        alert("Sorry, but you can't delete all heuristics questions")
       }
 
       this.menuQuestions = false
@@ -855,7 +859,7 @@ export default {
 
         this.$refs.formHeuris.resetValidation()
 
-        this.$emit("change");
+        this.$emit('change')
       }
     },
     closeDialog(dialogName) {
@@ -883,7 +887,7 @@ export default {
         ].questions.length
 
         this.$refs.formQuestion.resetValidation()
-        this.$emit("change");
+        this.$emit('change')
       }
     },
     validateEdit() {
