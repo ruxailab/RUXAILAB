@@ -8,6 +8,7 @@ import SettingsView from '@/views/admin/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
 import CreateView from '@/views/admin/CreateView.vue'
+import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 
@@ -88,6 +89,12 @@ export default [
     name: 'Create View',
     meta: { authorize: [1] },
     component: CreateView,
+  },
+  {
+    path: '/createBlank',
+    name: 'Create Blank View',
+    meta: { authorize: [1] },
+    component: CreateBlankView,
   },
   {
     path: '/fromtemplate',
