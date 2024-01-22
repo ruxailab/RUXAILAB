@@ -1,5 +1,5 @@
-<template style="background: #F9F5F0;">
-  <div>
+<template>
+  <div style="height: 93vh; background-color: #f9f5f0;">
     <v-col cols="12">
       <v-row justify="center">
         <span class="Titles ma-16"
@@ -16,7 +16,7 @@
             color="white"
             class="cards ml-5 mr-5 group"
             height="350"
-            @click="test.testType = 'HEURISTICS'"
+            @click=";(test.testType = 'HEURISTICS'), (dialog = true)"
           >
             <v-row>
               <v-sheet
@@ -68,7 +68,13 @@
         </v-col>
         <v-col cols="1"></v-col>
         <v-col class="" cols="4">
-          <v-card hover color="white" class="cards ml-5 mr-5" height="350" @click="test.testType = 'USER'">
+          <v-card
+            hover
+            color="white"
+            class="cards ml-5 mr-5"
+            height="350"
+            @click=";(test.testType = 'User'), (dialog = true)"
+          >
             <v-row>
               <v-sheet
                 class="ml-8 mt-6 mb-10 insideCards"
@@ -122,63 +128,251 @@
         <v-col cols="1"></v-col>
       </v-row>
     </v-col>
-    <v-dialog v-model="dialog" fullscreen>
-      <v-card color="#e8eaf2">
-        <v-container>
-          <p class="dialog-title ma-2 pa-2">
-            {{ $t('pages.createTest.create') }}
-          </p>
-          <v-divider />
-          <FormTestDescription ref="form" :test="test" :lock="false" />
-          <v-card-actions class="ma-0 pa-2">
-            <v-spacer />
-            <v-btn color="black" text @click="dialog = false">
-              {{ $t('buttons.cancel') }}
-            </v-btn>
-            <v-btn color="#F9A826" @click="validate()">
-              {{ $t('buttons.create') }}
-            </v-btn>
-          </v-card-actions>
-        </v-container>
+    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
+      <v-card color="#f9f5f0">
+        <v-row>
+          <v-btn
+            icon
+            dark
+            fab
+            color="red"
+            fixed
+            right
+            class="mt-6 mr-2"
+            @click="dialog = false"
+          >
+            <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
+          </v-btn>
+          <v-col cols="1"></v-col>
+          <v-col cols="10" class="mt-16 ml-11">
+            <span class="Titles ml-5">Test Creation</span>
+            <br />
+            <span class="cardSubtitle ml-5">Add a name to your test!</span>
+          </v-col>
+          <v-col cols="1"></v-col>
+          <v-col cols="5" class="ml-10">
+            <v-card
+              color="white"
+              style="border-radius: 20px !important;"
+              height="480"
+            >
+              <v-col cols="11">
+                <div class="mt-4">
+                  <span class="cardInternTitles ml-6">Test Name</span>
+                </div>
+                <v-text-field
+                  v-model="test.testTitle"
+                  class="ml-6 mt-3"
+                  label="Test Name"
+                  outlined
+                  color="orange"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                ></v-text-field>
+                <span class="cardInternTitles ml-6">Test Description</span>
+                <v-textarea
+                  outlined
+                  v-model="test.testDescription"
+                  color="orange"
+                  class="ml-6 mt-3"
+                  label="Test Description"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                ></v-textarea>
+                <v-row>
+                  <v-checkbox
+                    v-model="test.isPublic"
+                    class="ml-10 mt-8"
+                    color="orange"
+                    label="Turn this test public to all users"
+                  >
+                  </v-checkbox>
+                  <v-btn
+                    dark
+                    fab
+                    large
+                    color="orange"
+                    class="ml-auto mt-4 mr-2"
+                    @click="validate()"
+                  >
+                    <v-icon x-large>mdi-arrow-right</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-col>
+            </v-card>
+          </v-col>
+          <v-col cols="5">
+            <img
+              height="500"
+              draggable="false"
+              src="../../../public/createSVG.svg"
+              alt="Test Creation image"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+
+    <!-- DIALOG USER -->
+
+    <v-dialog
+      v-model="dialogUser"
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <v-card color="#f9f5f0">
+        <v-btn
+          icon
+          dark
+          fab
+          color="red"
+          fixed
+          right
+          class="mt-6 mr-2"
+          @click="dialogUser = false"
+        >
+          <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
+        </v-btn>
+        <v-col cols="12">
+          <v-row justify="center">
+            <span class="Titles mt-16 mb-8"
+              >What kind of test are you looking to start?</span
+            >
+          </v-row>
+        </v-col>
+        <v-col cols="12" class="mt-6">
+          <v-row justify="center">
+            <v-col cols="1"></v-col>
+            <v-col cols="4">
+              <v-card
+                hover
+                color="white"
+                class="cards ml-5 mr-5 group"
+                height="520"
+                @click="validate()"
+              >
+                <v-row>
+                  <div class="mt-6">
+                    <span class="Titles    ml-10">SelfTest</span>
+                    <br />
+                    <span class="cardSubtitle2 ml-10"> UNMODERATED </span>
+                  </div>
+                </v-row>
+                <img
+                  style="margin-left: 80px;"
+                  class="mt-5 mb-2"
+                  height="230"
+                  draggable="false"
+                  src="../../../public/SelfTest.svg"
+                  alt="Test Creation image"
+                />
+                <v-row class="mt-1">
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3">Answer on free time</span>
+                </v-row>
+                <v-row>
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3"
+                    >Enhanced answer analysis</span
+                  >
+                </v-row>
+                <v-row>
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3">Task Customization</span>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col cols="1"></v-col>
+            <v-col class="" cols="4">
+              <v-card
+                hover
+                color="white"
+                class="cards ml-5 mr-5"
+                height="520"
+                @click=";(test.testType = 'User'), (dialog = true)"
+              >
+                <v-row>
+                  <div class="mt-6">
+                    <span class="Titles ml-10">LiveTest</span>
+                    <br />
+                    <span class="cardSubtitle2 ml-10"> MODERATED </span>
+                  </div>
+                </v-row>
+                <img
+                  style="margin-left: 80px;"
+                  class="mt-5 mb-2"
+                  height="230"
+                  draggable="false"
+                  src="../../../public/LiveTest.svg"
+                  alt="Test Creation image"
+                />
+                <v-row class="mt-1">
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3"
+                    >Webcam, audio & screen record</span
+                  >
+                </v-row>
+                <v-row>
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3"
+                    >Enhanced answer analysis</span
+                  >
+                </v-row>
+                <v-row>
+                  <v-sheet
+                    class="ml-13 mb-8 circle"
+                    height="20"
+                    width="20"
+                  ></v-sheet>
+                  <span class="cardInternTitles ml-3">Moderated live test</span>
+                </v-row>
+              </v-card>
+            </v-col>
+            <v-col cols="1"></v-col>
+          </v-row>
+        </v-col>
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script>
-import FormTestDescription from '@/components/atoms/FormTestDescription.vue'
+import TestAdmin from '@/models/TestAdmin'
+import Test from '@/models/Test'
+
 export default {
-  components: {
-    FormTestDescription,
-  },
   data: () => ({
     dialog: false,
+    dialogUser: false,
     object: {},
     test: {
-      title: '',
-      description: '',
-      type: '',
+      testTitle: '',
+      testDescription: '',
+      testType: '',
     },
     testID: null,
   }),
   computed: {
     user() {
       return this.$store.getters.user
-    },
-  },
-  watch: {
-    dialog() {
-      this.test = {
-        title: '',
-        description: '',
-        type: '',
-      }
-      this.object = {}
-
-      if (!this.dialog) {
-        this.$refs.form.resetVal()
-        this.dialog = false
-      }
     },
   },
   methods: {
@@ -198,7 +392,7 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      console.log(test);
+      console.log(test)
 
       this.sendManager(testId)
     },
@@ -206,8 +400,15 @@ export default {
       this.$router.push(`/managerview/${id}`)
     },
     validate() {
-      if (this.$refs.form.valida()) {
-        this.submit()
+      if (this.test.testTitle.length > 0) {
+        if (this.test.testType == 'User' && this.dialogUser == false) {
+          this.dialog = false
+          this.dialogUser = true
+        } else if (this.test.testType == 'User' && this.dialogUser == true) {
+          this.submit()
+        }
+      } else {
+        alert('Please enter a title')
       }
     },
   },
@@ -247,6 +448,14 @@ export default {
   font-weight: 600;
   line-height: normal;
 }
+.cardSubtitle2 {
+  color: rgba(139, 149, 156, 0.64);
+  font-family: 'Poppins', Helvetica;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
 .cardInternTitles {
   max-width: 270px;
   font-family: 'Poppins', Helvetica;
@@ -267,7 +476,7 @@ export default {
   border-radius: 14px;
   background: linear-gradient(
     90deg,
-    rgba(255, 81, 47, 0.3) 1%,
+    rgba(236, 62, 27, 0.404) 1%,
     rgba(240, 152, 25, 0.3) 97.63%
   );
   z-index: 10;
@@ -280,7 +489,11 @@ export default {
     rgba(240, 150, 25, 0.432) 97.63%
   );
 }
-.v-main {
-  background: #f9f5f0;
+</style>
+
+<style scoped>
+.v-text-field--outlined >>> fieldset {
+  border-radius: 8px;
+  border: 1px solid #ffceb2;
 }
 </style>
