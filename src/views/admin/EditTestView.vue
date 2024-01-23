@@ -96,9 +96,9 @@
           @change="change = true"
         />
       </v-col>
-      <!-- User tests -->
+      <!-- Unmoderated User tests -->
       <EditUserTest
-        v-if="test.testType === 'User'"
+        v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
         slot="top"
         type="tabs"
         @tabClicked="setIndex"
@@ -106,7 +106,7 @@
       />
 
       <EditUserTest
-        v-if="test.testType === 'User'"
+        v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
         slot="content"
         :object="object"
         :index="index"
@@ -114,7 +114,24 @@
         @change="change = true"
         @valForm="validate"
       />
-      <!-- </ShowInfo> -->
+      <!-- Moderated User tests -->
+      <EditModeratedUserTest
+        v-if="test.testType === 'User' && test.userTestType === 'moderated'"
+        slot="top"
+        type="tabs"
+        @tabClicked="setIndex"
+        @change="change = true"
+      />
+
+      <EditModeratedUserTest
+        v-if="test.testType === 'User' && test.userTestType === 'moderated'"
+        slot="content"
+        :object="object"
+        :index="index"
+        type="content"
+        @change="change = true"
+        @valForm="validate"
+      />
     </v-row>
   </v-container>
 </template>
@@ -124,8 +141,8 @@ import Snackbar from '@/components/atoms/Snackbar'
 //import ShowInfo from "@/components/organisms/ShowInfo";
 //import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest'
-
 import EditUserTest from '@/components/organisms/EditUserTest'
+import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest'
 
 export default {
   components: {
@@ -134,6 +151,7 @@ export default {
     // IntroEdit,
     EditHeuristicsTest,
     EditUserTest,
+    EditModeratedUserTest,
   },
   // eslint-disable-next-line vue/require-prop-types
   props: ['id'],
@@ -294,12 +312,12 @@ export default {
       this.index = ind
     },
   },
-beforeRouteLeave(to, from, next) {
+  beforeRouteLeave(to, from, next) {
     if (this.change) {
-      this.dialog = true;
-      this.go = to.path;
+      this.dialog = true
+      this.go = to.path
     } else {
-      next();
+      next()
     }
   },
 }
