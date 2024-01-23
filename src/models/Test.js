@@ -24,6 +24,8 @@ export default class Test {
     numberColaborators,
     isPublic,
     finalReport,
+    userTestType,
+    userTestStatus,
   } = {}) {
     /**
      * Defines the test id.
@@ -129,6 +131,20 @@ export default class Test {
      * @type {string}
      */
     this.finalReport = finalReport ?? null
+
+    /**
+     * Allow to say if tests is moderated or not.
+     *
+     * @type {string}
+     */
+    this.userTestType = userTestType ?? null;
+
+    /**
+     * Allow to show if user and moderated is connected
+     *
+     * @type {Object}
+     */
+    this.userTestStatus = userTestStatus ?? {};
   }
 
   /**
@@ -167,6 +183,8 @@ export default class Test {
       numberColaborators: this.numberColaborators,
       isPublic: this.isPublic,
       finalReport: this.finalReport,
+      userTestType: this.userTestType,
+      userTestStatus: this.userTestStatus,
     }
   }
 }
