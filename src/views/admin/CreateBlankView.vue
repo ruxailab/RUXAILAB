@@ -247,7 +247,7 @@
                 color="white"
                 class="cards ml-5 mr-5 group"
                 height="520"
-                @click="validate()"
+                @click=";(test.userTestType = 'unmoderated'), validate()"
               >
                 <v-row>
                   <div class="mt-6">
@@ -299,7 +299,7 @@
                 color="white"
                 class="cards ml-5 mr-5"
                 height="520"
-                @click=";(test.testType = 'User'), (dialog = true)"
+                @click="chooseUserModerated()"
               >
                 <v-row>
                   <div class="mt-6">
@@ -367,6 +367,8 @@ export default {
       testTitle: '',
       testDescription: '',
       testType: '',
+      userTestType: '',
+      userTestStatus: {},
     },
     testID: null,
   }),
@@ -378,6 +380,14 @@ export default {
   methods: {
     pushToFromTemplate() {
       this.$router.push('/fromtemplate')
+    },
+    chooseUserModerated() {
+      this.test.userTestType = 'moderated'
+      this.test.userTestStatus = {
+        user: false,
+        moderator: false,
+      }
+      this.validate()
     },
     async submit() {
       const test = new Test({
@@ -415,7 +425,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .Titles {
   font-family: 'Poppins', Helvetica;
   font-size: 38px;
@@ -492,6 +502,7 @@ export default {
 </style>
 
 <style scoped>
+
 .v-text-field--outlined >>> fieldset {
   border-radius: 8px;
   border: 1px solid #ffceb2;

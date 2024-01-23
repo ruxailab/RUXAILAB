@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div style="height: 93vh;background-color: #f9f5f0;">
+    <v-col cols="12"></v-col>
     <span
-      class="Title"
-      style="display: flex; justify-content: center; margin: 50px 0px"
+      class="Title mb-14 mt-8"
+      style="display: flex; justify-content: center;"
     >
       {{ $t('pages.createTest.title') }}
     </span>
@@ -141,19 +142,19 @@ export default {
   color: #000000;
 }
 .Title {
-  margin-top: 60px;
-  margin-bottom: 60px;
-  color: #f99726;
-  font-family: 'Inter', sans-serif;
-  text-align: center;
-  font-size: 32px;
+  font-family: 'Poppins', Helvetica;
+  font-size: 38px;
   font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  text-align: center;
+  font-weight: 600;
+  line-height: initial;
+  background: #f99726;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .card {
   border-radius: 20px;
-  border: 1px solid rgb(201, 201, 201);
   padding: 30px;
   height: 250px;
 }
