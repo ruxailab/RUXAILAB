@@ -18,13 +18,8 @@
 
   <v-col v-else-if="type == 'content'" cols="12">
     <v-row>
-      <v-col cols="8">
-        <v-card
-          v-if="index == 0"
-          style="background: #f5f7ff"
-          flat
-          class="cards"
-        >
+      <v-col cols="8" v-if="index == 0">
+        <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3"> Consent Form</span>
             <br />
@@ -42,13 +37,8 @@
           ></v-textarea>
         </v-card>
       </v-col>
-      <v-col cols="4" style="height: 19vh;">
-        <v-card
-          v-if="index == 0"
-          flat
-          style="background: #f5f7ff"
-          class="cards"
-        >
+      <v-col cols="4" class="pl-0" style="height: 19vh;" v-if="index == 0">
+        <v-card flat style="background: #f5f7ff" class="cards">
           <v-col cols="12" class="pb-0 pt-6 px-8">
             <span class="cardsTitle mt-4">Welcome message</span>
             <br />
@@ -88,13 +78,8 @@
           </v-col>
         </v-card>
       </v-col>
-      <v-col cols="8" class="pt-0">
-        <v-card
-          v-if="index == 0"
-          style="background: #f5f7ff"
-          flat
-          class="cards"
-        >
+      <v-col cols="8" class="pt-0" v-if="index == 0">
+        <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12">
             <span class="cardsTitle ml-3">Pre-Form</span>
             <br />
@@ -105,14 +90,85 @@
           </v-col>
         </v-card>
       </v-col>
+      <v-col cols="12" v-if="index == 1">
+        <v-card
+          v-for="(item, n) in tasksNumber"
+          :key="n"
+          style="background: #f5f7ff"
+          flat
+          class="cards mb-5"
+        >
+          <v-col cols="12" class="pb-0 px-5 pt-4">
+            <span class="cardsTitle ml-3">Task</span>
+            <br />
+            <span class="cardsSubtitle ml-3">Task Description</span>
+          </v-col>
+          <v-textarea
+            rows="3"
+            outlined
+            color="orange"
+            class="mx-6 mt-3"
+            placeholder="Write what you want to task..."
+          ></v-textarea>
+          <v-row justify="center">
+            <v-btn
+              fab
+              depressed
+              dark
+              color="rgb(249, 168, 38)"
+              style="margin-bottom: -30px; z-index: 3;"
+              ><v-icon size="35">mdi-plus</v-icon></v-btn
+            >
+          </v-row>
+        </v-card>
+      </v-col>
+      <v-col cols="12" v-if="index == 2">
+        <v-card
+          style="background: #f5f7ff; min-height: 300px;"
+          flat
+          class="cards"
+        >
+          <v-col cols="12" class="pb-0 px-5 pt-4">
+            <span class="cardsTitle ml-3">Post Form</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a post-questions you make to get participants data</span
+            >
+            <FormPostTest />
+          </v-col>
+        </v-card>
+      </v-col>
+      <v-col cols="12" v-if="index == 2" class="pt-0">
+        <v-card style="background: #f5f7ff" flat class="cards">
+          <v-col cols="12" class="pb-0 px-5 pt-4">
+            <span class="cardsTitle ml-3">Final message</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a Final message you leave to the participant on finish
+              test.</span
+            >
+          </v-col>
+          <v-textarea
+            rows="3"
+            outlined
+            color="orange"
+            class="mx-6 mt-3"
+            placeholder="Thank you for participating..."
+          ></v-textarea>
+        </v-card>
+      </v-col>
     </v-row>
   </v-col>
 </template>
 
 <script>
+import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 export default {
-  components: { UserVariables },
+  data: () => ({
+    tasksNumber: [1, 2, 3, 4],
+  }),
+  components: { UserVariables, FormPostTest },
   props: {
     type: {
       type: String,
