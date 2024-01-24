@@ -486,7 +486,6 @@ export default {
                 cooperator: this.user,
               })
               this.flagToken = false
-              this.$router.push({ path: `/testview/${this.test.id}` })
             }
             // User invited, but they don't have an account
             else {
