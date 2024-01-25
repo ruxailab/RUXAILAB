@@ -10,12 +10,16 @@
       <v-tab @click="tabClicked(2)">
         Import .csv
       </v-tab>
+      <v-tab @click="tabClicked(3)">
+        Weights
+      </v-tab>
     </v-tabs>
 
     <div>
       <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="emitChange()" />
       <OptionsTable v-if="index == 1" :options="object.options" @change="emitChange()" />
       <ImportCsvTable v-if="index == 2" :options="object.importCsv" @change="emitChange()" />
+      <WeightTable v-if="index == 3" :options="object.weight" @change="emitChange()" />
     </div>
   </div>
 </template>
@@ -24,12 +28,14 @@
 import Heuristic from '@/components/molecules/HeuristicsTable'
 import OptionsTable from '@/components/molecules/OptionsTable'
 import ImportCsvTable from '@/components/molecules/ImportCsvTable'
+import WeightTable from '@/components/molecules/WeightTable.vue'
 
 export default {
   components: {
     Heuristic,
     OptionsTable,
     ImportCsvTable,
+    WeightTable,
   },
   props: {
     type: {
@@ -55,7 +61,7 @@ export default {
       this.index = index
     },
     emitChange() {
-      this.$emit("change");
+      this.$emit('change')
     },
 
   },
