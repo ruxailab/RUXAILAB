@@ -3,7 +3,7 @@
     <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
     <div>
       <!-- Analysis Geral -->
-      <v-row class="ma-0 pa-0 mt-4">
+      <v-row class="ma-0 pa-0">
         <v-col cols="8">
           <v-card height="400" class="cards mt-3">
             <v-row>
