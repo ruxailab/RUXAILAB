@@ -321,10 +321,8 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
+                          :question="heuristics[itemSelect].questions[questionSelect]"
                           @change="emitChange"
-                          :question="
-                            heuristics[itemSelect].questions[questionSelect]
-                          "
                         />
                       </v-row>
                     </v-col>
@@ -534,6 +532,8 @@
         </v-row>
       </v-card>
     </v-col>
+    {{ this.$store.state.Tests.Test.testStructure[0].title }}
+    {{ heuristics.length }}
   </v-row>
 </template>
 
@@ -555,6 +555,7 @@ export default {
     questionSelect: null,
     itemEdit: null,
     newQuestion: null,
+    comparisonSelect: null,
     heuristicForm: null,
     search: '',
     searchBar: false,
@@ -565,7 +566,10 @@ export default {
         align: 'start',
         value: 'title',
       },
-      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
+      { text: 'Actions',
+        value: 'actions',
+        align: 'end',
+        sortable: false },
     ],
     dialog: false,
     dialogEdit: false,
@@ -585,7 +589,14 @@ export default {
         ? this.$store.state.Tests.Test.testStructure
         : []
     },
-
+    arrayComparision() {
+      const auxC = []
+      const arrayC = Array.from(this.heuristics[this.itemSelect].comparision)
+      arrayC.forEach((el) => {
+        auxC.push(Object.assign({}, { id: el.id, res: '', com: '' }))
+      })
+      return []
+    },
     arrayQuestions() {
       const aux = []
       const array = Array.from(this.heuristics[this.itemSelect].questions)
@@ -623,6 +634,7 @@ export default {
             {
               id: 0,
               title: '',
+              comparision: [],
               descriptions: [],
             },
           ],
@@ -677,6 +689,7 @@ export default {
             id: 0,
             title: '',
             descriptions: [],
+            comparison: [],
           },
         ],
       }
@@ -690,6 +703,7 @@ export default {
             id: 0,
             title: '',
             descriptions: [],
+            comparison: [],
           },
         ],
       }
@@ -698,8 +712,8 @@ export default {
   },
   methods: {
      emitChange() {
-      this.$emit("change");
-      this.$forceUpdate();
+      this.$emit('change')
+      this.$forceUpdate()
     },
     moveItemUp(index) {
       if (index > 0) {
@@ -855,7 +869,7 @@ export default {
 
         this.$refs.formHeuris.resetValidation()
 
-        this.$emit("change");
+        this.$emit('change')
       }
     },
     closeDialog(dialogName) {
@@ -883,7 +897,7 @@ export default {
         ].questions.length
 
         this.$refs.formQuestion.resetValidation()
-        this.$emit("change");
+        this.$emit('change')
       }
     },
     validateEdit() {
