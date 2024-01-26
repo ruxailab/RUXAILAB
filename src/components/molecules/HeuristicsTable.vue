@@ -589,14 +589,6 @@ export default {
         ? this.$store.state.Tests.Test.testStructure
         : []
     },
-    arrayComparision() {
-      const auxC = []
-      const arrayC = Array.from(this.heuristics[this.itemSelect].comparision)
-      arrayC.forEach((el) => {
-        auxC.push(Object.assign({}, { id: el.id, res: '', com: '' }))
-      })
-      return []
-    },
     arrayQuestions() {
       const aux = []
       const array = Array.from(this.heuristics[this.itemSelect].questions)
