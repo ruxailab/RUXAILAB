@@ -66,8 +66,8 @@ Follow these steps to set up the development environment and run the application
 
    - In the project dashboard, click on the settings button on the left side of the screen (gear icon).
   - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen. 
-<div>
-  <img src="public/FBexample.png" alt="FBexample" />
+<div align="center">
+  <img src="public/FBexample.png" alt="FBexample" height="450" />
 </div> 
 
 In the folder of your project, create a file with the name .env and put the following data:
