@@ -45,6 +45,7 @@
                       >
                         <td>
                           H {{ f + (tabs + 1) }}
+                          <!-- tooltips -->
                           <v-tooltip right>
                             <template v-slot:activator="{ on, attrs }">
                               <v-icon
@@ -60,6 +61,7 @@
                             <span>{{ heuristics[f].title }}</span>
                           </v-tooltip>
                         </td>
+                        <!-- radio-group -->
                         <td class="text-center d-flex justify-center">
                           <v-radio-group
                             v-model="group[tabs][tam]"
@@ -84,6 +86,7 @@
                     </tbody>
                   </template>
                 </v-simple-table>
+                <!-- save button -->
                 <v-row align="center" justify="space-around">
                   <v-btn
                     class="mt-6 mb-4"
@@ -92,7 +95,7 @@
                     color="#FCA326"
                     elevation="5"
                     type="submit"
-                    @click="atualizarDados()"
+                    @click="updateDatas()"
                   >
                     save
                   </v-btn>
@@ -111,7 +114,6 @@ export default {
   data() {
     return {
       tabs: 0,
-      peso: null,
       row: [],
       group: null,
     }
@@ -132,23 +134,20 @@ export default {
   beforeMount() {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
 
-    const meuMap = {}
+    const weightMap = {}
 
     if (this.testAll.testWeights) {
       this.group = this.testAll.testWeights
-       }
-    else {
+    } else {
       for (let i = 0; i < heuristicLength - 1; i++) {
-        meuMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
+        weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
-      this.group = meuMap
-      }
-
+      this.group = weightMap
+    }
   },
 
   methods: {
-    // Salva os dados localmente
-    atualizarDados() {
+    updateDatas() {
       this.testAll.testWeights = this.group
       this.$store.dispatch('updateTest', this.testAll)
     },
