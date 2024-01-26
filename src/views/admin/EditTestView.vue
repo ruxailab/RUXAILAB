@@ -41,7 +41,7 @@
           color="#F9A826"
           v-bind="attrs"
           style="z-index: 100"
-          :disabled="testAnswerDocLength > 0 ? true : false"
+:disabled="testAnswerDocLength > 0 ? true : false"
           :class="{
             disabledBtnBackground: testAnswerDocLength > 0,
             disabledBtn: testAnswerDocLength > 0,
@@ -145,14 +145,10 @@ export default {
     dialog: false,
     intro: false,
   }),
+  async created() {
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
+  },
   computed: {
-    testAnswerDocLength() {
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
-    },
     accessLevel() {
       // If user is superadmin
       if (this.user) {
@@ -186,9 +182,6 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || []
-    },
-    testAnswerDoc() {
-      return this.$store.getters.testAnswerDocument
     },
     totalQuestions() {
       let result = 0
@@ -294,12 +287,12 @@ export default {
       this.index = ind
     },
   },
-beforeRouteLeave(to, from, next) {
+  beforeRouteLeave(to, from, next) {
     if (this.change) {
-      this.dialog = true;
-      this.go = to.path;
+      this.dialog = true
+      this.go = to.path
     } else {
-      next();
+      next()
     }
   },
 }
