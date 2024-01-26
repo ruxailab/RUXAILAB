@@ -60,10 +60,9 @@
                             <span>{{ heuristics[f].title }}</span>
                           </v-tooltip>
                         </td>
-                        <!-- batata[tabs][tam] -->
                         <td class="text-center d-flex justify-center">
                           <v-radio-group
-                            v-model="batata[tabs][tam]"
+                            v-model="group[tabs][tam]"
                             dense
                             row
                             class="justify-space-between"
@@ -104,12 +103,6 @@
         </v-tabs-items>
       </template>
     </v-card>
-    <!-- {{ heuristicaTamanho }} -->
-    <!--{{ this.$store.state.Tests.Test.testStructure }} -->
-    <!-- {{ batata }} -->
-    <!-- {{ heuristics.length }} -->
-    <!-- {{ tabs }} -->
-    {{ testAll.testWeights }}
   </div>
 </template>
 
@@ -120,74 +113,44 @@ export default {
       tabs: 0,
       peso: null,
       row: [],
-      batata: null,
+      group: null,
     }
   },
   computed: {
     testAll() {
       return this.$store.state.Tests.Test
     },
-    // heuristicsWeights() {},
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
         ? this.$store.state.Tests.Test.testStructure
         : []
     },
     heuristicaTamanho() {
-      console.log(this.heuristics.length)
       return this.heuristics.length
     },
   },
   beforeMount() {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
-    // console.log(heuristicLength)
-    // console.log(this.$store.state.Tests.Test.testStructure)
-    // //
-    // const emptyHeuristicaArray = Array.from(
-    //   { length: heuristicLength - 1 },
-    //   (_, index) => new Array(heuristicLength - (index + 1)).fill(null))
-    //   //
-    // const emptyHeuristicaArrayMap = [...Array(heuristicLength - 1)].map(
-    //   (_, index) => [...Array(heuristicLength - (index + 1))].map(() => null))
-    //
-    //
-    // console.log(this.batata.length)
-    // console.log(emptyHeuristicaArray)
-    // console.log(emptyHeuristicaArrayMap)
-    //
-    console.log(this.$store.state.Tests.Test.testWeight)
+
     const meuMap = {}
 
     if (this.testAll.testWeights) {
-      this.batata = this.testAll.testWeights
+      this.group = this.testAll.testWeights
        }
     else {
       for (let i = 0; i < heuristicLength - 1; i++) {
         meuMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
-      this.batata = meuMap
+      this.group = meuMap
       }
 
-    console.log(this.batata)
-    console.log(meuMap)
-    //
   },
-  mounted() {
-    // Carregar os dados salvos do localStorage ao renderizar a página
-    const savedData = localStorage.getItem('heuristicsData') //salva a localStorage em uma constante
-    if (savedData) {
-      //se houver
-      this.fbF = JSON.parse(savedData) //converte a string JSON de volta em objeto
-      console.log('Dados carregados do localStorage!')
-    }
-  },
+
   methods: {
     // Salva os dados localmente
     atualizarDados() {
-      this.testAll.testWeights = this.batata
+      this.testAll.testWeights = this.group
       this.$store.dispatch('updateTest', this.testAll)
-      localStorage.setItem('heuristicsData', JSON.stringify(this.fbF)) //converte o objeto this.fbF em string no localStorange com o nome 'heuristicsData'
-      console.log('Dados atualizados localmente!')
     },
   },
 }
