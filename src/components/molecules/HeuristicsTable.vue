@@ -532,8 +532,6 @@
         </v-row>
       </v-card>
     </v-col>
-    {{ this.$store.state.Tests.Test.testStructure[0].title }}
-    {{ heuristics.length }}
   </v-row>
 </template>
 
