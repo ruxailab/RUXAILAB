@@ -12,7 +12,7 @@
         >
           <v-tabs-slider color="#FCA326" />
           <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
-            <v-tooltip v-model="show" top>
+            <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <span v-bind="attrs" v-on="on"> H {{ heuri }}</span>
               </template>
@@ -60,7 +60,7 @@
                             <span>{{ heuristics[f].title }}</span>
                           </v-tooltip>
                         </td>
-
+                        <!-- batata[tabs][tam] -->
                         <td class="text-center d-flex justify-center">
                           <v-radio-group
                             v-model="batata[tabs][tam]"
@@ -93,7 +93,7 @@
                     color="#FCA326"
                     elevation="5"
                     type="submit"
-                    @click="atualizarDados(), addWeights()"
+                    @click="atualizarDados()"
                   >
                     save
                   </v-btn>
@@ -104,91 +104,75 @@
         </v-tabs-items>
       </template>
     </v-card>
-    {{ tam }}
+    <!-- {{ heuristicaTamanho }} -->
     <!--{{ this.$store.state.Tests.Test.testStructure }} -->
-    {{ batata }}
+    <!-- {{ batata }} -->
     <!-- {{ heuristics.length }} -->
-    {{ tabs }}
-    <!-- {{ per_cada_h }} -->
+    <!-- {{ tabs }} -->
+    {{ testAll.testWeights }}
   </div>
 </template>
-  <script>
-//   import { doc, getDoc,  } from "firebase/firestore";
-//   import { db } from "@/firebase/index";
 
+<script>
 export default {
   data() {
     return {
-      fbF: {
-        hheuristc: [
-          {
-            element: [
-              { title: 'h2', peso: 1 },
-              { peso: 1, title: 'h3' },
-              { peso: 1, title: 'h4' },
-              { title: 'h5', peso: 1 },
-              { peso: 1, title: 'h6' },
-              { title: 'h7', peso: 1 },
-              { peso: 1, title: 'h8' },
-            ],
-          },
-          {
-            element: [
-              { peso: 1, title: 'h3' },
-              { title: 'h4', peso: 1 },
-              { title: 'h5', peso: 1 },
-              { title: 'h6', peso: 1 },
-              { title: 'h7', peso: 1 },
-              { peso: 1, title: 'h8' },
-            ],
-          },
-          {
-            element: [
-              { title: 'h4', peso: 1 },
-              { title: 'h5', peso: 1 },
-              { peso: 1, title: 'h6' },
-              { title: 'h7', peso: 1 },
-              { peso: 1, title: 'h8' },
-            ],
-          },
-          {
-            element: [
-              { title: 'h5', peso: 1 },
-              { peso: 1, title: 'h6' },
-              { peso: 1, title: 'h7' },
-              { title: 'h8', peso: 1 },
-            ],
-          },
-          {
-            element: [
-              { peso: 1, title: 'h6' },
-              { peso: 1, title: 'h7' },
-              { title: 'h8', peso: 1 },
-            ],
-          },
-          {
-            element: [
-              { peso: 1, title: 'h7' },
-              { title: 'h8', peso: 1 },
-            ],
-          },
-          { element: [{ title: 'h8', peso: 1 }] },
-        ],
-      },
-      tabs: null,
+      tabs: 0,
       peso: null,
       row: [],
-      comparisonSelect: null,
-      per_cada_header: null,
-      batata: new Array(8).fill(null).map(() => new Array(5).fill(null)),
+      batata: null,
     }
   },
   computed: {
+    testAll() {
+      return this.$store.state.Tests.Test
+    },
+    // heuristicsWeights() {},
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
         ? this.$store.state.Tests.Test.testStructure
         : []
     },
+    heuristicaTamanho() {
+      console.log(this.heuristics.length)
+      return this.heuristics.length
+    },
+  },
+  beforeMount() {
+    const heuristicLength = this.$store.state.Tests.Test.testStructure.length
+    // console.log(heuristicLength)
+    // console.log(this.$store.state.Tests.Test.testStructure)
+    // //
+    // const emptyHeuristicaArray = Array.from(
+    //   { length: heuristicLength - 1 },
+    //   (_, index) => new Array(heuristicLength - (index + 1)).fill(null))
+    //   //
+    // const emptyHeuristicaArrayMap = [...Array(heuristicLength - 1)].map(
+    //   (_, index) => [...Array(heuristicLength - (index + 1))].map(() => null))
+    //
+    //
+    // console.log(this.batata.length)
+    // console.log(emptyHeuristicaArray)
+    // console.log(emptyHeuristicaArrayMap)
+    //
+    console.log(this.$store.state.Tests.Test.testWeight)
+    const meuMap = {}
+
+    if (this.testAll.testWeights) {
+      this.batata = this.testAll.testWeights
+       }
+    else {
+      for (let i = 0; i < heuristicLength - 1; i++) {
+        meuMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
+      }
+      this.batata = meuMap
+      }
+    
+
+
+    console.log(this.batata)
+    console.log(meuMap)
+    //
   },
   mounted() {
     // Carregar os dados salvos do localStorage ao renderizar a página
@@ -202,36 +186,16 @@ export default {
   methods: {
     // Salva os dados localmente
     atualizarDados() {
-      this.batata = ['d', 'e']
+      this.testAll.testWeights = this.batata
+      this.$store.dispatch('updateTest', this.testAll)
       localStorage.setItem('heuristicsData', JSON.stringify(this.fbF)) //converte o objeto this.fbF em string no localStorange com o nome 'heuristicsData'
       console.log('Dados atualizados localmente!')
-    },
-    addWeights() {
-      // this.per_cada_h = Array.from( { length: this.heuristics.length } )
-      // console.log(this.per_cada_h)
-      // for (let i = 0; i < this.heuristics.length; i++) {
-      //   this.heuristics[this.tabs].comparision = [
-      //   ]
-      // }
-      // for (let i = 0; i < this.heuristics.length; i++) {
-      //   this.heuristics[this.tabs].comparision = [];
-      //   let Hmap = this.heuristics.length
-      //   for (let index = 0; index < this.heuristics.length; index++) {
-      //     this.heuristics[index].comparision[Hmap] = [
-      //       {
-      //         peso: 1,
-      //         title: 'abacate',
-      //       },
-      //     ]
-      //     Hmap--
-      //   }
-      // }
     },
   },
 }
 </script>
 
-  <style scoped>
+<style scoped>
 .justify-space-between {
   justify-content: space-between !important;
 }
