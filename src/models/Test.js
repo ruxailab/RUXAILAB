@@ -24,6 +24,7 @@ export default class Test {
     numberColaborators,
     isPublic,
     finalReport,
+    testWeights,
   } = {}) {
     /**
      * Defines the test id.
@@ -129,6 +130,13 @@ export default class Test {
      * @type {string}
      */
     this.finalReport = finalReport ?? null
+  /**
+     * Defines the test weights.
+     *
+     * @type {TestWeights[]}
+     */
+  this.testWeights = testWeights ?? []
+
   }
 
   /**
@@ -167,6 +175,7 @@ export default class Test {
       numberColaborators: this.numberColaborators,
       isPublic: this.isPublic,
       finalReport: this.finalReport,
+      testWeights: this.testWeights,
     }
   }
 }
