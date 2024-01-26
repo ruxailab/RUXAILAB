@@ -167,8 +167,6 @@ export default {
       }
       this.batata = meuMap
       }
-    
-
 
     console.log(this.batata)
     console.log(meuMap)
