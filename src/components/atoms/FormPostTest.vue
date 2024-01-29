@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="8">
-        <v-expansion-panels style="z-index: auto;">
-          <v-expansion-panel v-for="(item, i) in items" :key="i">
+      <v-col cols="10">
+        <v-expansion-panels  v-if="items.length > 0" style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);">
+          <v-expansion-panel style="border-radius: 20px;" v-for="(item, i) in items" :key="i">
             <v-expansion-panel-header>
               {{ items[i].title }}
             </v-expansion-panel-header>
@@ -68,6 +68,8 @@
           </v-expansion-panel>
         </v-expansion-panels>
         <v-card
+        class="mt-2"
+          rounded="xl"
           @click="showModal"
           outlined
           elevation="0"
