@@ -2,17 +2,17 @@
   <div id="FileUpload" style="background-color:#F5F7FF">
     <v-col justify="center">
       <v-row class="px-6 pt-2">
-        <v-btn class="mb-3" @click="downloadTemplate">
+        <v-btn depressed dark color="orange" class="ma-2" @click="downloadTemplate">
           Donwload CSV template
         </v-btn>
       </v-row>
-      <v-divider />
+      <v-divider class="ma-4" />
       <v-row>
         <v-row class="px-8" justify="center" align="center">
           <v-file-input
             ref="myFile"
             v-model="csvFile"
-            class="d-flex justify-center "
+            class="d-flex justify-center ma-2"
             accept=".csv"
             show-size
             truncate-length="15"
@@ -23,7 +23,7 @@
             :loading="loadingUpdate"
             :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
             color="blue-grey"
-            class="ma-2 white--text"
+            class="ma-3 white--text"
             @click="changeToJSON"
           >
             Update

@@ -2,41 +2,8 @@
   <div v-if="answers">
     <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
     <div>
-      <!-- Tasks List -->
-      <!-- <v-row class="ma-0 pa-0">
-            <v-col class="ma-0 pa-0 task-list" cols="3">
-              <v-list dense class="list-scroll">
-                <v-subheader>Tasks</v-subheader>
-                <v-divider />
-                <v-list-item-group v-model="taskSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in testTasks" :key="i">
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-col>
-            <v-divider vertical inset />
-
-             Answer List 
-            <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <v-data-table
-                :headers="dataHeaders"
-                :items="taskAnswers"
-                item-key="userDocId"
-              >
-                <template v-slot:item.actions="{ item }">
-                  <v-btn color="orange" text @click="viewAnswers(item)"
-                    >Show Answers</v-btn
-                  >
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row> -->
-
       <!-- Analysis Geral -->
-      <v-row class="ma-0 pa-0 mt-4">
+      <v-row class="ma-0 pa-0">
         <v-col cols="8">
           <v-card height="400" class="cards mt-3">
             <v-row>
@@ -451,6 +418,7 @@ export default {
     },
   },
 }
+
 </script>
 
 <style scoped>
