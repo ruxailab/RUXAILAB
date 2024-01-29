@@ -121,7 +121,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" v-if="index == 2" class="pt-0">
-        <v-card style="background: #f5f7ff" flat class="cards">
+        <v-card style="background: #f5f7ff" flat class="cards"> 
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3">Final message</span>
             <br />
