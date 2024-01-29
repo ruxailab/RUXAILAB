@@ -323,10 +323,8 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
+                          :question="heuristics[itemSelect].questions[questionSelect]"
                           @change="emitChange"
-                          :question="
-                            heuristics[itemSelect].questions[questionSelect]
-                          "
                         />
                       </v-row>
                     </v-col>
@@ -557,6 +555,7 @@ export default {
     questionSelect: null,
     itemEdit: null,
     newQuestion: null,
+    comparisonSelect: null,
     heuristicForm: null,
     search: '',
     searchBar: false,
@@ -567,7 +566,10 @@ export default {
         align: 'start',
         value: 'title',
       },
-      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
+      { text: 'Actions',
+        value: 'actions',
+        align: 'end',
+        sortable: false },
     ],
     dialog: false,
     dialogEdit: false,
@@ -591,7 +593,6 @@ export default {
         ? this.$store.state.Tests.Test.testStructure
         : []
     },
-
     arrayQuestions() {
       const aux = []
       const array = Array.from(this.heuristics[this.itemSelect].questions)
@@ -608,6 +609,9 @@ export default {
       return result
     },
     testAnswerDocLength() {
+      if(!this.$store.getters.testAnswerDocument) {
+        return 0
+      }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
       const heuristicAnswersCount = Object.keys(heuristicAnswers).length
@@ -629,6 +633,7 @@ export default {
             {
               id: 0,
               title: '',
+              comparision: [],
               descriptions: [],
             },
           ],
@@ -681,6 +686,7 @@ export default {
             id: 0,
             title: '',
             descriptions: [],
+            comparison: [],
           },
         ],
       }
@@ -694,6 +700,7 @@ export default {
             id: 0,
             title: '',
             descriptions: [],
+            comparison: [],
           },
         ],
       }
@@ -701,7 +708,7 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-    emitChange() {
+     emitChange() {
       this.$emit('change')
       this.$forceUpdate()
     },
