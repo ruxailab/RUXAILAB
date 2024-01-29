@@ -26,6 +26,7 @@ export default class Test {
     finalReport,
     userTestType,
     userTestStatus,
+    testWeights,
   } = {}) {
     /**
      * Defines the test id.
@@ -145,6 +146,12 @@ export default class Test {
      * @type {Object}
      */
     this.userTestStatus = userTestStatus ?? {};
+  /**
+     * Defines the test weights.
+     *
+     * @type {TestWeights[]}
+     */
+    this.testWeights = testWeights ?? [];
   }
 
   /**
@@ -185,6 +192,7 @@ export default class Test {
       finalReport: this.finalReport,
       userTestType: this.userTestType,
       userTestStatus: this.userTestStatus,
+      testWeights: this.testWeights,
     }
   }
 }
