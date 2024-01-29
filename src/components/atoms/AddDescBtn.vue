@@ -101,6 +101,9 @@ export default {
   }),
   computed: {
     testAnswerDocLength() {
+            if(!this.$store.getters.testAnswerDocument) {
+        return 0
+      }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
       const heuristicAnswersCount = Object.keys(heuristicAnswers).length
