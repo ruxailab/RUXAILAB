@@ -1,5 +1,5 @@
 <template>
-  <dsadsaas>
+  <div>
     <v-card
       v-if="tasks.length == 0"
       style="background: #f5f7ff; min-height: 150px"
@@ -72,7 +72,7 @@
         </v-row>
       </v-card>
     </draggable>
-  </dsadsaas>
+  </div>
 </template>
 
 <script>
