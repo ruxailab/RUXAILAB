@@ -135,15 +135,16 @@ export default {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
 
     const weightMap = {}
-
-    if (this.testAll.testWeights) {
-      this.group = this.testAll.testWeights
-    } else {
+    if (this.testAll.testWeights = {}) {
       for (let i = 0; i < heuristicLength - 1; i++) {
         weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
       this.group = weightMap
     }
+    else {
+      this.group = this.testAll.testWeights
+    }
+    console.log(this.group)
   },
 
   methods: {
