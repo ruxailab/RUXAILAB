@@ -135,7 +135,7 @@ export default class Test {
      *
      * @type {TestWeights[]}
      */
-  this.testWeights = testWeights ?? []
+  this.testWeights = testWeights ?? {}
 
   }
 
