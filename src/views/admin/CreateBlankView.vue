@@ -416,6 +416,8 @@ export default {
           this.dialogUser = true
         } else if (this.test.testType == 'User' && this.dialogUser == true) {
           this.submit()
+        } else if (this.test.testType == 'HEURISTICS') {
+          this.submit()
         }
       } else {
         alert('Please enter a title')
