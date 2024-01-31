@@ -43,7 +43,7 @@
         </v-row>
       </v-col>
     </v-row>
-
+ 
     <v-dialog v-model="roomDialog" persistent max-width="500px">
       <v-card>
         <v-card-title>Join room</v-card-title>
