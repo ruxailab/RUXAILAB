@@ -11,22 +11,22 @@
 </div>
 
 <hr />
-<div>
+<div align="center">
   <table >
     <tr>
-      <td><img src="public/HomePic.png" alt="User Friendly" width="350"/></td>
+      <td><img src="public/HomePic.png" alt="User Friendly" width="600"/></td>
       <td>User Friendly</td>
     </tr>
     <tr>
-      <td><img src="public/TestPic.png" alt="Heuristics Tests" width="350"/></td>
+      <td><img src="public/TestPic.png" alt="Heuristics Tests" width="600"/></td>
       <td>Heuristics Tests</td>
     </tr>
     <tr>
-      <td><img src="public/AnswersPic.png" alt="Answers Views" width="350"/></td>
+      <td><img src="public/AnswersPic.png" alt="Answers Views" width="600"/></td>
       <td>Answers Views</td>
     </tr>
     <tr>
-      <td><img src="public/AnalyticsPic.png" alt="Analytics Graphs" width="350"/></td>
+      <td><img src="public/AnalyticsPic.png" alt="Analytics Graphs" width="600"/></td>
       <td>Analytics Graphs</td>
     </tr>
   </table>
