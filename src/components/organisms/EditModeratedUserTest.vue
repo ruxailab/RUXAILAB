@@ -65,9 +65,9 @@
               color="orange"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" class="pb-0 px-8">
+          <v-col cols="12"  class="pb-1 px-8">
             <span class="cardsTitle">Participant camera</span>
-            <v-radio-group class="pt-0">
+            <v-radio-group class="pt-0 mb-6">
               <v-radio label="Optional" color="orange" value="one"></v-radio>
               <v-radio label="Required" color="orange" value="two"></v-radio>
               <v-radio label="Disabled" color="orange" value="three"></v-radio>
