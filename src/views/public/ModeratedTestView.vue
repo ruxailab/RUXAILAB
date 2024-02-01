@@ -43,7 +43,7 @@
         </v-row>
       </v-col>
     </v-row>
- 
+
     <v-dialog v-model="roomDialog" persistent max-width="500px">
       <v-card>
         <v-card-title>Join room</v-card-title>
@@ -63,7 +63,17 @@
 </template>
 
 <script>
-import { collection, doc, addDoc, setDoc, onSnapshot, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  addDoc,
+  setDoc,
+  onSnapshot,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs
+} from 'firebase/firestore'
 import { db } from '@/firebase'
 export default {
   data() {
@@ -88,16 +98,16 @@ export default {
       localStream: null,
       remoteStream: null,
       roomDialog: false,
-      roomCollection: null, // Adicionando a referência para a coleção do Firestore
+      roomCollection: null, // Adding reference to Firestore collection
     }
   },
   methods: {
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
-      this.roomCollection = collection(db, 'rooms') // Obtendo a referência da coleção
+      this.roomCollection = collection(db, 'rooms') // Getting reference to collection
 
-      const roomRef = doc(this.roomCollection) // Criando uma nova referência para um documento na coleção
+      const roomRef = doc(this.roomCollection) // Creating new document reference
 
       console.log(
         'Create PeerConnection with configuration: ',
@@ -105,17 +115,10 @@ export default {
       )
       this.peerConnection = new RTCPeerConnection(this.configuration)
 
-      this.registerPeerConnectionListeners()
-
       this.localStream.getTracks().forEach((track) => {
         this.peerConnection.addTrack(track, this.localStream)
       })
 
-      // Adicione o código para criar uma sala aqui
-
-      // Código para criar a sala acima
-
-      // Código para coletar candidatos ICE abaixo
       const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
 
       this.peerConnection.addEventListener('icecandidate', (event) => {
@@ -124,11 +127,9 @@ export default {
           return
         }
         console.log('Got candidate: ', event.candidate)
-        addDoc(callerCandidatesCollection, event.candidate.toJSON()) // Adicionando candidato à coleção
+        addDoc(callerCandidatesCollection, event.candidate.toJSON()) // Adding candidate to collection
       })
-      // Código para coletar candidatos ICE acima
 
-      // Código para criar uma sala abaixo
       const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
       console.log('Created offer:', offer)
@@ -139,21 +140,17 @@ export default {
           sdp: offer.sdp,
         },
       }
-      await setDoc(roomRef, roomWithOffer) // Definindo os detalhes da sala no documento
+      await setDoc(roomRef, roomWithOffer) // Setting room details in document
       this.roomId = roomRef.id
       console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`)
       this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
-      // Código para criar uma sala acima
 
       this.peerConnection.addEventListener('track', (event) => {
-        console.log('Got remote track:', event.streams[0])
         event.streams[0].getTracks().forEach((track) => {
-          console.log('Add a track to the remoteStream:', track)
           this.remoteStream.addTrack(track)
         })
       })
 
-      // Escutando a descrição da sessão remota abaixo
       onSnapshot(roomRef, async (snapshot) => {
         const data = snapshot.data()
         if (
@@ -166,9 +163,7 @@ export default {
           await this.peerConnection.setRemoteDescription(rtcSessionDescription)
         }
       })
-      // Escutando a descrição da sessão remota acima
 
-      // Escutando candidatos ICE remotos abaixo
       onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
@@ -178,7 +173,6 @@ export default {
           }
         })
       })
-      // Escutando candidatos ICE remotos acima
     },
     async joinRoom() {
       this.createBtnDisabled = true
@@ -192,24 +186,19 @@ export default {
       await this.joinRoomById(roomId)
     },
     async joinRoomById(roomId) {
-      const roomRef = doc(collection(db, 'rooms'), roomId) // Obtendo uma referência para o documento da sala
+      const roomRef = doc(collection(db, 'rooms'), roomId) // Getting reference to room document
 
-      const roomSnapshot = await getDoc(roomRef) // Obtendo os detalhes da sala
+      const roomSnapshot = await getDoc(roomRef) // Getting room details
 
       console.log('Got room:', roomSnapshot.exists)
 
       if (roomSnapshot.exists) {
-        console.log(
-          'Create PeerConnection with configuration: ',
-          this.configuration,
-        )
         this.peerConnection = new RTCPeerConnection(this.configuration)
-        this.registerPeerConnectionListeners()
+
         this.localStream.getTracks().forEach((track) => {
           this.peerConnection.addTrack(track, this.localStream)
         })
 
-        // Código para coletar candidatos ICE abaixo
         const calleeCandidatesCollection = collection(
           roomRef,
           'calleeCandidates',
@@ -222,17 +211,13 @@ export default {
           console.log('Got candidate: ', event.candidate)
           addDoc(calleeCandidatesCollection, event.candidate.toJSON())
         })
-        // Código para coletar candidatos ICE acima
 
         this.peerConnection.addEventListener('track', (event) => {
-          console.log('Got remote track:', event.streams[0])
           event.streams[0].getTracks().forEach((track) => {
-            console.log('Add a track to the remoteStream:', track)
             this.remoteStream.addTrack(track)
           })
         })
 
-        // Código para criar a resposta SDP abaixo
         const offer = roomSnapshot.data().offer
         console.log('Got offer:', offer)
         await this.peerConnection.setRemoteDescription(
@@ -248,10 +233,8 @@ export default {
             sdp: answer.sdp,
           },
         }
-        await updateDoc(roomRef, roomWithAnswer) // Atualizando os detalhes da sala com a resposta SDP
-        // Código para criar a resposta SDP acima
+        await updateDoc(roomRef, roomWithAnswer) // Updating room details with SDP answer
 
-        // Escutando candidatos ICE remotos abaixo
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === 'added') {
@@ -265,7 +248,6 @@ export default {
             }
           })
         })
-        // Escutando candidatos ICE remotos acima
       }
     },
     async openUserMedia() {
@@ -282,6 +264,7 @@ export default {
       this.hangupBtnDisabled = false
     },
     async hangUp() {
+      console.log('hang up')
       const tracks = this.localStream.getTracks()
       tracks.forEach((track) => {
         track.stop()
@@ -299,53 +282,47 @@ export default {
       document.querySelector('#remoteVideo').srcObject = null
       this.localStream = null
       this.remoteStream = null
-      this.roomId = null
       this.createBtnDisabled = false
       this.joinBtnDisabled = false
       this.hangupBtnDisabled = true
       this.currentRoom = ''
 
-      // Excluindo a sala ao desligar
+      // Deleting room on hang up
       if (this.roomId) {
+        try {
+          const roomRef = doc(db, 'rooms', this.roomId)
 
-        const roomRef = doc(collection(db, 'rooms'), this.roomId)
-        const calleeCandidates = await collection(roomRef, 'calleeCandidates').get()
-        calleeCandidates.forEach(async (candidate) => {
-          await deleteDoc(candidate.ref)
-        })
-        const callerCandidates = await collection(roomRef, 'callerCandidates').get()
-        callerCandidates.forEach(async (candidate) => {
-          await deleteDoc(candidate.ref)
-        })
-        await deleteDoc(roomRef)
+          // Verificando se o documento da sala existe antes de tentar excluí-lo
+          const roomSnapshot = await getDoc(roomRef)
+          if (roomSnapshot.exists()) {
+            console.log('Room document exists. Deleting...')
+
+            const calleeCandidatesSnapshot = await getDocs(
+              collection(roomRef, 'calleeCandidates'),
+            )
+            calleeCandidatesSnapshot.forEach(async (candidate) => {
+              await deleteDoc(candidate.ref)
+              console.log('Deleted callee candidate:', candidate.id)
+            })
+
+            const callerCandidatesSnapshot = await getDocs(
+              collection(roomRef, 'callerCandidates'),
+            )
+            callerCandidatesSnapshot.forEach(async (candidate) => {
+              await deleteDoc(candidate.ref)
+              console.log('Deleted caller candidate:', candidate.id)
+            })
+
+            await deleteDoc(roomRef)
+            console.log('Deleted room document:', this.roomId)
+          } else {
+            console.log('Room document does not exist.')
+          }
+        } catch (error) {
+          console.error('Error deleting room and candidates:', error)
+        }
       }
-
-      document.location.reload(true)
-    },
-    registerPeerConnectionListeners() {
-      this.peerConnection.addEventListener('icegatheringstatechange', () => {
-        console.log(
-          `ICE gathering state changed: ${this.peerConnection.iceGatheringState}`,
-        )
-      })
-
-      this.peerConnection.addEventListener('connectionstatechange', () => {
-        console.log(
-          `Connection state change: ${this.peerConnection.connectionState}`,
-        )
-      })
-
-      this.peerConnection.addEventListener('signalingstatechange', () => {
-        console.log(
-          `Signaling state change: ${this.peerConnection.signalingState}`,
-        )
-      })
-
-      this.peerConnection.addEventListener('iceconnectionstatechange', () => {
-        console.log(
-          `ICE connection state change: ${this.peerConnection.iceConnectionState}`,
-        )
-      })
+      // document.location.reload(true)
     },
   },
 }
