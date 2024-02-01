@@ -41,7 +41,7 @@
           color="#F9A826"
           v-bind="attrs"
           style="z-index: 100"
-:disabled="testAnswerDocLength > 0 ? true : false"
+          :disabled="testAnswerDocLength > 0 ? true : false"
           :class="{
             disabledBtnBackground: testAnswerDocLength > 0,
             disabledBtn: testAnswerDocLength > 0,
@@ -241,6 +241,7 @@ export default {
           userTasks: this.$store.getters.tasks,
           preTest: this.$store.getters.preTest,
           postTest: this.$store.getters.postTest,
+          welcomeMessage: this.$store.getters.welcomeMessage,
         }
       }
       const auxT = Object.assign(this.test, this.object)
