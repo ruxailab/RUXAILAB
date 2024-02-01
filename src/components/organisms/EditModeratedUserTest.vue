@@ -29,7 +29,7 @@
               consentiment</span
             >
           </v-col>
-          <UserConsent/>
+          <UserConsent />
         </v-card>
       </v-col>
       <v-col cols="4" class="pl-0" style="height: 19vh;" v-if="index == 0">
@@ -47,6 +47,8 @@
             color="orange"
             class="mx-6 mt-3"
             placeholder="Thank you for participating..."
+            v-model="welcomeMessage"
+            @change="saveWelcomeState()"
           ></v-textarea>
           <v-col cols="12" class="pb-0 px-8">
             <span class="cardsTitle">Landing Page</span>
@@ -143,12 +145,16 @@ import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTasks from '../atoms/ModeratedTasks.vue'
 import UserConsent from '../atoms/UserConsent.vue'
 export default {
-data() {
+  data() {
     return {
       formData: {
         preTest: [],
         postTest: [],
       },
+      welcomeMessage: '',
+      landingPage: '',
+      participantCamera: '',
+      finalMessage: '',
     }
   },
   components: { UserVariables, FormPostTest, ModeratedTasks, UserConsent },
@@ -173,10 +179,13 @@ data() {
     test() {
       return this.$store.getters.test
     },
+    testStructure() {
+      return this.$store.state.Tests.Test.testStructure
+    },
   },
 
   mounted() {
-    this.getConsent()
+    this.getWelcome()
     if (this.type !== 'content' && this.type != 'tabs') {
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
     }
@@ -203,14 +212,14 @@ data() {
     tabClicked(index) {
       this.$emit('tabClicked', index)
     },
-    getConsent() {
-      if (this.test.testStructure.consent) {
-        this.consent = this.test.testStructure.consent
+    getWelcome() {
+      if (this.test.testStructure.welcomeMessage) {
+        this.welcomeMessage = this.test.testStructure.welcomeMessage
       }
     },
-    saveState() {
-      this.$store.dispatch('setConsent', this.consent)
-      this.test.testStructure.consent = this.consent
+    saveWelcomeState() {
+      this.$store.dispatch('setWelcomeMessage', this.welcomeMessage)
+      this.test.testStructure.welcomeMessage = this.welcomeMessage
     },
   },
 }
