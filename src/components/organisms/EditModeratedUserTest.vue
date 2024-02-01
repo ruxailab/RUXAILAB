@@ -29,13 +29,7 @@
               consentiment</span
             >
           </v-col>
-          <v-textarea
-            rows="3"
-            outlined
-            color="orange"
-            class="mx-6 mt-3"
-            placeholder="Consent Form..."
-          ></v-textarea>
+          <UserConsent/>
         </v-card>
       </v-col>
       <v-col cols="4" class="pl-0" style="height: 19vh;" v-if="index == 0">
@@ -91,7 +85,7 @@
             <span class="cardsSubtitle ml-3"
               >This is a pre-questions you make to get participants data</span
             >
-            <UserVariables />
+            <UserVariables @input="updateData" />
           </v-col>
         </v-card>
       </v-col>
@@ -116,12 +110,12 @@
             <span class="cardsSubtitle ml-3"
               >This is a post-questions you make to get participants data</span
             >
-            <FormPostTest />
+            <FormPostTest @input="updateData" />
           </v-col>
         </v-card>
       </v-col>
       <v-col cols="12" v-if="index == 2" class="pt-0">
-        <v-card style="background: #f5f7ff" flat class="cards"> 
+        <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3">Final message</span>
             <br />
@@ -147,9 +141,17 @@
 import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTasks from '../atoms/ModeratedTasks.vue'
+import UserConsent from '../atoms/UserConsent.vue'
 export default {
-  data: () => ({}),
-  components: { UserVariables, FormPostTest, ModeratedTasks },
+data() {
+    return {
+      formData: {
+        preTest: [],
+        postTest: [],
+      },
+    }
+  },
+  components: { UserVariables, FormPostTest, ModeratedTasks, UserConsent },
   props: {
     type: {
       type: String,
@@ -164,9 +166,51 @@ export default {
       default: () => {},
     },
   },
+  computed: {
+    consentStore() {
+      return this.$store.getters.consent
+    },
+    test() {
+      return this.$store.getters.test
+    },
+  },
+
+  mounted() {
+    this.getConsent()
+    if (this.type !== 'content' && this.type != 'tabs') {
+      console.error(this.type + ' type in EditUserTest.vue is not valid.')
+    }
+    if (this.testStructure.postTest) {
+      this.$store.dispatch('setPostTest', this.testStructure.postTest)
+    }
+    if (this.testStructure.preTest) {
+      this.$store.dispatch('setPreTest', this.testStructure.preTest)
+    }
+    if (this.testStructure.consent) {
+      this.$store.dispatch('setConsent', this.testStructure.consent)
+    }
+  },
+
   methods: {
+    updateData(data) {
+      if (this.index == 0) {
+        this.$store.dispatch('setPreTest', data)
+      }
+      if (this.index == 2) {
+        this.$store.dispatch('setPostTest', data)
+      }
+    },
     tabClicked(index) {
       this.$emit('tabClicked', index)
+    },
+    getConsent() {
+      if (this.test.testStructure.consent) {
+        this.consent = this.test.testStructure.consent
+      }
+    },
+    saveState() {
+      this.$store.dispatch('setConsent', this.consent)
+      this.test.testStructure.consent = this.consent
     },
   },
 }
