@@ -75,6 +75,9 @@ export default {
       //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
     },
+    SET_TASKS(state, payload) {
+      state.tasks = payload
+    },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
     },
@@ -291,6 +294,13 @@ export default {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
+      }
+    },
+    setTasks({ commit }, payload) {
+      try {
+        commit('SET_TASKS', payload)
+      } catch {
+        commit('setError', true)
       }
     },
     setCurrentImageUrl({ commit }, payload) {
