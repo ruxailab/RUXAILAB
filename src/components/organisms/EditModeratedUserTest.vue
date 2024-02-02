@@ -63,14 +63,32 @@
               placeholder="https://www.ruxailab.com"
               outlined
               color="orange"
+              v-model="landingPage"
+              @change="saveLandingPage()"
             ></v-text-field>
           </v-col>
-          <v-col cols="12"  class="pb-1 px-8">
+          <v-col cols="12" class="pb-1 px-8">
             <span class="cardsTitle">Participant camera</span>
-            <v-radio-group class="pt-0 mb-6">
-              <v-radio label="Optional" color="orange" value="one"></v-radio>
-              <v-radio label="Required" color="orange" value="two"></v-radio>
-              <v-radio label="Disabled" color="orange" value="three"></v-radio>
+            <v-radio-group
+              class="pt-0 mb-6"
+              v-model="participantCamera"
+              @change="saveParticipantCamera()"
+            >
+              <v-radio
+                label="Optional"
+                color="orange"
+                value="optional"
+              ></v-radio>
+              <v-radio
+                label="Required"
+                color="orange"
+                value="required"
+              ></v-radio>
+              <v-radio
+                label="Disabled"
+                color="orange"
+                value="disabled"
+              ></v-radio>
             </v-radio-group>
           </v-col>
         </v-card>
@@ -132,6 +150,8 @@
             color="orange"
             class="mx-6 mt-3"
             placeholder="Thank you for participating..."
+            @change="saveFinalMessage()"
+            v-model="finalMessage"
           ></v-textarea>
         </v-card>
       </v-col>
@@ -182,10 +202,26 @@ export default {
     testStructure() {
       return this.$store.state.Tests.Test.testStructure
     },
+    welcomeMessageStore() {
+      return this.$store.getters.welcomeMessage
+    },
+    landingPageStore() {
+      return this.$store.getters.landingPage
+    },
+    participantCameraStore() {
+      return this.$store.getters.participantCamera
+    },
+    finalMessageStore() {
+      return this.$store.getters.finalMessage
+    },
   },
 
   mounted() {
     this.getWelcome()
+    this.getLandingPage()
+    this.getParticipantCamera()
+    this.getFinalMessage()
+
     if (this.type !== 'content' && this.type != 'tabs') {
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
     }
@@ -213,13 +249,62 @@ export default {
       this.$emit('tabClicked', index)
     },
     getWelcome() {
-      if (this.test.testStructure.welcomeMessage) {
-        this.welcomeMessage = this.test.testStructure.welcomeMessage
+      if (this.testStructure.welcomeMessage) {
+        this.$store.dispatch(
+          'setWelcomeMessage',
+          this.testStructure.welcomeMessage,
+        )
+        this.welcomeMessage = this.testStructure.welcomeMessage
+      } else if (this.welcomeMessageStore) {
+        this.welcomeMessage = this.welcomeMessageStore
       }
     },
+
+    getLandingPage() {
+      if (this.testStructure.landingPage) {
+        this.$store.dispatch('setLandingPage', this.testStructure.landingPage)
+        this.landingPage = this.testStructure.landingPage
+      } else if (this.landingPageStore) {
+        this.landingPage = this.landingPageStore
+      }
+    },
+
+    getParticipantCamera() {
+      if (this.testStructure.participantCamera) {
+        this.$store.dispatch(
+          'setParticipantCamera',
+          this.testStructure.participantCamera,
+        )
+        this.participantCamera = this.testStructure.participantCamera
+      } else if (this.participantCameraStore) {
+        this.participantCamera = this.participantCameraStore
+      }
+    },
+
+    getFinalMessage() {
+      if (this.testStructure.finalMessage) {
+        this.$store.dispatch('setFinalMessage', this.testStructure.finalMessage)
+        this.finalMessage = this.testStructure.finalMessage
+      } else if (this.finalMessageStore) {
+        this.finalMessage = this.finalMessageStore
+      }
+    },
+
     saveWelcomeState() {
       this.$store.dispatch('setWelcomeMessage', this.welcomeMessage)
       this.test.testStructure.welcomeMessage = this.welcomeMessage
+    },
+    saveLandingPage() {
+      this.$store.dispatch('setLandingPage', this.landingPage)
+      this.test.testStructure.landingPage = this.landingPage
+    },
+    saveParticipantCamera() {
+      this.$store.dispatch('setParticipantCamera', this.participantCamera)
+      this.test.testStructure.participantCamera = this.participantCamera
+    },
+    saveFinalMessage() {
+      this.$store.dispatch('setFinalMessage', this.finalMessage)
+      this.test.testStructure.finalMessage = this.finalMessage
     },
   },
 }
