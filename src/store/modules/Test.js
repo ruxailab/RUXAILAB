@@ -112,6 +112,10 @@ export default {
       state.consent = ''
       state.preTest = []
       state.postTest = []
+      state.welcomeMessage = ''
+      state.landingPage = ''
+      state.participantCamera = ''
+      state.finalMessage = ''
     },
   },
   actions: {
