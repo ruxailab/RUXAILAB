@@ -95,43 +95,44 @@
           :index="index"
           @change="change = true"
         />
+
+        <!-- Unmoderated User tests -->
+        <EditUserTest
+          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
+          slot="top"
+          type="tabs"
+          @tabClicked="setIndex"
+          @change="change = true"
+        />
+
+        <EditUserTest
+          v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
+          slot="content"
+          :object="object"
+          :index="index"
+          type="content"
+          @change="change = true"
+          @valForm="validate"
+        />
+        <!-- Moderated User tests -->
+        <EditModeratedUserTest
+          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
+          slot="top"
+          type="tabs"
+          @tabClicked="setIndex"
+          @change="change = true"
+        />
+
+        <EditModeratedUserTest
+          v-if="test.testType === 'User' && test.userTestType === 'moderated'"
+          slot="content"
+          :object="object"
+          :index="index"
+          type="content"
+          @change="change = true"
+          @valForm="validate"
+        />
       </v-col>
-      <!-- Unmoderated User tests -->
-      <EditUserTest
-        v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-        slot="top"
-        type="tabs"
-        @tabClicked="setIndex"
-        @change="change = true"
-      />
-
-      <EditUserTest
-        v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-        slot="content"
-        :object="object"
-        :index="index"
-        type="content"
-        @change="change = true"
-        @valForm="validate"
-      />
-      <!-- Moderated User tests -->
-      <EditModeratedUserTest
-        v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-        slot="top"
-        type="tabs"
-        @tabClicked="setIndex"
-        @change="change = true"
-      />
-
-      <EditModeratedUserTest
-        v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-        slot="content"
-        :object="object"
-        :index="index"
-        type="content"
-        @change="change = true"
-        @valForm="validate"
-      />
     </v-row>
   </v-container>
 </template>
@@ -237,11 +238,14 @@ export default {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
       if (this.test.testType == 'User') {
         this.object.testStructure = {
+          welcomeMessage: this.$store.getters.welcomeMessage,
+          landingPage: this.$store.getters.landingPage,
+          participantCamera: this.$store.getters.participantCamera,
           consent: this.$store.getters.consent,
           userTasks: this.$store.getters.tasks,
           preTest: this.$store.getters.preTest,
           postTest: this.$store.getters.postTest,
-          welcomeMessage: this.$store.getters.welcomeMessage,
+          finalMessage: this.$store.getters.finalMessage,
         }
       }
       const auxT = Object.assign(this.test, this.object)
