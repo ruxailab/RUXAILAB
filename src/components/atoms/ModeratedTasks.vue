@@ -124,7 +124,7 @@ export default {
   components: { draggable },
 
   computed: {
-    tasksStore() {
+    tasksStore() { 
       return this.$store.getters.tasks
     },
     testStructure() {
