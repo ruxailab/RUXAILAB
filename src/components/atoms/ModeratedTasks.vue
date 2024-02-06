@@ -98,8 +98,12 @@
           ></v-textarea>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="addTask" dark color="orange">Add Task</v-btn>
-          <v-btn @click="closeAddTaskModal" dark color="red">Cancel</v-btn>
+          <v-btn @click="closeAddTaskModal" dark color="red"
+            ><v-icon class="mr-1">mdi-close</v-icon>Cancel</v-btn
+          >
+          <v-btn @click="addTask" dark color="orange"
+            ><v-icon class="mr-1">mdi-content-save</v-icon>Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -124,7 +128,7 @@ export default {
   components: { draggable },
 
   computed: {
-    tasksStore() { 
+    tasksStore() {
       return this.$store.getters.tasks
     },
     testStructure() {
