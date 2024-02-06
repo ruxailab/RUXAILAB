@@ -1,333 +1,745 @@
 <template>
-  <v-container fluid>
-    <v-row class="ma-4" justify="center">
-      <v-btn class="mr-4" color="primary" @click="openUserMedia()">
-        <v-icon left>mdi-camera</v-icon>
-        Open camera & microphone
-      </v-btn>
-      <v-btn
-        class="mr-4"
-        color="primary"
-        :disabled="createBtnDisabled"
-        @click="createRoom()"
-      >
-        <v-icon left>mdi-account-group-outline</v-icon>
-        Create room
-      </v-btn>
-      <v-btn
-        class="mr-4"
-        color="primary"
-        :disabled="joinBtnDisabled"
-        @click="joinRoom()"
-      >
-        <v-icon left>mdi-account-group</v-icon>
-        Join room
-      </v-btn>
-      <v-btn color="primary" :disabled="hangupBtnDisabled" @click="hangUp()">
-        <v-icon left>mdi-close</v-icon>
-        Hangup
-      </v-btn>
-    </v-row>
+  <div v-if="test">
 
-    <v-row justify="center" class="mt-4">
-      <span id="currentRoom">{{ currentRoom }}</span>
-    </v-row>
+    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
+      <CardSignIn
+        v-if="selected"
+        @logined="logined = true"
+        @change="selected = !selected"
+      />
+      <CardSignUp
+        v-else
+        @logined="
+          logined = true
+          setTest()
+        "
+        @change="selected = !selected"
+      />
+    </v-dialog>
 
-    <v-row justify="center">
-      <v-col cols="6">
-        <v-row justify="center">
-          <video id="localVideo" muted autoplay playsinline></video>
+    <v-dialog
+      :value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
+      <v-card v-if="user">
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange lighten-4" size="150">
+            <v-icon size="120" dark> mdi-account </v-icon>
+          </v-avatar>
         </v-row>
-        <v-row justify="center">
-          <video id="remoteVideo" autoplay playsinline></video>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+            Continue as {{ user.email }}
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            Not {{ user.email }}?
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
+          </p>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Start Screen -->
+    <v-row
+      v-if="test && start"
+      class="background background-img pa-0 ma-0"
+      align="center"
+    >
+      <v-col cols="6" class="ml-5">
+        <h1 class="titleView pb-1">
+          {{ test.testTitle }}
+        </h1>
+        <p align="justify" class="description">
+          {{ test.testDescription }}
+        </p>
+        <v-row justify="center" class>
+          <v-btn color="white" outlined rounded @click="startTest()">
+            Start Test
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
 
-    <v-dialog v-model="roomDialog" persistent max-width="500px">
-      <v-card>
-        <v-card-title>Join room</v-card-title>
-        <v-card-text>
-          Enter ID for room to join:
-          <v-text-field v-model="roomId" label="Room ID"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="roomDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" @click="confirmJoin">Join</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+    <v-row v-else class="nav pa-0 ma-0" dense>
+      <v-navigation-drawer
+        v-model="drawer"
+        clipped
+        :mini-variant="mini"
+        permanent
+        color="#3F3D56"
+      >
+        <div v-if="!mini" class="header">
+          <v-list-item>
+            <v-row dense align="center" justify="space-around">
+              <v-col class="pa-0 ma-0" cols="8">
+                <v-clamp class="titleText" autoresize :max-lines="2">
+                  {{ test.testTitle }}
+                </v-clamp>
+              </v-col>
+              <v-col>
+                <v-progress-circular
+                  rotate="-90"
+                  :value="calculateProgress()"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >
+                  {{ calculateProgress() }}%
+                </v-progress-circular>
+              </v-col>
+            </v-row>
+          </v-list-item>
+        </div>
+
+        <v-list
+          class="nav-list"
+          flat
+          dense
+          max-height="85%"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+        >
+          <div v-for="(item, n) in items" :key="n">
+            <!--Pre Test-->
+            <v-list-group
+              :disabled="
+                currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted,
+              }"
+              v-if="item.id == 0"
+              :value="index == 0 ? true : false"
+              no-action
+              @click="index = item.id"
+            >
+              <v-icon
+                slot="appendIcon"
+                :color="index == item.id ? '#ffffff' : '#fca326'"
+              >
+                mdi-chevron-down
+              </v-icon>
+              <template v-slot:activator>
+                <v-list-item-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                    {{ item.icon }}
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                >
+                  {{ item.title }}
+                </v-list-item-title>
+              </template>
+              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-list-item
+                    link
+                    v-bind="attrs"
+                    @click="taskIndex = i"
+                    v-on="on"
+                    :disabled="
+                      (currentUserTestAnswer.consentCompleted && i == 0) ||
+                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                        (currentUserTestAnswer.preTestCompleted && i == 1)
+                    "
+                  >
+                    <v-list-item-icon>
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
+                        {{ task.icon }}
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :style="
+                          taskIndex == i ? 'color: white' : 'color:#fca326'
+                        "
+                      >
+                        {{ task.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
+            </v-list-group>
+            <!--Tasks--->
+            <v-list-group
+              :disabled="
+                !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted
+              "
+              :class="{
+                'disabled-group':
+                  !currentUserTestAnswer.consentCompleted ||
+                  !currentUserTestAnswer.preTestCompleted,
+              }"
+              v-if="item.id == 1"
+              :value="index == 1 ? true : false"
+              no-action
+              @click="index = item.id"
+            >
+              <v-icon
+                slot="appendIcon"
+                :color="index == item.id ? '#ffffff' : '#fca326'"
+              >
+                mdi-chevron-down
+              </v-icon>
+              <template v-slot:activator>
+                <v-list-item-icon>
+                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                    {{ item.icon }}
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                >
+                  {{ item.title }}
+                </v-list-item-title>
+              </template>
+              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-list-item
+                    link
+                    v-bind="attrs"
+                    @click="taskIndex = i"
+                    v-on="on"
+                    :disabled="isTaskDisabled(i)"
+                    :class="{
+                      'disabled-group': isTaskDisabled(i),
+                    }"
+                  >
+                    <v-list-item-icon>
+                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
+                        {{ items[1].value[i].icon }}
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :style="
+                          taskIndex == i ? 'color: white' : 'color:#fca326'
+                        "
+                      >
+                        {{ task.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
+            </v-list-group>
+            <!--Post Test-->
+            <v-list-item
+              v-else-if="item.id == 2"
+              @click="index = item.id"
+              :disabled="!allTasksCompleted"
+              :class="{
+                'disabled-group': !allTasksCompleted,
+              }"
+            >
+              <v-list-item-icon>
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                  {{ item.icon }}
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title
+                  :style="index == item.id ? 'color: white' : 'color:#fca326'"
+                >
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+        </v-list>
+
+        <div class="footer">
+          <v-spacer />
+          <v-btn icon class="mr-2" @click.stop="mini = !mini">
+            <v-icon v-if="mini" color="white"> mdi-chevron-right </v-icon>
+            <v-icon v-else color="white"> mdi-chevron-left </v-icon>
+          </v-btn>
+        </div>
+      </v-navigation-drawer>
+    </v-row>
+  </div>
 </template>
 
 <script>
-import {
-  collection,
-  doc,
-  addDoc,
-  setDoc,
-  onSnapshot,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  getDocs
-} from 'firebase/firestore'
-import { db } from '@/firebase'
+import VClamp from 'vue-clamp'
+import Snackbar from '@/components/atoms/Snackbar'
+import CardSignIn from '@/components/atoms/CardSignIn'
+import CardSignUp from '@/components/atoms/CardSignUp'
+
 export default {
-  data() {
-    return {
-      createBtnDisabled: false,
-      joinBtnDisabled: false,
-      hangupBtnDisabled: true,
-      roomId: null,
-      currentRoom: '',
-      configuration: {
-        iceServers: [
-          {
-            urls: [
-              'stun:stun1.l.google.com:19302',
-              'stun:stun2.l.google.com:19302',
-            ],
-          },
-        ],
-        iceCandidatePoolSize: 10,
+  components: {
+    VClamp,
+    CardSignIn,
+    CardSignUp,
+  },
+  data: () => ({
+    displayMediaOptions: {
+      video: {
+        displaySurface: 'window',
+        cursor: 'always',
       },
-      peerConnection: null,
-      localStream: null,
-      remoteStream: null,
-      roomDialog: false,
-      roomCollection: null, // Adding reference to Firestore collection
-    }
+      audio: true,
+    },
+    isCapture: false,
+    mediaRecorder: [],
+    chunks: [],
+    isRecording: false,
+    videoUrl: '',
+    isCapture: false,
+    logined: null,
+    selected: true,
+    fromlink: null,
+    drawer: true,
+    start: true,
+    mini: false,
+    index: null,
+    noExistUser: true,
+    taskIndex: 0,
+    preTestIndex: null,
+    items: [],
+    taskAnswers: {},
+    fab: false,
+    res: 0,
+    dialog: false,
+    videoStream: null,
+    mediaRecorder: null,
+    recordedChunks: [],
+    recording: false,
+    allTasksCompleted: false,
+    recordedVideo: '',
+  }),
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+    testId() {
+      return this.$store.getters.test.id
+    },
+    user() {
+      if (this.$store.getters.user) this.setExistUser()
+      return this.$store.getters.user
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
+    showSaveBtn() {
+      if (this.currentUserTestAnswer.submitted) return false
+      return true
+    },
+    cooperators() {
+      return this.$store.getters.cooperators
+    },
+    loading() {
+      return this.$store.getters.loading
+    },
+    currentImageUrl() {
+      return this.$store.state.Tests.currentImageUrl
+    },
+    tasks() {
+      return this.$store.getters.tasks
+    },
+  },
+  watch: {
+    test: async function () {
+      this.mappingSteps()
+    },
+    items() {
+      if (this.items.length) {
+        this.index = this.items[0].id
+        if (this.items.find((obj) => obj.id == 0)) {
+          //se tiver preTest mexe no preTestIndex
+          this.preTestIndex = this.items[0].value[0].id
+        }
+      }
+    },
+    taskIndex() {
+      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
+    },
+    async user() {
+      if (this.user) {
+        this.noExistUser = false
+        if (this.logined) this.setTest()
+      }
+    },
+  },
+  async created() {
+    await this.mappingSteps()
+  },
+  async mounted() {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    this.autoComplete()
+    this.calculateProgress()
   },
   methods: {
-    async createRoom() {
-      this.createBtnDisabled = true
-      this.joinBtnDisabled = true
-      this.roomCollection = collection(db, 'rooms') // Getting reference to collection
-
-      const roomRef = doc(this.roomCollection) // Creating new document reference
-
-      console.log(
-        'Create PeerConnection with configuration: ',
-        this.configuration,
-      )
-      this.peerConnection = new RTCPeerConnection(this.configuration)
-
-      this.localStream.getTracks().forEach((track) => {
-        this.peerConnection.addTrack(track, this.localStream)
-      })
-
-      const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
-
-      this.peerConnection.addEventListener('icecandidate', (event) => {
-        if (!event.candidate) {
-          console.log('Got final candidate!')
-          return
+    isTaskDisabled(taskIndex) {
+      for (let i = 0; i < taskIndex; i++) {
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          return true
         }
-        console.log('Got candidate: ', event.candidate)
-        addDoc(callerCandidatesCollection, event.candidate.toJSON()) // Adding candidate to collection
-      })
-
-      const offer = await this.peerConnection.createOffer()
-      await this.peerConnection.setLocalDescription(offer)
-      console.log('Created offer:', offer)
-
-      const roomWithOffer = {
-        offer: {
-          type: offer.type,
-          sdp: offer.sdp,
-        },
       }
-      await setDoc(roomRef, roomWithOffer) // Setting room details in document
-      this.roomId = roomRef.id
-      console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`)
-      this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
-
-      this.peerConnection.addEventListener('track', (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-          this.remoteStream.addTrack(track)
-        })
+      return false
+    },
+    async saveAnswer() {
+      await this.$store.dispatch('saveTestAnswer', {
+        data: this.currentUserTestAnswer,
+        answerDocId: this.test.answersDocId,
+        testType: this.test.testType,
       })
+    },
+    async submitAnswer() {
+      this.currentUserTestAnswer.submitted = true
+      await this.saveAnswer()
+    },
+    startTest() {
+      if (this.test.testStructure.length == 0) {
+        alert("This test don't have any task")
+        this.$router.push('/managerview/' + this.test.id)
+      }
+      this.start = !this.start
+    },
+    callTimerSave() {
+      const timerComponent = this.$refs.timerComponent
 
-      onSnapshot(roomRef, async (snapshot) => {
-        const data = snapshot.data()
+      timerComponent.stopTimer()
+    },
+    handleTimerStopped(elapsedTime, taskIndex) {
+      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
+    },
+    completeStep(id, type) {
+      if (type === 'tasks') {
+        this.currentUserTestAnswer.tasks[id].completed = true
+        this.items[1].value[id].icon = 'mdi-check-circle-outline'
+        this.allTasksCompleted = true
+        this.$forceUpdate()
+
+        for (let i = 0; i < this.items[1].value.length; i++) {
+          if (!this.currentUserTestAnswer.tasks[i].completed) {
+            this.allTasksCompleted = false
+            break
+          }
+        }
+        if (this.allTasksCompleted) {
+          this.items[1].icon = 'mdi-check-circle-outline'
+        }
+      }
+      if (type === 'postTest') {
+        this.currentUserTestAnswer.postTestCompleted = true
+        this.items[2].icon = 'mdi-check-circle-outline'
+      }
+      if (type === 'preTest') {
+        this.currentUserTestAnswer.preTestCompleted = true
+        this.items[0].value[id].icon = 'mdi-check-circle-outline'
         if (
-          !this.peerConnection.currentRemoteDescription &&
-          data &&
-          data.answer
+          this.currentUserTestAnswer.preTestCompleted &&
+          this.currentUserTestAnswer.consentCompleted
         ) {
-          console.log('Got remote description: ', data.answer)
-          const rtcSessionDescription = new RTCSessionDescription(data.answer)
-          await this.peerConnection.setRemoteDescription(rtcSessionDescription)
+          this.items[0].icon = 'mdi-check-circle-outline'
         }
-      })
-
-      onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
-        snapshot.docChanges().forEach(async (change) => {
-          if (change.type === 'added') {
-            let data = change.doc.data()
-            console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`)
-            await this.peerConnection.addIceCandidate(new RTCIceCandidate(data))
-          }
-        })
-      })
+      }
+      if (type === 'consent') {
+        this.currentUserTestAnswer.consentCompleted = true
+        this.items[0].value[id].icon = 'mdi-check-circle-outline'
+        if (
+          this.currentUserTestAnswer.preTestCompleted &&
+          this.currentUserTestAnswer.consentCompleted
+        ) {
+          this.items[0].icon = 'mdi-check-circle-outline'
+        }
+      }
+      this.calculateProgress()
     },
-    async joinRoom() {
-      this.createBtnDisabled = true
-      this.joinBtnDisabled = true
-      this.roomDialog = true
+
+    async autoComplete() {
+      // PRE-TEST
+      if (this.currentUserTestAnswer.preTestCompleted) {
+        this.items[0].value[1].icon = 'mdi-check-circle-outline'
+      }
+      if (this.currentUserTestAnswer.consentCompleted) {
+        this.items[0].value[0].icon = 'mdi-check-circle-outline'
+      }
+      if (
+        this.currentUserTestAnswer.preTestCompleted &&
+        this.currentUserTestAnswer.consentCompleted
+      ) {
+        this.items[0].icon = 'mdi-check-circle-outline'
+      }
+      // TASKS
+      let allTasksCompleted = true
+      for (let i = 0; i < this.items[1].value.length; i++) {
+        if (this.currentUserTestAnswer.tasks[i].completed) {
+          this.items[1].value[i].icon = 'mdi-check-circle-outline'
+        }
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          allTasksCompleted = false
+          break
+        }
+      }
+      if (allTasksCompleted) {
+        this.items[1].icon = 'mdi-check-circle-outline'
+      }
+      // POST-TEST
+      if (this.currentUserTestAnswer.postTestCompleted) {
+        this.items[2].icon = 'mdi-check-circle-outline'
+      }
     },
-    async confirmJoin() {
-      const roomId = this.roomId
-      console.log('Join room: ', roomId)
-      this.currentRoom = `Current room is ${roomId} - You are the callee!`
-      await this.joinRoomById(roomId)
+    calculateProgress() {
+      const totalSteps = 4
+
+      let completedSteps = 0
+
+      if (this.currentUserTestAnswer.preTestCompleted) {
+        completedSteps++
+      }
+
+      if (this.currentUserTestAnswer.consentCompleted) {
+        completedSteps++
+      }
+
+      let tasksCompleted = 0
+      for (let i = 0; i < this.items[1].value.length; i++) {
+        if (this.currentUserTestAnswer.tasks[i].completed) {
+          tasksCompleted++
+        }
+      }
+
+      if (tasksCompleted === this.items[1].value.length) {
+        completedSteps++
+      }
+
+      if (this.currentUserTestAnswer.postTestCompleted) {
+        completedSteps++
+      }
+
+      // Calcular a porcentagem de conclusão
+      const progressPercentage = (completedSteps / totalSteps) * 100
+      this.currentUserTestAnswer.progress = progressPercentage
+      return progressPercentage
     },
-    async joinRoomById(roomId) {
-      const roomRef = doc(collection(db, 'rooms'), roomId) // Getting reference to room document
-
-      const roomSnapshot = await getDoc(roomRef) // Getting room details
-
-      console.log('Got room:', roomSnapshot.exists)
-
-      if (roomSnapshot.exists) {
-        this.peerConnection = new RTCPeerConnection(this.configuration)
-
-        this.localStream.getTracks().forEach((track) => {
-          this.peerConnection.addTrack(track, this.localStream)
+    async setTest() {
+      this.logined = true
+      await this.$store.dispatch('getCurrentTestAnswerDoc')
+      this.populateWithHeuristicQuestions()
+    },
+    setExistUser() {
+      this.noExistUser = false
+    },
+    async mappingSteps() {
+      //PreTest
+      if (this.validate(this.test.testStructure.preTest)) {
+        this.items.push({
+          title: 'Pre-test',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: [
+            {
+              title: 'Consent',
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: 0,
+            },
+          ],
+          id: 0,
         })
+      }
 
-        const calleeCandidatesCollection = collection(
-          roomRef,
-          'calleeCandidates',
-        )
-        this.peerConnection.addEventListener('icecandidate', (event) => {
-          if (!event.candidate) {
-            console.log('Got final candidate!')
-            return
-          }
-          console.log('Got candidate: ', event.candidate)
-          addDoc(calleeCandidatesCollection, event.candidate.toJSON())
-        })
-
-        this.peerConnection.addEventListener('track', (event) => {
-          event.streams[0].getTracks().forEach((track) => {
-            this.remoteStream.addTrack(track)
+      if (this.validate(this.test.testStructure.preTest)) {
+        if (this.items.length) {
+          this.items[0].value.push({
+            title: 'Form',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            id: 0,
           })
-        })
-
-        const offer = roomSnapshot.data().offer
-        console.log('Got offer:', offer)
-        await this.peerConnection.setRemoteDescription(
-          new RTCSessionDescription(offer),
-        )
-        const answer = await this.peerConnection.createAnswer()
-        console.log('Created answer:', answer)
-        await this.peerConnection.setLocalDescription(answer)
-
-        const roomWithAnswer = {
-          answer: {
-            type: answer.type,
-            sdp: answer.sdp,
-          },
+        } else {
+          this.items.push({
+            title: 'Pre Test',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: [
+              {
+                title: 'Form',
+                icon: 'mdi-checkbox-blank-circle-outline',
+                id: 0,
+              },
+            ],
+            id: 0,
+          })
         }
-        await updateDoc(roomRef, roomWithAnswer) // Updating room details with SDP answer
+      }
 
-        onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
-          snapshot.docChanges().forEach(async (change) => {
-            if (change.type === 'added') {
-              let data = change.doc.data()
-              console.log(
-                `Got new remote ICE candidate: ${JSON.stringify(data)}`,
-              )
-              await this.peerConnection.addIceCandidate(
-                new RTCIceCandidate(data),
-              )
+      //Tasks
+      if (this.validate(this.test.testStructure.userTasks))
+        this.items.push({
+          title: 'Tasks',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: this.test.testStructure.userTasks.map((i) => {
+            return {
+              title: i.taskName,
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: 2,
             }
-          })
+          }),
+          id: 1,
         })
-      }
+
+      //PostTest
+      if (this.validate(this.test.testStructure.postTest))
+        this.items.push({
+          title: 'Post Test',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          value: this.test.testStructure.postTest,
+          id: 2,
+        })
     },
-    async openUserMedia() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      })
-      this.localStream = stream
-      this.remoteStream = new MediaStream()
-      document.querySelector('#localVideo').srcObject = this.localStream
-      document.querySelector('#remoteVideo').srcObject = this.remoteStream
-      this.createBtnDisabled = false
-      this.joinBtnDisabled = false
-      this.hangupBtnDisabled = false
+    validate(object) {
+      return object !== null && object !== undefined && object !== ''
     },
-    async hangUp() {
-      console.log('hang up')
-      const tracks = this.localStream.getTracks()
-      tracks.forEach((track) => {
-        track.stop()
-      })
-
-      if (this.remoteStream) {
-        this.remoteStream.getTracks().forEach((track) => track.stop())
-      }
-
-      if (this.peerConnection) {
-        this.peerConnection.close()
-      }
-
-      document.querySelector('#localVideo').srcObject = null
-      document.querySelector('#remoteVideo').srcObject = null
-      this.localStream = null
-      this.remoteStream = null
-      this.createBtnDisabled = false
-      this.joinBtnDisabled = false
-      this.hangupBtnDisabled = true
-      this.currentRoom = ''
-
-      // Deleting room on hang up
-      if (this.roomId) {
-        try {
-          const roomRef = doc(db, 'rooms', this.roomId)
-
-          // Verificando se o documento da sala existe antes de tentar excluí-lo
-          const roomSnapshot = await getDoc(roomRef)
-          if (roomSnapshot.exists()) {
-            console.log('Room document exists. Deleting...')
-
-            const calleeCandidatesSnapshot = await getDocs(
-              collection(roomRef, 'calleeCandidates'),
-            )
-            calleeCandidatesSnapshot.forEach(async (candidate) => {
-              await deleteDoc(candidate.ref)
-              console.log('Deleted callee candidate:', candidate.id)
-            })
-
-            const callerCandidatesSnapshot = await getDocs(
-              collection(roomRef, 'callerCandidates'),
-            )
-            callerCandidatesSnapshot.forEach(async (candidate) => {
-              await deleteDoc(candidate.ref)
-              console.log('Deleted caller candidate:', candidate.id)
-            })
-
-            await deleteDoc(roomRef)
-            console.log('Deleted room document:', this.roomId)
-          } else {
-            console.log('Room document does not exist.')
-          }
-        } catch (error) {
-          console.error('Error deleting room and candidates:', error)
-        }
-      }
-      // document.location.reload(true)
-    },
+  },
+  beforeDestroy() {
+    this.stopRecording()
   },
 }
 </script>
 
+
+
 <style scoped>
-/* Estilos Vue.js aqui */
+.disabled-group {
+  pointer-events: none;
+  background-color: grey;
+}
+
+.background {
+  background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.backgroundTest {
+  background-color: #e8eaf2;
+  height: 94%;
+  overflow: scroll;
+}
+.background:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url(../../assets/BackgroundTestView.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right 0px top -20px;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.titleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+.description {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #ffffff;
+}
+.nav {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+.btn-fix:focus::before {
+  opacity: 0 !important;
+}
+.titleText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin-left: 15px;
+  padding: 10px;
+  padding-left: 0px;
+  padding-top: 0px;
+  /*
+  height: 2.9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; */
+}
+/* Right side scroll bar */
+/* width */
+.right-view::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+.right-view::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.right-view::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+.right-view::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
+/* Nav bar list scroll bar */
+/* width */
+.nav-list::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+.nav-list::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.nav-list::-webkit-scrollbar-thumb {
+  background: #777596;
+  border-radius: 4px;
+}
+/* Handle on hover */
+.nav-list::-webkit-scrollbar-thumb:hover {
+  background: #64618a;
+  /* background: #515069; */
+}
+.card-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 56px;
+  margin-left: 12px;
+  margin-bottom: 20px;
+}
 </style>
