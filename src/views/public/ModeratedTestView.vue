@@ -1,6 +1,5 @@
 <template>
   <div v-if="test">
-
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
         v-if="selected"
@@ -63,7 +62,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" dense>
+    <v-row v-else class="nav pa-0 ma-0" style="background-color: #E8EAF2" dense>
       <v-navigation-drawer
         v-model="drawer"
         clipped
@@ -103,7 +102,7 @@
         >
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
-            <v-list-group
+            <v-list-item
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
                   currentUserTestAnswer.preTestCompleted
@@ -118,129 +117,52 @@
               no-action
               @click="index = item.id"
             >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-              >
-                mdi-chevron-down
-              </v-icon>
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{ item.icon }}
-                  </v-icon>
-                </v-list-item-icon>
+              <v-list-item-icon>
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                  {{ item.icon }}
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
                 >
                   {{ item.title }}
                 </v-list-item-title>
-              </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item
-                    link
-                    v-bind="attrs"
-                    @click="taskIndex = i"
-                    v-on="on"
-                    :disabled="
-                      (currentUserTestAnswer.consentCompleted && i == 0) ||
-                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
-                        (currentUserTestAnswer.preTestCompleted && i == 1)
-                    "
-                  >
-                    <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{ task.icon }}
-                      </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        :style="
-                          taskIndex == i ? 'color: white' : 'color:#fca326'
-                        "
-                      >
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group>
-            <!--Tasks--->
-            <v-list-group
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
               :disabled="
-                !currentUserTestAnswer.consentCompleted ||
-                  !currentUserTestAnswer.preTestCompleted
+                currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
-                  !currentUserTestAnswer.consentCompleted ||
-                  !currentUserTestAnswer.preTestCompleted,
+                  currentUserTestAnswer.consentCompleted &&
+                  currentUserTestAnswer.preTestCompleted,
               }"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
               @click="index = item.id"
             >
-              <v-icon
-                slot="appendIcon"
-                :color="index == item.id ? '#ffffff' : '#fca326'"
-              >
-                mdi-chevron-down
-              </v-icon>
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{ item.icon }}
-                  </v-icon>
-                </v-list-item-icon>
+              <v-list-item-icon>
+                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
+                  {{ item.icon }}
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
                 >
                   {{ item.title }}
                 </v-list-item-title>
-              </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item
-                    link
-                    v-bind="attrs"
-                    @click="taskIndex = i"
-                    v-on="on"
-                    :disabled="isTaskDisabled(i)"
-                    :class="{
-                      'disabled-group': isTaskDisabled(i),
-                    }"
-                  >
-                    <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{ items[1].value[i].icon }}
-                      </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        :style="
-                          taskIndex == i ? 'color: white' : 'color:#fca326'
-                        "
-                      >
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group>
-            <!--Post Test-->
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item
-              v-else-if="item.id == 2"
+              v-else-if="item.id == 2 && !isAdmin"
               @click="index = item.id"
-              :disabled="!allTasksCompleted"
-              :class="{
-                'disabled-group': !allTasksCompleted,
-              }"
             >
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
@@ -267,13 +189,105 @@
           </v-btn>
         </div>
       </v-navigation-drawer>
+      <!-- MODERATOR VIEW -->
+      <v-col class="mx-15 mt-4" v-if="index == 0 && taskIndex == 0 && isAdmin">
+        <v-card color="white" class="cards">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Confirm you are ready</span>
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
+                  <span class="cardsSubtitle">
+                    This area enables you to connect via voice and camera with
+                    your evaluator so that, when ready, they can start the test.
+                  </span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mb-4">
+              <v-btn color="orange" block depressed dark>CONNECT</v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+      <!-- EVALUATOR VIEW -->
+      <v-col
+        class="mx-15 mt-4"
+        style=""
+        v-if="index == 0 && taskIndex == 0 && !isAdmin"
+      >
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Welcome!</span>
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0 mb-5">
+                  <span class="cardsSubtitle ">
+                    Welcome! in this test you are going to test a VR application
+                    that lorem ipsum lorem ipsum dolor sit amet consectetur
+                    adipiscing elit lorem ipsum dolor sit amet consectetur
+                    adipiscing elit lorem ipsum dolor sit amet consectetur
+                    adipiscing elit lorem ipsum dolor sit amet consectetur
+                    adipiscing elit
+                  </span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">We need your consentiment!</span>
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0 mb-5">
+                  <span class="cardsSubtitle ">
+                    The information you give is used for orem ipsum lorem ipsum
+                    dolor sit amet consectetur adipiscing elit lorem ipsum dolor
+                    sit amet consectetur adipiscing elit lorem ipsum dolor sit
+                    amet consectetur adipiscing elit lorem ipsum dolor sit amet
+                    consectetur adipiscing elit
+                  </span>
+                </v-col>
+              </v-row>
+              <v-checkbox color="orange" class="ma-0 pa-0"
+                ><template v-slot:label
+                  ><span style="color: #455a64;"
+                    >Do you like icecream?</span
+                  ></template
+                ></v-checkbox
+              >
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Connect with your moderator</span>
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
+                  <span class="cardsSubtitle ">
+                    This area enables you to connect via voice and camera with
+                    your moderator so that, when ready, they can start the test.
+                  </span>
+                </v-col>
+                <v-col cols="4" class="mt-2 mb-7 mr-8">
+                  <span class="cardsTitle text-center d-block">Waiting the moderator...</span>
+                <div class="dot-flashing mx-auto mt-4"></div>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
 import VClamp from 'vue-clamp'
-import Snackbar from '@/components/atoms/Snackbar'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 
@@ -292,6 +306,7 @@ export default {
       audio: true,
     },
     isCapture: false,
+    isAdmin: false,
     mediaRecorder: [],
     chunks: [],
     isRecording: false,
@@ -303,7 +318,7 @@ export default {
     drawer: true,
     start: true,
     mini: false,
-    index: null,
+    index: 0,
     noExistUser: true,
     taskIndex: 0,
     preTestIndex: null,
@@ -351,17 +366,8 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       this.mappingSteps()
-    },
-    items() {
-      if (this.items.length) {
-        this.index = this.items[0].id
-        if (this.items.find((obj) => obj.id == 0)) {
-          //se tiver preTest mexe no preTestIndex
-          this.preTestIndex = this.items[0].value[0].id
-        }
-      }
     },
     taskIndex() {
       this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
@@ -374,22 +380,10 @@ export default {
     },
   },
   async created() {
+    await this.verifyAdmin()
     await this.mappingSteps()
   },
-  async mounted() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    this.autoComplete()
-    this.calculateProgress()
-  },
   methods: {
-    isTaskDisabled(taskIndex) {
-      for (let i = 0; i < taskIndex; i++) {
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          return true
-        }
-      }
-      return false
-    },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -416,83 +410,7 @@ export default {
     handleTimerStopped(elapsedTime, taskIndex) {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
-    completeStep(id, type) {
-      if (type === 'tasks') {
-        this.currentUserTestAnswer.tasks[id].completed = true
-        this.items[1].value[id].icon = 'mdi-check-circle-outline'
-        this.allTasksCompleted = true
-        this.$forceUpdate()
 
-        for (let i = 0; i < this.items[1].value.length; i++) {
-          if (!this.currentUserTestAnswer.tasks[i].completed) {
-            this.allTasksCompleted = false
-            break
-          }
-        }
-        if (this.allTasksCompleted) {
-          this.items[1].icon = 'mdi-check-circle-outline'
-        }
-      }
-      if (type === 'postTest') {
-        this.currentUserTestAnswer.postTestCompleted = true
-        this.items[2].icon = 'mdi-check-circle-outline'
-      }
-      if (type === 'preTest') {
-        this.currentUserTestAnswer.preTestCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
-        }
-      }
-      if (type === 'consent') {
-        this.currentUserTestAnswer.consentCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
-        }
-      }
-      this.calculateProgress()
-    },
-
-    async autoComplete() {
-      // PRE-TEST
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        this.items[0].value[1].icon = 'mdi-check-circle-outline'
-      }
-      if (this.currentUserTestAnswer.consentCompleted) {
-        this.items[0].value[0].icon = 'mdi-check-circle-outline'
-      }
-      if (
-        this.currentUserTestAnswer.preTestCompleted &&
-        this.currentUserTestAnswer.consentCompleted
-      ) {
-        this.items[0].icon = 'mdi-check-circle-outline'
-      }
-      // TASKS
-      let allTasksCompleted = true
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          this.items[1].value[i].icon = 'mdi-check-circle-outline'
-        }
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          allTasksCompleted = false
-          break
-        }
-      }
-      if (allTasksCompleted) {
-        this.items[1].icon = 'mdi-check-circle-outline'
-      }
-      // POST-TEST
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        this.items[2].icon = 'mdi-check-circle-outline'
-      }
-    },
     calculateProgress() {
       const totalSteps = 4
 
@@ -503,17 +421,6 @@ export default {
       }
 
       if (this.currentUserTestAnswer.consentCompleted) {
-        completedSteps++
-      }
-
-      let tasksCompleted = 0
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          tasksCompleted++
-        }
-      }
-
-      if (tasksCompleted === this.items[1].value.length) {
         completedSteps++
       }
 
@@ -534,83 +441,90 @@ export default {
     setExistUser() {
       this.noExistUser = false
     },
-    async mappingSteps() {
-      //PreTest
-      if (this.validate(this.test.testStructure.preTest)) {
-        this.items.push({
-          title: 'Pre-test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: [
-            {
-              title: 'Consent',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 0,
-            },
-          ],
-          id: 0,
-        })
+    async verifyAdmin() {
+      if (this.test.testAdmin.email == this.user.email) {
+        this.isAdmin = true
       }
-
-      if (this.validate(this.test.testStructure.preTest)) {
-        if (this.items.length) {
-          this.items[0].value.push({
-            title: 'Form',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            id: 0,
-          })
-        } else {
+    },
+    async mappingSteps() {
+      if (this.isAdmin) {
+        if (this.validate(this.test.testStructure.preTest)) {
           this.items.push({
-            title: 'Pre Test',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: [
-              {
-                title: 'Form',
-                icon: 'mdi-checkbox-blank-circle-outline',
-                id: 0,
-              },
-            ],
+            title: 'Moderator view',
+            icon: 'mdi-security',
+            value: this.test.testStructure.postTest,
             id: 0,
           })
         }
+
+        if (this.validate(this.test.testStructure.preTest)) {
+          if (this.items.length) {
+            this.items.push({
+              title: 'Feedback',
+              icon: 'mdi-monitor-account',
+              value: this.test.testStructure.postTest,
+              id: 1,
+            })
+          }
+        }
+      } else {
+        //PreTest
+        if (this.validate(this.test.testStructure.preTest)) {
+          this.items.push({
+            title: 'Welcome Page',
+            icon: 'mdi-human-greeting',
+            id: 0,
+          })
+        }
+
+        //Tasks
+        if (this.validate(this.test.testStructure.userTasks))
+          this.items.push({
+            title: 'Tasks',
+            icon: 'mdi-checkbox-marked-circle-auto-outline',
+            id: 1,
+          })
+
+        //PostTest
+        if (this.validate(this.test.testStructure.postTest))
+          this.items.push({
+            title: 'Feedback',
+            icon: 'mdi-monitor-account',
+            id: 2,
+          })
       }
-
-      //Tasks
-      if (this.validate(this.test.testStructure.userTasks))
-        this.items.push({
-          title: 'Tasks',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.userTasks.map((i) => {
-            return {
-              title: i.taskName,
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 2,
-            }
-          }),
-          id: 1,
-        })
-
-      //PostTest
-      if (this.validate(this.test.testStructure.postTest))
-        this.items.push({
-          title: 'Post Test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.postTest,
-          id: 2,
-        })
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
   },
-  beforeDestroy() {
-    this.stopRecording()
-  },
 }
 </script>
 
-
-
 <style scoped>
+.cards {
+  border-radius: 20px;
+}
+.cardsTitle {
+  color: #455a64;
+  font-family: 'Poppins', Helvetica;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.cardsSubtitle {
+  color: #455a64;
+  font-family: 'Poppins', Helvetica;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.v-text-field--outlined >>> fieldset {
+  border-radius: 25px;
+  border: 1px solid #ffceb2;
+}
 .disabled-group {
   pointer-events: none;
   background-color: grey;
@@ -741,5 +655,55 @@ export default {
   line-height: 56px;
   margin-left: 12px;
   margin-bottom: 20px;
+}
+.dot-flashing {
+  position: relative;
+  width: 15px; /* Aumento do tamanho */
+  height: 15px; /* Aumento do tamanho */
+  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
+  background-color: #fca326; /* Alterado para laranja */
+  color: #fca326; /* Alterado para laranja */
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -25px; /* Ajuste para garantir a posição adequada */
+  width: 15px; /* Aumento do tamanho */
+  height: 15px; /* Aumento do tamanho */
+  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
+  background-color: #fca326; /* Alterado para laranja */
+  color: #fca326; /* Alterado para laranja */
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 25px; /* Ajuste para garantir a posição adequada */
+  width: 15px; /* Aumento do tamanho */
+  height: 15px; /* Aumento do tamanho */
+  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
+  background-color: #fca326; /* Alterado para laranja */
+  color: #fca326; /* Alterado para laranja */
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    background-color: #fca326; /* Alterado para laranja */
+  }
+  50%,
+  100% {
+    background-color: rgba(252, 163, 38, 0.281); /* Alterado para cinza com laranja */
+  }
 }
 </style>
