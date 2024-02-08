@@ -113,7 +113,7 @@
       <!-- Tasks -->
 
       <v-col cols="12" v-if="index == 1">
-        <moderated-tasks />
+        <ModeratedTasks />
       </v-col>
 
       <!-- Post Test -->
