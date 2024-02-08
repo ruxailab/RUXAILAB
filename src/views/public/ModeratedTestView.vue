@@ -62,7 +62,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" style="background-color: #E8EAF2" dense>
+    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2" dense>
       <v-navigation-drawer
         v-model="drawer"
         clipped
@@ -212,7 +212,7 @@
           </v-row>
         </v-card>
       </v-col>
-      <!-- EVALUATOR VIEW -->
+      <!--////// EVALUATOR VIEW //////-->
       <v-col
         class="mx-15 mt-4"
         style=""
@@ -223,8 +223,8 @@
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Welcome!</span>
               <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-0 mb-5">
-                  <span class="cardsSubtitle ">
+                <v-col cols="11" class="pt-2 mb-5">
+                  <span class="cardsSubtitle">
                     Welcome! in this test you are going to test a VR application
                     that lorem ipsum lorem ipsum dolor sit amet consectetur
                     adipiscing elit lorem ipsum dolor sit amet consectetur
@@ -242,8 +242,8 @@
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">We need your consentiment!</span>
               <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-0 mb-5">
-                  <span class="cardsSubtitle ">
+                <v-col cols="11" class="pt-2 mb-5">
+                  <span class="cardsSubtitle">
                     The information you give is used for orem ipsum lorem ipsum
                     dolor sit amet consectetur adipiscing elit lorem ipsum dolor
                     sit amet consectetur adipiscing elit lorem ipsum dolor sit
@@ -254,7 +254,7 @@
               </v-row>
               <v-checkbox color="orange" class="ma-0 pa-0"
                 ><template v-slot:label
-                  ><span style="color: #455a64;"
+                  ><span style="color: #455a64"
                     >Do you like icecream?</span
                   ></template
                 ></v-checkbox
@@ -268,19 +268,201 @@
               <span class="cardsTitle">Connect with your moderator</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
-                  <span class="cardsSubtitle ">
+                  <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
                 <v-col cols="4" class="mt-2 mb-7 mr-8">
-                  <span class="cardsTitle text-center d-block">Waiting the moderator...</span>
-                <div class="dot-flashing mx-auto mt-4"></div>
+                  <span class="cardsTitle text-center d-block"
+                    >Waiting the moderator...</span
+                  >
+                  <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
         </v-card>
+      </v-col>
+      <!--////// TASKS //////-->
+      <v-col class="mx-15 mt-6" v-if="index == 1 && !isAdmin">
+        <v-expansion-panels flat accordion>
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Pre-Test</span>
+                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.preTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p>{{ item.title }}</p>
+                  <p v-if="item.description">{{ item.description }}</p>
+                  <v-text-field
+                    :disabled="currentUserTestAnswer.preTestCompleted"
+                    v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                    v-if="item.textField"
+                    :placeholder="item.title"
+                    outlined
+                  ></v-text-field>
+                  <v-radio-group
+                    :disabled="currentUserTestAnswer.preTestCompleted"
+                    v-if="item.selectionField"
+                    v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                    column
+                  >
+                    <v-row
+                      v-for="(selection,
+                      selectionIndex) in item.selectionFields"
+                      :key="selectionIndex"
+                    >
+                      <v-radio
+                        :disabled="currentUserTestAnswer.preTestCompleted"
+                        class="ml-3 mb-1"
+                        :label="selection"
+                        :value="selection"
+                      ></v-radio>
+                    </v-row>
+                    <v-row justify="end"> </v-row>
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+
+              <v-row justify="center">
+                <v-col class="mx-4">
+                  <v-btn
+                    block
+                    dark
+                    style="border-radius: 10px"
+                    color="orange lighten-1"
+                    depressed
+                    :disabled="currentUserTestAnswer.preTestCompleted"
+                    @click="
+                      completeStep(taskIndex, 'preTest'),
+                        (index = 0),
+                        (taskIndex = 0)
+                    "
+                    >{{ $t('UserTestView.buttons.done') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Tarefas do Usuário -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            class="mb-3"
+            v-for="(task, index) in test.testStructure.userTasks"
+            :key="index"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">{{ task.taskName }}</span>
+                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455A64;">
+                    {{ test.testStructure.userTasks[index].taskDescription }}
+                  </span>
+                </v-col>
+                <v-col class="mx-4">
+                  <v-btn
+                    block
+                    dark
+                    style="border-radius: 10px"
+                    color="orange lighten-1"
+                    depressed
+                    @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
+                  >
+                    {{ $t('UserTestView.buttons.done') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Post-Test -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Post-Test</span>
+                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.postTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p>{{ item.title }}</p>
+                  <p v-if="item.description">{{ item.description }}</p>
+                  <v-text-field
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                    v-if="item.textField"
+                    :placeholder="item.title"
+                    outlined
+                  ></v-text-field>
+                  <v-radio-group
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    v-if="item.selectionField"
+                    v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                    column
+                  >
+                    <v-row
+                      v-for="(selection,
+                      selectionIndex) in item.selectionFields"
+                      :key="selectionIndex"
+                    >
+                      <v-radio
+                        :disabled="currentUserTestAnswer.postTestCompleted"
+                        class="ml-3 mb-1"
+                        :label="selection"
+                        :value="selection"
+                      ></v-radio>
+                    </v-row>
+                    <v-row justify="end"> </v-row>
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+
+              <v-row justify="center">
+                <v-col class="mx-4">
+                  <v-btn
+                    block
+                    dark
+                    style="border-radius: 10px"
+                    color="orange lighten-1"
+                    depressed
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    @click="
+                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
+                    "
+                    >{{ $t('UserTestView.buttons.done') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
   </div>
@@ -658,11 +840,11 @@ export default {
 }
 .dot-flashing {
   position: relative;
-  width: 15px; /* Aumento do tamanho */
-  height: 15px; /* Aumento do tamanho */
-  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
-  background-color: #fca326; /* Alterado para laranja */
-  color: #fca326; /* Alterado para laranja */
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+  background-color: #fca326;
+  color: #fca326;
   animation: dot-flashing 1s infinite linear alternate;
   animation-delay: 0.5s;
 }
@@ -676,34 +858,34 @@ export default {
 }
 
 .dot-flashing::before {
-  left: -25px; /* Ajuste para garantir a posição adequada */
-  width: 15px; /* Aumento do tamanho */
-  height: 15px; /* Aumento do tamanho */
-  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
-  background-color: #fca326; /* Alterado para laranja */
-  color: #fca326; /* Alterado para laranja */
+  left: -25px;
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+  background-color: #fca326;
+  color: #fca326;
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 0s;
 }
 
 .dot-flashing::after {
-  left: 25px; /* Ajuste para garantir a posição adequada */
-  width: 15px; /* Aumento do tamanho */
-  height: 15px; /* Aumento do tamanho */
-  border-radius: 10px; /* Metade do tamanho para manter o formato arredondado */
-  background-color: #fca326; /* Alterado para laranja */
-  color: #fca326; /* Alterado para laranja */
+  left: 25px;
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+  background-color: #fca326;
+  color: #fca326;
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 1s;
 }
 
 @keyframes dot-flashing {
   0% {
-    background-color: #fca326; /* Alterado para laranja */
+    background-color: #fca326;
   }
   50%,
   100% {
-    background-color: rgba(252, 163, 38, 0.281); /* Alterado para cinza com laranja */
+    background-color: rgba(252, 163, 38, 0.281);
   }
 }
 </style>
