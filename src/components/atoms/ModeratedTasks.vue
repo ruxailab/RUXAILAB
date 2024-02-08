@@ -48,7 +48,7 @@
       >
         <v-col cols="12" class="pb-0 px-5 pt-4">
           <v-icon style="cursor: pointer;">mdi-drag</v-icon>
-          <span class="cardsTitle ml-3">{{ task.name }}</span>
+          <span class="cardsTitle ml-3">{{ task.taskName }}</span>
           <br />
           <span class="cardsSubtitle ml-9">Task Description</span>
           <v-icon class="delete-icon" @click="deleteTask(index)"
@@ -57,7 +57,7 @@
         </v-col>
         <v-textarea
           draggable="false"
-          v-model="task.description"
+          v-model="task.taskDescription"
           rows="3"
           outlined
           color="orange"
@@ -85,13 +85,13 @@
         <v-col> </v-col>
         <v-card-text>
           <v-text-field
-            v-model="newTask.name"
+            v-model="newTask.taskName"
             outlined
             label="Task Name"
             color="orange"
           ></v-text-field>
           <v-textarea
-            v-model="newTask.description"
+            v-model="newTask.taskDescription"
             outlined
             label="Task Description"
             color="orange"
@@ -120,8 +120,8 @@ export default {
     addTaskModal: false,
     taskIndex: null,
     newTask: {
-      name: '',
-      description: '',
+      taskName: '',
+      taskDescription: '',
     },
   }),
 
@@ -148,19 +148,19 @@ export default {
     closeAddTaskModal() {
       this.taskIndex = null
       this.addTaskModal = false
-      this.newTask = { name: '', description: '' }
+      this.newTask = { taskName: '', taskDescription: '' }
     },
     addTask() {
       if (
-        this.newTask.name.trim() !== '' &&
-        this.newTask.description.trim() !== ''
+        this.newTask.taskName.trim() !== '' &&
+        this.newTask.taskDescription.trim() !== ''
       ) {
         const insertIndex =
           this.taskIndex !== null ? this.taskIndex + 1 : this.tasks.length
 
         this.tasks.splice(insertIndex, 0, {
-          name: this.newTask.name,
-          description: this.newTask.description,
+          taskName: this.newTask.taskName,
+          taskDescription: this.newTask.taskDescription,
         })
         this.closeAddTaskModal()
       }
