@@ -4,14 +4,14 @@
 
     <ShowInfo v-if="answers != null && !intro && test" title="Analytics">
       <div slot="content" class="ma-0 pa-0">
-        <v-card style="background: #f5f7ff">
+        <v-card flat rounded="xl" style="background: #f5f7ff">
           <v-row v-if="resultHeuristics" class="ma-0 pa-0">
             <!--Heuristics List-->
             <v-col class="ma-0 pa-0" cols="2">
-              <v-list dense height="560px" outlined>
+              <v-list outlined rounded dense height="560px" >
                 <v-subheader>Heuristics</v-subheader>
                 <v-divider />
-                <v-list dense height="470px" outlined class="list-scroll">
+                <v-list color="grey-lighten-3" dense height="470px"  class="list-scroll">
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
                     <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
                       <v-list-item-content>
@@ -30,12 +30,12 @@
             <v-col v-if="heuristicSelect !== null && test.testStructure[heuristicSelect]
             " class="ma-0 pa-0" cols="3"
             >
-              <v-list dense height="560px" outlined>
+              <v-list outlined rounded dense height="560px" >
                 <v-subheader>
                   {{ test.testStructure[heuristicSelect].title }} - Questions
                 </v-subheader>
                 <v-divider />
-                <v-list dense height="470px" outlined class="list-scroll">
+                <v-list dense height="470px"  class="list-scroll">
                   <v-list-item-group v-model="questionSelect" color="#fca326">
                     <v-list-item :value="-1">
                       <v-list-item-content>
@@ -65,7 +65,7 @@
               test.testStructure[heuristicSelect]
             " class="ma-0 pa-0"
             >
-              <v-card height="560px" elevation-0>
+              <v-card outlined rounded flat height="560px" elevation-0>
                 <v-subheader v-if="questionSelect != -1" class="pa-2">
                   {{
                     test.testStructure[heuristicSelect].questions[
