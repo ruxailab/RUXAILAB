@@ -321,9 +321,7 @@
               <v-list-item v-else-if="item.id == 2" @click="index = item.id">
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      item.icon
-                    }}
+                    {{ item.icon }}
                   </v-icon>
                 </v-list-item-icon>
 
@@ -411,8 +409,11 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="test.testType == 'User'">
+    <div v-if="test.testType == 'User' && test.userTestType === 'unmoderated'">
       <UserTestView />
+    </div>
+    <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
+      <ModeratedTestView />
     </div>
   </div>
 </template>
@@ -428,6 +429,7 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
+import ModeratedTestView from './ModeratedTestView.vue'
 export default {
   components: {
     ShowInfo,
@@ -438,6 +440,7 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
+    ModeratedTestView,
   },
   props: {
     id: { type: String, default: '' },
@@ -512,7 +515,7 @@ export default {
       }
     },
   },
-  
+
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
@@ -521,10 +524,10 @@ export default {
   },
   methods: {
     startTest() {
-        if(this.test.testStructure.length == 0) {
-          alert("This test don't have any heuristic")
-          this.$router.push('/managerview/' + this.test.id)
-        }
+      if (this.test.testStructure.length == 0) {
+        alert("This test don't have any heuristic")
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.start = !this.start
     },
     updateComment(comment, heurisIndex, answerIndex) {

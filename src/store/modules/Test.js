@@ -18,9 +18,13 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
+    welcomeMessage: '',
+    landingPage: '',
+    participantCamera: '',
     consent: '',
     preTest: [],
     postTest: [],
+    finalMessage: '',
   },
   getters: {
     tests(state) {
@@ -47,6 +51,18 @@ export default {
     consent(state) {
       return state.consent
     },
+    welcomeMessage(state) {
+      return state.welcomeMessage
+    },
+    landingPage(state) {
+      return state.landingPage
+    },
+    participantCamera(state) {
+      return state.participantCamera
+    },
+    finalMessage(state) {
+      return state.finalMessage
+    },
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -59,6 +75,9 @@ export default {
       //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
     },
+    SET_TASKS(state, payload) {
+      state.tasks = payload
+    },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
     },
@@ -70,6 +89,18 @@ export default {
     },
     SET_CONSENT(state, payload) {
       state.consent = payload
+    },
+    SET_WELCOME(state, payload) {
+      state.welcomeMessage = payload
+    },
+    SET_LANDING(state, payload) {
+      state.landingPage = payload
+    },
+    SET_PARTICIPANT_CAMERA(state, payload) {
+      state.participantCamera = payload
+    },
+    SET_FINAL_MESSAGE(state, payload) {
+      state.finalMessage = payload
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -84,6 +115,10 @@ export default {
       state.consent = ''
       state.preTest = []
       state.postTest = []
+      state.welcomeMessage = ''
+      state.landingPage = ''
+      state.participantCamera = ''
+      state.finalMessage = ''
     },
   },
   actions: {
@@ -261,6 +296,13 @@ export default {
         commit('setLoading', false)
       }
     },
+    setTasks({ commit }, payload) {
+      try {
+        commit('SET_TASKS', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
     },
@@ -285,10 +327,38 @@ export default {
         commit('setError', true)
       }
     },
+    async setWelcomeMessage({ commit }, payload) {
+      try {
+        commit('SET_WELCOME', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setLandingPage({ commit }, payload) {
+      try {
+        commit('SET_LANDING', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setParticipantCamera({ commit }, payload) {
+      try {
+        commit('SET_PARTICIPANT_CAMERA', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setFinalMessage({ commit }, payload) {
+      try {
+        commit('SET_FINAL_MESSAGE', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
-        console.log('clean test');
+        console.log('clean test')
       } catch {
         commit('setError', true)
       }

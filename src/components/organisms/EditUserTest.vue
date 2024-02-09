@@ -27,7 +27,7 @@
 
       <v-divider />
       <v-row justify="space-around">
-        <v-col cols="12">
+        <v-col cols="8">
           <UserConsent @input="updateData" />
         </v-col>
       </v-row>
@@ -148,5 +148,9 @@ export default {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
+}
+.v-text-field--outlined >>> fieldset {
+  border-radius: 25px;
+  border: 1px solid #ffceb2;
 }
 </style>

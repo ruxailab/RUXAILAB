@@ -22,6 +22,7 @@
     "firebase-functions": "^3.24.1",
     "handlebars": "^4.7.8",
     "jsdoc-vuex-plugin": "^1.0.0",
+    "material-components-web": "^14.0.0",
     "nodemailer": "^6.9.5",
     "stylus-loader": "^3.0.2",
     "tiptap": "^1.32.2",
