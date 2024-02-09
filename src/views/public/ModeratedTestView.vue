@@ -273,7 +273,7 @@
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
-                <v-col cols="4" class="mt-2 mb-7 mr-8">
+                <v-col cols="4" class="mt-2 mb-8 mr-8">
                   <span class="cardsTitle text-center d-block"
                     >Waiting the moderator...</span
                   >
