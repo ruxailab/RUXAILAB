@@ -32,10 +32,14 @@
                     template.header.templateVersion == '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                        template.header.updateDate,
-                      )}`
+                          template.header.updateDate,
+                        )}`
                   }}
-                  ({{ $t('pages.listTests.version') + ' ' + template.header.templateVersion }})
+                  ({{
+                    $t('pages.listTests.version') +
+                      ' ' +
+                      template.header.templateVersion
+                  }})
                 </div>
               </v-col>
             </v-row>
@@ -63,14 +67,11 @@
                   mdi-delete
                 </v-icon>
               </v-btn>
-             
-              <v-btn
-                class="primary mr-2"
-                @click="reset()"
-              >
+
+              <v-btn dark class="error mr-2" @click="reset()">
                 {{ $t('buttons.close') }}
               </v-btn>
-              
+
               <v-btn
                 v-if="allowCreate"
                 class="success"
@@ -175,14 +176,17 @@ export default {
 
   watch: {
     template() {
-      this.isMyTemplate = this.template?.header?.templateAuthor?.userDocId === this.user.id ? true : false
+      this.isMyTemplate =
+        this.template?.header?.templateAuthor?.userDocId === this.user.id
+          ? true
+          : false
     },
   },
 
   methods: {
     async deleteTemplate() {
       if (!confirm($t('alerts.deleteTest'))) return
-      
+
       await this.$store.dispatch('deleteTemplate', this.template.id)
       this.reset()
     },
