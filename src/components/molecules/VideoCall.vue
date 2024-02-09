@@ -72,7 +72,7 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
-  getDocs
+  getDocs,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 export default {
@@ -101,13 +101,33 @@ export default {
       roomCollection: null, // Adding reference to Firestore collection
     }
   },
+  props: {
+    isAdmin: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  computed: {
+    roomTestAnswerId() {
+      return this.$store.getters.test.testAnswerId
+    },
+    roomTestId() {
+      return this.$store.getters.test.id
+    }
+  },
+  created() {
+    const ref = doc(db, 'tests/', this.roomTestId)
+    onSnapshot(ref, (snapshot) => {
+      console.log(snapshot.data().testType);
+    })
+  },
   methods: {
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
       this.roomCollection = collection(db, 'rooms') // Getting reference to collection
 
-      const roomRef = doc(this.roomCollection) // Creating new document reference
+      const roomRef = doc(this.roomCollection, this.roomTestId) // Creating new document reference
 
       console.log(
         'Create PeerConnection with configuration: ',
@@ -251,17 +271,26 @@ export default {
       }
     },
     async openUserMedia() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      })
-      this.localStream = stream
-      this.remoteStream = new MediaStream()
-      document.querySelector('#localVideo').srcObject = this.localStream
-      document.querySelector('#remoteVideo').srcObject = this.remoteStream
-      this.createBtnDisabled = false
-      this.joinBtnDisabled = false
-      this.hangupBtnDisabled = false
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        })
+        this.localStream = stream
+        this.remoteStream = new MediaStream()
+        document.querySelector('#localVideo').srcObject = this.localStream
+        document.querySelector('#remoteVideo').srcObject = this.remoteStream
+        this.createBtnDisabled = false
+        this.joinBtnDisabled = false
+        this.hangupBtnDisabled = false
+      } catch (e) {
+        alert('Error in capturing your media device: ' + e.message)
+      }
+      if (this.isAdmin) {
+        this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
+      } else if (!this.isAdmin) {
+        this.joinRoomById(this.roomTestId)
+      }
     },
     async hangUp() {
       console.log('hang up')
@@ -328,6 +357,4 @@ export default {
 }
 </script>
 
-<style scoped>
-/* Estilos Vue.js aqui */
-</style>
+<style scoped></style>
