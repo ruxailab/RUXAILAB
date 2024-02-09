@@ -1,7 +1,7 @@
 <template>
-  <dsadsaas>
+  <div>
     <v-card
-      v-if="tasks.length == 0"
+      v-if="tasks.length === 0"
       style="background: #f5f7ff; min-height: 150px"
       flat
       class="cards mt-2"
@@ -18,7 +18,7 @@
               <v-card
                 class="mt-4"
                 rounded="xl"
-                @click="tasks = [1]"
+                @click="openAddTaskModal"
                 outlined
                 elevation="0"
                 color="grey lighten-2"
@@ -40,23 +40,28 @@
       @end="drag = false"
     >
       <v-card
-        v-for="(item, n) in tasks"
-        :key="n"
+        v-for="(task, index) in tasks"
+        :key="index"
         style="background: #f5f7ff"
         flat
         class="cards mb-5"
       >
         <v-col cols="12" class="pb-0 px-5 pt-4">
-          <v-icon>mdi-drag</v-icon>
-          <span class="cardsTitle ml-3">Task {{ tasks[n] }}</span>
+          <v-icon style="cursor: pointer;">mdi-drag</v-icon>
+          <span class="cardsTitle ml-3">{{ task.taskName }}</span>
           <br />
           <span class="cardsSubtitle ml-9">Task Description</span>
+          <v-icon class="delete-icon" @click="deleteTask(index)"
+            >mdi-delete</v-icon
+          >
         </v-col>
         <v-textarea
+          draggable="false"
+          v-model="task.taskDescription"
           rows="3"
           outlined
           color="orange"
-          class="mx-6 mt-3"
+          class="mx-14 mt-3"
           placeholder="Write what you want to task..."
         ></v-textarea>
         <v-row justify="center">
@@ -66,22 +71,127 @@
             dark
             color="rgb(249, 168, 38)"
             style="margin-bottom: -30px; z-index: 3;"
-            @click="tasks.push(tasks.length + 1)"
-            ><v-icon size="35">mdi-plus</v-icon>
+            @click="openAddTaskModal(index)"
+          >
+            <v-icon size="35">mdi-plus</v-icon>
           </v-btn>
         </v-row>
       </v-card>
     </draggable>
-  </dsadsaas>
+
+    <!-- Modal for adding a new task -->
+    <v-dialog v-model="addTaskModal" max-width="600">
+      <v-card class="cards">
+        <v-col> </v-col>
+        <v-card-text>
+          <v-text-field
+            v-model="newTask.taskName"
+            outlined
+            label="Task Name"
+            color="orange"
+          ></v-text-field>
+          <v-textarea
+            v-model="newTask.taskDescription"
+            outlined
+            label="Task Description"
+            color="orange"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="closeAddTaskModal" dark color="red"
+            ><v-icon class="mr-1">mdi-close</v-icon>Cancel</v-btn
+          >
+          <v-btn @click="addTask" dark color="orange"
+            ><v-icon class="mr-1">mdi-content-save</v-icon>Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+
 export default {
   data: () => ({
     tasks: [],
+    drag: false,
+    addTaskModal: false,
+    taskIndex: null,
+    newTask: {
+      taskName: '',
+      taskDescription: '',
+    },
   }),
+
   components: { draggable },
+
+  computed: {
+    tasksStore() {
+      return this.$store.getters.tasks
+    },
+    testStructure() {
+      return this.$store.state.Tests.Test.testStructure
+    },
+  },
+
+  mounted() {
+    this.getTasks()
+  },
+
+  methods: {
+    openAddTaskModal(taskIndex) {
+      this.taskIndex = taskIndex
+      this.addTaskModal = true
+    },
+    closeAddTaskModal() {
+      this.taskIndex = null
+      this.addTaskModal = false
+      this.newTask = { taskName: '', taskDescription: '' }
+    },
+    addTask() {
+      if (
+        this.newTask.taskName.trim() !== '' &&
+        this.newTask.taskDescription.trim() !== ''
+      ) {
+        const insertIndex =
+          this.taskIndex !== null ? this.taskIndex + 1 : this.tasks.length
+
+        this.tasks.splice(insertIndex, 0, {
+          taskName: this.newTask.taskName,
+          taskDescription: this.newTask.taskDescription,
+        })
+        this.closeAddTaskModal()
+      }
+    },
+
+    getTasks() {
+      if (this.testStructure.userTasks) {
+        this.$store.dispatch('setTasks', this.testStructure.userTasks)
+        this.tasks = this.testStructure.userTasks
+      } else if (this.tasksStore) {
+        this.tasks = this.tasksStore
+      }
+    },
+
+    saveTasks() {
+      this.$store.dispatch('setTasks', this.tasks)
+      this.test.testStructure.userTasks = this.tasks
+    },
+
+    deleteTask(index) {
+      this.tasks.splice(index, 1)
+    },
+  },
+  watch: {
+    tasks: {
+      handler() {
+        this.saveTasks()
+      },
+      deep: true,
+    },
+  },
 }
 </script>
 
@@ -104,6 +214,12 @@ export default {
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+}
+.delete-icon {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  cursor: pointer;
 }
 .v-text-field--outlined >>> fieldset {
   border-radius: 25px;
