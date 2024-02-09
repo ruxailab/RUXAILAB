@@ -273,16 +273,16 @@
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
-                <v-col cols="4" class="mt-2 mb-8 mr-8">
+                <v-col  cols="4" class="mt-2 mb-8 mr-8">
                   <span class="cardsTitle text-center d-block"
-                    >Waiting the moderator...</span
-                  >
+                    >Waiting the moderator...</span>
                   <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
         </v-card>
+        <video-call :isAdmin='isAdmin' />
       </v-col>
       <!--////// TASKS //////-->
       <v-col class="mx-15 mt-6" v-if="index == 1 && !isAdmin">
@@ -472,12 +472,14 @@
 import VClamp from 'vue-clamp'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
+import VideoCall from '@/components/molecules/VideoCall.vue'
 
 export default {
   components: {
     VClamp,
     CardSignIn,
     CardSignUp,
+    VideoCall,
   },
   data: () => ({
     displayMediaOptions: {
@@ -564,6 +566,7 @@ export default {
   async created() {
     await this.verifyAdmin()
     await this.mappingSteps()
+    console.log(this.testId);
   },
   methods: {
     async saveAnswer() {
