@@ -1,0 +1,1454 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+from __future__ import annotations
+
+from typing import MutableMapping, MutableSequence
+
+import proto  # type: ignore
+
+from google.protobuf import timestamp_pb2  # type: ignore
+
+
+__protobuf__ = proto.module(
+    package='google.events.cloud.gkebackup.v1',
+    manifest={
+        'Namespaces',
+        'NamespacedName',
+        'NamespacedNames',
+        'EncryptionKey',
+        'Backup',
+        'BackupPlan',
+        'Restore',
+        'RestoreConfig',
+        'RestorePlan',
+        'RestorePlanEventData',
+        'BackupEventData',
+        'BackupPlanEventData',
+        'RestoreEventData',
+    },
+)
+
+
+class Namespaces(proto.Message):
+    r"""A list of Kubernetes Namespaces
+
+    Attributes:
+        namespaces (MutableSequence[str]):
+            A list of Kubernetes Namespaces
+    """
+
+    namespaces: MutableSequence[str] = proto.RepeatedField(
+        proto.STRING,
+        number=1,
+    )
+
+
+class NamespacedName(proto.Message):
+    r"""A reference to a namespaced resource in Kubernetes.
+
+    Attributes:
+        namespace (str):
+            The Namespace of the Kubernetes resource.
+        name (str):
+            The name of the Kubernetes resource.
+    """
+
+    namespace: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    name: str = proto.Field(
+        proto.STRING,
+        number=2,
+    )
+
+
+class NamespacedNames(proto.Message):
+    r"""A list of namespaced Kubernetes resources.
+
+    Attributes:
+        namespaced_names (MutableSequence[google.events.cloud.gkebackup_v1.types.NamespacedName]):
+            A list of namespaced Kubernetes resources.
+    """
+
+    namespaced_names: MutableSequence['NamespacedName'] = proto.RepeatedField(
+        proto.MESSAGE,
+        number=1,
+        message='NamespacedName',
+    )
+
+
+class EncryptionKey(proto.Message):
+    r"""Defined a customer managed encryption key that will be used
+    to encrypt Backup artifacts.
+
+    Attributes:
+        gcp_kms_encryption_key (str):
+            Google Cloud KMS encryption key. Format:
+            ``projects/*/locations/*/keyRings/*/cryptoKeys/*``
+    """
+
+    gcp_kms_encryption_key: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+
+
+class Backup(proto.Message):
+    r"""Represents a request to perform a single point-in-time
+    capture of some portion of the state of a GKE cluster, the
+    record of the backup operation itself, and an anchor for the
+    underlying artifacts that comprise the Backup (the config backup
+    and VolumeBackups). Next id: 28
+
+    This message has `oneof`_ fields (mutually exclusive fields).
+    For each oneof, at most one member field can be set at the same time.
+    Setting any member of the oneof automatically clears all other
+    members.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        name (str):
+            Output only. The fully qualified name of the Backup.
+            ``projects/*/locations/*/backupPlans/*/backups/*``
+        uid (str):
+            Output only. Server generated global unique identifier of
+            `UUID4 <https://en.wikipedia.org/wiki/Universally_unique_identifier>`__
+        create_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this Backup
+            resource was created.
+        update_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this Backup
+            resource was last updated.
+        manual (bool):
+            Output only. This flag indicates whether this
+            Backup resource was created manually by a user
+            or via a schedule in the BackupPlan. A value of
+            True means that the Backup was created manually.
+        labels (MutableMapping[str, str]):
+            A set of custom labels supplied by user.
+        delete_lock_days (int):
+            Minimum age for this Backup (in days). If this field is set
+            to a non-zero value, the Backup will be "locked" against
+            deletion (either manual or automatic deletion) for the
+            number of days provided (measured from the creation time of
+            the Backup). MUST be an integer value between 0-90
+            (inclusive).
+
+            Defaults to parent BackupPlan's
+            [backup_delete_lock_days][google.cloud.gkebackup.v1.BackupPlan.RetentionPolicy.backup_delete_lock_days]
+            setting and may only be increased (either at creation time
+            or in a subsequent update).
+        delete_lock_expire_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The time at which an existing delete lock will
+            expire for this backup (calculated from create_time +
+            [delete_lock_days][google.cloud.gkebackup.v1.Backup.delete_lock_days]).
+        retain_days (int):
+            The age (in days) after which this Backup will be
+            automatically deleted. Must be an integer value >= 0:
+
+            -  If 0, no automatic deletion will occur for this Backup.
+            -  If not 0, this must be >=
+               [delete_lock_days][google.cloud.gkebackup.v1.Backup.delete_lock_days]
+               and <= 365.
+
+            Once a Backup is created, this value may only be increased.
+
+            Defaults to the parent BackupPlan's
+            [backup_retain_days][google.cloud.gkebackup.v1.BackupPlan.RetentionPolicy.backup_retain_days]
+            value.
+        retain_expire_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The time at which this Backup will be
+            automatically deleted (calculated from create_time +
+            [retain_days][google.cloud.gkebackup.v1.Backup.retain_days]).
+        encryption_key (google.events.cloud.gkebackup_v1.types.EncryptionKey):
+            Output only. The customer managed encryption key that was
+            used to encrypt the Backup's artifacts. Inherited from the
+            parent BackupPlan's
+            [encryption_key][google.cloud.gkebackup.v1.BackupPlan.BackupConfig.encryption_key]
+            value.
+        all_namespaces (bool):
+            Output only. If True, all namespaces were
+            included in the Backup.
+
+            This field is a member of `oneof`_ ``backup_scope``.
+        selected_namespaces (google.events.cloud.gkebackup_v1.types.Namespaces):
+            Output only. If set, the list of namespaces
+            that were included in the Backup.
+
+            This field is a member of `oneof`_ ``backup_scope``.
+        selected_applications (google.events.cloud.gkebackup_v1.types.NamespacedNames):
+            Output only. If set, the list of
+            ProtectedApplications whose resources were
+            included in the Backup.
+
+            This field is a member of `oneof`_ ``backup_scope``.
+        contains_volume_data (bool):
+            Output only. Whether or not the Backup contains volume data.
+            Controlled by the parent BackupPlan's
+            [include_volume_data][google.cloud.gkebackup.v1.BackupPlan.BackupConfig.include_volume_data]
+            value.
+        contains_secrets (bool):
+            Output only. Whether or not the Backup contains Kubernetes
+            Secrets. Controlled by the parent BackupPlan's
+            [include_secrets][google.cloud.gkebackup.v1.BackupPlan.BackupConfig.include_secrets]
+            value.
+        cluster_metadata (google.events.cloud.gkebackup_v1.types.Backup.ClusterMetadata):
+            Output only. Information about the GKE
+            cluster from which this Backup was created.
+        state (google.events.cloud.gkebackup_v1.types.Backup.State):
+            Output only. Current state of the Backup
+        state_reason (str):
+            Output only. Human-readable description of why the backup is
+            in the current ``state``.
+        complete_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. Completion time of the Backup
+        resource_count (int):
+            Output only. The total number of Kubernetes
+            resources included in the Backup.
+        volume_count (int):
+            Output only. The total number of volume
+            backups contained in the Backup.
+        size_bytes (int):
+            Output only. The total size of the Backup in
+            bytes = config backup size + sum(volume backup
+            sizes)
+        etag (str):
+            Output only. ``etag`` is used for optimistic concurrency
+            control as a way to help prevent simultaneous updates of a
+            backup from overwriting each other. It is strongly suggested
+            that systems make use of the ``etag`` in the
+            read-modify-write cycle to perform backup updates in order
+            to avoid race conditions: An ``etag`` is returned in the
+            response to ``GetBackup``, and systems are expected to put
+            that etag in the request to ``UpdateBackup`` or
+            ``DeleteBackup`` to ensure that their change will be applied
+            to the same version of the resource.
+        description (str):
+            User specified descriptive string for this
+            Backup.
+        pod_count (int):
+            Output only. The total number of Kubernetes
+            Pods contained in the Backup.
+        config_backup_size_bytes (int):
+            Output only. The size of the config backup in
+            bytes.
+    """
+    class State(proto.Enum):
+        r"""State
+
+        Values:
+            STATE_UNSPECIFIED (0):
+                The Backup resource is in the process of
+                being created.
+            CREATING (1):
+                The Backup resource has been created and the
+                associated BackupJob Kubernetes resource has
+                been injected into the source cluster.
+            IN_PROGRESS (2):
+                The gkebackup agent in the cluster has begun
+                executing the backup operation.
+            SUCCEEDED (3):
+                The backup operation has completed
+                successfully.
+            FAILED (4):
+                The backup operation has failed.
+            DELETING (5):
+                This Backup resource (and its associated
+                artifacts) is in the process of being deleted.
+        """
+        STATE_UNSPECIFIED = 0
+        CREATING = 1
+        IN_PROGRESS = 2
+        SUCCEEDED = 3
+        FAILED = 4
+        DELETING = 5
+
+    class ClusterMetadata(proto.Message):
+        r"""Information about the GKE cluster from which this Backup was
+        created.
+
+        This message has `oneof`_ fields (mutually exclusive fields).
+        For each oneof, at most one member field can be set at the same time.
+        Setting any member of the oneof automatically clears all other
+        members.
+
+        .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+        Attributes:
+            cluster (str):
+                The source cluster from which this Backup was created. Valid
+                formats:
+
+                -  ``projects/*/locations/*/clusters/*``
+                -  ``projects/*/zones/*/clusters/*``
+
+                This is inherited from the parent BackupPlan's
+                [cluster][google.cloud.gkebackup.v1.BackupPlan.cluster]
+                field.
+            k8s_version (str):
+                The Kubernetes server version of the source
+                cluster.
+            backup_crd_versions (MutableMapping[str, str]):
+                A list of the Backup for GKE CRD versions
+                found in the cluster.
+            gke_version (str):
+                GKE version
+
+                This field is a member of `oneof`_ ``platform_version``.
+            anthos_version (str):
+                Anthos version
+
+                This field is a member of `oneof`_ ``platform_version``.
+        """
+
+        cluster: str = proto.Field(
+            proto.STRING,
+            number=1,
+        )
+        k8s_version: str = proto.Field(
+            proto.STRING,
+            number=2,
+        )
+        backup_crd_versions: MutableMapping[str, str] = proto.MapField(
+            proto.STRING,
+            proto.STRING,
+            number=3,
+        )
+        gke_version: str = proto.Field(
+            proto.STRING,
+            number=4,
+            oneof='platform_version',
+        )
+        anthos_version: str = proto.Field(
+            proto.STRING,
+            number=5,
+            oneof='platform_version',
+        )
+
+    name: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    uid: str = proto.Field(
+        proto.STRING,
+        number=2,
+    )
+    create_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=3,
+        message=timestamp_pb2.Timestamp,
+    )
+    update_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=4,
+        message=timestamp_pb2.Timestamp,
+    )
+    manual: bool = proto.Field(
+        proto.BOOL,
+        number=5,
+    )
+    labels: MutableMapping[str, str] = proto.MapField(
+        proto.STRING,
+        proto.STRING,
+        number=6,
+    )
+    delete_lock_days: int = proto.Field(
+        proto.INT32,
+        number=7,
+    )
+    delete_lock_expire_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=8,
+        message=timestamp_pb2.Timestamp,
+    )
+    retain_days: int = proto.Field(
+        proto.INT32,
+        number=9,
+    )
+    retain_expire_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=10,
+        message=timestamp_pb2.Timestamp,
+    )
+    encryption_key: 'EncryptionKey' = proto.Field(
+        proto.MESSAGE,
+        number=11,
+        message='EncryptionKey',
+    )
+    all_namespaces: bool = proto.Field(
+        proto.BOOL,
+        number=12,
+        oneof='backup_scope',
+    )
+    selected_namespaces: 'Namespaces' = proto.Field(
+        proto.MESSAGE,
+        number=13,
+        oneof='backup_scope',
+        message='Namespaces',
+    )
+    selected_applications: 'NamespacedNames' = proto.Field(
+        proto.MESSAGE,
+        number=14,
+        oneof='backup_scope',
+        message='NamespacedNames',
+    )
+    contains_volume_data: bool = proto.Field(
+        proto.BOOL,
+        number=15,
+    )
+    contains_secrets: bool = proto.Field(
+        proto.BOOL,
+        number=16,
+    )
+    cluster_metadata: ClusterMetadata = proto.Field(
+        proto.MESSAGE,
+        number=17,
+        message=ClusterMetadata,
+    )
+    state: State = proto.Field(
+        proto.ENUM,
+        number=18,
+        enum=State,
+    )
+    state_reason: str = proto.Field(
+        proto.STRING,
+        number=19,
+    )
+    complete_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=20,
+        message=timestamp_pb2.Timestamp,
+    )
+    resource_count: int = proto.Field(
+        proto.INT32,
+        number=21,
+    )
+    volume_count: int = proto.Field(
+        proto.INT32,
+        number=22,
+    )
+    size_bytes: int = proto.Field(
+        proto.INT64,
+        number=23,
+    )
+    etag: str = proto.Field(
+        proto.STRING,
+        number=24,
+    )
+    description: str = proto.Field(
+        proto.STRING,
+        number=25,
+    )
+    pod_count: int = proto.Field(
+        proto.INT32,
+        number=26,
+    )
+    config_backup_size_bytes: int = proto.Field(
+        proto.INT64,
+        number=27,
+    )
+
+
+class BackupPlan(proto.Message):
+    r"""Defines the configuration and scheduling for a "line" of
+    Backups.
+
+    Attributes:
+        name (str):
+            Output only. The full name of the BackupPlan resource.
+            Format: ``projects/*/locations/*/backupPlans/*``
+        uid (str):
+            Output only. Server generated global unique identifier of
+            `UUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`__
+            format.
+        create_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this
+            BackupPlan resource was created.
+        update_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this
+            BackupPlan resource was last updated.
+        description (str):
+            User specified descriptive string for this
+            BackupPlan.
+        cluster (str):
+            Required. Immutable. The source cluster from which Backups
+            will be created via this BackupPlan. Valid formats:
+
+            -  ``projects/*/locations/*/clusters/*``
+            -  ``projects/*/zones/*/clusters/*``
+        retention_policy (google.events.cloud.gkebackup_v1.types.BackupPlan.RetentionPolicy):
+            RetentionPolicy governs lifecycle of Backups
+            created under this plan.
+        labels (MutableMapping[str, str]):
+            A set of custom labels supplied by user.
+        backup_schedule (google.events.cloud.gkebackup_v1.types.BackupPlan.Schedule):
+            Defines a schedule for automatic Backup
+            creation via this BackupPlan.
+        etag (str):
+            Output only. ``etag`` is used for optimistic concurrency
+            control as a way to help prevent simultaneous updates of a
+            backup plan from overwriting each other. It is strongly
+            suggested that systems make use of the 'etag' in the
+            read-modify-write cycle to perform BackupPlan updates in
+            order to avoid race conditions: An ``etag`` is returned in
+            the response to ``GetBackupPlan``, and systems are expected
+            to put that etag in the request to ``UpdateBackupPlan`` or
+            ``DeleteBackupPlan`` to ensure that their change will be
+            applied to the same version of the resource.
+        deactivated (bool):
+            This flag indicates whether this BackupPlan
+            has been deactivated. Setting this field to True
+            locks the BackupPlan such that no further
+            updates will be allowed (except deletes),
+            including the deactivated field itself. It also
+            prevents any new Backups from being created via
+            this BackupPlan (including scheduled Backups).
+
+            Default: False
+        backup_config (google.events.cloud.gkebackup_v1.types.BackupPlan.BackupConfig):
+            Defines the configuration of Backups created
+            via this BackupPlan.
+        protected_pod_count (int):
+            Output only. The number of Kubernetes Pods
+            backed up in the last successful Backup created
+            via this BackupPlan.
+    """
+
+    class RetentionPolicy(proto.Message):
+        r"""RetentionPolicy defines a Backup retention policy for a
+        BackupPlan.
+
+        Attributes:
+            backup_delete_lock_days (int):
+                Minimum age for Backups created via this BackupPlan (in
+                days). This field MUST be an integer value between 0-90
+                (inclusive). A Backup created under this BackupPlan will NOT
+                be deletable until it reaches Backup's (create_time +
+                backup_delete_lock_days). Updating this field of a
+                BackupPlan does NOT affect existing Backups under it.
+                Backups created AFTER a successful update will inherit the
+                new value.
+
+                Default: 0 (no delete blocking)
+            backup_retain_days (int):
+                The default maximum age of a Backup created via this
+                BackupPlan. This field MUST be an integer value >= 0 and <=
+                365. If specified, a Backup created under this BackupPlan
+                will be automatically deleted after its age reaches
+                (create_time + backup_retain_days). If not specified,
+                Backups created under this BackupPlan will NOT be subject to
+                automatic deletion. Updating this field does NOT affect
+                existing Backups under it. Backups created AFTER a
+                successful update will automatically pick up the new value.
+                NOTE: backup_retain_days must be >=
+                [backup_delete_lock_days][google.cloud.gkebackup.v1.BackupPlan.RetentionPolicy.backup_delete_lock_days].
+                If
+                [cron_schedule][google.cloud.gkebackup.v1.BackupPlan.Schedule.cron_schedule]
+                is defined, then this must be <= 360 \* the creation
+                interval.
+
+                Default: 0 (no automatic deletion)
+            locked (bool):
+                This flag denotes whether the retention policy of this
+                BackupPlan is locked. If set to True, no further update is
+                allowed on this policy, including the ``locked`` field
+                itself.
+
+                Default: False
+        """
+
+        backup_delete_lock_days: int = proto.Field(
+            proto.INT32,
+            number=1,
+        )
+        backup_retain_days: int = proto.Field(
+            proto.INT32,
+            number=2,
+        )
+        locked: bool = proto.Field(
+            proto.BOOL,
+            number=3,
+        )
+
+    class Schedule(proto.Message):
+        r"""Schedule defines scheduling parameters for automatically
+        creating Backups via this BackupPlan.
+
+        Attributes:
+            cron_schedule (str):
+                A standard `cron <https://wikipedia.com/wiki/cron>`__ string
+                that defines a repeating schedule for creating Backups via
+                this BackupPlan. If this is defined, then
+                [backup_retain_days][google.cloud.gkebackup.v1.BackupPlan.RetentionPolicy.backup_retain_days]
+                must also be defined.
+
+                Default (empty): no automatic backup creation will occur.
+            paused (bool):
+                This flag denotes whether automatic Backup
+                creation is paused for this BackupPlan.
+
+                Default: False
+        """
+
+        cron_schedule: str = proto.Field(
+            proto.STRING,
+            number=1,
+        )
+        paused: bool = proto.Field(
+            proto.BOOL,
+            number=2,
+        )
+
+    class BackupConfig(proto.Message):
+        r"""BackupConfig defines the configuration of Backups created via
+        this BackupPlan.
+
+        This message has `oneof`_ fields (mutually exclusive fields).
+        For each oneof, at most one member field can be set at the same time.
+        Setting any member of the oneof automatically clears all other
+        members.
+
+        .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+        Attributes:
+            all_namespaces (bool):
+                If True, include all namespaced resources
+
+                This field is a member of `oneof`_ ``backup_scope``.
+            selected_namespaces (google.events.cloud.gkebackup_v1.types.Namespaces):
+                If set, include just the resources in the
+                listed namespaces.
+
+                This field is a member of `oneof`_ ``backup_scope``.
+            selected_applications (google.events.cloud.gkebackup_v1.types.NamespacedNames):
+                If set, include just the resources referenced
+                by the listed ProtectedApplications.
+
+                This field is a member of `oneof`_ ``backup_scope``.
+            include_volume_data (bool):
+                This flag specifies whether volume data
+                should be backed up when PVCs are included in
+                the scope of a Backup.
+
+                Default: False
+            include_secrets (bool):
+                This flag specifies whether Kubernetes Secret
+                resources should be included when they fall into
+                the scope of Backups.
+
+                Default: False
+            encryption_key (google.events.cloud.gkebackup_v1.types.EncryptionKey):
+                This defines a customer managed encryption
+                key that will be used to encrypt the "config"
+                portion (the Kubernetes resources) of Backups
+                created via this plan.
+
+                Default (empty): Config backup artifacts will
+                not be encrypted.
+        """
+
+        all_namespaces: bool = proto.Field(
+            proto.BOOL,
+            number=1,
+            oneof='backup_scope',
+        )
+        selected_namespaces: 'Namespaces' = proto.Field(
+            proto.MESSAGE,
+            number=2,
+            oneof='backup_scope',
+            message='Namespaces',
+        )
+        selected_applications: 'NamespacedNames' = proto.Field(
+            proto.MESSAGE,
+            number=3,
+            oneof='backup_scope',
+            message='NamespacedNames',
+        )
+        include_volume_data: bool = proto.Field(
+            proto.BOOL,
+            number=4,
+        )
+        include_secrets: bool = proto.Field(
+            proto.BOOL,
+            number=5,
+        )
+        encryption_key: 'EncryptionKey' = proto.Field(
+            proto.MESSAGE,
+            number=6,
+            message='EncryptionKey',
+        )
+
+    name: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    uid: str = proto.Field(
+        proto.STRING,
+        number=2,
+    )
+    create_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=3,
+        message=timestamp_pb2.Timestamp,
+    )
+    update_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=4,
+        message=timestamp_pb2.Timestamp,
+    )
+    description: str = proto.Field(
+        proto.STRING,
+        number=5,
+    )
+    cluster: str = proto.Field(
+        proto.STRING,
+        number=6,
+    )
+    retention_policy: RetentionPolicy = proto.Field(
+        proto.MESSAGE,
+        number=7,
+        message=RetentionPolicy,
+    )
+    labels: MutableMapping[str, str] = proto.MapField(
+        proto.STRING,
+        proto.STRING,
+        number=8,
+    )
+    backup_schedule: Schedule = proto.Field(
+        proto.MESSAGE,
+        number=9,
+        message=Schedule,
+    )
+    etag: str = proto.Field(
+        proto.STRING,
+        number=10,
+    )
+    deactivated: bool = proto.Field(
+        proto.BOOL,
+        number=11,
+    )
+    backup_config: BackupConfig = proto.Field(
+        proto.MESSAGE,
+        number=12,
+        message=BackupConfig,
+    )
+    protected_pod_count: int = proto.Field(
+        proto.INT32,
+        number=13,
+    )
+
+
+class Restore(proto.Message):
+    r"""Represents both a request to Restore some portion of a Backup
+    into a target GKE cluster and a record of the restore operation
+    itself. Next id: 18
+
+    Attributes:
+        name (str):
+            Output only. The full name of the Restore resource. Format:
+            ``projects/*/locations/*/restorePlans/*/restores/*``
+        uid (str):
+            Output only. Server generated global unique identifier of
+            `UUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`__
+            format.
+        create_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this Restore
+            resource was created.
+        update_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this Restore
+            resource was last updated.
+        description (str):
+            User specified descriptive string for this
+            Restore.
+        backup (str):
+            Required. Immutable. A reference to the
+            [Backup][google.cloud.gkebackup.v1.Backup] used as the
+            source from which this Restore will restore. Note that this
+            Backup must be a sub-resource of the RestorePlan's
+            [backup_plan][google.cloud.gkebackup.v1.RestorePlan.backup_plan].
+            Format: ``projects/*/locations/*/backupPlans/*/backups/*``.
+        cluster (str):
+            Output only. The target cluster into which this Restore will
+            restore data. Valid formats:
+
+            -  ``projects/*/locations/*/clusters/*``
+            -  ``projects/*/zones/*/clusters/*``
+
+            Inherited from parent RestorePlan's
+            [cluster][google.cloud.gkebackup.v1.RestorePlan.cluster]
+            value.
+        restore_config (google.events.cloud.gkebackup_v1.types.RestoreConfig):
+            Output only. Configuration of the Restore. Inherited from
+            parent RestorePlan's
+            [restore_config][google.cloud.gkebackup.v1.RestorePlan.restore_config].
+        labels (MutableMapping[str, str]):
+            A set of custom labels supplied by user.
+        state (google.events.cloud.gkebackup_v1.types.Restore.State):
+            Output only. The current state of the
+            Restore.
+        state_reason (str):
+            Output only. Human-readable description of
+            why the Restore is in its current state.
+        complete_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. Timestamp of when the restore
+            operation completed.
+        resources_restored_count (int):
+            Output only. Number of resources restored
+            during the restore execution.
+        resources_excluded_count (int):
+            Output only. Number of resources excluded
+            during the restore execution.
+        resources_failed_count (int):
+            Output only. Number of resources that failed
+            to be restored during the restore execution.
+        volumes_restored_count (int):
+            Output only. Number of volumes restored
+            during the restore execution.
+        etag (str):
+            Output only. ``etag`` is used for optimistic concurrency
+            control as a way to help prevent simultaneous updates of a
+            restore from overwriting each other. It is strongly
+            suggested that systems make use of the ``etag`` in the
+            read-modify-write cycle to perform restore updates in order
+            to avoid race conditions: An ``etag`` is returned in the
+            response to ``GetRestore``, and systems are expected to put
+            that etag in the request to ``UpdateRestore`` or
+            ``DeleteRestore`` to ensure that their change will be
+            applied to the same version of the resource.
+    """
+    class State(proto.Enum):
+        r"""Possible values for state of the Restore.
+
+        Values:
+            STATE_UNSPECIFIED (0):
+                The Restore resource is in the process of
+                being created.
+            CREATING (1):
+                The Restore resource has been created and the
+                associated RestoreJob Kubernetes resource has
+                been injected into target cluster.
+            IN_PROGRESS (2):
+                The gkebackup agent in the cluster has begun
+                executing the restore operation.
+            SUCCEEDED (3):
+                The restore operation has completed
+                successfully. Restored workloads may not yet be
+                operational.
+            FAILED (4):
+                The restore operation has failed.
+            DELETING (5):
+                This Restore resource is in the process of
+                being deleted.
+        """
+        STATE_UNSPECIFIED = 0
+        CREATING = 1
+        IN_PROGRESS = 2
+        SUCCEEDED = 3
+        FAILED = 4
+        DELETING = 5
+
+    name: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    uid: str = proto.Field(
+        proto.STRING,
+        number=2,
+    )
+    create_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=3,
+        message=timestamp_pb2.Timestamp,
+    )
+    update_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=4,
+        message=timestamp_pb2.Timestamp,
+    )
+    description: str = proto.Field(
+        proto.STRING,
+        number=5,
+    )
+    backup: str = proto.Field(
+        proto.STRING,
+        number=6,
+    )
+    cluster: str = proto.Field(
+        proto.STRING,
+        number=7,
+    )
+    restore_config: 'RestoreConfig' = proto.Field(
+        proto.MESSAGE,
+        number=8,
+        message='RestoreConfig',
+    )
+    labels: MutableMapping[str, str] = proto.MapField(
+        proto.STRING,
+        proto.STRING,
+        number=9,
+    )
+    state: State = proto.Field(
+        proto.ENUM,
+        number=10,
+        enum=State,
+    )
+    state_reason: str = proto.Field(
+        proto.STRING,
+        number=11,
+    )
+    complete_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=12,
+        message=timestamp_pb2.Timestamp,
+    )
+    resources_restored_count: int = proto.Field(
+        proto.INT32,
+        number=13,
+    )
+    resources_excluded_count: int = proto.Field(
+        proto.INT32,
+        number=14,
+    )
+    resources_failed_count: int = proto.Field(
+        proto.INT32,
+        number=15,
+    )
+    volumes_restored_count: int = proto.Field(
+        proto.INT32,
+        number=16,
+    )
+    etag: str = proto.Field(
+        proto.STRING,
+        number=17,
+    )
+
+
+class RestoreConfig(proto.Message):
+    r"""Configuration of a restore.
+    Next id: 12
+
+    This message has `oneof`_ fields (mutually exclusive fields).
+    For each oneof, at most one member field can be set at the same time.
+    Setting any member of the oneof automatically clears all other
+    members.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        volume_data_restore_policy (google.events.cloud.gkebackup_v1.types.RestoreConfig.VolumeDataRestorePolicy):
+            Specifies the mechanism to be used to restore volume data.
+            Default: VOLUME_DATA_RESTORE_POLICY_UNSPECIFIED (will be
+            treated as NO_VOLUME_DATA_RESTORATION).
+        cluster_resource_conflict_policy (google.events.cloud.gkebackup_v1.types.RestoreConfig.ClusterResourceConflictPolicy):
+            Defines the behavior for handling the situation where
+            cluster-scoped resources being restored already exist in the
+            target cluster. This MUST be set to a value other than
+            CLUSTER_RESOURCE_CONFLICT_POLICY_UNSPECIFIED if
+            [cluster_resource_restore_scope][google.cloud.gkebackup.v1.RestoreConfig.cluster_resource_restore_scope]
+            is not empty.
+        namespaced_resource_restore_mode (google.events.cloud.gkebackup_v1.types.RestoreConfig.NamespacedResourceRestoreMode):
+            Defines the behavior for handling the situation where sets
+            of namespaced resources being restored already exist in the
+            target cluster. This MUST be set to a value other than
+            NAMESPACED_RESOURCE_RESTORE_MODE_UNSPECIFIED.
+        cluster_resource_restore_scope (google.events.cloud.gkebackup_v1.types.RestoreConfig.ClusterResourceRestoreScope):
+            Identifies the cluster-scoped resources to
+            restore from the Backup. Not specifying it means
+            NO cluster resource will be restored.
+        all_namespaces (bool):
+            Restore all namespaced resources in the
+            Backup if set to "True". Specifying this field
+            to "False" is an error.
+
+            This field is a member of `oneof`_ ``namespaced_resource_restore_scope``.
+        selected_namespaces (google.events.cloud.gkebackup_v1.types.Namespaces):
+            A list of selected Namespaces to restore from
+            the Backup. The listed Namespaces and all
+            resources contained in them will be restored.
+
+            This field is a member of `oneof`_ ``namespaced_resource_restore_scope``.
+        selected_applications (google.events.cloud.gkebackup_v1.types.NamespacedNames):
+            A list of selected ProtectedApplications to
+            restore. The listed ProtectedApplications and
+            all the resources to which they refer will be
+            restored.
+
+            This field is a member of `oneof`_ ``namespaced_resource_restore_scope``.
+        substitution_rules (MutableSequence[google.events.cloud.gkebackup_v1.types.RestoreConfig.SubstitutionRule]):
+            A list of transformation rules to be applied
+            against Kubernetes resources as they are
+            selected for restoration from a Backup. Rules
+            are executed in order defined - this order
+            matters, as changes made by a rule may impact
+            the filtering logic of subsequent rules. An
+            empty list means no substitution will occur.
+    """
+    class VolumeDataRestorePolicy(proto.Enum):
+        r"""Defines how volume data should be restored
+
+        Values:
+            VOLUME_DATA_RESTORE_POLICY_UNSPECIFIED (0):
+                Unspecified (illegal).
+            RESTORE_VOLUME_DATA_FROM_BACKUP (1):
+                For each PVC to be restored, will create a
+                new underlying volume (and PV) from the
+                corresponding VolumeBackup contained within the
+                Backup.
+            REUSE_VOLUME_HANDLE_FROM_BACKUP (2):
+                For each PVC to be restored, attempt to reuse
+                the original PV contained in the Backup (with
+                its original underlying volume).  Note that
+                option is likely only usable when restoring a
+                workload to its original cluster.
+            NO_VOLUME_DATA_RESTORATION (3):
+                For each PVC to be restored, PVCs will be
+                created without any particular action to restore
+                data.  In this case, the normal Kubernetes
+                provisioning logic would kick in, and this would
+                likely result in either dynamically provisioning
+                blank PVs or binding to statically provisioned
+                PVs.
+        """
+        VOLUME_DATA_RESTORE_POLICY_UNSPECIFIED = 0
+        RESTORE_VOLUME_DATA_FROM_BACKUP = 1
+        REUSE_VOLUME_HANDLE_FROM_BACKUP = 2
+        NO_VOLUME_DATA_RESTORATION = 3
+
+    class ClusterResourceConflictPolicy(proto.Enum):
+        r"""Defines the behavior for handling the situation where
+        cluster-scoped resources being restored already exist in the
+        target cluster.
+
+        Values:
+            CLUSTER_RESOURCE_CONFLICT_POLICY_UNSPECIFIED (0):
+                Unspecified. Only allowed if no
+                cluster-scoped resources will be restored.
+            USE_EXISTING_VERSION (1):
+                Do not attempt to restore the conflicting
+                resource.
+            USE_BACKUP_VERSION (2):
+                Delete the existing version before
+                re-creating it from the Backup. Note that this
+                is a dangerous option which could cause
+                unintentional data loss if used inappropriately
+                - for example, deleting a CRD will cause
+                Kubernetes to delete all CRs of that type.
+        """
+        CLUSTER_RESOURCE_CONFLICT_POLICY_UNSPECIFIED = 0
+        USE_EXISTING_VERSION = 1
+        USE_BACKUP_VERSION = 2
+
+    class NamespacedResourceRestoreMode(proto.Enum):
+        r"""Defines the behavior for handling the situation where sets of
+        namespaced resources being restored already exist in the target
+        cluster.
+
+        Values:
+            NAMESPACED_RESOURCE_RESTORE_MODE_UNSPECIFIED (0):
+                Unspecified (invalid).
+            DELETE_AND_RESTORE (1):
+                When conflicting top-level resources (either
+                Namespaces or ProtectedApplications, depending
+                upon the scope) are encountered, this will first
+                trigger a delete of the conflicting resource AND
+                ALL OF ITS REFERENCED RESOURCES (e.g., all
+                resources in the Namespace or all resources
+                referenced by the ProtectedApplication) before
+                restoring the resources from the Backup. This
+                mode should only be used when you are intending
+                to revert some portion of a cluster to an
+                earlier state.
+            FAIL_ON_CONFLICT (2):
+                If conflicting top-level resources (either
+                Namespaces or ProtectedApplications, depending
+                upon the scope) are encountered at the beginning
+                of a restore process, the Restore will fail.  If
+                a conflict occurs during the restore process
+                itself (e.g., because an out of band process
+                creates conflicting resources), a conflict will
+                be reported.
+        """
+        NAMESPACED_RESOURCE_RESTORE_MODE_UNSPECIFIED = 0
+        DELETE_AND_RESTORE = 1
+        FAIL_ON_CONFLICT = 2
+
+    class GroupKind(proto.Message):
+        r"""This is a direct map to the Kubernetes GroupKind type
+        `GroupKind <https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupKind>`__
+        and is used for identifying specific "types" of resources to
+        restore.
+
+        Attributes:
+            resource_group (str):
+                API group string of a Kubernetes resource,
+                e.g. "apiextensions.k8s.io", "storage.k8s.io",
+                etc. Note: use empty string for core API group
+            resource_kind (str):
+                Kind of a Kubernetes resource, e.g.
+                "CustomResourceDefinition", "StorageClass", etc.
+        """
+
+        resource_group: str = proto.Field(
+            proto.STRING,
+            number=1,
+        )
+        resource_kind: str = proto.Field(
+            proto.STRING,
+            number=2,
+        )
+
+    class ClusterResourceRestoreScope(proto.Message):
+        r"""Defines the scope of cluster-scoped resources to restore.
+
+        Some group kinds are not reasonable choices for a restore, and
+        will cause an error if selected here. Any scope selection that
+        would restore "all valid" resources automatically excludes these
+        group kinds.
+        - gkebackup.gke.io/BackupJob
+        - gkebackup.gke.io/RestoreJob
+        - metrics.k8s.io/NodeMetrics
+        - migration.k8s.io/StorageState
+        - migration.k8s.io/StorageVersionMigration
+        - Node
+        - snapshot.storage.k8s.io/VolumeSnapshotContent
+        - storage.k8s.io/CSINode
+
+        Some group kinds are driven by restore configuration elsewhere,
+        and will cause an error if selected here.
+        - Namespace
+        - PersistentVolume
+
+        Attributes:
+            selected_group_kinds (MutableSequence[google.events.cloud.gkebackup_v1.types.RestoreConfig.GroupKind]):
+                A list of cluster-scoped resource group kinds
+                to restore from the backup. If specified, only
+                the selected resources will be restored.
+                Mutually exclusive to any other field in the
+                message.
+        """
+
+        selected_group_kinds: MutableSequence['RestoreConfig.GroupKind'] = proto.RepeatedField(
+            proto.MESSAGE,
+            number=1,
+            message='RestoreConfig.GroupKind',
+        )
+
+    class SubstitutionRule(proto.Message):
+        r"""A transformation rule to be applied against Kubernetes
+        resources as they are selected for restoration from a Backup. A
+        rule contains both filtering logic (which resources are subject
+        to substitution) and substitution logic.
+
+        Attributes:
+            target_namespaces (MutableSequence[str]):
+                (Filtering parameter) Any resource subject to
+                substitution must be contained within one of the
+                listed Kubernetes Namespace in the Backup. If
+                this field is not provided, no namespace
+                filtering will be performed (all resources in
+                all Namespaces, including all cluster-scoped
+                resources, will be candidates for substitution).
+                To mix cluster-scoped and namespaced resources
+                in the same rule, use an empty string ("") as
+                one of the target namespaces.
+            target_group_kinds (MutableSequence[google.events.cloud.gkebackup_v1.types.RestoreConfig.GroupKind]):
+                (Filtering parameter) Any resource subject to
+                substitution must belong to one of the listed
+                "types". If this field is not provided, no type
+                filtering will be performed (all resources of
+                all types matching previous filtering parameters
+                will be candidates for substitution).
+            target_json_path (str):
+                Required. This is a [JSONPath]
+                (https://kubernetes.io/docs/reference/kubectl/jsonpath/)
+                expression that matches specific fields of candidate
+                resources and it operates as both a filtering parameter
+                (resources that are not matched with this expression will
+                not be candidates for substitution) as well as a field
+                identifier (identifies exactly which fields out of the
+                candidate resources will be modified).
+            original_value_pattern (str):
+                (Filtering parameter) This is a [regular expression]
+                (https://en.wikipedia.org/wiki/Regular_expression) that is
+                compared against the fields matched by the target_json_path
+                expression (and must also have passed the previous filters).
+                Substitution will not be performed against fields whose
+                value does not match this expression. If this field is NOT
+                specified, then ALL fields matched by the target_json_path
+                expression will undergo substitution. Note that an empty
+                (e.g., "", rather than unspecified) value for this field
+                will only match empty fields.
+            new_value (str):
+                This is the new value to set for any fields
+                that pass the filtering and selection criteria.
+                To remove a value from a Kubernetes resource,
+                either leave this field unspecified, or set it
+                to the empty string ("").
+        """
+
+        target_namespaces: MutableSequence[str] = proto.RepeatedField(
+            proto.STRING,
+            number=1,
+        )
+        target_group_kinds: MutableSequence['RestoreConfig.GroupKind'] = proto.RepeatedField(
+            proto.MESSAGE,
+            number=2,
+            message='RestoreConfig.GroupKind',
+        )
+        target_json_path: str = proto.Field(
+            proto.STRING,
+            number=3,
+        )
+        original_value_pattern: str = proto.Field(
+            proto.STRING,
+            number=4,
+        )
+        new_value: str = proto.Field(
+            proto.STRING,
+            number=5,
+        )
+
+    volume_data_restore_policy: VolumeDataRestorePolicy = proto.Field(
+        proto.ENUM,
+        number=1,
+        enum=VolumeDataRestorePolicy,
+    )
+    cluster_resource_conflict_policy: ClusterResourceConflictPolicy = proto.Field(
+        proto.ENUM,
+        number=2,
+        enum=ClusterResourceConflictPolicy,
+    )
+    namespaced_resource_restore_mode: NamespacedResourceRestoreMode = proto.Field(
+        proto.ENUM,
+        number=3,
+        enum=NamespacedResourceRestoreMode,
+    )
+    cluster_resource_restore_scope: ClusterResourceRestoreScope = proto.Field(
+        proto.MESSAGE,
+        number=4,
+        message=ClusterResourceRestoreScope,
+    )
+    all_namespaces: bool = proto.Field(
+        proto.BOOL,
+        number=5,
+        oneof='namespaced_resource_restore_scope',
+    )
+    selected_namespaces: 'Namespaces' = proto.Field(
+        proto.MESSAGE,
+        number=6,
+        oneof='namespaced_resource_restore_scope',
+        message='Namespaces',
+    )
+    selected_applications: 'NamespacedNames' = proto.Field(
+        proto.MESSAGE,
+        number=7,
+        oneof='namespaced_resource_restore_scope',
+        message='NamespacedNames',
+    )
+    substitution_rules: MutableSequence[SubstitutionRule] = proto.RepeatedField(
+        proto.MESSAGE,
+        number=8,
+        message=SubstitutionRule,
+    )
+
+
+class RestorePlan(proto.Message):
+    r"""The configuration of a potential series of Restore operations
+    to be performed against Backups belong to a particular
+    BackupPlan. Next id: 13
+
+    Attributes:
+        name (str):
+            Output only. The full name of the RestorePlan resource.
+            Format: ``projects/*/locations/*/restorePlans/*``.
+        uid (str):
+            Output only. Server generated global unique identifier of
+            `UUID <https://en.wikipedia.org/wiki/Universally_unique_identifier>`__
+            format.
+        create_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this
+            RestorePlan resource was created.
+        update_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The timestamp when this
+            RestorePlan resource was last updated.
+        description (str):
+            User specified descriptive string for this
+            RestorePlan.
+        backup_plan (str):
+            Required. Immutable. A reference to the
+            [BackupPlan][google.cloud.gkebackup.v1.BackupPlan] from
+            which Backups may be used as the source for Restores created
+            via this RestorePlan. Format:
+            ``projects/*/locations/*/backupPlans/*``.
+        cluster (str):
+            Required. Immutable. The target cluster into which Restores
+            created via this RestorePlan will restore data. NOTE: the
+            cluster's region must be the same as the RestorePlan. Valid
+            formats:
+
+            -  ``projects/*/locations/*/clusters/*``
+            -  ``projects/*/zones/*/clusters/*``
+        restore_config (google.events.cloud.gkebackup_v1.types.RestoreConfig):
+            Required. Configuration of Restores created
+            via this RestorePlan.
+        labels (MutableMapping[str, str]):
+            A set of custom labels supplied by user.
+        etag (str):
+            Output only. ``etag`` is used for optimistic concurrency
+            control as a way to help prevent simultaneous updates of a
+            restore from overwriting each other. It is strongly
+            suggested that systems make use of the ``etag`` in the
+            read-modify-write cycle to perform restore updates in order
+            to avoid race conditions: An ``etag`` is returned in the
+            response to ``GetRestorePlan``, and systems are expected to
+            put that etag in the request to ``UpdateRestorePlan`` or
+            ``DeleteRestorePlan`` to ensure that their change will be
+            applied to the same version of the resource.
+    """
+
+    name: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    uid: str = proto.Field(
+        proto.STRING,
+        number=2,
+    )
+    create_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=3,
+        message=timestamp_pb2.Timestamp,
+    )
+    update_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=4,
+        message=timestamp_pb2.Timestamp,
+    )
+    description: str = proto.Field(
+        proto.STRING,
+        number=5,
+    )
+    backup_plan: str = proto.Field(
+        proto.STRING,
+        number=6,
+    )
+    cluster: str = proto.Field(
+        proto.STRING,
+        number=7,
+    )
+    restore_config: 'RestoreConfig' = proto.Field(
+        proto.MESSAGE,
+        number=8,
+        message='RestoreConfig',
+    )
+    labels: MutableMapping[str, str] = proto.MapField(
+        proto.STRING,
+        proto.STRING,
+        number=9,
+    )
+    etag: str = proto.Field(
+        proto.STRING,
+        number=10,
+    )
+
+
+class RestorePlanEventData(proto.Message):
+    r"""The data within all RestorePlan events.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        payload (google.events.cloud.gkebackup_v1.types.RestorePlan):
+            Optional. The RestorePlan event payload.
+            Unset for deletion events.
+
+            This field is a member of `oneof`_ ``_payload``.
+    """
+
+    payload: 'RestorePlan' = proto.Field(
+        proto.MESSAGE,
+        number=1,
+        optional=True,
+        message='RestorePlan',
+    )
+
+
+class BackupEventData(proto.Message):
+    r"""The data within all Backup events.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        payload (google.events.cloud.gkebackup_v1.types.Backup):
+            Optional. The Backup event payload. Unset for
+            deletion events.
+
+            This field is a member of `oneof`_ ``_payload``.
+    """
+
+    payload: 'Backup' = proto.Field(
+        proto.MESSAGE,
+        number=1,
+        optional=True,
+        message='Backup',
+    )
+
+
+class BackupPlanEventData(proto.Message):
+    r"""The data within all BackupPlan events.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        payload (google.events.cloud.gkebackup_v1.types.BackupPlan):
+            Optional. The BackupPlan event payload. Unset
+            for deletion events.
+
+            This field is a member of `oneof`_ ``_payload``.
+    """
+
+    payload: 'BackupPlan' = proto.Field(
+        proto.MESSAGE,
+        number=1,
+        optional=True,
+        message='BackupPlan',
+    )
+
+
+class RestoreEventData(proto.Message):
+    r"""The data within all Restore events.
+
+    .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+    Attributes:
+        payload (google.events.cloud.gkebackup_v1.types.Restore):
+            Optional. The Restore event payload. Unset
+            for deletion events.
+
+            This field is a member of `oneof`_ ``_payload``.
+    """
+
+    payload: 'Restore' = proto.Field(
+        proto.MESSAGE,
+        number=1,
+        optional=True,
+        message='Restore',
+    )
+
+
+__all__ = tuple(sorted(__protobuf__.manifest))
