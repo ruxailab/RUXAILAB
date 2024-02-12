@@ -1,0 +1,38 @@
+Metadata-Version: 2.1
+Name: firebase-functions
+Version: 0.1.2
+Summary: Firebase Functions Python SDK
+Home-page: https://github.com/firebase/firebase-functions-python
+Author: Firebase Team
+License: Apache License 2.0
+Keywords: firebase,functions,google,cloud
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.10
+License-File: LICENSE
+Requires-Dist: flask >=2.1.2
+Requires-Dist: functions-framework >=3.0.0
+Requires-Dist: firebase-admin >=6.0.0
+Requires-Dist: pyyaml >=6.0
+Requires-Dist: typing-extensions >=4.4.0
+Requires-Dist: cloudevents ==1.9.0
+Requires-Dist: flask-cors >=3.0.10
+Requires-Dist: pyjwt[crypto] >=2.5.0
+Requires-Dist: google-events >=0.5.0
+Requires-Dist: google-cloud-firestore >=2.11.0
+Provides-Extra: dev
+Requires-Dist: pytest >=7.1.2 ; extra == 'dev'
+Requires-Dist: setuptools >=63.4.2 ; extra == 'dev'
+Requires-Dist: pylint >=2.16.1 ; extra == 'dev'
+Requires-Dist: pytest-cov >=3.0.0 ; extra == 'dev'
+Requires-Dist: mypy >=1.0.0 ; extra == 'dev'
+Requires-Dist: sphinx >=6.1.3 ; extra == 'dev'
+Requires-Dist: sphinxcontrib-napoleon >=0.7 ; extra == 'dev'
+Requires-Dist: yapf >=0.32.0 ; extra == 'dev'
+Requires-Dist: toml >=0.10.2 ; extra == 'dev'
+Requires-Dist: google-cloud-tasks >=2.13.1 ; extra == 'dev'
+
+The Firebase Functions Python SDK provides an SDK for defining Cloud Functions for Firebase.
