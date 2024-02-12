@@ -65,9 +65,7 @@
     <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2" dense>
       <v-navigation-drawer
         v-model="drawer"
-        clipped
         :mini-variant="mini"
-        permanent
         color="#3F3D56"
       >
         <div v-if="!mini" class="header">
@@ -105,7 +103,7 @@
             <v-list-item
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
+                currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -134,7 +132,7 @@
             <v-list-item
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
+                currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
@@ -206,10 +204,13 @@
             </v-col>
           </v-row>
           <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mb-4">
-              <v-btn color="orange" block depressed dark>CONNECT</v-btn>
-            </v-col>
+            <VideoCall @emit-confirm="confirmConnect()" :index="index" :isAdmin="isAdmin" />
           </v-row>
+        </v-card>
+      </v-col>
+      <v-col class="mx-15 mt-4" v-if="index == 1 && taskIndex == 0 && isAdmin">
+        <v-card>
+          <FeedbackView />
         </v-card>
       </v-col>
       <!--////// EVALUATOR VIEW //////-->
@@ -252,11 +253,15 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-checkbox color="orange" class="ma-0 pa-0"
+              <v-checkbox
+                v-model="currentUserTestAnswer.consentCompleted"
+                @change="saveAnswer()"
+                color="orange"
+                class="ma-0 pa-0"
                 ><template v-slot:label
-                  ><span style="color: #455a64"
-                    >Do you like icecream?</span
-                  ></template
+                  ><span style="color: #455a64">{{
+                    test.testStructure.consent
+                  }}</span></template
                 ></v-checkbox
               >
             </v-col>
@@ -273,22 +278,27 @@
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
-                <v-col  cols="4" class="mt-2 mb-8 mr-8">
+                <v-col
+                  v-if="moderatorStatus == false"
+                  cols="4"
+                  class="mt-2 mb-8 mr-8"
+                >
                   <span class="cardsTitle text-center d-block"
-                    >Waiting the moderator...</span>
+                    >Waiting the moderator...</span
+                  >
                   <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
+                <VideoCall ref="videoCallRef" :isAdmin="isAdmin" />
               </v-row>
             </v-col>
           </v-row>
         </v-card>
-        <video-call :isAdmin='isAdmin' />
       </v-col>
       <!--////// TASKS //////-->
       <v-col class="mx-15 mt-6" v-if="index == 1 && !isAdmin">
         <v-expansion-panels flat accordion>
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
           >
             <v-expansion-panel-header>
@@ -320,8 +330,9 @@
                     column
                   >
                     <v-row
-                      v-for="(selection,
-                      selectionIndex) in item.selectionFields"
+                      v-for="(
+                        selection, selectionIndex
+                      ) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -359,7 +370,7 @@
 
           <!-- Tarefas do Usuário -->
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
             v-for="(task, index) in test.testStructure.userTasks"
             :key="index"
@@ -374,7 +385,7 @@
               <v-divider class="mb-6"></v-divider>
               <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12" class="mb-0">
-                  <span class="ml-4" style="color: #455A64;">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[index].taskDescription }}
                   </span>
                 </v-col>
@@ -396,7 +407,7 @@
 
           <!-- Post-Test -->
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
           >
             <v-expansion-panel-header>
@@ -428,8 +439,9 @@
                     column
                   >
                     <v-row
-                      v-for="(selection,
-                      selectionIndex) in item.selectionFields"
+                      v-for="(
+                        selection, selectionIndex
+                      ) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -473,6 +485,9 @@ import VClamp from 'vue-clamp'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
+import { onSnapshot, doc, updateDoc } from 'firebase/firestore'
+import { db } from '@/firebase'
+import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
   components: {
@@ -480,6 +495,7 @@ export default {
     CardSignIn,
     CardSignUp,
     VideoCall,
+    FeedbackView,
   },
   data: () => ({
     displayMediaOptions: {
@@ -517,6 +533,8 @@ export default {
     recording: false,
     allTasksCompleted: false,
     recordedVideo: '',
+    moderatorStatus: null,
+    evaluatorStatus: null,
   }),
   computed: {
     test() {
@@ -548,9 +566,12 @@ export default {
     tasks() {
       return this.$store.getters.tasks
     },
+    roomTestId() {
+      return this.$store.getters.test.id
+    },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       this.mappingSteps()
     },
     taskIndex() {
@@ -566,7 +587,14 @@ export default {
   async created() {
     await this.verifyAdmin()
     await this.mappingSteps()
-    console.log(this.testId);
+    const ref = doc(db, 'tests/', this.roomTestId)
+    onSnapshot(ref, (snapshot) => {
+      this.moderatorStatus = snapshot.data().userTestStatus.moderator
+      this.evaluatorStatus = snapshot.data().userTestStatus.user
+    })
+  },
+  beforeDestroy() {
+    this.disconnect()
   },
   methods: {
     async saveAnswer() {
@@ -575,6 +603,47 @@ export default {
         answerDocId: this.test.answersDocId,
         testType: this.test.testType,
       })
+    },
+    async confirmConnect() {
+      console.log('confirm')
+      const ref = doc(db, 'tests', this.roomTestId)
+      if (this.isAdmin) {
+        try {
+          await updateDoc(ref, {
+            userTestStatus: {
+              moderator: true,
+              user: false,
+            },
+          })
+        } catch (e) {
+          console.error('Error in connect:', e)
+        }
+      } else {
+        try {
+          await updateDoc(ref, {
+            userTestStatus: {
+              user: true,
+              moderated: true,
+            },
+          })
+        } catch (e) {
+          console.error('Error in connect:', e)
+        }
+      }
+    },
+    async disconnect() {
+      console.log('Disconnecting...')
+      const ref = doc(db, 'tests', this.roomTestId)
+      try {
+        await updateDoc(ref, {
+          userTestStatus: {
+            moderator: false,
+            user: false,
+          },
+        })
+      } catch (e) {
+        console.error('Error in connect:', e)
+      }
     },
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
