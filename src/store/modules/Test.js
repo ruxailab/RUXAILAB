@@ -25,6 +25,8 @@ export default {
     preTest: [],
     postTest: [],
     finalMessage: '',
+    remoteStream: null,
+    localStream: null,
   },
   getters: {
     tests(state) {
@@ -62,6 +64,12 @@ export default {
     },
     finalMessage(state) {
       return state.finalMessage
+    },
+    remoteStream(state) {
+      return state.remoteStream
+    },
+    localStream(state) {
+      return state.localStream
     },
   },
   mutations: {
@@ -101,6 +109,12 @@ export default {
     },
     SET_FINAL_MESSAGE(state, payload) {
       state.finalMessage = payload
+    },
+    SET_REMOTE_STREAM(state, stream) {
+      state.remoteStream = stream
+    },
+    SET_LOCAL_STREAM(state, stream) {
+      state.localStream = stream
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -354,6 +368,12 @@ export default {
       } catch {
         commit('setError', true)
       }
+    },
+    setRemoteStream({ commit }, stream) {
+      commit('SET_REMOTE_STREAM', stream);
+    },
+    setLocalStream({ commit }, stream) {
+      commit('SET_LOCAL_STREAM', stream);
     },
     cleanTest({ commit }) {
       try {
