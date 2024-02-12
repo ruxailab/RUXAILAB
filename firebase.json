@@ -3,12 +3,25 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "functions": {
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint"
-    ],
-    "source": "functions"
-  },
+  "functions": [
+    {
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ],
+      "source": "functions",
+      "codebase": "functions"
+    },
+    {
+      "source": "weight_function",
+      "codebase": "weight_function",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ],
   "hosting": {
     "public": "dist",
     "ignore": [
