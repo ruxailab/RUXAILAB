@@ -99,6 +99,16 @@
                   >
                     save
                   </v-btn>
+                  <v-btn
+                    class="mt-6 mb-4"
+                    large
+                    align="center"
+                    color="#FCA326"
+                    elevation="5"
+                    @click="chamarCloudFunction"
+                  >
+                    python
+                  </v-btn>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -135,13 +145,12 @@ export default {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
 
     const weightMap = {}
-    if (this.testAll.testWeights = {}) {
+    if ((this.testAll.testWeights = {})) {
       for (let i = 0; i < heuristicLength - 1; i++) {
         weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
       this.group = weightMap
-    }
-    else {
+    } else {
       this.group = this.testAll.testWeights
     }
     console.log(this.group)
@@ -151,6 +160,17 @@ export default {
     updateDatas() {
       this.testAll.testWeights = this.group
       this.$store.dispatch('updateTest', this.testAll)
+    },
+    async chamarCloudFunction() {
+      try {
+        const resposta = await fetch('http://127.0.0.1:5001/retlab-dev/us-central1/say_hello', {
+          method: 'GET',
+        })
+        const data = await resposta.json()
+        console.log(data)
+      } catch (erro) {
+        console.error('Erro ao chamar Cloud Function:', erro)
+      }
     },
   },
 }
