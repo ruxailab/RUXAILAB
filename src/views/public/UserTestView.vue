@@ -499,11 +499,11 @@
                       false
                     "
                   >
-                    <audio-recorder
+                    <AudioRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></audio-recorder>
+                    ></AudioRecorder>
                   </v-row>
                   <v-row
                     v-if="
@@ -511,11 +511,11 @@
                       false
                     "
                   >
-                    <video-recorder
+                    <VideoRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></video-recorder>
+                    ></VideoRecorder>
                   </v-row>
                   <v-row
                     v-if="
@@ -523,11 +523,11 @@
                       false
                     "
                   >
-                    <screen-recorder
+                    <ScreenRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></screen-recorder>
+                    ></ScreenRecorder>
                   </v-row>
                   <v-spacer />
                   <v-row
@@ -723,19 +723,7 @@ export default {
     ScreenRecorder,
   },
   data: () => ({
-    displayMediaOptions: {
-      video: {
-        displaySurface: 'window',
-        cursor: 'always',
-      },
-      audio: true,
-    },
-    isCapture: false,
-    mediaRecorder: [],
-    chunks: [],
-    isRecording: false,
     videoUrl: '',
-    isCapture: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -747,16 +735,9 @@ export default {
     taskIndex: 0,
     preTestIndex: null,
     items: [],
-    taskAnswers: {},
     fab: false,
-    res: 0,
     dialog: false,
-    videoStream: null,
-    mediaRecorder: null,
-    recordedChunks: [],
-    recording: false,
     allTasksCompleted: false,
-    recordedVideo: '',
   }),
   computed: {
     test() {
