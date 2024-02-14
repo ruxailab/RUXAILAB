@@ -62,10 +62,12 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2" dense>
+    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2;" dense>
       <v-navigation-drawer
         v-model="drawer"
-        :mini-variant="mini"
+          clipped
+          :mini-variant="mini"
+          permanent
         color="#3F3D56"
       >
         <div v-if="!mini" class="header">
@@ -101,15 +103,6 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-item
-              :disabled="
-                currentUserTestAnswer.consentCompleted &&
-                currentUserTestAnswer.preTestCompleted
-              "
-              :class="{
-                'disabled-group':
-                  currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted,
-              }"
               v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
@@ -130,15 +123,6 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              :disabled="
-                currentUserTestAnswer.consentCompleted &&
-                currentUserTestAnswer.preTestCompleted
-              "
-              :class="{
-                'disabled-group':
-                  currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted,
-              }"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
@@ -188,14 +172,15 @@
         </div>
       </v-navigation-drawer>
       <!-- MODERATOR VIEW -->
-      <v-col class="mx-15 mt-4" v-if="index == 0 && taskIndex == 0 && isAdmin">
+      <v-col ref="rightView" class="mt-4 right-view backgroundTest" v-if="index == 0 && taskIndex == 0 && isAdmin">
         <v-card color="white" class="cards">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Confirm you are ready</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
-                  <span class="cardsSubtitle">
+                  <span class="
+                    ubtitle">
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
                   </span>
@@ -204,18 +189,20 @@
             </v-col>
           </v-row>
           <v-row justify="center" class="mt-4">
-            <VideoCall @emit-confirm="confirmConnect()" :index="index" :isAdmin="isAdmin" />
+            <VideoCall
+              @emit-confirm="confirmConnect()"
+              :index="index"
+              :isAdmin="isAdmin"
+            />
           </v-row>
         </v-card>
       </v-col>
-      <v-col class="mx-15 mt-4" v-if="index == 1 && taskIndex == 0 && isAdmin">
-        <v-card>
-          <FeedbackView />
-        </v-card>
+      <v-col ref="rightView" class="mx-10 right-view backgroundTest" v-if="index == 1 && taskIndex == 0 && isAdmin">
+          <FeedbackView :index="index" :isAdmin="isAdmin" />
       </v-col>
       <!--////// EVALUATOR VIEW //////-->
-      <v-col
-        class="mx-15 mt-4"
+      <v-col ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest"
         style=""
         v-if="index == 0 && taskIndex == 0 && !isAdmin"
       >
@@ -288,14 +275,20 @@
                   >
                   <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
-                <VideoCall ref="videoCallRef" :isAdmin="isAdmin" />
+
+                <v-col v-else cols="4" class="mt-2 mb-8 mr-8"
+                  ><VideoCall
+                    @emit-confirm="confirmConnect()"
+                    :index="index"
+                    :isAdmin="isAdmin"
+                /></v-col>
               </v-row>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
       <!--////// TASKS //////-->
-      <v-col class="mx-15 mt-6" v-if="index == 1 && !isAdmin">
+      <v-col ref="rightView" class=" mt-6 right-view backgroundTest" v-if="index == 1 && !isAdmin">
         <v-expansion-panels flat accordion>
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
@@ -330,9 +323,8 @@
                     column
                   >
                     <v-row
-                      v-for="(
-                        selection, selectionIndex
-                      ) in item.selectionFields"
+                      v-for="(selection,
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -439,9 +431,8 @@
                     column
                   >
                     <v-row
-                      v-for="(
-                        selection, selectionIndex
-                      ) in item.selectionFields"
+                      v-for="(selection,
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -475,6 +466,9 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+      </v-col>
+      <v-col ref="rightView" class="mx-10 mt-2 right-view backgroundTest" v-if="index == 2 && taskIndex == 0">
+          <FeedbackView :index="index" :isAdmin="isAdmin" />
       </v-col>
     </v-row>
   </div>
@@ -571,7 +565,7 @@ export default {
     },
   },
   watch: {
-    test: async function () {
+    test: async function() {
       this.mappingSteps()
     },
     taskIndex() {
@@ -742,7 +736,7 @@ export default {
         //PostTest
         if (this.validate(this.test.testStructure.postTest))
           this.items.push({
-            title: 'Feedback',
+            title:/* Ajuste conforme necessário para levar em consideração a altura do app bar */'Feedback',
             icon: 'mdi-monitor-account',
             id: 2,
           })
@@ -756,6 +750,67 @@ export default {
 </script>
 
 <style scoped>
+.nav {
+  background-color: #e8eaf2;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+
+/* Estilo para a lista de navegação */
+.nav-list {
+  max-height: 85%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 100px;
+}
+
+/* Estilo para os cartões de conteúdo */
+.cards {
+  margin-top: 16px;
+}
+
+/* Estilo para o título dos cartões */
+.cardsTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Estilo para o subtítulo dos cartões */
+.cardsSubtitle {
+  font-size: 16px;
+  color: #455a64;
+}
+
+/* Estilo para os campos de entrada de texto */
+.text-field {
+  margin-bottom: 16px;
+}
+
+/* Estilo para os botões */
+.btn-done {
+  border-radius: 10px;
+}
+
+/* Right side scroll bar */
+/* width */
+.right-view::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+.right-view::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.right-view::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+.right-view::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
 .cards {
   border-radius: 20px;
 }
@@ -784,6 +839,9 @@ export default {
   background-color: grey;
 }
 
+body {
+  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
