@@ -492,20 +492,7 @@ export default {
     FeedbackView,
   },
   data: () => ({
-    displayMediaOptions: {
-      video: {
-        displaySurface: 'window',
-        cursor: 'always',
-      },
-      audio: true,
-    },
-    isCapture: false,
     isAdmin: false,
-    mediaRecorder: [],
-    chunks: [],
-    isRecording: false,
-    videoUrl: '',
-    isCapture: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -518,15 +505,8 @@ export default {
     preTestIndex: null,
     items: [],
     taskAnswers: {},
-    fab: false,
-    res: 0,
     dialog: false,
-    videoStream: null,
-    mediaRecorder: null,
-    recordedChunks: [],
-    recording: false,
     allTasksCompleted: false,
-    recordedVideo: '',
     moderatorStatus: null,
     evaluatorStatus: null,
   }),
@@ -544,18 +524,11 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer
     },
-    showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
-    },
     cooperators() {
       return this.$store.getters.cooperators
     },
     loading() {
       return this.$store.getters.loading
-    },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
     },
     tasks() {
       return this.$store.getters.tasks
