@@ -62,12 +62,17 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2;" dense>
+    <v-row
+      v-else
+      class="nav pa-0 ma-0"
+      style="background-color: #e8eaf2;"
+      dense
+    >
       <v-navigation-drawer
         v-model="drawer"
-          clipped
-          :mini-variant="mini"
-          permanent
+        clipped
+        :mini-variant="mini"
+        permanent
         color="#3F3D56"
       >
         <div v-if="!mini" class="header">
@@ -172,15 +177,20 @@
         </div>
       </v-navigation-drawer>
       <!-- MODERATOR VIEW -->
-      <v-col ref="rightView" class="mt-4 right-view backgroundTest" v-if="index == 0 && taskIndex == 0 && isAdmin">
-        <v-card color="white" class="cards">
+      <v-col
+        ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest"
+        v-if="index == 0 && taskIndex == 0 && isAdmin"
+      >
+        <v-card color="white" class="cards" v-if="!conectionStatus">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Confirm you are ready</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
-                  <span class="
-                    ubtitle">
+                  <span
+                    class="cardsSubtitle"
+                  >
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
                   </span>
@@ -190,18 +200,126 @@
           </v-row>
           <v-row justify="center" class="mt-4">
             <VideoCall
+              ref="VideoCall"
               @emit-confirm="confirmConnect()"
               :index="index"
               :isAdmin="isAdmin"
             />
           </v-row>
         </v-card>
+        <v-expansion-panels v-else flat accordion>
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Pre-Test</span>
+                <v-icon color="orange">mdi-dots-horizontal</v-icon>
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.preTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">{{ item.description }}</p>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Tarefas do Usuário -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+            v-for="(task, index) in test.testStructure.userTasks"
+            :key="index"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">{{ task.taskName }}</span>
+                <v-icon v-if="task.taskStatus == 'closed'" color="green"
+                  >mdi-play</v-icon
+                >
+                <v-icon
+                  v-else-if="task.taskStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-dots</v-icon
+                >
+                <v-icon v-else-if="task.taskStatus == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
+                    {{ test.testStructure.userTasks[index].taskDescription }}
+                  </span>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Post-Test -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Post-Test</span>
+                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.postTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">{{ item.description }}</p>
+                </v-col>
+              </v-row>
+
+              <v-row justify="center">
+                <v-col class="mx-4">
+                  <v-btn
+                    block
+                    dark
+                    style="border-radius: 10px"
+                    color="orange lighten-1"
+                    depressed
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    @click="
+                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
+                    "
+                    >{{ $t('UserTestView.buttons.done') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
-      <v-col ref="rightView" class="mx-10 right-view backgroundTest" v-if="index == 1 && taskIndex == 0 && isAdmin">
-          <FeedbackView :index="index" :isAdmin="isAdmin" />
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-2 right-view backgroundTest"
+        v-if="index == 1 && taskIndex == 0 && isAdmin"
+      >
+        <FeedbackView :index="index" :isAdmin="isAdmin" />
       </v-col>
       <!--////// EVALUATOR VIEW //////-->
-      <v-col ref="rightView"
+      <v-col
+        ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
         style=""
         v-if="index == 0 && taskIndex == 0 && !isAdmin"
@@ -278,6 +396,7 @@
 
                 <v-col v-else cols="4" class="mt-2 mb-8 mr-8"
                   ><VideoCall
+                    ref="VideoCall"
                     @emit-confirm="confirmConnect()"
                     :index="index"
                     :isAdmin="isAdmin"
@@ -288,7 +407,11 @@
         </v-card>
       </v-col>
       <!--////// TASKS //////-->
-      <v-col ref="rightView" class=" mt-6 right-view backgroundTest" v-if="index == 1 && !isAdmin">
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="index == 1 && !isAdmin"
+      >
         <v-expansion-panels flat accordion>
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
@@ -297,7 +420,7 @@
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+                <v-icon color="green">mdi-lock-open</v-icon>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -370,7 +493,17 @@
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+                <v-icon v-if="task.taskStatus == 'closed'" color="#8D8D8D"
+                  >mdi-lock</v-icon
+                >
+                <v-icon
+                  v-else-if="task.taskStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-unlock</v-icon
+                >
+                <v-icon v-else-if="task.taskStatus == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -467,8 +600,12 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
-      <v-col ref="rightView" class="mx-10 mt-2 right-view backgroundTest" v-if="index == 2 && taskIndex == 0">
-          <FeedbackView :index="index" :isAdmin="isAdmin" />
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-2 right-view backgroundTest"
+        v-if="index == 2 && taskIndex == 0"
+      >
+        <FeedbackView :index="index" :isAdmin="isAdmin" />
       </v-col>
     </v-row>
   </div>
@@ -492,6 +629,7 @@ export default {
     FeedbackView,
   },
   data: () => ({
+    conectionStatus: false,
     isAdmin: false,
     logined: null,
     selected: true,
@@ -562,6 +700,7 @@ export default {
   },
   beforeDestroy() {
     this.disconnect()
+    this.$refs.VideoCall.hangUp()
   },
   methods: {
     async saveAnswer() {
@@ -582,6 +721,7 @@ export default {
               user: false,
             },
           })
+          this.conectionStatus = true
         } catch (e) {
           console.error('Error in connect:', e)
         }
@@ -593,6 +733,7 @@ export default {
               moderated: true,
             },
           })
+          this.conectionStatus = true
         } catch (e) {
           console.error('Error in connect:', e)
         }
@@ -709,7 +850,8 @@ export default {
         //PostTest
         if (this.validate(this.test.testStructure.postTest))
           this.items.push({
-            title:/* Ajuste conforme necessário para levar em consideração a altura do app bar */'Feedback',
+            title:
+              /* Ajuste conforme necessário para levar em consideração a altura do app bar */ 'Feedback',
             icon: 'mdi-monitor-account',
             id: 2,
           })
@@ -906,12 +1048,12 @@ body {
 }
 /* Handle */
 .right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
+  background: #ffcd8600;
   border-radius: 2px;
 }
 /* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+  background: #fca32600;
 }
 /* Nav bar list scroll bar */
 /* width */

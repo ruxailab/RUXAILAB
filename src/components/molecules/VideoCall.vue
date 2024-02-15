@@ -52,8 +52,11 @@ export default {
       localStream: null,
       remoteStream: null,
       roomDialog: false,
-      roomCollection: null, // Adding reference to Firestore collection
+      roomCollection: null,
     }
+  },
+  beforeRouteLeave() {
+    this.hangUp()
   },
   props: {
     isAdmin: {
