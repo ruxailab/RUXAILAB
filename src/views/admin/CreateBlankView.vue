@@ -1,10 +1,8 @@
 <template>
-  <div style="height: 93vh; background-color: #f9f5f0;">
+  <div style="height: 93vh; background-color: #f9f5f0">
     <v-col cols="12">
       <v-row justify="center">
-        <span class="Titles ma-16"
-          >What kind of test are you looking to start?</span
-        >
+        <span class="Titles ma-16">What kind of test are you looking to start?</span>
       </v-row>
     </v-col>
     <v-col cols="12" class="mt-6">
@@ -25,7 +23,7 @@
                 width="50"
                 ><v-img
                   class="ma-2"
-                  style="z-index: 0;"
+                  style="z-index: 0"
                   src="../../../public/specialist.png"
                 ></v-img
               ></v-sheet>
@@ -82,7 +80,7 @@
                 width="50"
                 ><v-img
                   class="ma-3"
-                  style="z-index: 0;"
+                  style="z-index: 0"
                   src="../../../public/user.png"
                 ></v-img
               ></v-sheet>
@@ -153,7 +151,7 @@
           <v-col cols="5" class="ml-10">
             <v-card
               color="white"
-              style="border-radius: 20px !important;"
+              style="border-radius: 20px !important"
               height="480"
             >
               <v-col cols="11">
@@ -251,13 +249,13 @@
               >
                 <v-row>
                   <div class="mt-6">
-                    <span class="Titles    ml-10">SelfTest</span>
+                    <span class="Titles ml-10">SelfTest</span>
                     <br />
                     <span class="cardSubtitle2 ml-10"> UNMODERATED </span>
                   </div>
                 </v-row>
                 <img
-                  style="margin-left: 80px;"
+                  style="margin-left: 80px"
                   class="mt-5 mb-2"
                   height="230"
                   draggable="false"
@@ -309,7 +307,7 @@
                   </div>
                 </v-row>
                 <img
-                  style="margin-left: 80px;"
+                  style="margin-left: 80px"
                   class="mt-5 mb-2"
                   height="230"
                   draggable="false"
@@ -416,6 +414,8 @@ export default {
           this.dialogUser = true
         } else if (this.test.testType == 'User' && this.dialogUser == true) {
           this.submit()
+        } else if (this.test.testType == 'HEURISTICS') {
+          this.submit()
         }
       } else {
         alert('Please enter a title')
@@ -502,7 +502,6 @@ export default {
 </style>
 
 <style scoped>
-
 .v-text-field--outlined >>> fieldset {
   border-radius: 8px;
   border: 1px solid #ffceb2;
