@@ -105,7 +105,7 @@
                     align="center"
                     color="#FCA326"
                     elevation="5"
-                    @click="chamarCloudFunction"
+                    @click="pythonFunction"
                   >
                     python
                   </v-btn>
@@ -116,6 +116,7 @@
         </v-tabs-items>
       </template>
     </v-card>
+    {{ this.$store.state.Tests.Test.testWeights }}
   </div>
 </template>
 
@@ -145,12 +146,13 @@ export default {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
 
     const weightMap = {}
-    if ((this.testAll.testWeights = {})) {
+    if ((this.testAll.testWeights == null)) {
       for (let i = 0; i < heuristicLength - 1; i++) {
         weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
       this.group = weightMap
-    } else {
+    }
+    else {
       this.group = this.testAll.testWeights
     }
     console.log(this.group)
@@ -161,13 +163,19 @@ export default {
       this.testAll.testWeights = this.group
       this.$store.dispatch('updateTest', this.testAll)
     },
-    async chamarCloudFunction() {
+    async pythonFunction() {
+      const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
+      const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
       try {
         const resposta = await fetch('http://127.0.0.1:5001/retlab-dev/us-central1/say_hello', {
-          method: 'GET',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ caminhoTestStructure, caminhoTestWeights }),
         })
         const data = await resposta.json()
-        console.log(data)
+        console.log(data.message)
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
