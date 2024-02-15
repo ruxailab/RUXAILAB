@@ -22,7 +22,7 @@
         </v-tabs>
         <!-- tbody  -->
         <v-tabs-items v-model="tabs">
-          <v-tab-item v-for="(n, pes) in heuristics.length - 1" :key="pes">
+          <v-tab-item v-for="(n, pes) in (heuristics && heuristics.length ? heuristics.length - 1 : 0)" :key="pes">
             <v-card flat>
               <v-card-text>
                 <v-simple-table>
@@ -116,7 +116,7 @@
         </v-tabs-items>
       </template>
     </v-card>
-    {{ this.$store.state.Tests.Test.testWeights }}
+    {{ testAll.testWeights }}
   </div>
 </template>
 
@@ -126,7 +126,7 @@ export default {
     return {
       tabs: 0,
       row: [],
-      group: null,
+      group: [], // Inicializar como uma matriz vazia
     }
   },
   computed: {
@@ -134,27 +134,25 @@ export default {
       return this.$store.state.Tests.Test
     },
     heuristics() {
-      return this.$store.state.Tests.Test.testStructure
-        ? this.$store.state.Tests.Test.testStructure
-        : []
+      return this.testAll.testStructure || [] // Verificar se testStructure está definido
     },
     heuristicaTamanho() {
       return this.heuristics.length
     },
   },
   beforeMount() {
-    const heuristicLength = this.$store.state.Tests.Test.testStructure.length
-
+    if (!this.testAll.testStructure) {
+      // Verificar se testStructure está definido
+      console.error('testStructure is undefined')
+      return
+    }
+    const heuristicLength = this.testAll.testStructure.length
     const weightMap = {}
-    if ((this.testAll.testWeights == null)) {
-      for (let i = 0; i < heuristicLength - 1; i++) {
-        weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
-      }
-      this.group = weightMap
+
+    for (let i = 0; i < heuristicLength - 1; i++) {
+      weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
     }
-    else {
-      this.group = this.testAll.testWeights
-    }
+    this.group = weightMap
     console.log(this.group)
   },
 
