@@ -116,7 +116,6 @@
         </v-tabs-items>
       </template>
     </v-card>
-    {{ testAll.testWeights }}
   </div>
 </template>
 
@@ -126,7 +125,7 @@ export default {
     return {
       tabs: 0,
       row: [],
-      group: [], // Inicializar como uma matriz vazia
+      group: {},
     }
   },
   computed: {
@@ -134,27 +133,35 @@ export default {
       return this.$store.state.Tests.Test
     },
     heuristics() {
-      return this.testAll.testStructure || [] // Verificar se testStructure está definido
+      return this.testAll.testStructure || []
     },
     heuristicaTamanho() {
       return this.heuristics.length
     },
   },
   beforeMount() {
-    if (!this.testAll.testStructure) {
-      // Verificar se testStructure está definido
-      console.error('testStructure is undefined')
-      return
-    }
-    const heuristicLength = this.testAll.testStructure.length
-    const weightMap = {}
+  if (!this.testAll.testWeights) {
+    console.error('testWeights is undefined')
+    return
+  }
 
+  console.log(this.testAll.testWeights)
+
+  const heuristicLength = this.testAll.testStructure.length
+  this.group = this.testAll.testWeights
+  console.log(this.group)
+
+  if (Object.keys(this.testAll.testWeights).length === 0) { // Verifica se é um objeto vazio
+    const weightMap = {}
     for (let i = 0; i < heuristicLength - 1; i++) {
       weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
     }
     this.group = weightMap
-    console.log(this.group)
-  },
+  }
+
+  console.log(this.group)
+},
+
 
   methods: {
     updateDatas() {
