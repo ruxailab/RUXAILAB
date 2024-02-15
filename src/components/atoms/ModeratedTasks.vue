@@ -122,6 +122,7 @@ export default {
     newTask: {
       taskName: '',
       taskDescription: '',
+      taskStatus: 'closed',
     },
   }),
 
@@ -148,7 +149,7 @@ export default {
     closeAddTaskModal() {
       this.taskIndex = null
       this.addTaskModal = false
-      this.newTask = { taskName: '', taskDescription: '' }
+      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed', }
     },
     addTask() {
       if (
@@ -161,6 +162,7 @@ export default {
         this.tasks.splice(insertIndex, 0, {
           taskName: this.newTask.taskName,
           taskDescription: this.newTask.taskDescription,
+          taskStatus: 'closed',
         })
         this.closeAddTaskModal()
       }
