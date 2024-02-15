@@ -140,7 +140,6 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 # #pesos como esta no csv
     pesos = []
     for valor in caminho_testWeights.values():
-    # Itera sobre cada elemento da lista
         for numero in valor:
             # Adiciona o número à lista de números
             pesos.append(numero)
@@ -172,11 +171,6 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
     print("\n\nCONSISTENCY RATIO = ", CR)
     print("\n\nCONSISTENCY INTERPRETATION = ", consistency_interpretation)
-    print(ahp_df.dtypes)
-
-    # for col in ahp_df.columns:
-    #     if ahp_df[col].dtype == 'float64':
-    #         ahp_df[col] = ahp_df[col].astype(str)
 
 
     response_data = {
