@@ -1,18 +1,30 @@
 <template>
   <v-row>
-    <v-col cols="12">
-      <video class="video" ref="remoteVideo" muted autoplay playsinline></video>
+    <v-col class="mt-8" cols="12">
+      <video class="video" ref="remoteVideo" autoplay playsinline></video>
       <video
         class="video ml-8"
-        style="height: 200px"
+        style="height: 150px"
         ref="localVideo"
+        muted
         autoplay
         playsinline
       ></video>
-      <v-btn @click="toggleMicrophone" class="mt-4" :dark="isMicrophoneMuted" :class="{ 'red': isMicrophoneMuted, 'grey': !isMicrophoneMuted }" fab>
+    </v-col>
+    <v-col cols="12">
+      <v-row justify="center">
+        <v-btn  v-if="localStream" @click="isSharingScreen = !isSharingScreen" class="mt-4 mx-2" :dark="isSharingScreen" :class="{ 'red': isSharingScreen, ' ': !isSharingScreen }" fab>
+        <v-icon v-if="!isSharingScreen">mdi-monitor-screenshot</v-icon>
+        <v-icon  v-else>mdi-monitor-off</v-icon>
+      </v-btn>
+      <v-btn v-if="localStream" @click="toggleMicrophone" class="mt-4 mx-2" :dark="isMicrophoneMuted" :class="{ 'red': isMicrophoneMuted, 'white': !isMicrophoneMuted }" fab>
         <v-icon v-if="!isMicrophoneMuted">mdi-microphone</v-icon>
         <v-icon  v-else>mdi-microphone-off</v-icon>
       </v-btn>
+      <v-btn v-if="localStream" @click="hangUp()" class="mt-4 mx-2" dark color="red" fab>
+        <v-icon>mdi-phone-hangup</v-icon>
+      </v-btn>
+      </v-row>
     </v-col>
   </v-row>
 </template>
@@ -29,7 +41,8 @@ export default {
   },
   data() {
     return {
-      isMicrophoneMuted: false, // Variável de dados para controlar o estado do microfone
+      isMicrophoneMuted: false,
+      isSharingScreen: false,
     };
   },
   mounted() {
@@ -57,6 +70,9 @@ export default {
         this.isMicrophoneMuted = !audioTrack.enabled;
       }
     },
+    hangUp() {
+      this.$router.push('/testslist')
+    }
   },
 };
 </script>
