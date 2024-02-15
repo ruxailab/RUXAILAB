@@ -164,7 +164,7 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
     # Normalized weights
     values_in_percentage = [value * 100 for value in normalized_weights]
-    n_data = {header: [value] for header, value in zip(list(heuristicas), values_in_percentage)}
+    n_data = {header: [value] for header, value in zip(heuristicas, values_in_percentage)}
     df_normalized_weights = pd.DataFrame(n_data)
     print("\n\nNORMALIZED WEIGHTS = ", normalized_weights)
     print("\n\n",df_normalized_weights.to_markdown())
