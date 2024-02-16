@@ -63,9 +63,9 @@ export default {
       this.$refs.remoteVideo.srcObject = this.remoteStream;
     },
     toggleMicrophone() {
-      const localStream = this.$refs.localVideo.srcObject;
-      if (localStream && localStream.getAudioTracks().length > 0) {
-        const audioTrack = localStream.getAudioTracks()[0];
+      if (this.localStream && this.localStream.getAudioTracks().length > 0) {
+        const audioTrack = this.localStream.getTracks().find(track => track.kind == 'audio')
+        console.log(audioTrack);
         audioTrack.enabled = !audioTrack.enabled;
         this.isMicrophoneMuted = !audioTrack.enabled;
       }
