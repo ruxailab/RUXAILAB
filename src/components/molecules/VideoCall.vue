@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <v-row class="ma-4" justify="center">
-      <v-col cols="11" class="mb-4">
+    <v-row class="mb-2" justify="center">
+      <v-col cols="10">
         <v-btn
         v-if="index == 0"
           @click="openUserMedia(), emitConfirm()"
