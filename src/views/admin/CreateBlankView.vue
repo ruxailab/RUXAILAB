@@ -386,6 +386,9 @@ export default {
       this.test.userTestStatus = {
         user: false,
         moderator: false,
+        consentStatus: 'open',
+        preTestStatus: 'closed',
+        postTestStatus: 'closed'
       }
       this.validate()
     },

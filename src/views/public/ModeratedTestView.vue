@@ -188,9 +188,7 @@
               <span class="cardsTitle">Confirm you are ready</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
-                  <span
-                    class="cardsSubtitle"
-                  >
+                  <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
                   </span>
@@ -226,7 +224,9 @@
               >
                 <v-col cols="5" class="mx-auto py-0">
                   <p class="cardsTitle">{{ item.title }}</p>
-                  <p class="cardsSubtitle" v-if="item.description">{{ item.description }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">
+                    {{ item.description }}
+                  </p>
                 </v-col>
               </v-row>
             </v-expansion-panel-content>
@@ -286,7 +286,9 @@
               >
                 <v-col cols="5" class="mx-auto py-0">
                   <p class="cardsTitle">{{ item.title }}</p>
-                  <p class="cardsSubtitle" v-if="item.description">{{ item.description }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">
+                    {{ item.description }}
+                  </p>
                 </v-col>
               </v-row>
 
@@ -358,17 +360,25 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-checkbox
-                v-model="currentUserTestAnswer.consentCompleted"
-                @change="saveAnswer()"
-                color="orange"
-                class="ma-0 pa-0"
-                ><template v-slot:label
-                  ><span style="color: #455a64">{{
-                    test.testStructure.consent
-                  }}</span></template
-                ></v-checkbox
-              >
+              <v-row justify="center">
+                <v-col cols="11">
+                  <v-checkbox
+                    v-model="currentUserTestAnswer.consentCompleted"
+                    @change="
+                      saveAnswer(),
+                        completeStep(taskIndex, 'consent'),
+                        (taskIndex = 1)
+                    "
+                    color="orange"
+                    class="ma-0 pa-0"
+                    ><template v-slot:label
+                      ><span style="color: #455a64">{{
+                        test.testStructure.consent
+                      }}</span></template
+                    ></v-checkbox
+                  >
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-card>
@@ -394,7 +404,7 @@
                   <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
 
-                <v-col v-else cols="4" class="mt-2 mb-8 mr-8"
+                <v-col v-else cols="12" class="mr-8"
                   ><VideoCall
                     ref="VideoCall"
                     @emit-confirm="confirmConnect()"
@@ -430,8 +440,10 @@
                 :key="index"
               >
                 <v-col cols="5" class="mx-auto py-0">
-                  <p>{{ item.title }}</p>
-                  <p v-if="item.description">{{ item.description }}</p>
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p v-if="item.description" class="cardsSubtitle">
+                    {{ item.description }}
+                  </p>
                   <v-text-field
                     :disabled="currentUserTestAnswer.preTestCompleted"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
@@ -489,6 +501,7 @@
             class="mb-3"
             v-for="(task, index) in test.testStructure.userTasks"
             :key="index"
+            @click="setTaskIndex(index)"
           >
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
@@ -680,7 +693,7 @@ export default {
       this.mappingSteps()
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
+      this.$refs.rightView.scrollTop = 0
     },
     async user() {
       if (this.user) {
@@ -710,6 +723,29 @@ export default {
         testType: this.test.testType,
       })
     },
+    setTaskIndex(index) {
+      console.log('setTaskIndex');
+      this.taskIndex = index
+    },
+    completeStep(id, type) {
+      if (type === 'tasks') {
+        this.currentUserTestAnswer.tasks[id].completed = true
+        this.test.testStructure.userTasks[id].taskStatus = 'done'
+      }
+      if (type === 'postTest') {
+        this.currentUserTestAnswer.postTestCompleted = true
+        this.test.userTestStatus.postTestStatus = 'done'
+      }
+      if (type === 'preTest') {
+        this.currentUserTestAnswer.preTestCompleted = true
+        this.test.userTestStatus.preTestStatus = 'done'
+      }
+      if (type === 'consent') {
+        this.currentUserTestAnswer.consentCompleted = true
+        this.test.userTestStatus.consentStatus = 'done'
+      }
+      this.calculateProgress()
+    },
     async confirmConnect() {
       console.log('confirm')
       const ref = doc(db, 'tests', this.roomTestId)
@@ -719,6 +755,9 @@ export default {
             userTestStatus: {
               moderator: true,
               user: false,
+              consentStatus: 'open',
+              preTestStatus: 'closed',
+              postTestStatus: 'closed',
             },
           })
           this.conectionStatus = true
@@ -731,6 +770,9 @@ export default {
             userTestStatus: {
               user: true,
               moderated: true,
+              consentStatus: 'open',
+              preTestStatus: 'closed',
+              postTestStatus: 'closed',
             },
           })
           this.conectionStatus = true
@@ -747,6 +789,9 @@ export default {
           userTestStatus: {
             moderator: false,
             user: false,
+            consentStatus: 'open',
+            preTestStatus: 'closed',
+            postTestStatus: 'closed',
           },
         })
       } catch (e) {
