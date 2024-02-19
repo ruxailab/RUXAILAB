@@ -205,6 +205,7 @@
             />
           </v-row>
         </v-card>
+
         <v-expansion-panels v-else flat accordion>
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
@@ -213,7 +214,23 @@
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon color="orange">mdi-dots-horizontal</v-icon>
+                <v-icon
+                  @click="openTask(index)"
+                  v-if="tasksStatus[index] == 'closed'"
+                  color="green"
+                  >mdi-play</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-dots-horizontal</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -242,15 +259,21 @@
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon v-if="task.taskStatus == 'closed'" color="green"
+                <v-icon
+                  @click="openTask(index)"
+                  v-if="tasksStatus[index] == 'closed'"
+                  color="green"
                   >mdi-play</v-icon
                 >
-                <v-icon
-                  v-else-if="task.taskStatus == 'inProgress'"
-                  color="orange"
-                  >mdi-dots</v-icon
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
                 >
-                <v-icon v-else-if="task.taskStatus == 'done'" color="green"
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-dots-horizontal</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
                   >mdi-check</v-icon
                 >
               </div>
@@ -302,7 +325,8 @@
                     depressed
                     :disabled="currentUserTestAnswer.postTestCompleted"
                     @click="
-                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
+                      completeStep(taskIndex, 'postTest', 'done'),
+                        (taskIndex = 3)
                     "
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
@@ -366,7 +390,7 @@
                     v-model="currentUserTestAnswer.consentCompleted"
                     @change="
                       saveAnswer(),
-                        completeStep(taskIndex, 'consent'),
+                        completeStep(taskIndex, 'consent', 'done'),
                         (taskIndex = 1)
                     "
                     color="orange"
@@ -430,7 +454,20 @@
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon color="green">mdi-lock-open</v-icon>
+                <v-icon v-if="tasksStatus[index] == 'closed'" color="#8D8D8D"
+                  >mdi-lock</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -482,9 +519,9 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    :disabled="currentUserTestAnswer.preTestCompleted"
+                    :disabled="test.userTestStatus.preTestStatus == 'closed'"
                     @click="
-                      completeStep(taskIndex, 'preTest'),
+                      completeStep(taskIndex, 'preTest', 'done'),
                         (index = 0),
                         (taskIndex = 0)
                     "
@@ -501,20 +538,25 @@
             class="mb-3"
             v-for="(task, index) in test.testStructure.userTasks"
             :key="index"
-            @click="setTaskIndex(index)"
+            @click="setTaskIndex(index), setInProgress(index)"
+            :disabled="tasksStatus[index] == 'closed'"
           >
+
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon v-if="task.taskStatus == 'closed'" color="#8D8D8D"
+                <v-icon v-if="tasksStatus[index] == 'closed'" color="#8D8D8D"
                   >mdi-lock</v-icon
                 >
-                <v-icon
-                  v-else-if="task.taskStatus == 'inProgress'"
-                  color="orange"
-                  >mdi-unlock</v-icon
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
                 >
-                <v-icon v-else-if="task.taskStatus == 'done'" color="green"
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
                   >mdi-check</v-icon
                 >
               </div>
@@ -534,7 +576,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
+                    @click="completeStep(taskIndex, 'tasks', 'done')"
                   >
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
@@ -547,6 +589,7 @@
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
+            :disabled="test.userTestStatus.postTestStatus == 'closed'"
           >
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
@@ -601,9 +644,10 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    :disabled="userTestStatus.postTestStatus == 'closed'"
                     @click="
-                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
+                      completeStep(taskIndex, 'postTest', 'done'),
+                        (taskIndex = 3)
                     "
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
@@ -629,7 +673,7 @@ import VClamp from 'vue-clamp'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
-import { onSnapshot, doc, updateDoc } from 'firebase/firestore'
+import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
@@ -660,6 +704,8 @@ export default {
     allTasksCompleted: false,
     moderatorStatus: null,
     evaluatorStatus: null,
+    tasksStatus: [],
+    userTestStatus: {}
   }),
   computed: {
     test() {
@@ -709,6 +755,17 @@ export default {
     onSnapshot(ref, (snapshot) => {
       this.moderatorStatus = snapshot.data().userTestStatus.moderator
       this.evaluatorStatus = snapshot.data().userTestStatus.user
+      const tasks = snapshot.data().testStructure.userTasks
+      const userStatus = snapshot.data().userTestStatus
+
+      const newTasksStatus = []
+
+      tasks.forEach((task) => {
+        newTasksStatus.push(task.taskStatus)
+      })
+
+      this.tasksStatus = newTasksStatus
+      this.userTestStatus = userStatus
     })
   },
   beforeDestroy() {
@@ -724,25 +781,171 @@ export default {
       })
     },
     setTaskIndex(index) {
-      console.log('setTaskIndex');
+      console.log('setTaskIndex')
       this.taskIndex = index
     },
-    completeStep(id, type) {
+    openTask(id) {
+      const testRef = doc(db, 'tests', this.roomTestId)
+
+      getDoc(testRef).then((doc) => {
+        if (doc.exists()) {
+          const testStructure = doc.data().testStructure
+          testStructure.userTasks[id].taskStatus = 'open'
+
+          updateDoc(testRef, { testStructure })
+            .then(() => {
+              console.log('Status da tarefa atualizado com sucesso')
+            })
+            .catch((error) => {
+              console.error('Erro ao atualizar o status da tarefa:', error)
+            })
+
+          this.test.testStructure.userTasks[id].taskStatus = 'open'
+        } else {
+          console.error('Documento do teste não encontrado')
+        }
+      })
+    },
+
+    setInProgress(id) {
+      if (this.tasksStatus[id] == 'open') {
+        const testRef = doc(db, 'tests', this.roomTestId)
+
+        getDoc(testRef).then((doc) => {
+          if (doc.exists()) {
+            const testStructure = doc.data().testStructure
+            testStructure.userTasks[id].taskStatus = 'inProgress'
+
+            updateDoc(testRef, { testStructure })
+              .then(() => {
+                console.log('Status da tarefa atualizado com sucesso')
+              })
+              .catch((error) => {
+                console.error('Erro ao atualizar o status da tarefa:', error)
+              })
+
+            this.test.testStructure.userTasks[id].taskStatus = 'inProgress'
+          } else {
+            console.error('Documento do teste não encontrado')
+          }
+        })
+      }
+    },
+
+    completeStep(id, type, newStatus) {
       if (type === 'tasks') {
-        this.currentUserTestAnswer.tasks[id].completed = true
-        this.test.testStructure.userTasks[id].taskStatus = 'done'
-      }
-      if (type === 'postTest') {
-        this.currentUserTestAnswer.postTestCompleted = true
-        this.test.userTestStatus.postTestStatus = 'done'
-      }
-      if (type === 'preTest') {
-        this.currentUserTestAnswer.preTestCompleted = true
-        this.test.userTestStatus.preTestStatus = 'done'
-      }
-      if (type === 'consent') {
-        this.currentUserTestAnswer.consentCompleted = true
-        this.test.userTestStatus.consentStatus = 'done'
+        const testRef = doc(db, 'tests', this.roomTestId)
+
+        getDoc(testRef)
+          .then((doc) => {
+            if (doc.exists()) {
+              const testStructure = doc.data().testStructure
+              testStructure.userTasks[id].taskStatus = newStatus
+
+              updateDoc(testRef, { testStructure })
+                .then(() => {
+                  console.log('Status da tarefa atualizado com sucesso')
+                })
+                .catch((error) => {
+                  console.error('Erro ao atualizar o status da tarefa:', error)
+                })
+
+              this.currentUserTestAnswer.tasks[id].completed = true
+              this.test.testStructure.userTasks[id].taskStatus = newStatus
+            } else {
+              console.error('Documento do teste não encontrado')
+            }
+          })
+          .catch((error) => {
+            console.error('Erro ao obter o documento do teste:', error)
+          })
+      } else if (type === 'postTest') {
+        const testRef = doc(db, 'tests', this.roomTestId)
+
+        getDoc(testRef)
+          .then((doc) => {
+            if (doc.exists()) {
+              const userTestStatus = doc.data().userTestStatus
+              userTestStatus.postTestStatus = newStatus
+
+              updateDoc(testRef, { userTestStatus })
+                .then(() => {
+                  console.log('Status do post test atualizado com sucesso')
+                })
+                .catch((error) => {
+                  console.error(
+                    'Erro ao atualizar o status do post test:',
+                    error,
+                  )
+                })
+
+              this.currentUserTestAnswer.postTestCompleted = true
+              this.test.userTestStatus.postTestStatus = newStatus
+            } else {
+              console.error('Documento do teste não encontrado')
+            }
+          })
+          .catch((error) => {
+            console.error('Erro ao obter o documento do teste:', error)
+          })
+      } else if (type === 'preTest') {
+        const testRef = doc(db, 'tests', this.roomTestId)
+
+        getDoc(testRef)
+          .then((doc) => {
+            if (doc.exists()) {
+              const userTestStatus = doc.data().userTestStatus
+              userTestStatus.preTestStatus = newStatus
+
+              updateDoc(testRef, { userTestStatus })
+                .then(() => {
+                  console.log('Status do pre test atualizado com sucesso')
+                })
+                .catch((error) => {
+                  console.error(
+                    'Erro ao atualizar o status do pre test:',
+                    error,
+                  )
+                })
+
+              this.currentUserTestAnswer.preTestCompleted = true
+              this.test.userTestStatus.preTestStatus = newStatus
+            } else {
+              console.error('Documento do teste não encontrado')
+            }
+          })
+          .catch((error) => {
+            console.error('Erro ao obter o documento do teste:', error)
+          })
+      } else if (type === 'consent') {
+        const testRef = doc(db, 'tests', this.roomTestId)
+
+        getDoc(testRef)
+          .then((doc) => {
+            if (doc.exists()) {
+              const userTestStatus = doc.data().userTestStatus
+              userTestStatus.consentStatus = newStatus
+
+              updateDoc(testRef, { userTestStatus })
+                .then(() => {
+                  console.log('Status do consentimento atualizado com sucesso')
+                })
+                .catch((error) => {
+                  console.error(
+                    'Erro ao atualizar o status do consentimento:',
+                    error,
+                  )
+                })
+
+              this.currentUserTestAnswer.consentCompleted = true
+              this.test.userTestStatus.consentStatus = newStatus
+            } else {
+              console.error('Documento do teste não encontrado')
+            }
+          })
+          .catch((error) => {
+            console.error('Erro ao obter o documento do teste:', error)
+          })
       }
       this.calculateProgress()
     },
