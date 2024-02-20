@@ -388,7 +388,7 @@ export default {
         moderator: false,
         consentStatus: 'open',
         preTestStatus: 'closed',
-        postTestStatus: 'closed'
+        postTestStatus: 'closed',
       }
       this.validate()
     },
@@ -507,7 +507,6 @@ export default {
 </style>
 
 <style scoped>
-
 .v-text-field--outlined >>> fieldset {
   border-radius: 8px;
   border: 1px solid #ffceb2;
