@@ -120,7 +120,10 @@
 </template>
 
 <script>
+//import goToWeightTable from '@/components/organisms/HeuristicsTestAnswer.vue'
+
 export default {
+  name:'WeightTable',
   data() {
     return {
       tabs: 0,
@@ -145,11 +148,10 @@ export default {
     return
   }
 
-  console.log(this.testAll.testWeights)
 
   const heuristicLength = this.testAll.testStructure.length
   this.group = this.testAll.testWeights
-  console.log(this.group)
+
 
   if (Object.keys(this.testAll.testWeights).length === 0) { // Verifica se é um objeto vazio
     const weightMap = {}
@@ -159,7 +161,7 @@ export default {
     this.group = weightMap
   }
 
-  console.log(this.group)
+
 },
 
 
