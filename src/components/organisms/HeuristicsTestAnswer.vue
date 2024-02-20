@@ -315,11 +315,11 @@ export default {
             return table
         },
         heuristicsStatistics() {
+            const array_scores = []
             const table = {
                 header: [],
                 items: [],
             }
-
             table.header = [
                 {
                     text: 'HEURISTICS',
@@ -360,6 +360,7 @@ export default {
                         .toFixed(2),
                         convertedValue =
                             ((valueToConvert - item.min) / (item.max - item.min)) * 100
+                            array_scores.push(parseFloat(convertedValue))
                     table.items.push({
                         name: item.heuristic,
                         max: Math.max(item.max).toFixed(2),
@@ -371,6 +372,7 @@ export default {
                             .toFixed(2),
                     })
                 })
+                console.log(array_scores)
             }
             return table
         },
@@ -397,10 +399,7 @@ export default {
     },
     watch: {
         answers() {
-            if (
-                this.testAnswerDocument &&
-                (this.answers !== null || this.answers.length > 0)
-            ) {
+            if (this.testAnswerDocument && (this.answers !== null || this.answers.length > 0)) {
                 statistics()
                 if (this.answers.length == 0) this.intro = true
                 else this.intro = false
@@ -448,6 +447,7 @@ export default {
             //✓
             this.$emit('goToCoops')
         },
+
     },
 }
 </script>
