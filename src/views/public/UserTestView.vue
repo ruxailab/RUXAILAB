@@ -778,13 +778,12 @@ export default {
       if (this.items.length) {
         this.index = this.items[0].id
         if (this.items.find((obj) => obj.id == 0)) {
-          //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id
         }
       }
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
+      this.$refs.rightView.scrollTop = 0
     },
     async user() {
       if (this.user) {
