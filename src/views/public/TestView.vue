@@ -655,6 +655,9 @@ export default {
 }
 </script>
 <style scoped>
+body {
+  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;

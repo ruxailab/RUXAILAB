@@ -35,7 +35,7 @@
         </v-radio-group>
         <v-text-field
           v-if="task.taskType === 'form'"
-          v-model="task.hasPost"
+          v-model="task.postQuestion"
           :label="$t('switches.postTest')"
           outlined
           dense
