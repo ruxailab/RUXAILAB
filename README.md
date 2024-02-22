@@ -81,7 +81,7 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV=""
   VUE_APP_FIREBASE_APP_ID_DEV=""
 
-  //Dosen't need changes
+  // Doesn't need changes
   VUE_APP_I18N_LOCALE_DEV="en"
   VUE_APP_I18N_FALLBACK_LOCALE_DEV="en"
   ```
