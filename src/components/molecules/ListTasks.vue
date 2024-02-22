@@ -13,7 +13,7 @@
         <v-row align="center" class="ma-0">
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
-              {{ $t('UserTestTable.titles.currentTasks')}}
+              {{ $t('UserTestTable.titles.currentTasks') }}
             </p>
           </v-col>
           <v-col>
@@ -139,9 +139,9 @@ export default {
     },
     deleteItem(item) {
       const index = this.allTasks.indexOf(item)
-      console.log(index);
+      console.log(index)
       confirm('Are you sure you want to delete this task?')
-      console.log(item);
+      console.log(item)
       this.allTasks.splice(index, 1)
     },
     addTask() {
