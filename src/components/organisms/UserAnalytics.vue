@@ -153,7 +153,7 @@
                 >
                 <v-card outlined rounded="6">
                   <div class="ma-6">
-                    <strong>{{ testStructure.userTasks[taskSelect].hasPost }}</strong> :
+                    <strong>{{ testStructure.userTasks[taskSelect].postQuestion }}</strong> :
                     <span>
                       {{ dialogItem.tasks[taskSelect].postAnswer }}
                     </span>
