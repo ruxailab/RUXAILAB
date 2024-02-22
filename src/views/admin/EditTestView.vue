@@ -190,6 +190,16 @@ export default {
 
       return 1
     },
+    testAnswerDocLength() {
+      if (!this.$store.getters.testAnswerDocument) {
+        return 0
+      }
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
     loading() {
       return this.$store.getters.loading
     },

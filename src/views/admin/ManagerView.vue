@@ -66,7 +66,7 @@
               <v-col class="text-div">
                 <div
                   v-if="accessLevel == 0"
-                  class="display-3 mb-4 white--text mobile-center"
+                  class="display-3 mt-7 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
                   {{ $t('titles.manager') }}

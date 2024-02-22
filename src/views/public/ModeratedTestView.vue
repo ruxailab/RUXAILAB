@@ -1,5 +1,6 @@
 <template>
   <div v-if="test">
+    <!-- Authentication Dialog -->
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
         v-if="selected"
@@ -15,7 +16,7 @@
         @change="selected = !selected"
       />
     </v-dialog>
-
+    <!-- Existing User Confirmation Dialog -->
     <v-dialog
       :value="fromlink && !noExistUser && !logined"
       width="500"
@@ -41,7 +42,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- Start Screen -->
+    <!-- Test Start Screen -->
     <v-row
       v-if="test && start"
       class="background background-img pa-0 ma-0"
@@ -62,7 +63,12 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2" dense>
+    <v-row
+      v-else
+      class="nav pa-0 ma-0"
+      style="background-color: #e8eaf2;"
+      dense
+    >
       <v-navigation-drawer
         v-model="drawer"
         clipped
@@ -103,16 +109,11 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-item
-              :disabled="
-                currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
-              "
-              :class="{
-                'disabled-group':
-                  currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted,
-              }"
               v-if="item.id == 0"
+              :disabled="!isAdmin && bothConnected"
+              :class="{
+                'disabled-group': !isAdmin && bothConnected,
+              }"
               :value="index == 0 ? true : false"
               no-action
               @click="index = item.id"
@@ -132,17 +133,12 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              :disabled="
-                currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted
-              "
-              :class="{
-                'disabled-group':
-                  currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted,
-              }"
               v-if="item.id == 1"
               :value="index == 1 ? true : false"
+              :class="{
+                'disabled-group': !bothConnected,
+              }"
+              :disabled="!bothConnected"
               no-action
               @click="index = item.id"
             >
@@ -161,7 +157,11 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              v-else-if="item.id == 2 && !isAdmin"
+              v-else-if="item.id == 2"
+              :class="{
+                'disabled-group': !bothConnected,
+              }"
+              :disabled="!bothConnected"
               @click="index = item.id"
             >
               <v-list-item-icon>
@@ -189,9 +189,14 @@
           </v-btn>
         </div>
       </v-navigation-drawer>
-      <!-- MODERATOR VIEW -->
-      <v-col class="mx-15 mt-4" v-if="index == 0 && taskIndex == 0 && isAdmin">
-        <v-card color="white" class="cards">
+      <!-- Moderator View -->
+      <v-col
+        ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest"
+        v-if="index == 0 && taskIndex == 0 && isAdmin"
+      >
+        <!-- Moderator View Content -->
+        <v-card color="white" class="cards" v-if="!conectionStatus">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Confirm you are ready</span>
@@ -206,18 +211,193 @@
             </v-col>
           </v-row>
           <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mb-4">
-              <v-btn color="orange" block depressed dark>CONNECT</v-btn>
-            </v-col>
+            <VideoCall
+              ref="VideoCall"
+              @emit-confirm="confirmConnect()"
+              :index="index"
+              :isAdmin="isAdmin"
+            />
           </v-row>
         </v-card>
+        <!-- Moderator Pre-Test view -->
+        <v-expansion-panels v-else flat accordion>
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Pre-Test</span>
+                <v-icon
+                  @click="changeStatus(0, 'preTest', 'open')"
+                  v-if="userTestStatus.preTestStatus == 'closed'"
+                  color="green"
+                  >mdi-play</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'open'"
+                  color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-dots-horizontal</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'done'"
+                  color="green"
+                  >mdi-check</v-icon
+                >
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.preTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">
+                    {{ item.description }}
+                  </p>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Moderator Tasks view -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+            v-for="(task, index) in test.testStructure.userTasks"
+            :key="index"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">{{ task.taskName }}</span>
+                <v-icon
+                  @click="openTask(index)"
+                  v-if="tasksStatus[index] == 'closed'"
+                  color="green"
+                  >mdi-play</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-dots-horizontal</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
+                    {{ test.testStructure.userTasks[index].taskDescription }}
+                  </span>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <!-- Moderator Post-Test view -->
+          <v-expansion-panel
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
+            class="mb-3"
+          >
+            <v-expansion-panel-header>
+              <div class="d-flex justify-space-between align-center">
+                <span class="cardsTitle">Post-Test</span>
+                <v-icon
+                  @click="changeStatus(0, 'postTest', 'open')"
+                  v-if="userTestStatus.postTestStatus == 'closed'"
+                  color="green"
+                  >mdi-play</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'open'"
+                  color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-dots-horizontal</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'done'"
+                  color="green"
+                  >mdi-check</v-icon
+                >
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-divider class="mb-6"></v-divider>
+              <v-row
+                v-for="(item, index) in test.testStructure.postTest"
+                :key="index"
+              >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p class="cardsSubtitle" v-if="item.description">
+                    {{ item.description }}
+                  </p>
+                </v-col>
+              </v-row>
+
+              <v-row justify="center">
+                <v-col class="mx-4">
+                  <v-btn
+                    block
+                    dark
+                    style="border-radius: 10px"
+                    color="orange lighten-1"
+                    depressed
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    @click="
+                      changeStatus(taskIndex, 'postTest', 'done'),
+                        (taskIndex = 3)
+                    "
+                    >{{ $t('UserTestView.buttons.done') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <!-- Finish button -->
+        <v-btn
+          color="orange"
+          dark
+          depressed
+          block
+          v-if="postTestFinished"
+          @click="finishTest()"
+          >Finish Test</v-btn
+        >
       </v-col>
-      <!--////// EVALUATOR VIEW //////-->
       <v-col
-        class="mx-15 mt-4"
-        style=""
+        ref="rightView"
+        class="mx-10 mt-2 right-view backgroundTest"
+        v-if="index == 1 && taskIndex == 0 && isAdmin"
+      >
+        <FeedbackView :index="index" :isAdmin="isAdmin" />
+      </v-col>
+      <!-- Evaluator View -->
+      <v-col
+        ref="rightView"
+        class="mx-15 mt-4 right-view backgroundTest"
         v-if="index == 0 && taskIndex == 0 && !isAdmin"
       >
+        <!-- Evaluator View Content -->
         <v-card color="white" flat class="cards mb-6">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
@@ -252,13 +432,21 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-checkbox color="orange" class="ma-0 pa-0"
-                ><template v-slot:label
-                  ><span style="color: #455a64"
-                    >Do you like icecream?</span
-                  ></template
-                ></v-checkbox
-              >
+              <v-row justify="center">
+                <v-col cols="11">
+                  <v-checkbox
+                    v-model="currentUserTestAnswer.consentCompleted"
+                    @change="changeStatus(taskIndex, 'consent', 'done')"
+                    color="orange"
+                    class="ma-0 pa-0"
+                    ><template v-slot:label
+                      ><span style="color: #455a64">{{
+                        test.testStructure.consent
+                      }}</span></template
+                    ></v-checkbox
+                  >
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-card>
@@ -273,28 +461,65 @@
                     your moderator so that, when ready, they can start the test.
                   </span>
                 </v-col>
-                <v-col cols="4" class="mt-2 mb-8 mr-8">
+                <v-col
+                  v-if="moderatorStatus == false"
+                  cols="4"
+                  class="mt-2 mb-8 mr-8"
+                >
                   <span class="cardsTitle text-center d-block"
                     >Waiting the moderator...</span
                   >
                   <div class="dot-flashing mx-auto mt-4"></div>
                 </v-col>
+
+                <v-col v-else cols="12" class="mr-8"
+                  ><VideoCall
+                    ref="VideoCall"
+                    @emit-confirm="confirmConnect(), (index = 1)"
+                    :index="index"
+                    :isAdmin="isAdmin"
+                /></v-col>
               </v-row>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
-      <!--////// TASKS //////-->
-      <v-col class="mx-15 mt-6" v-if="index == 1 && !isAdmin">
+      <!-- Evaluator Pre-Test view -->
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="index == 1 && !isAdmin"
+      >
         <v-expansion-panels flat accordion>
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
+            :disabled="userTestStatus.preTestStatus == 'closed'"
+            @click="setInProgress(index, 'preTest')"
           >
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Pre-Test</span>
-                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+                <v-icon
+                  v-if="userTestStatus.preTestStatus == 'closed'"
+                  color="#8D8D8D"
+                  >mdi-lock</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'open'"
+                  color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.preTestStatus == 'done'"
+                  color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -304,8 +529,10 @@
                 :key="index"
               >
                 <v-col cols="5" class="mx-auto py-0">
-                  <p>{{ item.title }}</p>
-                  <p v-if="item.description">{{ item.description }}</p>
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p v-if="item.description" class="cardsSubtitle">
+                    {{ item.description }}
+                  </p>
                   <v-text-field
                     :disabled="currentUserTestAnswer.preTestCompleted"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
@@ -344,12 +571,8 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    :disabled="currentUserTestAnswer.preTestCompleted"
-                    @click="
-                      completeStep(taskIndex, 'preTest'),
-                        (index = 0),
-                        (taskIndex = 0)
-                    "
+                    :disabled="test.userTestStatus.preTestStatus == 'closed'"
+                    @click="changeStatus(taskIndex, 'preTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -357,24 +580,39 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
 
-          <!-- Tarefas do Usuário -->
+          <!-- Evaluator Tasks view -->
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
             v-for="(task, index) in test.testStructure.userTasks"
             :key="index"
+            @click="setTaskIndex(index), setInProgress(index, 'tasks')"
+            :disabled="tasksStatus[index] == 'closed'"
           >
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">{{ task.taskName }}</span>
-                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+                <v-icon v-if="tasksStatus[index] == 'closed'" color="#8D8D8D"
+                  >mdi-lock</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'open'" color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="tasksStatus[index] == 'inProgress'"
+                  color="orange"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon v-else-if="tasksStatus[index] == 'done'" color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-divider class="mb-6"></v-divider>
               <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12" class="mb-0">
-                  <span class="ml-4" style="color: #455A64;">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[index].taskDescription }}
                   </span>
                 </v-col>
@@ -385,7 +623,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
+                    @click="changeStatus(taskIndex, 'tasks', 'done')"
                   >
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
@@ -394,15 +632,36 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
 
-          <!-- Post-Test -->
+          <!-- Evaluator Post-Test view -->
           <v-expansion-panel
-            style="border: solid 1px #71717182 !important; border-radius: 30px;"
+            style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
+            :disabled="userTestStatus.postTestStatus == 'closed'"
+            @click="setInProgress(index, 'postTest')"
           >
             <v-expansion-panel-header>
               <div class="d-flex justify-space-between align-center">
                 <span class="cardsTitle">Post-Test</span>
-                <v-icon color="#8D8D8D">mdi-lock</v-icon>
+                <v-icon
+                  v-if="userTestStatus.postTestStatus == 'closed'"
+                  color="#8D8D8D"
+                  >mdi-lock</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'open'"
+                  color="green"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'inProgress'"
+                  color="orange"
+                  >mdi-lock-open</v-icon
+                >
+                <v-icon
+                  v-else-if="userTestStatus.postTestStatus == 'done'"
+                  color="green"
+                  >mdi-check</v-icon
+                >
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -452,10 +711,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    :disabled="currentUserTestAnswer.postTestCompleted"
-                    @click="
-                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
-                    "
+                    @click="changeStatus(0, 'postTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -463,6 +719,14 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+      </v-col>
+      <!-- Feedback View -->
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-2 right-view backgroundTest"
+        v-if="index == 2 && taskIndex == 0"
+      >
+        <FeedbackView :index="index" :isAdmin="isAdmin" />
       </v-col>
     </v-row>
   </div>
@@ -472,28 +736,22 @@
 import VClamp from 'vue-clamp'
 import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
+import VideoCall from '@/components/molecules/VideoCall.vue'
+import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
+import { db } from '@/firebase'
+import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
   components: {
     VClamp,
     CardSignIn,
     CardSignUp,
+    VideoCall,
+    FeedbackView,
   },
   data: () => ({
-    displayMediaOptions: {
-      video: {
-        displaySurface: 'window',
-        cursor: 'always',
-      },
-      audio: true,
-    },
-    isCapture: false,
+    conectionStatus: false,
     isAdmin: false,
-    mediaRecorder: [],
-    chunks: [],
-    isRecording: false,
-    videoUrl: '',
-    isCapture: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -506,22 +764,17 @@ export default {
     preTestIndex: null,
     items: [],
     taskAnswers: {},
-    fab: false,
-    res: 0,
     dialog: false,
-    videoStream: null,
-    mediaRecorder: null,
-    recordedChunks: [],
-    recording: false,
-    allTasksCompleted: false,
-    recordedVideo: '',
+    moderatorStatus: null,
+    evaluatorStatus: null,
+    tasksStatus: [],
+    userTestStatus: {},
+    postTestFinished: false,
+    bothConnected: false,
   }),
   computed: {
     test() {
       return this.$store.getters.test
-    },
-    testId() {
-      return this.$store.getters.test.id
     },
     user() {
       if (this.$store.getters.user) this.setExistUser()
@@ -530,21 +783,17 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer
     },
-    showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
-    },
     cooperators() {
       return this.$store.getters.cooperators
     },
     loading() {
       return this.$store.getters.loading
     },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
-    },
     tasks() {
       return this.$store.getters.tasks
+    },
+    roomTestId() {
+      return this.$store.getters.test.id
     },
   },
   watch: {
@@ -552,7 +801,7 @@ export default {
       this.mappingSteps()
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
+      this.$refs.rightView.scrollTop = 0
     },
     async user() {
       if (this.user) {
@@ -560,10 +809,41 @@ export default {
         if (this.logined) this.setTest()
       }
     },
+    'userTestStatus.postTestStatus': function(newValue) {
+      if (newValue === 'done') {
+        this.postTestFinished = true
+      } else {
+        this.postTestFinished = false
+      }
+    },
+    evaluatorStatus(newValue) {
+      if (newValue === true && this.moderatorStatus === true) {
+        this.bothConnected = true
+      }
+    },
   },
   async created() {
     await this.verifyAdmin()
     await this.mappingSteps()
+    const ref = doc(db, 'tests/', this.roomTestId)
+    onSnapshot(ref, (snapshot) => {
+      this.moderatorStatus = snapshot.data().userTestStatus.moderator
+      this.evaluatorStatus = snapshot.data().userTestStatus.user
+      this.userTestStatus = snapshot.data().userTestStatus
+
+      const tasks = snapshot.data().testStructure.userTasks
+
+      const newTasksStatus = []
+
+      tasks.forEach((task) => {
+        newTasksStatus.push(task.taskStatus)
+      })
+      this.tasksStatus = newTasksStatus
+    })
+  },
+  beforeDestroy() {
+    this.disconnect()
+    this.$refs.VideoCall.hangUp()
   },
   methods: {
     async saveAnswer() {
@@ -572,6 +852,151 @@ export default {
         answerDocId: this.test.answersDocId,
         testType: this.test.testType,
       })
+    },
+    setTaskIndex(index) {
+      this.taskIndex = index
+    },
+    openTask(id) {
+      const testRef = doc(db, 'tests', this.roomTestId)
+
+      getDoc(testRef).then((doc) => {
+        if (doc.exists()) {
+          const testStructure = doc.data().testStructure
+          testStructure.userTasks[id].taskStatus = 'open'
+
+          updateDoc(testRef, { testStructure })
+            .then(() => {
+              console.log('Status da tarefa atualizado com sucesso')
+            })
+            .catch((error) => {
+              console.error('Erro ao atualizar o status da tarefa:', error)
+            })
+
+          this.test.testStructure.userTasks[id].taskStatus = 'open'
+        } else {
+          console.error('Documento do teste não encontrado')
+        }
+      })
+    },
+
+    setInProgress(id, type) {
+      const statusToUpdate = 'inProgress'
+      const testRef = doc(db, 'tests', this.roomTestId)
+
+      getDoc(testRef).then((doc) => {
+        if (doc.exists()) {
+          const data = doc.data()
+          if (type === 'tasks') {
+            if (this.tasksStatus[id] == 'open') {
+              data.testStructure.userTasks[id].taskStatus = statusToUpdate
+            }
+          } else if (type === 'postTest') {
+            if (this.userTestStatus.postTestStatus == 'open') {
+              data.userTestStatus.postTestStatus = statusToUpdate
+            }
+          } else if (type === 'preTest') {
+            if (this.userTestStatus.preTestStatus == 'open') {
+              data.userTestStatus.preTestStatus = statusToUpdate
+            }
+          }
+          updateDoc(testRef, data)
+            .then(() => {
+              console.log(`Status da ${type} atualizado com sucesso`)
+            })
+            .catch((error) => {
+              console.error(`Erro ao atualizar o status da ${type}:`, error)
+            })
+          if (type === 'tasks') {
+            this.test.testStructure.userTasks[id].taskStatus = statusToUpdate
+          } else {
+            this.test.userTestStatus[`${type}Status`] = statusToUpdate
+          }
+        } else {
+          console.error('Documento do teste não encontrado')
+        }
+      })
+    },
+
+    changeStatus(id, type, newStatus) {
+      const testRef = doc(db, 'tests', this.roomTestId)
+      console.log('receiving:', id, type, newStatus)
+
+      getDoc(testRef)
+        .then((doc) => {
+          if (doc.exists()) {
+            const data = doc.data()
+            if (type === 'tasks') {
+              data.testStructure.userTasks[id].taskStatus = newStatus
+            } else if (type === 'postTest') {
+              data.userTestStatus.postTestStatus = newStatus
+            } else if (type === 'preTest') {
+              data.userTestStatus.preTestStatus = newStatus
+            } else if (type === 'consent') {
+              data.userTestStatus.consentStatus = newStatus
+            }
+            return updateDoc(testRef, data)
+          } else {
+            console.error('Documento do teste não encontrado')
+            throw new Error('Documento do teste não encontrado')
+          }
+        })
+        .then(() => {
+          console.log('Status atualizado com sucesso')
+        })
+        .catch((error) => {
+          console.error('Erro ao atualizar o status:', error)
+        })
+    },
+
+    async confirmConnect() {
+      const ref = doc(db, 'tests', this.roomTestId)
+      if (this.isAdmin) {
+        try {
+          await updateDoc(ref, {
+            userTestStatus: {
+              moderator: true,
+              user: false,
+              consentStatus: 'open',
+              preTestStatus: 'closed',
+              postTestStatus: 'closed',
+            },
+          })
+          this.conectionStatus = true
+        } catch (e) {
+          console.error('Error in connect:', e)
+        }
+      } else {
+        try {
+          await updateDoc(ref, {
+            userTestStatus: {
+              user: true,
+              moderator: true,
+              consentStatus: 'open',
+              preTestStatus: 'closed',
+              postTestStatus: 'closed',
+            },
+          })
+          this.conectionStatus = true
+        } catch (e) {
+          console.error('Error in connect:', e)
+        }
+      }
+    },
+    async disconnect() {
+      const ref = doc(db, 'tests', this.roomTestId)
+      try {
+        await updateDoc(ref, {
+          userTestStatus: {
+            moderator: false,
+            user: false,
+            consentStatus: 'open',
+            preTestStatus: 'closed',
+            postTestStatus: 'closed',
+          },
+        })
+      } catch (e) {
+        console.error('Error in connect:', e)
+      }
     },
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
@@ -592,7 +1017,6 @@ export default {
     handleTimerStopped(elapsedTime, taskIndex) {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
-
     calculateProgress() {
       const totalSteps = 4
 
@@ -618,7 +1042,6 @@ export default {
     async setTest() {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
-      this.populateWithHeuristicQuestions()
     },
     setExistUser() {
       this.noExistUser = false
@@ -645,7 +1068,7 @@ export default {
               title: 'Feedback',
               icon: 'mdi-monitor-account',
               value: this.test.testStructure.postTest,
-              id: 1,
+              id: 2,
             })
           }
         }
@@ -676,6 +1099,23 @@ export default {
           })
       }
     },
+    finishTest() {
+      this.disconnect()
+      this.$refs.VideoCall.hangUp()
+      const testRef = doc(db, 'tests', this.roomTestId)
+      getDoc(testRef).then((doc) => {
+        if (doc.exists()) {
+          const data = doc.data()
+          data.userTestStatus.postTestStatus = 'closed'
+          data.userTestStatus.preTestStatus = 'closed'
+          data.userTestStatus.consentStatus = 'closed'
+          for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
+            data.testStructure.userTasks[i].taskStatus = 'closed'
+          }
+          return updateDoc(testRef, data)
+        }
+      })
+    },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
@@ -684,6 +1124,67 @@ export default {
 </script>
 
 <style scoped>
+.nav {
+  background-color: #e8eaf2;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+
+/* Estilo para a lista de navegação */
+.nav-list {
+  max-height: 85%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 100px;
+}
+
+/* Estilo para os cartões de conteúdo */
+.cards {
+  margin-top: 16px;
+}
+
+/* Estilo para o título dos cartões */
+.cardsTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Estilo para o subtítulo dos cartões */
+.cardsSubtitle {
+  font-size: 16px;
+  color: #455a64;
+}
+
+/* Estilo para os campos de entrada de texto */
+.text-field {
+  margin-bottom: 16px;
+}
+
+/* Estilo para os botões */
+.btn-done {
+  border-radius: 10px;
+}
+
+/* Right side scroll bar */
+/* width */
+.right-view::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+.right-view::-webkit-scrollbar-track {
+  background: none;
+}
+/* Handle */
+.right-view::-webkit-scrollbar-thumb {
+  background: #ffcd86;
+  border-radius: 2px;
+}
+/* Handle on hover */
+.right-view::-webkit-scrollbar-thumb:hover {
+  background: #fca326;
+}
 .cards {
   border-radius: 20px;
 }
@@ -712,6 +1213,9 @@ export default {
   background-color: grey;
 }
 
+body {
+  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -803,12 +1307,12 @@ export default {
 }
 /* Handle */
 .right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
+  background: #ffcd8600;
   border-radius: 2px;
 }
 /* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+  background: #fca32600;
 }
 /* Nav bar list scroll bar */
 /* width */
