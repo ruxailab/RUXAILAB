@@ -305,7 +305,7 @@
                   <v-list-item
                     link
                     v-bind="attrs"
-                    @click="taskIndex = i"
+                    @click="taskIndex = i, startTimer()"
                     v-on="on"
                     :disabled="isTaskDisabled(i)"
                     :class="{
@@ -529,7 +529,6 @@
                       :taskIndex="taskIndex"
                     ></ScreenRecorder>
                   </v-row>
-                  <v-spacer />
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].taskTip !== null
@@ -587,21 +586,21 @@
                 </v-col>
               </v-row>
               <v-row
-                v-if="test.testStructure.userTasks[taskIndex].hasPost"
+                v-if="test.testStructure.userTasks[taskIndex].postQuestion"
                 class="fill-height"
                 align="center"
                 justify="center"
               >
                 <v-col class="text-center">
                   <p class="text-h5">
-                    {{ test.testStructure.userTasks[taskIndex].hasPost }}
+                    {{ test.testStructure.userTasks[taskIndex].postQuestion }}
                   </p>
 
                   <v-text-field
                     class="mx-2"
                     v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
                     :placeholder="
-                      test.testStructure.userTasks[taskIndex].hasPost
+                      test.testStructure.userTasks[taskIndex].postQuestion
                     "
                     outlined
                   ></v-text-field>
@@ -635,7 +634,7 @@
                 <v-row justify="center">
                   <h1 class="mt-6">
                     {{ test.testTitle }} -
-                    {{ $t('UserTestTable.titles.postTest') }}
+                    {{ $t('UserTestView.titles.postTest') }}
                   </h1>
                 </v-row>
               </v-col>
@@ -831,6 +830,11 @@ export default {
       const timerComponent = this.$refs.timerComponent
 
       timerComponent.stopTimer()
+    },
+    startTimer(){
+            const timerComponent = this.$refs.timerComponent
+
+      timerComponent.startTimer()
     },
     handleTimerStopped(elapsedTime, taskIndex) {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
