@@ -1,10 +1,14 @@
 <template>
   <v-footer dark padless>
-    <v-card flat tile class="gray lighten-3 white--text text-center" style="width:100%">
-      <v-card-text
-        class="white--text pt-0"
-      >
-        {{ $t('pages.landing.footer') }} uxremotelab@gmail.com
+    <v-card
+      flat
+      tile
+      class="gray lighten-3 white--text text-center"
+      style="width:100%"
+    >
+      <v-card-text class="white--text py-1">
+        {{ $t('pages.landing.footer') }}
+        <a @click="sendTo('mailto:uxremotelab@gmail.com')">uxremotelab@gmail.com</a>
       </v-card-text>
 
       <v-divider />

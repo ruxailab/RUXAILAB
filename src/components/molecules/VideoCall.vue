@@ -1,64 +1,18 @@
 <template>
   <v-container fluid>
-    <v-row class="ma-4" justify="center">
-      <v-btn class="mr-4" color="primary" @click="openUserMedia()">
-        <v-icon left>mdi-camera</v-icon>
-        Open camera & microphone
-      </v-btn>
-      <v-btn
-        class="mr-4"
-        color="primary"
-        :disabled="createBtnDisabled"
-        @click="createRoom()"
-      >
-        <v-icon left>mdi-account-group-outline</v-icon>
-        Create room
-      </v-btn>
-      <v-btn
-        class="mr-4"
-        color="primary"
-        :disabled="joinBtnDisabled"
-        @click="joinRoom()"
-      >
-        <v-icon left>mdi-account-group</v-icon>
-        Join room
-      </v-btn>
-      <v-btn color="primary" :disabled="hangupBtnDisabled" @click="hangUp()">
-        <v-icon left>mdi-close</v-icon>
-        Hangup
-      </v-btn>
-    </v-row>
-
-    <v-row justify="center" class="mt-4">
-      <span id="currentRoom">{{ currentRoom }}</span>
-    </v-row>
-
-    <v-row justify="center">
-      <v-col cols="6">
-        <v-row justify="center">
-          <video id="localVideo" muted autoplay playsinline></video>
-        </v-row>
-        <v-row justify="center">
-          <video id="remoteVideo" autoplay playsinline></video>
-        </v-row>
+    <v-row class="mb-2" justify="center">
+      <v-col cols="10">
+        <v-btn
+          v-if="index == 0"
+          @click="openUserMedia(), emitConfirm()"
+          color="green"
+          block
+          depressed
+          dark
+          >CONNECT</v-btn
+        >
       </v-col>
     </v-row>
-
-    <v-dialog v-model="roomDialog" persistent max-width="500px">
-      <v-card>
-        <v-card-title>Join room</v-card-title>
-        <v-card-text>
-          Enter ID for room to join:
-          <v-text-field v-model="roomId" label="Room ID"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="roomDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" @click="confirmJoin">Join</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -72,7 +26,7 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
-  getDocs
+  getDocs,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 export default {
@@ -95,19 +49,45 @@ export default {
         iceCandidatePoolSize: 10,
       },
       peerConnection: null,
-      localStream: null,
-      remoteStream: null,
       roomDialog: false,
-      roomCollection: null, // Adding reference to Firestore collection
+      roomCollection: null,
     }
   },
+  beforeRouteLeave() {
+    this.hangUp()
+  },
+  props: {
+    isAdmin: {
+      type: Boolean,
+    },
+    index: {
+      type: Number,
+    },
+  },
+  computed: {
+    localStream() {
+      return this.$store.getters.localStream
+    },
+    remoteStream() {
+      return this.$store.getters.remoteStream
+    },
+    roomTestAnswerId() {
+      return this.$store.getters.test.testAnswerId
+    },
+    roomTestId() {
+      return this.$store.getters.test.id
+    },
+  },
   methods: {
+    emitConfirm() {
+      this.$emit('emit-confirm')
+    },
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
-      this.roomCollection = collection(db, 'rooms') // Getting reference to collection
+      this.roomCollection = collection(db, 'rooms')
 
-      const roomRef = doc(this.roomCollection) // Creating new document reference
+      const roomRef = doc(this.roomCollection, this.roomTestId)
 
       console.log(
         'Create PeerConnection with configuration: ',
@@ -127,7 +107,7 @@ export default {
           return
         }
         console.log('Got candidate: ', event.candidate)
-        addDoc(callerCandidatesCollection, event.candidate.toJSON()) // Adding candidate to collection
+        addDoc(callerCandidatesCollection, event.candidate.toJSON())
       })
 
       const offer = await this.peerConnection.createOffer()
@@ -186,9 +166,9 @@ export default {
       await this.joinRoomById(roomId)
     },
     async joinRoomById(roomId) {
-      const roomRef = doc(collection(db, 'rooms'), roomId) // Getting reference to room document
+      const roomRef = doc(collection(db, 'rooms'), roomId)
 
-      const roomSnapshot = await getDoc(roomRef) // Getting room details
+      const roomSnapshot = await getDoc(roomRef)
 
       console.log('Got room:', roomSnapshot.exists)
 
@@ -233,7 +213,7 @@ export default {
             sdp: answer.sdp,
           },
         }
-        await updateDoc(roomRef, roomWithAnswer) // Updating room details with SDP answer
+        await updateDoc(roomRef, roomWithAnswer) 
 
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
@@ -251,17 +231,24 @@ export default {
       }
     },
     async openUserMedia() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      })
-      this.localStream = stream
-      this.remoteStream = new MediaStream()
-      document.querySelector('#localVideo').srcObject = this.localStream
-      document.querySelector('#remoteVideo').srcObject = this.remoteStream
-      this.createBtnDisabled = false
-      this.joinBtnDisabled = false
-      this.hangupBtnDisabled = false
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        })
+        this.$store.commit('SET_LOCAL_STREAM', stream)
+        this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
+        this.createBtnDisabled = false
+        this.joinBtnDisabled = false
+        this.hangupBtnDisabled = false
+      } catch (e) {
+        alert('Error in capturing your media device: ' + e.message)
+      }
+      if (this.isAdmin) {
+        this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
+      } else if (!this.isAdmin) {
+        this.joinRoomById(this.roomTestId)
+      }
     },
     async hangUp() {
       console.log('hang up')
@@ -328,6 +315,4 @@ export default {
 }
 </script>
 
-<style scoped>
-/* Estilos Vue.js aqui */
-</style>
+<style scoped></style>
