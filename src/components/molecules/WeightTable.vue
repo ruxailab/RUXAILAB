@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="900px">
+  <v-col>
+    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
       <!-- tabs  -->
       <template>
         <v-tabs
@@ -89,11 +89,12 @@
                 <!-- save button -->
                 <v-row align="center" justify="space-around">
                   <v-btn
-                    class="mt-6 mb-4"
+                    dark
+                    depressed
+                    class="mt-8 mb-4"
                     large
                     align="center"
                     color="#FCA326"
-                    elevation="5"
                     type="submit"
                     @click="updateDatas()"
                   >
@@ -106,7 +107,7 @@
         </v-tabs-items>
       </template>
     </v-card>
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -135,13 +136,12 @@ export default {
     const heuristicLength = this.$store.state.Tests.Test.testStructure.length
 
     const weightMap = {}
-    if (this.testAll.testWeights = {}) {
+    if ((this.testAll.testWeights = {})) {
       for (let i = 0; i < heuristicLength - 1; i++) {
         weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
       this.group = weightMap
-    }
-    else {
+    } else {
       this.group = this.testAll.testWeights
     }
     console.log(this.group)
