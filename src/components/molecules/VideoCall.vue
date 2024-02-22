@@ -3,7 +3,7 @@
     <v-row class="mb-2" justify="center">
       <v-col cols="10">
         <v-btn
-        v-if="index == 0"
+          v-if="index == 0"
           @click="openUserMedia(), emitConfirm()"
           color="green"
           block
@@ -49,8 +49,6 @@ export default {
         iceCandidatePoolSize: 10,
       },
       peerConnection: null,
-      localStream: null,
-      remoteStream: null,
       roomDialog: false,
       roomCollection: null,
     }
@@ -64,9 +62,15 @@ export default {
     },
     index: {
       type: Number,
-    }
+    },
   },
   computed: {
+    localStream() {
+      return this.$store.getters.localStream
+    },
+    remoteStream() {
+      return this.$store.getters.remoteStream
+    },
     roomTestAnswerId() {
       return this.$store.getters.test.testAnswerId
     },
@@ -81,9 +85,9 @@ export default {
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
-      this.roomCollection = collection(db, 'rooms') // Getting reference to collection
+      this.roomCollection = collection(db, 'rooms')
 
-      const roomRef = doc(this.roomCollection, this.roomTestId) // Creating new document reference
+      const roomRef = doc(this.roomCollection, this.roomTestId)
 
       console.log(
         'Create PeerConnection with configuration: ',
@@ -103,7 +107,7 @@ export default {
           return
         }
         console.log('Got candidate: ', event.candidate)
-        addDoc(callerCandidatesCollection, event.candidate.toJSON()) // Adding candidate to collection
+        addDoc(callerCandidatesCollection, event.candidate.toJSON())
       })
 
       const offer = await this.peerConnection.createOffer()
@@ -162,9 +166,9 @@ export default {
       await this.joinRoomById(roomId)
     },
     async joinRoomById(roomId) {
-      const roomRef = doc(collection(db, 'rooms'), roomId) // Getting reference to room document
+      const roomRef = doc(collection(db, 'rooms'), roomId)
 
-      const roomSnapshot = await getDoc(roomRef) // Getting room details
+      const roomSnapshot = await getDoc(roomRef)
 
       console.log('Got room:', roomSnapshot.exists)
 
@@ -209,7 +213,7 @@ export default {
             sdp: answer.sdp,
           },
         }
-        await updateDoc(roomRef, roomWithAnswer) // Updating room details with SDP answer
+        await updateDoc(roomRef, roomWithAnswer) 
 
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
@@ -232,10 +236,8 @@ export default {
           video: true,
           audio: true,
         })
-        this.localStream = stream
-        this.remoteStream = new MediaStream()
-        this.$store.commit('SET_LOCAL_STREAM', stream);
-        this.$store.commit('SET_REMOTE_STREAM', this.remoteStream);
+        this.$store.commit('SET_LOCAL_STREAM', stream)
+        this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
         this.createBtnDisabled = false
         this.joinBtnDisabled = false
         this.hangupBtnDisabled = false
