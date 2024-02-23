@@ -89,10 +89,6 @@ export default {
 
       const roomRef = doc(this.roomCollection, this.roomTestId)
 
-      console.log(
-        'Create PeerConnection with configuration: ',
-        this.configuration,
-      )
       this.peerConnection = new RTCPeerConnection(this.configuration)
 
       this.localStream.getTracks().forEach((track) => {
@@ -103,16 +99,13 @@ export default {
 
       this.peerConnection.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
-          console.log('Got final candidate!')
           return
         }
-        console.log('Got candidate: ', event.candidate)
         addDoc(callerCandidatesCollection, event.candidate.toJSON())
       })
 
       const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
-      console.log('Created offer:', offer)
 
       const roomWithOffer = {
         offer: {
@@ -122,7 +115,6 @@ export default {
       }
       await setDoc(roomRef, roomWithOffer) // Setting room details in document
       this.roomId = roomRef.id
-      console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`)
       this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
 
       this.peerConnection.addEventListener('track', (event) => {
@@ -138,7 +130,6 @@ export default {
           data &&
           data.answer
         ) {
-          console.log('Got remote description: ', data.answer)
           const rtcSessionDescription = new RTCSessionDescription(data.answer)
           await this.peerConnection.setRemoteDescription(rtcSessionDescription)
         }
@@ -148,7 +139,6 @@ export default {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
             let data = change.doc.data()
-            console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`)
             await this.peerConnection.addIceCandidate(new RTCIceCandidate(data))
           }
         })
@@ -161,7 +151,6 @@ export default {
     },
     async confirmJoin() {
       const roomId = this.roomId
-      console.log('Join room: ', roomId)
       this.currentRoom = `Current room is ${roomId} - You are the callee!`
       await this.joinRoomById(roomId)
     },
@@ -185,10 +174,8 @@ export default {
         )
         this.peerConnection.addEventListener('icecandidate', (event) => {
           if (!event.candidate) {
-            console.log('Got final candidate!')
             return
           }
-          console.log('Got candidate: ', event.candidate)
           addDoc(calleeCandidatesCollection, event.candidate.toJSON())
         })
 
@@ -199,12 +186,10 @@ export default {
         })
 
         const offer = roomSnapshot.data().offer
-        console.log('Got offer:', offer)
         await this.peerConnection.setRemoteDescription(
           new RTCSessionDescription(offer),
         )
         const answer = await this.peerConnection.createAnswer()
-        console.log('Created answer:', answer)
         await this.peerConnection.setLocalDescription(answer)
 
         const roomWithAnswer = {
@@ -213,15 +198,12 @@ export default {
             sdp: answer.sdp,
           },
         }
-        await updateDoc(roomRef, roomWithAnswer) 
+        await updateDoc(roomRef, roomWithAnswer)
 
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === 'added') {
               let data = change.doc.data()
-              console.log(
-                `Got new remote ICE candidate: ${JSON.stringify(data)}`,
-              )
               await this.peerConnection.addIceCandidate(
                 new RTCIceCandidate(data),
               )
@@ -230,6 +212,39 @@ export default {
         })
       }
     },
+    async switchMediaStream() {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          cursor: true,
+        })
+        const screenTrack = stream.getTracks()[0]
+
+        // Get all the tracks that are currently being sent
+        const senders = this.peerConnection.getSenders()
+
+        // Replace each track with the new screenTrack
+        senders.forEach((sender) => {
+          if (sender.track.kind === 'video') {
+            sender.replaceTrack(screenTrack)
+          }
+        })
+
+        // When screen sharing is stopped, replace the screenTrack with the original tracks
+        screenTrack.onended = () => {
+          senders.forEach((sender) => {
+            if (sender.track.kind === 'video') {
+              const originalTrack = this.localStream.getVideoTracks()[0]
+              sender.replaceTrack(originalTrack)
+            }
+          })
+        }
+
+        this.$store.commit('SET_LOCAL_STREAM', stream)
+      } catch (error) {
+        console.error('Error switching media stream:', error)
+      }
+    },
+
     async openUserMedia() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -267,8 +282,8 @@ export default {
 
       document.querySelector('#localVideo').srcObject = null
       document.querySelector('#remoteVideo').srcObject = null
-      this.localStream = null
-      this.remoteStream = null
+      this.$store.commit('SET_LOCAL_STREAM', null)
+      this.$store.commit('SET_REMOTE_STREAM', null)
       this.createBtnDisabled = false
       this.joinBtnDisabled = false
       this.hangupBtnDisabled = true

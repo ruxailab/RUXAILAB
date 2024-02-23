@@ -14,6 +14,7 @@
     <v-col cols="12">
       <v-row justify="center">
         <v-btn
+        disabled
           v-if="localStream"
           @click="toggleScreen()"
           class="mt-4 mx-2"
@@ -47,10 +48,12 @@
         </v-btn>
       </v-row>
     </v-col>
+    <VideoCall ref="VideoCall" />
   </v-row>
 </template>
 
 <script>
+import VideoCall from './VideoCall.vue'
 export default {
   props: {
     isAdmin: {
@@ -60,8 +63,12 @@ export default {
       type: Number,
     },
   },
+  components: {
+    VideoCall,
+  },
   data() {
     return {
+      hide: true,
       isMicrophoneMuted: false,
       isSharingScreen: false,
     }
@@ -77,26 +84,21 @@ export default {
     remoteStream() {
       return this.$store.getters.remoteStream
     },
+    roomTestId() {
+      return this.$store.getters.test.id
+    },
   },
   methods: {
     async toggleScreen() {
-      console.log('toggleScreen');
+      console.log('toggleScreen')
       if (!this.isSharingScreen) {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        })
-        this.$store.commit('SET_LOCAL_STREAM', stream)
+        await this.$refs.VideoCall.switchMediaStream()
         this.isSharingScreen = true
         this.setupStreams()
       } else if (this.isSharingScreen) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        })
-        this.$store.commit('SET_LOCAL_STREAM', stream)
         this.isSharingScreen = false
         this.setupStreams()
+        this.$refs.VideoCall.joinRoomById(this.roomTestId)
       }
     },
     setupStreams() {
