@@ -109,6 +109,18 @@ def populate_ahp_matrix(ahp_df, pesos):
 
     return ahp_df
 
+@https_fn.on_request(
+    cors=options.CorsOptions(
+        cors_origins=[r"firebase\.com$",  r"http://localhost:8080"],
+        cors_methods=[ "post"],
+    )
+)
+def get_scores(req: https_fn.Request) -> https_fn.Response:
+    req_data = req.get_json()
+    array_scores = req_data.get('array_scores')
+    print('Dados recebidos:', array_scores)
+    resonse_scores = array_scores
+    return https_fn.Response(json.dumps(resonse_scores), content_type="application/json")
 
 
 @https_fn.on_request(
@@ -173,11 +185,13 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
 ############### Heuristics x Usability Score x Weights ###############
     
+    
     print("\n\n", usability_score)
 
     data_heuristics_usability_score_weights = {'Heuristics': heuristicas, 'Usability_Score': usability_score, 'Weights': normalized_weights}
     df_heuristics_usability_score_weights = pd.DataFrame(data_heuristics_usability_score_weights)
     print("\n\nHeuristics x Usability Score x Weights ", df_heuristics_usability_score_weights)
+
 
     response_data = {
         "tabela": ahp_df.to_json(),
