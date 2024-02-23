@@ -3,7 +3,7 @@ description: Submit a bug report to help us improve
 title: '[BUG]: '
 labels: [Bug]
 body:
-  -type: markdown
+  - type: markdown
     attributes:
       value: |
         # Welcome to the Bug Report template!
