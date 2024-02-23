@@ -1,0 +1,27 @@
+name: 🐛 Bug Report
+description: Submit a bug report to help us improve
+title: '[BUG]: '
+labels: [Bug]
+body:
+  -type: markdown
+    attributes:
+      value: |
+        # Welcome to the Bug Report template!
+        Please use this template to report any bugs or issues you encounter.
+
+        Fill in the information below to help us understand and resolve the problem quickly.
+
+        Instructions:
+          1. Provide a clear and concise description of the bug.
+          2. Specify the steps to reproduce the error.
+          3. Include screenshots if applicable.
+          4. Describe the expected and actual behavior.
+          5. Provide details about your environment, including the Vue component or project file affected, Git branch, etc.
+
+        Thank you for helping us improve our project! 🙌
+  - type: textarea
+      attributes:
+        label: Description
+        description: A clear and concise description of what the bug is.
+      validations:
+        required: true
