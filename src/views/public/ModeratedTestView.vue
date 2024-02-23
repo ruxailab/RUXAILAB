@@ -361,11 +361,6 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    :disabled="currentUserTestAnswer.postTestCompleted"
-                    @click="
-                      changeStatus(taskIndex, 'postTest', 'done'),
-                        (taskIndex = 3)
-                    "
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -405,12 +400,7 @@
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
-                    Welcome! in this test you are going to test a VR application
-                    that lorem ipsum lorem ipsum dolor sit amet consectetur
-                    adipiscing elit lorem ipsum dolor sit amet consectetur
-                    adipiscing elit lorem ipsum dolor sit amet consectetur
-                    adipiscing elit lorem ipsum dolor sit amet consectetur
-                    adipiscing elit
+                    {{ test.testStructure.welcomeMessage }}
                   </span>
                 </v-col>
               </v-row>
@@ -425,10 +415,7 @@
                 <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
                     The information you give is used for orem ipsum lorem ipsum
-                    dolor sit amet consectetur adipiscing elit lorem ipsum dolor
-                    sit amet consectetur adipiscing elit lorem ipsum dolor sit
-                    amet consectetur adipiscing elit lorem ipsum dolor sit amet
-                    consectetur adipiscing elit
+                    dolor sit amet consectetur
                   </span>
                 </v-col>
               </v-row>
@@ -534,14 +521,12 @@
                     {{ item.description }}
                   </p>
                   <v-text-field
-                    :disabled="currentUserTestAnswer.preTestCompleted"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
                     outlined
                   ></v-text-field>
                   <v-radio-group
-                    :disabled="currentUserTestAnswer.preTestCompleted"
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                     column
@@ -552,7 +537,6 @@
                       :key="selectionIndex"
                     >
                       <v-radio
-                        :disabled="currentUserTestAnswer.preTestCompleted"
                         class="ml-3 mb-1"
                         :label="selection"
                         :value="selection"
@@ -674,14 +658,12 @@
                   <p>{{ item.title }}</p>
                   <p v-if="item.description">{{ item.description }}</p>
                   <v-text-field
-                    :disabled="currentUserTestAnswer.postTestCompleted"
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
                     outlined
                   ></v-text-field>
                   <v-radio-group
-                    :disabled="currentUserTestAnswer.postTestCompleted"
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                     column
@@ -692,7 +674,6 @@
                       :key="selectionIndex"
                     >
                       <v-radio
-                        :disabled="currentUserTestAnswer.postTestCompleted"
                         class="ml-3 mb-1"
                         :label="selection"
                         :value="selection"
@@ -711,7 +692,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    @click="changeStatus(0, 'postTest', 'done')"
+                    @click="changeStatus(0, 'postTest', 'done'), saveAnswer()"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
