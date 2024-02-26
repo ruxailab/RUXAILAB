@@ -4,6 +4,8 @@
  */
 
 // import TestController
+import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
 // import Test from '../../models/Test'
 
@@ -370,10 +372,10 @@ export default {
       }
     },
     setRemoteStream({ commit }, stream) {
-      commit('SET_REMOTE_STREAM', stream);
+      commit('SET_REMOTE_STREAM', stream)
     },
     setLocalStream({ commit }, stream) {
-      commit('SET_LOCAL_STREAM', stream);
+      commit('SET_LOCAL_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {
@@ -381,6 +383,42 @@ export default {
         console.log('clean test')
       } catch {
         commit('setError', true)
+      }
+    },
+    async hangUp({ commit }, roomId) {
+      commit('SET_LOCAL_STREAM', null)
+      commit('SET_REMOTE_STREAM', null)
+
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+
+        const roomSnapshot = await getDoc(roomRef)
+        if (roomSnapshot.exists()) {
+          console.log('Room document exists. Deleting...')
+
+          const calleeCandidatesSnapshot = await getDocs(
+            collection(roomRef, 'calleeCandidates'),
+          )
+          calleeCandidatesSnapshot.forEach(async (candidate) => {
+            await deleteDoc(candidate.ref)
+            console.log('Deleted callee candidate:', candidate.id)
+          })
+
+          const callerCandidatesSnapshot = await getDocs(
+            collection(roomRef, 'callerCandidates'),
+          )
+          callerCandidatesSnapshot.forEach(async (candidate) => {
+            await deleteDoc(candidate.ref)
+            console.log('Deleted caller candidate:', candidate.id)
+          })
+
+          await deleteDoc(roomRef)
+          console.log('Deleted room document:', roomId)
+        } else {
+          console.log('Room document does not exist.')
+        }
+      } catch (error) {
+        console.error('Error deleting room and candidates:', error)
       }
     },
     coops(state) {
