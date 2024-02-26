@@ -369,15 +369,10 @@
           </v-expansion-panel>
         </v-expansion-panels>
         <!-- Finish button -->
-        <v-btn
-          color="orange"
-          dark
-          depressed
-          block
-          v-if="postTestFinished"
-          @click="finishTest()"
+        <v-btn color="orange" dark depressed block @click="finishTest()"
           >Finish Test</v-btn
         >
+        <!-- v-if="postTestFinished" -->
       </v-col>
       <v-col
         ref="rightView"
@@ -822,9 +817,9 @@ export default {
       this.tasksStatus = newTasksStatus
     })
   },
-  beforeDestroy() {
+  async beforeDestroy() {
     this.disconnect()
-    this.$refs.VideoCall.hangUp()
+    await this.$store.dispatch('hangUp', this.roomTestId)
   },
   methods: {
     async saveAnswer() {
@@ -1080,9 +1075,9 @@ export default {
           })
       }
     },
-    finishTest() {
+    async finishTest() {
       this.disconnect()
-      this.$refs.VideoCall.hangUp()
+      await this.$store.dispatch('hangUp', this.roomTestId)
       const testRef = doc(db, 'tests', this.roomTestId)
       getDoc(testRef).then((doc) => {
         if (doc.exists()) {
@@ -1096,6 +1091,7 @@ export default {
           return updateDoc(testRef, data)
         }
       })
+      this.$router.push('/testslist');
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
