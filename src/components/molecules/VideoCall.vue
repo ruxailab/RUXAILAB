@@ -280,8 +280,6 @@ export default {
         this.peerConnection.close()
       }
 
-      document.querySelector('#localVideo').srcObject = null
-      document.querySelector('#remoteVideo').srcObject = null
       this.$store.commit('SET_LOCAL_STREAM', null)
       this.$store.commit('SET_REMOTE_STREAM', null)
       this.createBtnDisabled = false
