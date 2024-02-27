@@ -219,8 +219,14 @@
             />
           </v-row>
         </v-card>
-        <!-- Moderator Pre-Test view -->
-        <v-expansion-panels v-else flat accordion>
+        <!-- Moderator expansion panels view -->
+        <v-col class="my-12" v-else-if="moderatorStatus && !evaluatorStatus">
+          <span class="cardsTitle text-center d-block"
+            >Waiting the evaluator connection ...</span
+          >
+          <div class="dot-flashing mx-auto mt-4"></div>
+        </v-col>
+        <v-expansion-panels v-else-if="bothConnected" flat accordion>
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
@@ -352,27 +358,19 @@
                   </p>
                 </v-col>
               </v-row>
-
-              <v-row justify="center">
-                <v-col class="mx-4">
-                  <v-btn
-                    block
-                    dark
-                    style="border-radius: 10px"
-                    color="orange lighten-1"
-                    depressed
-                    >{{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
         <!-- Finish button -->
-        <v-btn color="orange" dark depressed block @click="finishTest()"
+        <v-btn
+          color="orange"
+          v-if="postTestFinished"
+          dark
+          depressed
+          block
+          @click="finishTest()"
           >Finish Test</v-btn
         >
-        <!-- v-if="postTestFinished" -->
       </v-col>
       <v-col
         ref="rightView"
@@ -795,6 +793,9 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
       }
     },
   },
@@ -994,7 +995,7 @@ export default {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
     calculateProgress() {
-      const totalSteps = 4
+      const totalSteps = 3
 
       let completedSteps = 0
 
@@ -1091,7 +1092,7 @@ export default {
           return updateDoc(testRef, data)
         }
       })
-      this.$router.push('/testslist');
+      this.$router.push('/testslist')
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
