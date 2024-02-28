@@ -2,22 +2,20 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
   getAuth,
-  // connectAuthEmulator
+  // connectAuthEmulator,
 } from 'firebase/auth'
 import {
   getFirestore,
-  // connectFirestoreEmulator
+  // connectFirestoreEmulator,
 } from 'firebase/firestore'
 import {
   getFunctions,
-  // connectFunctionsEmulator
+  // connectFunctionsEmulator,
 } from 'firebase/functions'
 import {
-  connectStorageEmulator,
   getStorage,
-  // connectStorageEmulator 
+  // connectStorageEmulator,
 } from 'firebase/storage'
-// import { Storage } from '@google-cloud/storage'
 
 const isProduction = false
 
@@ -49,10 +47,9 @@ const analytics = getAnalytics(firebaseApp)
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 
-// connectFirestoreEmulator(db, 'localhost', 8081);
-// connectAuthEmulator(auth, "http://localhost:9099");
-// connectFunctionsEmulator(fbFunctions, "localhost", 5001);
-// connectStorageEmulator(storage, "127.0.0.1", 9199)
-
+// connectFirestoreEmulator(db, 'localhost', 8081)
+// connectAuthEmulator(auth, 'http://localhost:9099')
+// connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+// connectStorageEmulator(storage, '127.0.0.1', 9199)
 
 export { auth, db, analytics, fbFunctions, storage }
