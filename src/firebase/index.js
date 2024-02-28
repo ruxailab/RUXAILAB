@@ -9,7 +9,7 @@ import {
   // connectFirestoreEmulator
 } from 'firebase/firestore'
 import {
-  getFunctions,
+  getFunctions, 
   // connectFunctionsEmulator
 } from 'firebase/functions'
 import { getStorage } from 'firebase/storage'
