@@ -295,7 +295,7 @@ export default {
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
           .post(
-            'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
+            process.env.LARAVEL_PDF,
             {
               items: [
                 {
