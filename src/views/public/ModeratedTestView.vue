@@ -193,7 +193,7 @@
       <v-col
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
-        v-if="index == 0 && taskIndex == 0 && isAdmin"
+        v-if="index == 0 && isAdmin && !postTestFinished"
       >
         <!-- Moderator View Content -->
         <v-card color="white" class="cards" v-if="!conectionStatus">
@@ -362,15 +362,34 @@
           </v-expansion-panel>
         </v-expansion-panels>
         <!-- Finish button -->
-        <v-btn
-          color="orange"
-          v-if="postTestFinished"
-          dark
-          depressed
-          block
-          @click="finishTest()"
-          >Finish Test</v-btn
-        >
+      </v-col>
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="postTestFinished && isAdmin"
+      >
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Evaluator concluded the test!</span>
+              <br />
+              <span class="cardsSubtitle">
+                Here you can finilize the test, or you can keep talking with
+                your evaluator until you finish!
+              </span>
+              <v-btn
+                class="my-6"
+                color="orange"
+                v-if="postTestFinished"
+                dark
+                depressed
+                block
+                @click="finishTest()"
+                >Finish Test</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
       <v-col
         ref="rightView"
@@ -468,7 +487,7 @@
       <v-col
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
-        v-if="index == 1 && !isAdmin"
+        v-if="index == 1 && !isAdmin && !postTestFinished"
       >
         <v-expansion-panels flat accordion>
           <v-expansion-panel
@@ -694,6 +713,48 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="postTestFinished && !isAdmin"
+      >
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Final Message!</span>
+              <br />
+              <span class="cardsSubtitle">
+                Congratulations you finished this test, here you can until talk
+                with your moderator or leave the test
+              </span>
+              <v-row justify="center" class="mt-3">
+                <v-col cols="4">
+                  <img
+                    draggable="false"
+                    src="../../../public/finalMessage.svg"
+                    alt="Final test svg"
+                  />
+                </v-col>
+                <v-col cols="6" class="pt-2 my-8">
+                  <span class="cardsSubtitle">
+                    {{ test.testStructure.finalMessage }}
+                  </span>
+                  <v-col class="mt-4" align="end">
+                    <v-btn
+                      @click="disconnectEvaluator()"
+                      color="orange"
+                      depressed
+                      dark
+                      >Return to home</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
       <!-- Feedback View -->
       <v-col
         ref="rightView"
@@ -769,6 +830,9 @@ export default {
     roomTestId() {
       return this.$store.getters.test.id
     },
+    localStream() {
+      return this.$store.getters.localStream
+    },
   },
   watch: {
     test: async function() {
@@ -803,6 +867,18 @@ export default {
     await this.verifyAdmin()
     await this.mappingSteps()
     const ref = doc(db, 'tests/', this.roomTestId)
+    getDoc(ref).then((doc) => {
+      if (doc.exists()) {
+        const data = doc.data()
+        data.userTestStatus.postTestStatus = 'closed'
+        data.userTestStatus.preTestStatus = 'closed'
+        data.userTestStatus.consentStatus = 'closed'
+        for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
+          data.testStructure.userTasks[i].taskStatus = 'closed'
+        }
+        return updateDoc(ref, data)
+      }
+    })
     onSnapshot(ref, (snapshot) => {
       this.moderatorStatus = snapshot.data().userTestStatus.moderator
       this.evaluatorStatus = snapshot.data().userTestStatus.user
@@ -958,6 +1034,10 @@ export default {
           console.error('Error in connect:', e)
         }
       }
+    },
+    async disconnectEvaluator() {
+      await this.$store.dispatch('hangUp', this.roomTestId)
+      this.$router.push('/testslist')
     },
     async disconnect() {
       const ref = doc(db, 'tests', this.roomTestId)
