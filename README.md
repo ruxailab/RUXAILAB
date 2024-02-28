@@ -54,6 +54,10 @@ For commercial support, academic collaborations, and answers to common questions
 - Vue CLI version: 4.3.1
 - Vuetify version: 2.3.10
 
+## Video Guide
+
+<a href='https://youtu.be/dAf4LRxITCc'>Tutorial - Running RUXAILAB with Firebase Emulators   🖥️</a>
+
 ## Getting Started
 
 Follow these steps to set up the development environment and run the application locally:
