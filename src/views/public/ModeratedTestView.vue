@@ -366,7 +366,7 @@
       <v-col
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
-        v-if="postTestFinished && isAdmin"
+        v-if="index == 0 && postTestFinished && isAdmin"
       >
         <v-card color="white" flat class="cards mb-6">
           <v-row justify="center" class="mt-4">
@@ -704,7 +704,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    @click="changeStatus(0, 'postTest', 'done'), saveAnswer()"
+                    @click="changeStatus(0, 'postTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -716,7 +716,7 @@
       <v-col
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
-        v-if="postTestFinished && !isAdmin"
+        v-if="index == 1 && postTestFinished && !isAdmin"
       >
         <v-card color="white" flat class="cards mb-6">
           <v-row justify="center" class="mt-4">
@@ -741,7 +741,7 @@
                   </span>
                   <v-col class="mt-4" align="end">
                     <v-btn
-                      @click="disconnectEvaluator()"
+                      @click="saveAnswer(), stopRecording()"
                       color="orange"
                       depressed
                       dark
@@ -773,6 +773,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
@@ -806,6 +807,11 @@ export default {
     userTestStatus: {},
     postTestFinished: false,
     bothConnected: false,
+    recording: false,
+    recordedChunks: [],
+    videoStream: null,
+    mediaRecorder: null,
+    recordedVideo: '',
   }),
   computed: {
     test() {
@@ -845,6 +851,11 @@ export default {
       if (this.user) {
         this.noExistUser = false
         if (this.logined) this.setTest()
+      }
+    },
+    async localStream(value) {
+      if (value && !this.isAdmin) {
+        this.startRecording()
       }
     },
     'userTestStatus.postTestStatus': function(newValue) {
@@ -895,8 +906,9 @@ export default {
     })
   },
   async beforeDestroy() {
-    this.disconnect()
-    await this.$store.dispatch('hangUp', this.roomTestId)
+    if (this.isAdmin) {
+      await this.$store.dispatch('hangUp', this.roomTestId)
+    }
   },
   methods: {
     async saveAnswer() {
@@ -972,7 +984,6 @@ export default {
 
     changeStatus(id, type, newStatus) {
       const testRef = doc(db, 'tests', this.roomTestId)
-      console.log('receiving:', id, type, newStatus)
 
       getDoc(testRef)
         .then((doc) => {
@@ -999,6 +1010,44 @@ export default {
         .catch((error) => {
           console.error('Erro ao atualizar o status:', error)
         })
+    },
+    async startRecording() {
+      this.recording = true
+      this.videoStream = new MediaStream(this.localStream)
+      this.recordedChunks = []
+      this.mediaRecorder = new MediaRecorder(this.videoStream)
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data)
+        }
+      }
+      this.mediaRecorder.onstop = async () => {
+        const videoBlob = new Blob(this.recordedChunks, {
+          type: 'video/webm',
+        })
+        const storage = getStorage()
+        const storageRef = ref(
+          storage,
+          `tests/${this.roomTestId}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideo}`,
+        )
+        await uploadBytes(storageRef, videoBlob)
+
+        this.recordedVideo = await getDownloadURL(storageRef)
+
+        this.currentUserTestAnswer.cameraUrl = this.recordedVideo
+
+        this.$router.push('/testslist')
+      }
+      this.mediaRecorder.start()
+    },
+
+    async stopRecording() {
+      if (this.mediaRecorder) {
+        this.mediaRecorder.stop()
+        this.videoStream.getTracks().forEach((track) => track.stop())
+        this.recording = false
+      }
     },
 
     async confirmConnect() {
@@ -1034,10 +1083,6 @@ export default {
           console.error('Error in connect:', e)
         }
       }
-    },
-    async disconnectEvaluator() {
-      await this.$store.dispatch('hangUp', this.roomTestId)
-      this.$router.push('/testslist')
     },
     async disconnect() {
       const ref = doc(db, 'tests', this.roomTestId)
@@ -1157,21 +1202,8 @@ export default {
       }
     },
     async finishTest() {
-      this.disconnect()
+      this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
-      const testRef = doc(db, 'tests', this.roomTestId)
-      getDoc(testRef).then((doc) => {
-        if (doc.exists()) {
-          const data = doc.data()
-          data.userTestStatus.postTestStatus = 'closed'
-          data.userTestStatus.preTestStatus = 'closed'
-          data.userTestStatus.consentStatus = 'closed'
-          for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
-            data.testStructure.userTasks[i].taskStatus = 'closed'
-          }
-          return updateDoc(testRef, data)
-        }
-      })
       this.$router.push('/testslist')
     },
     validate(object) {
