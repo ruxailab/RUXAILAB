@@ -386,9 +386,6 @@ export default {
       }
     },
     async hangUp({ commit }, roomId) {
-      commit('SET_LOCAL_STREAM', null)
-      commit('SET_REMOTE_STREAM', null)
-
       try {
         const roomRef = doc(db, 'rooms', roomId)
 
