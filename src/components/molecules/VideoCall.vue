@@ -77,6 +77,9 @@ export default {
     roomTestId() {
       return this.$store.getters.test.id
     },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
   },
   methods: {
     emitConfirm() {
