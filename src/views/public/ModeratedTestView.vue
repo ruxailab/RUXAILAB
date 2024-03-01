@@ -1,5 +1,11 @@
 <template>
   <div v-if="test">
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving Answer
+      </div>
+    </v-overlay>
     <!-- Authentication Dialog -->
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
@@ -92,7 +98,7 @@
                   :size="50"
                   class="mt-2"
                 >
-                  {{ calculateProgress() }}%
+                  {{ Math.floor(calculateProgress()) }}%
                 </v-progress-circular>
               </v-col>
             </v-row>
@@ -435,7 +441,11 @@
                 <v-col cols="11">
                   <v-checkbox
                     v-model="currentUserTestAnswer.consentCompleted"
-                    @change="changeStatus(taskIndex, 'consent', 'done')"
+                    :disabled="consentCompleted"
+                    @click="
+                      changeStatus(taskIndex, 'consent', 'done'),
+                        (consentCompleted = true)
+                    "
                     color="orange"
                     class="ma-0 pa-0"
                     ><template v-slot:label
@@ -567,6 +577,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
+                    v-if="test.userTestStatus.preTestStatus != 'done'"
                     :disabled="test.userTestStatus.preTestStatus == 'closed'"
                     @click="changeStatus(taskIndex, 'preTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
@@ -619,6 +630,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
+                    v-if="tasksStatus[index] != 'done'"
                     @click="changeStatus(taskIndex, 'tasks', 'done')"
                   >
                     {{ $t('UserTestView.buttons.done') }}
@@ -704,6 +716,7 @@
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
+                    v-if="test.userTestStatus.postTestStatus != 'done'"
                     @click="changeStatus(0, 'postTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
@@ -812,6 +825,8 @@ export default {
     videoStream: null,
     mediaRecorder: null,
     recordedVideo: '',
+    isLoading: false,
+    consentCompleted: false,
   }),
   computed: {
     test() {
@@ -826,9 +841,6 @@ export default {
     },
     cooperators() {
       return this.$store.getters.cooperators
-    },
-    loading() {
-      return this.$store.getters.loading
     },
     tasks() {
       return this.$store.getters.tasks
@@ -877,6 +889,7 @@ export default {
   async created() {
     await this.verifyAdmin()
     await this.mappingSteps()
+    this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
     getDoc(ref).then((doc) => {
       if (doc.exists()) {
@@ -907,6 +920,7 @@ export default {
   },
   async beforeDestroy() {
     if (this.isAdmin) {
+      this.disconnect()
       await this.$store.dispatch('hangUp', this.roomTestId)
     }
   },
@@ -991,12 +1005,20 @@ export default {
             const data = doc.data()
             if (type === 'tasks') {
               data.testStructure.userTasks[id].taskStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.tasks[id].completed = true
             } else if (type === 'postTest') {
               data.userTestStatus.postTestStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.postTestCompleted = true
             } else if (type === 'preTest') {
               data.userTestStatus.preTestStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.preTestCompleted = true
             } else if (type === 'consent') {
               data.userTestStatus.consentStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.consentCompleted = true
             }
             return updateDoc(testRef, data)
           } else {
@@ -1005,6 +1027,7 @@ export default {
           }
         })
         .then(() => {
+          this.calculateProgress()
           console.log('Status atualizado com sucesso')
         })
         .catch((error) => {
@@ -1023,6 +1046,7 @@ export default {
         }
       }
       this.mediaRecorder.onstop = async () => {
+        this.isLoading = true
         const videoBlob = new Blob(this.recordedChunks, {
           type: 'video/webm',
         })
@@ -1034,9 +1058,8 @@ export default {
         await uploadBytes(storageRef, videoBlob)
 
         this.recordedVideo = await getDownloadURL(storageRef)
-
         this.currentUserTestAnswer.cameraUrl = this.recordedVideo
-
+        this.isLoading = false
         this.$router.push('/testslist')
       }
       this.mediaRecorder.start()
