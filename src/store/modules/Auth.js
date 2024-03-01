@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
-
+import Vue from 'vue'
 /**
  * Auth Store Module
  * @module Auth
@@ -75,11 +75,11 @@ export default {
       } catch (err) {
         console.error(err)
         if (err.code === 'auth/invalid-email') {
-          alert(i18n.t('errors.userNotExist'))
+          Vue.$toast.error(i18n.t('errors.userNotExist'))
         } else if (err.code === 'auth/wrong-password') {
-          alert(i18n.t('errors.incorrectPassword'))
+          Vue.$toast.error(i18n.t('errors.incorrectPassword'))
         } else {
-          alert(i18n.t('errors.incorrectCredential'))
+          Vue.$toast.error(i18n.t('errors.incorrectCredential'))
         }
       } finally {
         commit('setLoading', false)

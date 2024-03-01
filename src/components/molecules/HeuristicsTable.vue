@@ -181,9 +181,8 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
-                    > </template
-                  >'
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
+                  </template>'
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -193,10 +192,9 @@
                     <center class="mt-16" style="color: #a7a7a7">
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
-                      }}</strong
-                      ><br />
+                      }}</strong><br>
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
-                      <br />
+                      <br>
                       <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>
@@ -542,7 +540,7 @@ import AddDescBtn from '@/components/atoms/AddDescBtn'
 
 import VClamp from 'vue-clamp'
 import i18n from '@/i18n'
-
+import Vue from 'vue'
 export default {
   components: {
     AddDescBtn,
@@ -666,7 +664,7 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        alert('No csv file selected. \nPlease select one before procede.')
+        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
         this.loader = null
       }
     },
@@ -805,7 +803,7 @@ export default {
           ].questions.length
         }
       } else {
-        alert("Sorry, but you can't delete all heuristics questions")
+        Vue.$toast.warning('Sorry, but you can\'t delete all heuristics questions')
       }
 
       this.menuQuestions = false

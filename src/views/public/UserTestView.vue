@@ -55,7 +55,9 @@
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark> mdi-account </v-icon>
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
@@ -105,8 +107,12 @@
       >
         <template v-slot:activator>
           <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
-            <v-icon v-if="fab"> mdi-close </v-icon>
-            <v-icon v-else large> mdi-hammer-screwdriver </v-icon>
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon v-else large>
+              mdi-hammer-screwdriver
+            </v-icon>
           </v-btn>
         </template>
 
@@ -202,16 +208,16 @@
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
             <v-list-group
+              v-if="item.id == 0"
               :disabled="
                 currentUserTestAnswer.consentCompleted &&
-                currentUserTestAnswer.preTestCompleted
+                  currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
                   currentUserTestAnswer.consentCompleted &&
                   currentUserTestAnswer.preTestCompleted,
               }"
-              v-if="item.id == 0"
               :value="index == 0 ? true : false"
               no-action
               @click="index = item.id"
@@ -239,13 +245,13 @@
                   <v-list-item
                     link
                     v-bind="attrs"
-                    @click="taskIndex = i"
-                    v-on="on"
                     :disabled="
                       (currentUserTestAnswer.consentCompleted && i == 0) ||
-                      (!currentUserTestAnswer.consentCompleted && i == 1) ||
-                      (currentUserTestAnswer.preTestCompleted && i == 1)
+                        (!currentUserTestAnswer.consentCompleted && i == 1) ||
+                        (currentUserTestAnswer.preTestCompleted && i == 1)
                     "
+                    @click="taskIndex = i"
+                    v-on="on"
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -268,16 +274,16 @@
             </v-list-group>
             <!--Tasks--->
             <v-list-group
+              v-if="item.id == 1"
               :disabled="
                 !currentUserTestAnswer.consentCompleted ||
-                !currentUserTestAnswer.preTestCompleted
+                  !currentUserTestAnswer.preTestCompleted
               "
               :class="{
                 'disabled-group':
                   !currentUserTestAnswer.consentCompleted ||
                   !currentUserTestAnswer.preTestCompleted,
               }"
-              v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
               @click="index = item.id"
@@ -305,12 +311,12 @@
                   <v-list-item
                     link
                     v-bind="attrs"
-                    @click="taskIndex = i, startTimer()"
-                    v-on="on"
                     :disabled="isTaskDisabled(i)"
                     :class="{
                       'disabled-group': isTaskDisabled(i),
                     }"
+                    @click="taskIndex = i, startTimer()"
+                    v-on="on"
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -334,11 +340,11 @@
             <!--Post Test-->
             <v-list-item
               v-else-if="item.id == 2"
-              @click="index = item.id"
               :disabled="!allTasksCompleted"
               :class="{
                 'disabled-group': !allTasksCompleted,
               }"
+              @click="index = item.id"
             >
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
@@ -360,8 +366,12 @@
         <div class="footer">
           <v-spacer />
           <v-btn icon class="mr-2" @click.stop="mini = !mini">
-            <v-icon v-if="mini" color="white"> mdi-chevron-right </v-icon>
-            <v-icon v-else color="white"> mdi-chevron-left </v-icon>
+            <v-icon v-if="mini" color="white">
+              mdi-chevron-right
+            </v-icon>
+            <v-icon v-else color="white">
+              mdi-chevron-left
+            </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
@@ -389,12 +399,11 @@
             <v-row>
               <v-col cols="5" class="mx-auto py-0">
                 <v-checkbox
-                  :label="currentUserTestAnswer.consent"
                   v-model="currentUserTestAnswer.consentCompleted"
+                  :label="currentUserTestAnswer.consent"
                   :disabled="currentUserTestAnswer.consentCompleted"
                   @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)"
-                >
-                </v-checkbox>
+                />
               </v-col>
             </v-row>
           </div>
@@ -424,18 +433,20 @@
             >
               <v-col cols="5" class="mx-auto py-0">
                 <p>{{ item.title }}</p>
-                <p v-if="item.description">{{ item.description }}</p>
+                <p v-if="item.description">
+                  {{ item.description }}
+                </p>
                 <v-text-field
-                  :disabled="currentUserTestAnswer.preTestCompleted"
-                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                   v-if="item.textField"
+                  v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
                   :placeholder="item.title"
                   outlined
-                ></v-text-field>
+                />
                 <v-radio-group
-                  :disabled="currentUserTestAnswer.preTestCompleted"
                   v-if="item.selectionField"
                   v-model="currentUserTestAnswer.preTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
                   column
                 >
                   <v-row
@@ -447,9 +458,9 @@
                       class="ml-3 mb-1"
                       :label="selection"
                       :value="selection"
-                    ></v-radio>
+                    />
                   </v-row>
-                  <v-row justify="end"> </v-row>
+                  <v-row justify="end" />
                 </v-radio-group>
               </v-col>
             </v-row>
@@ -462,10 +473,11 @@
                 :disabled="currentUserTestAnswer.preTestCompleted"
                 @click="
                   completeStep(taskIndex, 'preTest'),
-                    (index = 1),
-                    (taskIndex = 0)
+                  (index = 1),
+                  (taskIndex = 0)
                 "
-                >{{ $t('UserTestView.buttons.done') }}
+              >
+                {{ $t('UserTestView.buttons.done') }}
               </v-btn>
             </v-row>
           </div>
@@ -496,38 +508,38 @@
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasAudioRecord !==
-                      false
+                        false
                     "
                   >
                     <AudioRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></AudioRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasCamRecord !==
-                      false
+                        false
                     "
                   >
                     <VideoRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></VideoRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].hasScreenRecord !=
-                      false
+                        false
                     "
                   >
                     <ScreenRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></ScreenRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
@@ -543,23 +555,23 @@
                   <v-row justify="center">
                     <Timer
                       ref="timerComponent"
-                      :taskIndex="taskIndex"
+                      :task-index="taskIndex"
                       @timerStopped="handleTimerStopped"
                     />
                   </v-row>
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
-                    class="mb-0 pb-0"
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
-                        'textArea'
+                          'textArea'
                       "
+                      class="mb-0 pb-0"
                     >
                       <v-textarea
                         :id="
                           'id-' +
-                          test.testStructure.userTasks[taskIndex].taskName
+                            test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex].taskAnswer
@@ -572,7 +584,7 @@
                       <v-textarea
                         :id="
                           'id-' +
-                          test.testStructure.userTasks[taskIndex].taskName
+                            test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
                           currentUserTestAnswer.tasks[taskIndex]
@@ -597,13 +609,13 @@
                   </p>
 
                   <v-text-field
-                    class="mx-2"
                     v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
+                    class="mx-2"
                     :placeholder="
                       test.testStructure.userTasks[taskIndex].postQuestion
                     "
                     outlined
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
               <video
@@ -612,7 +624,7 @@
                 class="preview"
                 style="max-width: 0px"
                 autoplay
-              ></video>
+              />
               <div class="pa-2 text-end">
                 <v-btn
                   block
@@ -647,18 +659,20 @@
             >
               <v-col cols="5" class="mx-auto py-0">
                 <p>{{ item.title }}</p>
-                <p v-if="item.description">{{ item.description }}</p>
+                <p v-if="item.description">
+                  {{ item.description }}
+                </p>
                 <v-text-field
-                  :disabled="currentUserTestAnswer.postTestCompleted"
-                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                   v-if="item.textField"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
                   :placeholder="item.title"
                   outlined
-                ></v-text-field>
+                />
                 <v-radio-group
-                  :disabled="currentUserTestAnswer.postTestCompleted"
                   v-if="item.selectionField"
                   v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
                   column
                 >
                   <v-row
@@ -670,9 +684,9 @@
                       class="ml-3 mb-1"
                       :label="selection"
                       :value="selection"
-                    ></v-radio>
+                    />
                   </v-row>
-                  <v-row justify="end"> </v-row>
+                  <v-row justify="end" />
                 </v-radio-group>
               </v-col>
             </v-row>
@@ -707,7 +721,7 @@ import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
-
+import Vue from 'vue'
 export default {
   components: {
     VideoRecorder,
@@ -799,6 +813,9 @@ export default {
     this.autoComplete()
     this.calculateProgress()
   },
+  beforeDestroy() {
+    this.stopRecording()
+  },
   methods: {
     isTaskDisabled(taskIndex) {
       for (let i = 0; i < taskIndex; i++) {
@@ -821,7 +838,7 @@ export default {
     },
     startTest() {
       if (this.test.testStructure.length == 0) {
-        alert("This test don't have any task")
+        Vue.$toast.info('This test don\'t have any task')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
@@ -1024,9 +1041,6 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
-  },
-  beforeDestroy() {
-    this.stopRecording()
   },
 }
 </script>

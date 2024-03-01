@@ -9,19 +9,17 @@
       <v-row justify="center">
         <v-col cols="12" class="pa-5">
           <span class="cardsTitle ml-5">Tasks</span>
-          <br />
-          <span class="cardsSubtitle ml-5 mb-1"
-            >Create tasks for your evaluators</span
-          >
+          <br>
+          <span class="cardsSubtitle ml-5 mb-1">Create tasks for your evaluators</span>
           <v-row justify="center">
             <v-col cols="8">
               <v-card
                 class="mt-4"
                 rounded="xl"
-                @click="openAddTaskModal"
                 outlined
                 elevation="0"
                 color="grey lighten-2"
+                @click="openAddTaskModal"
               >
                 <p class="text-subtitle-1 text-center ma-2">
                   <v-icon>mdi-plus-circle</v-icon>
@@ -47,23 +45,25 @@
         class="cards mb-5"
       >
         <v-col cols="12" class="pb-0 px-5 pt-4">
-          <v-icon style="cursor: pointer;">mdi-drag</v-icon>
+          <v-icon style="cursor: pointer;">
+            mdi-drag
+          </v-icon>
           <span class="cardsTitle ml-3">{{ task.taskName }}</span>
-          <br />
+          <br>
           <span class="cardsSubtitle ml-9">Task Description</span>
-          <v-icon class="delete-icon" @click="deleteTask(index)"
-            >mdi-delete</v-icon
-          >
+          <v-icon class="delete-icon" @click="deleteTask(index)">
+            mdi-delete
+          </v-icon>
         </v-col>
         <v-textarea
-          draggable="false"
           v-model="task.taskDescription"
+          draggable="false"
           rows="3"
           outlined
           color="orange"
           class="mx-14 mt-3"
           placeholder="Write what you want to task..."
-        ></v-textarea>
+        />
         <v-row justify="center">
           <v-btn
             fab
@@ -73,7 +73,9 @@
             style="margin-bottom: -30px; z-index: 3;"
             @click="openAddTaskModal(index)"
           >
-            <v-icon size="35">mdi-plus</v-icon>
+            <v-icon size="35">
+              mdi-plus
+            </v-icon>
           </v-btn>
         </v-row>
       </v-card>
@@ -82,28 +84,32 @@
     <!-- Modal for adding a new task -->
     <v-dialog v-model="addTaskModal" max-width="600">
       <v-card class="cards">
-        <v-col> </v-col>
+        <v-col />
         <v-card-text>
           <v-text-field
             v-model="newTask.taskName"
             outlined
             label="Task Name"
             color="orange"
-          ></v-text-field>
+          />
           <v-textarea
             v-model="newTask.taskDescription"
             outlined
             label="Task Description"
             color="orange"
-          ></v-textarea>
+          />
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="closeAddTaskModal" dark color="red"
-            ><v-icon class="mr-1">mdi-close</v-icon>Cancel</v-btn
-          >
-          <v-btn @click="addTask" dark color="orange"
-            ><v-icon class="mr-1">mdi-content-save</v-icon>Save</v-btn
-          >
+          <v-btn dark color="red" @click="closeAddTaskModal">
+            <v-icon class="mr-1">
+              mdi-close
+            </v-icon>Cancel
+          </v-btn>
+          <v-btn dark color="orange" @click="addTask">
+            <v-icon class="mr-1">
+              mdi-content-save
+            </v-icon>Save
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -114,6 +120,8 @@
 import draggable from 'vuedraggable'
 
 export default {
+
+  components: { draggable },
   data: () => ({
     tasks: [],
     drag: false,
@@ -126,14 +134,20 @@ export default {
     },
   }),
 
-  components: { draggable },
-
   computed: {
     tasksStore() {
       return this.$store.getters.tasks
     },
     testStructure() {
       return this.$store.state.Tests.Test.testStructure
+    },
+  },
+  watch: {
+    tasks: {
+      handler() {
+        this.saveTasks()
+      },
+      deep: true,
     },
   },
 
@@ -149,7 +163,7 @@ export default {
     closeAddTaskModal() {
       this.taskIndex = null
       this.addTaskModal = false
-      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed', }
+      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
     },
     addTask() {
       if (
@@ -184,14 +198,6 @@ export default {
 
     deleteTask(index) {
       this.tasks.splice(index, 1)
-    },
-  },
-  watch: {
-    tasks: {
-      handler() {
-        this.saveTasks()
-      },
-      deep: true,
     },
   },
 }

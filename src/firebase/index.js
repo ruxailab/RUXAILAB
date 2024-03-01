@@ -2,19 +2,19 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
   getAuth,
-  // connectAuthEmulator,
+  //  connectAuthEmulator
 } from 'firebase/auth'
 import {
   getFirestore,
-  // connectFirestoreEmulator,
+  //  connectFirestoreEmulator
 } from 'firebase/firestore'
 import {
   getFunctions,
-  // connectFunctionsEmulator,
+  //  connectFunctionsEmulator
 } from 'firebase/functions'
 import {
   getStorage,
-  // connectStorageEmulator,
+  //  connectStorageEmulator
 } from 'firebase/storage'
 
 const isProduction = false

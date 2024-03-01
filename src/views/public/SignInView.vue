@@ -3,7 +3,7 @@
     <Snackbar />
     <v-row justify="center" style="height: 90%" align="center">
       <v-col cols="12" md="8">
-        <v-card color="#f5f7ff"  rounded="xl" flat>
+        <v-card color="#f5f7ff" rounded="xl" flat>
           <v-row>
             <v-col cols="10" md="5" align-self="center" class="ma-8">
               <div class="card-title">

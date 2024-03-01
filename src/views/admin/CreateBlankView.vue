@@ -2,14 +2,12 @@
   <div style="height: 93vh; background-color: #f9f5f0;">
     <v-col cols="12">
       <v-row justify="center">
-        <span class="Titles ma-16"
-          >What kind of test are you looking to start?</span
-        >
+        <span class="Titles ma-16">What kind of test are you looking to start?</span>
       </v-row>
     </v-col>
     <v-col cols="12" class="mt-6">
       <v-row justify="center">
-        <v-col cols="1"></v-col>
+        <v-col cols="1" />
         <v-col cols="4">
           <v-card
             hover
@@ -23,35 +21,34 @@
                 class="ml-8 mt-6 mb-10 insideCards"
                 height="50"
                 width="50"
-                ><v-img
+              >
+                <v-img
                   class="ma-2"
                   style="z-index: 0;"
                   src="../../../public/specialist.png"
-                ></v-img
-              ></v-sheet>
+                />
+              </v-sheet>
               <div class="mt-6">
                 <span class="cardsTitle ml-4">Usability Heuristic</span>
-                <br />
+                <br>
                 <span class="cardSubtitle ml-4"> Test </span>
               </div>
             </v-row>
-            <v-divider></v-divider>
+            <v-divider />
             <v-row class="mt-1">
               <v-sheet
                 class="ml-10 mt-8 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
-              <span class="cardInternTitles ml-3 mt-8"
-                >Usability Percentage</span
-              >
+              />
+              <span class="cardInternTitles ml-3 mt-8">Usability Percentage</span>
             </v-row>
             <v-row>
               <v-sheet
                 class="ml-10 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
+              />
               <span class="cardInternTitles ml-3">Final Report PDF</span>
             </v-row>
             <v-row>
@@ -59,14 +56,12 @@
                 class="ml-10 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
-              <span class="cardInternTitles ml-3"
-                >Invite specialists to evaluate your application</span
-              >
+              />
+              <span class="cardInternTitles ml-3">Invite specialists to evaluate your application</span>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="1"></v-col>
+        <v-col cols="1" />
         <v-col class="" cols="4">
           <v-card
             hover
@@ -80,52 +75,47 @@
                 class="ml-8 mt-6 mb-10 insideCards"
                 height="50"
                 width="50"
-                ><v-img
+              >
+                <v-img
                   class="ma-3"
                   style="z-index: 0;"
                   src="../../../public/user.png"
-                ></v-img
-              ></v-sheet>
+                />
+              </v-sheet>
               <div class="mt-6">
                 <span class="cardsTitle ml-4">Usability User</span>
-                <br />
+                <br>
                 <span class="cardSubtitle ml-4"> Test </span>
               </div>
             </v-row>
-            <v-divider></v-divider>
+            <v-divider />
             <v-row class="mt-1">
               <v-sheet
                 class="ml-10 mt-8 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
-              <span class="cardInternTitles ml-3 mt-8"
-                >Webcam, audio & screen record</span
-              >
+              />
+              <span class="cardInternTitles ml-3 mt-8">Webcam, audio & screen record</span>
             </v-row>
             <v-row>
               <v-sheet
                 class="ml-10 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
-              <span class="cardInternTitles ml-3"
-                >Enhanced answer analysis</span
-              >
+              />
+              <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
             </v-row>
             <v-row>
               <v-sheet
                 class="ml-10 mb-8 circle"
                 height="20"
                 width="20"
-              ></v-sheet>
-              <span class="cardInternTitles ml-3"
-                >Moderated or non moderated tests</span
-              >
+              />
+              <span class="cardInternTitles ml-3">Moderated or non moderated tests</span>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="1"></v-col>
+        <v-col cols="1" />
       </v-row>
     </v-col>
     <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
@@ -141,15 +131,17 @@
             class="mt-6 mr-2"
             @click="dialog = false"
           >
-            <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
+            <v-icon x-large>
+              mdi-arrow-u-left-bottom
+            </v-icon>
           </v-btn>
-          <v-col cols="1"></v-col>
+          <v-col cols="1" />
           <v-col cols="10" class="mt-16 ml-11">
             <span class="Titles ml-5">Test Creation</span>
-            <br />
+            <br>
             <span class="cardSubtitle ml-5">Add a name to your test!</span>
           </v-col>
-          <v-col cols="1"></v-col>
+          <v-col cols="1" />
           <v-col cols="5" class="ml-10">
             <v-card
               color="white"
@@ -167,24 +159,23 @@
                   outlined
                   color="orange"
                   @change="$store.commit('SET_LOCAL_CHANGES', true)"
-                ></v-text-field>
+                />
                 <span class="cardInternTitles ml-6">Test Description</span>
                 <v-textarea
-                  outlined
                   v-model="test.testDescription"
+                  outlined
                   color="orange"
                   class="ml-6 mt-3"
                   label="Test Description"
                   @change="$store.commit('SET_LOCAL_CHANGES', true)"
-                ></v-textarea>
+                />
                 <v-row>
                   <v-checkbox
                     v-model="test.isPublic"
                     class="ml-10 mt-8"
                     color="orange"
                     label="Turn this test public to all users"
-                  >
-                  </v-checkbox>
+                  />
                   <v-btn
                     dark
                     fab
@@ -193,7 +184,9 @@
                     class="ml-auto mt-4 mr-2"
                     @click="validate()"
                   >
-                    <v-icon x-large>mdi-arrow-right</v-icon>
+                    <v-icon x-large>
+                      mdi-arrow-right
+                    </v-icon>
                   </v-btn>
                 </v-row>
               </v-col>
@@ -205,7 +198,7 @@
               draggable="false"
               src="../../../public/createSVG.svg"
               alt="Test Creation image"
-            />
+            >
           </v-col>
         </v-row>
       </v-card>
@@ -229,18 +222,18 @@
           class="mt-6 mr-2"
           @click="dialogUser = false"
         >
-          <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
+          <v-icon x-large>
+            mdi-arrow-u-left-bottom
+          </v-icon>
         </v-btn>
         <v-col cols="12">
           <v-row justify="center">
-            <span class="Titles mt-16 mb-8"
-              >What kind of test are you looking to start?</span
-            >
+            <span class="Titles mt-16 mb-8">What kind of test are you looking to start?</span>
           </v-row>
         </v-col>
         <v-col cols="12" class="mt-6">
           <v-row justify="center">
-            <v-col cols="1"></v-col>
+            <v-col cols="1" />
             <v-col cols="4">
               <v-card
                 hover
@@ -252,7 +245,7 @@
                 <v-row>
                   <div class="mt-6">
                     <span class="Titles    ml-10">SelfTest</span>
-                    <br />
+                    <br>
                     <span class="cardSubtitle2 ml-10"> UNMODERATED </span>
                   </div>
                 </v-row>
@@ -263,13 +256,13 @@
                   draggable="false"
                   src="../../../public/SelfTest.svg"
                   alt="Test Creation image"
-                />
+                >
                 <v-row class="mt-1">
                   <v-sheet
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
+                  />
                   <span class="cardInternTitles ml-3">Answer on free time</span>
                 </v-row>
                 <v-row>
@@ -277,22 +270,20 @@
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
-                  <span class="cardInternTitles ml-3"
-                    >Enhanced answer analysis</span
-                  >
+                  />
+                  <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
                 </v-row>
                 <v-row>
                   <v-sheet
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
+                  />
                   <span class="cardInternTitles ml-3">Task Customization</span>
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="1"></v-col>
+            <v-col cols="1" />
             <v-col class="" cols="4">
               <v-card
                 hover
@@ -304,7 +295,7 @@
                 <v-row>
                   <div class="mt-6">
                     <span class="Titles ml-10">LiveTest</span>
-                    <br />
+                    <br>
                     <span class="cardSubtitle2 ml-10"> MODERATED </span>
                   </div>
                 </v-row>
@@ -315,38 +306,34 @@
                   draggable="false"
                   src="../../../public/LiveTest.svg"
                   alt="Test Creation image"
-                />
+                >
                 <v-row class="mt-1">
                   <v-sheet
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
-                  <span class="cardInternTitles ml-3"
-                    >Webcam, audio & screen record</span
-                  >
+                  />
+                  <span class="cardInternTitles ml-3">Webcam, audio & screen record</span>
                 </v-row>
                 <v-row>
                   <v-sheet
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
-                  <span class="cardInternTitles ml-3"
-                    >Enhanced answer analysis</span
-                  >
+                  />
+                  <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
                 </v-row>
                 <v-row>
                   <v-sheet
                     class="ml-13 mb-8 circle"
                     height="20"
                     width="20"
-                  ></v-sheet>
+                  />
                   <span class="cardInternTitles ml-3">Moderated live test</span>
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="1"></v-col>
+            <v-col cols="1" />
           </v-row>
         </v-col>
       </v-card>
@@ -357,7 +344,7 @@
 <script>
 import TestAdmin from '@/models/TestAdmin'
 import Test from '@/models/Test'
-
+import Vue from 'vue'
 export default {
   data: () => ({
     dialog: false,
@@ -423,7 +410,7 @@ export default {
           this.submit()
         }
       } else {
-        alert('Please enter a title')
+        Vue.$toast.warning('Please enter a title')
       }
     },
   },

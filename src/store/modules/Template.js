@@ -67,14 +67,14 @@ export default {
         commit('setLoading', false)
       }
     },
-    
+
     async getCurrentUserAndPublicTemplates({ commit, rootState }) {
       try {
         commit('setLoading', true)
         const publicTemps = (await templateController.getPublicTemplates()) ?? []
         const userOwnedTemps = (await templateController.getTemplatesOfUser(rootState.Auth.user.id)) ?? []
-        
-        const res = [...publicTemps, ...userOwnedTemps.filter(temp => !publicTemps.some(i => i.id === temp.id))]
+
+        const res = [...publicTemps, ...userOwnedTemps.filter((temp) => !publicTemps.some((i) => i.id === temp.id))]
         commit('SET_TEMPLATES', res)
       } catch (e) {
         console.error(e)

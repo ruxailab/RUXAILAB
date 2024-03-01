@@ -1,23 +1,27 @@
 <template>
   <div>
     <video
-      class="web-cam mb-2 ml-3"
+      v-if="recording"
       ref="video"
+      class="web-cam mb-2 ml-3"
       height="100"
       autoplay
-      v-if="recording"
-    ></video>
+    />
     <v-btn
       v-if="!recording && recordedVideo == ''"
-      @click="startRecording"
       class="ml-4 mb-2 xl"
       color="grey lighten-2"
       elevation="0"
+      @click="startRecording"
     >
-      <v-icon class="mr-2">mdi-camera</v-icon>Start Recording
+      <v-icon class="mr-2">
+        mdi-camera
+      </v-icon>Start Recording
     </v-btn>
-    <v-btn color="red" icon v-if="recording" @click="stopRecording">
-      <v-icon dark>mdi-stop</v-icon>
+    <v-btn v-if="recording" color="red" icon @click="stopRecording">
+      <v-icon dark>
+        mdi-stop
+      </v-icon>
     </v-btn>
   </div>
 </template>

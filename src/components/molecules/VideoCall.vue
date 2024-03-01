@@ -4,13 +4,14 @@
       <v-col cols="10">
         <v-btn
           v-if="index == 0"
-          @click="openUserMedia(), emitConfirm()"
           color="green"
           block
           depressed
           dark
-          >CONNECT</v-btn
+          @click="openUserMedia(), emitConfirm()"
         >
+          CONNECT
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -29,7 +30,16 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
+import Vue from 'vue'
 export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+    },
+    index: {
+      type: Number,
+    },
+  },
   data() {
     return {
       createBtnDisabled: false,
@@ -55,14 +65,6 @@ export default {
   },
   beforeRouteLeave() {
     this.hangUp()
-  },
-  props: {
-    isAdmin: {
-      type: Boolean,
-    },
-    index: {
-      type: Number,
-    },
   },
   computed: {
     localStream() {
@@ -138,7 +140,7 @@ export default {
       onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
-            let data = change.doc.data()
+            const data = change.doc.data()
             await this.peerConnection.addIceCandidate(new RTCIceCandidate(data))
           }
         })
@@ -203,7 +205,7 @@ export default {
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === 'added') {
-              let data = change.doc.data()
+              const data = change.doc.data()
               await this.peerConnection.addIceCandidate(
                 new RTCIceCandidate(data),
               )
@@ -257,7 +259,7 @@ export default {
         this.joinBtnDisabled = false
         this.hangupBtnDisabled = false
       } catch (e) {
-        alert('Error in capturing your media device: ' + e.message)
+        Vue.$toast.error('Error in capturing your media device: ' + e.message)
       }
       if (this.isAdmin) {
         this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
