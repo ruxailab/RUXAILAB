@@ -487,6 +487,7 @@
                     @emit-confirm="confirmConnect(), (index = 1)"
                     :index="index"
                     :isAdmin="isAdmin"
+                    :consentCompleted="consentCompleted"
                 /></v-col>
               </v-row>
             </v-col>
@@ -542,12 +543,13 @@
                   <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
-                  <v-text-field
+                  <v-textarea
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
+                    rows="1"
                     outlined
-                  ></v-text-field>
+                  ></v-textarea>
                   <v-radio-group
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
@@ -570,7 +572,7 @@
               </v-row>
 
               <v-row justify="center">
-                <v-col class="mx-4">
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     block
                     dark
@@ -623,7 +625,21 @@
                     {{ test.testStructure.userTasks[index].taskDescription }}
                   </span>
                 </v-col>
-                <v-col class="mx-4">
+                <v-col cols="9" class="mb-0 pb-0">
+                      <v-textarea
+                        :id="
+                          'id-' +
+                          test.testStructure.userTasks[taskIndex].taskName
+                        "
+                        v-model="
+                          currentUserTestAnswer.tasks[taskIndex]
+                            .taskObservations
+                        "
+                        outlined
+                        label="observation (optional)"
+                      />
+                    </v-col>
+                <v-col cols="2" class="mx-4">
                   <v-btn
                     block
                     dark
@@ -681,12 +697,13 @@
                 <v-col cols="5" class="mx-auto py-0">
                   <p>{{ item.title }}</p>
                   <p v-if="item.description">{{ item.description }}</p>
-                  <v-text-field
+                  <v-textarea
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
                     outlined
-                  ></v-text-field>
+                    rows="1"
+                  ></v-textarea>
                   <v-radio-group
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
@@ -709,7 +726,7 @@
               </v-row>
 
               <v-row justify="center">
-                <v-col class="mx-4">
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     block
                     dark

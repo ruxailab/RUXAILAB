@@ -4,11 +4,12 @@
       <v-col cols="10">
         <v-btn
           v-if="index == 0"
+          :disabled="!consentCompleted && !isAdmin"
+          :dark="consentCompleted && !isAdmin || isAdmin"
           @click="openUserMedia(), emitConfirm()"
           color="green"
           block
           depressed
-          dark
           >CONNECT</v-btn
         >
       </v-col>
@@ -63,6 +64,9 @@ export default {
     index: {
       type: Number,
     },
+    consentCompleted: {
+      type: Boolean,
+    }
   },
   computed: {
     localStream() {
