@@ -626,19 +626,17 @@
                   </span>
                 </v-col>
                 <v-col cols="9" class="mb-0 pb-0">
-                      <v-textarea
-                        :id="
-                          'id-' +
-                          test.testStructure.userTasks[taskIndex].taskName
-                        "
-                        v-model="
-                          currentUserTestAnswer.tasks[taskIndex]
-                            .taskObservations
-                        "
-                        outlined
-                        label="observation (optional)"
-                      />
-                    </v-col>
+                  <v-textarea
+                    :id="
+                      'id-' + test.testStructure.userTasks[taskIndex].taskName
+                    "
+                    v-model="
+                      currentUserTestAnswer.tasks[taskIndex].taskObservations
+                    "
+                    outlined
+                    label="observation (optional)"
+                  />
+                </v-col>
                 <v-col cols="2" class="mx-4">
                   <v-btn
                     block
@@ -867,6 +865,9 @@ export default {
     },
     localStream() {
       return this.$store.getters.localStream
+    },
+    remoteStream() {
+      return this.$store.getters.remoteStream
     },
   },
   watch: {
