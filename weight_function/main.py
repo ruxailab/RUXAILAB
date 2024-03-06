@@ -3,9 +3,12 @@ from firebase_functions import https_fn, options
 from firebase_admin import db, initialize_app
 import numpy as np
 import pandas as pd
+import requests
 
 
 initialize_app()
+
+array_scores_global = [1,2,3]
 
 def calculate_eigen(matrix):
     eigenvalues, eigenvectors = np.linalg.eig(matrix)
@@ -109,18 +112,31 @@ def populate_ahp_matrix(ahp_df, pesos):
 
     return ahp_df
 
+
+def process_scores(array_scores):
+    # Process the array_scores here
+    print('Array scores received:', array_scores)
+    # Example: Calculate the sum of scores
+    sum_scores = array_scores
+    #array_scores_global = sum_scores
+    return sum_scores
+
 @https_fn.on_request(
     cors=options.CorsOptions(
-        cors_origins=[r"firebase\.com$",  r"http://localhost:8080"],
-        cors_methods=[ "post"],
+        cors_origins=['http://localhost:8080'],
+        cors_methods=["POST"],
     )
 )
 def get_scores(req: https_fn.Request) -> https_fn.Response:
     req_data = req.get_json()
     array_scores = req_data.get('array_scores')
-    print('Dados recebidos:', array_scores)
-    resonse_scores = array_scores
-    return https_fn.Response(json.dumps(resonse_scores), content_type="application/json")
+    print('Data received:', array_scores)
+    # Process the array_scores using another function
+    processed_scores = process_scores(array_scores)
+    headers = {
+        "Access-Control-Allow-Origin": "http://localhost:8080" 
+    }
+    return https_fn.Response(json.dumps(processed_scores), content_type="application/json")
 
 
 @https_fn.on_request(
@@ -134,6 +150,7 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     caminho_structure = req_data.get("caminhoTestStructure")
     caminho_testWeights = req_data.get("caminhoTestWeights")
     usability_score = req_data.get("score_percentage")
+
 
 # #titulos como esta no csv
     heuristicas = []
@@ -192,9 +209,12 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     df_heuristics_usability_score_weights = pd.DataFrame(data_heuristics_usability_score_weights)
     print("\n\nHeuristics x Usability Score x Weights ", df_heuristics_usability_score_weights)
 
+    print("\n\n", array_scores_global)
+    
 
     response_data = {
         "tabela": ahp_df.to_json(),
         "max_value": max_eigenvalue.astype("str"),
+        #"scores": array_scores.to_json(),
     }
     return https_fn.Response(json.dumps(response_data), content_type="application/json")
