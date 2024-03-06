@@ -22,19 +22,20 @@
         </v-tabs>
         <!-- tbody  -->
         <v-tabs-items v-model="tabs">
-          <v-tab-item v-for="(n, pes) in (heuristics && heuristics.length ? heuristics.length - 1 : 0)" :key="pes">
+          <v-tab-item
+            v-for="(n, pes) in heuristics && heuristics.length
+              ? heuristics.length - 1
+              : 0"
+            :key="pes"
+          >
             <v-card flat>
               <v-card-text>
                 <v-simple-table>
                   <template>
                     <thead>
                       <tr>
-                        <th class="text-left">
-                          Heuristicas
-                        </th>
-                        <th class="text-center">
-                          peso
-                        </th>
+                        <th class="text-left">Heuristicas</th>
+                        <th class="text-center">peso</th>
                       </tr>
                     </thead>
                     <!-- tbody -->
@@ -69,17 +70,22 @@
                             row
                             class="justify-space-between"
                           >
-                            <v-radio
-                              v-for="(r, rad) in 9"
-                              :key="rad"
-                              :label="`${r}`"
-                              :value="r"
-                              active-class
-                              class="padding-left"
-                              on-icon="mdi-check-circle-outline"
-                              off-icon="mdi-checkbox-blank-circle-outline"
-                              color="#FCA326"
-                            />
+                            <v-tooltip v-for="(r, rad) in importance" :key="rad" bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-radio
+                                  :label="`${r}`"
+                                  :value="r"
+                                  active-class
+                                  class="padding-left"
+                                  on-icon="mdi-check-circle-outline"
+                                  off-icon="mdi-checkbox-blank-circle-outline"
+                                  color="#FCA326"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                />
+                              </template>
+                              <span> H{{ f + (tabs + 1) }} has {{ importt[r-1] }} than  H {{ tabs+1 }}</span>
+                            </v-tooltip>
                           </v-radio-group>
                         </td>
                       </tr>
@@ -116,19 +122,38 @@
         </v-tabs-items>
       </template>
     </v-card>
+    <!-- <heuristics-test-answer-vue ref="Scores" /> -->
+    {{ scoresPercentage }}
   </div>
 </template>
 
 <script>
 //import goToWeightTable from '@/components/organisms/HeuristicsTestAnswer.vue'
+import HeuristicsTestAnswerVue from '@/components/organisms/HeuristicsTestAnswer.vue'
 
 export default {
-  name:'WeightTable',
+  name: 'WeightTable',
+  components: {
+    //HeuristicsTestAnswerVue,
+  },
   data() {
     return {
       tabs: 0,
       row: [],
       group: {},
+      scores: null,
+      importance: {
+        'Equal Importance': 1,
+        'Moderate Importance': 2,
+        'Strong Importance': 3,
+        'Very Strong Importance': 4,
+        'Extreme Importance': 5,
+        'Moderately Less Important': 6,
+        'Strongly Less Important': 7,
+        'Very Strongly Less Important': 8,
+        'Extremely Less Important': 9,
+      },
+      importt: ['Equal Importance', 'Moderate Importance', 'Strong Importance', 'Very Strong Importance', 'Extreme Importance', 'Moderately Less Important', 'Strongly Less Important', 'Very Strongly Less Important', 'Extremely Less Important' ],
     }
   },
   computed: {
@@ -141,29 +166,27 @@ export default {
     heuristicaTamanho() {
       return this.heuristics.length
     },
+    scoresPercentage() {
+      return this.$store.state.Tests.scoresPercentage
+    },
   },
   beforeMount() {
-  if (!this.testAll.testWeights) {
-    console.error('testWeights is undefined')
-    return
-  }
-
-
-  const heuristicLength = this.testAll.testStructure.length
-  this.group = this.testAll.testWeights
-
-
-  if (Object.keys(this.testAll.testWeights).length === 0) { // Verifica se é um objeto vazio
-    const weightMap = {}
-    for (let i = 0; i < heuristicLength - 1; i++) {
-      weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
+    if (!this.testAll.testWeights) {
+      console.error('testWeights is undefined')
+      return
     }
-    this.group = weightMap
-  }
+    const heuristicLength = this.testAll.testStructure.length
+    this.group = this.testAll.testWeights
 
-
-},
-
+    if (Object.keys(this.testAll.testWeights).length === 0) {
+      // Verifica se é um objeto vazio
+      const weightMap = {}
+      for (let i = 0; i < heuristicLength - 1; i++) {
+        weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
+      }
+      this.group = weightMap
+    }
+  },
 
   methods: {
     updateDatas() {
@@ -174,13 +197,16 @@ export default {
       const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
       const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
       try {
-        const resposta = await fetch('http://127.0.0.1:5001/retlab-dev/us-central1/say_hello', {
+        const resposta = await fetch(
+          'http://127.0.0.1:5001/retlab-dev/us-central1/say_hello',
+          {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({ caminhoTestStructure, caminhoTestWeights }),
-        })
+          },
+        )
         const data = await resposta.json()
         console.log(data.message)
       } catch (erro) {

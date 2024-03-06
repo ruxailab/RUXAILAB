@@ -21,17 +21,27 @@
           color="#FCA326"
           class="ml-4"
         >
-          <v-tab @click="tab = 0"> Statistics </v-tab>
-          <v-tab @click="tab = 1"> Evaluators </v-tab>
-          <v-tab @click="tab = 2"> Heuristics </v-tab>
-          <v-tab @click="tab = 3"> Analytics </v-tab>
+          <v-tab @click="tab = 0">
+            Statistics
+          </v-tab>
+          <v-tab @click="tab = 1">
+            Evaluators
+          </v-tab>
+          <v-tab @click="tab = 2">
+            Heuristics
+          </v-tab>
+          <v-tab @click="tab = 3">
+            Analytics
+          </v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
         <div slot="content" class="ma-0 pa-0">
           <!-- Tab 1 - Statistics -->
           <v-card v-if="tab == 0" style="background: #f5f7ff">
-            <v-card-title class="subtitleView"> Statistics </v-card-title>
+            <v-card-title class="subtitleView">
+              Statistics
+            </v-card-title>
 
             <v-divider />
 
@@ -185,7 +195,9 @@
 
           <!-- Tab 3 - Heuristics-->
           <v-card v-if="tab == 2" style="background: #f5f7ff">
-            <v-card-title class="subtitleView"> Heuristics Data </v-card-title>
+            <v-card-title class="subtitleView">
+              Heuristics Data
+            </v-card-title>
 
             <v-divider />
 
@@ -216,6 +228,13 @@
                 @click="ind = 2"
               >
                 Graphic
+              </v-tab>
+              <v-tab
+                class="tab-text"
+                style="text-transform: none !important"
+                @click="ind = 3"
+              >
+                Weights
               </v-tab>
             </v-tabs>
 
@@ -309,6 +328,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
+
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -434,6 +454,7 @@ export default {
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
           })
+          console.log(this.heuristicsEvaluator.items)
         })
       }
       console.log(table)
@@ -476,12 +497,14 @@ export default {
     },
   },
   mounted() {
-        this.array_scores = this.usuability_percentage_array()
-        this.enviarDadosParaCloudFunction()
-    },
+    this.array_scores = this.usuability_percentage_array()
+    this.enviarDadosParaCloudFunction()
+    this.enviarDadosParaCloudFunctionSayHello()
+  },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.usuability_percentage_array()
+    this.enviarDadosParaCloudFunction()
   },
   methods: {
     getColor(value, max, min) {
@@ -525,13 +548,31 @@ export default {
       for (let i = 0; i < teste.items.length; i++) {
         array_scores.push(teste.items[i].percentage)
       }
+      this.$store.dispatch('setScoresPercentage', array_scores)
       console.log(array_scores)
       return array_scores
     },
     //'http://127.0.0.1:5001/retlab-dev/us-central1/get_scores'
 
-    enviarDadosParaCloudFunction() {
-      fetch('http://127.0.0.1:5001/retlab-dev/us-central1/get_scores', {
+    async enviarDadosParaCloudFunction() {
+      const array_scores_env = this.array_scores
+      console.log(array_scores_env)
+      try {
+        const resposta = await fetch('http://127.0.0.1:5001/retlab-dev/us-central1/get_scores', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ array_scores_env}),
+        })
+        const data = await resposta.json()
+        console.log(data.message)
+      } catch (erro) {
+        console.error('Erro ao chamar Cloud Function:', erro)
+      }
+    },
+    enviarDadosParaCloudFunctionSayHello() {
+      fetch('http://127.0.0.1:5001/retlab-dev/us-central1/say_hello', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
