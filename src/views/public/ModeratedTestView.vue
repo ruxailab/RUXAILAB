@@ -390,7 +390,7 @@
                 dark
                 depressed
                 block
-                @click="finishTest()"
+                @click="finishTest(), stopRecording()"
                 >Finish Test</v-btn
               >
             </v-col>
@@ -836,10 +836,13 @@ export default {
     postTestFinished: false,
     bothConnected: false,
     recording: false,
-    recordedChunks: [],
+    recordedChunksEvaluator: [],
+    recordedChunksModerator: [],
+    recordedVideoEvaluator: '',
+    recordedVideoModerator: '',
     videoStream: null,
-    mediaRecorder: null,
-    recordedVideo: '',
+    mediaRecorderEvaluator: null,
+    mediaRecorderModerator: null,
     isLoading: false,
     consentCompleted: false,
   }),
@@ -885,7 +888,10 @@ export default {
     },
     async localStream(value) {
       if (value && !this.isAdmin) {
-        this.startRecording()
+        console.log(value)
+        this.startRecordingEvaluator()
+      } else if (value && this.isAdmin) {
+        this.startRecordingModerator()
       }
     },
     'userTestStatus.postTestStatus': function(newValue) {
@@ -1052,41 +1058,87 @@ export default {
           console.error('Erro ao atualizar o status:', error)
         })
     },
-    async startRecording() {
+    async startRecordingEvaluator() {
+      console.log('startRecordingEvaluator')
       this.recording = true
-      this.videoStream = new MediaStream(this.localStream)
-      this.recordedChunks = []
-      this.mediaRecorder = new MediaRecorder(this.videoStream)
+      this.recordedChunksEvaluator = []
+      this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
 
-      this.mediaRecorder.ondataavailable = (event) => {
+      this.mediaRecorderEvaluator.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          this.recordedChunks.push(event.data)
+          this.recordedChunksEvaluator.push(event.data)
         }
       }
-      this.mediaRecorder.onstop = async () => {
+
+      this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const videoBlob = new Blob(this.recordedChunks, {
+        const currentDate = new Date()
+        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
+          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
+        const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
           type: 'video/webm',
         })
-        const storage = getStorage()
-        const storageRef = ref(
-          storage,
-          `tests/${this.roomTestId}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideo}`,
+        const storageEvaluator = getStorage()
+        const storageRefEvaluator = ref(
+          storageEvaluator,
+          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
         )
-        await uploadBytes(storageRef, videoBlob)
+        await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
 
-        this.recordedVideo = await getDownloadURL(storageRef)
-        this.currentUserTestAnswer.cameraUrl = this.recordedVideo
+        this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
+        this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
         this.isLoading = false
         this.$router.push('/testslist')
       }
-      this.mediaRecorder.start()
+
+      this.mediaRecorderEvaluator.start()
+    },
+
+    async startRecordingModerator() {
+      console.log('startRecordingModerator')
+      this.recording = true
+      this.recordedChunksModerator = []
+      this.mediaRecorderModerator = new MediaRecorder(this.localStream)
+
+      this.mediaRecorderModerator.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunksModerator.push(event.data)
+        }
+      }
+
+      this.mediaRecorderModerator.onstop = async () => {
+        this.isLoading = true
+        const currentDate = new Date()
+        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
+          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
+        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
+          type: 'video/webm',
+        })
+        const storageModerator = getStorage()
+        const storageRefModerator = ref(
+          storageModerator,
+          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
+        )
+        await uploadBytes(storageRefModerator, videoBlobModerator)
+
+        this.recordedVideoModerator = await getDownloadURL(storageRefModerator)
+        this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+        this.isLoading = false
+        this.$router.push('/testslist')
+      }
+
+      this.mediaRecorderModerator.start()
     },
 
     async stopRecording() {
-      if (this.mediaRecorder) {
-        this.mediaRecorder.stop()
-        this.videoStream.getTracks().forEach((track) => track.stop())
+      if (this.mediaRecorderEvaluator) {
+        this.mediaRecorderEvaluator.stop()
+        this.localStream.stop()
+        this.recording = false
+      }
+      if (this.mediaRecorderModerator) {
+        this.mediaRecorderModerator.stop()
+        this.localStream.stop()
         this.recording = false
       }
     },
@@ -1177,7 +1229,6 @@ export default {
         completedSteps++
       }
 
-      // Calcular a porcentagem de conclusão
       const progressPercentage = (completedSteps / totalSteps) * 100
       this.currentUserTestAnswer.progress = progressPercentage
       return progressPercentage
@@ -1245,7 +1296,6 @@ export default {
     async finishTest() {
       this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
-      this.$router.push('/testslist')
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
