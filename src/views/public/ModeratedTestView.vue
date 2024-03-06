@@ -1,5 +1,11 @@
 <template>
   <div v-if="test">
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving Answer
+      </div>
+    </v-overlay>
     <!-- Authentication Dialog -->
     <v-dialog :value="fromlink && noExistUser" width="500" persistent>
       <CardSignIn
@@ -92,7 +98,7 @@
                   :size="50"
                   class="mt-2"
                 >
-                  {{ calculateProgress() }}%
+                  {{ Math.floor(calculateProgress()) }}%
                 </v-progress-circular>
               </v-col>
             </v-row>
@@ -193,7 +199,7 @@
       <v-col
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
-        v-if="index == 0 && taskIndex == 0 && isAdmin"
+        v-if="index == 0 && isAdmin && !postTestFinished"
       >
         <!-- Moderator View Content -->
         <v-card color="white" class="cards" v-if="!conectionStatus">
@@ -219,8 +225,14 @@
             />
           </v-row>
         </v-card>
-        <!-- Moderator Pre-Test view -->
-        <v-expansion-panels v-else flat accordion>
+        <!-- Moderator expansion panels view -->
+        <v-col class="my-12" v-else-if="moderatorStatus && !evaluatorStatus">
+          <span class="cardsTitle text-center d-block"
+            >Waiting the evaluator connection ...</span
+          >
+          <div class="dot-flashing mx-auto mt-4"></div>
+        </v-col>
+        <v-expansion-panels v-else-if="bothConnected" flat accordion>
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
@@ -352,27 +364,38 @@
                   </p>
                 </v-col>
               </v-row>
-
-              <v-row justify="center">
-                <v-col class="mx-4">
-                  <v-btn
-                    block
-                    dark
-                    style="border-radius: 10px"
-                    color="orange lighten-1"
-                    depressed
-                    >{{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
         <!-- Finish button -->
-        <v-btn color="orange" dark depressed block @click="finishTest()"
-          >Finish Test</v-btn
-        >
-        <!-- v-if="postTestFinished" -->
+      </v-col>
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="index == 0 && postTestFinished && isAdmin"
+      >
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Evaluator concluded the test!</span>
+              <br />
+              <span class="cardsSubtitle">
+                Here you can finilize the test, or you can keep talking with
+                your evaluator until you finish!
+              </span>
+              <v-btn
+                class="my-6"
+                color="orange"
+                v-if="postTestFinished"
+                dark
+                depressed
+                block
+                @click="finishTest(), stopRecording()"
+                >Finish Test</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-card>
       </v-col>
       <v-col
         ref="rightView"
@@ -418,7 +441,11 @@
                 <v-col cols="11">
                   <v-checkbox
                     v-model="currentUserTestAnswer.consentCompleted"
-                    @change="changeStatus(taskIndex, 'consent', 'done')"
+                    :disabled="consentCompleted"
+                    @click="
+                      changeStatus(taskIndex, 'consent', 'done'),
+                        (consentCompleted = true)
+                    "
                     color="orange"
                     class="ma-0 pa-0"
                     ><template v-slot:label
@@ -460,6 +487,7 @@
                     @emit-confirm="confirmConnect(), (index = 1)"
                     :index="index"
                     :isAdmin="isAdmin"
+                    :consentCompleted="consentCompleted"
                 /></v-col>
               </v-row>
             </v-col>
@@ -470,7 +498,7 @@
       <v-col
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
-        v-if="index == 1 && !isAdmin"
+        v-if="index == 1 && !isAdmin && !postTestFinished"
       >
         <v-expansion-panels flat accordion>
           <v-expansion-panel
@@ -515,12 +543,13 @@
                   <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
-                  <v-text-field
+                  <v-textarea
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
+                    rows="1"
                     outlined
-                  ></v-text-field>
+                  ></v-textarea>
                   <v-radio-group
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.preTestAnswer[index].answer"
@@ -543,13 +572,14 @@
               </v-row>
 
               <v-row justify="center">
-                <v-col class="mx-4">
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     block
                     dark
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
+                    v-if="test.userTestStatus.preTestStatus != 'done'"
                     :disabled="test.userTestStatus.preTestStatus == 'closed'"
                     @click="changeStatus(taskIndex, 'preTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
@@ -595,13 +625,26 @@
                     {{ test.testStructure.userTasks[index].taskDescription }}
                   </span>
                 </v-col>
-                <v-col class="mx-4">
+                <v-col cols="9" class="mb-0 pb-0">
+                  <v-textarea
+                    :id="
+                      'id-' + test.testStructure.userTasks[taskIndex].taskName
+                    "
+                    v-model="
+                      currentUserTestAnswer.tasks[taskIndex].taskObservations
+                    "
+                    outlined
+                    label="observation (optional)"
+                  />
+                </v-col>
+                <v-col cols="2" class="mx-4">
                   <v-btn
                     block
                     dark
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
+                    v-if="tasksStatus[index] != 'done'"
                     @click="changeStatus(taskIndex, 'tasks', 'done')"
                   >
                     {{ $t('UserTestView.buttons.done') }}
@@ -652,12 +695,13 @@
                 <v-col cols="5" class="mx-auto py-0">
                   <p>{{ item.title }}</p>
                   <p v-if="item.description">{{ item.description }}</p>
-                  <v-text-field
+                  <v-textarea
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                     v-if="item.textField"
                     :placeholder="item.title"
                     outlined
-                  ></v-text-field>
+                    rows="1"
+                  ></v-textarea>
                   <v-radio-group
                     v-if="item.selectionField"
                     v-model="currentUserTestAnswer.postTestAnswer[index].answer"
@@ -680,14 +724,15 @@
               </v-row>
 
               <v-row justify="center">
-                <v-col class="mx-4">
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     block
                     dark
                     style="border-radius: 10px"
                     color="orange lighten-1"
                     depressed
-                    @click="changeStatus(0, 'postTest', 'done'), saveAnswer()"
+                    v-if="test.userTestStatus.postTestStatus != 'done'"
+                    @click="changeStatus(0, 'postTest', 'done')"
                     >{{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -696,6 +741,48 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
+      <v-col
+        ref="rightView"
+        class="mx-10 mt-6 right-view backgroundTest"
+        v-if="index == 1 && postTestFinished && !isAdmin"
+      >
+        <v-card color="white" flat class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
+              <span class="cardsTitle">Final Message!</span>
+              <br />
+              <span class="cardsSubtitle">
+                Congratulations you finished this test, here you can until talk
+                with your moderator or leave the test
+              </span>
+              <v-row justify="center" class="mt-3">
+                <v-col cols="4">
+                  <img
+                    draggable="false"
+                    src="../../../public/finalMessage.svg"
+                    alt="Final test svg"
+                  />
+                </v-col>
+                <v-col cols="6" class="pt-2 my-8">
+                  <span class="cardsSubtitle">
+                    {{ test.testStructure.finalMessage }}
+                  </span>
+                  <v-col class="mt-4" align="end">
+                    <v-btn
+                      @click="saveAnswer(), stopRecording()"
+                      color="orange"
+                      depressed
+                      dark
+                      >Return to home</v-btn
+                    >
+                  </v-col>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
       <!-- Feedback View -->
       <v-col
         ref="rightView"
@@ -714,6 +801,7 @@ import CardSignIn from '@/components/atoms/CardSignIn'
 import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
@@ -747,6 +835,16 @@ export default {
     userTestStatus: {},
     postTestFinished: false,
     bothConnected: false,
+    recording: false,
+    recordedChunksEvaluator: [],
+    recordedChunksModerator: [],
+    recordedVideoEvaluator: '',
+    recordedVideoModerator: '',
+    videoStream: null,
+    mediaRecorderEvaluator: null,
+    mediaRecorderModerator: null,
+    isLoading: false,
+    consentCompleted: false,
   }),
   computed: {
     test() {
@@ -762,14 +860,17 @@ export default {
     cooperators() {
       return this.$store.getters.cooperators
     },
-    loading() {
-      return this.$store.getters.loading
-    },
     tasks() {
       return this.$store.getters.tasks
     },
     roomTestId() {
       return this.$store.getters.test.id
+    },
+    localStream() {
+      return this.$store.getters.localStream
+    },
+    remoteStream() {
+      return this.$store.getters.remoteStream
     },
   },
   watch: {
@@ -785,6 +886,14 @@ export default {
         if (this.logined) this.setTest()
       }
     },
+    async localStream(value) {
+      if (value && !this.isAdmin) {
+        console.log(value)
+        this.startRecordingEvaluator()
+      } else if (value && this.isAdmin) {
+        this.startRecordingModerator()
+      }
+    },
     'userTestStatus.postTestStatus': function(newValue) {
       if (newValue === 'done') {
         this.postTestFinished = true
@@ -795,13 +904,29 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
       }
     },
   },
   async created() {
     await this.verifyAdmin()
     await this.mappingSteps()
+    this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
+    getDoc(ref).then((doc) => {
+      if (doc.exists()) {
+        const data = doc.data()
+        data.userTestStatus.postTestStatus = 'closed'
+        data.userTestStatus.preTestStatus = 'closed'
+        data.userTestStatus.consentStatus = 'closed'
+        for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
+          data.testStructure.userTasks[i].taskStatus = 'closed'
+        }
+        return updateDoc(ref, data)
+      }
+    })
     onSnapshot(ref, (snapshot) => {
       this.moderatorStatus = snapshot.data().userTestStatus.moderator
       this.evaluatorStatus = snapshot.data().userTestStatus.user
@@ -818,8 +943,10 @@ export default {
     })
   },
   async beforeDestroy() {
-    this.disconnect()
-    await this.$store.dispatch('hangUp', this.roomTestId)
+    if (this.isAdmin) {
+      this.disconnect()
+      await this.$store.dispatch('hangUp', this.roomTestId)
+    }
   },
   methods: {
     async saveAnswer() {
@@ -895,7 +1022,6 @@ export default {
 
     changeStatus(id, type, newStatus) {
       const testRef = doc(db, 'tests', this.roomTestId)
-      console.log('receiving:', id, type, newStatus)
 
       getDoc(testRef)
         .then((doc) => {
@@ -903,12 +1029,20 @@ export default {
             const data = doc.data()
             if (type === 'tasks') {
               data.testStructure.userTasks[id].taskStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.tasks[id].completed = true
             } else if (type === 'postTest') {
               data.userTestStatus.postTestStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.postTestCompleted = true
             } else if (type === 'preTest') {
               data.userTestStatus.preTestStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.preTestCompleted = true
             } else if (type === 'consent') {
               data.userTestStatus.consentStatus = newStatus
+              if (newStatus == 'done')
+                this.currentUserTestAnswer.consentCompleted = true
             }
             return updateDoc(testRef, data)
           } else {
@@ -917,11 +1051,96 @@ export default {
           }
         })
         .then(() => {
+          this.calculateProgress()
           console.log('Status atualizado com sucesso')
         })
         .catch((error) => {
           console.error('Erro ao atualizar o status:', error)
         })
+    },
+    async startRecordingEvaluator() {
+      console.log('startRecordingEvaluator')
+      this.recording = true
+      this.recordedChunksEvaluator = []
+      this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
+
+      this.mediaRecorderEvaluator.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunksEvaluator.push(event.data)
+        }
+      }
+
+      this.mediaRecorderEvaluator.onstop = async () => {
+        this.isLoading = true
+        const currentDate = new Date()
+        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
+          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
+        const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
+          type: 'video/webm',
+        })
+        const storageEvaluator = getStorage()
+        const storageRefEvaluator = ref(
+          storageEvaluator,
+          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
+        )
+        await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
+
+        this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
+        this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
+        this.isLoading = false
+        this.$router.push('/testslist')
+      }
+
+      this.mediaRecorderEvaluator.start()
+    },
+
+    async startRecordingModerator() {
+      console.log('startRecordingModerator')
+      this.recording = true
+      this.recordedChunksModerator = []
+      this.mediaRecorderModerator = new MediaRecorder(this.localStream)
+
+      this.mediaRecorderModerator.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunksModerator.push(event.data)
+        }
+      }
+
+      this.mediaRecorderModerator.onstop = async () => {
+        this.isLoading = true
+        const currentDate = new Date()
+        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
+          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
+        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
+          type: 'video/webm',
+        })
+        const storageModerator = getStorage()
+        const storageRefModerator = ref(
+          storageModerator,
+          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
+        )
+        await uploadBytes(storageRefModerator, videoBlobModerator)
+
+        this.recordedVideoModerator = await getDownloadURL(storageRefModerator)
+        this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+        this.isLoading = false
+        this.$router.push('/testslist')
+      }
+
+      this.mediaRecorderModerator.start()
+    },
+
+    async stopRecording() {
+      if (this.mediaRecorderEvaluator) {
+        this.mediaRecorderEvaluator.stop()
+        this.localStream.stop()
+        this.recording = false
+      }
+      if (this.mediaRecorderModerator) {
+        this.mediaRecorderModerator.stop()
+        this.localStream.stop()
+        this.recording = false
+      }
     },
 
     async confirmConnect() {
@@ -994,7 +1213,7 @@ export default {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
     calculateProgress() {
-      const totalSteps = 4
+      const totalSteps = 3
 
       let completedSteps = 0
 
@@ -1010,7 +1229,6 @@ export default {
         completedSteps++
       }
 
-      // Calcular a porcentagem de conclusão
       const progressPercentage = (completedSteps / totalSteps) * 100
       this.currentUserTestAnswer.progress = progressPercentage
       return progressPercentage
@@ -1076,22 +1294,8 @@ export default {
       }
     },
     async finishTest() {
-      this.disconnect()
+      this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
-      const testRef = doc(db, 'tests', this.roomTestId)
-      getDoc(testRef).then((doc) => {
-        if (doc.exists()) {
-          const data = doc.data()
-          data.userTestStatus.postTestStatus = 'closed'
-          data.userTestStatus.preTestStatus = 'closed'
-          data.userTestStatus.consentStatus = 'closed'
-          for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
-            data.testStructure.userTasks[i].taskStatus = 'closed'
-          }
-          return updateDoc(testRef, data)
-        }
-      })
-      this.$router.push('/testslist');
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
