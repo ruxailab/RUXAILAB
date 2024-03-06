@@ -264,21 +264,6 @@ export default {
       return this.$store.getters.loading
     },
 
-    // paginatedTemps() {
-    //   return this.$store.getters.paginatedTemps;
-    // },
-    
-    // showOnExplore() {
-    //   // let array = [];
-    //   let temps = null;
-    //   let start = (this.page - 1) * this.itemsPerPage;
-    //   let finish = this.page * this.itemsPerPage;
-
-    //   temps = this.exploreTemplates.slice(start, finish);
-
-    //   return temps;
-    // },
-
     showTempDetails() {
       return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
@@ -375,43 +360,6 @@ export default {
         }
       }
     },
-
-    // nextPage() {
-    //   this.page++;
-    //   this.disablePrevious = false;
-    //   if (this.paginatedTemps.length) {
-    //     //if length == 0 got all templates in database
-    //     if (this.page > this.lastPage)
-    //       this.$store
-    //         .dispatch(
-    //           "getPaginationTemplates",
-    //           Object.assign(
-    //             {},
-    //             {
-    //               itemsPerPage: 2,
-    //               last: this.paginatedTemps[this.paginatedTemps.length - 1].id,
-    //             }
-    //           )
-    //         )
-    //         .then(() => {
-    //           this.exploreTemplates.push(...this.paginatedTemps);
-    //           this.lastPage++;
-    //           if (this.paginatedTemps.length == 0) {
-    //             this.page--; //no more templates to show, go back one page
-    //             alert("No more templates to show");
-    //             this.disableNext = true;
-    //           }
-    //         });
-    //   } else if (this.page == this.lastPage - 1) {
-    //     this.disableNext = true;
-    //   }
-    // },
-
-    // previousPage() {
-    //   this.page--;
-    //   if (this.page <= 1) this.disablePrevious = true;
-    //   this.disableNext = false;
-    // },
 
     setupTempDialog(temp) {
       this.temp = Object.assign({}, temp)
