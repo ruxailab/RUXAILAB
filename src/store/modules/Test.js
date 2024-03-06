@@ -21,6 +21,7 @@ export default {
     consent: '',
     preTest: [],
     postTest: [],
+    scoresPercentage: [],
   },
   getters: {
     tests(state) {
@@ -70,6 +71,9 @@ export default {
     },
     SET_CONSENT(state, payload) {
       state.consent = payload
+    },
+    SET_SCORES_PERCENTAGE(state, payload) {
+      state.scoresPercentage = payload
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -285,10 +289,17 @@ export default {
         commit('setError', true)
       }
     },
+    setScoresPercentage({ commit }, payload){
+      try {
+        commit('SET_SCORES_PERCENTAGE', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
-        console.log('clean test');
+        console.log('clean test')
       } catch {
         commit('setError', true)
       }
