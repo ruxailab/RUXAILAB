@@ -7,7 +7,7 @@
       elevation="0"
       rounded="0"
     >
-      <v-col cols="12" sm="6" md="4" style="user-select: none;">
+      <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6" style="user-select: none;">
         <div class="mt-12 display-3 bold font-weight-bold" style="color: white;">
           Help Center
         </div>
@@ -16,9 +16,11 @@
         </div>
       </v-col>
     </v-card>
+
+
     <v-container>
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
           <v-list outlined rounded>
             <v-list-item v-for="(item, index) in itemsLeft" :key="index">
               <v-list-item-content>
@@ -53,7 +55,8 @@
             </v-list-item>
           </v-list>
         </v-col>
-        <v-col cols="6">
+
+        <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
           <v-list outlined rounded>
             <v-list-item v-for="(item, index) in itemsRight" :key="index">
               <v-list-item-content>
@@ -101,7 +104,7 @@ export default {
   data() {
     return {
       items: [
-        {
+      {
           title: 'How do I create a test?',
           content:
             'To initiate the creation of a heuristic test by clicking on the plus icon, selecting Heuristic Test, specifying project particulars, and proceeding to the dedicated manager page.',
@@ -160,10 +163,10 @@ export default {
           content:
             'To send a message you go in your test in manager page and select Cooperators on left bar, click on a three dots icon of a cooperator and select Send a message and write a message with Title and Content.',
           isCollapsed: true,
-        },
-      ],
+        },      ],
     }
   },
+
   computed: {
     itemsLeft() {
       const totalItems = this.items.length
@@ -176,6 +179,7 @@ export default {
       return this.items.slice(halfItems)
     },
   },
+
   methods: {
     toggleCollapse(index) {
       this.items.forEach((item, i) => {
