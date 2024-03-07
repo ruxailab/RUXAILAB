@@ -7,7 +7,7 @@ global.alert = jest.fn()
 global.console.error = jest.fn()
 global.console.warn = jest.fn()
 
-describe('SingIn', () => {
+describe('SignIn', () => {
 
   it('should display email input', async () => {
     render(SignInView)
