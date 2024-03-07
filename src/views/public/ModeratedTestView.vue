@@ -721,6 +721,7 @@ import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -985,7 +986,7 @@ export default {
     },
     startTest() {
       if (this.test.testStructure.length == 0) {
-        alert("This test don't have any task")
+        Vue.$toast.info('This test don\'t have any task')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
