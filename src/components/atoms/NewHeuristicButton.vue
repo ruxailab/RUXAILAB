@@ -77,6 +77,7 @@
 
 <script>
 import i18n from '@/i18n'
+import Vue from 'vue'
 export default {
   props: {
     heuris: {
@@ -108,7 +109,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         if (this.heuris.questions.length == 0) {
-          alert(i18n.t('HeuristicsTable.validation.addQuestion'))
+          Vue.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
         } else {
           this.$emit('dialog', false)
           this.$emit('addHeuris')
