@@ -13,6 +13,8 @@ import {
 //import AuthController
 // import AuthController from "@/controllers/AuthController.js";
 import UserController from '@/controllers/UserController'
+import i18n from '@/i18n'
+import Vue from 'vue'
 
 // const AuthCont = new AuthController();
 //const UserCont = new UserController();
@@ -74,11 +76,11 @@ export default {
       } catch (err) {
         console.error(err)
         if (err.code === 'auth/invalid-email') {
-          alert('Este usuário não existe.')
+          Vue.$toast.error(i18n.t('errors.userNotExist'))
         } else if (err.code === 'auth/wrong-password') {
-          alert('Senha incorreta.')
+          Vue.$toast.error(i18n.t('errors.userNotExist'))
         } else {
-          alert('Usuário ou senha incorretos.')
+          Vue.$toast.error(i18n.t('errors.userNotExist'))
         }
       } finally {
         commit('setLoading', false)
