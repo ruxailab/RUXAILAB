@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
-
+  getAuth,
   // connectAuthEmulator,
 } from 'firebase/auth'
 import {
