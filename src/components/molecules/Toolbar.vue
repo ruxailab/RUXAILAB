@@ -86,11 +86,7 @@
     >
       Remote Testing Lab
     </v-toolbar-title>
-    <v-toolbar-title
-      v-else
-      style="cursor: pointer"
-      @click="goTo('/testslist')"
-    >
+    <v-toolbar-title v-else style="cursor: pointer" @click="goTo('/testslist')">
       Help Center
     </v-toolbar-title>
 
@@ -110,7 +106,11 @@
     </v-btn>
 
     <v-btn
-      v-if="this.$route.path == '/testslist'"
+      v-if="
+        this.$route.path == '/testslist' ||
+          this.$route.path == '/signin' ||
+          this.$route.path == '/signup'
+      "
       text
       color="#f9a826"
       class="console-button mx-1 hidden-sm-and-down"
@@ -120,7 +120,12 @@
     </v-btn>
 
     <v-btn
-      v-if="this.$route.path !== '/' && this.$route.path !== '/testslist'"
+      v-if="
+        this.$route.path !== '/' &&
+          this.$route.path !== '/testslist' &&
+          this.$route.path !== '/signin' &&
+          this.$route.path !== '/signup'
+      "
       text
       color="#f9a826"
       class="console-button mx-1 hidden-sm-and-down"
