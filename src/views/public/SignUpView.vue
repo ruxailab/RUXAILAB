@@ -59,7 +59,7 @@
               </v-card-actions>
               <v-card-actions class="justify-center mt-1">
                 <p>
-                  <a style="color: #F9A826" href="/signin">{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a>
+                  <a style="color: #F9A826; text-decoration: underline;" @click="redirectToSignin">{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a>
                 </p>
               </v-card-actions>
             </v-col>
@@ -125,6 +125,9 @@ export default {
 
         this.$router.push({name: 'SignIn'})
       }
+    },
+    redirectToSignin() {
+      this.$router.push('/signin')
     },
   },
 }
