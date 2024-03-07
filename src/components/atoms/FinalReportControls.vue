@@ -35,6 +35,7 @@
 
 <script>
 import i18n from '@/i18n'
+import Vue from 'vue'
 export default {
   data: () => ({ title: 'Enter your text here:', inputText: '' }),
   computed: {},
@@ -58,9 +59,9 @@ export default {
         document.execCommand('selectAll', false, null)
         const success = document.execCommand('copy')
         // output whether or not copy was successful
-        success ? alert(i18n.t('alerts.copy')) : alert(i18n.t('alerts.noCopy'))
+        success ? Vue.$toast.info(i18n.t('alerts.copy')) : Vue.$toast.error(i18n.t('alerts.noCopy'))
       } catch (e) {
-        alert(i18n.t('alerts.errorOccurred'))
+        Vue.$toast.error(i18n.t('alerts.errorOccurred'))
       }
     },
     center() {
