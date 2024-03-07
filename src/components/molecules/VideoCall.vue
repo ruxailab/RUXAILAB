@@ -30,6 +30,7 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -264,7 +265,7 @@ export default {
         this.joinBtnDisabled = false
         this.hangupBtnDisabled = false
       } catch (e) {
-        alert('Error in capturing your media device: ' + e.message)
+        Vue.$toast.error('Error in capturing your media device: ' + e.message)
       }
       if (this.isAdmin) {
         this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
