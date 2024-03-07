@@ -14,6 +14,7 @@ import {
 // import AuthController from "@/controllers/AuthController.js";
 import UserController from '@/controllers/UserController'
 import i18n from '@/i18n'
+import Vue from 'vue'
 
 // const AuthCont = new AuthController();
 //const UserCont = new UserController();

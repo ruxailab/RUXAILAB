@@ -707,6 +707,7 @@ import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -821,7 +822,7 @@ export default {
     },
     startTest() {
       if (this.test.testStructure.length == 0) {
-        alert("This test don't have any task")
+        Vue.$toast.info('This test don\'t have any task')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
