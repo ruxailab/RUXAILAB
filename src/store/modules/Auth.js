@@ -75,11 +75,11 @@ export default {
       } catch (err) {
         console.error(err)
         if (err.code === 'auth/invalid-email') {
-          alert(i18n.t('errors.userNotExist'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.userNotExist')})
         } else if (err.code === 'auth/wrong-password') {
-          alert(i18n.t('errors.incorrectPassword'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectPassword')})
         } else {
-          alert(i18n.t('errors.incorrectCredential'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectCredential')})
         }
       } finally {
         commit('setLoading', false)
