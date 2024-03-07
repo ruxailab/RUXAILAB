@@ -4,11 +4,12 @@
       <v-col cols="10">
         <v-btn
           v-if="index == 0"
+          :disabled="!consentCompleted && !isAdmin"
+          :dark="consentCompleted && !isAdmin || isAdmin"
           @click="openUserMedia(), emitConfirm()"
           color="green"
           block
           depressed
-          dark
           >CONNECT</v-btn
         >
       </v-col>
@@ -64,6 +65,9 @@ export default {
     index: {
       type: Number,
     },
+    consentCompleted: {
+      type: Boolean,
+    }
   },
   computed: {
     localStream() {
@@ -77,6 +81,9 @@ export default {
     },
     roomTestId() {
       return this.$store.getters.test.id
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
     },
   },
   methods: {
@@ -281,8 +288,6 @@ export default {
         this.peerConnection.close()
       }
 
-      document.querySelector('#localVideo').srcObject = null
-      document.querySelector('#remoteVideo').srcObject = null
       this.$store.commit('SET_LOCAL_STREAM', null)
       this.$store.commit('SET_REMOTE_STREAM', null)
       this.createBtnDisabled = false
