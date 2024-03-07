@@ -4,11 +4,12 @@
       <v-col cols="10">
         <v-btn
           v-if="index == 0"
+          :disabled="!consentCompleted && !isAdmin"
+          :dark="consentCompleted && !isAdmin || isAdmin"
           @click="openUserMedia(), emitConfirm()"
           color="green"
           block
           depressed
-          dark
           >CONNECT</v-btn
         >
       </v-col>
@@ -29,6 +30,7 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -63,6 +65,9 @@ export default {
     index: {
       type: Number,
     },
+    consentCompleted: {
+      type: Boolean,
+    }
   },
   computed: {
     localStream() {
@@ -76,6 +81,9 @@ export default {
     },
     roomTestId() {
       return this.$store.getters.test.id
+    },
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
     },
   },
   methods: {
@@ -257,7 +265,7 @@ export default {
         this.joinBtnDisabled = false
         this.hangupBtnDisabled = false
       } catch (e) {
-        alert('Error in capturing your media device: ' + e.message)
+        Vue.$toast.error('Error in capturing your media device: ' + e.message)
       }
       if (this.isAdmin) {
         this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
