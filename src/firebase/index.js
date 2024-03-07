@@ -2,15 +2,15 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
   getAuth,
-  // connectAuthEmulator
+  connectAuthEmulator
 } from 'firebase/auth'
 import {
   getFirestore,
-  // connectFirestoreEmulator
+  connectFirestoreEmulator
 } from 'firebase/firestore'
 import {
   getFunctions,
-  // connectFunctionsEmulator
+  connectFunctionsEmulator
 } from 'firebase/functions'
 import { getStorage } from 'firebase/storage'
 // import { Storage } from '@google-cloud/storage'
@@ -46,8 +46,8 @@ const fbFunctions = getFunctions(firebaseApp)
 
 const storage = getStorage(firebaseApp, 'gs://retlab-dev.appspot.com/')
 
-// connectFirestoreEmulator(db, 'localhost', 8081);
-// connectAuthEmulator(auth, "http://localhost:9099");
-// connectFunctionsEmulator(fbFunctions, "localhost", 5001);
+connectFirestoreEmulator(db, 'localhost', 8081);
+connectAuthEmulator(auth, "http://localhost:9099");
+connectFunctionsEmulator(fbFunctions, "localhost", 5001);
 
 export { auth, db, analytics, fbFunctions, storage }
