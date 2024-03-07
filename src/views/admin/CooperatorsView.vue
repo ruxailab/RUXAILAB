@@ -263,6 +263,7 @@ import { cooperatorsHeaders } from '@/utils/headers'
 import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
 const UIDGenerator = require('uid-generator')
+import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -454,7 +455,7 @@ export default {
         //if is object then no need to validate
         if (this.email.length) {
           if (!this.email.includes('@') || !this.email.includes('.')) {
-            alert(this.email + ' is not a valid email')
+            Vue.$toast.error(this.email + ' is not a valid email')
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
           }
