@@ -17,7 +17,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { authorize, requiresInvitation } = to.meta
+  const { authorize } = to.meta
 
   await autoSignIn()
 
@@ -36,10 +36,6 @@ router.beforeEach(async (to, from, next) => {
     if (!authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
-  }
-
-  if (requiresInvitation && !user.invited) {
-    //what to do if not invited
   }
 
   next()
