@@ -43,15 +43,6 @@
 
         <ShowInfo title="Cooperators">
           <div slot="content" class="ma-0 pa-0" style="background: #f5f7ff">
-            <v-chip
-              v-for="(coop, i) in selectedCoops"
-              :key="i"
-              class="ml-2 mt-2"
-              close
-              @click:close="removeSelectedCoops(i)"
-            >
-              {{ typeof coop == 'object' ? coop.email : coop }}
-            </v-chip>
             <v-row class="ma-0 pa-0 pt-3" align="center">
               <v-col class="mt-1 mx-4 pa-0">
                 <v-combobox
@@ -64,8 +55,8 @@
                   :items="users"
                   item-text="email"
                   label="Select cooperator"
-                  multiple
                   outlined
+                  rounded
                   dense
                   color="#fca326"
                   class="mx-2"
@@ -230,34 +221,54 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog class="rounded-lg" v-model="inviteModal" max-width="700">
+      <v-dialog class="rounded-lg" v-model="inviteModal" max-width="800">
         <v-card class="rounded-xxl">
-          <v-card-title
-            style="background-color: #F9A826; color: white;"
-            class="rounded-top-lg"
-          >
-            <v-icon color="white" class="mr-2">
-              mdi-email
-            </v-icon>
+          <v-card-title style="color: #626E76;" class="rounded-top-lg">
             Invite Evaluator To Test
           </v-card-title>
+          <v-divider class="mb-4"></v-divider>
           <v-card-text>
-            <v-text-field
-              v-model="messageTitle"
-              required
-              label="Title"
-              hint="Type a title for your message"
-              outlined
-              class="rounded-lg mt-4"
-            />
-            <v-textarea
-              v-model="messageContent"
-              required
-              label="Content"
-              hint="Type the content of your message"
-              outlined
-              class="rounded-lg"
-            />
+            <v-col cols="5">
+              <span class="modalInternTitles">Email</span>
+              <v-col cols="7" class="pa-0">
+                <v-text-field
+                  :value="comboboxModel.email"
+                  dense
+                  disabled="true"
+                  color="#626E76"
+                  outlined
+                  background-color="#D7D7D7"
+                  class="rounded-lg"
+                />
+              </v-col>
+              <span class="modalInternTitles">Scheduled at</span>
+              <v-row>
+                <v-col cols="7" class="pr-0">
+                  <v-text-field
+                    :value="comboboxModel.email"
+                    dense
+                    disabled="true"
+                    outlined
+                    class="rounded-lg"
+                  />
+                </v-col>
+                <v-col
+                  ><v-text-field
+                    :value="comboboxModel.email"
+                    dense
+                    disabled="true"
+                    outlined
+                    class="rounded-lg"/></v-col
+              ></v-row>
+              <span class="modalInternTitles">Invite message</span>
+              <v-textarea
+                v-model="messageContent"
+                required
+                placeholder="Hey lets make a test..."
+                outlined
+                class="rounded-lg"
+              />
+            </v-col>
           </v-card-text>
           <v-divider />
         </v-card>
@@ -532,5 +543,14 @@ export default {
   color: #000000;
   margin-bottom: 0px;
   padding-bottom: 0px;
+}
+.modalInternTitles {
+  max-width: 270px;
+  font-family: 'Poppins', Helvetica;
+  color: #626e76;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 </style>
