@@ -11,7 +11,7 @@ export default [
     path: '/testview/:id/:token?',
     name: 'TestView',
     props: true,
-    meta: { authorize: [] },
+    meta:{ requiresInvitation: true }, 
     component: TestView,
   },
   {

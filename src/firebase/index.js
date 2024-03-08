@@ -2,25 +2,25 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import {
   getAuth,
-  // connectAuthEmulator,
+  connectAuthEmulator,
 } from 'firebase/auth'
 import {
   getFirestore,
-  // connectFirestoreEmulator,
+  connectFirestoreEmulator,
 } from 'firebase/firestore'
 import {
   getFunctions,
-  // connectFunctionsEmulator,
+  connectFunctionsEmulator,
 } from 'firebase/functions'
 import {
   getStorage,
-  // connectStorageEmulator,
+  connectStorageEmulator,
 } from 'firebase/storage'
 
-const isProduction = false
 
-const firebaseConfig = isProduction
-  ? {
+
+const firebaseConfig = 
+   {
       apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
       authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
       storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
@@ -29,16 +29,7 @@ const firebaseConfig = isProduction
       messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.VUE_APP_FIREBASE_APP_ID,
     }
-  : {
-      apiKey: process.env.VUE_APP_FIREBASE_API_KEY_DEV,
-      authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN_DEV,
-      storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET_DEV,
-      databaseURL: process.env.VUE_APP_FIREBASE_DB_URL_DEV,
-      projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID_DEV,
-      messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV,
-      appId: process.env.VUE_APP_FIREBASE_APP_ID_DEV,
-      measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID_DEV,
-    }
+  
 
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
@@ -47,9 +38,9 @@ const analytics = getAnalytics(firebaseApp)
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 
-// connectFirestoreEmulator(db, 'localhost', 8081)
-// connectAuthEmulator(auth, 'http://localhost:9099')
-// connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
-// connectStorageEmulator(storage, '127.0.0.1', 9199)
+connectFirestoreEmulator(db, 'localhost', 8081)
+connectAuthEmulator(auth, 'http://localhost:9099')
+connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+connectStorageEmulator(storage, '127.0.0.1', 9199)
 
 export { auth, db, analytics, fbFunctions, storage }
