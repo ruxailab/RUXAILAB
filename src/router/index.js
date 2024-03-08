@@ -37,7 +37,11 @@ router.beforeEach(async (to, from, next) => {
       return next(redirect())
     }
   }
-
+  else if(user){
+    if(to.path == '/signin' || to.path == '/signup'){
+      return next(redirect())
+    }
+  }
   next()
 })
 
