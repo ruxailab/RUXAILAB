@@ -33,6 +33,9 @@
           <v-tab @click="tab = 3">
             Analytics
           </v-tab>
+          <v-tab @click="tab = 4">
+            python
+          </v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
@@ -315,10 +318,32 @@
               </v-col>
             </v-row>
           </v-card>
+          <!-- tab 3 analytics -->
           <AnalyticsView v-if="tab == 3" />
         </div>
       </ShowInfo>
     </v-row>
+
+    <!-- tab 4 python test -->
+    <v-card v-if="tab == 4" style="background: #f5f7ff">
+      {{ testWeights }}
+      {{ scoresPercentageHTA }}
+      <v-btn
+        v-if="tab == 4"
+        class="mt-6 mb-4"
+        large
+        align="center"
+        color="#FCA326"
+        elevation="5"
+        @click="pythonFunction"
+      >
+        python
+      </v-btn>
+    </v-card>
+    <!-- <weight-table ref="gato" /> -->
+    <!-- <v-row>
+
+    </v-row> -->
   </div>
 </template>
 
@@ -328,7 +353,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-
+//import WeightTable from '@/components/molecules/WeightTable.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -339,6 +364,7 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
+    //WeightTable,
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
@@ -354,6 +380,12 @@ export default {
     },
     evaluatorStatistics() {
       return this.$store.state.Answer.evaluatorStatistics
+    },
+    testWeights() {
+      return this.$store.state.Tests.Test.testWeights
+    },
+    scoresPercentageHTA() {
+      return this.$store.state.Tests.scoresPercentage
     },
     heuristicsEvaluator() {
       const table = {
@@ -498,13 +530,11 @@ export default {
   },
   mounted() {
     this.array_scores = this.usuability_percentage_array()
-    this.enviarDadosParaCloudFunction()
-    this.enviarDadosParaCloudFunctionSayHello()
+
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.usuability_percentage_array()
-    this.enviarDadosParaCloudFunction()
   },
   methods: {
     getColor(value, max, min) {
@@ -554,46 +584,30 @@ export default {
     },
     //'http://127.0.0.1:5001/retlab-dev/us-central1/get_scores'
 
-    async enviarDadosParaCloudFunction() {
-      const array_scores_env = this.array_scores
-      console.log(array_scores_env)
+    async pythonFunction() {
+      const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
+      const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
+      const caminhoTestScore = this.$store.state.Tests.scoresPercentage
       try {
-        const resposta = await fetch('http://127.0.0.1:5001/retlab-dev/us-central1/get_scores', {
+        const resposta = await fetch(
+          'http://127.0.0.1:5001/retlab-dev/us-central1/say_hello',
+          {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ array_scores_env}),
-        })
+            body: JSON.stringify({
+              caminhoTestStructure,
+              caminhoTestWeights,
+              caminhoTestScore,
+            }),
+          },
+        )
         const data = await resposta.json()
         console.log(data.message)
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
-    },
-    enviarDadosParaCloudFunctionSayHello() {
-      fetch('http://127.0.0.1:5001/retlab-dev/us-central1/say_hello', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ array_scores: this.array_scores }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(
-              'Ocorreu um erro ao enviar os dados para a Cloud Function.',
-            )
-          }
-          return response.json()
-        })
-        .then((data) => {
-          console.log('Resposta da Cloud Function:', data)
-          // Faça algo com a resposta, se necessário
-        })
-        .catch((error) => {
-          console.error('Erro:', error)
-        })
     },
   },
 }
