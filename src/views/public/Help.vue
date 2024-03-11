@@ -35,18 +35,15 @@
                 </v-list-item-title>
                 <v-expand-transition>
                   <v-row v-if="!item.isCollapsed">
-                    <v-col cols="6" align="justify">
+                    <v-col cols="6" xs="4" sm="6" md="6" lg="7" xl="6" align="justify">
                       <div class="subtitle-1 ml-5">
                         {{ item.content }}
                       </div>
-                    </v-col>
-                    <v-col cols="6" align="center">
-                      <div class="px-0">
+                      <div class="ml-5">
                         <v-img
-                          max-height="250"
-                          max-width="400"
-                          src="@/assets/CreateTest.gif"
-                        />
+                        max-width="800"  
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        style="object-fit: contain"  />
                       </div>
                     </v-col>
                   </v-row>
@@ -74,18 +71,15 @@
                 </v-list-item-title>
                 <v-expand-transition>
                   <v-row v-if="!item.isCollapsed">
-                    <v-col cols="6" align="justify">
+                    <v-col cols="6" xs="4" sm="6" md="7" lg="7" xl="6" align="justify">
                       <div class="subtitle-1 ml-5">
                         {{ item.content }}
                       </div>
-                    </v-col>
-                    <v-col cols="6" align="center">
-                      <div class="px-0">
+                      <div class="ml-5">
                         <v-img
-                          max-height="250"
-                          max-width="400"
-                          src="https://im2.ezgif.com/tmp/ezgif-2-1b8014c1f0.gif"
-                        />
+                        max-width="800"  
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        style="object-fit: contain"  />
                       </div>
                     </v-col>
                   </v-row>
@@ -107,63 +101,74 @@ export default {
       {
           title: 'How do I create a test?',
           content:
-            'To initiate the creation of a heuristic test by clicking on the plus icon, selecting Heuristic Test, specifying project particulars, and proceeding to the dedicated manager page.',
+            'To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.',
+          gif: 'create_test.gif',
           isCollapsed: true, // Initially collapsed
         },
         {
           title: 'How I setup my Heuristic test?',
           content:
-            'To initiate the setup of your Heuristics test you como to edit test and press the plus icon button,add title and the first question to your heuristic, go to options and create the answer options and the values, then save the modifications.',
+            'To set up your Heuristic test, start by accessing the "Edit Test" option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.',
+            gif: 'hsetup.gif',
           isCollapsed: true,
         },
         {
           title: 'How I delete my test?',
           content:
-            'To delete your test, tou go to the left bar and goes to options button, and click in DELETE TEST button.',
+            'To delete your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "DELETE TEST" button.',
+            gif: 'del_test.gif',
           isCollapsed: true,
         },
         {
           title: 'How to create a template?',
           content:
-            'To create a template of your test, tou go to the left bar and goes to options button, and click in CREATE TEMPLATE button.',
+            'To create a template for your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "CREATE TEMPLATE" option.',
+            gif: 'create-temp.gif',
           isCollapsed: true,
         },
         {
           title: 'How to use a template?',
           content:
-            'To use a template, you go to the tests page, in templates in PERSONAL is yours templates and explore is the publics.',
+            "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+            gif: 'use-temp.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to create a CSV?',
+          title: 'How to preview your Test?',
           content:
-            'To create a CSV you go on Edit Test click in .CSV IMPORT button and edit the CSV with your heuristics.',
+            'On the leftside bar, click on the "Preview" option then start the test answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the "Answers" section.',
+          gif: 'preview_test.gif',
           isCollapsed: true,
         },
         {
           title: 'How to import my CSV?',
           content:
-            'To import a your CSV you go on Edit Test click in UPDATE button and select your CSV file with the heuristics.',
+            'To import your CSV, navigate to the "Edit Test" section, then click the "UPDATE" button. Select your CSV file containing the heuristics.',
+          gif: 'csv.gif',
           isCollapsed: true,
         },
         {
           title: 'How to invite cooperators?',
           content:
-            'To invite a cooperator you go in your test in manager page and select Cooperators on left bar, click in Select cooperator and write the email of your cooperator, choose the role of the cooperator and send in bottom right.',
+            'To invite collaborators, navigate to the manager page of your test. From there, select "Cooperators" on the left sidebar. Click on "Select cooperator" and enter the email of your collaborator. Choose the collaborator\'s role, then send the invitation by clicking on the bottom right button.',
+          gif: 'sendinvite.gif',
           isCollapsed: true,
         },
         {
           title: 'How to analyse the results?',
           content:
-            'To analyse your results you go in your test in manager page and select Answers on left bar, and you can visualize statistics, evaluators and heuristics.',
+            'To analyze your results, navigate to the manager page of your test. From there, select "Answers" on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.',
+          gif: 'analytics.gif',
           isCollapsed: true,
         },
         {
           title: 'How to send a message to my cooperators?',
           content:
-            'To send a message you go in your test in manager page and select Cooperators on left bar, click on a three dots icon of a cooperator and select Send a message and write a message with Title and Content.',
+            'To send a message, navigate to the manager page of your test. Select "Cooperators" from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose "Send a message" and write your message with a title and content.',
+          gif: 'send_message.gif',
           isCollapsed: true,
-        },      ],
+        },      
+      ],
     }
   },
 
