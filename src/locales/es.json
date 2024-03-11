@@ -82,7 +82,10 @@
     "passwordRequired": "Se requiere contraseña",
     "passwordValidate": "La contraseña debe tener al menos 6 caracteres",
     "differentPasswords": "Diferentes contraseñas",
-    "fieldRequired": "Campo requerido"
+    "fieldRequired": "Campo requerido",
+    "userNotExist": "Este usuario no existe.",
+    "incorrectPassword": "Contraseña incorrecta.",
+    "incorrectCredential": "Usuario o contraseña incorrectos."
   },
   "Introduction": {
     "title": "UX LAB Remoto",

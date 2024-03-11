@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="900px">
+  <v-col>
+    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
       <!-- tabs  -->
       <template>
         <v-tabs
@@ -74,7 +74,11 @@
                             row
                             class="justify-space-between"
                           >
-                            <v-tooltip v-for="(r, rad) in importance" :key="rad" bottom>
+                            <v-tooltip
+                              v-for="(r, rad) in importance"
+                              :key="rad"
+                              bottom
+                            >
                               <template v-slot:activator="{ on, attrs }">
                                 <v-radio
                                   :label="`${r}`"
@@ -88,7 +92,10 @@
                                   v-on="on"
                                 />
                               </template>
-                              <span> H{{ f + (tabs + 1) }} has {{ importt[r-1] }} than  H {{ tabs+1 }}</span>
+                              <span>
+                                H{{ f + (tabs + 1) }} has
+                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span
+                              >
                             </v-tooltip>
                           </v-radio-group>
                         </td>
@@ -99,11 +106,12 @@
                 <!-- save button -->
                 <v-row align="center" justify="space-around">
                   <v-btn
-                    class="mt-6 mb-4"
+                    dark
+                    depressed
+                    class="mt-8 mb-4"
                     large
                     align="center"
                     color="#FCA326"
-                    elevation="5"
                     type="submit"
                     @click="updateDatas()"
                   >
@@ -126,9 +134,7 @@
         </v-tabs-items>
       </template>
     </v-card>
-    <!-- <heuristics-test-answer-vue ref="Scores" /> -->
-    {{ scoresPercentage }}
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -157,7 +163,17 @@ export default {
         'Very Strongly Less Important': 8,
         'Extremely Less Important': 9,
       },
-      importt: ['Equal Importance', 'Moderate Importance', 'Strong Importance', 'Very Strong Importance', 'Extreme Importance', 'Moderately Less Important', 'Strongly Less Important', 'Very Strongly Less Important', 'Extremely Less Important' ],
+      importt: [
+        'Equal Importance',
+        'Moderate Importance',
+        'Strong Importance',
+        'Very Strong Importance',
+        'Extreme Importance',
+        'Moderately Less Important',
+        'Strongly Less Important',
+        'Very Strongly Less Important',
+        'Extremely Less Important',
+      ],
     }
   },
   computed: {

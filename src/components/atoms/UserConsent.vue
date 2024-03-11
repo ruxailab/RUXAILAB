@@ -1,14 +1,14 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="8">
+      <v-col>
         <v-textarea
-          filled
-          v-model="consent"
-          name="input-7-4"
-          :label="$t('UserTestTable.titles.consentForm')"
-          placeholder="You agree to the following terms and conditions..."
           rows="3"
+          outlined
+          v-model="consent"
+          color="orange"
+          class="mx-6 mt-3"
+          placeholder="Consent Form..."
           @change="saveState()"
         ></v-textarea>
       </v-col>
@@ -38,7 +38,7 @@ export default {
       this.test.testStructure.consent = this.consent
     },
     getConsent() {
-      if(this.test.testStructure.consent) {
+      if (this.test.testStructure.consent) {
         this.consent = this.test.testStructure.consent
       }
     },
@@ -46,5 +46,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.v-text-field--outlined >>> fieldset {
+  border-radius: 25px;
+  border: 1px solid #ffceb2;
+}
 </style>

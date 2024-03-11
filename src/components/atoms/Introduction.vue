@@ -9,7 +9,7 @@
         <v-container>
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
-              <h1 class="display-3 font-weight-regular mb-4 white--text">
+              <h1 class="display-3 font-weight-regular mb-4 mt-16 white--text">
                 {{ $t('Introduction.title') }}
               </h1>
               <h4 class="display-1 white--text mb-4">
@@ -37,9 +37,11 @@
     <v-container class="hidden-md-and-up ma-0 pa-0">
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
-          <h1 class="display-3 font-weight-regular white--text text-center">
+          <v-col>
+          <h1 class="display-3 font-weight-regular white--text text-center mt-5">
             {{ $t('Introduction.title') }}
           </h1>
+          </v-col>  
         </div>
         <v-img
           src="@/assets/landing/introductionMobile.svg"

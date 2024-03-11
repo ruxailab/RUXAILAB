@@ -355,6 +355,7 @@
 <script>
 import TestAdmin from '@/models/TestAdmin'
 import Test from '@/models/Test'
+import Vue from 'vue'
 
 export default {
   data: () => ({
@@ -384,6 +385,9 @@ export default {
       this.test.userTestStatus = {
         user: false,
         moderator: false,
+        consentStatus: 'open',
+        preTestStatus: 'closed',
+        postTestStatus: 'closed',
       }
       this.validate()
     },
@@ -418,7 +422,7 @@ export default {
           this.submit()
         }
       } else {
-        alert('Please enter a title')
+        Vue.$toast.warning('Please enter a title')
       }
     },
   },
