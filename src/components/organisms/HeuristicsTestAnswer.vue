@@ -33,9 +33,6 @@
           <v-tab @click="tab = 3">
             Analytics
           </v-tab>
-          <v-tab @click="tab = 4">
-            python
-          </v-tab>
         </v-tabs>
 
         <!-- Main Tabs Content -->
@@ -323,27 +320,6 @@
         </div>
       </ShowInfo>
     </v-row>
-
-    <!-- tab 4 python test -->
-    <v-card v-if="tab == 4" style="background: #f5f7ff">
-      {{ testWeights }}
-      {{ scoresPercentageHTA }}
-      <v-btn
-        v-if="tab == 4"
-        class="mt-6 mb-4"
-        large
-        align="center"
-        color="#FCA326"
-        elevation="5"
-        @click="pythonFunction"
-      >
-        python
-      </v-btn>
-    </v-card>
-    <!-- <weight-table ref="gato" /> -->
-    <!-- <v-row>
-
-    </v-row> -->
   </div>
 </template>
 
@@ -353,7 +329,6 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-//import WeightTable from '@/components/molecules/WeightTable.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -364,7 +339,6 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
-    //WeightTable,
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
@@ -427,6 +401,7 @@ export default {
             }
           })
         })
+        console.log(table)
       }
       return table
     },
@@ -486,7 +461,6 @@ export default {
               .reduce((total, value) => total + value / results.length, 0)
               .toFixed(2),
           })
-          console.log(this.heuristicsEvaluator.items)
         })
       }
       console.log(table)
@@ -530,6 +504,7 @@ export default {
   },
   mounted() {
     this.array_scores = this.usuability_percentage_array()
+    this.pythonFunction()
 
   },
   async created() {

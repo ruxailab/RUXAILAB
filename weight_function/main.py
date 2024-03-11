@@ -184,12 +184,16 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
     data_heuristics_usability_score_weights = {'Heuristics': heuristicas, 'Usability_Score': caminho_scorepercentage, 'Weights': normalized_weights}
     df_heuristics_usability_score_weights = pd.DataFrame(data_heuristics_usability_score_weights)
+
+    # Definindo a opção de exibição para mostrar todas as colunas
+    pd.set_option('display.max_columns', None)
+
+    # Imprimindo o DataFrame
     print("\n\nHeuristics x Usability Score x Weights \n\n", df_heuristics_usability_score_weights)
 
-    print("\n\n")
-
-    df_heuristics_usability_score_weights['Relative_Weight'] = df_heuristics_usability_score_weights.Usability_Score*df_heuristics_usability_score_weights.Weights
-    print("\n\nHeuristics x Usability Score x Weights x Relative_Weight\n\n",df_heuristics_usability_score_weights)
+    # Realizando os cálculos adicionais e imprimindo o DataFrame atualizado
+    df_heuristics_usability_score_weights['Relative_Weight'] = df_heuristics_usability_score_weights['Usability_Score'] * df_heuristics_usability_score_weights['Weights']
+    print("\n\nHeuristics x Usability Score x Weights x Relative_Weight\n\n", df_heuristics_usability_score_weights)
     
     # final usability score
     print("\n\n",df_heuristics_usability_score_weights.Relative_Weight.sum())
