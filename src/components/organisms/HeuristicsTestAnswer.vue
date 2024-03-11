@@ -38,7 +38,7 @@
         <!-- Main Tabs Content -->
         <div slot="content" class="ma-0 pa-0">
           <!-- Tab 1 - Statistics -->
-          <v-card v-if="tab == 0" style="background: #f5f7ff">
+          <v-card v-if="tab == 0" flat rounded="xl" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Statistics
             </v-card-title>
@@ -48,7 +48,7 @@
             <v-row justify="space-around" class="ma-0">
               <!-- Top Card -->
               <v-col cols="10">
-                <v-card class="cardStyle">
+                <v-card class="cardStyle my-6" flat>
                   <v-row justify="space-around" class="ma-0">
                     <!-- Average -->
                     <v-col cols="4">
@@ -110,7 +110,7 @@
           </v-card>
 
           <!-- Tab 2 - Evaluators -->
-          <v-card v-if="tab == 1" style="background: #f5f7ff">
+          <v-card v-if="tab == 1" flat rounded="xl" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Evaluators
             </v-card-title>
@@ -146,7 +146,7 @@
                   :headers="evaluatorStatistics.header"
                   :items="evaluatorStatistics.items"
                   :items-per-page="15"
-                  class="elevation-1 cardStyle mx-2"
+                  class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                 >
                   <template v-slot:item.result="{ item }">
                     <v-chip
@@ -180,7 +180,7 @@
                   "
                   :data="evaluatorStatistics.items.map((item) => item.result)"
                 />
-                <v-card>
+                <v-card flat rounded="xl" outlined class="my-4">
                   <v-card-text
                     v-if="test.cooperators.length <= 3"
                     class="text-center body-1"
@@ -194,7 +194,7 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card v-if="tab == 2" style="background: #f5f7ff">
+          <v-card rounded="xl" flat v-if="tab == 2" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Heuristics Data
             </v-card-title>
@@ -248,7 +248,7 @@
                       :headers="heuristicsEvaluator.header"
                       :items="heuristicsEvaluator.items"
                       :items-per-page="15"
-                      class="elevation-1 cardStyle"
+                      class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                       dense
                     >
                       <template
@@ -283,7 +283,7 @@
                       :headers="heuristicsStatistics.header"
                       :items="heuristicsStatistics.items"
                       :items-per-page="15"
-                      class="elevation-1 cardStyle"
+                      class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                       dense
                     >
                       <template v-slot:item.percentage="{ item }">
@@ -302,6 +302,7 @@
                   <!-- Bottom Tab 3 -->
                   <v-col v-if="ind == 2" cols="12">
                     <BarChart
+                      class="mx-2 mt-3 mb-6"
                       :labels="
                         heuristicsStatistics.items.map((item) => item.name)
                       "
@@ -505,7 +506,6 @@ export default {
   mounted() {
     this.array_scores = this.usuability_percentage_array()
     this.pythonFunction()
-
   },
   async created() {
     await this.$store.dispatch('getCurrentTestAnswerDoc')

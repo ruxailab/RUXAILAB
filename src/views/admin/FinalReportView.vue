@@ -3,11 +3,12 @@
     <ShowInfo style="padding: 0!important;" title="Final Report" />
 
     <v-stepper
+    rounded="xl"
       v-model="step"
       style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
       class="final-report-box"
     >
-      <v-stepper-header background-color="transparent">
+      <v-stepper-header style="background-color: orange;">
         <v-stepper-step :complete="step > 1" step="1" />
         <v-divider />
         <v-stepper-step :complete="step > 2" step="2" />
@@ -22,7 +23,11 @@
 
             <div class="row">
               <div class="col">
-                <div id="myTextarea" contenteditable class="form-control" />
+                <div
+                  id="myTextarea"
+                  contenteditable
+                  class="form-control"
+                />
               </div>
             </div>
           </div>
@@ -118,7 +123,8 @@ export default {
 }
 .form-control {
   background-color: white;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
   width: 100%;
   height: 65vh;
   resize: none;

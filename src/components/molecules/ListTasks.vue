@@ -13,7 +13,7 @@
         <v-row align="center" class="ma-0">
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
-              {{ $t('UserTestTable.titles.currentTasks')}}
+              {{ $t('UserTestTable.titles.currentTasks') }}
             </p>
           </v-col>
           <v-col>
@@ -51,8 +51,8 @@
       <template v-slot:[`item.hasScreenRecord`]="{ item }">
         <v-simple-checkbox v-model="item.hasScreenRecord" disabled />
       </template>
-      <template v-slot:[`item.hasPost`]="{ item }">
-        <v-checkbox v-model="item.hasPost" disabled />
+      <template v-slot:[`item.postQuestion`]="{ item }">
+        <v-checkbox v-model="item.postQuestion" disabled />
       </template>
       <template v-slot:[`item.taskTip`]="{ item }">
         <v-checkbox v-model="item.taskTip" disabled />
@@ -104,7 +104,7 @@ export default {
       },
       { text: 'Description', value: 'taskDescription' },
       { text: 'Tip', value: 'taskTip' },
-      { text: 'Post Test', value: 'hasPost' },
+      { text: 'Post question', value: 'postQuestion' },
       { text: 'Screen Record', value: 'hasScreenRecord' },
       { text: 'Camera', value: 'hasCamRecord' },
       { text: 'Eye Tracker', value: 'hasEye' },
@@ -116,7 +116,7 @@ export default {
       taskName: '',
       taskDescription: null,
       taskTip: null,
-      hasPost: null,
+      postQuestion: null,
       taskType: null,
       hasAudioRecord: false,
       hasScreenRecord: false,
@@ -139,9 +139,9 @@ export default {
     },
     deleteItem(item) {
       const index = this.allTasks.indexOf(item)
-      console.log(index);
+      console.log(index)
       confirm('Are you sure you want to delete this task?')
-      console.log(item);
+      console.log(item)
       this.allTasks.splice(index, 1)
     },
     addTask() {
@@ -159,7 +159,7 @@ export default {
         taskName: '',
         taskDescription: null,
         taskTip: null,
-        hasPost: false,
+        postQuestion: null,
         taskType: null,
         hasAudioRecord: false,
         hasScreenRecord: false,

@@ -321,9 +321,7 @@
               <v-list-item v-else-if="item.id == 2" @click="index = item.id">
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      item.icon
-                    }}
+                    {{ item.icon }}
                   </v-icon>
                 </v-list-item-icon>
 
@@ -411,8 +409,11 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="test.testType == 'User'">
+    <div v-if="test.testType == 'User' && test.userTestType === 'unmoderated'">
       <UserTestView />
+    </div>
+    <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
+      <ModeratedTestView />
     </div>
   </div>
 </template>
@@ -428,6 +429,8 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
+import ModeratedTestView from './ModeratedTestView.vue'
+import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -438,6 +441,7 @@ export default {
     CardSignIn,
     CardSignUp,
     UserTestView,
+    ModeratedTestView,
   },
   props: {
     id: { type: String, default: '' },
@@ -512,7 +516,7 @@ export default {
       }
     },
   },
-  
+
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
@@ -521,10 +525,10 @@ export default {
   },
   methods: {
     startTest() {
-        if(this.test.testStructure.length == 0) {
-          alert("This test don't have any heuristic")
-          this.$router.push('/managerview/' + this.test.id)
-        }
+      if (this.test.testStructure.length == 0) {
+        Vue.$toast.info('This test don\'t have any heuristic')
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.start = !this.start
     },
     updateComment(comment, heurisIndex, answerIndex) {
@@ -652,6 +656,9 @@ export default {
 }
 </script>
 <style scoped>
+body {
+  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+}
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
