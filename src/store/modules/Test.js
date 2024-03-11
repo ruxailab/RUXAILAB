@@ -4,6 +4,8 @@
  */
 
 // import TestController
+import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
 // import Test from '../../models/Test'
 
@@ -18,10 +20,16 @@ export default {
     module: 'test',
     tasks: [],
     currentImageUrl: '',
+    welcomeMessage: '',
+    landingPage: '',
+    participantCamera: '',
     consent: '',
     preTest: [],
     postTest: [],
     scoresPercentage: [],
+    finalMessage: '',
+    remoteStream: null,
+    localStream: null,
   },
   getters: {
     tests(state) {
@@ -48,6 +56,24 @@ export default {
     consent(state) {
       return state.consent
     },
+    welcomeMessage(state) {
+      return state.welcomeMessage
+    },
+    landingPage(state) {
+      return state.landingPage
+    },
+    participantCamera(state) {
+      return state.participantCamera
+    },
+    finalMessage(state) {
+      return state.finalMessage
+    },
+    remoteStream(state) {
+      return state.remoteStream
+    },
+    localStream(state) {
+      return state.localStream
+    },
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -59,6 +85,9 @@ export default {
     ADD_TASKS(state, payload) {
       //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
+    },
+    SET_TASKS(state, payload) {
+      state.tasks = payload
     },
     SET_CURRENT_IMAGE_URL(state, payload) {
       state.currentImageUrl = payload
@@ -75,6 +104,24 @@ export default {
     SET_SCORES_PERCENTAGE(state, payload) {
       state.scoresPercentage = payload
     },
+    SET_WELCOME(state, payload) {
+      state.welcomeMessage = payload
+    },
+    SET_LANDING(state, payload) {
+      state.landingPage = payload
+    },
+    SET_PARTICIPANT_CAMERA(state, payload) {
+      state.participantCamera = payload
+    },
+    SET_FINAL_MESSAGE(state, payload) {
+      state.finalMessage = payload
+    },
+    SET_REMOTE_STREAM(state, stream) {
+      state.remoteStream = stream
+    },
+    SET_LOCAL_STREAM(state, stream) {
+      state.localStream = stream
+    },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
     },
@@ -88,6 +135,10 @@ export default {
       state.consent = ''
       state.preTest = []
       state.postTest = []
+      state.welcomeMessage = ''
+      state.landingPage = ''
+      state.participantCamera = ''
+      state.finalMessage = ''
     },
   },
   actions: {
@@ -265,6 +316,13 @@ export default {
         commit('setLoading', false)
       }
     },
+    setTasks({ commit }, payload) {
+      try {
+        commit('SET_TASKS', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
     },
@@ -289,12 +347,46 @@ export default {
         commit('setError', true)
       }
     },
-    setScoresPercentage({ commit }, payload){
+    setScoresPercentage({ commit }, payload) {
       try {
         commit('SET_SCORES_PERCENTAGE', payload)
       } catch {
         commit('setError', true)
       }
+    },
+    async setWelcomeMessage({ commit }, payload) {
+      try {
+        commit('SET_WELCOME', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setLandingPage({ commit }, payload) {
+      try {
+        commit('SET_LANDING', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setParticipantCamera({ commit }, payload) {
+      try {
+        commit('SET_PARTICIPANT_CAMERA', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    async setFinalMessage({ commit }, payload) {
+      try {
+        commit('SET_FINAL_MESSAGE', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setRemoteStream({ commit }, stream) {
+      commit('SET_REMOTE_STREAM', stream)
+    },
+    setLocalStream({ commit }, stream) {
+      commit('SET_LOCAL_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {
@@ -302,6 +394,39 @@ export default {
         console.log('clean test')
       } catch {
         commit('setError', true)
+      }
+    },
+    async hangUp({ commit }, roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+
+        const roomSnapshot = await getDoc(roomRef)
+        if (roomSnapshot.exists()) {
+          console.log('Room document exists. Deleting...')
+
+          const calleeCandidatesSnapshot = await getDocs(
+            collection(roomRef, 'calleeCandidates'),
+          )
+          calleeCandidatesSnapshot.forEach(async (candidate) => {
+            await deleteDoc(candidate.ref)
+            console.log('Deleted callee candidate:', candidate.id)
+          })
+
+          const callerCandidatesSnapshot = await getDocs(
+            collection(roomRef, 'callerCandidates'),
+          )
+          callerCandidatesSnapshot.forEach(async (candidate) => {
+            await deleteDoc(candidate.ref)
+            console.log('Deleted caller candidate:', candidate.id)
+          })
+
+          await deleteDoc(roomRef)
+          console.log('Deleted room document:', roomId)
+        } else {
+          console.log('Room document does not exist.')
+        }
+      } catch (error) {
+        console.error('Error deleting room and candidates:', error)
       }
     },
     coops(state) {

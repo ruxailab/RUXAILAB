@@ -3,8 +3,9 @@
     <template v-slot:activator="{ on }">
       <v-btn
         color="green"
-        class="ml-5 mr-auto white--text"
+        class="ml-4 my-2 mr-auto white--text"
         variant="tonal"
+        depressed
         v-on="on"
       >
         Tip

@@ -66,7 +66,7 @@
               <v-col class="text-div">
                 <div
                   v-if="accessLevel == 0"
-                  class="display-3 mb-4 white--text mobile-center"
+                  class="display-3 mt-7 mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
                   {{ $t('titles.manager') }}
@@ -223,6 +223,7 @@ import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
 import i18n from '@/i18n'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -489,12 +490,12 @@ export default {
             }
             // User invited, but they don't have an account
             else {
-              alert(i18n.t('errors.signupWithInvitationEmail'))
+              Vue.$toast.error(i18n.t('errors.signupWithInvitationEmail'))
               await this.$store.dispatch('logout')
               this.$router.push({ path: '/' })
             }
           } else {
-            alert(i18n.t('errors.invalidInvitation'))
+            Vue.$toast.error(i18n.t('errors.invalidInvitation'))
             this.$store.commit('setError', i18n.t('errors.invalidInvitation'))
             this.$router.push({ path: '/' })
           }

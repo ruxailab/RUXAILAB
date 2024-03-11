@@ -11,22 +11,22 @@
 </div>
 
 <hr />
-<div>
+<div align="center">
   <table >
     <tr>
-      <td><img src="public/HomePic.png" alt="User Friendly" width="350"/></td>
+      <td><img src="public/HomePic.png" alt="User Friendly" width="600"/></td>
       <td>User Friendly</td>
     </tr>
     <tr>
-      <td><img src="public/TestPic.png" alt="Heuristics Tests" width="350"/></td>
+      <td><img src="public/TestPic.png" alt="Heuristics Tests" width="600"/></td>
       <td>Heuristics Tests</td>
     </tr>
     <tr>
-      <td><img src="public/AnswersPic.png" alt="Answers Views" width="350"/></td>
+      <td><img src="public/AnswersPic.png" alt="Answers Views" width="600"/></td>
       <td>Answers Views</td>
     </tr>
     <tr>
-      <td><img src="public/AnalyticsPic.png" alt="Analytics Graphs" width="350"/></td>
+      <td><img src="public/AnalyticsPic.png" alt="Analytics Graphs" width="600"/></td>
       <td>Analytics Graphs</td>
     </tr>
   </table>
@@ -53,6 +53,10 @@ For commercial support, academic collaborations, and answers to common questions
 - Vue.js version: 2.6.12
 - Vue CLI version: 4.3.1
 - Vuetify version: 2.3.10
+
+## Video Guide
+
+<a href='https://youtu.be/dAf4LRxITCc'>Tutorial - Running RUXAILAB with Firebase Emulators   🖥️</a>
 
 ## Getting Started
 
@@ -81,7 +85,7 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV=""
   VUE_APP_FIREBASE_APP_ID_DEV=""
 
-  //Dosen't need changes
+  // Doesn't need changes
   VUE_APP_I18N_LOCALE_DEV="en"
   VUE_APP_I18N_FALLBACK_LOCALE_DEV="en"
   ```
