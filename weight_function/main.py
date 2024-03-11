@@ -8,7 +8,6 @@ import requests
 
 initialize_app()
 
-array_scores_global = [1,2,3]
 
 def calculate_eigen(matrix):
     eigenvalues, eigenvectors = np.linalg.eig(matrix)
@@ -113,32 +112,6 @@ def populate_ahp_matrix(ahp_df, pesos):
     return ahp_df
 
 
-def process_scores(array_scores):
-    # Process the array_scores here
-    print('Array scores received:', array_scores)
-    # Example: Calculate the sum of scores
-    sum_scores = array_scores
-    #array_scores_global = sum_scores
-    return sum_scores
-
-@https_fn.on_request(
-    cors=options.CorsOptions(
-        cors_origins=['http://localhost:8080'],
-        cors_methods=["POST"],
-    )
-)
-def get_scores(req: https_fn.Request) -> https_fn.Response:
-    req_data = req.get_json()
-    array_scores = req_data.get('array_scores')
-    print('Data received:', array_scores)
-    # Process the array_scores using another function
-    processed_scores = process_scores(array_scores)
-    headers = {
-        "Access-Control-Allow-Origin": "http://localhost:8080" 
-    }
-    return https_fn.Response(json.dumps(processed_scores), content_type="application/json")
-
-
 @https_fn.on_request(
     cors=options.CorsOptions(
         cors_origins=[r"firebase\.com$",  r"http://localhost:8080"],
@@ -149,7 +122,7 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     req_data = req.get_json()
     caminho_structure = req_data.get("caminhoTestStructure")
     caminho_testWeights = req_data.get("caminhoTestWeights")
-    usability_score = req_data.get("score_percentage")
+    caminho_scorepercentageOBJ = req_data.get("caminhoTestScore")
 
 
 # #titulos como esta no csv
@@ -200,17 +173,28 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     print("\n\nCONSISTENCY RATIO = ", CR)
     print("\n\nCONSISTENCY INTERPRETATION = ", consistency_interpretation)
 
+
 ############### Heuristics x Usability Score x Weights ###############
     
     
-    print("\n\n", usability_score)
+    #print("\n\n", caminho_scorepercentage)
 
-    data_heuristics_usability_score_weights = {'Heuristics': heuristicas, 'Usability_Score': usability_score, 'Weights': normalized_weights}
+    caminho_scorepercentage = [float(valor) for valor in caminho_scorepercentageOBJ]
+    #print("\n\n", caminho_scorepercentageOBJ)
+
+    data_heuristics_usability_score_weights = {'Heuristics': heuristicas, 'Usability_Score': caminho_scorepercentage, 'Weights': normalized_weights}
     df_heuristics_usability_score_weights = pd.DataFrame(data_heuristics_usability_score_weights)
-    print("\n\nHeuristics x Usability Score x Weights ", df_heuristics_usability_score_weights)
+    print("\n\nHeuristics x Usability Score x Weights \n\n", df_heuristics_usability_score_weights)
 
-    print("\n\n", array_scores_global)
+    print("\n\n")
+
+    df_heuristics_usability_score_weights['Relative_Weight'] = df_heuristics_usability_score_weights.Usability_Score*df_heuristics_usability_score_weights.Weights
+    print("\n\nHeuristics x Usability Score x Weights x Relative_Weight\n\n",df_heuristics_usability_score_weights)
     
+    # final usability score
+    print("\n\n",df_heuristics_usability_score_weights.Relative_Weight.sum())
+
+    print("\n\n",df_heuristics_usability_score_weights.Weights.sum())
 
     response_data = {
         "tabela": ahp_df.to_json(),
