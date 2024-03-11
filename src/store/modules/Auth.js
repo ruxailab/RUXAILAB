@@ -13,6 +13,8 @@ import {
 //import AuthController
 // import AuthController from "@/controllers/AuthController.js";
 import UserController from '@/controllers/UserController'
+import i18n from '@/i18n'
+import Vue from 'vue'
 
 // const AuthCont = new AuthController();
 //const UserCont = new UserController();
@@ -74,11 +76,11 @@ export default {
       } catch (err) {
         console.error(err)
         if (err.code === 'auth/invalid-email') {
-          alert('Este usuário não existe.')
+          commit('setError', {errorCode: 403, message:i18n.t('errors.userNotExist')})
         } else if (err.code === 'auth/wrong-password') {
-          alert('Senha incorreta.')
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectPassword')})
         } else {
-          alert('Usuário ou senha incorretos.')
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectCredential')})
         }
       } finally {
         commit('setLoading', false)

@@ -305,7 +305,7 @@
                   <v-list-item
                     link
                     v-bind="attrs"
-                    @click="taskIndex = i"
+                    @click="taskIndex = i, startTimer()"
                     v-on="on"
                     :disabled="isTaskDisabled(i)"
                     :class="{
@@ -499,11 +499,11 @@
                       false
                     "
                   >
-                    <audio-recorder
+                    <AudioRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></audio-recorder>
+                    ></AudioRecorder>
                   </v-row>
                   <v-row
                     v-if="
@@ -511,11 +511,11 @@
                       false
                     "
                   >
-                    <video-recorder
+                    <VideoRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></video-recorder>
+                    ></VideoRecorder>
                   </v-row>
                   <v-row
                     v-if="
@@ -523,13 +523,12 @@
                       false
                     "
                   >
-                    <screen-recorder
+                    <ScreenRecorder
                       :testId="testId"
                       :currentUserTestAnswer="currentUserTestAnswer"
                       :taskIndex="taskIndex"
-                    ></screen-recorder>
+                    ></ScreenRecorder>
                   </v-row>
-                  <v-spacer />
                   <v-row
                     v-if="
                       test.testStructure.userTasks[taskIndex].taskTip !== null
@@ -587,21 +586,21 @@
                 </v-col>
               </v-row>
               <v-row
-                v-if="test.testStructure.userTasks[taskIndex].hasPost"
+                v-if="test.testStructure.userTasks[taskIndex].postQuestion"
                 class="fill-height"
                 align="center"
                 justify="center"
               >
                 <v-col class="text-center">
                   <p class="text-h5">
-                    {{ test.testStructure.userTasks[taskIndex].hasPost }}
+                    {{ test.testStructure.userTasks[taskIndex].postQuestion }}
                   </p>
 
                   <v-text-field
                     class="mx-2"
                     v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
                     :placeholder="
-                      test.testStructure.userTasks[taskIndex].hasPost
+                      test.testStructure.userTasks[taskIndex].postQuestion
                     "
                     outlined
                   ></v-text-field>
@@ -635,7 +634,7 @@
                 <v-row justify="center">
                   <h1 class="mt-6">
                     {{ test.testTitle }} -
-                    {{ $t('UserTestTable.titles.postTest') }}
+                    {{ $t('UserTestView.titles.postTest') }}
                   </h1>
                 </v-row>
               </v-col>
@@ -708,6 +707,7 @@ import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -723,19 +723,7 @@ export default {
     ScreenRecorder,
   },
   data: () => ({
-    displayMediaOptions: {
-      video: {
-        displaySurface: 'window',
-        cursor: 'always',
-      },
-      audio: true,
-    },
-    isCapture: false,
-    mediaRecorder: [],
-    chunks: [],
-    isRecording: false,
     videoUrl: '',
-    isCapture: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -747,16 +735,9 @@ export default {
     taskIndex: 0,
     preTestIndex: null,
     items: [],
-    taskAnswers: {},
     fab: false,
-    res: 0,
     dialog: false,
-    videoStream: null,
-    mediaRecorder: null,
-    recordedChunks: [],
-    recording: false,
     allTasksCompleted: false,
-    recordedVideo: '',
   }),
   computed: {
     test() {
@@ -797,13 +778,12 @@ export default {
       if (this.items.length) {
         this.index = this.items[0].id
         if (this.items.find((obj) => obj.id == 0)) {
-          //se tiver preTest mexe no preTestIndex
           this.preTestIndex = this.items[0].value[0].id
         }
       }
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a task
+      this.$refs.rightView.scrollTop = 0
     },
     async user() {
       if (this.user) {
@@ -842,7 +822,7 @@ export default {
     },
     startTest() {
       if (this.test.testStructure.length == 0) {
-        alert("This test don't have any task")
+        Vue.$toast.info('This test don\'t have any task')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
@@ -851,6 +831,11 @@ export default {
       const timerComponent = this.$refs.timerComponent
 
       timerComponent.stopTimer()
+    },
+    startTimer(){
+            const timerComponent = this.$refs.timerComponent
+
+      timerComponent.startTimer()
     },
     handleTimerStopped(elapsedTime, taskIndex) {
       this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime

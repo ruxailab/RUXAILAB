@@ -2,7 +2,13 @@
   <div id="FileUpload" style="background-color:#F5F7FF">
     <v-col justify="center">
       <v-row class="px-6 pt-2">
-        <v-btn depressed dark color="orange" class="ma-2" @click="downloadTemplate">
+        <v-btn
+          depressed
+          dark
+          color="orange"
+          class="ma-2"
+          @click="downloadTemplate"
+        >
           Donwload CSV template
         </v-btn>
       </v-row>
@@ -39,6 +45,7 @@
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import Vue from 'vue'
 
 export default {
   data() {
@@ -62,6 +69,9 @@ export default {
       return this.$store.state.Tests.currentTest
     },
     testAnswerDocLength() {
+      if (!this.$store.getters.testAnswerDocument) {
+        return 0
+      }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
       const heuristicAnswersCount = Object.keys(heuristicAnswers).length
@@ -81,7 +91,7 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        alert('No csv file selected. \nPlease select one before procede.')
+        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
         this.loader = null
       }
     },

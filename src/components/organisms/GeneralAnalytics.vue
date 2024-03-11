@@ -11,7 +11,7 @@
                 <v-row justify="center">
                   <span class="cardTitle">Conclusion percentage</span>
                   <span class="conclusionPercentage mx-auto mb-1"
-                    >{{ getConclusionAverage() }}%</span
+                    >{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span
                   >
                   <v-col cols="8" class="mx-auto">
                     <v-progress-linear
@@ -38,11 +38,11 @@
                 <v-row justify="center">
                   <span class="cardSubtitle"
                     ><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
-                    {{ maxProgressPerTask() }}%</span
+                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span
                   >
                   <span class="cardSubtitle"
                     ><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
-                    {{ minProgressPerTask() }}%</span
+                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span
                   >
                   <span class="cardSubtitle"
                     >Total time<br />

@@ -99,7 +99,7 @@
           <v-btn color="red" class="ml-auto" dark @click="closeModal"
             ><v-icon class="mr-1">mdi-close</v-icon>{{ $t('buttons.close') }}</v-btn
           >
-          <v-btn color="green" dark @click="saveNewItem(), saveState()"
+          <v-btn color="orange" dark @click="saveNewItem(), saveState()"
             ><v-icon class="mr-1">mdi-content-save</v-icon>{{ $t('buttons.save') }}</v-btn
           >
         </v-card-actions>
