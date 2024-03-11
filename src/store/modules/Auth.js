@@ -76,11 +76,11 @@ export default {
       } catch (err) {
         console.error(err)
         if (err.code === 'auth/invalid-email') {
-          Vue.$toast.error(i18n.t('errors.userNotExist'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.userNotExist')})
         } else if (err.code === 'auth/wrong-password') {
-          Vue.$toast.error(i18n.t('errors.userNotExist'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectPassword')})
         } else {
-          Vue.$toast.error(i18n.t('errors.userNotExist'))
+          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectCredential')})
         }
       } finally {
         commit('setLoading', false)
