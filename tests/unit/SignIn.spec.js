@@ -2,8 +2,9 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '../test-utils'
 import SignInView from '@/views/public/SignInView.vue'
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import { waitFor } from '@testing-library/dom'
+import i18n from '@/i18n'
 
-global.alert = jest.fn()
 global.console.error = jest.fn()
 global.console.warn = jest.fn()
 
@@ -55,7 +56,10 @@ describe('SignIn', () => {
       await fireEvent.update(passwordInput, 'invalid-password')
       const submitButton = screen.getByRole('button', { name: /Sign-in/i })
       await fireEvent.click(submitButton)
-      expect(global.alert).toHaveBeenCalled()
+      await waitFor(() => {
+        expect(screen.getByText(i18n.t('errors.userNotExist'))).toBeInTheDocument()
+      })
+
     })
   })
 })
