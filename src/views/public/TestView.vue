@@ -526,7 +526,10 @@ export default {
   methods: {
     startTest() {
       if (this.test.testStructure.length == 0) {
-        Vue.$toast.info('This test don\'t have any heuristic')
+        this.$store.commit('setError', {
+          errorCode: 400,
+          message: "This test don't have any heuristic",
+        })
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
