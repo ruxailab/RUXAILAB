@@ -305,13 +305,17 @@ export default {
               this.userClicked = null
             })
             .catch((err) => {
-              console.error(err)
-              this.commit('setError', 'Error deleting user')
+              this.commit('setError', {
+                errorCode: 'auth',
+                message: 'Error deleting user',
+              })
             })
         })
         .catch((err) => {
-          console.error(err)
-          this.commit('setError', 'Error deleting user')
+          this.commit('setError', {
+            errorCode: 'auth',
+            message: 'Error deleting user',
+          })
         })
     },
     openManager(test) {
