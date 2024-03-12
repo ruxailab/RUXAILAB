@@ -1,7 +1,7 @@
 /**
  * Cooperators store module
  * @module cooperators
-*/
+ */
 
 import template from '@/assets/template.js'
 import { FirebaseFunctionsController } from '@/controllers/FirebaseFunctionsController'
@@ -44,7 +44,12 @@ export default {
         .then((doc) => {
           return doc.id
         })
-        .catch((err) => commit('setError', 'Error in createCooperators.' + err))
+        .catch((err) =>
+          commit('setError', {
+            errorCode: 'cooperatorsError',
+            message: err,
+          }),
+        )
 
       return docId
     },
@@ -74,8 +79,9 @@ export default {
         param: 'cooperators',
       })
 
-      dispatch('pushObject', payload)
-        .catch((err) => commit('setError', 'Error in pushCooperator.' + err))
+      dispatch('pushObject', payload).catch((err) =>
+        commit('setError', { errorCode: 'cooperatorsError', message: err }),
+      )
     },
     /**
      * This action updates a param in a existent cooperator,
@@ -97,11 +103,14 @@ export default {
         field: 'cooperators',
       })
 
-      if (!payload.identifier)
-        Object.assign(payload, { identifier: 'id' })
+      if (!payload.identifier) Object.assign(payload, { identifier: 'id' })
 
-      dispatch('updateArrayElement', payload)
-        .catch((err) => commit('setError', 'Error in updateCooperator.' + err))
+      dispatch('updateArrayElement', payload).catch((err) =>
+        commit('setError', {
+          errorCode: 'cooperatorsError',
+          message: err,
+        }),
+      )
     },
     /**
      * This action updates  an existing cooperator,
@@ -123,11 +132,14 @@ export default {
         field: 'cooperators',
       })
 
-      if (!payload.identifier)
-        Object.assign(payload, { identifier: 'id' })
+      if (!payload.identifier) Object.assign(payload, { identifier: 'id' })
 
-      dispatch('updateArrayElementObject', payload)
-        .catch((err) => commit('setError', 'Error in updateCooperatorObject.' + err))
+      dispatch('updateArrayElementObject', payload).catch((err) =>
+        commit('setError', {
+          errorCode: 'cooperatorsError',
+          message: err,
+        }),
+      )
     },
     /**
      * This action removes an existing cooperator,
@@ -148,8 +160,12 @@ export default {
         param: 'cooperators',
       })
 
-      dispatch('removeObject', payload)
-        .catch((err) => commit('setError', 'Error in removeCooperator.' + err))
+      dispatch('removeObject', payload).catch((err) =>
+        commit('setError', {
+          errorCode: 'cooperatorsError',
+          message: err,
+        }),
+      )
     },
     /**
      * This action deletes the cooperator document,
@@ -165,8 +181,12 @@ export default {
       commit('setLoading', true)
       payload = Object.assign(payload, { collection: 'cooperators' })
 
-      dispatch('deleteObject', payload)
-        .catch((err) => commit('setError', 'Error in deleteCooperators.' + err))
+      dispatch('deleteObject', payload).catch((err) =>
+        commit('setError', {
+          errorCode: 'cooperatorsError',
+          message: err,
+        }),
+      )
     },
     /**
      * This action updates the cooperator document,
@@ -188,8 +208,12 @@ export default {
       commit('setLoading', true)
       payload = Object.assign(payload, { collection: 'cooperators' })
 
-      dispatch('updateObject', payload)
-        .catch((err) => commit('setError', 'Error in updateTestCooperators.' + err))
+      dispatch('updateObject', payload).catch((err) =>
+        commit('setError', {
+          errorCode: 'cooperatorsError',
+          message: err,
+        }),
+      )
     },
     /**
      * This action send a email,
@@ -214,14 +238,14 @@ export default {
         payload.link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`
 
         await FirebaseFunctionsController.callHttpsCallableFunction(
-          'sendEmail', Object.assign(payload, { template: template.getTemplate(payload) }),
+          'sendEmail',
+          Object.assign(payload, { template: template.getTemplate(payload) }),
         )
       } catch (e) {
         console.error(e)
       } finally {
         commit('setLoading', false)
       }
-
     },
   },
 }
