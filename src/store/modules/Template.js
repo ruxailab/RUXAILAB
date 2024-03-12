@@ -27,8 +27,10 @@ export default {
         commit('setLoading', true)
         await templateController.createTemplate(payload)
       } catch (e) {
-        console.log(e)
-        commit('setError', true)
+        commit('setError', {
+          errorCode: 'Error',
+          message: 'createTemplate failed',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -67,14 +69,23 @@ export default {
         commit('setLoading', false)
       }
     },
-    
+
     async getCurrentUserAndPublicTemplates({ commit, rootState }) {
       try {
         commit('setLoading', true)
-        const publicTemps = (await templateController.getPublicTemplates()) ?? []
-        const userOwnedTemps = (await templateController.getTemplatesOfUser(rootState.Auth.user.id)) ?? []
-        
-        const res = [...publicTemps, ...userOwnedTemps.filter(temp => !publicTemps.some(i => i.id === temp.id))]
+        const publicTemps =
+          (await templateController.getPublicTemplates()) ?? []
+        const userOwnedTemps =
+          (await templateController.getTemplatesOfUser(
+            rootState.Auth.user.id,
+          )) ?? []
+
+        const res = [
+          ...publicTemps,
+          ...userOwnedTemps.filter(
+            (temp) => !publicTemps.some((i) => i.id === temp.id),
+          ),
+        ]
         commit('SET_TEMPLATES', res)
       } catch (e) {
         console.error(e)
