@@ -490,13 +490,18 @@ export default {
             }
             // User invited, but they don't have an account
             else {
-              Vue.$toast.error(i18n.t('errors.signupWithInvitationEmail'))
+              this.$store.commit('setError', {
+                errorCode: 'inviteError',
+                message: i18n.t('errors.signupWithInvitationEmail'),
+              })
               await this.$store.dispatch('logout')
               this.$router.push({ path: '/' })
             }
           } else {
-            Vue.$toast.error(i18n.t('errors.invalidInvitation'))
-            this.$store.commit('setError', i18n.t('errors.invalidInvitation'))
+            this.$store.commit('setError', {
+              errorCode: 'inviteError',
+              message: i18n.t('errors.invalidInvitation'),
+            })
             this.$router.push({ path: '/' })
           }
         } else {
