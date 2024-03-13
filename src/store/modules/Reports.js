@@ -40,7 +40,9 @@ export default {
         .then((doc) => {
           return doc.id
         })
-        .catch((err) => commit('setError', 'Error in createReport.' + err))
+        .catch((err) =>
+          commit('setError', { errorCode: 'reportError', message: err }),
+        )
 
       return docRef
     },
@@ -57,7 +59,7 @@ export default {
       payload = Object.assign(payload, { collection: 'reports' })
 
       dispatch('deleteObject', payload).catch((err) =>
-        commit('setError', 'Error in deleteReport.' + err),
+        commit('setError', { errorCode: 'reportError', message: err }),
       )
     },
     /**
@@ -74,7 +76,7 @@ export default {
       payload = Object.assign(payload, { collection: 'reports' })
 
       const reps = await dispatch('getObject', payload).catch((err) =>
-        commit('setError', 'Error in getReports.' + err),
+        commit('setError', { errorCode: 'reportError', message: err }),
       )
       commit('setReports', reps)
     },
@@ -102,7 +104,7 @@ export default {
       })
 
       dispatch('pushObject', payload).catch((err) =>
-        commit('setError', 'Error in pushLog.' + err),
+        commit('setError', { errorCode: 'logError', message: err }),
       )
     },
     /**
@@ -130,7 +132,7 @@ export default {
       })
 
       dispatch('updateArrayElement', payload).catch((err) =>
-        commit('setError', 'Error in updateLog.' + err),
+        commit('setError', { errorCode: 'logError', message: err }),
       )
     },
     /**
@@ -159,7 +161,10 @@ export default {
       payload = Object.assign(payload, { collection: 'reports' })
 
       dispatch('updateObject', payload).catch((err) =>
-        commit('setError', 'Error in updateTestReport.' + err),
+        commit('setError', {
+          errorCode: 'reportError',
+          message: err,
+        }),
       )
     },
     /**
@@ -180,7 +185,7 @@ export default {
       payload = Object.assign(payload, { collection: 'reports' })
 
       dispatch('removeObject', payload).catch((err) =>
-        commit('setError', 'Error in removeReport.' + err),
+        commit('setError', { errorCode: 'reportError', message: err }),
       )
     },
   },
