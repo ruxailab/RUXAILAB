@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 93vh; background-color: #f9f5f0;">
+  <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
         <span class="Titles ma-16"
@@ -8,9 +8,9 @@
       </v-row>
     </v-col>
     <v-col cols="12" class="mt-6">
-      <v-row justify="center">
-        <v-col cols="1"></v-col>
-        <v-col cols="4">
+      <v-row class="cardsContainer">
+        <!-- <v-col cols="1"></v-col> -->
+        <v-col cols="12" md="6" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -25,7 +25,7 @@
                 width="50"
                 ><v-img
                   class="ma-2"
-                  style="z-index: 0;"
+                  style="z-index: 0"
                   src="../../../public/specialist.png"
                 ></v-img
               ></v-sheet>
@@ -37,37 +37,25 @@
             </v-row>
             <v-divider></v-divider>
             <v-row class="mt-1">
-              <v-sheet
-                class="ml-10 mt-8 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mt-8 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3 mt-8"
                 >Usability Percentage</span
               >
             </v-row>
             <v-row>
-              <v-sheet
-                class="ml-10 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3">Final Report PDF</span>
             </v-row>
             <v-row>
-              <v-sheet
-                class="ml-10 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3"
                 >Invite specialists to evaluate your application</span
               >
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="1"></v-col>
-        <v-col class="" cols="4">
+        <!-- <v-col cols="1"></v-col> -->
+        <v-col cols="12" md="6" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -82,7 +70,7 @@
                 width="50"
                 ><v-img
                   class="ma-3"
-                  style="z-index: 0;"
+                  style="z-index: 0"
                   src="../../../public/user.png"
                 ></v-img
               ></v-sheet>
@@ -94,42 +82,30 @@
             </v-row>
             <v-divider></v-divider>
             <v-row class="mt-1">
-              <v-sheet
-                class="ml-10 mt-8 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mt-8 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3 mt-8"
                 >Webcam, audio & screen record</span
               >
             </v-row>
             <v-row>
-              <v-sheet
-                class="ml-10 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3"
                 >Enhanced answer analysis</span
               >
             </v-row>
             <v-row>
-              <v-sheet
-                class="ml-10 mb-8 circle"
-                height="20"
-                width="20"
-              ></v-sheet>
+              <v-sheet class="ml-10 mb-8 circle"></v-sheet>
               <span class="cardInternTitles ml-3"
                 >Moderated or non moderated tests</span
               >
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="1"></v-col>
+        <!-- <v-col cols="1"></v-col> -->
       </v-row>
     </v-col>
     <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
-      <v-card color="#f9f5f0">
+      <!-- <v-card color="#f9f5f0">
         <v-row>
           <v-btn
             icon
@@ -138,7 +114,7 @@
             color="red"
             fixed
             right
-            class="mt-6 mr-2"
+            class="mt-6 mr-2 arrowBack"
             @click="dialog = false"
           >
             <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
@@ -153,7 +129,7 @@
           <v-col cols="5" class="ml-10">
             <v-card
               color="white"
-              style="border-radius: 20px !important;"
+              style="border-radius: 20px !important"
               height="480"
             >
               <v-col cols="11">
@@ -208,6 +184,84 @@
             />
           </v-col>
         </v-row>
+      </v-card> -->
+      <v-card color="#f9f5f0">
+        <v-btn
+          icon
+          dark
+          fab
+          color="red"
+          fixed
+          right
+          class="mt-6 mr-2 arrowBack"
+          @click="dialog = false"
+        >
+          <v-icon x-large>mdi-arrow-u-left-bottom</v-icon>
+        </v-btn>
+        <v-row align="center" justify="center" class="cardRow">
+          <v-col cols="10" class="mt-16 ml-auto">
+            <span class="Titles ml-5">Test Creation</span>
+            <br />
+            <span class="cardSubtitle ml-5">Add a name to your test!</span>
+          </v-col>
+          <v-col class="ml-auto mr-auto" cols="auto">
+            <v-card
+              color="white"
+              style="border-radius: 20px !important"
+              height="480"
+            >
+              <v-col cols="11">
+                <div class="mt-4">
+                  <span class="cardInternTitles ml-6">Test Name</span>
+                </div>
+                <v-text-field
+                  v-model="test.testTitle"
+                  class="ml-6 mt-3"
+                  label="Test Name"
+                  outlined
+                  color="orange"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                ></v-text-field>
+                <span class="cardInternTitles ml-6">Test Description</span>
+                <v-textarea
+                  outlined
+                  v-model="test.testDescription"
+                  color="orange"
+                  class="ml-6 mt-3"
+                  label="Test Description"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                ></v-textarea>
+                <v-row>
+                  <v-checkbox
+                    v-model="test.isPublic"
+                    class="ml-10 mt-8"
+                    color="orange"
+                    label="Turn this test public to all users"
+                  >
+                  </v-checkbox>
+                  <v-btn
+                    dark
+                    fab
+                    large
+                    color="orange"
+                    class="ml-auto mt-4 mr-2 circleOrange"
+                    @click="validate()"
+                  >
+                    <v-icon x-large>mdi-arrow-right</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-col>
+            </v-card>
+          </v-col>
+          <v-col cols="5" class="imageColumn">
+            <img
+              height="500"
+              draggable="false"
+              src="../../../public/createSVG.svg"
+              alt="Test Creation image"
+            />
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog>
 
@@ -251,13 +305,13 @@
               >
                 <v-row>
                   <div class="mt-6">
-                    <span class="Titles    ml-10">SelfTest</span>
+                    <span class="Titles ml-10">SelfTest</span>
                     <br />
                     <span class="cardSubtitle2 ml-10"> UNMODERATED </span>
                   </div>
                 </v-row>
                 <img
-                  style="margin-left: 80px;"
+                  style="margin-left: 80px"
                   class="mt-5 mb-2"
                   height="230"
                   draggable="false"
@@ -309,7 +363,7 @@
                   </div>
                 </v-row>
                 <img
-                  style="margin-left: 80px;"
+                  style="margin-left: 80px"
                   class="mt-5 mb-2"
                   height="230"
                   draggable="false"
@@ -431,6 +485,14 @@ export default {
 </script>
 
 <style scoped>
+.outermost {
+  height: 93vh;
+  background-color: #f9f5f0;
+}
+.circle {
+  height: 20px;
+  width: 20px;
+}
 .Titles {
   font-family: 'Poppins', Helvetica;
   font-size: 38px;
@@ -442,6 +504,24 @@ export default {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+.cardRow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.imageColumn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card {
+  margin: auto;
+}
+.cardsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 .cardsTitle {
   font-family: 'Poppins', Helvetica;
@@ -503,6 +583,87 @@ export default {
     rgba(255, 80, 45, 0.514) 1%,
     rgba(240, 150, 25, 0.432) 97.63%
   );
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .Titles {
+    font-size: 28px; /* Adjust font size for smaller screens */
+  }
+  .cardRow {
+    flex-direction: column;
+    align-items: center;
+  }
+  .cardsContainer {
+    flex-direction: column;
+  }
+  .cardsTitle {
+    font-size: 16 px;
+  }
+  .cardSubtitle {
+    font-size: 15px;
+  }
+  .cardSubtitle2 {
+    font-size: 16px;
+  }
+  .cardInternTitles {
+    max-width: 270px;
+    font-size: 15px;
+  }
+  .circle {
+    height: 10px;
+    width: 10px;
+  }
+  .circleOrange {
+    margin-top: 10px;
+  }
+
+  .cards {
+    height: 250px; /* Adjust card height for smaller screens */
+  }
+
+  .mt-6 {
+    margin-top: 30px; /* Adjust margin for smaller screens */
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1160px) {
+  .cardRow {
+    flex-direction: column;
+    align-items: center;
+  }
+  .outermost {
+    height: auto;
+  }
+  .Titles {
+    font-size: 32px; /* Adjust font size for medium screens */
+  }
+  .cardsContainer {
+    flex-direction: column;
+  }
+
+  .cards {
+    height: 300px; /* Adjust card height for medium screens */
+    width: 100%;
+  }
+
+  .mt-6 {
+    margin-top: 40px; /* Adjust margin for medium screens */
+  }
+}
+
+@media (min-width: 1160px) {
+  .Titles {
+    font-size: 38px; /* Adjust font size for larger screens */
+  }
+
+  .cards {
+    height: 350px; /* Adjust card height for larger screens */
+  }
+
+  .mt-6 {
+    margin-top: 50px; /* Adjust margin for larger screens */
+  }
 }
 </style>
 
