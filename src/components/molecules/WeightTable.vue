@@ -117,16 +117,6 @@
                   >
                     save
                   </v-btn>
-                  <v-btn
-                    class="mt-6 mb-4"
-                    large
-                    align="center"
-                    color="#FCA326"
-                    elevation="5"
-                    @click="pythonFunction"
-                  >
-                    python
-                  </v-btn>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -138,14 +128,8 @@
 </template>
 
 <script>
-//import goToWeightTable from '@/components/organisms/HeuristicsTestAnswer.vue'
-//import HeuristicsTestAnswerVue from '@/components/organisms/HeuristicsTestAnswer.vue'
-
 export default {
   name: 'WeightTable',
-  components: {
-    //HeuristicsTestAnswerVue,
-  },
   data() {
     return {
       tabs: 0,
@@ -213,26 +197,6 @@ export default {
       this.testAll.testWeights = this.group
       this.$store.dispatch('updateTest', this.testAll)
     },
-    // async pythonFunction() {
-    //   const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
-    //   const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
-    //   try {
-    //     const resposta = await fetch(
-    //       'http://127.0.0.1:5001/retlab-dev/us-central1/say_hello',
-    //       {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({ caminhoTestStructure, caminhoTestWeights }),
-    //       },
-    //     )
-    //     const data = await resposta.json()
-    //     console.log(data.message)
-    //   } catch (erro) {
-    //     console.error('Erro ao chamar Cloud Function:', erro)
-    //   }
-    // },
   },
 }
 </script>

@@ -158,7 +158,7 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
     ahp_df = populate_ahp_matrix(ahp_df, pesos_list)
 
-    print('DECISION MATRIX:')
+    print('\n\nDECISION MATRIX:')
     print(ahp_df.to_markdown())
     max_eigenvalue, normalized_weights, CR, consistency_interpretation = calculate_eigen(ahp_df)
     print("\n\nMAX VALUE = ", max_eigenvalue)
@@ -168,13 +168,13 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     n_data = {header: [value] for header, value in zip(heuristicas, values_in_percentage)}
     df_normalized_weights = pd.DataFrame(n_data)
     print("\n\nNORMALIZED WEIGHTS = ", normalized_weights)
-    print("\n\n",df_normalized_weights.to_markdown())
+    print("\n\nWEIGHTS IN PERCENTAGE\n",df_normalized_weights.to_markdown())
 
     print("\n\nCONSISTENCY RATIO = ", CR)
     print("\n\nCONSISTENCY INTERPRETATION = ", consistency_interpretation)
 
 
-############### Heuristics x Usability Score x Weights ###############
+################## Heuristics x Usability Score x Weights ##################
     
     
     #print("\n\n", caminho_scorepercentage)
@@ -195,14 +195,19 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
     df_heuristics_usability_score_weights['Relative_Weight'] = df_heuristics_usability_score_weights['Usability_Score'] * df_heuristics_usability_score_weights['Weights']
     print("\n\nHeuristics x Usability Score x Weights x Relative_Weight\n\n", df_heuristics_usability_score_weights)
     
+    relative_weight_array = df_heuristics_usability_score_weights['Relative_Weight'].values
+    print("\n\nValores de Relative_Weight como um array:", relative_weight_array)
+
+
     # final usability score
     print("\n\n",df_heuristics_usability_score_weights.Relative_Weight.sum())
 
     print("\n\n",df_heuristics_usability_score_weights.Weights.sum())
 
     response_data = {
-        "tabela": ahp_df.to_json(),
+        "decisionmatrix": ahp_df.to_json(),
         "max_value": max_eigenvalue.astype("str"),
-        #"scores": array_scores.to_json(),
+        "tabelacompleta": df_heuristics_usability_score_weights.to_json(),
+        "relative": relative_weight_array.tolist()
     }
     return https_fn.Response(json.dumps(response_data), content_type="application/json")
