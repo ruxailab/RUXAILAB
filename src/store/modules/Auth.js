@@ -14,6 +14,7 @@ import {
 // import AuthController from "@/controllers/AuthController.js";
 import UserController from '@/controllers/UserController'
 import i18n from '@/i18n'
+import Vue from 'vue'
 
 // const AuthCont = new AuthController();
 //const UserCont = new UserController();
@@ -53,8 +54,7 @@ export default {
           payload.password,
         )
       } catch (err) {
-        console.error('Error when creating user', err)
-        commit('setError', err)
+        commit('setError', { errorCode: 'FIREBASE', message: err.code })
       } finally {
         commit('setLoading', false)
       }
@@ -73,13 +73,21 @@ export default {
           commit('SET_USER', dbUser)
         }
       } catch (err) {
-        console.error(err)
         if (err.code === 'auth/invalid-email') {
-          alert(i18n.t('errors.userNotExist'))
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.userNotExist'),
+          })
         } else if (err.code === 'auth/wrong-password') {
-          alert(i18n.t('errors.incorrectPassword'))
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.incorrectPassword'),
+          })
         } else {
-          alert(i18n.t('errors.incorrectCredential'))
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.incorrectCredential'),
+          })
         }
       } finally {
         commit('setLoading', false)

@@ -411,6 +411,7 @@
 <script>
 import TestAdmin from '@/models/TestAdmin'
 import Test from '@/models/Test'
+import Vue from 'vue'
 
 export default {
   data: () => ({
@@ -477,7 +478,7 @@ export default {
           this.submit()
         }
       } else {
-        alert('Please enter a title')
+        Vue.$toast.warning('Please enter a title')
       }
     },
   },

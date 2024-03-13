@@ -435,6 +435,7 @@ import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
+import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -549,7 +550,7 @@ export default {
   methods: {
     startTest() {
       if (this.test.testStructure.length == 0) {
-        alert("This test don't have any heuristic")
+        Vue.$toast.info('This test don\'t have any heuristic')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
