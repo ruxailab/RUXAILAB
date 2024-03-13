@@ -312,10 +312,19 @@
                       legend="Average"
                     />
                   </v-col>
+                  <!-- Bottom Tab 4 -->
+
+                  <v-col v-if="ind == 3" cols="12">
+                    {{ tabelacompleta }}
+                    {{ decisionmatrix }}
+                    {{ relative }}
+                    {{ max_value }}
+                  </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </v-card>
+
           <!-- tab 3 analytics -->
           <AnalyticsView v-if="tab == 3" />
         </div>
@@ -347,6 +356,10 @@ export default {
     ind: 0,
     resultEvaluator: statistics(),
     intro: null,
+    tabelacompleta: null,
+    decisionmatrix: null,
+    relative: null,
+    max_value: null,
   }),
 
   computed: {
@@ -468,6 +481,36 @@ export default {
       return table
     },
 
+    weightsStatistics() {
+      const tableWS = {
+        header: [],
+        items: [],
+      }
+
+      tableWS.header = [
+        {
+          text: 'HEURISTICS',
+          align: 'start',
+          sortable: false,
+          value: 'name',
+        },
+        {
+          text: 'Usability Score (%)',
+          value: 'percentage',
+          align: 'center',
+          sortable: true,
+        },
+        {
+          text: 'Relative  Weights',
+          value: 'rw',
+          align: 'center',
+          sortable: true,
+        },
+      ]
+
+      return tableWS
+    },
+
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
@@ -579,6 +622,11 @@ export default {
           },
         )
         const data = await resposta.json()
+
+        this.decisionmatrix = data.decisionmatrix
+        this.tabelacompleta = data.tabelacompleta
+        this.relative = data.relative
+        this.max_value = data.max_value
         console.log(data.decisionmatrix)
         console.log(data.tabelacompleta)
         console.log(data.relative)
