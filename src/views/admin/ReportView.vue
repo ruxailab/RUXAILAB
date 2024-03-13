@@ -206,7 +206,10 @@ export default {
           this.dialog = false
         })
         .catch((err) => {
-          this.$store.commit('setError', err)
+          this.$store.commit('setError', {
+            errorCode: 'reportError',
+            message: err,
+          })
         })
     },
 
