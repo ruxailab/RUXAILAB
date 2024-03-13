@@ -3,7 +3,10 @@
     <v-col>
       <v-row>
         <v-btn
-          v-if="!recordingAudio && recordedAudio == ''"
+          v-if="
+            !recordingAudio &&
+              currentUserTestAnswer.tasks[taskIndex].audioRecordURL == ''
+          "
           @click="startAudioRecording"
           class="ml-4 mb-2 xl"
           color="grey lighten-2"
@@ -26,11 +29,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
     testId: String,
-    currentUserTestAnswer: Object,
     taskIndex: Number,
   },
   data() {
@@ -41,6 +44,11 @@ export default {
       audioStream: null,
       recordedAudio: '',
     }
+  },
+  computed: {
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
   },
   methods: {
     async startAudioRecording() {
@@ -63,6 +71,7 @@ export default {
         }
 
         this.mediaRecorder.onstop = async () => {
+          this.$emit('showLoading')
           const audioBlob = new Blob(this.recordedChunks, {
             type: 'audio/webm',
           })
@@ -88,9 +97,8 @@ export default {
             this.taskIndex
           ].audioRecordURL = this.recordedAudio
 
-          console.log(
-            this.currentUserTestAnswer.tasks[this.taskIndex].audioRecordURL,
-          )
+          this.$emit('stopShowLoading')
+          Vue.$toast.success('Audio record saved!')
         }
 
         this.mediaRecorder.start()
@@ -103,6 +111,7 @@ export default {
       if (this.mediaRecorder) {
         this.mediaRecorder.stop()
         this.audioStream.getTracks().forEach((track) => track.stop())
+        this.audioStream = null
         this.recordingAudio = false
       }
     },
