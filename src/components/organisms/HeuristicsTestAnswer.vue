@@ -194,7 +194,7 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card rounded="xl" flat v-if="tab == 2" style="background: #f5f7ff">
+          <v-card v-if="tab == 2" rounded="xl" flat style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Heuristics Data
             </v-card-title>
@@ -402,7 +402,7 @@ export default {
             }
           })
         })
-        console.log(table)
+        //console.log(table)
       }
       return table
     },
@@ -464,7 +464,7 @@ export default {
           })
         })
       }
-      console.log(table)
+      //console.log(table)
       return table
     },
 
@@ -554,7 +554,7 @@ export default {
         array_scores.push(teste.items[i].percentage)
       }
       this.$store.dispatch('setScoresPercentage', array_scores)
-      console.log(array_scores)
+      //console.log(array_scores)
       return array_scores
     },
     //'http://127.0.0.1:5001/retlab-dev/us-central1/get_scores'
@@ -579,7 +579,10 @@ export default {
           },
         )
         const data = await resposta.json()
-        console.log(data.message)
+        console.log(data.decisionmatrix)
+        console.log(data.tabelacompleta)
+        console.log(data.relative)
+        console.log(data.max_value)
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
