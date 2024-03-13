@@ -8,7 +8,10 @@
       v-if="recording"
     ></video>
     <v-btn
-      v-if="!recording && recordedVideo == ''"
+      v-if="
+        !recording &&
+          currentUserTestAnswer.tasks[taskIndex].webcamRecordURL == ''
+      "
       @click="startRecording"
       class="ml-4 mb-2 xl"
       color="grey lighten-2"
@@ -23,11 +26,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
     testId: String,
-    currentUserTestAnswer: Object,
     taskIndex: Number,
   },
   data() {
@@ -38,6 +41,11 @@ export default {
       mediaRecorder: null,
       recordedVideo: '',
     }
+  },
+  computed: {
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
   },
   methods: {
     async startRecording() {
@@ -57,6 +65,7 @@ export default {
       }
 
       this.mediaRecorder.onstop = async () => {
+        this.$emit('showLoading')
         const videoBlob = new Blob(this.recordedChunks, {
           type: 'video/webm',
         })
@@ -73,9 +82,8 @@ export default {
           this.taskIndex
         ].webcamRecordURL = this.recordedVideo
 
-        console.log(
-          this.currentUserTestAnswer.tasks[this.taskIndex].webcamRecordURL,
-        )
+        this.$emit('stopShowLoading')
+        Vue.$toast.success('Video record saved!')
       }
 
       this.mediaRecorder.start()
