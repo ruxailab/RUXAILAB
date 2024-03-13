@@ -1,5 +1,11 @@
 <template>
   <div v-if="test">
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving...
+      </div>
+    </v-overlay>
     <Snackbar />
 
     <!-- Submit Alert Dialog -->
@@ -582,8 +588,9 @@
                       "
                     >
                       <AudioRecorder
+                        @showLoading="isLoading = true"
+                        @stopShowLoading="isLoading = false"
                         :testId="testId"
-                        :currentUserTestAnswer="currentUserTestAnswer"
                         :taskIndex="taskIndex"
                       ></AudioRecorder>
                     </v-row>
@@ -594,8 +601,9 @@
                       "
                     >
                       <VideoRecorder
+                        @showLoading="isLoading = true"
+                        @stopShowLoading="isLoading = false"
                         :testId="testId"
-                        :currentUserTestAnswer="currentUserTestAnswer"
                         :taskIndex="taskIndex"
                       ></VideoRecorder>
                     </v-row>
@@ -606,8 +614,9 @@
                       "
                     >
                       <ScreenRecorder
+                        @showLoading="isLoading = true"
+                        @stopShowLoading="isLoading = false"
                         :testId="testId"
-                        :currentUserTestAnswer="currentUserTestAnswer"
                         :taskIndex="taskIndex"
                       ></ScreenRecorder>
                     </v-row>
@@ -700,8 +709,7 @@
               <div class="pa-2 text-end">
                 <v-btn
                   block
-                  :dark="isTaskDisabled(i)"
-                  :disabled="!isTaskDisabled(i)"
+                  dark
                   color="orange lighten-1"
                   @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
                 >
@@ -882,6 +890,7 @@ export default {
     fab: false,
     dialog: false,
     allTasksCompleted: false,
+    isLoading: false,
   }),
   computed: {
     test() {
@@ -1000,6 +1009,17 @@ export default {
         }
         if (this.allTasksCompleted) {
           this.items[1].icon = 'mdi-check-circle-outline'
+        }
+        if (
+          this.taskIndex <
+          Object.keys(this.currentUserTestAnswer.tasks).length - 1
+        ) {
+          this.taskIndex++
+        } else if (
+          this.taskIndex >=
+          Object.keys(this.currentUserTestAnswer.tasks).length - 1
+        ) {
+          this.index++
         }
       }
       if (type === 'postTest') {
@@ -1170,9 +1190,6 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
-  },
-  beforeDestroy() {
-    this.stopRecording()
   },
 }
 </script>
