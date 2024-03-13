@@ -224,13 +224,19 @@ export default {
       return !Object.values(this.answers).length
     },
     averageTimePerTask() {
+      let totalTasks = 0
+      let totalTaskTime = 0
+
       if (!this.taskAnswers.length) return 0
 
-      const totalTaskTime = this.taskAnswers.reduce((total, answer) => {
-        return total + answer.tasks[this.taskSelect].taskTime
-      }, 0)
+      this.taskAnswers.forEach((answer) => {
+        Object.values(answer.tasks).forEach((task) => {
+          totalTaskTime += task.taskTime
+          totalTasks++
+        })
+      })
 
-      return totalTaskTime / this.taskAnswers.length
+      return totalTasks === 0 ? 0 : totalTaskTime / totalTasks
     },
   },
   created() {
@@ -259,46 +265,52 @@ export default {
         minutes: minutes,
       }
     },
+
     findLongestTask() {
       if (!this.taskAnswers.length) return null
 
       const taskAverages = {}
 
       this.taskAnswers.forEach((answer) => {
-        const taskTime = answer.tasks[this.taskSelect].taskTime
+        for (const taskId in answer.tasks) {
+          const taskTime = answer.tasks[taskId].taskTime
 
-        if (!taskAverages[this.taskSelect]) {
-          taskAverages[this.taskSelect] = {
-            totalTime: taskTime,
-            count: 1,
+          if (!taskAverages[taskId]) {
+            taskAverages[taskId] = {
+              totalTime: taskTime,
+              count: 1,
+            }
+          } else {
+            taskAverages[taskId].totalTime += taskTime
+            taskAverages[taskId].count++
           }
-        } else {
-          taskAverages[this.taskSelect].totalTime += taskTime
-          taskAverages[this.taskSelect].count += 1
         }
       })
 
-      for (const task in taskAverages) {
+      for (const taskId in taskAverages) {
         const averageTime =
-          taskAverages[task].totalTime / taskAverages[task].count
-        taskAverages[task].averageTime = averageTime
+          taskAverages[taskId].totalTime / taskAverages[taskId].count
+        taskAverages[taskId].averageTime = averageTime
       }
 
       let longestTask = null
       let longestAverageTime = 0
 
-      for (const task in taskAverages) {
-        if (taskAverages[task].averageTime > longestAverageTime) {
-          longestAverageTime = taskAverages[task].averageTime
-          longestTask = task
-          longestTask = this.testStructure.userTasks[task].taskName
+      for (const taskId in taskAverages) {
+        if (taskAverages[taskId].averageTime > longestAverageTime) {
+          longestAverageTime = taskAverages[taskId].averageTime
+          longestTask = taskId
         }
       }
 
       return {
-        taskName: longestTask,
+        taskName: this.testStructure.userTasks[longestTask].taskName,
         averageTime: this.formatTime(longestAverageTime),
       }
+    },
+    calculateAverageTime() {
+      const averageTime = this.formatTime(this.averageTimePerTask)
+      return averageTime
     },
     getConclusionAverage() {
       if (!this.taskAnswers.length) return null
@@ -412,13 +424,8 @@ export default {
       this.dialogItem = item
       this.showDialog = true
     },
-    calculateAverageTime() {
-      const averageTime = this.formatTime(this.averageTimePerTask)
-      return averageTime
-    },
   },
 }
-
 </script>
 
 <style scoped>
