@@ -29,8 +29,10 @@ export default {
           })
         })
       } catch (err) {
-        console.error('Error in getPaginationArray: ', err)
-        commit('setError', 'Error in getting paginated array in database')
+        commit('setError', {
+          errorCode: 'databaseError',
+          message: 'getting paginated array',
+        })
       } finally {
         commit('setLoading', false)
       }
@@ -44,8 +46,10 @@ export default {
         )
         return x
       } catch (err) {
-        console.error('Error in getObject:', err),
-          commit('setError', 'Error getting object from database')
+        commit('setError', {
+          errorCode: 'databaseError',
+          message: 'object retrievel failed',
+        })
       } finally {
         commit('setLoading', false)
       }

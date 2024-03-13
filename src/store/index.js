@@ -26,7 +26,10 @@ export default new Vuex.Store({
           state.loading = payload
         },
         setError(state, payload) {
-          state.error = payload
+          state.error = {
+            errorCode: payload.errorCode,
+             message: payload.message,
+            }
         },
         SET_DIALOG_LEAVE(state,payload){
           state.dialogLeave = payload
