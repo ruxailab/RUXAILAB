@@ -4,32 +4,27 @@
       <v-row>
         <v-btn
           @click="captureScreen"
-          class="ml-4 mb-2 xl"
-          v-if="
-            !isCapture &&
-              currentUserTestAnswer.tasks[taskIndex].screenRecordURL == ''
-          "
-          color="grey lighten-2"
+          class="ml-4 my-2 mr-auto"
+          v-if="!isCapture"
           elevation="0"
+          icon
         >
-          <v-icon left dark>mdi-monitor-screenshot</v-icon>
-          Capture
+          <v-icon>mdi-monitor-screenshot</v-icon>
         </v-btn>
         <v-btn
-          class="ml-4 mb-2 xl"
+          class="ml-4 my-2 mr-auto"
           v-if="
-            isCapture &&
-              currentUserTestAnswer.tasks[taskIndex].screenRecordURL == ''
+            isCapture && !currentUserTestAnswer.tasks[taskIndex].screenRecordURL
           "
-          :color="!isRecording ? 'grey lighten-2' : 'red lighten-1'"
+          :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
           :dark="isRecording"
-          prepend-icon="mdi-monitor-screenshot"
           elevation="0"
+          icon
           @click="recordScreen"
         >
-          <v-icon left dark v-if="!isRecording">mdi-monitor-screenshot</v-icon>
-          <v-icon left dark v-else>mdi-stop</v-icon>
-          {{ isRecording ? 'Stop recording' : 'Start recording' }}
+          <v-icon>{{
+            isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
+          }}</v-icon>
         </v-btn>
       </v-row>
     </v-col>
@@ -95,6 +90,7 @@ export default {
             this.taskIndex
           ].screenRecordURL = this.videoUrl
           this.videoStream = null
+          this.isRecording = false
           this.$emit('stopShowLoading')
           Vue.$toast.success('Screen record saved!')
         }
