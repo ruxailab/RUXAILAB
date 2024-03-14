@@ -1,27 +1,27 @@
 <template>
   <div>
-    <video
-      class="web-cam mb-2 ml-3"
-      ref="video"
-      height="100"
-      autoplay
-      v-if="recording"
-    ></video>
-    <v-btn
-      v-if="
-        !recording &&
-          currentUserTestAnswer.tasks[taskIndex].webcamRecordURL == ''
-      "
-      @click="startRecording"
-      class="ml-4 mb-2 xl"
-      color="grey lighten-2"
-      elevation="0"
-    >
-      <v-icon class="mr-2">mdi-camera</v-icon>Start Recording
-    </v-btn>
-    <v-btn color="red" icon v-if="recording" @click="stopRecording">
-      <v-icon dark>mdi-stop</v-icon>
-    </v-btn>
+    <v-col>
+      <v-row>
+        <v-btn
+          v-if="!recording"
+          @click="startRecording"
+          class="ml-4 my-2 mr-auto"
+          elevation="0"
+          icon
+        >
+          <v-icon>mdi-camera</v-icon>
+        </v-btn>
+        <v-btn
+          class="ml-4 my-2 mr-auto"
+          color="red"
+          icon
+          v-if="recording"
+          @click="stopRecording"
+        >
+          <v-icon dark>mdi-stop</v-icon>
+        </v-btn>
+      </v-row>
+    </v-col>
   </div>
 </template>
 
@@ -50,43 +50,51 @@ export default {
   methods: {
     async startRecording() {
       this.recording = true
-      this.videoStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      })
-      this.$refs.video.srcObject = this.videoStream
-
-      this.recordedChunks = []
-      this.mediaRecorder = new MediaRecorder(this.videoStream)
-
-      this.mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          this.recordedChunks.push(event.data)
-        }
-      }
-
-      this.mediaRecorder.onstop = async () => {
-        this.$emit('showLoading')
-        const videoBlob = new Blob(this.recordedChunks, {
-          type: 'video/webm',
+      try {
+        this.videoStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
         })
-        const storage = getStorage()
-        const storageRef = ref(
-          storage,
-          `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/video/${this.recordedVideo}`,
-        )
-        await uploadBytes(storageRef, videoBlob)
 
-        this.recordedVideo = await getDownloadURL(storageRef)
+        this.recordedChunks = []
+        this.mediaRecorder = new MediaRecorder(this.videoStream)
 
-        this.currentUserTestAnswer.tasks[
-          this.taskIndex
-        ].webcamRecordURL = this.recordedVideo
-
-        this.$emit('stopShowLoading')
-        Vue.$toast.success('Video record saved!')
+        this.mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.recordedChunks.push(event.data)
+          }
+        }
+      } catch (e) {
+        this.recording = false
+        this.$toast.error('Error in capturing your media device: ' + e.message)
       }
 
-      this.mediaRecorder.start()
+      try {
+        this.mediaRecorder.onstop = async () => {
+          this.$emit('showLoading')
+          const videoBlob = new Blob(this.recordedChunks, {
+            type: 'video/webm',
+          })
+          const storage = getStorage()
+          const storageRef = ref(
+            storage,
+            `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/video/${this.recordedVideo}`,
+          )
+          await uploadBytes(storageRef, videoBlob)
+
+          this.recordedVideo = await getDownloadURL(storageRef)
+
+          this.currentUserTestAnswer.tasks[
+            this.taskIndex
+          ].webcamRecordURL = this.recordedVideo
+
+          this.$emit('stopShowLoading')
+          Vue.$toast.success('Video record saved!')
+        }
+
+        this.mediaRecorder.start()
+      } catch (e) {
+        this.$toast.error('Error in capturing your media device: ' + e.message)
+      }
     },
     stopRecording() {
       if (this.mediaRecorder) {
