@@ -581,65 +581,71 @@
                     </p>
                   </v-row>
                   <div v-if="!currentUserTestAnswer.submitted">
-                    <v-row
-                      v-if="
-                        test.testStructure.userTasks[taskIndex]
-                          .hasAudioRecord !== false
-                      "
-                    >
-                      <AudioRecorder
-                        @showLoading="isLoading = true"
-                        @stopShowLoading="isLoading = false"
-                        :testId="testId"
-                        :taskIndex="taskIndex"
-                      ></AudioRecorder>
-                    </v-row>
-                    <v-row
-                      v-if="
-                        test.testStructure.userTasks[taskIndex].hasCamRecord !==
-                          false
-                      "
-                    >
-                      <VideoRecorder
-                        @showLoading="isLoading = true"
-                        @stopShowLoading="isLoading = false"
-                        :testId="testId"
-                        :taskIndex="taskIndex"
-                      ></VideoRecorder>
-                    </v-row>
-                    <v-row
-                      v-if="
-                        test.testStructure.userTasks[taskIndex]
-                          .hasScreenRecord != false
-                      "
-                    >
-                      <ScreenRecorder
-                        @showLoading="isLoading = true"
-                        @stopShowLoading="isLoading = false"
-                        :testId="testId"
-                        :taskIndex="taskIndex"
-                      ></ScreenRecorder>
-                    </v-row>
-                    <v-row
-                      v-if="
-                        test.testStructure.userTasks[taskIndex].taskTip !== null
-                      "
-                      justify="end"
-                    >
-                      <TipButton
-                        :task="test.testStructure.userTasks[taskIndex]"
-                      />
-                    </v-row>
-
-                    <v-spacer />
-                    <v-row justify="center">
-                      <Timer
-                        ref="timerComponent"
-                        :taskIndex="taskIndex"
-                        @timerStopped="handleTimerStopped"
-                      />
+                    <v-row>
+                      <v-col
+                        cols="1"
+                        v-if="
+                          test.testStructure.userTasks[taskIndex].taskTip !==
+                            null
+                        "
+                        justify="end"
+                      >
+                        <TipButton
+                          :task="test.testStructure.userTasks[taskIndex]"
+                        />
+                      </v-col>
+                      <v-col
+                        cols="1"
+                        v-if="
+                          test.testStructure.userTasks[taskIndex]
+                            .hasAudioRecord !== false
+                        "
+                      >
+                        <AudioRecorder
+                          @showLoading="isLoading = true"
+                          @stopShowLoading="isLoading = false"
+                          :testId="testId"
+                          :taskIndex="taskIndex"
+                        ></AudioRecorder>
+                      </v-col>
+                      <v-col
+                        cols="1"
+                        v-if="
+                          test.testStructure.userTasks[taskIndex]
+                            .hasCamRecord !== false
+                        "
+                      >
+                        <VideoRecorder
+                          @showLoading="isLoading = true"
+                          @stopShowLoading="isLoading = false"
+                          :testId="testId"
+                          :taskIndex="taskIndex"
+                        ></VideoRecorder>
+                      </v-col>
+                      <v-col
+                        cols="1"
+                        v-if="
+                          test.testStructure.userTasks[taskIndex]
+                            .hasScreenRecord !== false
+                        "
+                      >
+                        <ScreenRecorder
+                          @showLoading="isLoading = true"
+                          @stopShowLoading="isLoading = false"
+                          :testId="testId"
+                          :taskIndex="taskIndex"
+                        ></ScreenRecorder>
+                      </v-col>
+                      <v-col cols="4">
+                        <Timer
+                          ref="timerComponent"
+                          :taskIndex="taskIndex"
+                          @timerStopped="handleTimerStopped"
+                        />
+                      </v-col>
                     </v-row>
                   </div>
+
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
