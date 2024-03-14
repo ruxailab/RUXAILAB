@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row justify="center" align="center">
-      <v-col cols="11" class="py-0">
+    <v-row justify="start" align="center">
+      <v-col cols="10" sm="11" class="py-0">
         <slot name="answer" />
       </v-col>
       <v-col cols="1" class="mb-6 py-0">
@@ -13,8 +13,12 @@
               </v-icon>
             </v-btn>
           </template>
-          <span v-if="answerHeu.heuristicComment">{{ $t('HeuristicsTable.AddCommentBtn.showComment') }}</span>
-          <span v-else>{{ $t('HeuristicsTable.AddCommentBtn.addComment') }}</span>
+          <span v-if="answerHeu.heuristicComment">{{
+            $t('HeuristicsTable.AddCommentBtn.showComment')
+          }}</span>
+          <span v-else>{{
+            $t('HeuristicsTable.AddCommentBtn.addComment')
+          }}</span>
         </v-tooltip>
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -27,11 +31,23 @@
       </v-col>
 
       <v-col cols="12" class="py-0">
-        <v-textarea v-if="show" v-model="answerHeu.heuristicComment" outlined dense auto-grow clearable
-                    clear-icon="mdi-close" :label="$t('common.comment')" @change="updateComment"
+        <v-textarea
+          v-if="show"
+          v-model="answerHeu.heuristicComment"
+          outlined
+          dense
+          auto-grow
+          clearable
+          clear-icon="mdi-close"
+          :label="$t('common.comment')"
+          @change="updateComment"
         />
-        <ImageImport v-if="show" :heuristic-id="test.testStructure[heurisIndex]" :question-id="answerHeu.heuristicId"
-                     :test-id="this.$store.getters.test.id" @imageUploaded="handleImageUploaded"
+        <ImageImport
+          v-if="show"
+          :heuristic-id="test.testStructure[heurisIndex]"
+          :question-id="answerHeu.heuristicId"
+          :test-id="this.$store.getters.test.id"
+          @imageUploaded="handleImageUploaded"
         />
       </v-col>
     </v-row>
@@ -45,7 +61,7 @@ export default {
   props: {
     answerHeu: {
       type: Object,
-      default: ()=>{},
+      default: () => {},
       require: true,
     },
     heurisIndex: {
