@@ -143,7 +143,7 @@
         <v-divider />
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
-          <v-col class="ma-0 pa-0" cols="4">
+          <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
             <v-list dense height="560px" class="pt-0" outlined>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
@@ -305,7 +305,13 @@
           <v-divider vertical />
 
           <!--Questions List-->
-          <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
+          <v-col
+            v-if="itemSelect != null"
+            class="ma-0 pa-0 questionsList"
+            cols="12"
+            sm="6"
+            md="4"
+          >
             <v-list dense height="560px">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
@@ -323,7 +329,9 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
-                          :question="heuristics[itemSelect].questions[questionSelect]"
+                          :question="
+                            heuristics[itemSelect].questions[questionSelect]
+                          "
                           @change="emitChange"
                         />
                       </v-row>
@@ -410,7 +418,13 @@
           </v-col>
           <v-divider vertical />
           <!--Questions content-->
-          <v-col v-if="questionSelect != null" class="ma-0 pa-0">
+          <v-col
+            v-if="questionSelect != null"
+            class="ma-0 pa-0 questionsContent"
+            cols="12"
+            sm="6"
+            md="4"
+          >
             <v-card height="560px" elevation="0">
               <v-subheader class="pa-2">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
@@ -567,10 +581,7 @@ export default {
         align: 'start',
         value: 'title',
       },
-      { text: 'Actions',
-        value: 'actions',
-        align: 'end',
-        sortable: false },
+      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
     ],
     dialog: false,
     dialogEdit: false,
@@ -610,7 +621,7 @@ export default {
       return result
     },
     testAnswerDocLength() {
-      if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -709,7 +720,7 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-     emitChange() {
+    emitChange() {
       this.$emit('change')
       this.$forceUpdate()
     },
@@ -1030,6 +1041,15 @@ export default {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .questionsList {
+    margin-top: 7px;
+  }
+  .questionsContent {
+    margin-top: 7px;
   }
 }
 </style>
