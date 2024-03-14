@@ -3,25 +3,24 @@
     <v-col>
       <v-row>
         <v-btn
-          v-if="
-            !recordingAudio &&
-              currentUserTestAnswer.tasks[taskIndex].audioRecordURL == ''
-          "
+          v-if="!recordingAudio"
           @click="startAudioRecording"
-          class="ml-4 mb-2 xl"
-          color="grey lighten-2"
+          color="black"
+          class="ml-4 my-2 mr-auto"
           elevation="0"
+          icon
         >
-          <v-icon class="mr-2">mdi-microphone</v-icon>Start Recording
+          <v-icon>mdi-microphone</v-icon>
         </v-btn>
         <v-btn
           dark
           color="red"
-          class="ml-4 mb-2 xl"
+          class="ml-4 my-2 mr-auto xl"
           v-if="recordingAudio"
           @click="stopAudioRecording"
+          icon
         >
-          <v-icon left>mdi-stop</v-icon> Stop Recording
+          <v-icon>mdi-stop</v-icon>
         </v-btn>
       </v-row>
     </v-col>
