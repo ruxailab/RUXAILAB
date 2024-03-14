@@ -349,7 +349,11 @@
           </div>
         </v-navigation-drawer>
 
-        <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
+        <v-col
+          ref="rightView"
+          :class="{ mini: !mini }"
+          class="backgroundTest pa-0 ma-0 right-view"
+        >
           <!-- Heuristics -->
           <ShowInfo
             v-if="index == 1"
@@ -367,7 +371,7 @@
                 justify="center"
               >
                 <v-col cols="10">
-                  <v-row justify="space-around" align="center">
+                  <v-row class="questions">
                     <v-col cols="11">
                       <p class="subtitleView">
                         {{ i + 1 }}) {{ question.title }}
@@ -395,6 +399,7 @@
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
                           .heuristicQuestions[i].heuristicAnswer
                       "
+                      class="optionSelect"
                       :items="test.testOptions"
                       label="Respuestas/Answers"
                       outlined
@@ -515,6 +520,25 @@ export default {
         if (this.logined) this.setTest()
       }
     },
+  },
+  mounted() {
+    const mediaQuery = window.matchMedia('(max-width: 600px)')
+
+    // Function to toggle the visibility of the list of questions
+    const hideSidebar = () => {
+      this.mini = true
+    }
+
+    // Add an event listener for the media query
+    mediaQuery.addEventListener('change', hideSidebar)
+
+    // Call the function initially to set the correct visibility
+    hideSidebar()
+
+    // Clean up the event listener when the component is destroyed
+    this.$once('hook:beforeDestroy', () => {
+      mediaQuery.removeEventListener('change', hideSidebar)
+    })
   },
 
   async created() {
@@ -710,6 +734,11 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+.questions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 .subtitleView {
   font-family: Roboto;
   font-style: normal;
@@ -740,6 +769,9 @@ body {
 }
 /* Right side scroll bar */
 /* width */
+.right-view {
+  transition: filter 0.3s ease; /* Smooth transition for the blur effect */
+}
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
@@ -783,5 +815,18 @@ body {
   line-height: 56px;
   margin-left: 12px;
   margin-bottom: 20px;
+}
+@media (max-width: 600px) {
+  .subtitleView {
+    font-size: 14px;
+  }
+  .optionSelect {
+    transform: scale(0.875);
+  }
+  .right-view.mini {
+    filter: blur(15px); /* Apply blur effect */
+    width: 100%;
+    z-index: -100;
+  }
 }
 </style>
