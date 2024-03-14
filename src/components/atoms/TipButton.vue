@@ -6,15 +6,19 @@
         class="ml-4 my-2 mr-auto white--text"
         variant="tonal"
         depressed
+        icon
         v-on="on"
       >
-        Tip
-        <v-icon right>mdi-chat-question</v-icon>
+        <v-icon>mdi-chat-question</v-icon>
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title class="headline orange lighten-1 text-center" style="color: white;" primary-title>
+      <v-card-title
+        class="headline orange lighten-1 text-center"
+        style="color: white;"
+        primary-title
+      >
         {{ task.taskName }} - TIP
       </v-card-title>
 
@@ -38,7 +42,7 @@ export default {
     task: {
       type: Object,
       required: true,
-      default: function () {
+      default: function() {
         return {
           taskName: '',
           taskTip: '',
