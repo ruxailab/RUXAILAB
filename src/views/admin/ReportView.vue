@@ -61,7 +61,7 @@
                   <v-icon>mdi-dots-vertical</v-icon>
                 </v-btn>
               </template>
-              <v-list>
+              <v-list v-if="test.testAdmin.email == user.email">
                 <v-list-item @click=";(dialog = true), (report = item)">
                   <v-list-item-title>Remove Report</v-list-item-title>
                 </v-list-item>
@@ -91,6 +91,8 @@
 import ShowInfo from '@/components/organisms/ShowInfo'
 import Intro from '@/components/molecules/IntroReports'
 import Snackbar from '@/components/atoms/Snackbar'
+import { doc, getDoc, updateDoc, deleteField } from 'firebase/firestore'
+import { db } from '@/firebase'
 
 export default {
   components: {
@@ -185,32 +187,38 @@ export default {
       return status ? 'submitted' : 'in progress'
     },
 
+    async getCurrentAnswer() {
+      await this.$store.dispatch('getCurrentTestAnswerDoc')
+    },
+
     removeReport(report) {
-      this.$store
-        .dispatch('removeReport', {
-          docId: this.id,
-          element: {
-            id: report.userDocId,
-          },
-          param: 'reports',
-        })
-        .then(() => {
-          //remove from answers
-          if (report.log.status == 'Submitted')
-            this.$store.dispatch('removeUserAnswer', {
-              docId: this.answers.id,
-              element: Object.assign({}, { id: report.uid }),
-            })
-          this.$store.commit('setSuccess', 'Report successfully deleted')
-          this.loadingBtn = false
-          this.dialog = false
-        })
-        .catch((err) => {
-          this.$store.commit('setError', {
-            errorCode: 'reportError',
-            message: err,
-          })
-        })
+      let answerId = this.test.answersDocId
+      let userToRemoveId = report.userDocId
+      let testType = this.test.testType
+      let testId = this.test.id
+      if (testType == 'HEURISTIC') testType = 'heuristicAnswers'
+      if (testType == 'User') testType = 'taskAnswers'
+
+      const userDocRef = doc(db, 'users', userToRemoveId)
+      getDoc(userDocRef).then((userDoc) => {
+        if (userDoc.exists()) {
+          const updateObject = {}
+          updateObject[`myAnswers.${testId}`] = deleteField()
+          return updateDoc(userDocRef, updateObject)
+        }
+      })
+
+      const answerDocRef = doc(db, 'answers', answerId)
+      getDoc(answerDocRef).then((answerDoc) => {
+        if (answerDoc.exists()) {
+          const updateObject = {}
+          updateObject[`${testType}.${userToRemoveId}`] = deleteField()
+          return updateDoc(answerDocRef, updateObject)
+        }
+      })
+      this.getCurrentAnswer()
+      this.loadingBtn = false
+      this.dialog = false
     },
 
     formatDate(timestamp) {
