@@ -10,11 +10,11 @@ import {
 } from 'firebase/firestore'
 import {
   getFunctions,
-  // connectFunctionsEmulator,
+  // connectFunctionsEmulator
 } from 'firebase/functions'
 import {
   getStorage,
-  // connectStorageEmulator,
+  // connectStorageEmulator
 } from 'firebase/storage'
 
 const isProduction = false
