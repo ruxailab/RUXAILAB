@@ -315,10 +315,12 @@
                   <!-- Bottom Tab 4 -->
 
                   <v-col v-if="ind == 3" cols="12">
-                    {{ tabelacompleta }}
-                    {{ decisionmatrix }}
-                    {{ relative }}
-                    {{ max_value }}
+                    <v-data-table
+                      :headers="weightsStatistics.header"
+                      :items="weightsStatistics.items"
+                      :items-per-page="10"
+                      class="elevation-4 weightsStatisticsStyle mt-3 mb-6"
+                    />
                   </v-col>
                 </v-row>
               </v-col>
@@ -359,7 +361,7 @@ export default {
     tabelacompleta: null,
     decisionmatrix: null,
     relative: null,
-    max_value: null,
+    usability_total: null,
   }),
 
   computed: {
@@ -481,13 +483,21 @@ export default {
       return table
     },
 
+    testAll() {
+      return this.$store.state.Tests.Test
+    },
+
+    heuristics() {
+      return this.testAll.testStructure || []
+    },
+
     weightsStatistics() {
-      const tableWS = {
+      const tableWeights = {
         header: [],
         items: [],
       }
 
-      tableWS.header = [
+      tableWeights.header = [
         {
           text: 'HEURISTICS',
           align: 'start',
@@ -508,7 +518,19 @@ export default {
         },
       ]
 
-      return tableWS
+      console.log(tableWeights.header)
+      console.log(this.relative.length)
+      const relativeLength = this.relative.length
+
+      if (relativeLength > 0) {
+        for (var i = 0; i < relativeLength; i++)
+          tableWeights.items.push({
+            name: `H${i + 1} - ${this.heuristics[i].title}`,
+            percentage: this.$store.state.Tests.scoresPercentage[i],
+            rw: this.relative[i].toFixed(4),
+          })
+      }
+      return tableWeights
     },
 
     testAnswerDocument() {
@@ -626,11 +648,11 @@ export default {
         this.decisionmatrix = data.decisionmatrix
         this.tabelacompleta = data.tabelacompleta
         this.relative = data.relative
-        this.max_value = data.max_value
-        console.log(data.decisionmatrix)
-        console.log(data.tabelacompleta)
-        console.log(data.relative)
-        console.log(data.max_value)
+        this.usability_total = data.usability_total
+        console.log('DECISION MATRIX:  ', data.decisionmatrix)
+        console.log('TABELA COMPLETA:  ', data.tabelacompleta)
+        console.log('RELATIVE:  ', data.relative)
+        console.log('USABILITY TOTAL:  ', data.usability_total)
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
@@ -718,6 +740,11 @@ export default {
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
   /* background: #515069; */
+}
+
+.weightsStatisticsStyle {
+  border-radius: 20px;
+  border: 0.2px solid #fca326;
 }
 </style>
 <style>

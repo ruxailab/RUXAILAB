@@ -200,13 +200,14 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
 
     # final usability score
-    print("\n\n",df_heuristics_usability_score_weights.Relative_Weight.sum())
+    usability_total = df_heuristics_usability_score_weights.Relative_Weight.sum()
+    print("\n\n",usability_total)
 
     print("\n\n",df_heuristics_usability_score_weights.Weights.sum())
 
     response_data = {
         "decisionmatrix": ahp_df.to_json(),
-        "max_value": max_eigenvalue.astype("str"),
+        "usability_total": usability_total.astype("str"),
         "tabelacompleta": df_heuristics_usability_score_weights.to_json(),
         "relative": relative_weight_array.tolist()
     }
