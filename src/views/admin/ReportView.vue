@@ -191,34 +191,45 @@ export default {
       await this.$store.dispatch('getCurrentTestAnswerDoc')
     },
 
-    removeReport(report) {
+    async removeReport(report) {
       let answerId = this.test.answersDocId
       let userToRemoveId = report.userDocId
       let testType = this.test.testType
       let testId = this.test.id
-      if (testType == 'HEURISTIC') testType = 'heuristicAnswers'
-      if (testType == 'User') testType = 'taskAnswers'
 
-      const userDocRef = doc(db, 'users', userToRemoveId)
-      getDoc(userDocRef).then((userDoc) => {
+      if (testType === 'HEURISTIC') testType = 'heuristicAnswers'
+      if (testType === 'User') testType = 'taskAnswers'
+
+      try {
+        const userDocRef = doc(db, 'users', userToRemoveId)
+        const userDoc = await getDoc(userDocRef)
+
         if (userDoc.exists()) {
           const updateObject = {}
           updateObject[`myAnswers.${testId}`] = deleteField()
-          return updateDoc(userDocRef, updateObject)
+          await updateDoc(userDocRef, updateObject)
         }
-      })
 
-      const answerDocRef = doc(db, 'answers', answerId)
-      getDoc(answerDocRef).then((answerDoc) => {
+        const answerDocRef = doc(db, 'answers', answerId)
+        const answerDoc = await getDoc(answerDocRef)
+
         if (answerDoc.exists()) {
           const updateObject = {}
           updateObject[`${testType}.${userToRemoveId}`] = deleteField()
-          return updateDoc(answerDocRef, updateObject)
+          await updateDoc(answerDocRef, updateObject)
         }
-      })
-      this.getCurrentAnswer()
+      } catch (e) {
+        console.log(e)
+        this.$store.commit('setError', {
+          errorCode: `RemoveReportError`,
+          message: e,
+        })
+      }
+
+      await this.getCurrentAnswer()
       this.loadingBtn = false
       this.dialog = false
+      this.$toast.success('Report successfully deleted!')
     },
 
     formatDate(timestamp) {
