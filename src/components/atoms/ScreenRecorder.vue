@@ -2,30 +2,40 @@
   <div>
     <v-col>
       <v-row>
-        <v-btn
-          @click="captureScreen"
-          class="ml-4 my-2 mr-auto"
-          v-if="!isCapture"
-          elevation="0"
-          icon
-        >
-          <v-icon>mdi-monitor-screenshot</v-icon>
-        </v-btn>
-        <v-btn
-          class="ml-4 my-2 mr-auto"
-          v-if="
-            isCapture && !currentUserTestAnswer.tasks[taskIndex].screenRecordURL
-          "
-          :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
-          :dark="isRecording"
-          elevation="0"
-          icon
-          @click="recordScreen"
-        >
-          <v-icon>{{
-            isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
-          }}</v-icon>
-        </v-btn>
+        <v-tooltip bottom v-if="!isCapture">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="captureScreen"
+              class="ml-4 my-2 mr-auto"
+              elevation="0"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-monitor-screenshot</v-icon>
+            </v-btn>
+          </template>
+          <span>Capture Screen</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isCapture">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="recordScreen"
+              class="ml-4 my-2 mr-auto"
+              :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
+              :dark="isRecording"
+              elevation="0"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>{{
+                isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
+              }}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
+        </v-tooltip>
       </v-row>
     </v-col>
   </div>
