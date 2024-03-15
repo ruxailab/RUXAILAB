@@ -2,26 +2,38 @@
   <div>
     <v-col>
       <v-row>
-        <v-btn
-          v-if="!recordingAudio"
-          @click="startAudioRecording"
-          color="black"
-          class="ml-4 my-2 mr-auto"
-          elevation="0"
-          icon
-        >
-          <v-icon>mdi-microphone</v-icon>
-        </v-btn>
-        <v-btn
-          dark
-          color="red"
-          class="ml-4 my-2 mr-auto xl"
-          v-if="recordingAudio"
-          @click="stopAudioRecording"
-          icon
-        >
-          <v-icon>mdi-stop</v-icon>
-        </v-btn>
+        <v-tooltip bottom v-if="!recordingAudio">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="startAudioRecording"
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-microphone</v-icon>
+            </v-btn>
+          </template>
+          <span>Start Audio Record</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="recordingAudio">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="stopAudioRecording"
+              color="red"
+              dark
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto xl"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-stop</v-icon>
+            </v-btn>
+          </template>
+          <span>Stop Audio Record</span>
+        </v-tooltip>
       </v-row>
     </v-col>
   </div>
@@ -98,6 +110,7 @@ export default {
 
           this.$emit('stopShowLoading')
           Vue.$toast.success('Audio record saved!')
+          this.recordingAudio = false
         }
 
         this.mediaRecorder.start()
