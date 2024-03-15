@@ -1,8 +1,19 @@
 <template>
   <div class="mr-auto">
-    <v-icon @click="toggleTimer" class="ml-4 mr-2 my-4" style="cursor: pointer">
-      {{ timerRunning ? 'mdi-clock' : 'mdi-clock-outline' }}
-    </v-icon>
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on, attrs }">
+        <v-icon
+          @click="toggleTimer"
+          class="ml-4 mr-2 my-4"
+          style="cursor: pointer"
+          v-bind="attrs"
+          v-on="on"
+        >
+          {{ timerRunning ? 'mdi-clock' : 'mdi-clock-outline' }}
+        </v-icon>
+      </template>
+      <span>{{ timerVisible ? 'Hide Timer' : 'Show Timer' }}</span>
+    </v-tooltip>
     <span v-if="timerVisible"> {{ formatTime(elapsedTime) }} </span>
   </div>
 </template>
