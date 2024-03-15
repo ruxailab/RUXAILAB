@@ -2,24 +2,36 @@
   <div>
     <v-col>
       <v-row>
-        <v-btn
-          v-if="!recording"
-          @click="startRecording"
-          class="ml-4 my-2 mr-auto"
-          elevation="0"
-          icon
-        >
-          <v-icon>mdi-camera</v-icon>
-        </v-btn>
-        <v-btn
-          class="ml-4 my-2 mr-auto"
-          color="red"
-          icon
-          v-if="recording"
-          @click="stopRecording"
-        >
-          <v-icon dark>mdi-stop</v-icon>
-        </v-btn>
+        <v-tooltip bottom v-if="!recording">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="startRecording"
+              class="ml-4 my-2 mr-auto"
+              elevation="0"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-camera</v-icon>
+            </v-btn>
+          </template>
+          <span>Start Recording</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="recording">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="stopRecording"
+              class="ml-4 my-2 mr-auto"
+              color="red"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon dark>mdi-stop</v-icon>
+            </v-btn>
+          </template>
+          <span>Stop Recording</span>
+        </v-tooltip>
       </v-row>
     </v-col>
   </div>
