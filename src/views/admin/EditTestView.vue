@@ -93,6 +93,7 @@
           type="content"
           :object="object"
           :index="index"
+          @tabClicked="handleTabClick"
           @change="change = true"
         />
 
@@ -306,6 +307,9 @@ export default {
       this.valids[index] = valid
     },
     validateAll() {
+      this.submit()
+    },
+    handleTabClick(index) {
       this.submit()
     },
     preventNav(event) {
