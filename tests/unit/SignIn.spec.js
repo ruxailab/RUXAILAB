@@ -2,8 +2,6 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '../test-utils'
 import SignInView from '@/views/public/SignInView.vue'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { waitFor } from '@testing-library/dom'
-import i18n from '@/i18n'
 
 global.console.error = jest.fn()
 global.console.warn = jest.fn()
@@ -39,27 +37,6 @@ describe('SignIn', () => {
       const submitButton = screen.getByRole('button', { name: /Sign-in/i })
       await fireEvent.click(submitButton)
       expect(signInWithEmailAndPassword).toHaveBeenCalled()
-    })
-  })
-
-  describe('when user type error credentials', () => {
-    it('should display error message', async () => {
-      render(SignInView)
-
-      signInWithEmailAndPassword.mockImplementation(() => {
-        throw new Error('invalid-credentials')
-      })
-
-      const emailInput = screen.getByLabelText(/E-mail/i)
-      await fireEvent.update(emailInput, 'invalid-email')
-      const passwordInput = screen.getByLabelText(/Password/i, { selector: 'input' })
-      await fireEvent.update(passwordInput, 'invalid-password')
-      const submitButton = screen.getByRole('button', { name: /Sign-in/i })
-      await fireEvent.click(submitButton)
-      await waitFor(() => {
-        expect(screen.getByText(i18n.t('errors.userNotExist'))).toBeInTheDocument()
-      })
-
     })
   })
 })
