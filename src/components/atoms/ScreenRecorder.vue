@@ -2,7 +2,7 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip bottom v-if="!isCapture">
+        <v-tooltip bottom v-if="!isCapturing">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               @click="captureScreen"
@@ -17,7 +17,7 @@
           </template>
           <span>Capture Screen</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isCapture">
+        <v-tooltip bottom v-if="isCapturing">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               @click="recordScreen"
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     return {
-      isCapture: false,
+      isCapturing: false,
       isRecording: false,
       videoUrl: '',
       videoStream: null,
@@ -70,7 +70,7 @@ export default {
         this.videoStream = await navigator.mediaDevices.getDisplayMedia({
           cursor: true,
         })
-        this.isCapture = true
+        this.isCapturing = true
         this.recordScreen()
       } catch (err) {
         console.error(err)
@@ -78,6 +78,7 @@ export default {
     },
     recordScreen() {
       if (!this.isRecording) {
+        this.chunks = []
         this.mediaRecorder = new MediaRecorder(this.videoStream)
         this.mediaRecorder.start()
         this.mediaRecorder.ondataavailable = (e) => {
@@ -99,16 +100,16 @@ export default {
           this.currentUserTestAnswer.tasks[
             this.taskIndex
           ].screenRecordURL = this.videoUrl
-          this.videoStream = null
           this.isRecording = false
+          this.videoStream.getTracks().forEach((track) => track.stop())
+          this.isRecording = false
+          this.isCapturing = false
           this.$emit('stopShowLoading')
           Vue.$toast.success('Screen record saved!')
         }
         this.isRecording = true
       } else {
         this.mediaRecorder.stop()
-        this.videoStream.getTracks().forEach((track) => track.stop())
-        this.isRecording = false
       }
     },
   },
