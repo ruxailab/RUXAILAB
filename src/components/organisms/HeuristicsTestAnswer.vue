@@ -314,13 +314,29 @@
                   </v-col>
                   <!-- Bottom Tab 4 -->
 
-                  <v-col v-if="ind == 3" cols="12">
-                    <v-data-table
-                      :headers="weightsStatistics.header"
-                      :items="weightsStatistics.items"
-                      :items-per-page="10"
-                      class="elevation-4 weightsStatisticsStyle mt-3 mb-6"
-                    />
+                  <v-col v-if="ind == 3" cols="12" align="center">
+                    <v-row>
+                      <v-col cols="6" md="4" class=" my-6 py-6">
+                        <v-card class="pa-2 weightsStatisticsRadar elevation-4">
+                          1
+                        </v-card>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="8" class="my-6 py-6">
+                        <v-card class="pa-2 weightsStatisticsRadar elevation-4">
+                          2
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    <v-row align="center" justify="space-around">
+                      <v-data-table
+                        :headers="weightsStatistics.header"
+                        :items="weightsStatistics.items"
+                        :items-per-page="10"
+                        align="center"
+                        class="elevation-4 weightsStatisticsStyle mt-3 mb-6 mx-auto"
+                        width="950px"
+                      />
+                    </v-row>
                   </v-col>
                 </v-row>
               </v-col>
@@ -518,8 +534,6 @@ export default {
         },
       ]
 
-      console.log(tableWeights.header)
-      console.log(this.relative.length)
       const relativeLength = this.relative.length
 
       if (relativeLength > 0) {
@@ -743,6 +757,12 @@ export default {
 }
 
 .weightsStatisticsStyle {
+  border-radius: 20px;
+  border: 0.2px solid #fca326;
+  width: 950px;
+}
+
+.weightsStatisticsRadar {
   border-radius: 20px;
   border: 0.2px solid #fca326;
 }
