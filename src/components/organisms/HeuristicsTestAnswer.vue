@@ -323,8 +323,9 @@
                       </v-col>
                       <v-col cols="12" sm="6" md="8" class="my-6 py-6">
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
+                          2
                           <div class="example">
-                            <ColumnExample
+                            <!-- <ColumnExample
                               width="500"
                               height="350"
                               type="bar"
@@ -333,7 +334,7 @@
                             />
                             <button @click="updateChart">
                               Update!
-                            </button>
+                            </button> -->
                           </div>
                         </v-card>
                       </v-col>
@@ -368,7 +369,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import ColumnExample from '@/components/atoms/ColumnBarChart.vue'
+//import ColumnExample from '@/components/atoms/ColumnBarChart.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -379,7 +380,7 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
-    ColumnExample,
+    //ColumnExample,
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
