@@ -108,6 +108,10 @@ export default {
             this.taskIndex
           ].audioRecordURL = this.recordedAudio
 
+          this.audioStream.getTracks().forEach((track) => track.stop())
+          this.audioStream = null
+          this.recordingAudio = false
+
           this.$emit('stopShowLoading')
           Vue.$toast.success('Audio record saved!')
           this.recordingAudio = false
@@ -122,9 +126,6 @@ export default {
     stopAudioRecording() {
       if (this.mediaRecorder) {
         this.mediaRecorder.stop()
-        this.audioStream.getTracks().forEach((track) => track.stop())
-        this.audioStream = null
-        this.recordingAudio = false
       }
     },
   },
