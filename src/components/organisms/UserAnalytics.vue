@@ -53,7 +53,7 @@
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
-          <v-card-text>
+          <v-card-text style="background-color: #E8EAF2;">
             <v-row v-if="dialogItem">
               <v-col
                 v-if="dialogItem.preTestAnswer.length > 0"
@@ -62,12 +62,10 @@
                 "
                 class="pt-8"
               >
-                <span
-                  class="t-5 font-weight-bold text-h6"
-                  style="color: #252525"
+                <span class="cardsTitle ma-3" style="color: #252525"
                   >Variables</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       class="ma-1 text-subtitle-1"
@@ -91,7 +89,7 @@
                   style="color: #252525"
                   >Task Time</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <p class="text-h6">
                       {{ formatTime(dialogItem.tasks[taskSelect].taskTime) }}
@@ -104,12 +102,10 @@
                 cols="12"
                 class="pt-8"
               >
-                <span
-                  class="t-5 font-weight-bold text-h6"
-                  style="color: #252525"
+                <span class="cardsTitle ma-3" style="color: #252525"
                   >Post-Test Answer</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       class="ma-1 text-subtitle-1"
@@ -132,10 +128,10 @@
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: #252525"
+                <span class="cardsTitle ma-3" style="color: #252525"
                   >Answer</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskAnswer }}
@@ -148,12 +144,15 @@
                 cols="12"
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: #252525"
+                <span class="cardsTitle ma-3" style="color: #252525"
                   >Post Question</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
-                    <strong>{{ testStructure.userTasks[taskSelect].postQuestion }}</strong> :
+                    <strong>{{
+                      testStructure.userTasks[taskSelect].postQuestion
+                    }}</strong>
+                    :
                     <span>
                       {{ dialogItem.tasks[taskSelect].postAnswer }}
                     </span>
@@ -167,10 +166,10 @@
                 "
                 class="mt-4"
               >
-                <span class="font-weight-bold text-h6" style="color: #252525"
+                <span class="cardsTitle ma-3" style="color: #252525"
                   >Observation</span
                 >
-                <v-card outlined rounded="6">
+                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskObservations }}
@@ -185,7 +184,7 @@
                   class="d-flex align-center justify-center flex-column"
                 >
                   <span
-                    class="font-weight-bold text-h6 my-3"
+                    class="cardsTitle ma-3"
                     style="color: #252525"
                     v-if="dialogItem"
                     >Web Cam Record</span
@@ -205,12 +204,11 @@
                   v-if="dialogItem.tasks[taskSelect].screenRecordURL"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span
-                    class="font-weight-bold text-h6 my-3"
-                    style="color: #252525"
+                  <span class="cardsTitle ma-3" style="color: #252525"
                     >Screen Record</span
                   >
                   <video
+                    class="my-3"
                     :src="dialogItem.tasks[taskSelect].screenRecordURL"
                     controls
                     height="260"
@@ -223,16 +221,13 @@
                   v-if="dialogItem.tasks[taskSelect].audioRecordURL"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span
-                    class="font-weight-bold text-h6 my-3 mx-auto text-center"
-                    style="color: #252525"
-                  >
+                  <span class="cardsTitle ma-3" style="color: #252525">
                     Audio Record
                   </span>
                   <audio
+                    class="mx-auto my-3"
                     :src="dialogItem.tasks[taskSelect].audioRecordURL"
                     controls
-                    class="mx-auto"
                   ></audio>
                 </v-col>
               </div>
@@ -285,7 +280,6 @@ export default {
       if (!this.$store.getters.testAnswerDocument) {
         return []
       }
-      console.log(this.$store.getters.testAnswerDocument.taskAnswers)
       return this.$store.getters.testAnswerDocument.taskAnswers
     },
     loading() {
@@ -303,7 +297,6 @@ export default {
       this.taskAnswers[c] = this.answers[key]
       c++
     }
-    console.log(this.taskAnswers)
   },
   methods: {
     formatTime(time) {
@@ -339,6 +332,14 @@ export default {
 </script>
 
 <style scoped>
+.cardsTitle {
+  color: #455a64;
+  font-family: 'Poppins', Helvetica;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
 .list-scroll {
   height: 508px;
   overflow: auto;
