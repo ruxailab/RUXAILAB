@@ -4,7 +4,7 @@ module.exports = {
   ],
   env: {
     test: {
-      plugins: ["transform-require-context"],
+      plugins: ['transform-require-context'],
     },
   },
 }
