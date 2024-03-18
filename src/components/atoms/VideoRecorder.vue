@@ -99,6 +99,9 @@ export default {
             this.taskIndex
           ].webcamRecordURL = this.recordedVideo
 
+          this.videoStream.getTracks().forEach((track) => track.stop())
+          this.recording = false
+
           this.$emit('stopShowLoading')
           Vue.$toast.success('Video record saved!')
         }
@@ -111,8 +114,6 @@ export default {
     stopRecording() {
       if (this.mediaRecorder) {
         this.mediaRecorder.stop()
-        this.videoStream.getTracks().forEach((track) => track.stop())
-        this.recording = false
       }
     },
   },
