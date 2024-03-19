@@ -9,6 +9,17 @@ export default class UserController extends Controller {
   constructor() {
     super()
   }
+  async create(payload) {
+    const user = new User({
+      email: payload.email,
+      accessLevel: 1,
+      myTests: {},
+      myAnswers: {},
+      notifications: [],
+    }).toFirestore()
+    return super.create(COLLECTION, user)
+  }
+
   async update(docId, payload) {
     return super.update(COLLECTION, docId, payload)
   }
@@ -69,7 +80,7 @@ export default class UserController extends Controller {
             userData.notifications = userData.notifications.filter(
               (notification) => notification.testId !== testId,
             )
-              console.log('depois do filtro: ',userData.notifications)
+            console.log('depois do filtro: ', userData.notifications)
             // Atualizar o documento do usuário com as notificações filtradas
             await super.update('users', userId, { notifications: userData.notifications })
           }
@@ -85,42 +96,33 @@ export default class UserController extends Controller {
     }
   }
 
+  async removeTestFromUser(userId, testIdToRemove) {
+    try {
+      const userDoc = await super.readOne('users', userId)
 
-
-
-
-
-
-
-
-
-    async removeTestFromUser(userId, testIdToRemove) {
-      try {
-        const userDoc = await super.readOne('users', userId)
-
-        if (!userDoc.exists()) {
-          console.log('User not found.')
-          return
-        }
-        const userData = userDoc.data()
-        console.log(userData)
-
-        if (userData.myTests[testIdToRemove]) {
-          delete userData.myTests[testIdToRemove]
-        }
-        if (userData.myAnswers[testIdToRemove]) {
-          delete userData.myAnswers[testIdToRemove]
-        }
-
-
-        await super.update('users', userId, userData)
-
-        console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
-      } catch (error) {
-        console.error('Error removing test from user:', error)
-        throw error
+      if (!userDoc.exists()) {
+        console.log('User not found.')
+        return
       }
+      const userData = userDoc.data()
+      console.log(userData)
+
+      if (userData.myTests[testIdToRemove]) {
+        delete userData.myTests[testIdToRemove]
+      }
+      if (userData.myAnswers[testIdToRemove]) {
+        delete userData.myAnswers[testIdToRemove]
+      }
+
+
+      await super.update('users', userId, userData)
+
+      console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
+    } catch (error) {
+      console.error('Error removing test from user:', error)
+      throw error
     }
+  }
 
 
 }
