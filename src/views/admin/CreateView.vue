@@ -1,6 +1,6 @@
 <template>
   <div style="height: 93vh;background-color: #f9f5f0;">
-    <v-col cols="12"></v-col>
+    <v-col cols="12" />
     <span
       class="Title mb-14 mt-8"
       style="display: flex; justify-content: center;"
