@@ -17,7 +17,7 @@ export default class UserController extends Controller {
       myAnswers: {},
       notifications: [],
     }).toFirestore()
-    return super.create(COLLECTION, user)
+    return super.set(COLLECTION, payload.id, user)
   }
 
   async update(docId, payload) {

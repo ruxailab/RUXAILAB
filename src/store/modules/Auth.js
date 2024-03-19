@@ -41,9 +41,10 @@ export default {
       try {
         const { user } = await authController.signUp(payload.email, payload.password)
         await userController.create({
+          id: user.uid,
           email: user.email,
         })
-        const dbUser = await userController.getById(response.user.uid)
+        const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
