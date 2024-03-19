@@ -122,6 +122,7 @@ export default {
           email: this.email,
           password: this.password,
         })
+        await this.$router.push('/')
       }
     },
     redirectToSignin() {
