@@ -9,7 +9,9 @@
         v-on="on"
       >
         Tip
-        <v-icon right>mdi-chat-question</v-icon>
+        <v-icon right>
+          mdi-chat-question
+        </v-icon>
       </v-btn>
     </template>
 
@@ -26,7 +28,9 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="orange" text @click="dialog = false"> Ok </v-btn>
+        <v-btn color="orange" text @click="dialog = false">
+          Ok
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
