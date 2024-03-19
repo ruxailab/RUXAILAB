@@ -650,7 +650,6 @@ export default {
       //console.log(array_scores)
       return array_scores
     },
-    //'http://127.0.0.1:5001/retlab-dev/us-central1/get_scores'
 
     async pythonFunction() {
       const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
