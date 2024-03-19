@@ -80,7 +80,7 @@ def populate_ahp_matrix(ahp_df, pesos):
         # Remaining weights
         temp_saaty_scale_dict = saaty_scale_dict.copy()
 
-        criteria_dict = {i+1: col for i, col in enumerate(ahp_df.columns) if col != row and ahp_df.loc[row, col] == 0}
+        criteria_dict = {i+1: col for i, col in enumerate(ahp_df.columns) if col != row and ahp_df.loc[row, col].all() == 0}
 
         # Remaining criteria
         temp_criteria_dict = criteria_dict.copy()
@@ -205,8 +205,9 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
 
     print("\n\n",df_heuristics_usability_score_weights.Weights.sum())
 
+
     response_data = {
-        "decisionmatrix": ahp_df.to_json(),
+        #"decisionmatrix": ahp_df.to_json(),
         "usability_total": usability_total.astype("str"),
         "tabelacompleta": df_heuristics_usability_score_weights.to_json(),
         "relative": relative_weight_array.tolist()

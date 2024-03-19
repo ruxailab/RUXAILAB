@@ -5,6 +5,9 @@ import string
 import typing
 from itertools import chain as _chain
 
+if typing.TYPE_CHECKING:
+    from typing_extensions import Literal
+
 _logger = logging.getLogger(__name__)
 
 # -------------------------------------------------------------------------------------
@@ -92,7 +95,7 @@ def pep508_versionspec(value: str) -> bool:
         # versionspec
         return False
     # Let's pretend we have a dependency called `requirement` with the given
-    # version spec, then we can re-use the pep508 function for validation:
+    # version spec, then we can reuse the pep508 function for validation:
     return pep508(f"requirement{value}")
 
 
@@ -131,8 +134,10 @@ class _TroveClassifier:
     option (classifiers will be validated anyway during the upload to PyPI).
     """
 
+    downloaded: typing.Union[None, "Literal[False]", typing.Set[str]]
+
     def __init__(self):
-        self.downloaded: typing.Union[None, False, typing.Set[str]] = None
+        self.downloaded = None
         self._skip_download = False
         # None => not cached yet
         # False => cache not available
@@ -179,6 +184,17 @@ try:
 
 except ImportError:  # pragma: no cover
     trove_classifier = _TroveClassifier()
+
+
+# -------------------------------------------------------------------------------------
+# Stub packages - PEP 561
+
+
+def pep561_stub_name(value: str) -> bool:
+    top, *children = value.split(".")
+    if not top.endswith("-stubs"):
+        return False
+    return python_module_name(".".join([top[: -len("-stubs")], *children]))
 
 
 # -------------------------------------------------------------------------------------
