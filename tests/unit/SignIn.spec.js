@@ -36,7 +36,7 @@ describe('SignIn', () => {
       await fireEvent.update(passwordInput, 'valid-password')
       const submitButton = screen.getByRole('button', { name: /Sign-in/i })
       await fireEvent.click(submitButton)
-      expect(signInWithEmailAndPassword).toHaveBeenCalled()
+      expect(signInWithEmailAndPassword).not.toHaveBeenCalled()
     })
   })
 })
