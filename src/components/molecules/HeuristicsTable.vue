@@ -181,9 +181,8 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
-                    > </template
-                  >'
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
+                  </template>'
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -193,10 +192,9 @@
                     <center class="mt-16" style="color: #a7a7a7">
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
-                      }}</strong
-                      ><br />
+                      }}</strong><br>
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
-                      <br />
+                      <br>
                       <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>
