@@ -1,48 +1,56 @@
 <template>
   <v-row>
     <v-col class="mt-8" cols="12">
-      <video class="video" ref="remoteVideo" autoplay playsinline></video>
+      <video ref="remoteVideo" class="video" autoplay playsinline />
       <video
+        ref="localVideo"
         class="video ml-8"
         style="height: 10vw"
-        ref="localVideo"
         muted
         autoplay
         playsinline
-      ></video>
+      />
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
         <v-btn
-        disabled
           v-if="localStream"
-          @click="toggleScreen()"
+          disabled
           class="mt-4 mx-2"
           :dark="isSharingScreen"
           :class="{ red: isSharingScreen, ' ': !isSharingScreen }"
           fab
+          @click="toggleScreen()"
         >
-          <v-icon v-if="!isSharingScreen">mdi-monitor-screenshot</v-icon>
-          <v-icon v-else>mdi-monitor-off</v-icon>
+          <v-icon v-if="!isSharingScreen">
+            mdi-monitor-screenshot
+          </v-icon>
+          <v-icon v-else>
+            mdi-monitor-off
+          </v-icon>
         </v-btn>
         <v-btn
           v-if="localStream"
-          @click="toggleMicrophone"
           class="mt-4 mx-2"
           :dark="isMicrophoneMuted"
           :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
           fab
+          @click="toggleMicrophone"
         >
-          <v-icon v-if="!isMicrophoneMuted">mdi-microphone</v-icon>
-          <v-icon v-else>mdi-microphone-off</v-icon>
+          <v-icon v-if="!isMicrophoneMuted">
+            mdi-microphone
+          </v-icon>
+          <v-icon v-else>
+            mdi-microphone-off
+          </v-icon>
         </v-btn>
         <v-btn
           v-if="localStream"
-          @click="hangUp()"
           class="mt-4 mx-2"
           dark
           color="red"
           fab
+          @click="hangUp()"
         >
           <v-icon>mdi-phone-hangup</v-icon>
         </v-btn>
@@ -55,16 +63,17 @@
 <script>
 import VideoCall from './VideoCall.vue'
 export default {
+  components: {
+    VideoCall,
+  },
   props: {
     isAdmin: {
       type: Boolean,
     },
     index: {
+      default: 0,
       type: Number,
     },
-  },
-  components: {
-    VideoCall,
   },
   data() {
     return {
@@ -72,9 +81,6 @@ export default {
       isMicrophoneMuted: false,
       isSharingScreen: false,
     }
-  },
-  mounted() {
-    this.setupStreams()
   },
 
   computed: {
@@ -87,6 +93,9 @@ export default {
     roomTestId() {
       return this.$store.getters.test.id
     },
+  },
+  mounted() {
+    this.setupStreams()
   },
   methods: {
     async toggleScreen() {
