@@ -11,7 +11,7 @@ export default class Notification {
         redirectsTo,
         author,
         read,
-        testId
+        testId,
     } = {},
     ) {
         this.title = title
@@ -34,7 +34,7 @@ export default class Notification {
             createdDate: this.createdDate,
             author: this.author,
             read: this.read,
-            testId: this.testId
+            testId: this.testId,
         }
     }
 }

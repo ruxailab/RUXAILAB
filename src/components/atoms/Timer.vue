@@ -1,10 +1,10 @@
 <template>
   <div class="mr-auto ml-8 mt-3">
     <v-row>
-      <v-icon @click="toggleTimer" class="mr-2 my-4" style="cursor: pointer">
+      <v-icon class="mr-2 my-4" style="cursor: pointer" @click="toggleTimer">
         {{ timerRunning ? 'mdi-clock' : 'mdi-clock-outline' }}
       </v-icon>
-      <p  v-if="timerVisible" class="font-weight-bold mr-2 my-5">
+      <p v-if="timerVisible" class="font-weight-bold mr-2 my-5">
         {{ formatTime(elapsedTime) }}
       </p>
     </v-row>
