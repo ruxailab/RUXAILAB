@@ -1,11 +1,14 @@
 <script>
-import { Line, mixins } from 'vue-chartjs';
+import { Line, mixins } from 'vue-chartjs'
 
 export default {
   extends: Line,
   mixins: [mixins.reactiveData],
   props: {
-    taskAnswers: Array,
+    taskAnswers: {
+      type: Array,
+      default:() => [],
+    },
   },
   data() {
     return {
@@ -29,7 +32,7 @@ export default {
               time: {
                 unit: 'week',
                 displayFormats: {
-                  week: 'DD/MM', 
+                  week: 'DD/MM',
                 },
               },
               title: {
@@ -49,51 +52,51 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       },
-    };
+    }
   },
   mounted() {
-    this.processDataForChart();
-    this.renderChart(this.chartData, this.chartOptions);
+    this.processDataForChart()
+    this.renderChart(this.chartData, this.chartOptions)
   },
   methods: {
     processDataForChart() {
-      const currentDate = new Date();
-      const MonthsAgo = new Date(currentDate);
-      MonthsAgo.setMonth(currentDate.getMonth() - 2);
+      const currentDate = new Date()
+      const MonthsAgo = new Date(currentDate)
+      MonthsAgo.setMonth(currentDate.getMonth() - 2)
 
-      const validAnswers = this.taskAnswers.filter(answer => answer.lastUpdate);
-      const filteredAnswers = validAnswers.filter(answer => new Date(answer.lastUpdate) >= MonthsAgo);
-      filteredAnswers.sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate));
+      const validAnswers = this.taskAnswers.filter((answer) => answer.lastUpdate)
+      const filteredAnswers = validAnswers.filter((answer) => new Date(answer.lastUpdate) >= MonthsAgo)
+      filteredAnswers.sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate))
 
-      const testsPerDay = {};
-      let currentDateIterator = new Date(MonthsAgo);
+      const testsPerDay = {}
+      const currentDateIterator = new Date(MonthsAgo)
 
       // Inicializar o objeto testsPerDay com zero para todos os dias no período
       while (currentDateIterator <= currentDate) {
-        const dateKey = currentDateIterator.toISOString().split('T')[0];
-        testsPerDay[dateKey] = 0;
-        currentDateIterator.setDate(currentDateIterator.getDate() + 1);
+        const dateKey = currentDateIterator.toISOString().split('T')[0]
+        testsPerDay[dateKey] = 0
+        currentDateIterator.setDate(currentDateIterator.getDate() + 1)
       }
 
       // Preencher testsPerDay com os dados reais
-      filteredAnswers.forEach(answer => {
-        const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0];
-        testsPerDay[dateKey]++;
-      });
+      filteredAnswers.forEach((answer) => {
+        const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0]
+        testsPerDay[dateKey]++
+      })
 
-      this.chartData.labels = Object.keys(testsPerDay);
-      this.chartData.datasets[0].data = Object.values(testsPerDay);
+      this.chartData.labels = Object.keys(testsPerDay)
+      this.chartData.datasets[0].data = Object.values(testsPerDay)
 
       // Calcular o número máximo de testes e adicionar uma folga
-      const maxTests = Math.max(...this.chartData.datasets[0].data);
-      const suggestedMax = maxTests + 1;
+      const maxTests = Math.max(...this.chartData.datasets[0].data)
+      const suggestedMax = maxTests + 1
 
       // Atualizar configurações do eixo y
-      this.chartOptions.scales.yAxes[0].ticks.suggestedMax = suggestedMax;
-      
+      this.chartOptions.scales.yAxes[0].ticks.suggestedMax = suggestedMax
+
     },
   },
-};
+}
 </script>
 
 <style scoped>
