@@ -164,9 +164,6 @@ export default {
     dialog: false,
     intro: false,
   }),
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-  },
   computed: {
     accessLevel() {
       // If user is superadmin
@@ -233,6 +230,9 @@ export default {
         this.setIntro()
       }
     },
+  },
+  async created() {
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })

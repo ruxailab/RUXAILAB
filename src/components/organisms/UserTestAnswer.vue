@@ -14,8 +14,12 @@
           color="#FCA326"
           class="ml-4"
         >
-          <v-tab @click="tab = 0"> General Analytics </v-tab>
-          <v-tab @click="tab = 1"> Individual Analytics </v-tab>
+          <v-tab @click="tab = 0">
+            General Analytics
+          </v-tab>
+          <v-tab @click="tab = 1">
+            Individual Analytics
+          </v-tab>
         </v-tabs>
 
         <div slot="content" style="background-color: #E8EAF2;" class="ma-0 pa-0">

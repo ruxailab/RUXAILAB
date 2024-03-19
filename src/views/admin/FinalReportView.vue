@@ -3,8 +3,8 @@
     <ShowInfo style="padding: 0!important;" title="Final Report" />
 
     <v-stepper
-    rounded="xl"
       v-model="step"
+      rounded="xl"
       style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
       class="final-report-box"
     >
