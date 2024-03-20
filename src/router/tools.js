@@ -9,12 +9,12 @@ export function autoSignIn() {
         if (user && !store.state.Auth.user) {
           await store.dispatch('autoSignIn', user)
         }
-        resolve(); 
+        resolve()
       })
     } else {
-      resolve(); 
+      resolve()
     }
-  });
+  })
 }
 
 

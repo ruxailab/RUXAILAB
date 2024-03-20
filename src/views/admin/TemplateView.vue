@@ -137,10 +137,8 @@
                         Update
                       </v-btn>
                     </template>
-                    <span
-                      >Click to update your local template, click save to submit
-                      it.</span
-                    >
+                    <span>Click to update your local template, click save to submit
+                      it.</span>
                   </v-tooltip>
                 </v-row>
               </v-col>
@@ -154,7 +152,9 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left> mdi-trash-can-outline </v-icon>Delete template
+              <v-icon left>
+                mdi-trash-can-outline
+              </v-icon>Delete template
             </v-btn>
           </v-row>
         </v-card>
@@ -219,9 +219,9 @@ export default {
     },
     dialogText() {
       if (this.object)
-        return "Are you sure you want to delete your template ? This action can't be undone"
+        return 'Are you sure you want to delete your template ? This action can\'t be undone'
 
-      return "Are you sure you want to delete this template? This action can't be undone" //in case object isnt loaded
+      return 'Are you sure you want to delete this template? This action can\'t be undone' //in case object isnt loaded
     },
   },
   watch: {

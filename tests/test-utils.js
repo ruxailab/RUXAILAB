@@ -40,7 +40,7 @@ const i18n = new VueI18n({
 })
 
 export function render (component, { customStore } = {}) {
-  return renderWithVuetify(component, {}, vue => {
+  return renderWithVuetify(component, {}, (vue) => {
     vue.use(VueRouter)
     vue.use(VueI18n)
     vue.use(Vuex)
