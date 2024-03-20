@@ -399,7 +399,7 @@ export default {
         }
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
-          notification: new Notification({  
+          notification: new Notification({
             title: `${messageTitle}`,
             description: `${messageContent}`,
             redirectsTo: '/',

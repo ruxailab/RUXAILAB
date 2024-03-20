@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     changeDialog(payload) {
-      this.dialog = payload;
+      this.dialog = payload
     },
     updateOptions() {
       if (this.editIndex == -1) {
