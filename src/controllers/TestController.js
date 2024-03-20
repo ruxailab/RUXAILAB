@@ -25,7 +25,7 @@ export default class TestController extends Controller {
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
-  
+
 
   // async deleteTest(payload) {
   //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
@@ -46,7 +46,7 @@ export default class TestController extends Controller {
       const cooperators = collaborators.cooperators
       if(cooperators){
       console.log(cooperators)
-      let promises = []
+      const promises = []
 
       for (const cooperator of cooperators) {
         // Add the call to remove notifications for the test being deleted

@@ -25,7 +25,7 @@
         <!-- Main Tabs Content -->
         <div slot="content" class="ma-0 pa-0">
           <!-- Tab 1 - Statistics -->
-          <v-card v-if="tab == 0" flat rounded="xl"  style="background: #f5f7ff">
+          <v-card v-if="tab == 0" flat rounded="xl" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Statistics
             </v-card-title>
@@ -155,7 +155,7 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card rounded="xl" flat v-if="tab == 2" style="background: #f5f7ff">
+          <v-card v-if="tab == 2" rounded="xl" flat style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Heuristics Data
             </v-card-title>

@@ -19,81 +19,75 @@
   <v-col v-else-if="type == 'content'" cols="12">
     <v-row>
       <!-- PRE-TEST -->
-      <v-col cols="8" v-if="index == 0">
+      <v-col v-if="index == 0" cols="8">
         <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3"> Consent Form</span>
-            <br />
-            <span class="cardsSubtitle ml-3"
-              >This is a Consent Checkbox with a text for confirm the
-              consentiment</span
-            >
+            <br>
+            <span class="cardsSubtitle ml-3">This is a Consent Checkbox with a text for confirm the
+              consentiment</span>
           </v-col>
           <UserConsent />
         </v-card>
       </v-col>
-      <v-col cols="4" class="pl-0" style="height: 19vh;" v-if="index == 0">
+      <v-col v-if="index == 0" cols="4" class="pl-0" style="height: 19vh;">
         <v-card flat style="background: #f5f7ff" class="cards">
           <v-col cols="12" class="pb-0 pt-6 px-8">
             <span class="cardsTitle mt-4">Welcome message</span>
-            <br />
-            <span class="cardsSubtitle"
-              >This message will be the first thing participants see before the
-              session is started.</span
-            >
+            <br>
+            <span class="cardsSubtitle">This message will be the first thing participants see before the
+              session is started.</span>
           </v-col>
           <v-textarea
+            v-model="welcomeMessage"
             outlined
             color="orange"
             class="mx-6 mt-3"
             placeholder="Thank you for participating..."
-            v-model="welcomeMessage"
             @change="saveWelcomeState()"
-          ></v-textarea>
+          />
           <v-col cols="12" class="pb-0 px-8">
             <span class="cardsTitle">Landing Page</span>
-            <br />
-            <span class="cardsSubtitle"
-              >This URL will automatically load when participants starts
-              session.</span
-            >
+            <br>
+            <span class="cardsSubtitle">This URL will automatically load when participants starts
+              session.</span>
             <v-text-field
+              v-model="landingPage"
               class="mt-3"
               style="border-radius: 20px;"
               placeholder="https://www.ruxailab.com"
               outlined
               color="orange"
-              v-model="landingPage"
               @change="saveLandingPage()"
-            ></v-text-field>
+            />
           </v-col>
           <v-col cols="12" class="pb-1 px-8">
             <span class="cardsTitle">Participant camera</span>
             <v-radio-group
-              class="pt-0 mb-6"
               v-model="participantCamera"
+              class="pt-0 mb-6"
               @change="saveParticipantCamera()"
             >
               <v-radio
                 label="Optional"
                 color="orange"
                 value="optional"
-              ></v-radio>
+              />
               <v-radio
                 label="Required"
                 color="orange"
                 value="required"
-              ></v-radio>
+              />
               <v-radio
                 label="Disabled"
                 color="orange"
                 value="disabled"
-              ></v-radio>
+              />
             </v-radio-group>
           </v-col>
         </v-card>
       </v-col>
-      <v-col cols="8" class="pt-0" v-if="index == 0">
+      <v-col v-if="index == 0" cols="8" class="pt-0">
         <v-card
           style="background: #f5f7ff; min-height: 420px;"
           flat
@@ -101,10 +95,8 @@
         >
           <v-col cols="12">
             <span class="cardsTitle ml-3">Pre-Form</span>
-            <br />
-            <span class="cardsSubtitle ml-3"
-              >This is a pre-questions you make to get participants data</span
-            >
+            <br>
+            <span class="cardsSubtitle ml-3">This is a pre-questions you make to get participants data</span>
             <UserVariables @input="updateData" />
           </v-col>
         </v-card>
@@ -112,13 +104,13 @@
 
       <!-- Tasks -->
 
-      <v-col cols="12" v-if="index == 1">
+      <v-col v-if="index == 1" cols="12">
         <ModeratedTasks />
       </v-col>
 
       <!-- Post Test -->
 
-      <v-col cols="12" v-if="index == 2">
+      <v-col v-if="index == 2" cols="12">
         <v-card
           style="background: #f5f7ff; min-height: 410px;"
           flat
@@ -126,33 +118,29 @@
         >
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3">Post Form</span>
-            <br />
-            <span class="cardsSubtitle ml-3"
-              >This is a post-questions you make to get participants data</span
-            >
+            <br>
+            <span class="cardsSubtitle ml-3">This is a post-questions you make to get participants data</span>
             <FormPostTest @input="updateData" />
           </v-col>
         </v-card>
       </v-col>
-      <v-col cols="12" v-if="index == 2" class="pt-0">
+      <v-col v-if="index == 2" cols="12" class="pt-0">
         <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3">Final message</span>
-            <br />
-            <span class="cardsSubtitle ml-3"
-              >This is a Final message you leave to the participant on finish
-              test.</span
-            >
+            <br>
+            <span class="cardsSubtitle ml-3">This is a Final message you leave to the participant on finish
+              test.</span>
           </v-col>
           <v-textarea
+            v-model="finalMessage"
             rows="3"
             outlined
             color="orange"
             class="mx-6 mt-3"
             placeholder="Thank you for participating..."
             @change="saveFinalMessage()"
-            v-model="finalMessage"
-          ></v-textarea>
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -165,18 +153,6 @@ import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTasks from '../atoms/ModeratedTasks.vue'
 import UserConsent from '../atoms/UserConsent.vue'
 export default {
-  data() {
-    return {
-      formData: {
-        preTest: [],
-        postTest: [],
-      },
-      welcomeMessage: '',
-      landingPage: '',
-      participantCamera: '',
-      finalMessage: '',
-    }
-  },
   components: { UserVariables, FormPostTest, ModeratedTasks, UserConsent },
   props: {
     type: {
@@ -191,6 +167,18 @@ export default {
       type: Object,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      formData: {
+        preTest: [],
+        postTest: [],
+      },
+      welcomeMessage: '',
+      landingPage: '',
+      participantCamera: '',
+      finalMessage: '',
+    }
   },
   computed: {
     consentStore() {
