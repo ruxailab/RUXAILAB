@@ -136,6 +136,22 @@ export default {
       state.participantCamera = ''
       state.finalMessage = ''
     },
+    removeHeuristic(state, payload) {
+      state.Test.testStructure.splice(payload, 1)
+    },
+    setupHeuristicQuestionDescription(state, payload) {
+      // If empty
+      if (state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions == null) state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions = []
+
+      // If is editing
+      if (payload.editIndex != null) {
+        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = Object.assign({}, payload.description)
+      }
+      // New Description
+      else {
+        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions.push(payload.description)
+      }
+    },
   },
   actions: {
     /**
@@ -430,8 +446,5 @@ export default {
     managerIDs(state) {
       return state.managerIDs
     },
-    removeHeuristic({ state }, payload) {
-      state.Test.testStructure.splice(payload, 1)
-    }
   },
 }

@@ -327,9 +327,8 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
-                          :question="
-                            heuristics[itemSelect].questions[questionSelect]
-                          "
+                          :question-index="questionSelect"
+                          :heuristic-index="itemSelect"
                         />
                       </v-row>
                     </v-col>
@@ -475,7 +474,7 @@
                     height="350px"
                     :headers="headers"
                     :items="
-                      heuristics[itemSelect].questions[questionSelect].questions
+                      heuristics[itemSelect].questions[questionSelect].descriptions
                     "
                     :items-per-page="5"
                   >
@@ -490,9 +489,8 @@
                           <v-row justify="end" class="ma-0 pa-0">
                             <AddDescBtn
                               ref="descBtn"
-                              :question="
-                                heuristics[itemSelect].questions[questionSelect]
-                              "
+                              :question-index="questionSelect"
+                              :heuristic-index="itemSelect"
                             />
                           </v-row>
                         </v-col>
@@ -503,7 +501,8 @@
                     <template v-slot:item.actions="{ item }">
                       <!-- table actions -->
                       <v-row justify="end" class="pr-1">
-                        <v-btn
+                        <!-- TODO: Uncomment and fix reactivity -->
+                        <!-- <v-btn
                           icon
                           small
                           class="mr-2"
@@ -512,7 +511,7 @@
                           <v-icon small>
                             mdi-pencil
                           </v-icon>
-                        </v-btn>
+                        </v-btn> -->
                         <v-btn icon small @click="deleteItem(item)">
                           <v-icon small>
                             mdi-delete
@@ -596,8 +595,8 @@ export default {
     csvHeuristics() {
       return this.$store.state.Tests.Test.testStructure
     },
-    filteredHeuristics(){
-       if (this.search === '') {
+    filteredHeuristics() {
+      if (this.search === '') {
         return this.heuristics.filter((item) => {
           const searchLower = this.search.toLowerCase()
           const idString = item.id.toString()
@@ -696,7 +695,9 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        Vue.$toast.warning(
+          'No csv file selected. \nPlease select one before procede.',
+        )
         this.loader = null
       }
     },
@@ -776,7 +777,7 @@ export default {
       )
 
       if (config) {
-        this.$store.dispatch('removeHeuristic', item)
+        this.$store.commit('removeHeuristic', item)
         this.itemSelect = null
         this.questionSelect = null
       }
@@ -800,7 +801,9 @@ export default {
           ].questions.length
         }
       } else {
-        Vue.$toast.warning('Sorry, but you can\'t delete all heuristics questions')
+        Vue.$toast.warning(
+          'Sorry, but you can\'t delete all heuristics questions',
+        )
       }
 
       this.menuQuestions = false
