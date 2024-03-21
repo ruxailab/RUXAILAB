@@ -430,5 +430,8 @@ export default {
     managerIDs(state) {
       return state.managerIDs
     },
+    removeHeuristic({ state }, payload) {
+      state.Test.testStructure.splice(payload, 1)
+    }
   },
 }

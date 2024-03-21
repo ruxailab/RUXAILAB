@@ -16,10 +16,10 @@
     </v-tabs>
 
     <div>
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="emitChange()" />
-      <OptionsTable v-if="index == 1" :options="object.options" @change="emitChange()" />
-      <ImportCsvTable v-if="index == 2" :options="object.importCsv" @change="emitChange()" />
-      <WeightTable v-if="index == 3" :options="object.weight" @change="emitChange()" />
+      <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
+      <OptionsTable v-if="index == 1" :options="object.options" />
+      <ImportCsvTable v-if="index == 2" :options="object.importCsv" />
+      <WeightTable v-if="index == 3" :options="object.weight" />
     </div>
   </div>
 </template>
@@ -47,10 +47,11 @@ export default {
       type: Object,
       default: () => { },
     },
+    index: {
+      type: Number,
+      default: 0,
+    },
   },
-  data: () => ({
-    index: 0,
-  }),
   computed: {
     currentTest() {
       return this.$store.state.Tests.Test.testStructure
@@ -58,12 +59,8 @@ export default {
   },
   methods: {
     tabClicked(index) {
-      this.index = index
+      this.$emit('tabClicked', index)
     },
-    emitChange() {
-      this.$emit('change')
-    },
-
   },
 }
 </script>

@@ -151,13 +151,13 @@
                 @click="dialogHeuris = true"
               >
                 <v-list-item-icon>
-                  <v-icon style=" color=#fca326">
+                  <v-icon style=" color:#fca326">
                     mdi-plus
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    style="color: #fca326"
+                    style="color:#fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
                     <strong>{{
@@ -330,7 +330,6 @@
                           :question="
                             heuristics[itemSelect].questions[questionSelect]
                           "
-                          @change="emitChange"
                         />
                       </v-row>
                     </v-col>
@@ -572,7 +571,6 @@ export default {
     heuristicForm: null,
     search: '',
     searchBar: false,
-    filteredHeuristics: [],
     headers: [
       {
         text: 'Title',
@@ -597,6 +595,31 @@ export default {
   computed: {
     csvHeuristics() {
       return this.$store.state.Tests.Test.testStructure
+    },
+    filteredHeuristics(){
+       if (this.search === '') {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      } else {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      }
     },
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
@@ -630,9 +653,6 @@ export default {
     },
   },
   watch: {
-    search() {
-      this.updateFilteredHeuristics()
-    },
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuristicForm = {
@@ -657,7 +677,7 @@ export default {
           this.$refs.formHeuris.reset()
         }
       }
-      this.updateFilteredHeuristics()
+      // this.updateFilteredHeuristics()
     },
     itemSelect() {
       if (this.itemSelect !== null) this.questionSelect = null
@@ -681,11 +701,7 @@ export default {
       }
     },
   },
-  mounted() {
-    this.updateFilteredHeuristics()
-  },
   async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
@@ -718,10 +734,6 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-    emitChange() {
-      this.$emit('change')
-      this.$forceUpdate()
-    },
     moveItemUp(index) {
       if (index > 0) {
         const itemToMove = this.filteredHeuristics[index]
@@ -758,40 +770,13 @@ export default {
         itemBelow.id = index
       }
     },
-    updateFilteredHeuristics() {
-      if (this.search === '') {
-        this.searchBar = false
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      } else {
-        this.searchBar = true
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      }
-    },
     deleteHeuristic(item) {
       const config = confirm(
         `${i18n.t('alerts.deleteHeuristic')} ${this.heuristics[item].title}?`,
       )
 
       if (config) {
-        this.heuristics.splice(item, 1)
+        this.$store.dispatch('removeHeuristic', item)
         this.itemSelect = null
         this.questionSelect = null
       }
