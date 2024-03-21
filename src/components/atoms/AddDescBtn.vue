@@ -85,9 +85,15 @@ export default {
     TextBox,
   },
   props: {
-    question: {
-      type: Object,
+    questionIndex: {
+      type: Number,
       required: true,
+      default: 0,
+    },
+    heuristicIndex: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   data: () => ({
@@ -101,6 +107,9 @@ export default {
     isMounted: false,
   }),
   computed: {
+    question() {
+      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex].questions[this.questionIndex]
+    },
     testAnswerDocLength() {
             if(!this.$store.getters.testAnswerDocument) {
         return 0
@@ -116,17 +125,14 @@ export default {
     validate() {
       const valid = this.$refs.form.validate()
       if (valid && this.desc.text.length > 0) {
-        if (this.editIndex == null) this.question.descriptions.push(this.desc)
-        // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
-        else
-          this.$set(
-            this.question.descriptions,
-            this.editIndex,
-            Object.assign({}, this.desc),
-          )
+        this.$store.commit('setupHeuristicQuestionDescription', {
+          heuristic: this.heuristicIndex,
+          question: this.questionIndex,
+          description: this.desc,
+          editIndex: this.editIndex,
+        })
 
         this.reset()
-        this.$emit('change')
       } else if (valid && this.desc.text.length == 0) {
         Vue.$toast.info(i18n.t('alerts.addDescription'))
       }
