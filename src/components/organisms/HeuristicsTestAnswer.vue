@@ -180,11 +180,8 @@
                   "
                   :data="evaluatorStatistics.items.map((item) => item.result)"
                 />
-                <v-card flat rounded="xl" outlined class="my-4">
-                  <v-card-text
-                    v-if="test.cooperators.length <= 3"
-                    class="text-center body-1"
-                  >
+                <v-card v-else flat rounded="xl" outlined class="my-4">
+                  <v-card-text class="text-center body-1">
                     The graphic can only be generated with 3 or more evaluators,
                     please colect more data from your research to procede.
                   </v-card-text>
@@ -318,24 +315,24 @@
                     <v-row>
                       <v-col cols="6" md="4" class=" my-6 py-6">
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
-                          1
+                          <RadarWeight
+                            :labels="
+                              Array.from(
+                                { length: heuristicsLength },
+                                (_, index) => `H ${index + 1}`,
+                              )
+                            "
+                            :data="
+                              weightsStatistics.items.map(
+                                (item) => item.percentage,
+                              )
+                            "
+                          />
                         </v-card>
                       </v-col>
                       <v-col cols="12" sm="6" md="8" class="my-6 py-6">
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
                           2
-                          <div class="example">
-                            <!-- <ColumnExample
-                              width="500"
-                              height="350"
-                              type="bar"
-                              :options="chartOptions"
-                              :series="series"
-                            />
-                            <button @click="updateChart">
-                              Update!
-                            </button> -->
-                          </div>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -369,7 +366,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-//import ColumnExample from '@/components/atoms/ColumnBarChart.vue'
+import RadarWeight from '@/components/atoms/RadarChart.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -380,7 +377,7 @@ export default {
     ShowInfo,
     IntroAnswer,
     AnalyticsView,
-    //ColumnExample,
+    RadarWeight,
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
@@ -520,6 +517,9 @@ export default {
     heuristics() {
       return this.testAll.testStructure || []
     },
+    heuristicsLength() {
+      return this.relative.length
+    },
 
     weightsStatistics() {
       const tableWeights = {
@@ -655,9 +655,10 @@ export default {
       const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
       const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
       const caminhoTestScore = this.$store.state.Tests.scoresPercentage
+  
       try {
         const resposta = await fetch(
-          'http://127.0.0.1:5001/retlab-dev/us-central1/say_hello',
+          process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION,
           {
             method: 'POST',
             headers: {

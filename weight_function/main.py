@@ -111,14 +111,24 @@ def populate_ahp_matrix(ahp_df, pesos):
 
     return ahp_df
 
+common_headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+}
 
-@https_fn.on_request(
-    cors=options.CorsOptions(
-        cors_origins=[r"firebase\.com$",  r"http://localhost:8080"],
-        cors_methods=["get", "post"],
-    )
-)
+@https_fn.on_request()
 def say_hello(req: https_fn.Request) -> https_fn.Response:
+    if req.method == 'OPTIONS':
+        # Allows GET requests from any origin with the Content-Type
+        # header and caches preflight response for an 3600s
+        headers = {
+            **common_headers,
+            'Access-Control-Allow-Methods': 'GET, POST',
+            'Access-Control-Max-Age': '3600'
+        }
+        return ('', 204, headers)
+    
+
     req_data = req.get_json()
     caminho_structure = req_data.get("caminhoTestStructure")
     caminho_testWeights = req_data.get("caminhoTestWeights")
@@ -212,4 +222,10 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
         "tabelacompleta": df_heuristics_usability_score_weights.to_json(),
         "relative": relative_weight_array.tolist()
     }
-    return https_fn.Response(json.dumps(response_data), content_type="application/json")
+
+        # Set CORS headers for the main request
+    headers = {
+        **common_headers,
+        'Content-Type': 'application/json',
+    }
+    return https_fn.Response(json.dumps(response_data), content_type="application/json"), headers
