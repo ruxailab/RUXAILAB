@@ -30,7 +30,7 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: 'Usability Percentage',
+            label: 'Usability Percentage ',
             backgroundColor: 'rgba(249, 152, 38,0.24)',
             borderColor: 'rgba(255, 81, 47,1)',
             pointBackgroundColor: 'rgba(255, 81, 47,1)',
