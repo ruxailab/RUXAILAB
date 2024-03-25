@@ -117,7 +117,8 @@ common_headers = {
 }
 
 @https_fn.on_request()
-def say_hello(req: https_fn.Request) -> https_fn.Response:
+def say_hello(req):
+    print(req.method)
     if req.method == 'OPTIONS':
         # Allows GET requests from any origin with the Content-Type
         # header and caches preflight response for an 3600s
@@ -228,4 +229,8 @@ def say_hello(req: https_fn.Request) -> https_fn.Response:
         **common_headers,
         'Content-Type': 'application/json',
     }
-    return https_fn.Response(json.dumps(response_data), content_type="application/json"), headers
+    return (
+        json.dumps(response_data),
+        200,
+        headers
+    )
