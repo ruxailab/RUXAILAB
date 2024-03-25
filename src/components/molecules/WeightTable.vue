@@ -2,10 +2,11 @@
   <v-col>
     <v-card
       v-if="heuristics.length < 2"
-      class="mx-auto mt-10 mb-10 py-6 if-card" align="center"
+      class="mx-auto mt-10 mb-10 py-6 if-card"
+      align="center"
       width="970px"
     >
-      Precisa de no mínimo 2 heuristicas para poder ter colocar os pesos.
+      Need at least 2 heuristics to be able to place the weights.
     </v-card>
     <v-card v-else class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
       <!-- tabs  -->

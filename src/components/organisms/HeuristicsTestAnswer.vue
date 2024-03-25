@@ -312,8 +312,7 @@
                   <!-- Bottom Tab 4 -->
 
                   <v-col v-if="ind == 3" cols="12" align="center">
-                    <v-row align="center" justify="space-around">
-                      <!-- <v-col cols="6" md="4" class=" my-6 py-6">
+                    <!-- <v-col cols="6" md="4" class=" my-6 py-6">
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
                           <RadarWeight
                             :labels="
@@ -337,20 +336,26 @@
                         </v-card>
                       </v-col> -->
 
-                      <RadarWeight
-                        :labels="
-                          Array.from(
-                            { length: heuristicsLength },
-                            (_, index) => `H ${index + 1}`,
-                          )
-                        "
-                        :data="
-                          weightsStatistics.items.map((item) => item.percentage)
-                        "
+                    <v-row align="center" justify="space-around">
+                      <v-card
                         align="center"
-                        class=" elevation-4 weightsStatisticsStyle radar mt-6 py-4 mb-6 mx-auto"
+                        class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
                         width="950px"
-                      />
+                      >
+                        <RadarWeight
+                          :labels="
+                            Array.from(
+                              { length: heuristicsLength },
+                              (_, index) => `H ${index + 1}`,
+                            )
+                          "
+                          :data="
+                            weightsStatistics.items.map(
+                              (item) => item.percentage,
+                            )
+                          "
+                        />
+                      </v-card>
                     </v-row>
                     <v-row align="center" justify="space-around">
                       <v-data-table
