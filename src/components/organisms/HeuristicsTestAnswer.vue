@@ -348,7 +348,7 @@
                           weightsStatistics.items.map((item) => item.percentage)
                         "
                         align="center"
-                        class="whi elevation-4 weightsStatisticsStyle radar mt-6 py-4 mb-6 mx-auto"
+                        class=" elevation-4 weightsStatisticsStyle radar mt-6 py-4 mb-6 mx-auto"
                         width="950px"
                       />
                     </v-row>
