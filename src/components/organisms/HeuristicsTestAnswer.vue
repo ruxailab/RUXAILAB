@@ -312,8 +312,8 @@
                   <!-- Bottom Tab 4 -->
 
                   <v-col v-if="ind == 3" cols="12" align="center">
-                    <v-row>
-                      <v-col cols="6" md="4" class=" my-6 py-6">
+                    <v-row align="center" justify="space-around">
+                      <!-- <v-col cols="6" md="4" class=" my-6 py-6">
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
                           <RadarWeight
                             :labels="
@@ -327,6 +327,7 @@
                                 (item) => item.percentage,
                               )
                             "
+                            class="radar"
                           />
                         </v-card>
                       </v-col>
@@ -334,7 +335,22 @@
                         <v-card class="pa-2 weightsStatisticsRadar elevation-4">
                           2
                         </v-card>
-                      </v-col>
+                      </v-col> -->
+
+                      <RadarWeight
+                        :labels="
+                          Array.from(
+                            { length: heuristicsLength },
+                            (_, index) => `H ${index + 1}`,
+                          )
+                        "
+                        :data="
+                          weightsStatistics.items.map((item) => item.percentage)
+                        "
+                        align="center"
+                        class="whi elevation-4 weightsStatisticsStyle radar mt-6 py-4 mb-6 mx-auto"
+                        width="950px"
+                      />
                     </v-row>
                     <v-row align="center" justify="space-around">
                       <v-data-table
@@ -366,7 +382,7 @@ import RadarChart from '@/components/atoms/RadarChart.vue'
 import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import RadarWeight from '@/components/atoms/RadarChart.vue'
+import RadarWeight from '@/components/atoms/RadarWeight.vue'
 import axios from 'axios'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
@@ -779,6 +795,10 @@ export default {
 .weightsStatisticsRadar {
   border-radius: 20px;
   border: 0.2px solid #fca326;
+}
+
+.radar {
+  background: #fff;
 }
 </style>
 <style>
