@@ -94,8 +94,7 @@
                               </template>
                               <span>
                                 H{{ f + (tabs + 1) }} has
-                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span
-                              >
+                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span>
                             </v-tooltip>
                           </v-radio-group>
                         </td>

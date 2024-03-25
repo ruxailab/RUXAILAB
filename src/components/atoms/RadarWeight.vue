@@ -1,22 +1,5 @@
 <script>
-import { Radar } from 'vue-chartjs/legacy'
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  PointElement,
-  LineElement,
-} from 'chart.js'
-
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  PointElement,
-  RadialLinearScale,
-  LineElement,
-)
+import { Radar } from 'vue-chartjs'
 
 export default {
   extends: Radar,
@@ -47,7 +30,7 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: 'Importance',
+            label: 'Importance ',
             backgroundColor: 'rgba(249, 152, 38,0.24)',
             borderColor: 'rgba(255, 81, 47,1)',
             pointBackgroundColor: 'rgba(255, 81, 47,1)',
@@ -62,6 +45,17 @@ export default {
           ticks: {
             suggestedMin: 0,
             suggestedMax: 100,
+            display: false,
+          },
+        },
+        options: {
+          legend: {
+            display: true,
+            labels: {
+              fontFamily: 'Roboto',
+              fontSize: 20,
+              fontColor: 'black',
+            },
           },
         },
       },
