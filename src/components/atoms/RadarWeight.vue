@@ -19,11 +19,17 @@ export default {
       },
     },
   },
+  computed: {
+    heuristics() {
+      return this.testAll.testStructure || []
+    },
+  },
   watch: {
     data() {
       this.$data._chart.update()
     },
   },
+
   mounted() {
     this.renderChart(
       {
@@ -48,14 +54,13 @@ export default {
             display: false,
           },
         },
-        options: {
-          legend: {
-            display: true,
-            labels: {
-              fontFamily: 'Roboto',
-              fontSize: 20,
-              fontColor: 'black',
-            },
+
+        legend: {
+          display: true,
+          labels: {
+            fontFamily: 'Roboto',
+            fontStyle: 'bold',
+            fontSize: 20,
           },
         },
       },
