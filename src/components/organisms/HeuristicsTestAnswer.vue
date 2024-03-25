@@ -367,6 +367,7 @@ import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import RadarWeight from '@/components/atoms/RadarChart.vue'
+import axios from 'axios'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
@@ -655,28 +656,27 @@ export default {
       const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
       const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
       const caminhoTestScore = this.$store.state.Tests.scoresPercentage
-  
+      console.log(caminhoTestStructure)
+      console.log(caminhoTestWeights)
+      console.log(caminhoTestScore)
+      console.log(process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION)
+
       try {
-        const resposta = await fetch(
+        const resposta = await axios.post(
           process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION,
           {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              caminhoTestStructure,
-              caminhoTestWeights,
-              caminhoTestScore,
-            }),
+            caminhoTestStructure: caminhoTestStructure,
+            caminhoTestWeights: caminhoTestWeights,
+            caminhoTestScore: caminhoTestScore,
           },
         )
-        const data = await resposta.json()
+        const data = resposta.data
 
         this.decisionmatrix = data.decisionmatrix
         this.tabelacompleta = data.tabelacompleta
         this.relative = data.relative
         this.usability_total = data.usability_total
+        console.log(data.data)
         console.log('DECISION MATRIX:  ', data.decisionmatrix)
         console.log('TABELA COMPLETA:  ', data.tabelacompleta)
         console.log('RELATIVE:  ', data.relative)
