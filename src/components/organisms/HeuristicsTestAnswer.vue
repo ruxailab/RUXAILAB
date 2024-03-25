@@ -461,7 +461,6 @@ export default {
             }
           })
         })
-        //console.log(table)
       }
       return table
     },
@@ -523,7 +522,6 @@ export default {
           })
         })
       }
-      //console.log(table)
       return table
     },
 
@@ -664,7 +662,6 @@ export default {
         array_scores.push(teste.items[i].percentage)
       }
       this.$store.dispatch('setScoresPercentage', array_scores)
-      //console.log(array_scores)
       return array_scores
     },
 
@@ -672,10 +669,6 @@ export default {
       const caminhoTestStructure = this.$store.state.Tests.Test.testStructure
       const caminhoTestWeights = this.$store.state.Tests.Test.testWeights
       const caminhoTestScore = this.$store.state.Tests.scoresPercentage
-      console.log(caminhoTestStructure)
-      console.log(caminhoTestWeights)
-      console.log(caminhoTestScore)
-      console.log(process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION)
 
       try {
         const resposta = await axios.post(
@@ -692,11 +685,6 @@ export default {
         this.tabelacompleta = data.tabelacompleta
         this.relative = data.relative
         this.usability_total = data.usability_total
-        console.log(data.data)
-        console.log('DECISION MATRIX:  ', data.decisionmatrix)
-        console.log('TABELA COMPLETA:  ', data.tabelacompleta)
-        console.log('RELATIVE:  ', data.relative)
-        console.log('USABILITY TOTAL:  ', data.usability_total)
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
