@@ -1,6 +1,13 @@
 <template>
   <v-col>
-    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
+    <v-card
+      v-if="heuristics.length < 2"
+      class="mx-auto mt-10 mb-10 py-6 if-card" align="center"
+      width="970px"
+    >
+      Precisa de no mínimo 2 heuristicas para poder ter colocar os pesos.
+    </v-card>
+    <v-card v-else class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
       <!-- tabs  -->
       <template>
         <v-tabs
@@ -94,7 +101,8 @@
                               </template>
                               <span>
                                 H{{ f + (tabs + 1) }} has
-                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span>
+                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span
+                              >
                             </v-tooltip>
                           </v-radio-group>
                         </td>
@@ -206,5 +214,12 @@ export default {
 }
 .padding-left {
   padding-left: 23px;
+}
+
+.if-card {
+  border-radius: 15px;
+  border: 0.2px solid #fca326;
+  width: 950px;
+  font-size: 18px;
 }
 </style>
