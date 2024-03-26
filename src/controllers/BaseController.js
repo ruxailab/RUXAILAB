@@ -13,6 +13,7 @@ import {
   collection,
   orderBy,
   limit,
+  setDoc,
 } from 'firebase/firestore'
 
 /**
@@ -44,6 +45,11 @@ export default class Controller {
   // data - document to insert (object)
   async create(col, payload) {
     return addDoc(collection(db, col), payload)
+  }
+
+  async set(col, docId, payload) {
+    const ref = doc(db, `${col}/${docId}`)
+    return setDoc(ref, payload)
   }
 
   async readOne(col, docId) {
