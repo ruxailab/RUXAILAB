@@ -476,7 +476,8 @@
                     (index = 1),
                     (taskIndex = 0)
                 "
-                >{{ $t('UserTestView.buttons.done') }}
+              >
+                {{ $t('UserTestView.buttons.done') }}
               </v-btn>
             </v-row>
           </div>
@@ -511,10 +512,10 @@
                     "
                   >
                     <AudioRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></AudioRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
@@ -523,10 +524,10 @@
                     "
                   >
                     <VideoRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></VideoRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
@@ -535,10 +536,10 @@
                     "
                   >
                     <ScreenRecorder
-                      :testId="testId"
-                      :currentUserTestAnswer="currentUserTestAnswer"
-                      :taskIndex="taskIndex"
-                    ></ScreenRecorder>
+                      :test-id="testId"
+                      :current-user-test-answer="currentUserTestAnswer"
+                      :task-index="taskIndex"
+                    />
                   </v-row>
                   <v-row
                     v-if="
@@ -554,18 +555,18 @@
                   <v-row justify="center">
                     <Timer
                       ref="timerComponent"
-                      :taskIndex="taskIndex"
+                      :task-index="taskIndex"
                       @timerStopped="handleTimerStopped"
                     />
                   </v-row>
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
                     <v-col
-                      class="mb-0 pb-0"
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
                           'textArea'
                       "
+                      class="mb-0 pb-0"
                     >
                       <v-textarea
                         :id="
@@ -608,13 +609,13 @@
                   </p>
 
                   <v-text-field
-                    class="mx-2"
                     v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
+                    class="mx-2"
                     :placeholder="
                       test.testStructure.userTasks[taskIndex].postQuestion
                     "
                     outlined
-                  ></v-text-field>
+                  />
                 </v-col>
               </v-row>
               <video
@@ -623,7 +624,7 @@
                 class="preview"
                 style="max-width: 0px"
                 autoplay
-              ></video>
+              />
               <div class="pa-2 text-end">
                 <v-btn
                   block
@@ -658,18 +659,20 @@
             >
               <v-col cols="5" class="mx-auto py-0">
                 <p>{{ item.title }}</p>
-                <p v-if="item.description">{{ item.description }}</p>
+                <p v-if="item.description">
+                  {{ item.description }}
+                </p>
                 <v-text-field
-                  :disabled="currentUserTestAnswer.postTestCompleted"
-                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
                   v-if="item.textField"
+                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
                   :placeholder="item.title"
                   outlined
-                ></v-text-field>
+                />
                 <v-radio-group
-                  :disabled="currentUserTestAnswer.postTestCompleted"
                   v-if="item.selectionField"
                   v-model="currentUserTestAnswer.postTestAnswer[index].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
                   column
                 >
                   <v-row
@@ -681,9 +684,9 @@
                       class="ml-3 mb-1"
                       :label="selection"
                       :value="selection"
-                    ></v-radio>
+                    />
                   </v-row>
-                  <v-row justify="end"> </v-row>
+                  <v-row justify="end" />
                 </v-radio-group>
               </v-col>
             </v-row>
@@ -810,6 +813,9 @@ export default {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     this.autoComplete()
     this.calculateProgress()
+  },
+  beforeDestroy() {
+    this.stopRecording()
   },
   methods: {
     isTaskDisabled(taskIndex) {
@@ -1036,9 +1042,6 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== ''
     },
-  },
-  beforeDestroy() {
-    this.stopRecording()
   },
 }
 </script>

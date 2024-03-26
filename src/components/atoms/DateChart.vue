@@ -5,7 +5,10 @@ export default {
   extends: Line,
   mixins: [mixins.reactiveData],
   props: {
-    taskAnswers: Array,
+    taskAnswers: {
+      type: Array,
+      default:() => [],
+    },
   },
   data() {
     return {
@@ -61,18 +64,12 @@ export default {
       const MonthsAgo = new Date(currentDate)
       MonthsAgo.setMonth(currentDate.getMonth() - 2)
 
-      const validAnswers = this.taskAnswers.filter(
-        (answer) => answer.lastUpdate,
-      )
-      const filteredAnswers = validAnswers.filter(
-        (answer) => new Date(answer.lastUpdate) >= MonthsAgo,
-      )
-      filteredAnswers.sort(
-        (a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate),
-      )
+      const validAnswers = this.taskAnswers.filter((answer) => answer.lastUpdate)
+      const filteredAnswers = validAnswers.filter((answer) => new Date(answer.lastUpdate) >= MonthsAgo)
+      filteredAnswers.sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate))
 
       const testsPerDay = {}
-      let currentDateIterator = new Date(MonthsAgo)
+      const currentDateIterator = new Date(MonthsAgo)
 
       // Inicializar o objeto testsPerDay com zero para todos os dias no período
       while (currentDateIterator <= currentDate) {
