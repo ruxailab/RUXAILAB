@@ -28,21 +28,21 @@ export default {
       return this.$store.state.Answer.evaluatorStatistics
     },
     sortedEvaluatorStatistics() {
-      return this.evaluatorStatistics.items.slice().sort((a, b) => {
-        const parseDate = (dateStr) => {
-          const [day, month, yearTime] = dateStr.split('/')
-          const [year, time] = yearTime.split(', ')
-          const [hours, minutes, seconds] = time.split(':')
-          // Adjust the date format to 'month/day/year'
-          return new Date(`${month}/${day}/${year} ${time}`)
-        }
+    return this.evaluatorStatistics.items.slice().sort((a, b) => {
+      const parseDate = (dateStr) => {
+        const [day, month, yearTime] = dateStr.split('/')
+        const [year, time] = yearTime.split(', ')
+        const [hours, minutes, seconds] = time.split(':')
+        // Adjust the date format to 'month/day/year'
+        return new Date(`${month}/${day}/${year} ${time}`)
+      }
 
-        const dateA = parseDate(a.lastUpdate)
-        const dateB = parseDate(b.lastUpdate)
+      const dateA = parseDate(a.lastUpdate)
+      const dateB = parseDate(b.lastUpdate)
 
-        return dateB - dateA // sort in descending order
-      })
-    },
+      return dateB - dateA // sort in descending order
+    })
+  },
     heuristicsEvaluator() {
       const table = {
         header: [],

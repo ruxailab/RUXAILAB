@@ -81,7 +81,7 @@ function statistics() {
           id: `Ev${evaluatorIndex}`,
           heuristics: [],
           result: 0,
-          lastUpdate: evaluator.lastUpdate
+          lastUpdate: evaluator.lastUpdate,
         })
         SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
       }
