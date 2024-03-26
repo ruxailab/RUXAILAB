@@ -1,5 +1,3 @@
-// imports
-
 import { auth } from '@/firebase'
 
 import {
@@ -9,48 +7,23 @@ import {
 } from 'firebase/auth'
 
 export default class AuthController {
-    //Register new users
-
-    async authSignUp(email, password) {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user
-                return user
-            })
-            .catch(console.error('Error in SignUp'))
+    // Register new users
+    async signUp(email, password) {
+        return createUserWithEmailAndPassword(auth, email, password)
     }
 
-    //SignIn
-
-    async authSignIn(email, password) {
-        try {
-            return signInWithEmailAndPassword(auth, email, password).then(
-                (userCredential) => {
-                    const user = userCredential.user
-                    return user
-                },
-            )
-        } catch (e) {
-            console.error(e)
-        }
+    // Sign In
+    async signIn(email, password) {
+        return signInWithEmailAndPassword(auth, email, password)
     }
 
-    //Get Current User
-
-    async authGetCurrentUser() {
-        const user = auth.currentUser
-        if (user) {
-            return user
-        } else {
-            console.error('user is null')
-        }
-        return user
+    // Get Current User
+    async getCurrentUser() {
+        return auth.currentUser
     }
 
-    //SignOut
-
-    async authSignOut() {
-        return signOut(auth).then(() => {
-        })
+    // Sign Out
+    async signOut() {
+        return signOut(auth)
     }
 }

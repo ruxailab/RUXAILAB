@@ -9,6 +9,17 @@ export default class UserController extends Controller {
   constructor() {
     super()
   }
+  async create(payload) {
+    const user = new User({
+      email: payload.email,
+      accessLevel: 1,
+      myTests: {},
+      myAnswers: {},
+      notifications: [],
+    }).toFirestore()
+    return super.set(COLLECTION, payload.id, user)
+  }
+
   async update(docId, payload) {
     return super.update(COLLECTION, docId, payload)
   }
@@ -53,74 +64,65 @@ export default class UserController extends Controller {
   async removeNotificationsForTest(testId, cooperators) {
     try {
       for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
-        let userDocID = cooperators[cooperator].userDocId;
-  
+        const userDocID = cooperators[cooperator].userDocId
+
         // Lê o documento do usuário diretamente
-        const userDoc = await super.readOne('users', userDocID);
-  
+        const userDoc = await super.readOne('users', userDocID)
+
         // Verifica se o documento do usuário existe
         if (userDoc.exists()) {
-          const userData = userDoc.data();
-          const userId = userDoc.id;
-  
+          const userData = userDoc.data()
+          const userId = userDoc.id
+
           // Verificar se o usuário tem notificações
           if (userData.notifications && userData.notifications.length > 0) {
             // Filtrar notificações que têm o testId correspondente
             userData.notifications = userData.notifications.filter(
-              (notification) => notification.testId !== testId
-            );
-              console.log('depois do filtro: ',userData.notifications);
+              (notification) => notification.testId !== testId,
+            )
+            console.log('depois do filtro: ', userData.notifications)
             // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, { notifications: userData.notifications });
+            await super.update('users', userId, { notifications: userData.notifications })
           }
         } else {
-          console.log(`User document with ID ${userDocID} not found.`);
+          console.log(`User document with ID ${userDocID} not found.`)
         }
       }
-  
-      console.log(`Notifications for test ${testId} removed from all users.`);
+
+      console.log(`Notifications for test ${testId} removed from all users.`)
     } catch (error) {
-      console.error('Error removing notifications for the test:', error);
-      throw error;
+      console.error('Error removing notifications for the test:', error)
+      throw error
     }
   }
-  
-  
-  
-  
-  
-  
-  
-  
-    
 
-    async removeTestFromUser(userId, testIdToRemove) {
-      try {
-        const userDoc = await super.readOne('users', userId)
+  async removeTestFromUser(userId, testIdToRemove) {
+    try {
+      const userDoc = await super.readOne('users', userId)
 
-        if (!userDoc.exists()) {
-          console.log('User not found.')
-          return
-        }
-        const userData = userDoc.data()
-        console.log(userData)
-
-        if (userData.myTests[testIdToRemove]) {
-          delete userData.myTests[testIdToRemove]
-        }
-        if (userData.myAnswers[testIdToRemove]) {
-          delete userData.myAnswers[testIdToRemove]
-        }
-
-        
-        await super.update('users', userId, userData)
-
-        console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
-      } catch (error) {
-        console.error('Error removing test from user:', error)
-        throw error
+      if (!userDoc.exists()) {
+        console.log('User not found.')
+        return
       }
+      const userData = userDoc.data()
+      console.log(userData)
+
+      if (userData.myTests[testIdToRemove]) {
+        delete userData.myTests[testIdToRemove]
+      }
+      if (userData.myAnswers[testIdToRemove]) {
+        delete userData.myAnswers[testIdToRemove]
+      }
+
+
+      await super.update('users', userId, userData)
+
+      console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
+    } catch (error) {
+      console.error('Error removing test from user:', error)
+      throw error
     }
+  }
 
 
 }

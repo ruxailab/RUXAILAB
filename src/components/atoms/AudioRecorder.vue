@@ -4,21 +4,27 @@
       <v-row>
         <v-btn
           v-if="!recordingAudio && recordedAudio == ''"
-          @click="startAudioRecording"
           class="ml-4 mb-2 xl"
           color="grey lighten-2"
           elevation="0"
+          @click="startAudioRecording"
         >
-          <v-icon class="mr-2">mdi-microphone</v-icon>Start Recording
+          <v-icon class="mr-2">
+            mdi-microphone
+          </v-icon>
+          Start Recording
         </v-btn>
         <v-btn
+          v-if="recordingAudio"
           dark
           color="red"
           class="ml-4 mb-2 xl"
-          v-if="recordingAudio"
           @click="stopAudioRecording"
         >
-          <v-icon left>mdi-stop</v-icon> Stop Recording
+          <v-icon left>
+            mdi-stop
+          </v-icon>
+          Stop Recording
         </v-btn>
       </v-row>
     </v-col>
@@ -29,9 +35,18 @@
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
-    testId: String,
-    currentUserTestAnswer: Object,
-    taskIndex: Number,
+    testId: {
+      type: String,
+      default: null,
+    },
+    currentUserTestAnswer: {
+      type: Object,
+      default: null,
+    },
+    taskIndex: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {

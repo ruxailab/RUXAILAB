@@ -138,14 +138,14 @@ export default class Test {
      *
      * @type {string}
      */
-    this.userTestType = userTestType ?? null;
+    this.userTestType = userTestType ?? null
 
     /**
      * Allow to show if user and moderated is connected
      *
      * @type {Object}
      */
-    this.userTestStatus = userTestStatus ?? {};
+    this.userTestStatus = userTestStatus ?? {}
   /**
      * Defines the test weights.
      *

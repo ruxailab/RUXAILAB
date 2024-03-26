@@ -6,12 +6,13 @@
           v-if="index == 0"
           :disabled="!consentCompleted && !isAdmin"
           :dark="consentCompleted && !isAdmin || isAdmin"
-          @click="openUserMedia(), emitConfirm()"
           color="green"
           block
           depressed
-          >CONNECT</v-btn
+          @click="openUserMedia(), emitConfirm()"
         >
+          CONNECT
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -32,6 +33,18 @@ import {
 import { db } from '@/firebase'
 import Vue from 'vue'
 export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+    },
+    index: {
+      default: 0,
+      type: Number,
+    },
+    consentCompleted: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       createBtnDisabled: false,
@@ -57,17 +70,6 @@ export default {
   },
   beforeRouteLeave() {
     this.hangUp()
-  },
-  props: {
-    isAdmin: {
-      type: Boolean,
-    },
-    index: {
-      type: Number,
-    },
-    consentCompleted: {
-      type: Boolean,
-    }
   },
   computed: {
     localStream() {
@@ -146,7 +148,7 @@ export default {
       onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
-            let data = change.doc.data()
+            const data = change.doc.data()
             await this.peerConnection.addIceCandidate(new RTCIceCandidate(data))
           }
         })
@@ -211,7 +213,7 @@ export default {
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === 'added') {
-              let data = change.doc.data()
+              const data = change.doc.data()
               await this.peerConnection.addIceCandidate(
                 new RTCIceCandidate(data),
               )
