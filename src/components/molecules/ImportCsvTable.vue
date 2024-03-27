@@ -45,7 +45,6 @@
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
-import Vue from 'vue'
 
 export default {
   data() {
@@ -91,7 +90,7 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        this.$toast.warning('No csv file selected. \nPlease select one before procede.')
         this.loader = null
       }
     },

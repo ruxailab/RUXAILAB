@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
@@ -113,7 +112,7 @@ export default {
           this.recordingAudio = false
 
           this.$emit('stopShowLoading')
-          Vue.$toast.success('Audio record saved!')
+          this.$toast.success('Audio record saved!')
           this.recordingAudio = false
         }
 

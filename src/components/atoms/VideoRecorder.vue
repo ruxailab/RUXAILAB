@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
@@ -103,7 +102,7 @@ export default {
           this.recording = false
 
           this.$emit('stopShowLoading')
-          Vue.$toast.success('Video record saved!')
+          this.$toast.success('Video record saved!')
         }
 
         this.mediaRecorder.start()
