@@ -30,7 +30,9 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="orange" text @click="dialog = false"> Ok </v-btn>
+        <v-btn color="orange" text @click="dialog = false">
+          Ok
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

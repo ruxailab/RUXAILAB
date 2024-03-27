@@ -164,7 +164,7 @@ export default {
       return (
         'Are you sure you want to delete ' +
         (this.report !== null ? this.report.email : '') +
-        "'s report? This action can't be undone"
+        '\'s report? This action can\'t be undone'
       )
     },
     answers() {

@@ -32,8 +32,8 @@
                     template.header.templateVersion == '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                          template.header.updateDate,
-                        )}`
+                        template.header.updateDate,
+                      )}`
                   }}
                   ({{
                     $t('pages.listTests.version') +
