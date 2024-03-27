@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
@@ -105,7 +104,7 @@ export default {
           this.isRecording = false
           this.isCapturing = false
           this.$emit('stopShowLoading')
-          Vue.$toast.success('Screen record saved!')
+          this.$toast.success('Screen record saved!')
         }
         this.isRecording = true
       } else {
