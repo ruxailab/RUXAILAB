@@ -5,7 +5,10 @@
       style="display:contents; background-color:#f4b700; height:300px"
       class="hidden-sm-and-down"
     >
-      <v-img src="@/assets/landing/introductionDesktop.svg">
+      <v-img
+        v-if="desktopImagePreloaded"
+        src="@/assets/landing/introductionDesktop.svg"
+      >
         <v-container>
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
@@ -44,6 +47,7 @@
           </v-col>
         </div>
         <v-img
+          v-if="mobileImagePreloaded"
           src="@/assets/landing/introductionMobile.svg"
           class="mb-4"
           max-height="350"
@@ -77,7 +81,8 @@
       <div style="height: 10px" />
     </v-container>
 
-    <div class="svg-border-waves text-white">
+    <!-- SVG Waves -->
+    <div v-if="svgImagePreloaded" class="svg-border-waves text-white">
       <svg
         class="wave"
         style="pointer-events: none"
@@ -151,7 +156,13 @@ section {
 <script>
 export default {
   components: {},
-  data: () => ({}),
+  data() {
+    return {
+      desktopImagePreloaded: false,
+      mobileImagePreloaded: false,
+      svgImagePreloaded: false,
+    }
+  },
   computed: {
     test() {
       return this.$store.getters.test
@@ -163,11 +174,32 @@ export default {
       return this.$store.state.Tests.currentTest
     },
   },
+  mounted() {
+    this.preloadImages()
+  },
   methods: {
+    preloadImages() {
+      const desktopImage = new Image()
+      desktopImage.onload = () => {
+        this.desktopImagePreloaded = true
+      }
+      desktopImage.onerror = () => {
+        console.error('Error loading desktop image')
+      }
+      desktopImage.src = require('@/assets/landing/introductionDesktop.svg')
+
+      const mobileImage = new Image()
+      mobileImage.onload = () => {
+        this.mobileImagePreloaded = true
+      }
+      mobileImage.onerror = () => {
+        console.error('Error loading mobile image')
+      }
+      mobileImage.src = require('@/assets/landing/introductionMobile.svg')
+    },
     goTo(path) {
       this.$router.push(path).catch(() => {})
     },
   },
 }
-//remover
 </script>
