@@ -552,7 +552,6 @@ import AddDescBtn from '@/components/atoms/AddDescBtn'
 
 import VClamp from 'vue-clamp'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -695,7 +694,7 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning(
+        this.$toast.warning(
           'No csv file selected. \nPlease select one before procede.',
         )
         this.loader = null
@@ -801,7 +800,7 @@ export default {
           ].questions.length
         }
       } else {
-        Vue.$toast.warning(
+        this.$toast.warning(
           'Sorry, but you can\'t delete all heuristics questions',
         )
       }
