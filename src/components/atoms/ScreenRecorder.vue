@@ -1,31 +1,42 @@
 <template>
   <div>
     <v-col>
-    <v-row>
-      <v-btn
-        @click="captureScreen"
-        class="ml-4 mb-2 xl"
-        v-if="!isCapture"
-        color="grey lighten-2"
-        elevation="0"
-      >
-        <v-icon left dark>mdi-monitor-screenshot</v-icon>
-        Capture
-      </v-btn>
-      <v-btn
-        class="ml-4 mb-2 xl"
-        v-if="isCapture && videoUrl == ''"
-        :color="!isRecording ? 'grey lighten-2' : 'red lighten-1'"
-        :dark="isRecording"
-        prepend-icon="mdi-monitor-screenshot"
-        elevation="0"
-        @click="recordScreen"
-      >
-        <v-icon left dark v-if="!isRecording">mdi-monitor-screenshot</v-icon>
-        <v-icon left dark v-else>mdi-stop</v-icon>
-        {{ isRecording ? 'Stop recording' : 'Start recording' }}
-      </v-btn>
-    </v-row>
+      <v-row>
+        <v-tooltip bottom v-if="!isCapturing">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="captureScreen"
+              class="ml-4 my-2 mr-auto"
+              elevation="0"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-monitor-screenshot</v-icon>
+            </v-btn>
+          </template>
+          <span>Capture Screen</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isCapturing">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="recordScreen"
+              class="ml-4 my-2 mr-auto"
+              :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
+              :dark="isRecording"
+              elevation="0"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>{{
+                isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
+              }}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
+        </v-tooltip>
+      </v-row>
     </v-col>
   </div>
 </template>
@@ -35,63 +46,73 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
     testId: String,
-    currentUserTestAnswer: Object,
     taskIndex: Number,
   },
   data() {
     return {
-      isCapture: false,
+      isCapturing: false,
       isRecording: false,
       videoUrl: '',
+      videoStream: null,
       mediaRecorder: null,
       chunks: [],
-    };
+    }
+  },
+  computed: {
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
   },
   methods: {
     async captureScreen() {
-      const videoElem = document.getElementById('vpreview');
       try {
-        videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(
-          this.displayMediaOptions
-        );
-        this.isCapture = true;
+        this.videoStream = await navigator.mediaDevices.getDisplayMedia({
+          cursor: true,
+        })
+        this.isCapturing = true
+        this.recordScreen()
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
     },
     recordScreen() {
       if (!this.isRecording) {
-        const videoElem = document.getElementById('vpreview');
-        this.mediaRecorder = new MediaRecorder(videoElem.srcObject);
-        this.mediaRecorder.start();
+        this.chunks = []
+        this.mediaRecorder = new MediaRecorder(this.videoStream)
+        this.mediaRecorder.start()
         this.mediaRecorder.ondataavailable = (e) => {
-          this.chunks.push(e.data);
-        };
+          this.chunks.push(e.data)
+        }
 
         this.mediaRecorder.onstop = async () => {
-          const videoBlob = new Blob(this.chunks, { type: 'video/webm' });
-          const storage = getStorage();
+          this.$emit('showLoading')
+          const videoBlob = new Blob(this.chunks, { type: 'video/webm' })
+          const storage = getStorage()
           const storageRef = ref(
             storage,
-            `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/screen_record/${this.videoUrl}`
-          );
-          await uploadBytes(storageRef, videoBlob);
+            `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/screen_record/${this.videoUrl}`,
+          )
+          await uploadBytes(storageRef, videoBlob)
 
-          this.videoUrl = await getDownloadURL(storageRef);
+          this.videoUrl = await getDownloadURL(storageRef)
 
           this.currentUserTestAnswer.tasks[
             this.taskIndex
-          ].screenRecordURL = this.videoUrl;
-        };
-        this.isRecording = true;
+          ].screenRecordURL = this.videoUrl
+          this.isRecording = false
+          this.videoStream.getTracks().forEach((track) => track.stop())
+          this.isRecording = false
+          this.isCapturing = false
+          this.$emit('stopShowLoading')
+          this.$toast.success('Screen record saved!')
+        }
+        this.isRecording = true
       } else {
-        this.mediaRecorder.stop();
-        this.isRecording = false;
+        this.mediaRecorder.stop()
       }
     },
   },
-};
+}
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

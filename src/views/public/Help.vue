@@ -41,9 +41,10 @@
                       </div>
                       <div class="ml-5">
                         <v-img
-                        max-width="800"  
-                        :src="require(`@/assets/faqs/${item.gif}`)"
-                        style="object-fit: contain"  />
+                          max-width="800"
+                          :src="require(`@/assets/faqs/${item.gif}`)"
+                          style="object-fit: contain"
+                        />
                       </div>
                     </v-col>
                   </v-row>
@@ -77,9 +78,10 @@
                       </div>
                       <div class="ml-5">
                         <v-img
-                        max-width="800"  
-                        :src="require(`@/assets/faqs/${item.gif}`)"
-                        style="object-fit: contain"  />
+                          max-width="800"
+                          :src="require(`@/assets/faqs/${item.gif}`)"
+                          style="object-fit: contain"
+                        />
                       </div>
                     </v-col>
                   </v-row>
@@ -129,7 +131,7 @@ export default {
         {
           title: 'How to use a template?',
           content:
-            "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+            'To utilize a template, navigate to the Tests page. Under the Create Templates section, you\'ll find your personal templates. Additionally, you can explore public templates.',
             gif: 'use-temp.gif',
           isCollapsed: true,
         },
@@ -167,7 +169,7 @@ export default {
             'To send a message, navigate to the manager page of your test. Select "Cooperators" from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose "Send a message" and write your message with a title and content.',
           gif: 'send_message.gif',
           isCollapsed: true,
-        },      
+        },
       ],
     }
   },

@@ -289,7 +289,7 @@ export default {
         if (val == 1) await this.getSharedWithMeTests()
 
         if (val == 2) await this.getPublicTests()
-      } 
+      }
       else if (this.mainIndex == 1) {
         if (val == 0) await this.getMyTemplates()
         if (val == 1) await this.getPublicTemplates()

@@ -116,7 +116,7 @@
               :disabled="hasTemplate || !object ? true : false"
               @click="tempDialog = true"
             >
-            {{ $t('pages.settings.createTemplate') }}
+              {{ $t('pages.settings.createTemplate') }}
             </v-btn>
           </v-row>
           <v-divider class="my-3 mx-2" />
