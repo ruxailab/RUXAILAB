@@ -332,7 +332,6 @@
                     !currentUserTestAnswer.submitted) ||
                   (allTasksCompleted && !currentUserTestAnswer.submitted),
               }"
-              v-if="item.id == 1"
               :value="index == 1 ? true : false"
               no-action
               @click="index = item.id"
@@ -377,8 +376,6 @@
                       'disabled-group':
                         isTaskDisabled(i) && !currentUserTestAnswer.submitted,
                     }"
-                    @click=";(taskIndex = i), startTimer()"
-                    v-on="on"
                   >
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
@@ -412,7 +409,6 @@
                 'disabled-group':
                   !allTasksCompleted && !currentUserTestAnswer.submitted,
               }"
-              @click="index = item.id"
             >
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
@@ -664,14 +660,11 @@
                       v-if="
                         test.testStructure.userTasks[taskIndex].taskType ===
                           'textArea'
-                          'textArea'
                       "
-                      class="mb-0 pb-0"
                     >
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
                             test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
@@ -685,7 +678,6 @@
                       <v-textarea
                         :id="
                           'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
                             test.testStructure.userTasks[taskIndex].taskName
                         "
                         v-model="
@@ -946,7 +938,6 @@ export default {
   },
   watch: {
     test: async function() {
-    test: async function() {
       this.mappingSteps()
     },
     items() {
@@ -1011,8 +1002,6 @@ export default {
 
       timerComponent.stopTimer()
     },
-    startTimer() {
-      const timerComponent = this.$refs.timerComponent
     startTimer() {
       const timerComponent = this.$refs.timerComponent
 
