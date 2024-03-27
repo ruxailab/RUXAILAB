@@ -263,7 +263,6 @@ import { cooperatorsHeaders } from '@/utils/headers'
 import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
 const UIDGenerator = require('uid-generator')
-import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -399,7 +398,7 @@ export default {
         }
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
-          notification: new Notification({  
+          notification: new Notification({
             title: `${messageTitle}`,
             description: `${messageContent}`,
             redirectsTo: '/',
@@ -455,7 +454,14 @@ export default {
         //if is object then no need to validate
         if (this.email.length) {
           if (!this.email.includes('@') || !this.email.includes('.')) {
-            Vue.$toast.error(this.email + ' is not a valid email')
+            this.$toast.error(this.email + ' is not a valid email')
+          }
+          if (!this.users.find((user) => user.email === this.email)) {
+            // Verifica se o e-mail inserido manualmente existe na lista de usuários
+            this.$toast.error(
+              this.email + ' is not a valid email or does not exist',
+            )
+            return // Se não existir, interrompe a execução
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
           }
