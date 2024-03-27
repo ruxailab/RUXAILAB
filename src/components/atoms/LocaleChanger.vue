@@ -49,7 +49,7 @@ export default {
         { label: 'English', value: 'en' },
         { label: 'Español', value: 'es' },
         { label: 'Português', value: 'pt_br' },
-        { label: 'हिन्दी', value: 'hi'}
+        { label: 'हिन्दी', value: 'hi'},
       ],
       lang: this.$i18n.locale,
     }

@@ -10,16 +10,14 @@
               <v-col cols="6">
                 <v-row justify="center">
                   <span class="cardTitle">Conclusion percentage</span>
-                  <span class="conclusionPercentage mx-auto mb-1"
-                    >{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span
-                  >
+                  <span class="conclusionPercentage mx-auto mb-1">{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span>
                   <v-col cols="8" class="mx-auto">
                     <v-progress-linear
                       rounded
                       height="6"
                       color="orange"
                       :value="getConclusionAverage()"
-                    ></v-progress-linear>
+                    />
                   </v-col>
                   <span class="cardTitle">Tests in progress</span>
                   <span class="conclusionPercentage mx-auto mb-1">{{
@@ -32,22 +30,16 @@
                 vertical
                 class="mt-14"
                 style="background-color: #c9c9c9"
-              ></v-divider>
+              />
 
               <v-col cols="6">
                 <v-row justify="center">
-                  <span class="cardSubtitle"
-                    ><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
-                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span
-                  >
-                  <span class="cardSubtitle"
-                    ><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
-                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span
-                  >
-                  <span class="cardSubtitle"
-                    >Total time<br />
-                    16m</span
-                  >
+                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
+                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span>
+                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
+                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span>
+                  <span class="cardSubtitle">Total time<br>
+                    16m</span>
                 </v-row>
               </v-col>
             </v-row>
@@ -58,26 +50,19 @@
           <v-card height="190" class="mb-8 cards mt-3">
             <v-row justify="center">
               <span class="cardTitle mt-6">Average Time per Task</span>
-              <span class="cardTime mt-3"
-                ><v-icon size="45" class="mr-1 mb-2"> mdi-clock-fast</v-icon>
-                {{ calculateAverageTime().formatedTime }}</span
-              >
-              <span class="subtitleTime mt-4 mx-8"
-                >Users spend a average of
+              <span class="cardTime mt-3"><v-icon size="45" class="mr-1 mb-2"> mdi-clock-fast</v-icon>
+                {{ calculateAverageTime().formatedTime }}</span>
+              <span class="subtitleTime mt-4 mx-8">Users spend a average of
                 {{ calculateAverageTime().minutes }} minutes and
-                {{ calculateAverageTime().seconds }} seconds on each task</span
-              >
+                {{ calculateAverageTime().seconds }} seconds on each task</span>
             </v-row>
           </v-card>
           <v-card height="190" class="cards">
             <v-row justify="center">
               <span class="cardTitle mt-6">Longest Task on Average</span>
-              <span class="cardTime mt-4" style="color: #ff5252"
-                ><v-icon size="38" class="mr-1 mb-2" color="#FF5252">
-                  mdi-clock-alert-outline</v-icon
-                >
-                {{ findLongestTask().averageTime.formatedTime }}</span
-              >
+              <span class="cardTime mt-4" style="color: #ff5252"><v-icon size="38" class="mr-1 mb-2" color="#FF5252">
+                                                                   mdi-clock-alert-outline</v-icon>
+                {{ findLongestTask().averageTime.formatedTime }}</span>
               <span
                 class="subtitleTime mt-4 mx-8"
                 style="
@@ -88,8 +73,7 @@
                   text-overflow: ellipsis;
                   direction: ltr;
                 "
-                >“{{ findLongestTask().taskName }}”</span
-              >
+              >“{{ findLongestTask().taskName }}”</span>
               <span class="subtitleTime mx-8">with the longest average</span>
             </v-row>
           </v-card>
@@ -107,43 +91,38 @@
                   line-height: 40px;
                   text-align: start;
                 "
-                ><v-icon size="38" class="mr-1 mb-2" color="green">
-                  mdi-check-circle-outline</v-icon
-                >{{ getTotalAnswers() }}</span
-              >
+              ><v-icon size="38" class="mr-1 mb-2" color="green">
+                mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
               <span
                 class="subtitleTime mt-6"
                 style="text-align: start; min-width: 150px"
-                >Total answers</span
-              >
-              <v-col class="ml-9" cols="9"
-                ><v-divider style="background-color: #e4eaf0"></v-divider
-              ></v-col>
+              >Total answers</span>
+              <v-col class="ml-9" cols="9">
+                <v-divider style="background-color: #e4eaf0" />
+              </v-col>
 
               <span
                 class="subtitleTime mt-2 ml-12"
                 style="text-align: start; min-width: 210px"
-                ><v-icon size="20" class="mr-1 mb-2" color="green">
-                  mdi-chevron-double-up</v-icon
-                ><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span
-              >
+              ><v-icon size="20" class="mr-1 mb-2" color="green">
+                mdi-chevron-double-up</v-icon><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span>
             </v-row>
           </v-card>
 
           <v-card height="190" class="cards">
             <v-row>
-              <span class="bottomCardsTitle mb-1 mt-7 ml-11"
-                >Latest user answer</span
-              >
+              <span class="bottomCardsTitle mb-1 mt-7 ml-11">Latest user answer</span>
               <v-avatar color="grey lighten-1" class="ml-10 mt-4" size="45">
-                <v-icon size="42" dark> mdi-account-circle </v-icon>
+                <v-icon size="42" dark>
+                  mdi-account-circle
+                </v-icon>
               </v-avatar>
               <span
                 class="subtitleTime mt-4 ml-4"
                 style="text-align: start; min-width: 210px; color: #696d6e"
               >
                 {{ getLatestResponse().cooperatorEmail }}
-                <br />
+                <br>
                 <div class="mt-1" style="color: #28b5e1 !important">
                   Evaluator
                 </div>
@@ -151,9 +130,8 @@
               <span
                 class="subtitleTime ml-16 mt-5"
                 style="font-size: 14px; text-align: end"
-                >Last Updated:
-                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span
-              >
+              >Last Updated:
+                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span>
             </v-row>
           </v-card>
         </v-col>
@@ -163,14 +141,13 @@
               <span
                 class="bottomCardsTitle ml-10 mt-6 mb-5"
                 style="min-width:500px"
-                >Answers Timeline</span
-              >
+              >Answers Timeline</span>
             </v-row>
             <DateChart
-              :taskAnswers="taskAnswers"
+              :task-answers="taskAnswers"
               class="ml-6"
               style="max-height:300px; max-width:680px;"
-            ></DateChart>
+            />
           </v-card>
         </v-col>
       </v-row>
@@ -224,13 +201,19 @@ export default {
       return !Object.values(this.answers).length
     },
     averageTimePerTask() {
+      let totalTasks = 0
+      let totalTaskTime = 0
+
       if (!this.taskAnswers.length) return 0
 
-      const totalTaskTime = this.taskAnswers.reduce((total, answer) => {
-        return total + answer.tasks[this.taskSelect].taskTime
-      }, 0)
+      this.taskAnswers.forEach((answer) => {
+        Object.values(answer.tasks).forEach((task) => {
+          totalTaskTime += task.taskTime
+          totalTasks++
+        })
+      })
 
-      return totalTaskTime / this.taskAnswers.length
+      return totalTasks === 0 ? 0 : totalTaskTime / totalTasks
     },
   },
   created() {
@@ -259,46 +242,52 @@ export default {
         minutes: minutes,
       }
     },
+
     findLongestTask() {
       if (!this.taskAnswers.length) return null
 
       const taskAverages = {}
 
       this.taskAnswers.forEach((answer) => {
-        const taskTime = answer.tasks[this.taskSelect].taskTime
+        for (const taskId in answer.tasks) {
+          const taskTime = answer.tasks[taskId].taskTime
 
-        if (!taskAverages[this.taskSelect]) {
-          taskAverages[this.taskSelect] = {
-            totalTime: taskTime,
-            count: 1,
+          if (!taskAverages[taskId]) {
+            taskAverages[taskId] = {
+              totalTime: taskTime,
+              count: 1,
+            }
+          } else {
+            taskAverages[taskId].totalTime += taskTime
+            taskAverages[taskId].count++
           }
-        } else {
-          taskAverages[this.taskSelect].totalTime += taskTime
-          taskAverages[this.taskSelect].count += 1
         }
       })
 
-      for (const task in taskAverages) {
+      for (const taskId in taskAverages) {
         const averageTime =
-          taskAverages[task].totalTime / taskAverages[task].count
-        taskAverages[task].averageTime = averageTime
+          taskAverages[taskId].totalTime / taskAverages[taskId].count
+        taskAverages[taskId].averageTime = averageTime
       }
 
       let longestTask = null
       let longestAverageTime = 0
 
-      for (const task in taskAverages) {
-        if (taskAverages[task].averageTime > longestAverageTime) {
-          longestAverageTime = taskAverages[task].averageTime
-          longestTask = task
-          longestTask = this.testStructure.userTasks[task].taskName
+      for (const taskId in taskAverages) {
+        if (taskAverages[taskId].averageTime > longestAverageTime) {
+          longestAverageTime = taskAverages[taskId].averageTime
+          longestTask = taskId
         }
       }
 
       return {
-        taskName: longestTask,
+        taskName: this.testStructure.userTasks[longestTask].taskName,
         averageTime: this.formatTime(longestAverageTime),
       }
+    },
+    calculateAverageTime() {
+      const averageTime = this.formatTime(this.averageTimePerTask)
+      return averageTime
     },
     getConclusionAverage() {
       if (!this.taskAnswers.length) return null
@@ -412,13 +401,8 @@ export default {
       this.dialogItem = item
       this.showDialog = true
     },
-    calculateAverageTime() {
-      const averageTime = this.formatTime(this.averageTimePerTask)
-      return averageTime
-    },
   },
 }
-
 </script>
 
 <style scoped>
