@@ -31,18 +31,6 @@ import {
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 export default {
-  props: {
-    isAdmin: {
-      type: Boolean,
-    },
-    index: {
-      default: 0,
-      type: Number,
-    },
-    consentCompleted: {
-      type: Boolean,
-    },
-  },
   data() {
     return {
       createBtnDisabled: false,
