@@ -31,6 +31,18 @@ import {
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+    },
+    index: {
+      default: 0,
+      type: Number,
+    },
+    consentCompleted: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       createBtnDisabled: false,
@@ -145,7 +157,7 @@ export default {
       onSnapshot(collection(roomRef, 'calleeCandidates'), (snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
-            let data = change.doc.data()
+            const data = change.doc.data()
             await this.peerConnection.addIceCandidate(new RTCIceCandidate(data))
           }
         })
@@ -210,7 +222,7 @@ export default {
         onSnapshot(collection(roomRef, 'callerCandidates'), (snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === 'added') {
-              let data = change.doc.data()
+              const data = change.doc.data()
               await this.peerConnection.addIceCandidate(
                 new RTCIceCandidate(data),
               )
