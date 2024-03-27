@@ -3,14 +3,14 @@
     <v-row justify="center">
       <v-col>
         <v-textarea
+          v-model="consent"
           rows="3"
           outlined
-          v-model="consent"
           color="orange"
           class="mx-6 mt-3"
           placeholder="Consent Form..."
           @change="saveState()"
-        ></v-textarea>
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -21,9 +21,6 @@ export default {
   data: () => ({
     consent: '',
   }),
-  mounted() {
-    this.getConsent()
-  },
   computed: {
     consentStore() {
       return this.$store.getters.consent
@@ -31,6 +28,9 @@ export default {
     test() {
       return this.$store.getters.test
     },
+  },
+  mounted() {
+    this.getConsent()
   },
   methods: {
     saveState() {
