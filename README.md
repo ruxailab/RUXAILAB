@@ -84,6 +84,7 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_FIREBASE_STORAGE_BUCKET_DEV=""
   VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV=""
   VUE_APP_FIREBASE_APP_ID_DEV=""
+  VUE_APP_FIREBASE_PYTHON_FUNCTION=""
 
   // Doesn't need changes
   VUE_APP_I18N_LOCALE_DEV="en"
