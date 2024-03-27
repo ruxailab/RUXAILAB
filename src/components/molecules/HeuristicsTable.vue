@@ -143,7 +143,7 @@
         <v-divider />
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
-          <v-col class="ma-0 pa-0" cols="4">
+          <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
             <v-list dense height="560px" class="pt-0" outlined>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
@@ -151,13 +151,13 @@
                 @click="dialogHeuris = true"
               >
                 <v-list-item-icon>
-                  <v-icon style=" color=#fca326">
+                  <v-icon style=" color:#fca326">
                     mdi-plus
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    style="color: #fca326"
+                    style="color:#fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
                     <strong>{{
@@ -181,9 +181,8 @@
                 >
                   <template v-slot:label>
                     <span class="ml-2" style="font-size: 12px">
-                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span
-                    > </template
-                  >'
+                      {{ $t('HeuristicsTable.titles.searchHeuristics') }}</span>
+                  </template>'
                 </v-text-field>
               </v-subheader>
               <v-divider />
@@ -193,10 +192,9 @@
                     <center class="mt-16" style="color: #a7a7a7">
                       <strong>{{
                         $t('HeuristicsTable.titles.noHeuristicsFound')
-                      }}</strong
-                      ><br />
+                      }}</strong><br>
                       <h5>{{ $t('HeuristicsTable.messages.youMustHave') }}</h5>
-                      <br />
+                      <br>
                       <v-icon>mdi-file-remove</v-icon>
                     </center>
                   </template>
@@ -305,7 +303,13 @@
           <v-divider vertical />
 
           <!--Questions List-->
-          <v-col v-if="itemSelect != null" class="ma-0 pa-0" cols="4">
+          <v-col
+            v-if="itemSelect != null"
+            class="ma-0 pa-0 questionsList"
+            cols="12"
+            sm="6"
+            md="4"
+          >
             <v-list dense height="560px">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
@@ -323,8 +327,8 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
-                          :question="heuristics[itemSelect].questions[questionSelect]"
-                          @change="emitChange"
+                          :question-index="questionSelect"
+                          :heuristic-index="itemSelect"
                         />
                       </v-row>
                     </v-col>
@@ -410,7 +414,13 @@
           </v-col>
           <v-divider vertical />
           <!--Questions content-->
-          <v-col v-if="questionSelect != null" class="ma-0 pa-0">
+          <v-col
+            v-if="questionSelect != null"
+            class="ma-0 pa-0 questionsContent"
+            cols="12"
+            sm="6"
+            md="4"
+          >
             <v-card height="560px" elevation="0">
               <v-subheader class="pa-2">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
@@ -464,7 +474,7 @@
                     height="350px"
                     :headers="headers"
                     :items="
-                      heuristics[itemSelect].questions[questionSelect].questions
+                      heuristics[itemSelect].questions[questionSelect].descriptions
                     "
                     :items-per-page="5"
                   >
@@ -479,9 +489,8 @@
                           <v-row justify="end" class="ma-0 pa-0">
                             <AddDescBtn
                               ref="descBtn"
-                              :question="
-                                heuristics[itemSelect].questions[questionSelect]
-                              "
+                              :question-index="questionSelect"
+                              :heuristic-index="itemSelect"
                             />
                           </v-row>
                         </v-col>
@@ -492,7 +501,8 @@
                     <template v-slot:item.actions="{ item }">
                       <!-- table actions -->
                       <v-row justify="end" class="pr-1">
-                        <v-btn
+                        <!-- TODO: Uncomment and fix reactivity -->
+                        <!-- <v-btn
                           icon
                           small
                           class="mr-2"
@@ -501,7 +511,7 @@
                           <v-icon small>
                             mdi-pencil
                           </v-icon>
-                        </v-btn>
+                        </v-btn> -->
                         <v-btn icon small @click="deleteItem(item)">
                           <v-icon small>
                             mdi-delete
@@ -542,7 +552,6 @@ import AddDescBtn from '@/components/atoms/AddDescBtn'
 
 import VClamp from 'vue-clamp'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -560,17 +569,13 @@ export default {
     heuristicForm: null,
     search: '',
     searchBar: false,
-    filteredHeuristics: [],
     headers: [
       {
         text: 'Title',
         align: 'start',
         value: 'title',
       },
-      { text: 'Actions',
-        value: 'actions',
-        align: 'end',
-        sortable: false },
+      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
     ],
     dialog: false,
     dialogEdit: false,
@@ -588,6 +593,31 @@ export default {
   computed: {
     csvHeuristics() {
       return this.$store.state.Tests.Test.testStructure
+    },
+    filteredHeuristics() {
+      if (this.search === '') {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      } else {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      }
     },
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
@@ -610,7 +640,7 @@ export default {
       return result
     },
     testAnswerDocLength() {
-      if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -621,9 +651,6 @@ export default {
     },
   },
   watch: {
-    search() {
-      this.updateFilteredHeuristics()
-    },
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuristicForm = {
@@ -648,7 +675,7 @@ export default {
           this.$refs.formHeuris.reset()
         }
       }
-      this.updateFilteredHeuristics()
+      // this.updateFilteredHeuristics()
     },
     itemSelect() {
       if (this.itemSelect !== null) this.questionSelect = null
@@ -667,16 +694,14 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        this.$toast.warning(
+          'No csv file selected. \nPlease select one before procede.',
+        )
         this.loader = null
       }
     },
   },
-  mounted() {
-    this.updateFilteredHeuristics()
-  },
   async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
@@ -709,10 +734,6 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-     emitChange() {
-      this.$emit('change')
-      this.$forceUpdate()
-    },
     moveItemUp(index) {
       if (index > 0) {
         const itemToMove = this.filteredHeuristics[index]
@@ -749,40 +770,13 @@ export default {
         itemBelow.id = index
       }
     },
-    updateFilteredHeuristics() {
-      if (this.search === '') {
-        this.searchBar = false
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      } else {
-        this.searchBar = true
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      }
-    },
     deleteHeuristic(item) {
       const config = confirm(
         `${i18n.t('alerts.deleteHeuristic')} ${this.heuristics[item].title}?`,
       )
 
       if (config) {
-        this.heuristics.splice(item, 1)
+        this.$store.commit('removeHeuristic', item)
         this.itemSelect = null
         this.questionSelect = null
       }
@@ -806,7 +800,9 @@ export default {
           ].questions.length
         }
       } else {
-        Vue.$toast.warning('Sorry, but you can\'t delete all heuristics questions')
+        this.$toast.warning(
+          'Sorry, but you can\'t delete all heuristics questions',
+        )
       }
 
       this.menuQuestions = false
@@ -1030,6 +1026,15 @@ export default {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .questionsList {
+    margin-top: 7px;
+  }
+  .questionsContent {
+    margin-top: 7px;
   }
 }
 </style>

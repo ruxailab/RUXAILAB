@@ -1,23 +1,14 @@
-import { auth } from '@/firebase'
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth'
-
 /**
  * Auth Store Module
  * @module Auth
  */
 
-//import AuthController
-// import AuthController from "@/controllers/AuthController.js";
+import AuthController from '@/controllers/AuthController.js'
 import UserController from '@/controllers/UserController'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
-// const AuthCont = new AuthController();
-//const UserCont = new UserController();
+const authController = new AuthController()
+const userController = new UserController()
 
 export default {
   state: {
@@ -48,14 +39,15 @@ export default {
     async signup({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await createUserWithEmailAndPassword(
-          auth,
-          payload.email,
-          payload.password,
-        )
+        const { user } = await authController.signUp(payload.email, payload.password)
+        await userController.create({
+          id: user.uid,
+          email: user.email,
+        })
+        const dbUser = await userController.getById(user.uid)
+        commit('SET_USER', dbUser)
       } catch (err) {
-        console.error('Error when creating user', err)
-        commit('setError', err)
+        commit('setError', { errorCode: 'FIREBASE', message: err.code })
       } finally {
         commit('setLoading', false)
       }
@@ -64,23 +56,27 @@ export default {
     async signin({ commit }, payload) {
       commit('setLoading', true)
       try {
-        const response = await signInWithEmailAndPassword(
-          auth,
-          payload.email,
-          payload.password,
-        )
-        if (response) {
-          const dbUser = await new UserController().getById(response.user.uid)
+        const { user } = await authController.signIn(payload.email, payload.password)
+        if (user) {
+          const dbUser = await userController.getById(user.uid)
           commit('SET_USER', dbUser)
         }
       } catch (err) {
-        console.error(err)
         if (err.code === 'auth/invalid-email') {
-          commit('setError', {errorCode: 403, message:i18n.t('errors.userNotExist')})
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.userNotExist'),
+          })
         } else if (err.code === 'auth/wrong-password') {
-          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectPassword')})
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.incorrectPassword'),
+          })
         } else {
-          commit('setError', {errorCode: 403, message:i18n.t('errors.incorrectCredential')})
+          commit('setError', {
+            errorCode: 'auth',
+            message: i18n.t('errors.incorrectCredential'),
+          })
         }
       } finally {
         commit('setLoading', false)
@@ -89,25 +85,22 @@ export default {
 
     async logout({ commit }) {
       try {
-        await signOut(auth)
+        await authController.signOut()
         commit('SET_USER', null)
       } catch (err) {
         console.error(err)
       } finally {
-        //Statements that are executed after the try statement completes. These statements execute regardless of whether an exception was thrown or caught.
         commit('setLoading', false)
       }
     },
 
     async autoSignIn({ commit }) {
-      var user = auth.currentUser
-      if (user) {
-        try {
-          const dbUser = await new UserController().getById(user.uid)
-          commit('SET_USER', dbUser)
-        } catch (e) {
-          console.error(e)
-        }
+      try {
+        const user = await authController.getCurrentUser()
+        const dbUser = await userController.getById(user.uid)
+        commit('SET_USER', dbUser)
+      } catch (e) {
+        console.error(err)
       }
     },
   },

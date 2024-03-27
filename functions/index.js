@@ -37,37 +37,37 @@ exports.onTestUpdate = functions.firestore.document('tests/{docId}').onUpdate(as
   })
 })
 
-exports.processSignUp = functions.auth.user().onCreate(async (user) => {
-  try {
-    await admin
-      .firestore()
-      .collection("users")
-      .doc(user.uid)
-      .set({
-        email: user.email,
-        accessLevel: 1,
-        myTests: {},
-        myAnswers: {},
-        notifications: [],
-      });
-  } catch (err) {
-    console.error("Error to create user in database ", err);
-  }
-});
+// exports.processSignUp = functions.auth.user().onCreate(async (user) => {
+//   try {
+//     await admin
+//       .firestore()
+//       .collection("users")
+//       .doc(user.uid)
+//       .set({
+//         email: user.email,
+//         accessLevel: 1,
+//         myTests: {},
+//         myAnswers: {},
+//         notifications: [],
+//       });
+//   } catch (err) {
+//     console.error("Error to create user in database ", err);
+//   }
+// });
 
-exports.setUserRole = functions.https.onCall(async (data) => {
-  try {
-    return await admin
-      .firestore()
-      .collection("users")
-      .doc(data.uid)
-      .update({
-        accessLevel: data.customClaims.accessLevel,
-      });
-  } catch (err) {
-    return err;
-  }
-});
+// exports.setUserRole = functions.https.onCall(async (data) => {
+//   try {
+//     return await admin
+//       .firestore()
+//       .collection("users")
+//       .doc(data.uid)
+//       .update({
+//         accessLevel: data.customClaims.accessLevel,
+//       });
+//   } catch (err) {
+//     return err;
+//   }
+// });
 
 exports.deleteAuth = functions.https.onCall(async (data, context) => {
   try {
