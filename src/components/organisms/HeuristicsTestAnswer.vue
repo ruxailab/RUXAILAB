@@ -309,6 +309,7 @@
                       legend="Average"
                     />
                   </v-col>
+
                   <!-- Bottom Tab 4 -->
 
                   <v-col v-if="ind == 3" cols="12" align="center">
@@ -337,25 +338,48 @@
                       </v-col> -->
 
                     <v-row align="center" justify="space-around">
-                      <v-card
-                        align="center"
-                        class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
-                        width="950px"
-                      >
-                        <RadarWeight
-                          :labels="
-                            Array.from(
-                              { length: heuristicsLength },
-                              (_, index) => `H ${index + 1}`,
-                            )
-                          "
-                          :data="
-                            weightsStatistics.items.map(
-                              (item) => item.percentage,
-                            )
-                          "
-                        />
-                      </v-card>
+                      <v-col cols="6" md="4">
+                        <v-card
+                          align="center"
+                          class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
+                          width="950px"
+                        >
+                          <v-card-title class="mt-4 mb-4 font-weight-bold">
+                            <v-row align="center" justify="center">
+                              Usability Percentage <br>
+                              With Weights
+                            </v-row>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-row align="center" justify="center mt-2 mb-2">
+                              <p class="display-3">
+                                {{ usabilityTotalFix }}
+                              </p>
+                            </v-row>
+                          </v-card-text>
+                        </v-card>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="8">
+                        <v-card
+                          align="center"
+                          class=" elevation-4 weightsStatisticsStyle mt-6 py-4 px-4 mb-6 mx-auto"
+                          width="950px"
+                        >
+                          <RadarWeight
+                            :labels="
+                              Array.from(
+                                { length: heuristicsLength },
+                                (_, index) => `H ${index + 1}`,
+                              )
+                            "
+                            :data="
+                              weightsStatistics.items.map(
+                                (item) => item.percentage,
+                              )
+                            "
+                          />
+                        </v-card>
+                      </v-col>
                     </v-row>
                     <v-row align="center" justify="space-around">
                       <v-data-table
@@ -410,7 +434,7 @@ export default {
     tabelacompleta: null,
     decisionmatrix: null,
     relative: null,
-    usability_total: null,
+    usability_total: 0,
   }),
 
   computed: {
@@ -579,6 +603,11 @@ export default {
           })
       }
       return tableWeights
+    },
+
+    usabilityTotalFix() {
+      const usabilityTotalFix = parseFloat(this.usability_total).toFixed(2)
+      return usabilityTotalFix
     },
 
     testAnswerDocument() {
