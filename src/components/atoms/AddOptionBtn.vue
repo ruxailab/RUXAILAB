@@ -55,7 +55,6 @@
                     max-length="100"
                     counter="100"
                     :label="$t('HeuristicsTable.placeholders.optionDescription')"
-                    :rules="textRequired"
                   />
                 </v-col>
               </v-row>

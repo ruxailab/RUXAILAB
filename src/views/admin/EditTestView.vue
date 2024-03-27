@@ -93,7 +93,7 @@
           type="content"
           :object="object"
           :index="index"
-          @change="change = true"
+          @tabClicked="setIndex"
         />
 
         <!-- Unmoderated User tests -->
@@ -102,7 +102,6 @@
           slot="top"
           type="tabs"
           @tabClicked="setIndex"
-          @change="change = true"
         />
 
         <EditUserTest
@@ -111,7 +110,6 @@
           :object="object"
           :index="index"
           type="content"
-          @change="change = true"
           @valForm="validate"
         />
         <!-- Moderated User tests -->
@@ -164,9 +162,6 @@ export default {
     dialog: false,
     intro: false,
   }),
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-  },
   computed: {
     accessLevel() {
       // If user is superadmin
@@ -233,6 +228,9 @@ export default {
         this.setIntro()
       }
     },
+  },
+  async created() {
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })

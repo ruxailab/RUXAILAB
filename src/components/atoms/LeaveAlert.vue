@@ -43,7 +43,7 @@ methods: {
   },
   discardChanges(){
     this.$store.commit('SET_LOCAL_CHANGES',false)
-    console.log(this.$store.state.pathTo);
+    console.log(this.$store.state.pathTo)
     this.$router.push({name: this.$store.state.pathTo})
   },
 },

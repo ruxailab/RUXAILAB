@@ -38,10 +38,10 @@
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
           <v-col>
-          <h1 class="display-3 font-weight-regular white--text text-center mt-5">
-            {{ $t('Introduction.title') }}
-          </h1>
-          </v-col>  
+            <h1 class="display-3 font-weight-regular white--text text-center mt-5">
+              {{ $t('Introduction.title') }}
+            </h1>
+          </v-col>
         </div>
         <v-img
           src="@/assets/landing/introductionMobile.svg"
