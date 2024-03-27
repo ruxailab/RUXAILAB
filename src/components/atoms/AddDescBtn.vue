@@ -78,7 +78,6 @@
 <script>
 import TextBox from '@/components/atoms/TextBox'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -134,7 +133,7 @@ export default {
 
         this.reset()
       } else if (valid && this.desc.text.length == 0) {
-        Vue.$toast.info(i18n.t('alerts.addDescription'))
+        this.$toast.info(i18n.t('alerts.addDescription'))
       }
     },
     reset() {
