@@ -29,9 +29,9 @@
                 item-key="userDocId"
               >
                 <template v-slot:item.actions="{ item }">
-                  <v-btn color="orange" text @click="viewAnswers(item)"
-                    >Show Answers</v-btn
-                  >
+                  <v-btn color="orange" text @click="viewAnswers(item)">
+                    Show Answers
+                  </v-btn>
                 </template>
               </v-data-table>
             </v-col>
@@ -49,7 +49,7 @@
         <v-card>
           <v-toolbar color="orange" dark>
             <span class="headline">Answer and Observation</span>
-            <v-btn class="ml-auto" @click="showDialog = false" icon>
+            <v-btn class="ml-auto" icon @click="showDialog = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -68,10 +68,10 @@
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
-                      class="ma-1 text-subtitle-1"
-                      style="color: #252525"
                       v-for="(question, index) in testStructure.preTest"
                       :key="index"
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525"
                     >
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.preTestAnswer[index].answer }}
@@ -108,10 +108,10 @@
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
-                      class="ma-1 text-subtitle-1"
-                      style="color: #252525"
                       v-for="(question, index) in testStructure.postTest"
                       :key="index"
+                      class="ma-1 text-subtitle-1"
+                      style="color: #252525"
                     >
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.postTestAnswer[index].answer }}
@@ -179,29 +179,27 @@
               </v-col>
               <div v-if="dialogItem">
                 <v-col
-                  cols="12"
                   v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
+                  cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
                   <span
                     class="cardsTitle ma-3"
                     style="color: #252525"
-                    v-if="dialogItem"
-                    >Web Cam Record</span
-                  >
+                  >Web Cam Record</span>
                   <video
-                    class="my-3"
                     v-if="dialogItem"
+                    class="my-3"
                     :src="dialogItem.tasks[taskSelect].webcamRecordURL"
                     controls
                     height="260"
-                  ></video>
+                  />
                 </v-col>
               </div>
               <div v-if="dialogItem">
                 <v-col
-                  cols="12"
                   v-if="dialogItem.tasks[taskSelect].screenRecordURL"
+                  cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
                   <span class="cardsTitle ma-3" style="color: #252525"
@@ -212,13 +210,13 @@
                     :src="dialogItem.tasks[taskSelect].screenRecordURL"
                     controls
                     height="260"
-                  ></video>
+                  />
                 </v-col>
               </div>
               <div v-if="dialogItem">
                 <v-col
-                  cols="12"
                   v-if="dialogItem.tasks[taskSelect].audioRecordURL"
+                  cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
                   <span class="cardsTitle ma-3" style="color: #252525">
