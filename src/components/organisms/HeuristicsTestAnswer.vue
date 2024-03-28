@@ -313,84 +313,71 @@
                   <!-- Bottom Tab 4 -->
 
                   <v-col v-if="ind == 3" cols="12" align="center">
-                    <!-- <v-col cols="6" md="4" class=" my-6 py-6">
-                        <v-card class="pa-2 weightsStatisticsRadar elevation-4">
-                          <RadarWeight
-                            :labels="
-                              Array.from(
-                                { length: heuristicsLength },
-                                (_, index) => `H ${index + 1}`,
-                              )
-                            "
-                            :data="
-                              weightsStatistics.items.map(
-                                (item) => item.percentage,
-                              )
-                            "
-                            class="radar"
-                          />
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="8" class="my-6 py-6">
-                        <v-card class="pa-2 weightsStatisticsRadar elevation-4">
-                          2
-                        </v-card>
-                      </v-col> -->
-
-                    <v-row align="center" justify="space-around">
-                      <v-col cols="6" md="4">
-                        <v-card
+                    <v-card
+                      v-if="relative === null"
+                      class="mx-auto mt-10 mb-10 py-6 if-card"
+                      align="center"
+                      width="970px"
+                    >
+                      This page needs weight function (python) to be running, can be in
+                      emulators or in deploy mode.
+                    </v-card>
+                    <div v-else>
+                      <v-row align="center" justify="space-around">
+                        <v-col cols="6" md="4">
+                          <v-card
+                            align="center"
+                            class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
+                            width="950px"
+                          >
+                            <v-card-title class="mt-4 mb-4 font-weight-bold">
+                              <v-row align="center" justify="center">
+                                Usability Percentage <br>
+                                With Weights
+                              </v-row>
+                            </v-card-title>
+                            <v-card-text>
+                              <v-row align="center" justify="center mt-2 mb-2">
+                                <p class="display-3">
+                                  {{ usabilityTotalFix }}
+                                </p>
+                              </v-row>
+                            </v-card-text>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="8">
+                          <v-card
+                            align="center"
+                            class=" elevation-4 weightsStatisticsStyle mt-6 py-4 px-4 mb-6 mx-auto"
+                            width="950px"
+                          >
+                            <RadarWeight
+                              :labels="
+                                Array.from(
+                                  { length: heuristicsLength },
+                                  (_, index) => `H ${index + 1}`,
+                                )
+                              "
+                              :data="
+                                weightsStatistics.items.map(
+                                  (item) => item.percentage,
+                                )
+                              "
+                            />
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                      <v-row align="center" justify="space-around">
+                        <v-data-table
+                          :headers="weightsStatistics.header"
+                          :items="weightsStatistics.items"
+                          :items-per-page="10"
                           align="center"
-                          class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
+                          class="elevation-4 weightsStatisticsStyle mt-3 mb-6 mx-auto"
                           width="950px"
-                        >
-                          <v-card-title class="mt-4 mb-4 font-weight-bold">
-                            <v-row align="center" justify="center">
-                              Usability Percentage <br>
-                              With Weights
-                            </v-row>
-                          </v-card-title>
-                          <v-card-text>
-                            <v-row align="center" justify="center mt-2 mb-2">
-                              <p class="display-3">
-                                {{ usabilityTotalFix }}
-                              </p>
-                            </v-row>
-                          </v-card-text>
-                        </v-card>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="8">
-                        <v-card
-                          align="center"
-                          class=" elevation-4 weightsStatisticsStyle mt-6 py-4 px-4 mb-6 mx-auto"
-                          width="950px"
-                        >
-                          <RadarWeight
-                            :labels="
-                              Array.from(
-                                { length: heuristicsLength },
-                                (_, index) => `H ${index + 1}`,
-                              )
-                            "
-                            :data="
-                              weightsStatistics.items.map(
-                                (item) => item.percentage,
-                              )
-                            "
-                          />
-                        </v-card>
-                      </v-col>
-                    </v-row>
-                    <v-row align="center" justify="space-around">
-                      <v-data-table
-                        :headers="weightsStatistics.header"
-                        :items="weightsStatistics.items"
-                        :items-per-page="10"
-                        align="center"
-                        class="elevation-4 weightsStatisticsStyle mt-3 mb-6 mx-auto"
-                        width="950px"
-                      />
-                    </v-row>
+                        />
+                      </v-row>
+                    </div>
                   </v-col>
                 </v-row>
               </v-col>
@@ -821,6 +808,13 @@ export default {
 
 .radar {
   background: #fff;
+}
+
+.if-card {
+  border-radius: 15px;
+  border: 0.2px solid #fca326;
+  width: 950px;
+  font-size: 18px;
 }
 </style>
 <style>
