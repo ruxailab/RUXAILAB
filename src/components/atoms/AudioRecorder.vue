@@ -2,30 +2,38 @@
   <div>
     <v-col>
       <v-row>
-        <v-btn
-          v-if="!recordingAudio && recordedAudio == ''"
-          class="ml-4 mb-2 xl"
-          color="grey lighten-2"
-          elevation="0"
-          @click="startAudioRecording"
-        >
-          <v-icon class="mr-2">
-            mdi-microphone
-          </v-icon>
-          Start Recording
-        </v-btn>
-        <v-btn
-          v-if="recordingAudio"
-          dark
-          color="red"
-          class="ml-4 mb-2 xl"
-          @click="stopAudioRecording"
-        >
-          <v-icon left>
-            mdi-stop
-          </v-icon>
-          Stop Recording
-        </v-btn>
+        <v-tooltip bottom v-if="!recordingAudio">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="startAudioRecording"
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-microphone</v-icon>
+            </v-btn>
+          </template>
+          <span>Start Audio Record</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="recordingAudio">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="stopAudioRecording"
+              color="red"
+              dark
+              elevation="0"
+              icon
+              class="ml-4 my-2 mr-auto xl"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-stop</v-icon>
+            </v-btn>
+          </template>
+          <span>Stop Audio Record</span>
+        </v-tooltip>
       </v-row>
     </v-col>
   </div>
@@ -35,18 +43,8 @@
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
-    testId: {
-      type: String,
-      default: null,
-    },
-    currentUserTestAnswer: {
-      type: Object,
-      default: null,
-    },
-    taskIndex: {
-      type: Number,
-      default: 0,
-    },
+    testId: String,
+    taskIndex: Number,
   },
   data() {
     return {
@@ -56,6 +54,11 @@ export default {
       audioStream: null,
       recordedAudio: '',
     }
+  },
+  computed: {
+    currentUserTestAnswer() {
+      return this.$store.getters.currentUserTestAnswer
+    },
   },
   methods: {
     async startAudioRecording() {
@@ -78,6 +81,7 @@ export default {
         }
 
         this.mediaRecorder.onstop = async () => {
+          this.$emit('showLoading')
           const audioBlob = new Blob(this.recordedChunks, {
             type: 'audio/webm',
           })
@@ -103,9 +107,13 @@ export default {
             this.taskIndex
           ].audioRecordURL = this.recordedAudio
 
-          console.log(
-            this.currentUserTestAnswer.tasks[this.taskIndex].audioRecordURL,
-          )
+          this.audioStream.getTracks().forEach((track) => track.stop())
+          this.audioStream = null
+          this.recordingAudio = false
+
+          this.$emit('stopShowLoading')
+          this.$toast.success('Audio record saved!')
+          this.recordingAudio = false
         }
 
         this.mediaRecorder.start()
@@ -117,8 +125,6 @@ export default {
     stopAudioRecording() {
       if (this.mediaRecorder) {
         this.mediaRecorder.stop()
-        this.audioStream.getTracks().forEach((track) => track.stop())
-        this.recordingAudio = false
       }
     },
   },
