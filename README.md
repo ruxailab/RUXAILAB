@@ -90,7 +90,9 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_I18N_LOCALE_DEV="en"
   VUE_APP_I18N_FALLBACK_LOCALE_DEV="en"
   ```
-Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
+Then, complete the information in your .env file with the firebase information, respectively in their fields, for the 'VUE_APP_FIREBASE_PYTHON_FUNCTION'
+
+And run:
 
   ```bash
    # Run the application locally
