@@ -839,7 +839,6 @@ import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -1235,7 +1234,7 @@ export default {
     },
     startTest() {
       if (this.test.testStructure.length == 0) {
-        Vue.$toast.info('This test don\'t have any task')
+        this.$toast.info("This test don't have any task")
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
@@ -1361,19 +1360,6 @@ export default {
   margin-top: 16px;
 }
 
-/* Estilo para o título dos cartões */
-.cardsTitle {
-  font-size: 20px;
-  font-weight: bold;
-  color: #000;
-}
-
-/* Estilo para o subtítulo dos cartões */
-.cardsSubtitle {
-  font-size: 16px;
-  color: #455a64;
-}
-
 /* Estilo para os campos de entrada de texto */
 .text-field {
   margin-bottom: 16px;
@@ -1461,7 +1447,7 @@ body {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .titleView {
-  font-family: Roboto;
+  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -1524,12 +1510,12 @@ body {
 }
 /* Handle */
 .right-view::-webkit-scrollbar-thumb {
-  background: #ffcd8600;
+  background: #ffcd8694;
   border-radius: 2px;
 }
 /* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca32600;
+  background: #fda1207a;
 }
 /* Nav bar list scroll bar */
 /* width */
@@ -1542,12 +1528,12 @@ body {
 }
 /* Handle */
 .nav-list::-webkit-scrollbar-thumb {
-  background: #777596;
+  background: #c09c6b;
   border-radius: 4px;
 }
 /* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
-  background: #64618a;
+  background: #eba555;
   /* background: #515069; */
 }
 .card-title {
