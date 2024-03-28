@@ -65,6 +65,7 @@ Follow these steps to set up the development environment and run the application
    ```bash
    # Install dependencies
    npm install
+   pip install
    ```
  Open Firebase / Firestore and start a project.
 
@@ -85,16 +86,43 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV=""
   VUE_APP_FIREBASE_APP_ID_DEV=""
 
+
   // Doesn't need changes
   VUE_APP_I18N_LOCALE_DEV="en"
   VUE_APP_I18N_FALLBACK_LOCALE_DEV="en"
   ```
 Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
 
+
   ```bash
    # Run the application locally
    npm run serve
    ```
+
+## Running Python Function 
+
+To calculate heuristic weights, run:
+
+ ```bash	
+ # Run locally
+  firebase init functions
+  firebase use (choose your option)
+  firebase emulators:start --only functions
+   ```
+Then get the url, go to the .env file and add the following sentence:
+
+  ```javascript
+    // Your previous code
+   VUE_APP_FIREBASE_PYTHON_FUNCTION="url"
+   ```
+
+If you want to deply the fuction, change your account from spark to blaze, run:
+
+ ```bash	
+    firebase deploy --only functions
+   ```
+Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
+There you can get the url and replace on .env file.
 
 ## License
 
