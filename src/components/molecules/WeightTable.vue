@@ -1,6 +1,14 @@
 <template>
   <v-col>
-    <v-card class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
+    <v-card
+      v-if="heuristics.length < 2"
+      class="mx-auto mt-10 mb-10 py-6 if-card"
+      align="center"
+      width="970px"
+    >
+      Need at least 2 heuristics to be able to place the weights.
+    </v-card>
+    <v-card v-else class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
       <!-- tabs  -->
       <template>
         <v-tabs
@@ -22,7 +30,12 @@
         </v-tabs>
         <!-- tbody  -->
         <v-tabs-items v-model="tabs">
-          <v-tab-item v-for="(n, pes) in heuristics.length - 1" :key="pes">
+          <v-tab-item
+            v-for="(n, pes) in heuristics && heuristics.length
+              ? heuristics.length - 1
+              : 0"
+            :key="pes"
+          >
             <v-card flat>
               <v-card-text>
                 <v-simple-table>
@@ -69,17 +82,29 @@
                             row
                             class="justify-space-between"
                           >
-                            <v-radio
-                              v-for="(r, rad) in 9"
+                            <v-tooltip
+                              v-for="(r, rad) in importance"
                               :key="rad"
-                              :label="`${r}`"
-                              :value="r"
-                              active-class
-                              class="padding-left"
-                              on-icon="mdi-check-circle-outline"
-                              off-icon="mdi-checkbox-blank-circle-outline"
-                              color="#FCA326"
-                            />
+                              bottom
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-radio
+                                  :label="`${r}`"
+                                  :value="r"
+                                  active-class
+                                  class="padding-left"
+                                  on-icon="mdi-check-circle-outline"
+                                  off-icon="mdi-checkbox-blank-circle-outline"
+                                  color="#FCA326"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                />
+                              </template>
+                              <span>
+                                H{{ f + (tabs + 1) }} has
+                                {{ importt[r - 1] }} than H {{ tabs + 1 }}</span
+                              >
+                            </v-tooltip>
                           </v-radio-group>
                         </td>
                       </tr>
@@ -112,11 +137,35 @@
 
 <script>
 export default {
+  name: 'WeightTable',
   data() {
     return {
       tabs: 0,
       row: [],
-      group: null,
+      group: {},
+      scores: null,
+      importance: {
+        'Equal Importance': 1,
+        'Moderate Importance': 2,
+        'Strong Importance': 3,
+        'Very Strong Importance': 4,
+        'Extreme Importance': 5,
+        'Moderately Less Important': 6,
+        'Strongly Less Important': 7,
+        'Very Strongly Less Important': 8,
+        'Extremely Less Important': 9,
+      },
+      importt: [
+        'Equal Importance',
+        'Moderate Importance',
+        'Strong Importance',
+        'Very Strong Importance',
+        'Extreme Importance',
+        'Moderately Less Important',
+        'Strongly Less Important',
+        'Very Strongly Less Important',
+        'Extremely Less Important',
+      ],
     }
   },
   computed: {
@@ -124,27 +173,31 @@ export default {
       return this.$store.state.Tests.Test
     },
     heuristics() {
-      return this.$store.state.Tests.Test.testStructure
-        ? this.$store.state.Tests.Test.testStructure
-        : []
+      return this.testAll.testStructure || []
     },
     heuristicaTamanho() {
       return this.heuristics.length
     },
+    scoresPercentage() {
+      return this.$store.state.Tests.scoresPercentage
+    },
   },
   beforeMount() {
-    const heuristicLength = this.$store.state.Tests.Test.testStructure.length
+    if (!this.testAll.testWeights) {
+      console.error('testWeights is undefined')
+      return
+    }
+    const heuristicLength = this.testAll.testStructure.length
+    this.group = this.testAll.testWeights
 
-    const weightMap = {}
-    if ((this.testAll.testWeights = {})) {
+    if (Object.keys(this.testAll.testWeights).length === 0) {
+      // Verifica se é um objeto vazio
+      const weightMap = {}
       for (let i = 0; i < heuristicLength - 1; i++) {
         weightMap[i] = new Array(heuristicLength - (i + 1)).fill(null)
       }
       this.group = weightMap
-    } else {
-      this.group = this.testAll.testWeights
     }
-    console.log(this.group)
   },
 
   methods: {
@@ -162,5 +215,12 @@ export default {
 }
 .padding-left {
   padding-left: 23px;
+}
+
+.if-card {
+  border-radius: 15px;
+  border: 0.2px solid #fca326;
+  width: 950px;
+  font-size: 18px;
 }
 </style>

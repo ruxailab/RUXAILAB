@@ -26,6 +26,7 @@ export default {
     consent: '',
     preTest: [],
     postTest: [],
+    scoresPercentage: [],
     finalMessage: '',
     remoteStream: null,
     localStream: null,
@@ -99,6 +100,9 @@ export default {
     },
     SET_CONSENT(state, payload) {
       state.consent = payload
+    },
+    SET_SCORES_PERCENTAGE(state, payload) {
+      state.scoresPercentage = payload
     },
     SET_WELCOME(state, payload) {
       state.welcomeMessage = payload
@@ -355,6 +359,13 @@ export default {
     setConsent({ commit }, payload) {
       try {
         commit('SET_CONSENT', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setScoresPercentage({ commit }, payload) {
+      try {
+        commit('SET_SCORES_PERCENTAGE', payload)
       } catch {
         commit('setError', true)
       }
