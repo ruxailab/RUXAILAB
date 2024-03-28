@@ -191,7 +191,7 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card v-if="tab == 2" rounded="xl" flat style="background: #f5f7ff">
+          <v-card v-if="tab == 2" rounded="xl" flat class="mb-6" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
               Heuristics Data
             </v-card-title>
