@@ -17,6 +17,34 @@ export function autoSignIn() {
   })
 }
 
+export const isAuthorizedAndOwnsTest = async (to, from, next) => {
+  const user = store.getters['Auth/user'];
+
+  if (user) {
+    const allowedRoles = to.meta.authorize;
+    if (allowedRoles.includes(user.accessLevel)) {
+      try {
+        const isInvited = await store.dispatch('getPublicTest', to.params.id);
+        console.log(isInvited)
+        const isSharedWithUser = store.dispatch('getSharedWithMeTests');
+        const testExists = isInvited || isSharedWithUser.some(test => test.id === to.params.id);
+        
+        if (testExists) {
+          next();
+        } else {
+          next('/');
+        }
+      } catch (error) {
+        console.error('Error checking if user is authorized to access the test:', error);
+        next('/');
+      }
+    } else {
+      next('/');
+    }
+  } else {
+    next('/login');
+  }
+}
 
 export function redirect() {
     if (!store.state.Auth.user) {

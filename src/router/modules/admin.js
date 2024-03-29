@@ -11,6 +11,7 @@ import CreateView from '@/views/admin/CreateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
+import { isAuthorizedAndOwnsTest } from '../tools'
 
 export default [
   {
@@ -25,6 +26,7 @@ export default [
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
+    beforeEnter: isAuthorizedAndOwnsTest,
     children: [
       {
         path: '/reportview/:id',
