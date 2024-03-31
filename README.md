@@ -78,18 +78,18 @@ Follow these steps to set up the development environment and run the application
 In the folder of your project, create a file with the name .env and put the following data:
 
   ```javascript
-  VUE_APP_FIREBASE_API_KEY_DEV=""
-  VUE_APP_FIREBASE_AUTH_DOMAIN_DEV=""
-  VUE_APP_FIREBASE_DB_URL_DEV=""
-  VUE_APP_FIREBASE_PROJECT_ID_DEV=""
-  VUE_APP_FIREBASE_STORAGE_BUCKET_DEV=""
-  VUE_APP_FIREBASE_MESSAGING_SENDER_ID_DEV=""
-  VUE_APP_FIREBASE_APP_ID_DEV=""
+  VUE_APP_FIREBASE_API_KEY=""
+  VUE_APP_FIREBASE_AUTH_DOMAIN=""
+  VUE_APP_FIREBASE_DB_URL=""
+  VUE_APP_FIREBASE_PROJECT_ID=""
+  VUE_APP_FIREBASE_STORAGE_BUCKET=""
+  VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
+  VUE_APP_FIREBASE_APP_ID=""
 
 
   // Doesn't need changes
-  VUE_APP_I18N_LOCALE_DEV="en"
-  VUE_APP_I18N_FALLBACK_LOCALE_DEV="en"
+  VUE_APP_I18N_LOCALE="en"
+  VUE_APP_I18N_FALLBACK_LOCALE="en"
   ```
 Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
 
