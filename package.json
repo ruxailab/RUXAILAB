@@ -8,8 +8,8 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit",
-    "build-dev": "vue-cli-service build",
-    "build-prod": "vue-cli-service build --production",
+    "build-dev": "vue-cli-service build --mode development",
+    "build-prod": "vue-cli-service build --mode production",
     "deploy-dev": "firebase use dev && firebase deploy --only hosting",
     "deploy-prod": "firebase use production && firebase deploy -- only hosting"
   },
