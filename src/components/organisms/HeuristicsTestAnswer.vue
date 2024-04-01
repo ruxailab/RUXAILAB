@@ -175,7 +175,7 @@
                   v-if="evaluatorStatistics.items.length >= 3"
                   :labels="
                     evaluatorStatistics.items.map(
-                      (item) => `${item.evaluator} - ${item.result}%`,
+                      (item) => `${item.evaluator} - ${item.result}%`, 
                     )
                   "
                   :data="evaluatorStatistics.items.map((item) => item.result)"
