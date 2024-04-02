@@ -117,7 +117,7 @@ common_headers = {
 }
 
 @https_fn.on_request()
-def say_hello(req):
+def weight_calculate(req):
     print(req.method)
     if req.method == 'OPTIONS':
         # Allows GET requests from any origin with the Content-Type
