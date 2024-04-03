@@ -228,47 +228,58 @@
           </v-card-title>
           <v-divider class="mb-4"></v-divider>
           <v-card-text>
-            <v-col cols="5">
-              <span class="modalInternTitles">Email</span>
-              <v-col cols="7" class="pa-0">
-                <v-text-field
-                  :value="comboboxModel.email"
-                  dense
-                  disabled="true"
-                  color="#626E76"
-                  outlined
-                  background-color="#D7D7D7"
-                  class="rounded-lg"
-                />
-              </v-col>
-              <span class="modalInternTitles">Scheduled at</span>
-              <v-row>
-                <v-col cols="7" class="pr-0">
+            <v-row>
+              <v-col cols="5">
+                <span class="modalInternTitles">Email</span>
+                <v-col cols="7" class="pa-0">
                   <v-text-field
                     :value="comboboxModel.email"
                     dense
                     disabled="true"
+                    color="#626E76"
                     outlined
+                    background-color="#D7D7D7"
                     class="rounded-lg"
                   />
                 </v-col>
-                <v-col
-                  ><v-text-field
-                    :value="comboboxModel.email"
-                    dense
-                    disabled="true"
-                    outlined
-                    class="rounded-lg"/></v-col
-              ></v-row>
-              <span class="modalInternTitles">Invite message</span>
-              <v-textarea
-                v-model="messageContent"
-                required
-                placeholder="Hey lets make a test..."
-                outlined
-                class="rounded-lg"
-              />
-            </v-col>
+                <span class="modalInternTitles">Scheduled at</span>
+                <v-row justify="center">
+                  <v-col cols="7" class="pr-0">
+                    <v-text-field
+                      :value="comboboxModel.email"
+                      dense
+                      disabled="true"
+                      outlined
+                      class="rounded-lg"
+                    />
+                  </v-col>
+                  <v-col
+                    ><v-text-field
+                      :value="comboboxModel.email"
+                      dense
+                      disabled="true"
+                      outlined
+                      class="rounded-lg"/></v-col
+                ></v-row>
+                <span class="modalInternTitles">Invite message</span>
+                <v-textarea
+                  v-model="messageContent"
+                  required
+                  placeholder="Hey lets make a test..."
+                  outlined
+                  class="rounded-lg"
+                />
+              </v-col>
+              <v-col cols="7">
+                <v-date-picker
+                  v-model="date"
+                  show-adjacent-months
+                  class="ml-16"
+                  color="orange"
+                >
+                </v-date-picker>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-divider />
         </v-card>
@@ -297,6 +308,9 @@ export default {
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
+    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     object: null,
     headers: [
       { text: 'Email', value: 'email' },
