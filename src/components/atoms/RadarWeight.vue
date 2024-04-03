@@ -19,18 +19,24 @@ export default {
       },
     },
   },
+  computed: {
+    heuristics() {
+      return this.testAll.testStructure || []
+    },
+  },
   watch: {
     data() {
       this.$data._chart.update()
     },
   },
+
   mounted() {
     this.renderChart(
       {
         labels: this.labels,
         datasets: [
           {
-            label: 'Usability Percentage ',
+            label: 'Importance ',
             backgroundColor: 'rgba(249, 152, 38,0.24)',
             borderColor: 'rgba(255, 81, 47,1)',
             pointBackgroundColor: 'rgba(255, 81, 47,1)',
@@ -45,6 +51,16 @@ export default {
           ticks: {
             suggestedMin: 0,
             suggestedMax: 100,
+            display: false,
+          },
+        },
+
+        legend: {
+          display: true,
+          labels: {
+            fontFamily: 'Roboto',
+            fontStyle: 'bold',
+            fontSize: 20,
           },
         },
       },
