@@ -67,8 +67,7 @@ export default class TestController extends Controller {
 
   async updateTest(payload) {
     try {
-      console.log('Oque chegou no updateTest:', payload)
-      console.log('payload.toFirestore: ', payload.toFirestore())
+
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
       console.error(e)
