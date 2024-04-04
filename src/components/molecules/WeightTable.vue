@@ -1,10 +1,14 @@
 <template>
-  <v-col style="background-color:#F5F7FF">
+  <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-4">
+    <v-card-title class="subtitleView">
+      Current Weights
+    </v-card-title>
+    <v-divider />
     <v-card
       v-if="heuristics.length < 2"
-      class="mx-auto mt-10 mb-10 py-6 if-card"
+      class="mx-auto my-2 mb-5 py-6 if-card"
       align="center"
-      width="970px"
+
     >
       Need at least 2 heuristics to be able to place the weights.
     </v-card>
@@ -18,7 +22,7 @@
           dark
           show-arrows
         >
-          <v-tabs-slider color="#FCA326" />
+          <v-tabs-slider color="#696969" />
           <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
@@ -43,10 +47,10 @@
                     <thead>
                       <tr>
                         <th class="text-left">
-                          Heuristicas
+                          Heuristics
                         </th>
                         <th class="text-center">
-                          peso
+                          Weights
                         </th>
                       </tr>
                     </thead>
@@ -222,5 +226,15 @@ export default {
   border: 0.2px solid #fca326;
   width: 950px;
   font-size: 18px;
+}
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 </style>
