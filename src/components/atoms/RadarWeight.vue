@@ -50,8 +50,8 @@ export default {
         scale: {
           ticks: {
             suggestedMin: 0,
-            suggestedMax: 100,
-            display: false,
+            suggestedMax: this.maxvalue,
+            display: true,
           },
         },
 
