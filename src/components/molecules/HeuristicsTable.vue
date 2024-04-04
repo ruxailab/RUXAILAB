@@ -1,5 +1,5 @@
 <template>
-  <v-row class="ma-0">
+  <v-row>
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -49,7 +49,7 @@
     <v-dialog v-model="dialogQuestion" width="800" persistent>
       <v-card v-if="newQuestion">
         <v-card-title class="headline white--text" primary-title>
-          <v-row class="ma-0 mt-3">
+          <v-row class="ma-0 ">
             <v-col cols="10">
               <v-form ref="formQuestion" @submit.prevent="addQuestion()">
                 <v-text-field
@@ -136,7 +136,7 @@
 
     <!-- Main -->
     <v-col cols="12">
-      <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
+      <v-card style="background: #f5f7ff" elevation="0">
         <v-card-title class="subtitleView">
           {{ $t('HeuristicsTable.titles.currentHeuristics') }}
         </v-card-title>
@@ -144,7 +144,7 @@
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
-            <v-list dense height="560px" class="pt-0" outlined>
+            <v-list  height="560px" class="pt-0" outlined>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
