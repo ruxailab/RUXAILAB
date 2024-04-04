@@ -181,8 +181,8 @@
                   :data="evaluatorStatistics.items.map((item) => item.result)"
                 />
                 <v-card v-else flat class="mx-auto mt-10 mb-10 py-6 px-3 if-card" align="center" width="970px">
-                    The graphic can only be generated with 3 or more evaluators,
-                    please colect more data from your research to procede.
+                  The graphic can only be generated with 3 or more evaluators,
+                  please colect more data from your research to procede.
                 </v-card>
               </v-col>
             </v-row>
@@ -328,7 +328,7 @@
                         width="970px"
                       >
                         This page needs weight function (python) to be running, can be in
-                        emulators or in deploy mode.
+                        emulators or in deploy mode, and the weights to be full marked on your creating test page.
                       </v-card>
                       <div v-else>
                         <v-row align="center" justify="space-around">
@@ -368,9 +368,10 @@
                                 "
                                 :data="
                                   weightsStatistics.items.map(
-                                    (item) => item.percentage,
+                                    (item) => item.rw,
                                   )
                                 "
+                                :maxValue="maxValue"
                               />
                             </v-card>
                           </v-col>
@@ -603,7 +604,21 @@ export default {
 
     usabilityTotalFix() {
       const usabilityTotalFix = parseFloat(this.usability_total).toFixed(2)
+      console.log(this.maxValue)
       return usabilityTotalFix
+    },
+
+    maxValue() {
+      const relative = this.relative
+      let maxValue = relative[0]
+      for (let i = 1; i < relative.length; i++) {
+        if (relative[i] > maxValue) {
+            maxValue = relative[i]
+        }
+      }
+      const maxplus = parseFloat(maxValue).toFixed(1)
+      console.log(maxplus)
+      return maxplus
     },
 
     testAnswerDocument() {
@@ -719,6 +734,7 @@ export default {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
     },
+
   },
 }
 </script>
