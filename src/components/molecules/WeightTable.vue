@@ -1,5 +1,5 @@
 <template>
-  <v-col>
+  <v-col style="background-color:#F5F7FF">
     <v-card
       v-if="heuristics.length < 2"
       class="mx-auto mt-10 mb-10 py-6 if-card"
@@ -8,13 +8,13 @@
     >
       Need at least 2 heuristics to be able to place the weights.
     </v-card>
-    <v-card v-else class="mx-auto mt-10 mb-10 rounded-lg" width="950px">
+    <v-card v-else class="mx-auto my-2 mb-5" width="950px">
       <!-- tabs  -->
       <template>
         <v-tabs
           v-model="tabs"
           centered
-          background-color="#e35e1b"
+          background-color="orange"
           dark
           show-arrows
         >
@@ -119,7 +119,7 @@
                     class="mt-8 mb-4"
                     large
                     align="center"
-                    color="#FCA326"
+                    color="orange"
                     type="submit"
                     @click="updateDatas()"
                   >
