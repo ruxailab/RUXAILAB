@@ -1,5 +1,5 @@
 <template>
-  <div id="FileUpload" style="background-color:#F5F7FF">
+  <div id="FileUpload" class="rounded" style="background-color:#f5f7ff">
     <v-col justify="center">
       <v-row class="px-6 pt-2">
         <v-btn

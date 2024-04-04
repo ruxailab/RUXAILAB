@@ -144,7 +144,7 @@
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
-            <v-list  height="560px" class="pt-0" outlined>
+            <v-list height="560px" class="pt-0" outlined dense>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
@@ -186,7 +186,7 @@
                 </v-text-field>
               </v-subheader>
               <v-divider />
-              <v-list dense height="470px" class="list-scroll">
+              <v-list height="470px" class="list-scroll">
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">

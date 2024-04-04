@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-0 pa-0">
+  <div class="mt-0 pa-0 rounded-sm">
     <v-data-table
       height="420px"
       style="background: #f5f7ff;"
