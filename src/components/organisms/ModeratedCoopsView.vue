@@ -30,6 +30,7 @@
               right
               color="#F9A826"
               v-bind="attrs"
+              :disabled="!comboboxModel.email"
               @click="openInvitationModal()"
               v-on="on"
             >
@@ -46,12 +47,15 @@
             <v-row class="ma-0 pa-0 pt-3" align="center">
               <v-col class="mt-1 mx-4 pa-0">
                 <v-combobox
+                  :menu-props="{
+                    rounded: 'xl',
+                  }"
                   :key="comboboxKey"
                   ref="combobox"
                   v-model="comboboxModel"
                   :hide-no-data="false"
                   :autofocus="comboboxKey == 0 ? false : true"
-                  style="background: #f5f7ff"
+                  style="background: #f5f7ff;"
                   :items="users"
                   item-text="email"
                   label="Select cooperator"
@@ -60,7 +64,6 @@
                   dense
                   color="#fca326"
                   class="mx-2"
-                  @input="validateEmail()"
                 >
                   <template v-slot:no-data>
                     There are no users registered with that email, press enter
@@ -221,7 +224,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog class="rounded-lg" v-model="inviteModal" max-width="800">
+      <v-dialog class="rounded-lg" v-model="inviteModal" max-width="950">
         <v-card class="rounded-xxl">
           <v-card-title style="color: #626E76;" class="rounded-top-lg">
             Invite Evaluator To Test
@@ -229,55 +232,125 @@
           <v-divider class="mb-4"></v-divider>
           <v-card-text>
             <v-row>
-              <v-col cols="5">
+              <v-col cols="5" class="ml-4 mt-2">
                 <span class="modalInternTitles">Email</span>
                 <v-col cols="7" class="pa-0">
                   <v-text-field
                     :value="comboboxModel.email"
                     dense
-                    disabled="true"
-                    color="#626E76"
+                    disabled
                     outlined
                     background-color="#D7D7D7"
                     class="rounded-lg"
                   />
                 </v-col>
                 <span class="modalInternTitles">Scheduled at</span>
-                <v-row justify="center">
-                  <v-col cols="7" class="pr-0">
-                    <v-text-field
-                      :value="comboboxModel.email"
-                      dense
-                      disabled="true"
-                      outlined
-                      class="rounded-lg"
-                    />
+                <v-row justify="center" style="margin-top: -9px;">
+                  <v-col cols="5" class="pr-0">
+                    <v-menu
+                      ref="menu"
+                      :nudge-top="26"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="date"
+                          readonly
+                          color="orange"
+                          background-color="grey lighten-3"
+                          v-bind="attrs"
+                          v-on="on"
+                          outlined
+                          dense
+                          class="rounded-lg"
+                        />
+                      </template>
+                      <v-date-picker
+                        :min="
+                          new Date(
+                            Date.now() - new Date().getTimezoneOffset() * 60000,
+                          )
+                            .toISOString()
+                            .substring(0, 10)
+                        "
+                        v-model="date"
+                        show-adjacent-months
+                        color="orange"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-col>
-                  <v-col
-                    ><v-text-field
-                      :value="comboboxModel.email"
-                      dense
-                      disabled="true"
-                      outlined
-                      class="rounded-lg"/></v-col
-                ></v-row>
+                  <v-col cols="4" class="mr-auto"
+                    ><v-menu
+                      ref="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          prepend-icon="mdi-clock-time-four-outline"
+                          dense
+                          background-color="grey lighten-3"
+                          color="orange"
+                          outlined
+                          v-model="hour"
+                          class="rounded-lg"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        />
+                      </template>
+                      <v-time-picker
+                        format="24hr"
+                        color="orange"
+                        v-model="hour"
+                        scrollable
+                      ></v-time-picker></v-menu
+                  ></v-col>
+                </v-row>
                 <span class="modalInternTitles">Invite message</span>
-                <v-textarea
-                  v-model="messageContent"
-                  required
-                  placeholder="Hey lets make a test..."
-                  outlined
-                  class="rounded-lg"
-                />
+                <v-row>
+                  <v-col cols="9">
+                    <v-textarea
+                      v-model="messageContent"
+                      color="orange"
+                      background-color="grey lighten-3"
+                      required
+                      placeholder="Hey lets make a test..."
+                      outlined
+                      class="rounded-lg mt-1"
+                  /></v-col>
+                </v-row>
               </v-col>
-              <v-col cols="7">
-                <v-date-picker
-                  v-model="date"
-                  show-adjacent-months
-                  class="ml-16"
-                  color="orange"
+              <v-col>
+                <img
+                  class="ml-5"
+                  src="../../../public/Schedule.svg"
+                  alt="Schedule"
+                  height="330"
+                />
+                <v-row
+                  ><v-col cols="9" style="text-align: center"
+                    ><span class="modalInternTitles"
+                      >Invite with test link will be send at to evaluator email
+                      at scheduled time</span
+                    >
+                  </v-col>
+                  <v-col cols="2"
+                    ><v-btn
+                      color="orange"
+                      style="border-radius: 10px; text-transform: unset !important;font-weight: 600"
+                      dark
+                      large
+                      >Send
+                    </v-btn></v-col
+                  ></v-row
                 >
-                </v-date-picker>
               </v-col>
             </v-row>
           </v-card-text>
@@ -311,6 +384,8 @@ export default {
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
+    showTimePicker: false,
+    hour: null,
     object: null,
     headers: [
       { text: 'Email', value: 'email' },
@@ -460,22 +535,6 @@ export default {
     openInvitationModal() {
       this.inviteModal = true
     },
-    validateEmail() {
-      this.email = this.comboboxModel.pop()
-      this.comboboxKey++
-      if (typeof this.email !== 'object' && this.email !== undefined) {
-        //if is object then no need to validate
-        if (this.email.length) {
-          if (!this.email.includes('@') || !this.email.includes('.')) {
-            Vue.$toast.error(this.email + ' is not a valid email')
-          } else if (!this.selectedCoops.includes(this.email)) {
-            this.selectedCoops.push(this.email)
-          }
-        }
-      } else if (!this.selectedCoops.includes(this.email)) {
-        this.selectedCoops.push(this.email)
-      }
-    },
     async removeCoop(coop) {
       const ok = confirm(
         `Are you sure you want to remove ${coop.email} from your cooperators?`,
@@ -566,5 +625,11 @@ export default {
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+}
+.v-application .v-autocomplete__content.menuable__content__active {
+  border-radius: 20px !important;
+}
+.v-dialog {
+  border-radius: 20px !important;
 }
 </style>
