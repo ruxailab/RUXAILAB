@@ -12,7 +12,7 @@
     />
 
     <v-row justify="center">
-      <v-container class="ma-0 pa-0">
+      <v-container class="pa-0">
         <Snackbar />
         <!-- Leave alert dialog -->
         <v-dialog v-model="dialog" width="600" persistent>
@@ -87,17 +87,19 @@
               >
                 <!-- Email -->
                 <template v-slot:item.email="{ item }">
-                  <v-row align="center">
-                    <v-icon class="mr-2">
-                      mdi-account-circle
-                    </v-icon>
+                  <v-row class="ml-3" align="center">
                     <div>{{ item.email }}</div>
                   </v-row>
                 </template>
 
                 <!-- Test Date -->
                 <template v-slot:item.testDate="{ item }">
-                  <div>{{ item.accessLevel }}</div>
+                  <div>{{ formatDate(item.testDate) }}</div>
+                </template>
+
+                <!-- Starts at -->
+                <template v-slot:item.testHour="{ item }">
+                  <div>{{ formatTime(item.testDate) }}</div>
                 </template>
 
                 <!-- Invited -->
@@ -317,7 +319,7 @@
                 <v-row>
                   <v-col cols="9">
                     <v-textarea
-                      v-model="messageContent"
+                      v-model="inviteMessage"
                       color="orange"
                       background-color="grey lighten-3"
                       required
@@ -347,6 +349,7 @@
                       style="border-radius: 10px; text-transform: unset !important;font-weight: 600"
                       dark
                       large
+                      @click="saveInvitation()"
                       >Send
                     </v-btn></v-col
                   ></v-row
@@ -390,6 +393,7 @@ export default {
     headers: [
       { text: 'Email', value: 'email' },
       { text: 'Test Date', value: 'testDate' },
+      { text: 'Starts at', value: 'testHour' },
       { text: 'Invited', value: 'invited', justify: 'center' },
       { text: 'Accepted', value: 'accepted', justify: 'center' },
       { text: 'More', value: 'more', sortable: false },
@@ -407,6 +411,7 @@ export default {
     messageModel: false,
     selectedUser: [],
     messageTitle: '',
+    inviteMessage: '',
     messageContent: '',
     inviteModal: false,
   }),
@@ -443,35 +448,27 @@ export default {
     this.$store.dispatch('getAllUsers')
   },
   methods: {
-    removeSelectedCoops(index) {
-      this.selectedCoops.splice(index, 1)
+    async saveInvitation() {
+      const cooperator = this.comboboxModel
+      const dateTimeString = this.date + 'T' + this.hour + ':00'
+      const dateTime = new Date(dateTimeString)
+      const timestamp = dateTime.toISOString()
+      console.log(timestamp)
+      this.cooperatorsEdit.push({
+        userDocId: cooperator.id || null,
+        email: cooperator.email,
+        invited: true,
+        accepted: false,
+        accessLevel: 1,
+        testDate: timestamp,
+        inviteMessage: this.inviteMessage,
+        updateDate: this.test.updateDate,
+        testAuthorEmail: this.test.testAdmin.email,
+      })
+
+      this.submit()
     },
-    async changeRole(item, event) {
-      const index = this.cooperatorsEdit.indexOf(item)
-      const newCoop = Object.assign({}, item)
-      newCoop.accessLevel = event.value
-      const currentAccessLevelText = this.roleOptions.find(
-        (r) => r.value === item.accessLevel,
-      ).text
-      if (item.accessLevel !== event.value) {
-        const ok = confirm(
-          `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`,
-        )
-        if (ok) {
-          // UPDATE TEST WITH NEW COLLABORATOR ROLE
-          this.test.cooperators[index] = newCoop
-          await this.$store.dispatch('updateTest', this.test)
-          // UPDATE COOPERATOR ARRAY 'MYANSWERS' TO HAVE NEW ACCESSROLE
-          await this.$store.dispatch('updateUserAnswer', {
-            testDocId: this.test.id,
-            cooperatorId: newCoop.userDocId,
-            data: { accessLevel: newCoop.accessLevel },
-          })
-        } else {
-          this.dataTableKey++ //forces data table re-render without changing user role
-        }
-      }
-    },
+
     async submit() {
       this.test.cooperators = [...this.cooperatorsEdit]
       await this.$store.dispatch('updateTest', this.test)
@@ -481,7 +478,11 @@ export default {
           this.notifyCooperator(guest)
         }
       })
-      this.selectedCoops = []
+      this.inviteModal = false
+      this.hour = null
+      this.date = null
+      this.inviteMessage = ''
+      this.comboboxModel = []
       this.$refs.combobox.blur()
     },
     notifyCooperator(guest) {
@@ -528,6 +529,21 @@ export default {
           }),
         })
       }
+    },
+    formatDate(timestamp) {
+      const date = new Date(timestamp)
+      const day = date.getDate()
+      const month = date.getMonth() + 1
+      const year = date.getFullYear()
+
+      return `${day}/${month}/${year}`
+    },
+    formatTime(timestamp) {
+      const date = new Date(timestamp)
+      const hours = date.getHours()
+      const minutes = date.getMinutes()
+
+      return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
     },
     reinvite(guest) {
       this.notifyCooperator(guest)
