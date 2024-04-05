@@ -1,5 +1,9 @@
 <template>
   <div id="FileUpload" class="rounded" style="background-color:#f5f7ff">
+    <v-card-title class="subtitleView">
+      Settings
+    </v-card-title>
+    <v-divider class="mb-4" />
     <v-col justify="center">
       <v-row class="px-6 pt-2">
         <v-btn
@@ -192,5 +196,15 @@ export default {
 <style scoped>
 .csv-box {
   background-color: white;
+}
+.subtitleView {
+  font-family: 'Poppins', Helvetica;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 </style>
