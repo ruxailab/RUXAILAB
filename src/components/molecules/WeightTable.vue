@@ -127,7 +127,7 @@
                     type="submit"
                     @click="updateDatas()"
                   >
-                    save
+                    save weight values 
                   </v-btn>
                 </v-row>
               </v-card-text>
