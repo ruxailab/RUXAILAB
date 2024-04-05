@@ -1,24 +1,27 @@
 <template>
-  <v-col style="background-color:#F5F7FF">
+  <v-col style="background-color:#F5F7FF" class="rounded pa-0 ">
+    <v-card-title class="subtitleView">
+      Current Weights
+    </v-card-title>
+    <v-divider class="mb-4" />
     <v-card
       v-if="heuristics.length < 2"
-      class="mx-auto mt-10 mb-10 py-6 if-card"
+      class="mx-auto my-2 mb-5 py-6 if-card"
       align="center"
-      width="970px"
     >
       Need at least 2 heuristics to be able to place the weights.
     </v-card>
-    <v-card v-else class="mx-auto my-2 mb-5" width="950px">
+    <v-card v-else class="mx-auto mt-4 mb-5 rounded-0" elevation="0">
       <!-- tabs  -->
       <template>
         <v-tabs
           v-model="tabs"
           centered
-          background-color="orange"
-          dark
+          background-color="#F5F7FF"
+          color="orange"
           show-arrows
         >
-          <v-tabs-slider color="#FCA326" />
+          <v-tabs-slider color="#FF9800" />
           <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
@@ -35,18 +38,19 @@
               ? heuristics.length - 1
               : 0"
             :key="pes"
+            style="background-color:#F5F7FF"
           >
-            <v-card flat>
-              <v-card-text>
+            <v-card flat class="mx-4 mt-2 mb-8">
+              <v-card-text class="tablebody">
                 <v-simple-table>
                   <template>
                     <thead>
                       <tr>
                         <th class="text-left">
-                          Heuristicas
+                          Heuristics
                         </th>
                         <th class="text-center">
-                          peso
+                          Weights
                         </th>
                       </tr>
                     </thead>
@@ -75,12 +79,12 @@
                           </v-tooltip>
                         </td>
                         <!-- radio-group -->
-                        <td class="text-center d-flex justify-center">
+                        <td>
                           <v-radio-group
                             v-model="group[tabs][tam]"
                             dense
                             row
-                            class="justify-space-between"
+                            class=" px-10 mx-2 v-input--radio-group__input"
                           >
                             <v-tooltip
                               v-for="(r, rad) in importance"
@@ -123,7 +127,7 @@
                     type="submit"
                     @click="updateDatas()"
                   >
-                    save
+                    save weight values 
                   </v-btn>
                 </v-row>
               </v-card-text>
@@ -223,4 +227,26 @@ export default {
   width: 950px;
   font-size: 18px;
 }
+.subtitleView {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+
+.tablebody{
+  display: contents;
+}
+.v-input--radio-group__input {
+  border: none;
+  cursor: default;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
 </style>
