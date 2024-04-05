@@ -1,7 +1,7 @@
 <template>
   <v-col style="background-color:#F5F7FF" class="rounded pa-0 ">
     <v-card-title class="subtitleView">
-      Current Weights
+      Weights
     </v-card-title>
     <v-divider class="mb-4" />
     <v-card
@@ -84,7 +84,7 @@
                             v-model="group[tabs][tam]"
                             dense
                             row
-                            class=" px-10 mx-2 v-input--radio-group__input"
+                            class="px-10 mx-2 v-input--radio-group__input justify-space-around"
                           >
                             <v-tooltip
                               v-for="(r, rad) in importance"
@@ -96,7 +96,7 @@
                                   :label="`${r}`"
                                   :value="r"
                                   active-class
-                                  class="padding-left"
+                                  class="padding-left mx-4"
                                   on-icon="mdi-check-circle-outline"
                                   off-icon="mdi-checkbox-blank-circle-outline"
                                   color="#FCA326"
@@ -127,7 +127,7 @@
                     type="submit"
                     @click="updateDatas()"
                   >
-                    save weight values 
+                    save weight values
                   </v-btn>
                 </v-row>
               </v-card-text>
@@ -228,9 +228,9 @@ export default {
   font-size: 18px;
 }
 .subtitleView {
-  font-family: Roboto;
+  font-family: 'Poppins', Helvetica;
   font-style: normal;
-  font-weight: 200;
+  font-weight: 500;
   font-size: 18.1818px;
   align-items: flex-end;
   color: #000000;
@@ -238,7 +238,7 @@ export default {
   padding-bottom: 2px;
 }
 
-.tablebody{
+.tablebody {
   display: contents;
 }
 .v-input--radio-group__input {
@@ -246,7 +246,6 @@ export default {
   cursor: default;
   display: flex;
   width: 100%;
-  justify-content: space-evenly;
+  justify-content: space-evenly !important;
 }
-
 </style>
