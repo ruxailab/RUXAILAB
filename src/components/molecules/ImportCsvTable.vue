@@ -5,7 +5,7 @@
     </v-card-title>
     <v-divider class="mb-4" />
     <v-col justify="center">
-      <v-row class="px-6 pt-2">
+      <v-row class="px-6 ">
         <v-btn
           depressed
           dark
@@ -16,9 +16,9 @@
           Donwload CSV template
         </v-btn>
       </v-row>
-      <v-divider class="ma-4" />
+      <v-divider class="ma-8" />
       <v-row>
-        <v-row class="px-8" justify="center" align="center">
+        <v-row class="px-8 mb-2" justify="center" align="center">
           <v-file-input
             ref="myFile"
             v-model="csvFile"
