@@ -922,9 +922,9 @@ export default {
   color: #dbdde4;
 }
 .subtitleView {
-  font-family: Roboto;
+  font-family: 'Poppins', Helvetica;
   font-style: normal;
-  font-weight: 200;
+  font-weight: 500;
   font-size: 18.1818px;
   align-items: flex-end;
   color: #000000;
