@@ -144,7 +144,7 @@
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
-            <v-list height="560px" class="pt-0" outlined dense>
+            <v-list height="560px" class="pt-0 ma-0 pa-0"  dense>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
@@ -253,6 +253,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -277,6 +278,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -305,12 +307,9 @@
           <!--Questions List-->
           <v-col
             v-if="itemSelect != null"
-            class="ma-0 pa-0 questionsList"
-            cols="12"
-            sm="6"
-            md="4"
+            class="ma-0 pa-0" cols="12" sm="6" md="4"
           >
-            <v-list dense height="560px">
+            <v-list dense height="560px" class="ma-0 pa-0">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
                   {{ heuristics[itemSelect].title }} -
@@ -1031,10 +1030,10 @@ export default {
 
 @media (max-width: 600px) {
   .questionsList {
-    margin-top: 7px;
+    margin-top: 0px;
   }
   .questionsContent {
-    margin-top: 7px;
+    margin-top: 0px;
   }
 }
 </style>
