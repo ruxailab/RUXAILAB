@@ -485,18 +485,13 @@ export default {
     notifyCooperator(guest) {
       // Notify user on the platform in case it is already registered
       if (guest.userDocId) {
-        let path = ''
-        if (guest.accessLevel.value >= 2) {
-          path = 'testview'
-        } else {
-          path = 'managerview'
-        }
+        let path = 'testview'
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
-            title: 'Cooperation Invite!',
-            description: `You have been invited to test ${this.test.testTitle}!`,
-            redirectsTo: `${path}/${this.test.id}/${guest.token}`,
+            title: `You have been invited to test ${this.test.testTitle}!`,
+            description: this.inviteMessage,
+            redirectsTo: `${path}/${this.test.id}/${this.comboboxModel.id}`,
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
