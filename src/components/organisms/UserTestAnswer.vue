@@ -22,7 +22,11 @@
           </v-tab>
         </v-tabs>
 
-        <div slot="content" style="background-color: #E8EAF2;" class="ma-0 pa-0">
+        <div
+          slot="content"
+          style="background-color: #E8EAF2;"
+          class="ma-0 pa-0"
+        >
           <GeneralAnalytics v-if="tab === 0" />
         </div>
         <div slot="content" class="ma-0 pa-0">
@@ -103,7 +107,6 @@ export default {
 
 <style scoped>
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -114,7 +117,6 @@ export default {
 }
 
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -140,7 +142,6 @@ export default {
 }
 
 .tab-text {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

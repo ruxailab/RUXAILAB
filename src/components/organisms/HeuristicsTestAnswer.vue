@@ -191,7 +191,13 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card v-if="tab == 2" rounded="xl" flat class="mb-6" style="background: #f5f7ff">
+          <v-card
+            v-if="tab == 2"
+            rounded="xl"
+            flat
+            class="mb-6"
+            style="background: #f5f7ff"
+          >
             <v-card-title class="subtitleView">
               Heuristics Data
             </v-card-title>
@@ -319,8 +325,8 @@
                       align="center"
                       width="970px"
                     >
-                      This page needs weight function (python) to be running, can be in
-                      emulators or in deploy mode.
+                      This page needs weight function (python) to be running,
+                      can be in emulators or in deploy mode.
                     </v-card>
                     <div v-else>
                       <v-row align="center" justify="space-around">
@@ -332,7 +338,7 @@
                           >
                             <v-card-title class="mt-4 mb-4 font-weight-bold">
                               <v-row align="center" justify="center">
-                                Usability Percentage <br>
+                                Usability Percentage <br />
                                 With Weights
                               </v-row>
                             </v-card-title>
@@ -716,7 +722,6 @@ export default {
 
 <style scoped>
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -727,7 +732,6 @@ export default {
 }
 
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -753,7 +757,6 @@ export default {
 }
 
 .tab-text {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

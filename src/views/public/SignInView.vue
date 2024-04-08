@@ -48,7 +48,8 @@
                   <a
                     style="color: #F9A826 ;text-decoration: underline;"
                     @click="redirectToSignup"
-                  >{{ $t('SIGNIN.dont-have-account') }}</a>
+                    >{{ $t('SIGNIN.dont-have-account') }}</a
+                  >
                 </p>
               </v-card-actions>
             </v-col>
@@ -112,7 +113,6 @@ export default {
   align-content: center;
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;
