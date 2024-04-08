@@ -233,7 +233,9 @@
         </v-card>
         <!-- Moderator expansion panels view -->
         <v-col v-else-if="moderatorStatus && !evaluatorStatus" class="my-12">
-          <span class="cardsTitle text-center d-block">Waiting the evaluator connection ...</span>
+          <span class="cardsTitle text-center d-block"
+            >Waiting the evaluator connection ...</span
+          >
           <div class="dot-flashing mx-auto mt-4" />
         </v-col>
         <v-expansion-panels v-else-if="bothConnected" flat accordion>
@@ -396,7 +398,7 @@
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Evaluator concluded the test!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Here you can finilize the test, or you can keep talking with
                 your evaluator until you finish!
@@ -465,7 +467,7 @@
                     class="ma-0 pa-0"
                     @click="
                       changeStatus(taskIndex, 'consent', 'done'),
-                      (consentCompleted = true)
+                        (consentCompleted = true)
                     "
                   >
                     <template v-slot:label>
@@ -495,7 +497,9 @@
                   cols="4"
                   class="mt-2 mb-8 mr-8"
                 >
-                  <span class="cardsTitle text-center d-block">Waiting the moderator...</span>
+                  <span class="cardsTitle text-center d-block"
+                    >Waiting the moderator...</span
+                  >
                   <div class="dot-flashing mx-auto mt-4" />
                 </v-col>
 
@@ -582,7 +586,7 @@
                   >
                     <v-row
                       v-for="(selection,
-                              selectionIndex) in item.selectionFields"
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -742,7 +746,7 @@
                   >
                     <v-row
                       v-for="(selection,
-                              selectionIndex) in item.selectionFields"
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -784,7 +788,7 @@
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Final Message!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Congratulations you finished this test, here you can until talk
                 with your moderator or leave the test
@@ -795,7 +799,7 @@
                     draggable="false"
                     src="../../../public/finalMessage.svg"
                     alt="Final test svg"
-                  >
+                  />
                 </v-col>
                 <v-col cols="6" class="pt-2 my-8">
                   <span class="cardsSubtitle">
@@ -1393,7 +1397,6 @@ export default {
 }
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1401,7 +1404,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
@@ -1447,7 +1449,6 @@ body {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .titleView {
-  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -1457,7 +1458,6 @@ body {
   color: #ffffff;
 }
 .description {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1472,7 +1472,6 @@ body {
   overflow: hidden;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1537,7 +1536,6 @@ body {
   /* background: #515069; */
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;

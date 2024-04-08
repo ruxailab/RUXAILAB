@@ -54,7 +54,9 @@
                     v-model="option.description"
                     max-length="100"
                     counter="100"
-                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
+                    :label="
+                      $t('HeuristicsTable.placeholders.optionDescription')
+                    "
                   />
                 </v-col>
               </v-row>
@@ -108,11 +110,13 @@ export default {
     },
   },
   data: () => ({
-    textRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.textRequired')],
+    textRequired: [
+      (v) => !!v || i18n.t('HeuristicsTable.validation.textRequired'),
+    ],
   }),
   computed: {
     testAnswerDocLength() {
-            if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -178,7 +182,6 @@ export default {
   background-color: rgba(185, 185, 185, 0.308);
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

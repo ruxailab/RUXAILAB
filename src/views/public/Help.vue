@@ -7,8 +7,19 @@
       elevation="0"
       rounded="0"
     >
-      <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6" style="user-select: none;">
-        <div class="mt-12 display-3 bold font-weight-bold" style="color: white;">
+      <v-col
+        cols="12"
+        xs="4"
+        sm="8"
+        md="6"
+        lg="6"
+        xl="6"
+        style="user-select: none;"
+      >
+        <div
+          class="mt-12 display-3 bold font-weight-bold"
+          style="color: white;"
+        >
           Help Center
         </div>
         <div class="mt-3 display-2 bold font-weight-bold" style="color: white;">
@@ -16,7 +27,6 @@
         </div>
       </v-col>
     </v-card>
-
 
     <v-container>
       <v-row>
@@ -35,7 +45,15 @@
                 </v-list-item-title>
                 <v-expand-transition>
                   <v-row v-if="!item.isCollapsed">
-                    <v-col cols="6" xs="4" sm="6" md="6" lg="7" xl="6" align="justify">
+                    <v-col
+                      cols="6"
+                      xs="4"
+                      sm="6"
+                      md="6"
+                      lg="7"
+                      xl="6"
+                      align="justify"
+                    >
                       <div class="subtitle-1 ml-5">
                         {{ item.content }}
                       </div>
@@ -72,7 +90,15 @@
                 </v-list-item-title>
                 <v-expand-transition>
                   <v-row v-if="!item.isCollapsed">
-                    <v-col cols="6" xs="4" sm="6" md="7" lg="7" xl="6" align="justify">
+                    <v-col
+                      cols="6"
+                      xs="4"
+                      sm="6"
+                      md="7"
+                      lg="7"
+                      xl="6"
+                      align="justify"
+                    >
                       <div class="subtitle-1 ml-5">
                         {{ item.content }}
                       </div>
@@ -100,7 +126,7 @@ export default {
   data() {
     return {
       items: [
-      {
+        {
           title: 'How do I create a test?',
           content:
             'To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.',
@@ -111,28 +137,28 @@ export default {
           title: 'How I setup my Heuristic test?',
           content:
             'To set up your Heuristic test, start by accessing the "Edit Test" option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.',
-            gif: 'hsetup.gif',
+          gif: 'hsetup.gif',
           isCollapsed: true,
         },
         {
           title: 'How I delete my test?',
           content:
             'To delete your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "DELETE TEST" button.',
-            gif: 'del_test.gif',
+          gif: 'del_test.gif',
           isCollapsed: true,
         },
         {
           title: 'How to create a template?',
           content:
             'To create a template for your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "CREATE TEMPLATE" option.',
-            gif: 'create-temp.gif',
+          gif: 'create-temp.gif',
           isCollapsed: true,
         },
         {
           title: 'How to use a template?',
           content:
-            'To utilize a template, navigate to the Tests page. Under the Create Templates section, you\'ll find your personal templates. Additionally, you can explore public templates.',
-            gif: 'use-temp.gif',
+            "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+          gif: 'use-temp.gif',
           isCollapsed: true,
         },
         {

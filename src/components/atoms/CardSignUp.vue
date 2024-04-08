@@ -110,7 +110,6 @@ export default {
 
 <style scoped>
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;
