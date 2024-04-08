@@ -372,8 +372,6 @@ import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
 import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
 import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
-const UIDGenerator = require('uid-generator')
-import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -453,7 +451,6 @@ export default {
       const dateTimeString = this.date + 'T' + this.hour + ':00'
       const dateTime = new Date(dateTimeString)
       const timestamp = dateTime.toISOString()
-      console.log(timestamp)
       this.cooperatorsEdit.push({
         userDocId: cooperator.id || null,
         email: cooperator.email,
@@ -613,7 +610,6 @@ export default {
 
 <style scoped>
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -623,7 +619,6 @@ export default {
   color: #000000;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -635,7 +630,6 @@ export default {
 }
 .modalInternTitles {
   max-width: 270px;
-  font-family: 'Poppins', Helvetica;
   color: #626e76;
   font-size: 18px;
   font-style: normal;

@@ -66,15 +66,15 @@
               <v-col class="text-div">
                 <div
                   v-if="accessLevel == 0"
-                  class="display-3 mt-7 mb-4 white--text mobile-center"
-                  style="font-size: 60px; font-weight: 500"
+                  class="mt-7 mb-4 white--text mobile-center"
+                  style="font-size: 58px; font-weight: 500"
                 >
                   {{ $t('titles.manager') }}
                 </div>
                 <div
                   v-else
-                  class="display-3 mb-4 white--text mobile-center"
-                  style="font-size: 60px; font-weight: 500"
+                  class="mb-4 white--text mobile-center"
+                  style="font-size: 58px; font-weight: 500"
                 >
                   {{ test.testTitle }}
                 </div>
@@ -536,7 +536,6 @@ export default {
   display: none;
 }
 .testTitle {
-  font-family: Roboto;
   font-style: normal;
   font-weight: bold;
   font-size: 45px;
