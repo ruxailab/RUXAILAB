@@ -27,7 +27,7 @@
       <template v-slot:top>
         <v-row class="ma-0" align="center">
           <v-card-title class="subtitleView">
-            Current Options
+            Options
           </v-card-title>
           <v-row justify="end" class="ma-0 pa-0 mr-4">
             <AddOptionBtn
@@ -161,9 +161,9 @@ export default {
 
 <style scoped>
 .subtitleView {
-  font-family: Roboto;
+  font-family: 'Poppins', Helvetica;
   font-style: normal;
-  font-weight: 200;
+  font-weight: 500;
   font-size: 18.1818px;
   align-items: flex-end;
   color: #000000;
