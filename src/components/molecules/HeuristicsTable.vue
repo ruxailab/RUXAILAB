@@ -144,7 +144,7 @@
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
-            <v-list height="560px" class="pt-0" outlined dense>
+            <v-list height="560px" class="pt-0 ma-0 pa-0"  dense>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
@@ -253,6 +253,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -277,6 +278,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -305,12 +307,9 @@
           <!--Questions List-->
           <v-col
             v-if="itemSelect != null"
-            class="ma-0 pa-0 questionsList"
-            cols="12"
-            sm="6"
-            md="4"
+            class="ma-0 pa-0" cols="12" sm="6" md="4"
           >
-            <v-list dense height="560px">
+            <v-list dense height="560px" class="ma-0 pa-0">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
                   {{ heuristics[itemSelect].title }} -
@@ -421,8 +420,8 @@
             sm="6"
             md="4"
           >
-            <v-card height="560px" elevation="0">
-              <v-subheader class="pa-2">
+            <v-card height="560px" elevation="0" class="pa-0 ma-0">
+              <v-subheader class="px-2 pt-0 ma-0 " style="font-size: 12px; height: 40px">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
@@ -468,6 +467,7 @@
                 </v-menu>
               </v-subheader>
               <v-divider />
+
               <v-row>
                 <v-col>
                   <v-data-table
@@ -479,14 +479,14 @@
                     :items-per-page="5"
                   >
                     <template v-slot:top>
-                      <v-row class>
-                        <v-col class="ml-2 mb-1 pa-4 pb-0">
-                          <p class="subtitleView">
+                      <v-row class="mx-2 my-0 pa-0" style="height: 40px">
+                        <v-col class="ma-0 pa-0 py-1">
+                          <p >
                             {{ $t('HeuristicsTable.titles.descriptions') }}
                           </p>
                         </v-col>
-                        <v-col class="mr-2 mb-1 pb-0 pa-4">
-                          <v-row justify="end" class="ma-0 pa-0">
+                        <v-col class="ma-0 pa-0">
+                          <v-row justify="end" class="ma-0 pa-0 pt-1">
                             <AddDescBtn
                               ref="descBtn"
                               :question-index="questionSelect"
@@ -925,7 +925,7 @@ export default {
   font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 500;
-  font-size: 18.1818px;
+  font-size: 18.18px;
   align-items: flex-end;
   color: #000000;
   margin-bottom: 4px;
@@ -1031,10 +1031,10 @@ export default {
 
 @media (max-width: 600px) {
   .questionsList {
-    margin-top: 7px;
+    margin-top: 0px;
   }
   .questionsContent {
-    margin-top: 7px;
+    margin-top: 0px;
   }
 }
 </style>
