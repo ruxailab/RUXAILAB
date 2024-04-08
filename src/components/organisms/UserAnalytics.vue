@@ -183,10 +183,9 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span
-                    class="cardsTitle ma-3"
-                    style="color: #252525"
-                  >Web Cam Record</span>
+                  <span class="cardsTitle ma-3" style="color: #252525"
+                    >Web Cam Record</span
+                  >
                   <video
                     v-if="dialogItem"
                     class="my-3"
@@ -332,7 +331,6 @@ export default {
 <style scoped>
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;

@@ -3,10 +3,18 @@
     <div class="background-gradient" :style="backgroundImage">
       <v-row class="ml-0" align="center" justify="center" style="height: 100%">
         <div class="text-div">
-          <div class="display-3mb-4 white--text mobile-center" style="font-size: 60px; font-weight: 500">
+          <div
+            class="mb-4 white--text mobile-center"
+            style="font-size: 60px; font-weight: 500"
+          >
             {{ $t('titles.drawer.' + title) }}
           </div>
-          <v-img class="mb-5 hidden-md-and-up" contain :src="require('../../assets/manager/' + image)" max-height="350" />
+          <v-img
+            class="mb-5 hidden-md-and-up"
+            contain
+            :src="require('../../assets/manager/' + image)"
+            max-height="350"
+          />
           <div style="font-size: 22px" class="white--text mb-4 mobile-center">
             {{ main }}
           </div>
@@ -15,8 +23,12 @@
           </button>
         </div>
 
-        <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="400"
-               :src="require('../../assets/manager/' + image)"
+        <v-img
+          class="hidden-sm-and-down"
+          contain
+          max-width="40%"
+          max-height="400"
+          :src="require('../../assets/manager/' + image)"
         />
       </v-row>
     </div>
@@ -27,18 +39,28 @@
           <div class="learn-text">
             {{ $t('pages.intros.learnMore') }}
           </div>
-          <v-card elevation="4" class="ma-0 pa-0" style="border-radius: 10px !important">
+          <v-card
+            elevation="4"
+            class="ma-0 pa-0"
+            style="border-radius: 10px !important"
+          >
             <v-list class="ma-0 pa-0">
               <div v-for="(item, i) in items" :key="i">
-                <v-list-item class="py-5" :ripple="false" style="border-radius: 10px !important"
-                             @click="emitCallFunc(item.func)"
+                <v-list-item
+                  class="py-5"
+                  :ripple="false"
+                  style="border-radius: 10px !important"
+                  @click="emitCallFunc(item.func)"
                 >
                   <v-list-item-avatar size="50" :color="item.iconColor">
                     <v-icon dark size="35" v-text="item.icon" />
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title style="font-size: 25px" v-text="item.title" />
+                    <v-list-item-title
+                      style="font-size: 25px"
+                      v-text="item.title"
+                    />
                     <v-list-item-subtitle v-text="item.subtitle" />
                   </v-list-item-content>
                 </v-list-item>

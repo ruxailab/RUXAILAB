@@ -107,10 +107,11 @@ export default {
   }),
   computed: {
     question() {
-      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex].questions[this.questionIndex]
+      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex]
+        .questions[this.questionIndex]
     },
     testAnswerDocLength() {
-            if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -177,7 +178,6 @@ export default {
   background-color: rgba(185, 185, 185, 0.308);
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

@@ -2,7 +2,9 @@
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
-        <span class="Titles ma-16">What kind of test are you looking to start?</span>
+        <span class="Titles ma-16"
+          >What kind of test are you looking to start?</span
+        >
       </v-row>
     </v-col>
     <v-col cols="12" class="mt-6">
@@ -30,14 +32,16 @@
               </v-sheet>
               <div class="mt-6">
                 <span class="cardsTitle ml-4">Usability Heuristic</span>
-                <br>
+                <br />
                 <span class="cardSubtitle ml-4"> Test </span>
               </div>
             </v-row>
             <v-divider />
             <v-row class="mt-1">
               <v-sheet class="ml-10 mt-8 mb-8 circle" />
-              <span class="cardInternTitles ml-3 mt-8">Usability Percentage</span>
+              <span class="cardInternTitles ml-3 mt-8"
+                >Usability Percentage</span
+              >
             </v-row>
             <v-row>
               <v-sheet class="ml-10 mb-8 circle" />
@@ -45,7 +49,9 @@
             </v-row>
             <v-row>
               <v-sheet class="ml-10 mb-8 circle" />
-              <span class="cardInternTitles ml-3">Invite specialists to evaluate your application</span>
+              <span class="cardInternTitles ml-3"
+                >Invite specialists to evaluate your application</span
+              >
             </v-row>
           </v-card>
         </v-col>
@@ -72,22 +78,28 @@
               </v-sheet>
               <div class="mt-6">
                 <span class="cardsTitle ml-4">Usability User</span>
-                <br>
+                <br />
                 <span class="cardSubtitle ml-4"> Test </span>
               </div>
             </v-row>
             <v-divider />
             <v-row class="mt-1">
               <v-sheet class="ml-10 mt-8 mb-8 circle" />
-              <span class="cardInternTitles ml-3 mt-8">Webcam, audio & screen record</span>
+              <span class="cardInternTitles ml-3 mt-8"
+                >Webcam, audio & screen record</span
+              >
             </v-row>
             <v-row>
               <v-sheet class="ml-10 mb-8 circle" />
-              <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
+              <span class="cardInternTitles ml-3"
+                >Enhanced answer analysis</span
+              >
             </v-row>
             <v-row>
               <v-sheet class="ml-10 mb-8 circle" />
-              <span class="cardInternTitles ml-3">Moderated or non moderated tests</span>
+              <span class="cardInternTitles ml-3"
+                >Moderated or non moderated tests</span
+              >
             </v-row>
           </v-card>
         </v-col>
@@ -113,7 +125,7 @@
         <v-row align="center" justify="center" class="cardRow">
           <v-col cols="10" class="mt-16 ml-auto">
             <span class="Titles ml-5">Test Creation</span>
-            <br>
+            <br />
             <span class="cardSubtitle ml-5">Add a name to your test!</span>
           </v-col>
           <v-col class="ml-auto mr-auto" cols="auto">
@@ -172,7 +184,7 @@
               draggable="false"
               src="../../../public/createSVG.svg"
               alt="Test Creation image"
-            >
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -202,7 +214,9 @@
         </v-btn>
         <v-col cols="12">
           <v-row justify="center">
-            <span class="Titles mt-16 mb-8">What kind of test are you looking to start?</span>
+            <span class="Titles mt-16 mb-8"
+              >What kind of test are you looking to start?</span
+            >
           </v-row>
         </v-col>
         <v-col cols="12" class="mt-6">
@@ -219,7 +233,7 @@
                 <v-row>
                   <div class="mt-6">
                     <span class="Titles ml-10">SelfTest</span>
-                    <br>
+                    <br />
                     <span class="cardSubtitle2 ml-10"> UNMODERATED </span>
                   </div>
                 </v-row>
@@ -230,29 +244,19 @@
                   draggable="false"
                   src="../../../public/SelfTest.svg"
                   alt="Test Creation image"
-                >
+                />
                 <v-row class="mt-1">
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
                   <span class="cardInternTitles ml-3">Answer on free time</span>
                 </v-row>
                 <v-row>
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
-                  <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
+                  <span class="cardInternTitles ml-3"
+                    >Enhanced answer analysis</span
+                  >
                 </v-row>
                 <v-row>
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
                   <span class="cardInternTitles ml-3">Task Customization</span>
                 </v-row>
               </v-card>
@@ -283,29 +287,21 @@
                   draggable="false"
                   src="../../../public/LiveTest.svg"
                   alt="Test Creation image"
-                >
+                />
                 <v-row class="mt-1">
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
-                  <span class="cardInternTitles ml-3">Webcam, audio & screen record</span>
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
+                  <span class="cardInternTitles ml-3"
+                    >Webcam, audio & screen record</span
+                  >
                 </v-row>
                 <v-row>
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
-                  <span class="cardInternTitles ml-3">Enhanced answer analysis</span>
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
+                  <span class="cardInternTitles ml-3"
+                    >Enhanced answer analysis</span
+                  >
                 </v-row>
                 <v-row>
-                  <v-sheet
-                    class="ml-13 mb-8 circle"
-                    height="20"
-                    width="20"
-                  />
+                  <v-sheet class="ml-13 mb-8 circle" height="20" width="20" />
                   <span class="cardInternTitles ml-3">Moderated live test</span>
                 </v-row>
               </v-card>
@@ -404,7 +400,6 @@ export default {
   width: 20px;
 }
 .Titles {
-  font-family: 'Poppins', Helvetica;
   font-size: 38px;
   font-style: normal;
   text-align: center;
@@ -434,7 +429,6 @@ export default {
   justify-content: center;
 }
 .cardsTitle {
-  font-family: 'Poppins', Helvetica;
   font-size: 24px;
   font-style: normal;
   font-weight: 600;
@@ -448,14 +442,12 @@ export default {
 .cardSubtitle {
   color: #8b959c;
   font-size: 20px;
-  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
 }
 .cardSubtitle2 {
   color: rgba(139, 149, 156, 0.64);
-  font-family: 'Poppins', Helvetica;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -463,7 +455,6 @@ export default {
 }
 .cardInternTitles {
   max-width: 270px;
-  font-family: 'Poppins', Helvetica;
   color: #626e76;
   font-size: 18px;
   font-style: normal;
