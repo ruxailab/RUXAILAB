@@ -8,18 +8,18 @@
         Options
       </v-tab>
       <v-tab @click="tabClicked(2)">
-        Import .csv
+        Weights
       </v-tab>
       <v-tab @click="tabClicked(3)">
-        Weights
+        Settings
       </v-tab>
     </v-tabs>
 
     <div>
       <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
       <OptionsTable v-if="index == 1" :options="object.options" />
-      <ImportCsvTable v-if="index == 2" :options="object.importCsv" />
-      <WeightTable v-if="index == 3" :options="object.weight" />
+      <WeightTable v-if="index == 2" :options="object.weight" />
+      <Settings v-if="index == 3" :options="object.settings" />
     </div>
   </div>
 </template>
@@ -27,14 +27,14 @@
 <script>
 import Heuristic from '@/components/molecules/HeuristicsTable'
 import OptionsTable from '@/components/molecules/OptionsTable'
-import ImportCsvTable from '@/components/molecules/ImportCsvTable'
+import Settings from '@/components/molecules/HeuristicsSenttings.vue'
 import WeightTable from '@/components/molecules/WeightTable.vue'
 
 export default {
   components: {
     Heuristic,
     OptionsTable,
-    ImportCsvTable,
+    Settings,
     WeightTable,
   },
   props: {
