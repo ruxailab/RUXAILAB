@@ -420,8 +420,8 @@
             sm="6"
             md="4"
           >
-            <v-card height="560px" elevation="0">
-              <v-subheader class="pa-2">
+            <v-card height="560px" elevation="0" class="pa-0 ma-0">
+              <v-subheader class="px-2 pt-0 ma-0 " style="font-size: 12px; height: 40px">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
@@ -467,6 +467,7 @@
                 </v-menu>
               </v-subheader>
               <v-divider />
+
               <v-row>
                 <v-col>
                   <v-data-table
@@ -478,14 +479,14 @@
                     :items-per-page="5"
                   >
                     <template v-slot:top>
-                      <v-row class>
-                        <v-col class="ml-2 mb-1 pa-4 pb-0">
-                          <p class="subtitleView">
+                      <v-row class="mx-2 my-0 pa-0" style="height: 40px">
+                        <v-col class="ma-0 pa-0 py-1">
+                          <p >
                             {{ $t('HeuristicsTable.titles.descriptions') }}
                           </p>
                         </v-col>
-                        <v-col class="mr-2 mb-1 pb-0 pa-4">
-                          <v-row justify="end" class="ma-0 pa-0">
+                        <v-col class="ma-0 pa-0">
+                          <v-row justify="end" class="ma-0 pa-0 pt-1">
                             <AddDescBtn
                               ref="descBtn"
                               :question-index="questionSelect"
@@ -924,7 +925,7 @@ export default {
   font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 500;
-  font-size: 18.1818px;
+  font-size: 18.18px;
   align-items: flex-end;
   color: #000000;
   margin-bottom: 4px;
