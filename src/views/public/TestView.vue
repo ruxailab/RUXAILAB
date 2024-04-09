@@ -418,7 +418,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView />
+      <ModeratedTestView :token="token" />
     </div>
   </div>
 </template>
@@ -435,7 +435,6 @@ import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
-import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
