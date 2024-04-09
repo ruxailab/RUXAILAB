@@ -1,12 +1,13 @@
 <template>
-  <v-col style="background-color:#F5F7FF" class="rounded pa-0 ">
+  <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-2">
     <v-card-title class="subtitleView">
       Weights
     </v-card-title>
     <v-divider class="mb-4" />
     <v-card
       v-if="heuristics.length < 2"
-      class="mx-auto my-2 mb-5 py-6 if-card"
+      class="mx-auto mb-5 py-4 transparent rounded-0 subtitleView"
+      elevation="0"
       align="center"
     >
       Need at least 2 heuristics to be able to place the weights.
@@ -222,8 +223,8 @@ export default {
 }
 
 .if-card {
-  border-radius: 15px;
-  border: 0.2px solid #fca326;
+  /*border-radius: 15px;
+  border: 0.2px solid #fca326;*/
   width: 950px;
   font-size: 18px;
 }
