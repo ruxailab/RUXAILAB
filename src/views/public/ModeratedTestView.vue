@@ -1,55 +1,5 @@
 <template>
   <div v-if="test">
-    <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving Answer
-      </div>
-    </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
-      <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>
-              mdi-account
-            </v-icon>
-          </v-avatar>
-        </v-row>
-        <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">
-            Continue as {{ user.email }}
-          </v-btn>
-        </v-card-actions>
-        <v-card-actions class="justify-center mt-4">
-          <p>
-            Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
-          </p>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- Test Start Screen -->
     <v-row
       v-if="test && start"
@@ -211,7 +161,7 @@
         <v-card v-if="!conectionStatus" color="white" class="cards">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
-              <span class="cardsTitle">Confirm you are ready</span>
+              <span class="cardsTitle">Confirm you are ready {{ token }}</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
@@ -831,6 +781,55 @@
         <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving Answer
+      </div>
+    </v-overlay>
+    <!-- Authentication Dialog -->
+    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
+      <CardSignIn
+        v-if="selected"
+        @logined="logined = true"
+        @change="selected = !selected"
+      />
+      <CardSignUp
+        v-else
+        @logined="
+          logined = true
+          setTest()
+        "
+        @change="selected = !selected"
+      />
+    </v-dialog>
+    <!-- Existing User Confirmation Dialog -->
+    <v-dialog
+      :value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
+      <v-card v-if="user">
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange lighten-4" size="150">
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+            Continue as {{ user.email }}
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            Not {{ user.email }}?
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
+          </p>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -884,7 +883,11 @@ export default {
     mediaRecorderModerator: null,
     isLoading: false,
     consentCompleted: false,
+    sessionCooperator: null,
   }),
+  props: {
+    token: { type: String, default: '' },
+  },
   computed: {
     test() {
       return this.$store.getters.test
@@ -950,6 +953,15 @@ export default {
     },
   },
   async created() {
+    if (this.token != null) {
+      this.sessionCooperator = this.test.cooperators.find(
+        (user) => user.userDocId === this.token,
+      )
+      console.log(this.sessionCooperator)
+    } else {
+      this.$toast.info('Use a session your session link to the test')
+      this.$router.push('/managerview/' + this.test.id)
+    }
     await this.verifyAdmin()
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
