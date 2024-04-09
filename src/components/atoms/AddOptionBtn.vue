@@ -27,7 +27,7 @@
                 <v-col cols="6">
                   <v-text-field
                     v-model="option.text"
-                    max-length="250"
+                    max-length="100"
                     counter="100"
                     :label="$t('common.text')"
                     :rules="textRequired"
@@ -52,8 +52,8 @@
                 <v-col cols="12">
                   <v-text-field
                     v-model="option.description"
-                    max-length="100"
-                    counter="100"
+                    max-length="250"
+                    counter="250"
                     :label="
                       $t('HeuristicsTable.placeholders.optionDescription')
                     "
