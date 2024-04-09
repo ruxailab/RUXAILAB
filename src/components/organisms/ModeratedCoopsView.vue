@@ -74,7 +74,6 @@
             </v-row>
             <v-card class="mx-6" outlined>
               <v-data-table
-                dense
                 style="background: #f5f7ff"
                 :items="cooperatorsEdit"
                 :headers="headers"
@@ -123,6 +122,24 @@
                   <v-icon v-else color="#F47C7C">
                     mdi-close-circle-outline
                   </v-icon>
+                </template>
+
+                <!-- Session -->
+                <template v-slot:item.session="{ item }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        class="ml-1"
+                        v-if="item"
+                        icon
+                        @click="goToSession(item.userDocId)"
+                        ><v-icon>mdi-file-document-arrow-right</v-icon></v-btn
+                      >
+                    </template>
+                    <span>Go to session</span>
+                  </v-tooltip>
                 </template>
 
                 <!-- More -->
@@ -394,6 +411,7 @@ export default {
       { text: 'Starts at', value: 'testHour' },
       { text: 'Invited', value: 'invited', justify: 'center' },
       { text: 'Accepted', value: 'accepted', justify: 'center' },
+      { text: 'Session', value: 'session', justify: 'center' },
       { text: 'More', value: 'more', sortable: false },
     ],
     roleOptions: roleOptionsItems,
@@ -481,6 +499,9 @@ export default {
       this.inviteMessage = ''
       this.comboboxModel = []
       this.$refs.combobox.blur()
+    },
+    goToSession(coopId) {
+      this.$router.push(`/testview/${this.test.id}/${coopId}`)
     },
     notifyCooperator(guest) {
       // Notify user on the platform in case it is already registered
