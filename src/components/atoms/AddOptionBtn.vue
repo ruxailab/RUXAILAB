@@ -27,7 +27,7 @@
                 <v-col cols="6">
                   <v-text-field
                     v-model="option.text"
-                    max-length="100"
+                    max-length="250"
                     counter="100"
                     :label="$t('common.text')"
                     :rules="textRequired"
@@ -54,7 +54,9 @@
                     v-model="option.description"
                     max-length="100"
                     counter="100"
-                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
+                    :label="
+                      $t('HeuristicsTable.placeholders.optionDescription')
+                    "
                   />
                 </v-col>
               </v-row>
@@ -108,11 +110,13 @@ export default {
     },
   },
   data: () => ({
-    textRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.textRequired')],
+    textRequired: [
+      (v) => !!v || i18n.t('HeuristicsTable.validation.textRequired'),
+    ],
   }),
   computed: {
     testAnswerDocLength() {
-            if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
