@@ -76,7 +76,7 @@
                                 mdi-help-circle
                               </v-icon>
                             </template>
-                            <span>{{ heuristics[f].title }}</span>
+                            <span>{{ heuristics[f + tabs].title }}</span>
                           </v-tooltip>
                         </td>
                         <!-- radio-group -->
