@@ -1,5 +1,5 @@
 <template>
-  <div v-if="answers">
+  <div v-if="answers && test.userTestType != 'moderated'">
     <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
     <div>
       <!-- Analysis Geral -->
@@ -10,7 +10,9 @@
               <v-col cols="6">
                 <v-row justify="center">
                   <span class="cardTitle">Conclusion percentage</span>
-                  <span class="conclusionPercentage mx-auto mb-1">{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span>
+                  <span class="conclusionPercentage mx-auto mb-1"
+                    >{{ parseFloat(getConclusionAverage()).toFixed(2) }}%</span
+                  >
                   <v-col cols="8" class="mx-auto">
                     <v-progress-linear
                       rounded
@@ -34,12 +36,18 @@
 
               <v-col cols="6">
                 <v-row justify="center">
-                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
-                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span>
-                  <span class="cardSubtitle"><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
-                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span>
-                  <span class="cardSubtitle">Total time<br>
-                    16m</span>
+                  <span class="cardSubtitle"
+                    ><v-icon class="mr-1"> mdi-arrow-top-right</v-icon>Max
+                    {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%</span
+                  >
+                  <span class="cardSubtitle"
+                    ><v-icon class="mr-1"> mdi-arrow-bottom-right</v-icon>Min
+                    {{ parseFloat(minProgressPerTask()).toFixed(2) }}%</span
+                  >
+                  <span class="cardSubtitle"
+                    >Total time<br />
+                    16m</span
+                  >
                 </v-row>
               </v-col>
             </v-row>
@@ -50,19 +58,26 @@
           <v-card height="190" class="mb-8 cards mt-3">
             <v-row justify="center">
               <span class="cardTitle mt-6">Average Time per Task</span>
-              <span class="cardTime mt-3"><v-icon size="45" class="mr-1 mb-2"> mdi-clock-fast</v-icon>
-                {{ calculateAverageTime().formatedTime }}</span>
-              <span class="subtitleTime mt-4 mx-8">Users spend a average of
+              <span class="cardTime mt-3"
+                ><v-icon size="45" class="mr-1 mb-2"> mdi-clock-fast</v-icon>
+                {{ calculateAverageTime().formatedTime }}</span
+              >
+              <span class="subtitleTime mt-4 mx-8"
+                >Users spend a average of
                 {{ calculateAverageTime().minutes }} minutes and
-                {{ calculateAverageTime().seconds }} seconds on each task</span>
+                {{ calculateAverageTime().seconds }} seconds on each task</span
+              >
             </v-row>
           </v-card>
           <v-card height="190" class="cards">
             <v-row justify="center">
               <span class="cardTitle mt-6">Longest Task on Average</span>
-              <span class="cardTime mt-4" style="color: #ff5252"><v-icon size="38" class="mr-1 mb-2" color="#FF5252">
-                                                                   mdi-clock-alert-outline</v-icon>
-                {{ findLongestTask().averageTime.formatedTime }}</span>
+              <span class="cardTime mt-4" style="color: #ff5252"
+                ><v-icon size="38" class="mr-1 mb-2" color="#FF5252">
+                  mdi-clock-alert-outline</v-icon
+                >
+                {{ findLongestTask().averageTime.formatedTime }}</span
+              >
               <span
                 class="subtitleTime mt-4 mx-8"
                 style="
@@ -73,7 +88,8 @@
                   text-overflow: ellipsis;
                   direction: ltr;
                 "
-              >“{{ findLongestTask().taskName }}”</span>
+                >“{{ findLongestTask().taskName }}”</span
+              >
               <span class="subtitleTime mx-8">with the longest average</span>
             </v-row>
           </v-card>
@@ -91,12 +107,15 @@
                   line-height: 40px;
                   text-align: start;
                 "
-              ><v-icon size="38" class="mr-1 mb-2" color="green">
-                mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
+                ><v-icon size="38" class="mr-1 mb-2" color="green">
+                  mdi-check-circle-outline</v-icon
+                >{{ getTotalAnswers() }}</span
+              >
               <span
                 class="subtitleTime mt-6"
                 style="text-align: start; min-width: 150px"
-              >Total answers</span>
+                >Total answers</span
+              >
               <v-col class="ml-9" cols="9">
                 <v-divider style="background-color: #e4eaf0" />
               </v-col>
@@ -104,14 +123,18 @@
               <span
                 class="subtitleTime mt-2 ml-12"
                 style="text-align: start; min-width: 210px"
-              ><v-icon size="20" class="mr-1 mb-2" color="green">
-                mdi-chevron-double-up</v-icon><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span>
+                ><v-icon size="20" class="mr-1 mb-2" color="green">
+                  mdi-chevron-double-up</v-icon
+                ><strong>+{{ getTasksTodayCount() }} </strong>answers/day</span
+              >
             </v-row>
           </v-card>
 
           <v-card height="190" class="cards">
             <v-row>
-              <span class="bottomCardsTitle mb-1 mt-7 ml-11">Latest user answer</span>
+              <span class="bottomCardsTitle mb-1 mt-7 ml-11"
+                >Latest user answer</span
+              >
               <v-avatar color="grey lighten-1" class="ml-10 mt-4" size="45">
                 <v-icon size="42" dark>
                   mdi-account-circle
@@ -122,7 +145,7 @@
                 style="text-align: start; min-width: 210px; color: #696d6e"
               >
                 {{ getLatestResponse().cooperatorEmail }}
-                <br>
+                <br />
                 <div class="mt-1" style="color: #28b5e1 !important">
                   Evaluator
                 </div>
@@ -130,8 +153,9 @@
               <span
                 class="subtitleTime ml-16 mt-5"
                 style="font-size: 14px; text-align: end"
-              >Last Updated:
-                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span>
+                >Last Updated:
+                {{ getFormattedDate(getLatestResponse().lastUpdate) }}</span
+              >
             </v-row>
           </v-card>
         </v-col>
@@ -141,13 +165,36 @@
               <span
                 class="bottomCardsTitle ml-10 mt-6 mb-5"
                 style="min-width:500px"
-              >Answers Timeline</span>
+                >Answers Timeline</span
+              >
             </v-row>
             <DateChart
               :task-answers="taskAnswers"
               class="ml-6"
               style="max-height:300px; max-width:680px;"
             />
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
+  <div v-else>
+    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
+    <div>
+      <!-- Analysis Geral -->
+      <v-row class="ma-0 pa-0">
+        <v-col cols="12">
+          <v-card height="150" class="cards mt-3">
+            <v-row>
+              <v-col cols="12">
+                <v-row justify="center">
+                  <span class="cardTitle"
+                    ><v-icon class="mb-2 mr-3"> mdi-cog</v-icon>This tab is
+                    under development...
+                  </span>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
@@ -217,6 +264,7 @@ export default {
     },
   },
   created() {
+    console.log(this.test)
     let i = 0
     this.testStructure.userTasks.forEach((task) => {
       this.testTasks[i] = task.taskName
