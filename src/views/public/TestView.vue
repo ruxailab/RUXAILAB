@@ -449,7 +449,7 @@ export default {
   },
   props: {
     id: { type: String, default: '' },
-    token: { type: String, default: '' },
+    token: { type: String, default: null },
   },
   data: () => ({
     logined: null,
