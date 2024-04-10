@@ -14,7 +14,13 @@
           {{ test.testDescription }}
         </p>
         <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="startTest()">
+          <v-btn
+            :disabled="!isTestAvailable"
+            color="white"
+            outlined
+            rounded
+            @click="startTest()"
+          >
             Start Test
           </v-btn>
         </v-row>
@@ -161,7 +167,7 @@
         <v-card v-if="!conectionStatus" color="white" class="cards">
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
-              <span class="cardsTitle">Confirm you are ready {{ token }}</span>
+              <span class="cardsTitle">Confirm you are ready</span>
               <v-row justify="center" class="mt-1">
                 <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
@@ -884,9 +890,10 @@ export default {
     isLoading: false,
     consentCompleted: false,
     sessionCooperator: null,
+    testDate: null,
   }),
   props: {
-    token: { type: String, default: '' },
+    token: { type: String, default: null },
   },
   computed: {
     test() {
@@ -914,11 +921,13 @@ export default {
     remoteStream() {
       return this.$store.getters.remoteStream
     },
+    isTestAvailable() {
+      console.log(new Date(this.testDate))
+      console.log(new Date() > new Date(this.testDate))
+      return new Date() > new Date(this.testDate)
+    },
   },
   watch: {
-    test: async function() {
-      this.mappingSteps()
-    },
     taskIndex() {
       this.$refs.rightView.scrollTop = 0
     },
@@ -957,7 +966,12 @@ export default {
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
-      console.log(this.sessionCooperator)
+      if (this.sessionCooperator.testDate) {
+        this.testDate = this.sessionCooperator.testDate
+      } else {
+        this.$toast.warning(`Your session don't have a scheduled date`)
+        this.$router.push('/managerview/' + this.test.id)
+      }
     } else {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
