@@ -209,15 +209,18 @@
                     >
                       <v-list-item-content
                         style="
-                          margin: 0px !important;
-                          padding: 0px !important;
+                          margin-bottom: 8px !important;
+                          margin-top: 8px !important;
+                          padding-top: 6px !important;
+                          padding-bottom: 6px !important;
                           justify-content: space-between;
                         "
                       >
                         <v-list-item-title
                           style="
                             margin: 0px !important;
-                            padding: 0px !important;
+                            padding-top: 4px !important;
+                            padding-bottom: 4px !important;
                           "
                         >
                           {{ item.id }} - {{ item.title }}
