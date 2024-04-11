@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "retlab-dev",
+    "dev": "retlab-dev",
+    "production": "retlab"
+  },
+  "targets": {
+    "retlab-dev": {
+      "hosting": {
+        "ruxailab-dev": [
+          "ruxailab-dev"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
