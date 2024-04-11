@@ -925,7 +925,6 @@ export default {
   color: #dbdde4;
 }
 .subtitleView {
-  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 500;
   font-size: 18.18px;

@@ -189,7 +189,6 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <!-- aaaaaaaaaaaaa -->
           <v-card v-if="tab == 2" rounded="xl" flat class="mb-6 py-2" style="background: #f5f7ff">
             <v-card
               v-if="evaluatorStatistics.items.length <= 1"
@@ -741,7 +740,6 @@ export default {
 
 <style scoped>
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -752,7 +750,6 @@ export default {
 }
 
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -778,7 +775,6 @@ export default {
 }
 
 .tab-text {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

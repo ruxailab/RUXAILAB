@@ -1,55 +1,5 @@
 <template>
   <div v-if="test">
-    <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving Answer
-      </div>
-    </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
-      <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>
-              mdi-account
-            </v-icon>
-          </v-avatar>
-        </v-row>
-        <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">
-            Continue as {{ user.email }}
-          </v-btn>
-        </v-card-actions>
-        <v-card-actions class="justify-center mt-4">
-          <p>
-            Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
-          </p>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- Test Start Screen -->
     <v-row
       v-if="test && start"
@@ -63,8 +13,23 @@
         <p align="justify" class="description">
           {{ test.testDescription }}
         </p>
-        <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="startTest()">
+        <v-row justify="center">
+          <v-col cols="12"
+            ><span
+              style="font-size: 18px;"
+              class="titleText mt-4 ml-0"
+              v-if="!isTestAvailable"
+              >The test is available at
+              {{ new Date(this.testDate).toLocaleString() }}</span
+            ></v-col
+          >
+          <v-btn
+            :disabled="!isTestAvailable"
+            color="white"
+            outlined
+            rounded
+            @click="startTest()"
+          >
             Start Test
           </v-btn>
         </v-row>
@@ -233,7 +198,9 @@
         </v-card>
         <!-- Moderator expansion panels view -->
         <v-col v-else-if="moderatorStatus && !evaluatorStatus" class="my-12">
-          <span class="cardsTitle text-center d-block">Waiting the evaluator connection ...</span>
+          <span class="cardsTitle text-center d-block"
+            >Waiting the evaluator connection ...</span
+          >
           <div class="dot-flashing mx-auto mt-4" />
         </v-col>
         <v-expansion-panels v-else-if="bothConnected" flat accordion>
@@ -396,7 +363,7 @@
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Evaluator concluded the test!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Here you can finilize the test, or you can keep talking with
                 your evaluator until you finish!
@@ -465,7 +432,7 @@
                     class="ma-0 pa-0"
                     @click="
                       changeStatus(taskIndex, 'consent', 'done'),
-                      (consentCompleted = true)
+                        (consentCompleted = true)
                     "
                   >
                     <template v-slot:label>
@@ -495,7 +462,9 @@
                   cols="4"
                   class="mt-2 mb-8 mr-8"
                 >
-                  <span class="cardsTitle text-center d-block">Waiting the moderator...</span>
+                  <span class="cardsTitle text-center d-block"
+                    >Waiting the moderator...</span
+                  >
                   <div class="dot-flashing mx-auto mt-4" />
                 </v-col>
 
@@ -582,7 +551,7 @@
                   >
                     <v-row
                       v-for="(selection,
-                              selectionIndex) in item.selectionFields"
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -742,7 +711,7 @@
                   >
                     <v-row
                       v-for="(selection,
-                              selectionIndex) in item.selectionFields"
+                      selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
                     >
                       <v-radio
@@ -784,7 +753,7 @@
           <v-row justify="center" class="mt-4">
             <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Final Message!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Congratulations you finished this test, here you can until talk
                 with your moderator or leave the test
@@ -795,7 +764,7 @@
                     draggable="false"
                     src="../../../public/finalMessage.svg"
                     alt="Final test svg"
-                  >
+                  />
                 </v-col>
                 <v-col cols="6" class="pt-2 my-8">
                   <span class="cardsSubtitle">
@@ -827,6 +796,55 @@
         <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving Answer
+      </div>
+    </v-overlay>
+    <!-- Authentication Dialog -->
+    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
+      <CardSignIn
+        v-if="selected"
+        @logined="logined = true"
+        @change="selected = !selected"
+      />
+      <CardSignUp
+        v-else
+        @logined="
+          logined = true
+          setTest()
+        "
+        @change="selected = !selected"
+      />
+    </v-dialog>
+    <!-- Existing User Confirmation Dialog -->
+    <v-dialog
+      :value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
+      <v-card v-if="user">
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange lighten-4" size="150">
+            <v-icon size="120" dark>
+              mdi-account
+            </v-icon>
+          </v-avatar>
+        </v-row>
+        <v-card-actions class="justify-center mt-4">
+          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+            Continue as {{ user.email }}
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="justify-center mt-4">
+          <p>
+            Not {{ user.email }}?
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
+          </p>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -880,7 +898,12 @@ export default {
     mediaRecorderModerator: null,
     isLoading: false,
     consentCompleted: false,
+    sessionCooperator: null,
+    testDate: null,
   }),
+  props: {
+    token: { type: String, default: null },
+  },
   computed: {
     test() {
       return this.$store.getters.test
@@ -907,11 +930,13 @@ export default {
     remoteStream() {
       return this.$store.getters.remoteStream
     },
+    isTestAvailable() {
+      console.log(new Date(this.testDate))
+      console.log(new Date() > new Date(this.testDate))
+      return new Date() > new Date(this.testDate)
+    },
   },
   watch: {
-    test: async function() {
-      this.mappingSteps()
-    },
     taskIndex() {
       this.$refs.rightView.scrollTop = 0
     },
@@ -947,6 +972,25 @@ export default {
   },
   async created() {
     await this.verifyAdmin()
+    if (this.token != null) {
+      this.sessionCooperator = this.test.cooperators.find(
+        (user) => user.userDocId === this.token,
+      )
+      if (!this.user.userDocId !== this.token && !this.isAdmin) {
+        this.$toast.error(`You don't have access to this session.`)
+        this.$router.push('/testslist/')
+      }
+      if (this.sessionCooperator.testDate) {
+        this.testDate = this.sessionCooperator.testDate
+      } else {
+        this.$toast.warning(`Your session don't have a scheduled date`)
+        this.$router.push('/managerview/' + this.test.id)
+      }
+    } else {
+      this.$toast.info('Use a session your session link to the test')
+      this.$router.push('/managerview/' + this.test.id)
+    }
+
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
@@ -1393,7 +1437,6 @@ export default {
 }
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1401,7 +1444,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
@@ -1447,7 +1489,6 @@ body {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .titleView {
-  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -1457,7 +1498,6 @@ body {
   color: #ffffff;
 }
 .description {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1472,7 +1512,6 @@ body {
   overflow: hidden;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1537,7 +1576,6 @@ body {
   /* background: #515069; */
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;
