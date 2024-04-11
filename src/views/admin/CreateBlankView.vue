@@ -397,7 +397,6 @@ export default {
   width: 20px;
 }
 .Titles {
-  font-family: 'Poppins', Helvetica;
   font-size: 38px;
   font-style: normal;
   text-align: center;
@@ -427,7 +426,6 @@ export default {
   justify-content: center;
 }
 .cardsTitle {
-  font-family: 'Poppins', Helvetica;
   font-size: 24px;
   font-style: normal;
   font-weight: 600;
@@ -441,14 +439,12 @@ export default {
 .cardSubtitle {
   color: #8b959c;
   font-size: 20px;
-  font-family: 'Poppins', Helvetica;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
 }
 .cardSubtitle2 {
   color: rgba(139, 149, 156, 0.64);
-  font-family: 'Poppins', Helvetica;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -456,7 +452,6 @@ export default {
 }
 .cardInternTitles {
   max-width: 270px;
-  font-family: 'Poppins', Helvetica;
   color: #626e76;
   font-size: 18px;
   font-style: normal;

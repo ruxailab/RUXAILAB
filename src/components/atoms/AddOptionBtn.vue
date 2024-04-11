@@ -182,7 +182,6 @@ export default {
   background-color: rgba(185, 185, 185, 0.308);
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

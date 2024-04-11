@@ -5,11 +5,7 @@
       v-model="loading"
       class="text-center"
     >
-      <v-progress-circular
-        indeterminate
-        color="#fca326"
-        size="50"
-      />
+      <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
         {{ $t('common.loading') }}
       </div>
@@ -69,7 +65,7 @@
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div
-                  class="display-3 mb-4 white--text mobile-center"
+                  class="mb-4 white--text mobile-center"
                   style="font-size: 60px; font-weight: 500"
                 >
                   {{ $t('titles.manager') }}
@@ -241,7 +237,6 @@ export default {
 
 <style scoped>
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;

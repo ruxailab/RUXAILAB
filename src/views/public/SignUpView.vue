@@ -12,7 +12,11 @@
 
               <div class="divider" />
 
-              <v-form v-model="valid" class="mx-3" @keyup.native.enter="onSignUp()">
+              <v-form
+                v-model="valid"
+                class="mx-3"
+                @keyup.native.enter="onSignUp()"
+              >
                 <v-text-field
                   v-model="email"
                   dense
@@ -59,7 +63,11 @@
               </v-card-actions>
               <v-card-actions class="justify-center mt-1">
                 <p>
-                  <a style="color: #F9A826; text-decoration: underline;" @click="redirectToSignin">{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a>
+                  <a
+                    style="color: #F9A826; text-decoration: underline;"
+                    @click="redirectToSignin"
+                    >{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a
+                  >
                 </p>
               </v-card-actions>
             </v-col>
@@ -83,7 +91,6 @@ export default {
     Snackbar,
   },
   data: () => ({
-
     email: '',
     password: '',
 
@@ -104,7 +111,8 @@ export default {
   computed: {
     comparePassword() {
       return () =>
-        (this.confirmpassword == this.password && this.confirmpassword !== '') ||
+        (this.confirmpassword == this.password &&
+          this.confirmpassword !== '') ||
         i18n.t('errors.differentPasswords')
     },
     user() {
@@ -117,7 +125,7 @@ export default {
 
   methods: {
     async onSignUp() {
-      if (this.valid){
+      if (this.valid) {
         await this.$store.dispatch('signup', {
           email: this.email,
           password: this.password,
@@ -139,7 +147,6 @@ export default {
   align-content: center;
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;
