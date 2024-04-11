@@ -455,10 +455,7 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1
-                    style="color: #455a64; font-family: 'Poppins', Helvetica;"
-                    class="mt-6"
-                  >
+                  <h1 style="color: #455a64;" class="mt-6">
                     {{ test.testTitle }} -
                     {{ $t('UserTestView.titles.preTest') }}
                   </h1>
@@ -489,10 +486,7 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1
-                    style="color: #455a64; font-family: 'Poppins', Helvetica;"
-                    class="mt-6"
-                  >
+                  <h1 style="color: #455a64;" class="mt-6">
                     {{ test.testTitle }} -
                     {{ $t('UserTestView.titles.preTest') }}
                   </h1>
@@ -569,19 +563,13 @@
               <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12" class="mb-0 pb-0">
                   <v-row justify="center">
-                    <h1
-                      style="color: #455a64; font-family: 'Poppins', Helvetica;"
-                      class="mt-2"
-                    >
+                    <h1 style="color: #455a64;" class="mt-2">
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
                   <v-spacer />
                   <v-row justify="center">
-                    <p
-                      class="paragraph"
-                      style="color: #455a64; font-family: 'Poppins', Helvetica;"
-                    >
+                    <p class="paragraph" style="color: #455a64;">
                       {{
                         test.testStructure.userTasks[taskIndex].taskDescription
                       }}
@@ -745,10 +733,7 @@
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1
-                    style="color: #455a64; font-family: 'Poppins', Helvetica;"
-                    class="mt-6"
-                  >
+                  <h1 style="color: #455a64;" class="mt-6">
                     {{ test.testTitle }} -
                     {{ $t('UserTestView.titles.postTest') }}
                   </h1>
@@ -1243,7 +1228,6 @@ export default {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -1253,7 +1237,6 @@ export default {
   color: #ffffff;
 }
 .description {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1268,7 +1251,6 @@ export default {
   overflow: hidden;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -1337,7 +1319,7 @@ export default {
 }
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
+
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1345,7 +1327,7 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
+
   font-size: 15px;
   font-style: normal;
   font-weight: 400;

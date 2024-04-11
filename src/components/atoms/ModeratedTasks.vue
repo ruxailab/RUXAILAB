@@ -9,8 +9,10 @@
       <v-row justify="center">
         <v-col cols="12" class="pa-5">
           <span class="cardsTitle ml-5">Tasks</span>
-          <br>
-          <span class="cardsSubtitle ml-5 mb-1">Create tasks for your evaluators</span>
+          <br />
+          <span class="cardsSubtitle ml-5 mb-1"
+            >Create tasks for your evaluators</span
+          >
           <v-row justify="center">
             <v-col cols="8">
               <v-card
@@ -49,7 +51,7 @@
             mdi-drag
           </v-icon>
           <span class="cardsTitle ml-3">{{ task.taskName }}</span>
-          <br>
+          <br />
           <span class="cardsSubtitle ml-9">Task Description</span>
           <v-icon class="delete-icon" @click="deleteTask(index)">
             mdi-delete
@@ -102,13 +104,13 @@
         <v-card-actions>
           <v-btn dark color="red" @click="closeAddTaskModal">
             <v-icon class="mr-1">
-              mdi-close
-            </v-icon>Cancel
+              mdi-close </v-icon
+            >Cancel
           </v-btn>
           <v-btn dark color="orange" @click="addTask">
             <v-icon class="mr-1">
-              mdi-content-save
-            </v-icon>Save
+              mdi-content-save </v-icon
+            >Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -120,7 +122,6 @@
 import draggable from 'vuedraggable'
 
 export default {
-
   components: { draggable },
   data: () => ({
     tasks: [],
@@ -209,7 +210,6 @@ export default {
 }
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -217,7 +217,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
