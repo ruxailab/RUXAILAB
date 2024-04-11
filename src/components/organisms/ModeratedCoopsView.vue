@@ -325,6 +325,7 @@
                         />
                       </template>
                       <v-time-picker
+                        :min="minTime"
                         format="24hr"
                         color="orange"
                         v-model="hour"
@@ -451,6 +452,23 @@ export default {
     loading() {
       return this.$store.getters.loading
     },
+    minTime() {
+      const currentDate = new Date()
+      currentDate.setDate(currentDate.getDate() - 1)
+      const selectedDate = new Date(this.date)
+
+      console.log(selectedDate.toLocaleDateString())
+      if (
+        selectedDate.toLocaleDateString() ===
+          currentDate.toLocaleDateString() &&
+        selectedDate.getMonth() === currentDate.getMonth() &&
+        selectedDate.getFullYear() === currentDate.getFullYear()
+      ) {
+        return currentDate.getHours() + ':' + currentDate.getMinutes()
+      } else {
+        return '00:00'
+      }
+    },
   },
   watch: {
     loading() {
@@ -487,7 +505,6 @@ export default {
     async submit() {
       this.test.cooperators = [...this.cooperatorsEdit]
       await this.$store.dispatch('updateTest', this.test)
-      // Notify users
       this.cooperatorsEdit.forEach((guest) => {
         if (!guest.accepted) {
           this.notifyCooperator(guest)
