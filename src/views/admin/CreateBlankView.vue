@@ -264,7 +264,6 @@
             <v-col cols="1"></v-col>
             <v-col cols="4">
               <v-card
-                disabled
                 hover
                 color="white"
                 class="cards ml-5 mr-5"
@@ -275,9 +274,7 @@
                   <div class="mt-6">
                     <span class="Titles ml-10">LiveTest </span>
                     <br />
-                    <span class="cardSubtitle2 ml-10">
-                      MODERATED (Coming soon...)</span
-                    >
+                    <span class="cardSubtitle2 ml-10"> MODERATED</span>
                   </div>
                 </v-row>
                 <img

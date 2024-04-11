@@ -53,6 +53,7 @@ For commercial support, academic collaborations, and answers to common questions
 - Vue.js version: 2.6.12
 - Vue CLI version: 4.3.1
 - Vuetify version: 2.3.10
+- Python version: 3.11.8
 
 ## Video Guide
 

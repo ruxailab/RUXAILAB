@@ -1,5 +1,5 @@
 <template>
-  <div v-if="answers">
+  <div v-if="answers && test.userTestType != 'moderated'">
     <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
     <div>
       <!-- Analysis Geral -->
@@ -178,6 +178,28 @@
       </v-row>
     </div>
   </div>
+  <div v-else>
+    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
+    <div>
+      <!-- Analysis Geral -->
+      <v-row class="ma-0 pa-0">
+        <v-col cols="12">
+          <v-card height="150" class="cards mt-3">
+            <v-row>
+              <v-col cols="12">
+                <v-row justify="center">
+                  <span class="cardTitle"
+                    ><v-icon class="mb-2 mr-3"> mdi-cog</v-icon>This tab is
+                    under development...
+                  </span>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -242,6 +264,7 @@ export default {
     },
   },
   created() {
+    console.log(this.test)
     let i = 0
     this.testStructure.userTasks.forEach((task) => {
       this.testTasks[i] = task.taskName
