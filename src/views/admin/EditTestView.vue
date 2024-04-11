@@ -86,7 +86,7 @@
             />
         -->
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" class="pb-0">
         <EditHeuristicsTest
           v-if="test.testType === 'HEURISTICS'"
           slot="content"

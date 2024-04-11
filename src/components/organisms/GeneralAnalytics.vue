@@ -472,7 +472,6 @@ export default {
 .cardTime {
   min-width: 250px;
   color: #414d55;
-  font-family: 'Inter', sans-serif;
   font-size: 27px;
   text-align: center;
   font-style: normal;
@@ -484,7 +483,6 @@ export default {
   min-width: 250px;
   color: #414d55;
   text-align: center;
-  font-family: 'Inter', sans-serif;
   font-size: 48px;
   font-style: normal;
   font-weight: semi-bold;
@@ -498,7 +496,6 @@ export default {
   margin-top: 75px;
   color: #414d55;
   text-align: center;
-  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -508,7 +505,6 @@ export default {
 .subtitleTime {
   color: #8e8e8e;
   text-align: center;
-  font-family: 'Inter', sans-serif;
   font-size: 17px;
   font-style: normal;
   font-weight: 500;
@@ -519,7 +515,6 @@ export default {
 .bottomCardsTitle {
   min-width: 300px;
   color: #414d55;
-  font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
