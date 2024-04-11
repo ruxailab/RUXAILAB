@@ -13,7 +13,16 @@
         <p align="justify" class="description">
           {{ test.testDescription }}
         </p>
-        <v-row justify="center" class>
+        <v-row justify="center">
+          <v-col cols="12"
+            ><span
+              style="font-size: 18px;"
+              class="titleText mt-4 ml-0"
+              v-if="!isTestAvailable"
+              >The test is available at
+              {{ new Date(this.testDate).toLocaleString() }}</span
+            ></v-col
+          >
           <v-btn
             :disabled="!isTestAvailable"
             color="white"
@@ -962,10 +971,15 @@ export default {
     },
   },
   async created() {
+    await this.verifyAdmin()
     if (this.token != null) {
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
+      if (!this.user.userDocId !== this.token && !this.isAdmin) {
+        this.$toast.error(`You don't have access to this session.`)
+        this.$router.push('/testslist/')
+      }
       if (this.sessionCooperator.testDate) {
         this.testDate = this.sessionCooperator.testDate
       } else {
@@ -976,7 +990,7 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
-    await this.verifyAdmin()
+
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
