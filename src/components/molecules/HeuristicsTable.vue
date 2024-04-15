@@ -218,7 +218,8 @@
                       >
                         <v-list-item-title
                           style="
-                            margin: 0px !important;
+                            margin-top: 2px !important;
+                            margin-bottom: 2px !important;
                             padding-top: 4px !important;
                             padding-bottom: 4px !important;
                           "
