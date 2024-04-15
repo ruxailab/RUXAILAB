@@ -777,7 +777,7 @@
                       dark
                       @click="saveAnswer(), stopRecording()"
                     >
-                      Return to home
+                      Save & Exit
                     </v-btn>
                   </v-col>
                 </v-col>
@@ -901,10 +901,13 @@ export default {
     sessionCooperator: null,
     testDate: null,
   }),
-  props: {
-    token: { type: String, default: null },
-  },
   computed: {
+    token() {
+      const url = window.location.href
+      const parts = url.split('/')
+      const lastSegment = parts[parts.length - 1]
+      return lastSegment
+    },
     test() {
       return this.$store.getters.test
     },
@@ -976,9 +979,9 @@ export default {
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
-      if (!this.user.userDocId !== this.token && !this.isAdmin) {
+      if (this.user.id != this.token && !this.isAdmin) {
         this.$toast.error(`You don't have access to this session.`)
-        this.$router.push('/testslist/')
+        this.$router.push('/testslist')
       }
       if (this.sessionCooperator.testDate) {
         this.testDate = this.sessionCooperator.testDate
