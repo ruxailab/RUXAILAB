@@ -480,6 +480,7 @@ export default {
   },
   created() {
     this.$store.dispatch('getAllUsers')
+
   },
   methods: {
     async saveInvitation() {
@@ -529,7 +530,7 @@ export default {
           notification: new Notification({
             title: `You have been invited to test ${this.test.testTitle}!`,
             description: this.inviteMessage,
-            redirectsTo: `${path}/${this.test.id}/${this.comboboxModel.id}`,
+            redirectsTo: `${path}/${this.test.id}/${guest.userDocId}`,
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
@@ -576,6 +577,7 @@ export default {
       return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
     },
     reinvite(guest) {
+      console.log(guest)
       this.notifyCooperator(guest)
     },
     openInvitationModal() {
