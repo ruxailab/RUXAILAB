@@ -993,7 +993,10 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
-
+    // save first to exit
+    window.onbeforeunload = function() {
+      return 'handle your events or msgs here'
+    }
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
