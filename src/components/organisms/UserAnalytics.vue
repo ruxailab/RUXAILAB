@@ -23,11 +23,10 @@
 
             <!-- Answer List -->
             <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <v-data-table
-                :headers="dataHeaders"
-                :items="taskAnswers"
-                item-key="userDocId"
-              >
+              <v-data-table :headers="dataHeaders" :items="taskAnswers">
+                <template v-slot:item.userDocId="{ item }">
+                  <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn color="orange" text @click="viewAnswers(item)">
                     Show Answers
