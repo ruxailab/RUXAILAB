@@ -546,6 +546,14 @@ export default {
     this.populateWithHeuristicQuestions()
     this.calculateProgress()
   },
+  beforeRouteLeave(to, from, next) {
+    if (this.test.userTestType === 'moderated') {
+      if (!window.confirm('Leave without saving?')) {
+        return
+      }
+      next()
+    } else next()
+  },
   methods: {
     startTest() {
       if (this.test.testStructure.length == 0) {
