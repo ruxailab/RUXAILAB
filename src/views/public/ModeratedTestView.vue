@@ -900,6 +900,7 @@ export default {
     consentCompleted: false,
     sessionCooperator: null,
     testDate: null,
+    saved: false,
   }),
   computed: {
     token() {
@@ -1034,6 +1035,9 @@ export default {
     }
   },
   methods: {
+    isSaved() {
+      return this.saved
+    },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -1173,6 +1177,9 @@ export default {
         this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
         this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
         this.isLoading = false
+        this.saved = true
+        this.localStream.getTracks().forEach((track) => track.stop())
+        window.onbeforeunload = null
         this.$router.push('/testslist')
       }
 
@@ -1381,6 +1388,8 @@ export default {
     async finishTest() {
       this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
+      this.saved = true
+      window.onbeforeunload = null
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
