@@ -6,9 +6,6 @@
 <div align="center">
   <a href="https://retlab-dev.firebaseapp.com/"><strong>Read The Docs</strong></a>
 </div>
-<div align="center">
-  <a href="https://retlab-dev.firebaseapp.com/">Live Demo</a>
-</div>
 
 <hr />
 <div align="center">
