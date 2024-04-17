@@ -418,7 +418,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView :token="token" />
+      <ModeratedTestView ref="ModeratedTestView" :token="token" />
     </div>
   </div>
 </template>
@@ -548,11 +548,15 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (this.test.userTestType === 'moderated') {
-      if (!window.confirm('Leave without saving?')) {
-        return
-      }
+      let isSaved = this.$refs.ModeratedTestView.isSaved()
+      if (!isSaved) {
+        if (!window.confirm('Leave without saving?')) {
+          return
+        }
+        next()
+      } else next()
       next()
-    } else next()
+    }
   },
   methods: {
     startTest() {
