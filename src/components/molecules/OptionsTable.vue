@@ -128,6 +128,7 @@ export default {
     },
     updateOptions() {
       if (this.editIndex == -1) {
+        this.option.timestamp = Date.now() // using the current timestamp as a unique identifier
         this.options.push(this.option)
       } else {
         Object.assign(this.options[this.editIndex], this.option)
@@ -141,10 +142,13 @@ export default {
       this.hasValue = true
     },
     deleteItem(item) {
-      this.options.splice(this.options.indexOf(item), 1)
+      const index = this.options.findIndex((option) => option.timestamp === item.timestamp)
+      if (index !== -1) {
+        this.options.splice(index, 1)
+      }
     },
     editItem(item) {
-      this.editIndex = this.options.indexOf(item)
+      this.editIndex = this.options.findIndex((option) => option.timestamp === item.timestamp)
       this.option.text = this.options[this.editIndex].text
       this.option.value = this.options[this.editIndex].value
 
