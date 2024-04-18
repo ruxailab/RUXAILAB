@@ -41,7 +41,9 @@
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
           <v-col>
-            <h1 class="display-3 font-weight-regular white--text text-center mt-5">
+            <h1
+              class="display-3 font-weight-regular white--text text-center mt-5"
+            >
               {{ $t('Introduction.title') }}
             </h1>
           </v-col>
@@ -82,7 +84,7 @@
     </v-container>
 
     <!-- SVG Waves -->
-    <div v-if="svgImagePreloaded" class="svg-border-waves text-white">
+    <div class="svg-border-waves text-white">
       <svg
         class="wave"
         style="pointer-events: none"
@@ -160,7 +162,6 @@ export default {
     return {
       desktopImagePreloaded: false,
       mobileImagePreloaded: false,
-      svgImagePreloaded: false,
     }
   },
   computed: {
