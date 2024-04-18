@@ -93,7 +93,6 @@ export default {
 
       // Atualizar configurações do eixo y
       this.chartOptions.scales.yAxes[0].ticks.suggestedMax = suggestedMax
-
     },
   },
 }

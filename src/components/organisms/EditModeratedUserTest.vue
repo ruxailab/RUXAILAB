@@ -23,20 +23,24 @@
         <v-card style="background: #f5f7ff" flat class="cards">
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3"> Consent Form</span>
-            <br>
-            <span class="cardsSubtitle ml-3">This is a Consent Checkbox with a text for confirm the
-              consentiment</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a Consent Checkbox with a text for confirm the
+              consentiment</span
+            >
           </v-col>
           <UserConsent />
         </v-card>
       </v-col>
       <v-col v-if="index == 0" cols="4" class="pl-0" style="height: 19vh;">
         <v-card flat style="background: #f5f7ff" class="cards">
-          <v-col cols="12" class="pb-0 pt-6 px-8">
+          <v-col cols="12" class="pb-0 pt-4 px-8">
             <span class="cardsTitle mt-4">Welcome message</span>
-            <br>
-            <span class="cardsSubtitle">This message will be the first thing participants see before the
-              session is started.</span>
+            <br />
+            <span class="cardsSubtitle"
+              >This message will be the first thing participants see before the
+              session is started.</span
+            >
           </v-col>
           <v-textarea
             v-model="welcomeMessage"
@@ -48,9 +52,11 @@
           />
           <v-col cols="12" class="pb-0 px-8">
             <span class="cardsTitle">Landing Page</span>
-            <br>
-            <span class="cardsSubtitle">This URL will automatically load when participants starts
-              session.</span>
+            <br />
+            <span class="cardsSubtitle"
+              >This URL will automatically load when participants starts
+              session.</span
+            >
             <v-text-field
               v-model="landingPage"
               class="mt-3"
@@ -61,33 +67,21 @@
               @change="saveLandingPage()"
             />
           </v-col>
-          <v-col cols="12" class="pb-1 px-8">
+          <v-col cols="12" class="pb-1 px-8 pb-0">
             <span class="cardsTitle">Participant camera</span>
             <v-radio-group
               v-model="participantCamera"
-              class="pt-0 mb-6"
+              class="pt-0"
               @change="saveParticipantCamera()"
             >
-              <v-radio
-                label="Optional"
-                color="orange"
-                value="optional"
-              />
-              <v-radio
-                label="Required"
-                color="orange"
-                value="required"
-              />
-              <v-radio
-                label="Disabled"
-                color="orange"
-                value="disabled"
-              />
+              <v-radio label="Optional" color="orange" value="optional" />
+              <v-radio label="Required" color="orange" value="required" />
+              <v-radio label="Disabled" color="orange" value="disabled" />
             </v-radio-group>
           </v-col>
         </v-card>
       </v-col>
-      <v-col v-if="index == 0" cols="8" class="pt-0">
+      <v-col v-if="index == 0" cols="8" class="pt-0 pb-0">
         <v-card
           style="background: #f5f7ff; min-height: 420px;"
           flat
@@ -95,8 +89,10 @@
         >
           <v-col cols="12">
             <span class="cardsTitle ml-3">Pre-Form</span>
-            <br>
-            <span class="cardsSubtitle ml-3">This is a pre-questions you make to get participants data</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a pre-questions you make to get participants data</span
+            >
             <UserVariables @input="updateData" />
           </v-col>
         </v-card>
@@ -118,19 +114,23 @@
         >
           <v-col cols="12" class="pb-0 px-5 pt-4">
             <span class="cardsTitle ml-3">Post Form</span>
-            <br>
-            <span class="cardsSubtitle ml-3">This is a post-questions you make to get participants data</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a post-questions you make to get participants data</span
+            >
             <FormPostTest @input="updateData" />
           </v-col>
         </v-card>
       </v-col>
       <v-col v-if="index == 2" cols="12" class="pt-0">
         <v-card style="background: #f5f7ff" flat class="cards">
-          <v-col cols="12" class="pb-0 px-5 pt-4">
+          <v-col cols="12" class="pb-0 px-5 pt-4 pb-0">
             <span class="cardsTitle ml-3">Final message</span>
-            <br>
-            <span class="cardsSubtitle ml-3">This is a Final message you leave to the participant on finish
-              test.</span>
+            <br />
+            <span class="cardsSubtitle ml-3"
+              >This is a Final message you leave to the participant on finish
+              test.</span
+            >
           </v-col>
           <v-textarea
             v-model="finalMessage"
@@ -304,7 +304,6 @@ export default {
 }
 .cardsTitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -312,7 +311,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-  font-family: 'Poppins', Helvetica;
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
