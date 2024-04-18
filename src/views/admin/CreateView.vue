@@ -11,7 +11,12 @@
     <v-row justify="center" style="padding: 0px 30px;">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card hover class="card" :ripple="false" @click="$router.push('/createBlank')">
+          <v-card
+            hover
+            class="card"
+            :ripple="false"
+            @click="$router.push('/createBlank')"
+          >
             <v-row align="center">
               <v-col cols="12" md="5">
                 <v-img
@@ -132,7 +137,6 @@ export default {
 
 <style scoped>
 .dialog-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -142,7 +146,6 @@ export default {
   color: #000000;
 }
 .Title {
-  font-family: 'Poppins', Helvetica;
   font-size: 38px;
   font-style: normal;
   text-align: center;

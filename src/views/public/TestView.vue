@@ -418,7 +418,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView />
+      <ModeratedTestView :token="token" />
     </div>
   </div>
 </template>
@@ -435,7 +435,6 @@ import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
-import Vue from 'vue'
 export default {
   components: {
     ShowInfo,
@@ -450,7 +449,7 @@ export default {
   },
   props: {
     id: { type: String, default: '' },
-    token: { type: String, default: '' },
+    token: { type: String, default: null },
   },
   data: () => ({
     logined: null,
@@ -550,7 +549,10 @@ export default {
   methods: {
     startTest() {
       if (this.test.testStructure.length == 0) {
-        Vue.$toast.info('This test don\'t have any heuristic')
+        this.$store.commit('setError', {
+          errorCode: 400,
+          message: "This test don't have any heuristic",
+        })
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
@@ -710,7 +712,6 @@ body {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -720,7 +721,6 @@ body {
   color: #ffffff;
 }
 .description {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -740,7 +740,6 @@ body {
   align-items: center;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -808,7 +807,6 @@ body {
   /* background: #515069; */
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;

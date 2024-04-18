@@ -2,13 +2,19 @@
 node_modules
 package-lock.json
 /dist
-.firebase
+/.firebase
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
 /docs 
 
 # local env files
 .env.local
 .env.*.local
 .env
+.env.production
+.env.development
 
 # Log files
 npm-debug.log*

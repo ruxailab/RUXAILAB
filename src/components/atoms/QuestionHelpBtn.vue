@@ -61,14 +61,12 @@ export default {
 
 <style scoped>
 .titleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 25px;
   line-height: 1.3em;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-size: 18.1818px;
   line-height: 1.3em;
