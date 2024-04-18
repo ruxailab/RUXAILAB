@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
     <v-row justify="space-around">
-      <v-col cols="5">
+      <v-col class="mt-4" cols="5">
         <v-text-field
           v-model="task.taskName"
           :label="$t('common.name')"
@@ -18,7 +18,8 @@
         />
         <v-text-field
           v-model="task.taskTip"
-          :label="$t('buttons.tip')" outlined
+          :label="$t('buttons.tip')"
+          outlined
           dense
         />
       </v-col>
@@ -48,10 +49,10 @@
           {{ $t('switches.camera') }}
           <v-switch v-model="task.hasCamRecord" class="ml-2" />
         </v-row>
-        <v-row align="center">
+        <!-- <v-row align="center"> FUTURE WORK
           {{ $t('switches.eyeTracker') }}
           <v-switch v-model="task.hasEye" class="ml-2" />
-        </v-row>
+        </v-row> -->
         <v-row align="center">
           {{ $t('switches.audioRecord') }}
           <v-switch v-model="task.hasAudioRecord" class="ml-2" />

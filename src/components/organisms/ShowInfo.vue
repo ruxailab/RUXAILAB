@@ -32,7 +32,6 @@ export default {
 
 <style scoped>
 h1 {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   display: flex;
@@ -40,7 +39,6 @@ h1 {
   color: #000000;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

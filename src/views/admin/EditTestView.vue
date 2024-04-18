@@ -86,14 +86,14 @@
             />
         -->
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" class="pb-0">
         <EditHeuristicsTest
           v-if="test.testType === 'HEURISTICS'"
           slot="content"
           type="content"
           :object="object"
           :index="index"
-          @change="change = true"
+          @tabClicked="setIndex"
         />
 
         <!-- Unmoderated User tests -->
@@ -102,7 +102,6 @@
           slot="top"
           type="tabs"
           @tabClicked="setIndex"
-          @change="change = true"
         />
 
         <EditUserTest
@@ -111,7 +110,6 @@
           :object="object"
           :index="index"
           type="content"
-          @change="change = true"
           @valForm="validate"
         />
         <!-- Moderated User tests -->

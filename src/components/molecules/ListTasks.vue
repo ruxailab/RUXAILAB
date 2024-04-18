@@ -179,7 +179,6 @@ export default {
 
 <style scoped>
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

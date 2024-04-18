@@ -3,7 +3,9 @@
     <v-row justify="center">
       <v-col cols="10" class="pt-16">
         <v-row v-if="!searching" align="center">
-          <span class="titleText ml-3 mb-2">{{ $t('pages.createTest.templateTitle') }}</span>
+          <span class="titleText ml-3 mb-2">{{
+            $t('pages.createTest.templateTitle')
+          }}</span>
           <v-text-field
             v-model="search"
             full-width
@@ -115,7 +117,6 @@ export default {
   font-weight: 300;
 }
 .dialog-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 34px;

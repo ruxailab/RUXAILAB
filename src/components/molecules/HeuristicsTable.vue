@@ -1,5 +1,5 @@
 <template>
-  <v-row class="ma-0">
+  <v-row>
     <!--Dialog Edit-->
     <v-dialog v-model="dialogEdit" width="800" persistent>
       <v-card v-if="itemEdit">
@@ -49,7 +49,7 @@
     <v-dialog v-model="dialogQuestion" width="800" persistent>
       <v-card v-if="newQuestion">
         <v-card-title class="headline white--text" primary-title>
-          <v-row class="ma-0 mt-3">
+          <v-row class="ma-0 ">
             <v-col cols="10">
               <v-form ref="formQuestion" @submit.prevent="addQuestion()">
                 <v-text-field
@@ -136,7 +136,7 @@
 
     <!-- Main -->
     <v-col cols="12">
-      <v-card style="background: #f5f7ff; z-index: 10 !important" elevation="0">
+      <v-card style="background: #f5f7ff" elevation="0">
         <v-card-title class="subtitleView">
           {{ $t('HeuristicsTable.titles.currentHeuristics') }}
         </v-card-title>
@@ -144,20 +144,20 @@
         <v-row v-if="heuristics.length" class="ma-0 pa-0">
           <!--Heuristics List-->
           <v-col class="ma-0 pa-0" cols="12" sm="6" md="4">
-            <v-list dense height="560px" class="pt-0" outlined>
+            <v-list height="560px" class="pt-0 ma-0 pa-0"  dense>
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
                 @click="dialogHeuris = true"
               >
                 <v-list-item-icon>
-                  <v-icon style=" color=#fca326">
+                  <v-icon style=" color:#fca326">
                     mdi-plus
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                    style="color: #fca326"
+                    style="color:#fca326"
                     :class="{ disabledBtn: testAnswerDocLength > 0 }"
                   >
                     <strong>{{
@@ -186,7 +186,7 @@
                 </v-text-field>
               </v-subheader>
               <v-divider />
-              <v-list dense height="470px" class="list-scroll">
+              <v-list height="470px" class="list-scroll">
                 <v-list-item-group v-model="itemSelect" color="#fca326">
                   <template v-if="filteredHeuristics.length === 0">
                     <center class="mt-16" style="color: #a7a7a7">
@@ -209,15 +209,19 @@
                     >
                       <v-list-item-content
                         style="
-                          margin: 0px !important;
-                          padding: 0px !important;
+                          margin-bottom: 8px !important;
+                          margin-top: 8px !important;
+                          padding-top: 6px !important;
+                          padding-bottom: 6px !important;
                           justify-content: space-between;
                         "
                       >
                         <v-list-item-title
                           style="
-                            margin: 0px !important;
-                            padding: 0px !important;
+                            margin-top: 2px !important;
+                            margin-bottom: 2px !important;
+                            padding-top: 4px !important;
+                            padding-bottom: 4px !important;
                           "
                         >
                           {{ item.id }} - {{ item.title }}
@@ -253,6 +257,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -277,6 +282,7 @@
                           >
                             <v-icon
                               x-small
+                              color="orange"
                               style="
                                 margin: 0px !important;
                                 padding: 0px !important;
@@ -305,12 +311,9 @@
           <!--Questions List-->
           <v-col
             v-if="itemSelect != null"
-            class="ma-0 pa-0 questionsList"
-            cols="12"
-            sm="6"
-            md="4"
+            class="ma-0 pa-0" cols="12" sm="6" md="4"
           >
-            <v-list dense height="560px">
+            <v-list dense height="560px" class="ma-0 pa-0">
               <v-subheader>
                 <v-clamp autoresize :max-lines="2">
                   {{ heuristics[itemSelect].title }} -
@@ -327,10 +330,8 @@
                       <v-row justify="end" class="ma-0 pa-0">
                         <AddDescBtn
                           ref="descBtn"
-                          :question="
-                            heuristics[itemSelect].questions[questionSelect]
-                          "
-                          @change="emitChange"
+                          :question-index="questionSelect"
+                          :heuristic-index="itemSelect"
                         />
                       </v-row>
                     </v-col>
@@ -423,8 +424,8 @@
             sm="6"
             md="4"
           >
-            <v-card height="560px" elevation="0">
-              <v-subheader class="pa-2">
+            <v-card height="560px" elevation="0" class="pa-0 ma-0">
+              <v-subheader class="px-2 pt-0 ma-0 " style="font-size: 12px; height: 40px">
                 {{ heuristics[itemSelect].questions[questionSelect].title }}
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
@@ -470,30 +471,30 @@
                 </v-menu>
               </v-subheader>
               <v-divider />
+
               <v-row>
                 <v-col>
                   <v-data-table
                     height="350px"
                     :headers="headers"
                     :items="
-                      heuristics[itemSelect].questions[questionSelect].questions
+                      heuristics[itemSelect].questions[questionSelect].descriptions
                     "
                     :items-per-page="5"
                   >
                     <template v-slot:top>
-                      <v-row class>
-                        <v-col class="ml-2 mb-1 pa-4 pb-0">
-                          <p class="subtitleView">
+                      <v-row class="mx-2 my-0 pa-0" style="height: 40px">
+                        <v-col class="ma-0 pa-0 py-1">
+                          <p >
                             {{ $t('HeuristicsTable.titles.descriptions') }}
                           </p>
                         </v-col>
-                        <v-col class="mr-2 mb-1 pb-0 pa-4">
-                          <v-row justify="end" class="ma-0 pa-0">
+                        <v-col class="ma-0 pa-0">
+                          <v-row justify="end" class="ma-0 pa-0 pt-1">
                             <AddDescBtn
                               ref="descBtn"
-                              :question="
-                                heuristics[itemSelect].questions[questionSelect]
-                              "
+                              :question-index="questionSelect"
+                              :heuristic-index="itemSelect"
                             />
                           </v-row>
                         </v-col>
@@ -504,7 +505,8 @@
                     <template v-slot:item.actions="{ item }">
                       <!-- table actions -->
                       <v-row justify="end" class="pr-1">
-                        <v-btn
+                        <!-- TODO: Uncomment and fix reactivity -->
+                        <!-- <v-btn
                           icon
                           small
                           class="mr-2"
@@ -513,7 +515,7 @@
                           <v-icon small>
                             mdi-pencil
                           </v-icon>
-                        </v-btn>
+                        </v-btn> -->
                         <v-btn icon small @click="deleteItem(item)">
                           <v-icon small>
                             mdi-delete
@@ -554,7 +556,6 @@ import AddDescBtn from '@/components/atoms/AddDescBtn'
 
 import VClamp from 'vue-clamp'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -572,7 +573,6 @@ export default {
     heuristicForm: null,
     search: '',
     searchBar: false,
-    filteredHeuristics: [],
     headers: [
       {
         text: 'Title',
@@ -597,6 +597,31 @@ export default {
   computed: {
     csvHeuristics() {
       return this.$store.state.Tests.Test.testStructure
+    },
+    filteredHeuristics() {
+      if (this.search === '') {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      } else {
+        return this.heuristics.filter((item) => {
+          const searchLower = this.search.toLowerCase()
+          const idString = item.id.toString()
+
+          return (
+            item.title.toLowerCase().includes(searchLower) ||
+            idString.includes(searchLower) ||
+            idString === searchLower
+          )
+        })
+      }
     },
     heuristics() {
       return this.$store.state.Tests.Test.testStructure
@@ -630,9 +655,6 @@ export default {
     },
   },
   watch: {
-    search() {
-      this.updateFilteredHeuristics()
-    },
     dialogHeuris() {
       if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
         this.heuristicForm = {
@@ -657,7 +679,7 @@ export default {
           this.$refs.formHeuris.reset()
         }
       }
-      this.updateFilteredHeuristics()
+      // this.updateFilteredHeuristics()
     },
     itemSelect() {
       if (this.itemSelect !== null) this.questionSelect = null
@@ -676,16 +698,14 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        this.$toast.warning(
+          'No csv file selected. \nPlease select one before procede.',
+        )
         this.loader = null
       }
     },
   },
-  mounted() {
-    this.updateFilteredHeuristics()
-  },
   async created() {
-    await this.$store.dispatch('getTest', { id: this.$route.params.id })
     if (this.heuristics.length) {
       this.heuristicForm = {
         id: this.heuristics[this.heuristics.length - 1].id + 1,
@@ -718,10 +738,6 @@ export default {
     this.heuristicForm.total = this.heuristicForm.questions.length
   },
   methods: {
-    emitChange() {
-      this.$emit('change')
-      this.$forceUpdate()
-    },
     moveItemUp(index) {
       if (index > 0) {
         const itemToMove = this.filteredHeuristics[index]
@@ -758,40 +774,13 @@ export default {
         itemBelow.id = index
       }
     },
-    updateFilteredHeuristics() {
-      if (this.search === '') {
-        this.searchBar = false
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      } else {
-        this.searchBar = true
-        this.filteredHeuristics = this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
-
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      }
-    },
     deleteHeuristic(item) {
       const config = confirm(
         `${i18n.t('alerts.deleteHeuristic')} ${this.heuristics[item].title}?`,
       )
 
       if (config) {
-        this.heuristics.splice(item, 1)
+        this.$store.commit('removeHeuristic', item)
         this.itemSelect = null
         this.questionSelect = null
       }
@@ -815,7 +804,9 @@ export default {
           ].questions.length
         }
       } else {
-        Vue.$toast.warning('Sorry, but you can\'t delete all heuristics questions')
+        this.$toast.warning(
+          'Sorry, but you can\'t delete all heuristics questions',
+        )
       }
 
       this.menuQuestions = false
@@ -935,10 +926,9 @@ export default {
   color: #dbdde4;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
+  font-weight: 500;
+  font-size: 18.18px;
   align-items: flex-end;
   color: #000000;
   margin-bottom: 4px;
@@ -1044,10 +1034,10 @@ export default {
 
 @media (max-width: 600px) {
   .questionsList {
-    margin-top: 7px;
+    margin-top: 0px;
   }
   .questionsContent {
-    margin-top: 7px;
+    margin-top: 0px;
   }
 }
 </style>

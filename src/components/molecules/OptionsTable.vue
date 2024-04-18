@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-0 pa-0">
+  <div class="mt-0 pa-0 rounded-sm">
     <v-data-table
       height="420px"
       style="background: #f5f7ff;"
@@ -27,7 +27,7 @@
       <template v-slot:top>
         <v-row class="ma-0" align="center">
           <v-card-title class="subtitleView">
-            Current Options
+            Options
           </v-card-title>
           <v-row justify="end" class="ma-0 pa-0 mr-4">
             <AddOptionBtn
@@ -128,6 +128,7 @@ export default {
     },
     updateOptions() {
       if (this.editIndex == -1) {
+        this.option.timestamp = Date.now() // using the current timestamp as a unique identifier
         this.options.push(this.option)
       } else {
         Object.assign(this.options[this.editIndex], this.option)
@@ -141,10 +142,13 @@ export default {
       this.hasValue = true
     },
     deleteItem(item) {
-      this.options.splice(this.options.indexOf(item), 1)
+      const index = this.options.findIndex((option) => option.timestamp === item.timestamp)
+      if (index !== -1) {
+        this.options.splice(index, 1)
+      }
     },
     editItem(item) {
-      this.editIndex = this.options.indexOf(item)
+      this.editIndex = this.options.findIndex((option) => option.timestamp === item.timestamp)
       this.option.text = this.options[this.editIndex].text
       this.option.value = this.options[this.editIndex].value
 
@@ -161,9 +165,8 @@ export default {
 
 <style scoped>
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
-  font-weight: 200;
+  font-weight: 500;
   font-size: 18.1818px;
   align-items: flex-end;
   color: #000000;

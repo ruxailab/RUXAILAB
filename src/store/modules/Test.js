@@ -26,6 +26,7 @@ export default {
     consent: '',
     preTest: [],
     postTest: [],
+    scoresPercentage: [],
     finalMessage: '',
     remoteStream: null,
     localStream: null,
@@ -100,6 +101,9 @@ export default {
     SET_CONSENT(state, payload) {
       state.consent = payload
     },
+    SET_SCORES_PERCENTAGE(state, payload) {
+      state.scoresPercentage = payload
+    },
     SET_WELCOME(state, payload) {
       state.welcomeMessage = payload
     },
@@ -135,6 +139,22 @@ export default {
       state.landingPage = ''
       state.participantCamera = ''
       state.finalMessage = ''
+    },
+    removeHeuristic(state, payload) {
+      state.Test.testStructure.splice(payload, 1)
+    },
+    setupHeuristicQuestionDescription(state, payload) {
+      // If empty
+      if (state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions == null) state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions = []
+
+      // If is editing
+      if (payload.editIndex != null) {
+        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = Object.assign({}, payload.description)
+      }
+      // New Description
+      else {
+        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions.push(payload.description)
+      }
     },
   },
   actions: {
@@ -339,6 +359,13 @@ export default {
     setConsent({ commit }, payload) {
       try {
         commit('SET_CONSENT', payload)
+      } catch {
+        commit('setError', true)
+      }
+    },
+    setScoresPercentage({ commit }, payload) {
+      try {
+        commit('SET_SCORES_PERCENTAGE', payload)
       } catch {
         commit('setError', true)
       }
