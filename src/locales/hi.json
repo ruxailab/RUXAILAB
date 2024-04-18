@@ -155,6 +155,14 @@
       "hideTextArea": "टेक्स्ट एरिया छुपाएं"
     }
   },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "[TODO]"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
   "HeuristicsWeightsTable": {
     "titles": {
       "weights": "[TODO]",
