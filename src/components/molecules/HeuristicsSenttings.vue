@@ -1,7 +1,11 @@
 <template>
-  <div id="FileUpload" style="background-color:#F5F7FF">
+  <div id="FileUpload" class="rounded" style="background-color:#f5f7ff">
+    <v-card-title class="subtitleView">
+      Settings
+    </v-card-title>
+    <v-divider class="mb-4" />
     <v-col justify="center">
-      <v-row class="px-6 pt-2">
+      <v-row class="px-6 ">
         <v-btn
           depressed
           dark
@@ -12,9 +16,9 @@
           Donwload CSV template
         </v-btn>
       </v-row>
-      <v-divider class="ma-4" />
+      <v-divider class="ma-8" />
       <v-row>
-        <v-row class="px-8" justify="center" align="center">
+        <v-row class="px-8 mb-2" justify="center" align="center">
           <v-file-input
             ref="myFile"
             v-model="csvFile"
@@ -45,7 +49,6 @@
 
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
-import Vue from 'vue'
 
 export default {
   data() {
@@ -91,7 +94,7 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        Vue.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        this.$toast.warning('No csv file selected. \nPlease select one before procede.')
         this.loader = null
       }
     },
@@ -193,5 +196,15 @@ export default {
 <style scoped>
 .csv-box {
   background-color: white;
+}
+.subtitleView {
+  font-family: 'Poppins', Helvetica;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18.1818px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
 }
 </style>

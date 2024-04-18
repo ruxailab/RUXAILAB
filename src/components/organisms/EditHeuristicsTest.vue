@@ -8,18 +8,18 @@
         Options
       </v-tab>
       <v-tab @click="tabClicked(2)">
-        Import .csv
+        Weights
       </v-tab>
       <v-tab @click="tabClicked(3)">
-        Weights
+        Settings
       </v-tab>
     </v-tabs>
 
     <div>
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="emitChange()" />
-      <OptionsTable v-if="index == 1" :options="object.options" @change="emitChange()" />
-      <ImportCsvTable v-if="index == 2" :options="object.importCsv" @change="emitChange()" />
-      <WeightTable v-if="index == 3" :options="object.weight" @change="emitChange()" />
+      <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
+      <OptionsTable v-if="index == 1" :options="object.options" />
+      <WeightTable v-if="index == 2" :options="object.weight" />
+      <Settings v-if="index == 3" :options="object.settings" />
     </div>
   </div>
 </template>
@@ -27,14 +27,14 @@
 <script>
 import Heuristic from '@/components/molecules/HeuristicsTable'
 import OptionsTable from '@/components/molecules/OptionsTable'
-import ImportCsvTable from '@/components/molecules/ImportCsvTable'
+import Settings from '@/components/molecules/HeuristicsSenttings.vue'
 import WeightTable from '@/components/molecules/WeightTable.vue'
 
 export default {
   components: {
     Heuristic,
     OptionsTable,
-    ImportCsvTable,
+    Settings,
     WeightTable,
   },
   props: {
@@ -47,10 +47,11 @@ export default {
       type: Object,
       default: () => { },
     },
+    index: {
+      type: Number,
+      default: 0,
+    },
   },
-  data: () => ({
-    index: 0,
-  }),
   computed: {
     currentTest() {
       return this.$store.state.Tests.Test.testStructure
@@ -58,12 +59,8 @@ export default {
   },
   methods: {
     tabClicked(index) {
-      this.index = index
+      this.$emit('tabClicked', index)
     },
-    emitChange() {
-      this.$emit('change')
-    },
-
   },
 }
 </script>
