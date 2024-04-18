@@ -1,5 +1,5 @@
 <template>
-  <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-2">
+  <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-1 mb-10">
     <v-card-title class="subtitleView">
       Weights
     </v-card-title>
