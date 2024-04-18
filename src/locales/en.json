@@ -167,6 +167,22 @@
       "saveWeights": "save weight values"
     }
   },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "Settings"
+    },
+    "messages": {
+      "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+    },
+    "placeHolders": {
+      "importCsv": "Import your CSV testfile here."
+    },
+    "actions": {
+      "downloadCsvTemplate": "Download CSV template",
+      "update": "Update"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Consent Form",
