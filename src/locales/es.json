@@ -155,6 +155,18 @@
       "hideTextArea": "Ocultar área de texto"
     }
   },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Pesos",
+      "heuristics": "Heurísticas"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Necesita al menos 2 heurísticas para poder colocar los pesos."
+    },
+    "actions": {
+      "saveWeights": "guardar valores de peso"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Formulario de Consentimiento",
