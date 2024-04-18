@@ -167,6 +167,22 @@
       "saveWeights": "guardar valores de peso"
     }
   },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "[TODO]"
+    },
+    "messages": {
+      "acceptCsv": "[TODO]",
+      "noCsvFileSelected": "[TODO]"
+    },
+    "placeHolders": {
+      "importCsv": "[TODO]"
+    },
+    "actions": {
+      "downloadCsvTemplate": "[TODO]",
+      "update": "[TODO]"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Formulario de Consentimiento",
