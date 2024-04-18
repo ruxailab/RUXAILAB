@@ -155,6 +155,18 @@
       "positiveValue": "O valor precisa ser um número positivo"
     }
   },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "[TODO]",
+      "heuristics": "[TODO]"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "[TODO]"
+    },
+    "actions": {
+      "saveWeights": "[TODO]"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Formulário de Consentimento",
