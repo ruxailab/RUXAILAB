@@ -155,6 +155,18 @@
       "hideTextArea": "Hide text area"
     }
   },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Weights",
+      "heuristics": "Heuristics"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights."
+    },
+    "actions": {
+      "saveWeights": "save weight values"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Consent Form",
@@ -181,17 +193,17 @@
       "createNewPost": "Create a new post question"
     }
   },
-   "UserTestView": {
+  "UserTestView": {
     "titles": {
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest":"Post-Test"
+      "postTest": "Post-Test"
     },
     "buttons": {
       "done": "Done"
     }
-   },
+  },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
