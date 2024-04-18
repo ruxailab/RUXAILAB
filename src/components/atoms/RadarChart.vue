@@ -6,15 +6,15 @@ export default {
   props: {
     labels: {
       type: Array,
-      required:true,
+      required: true,
       default: function() {
         return []
       },
     },
     data: {
-      type:Array,
-      required:true,
-       default: function() {
+      type: Array,
+      required: true,
+      default: function() {
         return []
       },
     },
@@ -30,10 +30,10 @@ export default {
         labels: this.labels,
         datasets: [
           {
-            label: 'Usability Percentage',
-            backgroundColor: 'rgba(39, 71, 196,0.2)',
-            borderColor: 'rgba(39, 71, 196,1)',
-            pointBackgroundColor: 'rgba(39, 71, 196,1)',
+            label: 'Usability Percentage ',
+            backgroundColor: 'rgba(249, 152, 38,0.24)',
+            borderColor: 'rgba(255, 81, 47,1)',
+            pointBackgroundColor: 'rgba(255, 81, 47,1)',
             data: this.data,
           },
         ],

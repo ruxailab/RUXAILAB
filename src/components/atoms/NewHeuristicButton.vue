@@ -77,7 +77,6 @@
 
 <script>
 import i18n from '@/i18n'
-import Vue from 'vue'
 export default {
   props: {
     heuris: {
@@ -109,7 +108,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         if (this.heuris.questions.length == 0) {
-          Vue.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
+          this.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
         } else {
           this.$emit('dialog', false)
           this.$emit('addHeuris')
@@ -127,7 +126,6 @@ export default {
 
 <style scoped>
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
