@@ -512,6 +512,7 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
+      this.$forceUpdate()
     },
     async user() {
       if (this.user) {
@@ -547,16 +548,14 @@ export default {
     this.calculateProgress()
   },
   beforeRouteLeave(to, from, next) {
-    if (this.test.userTestType === 'moderated') {
+    if (this.test && this.test.userTestType === 'moderated') {
       let isSaved = this.$refs.ModeratedTestView.isSaved()
       if (!isSaved) {
         if (!window.confirm('Leave without saving?')) {
           return
-        }
-        next()
+        } next()
       } else next()
-      next()
-    }
+    } next()
   },
   methods: {
     startTest() {
