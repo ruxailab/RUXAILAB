@@ -224,7 +224,8 @@
                             padding-bottom: 4px !important;
                           "
                         >
-                          {{ item.id }} - {{ item.title }}
+                           {{ item.id + 1 }}
+                          - {{ item.title }}
                         </v-list-item-title>
                       </v-list-item-content>
                       <div
