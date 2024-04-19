@@ -1,0 +1,32 @@
+name: Generate Reports
+
+on:
+  push:
+    branches:
+      - develop
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+
+jobs:
+  generate-reports:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10.x'
+
+    - name: Install dependencies
+      run: |
+        pip install matplotlib pandas requests PyGithub
+
+    - name: Run report generation script
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+        USER: ${{ secrets.USER }}
+        PROJECT: ${{ secrets.PROJECT }}
+      run: python scripts.py
