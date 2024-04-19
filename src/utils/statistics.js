@@ -46,7 +46,7 @@ function calcFinalResult(array) {
   })
 
   const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
-  return ((result * 100) / perfectResult).toFixed(1)
+  return ((result * 100) / perfectResult).toFixed(2)
 }
 
 function answers() {
@@ -139,19 +139,19 @@ function finalResult() {
       return total + value.result / evaluatorStatistics.items.length
     }, 0)
 
-    testData.average = `${Math.fround(res).toFixed(1)}%`
+    testData.average = `${Math.fround(res).toFixed(2)}%`
 
     testData.max = `${Math.max(
       ...evaluatorStatistics.items.map((item) => item.result),
-    ).toFixed(1)}%`
+    ).toFixed(2)}%`
 
     testData.min = `${Math.min(
       ...evaluatorStatistics.items.map((item) => item.result),
-    ).toFixed(1)}%`
+    ).toFixed(2)}%`
 
     testData.sd = `${standardDeviation(
       evaluatorStatistics.items.map((item) => item.result),
-    ).toFixed(1)}%`
+    ).toFixed(2)}%`
   }
   return testData
 }
