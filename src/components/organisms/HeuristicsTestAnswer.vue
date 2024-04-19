@@ -21,16 +21,16 @@
           color="#FCA326"
           class="ml-4"
         >
-          <v-tab @click="tab = 0">
+          <v-tab @click=";(tab = 0), (ind = 0)">
             Statistics
           </v-tab>
-          <v-tab @click="tab = 1">
+          <v-tab @click=";(tab = 1), (ind = 0)">
             Evaluators
           </v-tab>
-          <v-tab @click="tab = 2">
+          <v-tab @click=";(tab = 2), (ind = 0)">
             Heuristics
           </v-tab>
-          <v-tab @click="tab = 3">
+          <v-tab @click=";(tab = 3), (ind = 0)">
             Analytics
           </v-tab>
         </v-tabs>
