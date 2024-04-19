@@ -190,15 +190,7 @@
 
           <!-- Tab 3 - Heuristics-->
           <v-card v-if="tab == 2" rounded="xl" flat class="mb-6 py-2" style="background: #f5f7ff">
-            <v-card
-              v-if="evaluatorStatistics.items.length <= 1"
-              class="mx-auto mt-10 mb-10 py-6 if-card"
-              align="center"
-              width="970px"
-            >
-              This page needs more than 1 answer to be generated.
-            </v-card>
-            <div v-else>
+            <div>
               <v-card-title class="subtitleView">
                 Heuristics Data
               </v-card-title>
