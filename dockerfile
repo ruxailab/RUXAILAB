@@ -1,5 +1,4 @@
-
-FROM node:16 AS build-stage
+FROM node:lts AS build-stage
 
 WORKDIR /app
 
@@ -9,16 +8,18 @@ RUN npm install
 
 COPY . .
 
+# Run build as per the script defined in package.json
 RUN npm run build
 
-# Serve the app using Node.js
-FROM node:16 AS production-stage
+# Production stage using a minimal Node.js image
+FROM node:alpine AS production-stage
 
 # Install 'serve' to serve the application
 RUN npm install -g serve
 
 WORKDIR /app
 
+# Copy the built application from the build stage
 COPY --from=build-stage /app/dist /app
 
 # Expose the port that 'serve' will run on
