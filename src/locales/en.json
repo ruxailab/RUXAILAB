@@ -191,6 +191,44 @@
       "update": "Update"
     }
   },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "Answers",
+      "statistics": "Statistics",
+      "evaluators": "Evaluators",
+      "heuristics": "Heuristics",
+      "analytics": "Analytics"
+    },
+    "statistics": {
+      "usabilityPercentage": "Usability Percentage",
+      "max": "Max",
+      "min": "Min",
+      "std": "Standard deviation"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "Table",
+        "graphic": "Graphic"
+      },
+      "messages": {
+        "graphForMoreThan3": "The graphic can only be generated with 3 or more evaluators,please collect more data from your research to proceed."
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "Heuristics Data",
+        "answersByEvaluator": "Answers by Evaluator",
+        "answersByHeuristics": "Answers by Heuristics",
+        "graphic": "Graphic",
+        "weights": "Weights"
+      },
+      "messages": {
+        "needMoreThan1Answer": "This page needs more than 1 answer to be generated.",
+        "runWeightFunction": "This page needs weight function (python) to be running, can be in emulators or in deploy mode, and the weights to be full marked on your creating test page."
+      }
+    },
+    "analytics": {}
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Consent Form",
