@@ -191,6 +191,14 @@
       "update": "[TODO]"
     }
   },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "[TODO]",
+      "options": "[TODO]",
+      "weights": "[TODO]",
+      "settings": "[TODO]"
+    }
+  },
   "HeuristicsTestAnswer": {
     "titles": {
       "answers": "[TODO]",
