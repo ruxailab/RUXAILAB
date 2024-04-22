@@ -29,7 +29,15 @@
     "save": "Save",
     "editDelete": "Edit/Delete",
     "type": "Type",
-    "noNotifications": "You don't have notifications yet"
+    "noNotifications": "You don't have notifications yet",
+    "timeAgo": {
+      "years": "{count} year{count !== 1 ? 's' : ''} ago",
+      "months": "{count} month{count !== 1 ? 's' : ''} ago",
+      "days": "{count} day{count !== 1 ? 's' : ''} ago",
+      "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
+      "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
+      "now": "Now"
+    }
   },
   "titles": {
     "manager": "Manager",
@@ -237,6 +245,30 @@
     },
     "analytics": {}
   },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "Reports",
+      "last_updated": "Last Updated"
+    },
+    "headers": {
+      "evaluator": "Evaluator",
+      "last_update": "Last Update",
+      "progress": "Progress",
+      "status": "Status",
+      "more": "More"
+    },
+    "messages": {
+      "confirm_delete_report": "Are you sure you want to delete this report?",
+      "reports_loading": "Loading Reports",
+      "remove_report": "Remove Report",
+      "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
+      "report_deleted": "Report successfully deleted"
+    },
+    "status": {
+      "submitted": "submitted",
+      "in_progress": "in progress"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Consent Form",
@@ -285,7 +317,7 @@
       "learnMore": "Learn More",
       "docTitle": "Read documentation",
       "docSubtitle": "Click to access the documentation on how to use the page ",
-      "discTitle": "Join the comunity!",
+      "discTitle": "Join the community!",
       "discSubtitle": "You will find support on our discord server."
     },
     "finalReport": {
