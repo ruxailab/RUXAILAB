@@ -32,8 +32,8 @@
                     template.header.templateVersion == '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                        template.header.updateDate,
-                      )}`
+                          template.header.updateDate,
+                        )}`
                   }}
                   ({{
                     $t('pages.listTests.version') +
@@ -185,7 +185,7 @@ export default {
 
   methods: {
     async deleteTemplate() {
-      if (!confirm($t('alerts.deleteTest'))) return
+      if (!confirm('are you sure, you to delete the template?')) return
 
       await this.$store.dispatch('deleteTemplate', this.template.id)
       this.reset()
