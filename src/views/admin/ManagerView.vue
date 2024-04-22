@@ -394,16 +394,20 @@ export default {
         // Check if the user is a collaborator or owner
         const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
         if (isTestOwner) return 0
+
         const answers = []
         const answersEntries = Object.entries(this.user.myAnswers)
         answersEntries.forEach((a) => {
           answers.push(a[1])
         })
 
-        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
-        if (isCooperator) {
-          return isCooperator.accessLevel
+        const coopsInfo = this.test.cooperators.find(
+          (coops) => coops.userDocId === this.user.id,
+        )
+        if (coopsInfo) {
+          return coopsInfo.accessLevel
         }
+        u
       }
 
       return 1
