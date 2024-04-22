@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <ShowInfo style="padding: 0!important;" title="Final Report" />
+    <ShowInfo
+      style="padding: 0!important;"
+      :title="$t('titles.drawer.Final Report')"
+    />
 
     <v-stepper
       v-model="step"
@@ -23,11 +26,7 @@
 
             <div class="row">
               <div class="col">
-                <div
-                  id="myTextarea"
-                  contenteditable
-                  class="form-control"
-                />
+                <div id="myTextarea" contenteditable class="form-control" />
               </div>
             </div>
           </div>
