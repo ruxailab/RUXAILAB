@@ -191,6 +191,44 @@
       "update": "[TODO]"
     }
   },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "[TODO]",
+      "statistics": "[TODO]",
+      "evaluators": "[TODO]",
+      "heuristics": "[TODO]",
+      "analytics": "[TODO]"
+    },
+    "statistics": {
+      "usabilityPercentage": "[TODO]",
+      "max": "[TODO]",
+      "min": "[TODO]",
+      "std": "[TODO]"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "[TODO]",
+        "graphic": "[TODO]"
+      },
+      "messages": {
+        "graphForMoreThan3": "[TODO]"
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "[TODO]",
+        "answersByEvaluator": "[TODO]",
+        "answersByHeuristics": "[TODO]",
+        "graphic": "[TODO]",
+        "weights": "[TODO]"
+      },
+      "messages": {
+        "needMoreThan1Answer": "[TODO]",
+        "runWeightFunction": "[TODO]"
+      }
+    },
+    "analytics": {}
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Formulário de Consentimento",
