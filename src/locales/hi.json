@@ -269,6 +269,40 @@
       "in_progress": "[TODO]"
     }
   },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "[TODO]"
+    },
+    "headers": {
+      "email": "[TODO]",
+      "role": "[TODO]",
+      "invited": "[TODO]",
+      "accepted": "[TODO]",
+      "more": "[TODO]"
+    },
+    "actions": {
+      "send_invitation": "[TODO]",
+      "send_message": "[TODO]",
+      "reinvite": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "cancel": "[TODO]",
+      "send": "[TODO]",
+      "select_cooperator": "[TODO]"
+    },
+    "roles": {
+      "administrator": "[TODO]",
+      "evaluator": "[TODO]",
+      "guest": "[TODO]"
+    },
+    "messages": {
+      "cooperators_loading": "[TODO]",
+      "no_users": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "change_role": "[TODO]?"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "सहमति फॉर्म",
