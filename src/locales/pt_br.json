@@ -29,7 +29,15 @@
     "save": "Salvar",
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
-    "noNotifications": "Você não tem notificações ainda"
+    "noNotifications": "Você não tem notificações ainda",
+    "timeAgo": {
+      "years": "[TODO] {count}",
+      "months": "[TODO] {count}",
+      "days": "[TODO] {count}",
+      "hours": "[TODO] {count}",
+      "minutes": "[TODO] {count}",
+      "now": "[TODO]"
+    }
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -236,6 +244,30 @@
       }
     },
     "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "[TODO]",
+      "last_updated": "[TODO]"
+    },
+    "headers": {
+      "evaluator": "[TODO]",
+      "last_update": "[TODO]",
+      "progress": "[TODO]",
+      "status": "[TODO]",
+      "more": "[TODO]"
+    },
+    "messages": {
+      "confirm_delete_report": "[TODO]",
+      "reports_loading": "[TODO]",
+      "remove_report": "[TODO]",
+      "sure_to_delete": "[TODO] {user}",
+      "report_deleted": "[TODO]"
+    },
+    "status": {
+      "submitted": "[TODO]",
+      "in_progress": "[TODO]"
+    }
   },
   "UserTestTable": {
     "titles": {
