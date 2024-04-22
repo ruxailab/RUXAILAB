@@ -191,6 +191,14 @@
       "update": "Update"
     }
   },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "Heuristics",
+      "options": "Options",
+      "weights": "Weights",
+      "settings": "Settings"
+    }
+  },
   "HeuristicsTestAnswer": {
     "titles": {
       "answers": "Answers",
