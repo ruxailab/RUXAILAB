@@ -29,7 +29,15 @@
     "save": "सहेजें",
     "editDelete": "संपादित/हटाएं",
     "type": "प्रकार",
-    "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं"
+    "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं",
+    "timeAgo": {
+      "years": "[TODO] {count}",
+      "months": "[TODO] {count}",
+      "days": "[TODO] {count}",
+      "hours": "[TODO] {count}",
+      "minutes": "[TODO] {count}",
+      "now": "[TODO]"
+    }
   },
   "titles": {
     "manager": "प्रबंधक",
@@ -236,6 +244,30 @@
       }
     },
     "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "[TODO]",
+      "last_updated": "[TODO]"
+    },
+    "headers": {
+      "evaluator": "[TODO]",
+      "last_update": "[TODO]",
+      "progress": "[TODO]",
+      "status": "[TODO]",
+      "more": "[TODO]"
+    },
+    "messages": {
+      "confirm_delete_report": "[TODO]",
+      "reports_loading": "[TODO]",
+      "remove_report": "[TODO]",
+      "sure_to_delete": "[TODO] {user}",
+      "report_deleted": "[TODO]"
+    },
+    "status": {
+      "submitted": "[TODO]",
+      "in_progress": "[TODO]"
+    }
   },
   "UserTestTable": {
     "titles": {
