@@ -269,6 +269,40 @@
       "in_progress": "in progress"
     }
   },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "Cooperators"
+    },
+    "headers": {
+      "email": "Email",
+      "role": "Role",
+      "invited": "Invited",
+      "accepted": "Accepted",
+      "more": "More"
+    },
+    "actions": {
+      "send_invitation": "Send Invitation",
+      "send_message": "Send a message",
+      "reinvite": "Re-invite",
+      "remove_cooperator": "Remove cooperator",
+      "cancel_invitation": "Cancel invitation",
+      "cancel": "Cancel",
+      "send": "Send",
+      "select_cooperator": "Select cooperator"
+    },
+    "roles": {
+      "administrator": "Administrator",
+      "evaluator": "Evaluator",
+      "guest": "Guest"
+    },
+    "messages": {
+      "cooperators_loading": "Loading Cooperators",
+      "no_users": "There are no users registered with that email, press enter to select anyways.",
+      "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Consent Form",
