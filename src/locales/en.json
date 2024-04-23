@@ -141,7 +141,7 @@
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
-      "changeWeights": "Be aware that by changing the order of the heuristics, the weights do not change automatically, you must change them manually."
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
     },
     "validation": {
       "nameRequired": "Name is mandatory",
