@@ -24,7 +24,6 @@ export default {
       return finalResult()
     },
     evaluatorStatistics() {
-      // console.log(this.sortedEvaluatorStatistics)
       return this.$store.state.Answer.evaluatorStatistics
     },
     sortedEvaluatorStatistics() {

@@ -43,7 +43,6 @@ export default class UserController extends Controller {
 
   async markNotificationAsRead(payload) {
     const userToUpdate = new User(payload.user)
-    console.log(userToUpdate)
     const index = userToUpdate.notifications.findIndex(
       (n) => n.createdDate === payload.notification.createdDate,
     )
@@ -80,9 +79,10 @@ export default class UserController extends Controller {
             userData.notifications = userData.notifications.filter(
               (notification) => notification.testId !== testId,
             )
-            console.log('depois do filtro: ', userData.notifications)
             // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, { notifications: userData.notifications })
+            await super.update('users', userId, {
+              notifications: userData.notifications,
+            })
           }
         } else {
           console.log(`User document with ID ${userDocID} not found.`)
@@ -114,7 +114,6 @@ export default class UserController extends Controller {
         delete userData.myAnswers[testIdToRemove]
       }
 
-
       await super.update('users', userId, userData)
 
       console.log(`Test ${testIdToRemove} removed from user ${userId}'s data.`)
@@ -123,6 +122,4 @@ export default class UserController extends Controller {
       throw error
     }
   }
-
-
 }
