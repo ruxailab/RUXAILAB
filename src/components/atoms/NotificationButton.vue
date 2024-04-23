@@ -102,12 +102,12 @@ export default {
   methods: {
     async goToNotificationRedirect(notification) {
       // Mark notification as read
-      await this.$store.dispatch('acceptInvitation', {
+      await this.$store.dispatch('markNotificationAsRead', {
         notification: notification,
         user: this.user,
       })
       // Redirect to notification url
-      window.open(notification.redirectsTo)
+      this.$router.go(`${notification.redirectsTo}`)
     },
     checkIfHasNewNotifications() {
       const newNot = this.user.notifications.filter((n) => n.read === false)
