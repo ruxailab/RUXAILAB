@@ -264,7 +264,6 @@ export default {
     },
   },
   created() {
-    console.log(this.test)
     let i = 0
     this.testStructure.userTasks.forEach((task) => {
       this.testTasks[i] = task.taskName
@@ -400,7 +399,6 @@ export default {
 
       this.taskAnswers.forEach((answer) => {
         if (answer.lastUpdate > this.taskAnswers[0].lastUpdate) {
-          console.log('entrou no for')
           latestResponse = answer.userDocId
           lastUpdate = answer.lastUpdate
         }

@@ -219,7 +219,6 @@ export default {
           await updateDoc(answerDocRef, updateObject)
         }
       } catch (e) {
-        console.log(e)
         this.$store.commit('setError', {
           errorCode: `RemoveReportError`,
           message: e,

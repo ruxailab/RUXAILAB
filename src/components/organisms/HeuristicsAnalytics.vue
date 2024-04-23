@@ -23,7 +23,6 @@
                   class="list-scroll"
                 >
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
-                    
                     <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
                       <v-list-item-content>
                         <v-list-item-title>{{ item.id }}</v-list-item-title>
@@ -339,9 +338,6 @@ export default {
       let index = 0
 
       for (const uid in this.answers) {
-
-        //console.log('answers  ', this.answers)
-
         if (!this.answers[uid]) {
           continue
         }
@@ -351,8 +347,6 @@ export default {
         let SelectHeuristic = this.resultHeuristics.find(
           (h) => h.id === `H${index}`,
         )
-        //console.log('heuristic  ' , heuristic)
-        //console.log('resultHeuristics  ', this.resultHeuristics)
 
         if (!SelectHeuristic) {
           this.resultHeuristics.push({
@@ -364,9 +358,6 @@ export default {
             this.resultHeuristics.length - 1
           ]
         }
-
-        //console.log('SelectHeuristic  ',SelectHeuristic)
-        //console.log('heuristicQuestions', heuristic.heuristicQuestions)
 
         heuristic.heuristicQuestions.forEach((hQuestion) => {
           hQuestion.heuristicQuestions.forEach((question, qIndex) => {
@@ -396,9 +387,7 @@ export default {
         })
 
         index++
-        // console.log(uid)
       }
-
     },
     goToCoops() {
       this.$emit('goToCoops')
