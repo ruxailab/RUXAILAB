@@ -50,11 +50,11 @@
           <div>
             <DocumentSelection />
 
-            <div class="ml-4">
-              <v-btn color="blue-grey darken-3" dark @click="step--">
+            <!-- <div class="ml-4"> -->
+              <v-btn class="teste2" color="blue-grey darken-3" dark @click="step--">
                 {{ $t('buttons.previous') }}
               </v-btn>
-            </div>
+            <!-- </div> -->
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -117,8 +117,8 @@ export default {
 }
 .teste2 {
   position: fixed;
-  right: 8%;
-  bottom: 3%;
+  left: 13%;
+  bottom: 4.2%;
 }
 .cloud-button {
   padding: 10px;
