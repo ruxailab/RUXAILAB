@@ -13,8 +13,6 @@
             <v-col class="ma-0 pa-0" cols="2">
               <v-list outlined rounded dense height="560px">
                 <v-subheader>Heuristics</v-subheader>
-                {{ resultHeuristics.length }}
-                {{ heuristicsLength }}
                 <v-divider />
                 <v-list
                   color="grey-lighten-3"
