@@ -34,7 +34,13 @@
                 <div id="myTextarea" contenteditable class="form-control" />
               </div>
             </div>
-            <v-btn class="mt-4" align="right" color="orange" dark @click="step++, update()">
+            <v-btn
+              class="mt-4"
+              align="right"
+              color="orange"
+              dark
+              @click="step++, update()"
+            >
               {{ $t('buttons.next') }}
             </v-btn>
           </div>
@@ -46,10 +52,9 @@
 
             <div class="ml-4">
               <v-btn color="blue-grey darken-3" dark @click="step--">
-              {{ $t('buttons.previous') }}
-            </v-btn>
+                {{ $t('buttons.previous') }}
+              </v-btn>
             </div>
-
           </div>
         </v-stepper-content>
       </v-stepper-items>
