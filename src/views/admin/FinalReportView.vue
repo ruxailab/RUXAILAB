@@ -1,21 +1,29 @@
 <template>
   <v-container>
-    <ShowInfo style="padding: 0!important;" title="Final Report" />
+    <ShowInfo
+      class="ma-0 pt-0"
+      style="padding: 0!important;"
+      title="Final Report"
+    />
 
     <v-stepper
       v-model="step"
-      rounded="xl"
-      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
-      class="final-report-box"
+      style="background-color:#F5F7FF"
+      class="final-report-box rounded pt-0 mb-4"
+      elevation="0"
     >
-      <v-stepper-header style="background-color: orange;">
-        <v-stepper-step :complete="step > 1" step="1" />
+      <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
+        <v-stepper-step :complete="step > 1" step="1" color="orange">
+          Conclusion
+        </v-stepper-step>
         <v-divider />
-        <v-stepper-step :complete="step > 2" step="2" />
+        <v-stepper-step :complete="step > 2" step="2" color="orange">
+          Elements
+        </v-stepper-step>
       </v-stepper-header>
 
-      <v-stepper-items style="background-color:#F5F5F5">
-        <v-stepper-content step="1" class="align-mid">
+      <v-stepper-items style="background-color:#F5F7FF" class="mt-0">
+        <v-stepper-content step="1" class="align-mid pt-2">
           <div class="container">
             <div class="row">
               <TextControls />
@@ -23,26 +31,25 @@
 
             <div class="row">
               <div class="col">
-                <div
-                  id="myTextarea"
-                  contenteditable
-                  class="form-control"
-                />
+                <div id="myTextarea" contenteditable class="form-control" />
               </div>
             </div>
+            <v-btn class="mt-4" align="right" color="orange" dark @click="step++, update()">
+              {{ $t('buttons.next') }}
+            </v-btn>
           </div>
-          <v-btn color="primary" class="teste" @click="step++, update()">
-            {{ $t('buttons.next') }}
-          </v-btn>
         </v-stepper-content>
 
         <v-stepper-content step="2">
           <div>
             <DocumentSelection />
 
-            <v-btn color="secondary" class="teste2" @click="step--">
+            <div class="ml-4">
+              <v-btn color="blue-grey darken-3" dark @click="step--">
               {{ $t('buttons.previous') }}
             </v-btn>
+            </div>
+
           </div>
         </v-stepper-content>
       </v-stepper-items>
