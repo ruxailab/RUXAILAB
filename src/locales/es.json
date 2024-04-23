@@ -141,7 +141,7 @@
       "youMustHave": "Debes haber escrito algo mal...",
       "noHeuristicsDeleteAll": "Lo siento, pero no puedes eliminar todas las preguntas de heurísticas",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
-      "changeWeights": "Tenga en cuenta que al cambiar el orden de las heurísticas, los pesos no cambian automáticamente, debe cambiarlos manualmente."
+      "changeWeights": "Tenga en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debe cambiarlos manualmente."
     },
     "validation": {
       "nameRequired": "El nombre es obligatorio",
