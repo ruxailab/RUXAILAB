@@ -102,7 +102,7 @@ export default {
   methods: {
     async goToNotificationRedirect(notification) {
       // Mark notification as read
-      await this.$store.dispatch('markNotificationAsRead', {
+      await this.$store.dispatch('acceptInvitation', {
         notification: notification,
         user: this.user,
       })
