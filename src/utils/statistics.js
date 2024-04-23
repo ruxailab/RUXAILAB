@@ -127,7 +127,6 @@ function statistics() {
       ev.result = calcFinalResult(ev.heuristics)
     })
 
-    console.log(resultEvaluator)
     return resultEvaluator
   }
 }

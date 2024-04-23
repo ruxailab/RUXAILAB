@@ -79,7 +79,6 @@ export default class UserController extends Controller {
             userData.notifications = userData.notifications.filter(
               (notification) => notification.testId !== testId,
             )
-            console.log('depois do filtro: ', userData.notifications)
             // Atualizar o documento do usuário com as notificações filtradas
             await super.update('users', userId, {
               notifications: userData.notifications,

@@ -411,10 +411,10 @@ export default {
         if (this.test.isPublic) {
           return 1
         } else {
-          return 3
+          return 1
         }
       }
-      return 1 
+      return 1
     },
   },
 
