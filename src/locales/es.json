@@ -213,6 +213,7 @@
       "to": "a",
       "createHeuristics": "Por favor cree heurísticas para poder seleccionarlas aquí.",
       "pdf": "Generar PDF",
+      "elements": "Elementos",
       "options": {
         "options": "Opciones de prueba",
         "comments": "Respuestas comentarios",
