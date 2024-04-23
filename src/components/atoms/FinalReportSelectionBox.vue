@@ -1,5 +1,5 @@
 <template>
-  <div class="selection-box mt-0 pt-0">
+  <div class="selection-box mt-0 py-0">
     <h2>{{ $t('pages.finalReport.select') }}</h2>
     <div class="flex-container pt-2">
       <div
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <div class="mt-4" align="right">
+    <div class="mt-12" align="right">
       <v-btn
         :disabled="isLoading"
         class=""
