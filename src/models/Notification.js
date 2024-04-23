@@ -5,7 +5,15 @@
  */
 
 export default class Notification {
-  constructor({ title, description, redirectsTo, author, read, testId } = {}) {
+  constructor({
+    title,
+    description,
+    redirectsTo,
+    author,
+    read,
+    testId,
+    accessLevel,
+  } = {}) {
     this.title = title
     this.description = description
     this.redirectsTo = redirectsTo
@@ -13,6 +21,7 @@ export default class Notification {
     this.author = author
     this.read = read
     this.testId = testId
+    this.accessLevel = accessLevel ?? null
   }
   static toNotification(data) {
     return new Notification(data)
@@ -27,6 +36,7 @@ export default class Notification {
       author: this.author,
       read: this.read,
       testId: this.testId,
+      accessLevel: this.accessLevel,
     }
   }
 }
