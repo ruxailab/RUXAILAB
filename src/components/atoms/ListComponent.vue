@@ -53,14 +53,6 @@
             <v-list-item-action-text
               v-if="item.accessLevel != null && item.accessLevel != undefined"
             >
-              <v-chip
-                label
-                outlined
-                class="my-1"
-                :color="getAccessLevelColor(item)"
-              >
-                {{ getAccessLevelText(item.accessLevel) }}
-              </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="item.updateDate">
               <v-row class="ma-0" align="center">
@@ -200,21 +192,6 @@ export default {
     getFormattedDate(date) {
       const d = new Date(date)
       return d.toLocaleString()
-    },
-    getAccessLevelText(accessLevel) {
-      return accessLevel === 0
-        ? 'Administrator'
-        : accessLevel === 1
-        ? 'Evaluator'
-        : 'Guest'
-    },
-    getAccessLevelColor(accessLevel) {
-      console.log(accessLevel)
-      return accessLevel === 0
-        ? 'blue'
-        : accessLevel === 1
-        ? 'orange'
-        : 'secondary'
     },
     generateColor() {
       const hue = Math.floor(Math.random() * 360)
