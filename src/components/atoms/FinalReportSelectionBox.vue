@@ -1,31 +1,38 @@
 <template>
-  <div class="selection-box">
+  <div class="selection-box mt-0 py-0">
     <h2>{{ $t('pages.finalReport.select') }}</h2>
-    <div class="flex-container">
-      <div v-if="heuristics.length !== 0" class="column with-border" style="max-height: 28vh">
-        <input v-if="heuristics.length > 5" v-model="sliderValue" type="range" :min="0"
-               :max="Math.max(0, heuristics.length - 5)" step="5" class="heuristics-slider"
-        >
-        <div class="slidder-section">
-          <div class="heuristics-slider-label">
-            {{ $t('pages.finalReport.heuristic') }} {{ sliderValueMin }}
-            {{ $t('pages.finalReport.to') }} {{ sliderValueMax }}
-          </div>
-        </div>
-        <div v-if="showSlider" class="slider-container" style="overflow: scroll; max-height: 90%">
-          <div v-for="heuristic in visibleHeuristics" :key="heuristic.id" class="option">
-            <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox" :name="heuristic.name"
-                   :value="heuristic.id"
-            >
+    <div class="flex-container pt-2">
+      <div
+        v-if="heuristics.length !== 0"
+        class="column with-border"
+        style="max-height: 28vh"
+      >
+        {{ $t('pages.finalReport.heuristic') + 's:' }}
+
+        <div v-if="showSlider" class="pb-4 mt-1 overflow-container">
+          <div
+            v-for="heuristic in visibleHeuristics"
+            :key="heuristic.id"
+            class="option"
+          >
+            <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox" :name="heuristic.name" :value="heuristic.id" />
             <label :for="'heuristic' + heuristic.id">
-              {{ heuristic.id }} - {{ heuristic.title }}
+              {{ heuristic.id + 1 }} - {{ heuristic.title }}
             </label>
           </div>
         </div>
         <div v-else>
           {{ $t('pages.finalReport.heuristic') + 's:' }}
-          <div v-for="heuristic in heuristics" :key="heuristic.id" class="option">
-            <input :id="'heuristic' + heuristic.id" type="checkbox" :name="heuristic.name">
+          <div
+            v-for="heuristic in heuristics"
+            :key="heuristic.id"
+            class="option"
+          >
+            <input
+              :id="'heuristic' + heuristic.id"
+              type="checkbox"
+              :name="heuristic.name"
+            />
 
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id }} - {{ heuristic.title }}
@@ -33,19 +40,29 @@
           </div>
         </div>
       </div>
+
       <div v-else class="column with-border" style="max-height: 28vh">
         <div style="margin-top: 10%">
           {{ $t('pages.finalReport.createHeuristics') }}
         </div>
       </div>
 
-      <div class="column with-margin">
+      <div class="column with-margin ">
+        {{ $t('pages.finalReport.elements') + ':' }}
         <div v-for="option in options" :key="option.id" class="option">
-          <input :id="option.id" type="checkbox" :name="option.name">
+          <input :id="option.id" type="checkbox" :name="option.name" />
           <label class="option" :for="option.id">{{ option.label }}</label>
         </div>
       </div>
-      <v-btn :disabled="isLoading" class="bottom-button" @click="submitPdf">
+    </div>
+    <div class="mt-12" align="right">
+      <v-btn
+        :disabled="isLoading"
+        class=""
+        dark
+        color="orange"
+        @click="submitPdf"
+      >
         <span v-if="!isLoading">{{ $t('pages.finalReport.pdf') }}</span>
         <span v-else>{{ $t('pages.finalReport.options.loading') }}</span>
       </v-btn>
@@ -78,10 +95,7 @@ export default {
       return Math.min(Number(this.sliderValue) + 5, this.heuristics.length)
     },
     visibleHeuristics() {
-      return this.heuristics.slice(
-        Number(this.sliderValue),
-        Number(this.sliderValue) + 5,
-      )
+      return this.heuristics.slice(Number(this.sliderValue))
     },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
@@ -102,9 +116,21 @@ export default {
     },
     options() {
       return [
-        { id: 'options', name: 'options', label: i18n.t('pages.finalReport.options.options') },
-        { id: 'comments', name: 'comments', label: i18n.t('pages.finalReport.options.comments') },
-        { id: 'results', name: 'results', label: i18n.t('pages.finalReport.options.statistics') },
+        {
+          id: 'options',
+          name: 'options',
+          label: i18n.t('pages.finalReport.options.options'),
+        },
+        {
+          id: 'comments',
+          name: 'comments',
+          label: i18n.t('pages.finalReport.options.comments'),
+        },
+        {
+          id: 'results',
+          name: 'results',
+          label: i18n.t('pages.finalReport.options.statistics'),
+        },
         {
           id: 'evaluators-results',
           name: 'evaluators-results',
@@ -115,7 +141,11 @@ export default {
           name: 'heuristics-results',
           label: i18n.t('pages.finalReport.options.answersByHeuristics'),
         },
-        { id: 'finalReport', name: 'finalReport', label: i18n.t('pages.finalReport.options.finalReport') },
+        {
+          id: 'finalReport',
+          name: 'finalReport',
+          label: i18n.t('pages.finalReport.options.finalReport'),
+        },
       ]
     },
   },
@@ -183,7 +213,7 @@ export default {
       const containerWidth = this.$el.querySelector('.column').offsetWidth
       const heuristicWidth = 200
       const numVisibleHeuristics = Math.floor(containerWidth / heuristicWidth)
-      this.showSlider = this.heuristics.length > numVisibleHeuristics + 5
+      this.showSlider = this.heuristics.length
     },
 
     async genPreview() {
@@ -374,6 +404,12 @@ export default {
   margin-top: 1rem;
   /* Add space at the top */
   margin-bottom: 1rem;
+}
+
+.overflow-container {
+  overflow-x: hidden; /* Impede a rolagem horizontal */
+  overflow-y: auto; /* Habilita a rolagem vertical se necessário */
+  max-height: 150%; /* Define a altura máxima */
 }
 
 /* Larger screens */
