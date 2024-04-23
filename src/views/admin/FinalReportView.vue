@@ -38,6 +38,7 @@
               class="mt-4"
               align="right"
               color="orange"
+              elevation="0"
               dark
               @click="step++, update()"
             >
@@ -51,7 +52,7 @@
             <DocumentSelection />
 
             <!-- <div class="ml-4"> -->
-              <v-btn class="teste2" color="blue-grey darken-3" dark @click="step--">
+              <v-btn class="teste2" color="blue-grey darken-3" elevation="0" dark @click="step--">
                 {{ $t('buttons.previous') }}
               </v-btn>
             <!-- </div> -->
@@ -118,7 +119,7 @@ export default {
 .teste2 {
   position: fixed;
   left: 13%;
-  bottom: 4.2%;
+  bottom: 5.5%;
 }
 .cloud-button {
   padding: 10px;
@@ -138,7 +139,7 @@ export default {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
     0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
   width: 100%;
-  height: 65vh;
+  height: 55vh;
   resize: none;
   padding: 20px;
   border-radius: 12px;
