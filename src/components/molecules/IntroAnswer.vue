@@ -52,7 +52,7 @@ export default {
       this.$router.push('/answers/documentation').catch(() => {})
     },
     goToDisc() {
-      window.open('https://discord.gg/XHhnXBjgRh')
+      window.open('https://discord.gg/MFWNpwTq9q')
     },
     callFunc(func) {
       this[func]()
