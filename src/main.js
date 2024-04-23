@@ -15,7 +15,7 @@ const options = {
   draggable: true,
   pauseOnHover: true,
   closeOnClick: true,
-  timeout: 3000,
+  timeout: 4000,
 }
 Vue.use(Toast, options)
 
