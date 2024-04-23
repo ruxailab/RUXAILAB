@@ -164,7 +164,7 @@ export default {
       return (
         'Are you sure you want to delete ' +
         (this.report !== null ? this.report.email : '') +
-        '\'s report? This action can\'t be undone'
+        "'s report? This action can't be undone"
       )
     },
     answers() {
@@ -219,7 +219,6 @@ export default {
           await updateDoc(answerDocRef, updateObject)
         }
       } catch (e) {
-        console.log(e)
         this.$store.commit('setError', {
           errorCode: `RemoveReportError`,
           message: e,
@@ -262,6 +261,7 @@ export default {
     },
 
     getCooperatorEmail(userDocId) {
+      if (userDocId == this.user.id) return 'You'
       let cooperatorEmail = null
       if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
         for (const element of this.test.cooperators) {

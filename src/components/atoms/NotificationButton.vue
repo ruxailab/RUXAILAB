@@ -107,7 +107,7 @@ export default {
         user: this.user,
       })
       // Redirect to notification url
-      window.open(notification.redirectsTo)
+      this.$router.go(`${notification.redirectsTo}`)
     },
     checkIfHasNewNotifications() {
       const newNot = this.user.notifications.filter((n) => n.read === false)

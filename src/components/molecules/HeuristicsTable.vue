@@ -224,7 +224,8 @@
                             padding-bottom: 4px !important;
                           "
                         >
-                          {{ item.id }} - {{ item.title }}
+                           {{ item.id + 1 }}
+                          - {{ item.title }}
                         </v-list-item-title>
                       </v-list-item-content>
                       <div
@@ -754,6 +755,8 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     moveItemDown(index) {
@@ -772,6 +775,8 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     deleteHeuristic(item) {
