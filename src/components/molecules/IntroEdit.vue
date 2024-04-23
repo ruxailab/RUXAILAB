@@ -48,7 +48,7 @@ export default {
       this.$router.push('/edit/documentation').catch(() => {})
     },
     goToDisc() {
-      window.open('https://discord.gg/XHhnXBjgRh')
+      window.open('https://discord.gg/MFWNpwTq9q')
     },
     closeIntro() {
       this.$emit('closeIntro')
