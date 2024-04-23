@@ -755,6 +755,8 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     moveItemDown(index) {
@@ -773,6 +775,8 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     deleteHeuristic(item) {
