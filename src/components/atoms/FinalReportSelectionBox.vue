@@ -15,7 +15,13 @@
             :key="heuristic.id"
             class="option"
           >
-            <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox" :name="heuristic.name" :value="heuristic.id" />
+            <input
+              :id="'heuristic' + heuristic.id"
+              v-model="selectedHeuristics"
+              type="checkbox"
+              :name="heuristic.name"
+              :value="heuristic.id"
+            />
             <label :for="'heuristic' + heuristic.id">
               {{ heuristic.id + 1 }} - {{ heuristic.title }}
             </label>
@@ -59,7 +65,7 @@
       <v-btn
         :disabled="isLoading"
         class=""
-        dark
+        :dark="!isLoading"
         color="orange"
         @click="submitPdf"
       >
