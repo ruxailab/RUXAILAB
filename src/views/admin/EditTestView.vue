@@ -257,7 +257,6 @@ export default {
         }
       }
       const auxT = Object.assign(this.test, this.object)
-      console.log(auxT)
       this.$store.dispatch('updateTest', auxT)
     },
 
