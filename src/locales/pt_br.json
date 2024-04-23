@@ -213,6 +213,7 @@
       "to": "para",
       "createHeuristics": "Por favor, crie heurísticas para que você possa selecioná-las aqui.",
       "pdf": "Gerar PDF",
+      "elements": "Elementos",
       "options": {
         "options": "Opções de teste",
         "comments": "Responde aos comentários",
