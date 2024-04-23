@@ -371,7 +371,6 @@ export default {
         }
 
         //console.log('SelectHeuristic  ',SelectHeuristic)
-
         //console.log('heuristicQuestions', heuristic.heuristicQuestions)
 
         heuristic.heuristicQuestions.forEach((hQuestion) => {
