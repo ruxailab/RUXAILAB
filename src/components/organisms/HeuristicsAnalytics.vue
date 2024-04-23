@@ -89,6 +89,7 @@
                   test.testStructure[heuristicSelect]
               "
               class="ma-0 pa-0"
+              cols="7"
             >
               <v-card outlined rounded flat height="560px" elevation-0>
                 <v-subheader v-if="questionSelect != -1" class="pa-2">
