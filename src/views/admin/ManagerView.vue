@@ -397,20 +397,24 @@ export default {
 
         const answers = []
         const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
+        answersEntries.forEach((answer) => {
+          answers.push(answer[1])
         })
-
-        const coopsInfo = this.test.cooperators.find(
-          (coops) => coops.userDocId === this.user.id,
-        )
-        if (coopsInfo) {
-          return coopsInfo.accessLevel
+        if (this.test.cooperators) {
+          const coopsInfo = this.test.cooperators.find(
+            (coops) => coops.userDocId === this.user.id,
+          )
+          if (coopsInfo) {
+            return coopsInfo.accessLevel
+          }
         }
-        u
+        if (this.test.isPublic) {
+          return 1
+        } else {
+          return 3
+        }
       }
-
-      return 1
+      return 1 
     },
   },
 
