@@ -1,24 +1,18 @@
 <template>
   <div class="selection-box">
     <h2>{{ $t('pages.finalReport.select') }}</h2>
-    <div class="flex-container">
+    <div class="flex-container pt-2">
       <div v-if="heuristics.length !== 0" class="column with-border" style="max-height: 28vh">
-        <input v-if="heuristics.length > 5" v-model="sliderValue" type="range" :min="0"
-               :max="Math.max(0, heuristics.length - 5)" step="5" class="heuristics-slider"
-        >
-        <div class="slidder-section">
-          <div class="heuristics-slider-label">
-            {{ $t('pages.finalReport.heuristic') }} {{ sliderValueMin }}
-            {{ $t('pages.finalReport.to') }} {{ sliderValueMax }}
-          </div>
-        </div>
-        <div v-if="showSlider" class="slider-container" style="overflow: scroll; max-height: 90%">
+
+        {{ $t('pages.finalReport.heuristic') + 's:' }}
+        
+        <div v-if="showSlider" class="slider-container pb-10 mt-1" style="overflow: scroll; max-height: 155%">
           <div v-for="heuristic in visibleHeuristics" :key="heuristic.id" class="option">
             <input :id="'heuristic' + heuristic.id" v-model="selectedHeuristics" type="checkbox" :name="heuristic.name"
                    :value="heuristic.id"
             >
             <label :for="'heuristic' + heuristic.id">
-              {{ heuristic.id }} - {{ heuristic.title }}
+              {{ heuristic.id + 1 }} - {{ heuristic.title }}
             </label>
           </div>
         </div>
@@ -33,13 +27,16 @@
           </div>
         </div>
       </div>
+
+      
       <div v-else class="column with-border" style="max-height: 28vh">
         <div style="margin-top: 10%">
           {{ $t('pages.finalReport.createHeuristics') }}
         </div>
       </div>
 
-      <div class="column with-margin">
+      <div class="column with-margin ">
+       Elements:
         <div v-for="option in options" :key="option.id" class="option">
           <input :id="option.id" type="checkbox" :name="option.name">
           <label class="option" :for="option.id">{{ option.label }}</label>
@@ -80,7 +77,6 @@ export default {
     visibleHeuristics() {
       return this.heuristics.slice(
         Number(this.sliderValue),
-        Number(this.sliderValue) + 5,
       )
     },
     testAnswerDocument() {
@@ -183,7 +179,7 @@ export default {
       const containerWidth = this.$el.querySelector('.column').offsetWidth
       const heuristicWidth = 200
       const numVisibleHeuristics = Math.floor(containerWidth / heuristicWidth)
-      this.showSlider = this.heuristics.length > numVisibleHeuristics + 5
+      this.showSlider = this.heuristics.length
     },
 
     async genPreview() {
