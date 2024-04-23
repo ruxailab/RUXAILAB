@@ -8,7 +8,8 @@
             <v-avatar tile :color="generateColor()" style="color: #545454">
               <span
                 v-if="type === 'myTemplates' || type === 'publicTemplates'"
-              >{{ item.header.templateTitle[0].toUpperCase() }}</span>
+                >{{ item.header.templateTitle[0].toUpperCase() }}</span
+              >
               <span v-else>{{ item.testTitle[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
@@ -41,8 +42,8 @@
                 item.testAdmin
                   ? item.testAdmin.email
                   : item.header
-                    ? item.header.templateAuthor.userEmail
-                    : ''
+                  ? item.header.templateAuthor.userEmail
+                  : ''
               }}</strong>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -56,7 +57,7 @@
                 label
                 outlined
                 class="my-1"
-                :color="getAccessLevelColor(item.accessLevel)"
+                :color="getAccessLevelColor(item)"
               >
                 {{ getAccessLevelText(item.accessLevel) }}
               </v-chip>
@@ -86,10 +87,8 @@
                   </v-tooltip>
                   <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-row v-bind="attrs" v-on="on">
-                        <div class="caption">
-                          {{ item.progress }}%
-                        </div>
+                      <v-row class="mr-3" v-bind="attrs" v-on="on">
+                        <div class="caption">{{ item.progress }}%</div>
 
                         <v-progress-circular
                           rotate="-90"
@@ -134,10 +133,12 @@
               type === 'publicTests' ||
               type === 'sharedWithMe'
           "
-        >{{ $t('pages.listTests.noTests') }}</span>
+          >{{ $t('pages.listTests.noTests') }}</span
+        >
         <span
           v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
-        >{{ $t('pages.listTests.noTemplates') }}</span>
+          >{{ $t('pages.listTests.noTemplates') }}</span
+        >
       </v-row>
     </v-list>
   </div>
@@ -208,11 +209,12 @@ export default {
         : 'Guest'
     },
     getAccessLevelColor(accessLevel) {
+      console.log(accessLevel)
       return accessLevel === 0
-        ? 'primary'
+        ? 'blue'
         : accessLevel === 1
-        ? 'secondary'
-        : 'warning'
+        ? 'orange'
+        : 'secondary'
     },
     generateColor() {
       const hue = Math.floor(Math.random() * 360)
