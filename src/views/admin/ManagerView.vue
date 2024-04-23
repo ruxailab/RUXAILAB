@@ -408,11 +408,8 @@ export default {
             return coopsInfo.accessLevel
           }
         }
-        if (this.test.isPublic) {
-          return 1
-        } else {
-          return 1
-        }
+        if (this.test.isPublic) return 1
+        else return 2
       }
       return 1
     },
@@ -482,11 +479,13 @@ export default {
           (a) => a.testDocId === this.test.id,
         )
         if (!alreadyAccepted) {
+          console.log('Caiu como !alreadyAccepted')
           // Get invitation
           const invitation = this.test.cooperators.find(
             (coop) => coop.token === this.token,
           )
           if (invitation) {
+            console.log('Caiu como invitation')
             // User invited, and they have an account
             if (this.user.email === invitation.email) {
               // Accept Collaboration
