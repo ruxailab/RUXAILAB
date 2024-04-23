@@ -401,7 +401,6 @@
                       "
                       class="optionSelect"
                       :items="test.testOptions"
-                      :item-value="i.toString()"
                       label="Respuestas/Answers"
                       outlined
                       dense
