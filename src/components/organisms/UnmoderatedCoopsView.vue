@@ -382,6 +382,7 @@ export default {
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
+            accessLevel: this.roleOptions[this.selectedRole].value,
           }),
         })
       }

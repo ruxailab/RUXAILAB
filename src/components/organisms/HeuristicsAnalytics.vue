@@ -13,8 +13,6 @@
             <v-col class="ma-0 pa-0" cols="2">
               <v-list outlined rounded dense height="560px">
                 <v-subheader>Heuristics</v-subheader>
-                {{ resultHeuristics.length }}
-                {{ heuristicsLength }}
                 <v-divider />
                 <v-list
                   color="grey-lighten-3"
@@ -23,7 +21,6 @@
                   class="list-scroll"
                 >
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
-                    
                     <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
                       <v-list-item-content>
                         <v-list-item-title>{{ item.id }}</v-list-item-title>
@@ -85,6 +82,7 @@
                   test.testStructure[heuristicSelect]
               "
               class="ma-0 pa-0"
+              cols="7"
             >
               <v-card outlined rounded flat height="560px" elevation-0>
                 <v-subheader v-if="questionSelect != -1" class="pa-2">
@@ -253,6 +251,7 @@ export default {
           },
         )
       }
+
       return header
     },
     itemsHeuristic() {
@@ -270,7 +269,6 @@ export default {
             })
           },
         )
-        console.log('aaaaaa  ', this.resultHeuristics)
       }
       return items
     },
@@ -307,12 +305,6 @@ export default {
     test() {
       return this.$store.getters.test
     },
-    heuristics() {
-      return this.$store.state.Tests.Test.testStructure || []
-    },
-    heuristicsLength() {
-      return this.heuristics.length
-    },
   },
   watch: {
     answers() {
@@ -344,9 +336,6 @@ export default {
       let index = 0
 
       for (const uid in this.answers) {
-
-        //console.log('answers  ', this.answers)
-
         if (!this.answers[uid]) {
           continue
         }
@@ -356,8 +345,6 @@ export default {
         let SelectHeuristic = this.resultHeuristics.find(
           (h) => h.id === `H${index}`,
         )
-        //console.log('heuristic  ' , heuristic)
-        //console.log('resultHeuristics  ', this.resultHeuristics)
 
         if (!SelectHeuristic) {
           this.resultHeuristics.push({
@@ -369,9 +356,6 @@ export default {
             this.resultHeuristics.length - 1
           ]
         }
-
-        //console.log('SelectHeuristic  ',SelectHeuristic)
-        //console.log('heuristicQuestions', heuristic.heuristicQuestions)
 
         heuristic.heuristicQuestions.forEach((hQuestion) => {
           hQuestion.heuristicQuestions.forEach((question, qIndex) => {
@@ -401,9 +385,7 @@ export default {
         })
 
         index++
-        // console.log(uid)
       }
-
     },
     goToCoops() {
       this.$emit('goToCoops')
