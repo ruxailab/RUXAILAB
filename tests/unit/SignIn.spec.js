@@ -30,7 +30,7 @@ describe('SignIn', () => {
         return Promise.resolve()
       })
 
-      // const emailInput = screen.getByLabelText(/E-mail/i)
+      const emailInput = screen.getByLabelText(/E-mail/i)
       await fireEvent.update(emailInput, 'valid-email')
       const passwordInput = screen.getByLabelText(/Password/i, { selector: 'input' })
       await fireEvent.update(passwordInput, 'valid-password')
