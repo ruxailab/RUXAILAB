@@ -199,6 +199,22 @@
       "update": "Update"
     }
   },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "Are you sure you want to submit this test?",
+      "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
+      "noHeuristics": "This test don't have any heuristic"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "save": "Save",
+      "continueAs": "Continue as {userEmail}",
+      "notMail": "Not {userEmail}?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    }
+  },
   "HeuristicsEditTest": {
     "titles": {
       "heuristics": "Heuristics",
