@@ -1,67 +1,64 @@
 <template>
   <div class="selection-box mt-0 py-0">
     <h2>{{ $t('pages.finalReport.select') }}</h2>
-    <div class="flex-container pt-2">
-      <div
-        v-if="heuristics.length !== 0"
-        class="column with-border"
-        style="max-height: 28vh"
-      >
-        {{ $t('pages.finalReport.heuristic') + 's:' }}
+    <div class="pt-2">
+      <v-row>
+        <v-col>
+          <div v-if="heuristics.length !== 0">
+            {{ $t('pages.finalReport.heuristic') + 's:' }}
 
-        <div v-if="showSlider" class="pb-4 mt-1 overflow-container">
-          <div
-            v-for="heuristic in visibleHeuristics"
-            :key="heuristic.id"
-            class="option"
-          >
-            <input
-              :id="'heuristic' + heuristic.id"
-              v-model="selectedHeuristics"
-              type="checkbox"
-              :name="heuristic.name"
-              :value="heuristic.id"
-            />
-            <label :for="'heuristic' + heuristic.id">
-              {{ heuristic.id + 1 }} - {{ heuristic.title }}
-            </label>
+            <div class="pb-4 mt-1">
+              <div
+                v-for="heuristic in heuristics"
+                :key="heuristic.id"
+                class="option"
+              >
+                <input
+                  :id="'heuristic' + heuristic.id"
+                  v-model="selectedHeuristics"
+                  type="checkbox"
+                  :name="heuristic.name"
+                  :value="heuristic.id"
+                  style="margin-right: 10px;"
+                />
+                <label :for="'heuristic' + heuristic.id">
+                  {{ heuristic.id + 1 }} - {{ heuristic.title }}
+                </label>
+              </div>
+            </div>
           </div>
-        </div>
-        <div v-else>
-          {{ $t('pages.finalReport.heuristic') + 's:' }}
-          <div
-            v-for="heuristic in heuristics"
-            :key="heuristic.id"
-            class="option"
-          >
-            <input
-              :id="'heuristic' + heuristic.id"
-              type="checkbox"
-              :name="heuristic.name"
-            />
-
-            <label :for="'heuristic' + heuristic.id">
-              {{ heuristic.id }} - {{ heuristic.title }}
-            </label>
+          <div v-else class="column with-border">
+            <div style="margin-top: 10%">
+              {{ $t('pages.finalReport.createHeuristics') }}
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div v-else class="column with-border" style="max-height: 28vh">
-        <div style="margin-top: 10%">
-          {{ $t('pages.finalReport.createHeuristics') }}
-        </div>
-      </div>
-
-      <div class="column with-margin ">
-        {{ $t('pages.finalReport.elements') + ':' }}
-        <div v-for="option in options" :key="option.id" class="option">
-          <input :id="option.id" type="checkbox" :name="option.name" />
-          <label class="option" :for="option.id">{{ option.label }}</label>
-        </div>
-      </div>
+        </v-col>
+        <v-col>
+          <div class="column with-margin ">
+            {{ $t('pages.finalReport.elements') + ':' }}
+            <div v-for="option in options" :key="option.id" class="option">
+              <input
+                :id="option.id"
+                type="checkbox"
+                :name="option.name"
+                style="margin-right: 10px;"
+              />
+              <label class="option" :for="option.id">{{ option.label }}</label>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
     </div>
-    <div class="mt-12" align="right">
+    <v-row class="ma-0" justify="space-between">
+      <v-btn
+        class="teste2"
+        color="blue-grey darken-3"
+        elevation="0"
+        dark
+        @click="$emit('return-step')"
+      >
+        {{ $t('buttons.previous') }}
+      </v-btn>
       <v-btn
         :disabled="isLoading"
         class=""
@@ -72,7 +69,7 @@
         <span v-if="!isLoading">{{ $t('pages.finalReport.pdf') }}</span>
         <span v-else>{{ $t('pages.finalReport.options.loading') }}</span>
       </v-btn>
-    </div>
+    </v-row>
   </div>
 </template>
 
@@ -95,15 +92,6 @@ export default {
     cooperatorsEmail: [],
   }),
   computed: {
-    sliderValueMin() {
-      return Number(this.sliderValue) + 1
-    },
-    sliderValueMax() {
-      return Math.min(Number(this.sliderValue) + 5, this.heuristics.length)
-    },
-    visibleHeuristics() {
-      return this.heuristics.slice(Number(this.sliderValue))
-    },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
@@ -150,13 +138,6 @@ export default {
         },
       ]
     },
-  },
-  mounted() {
-    window.addEventListener('resize', this.checkHeuristicsSlider)
-    this.checkHeuristicsSlider()
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkHeuristicsSlider)
   },
   methods: {
     heuristicsEvaluator() {
@@ -214,7 +195,6 @@ export default {
     checkHeuristicsSlider() {
       const containerWidth = this.$el.querySelector('.column').offsetWidth
       const heuristicWidth = 200
-      const numVisibleHeuristics = Math.floor(containerWidth / heuristicWidth)
       this.showSlider = this.heuristics.length
     },
 
@@ -376,117 +356,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.selection-box {
-  margin-left: 0px;
-  padding: 1rem;
-  border-radius: 36px 0px 0 0;
-}
-
-.flex-container {
-  display: flex;
-  flex-wrap: wrap;
-  /* Allow items to wrap to new lines */
-  gap: 1rem;
-  /* Add some space between items */
-}
-
-.column {
-  flex: 1;
-}
-
-.option {
-  font-size: medium;
-  padding: 0.5rem;
-}
-
-.bottom-button {
-  align-self: flex-end;
-  margin-top: 1rem;
-  /* Add space at the top */
-  margin-bottom: 1rem;
-}
-
-.overflow-container {
-  overflow-x: hidden; /* Impede a rolagem horizontal */
-  overflow-y: auto; /* Habilita a rolagem vertical se necessário */
-  max-height: 150%; /* Define a altura máxima */
-}
-
-/* Larger screens */
-@media (min-width: 768px) {
-  .flex-container {
-    flex-direction: row;
-    /* Horizontal layout for larger screens */
-  }
-
-  .column {
-    flex: 0.5;
-    /* Each column takes half of the available width */
-    max-width: 50%;
-    /* Limit column width to 50% */
-  }
-
-  .slidder-section {
-    align-items: center;
-    margin: 0;
-    /* Reset margin for this section */
-  }
-
-  .heuristics-slider-label {
-    font-size: medium;
-    margin-left: 0.5rem;
-    margin: 1rem;
-  }
-
-  .heuristics-slider {
-    max-width: 15vw;
-    margin: 0 0.5rem;
-  }
-}
-
-/* Smaller screens */
-@media (max-width: 767px) {
-  .flex-container {
-    flex-direction: column;
-    /* Vertical layout for smaller screens */
-  }
-
-  .column {
-    flex: none;
-    /* Reset flex property to allow natural width */
-    max-width: 100%;
-    /* Allow column to take full width */
-  }
-
-  .column.with-border {
-    order: 0;
-    /* Move this column below the other column on small screens */
-  }
-
-  /* Adjust the height and overflow of the slider container */
-  .slider-container {
-    max-height: 20vh !important;
-    /* Adjust the height as needed */
-    overflow-y: auto !important;
-    /* Enable vertical scrolling */
-    overflow-x: hidden !important;
-    /* Hide horizontal scrolling */
-    margin-top: 1rem;
-    /* Add space at the top */
-    font-size: 10px;
-
-    background-color: #ebebeb;
-    border-radius: 12px;
-    padding: 0.25rem;
-  }
-
-  .bottom-button {
-    align-self: flex-start !important;
-    margin-top: 1rem;
-    /* Add space at the top */
-    margin-bottom: 1rem;
-  }
-}
-</style>
