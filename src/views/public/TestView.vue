@@ -19,14 +19,14 @@
           <v-card-actions>
             <v-spacer />
             <v-btn class="grey lighten-3" text @click="dialog = false">
-              {{ $t('HeuristicsTestView.messages.cancel') }}
+              {{ $t('HeuristicsTestView.actions.cancel') }}
             </v-btn>
             <v-btn
               class="red white--text ml-1"
               text
               @click="submitAnswer(), (dialog = false)"
             >
-              {{ $t('HeuristicsTestView.messages.submit') }}
+              {{ $t('HeuristicsTestView.actions.submit') }}
             </v-btn>
           </v-card-actions>
         </v-card>
