@@ -382,6 +382,7 @@ export default {
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
+            accessLevel: this.roleOptions[this.selectedRole].value,
           }),
         })
       }
@@ -448,11 +449,13 @@ export default {
       this.submit()
     },
     validateEmail() {
+      console.log('Chamou validadeEmail')
       this.email = this.comboboxModel.pop()
       this.comboboxKey++
       if (typeof this.email !== 'object' && this.email !== undefined) {
         //if is object then no need to validate
         if (this.email.length) {
+          console.log('Chamou validadeEmail')
           if (!this.email.includes('@') || !this.email.includes('.')) {
             this.$toast.error(this.email + ' is not a valid email')
           }
@@ -464,6 +467,13 @@ export default {
             return // Se não existir, interrompe a execução
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
+          }
+          const alreadyInvited = this.cooperatorsEdit.find(
+            (cooperator) => cooperator.email === this.email,
+          )
+          if (alreadyInvited) {
+            this.$toast.error(this.email + ' has already been invited')
+            return
           }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
