@@ -188,7 +188,9 @@ export default {
       ]
 
       if (payload.resultEvaluator) {
+        let evaluatorIndex = 1
         payload.resultEvaluator.forEach((evaluator) => {
+          evaluator.id = `Ev${evaluatorIndex}`
           let totalNoAplication = 0
           let totalNoReply = 0
           let totalQuestions = 0
@@ -210,6 +212,7 @@ export default {
             ).toFixed(2),
             lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),
           })
+          evaluatorIndex++
         })
       }
 
