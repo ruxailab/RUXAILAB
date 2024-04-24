@@ -195,7 +195,13 @@
           </v-card>
 
           <!-- Tab 3 - Heuristics-->
-          <v-card v-if="tab == 2" rounded="xl" flat class="mb-6 py-2" style="background: #f5f7ff">
+          <v-card
+            v-if="tab == 2"
+            rounded="xl"
+            flat
+            class="mb-6 py-2"
+            style="background: #f5f7ff"
+          >
             <div>
               <v-card-title class="subtitleView">
                 Heuristics Data
@@ -266,7 +272,11 @@
                             dark
                             class="chip"
                           >
-                            {{ item[header.value] ? item[header.value] : 0 }}
+                            {{
+                              item[header.value]
+                                ? item[header.value].toFixed(2)
+                                : 0
+                            }}
                           </v-chip>
                           <v-btn
                             v-else
@@ -701,7 +711,6 @@ export default {
       //✓
       this.$emit('goToCoops')
     },
-
     usuability_percentage_array() {
       const teste = this.heuristicsStatistics
       const array_scores = []
