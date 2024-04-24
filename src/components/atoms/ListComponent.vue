@@ -43,7 +43,7 @@
                   ? item.testAdmin.email
                   : item.header
                   ? item.header.templateAuthor.userEmail
-                  : ''
+                  : item.testAuthorEmail
               }}</strong>
             </v-list-item-subtitle>
           </v-list-item-content>
