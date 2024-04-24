@@ -21,9 +21,14 @@
                   class="list-scroll"
                 >
                   <v-list-item-group v-model="heuristicSelect" color="#fca326">
-                    <v-list-item v-for="(item, i) in resultHeuristics" :key="i">
+                    <v-list-item
+                      v-for="(item, i) in test.testStructure"
+                      :key="i"
+                    >
                       <v-list-item-content>
-                        <v-list-item-title>{{ item.id }}</v-list-item-title>
+                        <v-list-item-title>{{
+                          `H${item.id + 1} - ${item.title}`
+                        }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon v-if="i == heuristicSelect">
                         <v-icon>mdi-chevron-right</v-icon>
@@ -58,13 +63,15 @@
                       </v-list-item-icon>
                     </v-list-item>
                     <v-list-item
-                      v-for="(item, i) in resultHeuristics[heuristicSelect]
+                      v-for="(item, i) in test.testStructure[heuristicSelect]
                         .questions"
                       :key="i"
                       :value="i"
                     >
                       <v-list-item-content>
-                        <v-list-item-title>{{ item.id }}</v-list-item-title>
+                        <v-list-item-title>{{
+                          `Q${item.id + 1} - ${item.title}`
+                        }}</v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-icon v-if="i == questionSelect">
                         <v-icon>mdi-chevron-right</v-icon>
@@ -96,6 +103,7 @@
                   Data Table
                 </v-subheader>
                 <v-divider />
+                <!-- DATA TABLE CONTENT TYPE -->
                 <v-row v-if="questionSelect == -1">
                   <v-col>
                     <v-text-field
@@ -117,13 +125,20 @@
                         v-slot:[`item.${header.value}`]="{ item }"
                       >
                         <div
-                          v-if="item[header.value] == null"
-                          :key="header.value"
+                          :key="item[header.value].uid"
+                          v-if="item[header.value].uid"
                         >
-                          -
+                          {{ item[header.value].uid }}
                         </div>
-                        <div v-else :key="header.value">
-                          {{ item[header.value] }}
+                        <div v-else :key="item[header.value].heuristicAnswer">
+                          <div
+                            v-if="item[header.value].heuristicAnswer == null"
+                          >
+                            -
+                          </div>
+                          <div v-else>
+                            {{ item[header.value].heuristicAnswer }}
+                          </div>
                         </div>
                       </template>
                     </v-data-table>
@@ -149,7 +164,7 @@
                       style="text-transform: none !important"
                       @click="ind = 1"
                     >
-                      Graphic
+                      Chart
                     </v-tab>
                   </v-tabs>
                   <v-col v-if="ind == 1">
@@ -171,28 +186,24 @@
                       justify="center"
                     >
                       <v-col cols="10">
-                        <v-timeline
-                          v-if="
-                            resultHeuristics[heuristicSelect].questions[
-                              questionSelect
-                            ].result.length
-                          "
-                          dense
-                        >
+                        <v-timeline dense>
                           <div
-                            v-for="(result, index) in resultHeuristics[
-                              heuristicSelect
-                            ].questions[questionSelect].result"
+                            v-for="(result, index) in itemsHeuristic"
                             :key="index"
                           >
                             <v-timeline-item
-                              v-if="result.comment"
+                              v-if="result[questionSelect].heuristicComment"
                               fill-dot
                               color="#fca326"
                               icon="mdi-message-reply-text"
                             >
                               <v-card class="elevation-2">
-                                <v-card-text>{{ result.comment }}</v-card-text>
+                                <v-card-text>{{
+                                  result[questionSelect].heuristicComment
+                                }}</v-card-text>
+                                <v-card-img v-if="result[questionSelect].answerImageUrl ">
+                                  <img height="200" :src="result[questionSelect].answerImageUrl " />
+                                </v-card-img>
                               </v-card>
                             </v-timeline-item>
                           </div>
@@ -213,16 +224,12 @@
 <script>
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import BarChart from '@/components/atoms/BarChart.vue'
-// import IntroAnalytics from '@/components/molecules/IntroAnalytics.vue'
 
 export default {
   components: {
     ShowInfo,
     BarChart,
-    // IntroAnalytics,
   },
-  // eslint-disable-next-line vue/prop-name-casing, vue/require-prop-types
-  props: ['id', 'HEURISTICS'],
   data: () => ({
     search: '',
     ind: 0,
@@ -235,16 +242,16 @@ export default {
     headersHeuristic() {
       const header = [
         {
-          text: 'ID',
+          text: 'Evalutator',
           align: 'start',
           value: 'uid',
         },
       ]
       if (this.heuristicSelect !== null) {
-        this.resultHeuristics[this.heuristicSelect].questions.forEach(
+        this.test.testStructure[this.heuristicSelect].questions.forEach(
           (question) => {
             header.push({
-              text: question.id,
+              text: `Q${question.id + 1}`,
               align: 'center',
               value: question.id,
             })
@@ -257,18 +264,13 @@ export default {
     itemsHeuristic() {
       const items = []
       if (this.heuristicSelect !== null) {
-        this.resultHeuristics[this.heuristicSelect].questions.forEach(
-          (question) => {
-            question.result.forEach((result) => {
-              let ev = items.find((item) => item.uid === result.evaluator)
-              if (!ev) {
-                items.push({ uid: result.evaluator })
-                ev = items[items.length - 1]
-              }
-              Object.assign(ev, { [question.id]: result.response })
-            })
-          },
-        )
+        Object.values(this.answers).forEach((answer) => {
+          items.push({
+            uid: { uid: answer.userDocId },
+            ...answer.heuristicQuestions[this.heuristicSelect]
+              .heuristicQuestions,
+          })
+        })
       }
       return items
     },
@@ -281,13 +283,18 @@ export default {
       }
 
       if (this.heuristicSelect !== null && this.questionSelect !== null) {
-        const question = this.resultHeuristics[this.heuristicSelect].questions[
-          this.questionSelect
-        ]
+        Object.values(this.answers).forEach((userAnswer) => {
+          const question = userAnswer.heuristicQuestions[this.heuristicSelect].heuristicQuestions[
+              this.questionSelect
+            ]
 
-        question.result.forEach((result) => {
-          const item = options.find((op) => op.value === result.response)
-          if (item) graph.data[graph.label.indexOf(item.text)] += 1
+          const optionSelect = options.find(
+            (op) => op.value === question.heuristicAnswer,
+          )
+          if (optionSelect) {
+            const optionIndex = graph.label.indexOf(optionSelect.text)
+            graph.data[optionIndex] += 1
+          }
         })
       }
       return graph
@@ -309,8 +316,6 @@ export default {
   watch: {
     answers() {
       if (Object.values(this.answers)) {
-        this.statistics()
-
         this.intro = !Object.values(this.answers).length
       }
     },
@@ -330,63 +335,6 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
   methods: {
-    statistics() {
-      this.resultHeuristics = []
-
-      let index = 0
-
-      for (const uid in this.answers) {
-        if (!this.answers[uid]) {
-          continue
-        }
-
-        const heuristic = this.answers[uid]
-
-        let SelectHeuristic = this.resultHeuristics.find(
-          (h) => h.id === `H${index}`,
-        )
-
-        if (!SelectHeuristic) {
-          this.resultHeuristics.push({
-            id: `H${index}`,
-            questions: [],
-          })
-
-          SelectHeuristic = this.resultHeuristics[
-            this.resultHeuristics.length - 1
-          ]
-        }
-
-        heuristic.heuristicQuestions.forEach((hQuestion) => {
-          hQuestion.heuristicQuestions.forEach((question, qIndex) => {
-            const selectQuestion = SelectHeuristic.questions.find(
-              (q) => q.id === `Question ${qIndex}`,
-            )
-
-            if (!selectQuestion) {
-              SelectHeuristic.questions.push({
-                id: `Question ${qIndex}`,
-                result: [
-                  {
-                    evaluator: uid,
-                    response: question.heuristicAnswer,
-                    comment: question.heuristicComment,
-                  },
-                ],
-              })
-            } else {
-              selectQuestion.result.push({
-                evaluator: uid,
-                response: question.heuristicAnswer,
-                comment: question.heuristicComment,
-              })
-            }
-          })
-        })
-
-        index++
-      }
-    },
     goToCoops() {
       this.$emit('goToCoops')
     },
