@@ -49,13 +49,7 @@
 
         <v-stepper-content step="2">
           <div>
-            <DocumentSelection />
-
-            <!-- <div class="ml-4"> -->
-              <v-btn class="teste2" color="blue-grey darken-3" elevation="0" dark @click="step--">
-                {{ $t('buttons.previous') }}
-              </v-btn>
-            <!-- </div> -->
+            <FinalReportSelectionBox @return-step="step--" />
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -65,11 +59,11 @@
 
 <script>
 import TextControls from '@/components/atoms/FinalReportControls.vue'
-import DocumentSelection from '@/components/molecules/FinalReportDocumentSelection.vue'
+import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
-  components: { TextControls, DocumentSelection, ShowInfo },
+  components: { TextControls, FinalReportSelectionBox, ShowInfo },
   data: () => ({
     title: 'Final report',
     inputText: '',
