@@ -69,8 +69,9 @@
             </v-menu>
           </template>
 
-          <template v-slot:item.userDocId="{ item }">
-            <div>{{ getCooperatorEmail(item.userDocId) }}</div>
+          <template v-slot:item.userDocId="{ item, index }">
+            <!-- <div>{{ getCooperatorEmail(item.userDocId) }}</div> -->
+            {{ `Ev${index + 1}` }}
           </template>
           <template v-slot:item.progress="{ item }">
             <div>{{ item.progress }}</div>
