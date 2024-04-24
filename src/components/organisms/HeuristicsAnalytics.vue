@@ -201,6 +201,9 @@
                                 <v-card-text>{{
                                   result[questionSelect].heuristicComment
                                 }}</v-card-text>
+                                <v-card-img v-if="result[questionSelect].answerImageUrl ">
+                                  <img height="200" :src="result[questionSelect].answerImageUrl " />
+                                </v-card-img>
                               </v-card>
                             </v-timeline-item>
                           </div>
