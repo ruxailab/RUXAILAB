@@ -199,6 +199,22 @@
       "update": "[TODO]"
     }
   },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "[TODO]",
+      "submitOnce": "[TODO]",
+      "noHeuristics": "[TODO]"
+    },
+    "actions": {
+      "cancel": "[TODO]",
+      "submit": "[TODO]",
+      "save": "[TODO]",
+      "continueAs": "[TODO]",
+      "notMail": "[TODO]",
+      "changeAccount": "[TODO]",
+      "startTest": "[TODO]"
+    }
+  },
   "HeuristicsEditTest": {
     "titles": {
       "heuristics": "[TODO]",
