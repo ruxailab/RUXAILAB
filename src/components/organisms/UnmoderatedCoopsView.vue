@@ -3,7 +3,7 @@
     <v-overlay v-if="loading" v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
-        {{ $t(HeuristicsCooperators.messages.cooperators_loading) }}
+        {{ $t('HeuristicsCooperators.messages.cooperators_loading') }}
       </div>
     </v-overlay>
     <Intro
@@ -222,16 +222,16 @@
             <v-text-field
               v-model="messageTitle"
               required
-              label="Title"
-              hint="Type a title for your message"
+              :label="$t('HeuristicsCooperators.headers.title')"
+              :hint="$t('HeuristicsCooperators.messages.message_title_hint')"
               outlined
               class="rounded-lg mt-4"
             />
             <v-textarea
               v-model="messageContent"
               required
-              label="Content"
-              hint="Type the content of your message"
+              :label="$t('HeuristicsCooperators.headers.content')"
+              :hint="$t('HeuristicsCooperators.messages.message_content_hint')"
               outlined
               class="rounded-lg"
             />
