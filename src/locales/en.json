@@ -278,7 +278,9 @@
       "role": "Role",
       "invited": "Invited",
       "accepted": "Accepted",
-      "more": "More"
+      "more": "More",
+      "title": "Title",
+      "content": "Content"
     },
     "actions": {
       "send_invitation": "Send Invitation",
@@ -300,7 +302,9 @@
       "no_users": "There are no users registered with that email, press enter to select anyways.",
       "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
       "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
-      "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?"
+      "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "message_title_hint": "Type a title for your message",
+      "message_content_hint": "Type the content of your message"
     }
   },
   "UserTestTable": {
