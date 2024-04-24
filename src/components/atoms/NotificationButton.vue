@@ -49,14 +49,10 @@
           >
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold">
-                {{
-                  notification.title
-                }}
+                {{ notification.title }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{
-                  notification.description
-                }}
+                {{ notification.description }}
               </v-list-item-subtitle>
               <v-list-item-subtitle>
                 Sent by {{ notification.author }}
@@ -76,7 +72,8 @@
         <v-list-item>
           <template>
             <center class="mt-3 pa-1" style="color: #a7a7a7">
-              <strong>{{ $t('common.noNotifications') }}</strong><br>
+              <strong>{{ $t('common.noNotifications') }}</strong
+              ><br />
               <v-icon class="mt-2 mb-3">
                 mdi-bell-off
               </v-icon>

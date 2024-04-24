@@ -520,25 +520,6 @@ export default {
       }
     },
   },
-  mounted() {
-    const mediaQuery = window.matchMedia('(max-width: 600px)')
-
-    // Function to toggle the visibility of the list of questions
-    const hideSidebar = () => {
-      this.mini = true
-    }
-
-    // Add an event listener for the media query
-    mediaQuery.addEventListener('change', hideSidebar)
-
-    // Call the function initially to set the correct visibility
-    hideSidebar()
-
-    // Clean up the event listener when the component is destroyed
-    this.$once('hook:beforeDestroy', () => {
-      mediaQuery.removeEventListener('change', hideSidebar)
-    })
-  },
 
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
@@ -610,6 +591,7 @@ export default {
           this.calculatedProgress = 0
         }
       }
+      this.$forceUpdate()
     },
     perHeuristicProgress(item) {
       const value =
