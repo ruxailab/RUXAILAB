@@ -278,7 +278,9 @@
       "role": "[TODO]",
       "invited": "[TODO]",
       "accepted": "[TODO]",
-      "more": "[TODO]"
+      "more": "[TODO]",
+      "title": "[TODO]",
+      "content": "[TODO]"
     },
     "actions": {
       "send_invitation": "[TODO]",
@@ -300,7 +302,9 @@
       "no_users": "[TODO]",
       "remove_cooperator": "[TODO]",
       "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]?"
+      "change_role": "[TODO]",
+      "message_title_hint": "[TODO]",
+      "message_content_hint": "[TODO]"
     }
   },
   "UserTestTable": {
