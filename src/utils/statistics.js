@@ -135,21 +135,21 @@ function finalResult() {
   const evaluatorStatistics = store.state.Answer.evaluatorStatistics
   if (evaluatorStatistics.items.length) {
     const res = evaluatorStatistics.items.reduce((total, value) => {
-      return total + value.result / evaluatorStatistics.items.length
+      return !isNaN(parseInt(value.result)) ? total + value.result / evaluatorStatistics.items.length : 0
     }, 0)
 
     testData.average = `${Math.fround(res).toFixed(2)}%`
 
     testData.max = `${Math.max(
-      ...evaluatorStatistics.items.map((item) => item.result),
+      ...evaluatorStatistics.items.map((item) => !isNaN(parseInt(item.result)) ? item.result : 0),
     ).toFixed(2)}%`
 
     testData.min = `${Math.min(
-      ...evaluatorStatistics.items.map((item) => item.result),
+      ...evaluatorStatistics.items.map((item) => !isNaN(parseInt(item.result)) ? item.result : 0),
     ).toFixed(2)}%`
 
     testData.sd = `${standardDeviation(
-      evaluatorStatistics.items.map((item) => item.result),
+      evaluatorStatistics.items.map((item) => !isNaN(parseInt(item.result)) ? item.result : 0),
     ).toFixed(2)}%`
   }
   return testData
