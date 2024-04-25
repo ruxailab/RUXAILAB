@@ -272,7 +272,11 @@
                             dark
                             class="chip"
                           >
-                            {{ item[header.value] ? item[header.value].toFixed(2) : 0 }}
+                            {{
+                              item[header.value]
+                                ? item[header.value].toFixed(2)
+                                : 0
+                            }}
                           </v-chip>
                           <v-btn
                             v-else
