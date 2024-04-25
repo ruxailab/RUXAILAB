@@ -400,7 +400,10 @@
                           .heuristicQuestions[i].heuristicAnswer
                       "
                       class="optionSelect"
+                      return-object
                       :items="test.testOptions"
+                      item-text="text"
+                      item-value=""
                       label="Respuestas/Answers"
                       outlined
                       dense

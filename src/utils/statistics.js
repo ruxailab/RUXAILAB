@@ -97,11 +97,11 @@ function statistics() {
         let noReply = 0
         let res = heuristic.heuristicQuestions.reduce(
           (totalQuestions, question) => {
-            if (question.heuristicAnswer === null) {
+            if (question.heuristicAnswer.value === null) {
               noAplication++
             }
-            if (question.heuristicAnswer === '') noReply++
-            return totalQuestions + Number(question.heuristicAnswer)
+            if (question.heuristicAnswer.value === '') noReply++
+            return totalQuestions + Number(question.heuristicAnswer.value)
           },
           0,
         )
