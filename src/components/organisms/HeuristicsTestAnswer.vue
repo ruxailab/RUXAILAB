@@ -698,7 +698,7 @@ export default {
       else if (value <= min + 1 * h) return 'amber'
       else if (value <= min + 2 * h) return 'orange lighten-1'
       else if (value <= min + 3 * h) return 'lime'
-      else return 'gray'
+      else return 'green'
     },
     getColorPorcentage(value) {
       //✓
