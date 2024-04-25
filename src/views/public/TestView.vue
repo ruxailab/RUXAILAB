@@ -381,7 +381,6 @@
                       <HelpBtn :question="question" />
                     </v-col>
                   </v-row>
-
                   <AddCommentBtn
                     :heuris-index="heurisIndex"
                     :answer-heu="
