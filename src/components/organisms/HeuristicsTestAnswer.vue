@@ -301,6 +301,7 @@
                         <template v-slot:item.percentage="{ item }">
                           <div style="padding-top: 2px; padding-bottom: 2px">
                             <v-chip
+                              v-if="!isNaN(item.percentage)"
                               style="width: 35%"
                               :color="
                                 getColor(item.average, item.max, item.min)
