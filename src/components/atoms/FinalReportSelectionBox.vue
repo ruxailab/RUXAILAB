@@ -304,6 +304,14 @@ export default {
         } else {
           this.preview.cooperatorsEmail = ''
         }
+        // TODO: Fix this, right now I've just removed the option to send images
+        this.answers.forEach(answer => {
+          answer.heuristicQuestions.forEach(heuristic => {
+            heuristic.heuristicQuestions.forEach(question => {
+              question.answerImageUrl = ""
+            })
+          })
+        })
         //this.preview.cooperatorsEmail = this.test.cooperators[i].email
         await axios
           .post(
