@@ -381,7 +381,6 @@
                       <HelpBtn :question="question" />
                     </v-col>
                   </v-row>
-
                   <AddCommentBtn
                     :heuris-index="heurisIndex"
                     :answer-heu="
@@ -400,7 +399,10 @@
                           .heuristicQuestions[i].heuristicAnswer
                       "
                       class="optionSelect"
+                      return-object
                       :items="test.testOptions"
+                      item-text="text"
+                      item-value=""
                       label="Respuestas/Answers"
                       outlined
                       dense
@@ -521,25 +523,6 @@ export default {
       }
     },
   },
-  mounted() {
-    const mediaQuery = window.matchMedia('(max-width: 600px)')
-
-    // Function to toggle the visibility of the list of questions
-    const hideSidebar = () => {
-      this.mini = true
-    }
-
-    // Add an event listener for the media query
-    mediaQuery.addEventListener('change', hideSidebar)
-
-    // Call the function initially to set the correct visibility
-    hideSidebar()
-
-    // Clean up the event listener when the component is destroyed
-    this.$once('hook:beforeDestroy', () => {
-      mediaQuery.removeEventListener('change', hideSidebar)
-    })
-  },
 
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
@@ -610,7 +593,7 @@ export default {
         let x = 0
         this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
           heuQ.heuristicQuestions.forEach((question) => {
-            if (question.heuristicAnswer !== '') {
+            if (question.heuristicAnswer !== '' && Object.values(question.heuristicAnswer).length > 0) {
               x++
             }
           })
@@ -621,10 +604,11 @@ export default {
           this.calculatedProgress = 0
         }
       }
+      this.$forceUpdate()
     },
     perHeuristicProgress(item) {
       const value =
-        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '')
+        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '' && Object.values(q.heuristicAnswer).length > 0)
           .length *
           100) /
         item.heuristicTotal
