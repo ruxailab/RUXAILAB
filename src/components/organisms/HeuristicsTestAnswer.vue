@@ -308,9 +308,16 @@
                               "
                               dark
                             >
-                              {{ item.percentage }}
+                              {{checkIfNan(item.percentage)}}
                             </v-chip>
                           </div>
+                        </template>
+
+                        <template v-slot:item.sd="{ item }">
+                          {{ checkIfNan(item.sd) }}
+                        </template>
+                         <template v-slot:item.average="{ item }">
+                          {{ checkIfNan(item.average) }}
                         </template>
                       </v-data-table>
                     </v-col>
@@ -678,6 +685,9 @@ export default {
     this.usuability_percentage_array()
   },
   methods: {
+    checkIfNan(value) {
+      return !isNaN(value) ? value : '-'
+    },
     getColor(value, max, min) {
       //✓
       max = Number(max)
