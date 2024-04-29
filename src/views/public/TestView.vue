@@ -381,7 +381,6 @@
                       <HelpBtn :question="question" />
                     </v-col>
                   </v-row>
-
                   <AddCommentBtn
                     :heuris-index="heurisIndex"
                     :answer-heu="
@@ -400,7 +399,10 @@
                           .heuristicQuestions[i].heuristicAnswer
                       "
                       class="optionSelect"
+                      return-object
                       :items="test.testOptions"
+                      item-text="text"
+                      item-value=""
                       label="Respuestas/Answers"
                       outlined
                       dense
@@ -580,7 +582,7 @@ export default {
         let x = 0
         this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
           heuQ.heuristicQuestions.forEach((question) => {
-            if (question.heuristicAnswer !== '') {
+            if (question.heuristicAnswer !== '' && Object.values(question.heuristicAnswer).length > 0) {
               x++
             }
           })
@@ -595,7 +597,7 @@ export default {
     },
     perHeuristicProgress(item) {
       const value =
-        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '')
+        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '' && Object.values(q.heuristicAnswer).length > 0)
           .length *
           100) /
         item.heuristicTotal
