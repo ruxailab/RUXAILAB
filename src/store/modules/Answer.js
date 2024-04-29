@@ -14,8 +14,26 @@ export default {
     finalReport: [],
   },
   getters: {
-    testAnswerDocument(state) {
+    testAnswerDocument(state, rootState) {
+      if (rootState.test) {
+        const testOptions = rootState.test.testOptions
+
+        if (state.testAnswerDocument && state.testAnswerDocument.heuristicAnswers) {
+          for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
+            value.heuristicQuestions.forEach(heuristic => {
+              heuristic.heuristicQuestions.forEach(question => {
+                question.heuristicAnswer = question.heuristicAnswer?.text ? question.heuristicAnswer : {
+                  text: testOptions.find(op => op.value === question.heuristicAnswer)?.text ?? "", value: question.heuristicAnswer,
+                }
+              })
+            })
+          }
+        }
+
+      }
+
       return state.testAnswerDocument
+      // return {}
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
@@ -25,61 +43,62 @@ export default {
       if (state.testAnswerDocument.type === 'HEURISTICS') {
         return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
           ? HeuristicAnswer.toHeuristicAnswer(
-              state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
-            )
+            state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
+            rootState.test.testOptions,
+          )
           : new HeuristicAnswer({
-              userDocId: rootState.user.id,
-            })
+            userDocId: rootState.user.id,
+          })
       }
 
       if (state.testAnswerDocument.type === 'User') {
         return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
           ? TaskAnswer.toTaskAnswer(
-              state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
-            )
+            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+          )
           : new TaskAnswer({
-              userDocId: rootState.user.id,
-              preTestAnswer: (() => {
-                const preTestAnswer = []
-                for (
-                  let i = 0;
-                  i < rootState.test.testStructure.preTest.length;
-                  i++
-                ) {
-                  preTestAnswer[i] = {
-                    preTestAnswerId: i,
-                    answer: '',
-                  }
+            userDocId: rootState.user.id,
+            preTestAnswer: (() => {
+              const preTestAnswer = []
+              for (
+                let i = 0;
+                i < rootState.test.testStructure.preTest.length;
+                i++
+              ) {
+                preTestAnswer[i] = {
+                  preTestAnswerId: i,
+                  answer: '',
                 }
-                return preTestAnswer
-              })(),
-              consent: rootState.test.testStructure.consent,
-              postTestAnswer: rootState.test.testStructure.postTest,
-              preTestCompleted: false,
-              consentCompleted: false,
-              postTestCompleted: false,
-              tasks: (() => {
-                const tasks = {}
-                for (
-                  let i = 0;
-                  i < rootState.test.testStructure.userTasks.length;
-                  i++
-                ) {
-                  tasks[i] = new UserTask({
-                    taskId: i,
-                    taskAnswer: '',
-                    taskObservations: '',
-                    taskTime: null,
-                    completed: false,
-                    audioRecordURL: '',
-                    screenRecordURL: '',
-                    webcamRecordURL: '',
-                    postAnswer: '',
-                  })
-                }
-                return tasks
-              })(),
-            })
+              }
+              return preTestAnswer
+            })(),
+            consent: rootState.test.testStructure.consent,
+            postTestAnswer: rootState.test.testStructure.postTest,
+            preTestCompleted: false,
+            consentCompleted: false,
+            postTestCompleted: false,
+            tasks: (() => {
+              const tasks = {}
+              for (
+                let i = 0;
+                i < rootState.test.testStructure.userTasks.length;
+                i++
+              ) {
+                tasks[i] = new UserTask({
+                  taskId: i,
+                  taskAnswer: '',
+                  taskObservations: '',
+                  taskTime: null,
+                  completed: false,
+                  audioRecordURL: '',
+                  screenRecordURL: '',
+                  webcamRecordURL: '',
+                  postAnswer: '',
+                })
+              }
+              return tasks
+            })(),
+          })
       }
     },
   },
@@ -188,7 +207,9 @@ export default {
       ]
 
       if (payload.resultEvaluator) {
+        let evaluatorIndex = 1
         payload.resultEvaluator.forEach((evaluator) => {
+          evaluator.id = `Ev${evaluatorIndex}`
           let totalNoAplication = 0
           let totalNoReply = 0
           let totalQuestions = 0
@@ -210,6 +231,7 @@ export default {
             ).toFixed(2),
             lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),
           })
+          evaluatorIndex++
         })
       }
 

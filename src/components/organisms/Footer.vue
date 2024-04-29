@@ -8,7 +8,7 @@
     >
       <v-card-text class="white--text py-1">
         {{ $t('pages.landing.footer') }}
-        <a @click="sendTo('mailto:uxremotelab@gmail.com')">uxremotelab@gmail.com</a>
+        <a @click="sendTo('mailto:ruxailab@gmail.com')">ruxailab@gmail.com</a>
       </v-card-text>
 
       <v-divider />

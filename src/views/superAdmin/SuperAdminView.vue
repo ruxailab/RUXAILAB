@@ -165,6 +165,10 @@
                   mdi-eye
                 </v-icon>
               </template>
+
+               <template v-slot:[`item.creationDate`]="{ item }">
+                {{ new Date(item.creationDate).toLocaleString() }}
+              </template>
             </v-data-table>
           </v-tab-item>
         </v-tabs-items>
@@ -203,6 +207,7 @@ export default {
         value: 'testTitle',
       },
       { text: 'Created by', value: 'testAdmin.email' },
+      { text: 'Created Date', value: 'creationDate' },
       { text: 'Actions', value: 'actions', align: 'end', sortable: false },
     ],
     editedIndex: -1,
