@@ -301,14 +301,13 @@
                         <template v-slot:item.percentage="{ item }">
                           <div style="padding-top: 2px; padding-bottom: 2px">
                             <v-chip
-                              v-if="!isNaN(item.percentage)"
                               style="width: 35%"
                               :color="
                                 getColor(item.average, item.max, item.min)
                               "
                               dark
                             >
-                              {{checkIfNan(item.percentage)}}
+                              {{ checkIfNan(item.percentage) }}
                             </v-chip>
                           </div>
                         </template>
@@ -316,7 +315,7 @@
                         <template v-slot:item.sd="{ item }">
                           {{ checkIfNan(item.sd) }}
                         </template>
-                         <template v-slot:item.average="{ item }">
+                        <template v-slot:item.average="{ item }">
                           {{ checkIfNan(item.average) }}
                         </template>
                       </v-data-table>
