@@ -394,18 +394,23 @@ export default {
         // Check if the user is a collaborator or owner
         const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
         if (isTestOwner) return 0
+
         const answers = []
         const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
+        answersEntries.forEach((answer) => {
+          answers.push(answer[1])
         })
-
-        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
-        if (isCooperator) {
-          return isCooperator.accessLevel
+        if (this.test.cooperators) {
+          const coopsInfo = this.test.cooperators.find(
+            (coops) => coops.userDocId === this.user.id,
+          )
+          if (coopsInfo) {
+            return coopsInfo.accessLevel
+          }
         }
+        if (this.test.isPublic) return 1
+        else return 2
       }
-
       return 1
     },
   },
@@ -474,11 +479,13 @@ export default {
           (a) => a.testDocId === this.test.id,
         )
         if (!alreadyAccepted) {
+          console.log('Caiu como !alreadyAccepted')
           // Get invitation
           const invitation = this.test.cooperators.find(
             (coop) => coop.token === this.token,
           )
           if (invitation) {
+            console.log('Caiu como invitation')
             // User invited, and they have an account
             if (this.user.email === invitation.email) {
               // Accept Collaboration
