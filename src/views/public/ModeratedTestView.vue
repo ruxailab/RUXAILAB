@@ -935,8 +935,6 @@ export default {
       return this.$store.getters.remoteStream
     },
     isTestAvailable() {
-      console.log(new Date(this.testDate))
-      console.log(new Date() > new Date(this.testDate))
       return new Date() > new Date(this.testDate)
     },
   },
@@ -952,7 +950,6 @@ export default {
     },
     async localStream(value) {
       if (value && !this.isAdmin) {
-        console.log(value)
         this.startRecordingEvaluator()
       } else if (value && this.isAdmin) {
         this.startRecordingModerator()
@@ -1058,7 +1055,6 @@ export default {
 
           updateDoc(testRef, { testStructure })
             .then(() => {
-              console.log('Status da tarefa atualizado com sucesso')
             })
             .catch((error) => {
               console.error('Erro ao atualizar o status da tarefa:', error)
@@ -1093,7 +1089,6 @@ export default {
           }
           updateDoc(testRef, data)
             .then(() => {
-              console.log(`Status da ${type} atualizado com sucesso`)
             })
             .catch((error) => {
               console.error(`Erro ao atualizar o status da ${type}:`, error)
@@ -1141,14 +1136,12 @@ export default {
         })
         .then(() => {
           this.calculateProgress()
-          console.log('Status atualizado com sucesso')
         })
         .catch((error) => {
           console.error('Erro ao atualizar o status:', error)
         })
     },
     async startRecordingEvaluator() {
-      console.log('startRecordingEvaluator')
       this.recording = true
       this.recordedChunksEvaluator = []
       this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
@@ -1187,7 +1180,6 @@ export default {
     },
 
     async startRecordingModerator() {
-      console.log('startRecordingModerator')
       this.recording = true
       this.recordedChunksModerator = []
       this.mediaRecorderModerator = new MediaRecorder(this.localStream)
