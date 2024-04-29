@@ -130,14 +130,19 @@
                         >
                           {{ item[header.value].uid }}
                         </div>
-                        <div v-else :key="item[header.value].heuristicAnswer">
+                        <div
+                          v-else
+                          :key="item[header.value].heuristicAnswer.value"
+                        >
                           <div
-                            v-if="item[header.value].heuristicAnswer == null"
+                            v-if="
+                              item[header.value].heuristicAnswer.value == null
+                            "
                           >
                             -
                           </div>
                           <div v-else>
-                            {{ item[header.value].heuristicAnswer }}
+                            {{ item[header.value].heuristicAnswer.value }}
                           </div>
                         </div>
                       </template>
@@ -201,8 +206,13 @@
                                 <v-card-text>{{
                                   result[questionSelect].heuristicComment
                                 }}</v-card-text>
-                                <v-card-img v-if="result[questionSelect].answerImageUrl ">
-                                  <img height="200" :src="result[questionSelect].answerImageUrl " />
+                                <v-card-img
+                                  v-if="result[questionSelect].answerImageUrl"
+                                >
+                                  <img
+                                    height="200"
+                                    :src="result[questionSelect].answerImageUrl"
+                                  />
                                 </v-card-img>
                               </v-card>
                             </v-timeline-item>
@@ -284,12 +294,12 @@ export default {
 
       if (this.heuristicSelect !== null && this.questionSelect !== null) {
         Object.values(this.answers).forEach((userAnswer) => {
-          const question = userAnswer.heuristicQuestions[this.heuristicSelect].heuristicQuestions[
-              this.questionSelect
-            ]
+          const question =
+            userAnswer.heuristicQuestions[this.heuristicSelect]
+              .heuristicQuestions[this.questionSelect]
 
           const optionSelect = options.find(
-            (op) => op.value === question.heuristicAnswer,
+            (op) => op.text === question.heuristicAnswer.text,
           )
           if (optionSelect) {
             const optionIndex = graph.label.indexOf(optionSelect.text)
