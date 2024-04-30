@@ -369,20 +369,25 @@ export default {
       this.$router.push(`/managerview/${id}`)
     },
     validate() {
-      if (this.test.testTitle.length > 0) {
-        if (this.test.testType == 'User' && this.dialogUser == false) {
-          this.dialog = false
-          this.dialogUser = true
-        } else if (this.test.testType == 'User' && this.dialogUser == true) {
-          this.submit()
-        } else if (this.test.testType == 'HEURISTICS') {
-          this.submit()
-        }
-      } else {
-        this.$toast.warning('Please enter a title')
+  if (this.test.testTitle.length > 0 && this.test.testTitle.length <= 200) {
+    if (this.test.testDescription.length <= 600) {
+      if (this.test.testType == 'User' && this.dialogUser == false) {
+        this.dialog = false;
+        this.dialogUser = true;
+      } else if (this.test.testType == 'User' && this.dialogUser == true) {
+        this.submit();
+      } else if (this.test.testType == 'HEURISTICS') {
+        this.submit();
       }
-    },
-  },
+    } else {
+      this.$toast.warning('Description cannot exceed 600 characters');
+    }
+  } else {
+    this.$toast.warning('Title cannot exceed 200 characters');
+  }
+}
+
+},
 }
 </script>
 
