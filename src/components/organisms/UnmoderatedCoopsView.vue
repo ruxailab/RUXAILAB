@@ -449,35 +449,33 @@ export default {
       this.submit()
     },
     validateEmail() {
-      console.log('Chamou validadeEmail')
       this.email = this.comboboxModel.pop()
       this.comboboxKey++
       if (typeof this.email !== 'object' && this.email !== undefined) {
         //if is object then no need to validate
         if (this.email.length) {
-          console.log('Chamou validadeEmail')
           if (!this.email.includes('@') || !this.email.includes('.')) {
             this.$toast.error(this.email + ' is not a valid email')
           }
           if (!this.users.find((user) => user.email === this.email)) {
-            // Verifica se o e-mail inserido manualmente existe na lista de usuários
             this.$toast.error(
               this.email + ' is not a valid email or does not exist',
             )
-            return // Se não existir, interrompe a execução
+            return
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
           }
-          const alreadyInvited = this.cooperatorsEdit.find(
-            (cooperator) => cooperator.email === this.email,
-          )
-          if (alreadyInvited) {
-            this.$toast.error(this.email + ' has already been invited')
-            return
-          }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
-        this.selectedCoops.push(this.email)
+        const alreadyInvited = this.cooperatorsEdit.find(
+          (cooperator) => cooperator.email === this.email.email,
+        )
+        if (alreadyInvited) {
+          this.$toast.warning(this.email.email + ' has already been invited')
+          return
+        } else {
+          this.selectedCoops.push(this.email)
+        }
       }
     },
     async removeCoop(coop) {
