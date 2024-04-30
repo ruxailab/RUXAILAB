@@ -368,7 +368,7 @@ export default {
     sendManager(id) {
       this.$router.push(`/managerview/${id}`)
     },
-    validate() {
+      validate() {
   if (this.test.testTitle.length > 0 && this.test.testTitle.length <= 200) {
     if (this.test.testDescription.length <= 600) {
       if (this.test.testType == 'User' && this.dialogUser == false) {
@@ -385,9 +385,8 @@ export default {
   } else {
     this.$toast.warning('Title cannot exceed 200 characters');
   }
-}
-
-},
+  },
+  },
 }
 </script>
 
