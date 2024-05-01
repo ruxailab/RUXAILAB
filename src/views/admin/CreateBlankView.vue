@@ -383,7 +383,10 @@ export default {
       this.$toast.warning('Description cannot exceed 600 characters');
     }
   } else {
-    this.$toast.warning('Title cannot exceed 200 characters');
+    if (this.test.testTitle.length > 0)
+       this.$toast.warning('Title cannot exceed 200 characters');
+    else
+      this.$toast.warning('Enter a Title');
   }
   },
   },
