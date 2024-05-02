@@ -859,6 +859,7 @@ import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
+  props: { token: { type: String, default: null } },
   components: {
     VClamp,
     CardSignIn,
@@ -903,12 +904,6 @@ export default {
     saved: false,
   }),
   computed: {
-    token() {
-      const url = window.location.href
-      const parts = url.split('/')
-      const lastSegment = parts[parts.length - 1]
-      return lastSegment
-    },
     test() {
       return this.$store.getters.test
     },
@@ -974,6 +969,10 @@ export default {
   async created() {
     await this.verifyAdmin()
     if (this.token != null) {
+      if (this.token == this.test.id) {
+        this.$toast.info('Use a session your session link to the test')
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
@@ -990,6 +989,10 @@ export default {
     } else {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
+    }
+    // save first to exit
+    window.onbeforeunload = function() {
+      return 'handle your events or msgs here'
     }
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
@@ -1030,6 +1033,9 @@ export default {
   methods: {
     isSaved() {
       return this.saved
+    },
+    isTestNotStarted() {
+      return this.start
     },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
