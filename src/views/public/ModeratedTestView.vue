@@ -991,10 +991,6 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
-    // save first to exit
-    window.onbeforeunload = function() {
-      return 'handle your events or msgs here'
-    }
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
@@ -1054,8 +1050,7 @@ export default {
           testStructure.userTasks[id].taskStatus = 'open'
 
           updateDoc(testRef, { testStructure })
-            .then(() => {
-            })
+            .then(() => {})
             .catch((error) => {
               console.error('Erro ao atualizar o status da tarefa:', error)
             })
@@ -1088,8 +1083,7 @@ export default {
             }
           }
           updateDoc(testRef, data)
-            .then(() => {
-            })
+            .then(() => {})
             .catch((error) => {
               console.error(`Erro ao atualizar o status da ${type}:`, error)
             })
