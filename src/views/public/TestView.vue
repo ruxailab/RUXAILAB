@@ -533,12 +533,15 @@ export default {
   beforeRouteLeave(to, from, next) {
     if (this.test && this.test.userTestType === 'moderated') {
       let isSaved = this.$refs.ModeratedTestView.isSaved()
-      if (!isSaved) {
+      let isTestNotStarted = this.$refs.ModeratedTestView.isTestNotStarted()
+      if (!isSaved && !isTestNotStarted) {
         if (!window.confirm('Leave without saving?')) {
           return
-        } next()
+        }
+        next()
       } else next()
-    } next()
+    }
+    next()
   },
   methods: {
     startTest() {
@@ -593,7 +596,10 @@ export default {
         let x = 0
         this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
           heuQ.heuristicQuestions.forEach((question) => {
-            if (question.heuristicAnswer !== '' && Object.values(question.heuristicAnswer).length > 0) {
+            if (
+              question.heuristicAnswer !== '' &&
+              Object.values(question.heuristicAnswer).length > 0
+            ) {
               x++
             }
           })
@@ -608,8 +614,11 @@ export default {
     },
     perHeuristicProgress(item) {
       const value =
-        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '' && Object.values(q.heuristicAnswer).length > 0)
-          .length *
+        (item.heuristicQuestions.filter(
+          (q) =>
+            q.heuristicAnswer !== '' &&
+            Object.values(q.heuristicAnswer).length > 0,
+        ).length *
           100) /
         item.heuristicTotal
       return value.toFixed(1)
