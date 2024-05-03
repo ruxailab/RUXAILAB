@@ -6,7 +6,7 @@
           v-if="index == 0"
           :disabled="!consentCompleted && !isAdmin"
           :dark="(consentCompleted && !isAdmin) || isAdmin"
-          @click="openUserMedia(), emitConfirm()"
+          @click="openUserMedia()"
           color="green"
           block
           depressed
@@ -166,7 +166,6 @@ export default {
 
       const roomSnapshot = await getDoc(roomRef)
 
-
       if (roomSnapshot.exists) {
         this.peerConnection = new RTCPeerConnection(this.configuration)
 
@@ -257,13 +256,16 @@ export default {
           video: true,
           audio: true,
         })
-        this.$store.commit('SET_LOCAL_STREAM', stream)
-        this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
-        this.createBtnDisabled = false
-        this.joinBtnDisabled = false
-        this.hangupBtnDisabled = false
+        if (stream) {
+          this.emitConfirm()
+          this.$store.commit('SET_LOCAL_STREAM', stream)
+          this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
+          this.createBtnDisabled = false
+          this.joinBtnDisabled = false
+          this.hangupBtnDisabled = false
+        }
       } catch (e) {
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error('Error in capturing your media device:' + e.message)
       }
       if (this.isAdmin) {
         this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
@@ -300,7 +302,6 @@ export default {
           // Verificando se o documento da sala existe antes de tentar excluí-lo
           const roomSnapshot = await getDoc(roomRef)
           if (roomSnapshot.exists()) {
-
             const calleeCandidatesSnapshot = await getDocs(
               collection(roomRef, 'calleeCandidates'),
             )
