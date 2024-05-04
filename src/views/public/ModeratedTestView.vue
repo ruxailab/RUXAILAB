@@ -777,7 +777,7 @@
                       dark
                       @click="saveAnswer(), stopRecording()"
                     >
-                      Return to home
+                      Save & Exit
                     </v-btn>
                   </v-col>
                 </v-col>
@@ -859,6 +859,7 @@ import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
+  props: { token: { type: String, default: null } },
   components: {
     VClamp,
     CardSignIn,
@@ -900,10 +901,8 @@ export default {
     consentCompleted: false,
     sessionCooperator: null,
     testDate: null,
+    saved: false,
   }),
-  props: {
-    token: { type: String, default: null },
-  },
   computed: {
     test() {
       return this.$store.getters.test
@@ -931,8 +930,6 @@ export default {
       return this.$store.getters.remoteStream
     },
     isTestAvailable() {
-      console.log(new Date(this.testDate))
-      console.log(new Date() > new Date(this.testDate))
       return new Date() > new Date(this.testDate)
     },
   },
@@ -948,7 +945,6 @@ export default {
     },
     async localStream(value) {
       if (value && !this.isAdmin) {
-        console.log(value)
         this.startRecordingEvaluator()
       } else if (value && this.isAdmin) {
         this.startRecordingModerator()
@@ -973,12 +969,16 @@ export default {
   async created() {
     await this.verifyAdmin()
     if (this.token != null) {
+      if (this.token == this.test.id) {
+        this.$toast.info('Use a session your session link to the test')
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
-      if (!this.user.userDocId !== this.token && !this.isAdmin) {
+      if (this.user.id != this.token && !this.isAdmin) {
         this.$toast.error(`You don't have access to this session.`)
-        this.$router.push('/testslist/')
+        this.$router.push('/testslist')
       }
       if (this.sessionCooperator.testDate) {
         this.testDate = this.sessionCooperator.testDate
@@ -990,7 +990,10 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
-
+    // save first to exit
+    window.onbeforeunload = function() {
+      return 'handle your events or msgs here'
+    }
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
@@ -1028,6 +1031,12 @@ export default {
     }
   },
   methods: {
+    isSaved() {
+      return this.saved
+    },
+    isTestNotStarted() {
+      return this.start
+    },
     async saveAnswer() {
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
@@ -1047,9 +1056,7 @@ export default {
           testStructure.userTasks[id].taskStatus = 'open'
 
           updateDoc(testRef, { testStructure })
-            .then(() => {
-              console.log('Status da tarefa atualizado com sucesso')
-            })
+            .then(() => {})
             .catch((error) => {
               console.error('Erro ao atualizar o status da tarefa:', error)
             })
@@ -1082,9 +1089,7 @@ export default {
             }
           }
           updateDoc(testRef, data)
-            .then(() => {
-              console.log(`Status da ${type} atualizado com sucesso`)
-            })
+            .then(() => {})
             .catch((error) => {
               console.error(`Erro ao atualizar o status da ${type}:`, error)
             })
@@ -1131,14 +1136,12 @@ export default {
         })
         .then(() => {
           this.calculateProgress()
-          console.log('Status atualizado com sucesso')
         })
         .catch((error) => {
           console.error('Erro ao atualizar o status:', error)
         })
     },
     async startRecordingEvaluator() {
-      console.log('startRecordingEvaluator')
       this.recording = true
       this.recordedChunksEvaluator = []
       this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
@@ -1167,6 +1170,9 @@ export default {
         this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
         this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
         this.isLoading = false
+        this.saved = true
+        this.localStream.getTracks().forEach((track) => track.stop())
+        window.onbeforeunload = null
         this.$router.push('/testslist')
       }
 
@@ -1174,7 +1180,6 @@ export default {
     },
 
     async startRecordingModerator() {
-      console.log('startRecordingModerator')
       this.recording = true
       this.recordedChunksModerator = []
       this.mediaRecorderModerator = new MediaRecorder(this.localStream)
@@ -1375,6 +1380,8 @@ export default {
     async finishTest() {
       this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
+      this.saved = true
+      window.onbeforeunload = null
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''

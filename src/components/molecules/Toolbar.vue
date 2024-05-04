@@ -54,7 +54,7 @@
       <v-list v-if="isManager && test" dense dark>
         <v-list-item-group v-model="item">
           <v-list-item
-            v-for="(item, i) in managerItems"
+            v-for="(item, i) in items"
             :key="i"
             link
             @click="goTo(item.path)"
@@ -229,86 +229,131 @@ export default {
     user() {
       return this.$store.getters.user
     },
-    managerItems() {
-      const items = [
-        {
-          title: 'Manager',
-          icon: 'mdi-home',
-          path: `/managerview/${this.test.id}`,
-          id: 0,
-        },
-        {
-          title: 'Test',
-          icon: 'mdi-file-document-edit',
-          path: `/edittest/${this.test.id}`,
-          id: 1,
-        },
-        {
-          title: 'Preview',
-          icon: 'mdi-file-eye',
-          path: `/testview/${this.test.id}`,
-          id: 2,
-        },
-        {
-          title: 'Reports',
-          icon: 'mdi-book-multiple',
-          path: `/reportview/${this.test.reports}`,
-          id: 3,
-        },
-        {
-          title: 'Answers',
-          icon: 'mdi-order-bool-ascending-variant',
-          path: `/answerview/${this.test.answersDocId}`,
-          id: 4,
-        },
-        {
-          title: 'Final Report',
-          icon: 'mdi-file-document',
-          path: `/finalreportview/${this.test.id}`,
-          id: 6,
-        },
-      ]
+    test() {
+      return this.$store.state.Tests.Test
+    },
+    items() {
+      let items
+      if (this.test) {
+        items = [
+          {
+            title: 'Manager',
+            icon: 'mdi-home',
+            path: `/managerview/${this.test.id}`,
+            id: 0,
+          },
+        ]
 
-      if (this.isManager) {
-        items.push({
-          title: 'Cooperators',
-          icon: 'mdi-account-group',
-          path: `/cooperators/${this.test.cooperators}`,
-          id: 6,
-        })
+        if (this.accessLevel <= 2) {
+          if (this.accessLevel == 0) {
+            items.push(
+              {
+                title: 'Test',
+                icon: 'mdi-file-document-edit',
+                path: `/edittest/${this.test.id}`,
+                id: 1,
+              },
+              {
+                title: 'Preview',
+                icon: 'mdi-file-eye',
+                path: `/testview/${this.test.id}`,
+                id: 2,
+              },
+            )
+          } else if (this.accessLevel == 1) {
+            items.push({
+              title: 'Answer Test',
+              icon: 'mdi-file-document',
+              path: `/testview/${this.test.id}`,
+              id: 1,
+            })
+          }
+        }
+        if (this.accessLevel == 0) {
+          items.push(
+            {
+              title: 'Reports',
+              icon: 'mdi-book-multiple',
+              path: `/reportview/${this.test.id}`,
+              id: 3,
+            },
+            {
+              title: 'Answers',
+              icon: 'mdi-order-bool-ascending-variant',
+              path: `/answerview/${this.test.id}`,
+              id: 4,
+            },
+          )
+        } else if (this.accessLevel == 1) {
+          items.push(
+            {
+              title: 'Reports',
+              icon: 'mdi-book-multiple',
+              path: `/reportview/${this.test.id}`,
+              id: 2,
+            },
+            {
+              title: 'Answers',
+              icon: 'mdi-order-bool-ascending-variant',
+              path: `/answerview/${this.test.id}`,
+              id: 3,
+            },
+          )
+        }
+        if (this.accessLevel == 0) {
+          items.push(
+            {
+              title: 'Final Report',
+              icon: 'mdi-file-document',
+              path: `/finalreportview/${this.test.id}`,
+              id: 5,
+            },
+            {
+              title: 'Cooperators',
+              icon: 'mdi-account-group',
+              path: `/cooperators/${this.test.id}`,
+              id: 6,
+            },
+          )
+        }
+
+        if (this.test.template) {
+          items.push({
+            title: 'Template',
+            icon: 'mdi-file-compare',
+            path: `/templateview/${this.test.template.id}`,
+            id: 7,
+          })
+        }
       }
 
-      if (this.test.template) {
-        items.push({
-          title: 'Template',
-          icon: 'mdi-file-compare',
-          path: `/templateview/${this.test.template.id}`,
-          id: 7,
-        })
-      }
-
-      items.push({
-        title: 'Settings',
-        icon: 'mdi-cog',
-        path: `/settingsview/${this.test.id}`,
-        id: 8,
-      })
       return items
     },
-    test() {
-      return this.$store.getters.test
-    },
     accessLevel() {
-      /*
-      let id = this.test?.id;
+      // If the user is a superadmin
+      if (this.user) {
+        if (this.user.accessLevel == 0) return 0
+        // Check if the user is a collaborator or owner
+        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
+        if (isTestOwner) return 0
 
-      //if (this.user?.myTests.find((mt) => mt.id == id)) return 0; //if own test
-
-      let myCoop = this.user?.myCoops.find((mc) => mc.id == id);
-      if (myCoop) return myCoop.accessLevel;
-      */
-
-      return 1 // default to 1 -> Guest
+        const answers = []
+        const answersEntries = Object.entries(this.user.myAnswers)
+        answersEntries.forEach((answer) => {
+          answers.push(answer[1])
+        })
+        if (this.test.cooperators) {
+          const coopsInfo = this.test.cooperators.find(
+            (coops) => coops.userDocId === this.user.id,
+          )
+          if (coopsInfo) {
+            return coopsInfo.accessLevel
+          }
+        }
+        if (this.test.isPublic) return 1
+        else return 2
+      }
+      return 1
     },
   },
   watch: {

@@ -20,10 +20,10 @@ export default class Heuristic {
         this.heuristicQuestions = heuristicQuestions
         this.heuristicTotal = heuristicTotal
     }
-    static toHeuristic(data) {
+    static toHeuristic(data, testOptions) {
         return new Heuristic({
             ...data,
-            heuristicQuestions: data.heuristicQuestions.map((h) => HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h)),
+            heuristicQuestions: data.heuristicQuestions.map((h) => HeuristicQuestionAnswer.toHeuristicQuestionAnswer(h, testOptions)),
         })
     }
 
