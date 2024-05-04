@@ -139,9 +139,7 @@ export default {
     },
     deleteItem(item) {
       const index = this.allTasks.indexOf(item)
-      console.log(index)
       confirm('Are you sure you want to delete this task?')
-      console.log(item)
       this.allTasks.splice(index, 1)
     },
     addTask() {
