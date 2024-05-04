@@ -37,16 +37,13 @@ if (window.Cypress) {
  * Delete the currently logged in user
  * @returns {Promise<void>}
  */
-export const deleteUser = async () => {
+export const deleteUser = async (email, password) => {
   try {
-    if (!auth.currentUser) {
-      throw new Error('No user is logged in')
-    }
+    const { user } = await signInWithEmailAndPassword(auth, email, password)
     const { collection } = authUser
-    const currentUser = auth.currentUser
-    await deleteDocById(collection, currentUser.uid)
-    await deleteUserAuth(auth.currentUser)
-    console.info(`Deleted user with ID "${currentUser.uid}"`)
+    await deleteDocById(collection, user.uid)
+    await deleteUserAuth(user)
+    console.info(`Deleted user with ID "${user.uid}"`)
   } catch (err) {
     console.error(err)
     alert(err.message)
