@@ -1,6 +1,7 @@
 {
   "email": "ruxailab@ruxailab.com",
   "password": "ruxailab1234",
+  "invalidPassword": "123",
   "data": {
     "accessLevel": 1,
     "email" : "ruxailab@ruxailab.com",
