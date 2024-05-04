@@ -19,7 +19,11 @@
             feature2="Final Report PDF"
             feature3="Invite specialists to evaluate your application"
             imageSrc="../../../public/specialist.png"
-            :handleClick="() => handleTestType('HEURISTICS')"
+            :handleClick="
+              () => {
+                ;(test.testType = 'HEURISTICS'), (dialog = true)
+              }
+            "
           />
         </v-col>
         <!-- <v-col cols="1"></v-col> -->
@@ -32,7 +36,11 @@
             feature2="Enhanced answer analysis"
             feature3="Moderated or non moderated tests"
             imageSrc="../../../public/user.png"
-            :handleClick="() => handleTestType('User')"
+            :handleClick="
+              () => {
+                ;(test.testType = 'User'), (dialog = true)
+              }
+            "
           />
         </v-col>
         <!-- <v-col cols="1"></v-col> -->
@@ -56,6 +64,11 @@ import TestAdmin from '@/models/TestAdmin'
 import Test from '@/models/Test'
 
 export default {
+  components: {
+    CardComponent,
+    TestCreationDialog,
+    UserTestDialog,
+  },
   data: () => ({
     dialog: false,
     dialogUser: false,
@@ -108,27 +121,26 @@ export default {
     sendManager(id) {
       this.$router.push(`/managerview/${id}`)
     },
-      validate() {
-  if (this.test.testTitle.length > 0 && this.test.testTitle.length <= 200) {
-    if (this.test.testDescription.length <= 600) {
-      if (this.test.testType == 'User' && this.dialogUser == false) {
-        this.dialog = false;
-        this.dialogUser = true;
-      } else if (this.test.testType == 'User' && this.dialogUser == true) {
-        this.submit();
-      } else if (this.test.testType == 'HEURISTICS') {
-        this.submit();
+    validate() {
+      if (this.test.testTitle.length > 0 && this.test.testTitle.length <= 200) {
+        if (this.test.testDescription.length <= 600) {
+          if (this.test.testType == 'User' && this.dialogUser == false) {
+            this.dialog = false
+            this.dialogUser = true
+          } else if (this.test.testType == 'User' && this.dialogUser == true) {
+            this.submit()
+          } else if (this.test.testType == 'HEURISTICS') {
+            this.submit()
+          }
+        } else {
+          this.$toast.warning('Description cannot exceed 600 characters')
+        }
+      } else {
+        if (this.test.testTitle.length > 0)
+          this.$toast.warning('Title cannot exceed 200 characters')
+        else this.$toast.warning('Enter a Title')
       }
-    } else {
-      this.$toast.warning('Description cannot exceed 600 characters');
-    }
-  } else {
-    if (this.test.testTitle.length > 0)
-       this.$toast.warning('Title cannot exceed 200 characters');
-    else
-      this.$toast.warning('Enter a Title');
-  }
-  },
+    },
   },
 }
 </script>
