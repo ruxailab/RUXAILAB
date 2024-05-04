@@ -169,6 +169,7 @@
                     color="orange"
                     class="ml-auto mt-4 mr-2 circleOrange"
                     @click="validate()"
+                    data-testid="add-name-test-creation-btn"
                   >
                     <v-icon x-large>
                       mdi-arrow-right
