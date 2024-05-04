@@ -26,11 +26,11 @@ export default class HeuristicAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? 0
   }
-  static toHeuristicAnswer(data) {
+  static toHeuristicAnswer(data, testOptions) {
     return new HeuristicAnswer({
       ...data,
       heuristicQuestions: data.heuristicQuestions.map((h) =>
-        Heuristic.toHeuristic(h),
+        Heuristic.toHeuristic(h, testOptions),
       ),
     })
   }
