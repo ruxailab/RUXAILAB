@@ -99,7 +99,6 @@ export default {
   },
   methods: {
     async toggleScreen() {
-      console.log('toggleScreen')
       if (!this.isSharingScreen) {
         await this.$refs.VideoCall.switchMediaStream()
         this.isSharingScreen = true
@@ -119,7 +118,6 @@ export default {
         const audioTrack = this.localStream
           .getTracks()
           .find((track) => track.kind == 'audio')
-        console.log(audioTrack)
         audioTrack.enabled = !audioTrack.enabled
         this.isMicrophoneMuted = !audioTrack.enabled
       }
