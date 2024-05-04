@@ -34,7 +34,7 @@ if (window.Cypress) {
 }
 
 /**
- * Delete the currently logged in user
+ * Delete the currently logged-in user
  * @returns {Promise<void>}
  */
 export const deleteUser = async (email, password) => {
@@ -46,7 +46,6 @@ export const deleteUser = async (email, password) => {
     console.info(`Deleted user with ID "${user.uid}"`)
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
@@ -63,12 +62,11 @@ export const logInWithEmailAndPassword = async (email, password) => {
     })
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
 /**
- * Log out the currently logged in user
+ * Log out the currently logged-in user
  * @returns {Promise<void>}
  */
 export const logOut = async () => {
@@ -78,7 +76,6 @@ export const logOut = async () => {
     })
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
@@ -96,7 +93,6 @@ export const signUpWithEmailAndPassword = async (email, password) => {
     await createDoc(collection, user.uid, data)
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
@@ -113,7 +109,6 @@ export const createDoc = async (col, docId, data) => {
     await setDoc(ref, data)
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
@@ -129,7 +124,6 @@ export const deleteDocById = async (col, docId) => {
     await deleteDoc(ref)
   } catch (err) {
     console.error(err)
-    alert(err.message)
   }
 }
 
