@@ -1,0 +1,12 @@
+{
+  "email": "ruxailab@ruxailab.com",
+  "password": "ruxailab1234",
+  "data": {
+    "accessLevel": 1,
+    "email" : "ruxailab@ruxailab.com",
+    "myAnswers": {},
+    "myTests": {},
+    "notifications": []
+  },
+  "collection": "users"
+}
