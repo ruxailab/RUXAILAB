@@ -10,7 +10,7 @@
     <v-col cols="12" class="mt-6">
       <v-row class="cardsContainer">
         <!-- <v-col cols="1"></v-col> -->
-        <v-col cols="12" md="6" sm="10" class="card">
+        <v-col cols="10" md="5" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -56,7 +56,7 @@
           </v-card>
         </v-col>
         <!-- <v-col cols="1"></v-col> -->
-        <v-col cols="12" md="6" sm="10" class="card">
+        <v-col cols="12" md="5" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -122,8 +122,8 @@
             mdi-arrow-u-left-bottom
           </v-icon>
         </v-btn>
-        <v-col lg="9" md="8" sm="12" class="ml-auto mr-auto">
-          <span class="Titles ml-5">Test Creation</span>
+        <v-col lg="9" md="8" sm="12" class="ml-auto mr-auto pt-10">
+          <span class="Titles ml-5 ">Test Creation</span>
           <br />
           <span class="cardSubtitle ml-5">Add a name to your test!</span>
         </v-col>
@@ -131,7 +131,7 @@
           <v-col class="ml-auto mr-auto" sm="10" md="8" lg="4">
             <v-card
               color="white"
-              class="pb-4"
+              class="pb-5"
               style="border-radius: 20px !important"
             >
               <v-col cols="11">
@@ -158,13 +158,14 @@
                 <v-row>
                   <v-checkbox
                     v-model="test.isPublic"
-                    class="ml-10 mt-8"
+                    class="ml-10 mt-4"
                     color="orange"
                     label="Test public to all users"
                   />
                   <v-btn
                     dark
                     fab
+                    depressed
                     color="orange"
                     class="ml-auto mr-2 circleOrange"
                     @click="validate()"
@@ -217,15 +218,15 @@
         </v-btn>
         <v-col cols="12">
           <v-row justify="center">
-            <span class="Titles mt-16 mb-8"
-              >What kind of test are you looking to start?</span
+            <span class="Titles mt-8 mb-8"
+              >What type of test are you looking to start?</span
             >
           </v-row>
         </v-col>
         <v-col cols="12" class="mt-6">
-          <v-row justify="center">
-            <v-col cols="1" />
-            <v-col cols="4">
+          <v-row class="cardsContainer">
+            <!-- <v-col cols="1"></v-col> -->
+            <v-col cols="10" md="4" sm="10" class="card">
               <v-card
                 hover
                 color="white"
@@ -264,8 +265,7 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="1"></v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4" sm="10" class="card">
               <v-card
                 hover
                 color="white"
