@@ -10,7 +10,7 @@ describe('SignIn', () => {
 
   it('should display email input', async () => {
     render(SignInView)
-    expect(screen.getByLabelText(/E-mail/i, { selector: 'input' })).toBeInTheDocument()
+    expect(screen.getByLabelText(/E-mailxxxxx/i, { selector: 'input' })).toBeInTheDocument()
   })
   it('should display password input', async () => {
     render(SignInView)
