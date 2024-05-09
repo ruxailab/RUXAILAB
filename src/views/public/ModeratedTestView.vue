@@ -937,6 +937,14 @@ export default {
     taskIndex() {
       this.$refs.rightView.scrollTop = 0
     },
+    start() {
+      if (this.start) {
+        window.onbeforeunload = function() {
+          return 'handle your events or msgs here'
+        }
+      }
+      // save first to exit
+    },
     async user() {
       if (this.user) {
         this.noExistUser = false
@@ -990,10 +998,6 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
-    // save first to exit
-    window.onbeforeunload = function() {
-      return 'handle your events or msgs here'
-    }
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
@@ -1027,6 +1031,7 @@ export default {
   async beforeDestroy() {
     if (this.isAdmin) {
       this.disconnect()
+      window.onbeforeunload = null
       await this.$store.dispatch('hangUp', this.roomTestId)
     }
   },
