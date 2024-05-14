@@ -225,7 +225,7 @@
         </v-col>
         <v-col cols="12" class="mt-6">
           <v-row class="cardsContainer">
-            <!-- <v-col cols="1"></v-col> -->
+            <v-col cols="1"></v-col>
             <v-col cols="10" md="4" sm="10" class="card">
               <v-card
                 hover
