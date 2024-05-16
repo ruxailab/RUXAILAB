@@ -148,7 +148,8 @@
       "noHeuristics": "Você não tem nenhuma heurística, crie uma para continuar.",
       "youMustHave": "Você deve ter digitado algo errado...",
       "noHeuristicsDeleteAll": "Desculpe, mas você não pode excluir todas as perguntas de heurísticas",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar."
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. Por favor, selecione um antes de continuar.",
+      "changeWeights": "Esteja ciente que alterando a ordem das heuristicas, os pesos NÃO MUDAM automaticamente, você deve alterá-los manualmente."
     },
     "validation": {
       "nameRequired": "Nome é requerido",
@@ -380,6 +381,7 @@
       "to": "para",
       "createHeuristics": "Por favor, crie heurísticas para que você possa selecioná-las aqui.",
       "pdf": "Gerar PDF",
+      "elements": "Elementos",
       "options": {
         "options": "Opções de teste",
         "comments": "Responde aos comentários",
