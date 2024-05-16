@@ -64,6 +64,7 @@
                   dense
                   color="#fca326"
                   class="mx-2"
+                  @input="verifyEmail()"
                 >
                   <template v-slot:no-data>
                     There are no users registered with that email, press enter
@@ -457,7 +458,6 @@ export default {
       currentDate.setDate(currentDate.getDate() - 1)
       const selectedDate = new Date(this.date)
 
-      console.log(selectedDate.toLocaleDateString())
       if (
         selectedDate.toLocaleDateString() ===
           currentDate.toLocaleDateString() &&
@@ -480,7 +480,6 @@ export default {
   },
   created() {
     this.$store.dispatch('getAllUsers')
-
   },
   methods: {
     async saveInvitation() {
@@ -501,6 +500,19 @@ export default {
       })
 
       this.submit()
+    },
+
+    verifyEmail() {
+      const alreadyInvited = this.cooperatorsEdit.find(
+        (cooperator) => cooperator.email === this.comboboxModel.email,
+      )
+      if (alreadyInvited) {
+        this.$toast.warning(
+          this.comboboxModel.email + ' has already been invited',
+        )
+        this.comboboxModel = ''
+        return
+      }
     },
 
     async submit() {
@@ -577,7 +589,6 @@ export default {
       return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
     },
     reinvite(guest) {
-      console.log(guest)
       this.notifyCooperator(guest)
     },
     openInvitationModal() {

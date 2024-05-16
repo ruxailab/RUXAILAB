@@ -32,7 +32,6 @@ export default class TestController extends Controller {
   //   return await super.delete(COLLECTION, payload.id)
   // }
   async deleteTest(payload) {
-    console.log(payload)
     try {
       console.log('Inicio do delete test')
       const testToDelete = await super.readOne(COLLECTION, payload.id)

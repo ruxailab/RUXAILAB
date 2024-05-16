@@ -187,6 +187,39 @@ If you want to deply the fuction, change your account from spark to blaze, run:
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
 There you can get the url and replace on .env file.
 
+
+
+
+## Docker Setup
+
+
+
+### Building the Docker Image
+
+To build the Docker image for UX Remote LAB, navigate to the project's root directory and run the following command:
+
+```bash
+docker build -t uxremotelab .
+```
+
+### Running the Application using Docker
+
+After building the image, you can run the application in a Docker container using:
+
+ 
+Note: Ensure you have created the .env file and filled it with all required variables before running the following command:
+  
+
+```bash
+docker run -d --env-file .env -p 5000:5000 uxremotelab
+```
+
+Visit `http://localhost:5000` in your browser to access the UX Remote LAB platform.
+
+
+
+
+
 ## License
 
 MIT © [UX Remote LAB](https://github.com/uramakilab/remote-usability-lab)

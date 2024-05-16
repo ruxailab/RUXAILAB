@@ -6,7 +6,7 @@
           v-if="index == 0"
           :disabled="!consentCompleted && !isAdmin"
           :dark="(consentCompleted && !isAdmin) || isAdmin"
-          @click="openUserMedia(), emitConfirm()"
+          @click="openUserMedia()"
           color="green"
           block
           depressed
@@ -166,8 +166,6 @@ export default {
 
       const roomSnapshot = await getDoc(roomRef)
 
-      console.log('Got room:', roomSnapshot.exists)
-
       if (roomSnapshot.exists) {
         this.peerConnection = new RTCPeerConnection(this.configuration)
 
@@ -258,13 +256,16 @@ export default {
           video: true,
           audio: true,
         })
-        this.$store.commit('SET_LOCAL_STREAM', stream)
-        this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
-        this.createBtnDisabled = false
-        this.joinBtnDisabled = false
-        this.hangupBtnDisabled = false
+        if (stream) {
+          this.emitConfirm()
+          this.$store.commit('SET_LOCAL_STREAM', stream)
+          this.$store.commit('SET_REMOTE_STREAM', new MediaStream())
+          this.createBtnDisabled = false
+          this.joinBtnDisabled = false
+          this.hangupBtnDisabled = false
+        }
       } catch (e) {
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error('Error in capturing your media device:' + e.message)
       }
       if (this.isAdmin) {
         this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
@@ -273,7 +274,6 @@ export default {
       }
     },
     async hangUp() {
-      console.log('hang up')
       const tracks = this.localStream.getTracks()
       tracks.forEach((track) => {
         track.stop()
@@ -302,14 +302,11 @@ export default {
           // Verificando se o documento da sala existe antes de tentar excluí-lo
           const roomSnapshot = await getDoc(roomRef)
           if (roomSnapshot.exists()) {
-            console.log('Room document exists. Deleting...')
-
             const calleeCandidatesSnapshot = await getDocs(
               collection(roomRef, 'calleeCandidates'),
             )
             calleeCandidatesSnapshot.forEach(async (candidate) => {
               await deleteDoc(candidate.ref)
-              console.log('Deleted callee candidate:', candidate.id)
             })
 
             const callerCandidatesSnapshot = await getDocs(
@@ -317,13 +314,10 @@ export default {
             )
             callerCandidatesSnapshot.forEach(async (candidate) => {
               await deleteDoc(candidate.ref)
-              console.log('Deleted caller candidate:', candidate.id)
             })
 
             await deleteDoc(roomRef)
-            console.log('Deleted room document:', this.roomId)
           } else {
-            console.log('Room document does not exist.')
           }
         } catch (error) {
           console.error('Error deleting room and candidates:', error)

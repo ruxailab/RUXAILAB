@@ -392,7 +392,6 @@
                       <HelpBtn :question="question" />
                     </v-col>
                   </v-row>
-
                   <AddCommentBtn
                     :heuris-index="heurisIndex"
                     :answer-heu="
@@ -411,7 +410,10 @@
                           .heuristicQuestions[i].heuristicAnswer
                       "
                       class="optionSelect"
+                      return-object
                       :items="test.testOptions"
+                      item-text="text"
+                      item-value=""
                       label="Respuestas/Answers"
                       outlined
                       dense
@@ -429,7 +431,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView :token="token" />
+      <ModeratedTestView ref="ModeratedTestView" :token="token" />
     </div>
   </div>
 </template>
@@ -523,6 +525,7 @@ export default {
     },
     heurisIndex() {
       this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
+      this.$forceUpdate()
     },
     async user() {
       if (this.user) {
@@ -537,6 +540,19 @@ export default {
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     this.populateWithHeuristicQuestions()
     this.calculateProgress()
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.test && this.test.userTestType === 'moderated') {
+      let isSaved = this.$refs.ModeratedTestView.isSaved()
+      let isTestNotStarted = this.$refs.ModeratedTestView.isTestNotStarted()
+      if (!isSaved && !isTestNotStarted) {
+        if (!window.confirm('Leave without saving?')) {
+          return
+        }
+        next()
+      } else next()
+    }
+    next()
   },
   methods: {
     startTest() {
@@ -591,7 +607,10 @@ export default {
         let x = 0
         this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
           heuQ.heuristicQuestions.forEach((question) => {
-            if (question.heuristicAnswer !== '') {
+            if (
+              question.heuristicAnswer !== '' &&
+              Object.values(question.heuristicAnswer).length > 0
+            ) {
               x++
             }
           })
@@ -606,8 +625,11 @@ export default {
     },
     perHeuristicProgress(item) {
       const value =
-        (item.heuristicQuestions.filter((q) => q.heuristicAnswer !== '')
-          .length *
+        (item.heuristicQuestions.filter(
+          (q) =>
+            q.heuristicAnswer !== '' &&
+            Object.values(q.heuristicAnswer).length > 0,
+        ).length *
           100) /
         item.heuristicTotal
       return value.toFixed(1)

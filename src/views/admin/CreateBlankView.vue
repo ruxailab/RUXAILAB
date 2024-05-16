@@ -10,7 +10,7 @@
     <v-col cols="12" class="mt-6">
       <v-row class="cardsContainer">
         <!-- <v-col cols="1"></v-col> -->
-        <v-col cols="12" md="6" sm="10" class="card">
+        <v-col cols="10" md="5" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -56,7 +56,7 @@
           </v-card>
         </v-col>
         <!-- <v-col cols="1"></v-col> -->
-        <v-col cols="12" md="6" sm="10" class="card">
+        <v-col cols="12" md="5" sm="10" class="card">
           <v-card
             hover
             color="white"
@@ -107,7 +107,7 @@
       </v-row>
     </v-col>
     <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
-      <v-card color="#f9f5f0">
+      <v-card color="#f9f5f0" class="ma-0">
         <v-btn
           icon
           dark
@@ -122,17 +122,17 @@
             mdi-arrow-u-left-bottom
           </v-icon>
         </v-btn>
-        <v-row align="center" justify="center" class="cardRow">
-          <v-col cols="10" class="mt-16 ml-auto">
-            <span class="Titles ml-5">Test Creation</span>
-            <br />
-            <span class="cardSubtitle ml-5">Add a name to your test!</span>
-          </v-col>
-          <v-col class="ml-auto mr-auto" cols="auto">
+        <v-col lg="9" md="8" sm="12" class="ml-auto mr-auto pt-10">
+          <span class="Titles ml-5 ">Test Creation</span>
+          <br />
+          <span class="cardSubtitle ml-5">Add a name to your test!</span>
+        </v-col>
+        <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
+          <v-col class="ml-auto mr-auto" sm="10" md="8" lg="4">
             <v-card
               color="white"
+              class="pb-5"
               style="border-radius: 20px !important"
-              height="480"
             >
               <v-col cols="11">
                 <div class="mt-4">
@@ -158,16 +158,16 @@
                 <v-row>
                   <v-checkbox
                     v-model="test.isPublic"
-                    class="ml-10 mt-8"
+                    class="ml-10 mt-4"
                     color="orange"
-                    label="Turn this test public to all users"
+                    label="Test public to all users"
                   />
                   <v-btn
                     dark
                     fab
-                    large
+                    depressed
                     color="orange"
-                    class="ml-auto mt-4 mr-2 circleOrange"
+                    class="ml-auto mr-2 circleOrange"
                     @click="validate()"
                   >
                     <v-icon x-large>
@@ -178,7 +178,11 @@
               </v-col>
             </v-card>
           </v-col>
-          <v-col cols="5" class="imageColumn">
+          <v-col
+            v-if="!$vuetify.breakpoint.mdAndDown"
+            cols="5"
+            class="imageColumn"
+          >
             <img
               height="500"
               draggable="false"
@@ -214,15 +218,15 @@
         </v-btn>
         <v-col cols="12">
           <v-row justify="center">
-            <span class="Titles mt-16 mb-8"
-              >What kind of test are you looking to start?</span
+            <span class="Titles mt-8 mb-8"
+              >What type of test are you looking to start?</span
             >
           </v-row>
         </v-col>
         <v-col cols="12" class="mt-6">
-          <v-row justify="center">
-            <v-col cols="1" />
-            <v-col cols="4">
+          <v-row class="cardsContainer">
+            <v-col cols="1"></v-col>
+            <v-col cols="10" md="4" sm="10" class="card">
               <v-card
                 hover
                 color="white"
@@ -261,8 +265,7 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="1"></v-col>
-            <v-col cols="4">
+            <v-col cols="12" md="4" sm="10" class="card">
               <v-card
                 hover
                 color="white"
@@ -278,6 +281,7 @@
                   </div>
                 </v-row>
                 <img
+                  v-if="!$vuetify.breakpoint.mdAndDown"
                   style="margin-left: 80px"
                   class="mt-5 mb-2"
                   height="230"
@@ -362,7 +366,6 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      console.log(test)
 
       this.sendManager(testId)
     },
@@ -370,17 +373,23 @@ export default {
       this.$router.push(`/managerview/${id}`)
     },
     validate() {
-      if (this.test.testTitle.length > 0) {
-        if (this.test.testType == 'User' && this.dialogUser == false) {
-          this.dialog = false
-          this.dialogUser = true
-        } else if (this.test.testType == 'User' && this.dialogUser == true) {
-          this.submit()
-        } else if (this.test.testType == 'HEURISTICS') {
-          this.submit()
+      if (this.test.testTitle.length > 0 && this.test.testTitle.length <= 200) {
+        if (this.test.testDescription.length <= 600) {
+          if (this.test.testType == 'User' && this.dialogUser == false) {
+            this.dialog = false
+            this.dialogUser = true
+          } else if (this.test.testType == 'User' && this.dialogUser == true) {
+            this.submit()
+          } else if (this.test.testType == 'HEURISTICS') {
+            this.submit()
+          }
+        } else {
+          this.$toast.warning('Description cannot exceed 600 characters')
         }
       } else {
-        this.$toast.warning('Please enter a title')
+        if (this.test.testTitle.length > 0)
+          this.$toast.warning('Title cannot exceed 200 characters')
+        else this.$toast.warning('Enter a Title')
       }
     },
   },
@@ -416,6 +425,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
+  padding-right: 30vh;
 }
 .card {
   margin: auto;

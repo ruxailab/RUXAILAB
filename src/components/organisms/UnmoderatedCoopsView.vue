@@ -434,6 +434,7 @@ export default {
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
+            accessLevel: this.roleOptions[this.selectedRole].value,
           }),
         })
       }
@@ -509,17 +510,24 @@ export default {
             this.$toast.error(this.email + ' is not a valid email')
           }
           if (!this.users.find((user) => user.email === this.email)) {
-            // Verifica se o e-mail inserido manualmente existe na lista de usuários
             this.$toast.error(
               this.email + ' is not a valid email or does not exist',
             )
-            return // Se não existir, interrompe a execução
+            return
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
           }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
-        this.selectedCoops.push(this.email)
+        const alreadyInvited = this.cooperatorsEdit.find(
+          (cooperator) => cooperator.email === this.email.email,
+        )
+        if (alreadyInvited) {
+          this.$toast.warning(this.email.email + ' has already been invited')
+          return
+        } else {
+          this.selectedCoops.push(this.email)
+        }
       }
     },
     async removeCoop(coop) {
