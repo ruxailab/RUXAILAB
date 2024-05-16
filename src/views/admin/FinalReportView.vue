@@ -1,24 +1,32 @@
 <template>
   <v-container>
     <ShowInfo
+     
+      class="ma-0 pt-0"
       style="padding: 0!important;"
+     
       :title="$t('titles.drawer.Final Report')"
+   
     />
 
     <v-stepper
       v-model="step"
-      rounded="xl"
-      style="background: linear-gradient(to top, rgba(245, 245, 245, 1), rgba(245, 245, 245, 0));"
-      class="final-report-box"
+      style="background-color:#F5F7FF"
+      class="final-report-box rounded pt-0 mb-4"
+      elevation="0"
     >
-      <v-stepper-header style="background-color: orange;">
-        <v-stepper-step :complete="step > 1" step="1" />
+      <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
+        <v-stepper-step :complete="step > 1" step="1" color="orange">
+          Conclusion
+        </v-stepper-step>
         <v-divider />
-        <v-stepper-step :complete="step > 2" step="2" />
+        <v-stepper-step :complete="step > 2" step="2" color="orange">
+          Elements
+        </v-stepper-step>
       </v-stepper-header>
 
-      <v-stepper-items style="background-color:#F5F5F5">
-        <v-stepper-content step="1" class="align-mid">
+      <v-stepper-items style="background-color:#F5F7FF" class="mt-0">
+        <v-stepper-content step="1" class="align-mid pt-2">
           <div class="container">
             <div class="row">
               <TextControls />
@@ -29,19 +37,22 @@
                 <div id="myTextarea" contenteditable class="form-control" />
               </div>
             </div>
+            <v-btn
+              class="mt-4"
+              align="right"
+              color="orange"
+              elevation="0"
+              dark
+              @click="step++, update()"
+            >
+              {{ $t('buttons.next') }}
+            </v-btn>
           </div>
-          <v-btn color="primary" class="teste" @click="step++, update()">
-            {{ $t('buttons.next') }}
-          </v-btn>
         </v-stepper-content>
 
         <v-stepper-content step="2">
           <div>
-            <DocumentSelection />
-
-            <v-btn color="secondary" class="teste2" @click="step--">
-              {{ $t('buttons.previous') }}
-            </v-btn>
+            <FinalReportSelectionBox @return-step="step--" />
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -51,11 +62,11 @@
 
 <script>
 import TextControls from '@/components/atoms/FinalReportControls.vue'
-import DocumentSelection from '@/components/molecules/FinalReportDocumentSelection.vue'
+import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
 export default {
-  components: { TextControls, DocumentSelection, ShowInfo },
+  components: { TextControls, FinalReportSelectionBox, ShowInfo },
   data: () => ({
     title: 'Final report',
     inputText: '',
@@ -104,8 +115,8 @@ export default {
 }
 .teste2 {
   position: fixed;
-  right: 8%;
-  bottom: 3%;
+  left: 13%;
+  bottom: 5.5%;
 }
 .cloud-button {
   padding: 10px;
@@ -125,7 +136,7 @@ export default {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
     0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
   width: 100%;
-  height: 65vh;
+  height: 55vh;
   resize: none;
   padding: 20px;
   border-radius: 12px;
