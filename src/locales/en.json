@@ -148,7 +148,8 @@
       "noHeuristics": "You don't have any heuristic, create one to proceed.",
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
-      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding."
+      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -380,6 +381,7 @@
       "to": "to",
       "createHeuristics": "Please create Heuristics so you can select them here.",
       "pdf": "Generate PDF",
+      "elements": "Elements",
       "options": {
         "options": "Test options",
         "comments": "Answers comments",

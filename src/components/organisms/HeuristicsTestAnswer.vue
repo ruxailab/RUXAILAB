@@ -21,16 +21,16 @@
           color="#FCA326"
           class="ml-4"
         >
-          <v-tab @click="tab = 0">
+          <v-tab @click=";(tab = 0), (ind = 0)">
             {{ $t('HeuristicsTestAnswer.titles.statistics') }}
           </v-tab>
-          <v-tab @click="tab = 1">
+          <v-tab @click=";(tab = 1), (ind = 0)">
             {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
           </v-tab>
-          <v-tab @click="tab = 2">
+          <v-tab @click=";(tab = 2), (ind = 0)">
             {{ $t('HeuristicsTestAnswer.titles.heuristics') }}
           </v-tab>
-          <v-tab @click="tab = 3">
+          <v-tab @click=";(tab = 3), (ind = 0)">
             {{ $t('HeuristicsTestAnswer.titles.analytics') }}
           </v-tab>
         </v-tabs>
@@ -305,7 +305,11 @@
                             dark
                             class="chip"
                           >
-                            {{ item[header.value] ? item[header.value] : 0 }}
+                            {{
+                              item[header.value]
+                                ? item[header.value].toFixed(2)
+                                : 0
+                            }}
                           </v-chip>
                           <v-btn
                             v-else
@@ -336,9 +340,16 @@
                               "
                               dark
                             >
-                              {{ item.percentage }}
+                              {{ checkIfNan(item.percentage) }}
                             </v-chip>
                           </div>
+                        </template>
+
+                        <template v-slot:item.sd="{ item }">
+                          {{ checkIfNan(item.sd) }}
+                        </template>
+                        <template v-slot:item.average="{ item }">
+                          {{ checkIfNan(item.average) }}
                         </template>
                       </v-data-table>
                     </v-col>
@@ -369,15 +380,15 @@
                       </v-card>
                       <div v-else>
                         <v-row align="center" justify="space-around">
-                          <v-col cols="6" md="4">
+                          <v-col md="4" sm="8">
                             <v-card
                               align="center"
-                              class=" elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
+                              class="elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
                               width="950px"
                             >
                               <v-card-title class="mt-4 mb-4 font-weight-bold">
                                 <v-row align="center" justify="center">
-                                  Usability Percentage <br>
+                                  Usability Percentage <br />
                                   With Weights
                                 </v-row>
                               </v-card-title>
@@ -500,7 +511,9 @@ export default {
         value: 'heuristic',
       })
       if (this.resultEvaluator) {
+        let evaluatorIndex = 1
         this.resultEvaluator.forEach((evaluator) => {
+          evaluator.id = `Ev${evaluatorIndex}`
           const header = table.header.find((h) => h.text == evaluator.id)
           if (!header) {
             table.header.push({
@@ -524,6 +537,7 @@ export default {
               })
             }
           })
+          evaluatorIndex++
         })
       }
       return table
@@ -642,7 +656,6 @@ export default {
 
     usabilityTotalFix() {
       const usabilityTotalFix = parseFloat(this.usability_total).toFixed(2)
-      console.log(this.maxValue)
       return usabilityTotalFix
     },
 
@@ -655,7 +668,6 @@ export default {
         }
       }
       const maxplus = parseFloat(maxValue).toFixed(1)
-      console.log(maxplus)
       return maxplus
     },
 
@@ -703,6 +715,9 @@ export default {
     this.usuability_percentage_array()
   },
   methods: {
+    checkIfNan(value) {
+      return !isNaN(value) ? value : '-'
+    },
     getColor(value, max, min) {
       //✓
       max = Number(max)
@@ -737,7 +752,6 @@ export default {
       //✓
       this.$emit('goToCoops')
     },
-
     usuability_percentage_array() {
       const teste = this.heuristicsStatistics
       const array_scores = []

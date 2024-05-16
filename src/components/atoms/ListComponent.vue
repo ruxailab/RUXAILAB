@@ -8,7 +8,8 @@
             <v-avatar tile :color="generateColor()" style="color: #545454">
               <span
                 v-if="type === 'myTemplates' || type === 'publicTemplates'"
-              >{{ item.header.templateTitle[0].toUpperCase() }}</span>
+                >{{ item.header.templateTitle[0].toUpperCase() }}</span
+              >
               <span v-else>{{ item.testTitle[0].toUpperCase() }}</span>
             </v-avatar>
           </v-list-item-avatar>
@@ -41,8 +42,8 @@
                 item.testAdmin
                   ? item.testAdmin.email
                   : item.header
-                    ? item.header.templateAuthor.userEmail
-                    : ''
+                  ? item.header.templateAuthor.userEmail
+                  : item.testAuthorEmail
               }}</strong>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -52,14 +53,6 @@
             <v-list-item-action-text
               v-if="item.accessLevel != null && item.accessLevel != undefined"
             >
-              <v-chip
-                label
-                outlined
-                class="my-1"
-                :color="getAccessLevelColor(item.accessLevel)"
-              >
-                {{ getAccessLevelText(item.accessLevel) }}
-              </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="item.updateDate">
               <v-row class="ma-0" align="center">
@@ -86,10 +79,8 @@
                   </v-tooltip>
                   <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-row v-bind="attrs" v-on="on">
-                        <div class="caption">
-                          {{ item.progress }}%
-                        </div>
+                      <v-row class="mr-3" v-bind="attrs" v-on="on">
+                        <div class="caption">{{ item.progress }}%</div>
 
                         <v-progress-circular
                           rotate="-90"
@@ -134,10 +125,12 @@
               type === 'publicTests' ||
               type === 'sharedWithMe'
           "
-        >{{ $t('pages.listTests.noTests') }}</span>
+          >{{ $t('pages.listTests.noTests') }}</span
+        >
         <span
           v-else-if="type === 'myTemplates' || type === 'publicTemplates'"
-        >{{ $t('pages.listTests.noTemplates') }}</span>
+          >{{ $t('pages.listTests.noTemplates') }}</span
+        >
       </v-row>
     </v-list>
   </div>
@@ -199,20 +192,6 @@ export default {
     getFormattedDate(date) {
       const d = new Date(date)
       return d.toLocaleString()
-    },
-    getAccessLevelText(accessLevel) {
-      return accessLevel === 0
-        ? 'Administrator'
-        : accessLevel === 1
-        ? 'Evaluator'
-        : 'Guest'
-    },
-    getAccessLevelColor(accessLevel) {
-      return accessLevel === 0
-        ? 'primary'
-        : accessLevel === 1
-        ? 'secondary'
-        : 'warning'
     },
     generateColor() {
       const hue = Math.floor(Math.random() * 360)
