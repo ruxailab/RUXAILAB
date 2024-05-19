@@ -40,4 +40,12 @@ jobs:
         if: failure() && github.event_name == 'pull_request'
         uses: Ilshidur/action-discord@master
         with:
-          args: "⚠️ The github event ${{ github.event_name }} has failed. Please review the proposed changes."
+          args: |
+            ⚠️ The GitHub event `${{ github.event_name }}` has failed.
+            Repository: `${{ github.repository }}`
+            Workflow: `${{ github.workflow }}`
+            Job: `${{ github.job }}`
+            Commit: `${{ github.sha }}`
+            Actor: `${{ github.actor }}`
+            Pull Request: `${{ github.event.pull_request.html_url }}`
+            Please review the proposed changes.
