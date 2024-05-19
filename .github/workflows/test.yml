@@ -36,7 +36,7 @@ jobs:
 
       - name: Send message to Discord
         env:
-          DISCORD_WEBHOOK: 'https://discord.com/api/webhooks/1241683835067039784/1UkTaSTdthDJdYq_GSZRjAbCE8jLM0jMS6qvhYt8FuuuB6H1XGIYKzwfzQ7G-YImJTYE'
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         if: failure() && github.event_name == 'pull_request'
         uses: Ilshidur/action-discord@master
         with:
