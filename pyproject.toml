@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "ruxailab"
+version = "0.1.0"
+description = ""
+authors = ["SebastianJitaru <sjitaru29@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+httplib2 = "^0.22.0"
+idna = "^3.7"
+itsdangerous = "^2.2.0"
+jinja2 = "^3.1.4"
+markupsafe = "^2.1.5"
+msgpack = "^1.0.8"
+numpy = "^1.26.4"
+packaging = "^24.0"
+pandas = "^2.2.2"
+proto-plus = "^1.23.0"
+pyasn1 = "^0.6.0"
+pyasn1-modules = "^0.4.0"
+pycparser = "^2.22"
+pyjwt = "^2.8.0"
+pyparsing = "^3.1.2"
+python-dateutil = "^2.9.0.post0"
+pytz = "^2024.1"
+pyyaml = "^6.0.1"
+requests = "^2.31.0"
+rsa = "^4.9"
+six = "^1.16.0"
+tabulate = "^0.9.0"
+typing-extensions = "^4.11.0"
+tzdata = "^2024.1"
+uritemplate = "^4.1.1"
+urllib3 = "^2.2.1"
+watchdog = "^4.0.0"
+werkzeug = "^3.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
