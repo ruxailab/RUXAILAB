@@ -485,7 +485,6 @@ export default {
             (coop) => coop.token === this.token,
           )
           if (invitation) {
-            console.log('Caiu como invitation')
             // User invited, and they have an account
             if (this.user.email === invitation.email) {
               // Accept Collaboration

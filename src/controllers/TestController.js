@@ -26,7 +26,6 @@ export default class TestController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
 
-
   // async deleteTest(payload) {
   //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
   //   return await super.delete(COLLECTION, payload.id)
@@ -43,19 +42,21 @@ export default class TestController extends Controller {
 
       const collaborators = await testToDelete.data()
       const cooperators = collaborators.cooperators
-      if(cooperators){
-      console.log(cooperators)
-      const promises = []
+      if (cooperators) {
+        console.log(cooperators)
+        const promises = []
 
-      for (const cooperator of cooperators) {
-        // Add the call to remove notifications for the test being deleted
-        promises.push(
-          userController.removeTestFromUser(cooperator.userDocId, payload.id),
-        )
-        promises.push(userController.removeNotificationsForTest(payload.id,cooperators))
+        for (const cooperator of cooperators) {
+          // Add the call to remove notifications for the test being deleted
+          promises.push(
+            userController.removeTestFromUser(cooperator.userDocId, payload.id),
+          )
+          promises.push(
+            userController.removeNotificationsForTest(payload.id, cooperators),
+          )
+        }
+        await Promise.all(promises)
       }
-      await Promise.all(promises)
-    }
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
       await super.delete(COLLECTION, payload.id)
     } catch (error) {
@@ -66,7 +67,6 @@ export default class TestController extends Controller {
 
   async updateTest(payload) {
     try {
-
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
       console.error(e)
