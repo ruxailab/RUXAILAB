@@ -802,28 +802,8 @@
         Saving Answer
       </div>
     </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
+
+    <v-dialog :value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -849,9 +829,6 @@
 </template>
 
 <script>
-import VClamp from 'vue-clamp'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -861,9 +838,6 @@ import FeedbackView from '@/components/molecules/FeedbackView.vue'
 export default {
   props: { token: { type: String, default: null } },
   components: {
-    VClamp,
-    CardSignIn,
-    CardSignUp,
     VideoCall,
     FeedbackView,
   },
@@ -1043,6 +1017,14 @@ export default {
       await this.$store.dispatch('hangUp', this.roomTestId)
     }
   },
+  mounted() {
+    if (this.user == null) {
+      this.$toast.error(
+        'Login to your RUXAILAB account first to access the test!',
+      )
+      this.$router.push('/signin')
+    }
+  },
   methods: {
     isSaved() {
       return this.saved
@@ -1115,6 +1097,9 @@ export default {
           console.error('Documento do teste não encontrado')
         }
       })
+    },
+    setExistUser() {
+      this.noExistUser = false
     },
 
     changeStatus(id, type, newStatus) {
@@ -1333,9 +1318,6 @@ export default {
     async setTest() {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
-    },
-    setExistUser() {
-      this.noExistUser = false
     },
     async verifyAdmin() {
       if (this.test.testAdmin.email == this.user.email) {
