@@ -630,12 +630,12 @@ export default {
       if (guest.accessLevel === 1) {
         email = Object.assign(email, {
           path: 'testview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       } else {
         email = Object.assign(email, {
           path: 'managerview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       }
       await this.$store.dispatch('sendEmailInvitation', email)

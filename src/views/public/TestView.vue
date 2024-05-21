@@ -36,22 +36,6 @@
         <v-progress-circular indeterminate size="64" />
       </v-overlay>
 
-      <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-        <CardSignIn
-          v-if="selected"
-          @logined="logined = true"
-          @change="selected = !selected"
-        />
-        <CardSignUp
-          v-else
-          @logined="
-            logined = true
-            setTest()
-          "
-          @change="selected = !selected"
-        />
-      </v-dialog>
-
       <v-dialog
         :value="fromlink && !noExistUser && !logined"
         width="500"
@@ -431,8 +415,6 @@ import AddCommentBtn from '@/components/atoms/AddCommentBtn'
 import HelpBtn from '@/components/atoms/QuestionHelpBtn'
 import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
@@ -444,8 +426,6 @@ export default {
     HelpBtn,
     VClamp,
     Snackbar,
-    CardSignIn,
-    CardSignUp,
     UserTestView,
     ModeratedTestView,
   },
