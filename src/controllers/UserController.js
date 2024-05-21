@@ -2,7 +2,6 @@
 
 import Controller from '@/controllers/BaseController'
 import User from '@/models/UserModel'
-import { log } from 'handlebars'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {

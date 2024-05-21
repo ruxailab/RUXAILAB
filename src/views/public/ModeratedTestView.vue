@@ -978,7 +978,7 @@ export default {
     await this.verifyAdmin()
     if (this.token != null) {
       if (this.token == this.test.id) {
-        this.$toast.info('Use a session your session link to the test')
+        this.$toast.info('Use a session link to access your moderated test!')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.sessionCooperator = this.test.cooperators.find(
@@ -998,6 +998,14 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
+
+    if (!this.isAdmin) {
+      await this.$store.dispatch('acceptTestCollaboration', {
+        test: this.test,
+        cooperator: this.user,
+      })
+    }
+
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
