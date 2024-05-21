@@ -540,6 +540,7 @@ export default {
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
+            accessLevel: 1,
             title: `You have been invited to test ${this.test.testTitle}!`,
             description: this.inviteMessage,
             redirectsTo: `${path}/${this.test.id}/${guest.userDocId}`,
