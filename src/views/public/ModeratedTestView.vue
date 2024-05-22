@@ -192,7 +192,7 @@
               ref="VideoCall"
               :index="index"
               :is-admin="isAdmin"
-              @emit-confirm="confirmConnect()"
+              @emit-confirm="confirmConnect(), (index = 1)"
             />
           </v-row>
         </v-card>
@@ -474,7 +474,7 @@
                     :index="index"
                     :is-admin="isAdmin"
                     :consent-completed="consentCompleted"
-                    @emit-confirm="confirmConnect(), (index = 1)"
+                    @emit-confirm="confirmConnect(), (index = 2)"
                   />
                 </v-col>
               </v-row>
@@ -1152,16 +1152,13 @@ export default {
 
       this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
         const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
           type: 'video/webm',
         })
         const storageEvaluator = getStorage()
         const storageRefEvaluator = ref(
           storageEvaluator,
-          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
+          `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
         )
         await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
 
@@ -1190,16 +1187,10 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
-        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
-          type: 'video/webm',
-        })
         const storageModerator = getStorage()
         const storageRefModerator = ref(
           storageModerator,
-          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
+          `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`,
         )
         await uploadBytes(storageRefModerator, videoBlobModerator)
 
