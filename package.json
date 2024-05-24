@@ -47,10 +47,12 @@
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.1.0",
+    "@playwright/test": "^1.44.1",
     "@testing-library/dom": "^9.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/user-event": "12",
     "@testing-library/vue": "^5.9.0",
+    "@types/node": "^20.12.12",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-eslint": "~4.3.0",
     "@vue/cli-plugin-router": "~4.3.0",
