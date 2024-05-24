@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ develop, master, playwritght-testing ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ develop, master, playwritght-testing ]
 jobs:
   test:
     timeout-minutes: 60
@@ -12,16 +12,22 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 18
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test 
     - uses: actions/upload-artifact@v4
-      if: always()
+      if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
+        retention-days: 30
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-screenshots
+        path: playwright/output
         retention-days: 30
