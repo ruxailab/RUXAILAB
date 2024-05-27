@@ -84,25 +84,36 @@
       </v-dialog>
 
       <!-- Start Screen -->
-      <v-row
+      <div
         v-if="test && start"
-        class="background background-img pa-0 ma-0"
-        align="center"
+        class="startscreen"
+        style="position: relative; width: 100%; height: 100vh; overflow: hidden;"
       >
-        <v-col cols="6" class="ml-5">
-          <h1 class="titleView pb-1">
-            {{ test.testTitle }}
-          </h1>
-          <p align="justify" class="description">
-            {{ test.testDescription }}
-          </p>
-          <v-row justify="center" class>
-            <v-btn color="white" outlined rounded @click="startTest()">
-              Start Test
-            </v-btn>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row
+          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;z-index:1;"
+        >
+          <v-col cols="12">
+            <h1
+              class="titleView pb-1"
+              style="color: white; font-size: 2.5rem; margin-bottom: 1rem;"
+            >
+              {{ test.testTitle }}
+            </h1>
+            <p
+              class="description"
+              style="color: white; margin-bottom: 2rem; text-align: justify;"
+            >
+              {{ test.testDescription }}
+            </p>
+            <v-row justify="center">
+              <v-btn color="white" outlined rounded @click="startTest()">
+                Start Test
+              </v-btn>
+            </v-row>
+          </v-col>
+        </v-row>
+        <div class="background background-img" style="filter: blur(8px);" />
+      </div>
 
       <v-row v-else class="nav pa-0 ma-0" dense>
         <v-speed-dial
