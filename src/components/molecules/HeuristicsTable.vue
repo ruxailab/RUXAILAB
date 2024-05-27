@@ -295,7 +295,7 @@
                       </div>
                       <v-list-item-icon
                         v-if="i == itemSelect"
-                        class="mt-2 mb-2"
+                        style="margin-top:15px ;"
                       >
                         <v-icon>mdi-chevron-right</v-icon>
                       </v-list-item-icon>
