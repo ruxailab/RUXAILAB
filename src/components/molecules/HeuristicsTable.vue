@@ -400,14 +400,14 @@
               <v-divider />
               <v-list dense height="470px" class="list-scroll">
                 <v-list-item-group v-model="questionSelect" color="#fca326">
-                  <v-list-item
+                  <v-list-item style="min-height: 56px;"
                     v-for="(item, i) in heuristics[itemSelect].questions"
                     :key="i"
                   >
                     <v-list-item-content>
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-content>
-                    <v-list-item-icon v-if="i == questionSelect">
+                    <v-list-item-icon v-if="i == questionSelect" style="margin-top:15px" >
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-list-item-icon>
                   </v-list-item>
