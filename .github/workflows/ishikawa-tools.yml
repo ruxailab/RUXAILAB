@@ -1,9 +1,10 @@
 name: Generate Reports
 
 on:
-  push:
-    branches:
-      - ishikawas-tools
+  schedule:
+    - cron: "0 0 * * *"
+  issues:
+    types: [opened, deleted, closed, reopened, labeled]
 
 jobs:
   generate-reports:
@@ -32,4 +33,4 @@ jobs:
       with:
         name: ishikawa-screenshots
         path: ./ishikawa_tools/output
-        retention-days: 30
+        retention-days: 1
