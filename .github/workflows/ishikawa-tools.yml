@@ -2,7 +2,7 @@ name: Generate Reports
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'
   issues:
     types: [opened, deleted, closed, reopened, labeled]
 
@@ -11,32 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10.x'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10.x'
 
-    - name: Install dependencies
-      run: |
-        pip install matplotlib pandas requests PyGithub
+      - name: Install dependencies
+        run: |
+          pip install matplotlib pandas requests PyGithub
 
-          - name: Check environment variables
-      run: |
-        echo "User: $USER"
-        echo "Project: $PROJECT"
-        echo "Token: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
+      - name: Check environment variables
+        run: |
+          echo "User: $USER"
+          echo "Project: $PROJECT"
+          echo "Token: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
 
-    - name: Run report generation script
-      env:
-        TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        USER: ${{ secrets.USER }}
-        PROJECT: ${{ secrets.PROJECT }}
-      run: python ishikawa_tools/ishikawa_tools_script.py
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ishikawa-screenshots
-        path: ./ishikawa_tools/output
-        retention-days: 1
+      - name: Run report generation script
+        env:
+          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          USER: ${{ secrets.USER }}
+          PROJECT: ${{ secrets.PROJECT }}
+        run: python ishikawa_tools/ishikawa_tools_script.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ishikawa-screenshots
+          path: ./ishikawa_tools/output
+          retention-days: 1
