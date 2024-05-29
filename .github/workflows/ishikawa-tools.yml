@@ -24,17 +24,22 @@ jobs:
           pip install matplotlib pandas requests PyGithub
 
       - name: Check environment variables
-        run: |
-          echo "User: $USER"
-          echo "Project: $PROJECT"
-          echo "Token: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
-
-      - name: Run report generation script
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           USER: ${{ secrets.USER }}
           PROJECT: ${{ secrets.PROJECT }}
+        run: |
+          echo "User: $USER"
+          echo "Project: $PROJECT"
+          echo "Token length: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
+
+      - name: Run report generation script
+        env:
+          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          USER: ${{ secrets.USER }}
+          PROJECT: ${{ secrets.PROJECT }}
         run: python ishikawa_tools/ishikawa_tools_script.py
+
       - uses: actions/upload-artifact@v4
         with:
           name: ishikawa-screenshots
