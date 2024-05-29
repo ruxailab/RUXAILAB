@@ -160,6 +160,7 @@ def generate_scatter_diagram_report(repo_owner, repo_name, github_token):
     plt.savefig('./ishikawa_tools/output/scatter.pdf')
 
 def main():
+    repo_owner = "marcgc21"
     github_token = os.getenv('TOKEN')
     username = os.getenv('USER')
     repository_name = os.getenv('PROJECT')
