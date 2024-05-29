@@ -48,7 +48,7 @@
               <v-col class="mt-1 mx-4 pa-0">
                 <v-combobox
                   :menu-props="{
-                    rounded: 'xl',
+                    rounded: 'xl', 
                   }"
                   :key="comboboxKey"
                   ref="combobox"
