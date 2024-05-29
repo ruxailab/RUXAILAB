@@ -169,7 +169,7 @@ def main():
         print("One or more environment variables are missing.")
         return
 
-    issues = fetch_issues(username, repository_name, github_token)
+    issues = fetch_issues(repo_owner, repository_name, github_token)
     if issues is None:
         print("Exiting script due to fetch issues failure.")
         return
