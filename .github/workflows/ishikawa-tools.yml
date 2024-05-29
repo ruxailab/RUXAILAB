@@ -23,6 +23,12 @@ jobs:
       run: |
         pip install matplotlib pandas requests PyGithub
 
+          - name: Check environment variables
+      run: |
+        echo "User: $USER"
+        echo "Project: $PROJECT"
+        echo "Token: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
+
     - name: Run report generation script
       env:
         TOKEN: ${{ secrets.ACCESS_TOKEN }}
