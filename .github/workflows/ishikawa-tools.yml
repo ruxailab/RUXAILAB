@@ -29,8 +29,8 @@ jobs:
           USER: ${{ secrets.USER }}
           PROJECT: ${{ secrets.PROJECT }}
         run: |
-          echo "User: $USER"
-          echo "Project: $PROJECT"
+          echo "User secret length: ${#USER}"
+          echo "Project secret length: ${#PROJECT}" # Changed the checks for user and project to length checks (these secrets should probably be changed to variables)
           echo "Token length: ${#ACCESS_TOKEN}"  # This will print the length of the token to ensure it's set, without exposing it.
 
       - name: Run report generation script
