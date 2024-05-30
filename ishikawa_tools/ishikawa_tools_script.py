@@ -172,6 +172,8 @@ def main():
     if issues is None:
         print("Exiting script due to fetch issues failure.")
         return
+    
+    Path("./ishikawa_tools/output").mkdir(parents=True, exist_ok=True)
 
     generate_pareto_diagram(issues)
     generate_weekly_report(github_token, username, repository_name)
