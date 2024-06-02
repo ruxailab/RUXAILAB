@@ -37,7 +37,13 @@ jobs:
         run: |
           npm ci
           npx playwright install
-          npx playwright test
+          npx playwright test --project webkit
+      - uses: actions/upload-artifact@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
       - name: Stop services
         run: |
