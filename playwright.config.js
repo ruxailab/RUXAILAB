@@ -28,7 +28,7 @@ module.exports = defineConfig({
     screenshot: { mode: 'only-on-failure', fullPage: true },
 
     // Records video on first retry after fail
-    video: { mode: 'on-first-retry' },
+    video: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
@@ -39,7 +39,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Chrome'],
       },
-      retries: 2,
+      retries: 1,
     },
     {
       name: 'chromium-prod',
@@ -56,7 +56,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Firefox'],
       },
-      retries: 2,
+      retries: 1,
     },
     {
       name: 'firefox-prod',
@@ -73,7 +73,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Safari'],
       },
-      retries: 2,
+      retries: 1,
     },
     {
       name: 'webkit-prod',
