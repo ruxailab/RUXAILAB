@@ -27,6 +27,7 @@ module.exports = defineConfig({
     /* Create a screenshot if a test fails */
     screenshot: { mode: 'only-on-failure', fullPage: true },
 
+    // Records video on first retry after fail
     video: { mode: 'on-first-retry' },
   },
 
@@ -35,7 +36,7 @@ module.exports = defineConfig({
     {
       name: 'chromium-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app/',
+        baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Chrome'],
       },
       retries: 2,
@@ -43,7 +44,7 @@ module.exports = defineConfig({
     {
       name: 'chromium-prod',
       use: {
-        baseURL: 'https://ruxailab-prod.web.app/',
+        baseURL: 'https://ruxailab-prod.web.app',
         ...devices['Desktop Chrome'],
       },
       retries: 0,
@@ -52,7 +53,7 @@ module.exports = defineConfig({
     {
       name: 'firefox-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app/',
+        baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Firefox'],
       },
       retries: 2,
@@ -60,7 +61,7 @@ module.exports = defineConfig({
     {
       name: 'firefox-prod',
       use: {
-        baseURL: 'https://ruxailab-prod.web.app/',
+        baseURL: 'https://ruxailab-prod.web.app',
         ...devices['Desktop Firefox'],
       },
       retries: 0,
@@ -69,7 +70,7 @@ module.exports = defineConfig({
     {
       name: 'webkit-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app/',
+        baseURL: 'https://ruxailab-dev.web.app',
         ...devices['Desktop Safari'],
       },
       retries: 2,
@@ -77,7 +78,7 @@ module.exports = defineConfig({
     {
       name: 'webkit-prod',
       use: {
-        baseURL: 'https://ruxailab-prod.web.app/',
+        baseURL: 'https://ruxailab-prod.web.app',
         ...devices['Desktop Safari'],
       },
       retries: 0,
