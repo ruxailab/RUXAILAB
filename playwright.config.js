@@ -2,7 +2,6 @@
 const { defineConfig, devices } = require('@playwright/test')
 
 const devBaseUrl = 'http://localhost:5000'
-const prodBaseUrl = 'https://ruxailab-prod.web.app'
 
 module.exports = defineConfig({
   testDir: './e2e',
@@ -19,7 +18,10 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['list'],
+    ['@estruyf/github-actions-reporter']
+  ]
 
   /* Output directory for screenshots of failed tests */
   outputDir: './playwright/output',
@@ -29,62 +31,17 @@ module.exports = defineConfig({
 
     /* Create a screenshot if a test fails */
     screenshot: { mode: 'only-on-failure', fullPage: true },
-
-    // Records video on first retry after fail
-    video: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium-dev',
+      name: 'chromium',
       use: {
         baseURL: devBaseUrl,
         ...devices['Desktop Chrome'],
       },
       retries: 1,
-    },
-    {
-      name: 'chromium-prod',
-      use: {
-        baseURL: prodBaseUrl,
-        ...devices['Desktop Chrome'],
-      },
-      retries: 0,
-    },
-
-    {
-      name: 'firefox-dev',
-      use: {
-        baseURL: devBaseUrl,
-        ...devices['Desktop Firefox'],
-      },
-      retries: 1,
-    },
-    {
-      name: 'firefox-prod',
-      use: {
-        baseURL: prodBaseUrl,
-        ...devices['Desktop Firefox'],
-      },
-      retries: 0,
-    },
-
-    {
-      name: 'webkit-dev',
-      use: {
-        baseURL: devBaseUrl,
-        ...devices['Desktop Safari'],
-      },
-      retries: 1,
-    },
-    {
-      name: prodBaseUrl,
-      use: {
-        baseURL: 'https://ruxailab-prod.web.app',
-        ...devices['Desktop Safari'],
-      },
-      retries: 0,
     },
   ],
 })
