@@ -3,29 +3,29 @@ name: Playwright Tests
 on: [push, pull_request]
 
 jobs:
-  test:
-    timeout-minutes: 60
+  setup:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test 
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-    - uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: playwright-screenshots
-        path: playwright/output
-        retention-days: 30
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start Docker Compose
+        run: docker-compose up -d
+
+      - name: Wait for services to start
+        run: |
+          timeout=300
+          until curl -sSf http://localhost:4321 -o /dev/null; do
+            timeout=$(($timeout - 1))
+            if [ $timeout -eq 0 ]; then
+              echo "Services did not start in time"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Stop Docker Compose
+        run: docker-compose down
