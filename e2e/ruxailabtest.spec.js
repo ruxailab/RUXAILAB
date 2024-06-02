@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test')
 const { log } = require('console')
 
 const logIn = async (page) => {
-  await page.goto('http://localhost:5000/signin')
+  await page.goto('/signin')
 
   await page.getByLabel('E-mail').fill('testemail@gmail.com')
   await page.getByLabel('Password', { exact: true }).fill('password123')
@@ -130,7 +130,7 @@ test('Detalte test', async ({ page }) => {
     '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
   )
 
-  await page.goto('https://ruxailab-prod.web.app/testslist')
+  await page.goto('/testslist')
 
   await page.click('text=Test heuristic playwright for delate')
   await page.click(
