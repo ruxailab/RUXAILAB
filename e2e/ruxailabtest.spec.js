@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test')
 const { log } = require('console')
 
 const logIn = async (page) => {
-  await page.goto('/signin')
+  await page.goto('http://localhost:5000/signin')
 
   await page.getByLabel('E-mail').fill('testemail@gmail.com')
   await page.getByLabel('Password', { exact: true }).fill('password123')
@@ -42,7 +42,7 @@ const createTest = async (page, type) => {
 }
 
 test('has link page', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('http://localhost:5000/')
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/RUXAILAB/)
