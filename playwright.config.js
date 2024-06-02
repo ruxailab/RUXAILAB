@@ -36,6 +36,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app/',
         ...devices['Desktop Chrome'],
       },
+      retries: 2,
     },
     {
       name: 'chromium-prod',
@@ -43,6 +44,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-prod.web.app/',
         ...devices['Desktop Chrome'],
       },
+      retries: 0,
     },
 
     {
@@ -51,6 +53,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app/',
         ...devices['Desktop Firefox'],
       },
+      retries: 2,
     },
     {
       name: 'firefox-prod',
@@ -58,6 +61,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-prod.web.app/',
         ...devices['Desktop Firefox'],
       },
+      retries: 0,
     },
 
     {
@@ -66,6 +70,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-dev.web.app/',
         ...devices['Desktop Safari'],
       },
+      retries: 2,
     },
     {
       name: 'webkit-prod',
@@ -73,6 +78,7 @@ module.exports = defineConfig({
         baseURL: 'https://ruxailab-prod.web.app/',
         ...devices['Desktop Safari'],
       },
+      retries: 0,
     },
   ],
 })
