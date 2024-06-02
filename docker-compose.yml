@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4321:5000"
+      - "5000:5000"
     depends_on:
       - firebase-emulator
 
