@@ -18,10 +18,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['list'],
-    ['@estruyf/github-actions-reporter']
-  ]
+  reporter: [['list'], ['@estruyf/github-actions-reporter']],
 
   /* Output directory for screenshots of failed tests */
   outputDir: './playwright/output',
