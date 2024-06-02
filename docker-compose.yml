@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4321:5000"
-    env_file:
-      - .env
     depends_on:
       - firebase-emulator
 
