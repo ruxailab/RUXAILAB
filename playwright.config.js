@@ -31,18 +31,48 @@ module.exports = defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'chromium-dev',
+      use: {
+        baseURL: 'https://ruxailab-dev.web.app/',
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: 'chromium-prod',
+      use: {
+        baseURL: 'https://ruxailab-prod.web.app/',
+        ...devices['Desktop Chrome'],
+      },
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'firefox-dev',
+      use: {
+        baseURL: 'https://ruxailab-dev.web.app/',
+        ...devices['Desktop Firefox'],
+      },
+    },
+    {
+      name: 'firefox-prod',
+      use: {
+        baseURL: 'https://ruxailab-prod.web.app/',
+        ...devices['Desktop Firefox'],
+      },
     },
 
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'webkit-dev',
+      use: {
+        baseURL: 'https://ruxailab-dev.web.app/',
+        ...devices['Desktop Safari'],
+      },
+    },
+    {
+      name: 'webkit-prod',
+      use: {
+        baseURL: 'https://ruxailab-prod.web.app/',
+        ...devices['Desktop Safari'],
+      },
     },
   ],
 })
