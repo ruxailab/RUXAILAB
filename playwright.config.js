@@ -1,6 +1,9 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test')
 
+const devBaseUrl = 'http://localhost:5000'
+const prodBaseUrl = 'https://ruxailab-prod.web.app'
+
 module.exports = defineConfig({
   testDir: './e2e',
   /* Run tests in files in parallel */
@@ -36,7 +39,7 @@ module.exports = defineConfig({
     {
       name: 'chromium-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app',
+        baseURL: devBaseUrl,
         ...devices['Desktop Chrome'],
       },
       retries: 1,
@@ -44,7 +47,7 @@ module.exports = defineConfig({
     {
       name: 'chromium-prod',
       use: {
-        baseURL: 'https://ruxailab-prod.web.app',
+        baseURL: prodBaseUrl,
         ...devices['Desktop Chrome'],
       },
       retries: 0,
@@ -53,7 +56,7 @@ module.exports = defineConfig({
     {
       name: 'firefox-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app',
+        baseURL: devBaseUrl,
         ...devices['Desktop Firefox'],
       },
       retries: 1,
@@ -61,7 +64,7 @@ module.exports = defineConfig({
     {
       name: 'firefox-prod',
       use: {
-        baseURL: 'https://ruxailab-prod.web.app',
+        baseURL: prodBaseUrl,
         ...devices['Desktop Firefox'],
       },
       retries: 0,
@@ -70,13 +73,13 @@ module.exports = defineConfig({
     {
       name: 'webkit-dev',
       use: {
-        baseURL: 'https://ruxailab-dev.web.app',
+        baseURL: devBaseUrl,
         ...devices['Desktop Safari'],
       },
       retries: 1,
     },
     {
-      name: 'webkit-prod',
+      name: prodBaseUrl,
       use: {
         baseURL: 'https://ruxailab-prod.web.app',
         ...devices['Desktop Safari'],
