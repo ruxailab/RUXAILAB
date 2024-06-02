@@ -24,6 +24,9 @@ jobs:
             sleep 1
           done
 
+      - name: Print index page
+        run: curl http://localhost:4321
+
       - name: Run Playwright tests
         run: npx playwright test
 
