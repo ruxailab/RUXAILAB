@@ -37,7 +37,7 @@ jobs:
         run: |
           npm ci
           npx playwright install
-          npx playwright test --project chromium-dev
+          npx playwright test --project firefox
       - uses: actions/upload-artifact@v2
         if: ${{ !cancelled() }}
         with:
