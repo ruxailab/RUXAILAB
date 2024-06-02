@@ -26,6 +26,8 @@ module.exports = defineConfig({
 
     /* Create a screenshot if a test fails */
     screenshot: { mode: 'only-on-failure', fullPage: true },
+
+    video: { mode: 'on-first-retry' },
   },
 
   /* Configure projects for major browsers */
