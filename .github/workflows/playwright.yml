@@ -31,12 +31,12 @@ jobs:
       - name: Wait for services to be ready
         run: |
           while ! nc -z localhost 4321; do sleep 10; done
-          while ! nc -z localhost 5001; do sleep 10; done
+          while ! nc -z localhost 4000; do sleep 10; done
 
       - name: Run Playwright tests
         run: |
           npm ci
-          npx playwright install-deps
+          npx playwright install
           npx playwright test
 
       - name: Stop services
