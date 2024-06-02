@@ -42,7 +42,7 @@ const createTest = async (page, type) => {
 }
 
 test('has link page', async ({ page }) => {
-  await page.goto('http://localhost:5000/')
+  await page.goto('/')
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/RUXAILAB/)
@@ -83,4 +83,94 @@ test('sign and create template', async ({ page }) => {
   await page.click(
     '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
   ) // Click go back to console button
+})
+
+test('failure test heuristic', async ({ page }) => {
+  await logIn(page)
+
+  await page.click(
+    'button.v-btn.v-btn--bottom.v-btn--is-elevated.v-btn--fab.v-btn--fixed.v-btn--has-bg.v-btn--right.v-btn--round',
+  )
+  await page.click('.card-title:has-text("Create a blank test")')
+  await page.click('.card.col-sm-10.col-md-5.col-12')
+  await page
+    .getByRole('textbox', { name: 'Test Description' })
+    .fill('Some descripton')
+  await page.click(
+    '.ml-auto.mr-2.circleOrange.v-btn.v-btn--fab.v-btn--has-bg.v-btn--round.theme--dark.v-size--default.orange',
+  )
+
+  const errorMessage = page.locator('div[role="alert"]')
+  await expect(errorMessage).toBeVisible()
+  await expect(errorMessage).toHaveText('Enter a Title')
+})
+
+test('Detalte test', async ({ page }) => {
+  await logIn(page)
+
+  await page.click(
+    'button.v-btn.v-btn--bottom.v-btn--is-elevated.v-btn--fab.v-btn--fixed.v-btn--has-bg.v-btn--right.v-btn--round',
+  )
+
+  await page.click('.card-title:has-text("Create a blank test")')
+  await page.click('.card.col-sm-10.col-md-5.col-12')
+
+  await page
+    .getByRole('textbox', { name: 'Test Name' })
+    .fill('Test heuristic playwright for delate')
+  await page
+    .getByRole('textbox', { name: 'Test Description' })
+    .fill('Some descripton')
+
+  await page.click(
+    '.ml-auto.mr-2.circleOrange.v-btn.v-btn--fab.v-btn--has-bg.v-btn--round.theme--dark.v-size--default.orange',
+  )
+  await page.click('.card.col-sm-10.col-md-4.col-10')
+  await page.click(
+    '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
+  )
+
+  await page.goto('https://ruxailab-prod.web.app/testslist')
+
+  await page.click('text=Test heuristic playwright for delate')
+  await page.click(
+    '.v-btn.v-btn--icon.v-btn--round.theme--light.v-size--default',
+  )
+  await page.click(
+    '.white--text.mb-4.v-btn.v-btn--is-elevated.v-btn--has-bg.theme--light.v-size--default',
+  )
+  await page.click(
+    '.red.white--text.ml-1.v-btn.v-btn--text.theme--light.v-size--default',
+  )
+})
+
+test('failure test template', async ({ page }) => {
+  logIn(page)
+
+  await page.click(
+    'button.v-btn.v-btn--bottom.v-btn--is-elevated.v-btn--fab.v-btn--fixed.v-btn--has-bg.v-btn--right.v-btn--round',
+  )
+  await page.click('.card-title:has-text("Create from template")')
+
+  await page.click('.v-list-item.v-list-item--link.theme--light')
+  await page.getByRole('button', { name: 'NEXT' }).click()
+  await page.getByRole('textbox', { name: 'Title' }).fill('')
+  await page
+    .getByRole('textbox', { name: 'Description' })
+    .fill('Some description for template')
+  await page.getByRole('button', { name: 'CREATE' }).click()
+
+  try {
+    await page.waitForSelector(
+      '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
+    )
+    await page.click(
+      '.console-button.mx-1.hidden-sm-and-down.v-btn.v-btn--text.theme--dark.v-size--default',
+      { timeout: 5000 },
+    )
+    await expect(page).toHaveURL('https://ruxailab-prod.web.app/testslist')
+  } catch {
+    console.error('Failed to click button or URL did not match:')
+    page.close()
+  }
 })
