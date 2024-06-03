@@ -32,9 +32,6 @@ jobs:
           while ! nc -z localhost 4321; do sleep 10; done
           while ! nc -z localhost 4000; do sleep 10; done
 
-      - name: Print Home page
-        run: curl http://localhost:4321/
-
       - name: Run Playwright tests
         run: |
           npm ci
