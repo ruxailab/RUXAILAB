@@ -18,11 +18,12 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['list'], ['@estruyf/github-actions-reporter']],
+  reporter: 'html',
 
   /* Output directory for screenshots of failed tests */
   outputDir: './playwright/output',
   use: {
+    ...devices['Desktop Chrome'],
     /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',
 
