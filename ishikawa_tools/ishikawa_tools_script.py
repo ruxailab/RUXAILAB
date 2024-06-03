@@ -162,6 +162,7 @@ def generate_scatter_diagram_report(repo_owner, repo_name, github_token):
 def main():
     github_token = os.getenv('TOKEN')
     username = os.getenv('USER')
+    repository_name = os.getenv('PROJECT')
 
     if not all([github_token, username, repository_name]):
         print("One or more environment variables are missing.")
