@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and run Docker Compose
-        run: docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from test
+        run: docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from uxremotelab
 
       - name: Check Docker Compose Test Result
         run: |
