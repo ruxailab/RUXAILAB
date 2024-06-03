@@ -20,13 +20,12 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '18.x'  # Cambia esto a la versión de Node.js que usas
+          node-version: '18.x'
 
       - name: Build and start services
-        run: |
-          docker-compose up -d --build
+        run: docker-compose up -d --build
 
       - name: Wait for services to be ready
         run: |
@@ -34,15 +33,16 @@ jobs:
           while ! nc -z localhost 4000; do sleep 10; done
 
       - name: Print Home page
-        run: |
-          curl http://localhost:5000
+        run: curl http://localhost:5000
 
       - name: Run Playwright tests
         run: |
           npm ci
           npx playwright install --with-deps chromium
           npx playwright test
-      - uses: actions/upload-artifact@v2
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v2
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
@@ -50,5 +50,4 @@ jobs:
           retention-days: 30
 
       - name: Stop services
-        run: |
-          docker-compose down
+        run: docker-compose down
