@@ -1,12 +1,37 @@
-name: Playwright Tests
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        ports:
+          - 5000:5000
+          - 9099:9099
+          - 5001:5001
+          - 8081:8081
+          - 5002:5002
+          - 9199:9199
+          - 4000:4000
+          - 4400:4400
+          - 4500:4500
+          - 9150:9150
+          - 5007:5007
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -19,32 +44,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
+      - name: Build and run Docker Compose
+        run: docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from test
 
-      - name: Build and start services
-        run: docker-compose up -d --build
-
-      - name: Wait for services to be ready
+      - name: Check Docker Compose Test Result
         run: |
-          while ! nc -z localhost 5000; do sleep 10; done
-          while ! nc -z localhost 4000; do sleep 10; done
-
-      - name: Run Playwright tests
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
-          npx playwright test
-
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v2
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-
-      - name: Stop services
-        run: docker-compose down
+          EXIT_CODE=$(docker inspect test --format='{{.State.ExitCode}}')
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            exit $EXIT_CODE
+          fi
