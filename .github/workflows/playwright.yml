@@ -33,10 +33,14 @@ jobs:
           while ! nc -z localhost 5000; do sleep 10; done
           while ! nc -z localhost 4000; do sleep 10; done
 
+      - name: Print Home page
+        run: |
+          curl http://localhost:5000
+
       - name: Run Playwright tests
         run: |
           npm ci
-          npx playwright install
+          npx playwright install --with-deps chromium
           npx playwright test
       - uses: actions/upload-artifact@v2
         if: ${{ !cancelled() }}
