@@ -160,7 +160,6 @@ def generate_scatter_diagram_report(repo_owner, repo_name, github_token):
     plt.savefig('./ishikawa_tools/output/scatter.pdf')
 
 def main():
-    repo_owner = "marcgc21"
     github_token = os.getenv('TOKEN')
     username = os.getenv('USER')
     repository_name = os.getenv('PROJECT')
@@ -169,10 +168,12 @@ def main():
         print("One or more environment variables are missing.")
         return
 
-    issues = fetch_issues(repo_owner, repository_name, github_token)
+    issues = fetch_issues(username, repository_name, github_token)
     if issues is None:
         print("Exiting script due to fetch issues failure.")
         return
+    
+    Path("./ishikawa_tools/output").mkdir(parents=True, exist_ok=True)
 
     generate_pareto_diagram(issues)
     generate_weekly_report(github_token, username, repository_name)
