@@ -25,7 +25,7 @@ jobs:
           node-version: '18.x'
 
       - name: Build and start services
-        run: docker-compose up -d --build
+        run: docker-compose up -d --build -abort-on-container-exit --exit-code-from test
 
       - name: Wait for services to be ready
         run: |
