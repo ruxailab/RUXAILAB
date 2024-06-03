@@ -29,18 +29,3 @@ services:
     environment:
       - FIREBASE_PROJECT_ID=retlab-dev
       # Agrega cualquier otra variable de entorno necesaria para el emulador de Firebase
-
-  test:
-    build:
-      context: .
-    volumes:
-      - .:/app
-    depends_on:
-      - uxremotelab
-    command: >
-      sh -c "
-        while ! curl -sSf localhost:5000 > /dev/null; do
-          echo 'Waiting for app...';
-          sleep 2;
-        done;
-        npx playwright test"
