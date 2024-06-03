@@ -160,9 +160,8 @@ def generate_scatter_diagram_report(repo_owner, repo_name, github_token):
     plt.savefig('./ishikawa_tools/output/scatter.pdf')
 
 def main():
-    github_token = os.getenv('TOKENXXX')
-    username = os.getenv('USERXXX')
-    repository_name = os.getenv('PROJECTXXX')
+    github_token = os.getenv('TOKEN')
+    username = os.getenv('USER')
 
     if not all([github_token, username, repository_name]):
         print("One or more environment variables are missing.")
