@@ -34,6 +34,7 @@
               </v-form>
               <v-card-actions class="justify-center mt-4">
                 <v-btn
+                  data-testid="sign-in-button"
                   color="#F9A826"
                   rounded
                   class="white--text"
