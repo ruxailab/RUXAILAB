@@ -200,7 +200,6 @@
                   </template>
                   <template v-else>
                     <v-list-item
-                      style="height: 40px ;"
                       v-for="(item, i) in filteredHeuristics"
                       :key="i"
                       class="pb-0 pt-0"
@@ -294,7 +293,7 @@
                           </v-btn>
                         </v-list-item-action>
                       </div>
-                      <v-list-item-icon v-if="i == itemSelect">
+                      <v-list-item-icon v-if="i == itemSelect" class="pt-4">
                         <v-icon>mdi-chevron-right</v-icon>
                       </v-list-item-icon>
                     </v-list-item>
@@ -403,9 +402,11 @@
                     :key="i"
                   >
                     <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      <v-list-item-title class="py-3">{{
+                        item.title
+                      }}</v-list-item-title>
                     </v-list-item-content>
-                    <v-list-item-icon v-if="i == questionSelect">
+                    <v-list-item-icon v-if="i == questionSelect" class="pt-4">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-list-item-icon>
                   </v-list-item>
