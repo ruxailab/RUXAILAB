@@ -16,8 +16,7 @@
     "test-playwright": "playwright test --browser=all",
     "test-html-report": "playwright test --browser=all --reporter=html",
     "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
-  }
-},
+  },
   "dependencies": {
     "@estruyf/github-actions-reporter": "^1.7.0",
     "axios": "^1.5.0",
