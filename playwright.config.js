@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test')
 
-const devBaseUrl = 'http://localhost:5000'
+const devBaseUrl = 'http://localhost:8080'
 
 module.exports = defineConfig({
   testDir: './e2e',
