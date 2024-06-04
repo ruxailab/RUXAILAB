@@ -30,7 +30,10 @@ jobs:
       - name: Wait for container to become available
         run: |
           npx wait-on http://localhost:8080
-          sleep 20
+          sleep 30  # Aumenta el tiempo de espera adicional para asegurarte de que el servidor está listo
+
+      - name: Check Docker logs
+        run: docker-compose logs
 
       - name: Print home page
         run: curl http://localhost:8080
