@@ -112,7 +112,7 @@
             </v-row>
           </v-col>
         </v-row>
-        <div class="background background-img" style="filter: blur(8px);" />
+        <div class="background background-img"/>
       </div>
 
       <v-row v-else class="nav pa-0 ma-0" dense>
