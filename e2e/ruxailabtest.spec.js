@@ -43,11 +43,12 @@ const createTest = async (page, type) => {
 
 test('has link page', async ({ page }) => {
   await page.goto('/')
-  // Esperar a que cargue la página
-  await page.waitForLoadState('domcontentloaded')
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/RUXAILAB/)
+  // Esperar a que un elemento específico esté presente en la página, indicando que el contenido dinámico se ha cargado
+  await page.waitForSelector('#app', { timeout: 10000 })
+
+  // Ahora verificar el título de la página
+  await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 10000 })
 })
 
 // test('sign and create heurisic test', async ({ page }) => {
