@@ -27,10 +27,9 @@ jobs:
       - name: Build and start services
         run: docker-compose up -d --build
 
-      - name: Wait for services to be ready
-        run: |
-          while ! nc -z localhost 5000; do sleep 10; done
-          while ! nc -z localhost 4000; do sleep 10; done
+      - name: Wait for container to become available
+        run: npx wait-on http://localhost:8080
+        timeout-minutes: 1
 
       - name: Run Playwright tests
         run: |
