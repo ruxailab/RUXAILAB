@@ -43,6 +43,8 @@ const createTest = async (page, type) => {
 
 test('has link page', async ({ page }) => {
   await page.goto('/')
+  // Esperar a que cargue la página
+  await page.waitForLoadState('domcontentloaded')
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/RUXAILAB/)

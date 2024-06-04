@@ -29,26 +29,26 @@ jobs:
 
       - name: Wait for container to become available
         run: npx wait-on http://localhost:8080
-        timeout-minutes: 1
+        timeout-minutes: 2
 
       - name: Print home page
         run: curl http://localhost:8080
 
       - name: Install npm dependencies
-        run: npm install
-      - name: Install dependencies
         run: npm ci
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
       - name: Run Playwright tests
         run: npx playwright test
-      - uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v2
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-
 
       - name: Stop services
         run: docker-compose down
