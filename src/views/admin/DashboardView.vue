@@ -16,6 +16,7 @@
           v-bind="attrs"
           @click="goToCreateTestRoute()"
           v-on="on"
+          data-testid="create-test-btn"
         >
           <v-icon large>
             mdi-plus
