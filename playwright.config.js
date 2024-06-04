@@ -1,7 +1,7 @@
 // @ts-check
-const { defineConfig, devices } = require('@playwright/test')
+const { defineConfig, devices } = require('@playwright/test');
 
-const devBaseUrl = 'http://localhost:8080'
+const devBaseUrl = 'http://localhost:8080';
 
 module.exports = defineConfig({
   testDir: './e2e',
@@ -22,13 +22,21 @@ module.exports = defineConfig({
 
   /* Output directory for screenshots of failed tests */
   outputDir: './playwright/output',
+
   use: {
+    baseURL: devBaseUrl,
     ...devices['Desktop Chrome'],
     /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',
 
     /* Create a screenshot if a test fails */
     screenshot: { mode: 'only-on-failure', fullPage: true },
+
+    /* Set global timeout for actions (e.g., click, fill) */
+    actionTimeout: 10000,
+
+    /* Set global timeout for navigation */
+    navigationTimeout: 30000,
   },
 
   /* Configure projects for major browsers */
@@ -36,10 +44,23 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       use: {
-        baseURL: devBaseUrl,
         ...devices['Desktop Chrome'],
       },
       retries: 1,
     },
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+      },
+      retries: 1,
+    },
+    {
+      name: 'webkit',
+      use: {
+        ...devices['Desktop Safari'],
+      },
+      retries: 1,
+    },
   ],
-})
+});

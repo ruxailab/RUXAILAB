@@ -42,16 +42,16 @@ const createTest = async (page, type) => {
 }
 
 test('has link page', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('http://localhost:8080/signin')
 
   // Esperar un elemento específico
-  await page.waitForSelector('#app', { timeout: 20000 });
+  await page.waitForSelector('#app', { timeout: 20000 })
 
   // Tomar una captura de pantalla para verificar el estado de la página
-  await page.screenshot({ path: 'screenshot.png' });
+  await page.screenshot({ path: 'screenshot.png' })
 
   // Ahora verificar el título de la página
-  await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 20000 });
+  await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 20000 })
 })
 
 // test('sign and create heurisic test', async ({ page }) => {
