@@ -28,8 +28,9 @@ jobs:
         run: docker-compose up -d --build
 
       - name: Wait for container to become available
-        run: npx wait-on http://localhost:8080
-        timeout-minutes: 2
+        run: |
+          npx wait-on http://localhost:8080
+          sleep 20
 
       - name: Print home page
         run: curl http://localhost:8080
