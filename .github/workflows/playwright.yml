@@ -38,6 +38,12 @@ jobs:
       - name: Print home page
         run: curl http://localhost:8080
 
+      - name: Check Docker logs
+        run: docker-compose logs
+
+      - name: Print product page
+        run: curl https://ruxailab-dev.web.app
+
       - name: Install npm dependencies
         run: npm ci
 
