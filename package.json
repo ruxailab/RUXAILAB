@@ -12,9 +12,13 @@
     "build-prod": "vue-cli-service build --mode production",
     "cypress:open": "cypress open",
     "deploy-dev": "firebase use dev && firebase deploy --only hosting:ruxailab-dev",
-    "deploy-prod": "firebase use prod && firebase deploy --only hosting:ruxailab-prod"
+    "deploy-prod": "firebase use prod && firebase deploy --only hosting:ruxailab-prod",
+    "test-playwright": "playwright test --browser=all",
+    "test-html-report": "playwright test --browser=all --reporter=html",
+    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
   },
   "dependencies": {
+    "@estruyf/github-actions-reporter": "^1.7.0",
     "axios": "^1.5.0",
     "bluebird": "^3.7.2",
     "caniuse-lite": "^1.0.30001534",
@@ -47,11 +51,13 @@
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.1.0",
+    "@playwright/test": "^1.44.1",
     "@testing-library/cypress": "^10.0.1",
     "@testing-library/dom": "^9.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/user-event": "12",
     "@testing-library/vue": "^5.9.0",
+    "@types/node": "^20.12.12",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-eslint": "~4.3.0",
     "@vue/cli-plugin-router": "~4.3.0",
