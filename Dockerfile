@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 
 # Run build as per the script defined in package.json
-RUN npm run build
+RUN npm run build-dev
 
 # Production stage using a minimal Node.js image
 FROM node:alpine AS production-stage
