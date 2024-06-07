@@ -57,7 +57,7 @@
     </v-dialog>
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
-      <drawer :user-access-level-on-test="[accessLevel]" />
+      <Drawer :user-access-level-on-test="[accessLevel]" />
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
@@ -485,7 +485,6 @@ export default {
             (coop) => coop.token === this.token,
           )
           if (invitation) {
-            console.log('Caiu como invitation')
             // User invited, and they have an account
             if (this.user.email === invitation.email) {
               // Accept Collaboration
