@@ -294,10 +294,7 @@
                           </v-btn>
                         </v-list-item-action>
                       </div>
-                      <v-list-item-icon
-                        v-if="i == itemSelect"
-                        class="mt-2 mb-2"
-                      >
+                      <v-list-item-icon v-if="i == itemSelect" class="pt-4">
                         <v-icon>mdi-chevron-right</v-icon>
                       </v-list-item-icon>
                     </v-list-item>
@@ -406,9 +403,11 @@
                     :key="i"
                   >
                     <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      <v-list-item-title class="py-3">{{
+                        item.title
+                      }}</v-list-item-title>
                     </v-list-item-content>
-                    <v-list-item-icon v-if="i == questionSelect">
+                    <v-list-item-icon v-if="i == questionSelect" class="pt-4">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-list-item-icon>
                   </v-list-item>
