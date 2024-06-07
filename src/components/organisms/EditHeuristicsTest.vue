@@ -2,16 +2,16 @@
   <div>
     <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">
-        Heuristics
+        {{ $t('HeuristicsEditTest.titles.heuristics') }}
       </v-tab>
       <v-tab @click="tabClicked(1)">
-        Options
+        {{ $t('HeuristicsEditTest.titles.options') }}
       </v-tab>
       <v-tab @click="tabClicked(2)">
-        Weights
+        {{ $t('HeuristicsEditTest.titles.weights') }}
       </v-tab>
       <v-tab @click="tabClicked(3)">
-        Settings
+        {{ $t('HeuristicsEditTest.titles.settings') }}
       </v-tab>
     </v-tabs>
 
@@ -45,7 +45,7 @@ export default {
 
     object: {
       type: Object,
-      default: () => { },
+      default: () => {},
     },
     index: {
       type: Number,

@@ -27,7 +27,7 @@
       <template v-slot:top>
         <v-row class="ma-0" align="center">
           <v-card-title class="subtitleView">
-            Options
+            {{ $t('HeuristicsOptionsTable.titles.options') }}
           </v-card-title>
           <v-row justify="end" class="ma-0 pa-0 mr-4">
             <AddOptionBtn
@@ -98,7 +98,7 @@ export default {
       })
     },
     testAnswerDocLength() {
-            if(!this.$store.getters.testAnswerDocument) {
+      if (!this.$store.getters.testAnswerDocument) {
         return 0
       }
       const heuristicAnswers = this.$store.getters.testAnswerDocument
@@ -142,13 +142,17 @@ export default {
       this.hasValue = true
     },
     deleteItem(item) {
-      const index = this.options.findIndex((option) => option.timestamp === item.timestamp)
+      const index = this.options.findIndex(
+        (option) => option.timestamp === item.timestamp,
+      )
       if (index !== -1) {
         this.options.splice(index, 1)
       }
     },
     editItem(item) {
-      this.editIndex = this.options.findIndex((option) => option.timestamp === item.timestamp)
+      this.editIndex = this.options.findIndex(
+        (option) => option.timestamp === item.timestamp,
+      )
       this.option.text = this.options[this.editIndex].text
       this.option.value = this.options[this.editIndex].value
 
