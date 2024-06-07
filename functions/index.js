@@ -21,7 +21,7 @@ exports.onTestCreate = functions.firestore
           testTitle: test.testTitle,
           testType: test.testType,
           numberColaborators: 0,
-          creationDate: test.creationDate ?? null,
+          creationDate: test.creationDate || null,
           updateDate: Date.now(),
         },
       })
@@ -42,7 +42,7 @@ exports.onTestUpdate = functions.firestore
           testDocId: snap.after.id,
           testTitle: test.testTitle,
           testType: test.testType,
-          numberColaborators: test.numberColaborators ?? 0,
+          numberColaborators: test.numberColaborators || 0,
           creationDate: test.creationDate,
           updateDate: Date.now(),
         },
