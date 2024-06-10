@@ -6,7 +6,8 @@
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title>
-          Are you sure you want to delete this report?
+          <!-- Are you sure you want to delete this report? -->
+          {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
         </v-card-title>
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -16,7 +17,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn class="grey lighten-3" text @click="dialog = false">
-            Cancel
+            {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
             class="red white--text ml-1"
@@ -24,7 +25,7 @@
             text
             @click="removeReport(report), (loadingBtn = true)"
           >
-            Delete
+            {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -33,15 +34,16 @@
     <v-overlay v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
-        Loading Reports
+        {{ $t('HeuristicsReport.messages.reports_loading') }}
       </div>
     </v-overlay>
 
     <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
-    <ShowInfo v-else title="Reports">
+    <ShowInfo v-else :title="$t('HeuristicsReport.titles.reports')">
       <v-row slot="top" justify="end" dense class="mr-3">
         <p class="subtitleView">
-          Last Updated: {{ new Date().toLocaleString('en') }}
+          {{ $t('HeuristicsReport.titles.last_updated') }}:
+          {{ new Date().toLocaleString('en') }}
         </p>
       </v-row>
 
@@ -63,7 +65,9 @@
               </template>
               <v-list v-if="test.testAdmin.email == user.email">
                 <v-list-item @click=";(dialog = true), (report = item)">
-                  <v-list-item-title>Remove Report</v-list-item-title>
+                  <v-list-item-title>
+                    {{ $t('HeuristicsReport.messages.remove_report') }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -105,13 +109,17 @@ export default {
   props: { id: { type: String, default: '' } },
 
   data: () => ({
-    headers: [
-      { text: 'Evaluator', value: 'userDocId' },
-      { text: 'Last Update', value: 'lastUpdate' },
-      { text: 'Progress', value: 'progress', justify: 'center' },
-      { text: 'Status', value: 'submitted' },
-      { text: 'More', value: 'more', justify: 'end' },
-    ],
+    // headers: [
+    //   // { text: 'Evaluator', value: 'userDocId' },
+    //   {
+    //     text: 'evaluator',// key used in the translation file
+    //     value: 'userDocId',
+    //   },
+    //   { text: 'Last Update', value: 'lastUpdate' },
+    //   { text: 'Progress', value: 'progress', justify: 'center' },
+    //   { text: 'Status', value: 'submitted' },
+    //   { text: 'More', value: 'more', justify: 'end' },
+    // ],
     loading: true,
     dialog: false,
     loadingBtn: false,
@@ -119,6 +127,32 @@ export default {
   }),
 
   computed: {
+    headers() {
+      return [
+        {
+          text: this.$t('HeuristicsReport.headers.evaluator'),
+          value: 'userDocId',
+        },
+        {
+          text: this.$t('HeuristicsReport.headers.last_update'),
+          value: 'lastUpdate',
+        },
+        {
+          text: this.$t('HeuristicsReport.headers.progress'),
+          value: 'progress',
+          justify: 'center',
+        },
+        {
+          text: this.$t('HeuristicsReport.headers.status'),
+          value: 'submitted',
+        },
+        {
+          text: this.$t('HeuristicsReport.headers.more'),
+          value: 'more',
+          justify: 'end',
+        },
+      ]
+    },
     reports() {
       const testAnswerDocument = this.$store.getters.testAnswerDocument
 
@@ -162,11 +196,9 @@ export default {
     },
 
     dialogText() {
-      return (
-        'Are you sure you want to delete ' +
-        (this.report !== null ? this.report.email : '') +
-        "'s report? This action can't be undone"
-      )
+      return this.$t('HeuristicsReport.messages.sure_to_delete', {
+        user: this.report !== null ? this.report.email : '',
+      })
     },
     answers() {
       return this.$store.getters.answers || {}
@@ -185,7 +217,9 @@ export default {
 
   methods: {
     checkIfIsSubmitted(status) {
-      return status ? 'submitted' : 'in progress'
+      return status
+        ? this.$t('HeuristicsReport.status.submitted')
+        : this.$t('HeuristicsReport.status.in_progress')
     },
 
     async getCurrentAnswer() {
@@ -193,10 +227,10 @@ export default {
     },
 
     async removeReport(report) {
-      let answerId = this.test.answersDocId
-      let userToRemoveId = report.userDocId
+      const answerId = this.test.answersDocId
+      const userToRemoveId = report.userDocId
       let testType = this.test.testType
-      let testId = this.test.id
+      const testId = this.test.id
 
       if (testType === 'HEURISTIC') testType = 'heuristicAnswers'
       if (testType === 'User') testType = 'taskAnswers'
@@ -221,7 +255,7 @@ export default {
         }
       } catch (e) {
         this.$store.commit('setError', {
-          errorCode: `RemoveReportError`,
+          errorCode: 'RemoveReportError',
           message: e,
         })
       }
@@ -229,7 +263,7 @@ export default {
       await this.getCurrentAnswer()
       this.loadingBtn = false
       this.dialog = false
-      this.$toast.success('Report successfully deleted!')
+      this.$toast.success(this.$t('HeuristicsReport.messages.report_deleted'))
     },
 
     formatDate(timestamp) {
@@ -243,17 +277,17 @@ export default {
       const minuteDiff = currentDate.getMinutes() - startDate.getMinutes()
 
       if (yearDiff > 0) {
-        return `${yearDiff} year${yearDiff !== 1 ? 's' : ''} ago`
+        return this.formatTimeAgo(yearDiff, 'years')
       } else if (monthDiff > 0) {
-        return `${monthDiff} month${monthDiff !== 1 ? 's' : ''} ago`
+        return this.formatTimeAgo(monthDiff, 'months')
       } else if (dayDiff > 0) {
-        return `${dayDiff} day${dayDiff !== 1 ? 's' : ''} ago`
+        return this.formatTimeAgo(dayDiff, 'days')
       } else if (hourDiff > 0) {
-        return `${hourDiff} hour${hourDiff !== 1 ? 's' : ''} ago`
+        return this.formatTimeAgo(hourDiff, 'hours')
       } else if (minuteDiff > 0) {
-        return `${minuteDiff} minute${minuteDiff !== 1 ? 's' : ''} ago`
+        return this.formatTimeAgo(minuteDiff, 'minutes')
       } else {
-        return 'Now'
+        return this.$t('common.timeAgo.now')
       }
     },
 
@@ -272,6 +306,12 @@ export default {
         }
       }
       return cooperatorEmail
+    },
+    formatTimeAgo(timeDiff, unit) {
+      const translationKey = `common.timeAgo.${unit}`
+      const translatedText = this.$t(translationKey, { count: timeDiff })
+
+      return translatedText
     },
   },
 }
