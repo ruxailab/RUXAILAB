@@ -23,3 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import '@testing-library/cypress/add-commands'
+import { deleteUser,
+  logInWithEmailAndPassword,
+  logOut,
+  signUpWithEmailAndPassword }
+  from './commands/auth'
+
+
+Cypress.Commands.add('deleteUser', deleteUser)
+Cypress.Commands.add('login', logInWithEmailAndPassword)
+Cypress.Commands.add('logout', logOut)
+Cypress.Commands.add('signup', signUpWithEmailAndPassword)
