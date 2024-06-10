@@ -37,22 +37,6 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-
     <v-dialog
       :value="fromlink && !noExistUser && !logined"
       width="500"
@@ -850,8 +834,6 @@
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import TipButton from '@/components/atoms/TipButton'
 import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
@@ -864,8 +846,6 @@ export default {
     ShowInfo,
     VClamp,
     Snackbar,
-    CardSignIn,
-    CardSignUp,
     TipButton,
     Timer,
     AudioRecorder,
