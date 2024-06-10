@@ -11,26 +11,6 @@
       </div>
     </v-overlay>
 
-    <v-dialog :value="flagToken && !flagUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="
-          setTest()
-          logined = true
-        "
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          flagNewUser = true
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-
     <v-dialog :value="flagToken && flagUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
@@ -218,17 +198,12 @@
 </template>
 
 <script>
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
-    CardSignIn,
-    CardSignUp,
     Drawer,
   },
   data: () => ({
@@ -430,6 +405,10 @@ export default {
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
+    if (this.accessLevel == 2) {
+      this.$toast.warning("You don't have permission to access this test!")
+      this.$router.push('/testslist')
+    }
   },
   methods: {
     standardDeviation(array) {
