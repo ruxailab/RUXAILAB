@@ -192,7 +192,7 @@
               ref="VideoCall"
               :index="index"
               :is-admin="isAdmin"
-              @emit-confirm="confirmConnect()"
+              @emit-confirm="confirmConnect(), (index = 1)"
             />
           </v-row>
         </v-card>
@@ -474,7 +474,7 @@
                     :index="index"
                     :is-admin="isAdmin"
                     :consent-completed="consentCompleted"
-                    @emit-confirm="confirmConnect(), (index = 1)"
+                    @emit-confirm="confirmConnect(), (index = 2)"
                   />
                 </v-col>
               </v-row>
@@ -568,7 +568,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.preTestStatus != 'done'"
+                    v-if="userTestStatus.preTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -728,7 +728,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.postTestStatus != 'done'"
+                    v-if="userTestStatus.postTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -802,28 +802,8 @@
         Saving Answer
       </div>
     </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
+
+    <v-dialog :value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -849,9 +829,6 @@
 </template>
 
 <script>
-import VClamp from 'vue-clamp'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -861,9 +838,6 @@ import FeedbackView from '@/components/molecules/FeedbackView.vue'
 export default {
   props: { token: { type: String, default: null } },
   components: {
-    VClamp,
-    CardSignIn,
-    CardSignUp,
     VideoCall,
     FeedbackView,
   },
@@ -958,6 +932,14 @@ export default {
         this.startRecordingModerator()
       }
     },
+    'userTestStatus.preTestStatus': function(newValue) {
+      if (newValue === 'done') {
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
+      }
+    },
+
     'userTestStatus.postTestStatus': function(newValue) {
       if (newValue === 'done') {
         this.postTestFinished = true
@@ -968,9 +950,6 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
-        if (!this.isAdmin) {
-          window.open(this.test.testStructure.landingPage)
-        }
       }
     },
   },
@@ -1041,6 +1020,14 @@ export default {
       this.disconnect()
       window.onbeforeunload = null
       await this.$store.dispatch('hangUp', this.roomTestId)
+    }
+  },
+  mounted() {
+    if (this.user == null) {
+      this.$toast.error(
+        'Login to your RUXAILAB account first to access the test!',
+      )
+      this.$router.push('/signin')
     }
   },
   methods: {
@@ -1116,6 +1103,9 @@ export default {
         }
       })
     },
+    setExistUser() {
+      this.noExistUser = false
+    },
 
     changeStatus(id, type, newStatus) {
       const testRef = doc(db, 'tests', this.roomTestId)
@@ -1167,16 +1157,13 @@ export default {
 
       this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
         const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
           type: 'video/webm',
         })
         const storageEvaluator = getStorage()
         const storageRefEvaluator = ref(
           storageEvaluator,
-          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
+          `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
         )
         await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
 
@@ -1205,16 +1192,10 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
-        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
-          type: 'video/webm',
-        })
         const storageModerator = getStorage()
         const storageRefModerator = ref(
           storageModerator,
-          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
+          `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`,
         )
         await uploadBytes(storageRefModerator, videoBlobModerator)
 
@@ -1333,9 +1314,6 @@ export default {
     async setTest() {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
-    },
-    setExistUser() {
-      this.noExistUser = false
     },
     async verifyAdmin() {
       if (this.test.testAdmin.email == this.user.email) {
