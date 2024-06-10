@@ -5,8 +5,7 @@
   },
   "functions": {
     "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
-    "source": "functions",
-    "runtimes": "python312"
+    "source": "functions"
   },
   "hosting": [
     {
@@ -14,7 +13,10 @@
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
-        { "source": "**", "destination": "/index.html" }
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
       ]
     },
     {
@@ -22,25 +24,34 @@
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
-        { "source": "**", "destination": "/index.html" }
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
       ]
     }
   ],
   "emulators": {
     "auth": {
-      "port": 9099
+      "port": 9099,
+      "host": "0.0.0.0"
     },
     "functions": {
-      "port": 5001
+      "port": 5001,
+      "host": "0.0.0.0"
     },
     "firestore": {
-      "port": 8081
+      "port": 8081,
+      "host": "0.0.0.0"
     },
     "hosting": {
-      "port": 5000
+      "port": 5002,
+      "host": "0.0.0.0"
     },
     "ui": {
-      "enabled": true
+      "enabled": true,
+      "port": 4000,
+      "host": "0.0.0.0"
     },
     "singleProjectMode": true,
     "storage": {

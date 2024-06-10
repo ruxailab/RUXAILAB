@@ -11,7 +11,7 @@ exports.onTestCreate = functions.firestore
     const userId = snap.data().testAdmin.userDocId
     const test = snap.data()
 
-    return await admin
+    await admin
       .firestore()
       .collection('users')
       .doc(userId)
@@ -21,7 +21,7 @@ exports.onTestCreate = functions.firestore
           testTitle: test.testTitle,
           testType: test.testType,
           numberColaborators: 0,
-          creationDate: test.creationDate ?? null,
+          creationDate: test.creationDate || null,
           updateDate: Date.now(),
         },
       })
@@ -33,7 +33,7 @@ exports.onTestUpdate = functions.firestore
     const userId = snap.after.data().testAdmin.userDocId
     const test = snap.after.data()
 
-    return await admin
+    await admin
       .firestore()
       .collection('users')
       .doc(userId)
@@ -42,13 +42,49 @@ exports.onTestUpdate = functions.firestore
           testDocId: snap.after.id,
           testTitle: test.testTitle,
           testType: test.testType,
-          numberColaborators: test.numberColaborators ?? 0,
+          numberColaborators: test.numberColaborators || 0,
           creationDate: test.creationDate,
           updateDate: Date.now(),
         },
       })
   })
 
+exports.deleteAuth = functions.https.onCall(async (data, context) => {
+  try {
+    await admin.auth().deleteUser(data.id)
+    return 'User deleted successfully.'
+  } catch (err) {
+    console.error('Error deleting user:', err)
+    return err
+  }
+})
+
+exports.sendEmail = functions.https.onCall(async (data, context) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.VUE_APP_FIREBASE_EMAIL,
+      pass: process.env.VUE_APP_FIREBASE_PASSWORD,
+    },
+  })
+
+  const mail = {
+    from: 'Uramaki Lab',
+    to: data.guest.email,
+    subject: 'You have been invited to evaluate a test!',
+    html: data.template,
+  }
+
+  try {
+    const info = await transporter.sendMail(mail)
+    return `Message sent: ${info.messageId}`
+  } catch (error) {
+    console.error('Error sending email:', error)
+    return `Error sending email: ${error.message}`
+  }
+})
+
+//code is in safe------------------------------------------------
 // exports.processSignUp = functions.auth.user().onCreate(async (user) => {
 //   try {
 //     await admin
@@ -80,38 +116,3 @@ exports.onTestUpdate = functions.firestore
 //     return err;
 //   }
 // });
-
-exports.deleteAuth = functions.https.onCall(async (data, context) => {
-  try {
-    return await admin.auth().deleteUser(data.id)
-  } catch (err) {
-    return err
-  }
-})
-
-exports.sendEmail = functions.https.onCall(async (data, context) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.VUE_APP_FIREBASE_EMAIL,
-      pass: process.env.VUE_APP_FIREBASE_PASSWORD,
-    },
-  })
-
-  const mail = {
-    from: 'Uramaki Lab',
-    to: data.guest.email,
-    subject: 'You have been invited to evaluate a test!',
-    html: data.template,
-  }
-
-  return await transporter
-    .sendMail(mail)
-    .then((info) => {
-      return `Message sent: ${info.messageId} `
-    })
-    .catch((e) => {
-      console.log('Error in transporter ', e)
-      return `Error on sending msg: ${e}`
-    })
-})
