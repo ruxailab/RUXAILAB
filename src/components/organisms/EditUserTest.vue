@@ -20,7 +20,7 @@
   </v-tabs>
 
   <v-col v-else-if="type == 'content'" cols="12">
-    <v-card v-if="index == 0" style="background: #f5f7ff">
+    <v-card rounded="xxl" v-if="index == 0" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
         {{ $t('UserTestTable.titles.consentForm') }}
       </v-card-title>
@@ -33,7 +33,7 @@
       </v-row>
     </v-card>
 
-    <v-card v-if="index == 1" style="background: #f5f7ff">
+    <v-card rounded="xxl" v-if="index == 1" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
         {{ $t('UserTestTable.titles.userVariables') }}
       </v-card-title>
@@ -52,7 +52,7 @@
       @input="updateData"
     />
 
-    <v-card v-if="index == 3" style="background: #f5f7ff">
+    <v-card rounded="xxl" v-if="index == 3" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
         {{ $t('UserTestTable.titles.postForm') }}
       </v-card-title>
@@ -111,14 +111,14 @@ export default {
     if (this.type !== 'content' && this.type != 'tabs') {
       console.error(this.type + ' type in EditUserTest.vue is not valid.')
     }
-    if(this.testStructure.postTest) {
+    if (this.testStructure.postTest) {
       this.$store.dispatch('setPostTest', this.testStructure.postTest)
     }
-    if(this.testStructure.preTest) {
+    if (this.testStructure.preTest) {
       this.$store.dispatch('setPreTest', this.testStructure.preTest)
     }
-    if(this.testStructure.consent) {
-    this.$store.dispatch('setConsent', this.testStructure.consent)
+    if (this.testStructure.consent) {
+      this.$store.dispatch('setConsent', this.testStructure.consent)
     }
   },
 
