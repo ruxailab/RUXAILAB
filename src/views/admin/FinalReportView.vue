@@ -1,9 +1,12 @@
 <template>
   <v-container>
     <ShowInfo
+     
       class="ma-0 pt-0"
       style="padding: 0!important;"
-      title="Final Report"
+     
+      :title="$t('titles.drawer.Final Report')"
+   
     />
 
     <v-stepper

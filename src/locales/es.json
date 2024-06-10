@@ -29,7 +29,15 @@
     "save": "Ahorrar",
     "editDelete": "Editar/Borrar",
     "type": "Tipo",
-    "noNotifications": "Aún no tienes notificaciones"
+    "noNotifications": "Aún no tienes notificaciones",
+    "timeAgo": {
+      "years": "Hace {count} año{count !== 1 ? 's' : ''}",
+      "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
+      "days": "Hace {count} día{count !== 1 ? 's' : ''}",
+      "hours": "Hace {count} hora{count !== 1 ? 's' : ''}",
+      "minutes": "Hace {count} minuto{count !== 1 ? 's' : ''}",
+      "now": "Ahora"
+    }
   },
   "titles": {
     "manager": "Gerente",
@@ -154,6 +162,166 @@
       "showComment": "Mostrar comentario",
       "addComment": "Agregar comentario",
       "hideTextArea": "Ocultar área de texto"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "[TODO]"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Pesos",
+      "heuristics": "Heurísticas"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Necesita al menos 2 heurísticas para poder colocar los pesos."
+    },
+    "actions": {
+      "saveWeights": "guardar valores de peso"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "[TODO]"
+    },
+    "messages": {
+      "acceptCsv": "[TODO]",
+      "noCsvFileSelected": "[TODO]"
+    },
+    "placeHolders": {
+      "importCsv": "[TODO]"
+    },
+    "actions": {
+      "downloadCsvTemplate": "[TODO]",
+      "update": "[TODO]"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "[TODO]",
+      "submitOnce": "[TODO]",
+      "noHeuristics": "[TODO]"
+    },
+    "actions": {
+      "cancel": "[TODO]",
+      "submit": "[TODO]",
+      "save": "[TODO]",
+      "continueAs": "[TODO]",
+      "notMail": "[TODO]",
+      "changeAccount": "[TODO]",
+      "startTest": "[TODO]"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "[TODO]",
+      "options": "[TODO]",
+      "weights": "[TODO]",
+      "settings": "[TODO]"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "[TODO]",
+      "statistics": "[TODO]",
+      "evaluators": "[TODO]",
+      "heuristics": "[TODO]",
+      "analytics": "[TODO]"
+    },
+    "statistics": {
+      "usabilityPercentage": "[TODO]",
+      "max": "[TODO]",
+      "min": "[TODO]",
+      "std": "[TODO]"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "[TODO]",
+        "graphic": "[TODO]"
+      },
+      "messages": {
+        "graphForMoreThan3": "[TODO]"
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "[TODO]",
+        "answersByEvaluator": "[TODO]",
+        "answersByHeuristics": "[TODO]",
+        "graphic": "[TODO]",
+        "weights": "[TODO]"
+      },
+      "messages": {
+        "needMoreThan1Answer": "[TODO]",
+        "runWeightFunction": "[TODO]"
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "[TODO]",
+      "last_updated": "[TODO]"
+    },
+    "headers": {
+      "evaluator": "[TODO]",
+      "last_update": "[TODO]",
+      "progress": "[TODO]",
+      "status": "[TODO]",
+      "more": "[TODO]"
+    },
+    "messages": {
+      "confirm_delete_report": "[TODO]",
+      "reports_loading": "[TODO]",
+      "remove_report": "[TODO]",
+      "sure_to_delete": "[TODO] {user}",
+      "report_deleted": "[TODO]"
+    },
+    "status": {
+      "submitted": "[TODO]",
+      "in_progress": "[TODO]"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "[TODO]"
+    },
+    "headers": {
+      "email": "[TODO]",
+      "role": "[TODO]",
+      "invited": "[TODO]",
+      "accepted": "[TODO]",
+      "more": "[TODO]",
+      "title": "[TODO]",
+      "content": "[TODO]"
+    },
+    "actions": {
+      "send_invitation": "[TODO]",
+      "send_message": "[TODO]",
+      "reinvite": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "cancel": "[TODO]",
+      "send": "[TODO]",
+      "select_cooperator": "[TODO]"
+    },
+    "roles": {
+      "administrator": "[TODO]",
+      "evaluator": "[TODO]",
+      "guest": "[TODO]"
+    },
+    "messages": {
+      "cooperators_loading": "[TODO]",
+      "no_users": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "change_role": "[TODO]",
+      "message_title_hint": "[TODO]",
+      "message_content_hint": "[TODO]"
     }
   },
   "UserTestTable": {
