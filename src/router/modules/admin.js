@@ -11,6 +11,7 @@ import CreateView from '@/views/admin/CreateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
+import EmotionsView from '@/views/admin/EmotionsView'
 
 export default [
   {
@@ -53,6 +54,13 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
+      },
+      {
+        path: '/emotionsview/:id',
+        name: 'EmotionsView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: EmotionsView,
       },
       {
         path: '/settingsview/:id',

@@ -218,7 +218,7 @@ export default {
             {
               title: 'Emotions',
               icon: 'mdi-heart',
-              path: `/emotions/${this.test.id}`,
+              path: `/emotionsview/${this.test.id}`,
               id: 8,
             }
           )
