@@ -612,6 +612,8 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
+      this.$toast.success('Your response has been Recorded')
+      this.$router.push('/testslist')
     },
     setExistUser() {
       this.noExistUser = false
