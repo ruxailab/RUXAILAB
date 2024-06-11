@@ -3,7 +3,9 @@
     "default": "retlab-dev",
     "dev": "retlab-dev",
     "production": "retlab",
-    "prod": "ruxailab-prod"
+    "prod": "ruxailab-prod",
+    "tfg": "ruxailab-emotions",
+    "newtfg": "emotions-tfg"
   },
   "targets": {
     "retlab-dev": {
@@ -14,5 +16,6 @@
       }
     }
   },
-  "etags": {}
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

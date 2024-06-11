@@ -213,7 +213,16 @@ export default {
             },
           )
         }
-
+        if (this.userAccessLevelOnTest == 0) {
+          items.push(
+            {
+              title: 'Emotions',
+              icon: 'mdi-heart',
+              path: `/emotions/${this.test.id}`,
+              id: 8,
+            }
+          )
+        }
         if (this.test.template) {
           items.push({
             title: 'Template',
