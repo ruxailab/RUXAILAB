@@ -72,7 +72,8 @@
       "invite": "Invite evaluators to answer your test!",
       "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
       "start": "Get started!",
-      "edit": "Create and customize your tasks and heuristics for your research needs."
+      "edit": "Create and customize your tasks and heuristics for your research needs.",
+      "emotions": "Introduction text for emotions."
     }
   },
   "errors": {
