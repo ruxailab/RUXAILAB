@@ -6,7 +6,7 @@
           v-if="index == 0"
           :disabled="!consentCompleted && !isAdmin"
           :dark="(consentCompleted && !isAdmin) || isAdmin"
-          @click="openUserMedia()"
+          @click="openUserCamera(), openUserScreen()"
           color="green"
           block
           depressed
@@ -44,6 +44,8 @@ export default {
             urls: [
               'stun:stun1.l.google.com:19302',
               'stun:stun2.l.google.com:19302',
+              'stun:stun3.l.google.com:19302',
+              'stun:stun4.l.google.com:19302',
             ],
           },
         ],
@@ -69,11 +71,17 @@ export default {
     },
   },
   computed: {
-    localStream() {
-      return this.$store.getters.localStream
+    localCameraStream() {
+      return this.$store.getters.localCameraStream
     },
-    remoteStream() {
-      return this.$store.getters.remoteStream
+    remoteCameraStream() {
+      return this.$store.getters.remoteCameraStream
+    },
+    localScreenStream() {
+      return this.$store.getters.localScreenStream
+    },
+    remoteScreenStream() {
+      return this.$store.getters.remoteScreenStream
     },
     roomTestAnswerId() {
       return this.$store.getters.test.testAnswerId
@@ -89,6 +97,7 @@ export default {
     emitConfirm() {
       this.$emit('emit-confirm')
     },
+
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
@@ -98,8 +107,12 @@ export default {
 
       this.peerConnection = new RTCPeerConnection(this.configuration)
 
-      this.localStream.getTracks().forEach((track) => {
-        this.peerConnection.addTrack(track, this.localStream)
+      this.localCameraStream.getTracks().forEach((track) => {
+        this.peerConnection.addTrack(track, this.localCameraStream)
+      })
+
+      this.localScreenStream.getTracks().forEach((track) => {
+        this.peerConnection.addTrack(track, this.localScreenStream)
       })
 
       const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
@@ -126,7 +139,7 @@ export default {
 
       this.peerConnection.addEventListener('track', (event) => {
         event.streams[0].getTracks().forEach((track) => {
-          this.remoteStream.addTrack(track)
+          this.remoteCameraStream.addTrack(track)
         })
       })
 
@@ -151,17 +164,8 @@ export default {
         })
       })
     },
-    async joinRoom() {
-      this.createBtnDisabled = true
-      this.joinBtnDisabled = true
-      this.roomDialog = true
-    },
-    async confirmJoin() {
-      const roomId = this.roomId
-      this.currentRoom = `Current room is ${roomId} - You are the callee!`
-      await this.joinRoomById(roomId)
-    },
-    async joinRoomById(roomId) {
+
+    async joinRoomById(roomId, streamType) {
       const roomRef = doc(collection(db, 'rooms'), roomId)
 
       const roomSnapshot = await getDoc(roomRef)
@@ -169,9 +173,17 @@ export default {
       if (roomSnapshot.exists) {
         this.peerConnection = new RTCPeerConnection(this.configuration)
 
-        this.localStream.getTracks().forEach((track) => {
-          this.peerConnection.addTrack(track, this.localStream)
-        })
+        if (streamType == 'camera') {
+          this.localCameraStream.getTracks().forEach((track) => {
+            track.identifier = 'camera'
+            this.peerConnection.addTrack(track, this.localCameraStream)
+          })
+        } else if (streamType == 'screen') {
+          this.localScreenStream.getTracks().forEach((track) => {
+            track.identifier = 'screen'
+            this.peerConnection.addTrack(track, this.localScreenStream)
+          })
+        }
 
         const calleeCandidatesCollection = collection(
           roomRef,
@@ -186,7 +198,11 @@ export default {
 
         this.peerConnection.addEventListener('track', (event) => {
           event.streams[0].getTracks().forEach((track) => {
-            this.remoteStream.addTrack(track)
+            if (streamType == 'camera') {
+              this.remoteCameraStream.addTrack(track)
+            } else if (streamType == 'screen') {
+              this.remoteScreenStream.addTrack(track)
+            }
           })
         })
 
@@ -217,40 +233,8 @@ export default {
         })
       }
     },
-    async switchMediaStream() {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          cursor: true,
-        })
-        const screenTrack = stream.getTracks()[0]
 
-        // Get all the tracks that are currently being sent
-        const senders = this.peerConnection.getSenders()
-
-        // Replace each track with the new screenTrack
-        senders.forEach((sender) => {
-          if (sender.track.kind === 'video') {
-            sender.replaceTrack(screenTrack)
-          }
-        })
-
-        // When screen sharing is stopped, replace the screenTrack with the original tracks
-        screenTrack.onended = () => {
-          senders.forEach((sender) => {
-            if (sender.track.kind === 'video') {
-              const originalTrack = this.localStream.getVideoTracks()[0]
-              sender.replaceTrack(originalTrack)
-            }
-          })
-        }
-
-        this.$store.commit('SET_LOCAL_STREAM', stream)
-      } catch (error) {
-        console.error('Error switching media stream:', error)
-      }
-    },
-
-    async openUserMedia() {
+    async openUserCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -268,19 +252,40 @@ export default {
         this.$toast.error('Error in capturing your media device:' + e.message)
       }
       if (this.isAdmin) {
-        this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
+        this.createRoom()
       } else if (!this.isAdmin) {
-        this.joinRoomById(this.roomTestId)
+        this.joinRoomById(this.roomTestId, 'camera')
       }
     },
+
+    async openUserScreen() {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: true,
+        })
+        if (stream) {
+          this.emitConfirm()
+          this.$store.commit('SET_LOCAL_SCREEN_STREAM', stream)
+          this.$store.commit('SET_REMOTE_SCREEN_STREAM', new MediaStream())
+          this.createBtnDisabled = false
+          this.joinBtnDisabled = false
+          this.hangupBtnDisabled = false
+          this.joinRoomById(this.roomTestId, 'screen')
+        }
+      } catch (e) {
+        this.$toast.error('Error in capturing your media device:' + e.message)
+      }
+    },
+
     async hangUp() {
-      const tracks = this.localStream.getTracks()
+      const tracks = this.localCameraStream.getTracks()
       tracks.forEach((track) => {
         track.stop()
       })
 
-      if (this.remoteStream) {
-        this.remoteStream.getTracks().forEach((track) => track.stop())
+      if (this.remoteCameraStream) {
+        this.remoteCameraStream.getTracks().forEach((track) => track.stop())
       }
 
       if (this.peerConnection) {
