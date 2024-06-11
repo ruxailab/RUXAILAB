@@ -9,7 +9,7 @@ import Cooperators from '@/store/modules/Cooperators'
 import Reports from '@/store/modules/Reports'
 import Heuristic from '@/store/modules/Heuristic'
 import Answer from '@/store/modules/Answer'
-
+import VideoAnalysis from './modules/VideoAnalysis'
 
 Vue.use(Vuex)
 
@@ -59,5 +59,6 @@ export default new Vuex.Store({
       Reports,
       Heuristic,
       Answer,
+      VideoAnalysis,
     },
 })
