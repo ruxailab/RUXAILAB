@@ -864,7 +864,7 @@ export default {
         this.heuristics.total = this.totalQuestions
 
         this.$refs.formHeuris.resetValidation()
-
+        console.log('Item added')
         this.$emit('change')
       }
     },

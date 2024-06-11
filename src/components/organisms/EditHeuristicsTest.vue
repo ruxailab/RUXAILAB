@@ -16,7 +16,11 @@
     </v-tabs>
 
     <div>
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
+      <Heuristic
+        v-if="index == 0"
+        :heuristics="object.heuristics"
+        @change="change"
+      />
       <OptionsTable v-if="index == 1" :options="object.options" />
       <WeightTable v-if="index == 2" :options="object.weight" />
       <Settings v-if="index == 3" :options="object.settings" />
@@ -45,7 +49,7 @@ export default {
 
     object: {
       type: Object,
-      default: () => { },
+      default: () => {},
     },
     index: {
       type: Number,
@@ -60,6 +64,10 @@ export default {
   methods: {
     tabClicked(index) {
       this.$emit('tabClicked', index)
+    },
+    change() {
+      console.log('change editheutisticsTest')
+      this.$emit('change')
     },
   },
 }
