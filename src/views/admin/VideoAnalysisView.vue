@@ -1,9 +1,12 @@
-<!-- src/views/admin/VideoAnalysisView.vue -->
 <template>
   <v-container fluid>
     <Snackbar />
     <h1>{{ $t('titles.videoAnalysis') }}</h1>
-    <SummaryTable />
+    <v-row>
+      <v-col cols="12">
+        <SummaryTable :collaborators="collaborators" />
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-data-table
@@ -15,12 +18,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12" md="6">
         <v-card class="pa-3">
           <RadarChart :labels="chartLabels" :data="chartData" />
         </v-card>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="12" md="6">
         <v-card class="pa-3">
           <BarChart :labels="chartLabels" :data="chartData" legend="Emotions Data" />
         </v-card>
@@ -30,19 +33,18 @@
 </template>
 
 <script>
-// Importing components
 import Snackbar from '@/components/atoms/Snackbar'
-import SummaryTable from '@/components/atoms/SummaryTable.vue'
 import RadarChart from '@/components/atoms/RadarChart.vue'
 import BarChart from '@/components/atoms/BarChart.vue'
+import SummaryTable from '@/components/atoms/SummaryTable.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     Snackbar,
-    SummaryTable,
     RadarChart,
     BarChart,
+    SummaryTable,
   },
   data() {
     return {
@@ -53,6 +55,11 @@ export default {
         { text: 'Surprised', value: 'surprised' },
         { text: 'Fearful', value: 'fearful' },
         { text: 'Neutral', value: 'neutral' },
+      ],
+      collaborators: [
+        { name: 'Name 1', attention: '25%', emotion: 'Annoyance', focus: '10 minutes' },
+        { name: 'Name 2', attention: '25%', emotion: 'Confusion', focus: '10 minutes' },
+        { name: 'Name 3', attention: '25%', emotion: 'Annoyance', focus: '10 minutes' },
       ],
     }
   },
@@ -77,17 +84,12 @@ export default {
       return this.formattedVideoAnalysisData.length > 0 ? Object.keys(this.formattedVideoAnalysisData[0]) : []
     },
     chartData() {
-      return this.formattedVideoAnalysisData.reduce((acc, curr) => {
-        Object.keys(curr).forEach(key => {
-          acc[key] = (acc[key] || 0) + curr[key];
-        });
-        return acc;
-      }, {});
+      return this.formattedVideoAnalysisData.length > 0 ? Object.values(this.formattedVideoAnalysisData[0]) : []
     },
   },
   created() {
     const docId = this.$route.params.id
-    this.fetchVideoAnalysisData(docId)
+    this.fetchVideoAnalysisData("wN1xMuQpPNqebn8T6CoD")
   },
   methods: {
     ...mapActions('VideoAnalysis', ['fetchVideoAnalysisData']),
@@ -98,6 +100,5 @@ export default {
 <style scoped>
 .v-card {
   background-color: rgb(253, 253, 253);
-  border: 1px solid #f4b700;
 }
 </style>
