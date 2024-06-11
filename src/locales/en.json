@@ -42,6 +42,7 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "emotions": "Emotions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -73,7 +74,7 @@
       "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
       "start": "Get started!",
       "edit": "Create and customize your tasks and heuristics for your research needs.",
-      "emotions": "Introduction text for emotions."
+      "emotions": "Learn how your collaborators felt during the test using AI emotion analysis!."
     }
   },
   "errors": {
