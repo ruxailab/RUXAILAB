@@ -897,11 +897,11 @@ export default {
     roomTestId() {
       return this.$store.getters.test.id
     },
-    localStream() {
-      return this.$store.getters.localStream
+    localCameraStream() {
+      return this.$store.getters.localCameraStream
     },
-    remoteStream() {
-      return this.$store.getters.remoteStream
+    remoteCameraStream() {
+      return this.$store.getters.remoteCameraStream
     },
     isTestAvailable() {
       return new Date() > new Date(this.testDate)
@@ -925,7 +925,7 @@ export default {
         if (this.logined) this.setTest()
       }
     },
-    async localStream(value) {
+    async localCameraStream(value) {
       if (value && !this.isAdmin) {
         this.startRecordingEvaluator()
       } else if (value && this.isAdmin) {
@@ -1148,7 +1148,7 @@ export default {
     async startRecordingEvaluator() {
       this.recording = true
       this.recordedChunksEvaluator = []
-      this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
+      this.mediaRecorderEvaluator = new MediaRecorder(this.localCameraStream)
 
       this.mediaRecorderEvaluator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1172,7 +1172,7 @@ export default {
         this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
         this.isLoading = false
         this.saved = true
-        this.localStream.getTracks().forEach((track) => track.stop())
+        this.localCameraStream.getTracks().forEach((track) => track.stop())
         window.onbeforeunload = null
         this.$router.push('/testslist')
       }
@@ -1183,7 +1183,7 @@ export default {
     async startRecordingModerator() {
       this.recording = true
       this.recordedChunksModerator = []
-      this.mediaRecorderModerator = new MediaRecorder(this.localStream)
+      this.mediaRecorderModerator = new MediaRecorder(this.localCameraStream)
 
       this.mediaRecorderModerator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1212,12 +1212,12 @@ export default {
     async stopRecording() {
       if (this.mediaRecorderEvaluator) {
         this.mediaRecorderEvaluator.stop()
-        this.localStream.stop()
+        this.localCameraStream.stop()
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
         this.mediaRecorderModerator.stop()
-        this.localStream.stop()
+        this.localCameraStream.stop()
         this.recording = false
       }
     },
@@ -1370,7 +1370,7 @@ export default {
       }
     },
     async finishTest() {
-      this.localStream.getTracks().forEach((track) => track.stop())
+      this.localCameraStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
       this.saved = true
       window.onbeforeunload = null

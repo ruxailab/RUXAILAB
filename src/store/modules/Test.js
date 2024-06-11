@@ -28,8 +28,10 @@ export default {
     postTest: [],
     scoresPercentage: [],
     finalMessage: '',
-    remoteStream: null,
-    localStream: null,
+    remoteCameraStream: null,
+    localCameraStream: null,
+    remoteScreenStream: null,
+    localScreenStream: null,
   },
   getters: {
     tests(state) {
@@ -68,11 +70,17 @@ export default {
     finalMessage(state) {
       return state.finalMessage
     },
-    remoteStream(state) {
-      return state.remoteStream
+    remoteCameraStream(state) {
+      return state.remoteCameraStream
     },
-    localStream(state) {
-      return state.localStream
+    localCameraStream(state) {
+      return state.localCameraStream
+    },
+    remoteScreenStream(state) {
+      return state.remoteScreenStream
+    },
+    localScreenStream(state) {
+      return state.localScreenStream
     },
   },
   mutations: {
@@ -117,10 +125,16 @@ export default {
       state.finalMessage = payload
     },
     SET_REMOTE_STREAM(state, stream) {
-      state.remoteStream = stream
+      state.remoteCameraStream = stream
     },
     SET_LOCAL_STREAM(state, stream) {
-      state.localStream = stream
+      state.localCameraStream = stream
+    },
+    SET_LOCAL_SCREEN_STREAM(state, stream) {
+      state.localScreenStream = stream
+    },
+    SET_REMOTE_SCREEN_STREAM(state, stream) {
+      state.remoteScreenStream = stream
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -145,15 +159,28 @@ export default {
     },
     setupHeuristicQuestionDescription(state, payload) {
       // If empty
-      if (state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions == null) state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions = []
+      if (
+        state.Test.testStructure[payload.heuristic].questions[payload.question]
+          .descriptions == null
+      )
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions = []
 
       // If is editing
       if (payload.editIndex != null) {
-        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = Object.assign({}, payload.description)
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions[payload.editIndex] = Object.assign(
+          {},
+          payload.description,
+        )
       }
       // New Description
       else {
-        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions.push(payload.description)
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions.push(payload.description)
       }
     },
   },
@@ -398,11 +425,17 @@ export default {
         commit('setError', true)
       }
     },
-    setRemoteStream({ commit }, stream) {
+    setremoteCameraStream({ commit }, stream) {
       commit('SET_REMOTE_STREAM', stream)
     },
-    setLocalStream({ commit }, stream) {
+    setlocalCameraStream({ commit }, stream) {
       commit('SET_LOCAL_STREAM', stream)
+    },
+    setRemoteScreenStream({ commit }, stream) {
+      commit('SET_REMOTE_SCREEN_STREAM', stream)
+    },
+    setLocalScreenStream({ commit }, stream) {
+      commit('SET_LOCAL_SCREEN_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {
