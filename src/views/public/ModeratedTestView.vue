@@ -1038,6 +1038,7 @@ export default {
       return this.start
     },
     async saveAnswer() {
+      this.currentUserTestAnswer.submitted = true
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
