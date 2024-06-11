@@ -1,18 +1,17 @@
 <template>
-    <IntroComp
-      :colors="['#9ac94f', '#7eb543']"
-      :title="'Emotions'"
-      :image="'IntroAnswer.svg'"
-      :main="
-        $t('descriptions.intro.emotions')
-      "
-      :link="$t('descriptions.intro.invite')"
-      :items="items"
-      @linkClicked="goToCoops()"
-      @callFunc="callFunc"
-    />
+    <div class="intro-container">
+      <IntroComp
+        :colors="['#3498db', '#2e9ecc']"
+        :title="'Emotions'"
+        :image="'IntroEmotions.png'"
+        :main="$t('descriptions.intro.emotions')"
+        :link="$t('descriptions.intro.invite')"
+        :items="items"
+        @linkClicked="goToCoops"
+        @callFunc="callFunc"
+      />
+    </div>
   </template>
-  
   <script>
   import IntroComp from '@/components/atoms/IntrosComponent'
   import i18n from '@/i18n'
@@ -60,4 +59,3 @@
     },
   }
   </script>
-  

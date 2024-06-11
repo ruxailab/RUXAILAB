@@ -117,6 +117,11 @@ export default {
     currentIndexSelect: {
       get() {
         if (this.items) {
+          console.log('Current index:', this.items.indexOf(
+            this.items.find((item) =>
+              item.path.split('/').includes(this.$route.path.split('/')[1]),
+            ),
+          ))
           return this.items.indexOf(
             this.items.find((item) =>
               item.path.split('/').includes(this.$route.path.split('/')[1]),
@@ -126,6 +131,7 @@ export default {
         return 0
       },
       set(item) {
+        console.log('Current index select:', item)
         return item
       },
     },
@@ -219,7 +225,7 @@ export default {
               title: 'Emotions',
               icon: 'mdi-heart',
               path: `/emotionsview/${this.test.id}`,
-              id: 8,
+              id: 7,
             }
           )
         }
