@@ -7,11 +7,11 @@
       <v-dialog v-model="dialog" width="600" persistent>
         <v-card>
           <v-card-title class="headline error white--text" primary-title>
-            Are you sure you want to submit this test?
+            {{ $t('HeuristicsTestView.messages.submitTest') }}
           </v-card-title>
 
           <v-card-text>
-            Are you sure you want to submit your test. You can only do it once.
+            {{ $t('HeuristicsTestView.messages.submitOnce') }}
           </v-card-text>
 
           <v-divider />
@@ -19,14 +19,14 @@
           <v-card-actions>
             <v-spacer />
             <v-btn class="grey lighten-3" text @click="dialog = false">
-              Cancel
+              {{ $t('HeuristicsTestView.actions.cancel') }}
             </v-btn>
             <v-btn
               class="red white--text ml-1"
               text
               @click="submitAnswer(), (dialog = false)"
             >
-              Submit
+              {{ $t('HeuristicsTestView.actions.submit') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -55,13 +55,24 @@
           </v-row>
           <v-card-actions class="justify-center mt-4">
             <v-btn color="#F9A826" class="white--text" @click="setTest()">
-              Continue as {{ user.email }}
+              {{
+                $t('HeuristicsTestView.actions.continueAs', {
+                  userMail: user.email,
+                })
+              }}
             </v-btn>
           </v-card-actions>
           <v-card-actions class="justify-center mt-4">
             <p>
-              Not {{ user.email }}?
-              <a style="color: #f9a826" @click="signOut()">Change account</a>
+              <!-- Not {{ user.email }}? -->
+              {{
+                $t('HeuristicsTestView.actions.notMail', {
+                  userEmail: user.email,
+                })
+              }}
+              <a style="color: #f9a826" @click="signOut()">{{
+                $t('HeuristicsTestView.actions.changeAccount')
+              }}</a>
             </p>
           </v-card-actions>
         </v-card>
@@ -82,7 +93,7 @@
           </p>
           <v-row justify="center" class>
             <v-btn color="white" outlined rounded @click="startTest()">
-              Start Test
+              {{ $t('HeuristicsTestView.actions.startTest') }}
             </v-btn>
           </v-row>
         </v-col>
@@ -123,7 +134,7 @@
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
             </template>
-            <span>Save</span>
+            <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
           </v-tooltip>
 
           <v-tooltip v-if="currentUserTestAnswer" left>
@@ -141,7 +152,7 @@
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
             </template>
-            <span>Submit</span>
+            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </v-tooltip>
 
           <v-tooltip v-else left>
@@ -158,7 +169,7 @@
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
             </template>
-            <span>Submit</span>
+            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </v-tooltip>
         </v-speed-dial>
 
@@ -528,7 +539,7 @@ export default {
       if (this.test.testStructure.length == 0) {
         this.$store.commit('setError', {
           errorCode: 400,
-          message: "This test don't have any heuristic",
+          message: this.$t('HeuristicsTestView.messages.noHeuristics'),
         })
         this.$router.push('/managerview/' + this.test.id)
       }
@@ -614,6 +625,8 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
+      this.$toast.success('Your response has been Recorded')
+      this.$router.push('/testslist')
     },
     setExistUser() {
       this.noExistUser = false

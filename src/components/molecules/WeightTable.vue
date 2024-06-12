@@ -1,7 +1,7 @@
 <template>
   <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-1 mb-10">
     <v-card-title class="subtitleView">
-      Weights
+      {{ $t('HeuristicsWeightsTable.titles.weights') }}
     </v-card-title>
     <v-divider class="mb-4" />
     <v-card
@@ -10,7 +10,7 @@
       elevation="0"
       align="center"
     >
-      Need at least 2 heuristics to be able to place the weights.
+      {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
     </v-card>
     <v-card v-else class="mx-auto mt-4 mb-5 rounded-0" elevation="0">
       <!-- tabs  -->
@@ -48,10 +48,10 @@
                     <thead>
                       <tr>
                         <th class="text-left">
-                          Heuristics
+                          {{ $t('HeuristicsWeightsTable.titles.heuristics') }}
                         </th>
                         <th class="text-center">
-                          Weights
+                          {{ $t('HeuristicsWeightsTable.titles.weights') }}
                         </th>
                       </tr>
                     </thead>
@@ -128,7 +128,7 @@
                     type="submit"
                     @click="updateDatas()"
                   >
-                    save weight values
+                    {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
                   </v-btn>
                 </v-row>
               </v-card-text>
