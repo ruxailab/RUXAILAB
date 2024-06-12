@@ -375,7 +375,7 @@
                 dark
                 depressed
                 block
-                @click="finishTest(), stopRecording()"
+                @click="stopRecording(), finishTest()"
               >
                 Finish Test
               </v-btn>
@@ -796,11 +796,23 @@
         <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+    <!-- \\\\\\\\\\\\\\\\\\\\\\\ LOADING \\\\\\\\\\\\\\\\\\\\\\\ -->
     <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving Answer
-      </div>
+      <v-card class="pa-4" rounded="xl" color="grey darken-4">
+        <v-progress-linear
+          style="border-radius: 20px; width: 20wv;"
+          :value="uploadProgress"
+          color="#fca326"
+          height="20"
+          class="mb-2"
+          ><template v-slot:default="{ value }">
+            <span>{{ Math.ceil(value) }}%</span>
+          </template></v-progress-linear
+        >
+        <div class="white-text mx-16">
+          Saving Your Answer...
+        </div>
+      </v-card>
     </v-overlay>
 
     <v-dialog :value="!noExistUser && !logined" width="500" persistent>
@@ -831,7 +843,12 @@
 <script>
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
@@ -876,6 +893,7 @@ export default {
     sessionCooperator: null,
     testDate: null,
     saved: false,
+    uploadProgress: 0,
   }),
   computed: {
     test() {
@@ -1166,15 +1184,35 @@ export default {
           storageEvaluator,
           `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
         )
-        await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
 
-        this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
-        this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
-        this.isLoading = false
-        this.saved = true
-        this.localStream.getTracks().forEach((track) => track.stop())
-        window.onbeforeunload = null
-        this.$router.push('/testslist')
+        const uploadTask = uploadBytesResumable(
+          storageRefEvaluator,
+          videoBlobEvaluator,
+        )
+
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            this.isLoading = false
+          },
+          async () => {
+            this.recordedVideoEvaluator = await getDownloadURL(
+              storageRefEvaluator,
+            )
+            this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
+            this.isLoading = false
+            this.saved = true
+            this.localStream.getTracks().forEach((track) => track.stop())
+            window.onbeforeunload = null
+            this.$router.push('/testslist')
+          },
+        )
       }
 
       this.mediaRecorderEvaluator.start()
@@ -1193,19 +1231,41 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
+        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
+          type: 'video/webm',
+        })
         const storageModerator = getStorage()
         const storageRefModerator = ref(
           storageModerator,
           `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`,
         )
-        await uploadBytes(storageRefModerator, videoBlobModerator)
 
-        this.recordedVideoModerator = await getDownloadURL(storageRefModerator)
-        this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
-        this.isLoading = false
-        this.$router.push('/testslist')
+        const uploadTask = uploadBytesResumable(
+          storageRefModerator,
+          videoBlobModerator,
+        )
+
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            this.isLoading = false
+          },
+          async () => {
+            this.recordedVideoModerator = await getDownloadURL(
+              storageRefModerator,
+            )
+            this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+            this.isLoading = false
+            this.$router.push('/testslist')
+          },
+        )
       }
-
       this.mediaRecorderModerator.start()
     },
 
@@ -1216,6 +1276,7 @@ export default {
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
+        console.log('Stop media recorder moderator')
         this.mediaRecorderModerator.stop()
         this.localStream.stop()
         this.recording = false
@@ -1370,7 +1431,6 @@ export default {
       }
     },
     async finishTest() {
-      this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
       this.saved = true
       window.onbeforeunload = null
