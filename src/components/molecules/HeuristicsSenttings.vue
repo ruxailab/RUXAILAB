@@ -1,7 +1,7 @@
 <template>
   <div id="FileUpload" class="rounded" style="background-color:#f5f7ff">
     <v-card-title class="subtitleView">
-      Settings
+      {{ $t('HeuristicsSettings.titles.settings') }}
     </v-card-title>
     <v-divider class="mb-4" />
     <v-col justify="center">
@@ -13,7 +13,7 @@
           class="ma-2"
           @click="downloadTemplate"
         >
-          Donwload CSV template
+          {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
         </v-btn>
       </v-row>
       <v-divider class="ma-8" />
@@ -26,7 +26,7 @@
             accept=".csv"
             show-size
             truncate-length="15"
-            placeholder="Import your CSV testfile here."
+            :placeholder="$t('HeuristicsSettings.placeHolders.importCsv')"
             :disabled="testAnswerDocLength > 0 ? true : false"
           />
           <v-btn
@@ -36,7 +36,7 @@
             class="ma-3 white--text"
             @click="changeToJSON"
           >
-            Update
+            {{ $t('HeuristicsSettings.actions.update') }}
             <v-icon right dark>
               mdi-cloud-upload
             </v-icon>
@@ -94,7 +94,9 @@ export default {
         this.loader = null
       } else {
         setTimeout(() => (this[l] = false), 3000)
-        this.$toast.warning('No csv file selected. \nPlease select one before procede.')
+        this.$toast.warning(
+          this.$t('HeuristicsSettings.messages.noCsvFileSelected'),
+        )
         this.loader = null
       }
     },
@@ -104,8 +106,9 @@ export default {
     async changeToJSON() {
       this.loadingUpdate = true
       try {
-        const confirmationText =
-          'If you accept, all your present heuristics will be replaced by the ones in the .csv file'
+        const confirmationText = this.$t(
+          'HeuristicsSettings.messages.acceptCsv',
+        )
         if (confirm(confirmationText)) {
           const reader = new FileReader()
           reader.readAsText(this.csvFile, 'UTF-8') // Use readAsText with UTF-8 encoding

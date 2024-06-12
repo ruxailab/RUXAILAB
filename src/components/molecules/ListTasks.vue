@@ -2,7 +2,7 @@
   <div class="ma-0 pa-0">
     <v-data-table
       height="420"
-      style="background: #f5f7ff"
+      style="background: #f5f7ff; border-radius: 20px;"
       :headers="headers"
       :items="allTasks"
       :items-per-page="5"
@@ -19,6 +19,7 @@
           <v-col>
             <v-row justify="end" class="mx-0">
               <v-btn
+                depressed
                 rounded
                 color="#f9a826"
                 class="white--text"
@@ -139,8 +140,9 @@ export default {
     },
     deleteItem(item) {
       const index = this.allTasks.indexOf(item)
-      confirm('Are you sure you want to delete this task?')
-      this.allTasks.splice(index, 1)
+      if (confirm('Are you sure you want to delete this task?')) {
+        this.allTasks.splice(index, 1)
+      }
     },
     addTask() {
       if (this.editedIndex > -1) {
