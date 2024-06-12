@@ -94,6 +94,7 @@
           :object="object"
           :index="index"
           @tabClicked="setIndex"
+          @change="change=true"
         />
 
         <!-- Unmoderated User tests -->
@@ -297,6 +298,7 @@ export default {
     },
     validateAll() {
       this.submit()
+      this.change=false
     },
     preventNav(event) {
       if (!this.change) return

@@ -44,7 +44,7 @@
             mdi-microphone-off
           </v-icon>
         </v-btn>
-        <v-btn
+        <!-- <v-btn
           v-if="localStream"
           class="mt-4 mx-2"
           dark
@@ -53,7 +53,7 @@
           @click="hangUp()"
         >
           <v-icon>mdi-phone-hangup</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-row>
     </v-col>
     <VideoCall ref="VideoCall" />

@@ -568,7 +568,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.preTestStatus != 'done'"
+                    v-if="userTestStatus.preTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -728,7 +728,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.postTestStatus != 'done'"
+                    v-if="userTestStatus.postTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -950,6 +950,14 @@ export default {
         this.startRecordingModerator()
       }
     },
+    'userTestStatus.preTestStatus': function(newValue) {
+      if (newValue === 'done') {
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
+      }
+    },
+
     'userTestStatus.postTestStatus': function(newValue) {
       if (newValue === 'done') {
         this.postTestFinished = true
@@ -960,9 +968,6 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
-        if (!this.isAdmin) {
-          window.open(this.test.testStructure.landingPage)
-        }
       }
     },
   },
@@ -1051,6 +1056,7 @@ export default {
       return this.start
     },
     async saveAnswer() {
+      this.currentUserTestAnswer.submitted = true
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
