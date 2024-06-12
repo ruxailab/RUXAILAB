@@ -5,7 +5,8 @@
   },
   "functions": {
     "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
-    "source": "functions"
+    "source": "functions",
+    "runtimes": "python312"
   },
   "hosting": [
     {
@@ -13,10 +14,7 @@
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
+        { "source": "**", "destination": "/index.html" }
       ]
     },
     {
@@ -24,10 +22,7 @@
       "public": "dist",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
+        { "source": "**", "destination": "/index.html" }
       ]
     }
   ],
