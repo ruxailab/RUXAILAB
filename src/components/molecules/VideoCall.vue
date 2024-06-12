@@ -99,24 +99,20 @@ export default {
     },
 
     async createRoom() {
+      // Inicialização e configuração
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
       this.roomCollection = collection(db, 'rooms')
-
       const roomRef = doc(this.roomCollection, this.roomTestId)
-
       this.peerConnection = new RTCPeerConnection(this.configuration)
 
+      // Adição das tracks da câmera
       this.localCameraStream.getTracks().forEach((track) => {
         this.peerConnection.addTrack(track, this.localCameraStream)
       })
 
-      this.localScreenStream.getTracks().forEach((track) => {
-        this.peerConnection.addTrack(track, this.localScreenStream)
-      })
-
+      // Configuração do ICE
       const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
-
       this.peerConnection.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
           return
@@ -124,25 +120,27 @@ export default {
         addDoc(callerCandidatesCollection, event.candidate.toJSON())
       })
 
+      // Criação da oferta e configuração
       const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
-
       const roomWithOffer = {
         offer: {
           type: offer.type,
           sdp: offer.sdp,
         },
       }
-      await setDoc(roomRef, roomWithOffer) // Setting room details in document
+      await setDoc(roomRef, roomWithOffer)
       this.roomId = roomRef.id
       this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
 
       this.peerConnection.addEventListener('track', (event) => {
+        console.log('Track received in CreateRoom:', event.track) // por enquanto so estou conseguindo logar o da camera, tenho que revisar mais o codigo
         event.streams[0].getTracks().forEach((track) => {
           this.remoteCameraStream.addTrack(track)
         })
       })
 
+      // Observação das mudanças na sala
       onSnapshot(roomRef, async (snapshot) => {
         const data = snapshot.data()
         if (
@@ -166,25 +164,27 @@ export default {
     },
 
     async joinRoomById(roomId, streamType) {
+      // Inicialização e configuração
       const roomRef = doc(collection(db, 'rooms'), roomId)
-
       const roomSnapshot = await getDoc(roomRef)
 
       if (roomSnapshot.exists) {
         this.peerConnection = new RTCPeerConnection(this.configuration)
 
-        if (streamType == 'camera') {
+        // Adição das tracks com base no tipo de stream
+        if (streamType === 'camera') {
           this.localCameraStream.getTracks().forEach((track) => {
-            track.identifier = 'camera'
+            track.contentHint = 'camera'
             this.peerConnection.addTrack(track, this.localCameraStream)
           })
-        } else if (streamType == 'screen') {
+        } else if (streamType === 'screen') {
           this.localScreenStream.getTracks().forEach((track) => {
-            track.identifier = 'screen'
+            track.contentHint = 'screen'
             this.peerConnection.addTrack(track, this.localScreenStream)
           })
         }
 
+        // Configuração do ICE
         const calleeCandidatesCollection = collection(
           roomRef,
           'calleeCandidates',
@@ -196,23 +196,21 @@ export default {
           addDoc(calleeCandidatesCollection, event.candidate.toJSON())
         })
 
+        // Recebimento das tracks remotas
         this.peerConnection.addEventListener('track', (event) => {
+          console.log('Track received in JoinWithId:', event.track)
           event.streams[0].getTracks().forEach((track) => {
-            if (streamType == 'camera') {
-              this.remoteCameraStream.addTrack(track)
-            } else if (streamType == 'screen') {
-              this.remoteScreenStream.addTrack(track)
-            }
+            this.remoteCameraStream.addTrack(track)
           })
         })
 
+        // Configuração da resposta
         const offer = roomSnapshot.data().offer
         await this.peerConnection.setRemoteDescription(
           new RTCSessionDescription(offer),
         )
         const answer = await this.peerConnection.createAnswer()
         await this.peerConnection.setLocalDescription(answer)
-
         const roomWithAnswer = {
           answer: {
             type: answer.type,
@@ -259,22 +257,30 @@ export default {
     },
 
     async openUserScreen() {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        })
-        if (stream) {
-          this.emitConfirm()
-          this.$store.commit('SET_LOCAL_SCREEN_STREAM', stream)
-          this.$store.commit('SET_REMOTE_SCREEN_STREAM', new MediaStream())
-          this.createBtnDisabled = false
-          this.joinBtnDisabled = false
-          this.hangupBtnDisabled = false
-          this.joinRoomById(this.roomTestId, 'screen')
+      if (this.isAdmin) {
+        this.emitConfirm()
+        this.$store.commit('SET_REMOTE_SCREEN_STREAM', new MediaStream())
+        this.createBtnDisabled = false
+        this.joinBtnDisabled = false
+        this.hangupBtnDisabled = false
+      }
+      if (!this.isAdmin) {
+        try {
+          const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: true,
+          })
+          if (stream) {
+            this.emitConfirm()
+            this.$store.commit('SET_LOCAL_SCREEN_STREAM', stream)
+            this.createBtnDisabled = false
+            this.joinBtnDisabled = false
+            this.hangupBtnDisabled = false
+            this.joinRoomById(this.roomTestId, 'screen')
+          }
+        } catch (e) {
+          this.$toast.error('Error in capturing your media device:' + e.message)
         }
-      } catch (e) {
-        this.$toast.error('Error in capturing your media device:' + e.message)
       }
     },
 
