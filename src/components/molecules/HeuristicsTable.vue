@@ -337,7 +337,12 @@
                 <v-spacer />
                 <v-menu v-model="menuHeuristics" offset-x>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="HandleNotEditable"
+                    >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
@@ -429,7 +434,12 @@
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="HandleNotEditable"
+                    >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
@@ -908,6 +918,13 @@ export default {
             this.questionSelect
           ].title = this.itemEdit.titleEdit
         }
+      }
+    },
+    //Solution #1
+    HandleNotEditable() {
+      console.log('not editable')
+      if (this.testAnswerDocLength > 0) {
+        this.$toast.error('Not Editable : this test already has answers')
       }
     },
   },
