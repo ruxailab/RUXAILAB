@@ -352,7 +352,7 @@
                   >
                     <!--Edit Heuris Flag -->
                     <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
+                      :disabled="testAnswerDocLength > 0 ? false : false"
                       @click="editHeuris(heuristics[itemSelect])"
                     >
                       <v-list-item-icon>
@@ -445,13 +445,13 @@
                   </template>
                   <v-list
                     dense
-                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    :disabled="testAnswerDocLength > 0 ? false : false"
                     :class="{
                       disabledBtnBackground: testAnswerDocLength > 0,
                     }"
                   >
                     <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
+                      :disabled="testAnswerDocLength > 0 ? false : false"
                       @click="
                         editQuestions(
                           heuristics[itemSelect].questions[questionSelect],
@@ -923,9 +923,9 @@ export default {
     //Solution #1
     HandleNotEditable() {
       console.log('not editable')
-      if (this.testAnswerDocLength > 0) {
-        this.$toast.error('Not Editable : this test already has answers')
-      }
+      // if (this.testAnswerDocLength > 0) {
+      //   this.$toast.error('Not Editable : this test already has answers')
+      // }
     },
   },
 }
