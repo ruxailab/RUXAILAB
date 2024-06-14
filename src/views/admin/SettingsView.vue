@@ -48,7 +48,7 @@
                 autofocus
                 label="Title"
                 :rules="titleRequired"
-                counter="100"
+                counter="200"
                 outlined
                 dense
                 @input="$emit('change')"
@@ -209,7 +209,7 @@ export default {
     tempDialog: false,
     titleRequired: [
       (v) => !!v || i18n.t('errors.fieldRequired'),
-      (v) => v.length <= 100 || 'Max 100 characters',
+      (v) => v.length <= 200 || 'Max 200 characters',
     ],
     showSettings: false,
     publicTemplate: true,
@@ -285,8 +285,18 @@ export default {
       this.valids[index] = valid
     },
     async submit() {
-      await this.$store.dispatch('updateTest', new Test(this.object))
-      this.$store.commit('SET_LOCAL_CHANGES', false)
+      const element = this.object.testTitle
+      if (element.length > 0 && element.length < 200) {
+        await this.$store.dispatch('updateTest', new Test(this.object))
+        this.$store.commit('SET_LOCAL_CHANGES', false)
+        console.log('changes Saved')
+        this.$toast.success('Changes Saved')
+      } else if (element.length >= 200) {
+        this.$toast.warning('Title must not exceed 200 characters.')
+      } else {
+        this.$toast.warning('Test must contain a title.')
+      }
+
       // await this.$store.dispatch("getAnswers", { id: this.test.answers });
       // await this.$store.dispatch("getReports", { id: this.test.reports });
       // delete this.object.id;
