@@ -1,10 +1,8 @@
 <template>
   <v-row>
     <v-col class="mt-8" cols="12">
-      <video ref="remoteCamera" class="video" autoplay playsinline />
-      <video ref="localCamera" class="video" muted autoplay playsinline />
-      <video ref="remoteScreen" class="video" muted autoplay playsinline />
-      <video ref="localScreen" class="video" muted autoplay playsinline />
+      <video ref="remoteMedia" class="video" autoplay playsinline />
+      <video ref="localMedia" class="video" muted autoplay playsinline />
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
@@ -23,6 +21,9 @@
             mdi-microphone-off
           </v-icon>
         </v-btn>
+        <v-btn @click="toggleCameraScreen()" color="blue" block depressed
+          >TOGGLE CAMERA/SCREEN</v-btn
+        >
       </v-row>
     </v-col>
     <VideoCall ref="VideoCall" />
@@ -58,12 +59,6 @@ export default {
     remoteCameraStream() {
       return this.$store.getters.remoteCameraStream
     },
-    localScreenStream() {
-      return this.$store.getters.localScreenStream
-    },
-    remoteScreenStream() {
-      return this.$store.getters.remoteScreenStream
-    },
     roomTestId() {
       return this.$store.getters.test.id
     },
@@ -78,19 +73,11 @@ export default {
     remoteCameraStream(newVal) {
       this.setupStreams()
     },
-    localScreenStream(newVal) {
-      this.setupStreams()
-    },
-    remoteScreenStream(newVal) {
-      this.setupStreams()
-    },
   },
   methods: {
     setupStreams() {
-      this.$refs.localCamera.srcObject = this.localCameraStream
-      this.$refs.remoteCamera.srcObject = this.remoteCameraStream
-      this.$refs.localScreen.srcObject = this.localScreenStream
-      this.$refs.remoteScreen.srcObject = this.remoteScreenStream
+      this.$refs.localMedia.srcObject = this.localCameraStream
+      this.$refs.remoteMedia.srcObject = this.remoteCameraStream
     },
     toggleMicrophone() {
       if (
