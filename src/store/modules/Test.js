@@ -30,8 +30,6 @@ export default {
     finalMessage: '',
     remoteCameraStream: null,
     localCameraStream: null,
-    remoteScreenStream: null,
-    localScreenStream: null,
   },
   getters: {
     tests(state) {
@@ -75,12 +73,6 @@ export default {
     },
     localCameraStream(state) {
       return state.localCameraStream
-    },
-    remoteScreenStream(state) {
-      return state.remoteScreenStream
-    },
-    localScreenStream(state) {
-      return state.localScreenStream
     },
   },
   mutations: {
@@ -129,12 +121,6 @@ export default {
     },
     SET_LOCAL_STREAM(state, stream) {
       state.localCameraStream = stream
-    },
-    SET_LOCAL_SCREEN_STREAM(state, stream) {
-      state.localScreenStream = stream
-    },
-    SET_REMOTE_SCREEN_STREAM(state, stream) {
-      state.remoteScreenStream = stream
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url // Update currentImageUrl with the new URL
@@ -430,12 +416,6 @@ export default {
     },
     setlocalCameraStream({ commit }, stream) {
       commit('SET_LOCAL_STREAM', stream)
-    },
-    setRemoteScreenStream({ commit }, stream) {
-      commit('SET_REMOTE_SCREEN_STREAM', stream)
-    },
-    setLocalScreenStream({ commit }, stream) {
-      commit('SET_LOCAL_SCREEN_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {

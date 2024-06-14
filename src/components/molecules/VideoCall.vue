@@ -12,14 +12,6 @@
           depressed
           >CONNECT</v-btn
         >
-        <v-btn
-          v-if="index === 1"
-          @click="toggleCameraScreen"
-          color="blue"
-          block
-          depressed
-          >TOGGLE CAMERA/SCREEN</v-btn
-        >
       </v-col>
     </v-row>
   </v-container>
@@ -98,7 +90,7 @@ export default {
       return this.$store.getters.currentUserTestAnswer
     },
   },
-  created() {
+  mounted() {
     if (!this.isAdmin) {
       setInterval(this.toggleCameraScreen, 50000) // Remove parentheses from toggleCameraScreen
     }
