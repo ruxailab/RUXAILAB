@@ -7,7 +7,7 @@
           :autofocus="lock ? false : true"
           :label="$t('common.title')"
           :rules="titleRequired"
-          counter="100"
+          counter="200"
           outlined
           dense
           @input="$store.commit('SET_LOCAL_CHANGES', true)"
@@ -57,7 +57,7 @@ export default {
   data: () => ({
     titleRequired: [
       (v) => !!v || i18n.t('errors.fieldRequired'),
-      (v) => (v && v.length <= 100) || 'Max 100 characters',
+      (v) => (v && v.length <= 200) || 'Max 200 characters',
     ],
     typeRequired: [(v) => !!v || i18n.t('errors.fieldRequired')],
     types: [
