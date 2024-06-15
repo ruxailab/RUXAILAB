@@ -95,22 +95,20 @@
             color="orange"
           />
           <v-textarea
+            ref="taskDescription"
             v-model="newTask.taskDescription"
             outlined
             label="Task Description"
             color="orange"
+            :rules="[(v) => !!v || 'Required field']"
           />
         </v-card-text>
         <v-card-actions>
           <v-btn dark color="red" @click="closeAddTaskModal">
-            <v-icon class="mr-1">
-              mdi-close </v-icon
-            >Cancel
+            <v-icon class="mr-1"> mdi-close </v-icon>Cancel
           </v-btn>
           <v-btn dark color="orange" @click="addTask">
-            <v-icon class="mr-1">
-              mdi-content-save </v-icon
-            >Save
+            <v-icon class="mr-1"> mdi-content-save </v-icon>Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -166,6 +164,9 @@ export default {
       this.addTaskModal = false
       this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
     },
+    resetForm(){
+      this.$refs.taskDescription.resetValidation();
+    },
     addTask() {
       if (
         this.newTask.taskName.trim() !== '' &&
@@ -180,6 +181,10 @@ export default {
           taskStatus: 'closed',
         })
         this.closeAddTaskModal()
+        this.resetForm();
+      } else if (this.newTask.taskDescription.trim() == '') {
+        this.$refs.taskDescription.validate()
+        this.$refs.taskDescription.focus()
       }
     },
 
