@@ -88,20 +88,25 @@
       <v-card class="cards">
         <v-col />
         <v-card-text>
-          <v-text-field
-            v-model="newTask.taskName"
-            outlined
-            label="Task Name"
-            color="orange"
-          />
-          <v-textarea
-            ref="taskDescription"
-            v-model="newTask.taskDescription"
-            outlined
-            label="Task Description"
-            color="orange"
-            :rules="[(v) => !!v || 'Required field']"
-          />
+          <v-form ref="form" v-modal="valid">
+            <v-text-field
+              v-model="newTask.taskName"
+              outlined
+              label="Task Name"
+              color="orange"
+              :rules="[(v) => !!v || 'Required field']"
+              required
+            />
+            <v-textarea
+              ref="taskDescription"
+              v-model="newTask.taskDescription"
+              outlined
+              label="Task Description"
+              color="orange"
+              :rules="[(v) => !!v || 'Required field']"
+              required
+            />
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-btn dark color="red" @click="closeAddTaskModal">
@@ -126,6 +131,7 @@ export default {
     drag: false,
     addTaskModal: false,
     taskIndex: null,
+    valid: false,
     newTask: {
       taskName: '',
       taskDescription: '',
@@ -164,8 +170,8 @@ export default {
       this.addTaskModal = false
       this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
     },
-    resetForm(){
-      this.$refs.taskDescription.resetValidation();
+    resetForm() {
+      this.$refs.form.resetValidation()
     },
     addTask() {
       if (
@@ -181,10 +187,12 @@ export default {
           taskStatus: 'closed',
         })
         this.closeAddTaskModal()
-        this.resetForm();
-      } else if (this.newTask.taskDescription.trim() == '') {
-        this.$refs.taskDescription.validate()
-        this.$refs.taskDescription.focus()
+        this.resetForm()
+      } else if (
+        this.newTask.taskDescription.trim() == '' ||
+        this.newTask.taskName.trim() == ''
+      ) {
+        this.$refs.form.validate()
       }
     },
 
