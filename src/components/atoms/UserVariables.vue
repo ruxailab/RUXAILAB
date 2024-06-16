@@ -103,14 +103,16 @@
           }}
         </v-card-title>
         <v-card-text>
-          <v-text-field
-            v-model="newItem"
-            filled
-            :rules="[() => !!newItem || 'This field is required']"
-            color="orange"
-            :label="$t('UserTestTable.inputs.variableName')"
-            @change="saveState"
-          />
+          <v-form ref="form" v-model="valid">
+            <v-text-field
+              v-model="newItem"
+              filled
+              :rules="[(newItem) => !!newItem || 'This Name field is required']"
+              color="orange"
+              :label="$t('UserTestTable.inputs.variableName')"
+              @change="saveState"
+            />
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-btn color="red" class="ml-auto" dark @click="closeModal">
@@ -137,6 +139,7 @@ export default {
     newItem: '',
     items: [],
     show: false,
+    valid: false,
   }),
   computed: {
     test() {
@@ -158,6 +161,7 @@ export default {
     },
     closeModal() {
       this.show = false
+      this.$refs.form.resetValidation()
     },
     selectField(i) {
       if (
@@ -181,16 +185,21 @@ export default {
       this.items.splice(i, 1)
     },
     saveNewItem() {
-      this.items.push({
-        answer: '',
-        title: this.newItem,
-        description: '',
-        selectionFields: [],
-        selectionField: false,
-        textField: true,
-      })
-      this.newItem = ''
-      this.show = false
+      if (this.newItem.trim() !== '') {
+        this.items.push({
+          answer: '',
+          title: this.newItem,
+          description: '',
+          selectionFields: [],
+          selectionField: false,
+          textField: true,
+        })
+        this.newItem = ''
+        this.show = false
+        this.$refs.form.resetValidation()
+      } else {
+        this.$refs.form.validate()
+      }
     },
     newSelection(index) {
       this.$set(this.items, index, {
