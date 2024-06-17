@@ -2,8 +2,15 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-expansion-panels v-if="items.length > 0" style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);">
-          <v-expansion-panel v-for="(item, i) in items" :key="i" style="border-radius: 20px;">
+        <v-expansion-panels
+          v-if="items.length > 0"
+          style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);"
+        >
+          <v-expansion-panel
+            v-for="(item, i) in items"
+            :key="i"
+            style="border-radius: 20px;"
+          >
             <v-expansion-panel-header>
               {{ items[i].title }}
             </v-expansion-panel-header>
@@ -94,25 +101,24 @@
           {{ $t('UserTestTable.titles.writeNewPost') }}
         </v-card-title>
         <v-card-text>
-          <v-text-field
-            v-model="newItem"
-            filled
-            :rules="[() => !!newItem || 'This field is required']"
-            color="orange"
-            :label="$t('UserTestTable.inputs.writeQuestion')"
-            @change="saveState"
-          />
+          <v-form ref="form" v-model="valid">
+            <v-text-field
+              v-model="newItem"
+              filled
+              :rules="[(newItem) => !!newItem || 'This field is required']"
+              color="orange"
+              :label="$t('UserTestTable.inputs.writeQuestion')"
+              @change="saveState"
+            />
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-btn color="red" class="ml-auto" dark @click="closeModal">
-            <v-icon class="mr-1">
-              mdi-close
-            </v-icon>{{ $t('buttons.close') }}
+            <v-icon class="mr-1"> mdi-close </v-icon>{{ $t('buttons.close') }}
           </v-btn>
           <v-btn color="orange" dark @click="saveNewItem(), saveState()">
-            <v-icon class="mr-1">
-              mdi-content-save
-            </v-icon>{{ $t('buttons.save') }}
+            <v-icon class="mr-1"> mdi-content-save </v-icon
+            >{{ $t('buttons.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -126,6 +132,7 @@ export default {
     newItem: '',
     items: [],
     show: false,
+    valid: false,
   }),
   computed: {
     test() {
@@ -147,6 +154,7 @@ export default {
     },
     closeModal() {
       this.show = false
+      this.$refs.form.resetValidation()
     },
     selectField(i) {
       if (
@@ -170,16 +178,21 @@ export default {
       this.items.splice(i, 1)
     },
     saveNewItem() {
-      this.items.push({
-        answer: '',
-        title: this.newItem,
-        description: '',
-        selectionFields: [],
-        selectionField: false,
-        textField: true,
-      })
-      this.newItem = ''
-      this.show = false
+      if (this.newItem.trim() !== '') {
+        this.items.push({
+          answer: '',
+          title: this.newItem,
+          description: '',
+          selectionFields: [],
+          selectionField: false,
+          textField: true,
+        })
+        this.newItem = ''
+        this.show = false
+        this.$refs.form.resetValidation()
+      } else {
+        this.$refs.form.validate()
+      }
     },
     newSelection(index) {
       this.$set(this.items, index, {
@@ -197,11 +210,10 @@ export default {
       this.$store.dispatch('setPostTest', this.items)
     },
     getPostTest() {
-      if(this.test.testStructure.postTest) {
+      if (this.test.testStructure.postTest) {
         this.items = this.test.testStructure.postTest
         this.$store.dispatch('setPostTest', this.items)
-      }
-      else if(this.postTest) {
+      } else if (this.postTest) {
         this.items = this.postTest
       }
     },
