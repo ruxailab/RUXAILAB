@@ -58,7 +58,7 @@ export default {
         { text: 'Neutral', value: 'neutral' },
       ],
       collaborators: [
-        { name: 'Name 1', attention: '25%', emotion: 'Annoyance', focus: '10 minutes' },
+        { name: 'Name 1', attention: '25%', emotion: 'Happy'},
       ],
     };
   },

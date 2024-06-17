@@ -3,19 +3,16 @@
     <v-simple-table>
       <thead>
         <tr>
-          <th class="text-left">COLLABORATOR</th>
-          <th class="text-left">AVG ATTENTION</th>
-          <th class="text-left">DOMINANT EMOTION</th>
-          <th class="text-left">CONTINUED FOCUS</th>
+          <th class="text-center">COLLABORATOR</th>
+          <th class="text-center">AVG HAPPINESS</th>
+          <th class="text-center">DOMINANT EMOTION</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="collaborator in collaborators" :key="collaborator.name">
-          <td>{{ collaborator.name }}</td>
-          <td>{{ collaborator.attention }}</td>
-          <td>{{ collaborator.emotion }}</td>
-          <td>{{ collaborator.focus }}</td>
-        </tr>
+          <td class="text-center">{{ collaborator.name }}</td>
+          <td class="text-center">{{ collaborator.attention }}</td>
+          <td class="text-center">{{ collaborator.emotion }}</td>        </tr>
       </tbody>
     </v-simple-table>
   </v-card>
@@ -36,5 +33,8 @@ export default {
 <style scoped>
 .v-card {
   border: 1px solid #f4b700;
+}
+.text-center {
+  text-align: center;
 }
 </style>
