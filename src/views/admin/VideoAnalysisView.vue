@@ -20,7 +20,7 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-card class="pa-3">
-          <RadarChart :labels="chartLabels" :data="chartData" />
+          <RadarChart :labels="chartLabels" :data="chartData" legend="Emotion Percentages" />
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import Snackbar from '@/components/atoms/Snackbar'
-import RadarChart from '@/components/atoms/RadarChart.vue'
-import BarChart from '@/components/atoms/BarChart.vue'
-import SummaryTable from '@/components/atoms/SummaryTable.vue'
-import { mapGetters, mapActions } from 'vuex'
+import Snackbar from '@/components/atoms/Snackbar';
+import RadarChart from '@/components/atoms/RadarChart.vue';
+import BarChart from '@/components/atoms/BarChart.vue';
+import SummaryTable from '@/components/atoms/SummaryTable.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -49,6 +49,7 @@ export default {
   data() {
     return {
       headers: [
+        { text: 'Fragment', value: 'fragment' },
         { text: 'Angry', value: 'angry' },
         { text: 'Sad', value: 'sad' },
         { text: 'Happy', value: 'happy' },
@@ -58,47 +59,76 @@ export default {
       ],
       collaborators: [
         { name: 'Name 1', attention: '25%', emotion: 'Annoyance', focus: '10 minutes' },
-        { name: 'Name 2', attention: '25%', emotion: 'Confusion', focus: '10 minutes' },
-        { name: 'Name 3', attention: '25%', emotion: 'Annoyance', focus: '10 minutes' },
       ],
-    }
+    };
   },
   computed: {
     ...mapGetters('VideoAnalysis', {
       videoAnalysisData: 'videoAnalysisData',
     }),
     formattedVideoAnalysisData() {
-      return this.videoAnalysisData.map(item => {
-        const fragment = item.fragment1 || {};
-        return {
-          angry: fragment.Angry || 0,
-          sad: fragment.Sad || 0,
-          happy: fragment.Happy || 0,
-          surprised: fragment.Surprised || 0,
-          fearful: fragment.Fearful || 0,
-          neutral: fragment.Neutral || 0,
-        };
+      return this.videoAnalysisData.reduce((acc, item) => {
+        Object.keys(item).forEach(fragmentKey => {
+          const fragment = item[fragmentKey];
+          acc.push({
+            fragment: fragmentKey,
+            angry: fragment.Angry || 0,
+            sad: fragment.Sad || 0,
+            happy: fragment.Happy || 0,
+            surprised: fragment.Surprised || 0,
+            fearful: fragment.Fearful || 0,
+            neutral: fragment.Neutral || 0,
+          });
+        });
+        return acc;
+      }, []);
+    },
+    globalEmotionData() {
+      const totals = this.videoAnalysisData.reduce((acc, item) => {
+        Object.keys(item).forEach(fragmentKey => {
+          const fragment = item[fragmentKey];
+          acc.angry += fragment.Angry || 0;
+          acc.sad += fragment.Sad || 0;
+          acc.happy += fragment.Happy || 0;
+          acc.surprised += fragment.Surprised || 0;
+          acc.fearful += fragment.Fearful || 0;
+          acc.neutral += fragment.Neutral || 0;
+          acc.count += 1;
+        });
+        return acc;
+      }, {
+        angry: 0,
+        sad: 0,
+        happy: 0,
+        surprised: 0,
+        fearful: 0,
+        neutral: 0,
+        count: 0,
       });
+
+      return {
+        angry: totals.angry / totals.count,
+        sad: totals.sad / totals.count,
+        happy: totals.happy / totals.count,
+        surprised: totals.surprised / totals.count,
+        fearful: totals.fearful / totals.count,
+        neutral: totals.neutral / totals.count,
+      };
     },
     chartLabels() {
-      return this.formattedVideoAnalysisData.length > 0 ? Object.keys(this.formattedVideoAnalysisData[0]) : []
+      return ['Angry', 'Sad', 'Happy', 'Surprised', 'Fearful', 'Neutral'];
     },
     chartData() {
-      return this.formattedVideoAnalysisData.length > 0 ? Object.values(this.formattedVideoAnalysisData[0]) : []
+      const data = this.globalEmotionData;
+      return [data.angry, data.sad, data.happy, data.surprised, data.fearful, data.neutral];
     },
   },
   created() {
-    const docId = this.$route.params.id
-    this.fetchVideoAnalysisData("wN1xMuQpPNqebn8T6CoD")
+    const docId = this.$route.params.id;
+    this.fetchVideoAnalysisData(docId);
   },
   methods: {
     ...mapActions('VideoAnalysis', ['fetchVideoAnalysisData']),
   },
-}
+};
 </script>
-
-<style scoped>
-.v-card {
-  background-color: rgb(253, 253, 253);
-}
-</style>
