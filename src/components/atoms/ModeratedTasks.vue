@@ -84,7 +84,7 @@
     </draggable>
 
     <!-- Modal for adding a new task -->
-    <v-dialog v-model="addTaskModal" max-width="600">
+    <v-dialog v-model="addTaskModal" max-width="600" @click:outside="resetForm">
       <v-card class="cards">
         <v-col />
         <v-card-text>
@@ -169,6 +169,7 @@ export default {
       this.taskIndex = null
       this.addTaskModal = false
       this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
+      this.resetForm()
     },
     resetForm() {
       this.$refs.form.resetValidation()
