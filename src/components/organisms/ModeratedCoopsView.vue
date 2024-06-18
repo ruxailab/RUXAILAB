@@ -618,6 +618,7 @@ export default {
       this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
+      console.log(guest);
       let domain = window.location.href
       domain = domain.replace(window.location.pathname, '')
       let email = {
