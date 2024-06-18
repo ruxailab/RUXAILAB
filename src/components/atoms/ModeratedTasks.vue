@@ -84,33 +84,36 @@
     </draggable>
 
     <!-- Modal for adding a new task -->
-    <v-dialog v-model="addTaskModal" max-width="600">
+    <v-dialog v-model="addTaskModal" max-width="600" @click:outside="resetForm">
       <v-card class="cards">
         <v-col />
         <v-card-text>
-          <v-text-field
-            v-model="newTask.taskName"
-            outlined
-            label="Task Name"
-            color="orange"
-          />
-          <v-textarea
-            v-model="newTask.taskDescription"
-            outlined
-            label="Task Description"
-            color="orange"
-          />
+          <v-form ref="form" v-modal="valid">
+            <v-text-field
+              v-model="newTask.taskName"
+              outlined
+              label="Task Name"
+              color="orange"
+              :rules="[(v) => !!v || 'Required field']"
+              required
+            />
+            <v-textarea
+              ref="taskDescription"
+              v-model="newTask.taskDescription"
+              outlined
+              label="Task Description"
+              color="orange"
+              :rules="[(v) => !!v || 'Required field']"
+              required
+            />
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-btn dark color="red" @click="closeAddTaskModal">
-            <v-icon class="mr-1">
-              mdi-close </v-icon
-            >Cancel
+            <v-icon class="mr-1"> mdi-close </v-icon>Cancel
           </v-btn>
           <v-btn dark color="orange" @click="addTask">
-            <v-icon class="mr-1">
-              mdi-content-save </v-icon
-            >Save
+            <v-icon class="mr-1"> mdi-content-save </v-icon>Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -128,6 +131,7 @@ export default {
     drag: false,
     addTaskModal: false,
     taskIndex: null,
+    valid: false,
     newTask: {
       taskName: '',
       taskDescription: '',
@@ -165,6 +169,10 @@ export default {
       this.taskIndex = null
       this.addTaskModal = false
       this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
+      this.resetForm()
+    },
+    resetForm() {
+      this.$refs.form.resetValidation()
     },
     addTask() {
       if (
@@ -180,6 +188,12 @@ export default {
           taskStatus: 'closed',
         })
         this.closeAddTaskModal()
+        this.resetForm()
+      } else if (
+        this.newTask.taskDescription.trim() == '' ||
+        this.newTask.taskName.trim() == ''
+      ) {
+        this.$refs.form.validate()
       }
     },
 
