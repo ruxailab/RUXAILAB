@@ -48,7 +48,7 @@
               <v-col class="mt-1 mx-4 pa-0">
                 <v-combobox
                   :menu-props="{
-                    rounded: 'xl', 
+                    rounded: 'xl',
                   }"
                   :key="comboboxKey"
                   ref="combobox"
@@ -618,6 +618,7 @@ export default {
       this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
+      console.log(guest)
       let domain = window.location.href
       domain = domain.replace(window.location.pathname, '')
       let email = {
@@ -638,7 +639,7 @@ export default {
           token: guest.userDocId,
         })
       }
-      await this.$store.dispatch('sendEmailInvitation', email)
+      await this.$store.dispatch('sendModeratedEmailInvitation', email)
     },
     async cancelInvitation(guest) {
       const ok = confirm(
