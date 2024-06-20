@@ -247,5 +247,68 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async sendModeratedEmailInvitation({ commit }, payload) {
+      commit('setLoading', true)
+
+      try {
+        payload.link = `${payload.domain}/${payload.path}/${payload.testId}/${payload.token}`
+
+        const testDate = new Date(payload.guest.testDate)
+
+        payload.testDate = testDate.toLocaleDateString()
+        payload.testTime = testDate.toLocaleTimeString()
+        const dtStamp = testDate
+          .toISOString()
+          .replace(/[-:]/g, '')
+          .split('.')[0]
+        const dtStart = dtStamp
+        const dtEnd = new Date(testDate.getTime() + 60 * 60 * 1000)
+          .toISOString()
+          .replace(/[-:]/g, '')
+          .split('.')[0]
+
+        const icsContent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+PRODID:-//Your Organization//Your Product//EN
+BEGIN:VEVENT
+UID:${payload.testId}@yourdomain.com
+DTSTAMP:${dtStamp}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+SUMMARY:Your Test Event
+DESCRIPTION:This is a test event for your usability test.
+LOCATION:Online
+END:VEVENT
+END:VCALENDAR
+    `.trim()
+
+        // Adiciona o anexo ao payload
+        let attachments = [
+          {
+            filename: 'moderatedTest.ics',
+            content: Buffer.from(icsContent).toString('base64'),
+            encoding: 'base64',
+            contentType: 'text/calendar; charset=utf-8; method=REQUEST',
+          },
+        ]
+
+        console.error(payload) // Verifique a estrutura do payload no console
+
+        await FirebaseFunctionsController.callHttpsCallableFunction(
+          'sendEmail',
+          Object.assign(payload, {
+            template: template.getModeratedTemplate(payload),
+            attachments,
+          }),
+        )
+      } catch (e) {
+        console.error(e)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
 }

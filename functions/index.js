@@ -73,6 +73,7 @@ exports.sendEmail = functions.https.onCall(async (data, context) => {
     to: data.guest.email,
     subject: 'You have been invited to evaluate a test!',
     html: data.template,
+    attachments: data.attachments ?? [],
   }
 
   try {
