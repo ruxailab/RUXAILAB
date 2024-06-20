@@ -1,7 +1,9 @@
 <template>
   <v-row>
-    <v-col class="mt-8" cols="12">
+    <v-col class="mt-8" cols="8">
       <video ref="remoteMedia" class="video" autoplay playsinline />
+    </v-col>
+    <v-col class="mt-8" cols="4">
       <video ref="localMedia" class="video" muted autoplay playsinline />
     </v-col>
     <v-col cols="12">
@@ -21,21 +23,18 @@
             mdi-microphone-off
           </v-icon>
         </v-btn>
-        <v-btn @click="toggleCameraScreen()" color="blue" block depressed
-          >TOGGLE CAMERA/SCREEN</v-btn
+        <v-btn class="mt-4 mx-2 white" fab @click="toggleCameraScreen">
+          <v-icon v-if="!isMicrophoneMuted">
+            monitor-screenshot
+          </v-icon></v-btn
         >
       </v-row>
     </v-col>
-    <VideoCall ref="VideoCall" />
   </v-row>
 </template>
 
 <script>
-import VideoCall from './VideoCall.vue'
 export default {
-  components: {
-    VideoCall,
-  },
   props: {
     isAdmin: {
       type: Boolean,
@@ -50,6 +49,7 @@ export default {
       hide: true,
       isMicrophoneMuted: false,
       isSharingScreen: false,
+      usingCamera: true,
     }
   },
   computed: {
@@ -61,6 +61,9 @@ export default {
     },
     roomTestId() {
       return this.$store.getters.test.id
+    },
+    peerConnection() {
+      return this.$store.getters.peerConnection
     },
   },
   mounted() {
@@ -91,6 +94,28 @@ export default {
         this.isMicrophoneMuted = !audioTrack.enabled
       }
     },
+    async toggleCameraScreen() {
+      try {
+        let stream
+
+        if (this.usingCamera) {
+          stream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+          })
+        } else {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          })
+        }
+
+        if (stream) {
+          await this.$store.dispatch('changeTrack', stream)
+          this.usingCamera = !this.usingCamera
+        }
+      } catch (e) {
+        this.$toast.error('Error in toggling camera/screen: ' + e.message)
+      }
+    },
     hangUp() {
       this.$router.push('/testslist')
     },
@@ -101,6 +126,7 @@ export default {
 <style scoped>
 .video {
   border-radius: 30px;
-  width: 50vw;
+  width: 100%;
+  object-fit: contain;
 }
 </style>
