@@ -187,8 +187,8 @@
                   align="center"
                   width="970px"
                 >
-                  The graphic can only be generated with 3 or more evaluators,
-                  please colect more data from your research to procede.
+                The graphic can only be generated with 3 or more evaluators.
+                Please collect more data from your research to proceed.
                 </v-card>
               </v-col>
             </v-row>
