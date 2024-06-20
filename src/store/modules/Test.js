@@ -7,7 +7,6 @@
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
-// import Test from '../../models/Test'
 
 const testController = new TestController()
 
@@ -30,6 +29,7 @@ export default {
     finalMessage: '',
     remoteCameraStream: null,
     localCameraStream: null,
+    peerConnection: null, // Adiciona peerConnection aqui
   },
   getters: {
     tests(state) {
@@ -74,6 +74,10 @@ export default {
     localCameraStream(state) {
       return state.localCameraStream
     },
+    peerConnection(state) {
+      // Adiciona getter para peerConnection
+      return state.peerConnection
+    },
   },
   mutations: {
     SET_TEST(state, payload) {
@@ -83,7 +87,6 @@ export default {
       state.tests = payload
     },
     ADD_TASKS(state, payload) {
-      //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
     },
     SET_TASKS(state, payload) {
@@ -122,8 +125,12 @@ export default {
     SET_LOCAL_STREAM(state, stream) {
       state.localCameraStream = stream
     },
+    SET_PEER_CONNECTION(state, connection) {
+      // Adiciona mutação para peerConnection
+      state.peerConnection = connection
+    },
     updateCurrentImageUrl(state, url) {
-      state.currentImageUrl = url // Update currentImageUrl with the new URL
+      state.currentImageUrl = url
     },
     CLEAN_TEST(state) {
       state.Test = null
@@ -139,12 +146,12 @@ export default {
       state.landingPage = ''
       state.participantCamera = ''
       state.finalMessage = ''
+      state.peerConnection = null // Reseta peerConnection
     },
     removeHeuristic(state, payload) {
       state.Test.testStructure.splice(payload, 1)
     },
     setupHeuristicQuestionDescription(state, payload) {
-      // If empty
       if (
         state.Test.testStructure[payload.heuristic].questions[payload.question]
           .descriptions == null
@@ -153,7 +160,6 @@ export default {
           payload.question
         ].descriptions = []
 
-      // If is editing
       if (payload.editIndex != null) {
         state.Test.testStructure[payload.heuristic].questions[
           payload.question
@@ -161,9 +167,7 @@ export default {
           {},
           payload.description,
         )
-      }
-      // New Description
-      else {
+      } else {
         state.Test.testStructure[payload.heuristic].questions[
           payload.question
         ].descriptions.push(payload.description)
@@ -171,26 +175,16 @@ export default {
     },
   },
   actions: {
-    /**
-     * This action creates a new Test, using the generic action "createObject"
-     * to creates the object, passing the Test data.
-     *
-     * @param {Test} payload the test creation data
-     */
-
     async createNewTest({ commit }, payload) {
       commit('setLoading', true)
 
       try {
         const res = await testController.createTest(payload)
-
         commit('SET_TEST', res.id)
-
         return res.id
       } catch (err) {
         console.log('erro', err)
         commit('setError', true)
-
         return null
       } finally {
         commit('setLoading', false)
@@ -205,7 +199,6 @@ export default {
      */
 
     async deleteTest({ commit }, payload) {
-      // Connect to controllers
       try {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
@@ -230,7 +223,6 @@ export default {
         await testController.updateTest(payload)
       } catch (e) {
         console.error('Error in updateTest', e)
-        // commit("setError", true);
       } finally {
         commit('setLoading', false)
       }
@@ -259,7 +251,6 @@ export default {
     async getTest({ commit }, payload) {
       commit('setLoading', true)
 
-      // Connect to controllers
       try {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
@@ -272,7 +263,6 @@ export default {
     },
 
     async getAllTests({ commit }) {
-      // Connect to controllers
       try {
         commit('setLoading', true)
         const res = await testController.getAllTests()
@@ -458,17 +448,38 @@ export default {
         console.error('Error deleting room and candidates:', error)
       }
     },
-    coops(state) {
-      return state.test.coop
+    async createPeerConnection({ commit }, configuration) {
+      // Adiciona ação para criar peerConnection
+      try {
+        const peerConnection = new RTCPeerConnection(configuration)
+        commit('SET_PEER_CONNECTION', peerConnection)
+        return peerConnection
+      } catch (error) {
+        console.error('Error creating peer connection:', error)
+      }
     },
-    snackColor(state) {
-      return state.snackColor
+    async closePeerConnection({ commit, state }) {
+      if (state.peerConnection) {
+        state.peerConnection.close()
+        commit('SET_PEER_CONNECTION', null)
+      }
     },
-    snackMessage(state) {
-      return state.snackMessage
-    },
-    managerIDs(state) {
-      return state.managerIDs
+    async changeTrack({ commit, state }, stream) {
+      const newTrack = stream.getVideoTracks()[0]
+
+      if (state.peerConnection) {
+        const senders = state.peerConnection.getSenders()
+        const videoSender = senders.find(
+          (sender) => sender.track.kind === 'video',
+        )
+
+        if (videoSender) {
+          await videoSender.replaceTrack(newTrack)
+          commit('SET_LOCAL_STREAM', stream)
+        } else {
+          console.error('videoSender is not set')
+        }
+      }
     },
   },
 }
