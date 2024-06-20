@@ -21,13 +21,13 @@
 import {
   collection,
   doc,
-  addDoc,
-  setDoc,
-  onSnapshot,
   getDoc,
-  updateDoc,
   deleteDoc,
   getDocs,
+  addDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 
@@ -52,11 +52,9 @@ export default {
         ],
         iceCandidatePoolSize: 10,
       },
-      peerConnection: null,
-      videoSender: null, // Initialize videoSender as null
+      videoSender: null,
       roomDialog: false,
       roomCollection: null,
-      usingCamera: true,
     }
   },
   beforeRouteLeave() {
@@ -89,11 +87,9 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer
     },
-  },
-  mounted() {
-    if (!this.isAdmin) {
-      setInterval(this.toggleCameraScreen, 50000) // Remove parentheses from toggleCameraScreen
-    }
+    peerConnection() {
+      return this.$store.getters.peerConnection
+    },
   },
   methods: {
     emitConfirm() {
@@ -105,7 +101,9 @@ export default {
       this.joinBtnDisabled = true
       this.roomCollection = collection(db, 'rooms')
       const roomRef = doc(this.roomCollection, this.roomTestId)
-      this.peerConnection = new RTCPeerConnection(this.configuration)
+      await this.$store.dispatch('createPeerConnection', {
+        configuration: this.configuration,
+      })
 
       this.localCameraStream.getTracks().forEach((track) => {
         this.videoSender = this.peerConnection.addTrack(
@@ -169,7 +167,9 @@ export default {
       const roomSnapshot = await getDoc(roomRef)
 
       if (roomSnapshot.exists) {
-        this.peerConnection = new RTCPeerConnection(this.configuration)
+        await this.$store.dispatch('createPeerConnection', {
+          configuration: this.configuration,
+        })
         const localStream = this.localCameraStream
         localStream.getTracks().forEach((track) => {
           this.videoSender = this.peerConnection.addTrack(track, localStream)
@@ -254,40 +254,6 @@ export default {
       }
     },
 
-    async toggleCameraScreen() {
-      try {
-        let stream
-
-        // Toggle between camera and screen sharing
-        if (this.usingCamera) {
-          stream = await navigator.mediaDevices.getDisplayMedia({
-            video: true,
-          })
-        } else {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-          })
-        }
-
-        if (stream) {
-          const newTrack = stream.getVideoTracks()[0]
-
-          // Check if videoSender is defined and replace the track
-          if (this.videoSender) {
-            await this.videoSender.replaceTrack(newTrack)
-          } else {
-            console.error('videoSender is not set')
-          }
-
-          // Update local stream and toggle camera/screen flag
-          this.$store.commit('SET_LOCAL_STREAM', stream)
-          this.usingCamera = !this.usingCamera
-        }
-      } catch (e) {
-        this.$toast.error('Error in toggling camera/screen: ' + e.message)
-      }
-    },
-
     async hangUp() {
       const tracks = this.localCameraStream.getTracks()
       tracks.forEach((track) => track.stop())
@@ -296,9 +262,7 @@ export default {
         this.remoteCameraStream.getTracks().forEach((track) => track.stop())
       }
 
-      if (this.peerConnection) {
-        this.peerConnection.close()
-      }
+      await this.$store.dispatch('closePeerConnection')
 
       this.$store.commit('SET_LOCAL_STREAM', null)
       this.$store.commit('SET_REMOTE_STREAM', null)
@@ -307,12 +271,9 @@ export default {
       this.hangupBtnDisabled = true
       this.currentRoom = ''
 
-      // Deleting room on hang up
       if (this.roomId) {
         try {
           const roomRef = doc(db, 'rooms', this.roomId)
-
-          // Check if the room document exists before trying to delete it
           const roomSnapshot = await getDoc(roomRef)
           if (roomSnapshot.exists()) {
             const calleeCandidatesSnapshot = await getDocs(
@@ -339,5 +300,4 @@ export default {
   },
 }
 </script>
-
 <style scoped></style>
