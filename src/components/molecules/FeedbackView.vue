@@ -25,7 +25,7 @@
         </v-btn>
         <v-btn class="mt-4 mx-2 white" fab @click="toggleCameraScreen">
           <v-icon v-if="!isMicrophoneMuted">
-            monitor-screenshot
+            mdi-monitor-screenshot
           </v-icon></v-btn
         >
       </v-row>

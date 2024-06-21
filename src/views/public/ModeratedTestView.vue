@@ -1166,7 +1166,11 @@ export default {
     async startRecordingEvaluator() {
       this.recording = true
       this.recordedChunksEvaluator = []
-      this.mediaRecorderEvaluator = new MediaRecorder(this.localCameraStream)
+      let evaluatorCamera = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      })
+      this.mediaRecorderEvaluator = new MediaRecorder(evaluatorCamera)
 
       this.mediaRecorderEvaluator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1221,7 +1225,11 @@ export default {
     async startRecordingModerator() {
       this.recording = true
       this.recordedChunksModerator = []
-      this.mediaRecorderModerator = new MediaRecorder(this.localCameraStream)
+      let moderatorCamera = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      })
+      this.mediaRecorderModerator = new MediaRecorder(moderatorCamera)
 
       this.mediaRecorderModerator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1276,7 +1284,6 @@ export default {
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
-        console.log('Stop media recorder moderator')
         this.mediaRecorderModerator.stop()
         this.localCameraStream.stop()
         this.recording = false
