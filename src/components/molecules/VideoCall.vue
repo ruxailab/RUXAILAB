@@ -133,7 +133,6 @@ export default {
       this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
 
       this.peerConnection.addEventListener('track', (event) => {
-        console.log('Track received in CreateRoom:', event.track)
         event.streams[0].getTracks().forEach((track) => {
           this.remoteCameraStream.addTrack(track)
         })
@@ -162,7 +161,6 @@ export default {
     },
 
     async joinRoomById(roomId) {
-      console.log(`Joining room: ${roomId}`)
       const roomRef = doc(collection(db, 'rooms'), roomId)
       const roomSnapshot = await getDoc(roomRef)
 
@@ -173,7 +171,6 @@ export default {
         const localStream = this.localCameraStream
         localStream.getTracks().forEach((track) => {
           this.videoSender = this.peerConnection.addTrack(track, localStream)
-          console.log(`Added track to peerConnection: ${track.id}`)
         })
 
         const calleeCandidatesCollection = collection(
@@ -185,11 +182,9 @@ export default {
             return
           }
           addDoc(calleeCandidatesCollection, event.candidate.toJSON())
-          console.log('Added ICE candidate:', event.candidate)
         })
 
         this.peerConnection.addEventListener('track', (event) => {
-          console.log('Track received in JoinWithId:', event.track)
           event.streams[0].getTracks().forEach((track) => {
             if (this.remoteCameraStream) {
               this.remoteCameraStream.addTrack(track)
@@ -201,12 +196,9 @@ export default {
         await this.peerConnection.setRemoteDescription(
           new RTCSessionDescription(offer),
         )
-        console.log('Set remote description with offer:', offer)
 
         const answer = await this.peerConnection.createAnswer()
         await this.peerConnection.setLocalDescription(answer)
-        console.log('Created and set local description with answer:', answer)
-
         const roomWithAnswer = {
           answer: {
             type: answer.type,
@@ -222,7 +214,6 @@ export default {
               await this.peerConnection.addIceCandidate(
                 new RTCIceCandidate(data),
               )
-              console.log('Added remote ICE candidate:', data)
             }
           })
         })
