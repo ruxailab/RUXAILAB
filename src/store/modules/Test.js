@@ -183,8 +183,7 @@ export default {
         commit('SET_TEST', res.id)
         return res.id
       } catch (err) {
-        console.log('erro', err)
-        commit('setError', true)
+        commit('set Error', true)
         return null
       } finally {
         commit('setLoading', false)
@@ -203,8 +202,7 @@ export default {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in deleteTest')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -255,8 +253,7 @@ export default {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
       } catch {
-        console.log('Error in getTest')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -268,8 +265,7 @@ export default {
         const res = await testController.getAllTests()
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in getAllTests')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -287,8 +283,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
-        console.log('Error in getSharedWithMeTests: ', e)
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -300,8 +295,7 @@ export default {
         const res = await testController.getPublicTests()
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in getPublicTests')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -410,7 +404,6 @@ export default {
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
-        console.log('clean test')
       } catch {
         commit('setError', true)
       }
@@ -421,14 +414,11 @@ export default {
 
         const roomSnapshot = await getDoc(roomRef)
         if (roomSnapshot.exists()) {
-          console.log('Room document exists. Deleting...')
-
           const calleeCandidatesSnapshot = await getDocs(
             collection(roomRef, 'calleeCandidates'),
           )
           calleeCandidatesSnapshot.forEach(async (candidate) => {
             await deleteDoc(candidate.ref)
-            console.log('Deleted callee candidate:', candidate.id)
           })
 
           const callerCandidatesSnapshot = await getDocs(
@@ -436,13 +426,10 @@ export default {
           )
           callerCandidatesSnapshot.forEach(async (candidate) => {
             await deleteDoc(candidate.ref)
-            console.log('Deleted caller candidate:', candidate.id)
           })
 
           await deleteDoc(roomRef)
-          console.log('Deleted room document:', roomId)
         } else {
-          console.log('Room document does not exist.')
         }
       } catch (error) {
         console.error('Error deleting room and candidates:', error)
@@ -475,7 +462,11 @@ export default {
 
         if (videoSender) {
           await videoSender.replaceTrack(newTrack)
-          commit('SET_LOCAL_STREAM', stream)
+          const newStream = new MediaStream([
+            ...state.localCameraStream.getAudioTracks(),
+            newTrack,
+          ])
+          commit('SET_LOCAL_STREAM', newStream)
         } else {
           console.error('videoSender is not set')
         }
