@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col class="mt-8" cols="8">
-      <video ref="remoteMedia" class="video" autoplay playsinline />
+      <video ref="remoteMedia" class="video" muted autoplay playsinline />
     </v-col>
     <v-col class="mt-8" cols="4">
       <video ref="localMedia" class="video" muted autoplay playsinline />
@@ -24,7 +24,7 @@
           </v-icon>
         </v-btn>
         <v-btn class="mt-4 mx-2 white" fab @click="toggleCameraScreen">
-          <v-icon v-if="!isMicrophoneMuted">
+          <v-icon>
             mdi-monitor-screenshot
           </v-icon></v-btn
         >
