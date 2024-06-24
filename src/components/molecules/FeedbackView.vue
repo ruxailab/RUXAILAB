@@ -1,36 +1,15 @@
 <template>
   <v-row>
-    <v-col class="mt-8" cols="12">
-      <video ref="remoteVideo" class="video" autoplay playsinline />
-      <video
-        ref="localVideo"
-        class="video ml-8"
-        style="height: 10vw"
-        muted
-        autoplay
-        playsinline
-      />
+    <v-col class="mt-8" cols="8">
+      <video ref="remoteMedia" class="video" muted autoplay playsinline />
+    </v-col>
+    <v-col class="mt-8" cols="4">
+      <video ref="localMedia" class="video" muted autoplay playsinline />
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
         <v-btn
-          v-if="localStream"
-          disabled
-          class="mt-4 mx-2"
-          :dark="isSharingScreen"
-          :class="{ red: isSharingScreen, ' ': !isSharingScreen }"
-          fab
-          @click="toggleScreen()"
-        >
-          <v-icon v-if="!isSharingScreen">
-            mdi-monitor-screenshot
-          </v-icon>
-          <v-icon v-else>
-            mdi-monitor-off
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-if="localStream"
+          v-if="localCameraStream"
           class="mt-4 mx-2"
           :dark="isMicrophoneMuted"
           :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
@@ -44,28 +23,18 @@
             mdi-microphone-off
           </v-icon>
         </v-btn>
-        <!-- <v-btn
-          v-if="localStream"
-          class="mt-4 mx-2"
-          dark
-          color="red"
-          fab
-          @click="hangUp()"
+        <v-btn class="mt-4 mx-2 white" fab @click="toggleCameraScreen">
+          <v-icon>
+            mdi-monitor-screenshot
+          </v-icon></v-btn
         >
-          <v-icon>mdi-phone-hangup</v-icon>
-        </v-btn> -->
       </v-row>
     </v-col>
-    <VideoCall ref="VideoCall" />
   </v-row>
 </template>
 
 <script>
-import VideoCall from './VideoCall.vue'
 export default {
-  components: {
-    VideoCall,
-  },
   props: {
     isAdmin: {
       type: Boolean,
@@ -80,46 +49,71 @@ export default {
       hide: true,
       isMicrophoneMuted: false,
       isSharingScreen: false,
+      usingCamera: true,
     }
   },
-
   computed: {
-    localStream() {
-      return this.$store.getters.localStream
+    localCameraStream() {
+      return this.$store.getters.localCameraStream
     },
-    remoteStream() {
-      return this.$store.getters.remoteStream
+    remoteCameraStream() {
+      return this.$store.getters.remoteCameraStream
     },
     roomTestId() {
       return this.$store.getters.test.id
+    },
+    peerConnection() {
+      return this.$store.getters.peerConnection
     },
   },
   mounted() {
     this.setupStreams()
   },
-  methods: {
-    async toggleScreen() {
-      if (!this.isSharingScreen) {
-        await this.$refs.VideoCall.switchMediaStream()
-        this.isSharingScreen = true
-        this.setupStreams()
-      } else if (this.isSharingScreen) {
-        this.isSharingScreen = false
-        this.setupStreams()
-        this.$refs.VideoCall.joinRoomById(this.roomTestId)
-      }
+  watch: {
+    localCameraStream(newVal) {
+      this.setupStreams()
     },
+    remoteCameraStream(newVal) {
+      this.setupStreams()
+    },
+  },
+  methods: {
     setupStreams() {
-      this.$refs.localVideo.srcObject = this.localStream
-      this.$refs.remoteVideo.srcObject = this.remoteStream
+      this.$refs.localMedia.srcObject = this.localCameraStream
+      this.$refs.remoteMedia.srcObject = this.remoteCameraStream
     },
     toggleMicrophone() {
-      if (this.localStream && this.localStream.getAudioTracks().length > 0) {
-        const audioTrack = this.localStream
+      if (
+        this.localCameraStream &&
+        this.localCameraStream.getAudioTracks().length > 0
+      ) {
+        const audioTrack = this.localCameraStream
           .getTracks()
           .find((track) => track.kind == 'audio')
         audioTrack.enabled = !audioTrack.enabled
         this.isMicrophoneMuted = !audioTrack.enabled
+      }
+    },
+    async toggleCameraScreen() {
+      try {
+        let stream
+
+        if (this.usingCamera) {
+          stream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+          })
+        } else {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          })
+        }
+
+        if (stream) {
+          await this.$store.dispatch('changeTrack', stream)
+          this.usingCamera = !this.usingCamera
+        }
+      } catch (e) {
+        this.$toast.error('Error in toggling camera/screen: ' + e.message)
       }
     },
     hangUp() {
@@ -132,6 +126,7 @@ export default {
 <style scoped>
 .video {
   border-radius: 30px;
-  height: 36vw;
+  width: 100%;
+  object-fit: contain;
 }
 </style>
