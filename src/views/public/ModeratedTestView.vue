@@ -837,6 +837,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <audio ref="remoteAudio"></audio>
   </div>
 </template>
 
@@ -894,6 +895,7 @@ export default {
     testDate: null,
     saved: false,
     uploadProgress: 0,
+    backupInterval: null,
   }),
   computed: {
     test() {
@@ -949,6 +951,9 @@ export default {
       } else if (value && this.isAdmin) {
         this.startRecordingModerator()
       }
+    },
+    async remoteCameraStream(value) {
+      this.setRemoteAudio()
     },
     'userTestStatus.preTestStatus': function(newValue) {
       if (newValue === 'done') {
@@ -1036,8 +1041,11 @@ export default {
   async beforeDestroy() {
     if (this.isAdmin) {
       this.disconnect()
+      this.stopRecording()
       window.onbeforeunload = null
       await this.$store.dispatch('hangUp', this.roomTestId)
+    } else {
+      this.stopRecording()
     }
   },
   mounted() {
@@ -1163,6 +1171,45 @@ export default {
           console.error('Erro ao atualizar o status:', error)
         })
     },
+    async setRemoteAudio() {
+      if (
+        this.remoteCameraScreen &&
+        this.remoteCameraScreen.getAudioTracks().length > 0
+      ) {
+        let audioTrack = this.remoteCameraScreen
+          .getTracks()
+          .find((track) => track.kind == 'audio')
+        const audioStream = new MediaStream([audioTrack])
+        this.$refs.remoteAudio.srcObject = audioStream
+        this.$refs.remoteAudio.play()
+      }
+    },
+    async uploadVideo(recordedChunks, storagePath) {
+      const videoBlob = new Blob(recordedChunks, { type: 'video/webm' })
+      const storage = getStorage()
+      const storageRef = ref(storage, storagePath)
+
+      const uploadTask = uploadBytesResumable(storageRef, videoBlob)
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            reject(error)
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(storageRef)
+            resolve(downloadURL)
+          },
+        )
+      })
+    },
+
     async startRecordingEvaluator() {
       this.recording = true
       this.recordedChunksEvaluator = []
@@ -1180,46 +1227,32 @@ export default {
 
       this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
-          type: 'video/webm',
-        })
-        const storageEvaluator = getStorage()
-        const storageRefEvaluator = ref(
-          storageEvaluator,
-          `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
-        )
-
-        const uploadTask = uploadBytesResumable(
-          storageRefEvaluator,
-          videoBlobEvaluator,
-        )
-
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            this.uploadProgress = progress
-          },
-          (error) => {
-            console.error('Upload failed:', error)
-            this.isLoading = false
-          },
-          async () => {
-            this.recordedVideoEvaluator = await getDownloadURL(
-              storageRefEvaluator,
-            )
-            this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
-            this.isLoading = false
-            this.saved = true
-            this.localStream.getTracks().forEach((track) => track.stop())
-            window.onbeforeunload = null
-            this.$router.push('/testslist')
-          },
-        )
+        const storagePath = `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`
+        try {
+          this.recordedVideoEvaluator = await this.uploadVideo(
+            this.recordedChunksEvaluator,
+            storagePath,
+          )
+          this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
+          this.isLoading = false
+          this.saved = true
+          this.localStream.getTracks().forEach((track) => track.stop())
+          window.onbeforeunload = null
+          this.$router.push('/testslist')
+        } catch (error) {
+          console.error('Upload failed:', error)
+          this.isLoading = false
+        }
       }
 
       this.mediaRecorderEvaluator.start()
+
+      // Set up periodic backups
+      this.backupInterval = setInterval(async () => {
+        if (this.recording) {
+          await this.uploadVideo(this.recordedChunksEvaluator, storagePath)
+        }
+      }, 300000) // 5 minutes
     },
 
     async startRecordingModerator() {
@@ -1239,57 +1272,47 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
-          type: 'video/webm',
-        })
-        const storageModerator = getStorage()
-        const storageRefModerator = ref(
-          storageModerator,
-          `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`,
-        )
-
-        const uploadTask = uploadBytesResumable(
-          storageRefModerator,
-          videoBlobModerator,
-        )
-
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            this.uploadProgress = progress
-          },
-          (error) => {
-            console.error('Upload failed:', error)
-            this.isLoading = false
-          },
-          async () => {
-            this.recordedVideoModerator = await getDownloadURL(
-              storageRefModerator,
-            )
-            this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
-            this.isLoading = false
-            this.$router.push('/testslist')
-          },
-        )
+        const storagePath = `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`
+        try {
+          this.recordedVideoModerator = await this.uploadVideo(
+            this.recordedChunksModerator,
+            storagePath,
+          )
+          this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+          this.isLoading = false
+          this.saved = true
+          this.localStream.getTracks().forEach((track) => track.stop())
+          window.onbeforeunload = null
+          this.$router.push('/testslist')
+        } catch (error) {
+          console.error('Upload failed:', error)
+          this.isLoading = false
+        }
       }
+
       this.mediaRecorderModerator.start()
+
+      this.backupInterval = setInterval(async () => {
+        if (this.recording) {
+          await this.uploadVideo(this.recordedChunksModerator, storagePath)
+        }
+      }, 300000) // 5 minutes
     },
 
     async stopRecording() {
       if (this.mediaRecorderEvaluator) {
         this.mediaRecorderEvaluator.stop()
         this.localCameraStream.stop()
+        clearInterval(this.backupInterval)
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
         this.mediaRecorderModerator.stop()
         this.localCameraStream.stop()
+        clearInterval(this.backupInterval)
         this.recording = false
       }
     },
-
     async confirmConnect() {
       const ref = doc(db, 'tests', this.roomTestId)
       if (this.isAdmin) {
@@ -1350,14 +1373,6 @@ export default {
         this.$router.push('/managerview/' + this.test.id)
       }
       this.start = !this.start
-    },
-    callTimerSave() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.stopTimer()
-    },
-    handleTimerStopped(elapsedTime, taskIndex) {
-      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
     },
     calculateProgress() {
       const totalSteps = 3
