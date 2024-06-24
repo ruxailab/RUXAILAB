@@ -64,6 +64,7 @@
                   dense
                   color="#fca326"
                   class="mx-2"
+                  @input="verifyEmail()"
                 >
                   <template v-slot:no-data>
                     There are no users registered with that email, press enter
@@ -457,7 +458,6 @@ export default {
       currentDate.setDate(currentDate.getDate() - 1)
       const selectedDate = new Date(this.date)
 
-      console.log(selectedDate.toLocaleDateString())
       if (
         selectedDate.toLocaleDateString() ===
           currentDate.toLocaleDateString() &&
@@ -480,7 +480,6 @@ export default {
   },
   created() {
     this.$store.dispatch('getAllUsers')
-
   },
   methods: {
     async saveInvitation() {
@@ -501,6 +500,19 @@ export default {
       })
 
       this.submit()
+    },
+
+    verifyEmail() {
+      const alreadyInvited = this.cooperatorsEdit.find(
+        (cooperator) => cooperator.email === this.comboboxModel.email,
+      )
+      if (alreadyInvited) {
+        this.$toast.warning(
+          this.comboboxModel.email + ' has already been invited',
+        )
+        this.comboboxModel = ''
+        return
+      }
     },
 
     async submit() {
@@ -528,6 +540,7 @@ export default {
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
+            accessLevel: 1,
             title: `You have been invited to test ${this.test.testTitle}!`,
             description: this.inviteMessage,
             redirectsTo: `${path}/${this.test.id}/${guest.userDocId}`,
@@ -577,7 +590,6 @@ export default {
       return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
     },
     reinvite(guest) {
-      console.log(guest)
       this.notifyCooperator(guest)
     },
     openInvitationModal() {
@@ -606,6 +618,7 @@ export default {
       this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
+      console.log(guest)
       let domain = window.location.href
       domain = domain.replace(window.location.pathname, '')
       let email = {
@@ -618,15 +631,15 @@ export default {
       if (guest.accessLevel === 1) {
         email = Object.assign(email, {
           path: 'testview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       } else {
         email = Object.assign(email, {
           path: 'managerview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       }
-      await this.$store.dispatch('sendEmailInvitation', email)
+      await this.$store.dispatch('sendModeratedEmailInvitation', email)
     },
     async cancelInvitation(guest) {
       const ok = confirm(
