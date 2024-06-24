@@ -30,6 +30,6 @@ export function redirect() {
     } else if (level == 1) {
         return '/testslist'
     } else {
-        return '/home'
+        return '/'
     }
 }

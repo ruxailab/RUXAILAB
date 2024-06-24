@@ -1,308 +1,451 @@
 {
-    "language": "भाषा",
-    "SIGNIN": {
-      "sign-in": "साइन-इन करें",
-      "email": "ई-मेल",
-      "password": "पासवर्ड",
-      "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
-      "sign-up": "साइन-अप",
-      "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
-      "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
+  "language": "भाषा",
+  "SIGNIN": {
+    "sign-in": "साइन-इन करें",
+    "email": "ई-मेल",
+    "password": "पासवर्ड",
+    "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
+    "sign-up": "साइन-अप",
+    "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
+    "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
+  },
+  "common": {
+    "loading": "लोड हो रहा है",
+    "continueAs": "के रूप में जारी रखें",
+    "notUser": "{userEmail} नहीं हैं?",
+    "name": "नाम",
+    "changeAccount": "खाता बदलें",
+    "editAndInvite": "अपने परीक्षण में लोगों को संपादित करें और आमंत्रित करें",
+    "analyzeProject": "परियोजना और मूल्यांककों का विश्लेषण करें",
+    "comment": "टिप्पणी",
+    "inputImage": "विषय से संबंधित अपनी पसंद की एक छवि दर्ज करें",
+    "title": "शीर्षक",
+    "description": "विवरण",
+    "cancel": "रद्द करें",
+    "confirm": "पुष्टि करें",
+    "add": "जोड़ें",
+    "text": "पाठ",
+    "value": "मूल्य",
+    "save": "सहेजें",
+    "editDelete": "संपादित/हटाएं",
+    "type": "प्रकार",
+    "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं",
+    "timeAgo": {
+      "years": "[TODO] {count}",
+      "months": "[TODO] {count}",
+      "days": "[TODO] {count}",
+      "hours": "[TODO] {count}",
+      "minutes": "[TODO] {count}",
+      "now": "[TODO]"
+    }
+  },
+  "titles": {
+    "manager": "प्रबंधक",
+    "test": "परीक्षण",
+    "preview": "पूर्वावलोकन",
+    "reports": "रिपोर्ट्स",
+    "answers": "उत्तर",
+    "analytics": "विश्लेषिकी",
+    "cooperators": "सहयोगी",
+    "template": "टेम्पलेट",
+    "finalReport": "अंतिम रिपोर्ट",
+    "answerType": "उत्तर प्रकार:",
+    "drawer": {
+      "Manager": "प्रबंधक",
+      "Test": "परीक्षण",
+      "Preview": "पूर्वावलोकन",
+      "Reports": "रिपोर्ट्स",
+      "Answers": "उत्तर",
+      "Analytics": "विश्लेषिकी",
+      "Cooperators": "सहयोगी",
+      "Template": "टेम्पलेट",
+      "Final Report": "अंतिम रिपोर्ट",
+      "Answer Test": "उत्तर परीक्षण",
+      "Settings": "सेटिंग्स"
     },
-    "common": {
-      "loading": "लोड हो रहा है",
-      "continueAs": "के रूप में जारी रखें",
-      "notUser": "{userEmail} नहीं हैं?",
-      "name": "नाम",
-      "changeAccount": "खाता बदलें",
-      "editAndInvite": "अपने परीक्षण में लोगों को संपादित करें और आमंत्रित करें",
-      "analyzeProject": "परियोजना और मूल्यांककों का विश्लेषण करें",
-      "comment": "टिप्पणी",
-      "inputImage": "विषय से संबंधित अपनी पसंद की एक छवि दर्ज करें",
-      "title": "शीर्षक",
-      "description": "विवरण",
-      "cancel": "रद्द करें",
-      "confirm": "पुष्टि करें",
-      "add": "जोड़ें",
-      "text": "पाठ",
-      "value": "मूल्य",
-      "save": "सहेजें",
-      "editDelete": "संपादित/हटाएं",
-      "type": "प्रकार",
-      "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं"
-    },
+    "heuristic": "उपयोगिता ह्यूरिस्टिक मूल्यांकन"
+  },
+  "descriptions": {
+    "edit": "अपने परीक्षण बनाना और संपादित करना शुरू करें।",
+    "cooperators": "अपने परीक्षण में मदद करने के लिए लोगों को आमंत्रित करें।",
+    "reports": "आपके मूल्यांकक कैसे कर रहे हैं इस पर एक नज़र डालें।",
+    "answers": "देखें कि आपके मूल्यांकक आपकी परियोजना का मूल्यांकन कैसे कर रहे हैं।",
+    "analytics": "अपने मूल्यांककों से प्राप्त टिप्पणियों और उत्तरों का विश्लेषण करें।",
+    "finalReport": "अपने परीक्षण में अतिरिक्त डेटा जोड़ें।",
+    "intro": {
+      "reports": "अपने मूल्यांककों की प्रगति और उत्तर स्थिति को ट्रैक करें जब वे आपके परीक्षण को पूरा करते हैं।",
+      "answers": "अन्य उपयोगकर्ताओं के उत्तरों से डेटा का विश्लेषण करके अपनी परियोजना पर जल्दी से प्रतिक्रिया प्राप्त करें।",
+      "analytics": "अपने परीक्षण में गहराई से देखें और देखें कि लोग इसके बारे में क्या कह रहे हैं।",
+      "invite": "अपने परीक्षण का उत्तर देने के लिए मूल्यांककों को आमंत्रित करें!",
+      "cooperators": "सहयोगी जोड़ें जो आपको अपनी परियोजना में सुधार करने और अपने अध्ययनों के लिए डेटा एकत्र करने में मदद कर सकते हैं।",
+      "start": "शुरू करें!",
+      "edit": "अपनी अनुसंधान आवश्यकताओं के लिए अपने कार्यों और ह्यूरिस्टिक्स को बनाएं और अनुकूलित करें।"
+    }
+  },
+  "errors": {
+    "invalidInvitation": "अमान्य आमंत्रण",
+    "signupWithInvitationEmail": "उपयोगकर्ता को आमंत्रण के समान ईमेल का उपयोग करके साइनअप करना होगा।",
+    "emailIsRequired": "ईमेल आवश्यक है",
+    "invalidEmail": "अमान्य ईमेल",
+    "passwordRequired": "पासवर्ड आवश्यक है",
+    "passwordValidate": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए",
+    "differentPasswords": "अलग पासवर्ड",
+    "fieldRequired": "फील्ड आवश्यक है",
+    "userNotExist": "यह उपयोगकर्ता मौजूद नहीं है।",
+    "incorrectPassword": "गलत पासवर्ड",
+    "incorrectCredential": "गलत उपयोगकर्ता नाम या पासवर्ड।"
+  },
+  "Introduction": {
+    "title": "UX रिमोट लैब",
+    "subtitle": "दूरस्थ रूप से उपयोगिता परीक्षण करने के बारे में क्या?",
+    "description": "हमारे ओपनसोर्स परियोजना में शामिल हों और अपनी खुद की उपयोगिता लैब बनाएं और इसे दोस्तों के साथ साझा करें। अनुसंधान कभी आसान नहीं रहा!",
+    "cta": "शुरू करें"
+  },
+  "Dashboard": {
+    "createNewTest": "नया परीक्षण बनाएं",
+    "tests": "परीक्षण",
+    "templates": "टेम्पलेट्स",
+    "search": "खोज",
+    "myTests": "मेरे परीक्षण",
+    "sharedWithMe": "मेरे साथ साझा किया गया",
+    "publicTests": "सार्वजनिक परीक्षण",
+    "personal": "व्यक्तिगत",
+    "explore": "अन्वेषण करें"
+  },
+  "HeuristicsTable": {
     "titles": {
-      "manager": "प्रबंधक",
-      "test": "परीक्षण",
-      "preview": "पूर्वावलोकन",
-      "reports": "रिपोर्ट्स",
-      "answers": "उत्तर",
-      "analytics": "विश्लेषिकी",
-      "cooperators": "सहयोगी",
-      "template": "टेम्पलेट",
-      "finalReport": "अंतिम रिपोर्ट",
-      "answerType": "उत्तर प्रकार:",
-      "drawer": {
-        "Manager": "प्रबंधक",
-        "Test": "परीक्षण",
-        "Preview": "पूर्वावलोकन",
-        "Reports": "रिपोर्ट्स",
-        "Answers": "उत्तर",
-        "Analytics": "विश्लेषिकी",
-        "Cooperators": "सहयोगी",
-        "Template": "टेम्पलेट",
-        "Final Report": "अंतिम रिपोर्ट",
-        "Answer Test": "उत्तर परीक्षण",
-        "Settings": "सेटिंग्स"
-      },
-      "heuristic": "उपयोगिता ह्यूरिस्टिक मूल्यांकन"
+      "editHeuristic": "ह्यूरिस्टिक संपादित करें",
+      "editQuestion": "प्रश्न संपादित करें",
+      "newQuestion": "नया प्रश्न",
+      "creatingHeuristic": "ह्यूरिस्टिक बना रहे हैं",
+      "currentHeuristics": "अनुमानी",
+      "addNewHeuristic": "नया ह्यूरिस्टिक जोड़ें",
+      "searchHeuristics": "ह्यूरिस्टिक्स खोजें...",
+      "noHeuristicsFound": "कोई ह्यूरिस्टिक्स नहीं मिले",
+      "addNewQuestion": "नया प्रश्न जोड़ें",
+      "questions": "प्रश्न",
+      "descriptions": "विवरण",
+      "actions": "कार्रवाई",
+      "titles": "शीर्षक",
+      "cancel": "रद्द करें",
+      "ok": "ठीक है",
+      "add": "जोड़ें",
+      "deleteHeuristic": "ह्यूरिस्टिक हटाएं",
+      "deleteQuestion": "प्रश्न हटाएं",
+      "addNewDescription": "एक नया विवरण जोड़ें",
+      "addOption": "एक नया विकल्प जोड़ें",
+      "hasValue": "मूल्य है"
     },
-    "descriptions": {
-      "edit": "अपने परीक्षण बनाना और संपादित करना शुरू करें।",
-      "cooperators": "अपने परीक्षण में मदद करने के लिए लोगों को आमंत्रित करें।",
-      "reports": "आपके मूल्यांकक कैसे कर रहे हैं इस पर एक नज़र डालें।",
-      "answers": "देखें कि आपके मूल्यांकक आपकी परियोजना का मूल्यांकन कैसे कर रहे हैं।",
-      "analytics": "अपने मूल्यांककों से प्राप्त टिप्पणियों और उत्तरों का विश्लेषण करें।",
-      "finalReport": "अपने परीक्षण में अतिरिक्त डेटा जोड़ें।",
-      "intro": {
-        "reports": "अपने मूल्यांककों की प्रगति और उत्तर स्थिति को ट्रैक करें जब वे आपके परीक्षण को पूरा करते हैं।",
-        "answers": "अन्य उपयोगकर्ताओं के उत्तरों से डेटा का विश्लेषण करके अपनी परियोजना पर जल्दी से प्रतिक्रिया प्राप्त करें।",
-        "analytics": "अपने परीक्षण में गहराई से देखें और देखें कि लोग इसके बारे में क्या कह रहे हैं।",
-        "invite": "अपने परीक्षण का उत्तर देने के लिए मूल्यांककों को आमंत्रित करें!",
-        "cooperators": "सहयोगी जोड़ें जो आपको अपनी परियोजना में सुधार करने और अपने अध्ययनों के लिए डेटा एकत्र करने में मदद कर सकते हैं।",
-        "start": "शुरू करें!",
-        "edit": "अपनी अनुसंधान आवश्यकताओं के लिए अपने कार्यों और ह्यूरिस्टिक्स को बनाएं और अनुकूलित करें।"
-      }
+    "placeholders": {
+      "titleHeuristic": "ह्यूरिस्टिक शीर्षक",
+      "titleYourHeuristic": "अपने ह्यूरिस्टिक का शीर्षक दें",
+      "titleYourQuestion": "अपने प्रश्न का शीर्षक दें",
+      "titleQuestion": "प्रश्न शीर्षक",
+      "titleNewQuestion": "नए प्रश्न का शीर्षक",
+      "optionDescription": "विकल्प विवरण"
     },
-    "errors": {
-      "invalidInvitation": "अमान्य आमंत्रण",
-      "signupWithInvitationEmail": "उपयोगकर्ता को आमंत्रण के समान ईमेल का उपयोग करके साइनअप करना होगा।",
-      "emailIsRequired": "ईमेल आवश्यक है",
-      "invalidEmail": "अमान्य ईमेल",
-      "passwordRequired": "पासवर्ड आवश्यक है",
-      "passwordValidate": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए",
-      "differentPasswords": "अलग पासवर्ड",
-      "fieldRequired": "फील्ड आवश्यक है",
-      "userNotExist": "यह उपयोगकर्ता मौजूद नहीं है।",
-      "incorrectPassword": "गलत पासवर्ड",
-      "incorrectCredential": "गलत उपयोगकर्ता नाम या पासवर्ड।"
+    "messages": {
+      "noHeuristics": "आपके पास कोई ह्यूरिस्टिक नहीं है, आगे बढ़ने के लिए एक बनाएं।",
+      "youMustHave": "आपने कुछ गलत टाइप किया होगा...",
+      "noHeuristicsDeleteAll": "क्षमा करें, लेकिन आप सभी ह्यूरिस्टिक प्रश्नों को हटा नहीं सकते",
+      "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक का चयन करें।"
     },
-    "Introduction": {
-      "title": "UX रिमोट लैब",
-      "subtitle": "दूरस्थ रूप से उपयोगिता परीक्षण करने के बारे में क्या?",
-      "description": "हमारे ओपनसोर्स परियोजना में शामिल हों और अपनी खुद की उपयोगिता लैब बनाएं और इसे दोस्तों के साथ साझा करें। अनुसंधान कभी आसान नहीं रहा!",
-      "cta": "शुरू करें"
+    "validation": {
+      "nameRequired": "नाम अनिवार्य है",
+      "questionRequired": "प्रश्न भरा जाना चाहिए",
+      "textRequired": "पाठ आवश्यक है",
+      "positiveValue": "मूल्य एक सकारात्मक संख्या होनी चाहिए",
+      "addQuestion": "कृपया अपने ह्यूरिस्टिक में कम से कम एक प्रश्न जोड़ें"
     },
-    "Dashboard": {
-      "createNewTest": "नया परीक्षण बनाएं",
-      "tests": "परीक्षण",
-      "templates": "टेम्पलेट्स",
-      "search": "खोज",
-      "myTests": "मेरे परीक्षण",
-      "sharedWithMe": "मेरे साथ साझा किया गया",
-      "publicTests": "सार्वजनिक परीक्षण",
-      "personal": "व्यक्तिगत",
-      "explore": "अन्वेषण करें"
+    "AddCommentBtn": {
+      "showComment": "टिप्पणी दिखाएँ",
+      "addComment": "टिप्पणी जोड़ें",
+      "hideTextArea": "टेक्स्ट एरिया छुपाएं"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "[TODO]"
     },
-    "HeuristicsTable": {
-      "titles": {
-        "editHeuristic": "ह्यूरिस्टिक संपादित करें",
-        "editQuestion": "प्रश्न संपादित करें",
-        "newQuestion": "नया प्रश्न",
-        "creatingHeuristic": "ह्यूरिस्टिक बना रहे हैं",
-        "currentHeuristics": "अनुमानी",
-        "addNewHeuristic": "नया ह्यूरिस्टिक जोड़ें",
-        "searchHeuristics": "ह्यूरिस्टिक्स खोजें...",
-        "noHeuristicsFound": "कोई ह्यूरिस्टिक्स नहीं मिले",
-        "addNewQuestion": "नया प्रश्न जोड़ें",
-        "questions": "प्रश्न",
-        "descriptions": "विवरण",
-        "actions": "कार्रवाई",
-        "titles": "शीर्षक",
-        "cancel": "रद्द करें",
-        "ok": "ठीक है",
-        "add": "जोड़ें",
-        "deleteHeuristic": "ह्यूरिस्टिक हटाएं",
-        "deleteQuestion": "प्रश्न हटाएं",
-        "addNewDescription": "एक नया विवरण जोड़ें",
-        "addOption": "एक नया विकल्प जोड़ें",
-        "hasValue": "मूल्य है"
-      },
-      "placeholders": {
-        "titleHeuristic": "ह्यूरिस्टिक शीर्षक",
-        "titleYourHeuristic": "अपने ह्यूरिस्टिक का शीर्षक दें",
-        "titleYourQuestion": "अपने प्रश्न का शीर्षक दें",
-        "titleQuestion": "प्रश्न शीर्षक",
-        "titleNewQuestion": "नए प्रश्न का शीर्षक",
-        "optionDescription": "विकल्प विवरण"
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "[TODO]",
+      "heuristics": "[TODO]"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "[TODO]"
+    },
+    "actions": {
+      "saveWeights": "[TODO]"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "[TODO]"
+    },
+    "messages": {
+      "acceptCsv": "[TODO]",
+      "noCsvFileSelected": "[TODO]"
+    },
+    "placeHolders": {
+      "importCsv": "[TODO]"
+    },
+    "actions": {
+      "downloadCsvTemplate": "[TODO]",
+      "update": "[TODO]"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "[TODO]",
+      "submitOnce": "[TODO]",
+      "noHeuristics": "[TODO]"
+    },
+    "actions": {
+      "cancel": "[TODO]",
+      "submit": "[TODO]",
+      "save": "[TODO]",
+      "continueAs": "[TODO]",
+      "notMail": "[TODO]",
+      "changeAccount": "[TODO]",
+      "startTest": "[TODO]"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "[TODO]",
+      "options": "[TODO]",
+      "weights": "[TODO]",
+      "settings": "[TODO]"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "[TODO]",
+      "statistics": "[TODO]",
+      "evaluators": "[TODO]",
+      "heuristics": "[TODO]",
+      "analytics": "[TODO]"
+    },
+    "statistics": {
+      "usabilityPercentage": "[TODO]",
+      "max": "[TODO]",
+      "min": "[TODO]",
+      "std": "[TODO]"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "[TODO]",
+        "graphic": "[TODO]"
       },
       "messages": {
-        "noHeuristics": "आपके पास कोई ह्यूरिस्टिक नहीं है, आगे बढ़ने के लिए एक बनाएं।",
-        "youMustHave": "आपने कुछ गलत टाइप किया होगा...",
-        "noHeuristicsDeleteAll": "क्षमा करें, लेकिन आप सभी ह्यूरिस्टिक प्रश्नों को हटा नहीं सकते",
-        "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक का चयन करें।"
-      },
-      "validation": {
-        "nameRequired": "नाम अनिवार्य है",
-        "questionRequired": "प्रश्न भरा जाना चाहिए",
-        "textRequired": "पाठ आवश्यक है",
-        "positiveValue": "मूल्य एक सकारात्मक संख्या होनी चाहिए",
-        "addQuestion": "कृपया अपने ह्यूरिस्टिक में कम से कम एक प्रश्न जोड़ें"
-      },
-      "AddCommentBtn": {
-        "showComment": "टिप्पणी दिखाएँ",
-        "addComment": "टिप्पणी जोड़ें",
-        "hideTextArea": "टेक्स्ट एरिया छुपाएं"
+        "graphForMoreThan3": "[TODO]"
       }
     },
-    "UserTestTable": {
-      "titles": {
-        "consentForm": "सहमति फॉर्म",
-        "userVariables": "उपयोगकर्ता चर",
-        "currentTasks": "वर्तमान कार्य",
-        "postForm": "पोस्ट फॉर्म",
-        "writeNewPost": "एक नया पोस्ट प्रश्न लिखें"
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "[TODO]",
+        "answersByEvaluator": "[TODO]",
+        "answersByHeuristics": "[TODO]",
+        "graphic": "[TODO]",
+        "weights": "[TODO]"
       },
-      "inputs": {
-        "consent": "सहमति",
-        "variableName": "चर नाम",
-        "description": "विवरण",
-        "selection": "चयन",
-        "writeQuestion": "एक प्रश्न लिखें"
-      },
-      "checkboxes": {
-        "selectionField": "चयन क्षेत्र",
-        "textField": "टेक्स्ट फील्ड",
-        "textAnswer": "टेक्स्ट उत्तर",
-        "selectionAnswer": "चयन उत्तर"
-      },
-      "buttons": {
-        "createNewVariable": "एक नया चर बनाएं",
-        "createNewPost": "एक नया पोस्ट प्रश्न बनाएं"
+      "messages": {
+        "needMoreThan1Answer": "[TODO]",
+        "runWeightFunction": "[TODO]"
       }
     },
-    "UserTestView": {
-      "titles": {
-        "preTestConsent": "प्री टेस्ट - सहमति",
-        "preTestForm": "प्री टेस्ट - फॉर्म",
-        "preTest": "प्री-टेस्ट",
-        "postTest":"पोस्ट-टेस्ट"
-      },
-      "buttons": {
-        "done": "हो गया"
-      }
+    "analytics": {}
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "[TODO]"
     },
-    "AccessNotAllowed": {
-      "notAllowed": "पहुँच अनुमति नहीं",
-      "noAccess": "आपको उस पृष्ठ तक पहुँचने की अनुमति नहीं है जिसे आप एक्सेस करने का प्रयास कर रहे हैं।",
-      "goHome": "होम पर जाएं"
+    "headers": {
+      "email": "[TODO]",
+      "role": "[TODO]",
+      "invited": "[TODO]",
+      "accepted": "[TODO]",
+      "more": "[TODO]",
+      "title": "[TODO]",
+      "content": "[TODO]"
     },
-    "pages": {
-      "intros": {
-        "click": "यहाँ क्लिक करें!",
-        "learnMore": "और जानें",
-        "docTitle": "दस्तावेज़ीकरण पढ़ें",
-        "docSubtitle": "पृष्ठ का उपयोग कैसे करें इस पर दस्तावेज़ीकरण तक पहुँचने के लिए क्लिक करें",
-        "discTitle": "समुदाय में शामिल हों!",
-        "discSubtitle": "आप हमारे डिस्कॉर्ड सर्वर पर समर्थन पाएंगे।"
-      },
-      "finalReport": {
-        "select": "अपने पीडीएफ तत्वों का चयन करें",
-        "heuristic": "ह्यूरिस्टिक",
-        "to": "को",
-        "createHeuristics": "कृपया ह्यूरिस्टिक्स बनाएं ताकि आप उन्हें यहां चुन सकें।",
-        "pdf": "पीडीएफ जनरेट करें",
-        "options": {
-          "options": "परीक्षण विकल्प",
-          "comments": "उत्तर टिप्पणियाँ",
-          "statistics": "सांख्यिकी",
-          "answersByEvaluator": "मूल्यांककों द्वारा उत्तर",
-          "answersByHeuristics": "ह्यूरिस्टिक्स द्वारा उत्तर",
-          "finalReport": "अंतिम रिपोर्ट",
-          "loading": "लोड हो रहा है..."
-        }
-      },
-      "landing": {
-        "feedbackTitle": "अपनी परियोजनाओं पर जल्दी से प्रतिक्रिया प्राप्त करें",
-        "feedbackSubtitle1": "यूएक्स रिमोट लैब को विभिन्न यूएक्स विशेषज्ञों के लिए एक उपकरण सेट प्रदान करने के लिए बनाया गया है जो अपने खुद के यूएक्स परीक्षण बनाना चाहते हैं और उपयोगकर्ताओं के साथ इसे करना चाहते हैं।",
-        "feedbackSubtitle2": "COVID-19 ने दुनिया को दिखाया है कि कभी-कभी वास्तविक उपयोगकर्ताओं की भौतिक उपस्थिति संभव नहीं होती है इसलिए हम यहां इस समस्या को हल करने के लिए हैं!",
-        "uxTitle": "अपनी खुद की यूएक्स लैब शुरू करें",
-        "uxSubtitle1": "यदि आप एक अनुसंधानकर्ता, एक कंपनी, या एक पेशेवर हैं जो एक यूएक्स परीक्षण करना चाहते हैं, तो यहां आपको विभिन्न यूएक्स तकनीकों का उपयोग करके अपने परीक्षणों का विश्लेषण और ट्रैक करने में मदद करने के लिए कई उपकरण मिलेंगे।",
-        "uxSubtitle2": "इस ओपन सोर्स समुदाय को बढ़ाने में हमारी मदद करें और हमसे GitHub पर जुड़ें! :)",
-        "footer": "हम परियोजना को बढ़ाने में मदद करने के लिए नए साझेदारों की तलाश में हैं! हमसे संपर्क करने के लिए स्वतंत्र महसूस करें "
-      },
-      "listTests": {
-        "createdBy": "द्वारा बनाई गई",
-        "me": "मैं",
-        "progress": "प्रगति",
-        "updated": "अंतिम अपडेट पर",
-        "version": "संस्करण:",
-        "noTests": "कोई परीक्षण नहीं मिला",
-        "noTemplates": "कोई टेम्पलेट नहीं मिला"
-      },
-      "createTest": {
-        "title": "एक नया परीक्षण बनाएं",
-        "blanckTitle": "एक खाली परीक्षण बनाएं",
-        "blanckSubtitle": "एक पूरी तरह से नए और ताजा टेम्पलेट के साथ शुरू करने के लिए एक खाली परीक्षण बनाएं।",
-        "templateTitle": "टेम्पलेट से बनाएं",
-        "templateSubtitle": "हमारे उपयोगकर्ताओं में से एक द्वारा बनाए गए टेम्पलेट के आधार पर एक परीक्षण बनाएं।",
-        "create": "परीक्षण बनाएं",
-        "templateInfo": "टेम्पलेट जानकारी",
-        "deleteTemplate": "टेम्पलेट हटाएं",
-        "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
-        "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
-      },
-      "settings": {
-        "title": "सेटिंग्स",
-        "currentTest": "वर्तमान परीक्षण",
-        "createTemplate": "टेम्पलेट बनाएं",
-        "deleteTest": "परीक्षण हटाएं"
-      }
+    "actions": {
+      "send_invitation": "[TODO]",
+      "send_message": "[TODO]",
+      "reinvite": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "cancel": "[TODO]",
+      "send": "[TODO]",
+      "select_cooperator": "[TODO]"
     },
-    "alerts": {
-      "copy": "कॉपी सफल",
-      "noCopy": "कॉपी असफल",
-      "deleteTemplate": "क्या आप वाकई इस टेम्पलेट को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता!",
-      "deleteTest": "क्या आप वाकई इस परीक्षण को हटाना चाहते हैं?",
-      "addDescription": "कृपया एक विवरण जोड़ें",
-      "errorOccurred": "एक त्रुटि आई है",
-      "leave": "क्या आप वाकई जाना चाहते हैं?",
-      "sureLeave": "क्या आप वाकई जाना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
-      "imageURL": "छवि URL टाइप करें:",
-      "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं "
+    "roles": {
+      "administrator": "[TODO]",
+      "evaluator": "[TODO]",
+      "guest": "[TODO]"
     },
-    "buttons": {
-      "next": "अगला",
-      "previous": "पिछला",
-      "seeCode": "कोड देखें",
-      "username": "उपयोगकर्ता नाम",
-      "goToConsole": "कंसोल पर जाएं",
-      "signout": "साइन-आउट",
-      "returnToConsole": "कंसोल पर लौटें",
-      "tip": "टिप",
-      "cancel": "रद्द करें",
-      "create": "बनाएँ",
-      "close": "बंद करें",
-      "save": "सहेजें",
-      "stay": "रुकें",
-      "leave": "छोड़ें",
-      "help": "मदद",
-      "delete": "हटाएं"
-    },
-    "switches": {
-      "noAnswer": "कोई उत्तर नहीं",
-      "textArea": "टेक्स्ट एरिया",
-      "timer": "टाइमर",
-      "postTest": "पोस्ट प्रश्न",
-      "screenRecord": "स्क्रीन रिकॉर्ड",
-      "camera": "कैमरा",
-      "eyeTracker": "आई ट्रैकर",
-      "audioRecord": "ऑडियो रिकॉर्ड"
+    "messages": {
+      "cooperators_loading": "[TODO]",
+      "no_users": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "change_role": "[TODO]",
+      "message_title_hint": "[TODO]",
+      "message_content_hint": "[TODO]"
+    }
+  },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "सहमति फॉर्म",
+      "userVariables": "उपयोगकर्ता चर",
+      "currentTasks": "वर्तमान कार्य",
+      "postForm": "पोस्ट फॉर्म",
+      "writeNewPost": "एक नया पोस्ट प्रश्न लिखें"
     },
     "inputs": {
-      "consentForm": "सहमति फॉर्म",
-      "preForm": "प्री फॉर्म",
-      "postForm": "पोस्ट फॉर्म"
+      "consent": "सहमति",
+      "variableName": "चर नाम",
+      "description": "विवरण",
+      "selection": "चयन",
+      "writeQuestion": "एक प्रश्न लिखें"
+    },
+    "checkboxes": {
+      "selectionField": "चयन क्षेत्र",
+      "textField": "टेक्स्ट फील्ड",
+      "textAnswer": "टेक्स्ट उत्तर",
+      "selectionAnswer": "चयन उत्तर"
+    },
+    "buttons": {
+      "createNewVariable": "एक नया चर बनाएं",
+      "createNewPost": "एक नया पोस्ट प्रश्न बनाएं"
     }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "प्री टेस्ट - सहमति",
+      "preTestForm": "प्री टेस्ट - फॉर्म",
+      "preTest": "प्री-टेस्ट",
+      "postTest": "पोस्ट-टेस्ट"
+    },
+    "buttons": {
+      "done": "हो गया"
+    }
+  },
+  "AccessNotAllowed": {
+    "notAllowed": "पहुँच अनुमति नहीं",
+    "noAccess": "आपको उस पृष्ठ तक पहुँचने की अनुमति नहीं है जिसे आप एक्सेस करने का प्रयास कर रहे हैं।",
+    "goHome": "होम पर जाएं"
+  },
+  "pages": {
+    "intros": {
+      "click": "यहाँ क्लिक करें!",
+      "learnMore": "और जानें",
+      "docTitle": "दस्तावेज़ीकरण पढ़ें",
+      "docSubtitle": "पृष्ठ का उपयोग कैसे करें इस पर दस्तावेज़ीकरण तक पहुँचने के लिए क्लिक करें",
+      "discTitle": "समुदाय में शामिल हों!",
+      "discSubtitle": "आप हमारे डिस्कॉर्ड सर्वर पर समर्थन पाएंगे।"
+    },
+    "finalReport": {
+      "select": "अपने पीडीएफ तत्वों का चयन करें",
+      "heuristic": "ह्यूरिस्टिक",
+      "to": "को",
+      "createHeuristics": "कृपया ह्यूरिस्टिक्स बनाएं ताकि आप उन्हें यहां चुन सकें।",
+      "pdf": "पीडीएफ जनरेट करें",
+      "options": {
+        "options": "परीक्षण विकल्प",
+        "comments": "उत्तर टिप्पणियाँ",
+        "statistics": "सांख्यिकी",
+        "answersByEvaluator": "मूल्यांककों द्वारा उत्तर",
+        "answersByHeuristics": "ह्यूरिस्टिक्स द्वारा उत्तर",
+        "finalReport": "अंतिम रिपोर्ट",
+        "loading": "लोड हो रहा है..."
+      }
+    },
+    "landing": {
+      "feedbackTitle": "अपनी परियोजनाओं पर जल्दी से प्रतिक्रिया प्राप्त करें",
+      "feedbackSubtitle1": "यूएक्स रिमोट लैब को विभिन्न यूएक्स विशेषज्ञों के लिए एक उपकरण सेट प्रदान करने के लिए बनाया गया है जो अपने खुद के यूएक्स परीक्षण बनाना चाहते हैं और उपयोगकर्ताओं के साथ इसे करना चाहते हैं।",
+      "feedbackSubtitle2": "COVID-19 ने दुनिया को दिखाया है कि कभी-कभी वास्तविक उपयोगकर्ताओं की भौतिक उपस्थिति संभव नहीं होती है इसलिए हम यहां इस समस्या को हल करने के लिए हैं!",
+      "uxTitle": "अपनी खुद की यूएक्स लैब शुरू करें",
+      "uxSubtitle1": "यदि आप एक अनुसंधानकर्ता, एक कंपनी, या एक पेशेवर हैं जो एक यूएक्स परीक्षण करना चाहते हैं, तो यहां आपको विभिन्न यूएक्स तकनीकों का उपयोग करके अपने परीक्षणों का विश्लेषण और ट्रैक करने में मदद करने के लिए कई उपकरण मिलेंगे।",
+      "uxSubtitle2": "इस ओपन सोर्स समुदाय को बढ़ाने में हमारी मदद करें और हमसे GitHub पर जुड़ें! :)",
+      "footer": "हम परियोजना को बढ़ाने में मदद करने के लिए नए साझेदारों की तलाश में हैं! हमसे संपर्क करने के लिए स्वतंत्र महसूस करें "
+    },
+    "listTests": {
+      "createdBy": "द्वारा बनाई गई",
+      "me": "मैं",
+      "progress": "प्रगति",
+      "updated": "अंतिम अपडेट पर",
+      "version": "संस्करण:",
+      "noTests": "कोई परीक्षण नहीं मिला",
+      "noTemplates": "कोई टेम्पलेट नहीं मिला"
+    },
+    "createTest": {
+      "title": "एक नया परीक्षण बनाएं",
+      "blanckTitle": "एक खाली परीक्षण बनाएं",
+      "blanckSubtitle": "एक पूरी तरह से नए और ताजा टेम्पलेट के साथ शुरू करने के लिए एक खाली परीक्षण बनाएं।",
+      "templateTitle": "टेम्पलेट से बनाएं",
+      "templateSubtitle": "हमारे उपयोगकर्ताओं में से एक द्वारा बनाए गए टेम्पलेट के आधार पर एक परीक्षण बनाएं।",
+      "create": "परीक्षण बनाएं",
+      "templateInfo": "टेम्पलेट जानकारी",
+      "deleteTemplate": "टेम्पलेट हटाएं",
+      "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
+      "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
+    },
+    "settings": {
+      "title": "सेटिंग्स",
+      "currentTest": "वर्तमान परीक्षण",
+      "createTemplate": "टेम्पलेट बनाएं",
+      "deleteTest": "परीक्षण हटाएं"
+    }
+  },
+  "alerts": {
+    "copy": "कॉपी सफल",
+    "noCopy": "कॉपी असफल",
+    "deleteTemplate": "क्या आप वाकई इस टेम्पलेट को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता!",
+    "deleteTest": "क्या आप वाकई इस परीक्षण को हटाना चाहते हैं?",
+    "addDescription": "कृपया एक विवरण जोड़ें",
+    "errorOccurred": "एक त्रुटि आई है",
+    "leave": "क्या आप वाकई जाना चाहते हैं?",
+    "sureLeave": "क्या आप वाकई जाना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
+    "imageURL": "छवि URL टाइप करें:",
+    "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं "
+  },
+  "buttons": {
+    "next": "अगला",
+    "previous": "पिछला",
+    "seeCode": "कोड देखें",
+    "username": "उपयोगकर्ता नाम",
+    "goToConsole": "कंसोल पर जाएं",
+    "signout": "साइन-आउट",
+    "returnToConsole": "कंसोल पर लौटें",
+    "tip": "टिप",
+    "cancel": "रद्द करें",
+    "create": "बनाएँ",
+    "close": "बंद करें",
+    "save": "सहेजें",
+    "stay": "रुकें",
+    "leave": "छोड़ें",
+    "help": "मदद",
+    "delete": "हटाएं"
+  },
+  "switches": {
+    "noAnswer": "कोई उत्तर नहीं",
+    "textArea": "टेक्स्ट एरिया",
+    "timer": "टाइमर",
+    "postTest": "पोस्ट प्रश्न",
+    "screenRecord": "स्क्रीन रिकॉर्ड",
+    "camera": "कैमरा",
+    "eyeTracker": "आई ट्रैकर",
+    "audioRecord": "ऑडियो रिकॉर्ड"
+  },
+  "inputs": {
+    "consentForm": "सहमति फॉर्म",
+    "preForm": "प्री फॉर्म",
+    "postForm": "पोस्ट फॉर्म"
   }
-  
+}

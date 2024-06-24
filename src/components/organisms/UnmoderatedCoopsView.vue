@@ -3,7 +3,7 @@
     <v-overlay v-if="loading" v-model="loading" class="text-center">
       <v-progress-circular indeterminate color="#fca326" size="50" />
       <div class="white-text mt-3">
-        Loading Cooperators
+        {{ $t('HeuristicsCooperators.messages.cooperators_loading') }}
       </div>
     </v-overlay>
     <Intro
@@ -38,10 +38,10 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Send invitations</span>
+          <span>{{ $t('HeuristicsCooperators.actions.send_invitation') }}</span>
         </v-tooltip>
 
-        <ShowInfo title="Cooperators">
+        <ShowInfo :title="$t('HeuristicsCooperators.title.cooperators')">
           <div slot="content" class="ma-0 pa-0" style="background: #f5f7ff">
             <v-chip
               v-for="(coop, i) in selectedCoops"
@@ -63,7 +63,7 @@
                   style="background: #f5f7ff"
                   :items="users"
                   item-text="email"
-                  label="Select cooperator"
+                  :label="$t('HeuristicsCooperators.actions.select_cooperator')"
                   multiple
                   outlined
                   dense
@@ -72,8 +72,7 @@
                   @input="validateEmail()"
                 >
                   <template v-slot:no-data>
-                    There are no users registered with that email, press enter
-                    to select anyways.
+                    {{ $t('HeuristicsCooperators.messages.no_users') }}
                   </template>
                 </v-combobox>
               </v-col>
@@ -81,7 +80,7 @@
                 <v-select
                   v-model="selectedRole"
                   class="mx-2"
-                  label="Role"
+                  :label="$t('HeuristicsCooperators.headers.role')"
                   color="#fca326"
                   outlined
                   dense
@@ -166,25 +165,37 @@
                       link
                       @click=";(messageModel = true), (selectedUser = item)"
                     >
-                      <v-list-item-title>Send a message</v-list-item-title>
+                      <v-list-item-title>
+                        {{ $t('HeuristicsCooperators.actions.send_message') }}
+                      </v-list-item-title>
                     </v-list-item>
                     <v-list-item
                       v-if="item.accepted == false"
                       link
                       @click="reinvite(item)"
                     >
-                      <v-list-item-title>Re-invite</v-list-item-title>
+                      <v-list-item-title>
+                        {{ $t('HeuristicsCooperators.actions.reinvite') }}
+                      </v-list-item-title>
                     </v-list-item>
 
                     <v-list-item v-if="item.accepted" @click="removeCoop(item)">
-                      <v-list-item-title>Remove cooperator</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsCooperators.actions.remove_cooperator')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
 
                     <v-list-item
                       v-if="item.invited && !item.accepted"
                       @click="cancelInvitation(item)"
                     >
-                      <v-list-item-title>Cancel invitation</v-list-item-title>
+                      <v-list-item-title>
+                        {{
+                          $t('HeuristicsCooperators.actions.cancel_invitation')
+                        }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -205,22 +216,22 @@
             <v-icon color="white" class="mr-2">
               mdi-email
             </v-icon>
-            Send a Message
+            {{ $t('HeuristicsCooperators.actions.send_message') }}
           </v-card-title>
           <v-card-text>
             <v-text-field
               v-model="messageTitle"
               required
-              label="Title"
-              hint="Type a title for your message"
+              :label="$t('HeuristicsCooperators.headers.title')"
+              :hint="$t('HeuristicsCooperators.messages.message_title_hint')"
               outlined
               class="rounded-lg mt-4"
             />
             <v-textarea
               v-model="messageContent"
               required
-              label="Content"
-              hint="Type the content of your message"
+              :label="$t('HeuristicsCooperators.headers.content')"
+              :hint="$t('HeuristicsCooperators.messages.message_content_hint')"
               outlined
               class="rounded-lg"
             />
@@ -236,7 +247,7 @@
               class="rounded-lg"
               @click="messageModel = false"
             >
-              Cancel
+              {{ $t('HeuristicsCooperators.actions.cancel') }}
             </v-btn>
             <v-btn
               color="orange"
@@ -244,7 +255,7 @@
               class="rounded-lg"
               @click="sendMessage(selectedUser, messageTitle, messageContent)"
             >
-              Send
+              {{ $t('HeuristicsCooperators.actions.send') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -259,8 +270,8 @@ import Snackbar from '@/components/atoms/Snackbar'
 import Intro from '@/components/molecules/IntroCoops'
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
 import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
-import { cooperatorsHeaders } from '@/utils/headers'
-import { roleOptionsItems } from '@/utils/items'
+// import { cooperatorsHeaders } from '@/utils/headers'
+// import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
 const UIDGenerator = require('uid-generator')
 export default {
@@ -274,8 +285,8 @@ export default {
   props: { id: { type: String, default: '' } },
   data: () => ({
     object: null,
-    headers: cooperatorsHeaders,
-    roleOptions: roleOptionsItems,
+    // headers: headers,
+    // roleOptions: roleOptionsItems,
     intro: null,
     email: '',
     selectedCoops: [],
@@ -310,6 +321,43 @@ export default {
     loading() {
       return this.$store.getters.loading
     },
+    headers() {
+      return [
+        {
+          text: this.$t('HeuristicsCooperators.headers.email'),
+          value: 'email',
+        },
+        {
+          text: this.$t('HeuristicsCooperators.headers.role'),
+          value: 'accessLevel',
+        },
+        {
+          text: this.$t('HeuristicsCooperators.headers.invited'),
+          value: 'invited',
+          justify: 'center',
+        },
+        {
+          text: this.$t('HeuristicsCooperators.headers.accepted'),
+          value: 'accepted',
+          justify: 'center',
+        },
+        {
+          text: this.$t('HeuristicsCooperators.headers.more'),
+          value: 'more',
+          sortable: false,
+        },
+      ]
+    },
+    roleOptions() {
+      return [
+        {
+          text: this.$t('HeuristicsCooperators.roles.administrator'),
+          value: 0,
+        },
+        { text: this.$t('HeuristicsCooperators.roles.evaluator'), value: 1 },
+        { text: this.$t('HeuristicsCooperators.roles.guest'), value: 2 },
+      ]
+    },
   },
   watch: {
     loading() {
@@ -335,7 +383,11 @@ export default {
       ).text
       if (item.accessLevel !== event.value) {
         const ok = confirm(
-          `Are you sure you want to change ${item.email}'s role from "${currentAccessLevelText}" to "${event.text}"`,
+          this.$t('HeuristicsCooperators.messages.change_role', {
+            email: item.email,
+            old: currentAccessLevelText,
+            new: event.text,
+          }),
         )
         if (ok) {
           // UPDATE TEST WITH NEW COLLABORATOR ROLE
@@ -382,6 +434,7 @@ export default {
             author: `${this.test.testAdmin.email}`,
             read: false,
             testId: this.test.id,
+            accessLevel: this.roleOptions[this.selectedRole].value,
           }),
         })
       }
@@ -457,22 +510,31 @@ export default {
             this.$toast.error(this.email + ' is not a valid email')
           }
           if (!this.users.find((user) => user.email === this.email)) {
-            // Verifica se o e-mail inserido manualmente existe na lista de usuários
             this.$toast.error(
               this.email + ' is not a valid email or does not exist',
             )
-            return // Se não existir, interrompe a execução
+            return
           } else if (!this.selectedCoops.includes(this.email)) {
             this.selectedCoops.push(this.email)
           }
         }
       } else if (!this.selectedCoops.includes(this.email)) {
-        this.selectedCoops.push(this.email)
+        const alreadyInvited = this.cooperatorsEdit.find(
+          (cooperator) => cooperator.email === this.email.email,
+        )
+        if (alreadyInvited) {
+          this.$toast.warning(this.email.email + ' has already been invited')
+          return
+        } else {
+          this.selectedCoops.push(this.email)
+        }
       }
     },
     async removeCoop(coop) {
       const ok = confirm(
-        `Are you sure you want to remove ${coop.email} from your cooperators?`,
+        this.$t('HeuristicsCooperators.messages.remove_cooperator', {
+          email: coop.email,
+        }),
       )
       if (ok) {
         // Remove from test
@@ -517,7 +579,9 @@ export default {
     },
     async cancelInvitation(guest) {
       const ok = confirm(
-        `Are you sure you want to cancel ${guest.email} from your cooperators?`,
+        this.$t('HeuristicsCooperators.messages.cancel_invitation', {
+          email: guest.email,
+        }),
       )
       if (ok) {
         const index = this.cooperatorsEdit.indexOf(guest)

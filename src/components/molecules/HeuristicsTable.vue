@@ -224,7 +224,8 @@
                             padding-bottom: 4px !important;
                           "
                         >
-                          {{ item.id }} - {{ item.title }}
+                           {{ item.id + 1 }}
+                          - {{ item.title }}
                         </v-list-item-title>
                       </v-list-item-content>
                       <div
@@ -337,7 +338,12 @@
                 <v-spacer />
                 <v-menu v-model="menuHeuristics" offset-x>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="HandleNotEditable"
+                    >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
@@ -347,7 +353,7 @@
                   >
                     <!--Edit Heuris Flag -->
                     <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
+                      :disabled="testAnswerDocLength > 0 ? false : false"
                       @click="editHeuris(heuristics[itemSelect])"
                     >
                       <v-list-item-icon>
@@ -429,19 +435,24 @@
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="HandleNotEditable"
+                    >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
                   <v-list
                     dense
-                    :disabled="testAnswerDocLength > 0 ? true : false"
+                    :disabled="testAnswerDocLength > 0 ? false : false"
                     :class="{
                       disabledBtnBackground: testAnswerDocLength > 0,
                     }"
                   >
                     <v-list-item
-                      :disabled="testAnswerDocLength > 0 ? true : false"
+                      :disabled="testAnswerDocLength > 0 ? false : false"
                       @click="
                         editQuestions(
                           heuristics[itemSelect].questions[questionSelect],
@@ -754,6 +765,8 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     moveItemDown(index) {
@@ -772,6 +785,8 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     deleteHeuristic(item) {
@@ -911,8 +926,12 @@ export default {
         }
       }
     },
-    updateDescription({ index, description }) {
-      this.heuristics[this.itemSelect].questions[this.questionSelect].descriptions.splice(index, 1, description);
+    //Solution #1
+    HandleNotEditable() {
+      console.log('not editable')
+      // if (this.testAnswerDocLength > 0) {
+      //   this.$toast.error('Not Editable : this test already has answers')
+      // }
     },
   },
 }
