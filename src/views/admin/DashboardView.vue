@@ -16,6 +16,7 @@
           v-bind="attrs"
           @click="goToCreateTestRoute()"
           v-on="on"
+          data-testid="create-test-btn"
         >
           <v-icon large>
             mdi-plus
@@ -289,8 +290,7 @@ export default {
         if (val == 1) await this.getSharedWithMeTests()
 
         if (val == 2) await this.getPublicTests()
-      }
-      else if (this.mainIndex == 1) {
+      } else if (this.mainIndex == 1) {
         if (val == 0) await this.getMyTemplates()
         if (val == 1) await this.getPublicTemplates()
       }
