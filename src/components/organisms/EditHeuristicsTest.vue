@@ -2,21 +2,21 @@
   <div>
     <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">
-        Heuristics
+        {{ $t('HeuristicsEditTest.titles.heuristics') }}
       </v-tab>
       <v-tab @click="tabClicked(1)">
-        Options
+        {{ $t('HeuristicsEditTest.titles.options') }}
       </v-tab>
       <v-tab @click="tabClicked(2)">
-        Weights
+        {{ $t('HeuristicsEditTest.titles.weights') }}
       </v-tab>
       <v-tab @click="tabClicked(3)">
-        Settings
+        {{ $t('HeuristicsEditTest.titles.settings') }}
       </v-tab>
     </v-tabs>
 
     <div>
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" />
+      <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="change" />
       <OptionsTable v-if="index == 1" :options="object.options" />
       <WeightTable v-if="index == 2" :options="object.weight" />
       <Settings v-if="index == 3" :options="object.settings" />
@@ -45,7 +45,7 @@ export default {
 
     object: {
       type: Object,
-      default: () => { },
+      default: () => {},
     },
     index: {
       type: Number,
@@ -61,6 +61,10 @@ export default {
     tabClicked(index) {
       this.$emit('tabClicked', index)
     },
+    change(){
+      this.$emit('change')
+    }
   },
+  
 }
 </script>
