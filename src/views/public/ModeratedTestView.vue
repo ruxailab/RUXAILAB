@@ -192,7 +192,7 @@
               ref="VideoCall"
               :index="index"
               :is-admin="isAdmin"
-              @emit-confirm="confirmConnect()"
+              @emit-confirm="confirmConnect(), (index = 1)"
             />
           </v-row>
         </v-card>
@@ -375,7 +375,7 @@
                 dark
                 depressed
                 block
-                @click="finishTest(), stopRecording()"
+                @click="stopRecording(), finishTest()"
               >
                 Finish Test
               </v-btn>
@@ -474,7 +474,7 @@
                     :index="index"
                     :is-admin="isAdmin"
                     :consent-completed="consentCompleted"
-                    @emit-confirm="confirmConnect(), (index = 1)"
+                    @emit-confirm="confirmConnect(), (index = 2)"
                   />
                 </v-col>
               </v-row>
@@ -568,7 +568,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.preTestStatus != 'done'"
+                    v-if="userTestStatus.preTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -728,7 +728,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.postTestStatus != 'done'"
+                    v-if="userTestStatus.postTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -796,34 +796,26 @@
         <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+    <!-- \\\\\\\\\\\\\\\\\\\\\\\ LOADING \\\\\\\\\\\\\\\\\\\\\\\ -->
     <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving Answer
-      </div>
+      <v-card class="pa-4" rounded="xl" color="grey darken-4">
+        <v-progress-linear
+          style="border-radius: 20px; width: 20wv;"
+          :value="uploadProgress"
+          color="#fca326"
+          height="20"
+          class="mb-2"
+          ><template v-slot:default="{ value }">
+            <span>{{ Math.ceil(value) }}%</span>
+          </template></v-progress-linear
+        >
+        <div class="white-text mx-16">
+          Saving Your Answer...
+        </div>
+      </v-card>
     </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
+
+    <v-dialog :value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -849,20 +841,20 @@
 </template>
 
 <script>
-import VClamp from 'vue-clamp'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
+  props: { token: { type: String, default: null } },
   components: {
-    VClamp,
-    CardSignIn,
-    CardSignUp,
     VideoCall,
     FeedbackView,
   },
@@ -900,14 +892,10 @@ export default {
     consentCompleted: false,
     sessionCooperator: null,
     testDate: null,
+    saved: false,
+    uploadProgress: 0,
   }),
   computed: {
-    token() {
-      const url = window.location.href
-      const parts = url.split('/')
-      const lastSegment = parts[parts.length - 1]
-      return lastSegment
-    },
     test() {
       return this.$store.getters.test
     },
@@ -934,14 +922,20 @@ export default {
       return this.$store.getters.remoteStream
     },
     isTestAvailable() {
-      console.log(new Date(this.testDate))
-      console.log(new Date() > new Date(this.testDate))
       return new Date() > new Date(this.testDate)
     },
   },
   watch: {
     taskIndex() {
       this.$refs.rightView.scrollTop = 0
+    },
+    start() {
+      if (this.start) {
+        window.onbeforeunload = function() {
+          return 'handle your events or msgs here'
+        }
+      }
+      // save first to exit
     },
     async user() {
       if (this.user) {
@@ -951,12 +945,19 @@ export default {
     },
     async localStream(value) {
       if (value && !this.isAdmin) {
-        console.log(value)
         this.startRecordingEvaluator()
       } else if (value && this.isAdmin) {
         this.startRecordingModerator()
       }
     },
+    'userTestStatus.preTestStatus': function(newValue) {
+      if (newValue === 'done') {
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
+      }
+    },
+
     'userTestStatus.postTestStatus': function(newValue) {
       if (newValue === 'done') {
         this.postTestFinished = true
@@ -967,15 +968,16 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
-        if (!this.isAdmin) {
-          window.open(this.test.testStructure.landingPage)
-        }
       }
     },
   },
   async created() {
     await this.verifyAdmin()
     if (this.token != null) {
+      if (this.token == this.test.id) {
+        this.$toast.info('Use a session link to access your moderated test!')
+        this.$router.push('/managerview/' + this.test.id)
+      }
       this.sessionCooperator = this.test.cooperators.find(
         (user) => user.userDocId === this.token,
       )
@@ -992,6 +994,13 @@ export default {
     } else {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
+    }
+
+    if (!this.isAdmin) {
+      await this.$store.dispatch('acceptTestCollaboration', {
+        test: this.test,
+        cooperator: this.user,
+      })
     }
 
     await this.mappingSteps()
@@ -1027,11 +1036,27 @@ export default {
   async beforeDestroy() {
     if (this.isAdmin) {
       this.disconnect()
+      window.onbeforeunload = null
       await this.$store.dispatch('hangUp', this.roomTestId)
     }
   },
+  mounted() {
+    if (this.user == null) {
+      this.$toast.error(
+        'Login to your RUXAILAB account first to access the test!',
+      )
+      this.$router.push('/signin')
+    }
+  },
   methods: {
+    isSaved() {
+      return this.saved
+    },
+    isTestNotStarted() {
+      return this.start
+    },
     async saveAnswer() {
+      this.currentUserTestAnswer.submitted = true
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
@@ -1050,9 +1075,7 @@ export default {
           testStructure.userTasks[id].taskStatus = 'open'
 
           updateDoc(testRef, { testStructure })
-            .then(() => {
-              console.log('Status da tarefa atualizado com sucesso')
-            })
+            .then(() => {})
             .catch((error) => {
               console.error('Erro ao atualizar o status da tarefa:', error)
             })
@@ -1085,9 +1108,7 @@ export default {
             }
           }
           updateDoc(testRef, data)
-            .then(() => {
-              console.log(`Status da ${type} atualizado com sucesso`)
-            })
+            .then(() => {})
             .catch((error) => {
               console.error(`Erro ao atualizar o status da ${type}:`, error)
             })
@@ -1100,6 +1121,9 @@ export default {
           console.error('Documento do teste não encontrado')
         }
       })
+    },
+    setExistUser() {
+      this.noExistUser = false
     },
 
     changeStatus(id, type, newStatus) {
@@ -1134,14 +1158,12 @@ export default {
         })
         .then(() => {
           this.calculateProgress()
-          console.log('Status atualizado com sucesso')
         })
         .catch((error) => {
           console.error('Erro ao atualizar o status:', error)
         })
     },
     async startRecordingEvaluator() {
-      console.log('startRecordingEvaluator')
       this.recording = true
       this.recordedChunksEvaluator = []
       this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
@@ -1154,30 +1176,49 @@ export default {
 
       this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
         const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
           type: 'video/webm',
         })
         const storageEvaluator = getStorage()
         const storageRefEvaluator = ref(
           storageEvaluator,
-          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
+          `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
         )
-        await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
 
-        this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
-        this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
-        this.isLoading = false
-        this.$router.push('/testslist')
+        const uploadTask = uploadBytesResumable(
+          storageRefEvaluator,
+          videoBlobEvaluator,
+        )
+
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            this.isLoading = false
+          },
+          async () => {
+            this.recordedVideoEvaluator = await getDownloadURL(
+              storageRefEvaluator,
+            )
+            this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
+            this.isLoading = false
+            this.saved = true
+            this.localStream.getTracks().forEach((track) => track.stop())
+            window.onbeforeunload = null
+            this.$router.push('/testslist')
+          },
+        )
       }
 
       this.mediaRecorderEvaluator.start()
     },
 
     async startRecordingModerator() {
-      console.log('startRecordingModerator')
       this.recording = true
       this.recordedChunksModerator = []
       this.mediaRecorderModerator = new MediaRecorder(this.localStream)
@@ -1190,25 +1231,41 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
         const videoBlobModerator = new Blob(this.recordedChunksModerator, {
           type: 'video/webm',
         })
         const storageModerator = getStorage()
         const storageRefModerator = ref(
           storageModerator,
-          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
+          `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`,
         )
-        await uploadBytes(storageRefModerator, videoBlobModerator)
 
-        this.recordedVideoModerator = await getDownloadURL(storageRefModerator)
-        this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
-        this.isLoading = false
-        this.$router.push('/testslist')
+        const uploadTask = uploadBytesResumable(
+          storageRefModerator,
+          videoBlobModerator,
+        )
+
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            this.isLoading = false
+          },
+          async () => {
+            this.recordedVideoModerator = await getDownloadURL(
+              storageRefModerator,
+            )
+            this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+            this.isLoading = false
+            this.$router.push('/testslist')
+          },
+        )
       }
-
       this.mediaRecorderModerator.start()
     },
 
@@ -1219,6 +1276,7 @@ export default {
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
+        console.log('Stop media recorder moderator')
         this.mediaRecorderModerator.stop()
         this.localStream.stop()
         this.recording = false
@@ -1319,9 +1377,6 @@ export default {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
     },
-    setExistUser() {
-      this.noExistUser = false
-    },
     async verifyAdmin() {
       if (this.test.testAdmin.email == this.user.email) {
         this.isAdmin = true
@@ -1376,8 +1431,9 @@ export default {
       }
     },
     async finishTest() {
-      this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
+      this.saved = true
+      window.onbeforeunload = null
     },
     validate(object) {
       return object !== null && object !== undefined && object !== ''
