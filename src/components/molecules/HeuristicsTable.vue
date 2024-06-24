@@ -505,6 +505,7 @@
                               ref="descBtn"
                               :question-index="questionSelect"
                               :heuristic-index="itemSelect"
+                              @update-description="updateDescription"
                             />
                           </v-row>
                         </v-col>
@@ -516,7 +517,7 @@
                       <!-- table actions -->
                       <v-row justify="end" class="pr-1">
                         <!-- TODO: Uncomment and fix reactivity -->
-                        <!-- <v-btn
+                        <v-btn
                           icon
                           small
                           class="mr-2"
@@ -525,7 +526,7 @@
                           <v-icon small>
                             mdi-pencil
                           </v-icon>
-                        </v-btn> -->
+                        </v-btn>
                         <v-btn icon small @click="deleteItem(item)">
                           <v-icon small>
                             mdi-delete
