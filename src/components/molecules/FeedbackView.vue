@@ -79,6 +79,7 @@ export default {
   },
   methods: {
     setupStreams() {
+      console.log('setupStreams')
       this.$refs.localMedia.srcObject = this.localCameraStream
       this.$refs.remoteMedia.srcObject = this.remoteCameraStream
     },

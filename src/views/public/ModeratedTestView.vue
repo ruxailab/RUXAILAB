@@ -837,7 +837,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <audio ref="remoteAudio"></audio>
+    <video ref="remoteAudio" autoplay playsinline style="display:none;"></video>
   </div>
 </template>
 
@@ -1172,17 +1172,7 @@ export default {
         })
     },
     async setRemoteAudio() {
-      if (
-        this.remoteCameraScreen &&
-        this.remoteCameraScreen.getAudioTracks().length > 0
-      ) {
-        let audioTrack = this.remoteCameraScreen
-          .getTracks()
-          .find((track) => track.kind == 'audio')
-        const audioStream = new MediaStream([audioTrack])
-        this.$refs.remoteAudio.srcObject = audioStream
-        this.$refs.remoteAudio.play()
-      }
+      this.$refs.remoteAudio.srcObject = this.remoteCameraStream
     },
     async uploadVideo(recordedChunks, storagePath) {
       const videoBlob = new Blob(recordedChunks, { type: 'video/webm' })
@@ -1258,6 +1248,7 @@ export default {
     async startRecordingModerator() {
       this.recording = true
       this.recordedChunksModerator = []
+      const storagePath = `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`
       let moderatorCamera = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
@@ -1272,7 +1263,6 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const storagePath = `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`
         try {
           this.recordedVideoModerator = await this.uploadVideo(
             this.recordedChunksModerator,
