@@ -8,26 +8,44 @@
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
-        <v-btn
-          v-if="localCameraStream"
-          class="mt-4 mx-2"
-          :dark="isMicrophoneMuted"
-          :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
-          fab
-          @click="toggleMicrophone"
-        >
-          <v-icon v-if="!isMicrophoneMuted">
-            mdi-microphone
-          </v-icon>
-          <v-icon v-else>
-            mdi-microphone-off
-          </v-icon>
-        </v-btn>
-        <v-btn class="mt-4 mx-2 white" fab @click="toggleCameraScreen">
-          <v-icon>
-            mdi-monitor-screenshot
-          </v-icon></v-btn
-        >
+        <v-card class="pa-2 buttonCard" depressed>
+          <v-btn
+            v-if="localCameraStream"
+            class="mx-3"
+            :dark="isMicrophoneMuted"
+            :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
+            fab
+            depressed
+            @click="toggleMicrophone"
+          >
+            <v-icon v-if="!isMicrophoneMuted">
+              mdi-microphone
+            </v-icon>
+            <v-icon v-else>
+              mdi-microphone-off
+            </v-icon>
+          </v-btn>
+          <v-btn
+            class="mx-3"
+            :dark="isSharingScreen"
+            :class="{ red: isSharingScreen, white: !isSharingScreen }"
+            depressed
+            fab
+            @click="toggleCameraScreen"
+          >
+            <v-icon v-if="!isSharingScreen">
+              mdi-monitor-screenshot
+            </v-icon>
+            <v-icon v-else>
+              mdi-monitor-off
+            </v-icon></v-btn
+          >
+          <v-btn class="mx-3 white" depressed fab @click="redirect()">
+            <v-icon>
+              mdi-link
+            </v-icon></v-btn
+          >
+        </v-card>
       </v-row>
     </v-col>
   </v-row>
@@ -53,6 +71,9 @@ export default {
     }
   },
   computed: {
+    test() {
+      return this.$store.getters.test
+    },
     localCameraStream() {
       return this.$store.getters.localCameraStream
     },
@@ -78,6 +99,9 @@ export default {
     },
   },
   methods: {
+    redirect() {
+      window.open(this.test.testStructure.landingPage)
+    },
     setupStreams() {
       console.log('setupStreams')
       this.$refs.localMedia.srcObject = this.localCameraStream
@@ -111,6 +135,7 @@ export default {
 
         if (stream) {
           await this.$store.dispatch('changeTrack', stream)
+          this.isSharingScreen = !this.isSharingScreen
           this.usingCamera = !this.usingCamera
         }
       } catch (e) {
@@ -129,5 +154,16 @@ export default {
   border-radius: 30px;
   width: 100%;
   object-fit: contain;
+  margin-top: 5vh;
+}
+.buttonCard {
+  background: rgb(77, 77, 77);
+  background: linear-gradient(
+    180deg,
+    rgb(190, 190, 190) 0%,
+    rgb(170, 170, 170) 100%
+  );
+  border-radius: 20px;
+  margin-top: 10vh;
 }
 </style>
