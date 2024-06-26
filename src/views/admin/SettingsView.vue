@@ -130,7 +130,8 @@
             >
               <v-icon left>
                 mdi-trash-can-outline
-              </v-icon> {{ $t('pages.settings.deleteTest') }}
+              </v-icon>
+              {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </v-row>
         </v-card>
@@ -237,7 +238,7 @@ export default {
       if (this.test)
         return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
 
-      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
+      return "Are you sure you want to delete this test? This action can't be undone" //in case object isnt loaded
     },
     hasTemplate() {
       if (this.object)
@@ -430,15 +431,18 @@ export default {
         header: tempHeader,
         body: tempBody,
       })
-
-      await this.$store.dispatch('createTemplate', template)
-      this.closeDialog()
+      if (this.template.templateTitle.trim() !== '') {
+        await this.$store.dispatch('createTemplate', template)
+        this.closeDialog()
+      }else{
+        this.$refs.tempform.validate()
+      }
     },
     closeDialog() {
       this.tempDialog = false
       this.$refs.tempform.resetValidation()
-      this.templateTitle = ''
-      this.templateDescription = ''
+      this.template.templateTitle = ''
+      this.template.templateDescription = ''
     },
     setLeavingAlert() {
       this.$store.commit('SET_DIALOG_LEAVE', true)
