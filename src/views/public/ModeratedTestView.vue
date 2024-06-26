@@ -1187,10 +1187,11 @@ export default {
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
           },
           (error) => {
             console.error('Upload failed:', error)
-            reject(error)
+            this.isLoading = false
           },
           async () => {
             const downloadURL = await getDownloadURL(storageRef)
@@ -1226,7 +1227,6 @@ export default {
           this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
           this.isLoading = false
           this.saved = true
-          this.localStream.getTracks().forEach((track) => track.stop())
           window.onbeforeunload = null
           this.$router.push('/testslist')
         } catch (error) {
@@ -1271,7 +1271,6 @@ export default {
           this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
           this.isLoading = false
           this.saved = true
-          this.localStream.getTracks().forEach((track) => track.stop())
           window.onbeforeunload = null
           this.$router.push('/testslist')
         } catch (error) {

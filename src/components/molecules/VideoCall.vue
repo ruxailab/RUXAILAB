@@ -177,11 +177,11 @@ export default {
           roomRef,
           'calleeCandidates',
         )
-        this.peerConnection.addEventListener('icecandidate', (event) => {
+        this.peerConnection.addEventListener('icecandidate', async (event) => {
           if (!event.candidate) {
             return
           }
-          addDoc(calleeCandidatesCollection, event.candidate.toJSON())
+          await addDoc(calleeCandidatesCollection, event.candidate.toJSON())
         })
 
         this.peerConnection.addEventListener('track', (event) => {
@@ -219,11 +219,13 @@ export default {
         })
       }
     },
-
     async openUserCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            width: { ideal: 640, max: 1280 },
+            height: { ideal: 360, max: 720 },
+          },
           audio: true,
         })
         if (stream) {
