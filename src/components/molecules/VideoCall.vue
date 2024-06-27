@@ -158,6 +158,15 @@ export default {
           }
         })
       })
+
+      this.peerConnection.addEventListener('connectionstatechange', () => {
+        if (
+          this.peerConnection.connectionState == 'disconnected' ||
+          this.peerConnection.iceConnectionState == 'disconnected'
+        ) {
+          this.$store.commit('SET_DISCONNECTED', true)
+        }
+      })
     },
 
     async joinRoomById(roomId) {
@@ -218,6 +227,14 @@ export default {
           })
         })
       }
+      this.peerConnection.addEventListener('connectionstatechange', () => {
+        if (
+          this.peerConnection.connectionState == 'disconnected' ||
+          this.peerConnection.iceConnectionState == 'disconnected'
+        ) {
+          this.$store.commit('SET_DISCONNECTED', true)
+        }
+      })
     },
     async openUserCamera() {
       try {
