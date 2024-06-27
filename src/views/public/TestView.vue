@@ -273,7 +273,10 @@
                     v-for="(heuris, i) in item.value"
                     :key="i"
                     link
-                    @click="heurisIndex = i"
+                    @click="
+                      heurisIndex = i
+                      setReviewTrue()
+                    "
                   >
                     <v-list-item-icon>
                       <v-progress-circular
@@ -307,6 +310,18 @@
                         "
                       >
                         {{ heuris.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item style="cursor:pointer" v-if="review==true && calculatedProgress==100" @click="review=false" >
+                    <v-list-item-icon>
+                      <v-icon color="#fca326">
+                        mdi-send-circle-outline
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <div style="color: #fca326;">Submit</div>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -351,7 +366,7 @@
         >
           <!-- Heuristics -->
           <ShowInfo
-            v-if="index == 1"
+            v-if="index == 1 && review == true"
             :title="test.testStructure[heurisIndex].title"
           >
             <div slot="content" class="ma-0 pa-0">
@@ -408,6 +423,46 @@
               </v-row>
             </div>
           </ShowInfo>
+          <div v-if="calculatedProgress == 100 && review == false">
+            <ShowInfo title="Finish Test">
+              <div slot="content" class="ma-0 pa-0">
+                <v-row justify="center" class="ma-4">
+                  <v-col cols="11" class="mt-3">
+                    <span class="cardsTitle">Final Message!</span>
+                    <br />
+                    <span class="cardsSubtitle">
+                      Congratulations you finished this test, now you can submit
+                      your answer.
+                    </span>
+                    <v-row justify="center" class="mt-3">
+                      <v-col cols="4">
+                        <img
+                          draggable="false"
+                          src="../../../public/finalMessage.svg"
+                          alt="Final test svg"
+                        />
+                      </v-col>
+                      <v-col cols="4" class="pt-2 my-8">
+                        <span class="cardsSubtitle"
+                          >Click here to submit your answer, when submitted your
+                          answer can't be changed!</span
+                        >
+                        <v-col class="mt-2">
+                          <v-btn
+                            @click="dialog = true"
+                            color="orange"
+                            depressed
+                            dark
+                            ><v-icon class="ma-2">mdi-send</v-icon>Submit</v-btn
+                          >
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </div>
+            </ShowInfo>
+          </div>
         </v-col>
       </v-row>
     </div>
@@ -461,6 +516,7 @@ export default {
     res: 0,
     dialog: false,
     calculatedProgress: 0,
+    review: true,
   }),
   computed: {
     test() {
@@ -511,6 +567,11 @@ export default {
       if (this.user) {
         this.noExistUser = false
         if (this.logined) this.setTest()
+      }
+    },
+    calculatedProgress(newVal) {
+      if (newVal == 100) {
+        this.review = false
       }
     },
   },
@@ -667,6 +728,10 @@ export default {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
       this.populateWithHeuristicQuestions()
+    },
+    setReviewTrue() {
+      console.log('click done')
+      this.review = true
     },
   },
   beforeRouteEnter(to, from, next) {
