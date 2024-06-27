@@ -280,7 +280,7 @@
                     link
                     @click="
                       heurisIndex = i
-                      clickfun()
+                      setReviewTrue()
                     "
                   >
                     <v-list-item-icon>
@@ -716,7 +716,7 @@ export default {
       await this.$store.dispatch('getCurrentTestAnswerDoc')
       this.populateWithHeuristicQuestions()
     },
-    clickfun() {
+    setReviewTrue() {
       console.log('click done')
       this.review = true
     },
