@@ -837,12 +837,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <DisconnectedCard v-if="isDisconnected" />
     <video ref="remoteAudio" autoplay playsinline style="display:none;"></video>
   </div>
 </template>
 
 <script>
 import VideoCall from '@/components/molecules/VideoCall.vue'
+import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
 import {
   getStorage,
@@ -858,6 +860,7 @@ export default {
   components: {
     VideoCall,
     FeedbackView,
+    DisconnectedCard,
   },
   data: () => ({
     conectionStatus: false,
@@ -925,6 +928,9 @@ export default {
     },
     isTestAvailable() {
       return new Date() > new Date(this.testDate)
+    },
+    isDisconnected() {
+      return this.$store.getters.isDisconnected
     },
   },
   watch: {

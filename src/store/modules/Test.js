@@ -29,7 +29,8 @@ export default {
     finalMessage: '',
     remoteCameraStream: null,
     localCameraStream: null,
-    peerConnection: null, // Adiciona peerConnection aqui
+    peerConnection: null,
+    isDisconnected: false,
   },
   getters: {
     tests(state) {
@@ -75,8 +76,10 @@ export default {
       return state.localCameraStream
     },
     peerConnection(state) {
-      // Adiciona getter para peerConnection
       return state.peerConnection
+    },
+    isDisconnected(state) {
+      return state.isDisconnected
     },
   },
   mutations: {
@@ -128,6 +131,9 @@ export default {
     SET_PEER_CONNECTION(state, connection) {
       // Adiciona mutação para peerConnection
       state.peerConnection = connection
+    },
+    SET_DISCONNECTED(state, status) {
+      state.isDisconnected = status
     },
     updateCurrentImageUrl(state, url) {
       state.currentImageUrl = url
