@@ -92,6 +92,7 @@
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
             <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
+            <v-tab>Sessions</v-tab>
 
             <v-spacer />
           </v-tabs>
@@ -162,6 +163,18 @@
             @clicked="goTo"
           />
 
+          <!-- Tests -> Sessions -->
+          <List
+            v-if="
+              filteredModeratedSessions.length > 0 &&
+                mainIndex == 0 &&
+                subIndex == 3
+            "
+            :items="filteredModeratedSessions"
+            type="sessions"
+            @clicked="goTo"
+          />
+
           <!-- Templates -> Personal -->
           <List
             v-if="mainIndex == 1 && subIndex == 0"
@@ -228,13 +241,16 @@ export default {
     disablePrevious: true,
     tempDialog: false,
     temp: {},
+    filteredModeratedSessions: [],
   }),
 
   computed: {
     user() {
       return this.$store.getters.user
     },
-
+    test() {
+      return this.$store.getters.test
+    },
     tests() {
       return this.$store.state.Tests.tests
     },
@@ -268,6 +284,10 @@ export default {
     showTempDetails() {
       return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
+  },
+
+  mounted() {
+    this.filterModeratedSessions()
   },
 
   watch: {
@@ -326,12 +346,42 @@ export default {
       await this.$store.dispatch('getSharedWithMeTests', this.user.id)
     },
 
+    // user.myAnswers -> userTestType == 'moderated'
+    // tests.testDocId -> cooperators.userDocId == meuId -> testDate <= hoje
+    async filterModeratedSessions() {
+      // Filtra os testes do usuário que são do tipo 'moderated'
+      let userModeratedTests = Object.values(this.user.myAnswers).filter(
+        (answer) => answer.userTestType === 'moderated',
+      )
+
+      // Inicializa um array para armazenar os objetos cooperator válidos
+      let cooperatorObjs = []
+
+      for (let i = 0; i < userModeratedTests.length; i++) {
+        let testId = userModeratedTests[i].testDocId
+        let testObj = await this.$store.dispatch('returnTest', { id: testId })
+
+        if (testObj) {
+          let cooperatorObj = testObj.cooperators.find(
+            (coop) => coop.userDocId === this.user.id,
+          )
+
+          // Verifica se a data do teste é menor ou igual à data atual
+          if (cooperatorObj && new Date(testObj.testDate) <= new Date()) {
+            cooperatorObjs.push(cooperatorObj)
+          }
+        }
+      }
+
+      console.log(cooperatorObjs)
+      return cooperatorObjs
+    },
+
     goToCreateTestRoute() {
       this.$router.push('/createtest')
     },
 
     goTo(test) {
-      // if it is from the my tests tab
       if (this.mainIndex === 0) {
         if (this.subIndex === 0) {
           this.$router.push({
