@@ -67,7 +67,6 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-//import AuthController from "@/controllers/AuthController";
 
 export default {
   components: {
