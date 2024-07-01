@@ -174,6 +174,23 @@
             type="sessions"
             @clicked="goTo"
           />
+          <v-col
+            align="center"
+            class="my-5"
+            v-if="
+              filteredModeratedSessions.length == 0 &&
+                mainIndex == 0 &&
+                subIndex == 3
+            "
+          >
+            <span style="color: #575757; font-size: 1.25rem !important;"
+              >You don't have active sessions</span
+            >
+            <br />
+            <v-icon style="color: #575757;" class="mt-2" large
+              >mdi-clock-remove-outline</v-icon
+            >
+          </v-col>
 
           <!-- Templates -> Personal -->
           <List
@@ -355,26 +372,31 @@ export default {
       )
 
       // Inicializa um array para armazenar os objetos cooperator válidos
-      let cooperatorObjs = []
+      let cooperatorArray = []
 
       for (let i = 0; i < userModeratedTests.length; i++) {
         let testId = userModeratedTests[i].testDocId
-        let testObj = await this.$store.dispatch('returnTest', { id: testId })
+        console.log(testId)
+        let testObj = await this.$store.dispatch('getTest', { id: testId })
 
+        console.log(testObj)
         if (testObj) {
           let cooperatorObj = testObj.cooperators.find(
-            (coop) => coop.userDocId === this.user.id,
+            (coop) => coop.userDocId == this.user.id,
           )
-
+          console.log(cooperatorObj)
+          cooperatorObj.testTitle = testObj.testTitle
+          cooperatorObj.testAdmin = testObj.testAdmin
+          cooperatorObj.id = testObj.id
           // Verifica se a data do teste é menor ou igual à data atual
-          if (cooperatorObj && new Date(testObj.testDate) <= new Date()) {
-            cooperatorObjs.push(cooperatorObj)
+          if (cooperatorObj) {
+            cooperatorArray.push(cooperatorObj)
           }
         }
       }
-
-      console.log(cooperatorObjs)
-      return cooperatorObjs
+      this.filteredModeratedSessions = cooperatorArray
+      console.log(cooperatorArray)
+      return cooperatorArray
     },
 
     goToCreateTestRoute() {
@@ -383,6 +405,7 @@ export default {
 
     goTo(test) {
       if (this.mainIndex === 0) {
+        console.log(test)
         if (this.subIndex === 0) {
           this.$router.push({
             name: 'ManagerView',
@@ -407,6 +430,8 @@ export default {
             name: 'ManagerView',
             params: { id: test.id },
           })
+        } else if (this.subIndex === 3) {
+          this.$router.push(`testview/${test.id}/${this.user.id}`)
         }
       }
     },
