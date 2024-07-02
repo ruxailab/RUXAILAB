@@ -3,9 +3,7 @@
     "default": "retlab-dev",
     "dev": "retlab-dev",
     "production": "retlab",
-    "prod": "ruxailab-prod",
-    "tfg": "ruxailab-emotions",
-    "newtfg": "emotions-tfg"
+    "prod": "ruxailab-prod"
   },
   "targets": {
     "retlab-dev": {
