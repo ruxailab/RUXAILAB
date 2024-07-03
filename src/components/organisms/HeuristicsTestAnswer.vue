@@ -169,6 +169,7 @@
                   </template>
                 </v-data-table>
                 <v-btn
+                  class="mx-2"
                   @click="DownloadEvaluatorCsv"
                   small
                   outlined
