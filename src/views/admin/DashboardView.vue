@@ -6,6 +6,7 @@
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          data-testid="create-test-btn"
           large
           dark
           fab
@@ -16,7 +17,6 @@
           v-bind="attrs"
           @click="goToCreateTestRoute()"
           v-on="on"
-          data-testid="create-test-btn"
         >
           <v-icon large>
             mdi-plus
@@ -175,21 +175,21 @@
             @clicked="goTo"
           />
           <v-col
-            align="center"
-            class="my-5"
             v-if="
               filteredModeratedSessions.length == 0 &&
                 mainIndex == 0 &&
                 subIndex == 3
             "
+            align="center"
+            class="my-5"
           >
-            <span style="color: #575757; font-size: 1.25rem !important;"
-              >You don't have active sessions</span
-            >
-            <br />
-            <v-icon style="color: #575757;" class="mt-2" large
-              >mdi-clock-remove-outline</v-icon
-            >
+            <span style="color: #575757; font-size: 1.25rem !important;">
+              You don't have active sessions
+            </span>
+            <br>
+            <v-icon style="color: #575757;" class="mt-2" large>
+              mdi-clock-remove-outline
+            </v-icon>
           </v-col>
 
           <!-- Templates -> Personal -->
@@ -302,11 +302,6 @@ export default {
       return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
   },
-
-  mounted() {
-    this.filterModeratedSessions()
-  },
-
   watch: {
     async mainIndex(val) {
       this.subIndex = 0 //reset subIndex when main index change
@@ -332,6 +327,9 @@ export default {
         if (val == 1) await this.getPublicTemplates()
       }
     },
+  },
+  mounted() {
+    this.filterModeratedSessions()
   },
 
   async created() {
@@ -364,26 +362,26 @@ export default {
     },
 
     async filterModeratedSessions() {
-      let userModeratedTests = Object.values(this.user.myAnswers).filter(
+      const userModeratedTests = Object.values(this.user.myAnswers).filter(
         (answer) => answer.userTestType === 'moderated',
       )
 
-      let cooperatorArray = []
+      const cooperatorArray = []
 
       for (let i = 0; i < userModeratedTests.length; i++) {
-        let testId = userModeratedTests[i].testDocId
-        let testObj = await this.$store.dispatch('getTest', { id: testId })
+        const testId = userModeratedTests[i].testDocId
+        const testObj = await this.$store.dispatch('getTest', { id: testId })
 
         if (testObj) {
-          let cooperatorObj = testObj.cooperators.find(
+          const cooperatorObj = testObj.cooperators.find(
             (coop) => coop.userDocId == this.user.id,
           )
           cooperatorObj.testTitle = testObj.testTitle
           cooperatorObj.testAdmin = testObj.testAdmin
           cooperatorObj.id = testObj.id
 
-          let today = new Date()
-          let testDate = new Date(cooperatorObj.testDate)
+          const today = new Date()
+          const testDate = new Date(cooperatorObj.testDate)
 
           if (cooperatorObj && testDate.getDate() === today.getDate()) {
             cooperatorArray.push(cooperatorObj)

@@ -178,11 +178,11 @@
                 </v-data-table>
                 <v-btn
                   class="mx-2"
-                  @click="DownloadEvaluatorCsv"
                   small
                   outlined
                   :loading="loading"
                   :disabled="loading"
+                  @click="DownloadEvaluatorCsv"
                 >
                   Export as CSV
                   <v-icon right dark>
@@ -389,7 +389,11 @@
                         align="center"
                         width="970px"
                       >
-                        {{ $t('HeuristicsTestAnswer.heuristics.messages.runWeightFunction') }}
+                        {{
+                          $t(
+                            'HeuristicsTestAnswer.heuristics.messages.runWeightFunction',
+                          )
+                        }}
                       </v-card>
                       <div v-else>
                         <v-row align="center" justify="space-around">
@@ -401,7 +405,7 @@
                             >
                               <v-card-title class="mt-4 mb-4 font-weight-bold">
                                 <v-row align="center" justify="center">
-                                  Usability Percentage <br />
+                                  Usability Percentage <br>
                                   With Weights
                                 </v-row>
                               </v-card-title>
