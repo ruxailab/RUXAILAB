@@ -28,7 +28,7 @@ export default {
     /**
      * This action register a User on the platform,
      * using the API and creates the observer for the User's metadata in the db
-     *
+     * 
      * @action signup
      * @param {object} payload - Data to create a new User
      * @param {string} payload.email - the User email
@@ -96,7 +96,9 @@ export default {
 
     async autoSignIn({ commit }) {
       try {
-        const user = await authController.getCurrentUser()
+        const user = await authController.autoSignIn()
+        if (!user) return
+
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
