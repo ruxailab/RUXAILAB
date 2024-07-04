@@ -56,7 +56,7 @@
             small
             color="#f9a826"
             class="white--text"
-            @click="validate()"
+            @click="submitEdit()"
           >
             {{ $t('common.confirm') }}
           </v-btn>
@@ -165,6 +165,17 @@ export default {
     setDescriptionText() {
       this.isMounted = true
       this.$refs.textbox.setContent(this.desc.text)
+    },
+    submitEdit(){
+      const valid = this.$refs.form.validate()
+      console.log('submitEdit',this.desc.text)
+      const strippedText = this.desc.text.replace(/<\/?[^>]+(>|$)/g, "").trim();
+      if(valid && strippedText.length > 0){
+        this.$emit('update-description', { index: this.editIndex, description: this.desc });
+        this.reset();
+      }else if (valid && strippedText.length == 0) {
+        this.$toast.info(i18n.t('alerts.addDescription'))
+      }
     },
   },
 }

@@ -14,12 +14,17 @@ export default class HeuristicQuestionAnswer {
     answerImageUrl,
   } = {}) {
     this.heuristicId = heuristicId
-    this.heuristicAnswer = heuristicAnswer ?? ''
+    this.heuristicAnswer = heuristicAnswer ?? {}
     this.heuristicComment = heuristicComment
     this.answerImageUrl = answerImageUrl
   }
-  static toHeuristicQuestionAnswer(data) {
-    return new HeuristicQuestionAnswer(data)
+  static toHeuristicQuestionAnswer(data, testOptions) {
+    return new HeuristicQuestionAnswer({
+      // TODO: This needs to be changed urgently, just a hotfix for now
+      ...data, heuristicAnswer: data.heuristicAnswer?.text ? data.heuristicAnswer : {
+        text: testOptions.find(op => op.value === data.heuristicAnswer)?.text ?? "", value: data.heuristicAnswer,
+      }
+    })
   }
 
   toFirestore() {
