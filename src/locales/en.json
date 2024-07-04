@@ -29,7 +29,15 @@
     "save": "Save",
     "editDelete": "Edit/Delete",
     "type": "Type",
-    "noNotifications": "You don't have notifications yet"
+    "noNotifications": "You don't have notifications yet",
+    "timeAgo": {
+      "years": "{count} year{count !== 1 ? 's' : ''} ago",
+      "months": "{count} month{count !== 1 ? 's' : ''} ago",
+      "days": "{count} day{count !== 1 ? 's' : ''} ago",
+      "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
+      "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
+      "now": "Now"
+    }
   },
   "titles": {
     "manager": "Manager",
@@ -140,7 +148,8 @@
       "noHeuristics": "You don't have any heuristic, create one to proceed.",
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
-      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding."
+      "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -153,6 +162,166 @@
       "showComment": "Show comment",
       "addComment": "Add comment",
       "hideTextArea": "Hide text area"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "Options"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Weights",
+      "heuristics": "Heuristics"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Need at least 2 heuristics to be able to place the weights."
+    },
+    "actions": {
+      "saveWeights": "save weight values"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "Settings"
+    },
+    "messages": {
+      "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+    },
+    "placeHolders": {
+      "importCsv": "Import your CSV testfile here."
+    },
+    "actions": {
+      "downloadCsvTemplate": "Download CSV template",
+      "update": "Update"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "Are you sure you want to submit this test?",
+      "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
+      "noHeuristics": "This test don't have any heuristic"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "save": "Save",
+      "continueAs": "Continue as {userEmail}",
+      "notMail": "Not {userEmail}?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "Heuristics",
+      "options": "Options",
+      "weights": "Weights",
+      "settings": "Settings"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "Answers",
+      "statistics": "Statistics",
+      "evaluators": "Evaluators",
+      "heuristics": "Heuristics",
+      "analytics": "Analytics"
+    },
+    "statistics": {
+      "usabilityPercentage": "Usability Percentage",
+      "max": "Max",
+      "min": "Min",
+      "std": "Standard deviation"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "Table",
+        "graphic": "Graphic"
+      },
+      "messages": {
+        "graphForMoreThan3": "The graphic can only be generated with 3 or more evaluators,please collect more data from your research to proceed."
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "Heuristics Data",
+        "answersByEvaluator": "Answers by Evaluator",
+        "answersByHeuristics": "Answers by Heuristics",
+        "graphic": "Graphic",
+        "weights": "Weights"
+      },
+      "messages": {
+        "needMoreThan1Answer": "This page needs more than 1 answer to be generated.",
+        "runWeightFunction": "This page needs weight function (python) to be running, can be in emulators or in deploy mode, and the weights to be full marked on your creating test page."
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "Reports",
+      "last_updated": "Last Updated"
+    },
+    "headers": {
+      "evaluator": "Evaluator",
+      "last_update": "Last Update",
+      "progress": "Progress",
+      "status": "Status",
+      "more": "More"
+    },
+    "messages": {
+      "confirm_delete_report": "Are you sure you want to delete this report?",
+      "reports_loading": "Loading Reports",
+      "remove_report": "Remove Report",
+      "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
+      "report_deleted": "Report successfully deleted"
+    },
+    "status": {
+      "submitted": "submitted",
+      "in_progress": "in progress"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "Cooperators"
+    },
+    "headers": {
+      "email": "Email",
+      "role": "Role",
+      "invited": "Invited",
+      "accepted": "Accepted",
+      "more": "More",
+      "title": "Title",
+      "content": "Content"
+    },
+    "actions": {
+      "send_invitation": "Send Invitation",
+      "send_message": "Send a message",
+      "reinvite": "Re-invite",
+      "remove_cooperator": "Remove cooperator",
+      "cancel_invitation": "Cancel invitation",
+      "cancel": "Cancel",
+      "send": "Send",
+      "select_cooperator": "Select cooperator"
+    },
+    "roles": {
+      "administrator": "Administrator",
+      "evaluator": "Evaluator",
+      "guest": "Guest"
+    },
+    "messages": {
+      "cooperators_loading": "Loading Cooperators",
+      "no_users": "There are no users registered with that email, press enter to select anyways.",
+      "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "message_title_hint": "Type a title for your message",
+      "message_content_hint": "Type the content of your message"
     }
   },
   "UserTestTable": {
@@ -203,7 +372,7 @@
       "learnMore": "Learn More",
       "docTitle": "Read documentation",
       "docSubtitle": "Click to access the documentation on how to use the page ",
-      "discTitle": "Join the comunity!",
+      "discTitle": "Join the community!",
       "discSubtitle": "You will find support on our discord server."
     },
     "finalReport": {
@@ -213,6 +382,7 @@
       "createHeuristics": "Please create Heuristics so you can select them here.",
       "createUserTask": "Please create Tasks so you can select them here.",
       "pdf": "Generate PDF",
+      "elements": "Elements",
       "options": {
         "options": "Test options",
         "comments": "Answers comments",
