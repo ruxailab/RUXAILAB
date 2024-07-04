@@ -363,39 +363,34 @@ export default {
       await this.$store.dispatch('getSharedWithMeTests', this.user.id)
     },
 
-    // user.myAnswers -> userTestType == 'moderated'
-    // tests.testDocId -> cooperators.userDocId == meuId -> testDate <= hoje
     async filterModeratedSessions() {
-      // Filtra os testes do usuário que são do tipo 'moderated'
       let userModeratedTests = Object.values(this.user.myAnswers).filter(
         (answer) => answer.userTestType === 'moderated',
       )
 
-      // Inicializa um array para armazenar os objetos cooperator válidos
       let cooperatorArray = []
 
       for (let i = 0; i < userModeratedTests.length; i++) {
         let testId = userModeratedTests[i].testDocId
-        console.log(testId)
         let testObj = await this.$store.dispatch('getTest', { id: testId })
 
-        console.log(testObj)
         if (testObj) {
           let cooperatorObj = testObj.cooperators.find(
             (coop) => coop.userDocId == this.user.id,
           )
-          console.log(cooperatorObj)
           cooperatorObj.testTitle = testObj.testTitle
           cooperatorObj.testAdmin = testObj.testAdmin
           cooperatorObj.id = testObj.id
-          // Verifica se a data do teste é menor ou igual à data atual
-          if (cooperatorObj) {
+
+          let today = new Date()
+          let testDate = new Date(cooperatorObj.testDate)
+
+          if (cooperatorObj && testDate.getDate() === today.getDate()) {
             cooperatorArray.push(cooperatorObj)
           }
         }
       }
       this.filteredModeratedSessions = cooperatorArray
-      console.log(cooperatorArray)
       return cooperatorArray
     },
 
@@ -405,7 +400,6 @@ export default {
 
     goTo(test) {
       if (this.mainIndex === 0) {
-        console.log(test)
         if (this.subIndex === 0) {
           this.$router.push({
             name: 'ManagerView',
