@@ -390,7 +390,9 @@
         "answersByHeuristics": "Respostas por heurística",
         "finalReport": "Relatório Final",
         "loading": "Carregando..."
-      }
+      },
+      "ContructionHeading": "Página em Construção",
+      "ContructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Por favor, volte em breve!"
     },
     "landing": {
       "feedbackTitle": "Receba feedback rapidamente sobre seus projetos",

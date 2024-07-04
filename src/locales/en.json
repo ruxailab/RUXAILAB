@@ -380,6 +380,7 @@
       "heuristic": "Heuristic",
       "to": "to",
       "createHeuristics": "Please create Heuristics so you can select them here.",
+      "createUserTask": "Please create Tasks so you can select them here.",
       "pdf": "Generate PDF",
       "elements": "Elements",
       "options": {
@@ -390,7 +391,9 @@
         "answersByHeuristics": "Answers by heuristics",
         "finalReport": "Final Report",
         "loading": "Loading..."
-      }
+      },
+      "ContructionHeading": "Page Under Construction",
+      "ContructionParagraph": "We're working hard to improve our website. Please check back soon!"
     },
     "landing": {
       "feedbackTitle": "Quickly get feedback on your projects",
