@@ -163,142 +163,6 @@
       "hideTextArea": "टेक्स्ट एरिया छुपाएं"
     }
   },
-  "HeuristicsOptionsTable": {
-    "titles": {
-      "options": "[TODO]"
-    },
-    "messages": {},
-    "placeHolders": {},
-    "actions": {}
-  },
-  "HeuristicsWeightsTable": {
-    "titles": {
-      "weights": "[TODO]",
-      "heuristics": "[TODO]"
-    },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "[TODO]"
-    },
-    "actions": {
-      "saveWeights": "[TODO]"
-    }
-  },
-  "HeuristicsSettings": {
-    "titles": {
-      "settings": "[TODO]"
-    },
-    "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
-    },
-    "placeHolders": {
-      "importCsv": "[TODO]"
-    },
-    "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
-    }
-  },
-  "HeuristicsTestView": {
-    "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
-    },
-    "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
-    }
-  },
-  "HeuristicsEditTest": {
-    "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
-    }
-  },
-  "HeuristicsTestAnswer": {
-    "titles": {
-      "answers": "[TODO]",
-      "statistics": "[TODO]",
-      "evaluators": "[TODO]",
-      "heuristics": "[TODO]",
-      "analytics": "[TODO]"
-    },
-    "statistics": {
-      "usabilityPercentage": "[TODO]",
-      "max": "[TODO]",
-      "min": "[TODO]",
-      "std": "[TODO]"
-    },
-    "evaluators": {
-      "headers": {
-        "table": "[TODO]",
-        "graphic": "[TODO]"
-      },
-      "messages": {
-        "graphForMoreThan3": "[TODO]"
-      }
-    },
-    "heuristics": {
-      "headers": {
-        "heuristicsData": "[TODO]",
-        "answersByEvaluator": "[TODO]",
-        "answersByHeuristics": "[TODO]",
-        "graphic": "[TODO]",
-        "weights": "[TODO]"
-      },
-      "messages": {
-        "needMoreThan1Answer": "[TODO]",
-        "runWeightFunction": "[TODO]"
-      }
-    },
-    "analytics": {}
-  },
-  "HeuristicsCooperators": {
-    "title": {
-      "cooperators": "[TODO]"
-    },
-    "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
-    },
-    "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
-    },
-    "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
-    },
-    "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
-    }
-  },
   "UserTestTable": {
     "titles": {
       "consentForm": "सहमति फॉर्म",
@@ -364,7 +228,9 @@
         "answersByHeuristics": "ह्यूरिस्टिक्स द्वारा उत्तर",
         "finalReport": "अंतिम रिपोर्ट",
         "loading": "लोड हो रहा है..."
-      }
+      },
+      "ContructionHeading": "पृष्ठ निर्माणाधीन है",
+      "ContructionParagraph": "हमारी वेबसाइट को बेहतर बनाने के लिए हम कड़ी मेहनत कर रहे हैं। कृपया जल्द ही वापस आएं!"
     },
     "landing": {
       "feedbackTitle": "अपनी परियोजनाओं पर जल्दी से प्रतिक्रिया प्राप्त करें",
@@ -396,6 +262,82 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "[TODO]"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "[TODO]",
+      "heuristics": "[TODO]"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "[TODO]"
+    },
+    "actions": {
+      "saveWeights": "[TODO]"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "[TODO]"
+    },
+    "messages": {
+      "acceptCsv": "[TODO]",
+      "noCsvFileSelected": "[TODO]"
+    },
+    "placeHolders": {
+      "importCsv": "[TODO]"
+    },
+    "actions": {
+      "downloadCsvTemplate": "[TODO]",
+      "update": "[TODO]"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "[TODO]",
+      "submitOnce": "[TODO]",
+      "noHeuristics": "[TODO]"
+    },
+    "actions": {
+      "cancel": "[TODO]",
+      "submit": "[TODO]",
+      "save": "[TODO]",
+      "continueAs": "[TODO]",
+      "notMail": "[TODO]",
+      "changeAccount": "[TODO]",
+      "startTest": "[TODO]"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "[TODO]",
+      "options": "[TODO]",
+      "weights": "[TODO]",
+      "settings": "[TODO]"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "[TODO]"
+    }
+  },
+  "forms": {
+    "labels": {
+      "testName": "[TODO]",
+      "name": "[TODO]",
+      "variableName": "[TODO]",
+      "question": "[TODO]",
+      "text": "[TODO]",
+      "value": "[TODO]"
+    }
+  }
+},
     "settings": {
       "title": "सेटिंग्स",
       "currentTest": "वर्तमान परीक्षण",
