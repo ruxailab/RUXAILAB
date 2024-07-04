@@ -181,17 +181,17 @@
       "createNewPost": "Create a new post question"
     }
   },
-   "UserTestView": {
+  "UserTestView": {
     "titles": {
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest":"Post-Test"
+      "postTest": "Post-Test"
     },
     "buttons": {
       "done": "Done"
     }
-   },
+  },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
     "noAccess": "You do not have access to the page you're trying to access.",
@@ -211,6 +211,7 @@
       "heuristic": "Heuristic",
       "to": "to",
       "createHeuristics": "Please create Heuristics so you can select them here.",
+      "createUserTask": "Please create Tasks so you can select them here.",
       "pdf": "Generate PDF",
       "options": {
         "options": "Test options",
@@ -220,7 +221,9 @@
         "answersByHeuristics": "Answers by heuristics",
         "finalReport": "Final Report",
         "loading": "Loading..."
-      }
+      },
+      "ContructionHeading": "Page Under Construction",
+      "ContructionParagraph": "We're working hard to improve our website. Please check back soon!"
     },
     "landing": {
       "feedbackTitle": "Quickly get feedback on your projects",

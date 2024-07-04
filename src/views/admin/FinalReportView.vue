@@ -1,6 +1,7 @@
 <template>
-  <v-container>
-    <ShowInfo style="padding: 0!important;" title="Final Report" />
+  <div class="finalReportView">
+    <v-container v-if="test.testType == 'HEURISTICS'">
+      <ShowInfo style="padding: 0!important;" title="Final Report" />
 
     <v-stepper
       v-model="step"
@@ -40,20 +41,43 @@
           <div>
             <DocumentSelection />
 
-            <v-btn color="secondary" class="teste2" @click="step--">
-              {{ $t('buttons.previous') }}
-            </v-btn>
-          </div>
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
-  </v-container>
+              <v-btn color="secondary" class="teste2" @click="step--">
+                {{ $t('buttons.previous') }}
+              </v-btn>
+            </div>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+    </v-container>
+
+    
+    <v-container
+      fluid
+      fill-height
+      v-else-if="test.testType == 'User'"
+      class="mt-10"
+    >
+      <v-row>
+        <v-col class="text-center">
+          <v-icon size="100" color="primary" class="mb-4">mdi-tools</v-icon>
+          <h1 class="display-1">
+            {{ $t('pages.finalReport.ContructionHeading') }}
+          </h1>
+          <p class="subtitle-1">
+            {{ $t('pages.finalReport.ContructionParagraph') }}
+          </p>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
 import TextControls from '@/components/atoms/FinalReportControls.vue'
 import DocumentSelection from '@/components/molecules/FinalReportDocumentSelection.vue'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
+
+import i18n from '@/i18n'
 
 export default {
   components: { TextControls, DocumentSelection, ShowInfo },
