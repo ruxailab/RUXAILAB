@@ -76,7 +76,9 @@
             <v-list-item-action-text
               v-if="item.accessLevel != null && item.accessLevel != undefined"
             ></v-list-item-action-text>
-            <v-list-item-action-text v-if="item.updateDate">
+            <v-list-item-action-text
+              v-if="item.updateDate && type != 'sessions'"
+            >
               <v-row class="ma-0" align="center">
                 <div class="hidden-sm-and-down">
                   <v-tooltip v-if="type === 'myTests'" top>
@@ -120,9 +122,8 @@
               </v-row>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="type === 'sessions'">
-              <v-chip outlined small class="ml-1" label>
-                Scheduled at
-                {{ getFormattedDate(item.testDate) }}
+              <v-chip outlined class="mb-1 mr-6">
+                <span>Scheduled for {{ getFormattedDate(item.testDate) }}</span>
               </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text
