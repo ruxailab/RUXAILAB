@@ -224,7 +224,8 @@
                             padding-bottom: 4px !important;
                           "
                         >
-                          {{ item.id }} - {{ item.title }}
+                           {{ item.id + 1 }}
+                          - {{ item.title }}
                         </v-list-item-title>
                       </v-list-item-content>
                       <div
@@ -504,6 +505,7 @@
                               ref="descBtn"
                               :question-index="questionSelect"
                               :heuristic-index="itemSelect"
+                              @update-description="updateDescription"
                             />
                           </v-row>
                         </v-col>
@@ -515,7 +517,7 @@
                       <!-- table actions -->
                       <v-row justify="end" class="pr-1">
                         <!-- TODO: Uncomment and fix reactivity -->
-                        <!-- <v-btn
+                        <v-btn
                           icon
                           small
                           class="mr-2"
@@ -524,7 +526,7 @@
                           <v-icon small>
                             mdi-pencil
                           </v-icon>
-                        </v-btn> -->
+                        </v-btn>
                         <v-btn icon small @click="deleteItem(item)">
                           <v-icon small>
                             mdi-delete
@@ -763,6 +765,8 @@ export default {
 
         itemToMove.id = index - 1
         itemAbove.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     moveItemDown(index) {
@@ -781,6 +785,8 @@ export default {
 
         itemToMove.id = index + 1
         itemBelow.id = index
+
+        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
       }
     },
     deleteHeuristic(item) {

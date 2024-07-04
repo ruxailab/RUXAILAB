@@ -11,26 +11,6 @@
       </div>
     </v-overlay>
 
-    <v-dialog :value="flagToken && !flagUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="
-          setTest()
-          logined = true
-        "
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          flagNewUser = true
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-
     <v-dialog :value="flagToken && flagUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
@@ -57,7 +37,7 @@
     </v-dialog>
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
-      <drawer :user-access-level-on-test="[accessLevel]" />
+      <Drawer :user-access-level-on-test="[accessLevel]" />
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
@@ -218,17 +198,12 @@
 </template>
 
 <script>
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
 import i18n from '@/i18n'
-import Vue from 'vue'
 
 export default {
   components: {
-    CardSignIn,
-    CardSignUp,
     Drawer,
   },
   data: () => ({
@@ -394,18 +369,23 @@ export default {
         // Check if the user is a collaborator or owner
         const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
         if (isTestOwner) return 0
+
         const answers = []
         const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((a) => {
-          answers.push(a[1])
+        answersEntries.forEach((answer) => {
+          answers.push(answer[1])
         })
-
-        const isCooperator = answers.find((a) => a.testDocId === this.test.id)
-        if (isCooperator) {
-          return isCooperator.accessLevel
+        if (this.test.cooperators) {
+          const coopsInfo = this.test.cooperators.find(
+            (coops) => coops.userDocId === this.user.id,
+          )
+          if (coopsInfo) {
+            return coopsInfo.accessLevel
+          }
         }
+        if (this.test.isPublic) return 1
+        else return 2
       }
-
       return 1
     },
   },
@@ -425,6 +405,10 @@ export default {
   async created() {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
+    if (this.accessLevel == 2) {
+      this.$toast.warning("You don't have permission to access this test!")
+      this.$router.push('/testslist')
+    }
   },
   methods: {
     standardDeviation(array) {
@@ -474,6 +458,7 @@ export default {
           (a) => a.testDocId === this.test.id,
         )
         if (!alreadyAccepted) {
+          console.log('Caiu como !alreadyAccepted')
           // Get invitation
           const invitation = this.test.cooperators.find(
             (coop) => coop.token === this.token,
