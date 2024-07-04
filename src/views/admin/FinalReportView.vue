@@ -57,14 +57,16 @@
     </v-container>
 
     <v-container
-      fluid
       v-else-if="test.testType == 'User'"
+      fluid
       fill-height
       class="mt-10"
     >
       <v-row>
         <v-col class="text-center">
-          <v-icon size="100" color="primary" class="mb-4">mdi-tools</v-icon>
+          <v-icon size="100" color="primary" class="mb-4">
+            mdi-tools
+          </v-icon>
           <h1 class="display-1">
             {{ $t('pages.finalReport.ContructionHeading') }}
           </h1>

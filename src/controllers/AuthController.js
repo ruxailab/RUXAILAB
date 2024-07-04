@@ -3,7 +3,7 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	signOut,
-	onAuthStateChanged
+	onAuthStateChanged,
 } from 'firebase/auth'
 
 export default class AuthController {
@@ -31,7 +31,7 @@ export default class AuthController {
 		return new Promise((resolve, rejecj) => {
 			const unsubscribe = onAuthStateChanged(
 				auth,
-				user => {
+				(user) => {
 					unsubscribe()
 					resolve(user)
 				},
