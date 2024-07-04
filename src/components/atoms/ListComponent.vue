@@ -64,8 +64,8 @@
                   item.testAdmin
                     ? item.testAdmin.email
                     : item.header
-                    ? item.header.templateAuthor.userEmail
-                    : item.testAuthorEmail
+                      ? item.header.templateAuthor.userEmail
+                      : item.testAuthorEmail
                 }}
               </strong>
             </v-list-item-subtitle>
@@ -75,7 +75,7 @@
           <v-list-item-action class="hidden-sm-and-down">
             <v-list-item-action-text
               v-if="item.accessLevel != null && item.accessLevel != undefined"
-            ></v-list-item-action-text>
+            />
             <v-list-item-action-text
               v-if="item.updateDate && type != 'sessions'"
             >
@@ -94,7 +94,9 @@
                             ? item.numberColaborators
                             : '-'
                         }}
-                        <v-icon class="ml-1">mdi-account-multiple</v-icon>
+                        <v-icon class="ml-1">
+                          mdi-account-multiple
+                        </v-icon>
                       </v-row>
                     </template>
                     <span>{{ $t('titles.cooperators') }}</span>
@@ -102,7 +104,9 @@
                   <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-row class="mr-3" v-bind="attrs" v-on="on">
-                        <div class="caption">{{ item.progress }}%</div>
+                        <div class="caption">
+                          {{ item.progress }}%
+                        </div>
                         <v-progress-circular
                           rotate="-90"
                           :value="item.progress"

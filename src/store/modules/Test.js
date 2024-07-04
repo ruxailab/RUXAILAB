@@ -436,7 +436,6 @@ export default {
           })
 
           await deleteDoc(roomRef)
-        } else {
         }
       } catch (error) {
         console.error('Error deleting room and candidates:', error)
