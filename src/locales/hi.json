@@ -262,82 +262,81 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
-  "HeuristicsOptionsTable": {
-    "titles": {
-      "options": "[TODO]"
+    "HeuristicsOptionsTable": {
+      "titles": {
+        "options": "[TODO]"
+      },
+      "messages": {},
+      "placeHolders": {},
+      "actions": {}
     },
-    "messages": {},
-    "placeHolders": {},
-    "actions": {}
-  },
-  "HeuristicsWeightsTable": {
-    "titles": {
-      "weights": "[TODO]",
-      "heuristics": "[TODO]"
+    "HeuristicsWeightsTable": {
+      "titles": {
+        "weights": "[TODO]",
+        "heuristics": "[TODO]"
+      },
+      "messages": {
+        "atLeast2HeuristicsForWeighting": "[TODO]"
+      },
+      "actions": {
+        "saveWeights": "[TODO]"
+      }
     },
-    "messages": {
-      "atLeast2HeuristicsForWeighting": "[TODO]"
+    "HeuristicsSettings": {
+      "titles": {
+        "settings": "[TODO]"
+      },
+      "messages": {
+        "acceptCsv": "[TODO]",
+        "noCsvFileSelected": "[TODO]"
+      },
+      "placeHolders": {
+        "importCsv": "[TODO]"
+      },
+      "actions": {
+        "downloadCsvTemplate": "[TODO]",
+        "update": "[TODO]"
+      }
     },
-    "actions": {
-      "saveWeights": "[TODO]"
-    }
-  },
-  "HeuristicsSettings": {
-    "titles": {
-      "settings": "[TODO]"
+    "HeuristicsTestView": {
+      "messages": {
+        "submitTest": "[TODO]",
+        "submitOnce": "[TODO]",
+        "noHeuristics": "[TODO]"
+      },
+      "actions": {
+        "cancel": "[TODO]",
+        "submit": "[TODO]",
+        "save": "[TODO]",
+        "continueAs": "[TODO]",
+        "notMail": "[TODO]",
+        "changeAccount": "[TODO]",
+        "startTest": "[TODO]"
+      }
     },
-    "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+    "HeuristicsEditTest": {
+      "titles": {
+        "heuristics": "[TODO]",
+        "options": "[TODO]",
+        "weights": "[TODO]",
+        "settings": "[TODO]"
+      }
     },
-    "placeHolders": {
-      "importCsv": "[TODO]"
+    "HeuristicsTestAnswer": {
+      "titles": {
+        "answers": "[TODO]"
+      }
     },
-    "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
-    }
-  },
-  "HeuristicsTestView": {
-    "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+    "forms": {
+      "labels": {
+        "testName": "[TODO]",
+        "name": "[TODO]",
+        "variableName": "[TODO]",
+        "question": "[TODO]",
+        "text": "[TODO]",
+        "value": "[TODO]"
+      }
     },
-    "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
-    }
-  },
-  "HeuristicsEditTest": {
-    "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
-    }
-  },
-  "HeuristicsTestAnswer": {
-    "titles": {
-      "answers": "[TODO]"
-    }
-  },
-  "forms": {
-    "labels": {
-      "testName": "[TODO]",
-      "name": "[TODO]",
-      "variableName": "[TODO]",
-      "question": "[TODO]",
-      "text": "[TODO]",
-      "value": "[TODO]"
-    }
-  }
-},
     "settings": {
       "title": "सेटिंग्स",
       "currentTest": "वर्तमान परीक्षण",
