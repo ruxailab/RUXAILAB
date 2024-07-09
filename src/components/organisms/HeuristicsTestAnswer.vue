@@ -176,6 +176,19 @@
                     {{ item.answered }}%
                   </template>
                 </v-data-table>
+                <v-btn
+                  class="mx-2"
+                  small
+                  outlined
+                  :loading="loading"
+                  :disabled="loading"
+                  @click="DownloadEvaluatorCsv"
+                >
+                  Export as CSV
+                  <v-icon right dark>
+                    mdi-download
+                  </v-icon>
+                </v-btn>
               </v-col>
 
               <v-col v-if="ind == 1" cols="10">
@@ -376,7 +389,11 @@
                         align="center"
                         width="970px"
                       >
-                        {{ $t('HeuristicsTestAnswer.heuristics.messages.runWeightFunction') }}
+                        {{
+                          $t(
+                            'HeuristicsTestAnswer.heuristics.messages.runWeightFunction',
+                          )
+                        }}
                       </v-card>
                       <div v-else>
                         <v-row align="center" justify="space-around">
@@ -388,7 +405,7 @@
                             >
                               <v-card-title class="mt-4 mb-4 font-weight-bold">
                                 <v-row align="center" justify="center">
-                                  Usability Percentage <br />
+                                  Usability Percentage <br>
                                   With Weights
                                 </v-row>
                               </v-card-title>
@@ -481,6 +498,7 @@ export default {
     decisionmatrix: null,
     relative: null,
     usability_total: 0,
+    loading: false,
   }),
 
   computed: {
@@ -785,6 +803,30 @@ export default {
       } catch (erro) {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
+    },
+    DownloadEvaluatorCsv() {
+      this.loading = true
+      const headers = this.evaluatorStatistics.header
+        .map((header) => header.text)
+        .join(',')
+      const rows = this.evaluatorStatistics.items
+        .map((item) => {
+          return this.evaluatorStatistics.header
+            .map((header) => item[header.value])
+            .join(',')
+        })
+        .join('\n')
+      const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'evaluatorStatistics.csv')
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      setTimeout(() => {
+        this.loading = false
+      }, 1000)
     },
   },
 }

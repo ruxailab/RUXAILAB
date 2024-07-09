@@ -258,6 +258,7 @@ export default {
       try {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
+        return res
       } catch {
         commit('set Error', true)
       } finally {
@@ -435,7 +436,6 @@ export default {
           })
 
           await deleteDoc(roomRef)
-        } else {
         }
       } catch (error) {
         console.error('Error deleting room and candidates:', error)
