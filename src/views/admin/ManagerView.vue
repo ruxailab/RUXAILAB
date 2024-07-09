@@ -37,7 +37,7 @@
     </v-dialog>
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
-      <Drawer :user-access-level-on-test="[accessLevel]" />
+      <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
@@ -46,7 +46,7 @@
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
                 <div v-if="accessLevel == 0" class="white--text">
-                  <p 
+                  <p
                     class="mobile-center"
                     style="font-size: 58px; font-weight: 500"
                   >
@@ -55,7 +55,9 @@
                   <p
                     style="font-size: 22px"
                     class="mobile-center"
-                  >{{ test.testTitle }}</p>
+                  >
+                    {{ test.testTitle }}
+                  </p>
                 </div>
                 <div
                   v-else
@@ -208,14 +210,10 @@ export default {
   },
 
   data: () => ({
-    selected: true,
     flagUser: false,
     flagToken: false,
     flagNewUser: false,
     logined: false,
-
-    selectedTest: null,
-    item: 0,
   }),
 
   computed: {
@@ -226,10 +224,6 @@ export default {
         answers: this.$store.getters.testAnswerDocument,
       })
       return this.$store.getters.test
-    },
-
-    isSettings() {
-      return this.$route.path.includes('/settings')
     },
 
     topCards() {
@@ -326,6 +320,40 @@ export default {
       // Check if the test is public
       return this.test.isPublic ? 1 : 2
     },
+
+    navigator() {
+      if (!this.test) return []
+
+      const items = [
+        { title: 'Manager', icon: 'mdi-home', path: `/managerview/${this.test.id}` }, 
+      ]
+
+      if (this.test.template) {
+        items.push({ title: 'Template', icon: 'mdi-file-compare', path: `/templateview/${this.test.template.id}` })
+      }
+
+      if (this.accessLevel == 0) {
+        items.push(
+          { title: 'Test', icon: 'mdi-file-document-edit', path: `/edittest/${this.test.id}` },
+          { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${this.test.id}` },
+          { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
+          { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
+          { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },
+          { title: 'Cooperators', icon: 'mdi-account-group', path: `/cooperators/${this.test.id}` },
+          { title: 'Settings', icon: 'mdi-cog', path: `/settingsview/${this.test.id}` },
+        )
+      }
+      
+      if (this.accessLevel == 1) {
+        items.push(
+          { title: 'Answer Test', icon: 'mdi-file-document', path: `/testview/${this.test.id}` },
+          { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
+          { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
+        )
+      }
+
+      return items
+    },
   },
 
   watch: {
@@ -351,11 +379,9 @@ export default {
 
   methods: {
     go(item) {
-      if (item.id === undefined) this.$router.push(item).catch(() => {})
-      else {
-        if (item.id === 2) window.open(item.path)
-        else this.$router.push(item.path).catch(() => {})
-      }
+      if (item.id === undefined) return this.$router.push(item).catch(() => {})
+      if (item.id === 2) return window.open(item.path)
+      return this.$router.push(item.path).catch(() => {})
     },
 
     setFlag(flag, value) {
