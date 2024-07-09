@@ -49,8 +49,9 @@
                   <a
                     style="color: #F9A826 ;text-decoration: underline;"
                     @click="redirectToSignup"
-                    >{{ $t('SIGNIN.dont-have-account') }}</a
                   >
+                    {{ $t('SIGNIN.dont-have-account') }}
+                  </a>
                 </p>
               </v-card-actions>
             </v-col>
@@ -67,7 +68,6 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-//import AuthController from "@/controllers/AuthController";
 
 export default {
   components: {
