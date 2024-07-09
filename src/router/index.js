@@ -3,8 +3,7 @@ import VueRouter from 'vue-router'
 import Public from '@/router/modules/public.js'
 import Admin from '@/router/modules/admin.js'
 import SuperAdmin from '@/router/modules/superAdmin.js'
-import { autoSignIn, redirect } from '@/router/tools.js'
-import store from '@/store/index.js'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -18,9 +17,7 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const { authorize } = to.meta
-
-  await autoSignIn()
-
+  await store.dispatch('autoSignIn')
   const user = store.state.Auth.user
 
   if (
@@ -37,12 +34,20 @@ router.beforeEach(async (to, from, next) => {
       return next(redirect())
     }
   }
-  else if(user){
-    if(to.path == '/signin' || to.path == '/signup'){
-      return next(redirect())
-    }
+  if (user && (to.path == '/signin' || to.path == '/signup')) {
+    return next(redirect())
   }
+
   next()
 })
+
+function redirect() {
+  if (!store.state.Auth.user) return '/'
+  const level = store.state.Auth.user.accessLevel
+
+  if (level == 0) return '/superadmin'
+  if (level == 1) return '/testslist'
+  return '/'
+}
 
 export default router

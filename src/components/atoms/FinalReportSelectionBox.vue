@@ -20,7 +20,7 @@
                   :name="heuristic.name"
                   :value="heuristic.id"
                   style="margin-right: 10px;"
-                />
+                >
                 <label :for="'heuristic' + heuristic.id">
                   {{ heuristic.id + 1 }} - {{ heuristic.title }}
                 </label>
@@ -42,7 +42,7 @@
                 type="checkbox"
                 :name="option.name"
                 style="margin-right: 10px;"
-              />
+              >
               <label class="option" :for="option.id">{{ option.label }}</label>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default {
     currentHeuristicIndex: 0,
     showSlider: false,
     sliderValue: 0,
-    isLoading: false, // New data property to track loading state
+    isLoading: false,
     selectedHeuristics: [],
     cooperatorsEmail: [],
   }),
@@ -305,10 +305,10 @@ export default {
           this.preview.cooperatorsEmail = ''
         }
         // TODO: Fix this, right now I've just removed the option to send images
-        this.answers.forEach(answer => {
-          answer.heuristicQuestions.forEach(heuristic => {
-            heuristic.heuristicQuestions.forEach(question => {
-              question.answerImageUrl = ""
+        this.answers.forEach((answer) => {
+          answer.heuristicQuestions.forEach((heuristic) => {
+            heuristic.heuristicQuestions.forEach((question) => {
+              question.answerImageUrl = ''
             })
           })
         })
