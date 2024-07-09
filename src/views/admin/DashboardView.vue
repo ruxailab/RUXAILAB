@@ -240,13 +240,9 @@ export default {
     },
 
     filteredTests() {
-      let arr = null
-
-      arr = this.tests?.filter((test) => {
+      return this.tests?.filter(test => {
         return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-
-      return arr ?? this.tests
+      }) ?? this.tests
     },
 
     templates() {
@@ -254,11 +250,9 @@ export default {
     },
 
     filteredTemplates() {
-      return this.templates.filter((temp) =>
-        temp.header.templateTitle
-          .toLowerCase()
-          .includes(this.search.toLowerCase()),
-      )
+      return this.templates.filter(temp => {
+        return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
+      })
     },
 
     loading() {
@@ -306,6 +300,7 @@ export default {
     async cleanTestStore() {
       await this.$store.dispatch('cleanTest')
     },
+    
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
@@ -331,33 +326,30 @@ export default {
     },
 
     goTo(test) {
-      // if it is from the my tests tab
-      if (this.mainIndex === 0) {
-        if (this.subIndex === 0) {
+      if (this.subIndex === 0) {
+        this.$router.push({
+          name: 'ManagerView',
+          params: { id: test.testDocId },
+        })
+      }
+      // if it is the shared with me tests
+      else if (this.subIndex === 1) {
+        if (test.accessLevel >= 2) {
+          this.$router.push({
+            name: 'TestView',
+            params: { id: test.testDocId },
+          })
+        } else {
           this.$router.push({
             name: 'ManagerView',
             params: { id: test.testDocId },
           })
         }
-        // if it is the shared with me tests
-        else if (this.subIndex === 1) {
-          if (test.accessLevel >= 2) {
-            this.$router.push({
-              name: 'TestView',
-              params: { id: test.testDocId },
-            })
-          } else {
-            this.$router.push({
-              name: 'ManagerView',
-              params: { id: test.testDocId },
-            })
-          }
-        } else if (this.subIndex === 2) {
-          this.$router.push({
-            name: 'ManagerView',
-            params: { id: test.id },
-          })
-        }
+      } else if (this.subIndex === 2) {
+        this.$router.push({
+          name: 'ManagerView',
+          params: { id: test.id },
+        })
       }
     },
 

@@ -406,7 +406,7 @@ export default {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     if (this.accessLevel == 2) {
-      this.$toast.warning("You don't have permission to access this test!")
+      this.$toast.warning('You don\'t have permission to access this test!')
       this.$router.push('/testslist')
     }
   },
