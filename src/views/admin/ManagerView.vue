@@ -38,22 +38,28 @@
 
     <v-row v-if="test" class="nav pa-0 ma-0" dense>
       <Drawer :user-access-level-on-test="[accessLevel]" />
+
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
             <v-row align="center" justify="center" style="height: 100%">
               <v-col class="text-div">
-                <div
-                  v-if="accessLevel == 0"
-                  class="mt-7 mb-4 white--text mobile-center"
-                  style="font-size: 58px; font-weight: 500"
-                >
-                  {{ $t('titles.manager') }}
+                <div v-if="accessLevel == 0" class="white--text">
+                  <p 
+                    class="mobile-center"
+                    style="font-size: 58px; font-weight: 500"
+                  >
+                    {{ $t('titles.manager') }}
+                  </p>
+                  <p
+                    style="font-size: 22px"
+                    class="mobile-center"
+                  >{{ test.testTitle }}</p>
                 </div>
                 <div
                   v-else
-                  class="mb-4 white--text mobile-center"
+                  class="white--text mobile-center"
                   style="font-size: 58px; font-weight: 500"
                 >
                   {{ test.testTitle }}
@@ -64,12 +70,6 @@
                   contain
                   src="@/assets/manager/IntroManager.svg"
                 />
-                <div
-                  style="font-size: 22px"
-                  class="white--text mb-4 mobile-center"
-                >
-                  {{ test.title }}
-                </div>
               </v-col>
               <v-img
                 class="hidden-sm-and-down"
@@ -169,7 +169,7 @@
                     </v-row>
 
                     <div
-                      class="white--text text-justification pl-4"
+                      class="white--text pa-1 pl-4"
                       :style="{
                         height: '90px',
                         position: 'absolute',
@@ -191,7 +191,7 @@
             </v-container>
           </div>
         </div>
-        <router-view v-else @goToCoops="go(items[6])" />
+        <router-view v-else />
       </v-col>
     </v-row>
   </v-container>
@@ -206,6 +206,7 @@ export default {
   components: {
     Drawer,
   },
+
   data: () => ({
     selected: true,
     flagUser: false,
@@ -213,12 +214,10 @@ export default {
     flagNewUser: false,
     logined: false,
 
-    tests: [],
-
-    isCoops: null,
     selectedTest: null,
     item: 0,
   }),
+
   computed: {
     test() {
       this.$store.dispatch('processStatistics', {
@@ -229,66 +228,10 @@ export default {
       return this.$store.getters.test
     },
 
-    items() {
-      let items
-      if (this.test) {
-        items = [
-          {
-            title: i18n.t('titles.manager'),
-            icon: 'mdi-home',
-            path: `/managerview/${this.test.id}`,
-            id: 0,
-          },
-          {
-            title: i18n.t('titles.test'),
-            icon: 'mdi-file-document-edit',
-            path: `/edittest/${this.test.id}`,
-            id: 1,
-          },
-          {
-            title: i18n.t('titles.preview'),
-            icon: 'mdi-file-eye',
-            path: `/testview/${this.test.id}`,
-            id: 2,
-          },
-          {
-            title: i18n.t('titles.reports'),
-            icon: 'mdi-book-multiple',
-            path: `/reportview/${this.test.answersDocId}`,
-            id: 3,
-          },
-          {
-            title: i18n.t('titles.answers'),
-            icon: 'mdi-order-bool-ascending-variant',
-            path: `/answerview/${this.test.answersDocId}`,
-            id: 4,
-          },
-        ]
-
-        if (this.accessLevel == 0) {
-          items.push({
-            title: i18n.t('titles.cooperators'),
-            icon: 'mdi-account-group',
-            path: `/cooperators/${this.test.cooperators}`,
-            id: 6,
-          })
-        }
-
-        if (this.test.template) {
-          items.push({
-            title: i18n.t('titles.template'),
-            icon: 'mdi-file-compare',
-            path: `/templateview/${this.test.template.id}`,
-            id: 7,
-          })
-        }
-      }
-
-      return items
-    },
     isSettings() {
       return this.$route.path.includes('/settings')
     },
+
     topCards() {
       return [
         {
@@ -313,6 +256,7 @@ export default {
         },
       ]
     },
+
     bottomCards() {
       const bottomCards = [
         {
@@ -350,43 +294,37 @@ export default {
       }
       return bottomCards
     },
+
     user() {
-      if (this.$store.getters.user) {
-        this.setFlag('flagUser', true)
-      }
+      if (this.$store.getters.user) this.setFlag('flagUser', true)
       return this.$store.getters.user
     },
+
     cooperators() {
       return this.$store.getters.cooperators
     },
+
     loading() {
       return this.$store.getters.loading
     },
-    accessLevel() {
-      // If the user is a superadmin
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0
-        // Check if the user is a collaborator or owner
-        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
-        if (isTestOwner) return 0
 
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((answer) => {
-          answers.push(answer[1])
-        })
-        if (this.test.cooperators) {
-          const coopsInfo = this.test.cooperators.find(
-            (coops) => coops.userDocId === this.user.id,
-          )
-          if (coopsInfo) {
-            return coopsInfo.accessLevel
-          }
-        }
-        if (this.test.isPublic) return 1
-        else return 2
-      }
-      return 1
+    accessLevel() {
+      // Check if the user is defined
+      if (!this.user) return 1
+
+      // If the user is a superadmin
+      if (this.user.accessLevel === 0) return 0
+
+      // Check if the user is a collaborator or owner
+      const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
+      if (isTestOwner) return 0
+
+      // Check if the user is a cooperator and get their access level
+      const coopsInfo = this.test.cooperators?.find((coops) => coops.userDocId === this.user.id)
+      if (coopsInfo) return coopsInfo.accessLevel
+
+      // Check if the test is public
+      return this.test.isPublic ? 1 : 2
     },
   },
 
@@ -406,28 +344,12 @@ export default {
     await this.$store.dispatch('getTest', { id: this.$route.params.id })
     await this.$store.dispatch('getCurrentTestAnswerDoc')
     if (this.accessLevel == 2) {
-      this.$toast.warning("You don't have permission to access this test!")
+      this.$toast.warning('You don\'t have permission to access this test!')
       this.$router.push('/testslist')
     }
   },
-  methods: {
-    standardDeviation(array) {
-      const average = array.reduce(
-        (total, value) => total + value / array.length,
-        0,
-      )
-      return Math.sqrt(
-        array.reduce(
-          (total, valor) => total + Math.pow(average - valor, 2) / array.length,
-          0,
-        ),
-      )
-    },
 
-    pushToTest() {
-      this.$router.push('/managerview/' + this.selectedTest).catch(() => {})
-      this.index = 0
-    },
+  methods: {
     go(item) {
       if (item.id === undefined) this.$router.push(item).catch(() => {})
       else {
@@ -435,17 +357,17 @@ export default {
         else this.$router.push(item.path).catch(() => {})
       }
     },
-    setIsCoops(payload) {
-      this.isCoops = payload
-    },
+
     setFlag(flag, value) {
       this[flag] = value
     },
+
     signOut() {
       this.$store.dispatch('logout').then(() => {
         this.setFlag('flagUser', false)
       })
     },
+
     async setTest() {
       if (this.user.myAnswers && this.test) {
         const answers = []
@@ -495,6 +417,7 @@ export default {
       }
     },
   },
+
   beforeRouteEnter(to, from, next) {
     if (to.params.token)
       next((vm) => {
@@ -517,6 +440,7 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
+
 .background::-webkit-scrollbar {
   display: none;
 }
@@ -530,42 +454,23 @@ export default {
   text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
   color: #ffffff;
 }
-.footer {
-  background-color: #343344;
-  height: 8%;
-  width: 100%;
-  display: flex;
-  align-items: center;
 
-  position: absolute;
-  bottom: 49px;
-}
-.header {
-  background-color: #343344;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-.idText {
-  color: rgba(255, 255, 255, 0.28);
-  font-size: 12px;
-  margin-left: 15px;
-  padding: 0px;
-  margin-bottom: 0px;
-  margin-top: 20px;
-  align-items: flex-end;
-}
 .presentation-text {
   color: rgb(87, 84, 100);
   font-weight: 700;
   font-size: 22px;
   margin-bottom: 20px;
 }
+
 .back-gradient {
   height: 60vh;
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
+
 .text-div {
   max-width: 45%;
 }
+
 .card-container {
   width: 70%;
 }
@@ -600,10 +505,8 @@ export default {
   box-shadow: 0;
   transition: box-shadow 0.5s;
 }
+
 .cards-animation:hover {
   box-shadow: 0px 0px 35px 2px rgba(0, 0, 0, 0.7) !important;
-}
-.text-justification {
-  padding: 2px;
 }
 </style>
