@@ -107,7 +107,7 @@
             @change="change = true"
           />
 
-          <v-row class="mx-3">
+          <v-row class="mx-3 mb-3">
             <v-spacer />
             <v-btn
               style="margin-right: 40px"
@@ -118,10 +118,19 @@
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
+            <v-btn
+              style="margin-right: 40px"
+              outlined
+              color="purple accent-4"
+              :disabled="hasTemplate || !object ? true : false"
+            >
+              Duplicate test
+            </v-btn>
           </v-row>
+
           <v-divider class="my-3 mx-2" />
 
-          <v-row justify="center">
+          <v-row justify="center" class="mt-3">
             <v-btn
               color="#f26363"
               class="white--text mb-4"
@@ -434,7 +443,7 @@ export default {
       if (this.template.templateTitle.trim() !== '') {
         await this.$store.dispatch('createTemplate', template)
         this.closeDialog()
-      }else{
+      } else {
         this.$refs.tempform.validate()
       }
     },
