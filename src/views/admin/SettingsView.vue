@@ -118,17 +118,22 @@
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
+
             <v-btn
               style="margin-right: 40px"
               outlined
               color="purple accent-4"
-              :disabled="hasTemplate || !object ? true : false"
+              @click="duplicateTest()"
             >
               Duplicate test
             </v-btn>
           </v-row>
 
+          {{ test }}
+
           <v-divider class="my-3 mx-2" />
+
+          {{ answersNew }}
 
           <v-row justify="center" class="mt-3">
             <v-btn
@@ -191,6 +196,7 @@ import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
 import i18n from '@/i18n'
+import TestAdmin from '@/models/TestAdmin'
 
 export default {
   components: {
@@ -236,6 +242,18 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || []
+    },
+    testandorespostas() {
+      return this.$store.state.Answer
+    },
+    testAnswerDocument() {
+      return this.$store.state.Answer.testAnswerDocument
+    },
+    answersNew() {
+      if (this.testAnswerDocument) {
+        return Object.values(this.testAnswerDocument.heuristicAnswers)
+      }
+      return []
     },
     reports() {
       return this.$store.getters.reports || []
@@ -455,6 +473,33 @@ export default {
     },
     setLeavingAlert() {
       this.$store.commit('SET_DIALOG_LEAVE', true)
+    },
+    async duplicateTest() {
+      const auxAnswers = this.answersNew
+
+      const test = new Test({
+        testTitle: 'Copy of ' + this.test.testTitle,
+        testDescription: this.test.testDescription,
+        testType: this.test.testType,
+        userTestType: this.test.userTestType,
+        testStructure: this.test.testStructure,
+        testOptions: this.test.testOptions,
+        userTestStatus: {},
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+      })
+
+      const testId = await this.$store.dispatch('createNewTest', test)
+
+      this.sendManager(testId)
+    },
+    sendManager(id) {
+      this.$router.push(`/managerview/${id}`)
     },
   },
 
