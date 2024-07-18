@@ -129,11 +129,7 @@
             </v-btn>
           </v-row>
 
-          {{ test }}
-
           <v-divider class="my-3 mx-2" />
-
-          {{ answersNew }}
 
           <v-row justify="center" class="mt-3">
             <v-btn
@@ -244,7 +240,7 @@ export default {
       return this.$store.getters.answers || []
     },
     testandorespostas() {
-      return this.$store.state.Answer
+      return this.$store.state.answer(this.test.answersDocId)
     },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
@@ -265,7 +261,7 @@ export default {
       if (this.test)
         return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
 
-      return "Are you sure you want to delete this test? This action can't be undone" //in case object isnt loaded
+      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
     },
     hasTemplate() {
       if (this.object)
@@ -474,8 +470,8 @@ export default {
     setLeavingAlert() {
       this.$store.commit('SET_DIALOG_LEAVE', true)
     },
+
     async duplicateTest() {
-      const auxAnswers = this.answersNew
 
       const test = new Test({
         testTitle: 'Copy of ' + this.test.testTitle,
@@ -492,14 +488,12 @@ export default {
         }),
         creationDate: Date.now(),
         updateDate: Date.now(),
-      })
+      },
+    )
 
-      const testId = await this.$store.dispatch('createNewTest', test)
+      await this.$store.dispatch('duplicateTest', {test: test, answer:this.testAnswerDocument})
 
-      this.sendManager(testId)
-    },
-    sendManager(id) {
-      this.$router.push(`/managerview/${id}`)
+      this.$router.push('/testslist')
     },
   },
 
