@@ -25,6 +25,14 @@ export default class TestController extends Controller {
 
     return await super.create(COLLECTION, payload.toFirestore())
   }
+  async duplicateTest(payload) {
+    console.log(payload.answer)
+    // Duplicate answers doc for another test
+    const answerDoc = await answerController.createAnswer(payload.answer)
+    payload.test.answersDocId = answerDoc.id
+
+    return await super.create(COLLECTION, payload.test.toFirestore())
+  }
 
   // async deleteTest(payload) {
   //   await super.update('users', payload.testAdmin.userDocId, payload.auxUser)

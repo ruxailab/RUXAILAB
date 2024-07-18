@@ -195,6 +195,18 @@ export default {
         commit('setLoading', false)
       }
     },
+    async duplicateTest({ commit }, payload) {
+      commit('setLoading', true)
+
+      try {
+        await testController.duplicateTest(payload)
+      } catch (err) {
+        commit('set Error', true)
+        return null
+      } finally {
+        commit('setLoading', false)
+      }
+    },
 
     /**
      * This action deletes a Test,using the generic action "deleteObject",
