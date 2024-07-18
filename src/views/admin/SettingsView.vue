@@ -107,10 +107,10 @@
             @change="change = true"
           />
 
-          <v-row class="mx-3 mb-3">
+          <v-row justify="space-around" class="mx-4 mb-3">
             <v-spacer />
             <v-btn
-              style="margin-right: 40px"
+              style="margin-right: 25px"
               outlined
               color="green"
               :disabled="hasTemplate || !object ? true : false"
@@ -119,12 +119,7 @@
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
 
-            <v-btn
-              style="margin-right: 40px"
-              outlined
-              color="purple accent-4"
-              @click="duplicateTest()"
-            >
+            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
               Duplicate test
             </v-btn>
           </v-row>
@@ -261,7 +256,7 @@ export default {
       if (this.test)
         return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
 
-      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
+      return "Are you sure you want to delete this test? This action can't be undone" //in case object isnt loaded
     },
     hasTemplate() {
       if (this.object)
@@ -472,7 +467,6 @@ export default {
     },
 
     async duplicateTest() {
-
       const test = new Test({
         testTitle: 'Copy of ' + this.test.testTitle,
         testDescription: this.test.testDescription,
@@ -488,10 +482,12 @@ export default {
         }),
         creationDate: Date.now(),
         updateDate: Date.now(),
-      },
-    )
+      })
 
-      await this.$store.dispatch('duplicateTest', {test: test, answer:this.testAnswerDocument})
+      await this.$store.dispatch('duplicateTest', {
+        test: test,
+        answer: this.testAnswerDocument,
+      })
 
       this.$router.push('/testslist')
     },
