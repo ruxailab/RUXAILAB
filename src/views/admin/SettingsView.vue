@@ -107,10 +107,10 @@
             @change="change = true"
           />
 
-          <v-row class="mx-3">
+          <v-row justify="space-around" class="mx-4 mb-3">
             <v-spacer />
             <v-btn
-              style="margin-right: 40px"
+              style="margin-right: 25px"
               outlined
               color="green"
               :disabled="hasTemplate || !object ? true : false"
@@ -118,10 +118,15 @@
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
+
+            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+              Duplicate test
+            </v-btn>
           </v-row>
+
           <v-divider class="my-3 mx-2" />
 
-          <v-row justify="center">
+          <v-row justify="center" class="mt-3">
             <v-btn
               color="#f26363"
               class="white--text mb-4"
@@ -182,6 +187,7 @@ import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
 import i18n from '@/i18n'
+import TestAdmin from '@/models/TestAdmin'
 
 export default {
   components: {
@@ -227,6 +233,18 @@ export default {
     },
     answers() {
       return this.$store.getters.answers || []
+    },
+    testandorespostas() {
+      return this.$store.state.answer(this.test.answersDocId)
+    },
+    testAnswerDocument() {
+      return this.$store.state.Answer.testAnswerDocument
+    },
+    answersNew() {
+      if (this.testAnswerDocument) {
+        return Object.values(this.testAnswerDocument.heuristicAnswers)
+      }
+      return []
     },
     reports() {
       return this.$store.getters.reports || []
@@ -434,7 +452,7 @@ export default {
       if (this.template.templateTitle.trim() !== '') {
         await this.$store.dispatch('createTemplate', template)
         this.closeDialog()
-      }else{
+      } else {
         this.$refs.tempform.validate()
       }
     },
@@ -446,6 +464,32 @@ export default {
     },
     setLeavingAlert() {
       this.$store.commit('SET_DIALOG_LEAVE', true)
+    },
+
+    async duplicateTest() {
+      const test = new Test({
+        testTitle: 'Copy of ' + this.test.testTitle,
+        testDescription: this.test.testDescription,
+        testType: this.test.testType,
+        userTestType: this.test.userTestType,
+        testStructure: this.test.testStructure,
+        testOptions: this.test.testOptions,
+        userTestStatus: {},
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+      })
+
+      await this.$store.dispatch('duplicateTest', {
+        test: test,
+        answer: this.testAnswerDocument,
+      })
+
+      this.$router.push('/testslist')
     },
   },
 
