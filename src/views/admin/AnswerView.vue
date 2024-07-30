@@ -20,9 +20,6 @@ export default {
   },
 
   computed: {
-    showFinalResult() {
-      return finalResult()
-    },
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
