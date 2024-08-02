@@ -1,28 +1,40 @@
 <template>
   <div>
-    <!-- checking whether to show heuristics answer sheet or user answer sheet-->
-    <!-- <div v-if="testAnswerDocument.type === 'HEURISTICS'">
-      <HeuristicsTestAnswer />
+    <!-- User Usability Test -->
+    <div v-if="testAnswerDocument.type === 'User'">
+      <!-- Moderated Test -->
+      <div v-if="testDocument.userTestType === 'moderated'">
+        <UserModeratedSentiment />
+      </div>
+
+      <!-- Un-moderated Test -->
+      <div v-else>
+        <h6>Sorry Sentiment Analysis isn't available for Un-moderated tests</h6>
+      </div>
     </div>
+
+    <!-- Heuristic Test -->
     <div v-else>
-      <UserTestAnswer />
-    </div> -->
-
-    <!-- Audio Wave -->
-    <AudioWave />
-
-    SentimentAnalysisView :D
+      <h6>Sorry Sentiment Analysis isn't available for Heuristic tests</h6>
+    </div>
   </div>
 </template>
 
 <script>
 // Components
-import AudioWave from '@/components/molecules/AudioWave.vue'
-// import HeuristicsTestAnswer from '@/components/organisms/HeuristicsTestAnswer.vue'
-// import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
+import UserModeratedSentiment from '@/components/organisms/UserModeratedSentiment.vue'
+
 export default {
   components: {
-    AudioWave,
+    UserModeratedSentiment,
+  },
+  computed: {
+    testDocument() {
+      return this.$store.getters.test
+    },
+    testAnswerDocument() {
+      return this.$store.state.Answer.testAnswerDocument
+    },
   },
 }
 </script>
