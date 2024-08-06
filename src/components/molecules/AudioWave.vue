@@ -7,7 +7,7 @@
     <!-- Controls -->
     <v-btn icon @click="playPause">
       <v-icon>
-        {{ false ? 'mdi-pause' : 'mdi-play' }}
+        {{ playing ? 'mdi-pause' : 'mdi-play' }}
       </v-icon>
     </v-btn>
   </div>
@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       wave_surfer: null,
+      playing: false,
     }
   },
 
@@ -45,7 +46,9 @@ export default {
     // Initialize WaveSurfer
     this.initWaveSurfer()
 
-    // this.initialize()
+    // Update play/pause state when WaveSurfer's playback state changes
+    this.wave_surfer.on('play', () => (this.playing = true))
+    this.wave_surfer.on('pause', () => (this.playing = false))
   },
   methods: {
     async loadAudioFile() {
