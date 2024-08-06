@@ -1,6 +1,5 @@
 <template>
   <div class="waveform-container">
-    <h1>Basma</h1>
     <!-- Wave Reference -->
     <div ref="waveform" />
 
@@ -21,11 +20,16 @@ import WaveSurfer from 'wavesurfer.js'
 
 export default {
   components: {},
-
+  props: {
+    filePath: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       wave_surfer: null,
-      fileUrl: '',
+      // fileUrl: '',
     }
   },
   mounted() {
