@@ -1,13 +1,15 @@
 <template>
   <div class="waveform-container">
-    file:{{ file }}
     <!-- Wave Reference -->
     <div ref="waveform" />
 
     <!-- Controls -->
-    <button @click="playPause">
-      Play/Pause
-    </button>
+    <!-- Controls -->
+    <v-btn icon @click="playPause">
+      <v-icon>
+        {{ false ? 'mdi-pause' : 'mdi-play' }}
+      </v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -35,26 +37,29 @@ export default {
 
   watch: {
     file(newFile) {
-      // Destroy the previous WaveSurfer instance if it exists
-      if (this.wave_surfer) {
-        this.wave_surfer.destroy()
-      }
       // Re-initialize with the new file
-      this.initialize()
+      this.loadAudioFile()
     },
   },
   mounted() {
-    this.initialize()
+    // Initialize WaveSurfer
+    this.initWaveSurfer()
+
+    // this.initialize()
   },
   methods: {
-    async initialize() {
+    async loadAudioFile() {
+      if (!this.wave_surfer) return
+
       if (!this.file) return
       // Get Audio File URL
       const storage = getStorage()
       const fileRef = ref(storage, this.file)
       getDownloadURL(fileRef)
         .then((url) => {
-          this.initWaveSurfer(url)
+          if (url) {
+            this.wave_surfer.load(url)
+          }
         })
         .catch((error) => {
           switch (error.code) {
@@ -75,7 +80,7 @@ export default {
     },
 
     // WaveSurfer Initializer
-    initWaveSurfer(url) {
+    initWaveSurfer() {
       this.wave_surfer = WaveSurfer.create({
         container: this.$refs.waveform,
         waveColor: 'orange',
@@ -86,15 +91,6 @@ export default {
         // cursorWidth: 1,
         // height: 500,
       })
-      if (url) {
-        this.wave_surfer.load(
-          url,
-          // 'https://firebasestorage.googleapis.com/v0/b/retlab-dev.appspot.com/o/tests%2FavamZbs4K0m6k03WlnGu%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FBasma_sportify_1_Side.mp4?alt=media&token=7f6b01e0-b939-40d7-a25a-225ff84efb04',
-        )
-        // this.wave_surfer.load(
-        //   'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
-        // )
-      }
     },
 
     // Play/Pause
