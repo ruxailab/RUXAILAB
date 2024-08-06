@@ -1,6 +1,7 @@
 <template>
   <div v-if="answers">
     {{ answersDocument }}
+    <h3>aaaaaaa</h3>
     {{ answers }}
     <ShowInfo title="Sentiment Analysis">
       <div slot="content">
@@ -16,6 +17,7 @@
                     <v-list-item-content>
                       <v-list-item-title>
                         {{ getCooperatorEmail(item) }}
+                        <!-- {{ item }}/{{ getCooperatorEmail(item) }} -->
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -28,7 +30,15 @@
             <v-col class="ma-0 pa-1 answer-list" cols="9">
               <h5>Sentiment Preview</h5>
               <h5>{{ answerSelect }}</h5>
-              <h5>{{ cameraUrlEvaluator }}</h5>
+              <!-- Upper -->
+
+              <!-- Audio Wave -->
+              <AudioWave />
+              <!-- <AudioWave :file="cameraUrlEvaluator" /> -->
+              <!-- <h4>{{ cameraUrlEvaluator }}</h4> -->
+
+              <!-- Transcript -->
+
               <!-- <v-data-table :headers="dataHeaders" :items="taskAnswers">
                 <template v-slot:item.userDocId="{ item }">
                   <span>{{ getCooperatorEmail(item.userDocId) }}</span>
@@ -64,14 +74,13 @@
 <script>
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-
-// import AudioWave from '@/components/molecules/AudioWave.vue'
+import AudioWave from '@/components/molecules/AudioWave.vue'
 // import TranscriptGridView from './TranscriptGridView.vue'
 
 export default {
   components: {
     ShowInfo,
-    // AudioWave,
+    AudioWave,
     // TranscriptGridView,
   },
   data: () => ({
