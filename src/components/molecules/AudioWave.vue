@@ -1,5 +1,6 @@
 <template>
   <div class="waveform-container">
+    file:{{ file }}
     <!-- Wave Reference -->
     <div ref="waveform" />
 
@@ -14,39 +15,46 @@
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 
 import WaveSurfer from 'wavesurfer.js'
-// import audioFile from '@/demos/Basma_sportify_1_Side.mp4'
 
 // Components
 
 export default {
   components: {},
   props: {
-    filePath: {
+    file: {
       type: String,
-      required: true,
+      required: false, // allowing for the file to be undefined
+      default: null,
     },
   },
   data() {
     return {
       wave_surfer: null,
-      // fileUrl: '',
     }
   },
+
+  watch: {
+    file(newFile) {
+      // Destroy the previous WaveSurfer instance if it exists
+      if (this.wave_surfer) {
+        this.wave_surfer.destroy()
+      }
+      // Re-initialize with the new file
+      this.initialize()
+    },
+  },
   mounted() {
-    // this.downloadAudio()
-    this.initWaveSurfer()
+    this.initialize()
   },
   methods: {
-    async downloadAudio() {
+    async initialize() {
+      if (!this.file) return
+      // Get Audio File URL
       const storage = getStorage()
-      const fileRef = ref(
-        storage,
-        'tests/avamZbs4K0m6k03WlnGu/byfjeXr4olNzHdnSmF0ibZQZgkH2/byfjeXr4olNzHdnSmF0ibZQZgkH2/Basma_sportify_1_Side.mp4',
-      )
+      const fileRef = ref(storage, this.file)
       getDownloadURL(fileRef)
         .then((url) => {
-          console.log('URL:', url)
-          // window.open(url, '_blank')
+          this.initWaveSurfer(url)
         })
         .catch((error) => {
           switch (error.code) {
@@ -67,7 +75,7 @@ export default {
     },
 
     // WaveSurfer Initializer
-    initWaveSurfer() {
+    initWaveSurfer(url) {
       this.wave_surfer = WaveSurfer.create({
         container: this.$refs.waveform,
         waveColor: 'orange',
@@ -78,18 +86,15 @@ export default {
         // cursorWidth: 1,
         // height: 500,
       })
-      // console.log('WaveSurfer:', this.wave_surfer)
-      // if (this.fileUrl) {
-      // console.log('Loading file:', this.fileUrl)
-      console.log('Loading file:')
-      this.wave_surfer.load(
-        'https://firebasestorage.googleapis.com/v0/b/retlab-dev.appspot.com/o/tests%2FavamZbs4K0m6k03WlnGu%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FBasma_sportify_1_Side.mp4?alt=media&token=7f6b01e0-b939-40d7-a25a-225ff84efb04',
-      )
-      // this.wave_surfer.load(
-      //   'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
-      // )
-      console.log('File loaded:')
-      // }
+      if (url) {
+        this.wave_surfer.load(
+          url,
+          // 'https://firebasestorage.googleapis.com/v0/b/retlab-dev.appspot.com/o/tests%2FavamZbs4K0m6k03WlnGu%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FBasma_sportify_1_Side.mp4?alt=media&token=7f6b01e0-b939-40d7-a25a-225ff84efb04',
+        )
+        // this.wave_surfer.load(
+        //   'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
+        // )
+      }
     },
 
     // Play/Pause

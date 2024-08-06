@@ -33,8 +33,9 @@
               <!-- Upper -->
 
               <!-- Audio Wave -->
-              <AudioWave />
-              <!-- <AudioWave :file="cameraUrlEvaluator" /> -->
+              <!-- <AudioWave /> -->
+              <AudioWave :file="cameraUrlEvaluator" />
+              <!-- <AudioWave :file="'tests/avamZbs4K0m6k03WlnGu/byfjeXr4olNzHdnSmF0ibZQZgkH2/byfjeXr4olNzHdnSmF0ibZQZgkH2/Basma_sportify_1_Side.mp4'" /> -->
               <!-- <h4>{{ cameraUrlEvaluator }}</h4> -->
 
               <!-- Transcript -->
