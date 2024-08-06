@@ -15,7 +15,7 @@
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 
 import WaveSurfer from 'wavesurfer.js'
-import audioFile from '@/demos/Basma_sportify_1_Side.mp4'
+// import audioFile from '@/demos/Basma_sportify_1_Side.mp4'
 
 // Components
 
@@ -37,7 +37,7 @@ export default {
       const storage = getStorage()
       const fileRef = ref(
         storage,
-        'tests/avamZbs4K0m6k03WlnGu/byfjeXr4olNzHdnSmF0ibZQZgkH2/byfjeXr4olNzHdnSmF0ibZQZgkH2/video',
+        'tests/avamZbs4K0m6k03WlnGu/byfjeXr4olNzHdnSmF0ibZQZgkH2/byfjeXr4olNzHdnSmF0ibZQZgkH2/Basma_sportify_1_Side.mp4',
       )
       getDownloadURL(fileRef)
         .then((url) => {
@@ -78,10 +78,12 @@ export default {
       // if (this.fileUrl) {
       // console.log('Loading file:', this.fileUrl)
       console.log('Loading file:')
-      // this.wave_surfer.load('https://firebasestorage.googleapis.com/v0/b/retlab-dev.appspot.com/o/tests%2FavamZbs4K0m6k03WlnGu%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2Fvideo?alt=media&token=cb9e7dc6-e8ee-42aa-8c23-d5ac8baef38b')
       this.wave_surfer.load(
-        'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
+        'https://firebasestorage.googleapis.com/v0/b/retlab-dev.appspot.com/o/tests%2FavamZbs4K0m6k03WlnGu%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FbyfjeXr4olNzHdnSmF0ibZQZgkH2%2FBasma_sportify_1_Side.mp4?alt=media&token=7f6b01e0-b939-40d7-a25a-225ff84efb04',
       )
+      // this.wave_surfer.load(
+      //   'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg',
+      // )
       console.log('File loaded:')
       // }
     },
