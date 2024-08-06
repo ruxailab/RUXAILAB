@@ -47,6 +47,7 @@
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.7.1",
     "vuex": "^3.6.2",
+    "wavesurfer.js": "^7.8.2",
     "webpack": "^4.47.0"
   },
   "devDependencies": {
