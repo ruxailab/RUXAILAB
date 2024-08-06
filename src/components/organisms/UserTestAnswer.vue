@@ -65,7 +65,8 @@ export default {
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
-    tab: 0,
+    // tab: 0,
+    tab: 2,
     ind: 0,
     resultEvaluator: statistics(),
     intro: null,
