@@ -1,8 +1,8 @@
 <template>
   <div v-if="answers">
-    {{ answersDocument }}
-    <h3>aaaaaaa</h3>
-    {{ answers }}
+    <!-- {{ answersDocument }} -->
+    <!-- <h3>aaaaaaa</h3> -->
+    <!-- {{ answers }} -->
     <ShowInfo title="Sentiment Analysis">
       <div slot="content">
         <v-card flat class="task-container">
@@ -17,7 +17,6 @@
                     <v-list-item-content>
                       <v-list-item-title>
                         {{ getCooperatorEmail(item) }}
-                        <!-- {{ item }}/{{ getCooperatorEmail(item) }} -->
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -28,9 +27,7 @@
 
             <!-- Answer Sentiment -->
             <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <!-- <h5>Sentiment Preview</h5> -->
-              <!-- <h5>{{ answerSelect }}</h5> -->
-              <!-- Upper -->
+              <!-- Co-operators -->
 
               <!-- Audio Wave -->
               <AudioWave :file="cameraUrlEvaluator" />
