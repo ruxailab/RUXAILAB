@@ -20,6 +20,7 @@
   "dependencies": {
     "@estruyf/github-actions-reporter": "^1.7.0",
     "axios": "^1.5.0",
+    "axois": "^0.0.1-security",
     "bluebird": "^3.7.2",
     "caniuse-lite": "^1.0.30001534",
     "chart.js": "^2.9.4",
