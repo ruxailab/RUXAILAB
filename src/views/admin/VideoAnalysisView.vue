@@ -58,7 +58,7 @@ export default {
         { text: 'Neutral', value: 'neutral' },
       ],
       collaborators: [
-        { name: 'Name 1', attention: '25%', emotion: 'Happy'},
+        { name: 'sjd1', attention: '19.57', emotion: 'Surprise'},
       ],
     };
   },
@@ -125,7 +125,9 @@ export default {
   },
   created() {
     const docId = this.$route.params.id;
-    this.fetchVideoAnalysisData(docId);
+    console.log(docId); //route sesion id, to be used when fully integrated
+    this.fetchVideoAnalysisData("nPbTHDp2FlWJ4PPyncWx");
+
   },
   methods: {
     ...mapActions('VideoAnalysis', ['fetchVideoAnalysisData']),
