@@ -3,10 +3,10 @@
     <v-row class="mb-2" justify="center">
       <v-col cols="10">
         <v-btn
-          v-if="index == 0"
+          v-if="index === 0"
           :disabled="!consentCompleted && !isAdmin"
           :dark="(consentCompleted && !isAdmin) || isAdmin"
-          @click="openUserMedia()"
+          @click="openUserCamera"
           color="green"
           block
           depressed
@@ -21,15 +21,16 @@
 import {
   collection,
   doc,
-  addDoc,
-  setDoc,
-  onSnapshot,
   getDoc,
-  updateDoc,
   deleteDoc,
   getDocs,
+  addDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
+
 export default {
   data() {
     return {
@@ -44,12 +45,14 @@ export default {
             urls: [
               'stun:stun1.l.google.com:19302',
               'stun:stun2.l.google.com:19302',
+              'stun:stun3.l.google.com:19302',
+              'stun:stun4.l.google.com:19302',
             ],
           },
         ],
         iceCandidatePoolSize: 10,
       },
-      peerConnection: null,
+      videoSender: null,
       roomDialog: false,
       roomCollection: null,
     }
@@ -69,11 +72,11 @@ export default {
     },
   },
   computed: {
-    localStream() {
-      return this.$store.getters.localStream
+    localCameraStream() {
+      return this.$store.getters.localCameraStream
     },
-    remoteStream() {
-      return this.$store.getters.remoteStream
+    remoteCameraStream() {
+      return this.$store.getters.remoteCameraStream
     },
     roomTestAnswerId() {
       return this.$store.getters.test.testAnswerId
@@ -84,26 +87,32 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer
     },
+    peerConnection() {
+      return this.$store.getters.peerConnection
+    },
   },
   methods: {
     emitConfirm() {
       this.$emit('emit-confirm')
     },
+
     async createRoom() {
       this.createBtnDisabled = true
       this.joinBtnDisabled = true
       this.roomCollection = collection(db, 'rooms')
-
       const roomRef = doc(this.roomCollection, this.roomTestId)
+      await this.$store.dispatch('createPeerConnection', {
+        configuration: this.configuration,
+      })
 
-      this.peerConnection = new RTCPeerConnection(this.configuration)
-
-      this.localStream.getTracks().forEach((track) => {
-        this.peerConnection.addTrack(track, this.localStream)
+      this.localCameraStream.getTracks().forEach((track) => {
+        this.videoSender = this.peerConnection.addTrack(
+          track,
+          this.localCameraStream,
+        )
       })
 
       const callerCandidatesCollection = collection(roomRef, 'callerCandidates')
-
       this.peerConnection.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
           return
@@ -113,20 +122,19 @@ export default {
 
       const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
-
       const roomWithOffer = {
         offer: {
           type: offer.type,
           sdp: offer.sdp,
         },
       }
-      await setDoc(roomRef, roomWithOffer) // Setting room details in document
+      await setDoc(roomRef, roomWithOffer)
       this.roomId = roomRef.id
       this.currentRoom = `Current room is ${roomRef.id} - You are the caller!`
 
       this.peerConnection.addEventListener('track', (event) => {
         event.streams[0].getTracks().forEach((track) => {
-          this.remoteStream.addTrack(track)
+          this.remoteCameraStream.addTrack(track)
         })
       })
 
@@ -150,43 +158,46 @@ export default {
           }
         })
       })
+
+      this.peerConnection.addEventListener('connectionstatechange', () => {
+        if (
+          this.peerConnection.connectionState == 'disconnected' ||
+          this.peerConnection.iceConnectionState == 'disconnected'
+        ) {
+          this.$store.commit('SET_DISCONNECTED', true)
+        }
+      })
     },
-    async joinRoom() {
-      this.createBtnDisabled = true
-      this.joinBtnDisabled = true
-      this.roomDialog = true
-    },
-    async confirmJoin() {
-      const roomId = this.roomId
-      this.currentRoom = `Current room is ${roomId} - You are the callee!`
-      await this.joinRoomById(roomId)
-    },
+
     async joinRoomById(roomId) {
       const roomRef = doc(collection(db, 'rooms'), roomId)
-
       const roomSnapshot = await getDoc(roomRef)
 
       if (roomSnapshot.exists) {
-        this.peerConnection = new RTCPeerConnection(this.configuration)
-
-        this.localStream.getTracks().forEach((track) => {
-          this.peerConnection.addTrack(track, this.localStream)
+        await this.$store.dispatch('createPeerConnection', {
+          configuration: this.configuration,
+        })
+        const localStream = this.localCameraStream
+        localStream.getTracks().forEach((track) => {
+          this.videoSender = this.peerConnection.addTrack(track, localStream)
         })
 
         const calleeCandidatesCollection = collection(
           roomRef,
           'calleeCandidates',
         )
-        this.peerConnection.addEventListener('icecandidate', (event) => {
+        this.peerConnection.addEventListener('icecandidate', async (event) => {
           if (!event.candidate) {
             return
           }
-          addDoc(calleeCandidatesCollection, event.candidate.toJSON())
+          await addDoc(calleeCandidatesCollection, event.candidate.toJSON())
         })
 
         this.peerConnection.addEventListener('track', (event) => {
           event.streams[0].getTracks().forEach((track) => {
-            this.remoteStream.addTrack(track)
+            if (this.remoteCameraStream) {
+              this.remoteCameraStream.addTrack(track)
+            }
           })
         })
 
@@ -194,9 +205,9 @@ export default {
         await this.peerConnection.setRemoteDescription(
           new RTCSessionDescription(offer),
         )
+
         const answer = await this.peerConnection.createAnswer()
         await this.peerConnection.setLocalDescription(answer)
-
         const roomWithAnswer = {
           answer: {
             type: answer.type,
@@ -216,44 +227,22 @@ export default {
           })
         })
       }
-    },
-    async switchMediaStream() {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          cursor: true,
-        })
-        const screenTrack = stream.getTracks()[0]
-
-        // Get all the tracks that are currently being sent
-        const senders = this.peerConnection.getSenders()
-
-        // Replace each track with the new screenTrack
-        senders.forEach((sender) => {
-          if (sender.track.kind === 'video') {
-            sender.replaceTrack(screenTrack)
-          }
-        })
-
-        // When screen sharing is stopped, replace the screenTrack with the original tracks
-        screenTrack.onended = () => {
-          senders.forEach((sender) => {
-            if (sender.track.kind === 'video') {
-              const originalTrack = this.localStream.getVideoTracks()[0]
-              sender.replaceTrack(originalTrack)
-            }
-          })
+      this.peerConnection.addEventListener('connectionstatechange', () => {
+        if (
+          this.peerConnection.connectionState == 'disconnected' ||
+          this.peerConnection.iceConnectionState == 'disconnected'
+        ) {
+          this.$store.commit('SET_DISCONNECTED', true)
         }
-
-        this.$store.commit('SET_LOCAL_STREAM', stream)
-      } catch (error) {
-        console.error('Error switching media stream:', error)
-      }
+      })
     },
-
-    async openUserMedia() {
+    async openUserCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            width: { ideal: 640, max: 1280 },
+            height: { ideal: 360, max: 720 },
+          },
           audio: true,
         })
         if (stream) {
@@ -263,29 +252,27 @@ export default {
           this.createBtnDisabled = false
           this.joinBtnDisabled = false
           this.hangupBtnDisabled = false
+
+          if (this.isAdmin) {
+            this.createRoom()
+          } else {
+            this.joinRoomById(this.roomTestId)
+          }
         }
       } catch (e) {
         this.$toast.error('Error in capturing your media device:' + e.message)
       }
-      if (this.isAdmin) {
-        this.createRoom() // calling createRoom function to before connect the webcam the moderator instantly create a room
-      } else if (!this.isAdmin) {
-        this.joinRoomById(this.roomTestId)
-      }
     },
+
     async hangUp() {
-      const tracks = this.localStream.getTracks()
-      tracks.forEach((track) => {
-        track.stop()
-      })
+      const tracks = this.localCameraStream.getTracks()
+      tracks.forEach((track) => track.stop())
 
-      if (this.remoteStream) {
-        this.remoteStream.getTracks().forEach((track) => track.stop())
+      if (this.remoteCameraStream) {
+        this.remoteCameraStream.getTracks().forEach((track) => track.stop())
       }
 
-      if (this.peerConnection) {
-        this.peerConnection.close()
-      }
+      await this.$store.dispatch('closePeerConnection')
 
       this.$store.commit('SET_LOCAL_STREAM', null)
       this.$store.commit('SET_REMOTE_STREAM', null)
@@ -294,12 +281,9 @@ export default {
       this.hangupBtnDisabled = true
       this.currentRoom = ''
 
-      // Deleting room on hang up
       if (this.roomId) {
         try {
           const roomRef = doc(db, 'rooms', this.roomId)
-
-          // Verificando se o documento da sala existe antes de tentar excluí-lo
           const roomSnapshot = await getDoc(roomRef)
           if (roomSnapshot.exists()) {
             const calleeCandidatesSnapshot = await getDocs(
@@ -317,16 +301,13 @@ export default {
             })
 
             await deleteDoc(roomRef)
-          } else {
           }
         } catch (error) {
           console.error('Error deleting room and candidates:', error)
         }
       }
-      // document.location.reload(true)
     },
   },
 }
 </script>
-
 <style scoped></style>

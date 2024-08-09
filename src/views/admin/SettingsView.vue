@@ -48,7 +48,7 @@
                 autofocus
                 label="Title"
                 :rules="titleRequired"
-                counter="100"
+                counter="200"
                 outlined
                 dense
                 @input="$emit('change')"
@@ -107,10 +107,10 @@
             @change="change = true"
           />
 
-          <v-row class="mx-3">
+          <v-row justify="space-around" class="mx-4 mb-3">
             <v-spacer />
             <v-btn
-              style="margin-right: 40px"
+              style="margin-right: 25px"
               outlined
               color="green"
               :disabled="hasTemplate || !object ? true : false"
@@ -118,10 +118,15 @@
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
+
+            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+              Duplicate test
+            </v-btn>
           </v-row>
+
           <v-divider class="my-3 mx-2" />
 
-          <v-row justify="center">
+          <v-row justify="center" class="mt-3">
             <v-btn
               color="#f26363"
               class="white--text mb-4"
@@ -130,7 +135,8 @@
             >
               <v-icon left>
                 mdi-trash-can-outline
-              </v-icon> {{ $t('pages.settings.deleteTest') }}
+              </v-icon>
+              {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </v-row>
         </v-card>
@@ -181,6 +187,7 @@ import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
 import i18n from '@/i18n'
+import TestAdmin from '@/models/TestAdmin'
 
 export default {
   components: {
@@ -209,7 +216,7 @@ export default {
     tempDialog: false,
     titleRequired: [
       (v) => !!v || i18n.t('errors.fieldRequired'),
-      (v) => v.length <= 100 || 'Max 100 characters',
+      (v) => v.length <= 200 || 'Max 200 characters',
     ],
     showSettings: false,
     publicTemplate: true,
@@ -227,6 +234,18 @@ export default {
     answers() {
       return this.$store.getters.answers || []
     },
+    testandorespostas() {
+      return this.$store.state.answer(this.test.answersDocId)
+    },
+    testAnswerDocument() {
+      return this.$store.state.Answer.testAnswerDocument
+    },
+    answersNew() {
+      if (this.testAnswerDocument) {
+        return Object.values(this.testAnswerDocument.heuristicAnswers)
+      }
+      return []
+    },
     reports() {
       return this.$store.getters.reports || []
     },
@@ -237,7 +256,7 @@ export default {
       if (this.test)
         return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
 
-      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
+      return "Are you sure you want to delete this test? This action can't be undone" //in case object isnt loaded
     },
     hasTemplate() {
       if (this.object)
@@ -285,8 +304,18 @@ export default {
       this.valids[index] = valid
     },
     async submit() {
-      await this.$store.dispatch('updateTest', new Test(this.object))
-      this.$store.commit('SET_LOCAL_CHANGES', false)
+      const element = this.object.testTitle
+      if (element.length > 0 && element.length < 200) {
+        await this.$store.dispatch('updateTest', new Test(this.object))
+        this.$store.commit('SET_LOCAL_CHANGES', false)
+        console.log('changes Saved')
+        this.$toast.success('Changes Saved')
+      } else if (element.length >= 200) {
+        this.$toast.warning('Title must not exceed 200 characters.')
+      } else {
+        this.$toast.warning('Test must contain a title.')
+      }
+
       // await this.$store.dispatch("getAnswers", { id: this.test.answers });
       // await this.$store.dispatch("getReports", { id: this.test.reports });
       // delete this.object.id;
@@ -420,18 +449,47 @@ export default {
         header: tempHeader,
         body: tempBody,
       })
-
-      await this.$store.dispatch('createTemplate', template)
-      this.closeDialog()
+      if (this.template.templateTitle.trim() !== '') {
+        await this.$store.dispatch('createTemplate', template)
+        this.closeDialog()
+      } else {
+        this.$refs.tempform.validate()
+      }
     },
     closeDialog() {
       this.tempDialog = false
       this.$refs.tempform.resetValidation()
-      this.templateTitle = ''
-      this.templateDescription = ''
+      this.template.templateTitle = ''
+      this.template.templateDescription = ''
     },
     setLeavingAlert() {
       this.$store.commit('SET_DIALOG_LEAVE', true)
+    },
+
+    async duplicateTest() {
+      const test = new Test({
+        testTitle: 'Copy of ' + this.test.testTitle,
+        testDescription: this.test.testDescription,
+        testType: this.test.testType,
+        userTestType: this.test.userTestType,
+        testStructure: this.test.testStructure,
+        testOptions: this.test.testOptions,
+        userTestStatus: {},
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+      })
+
+      await this.$store.dispatch('duplicateTest', {
+        test: test,
+        answer: this.testAnswerDocument,
+      })
+
+      this.$router.push('/testslist')
     },
   },
 

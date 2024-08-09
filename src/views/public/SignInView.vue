@@ -34,6 +34,7 @@
               </v-form>
               <v-card-actions class="justify-center mt-4">
                 <v-btn
+                  data-testid="sign-in-button"
                   color="#F9A826"
                   rounded
                   class="white--text"
@@ -48,8 +49,9 @@
                   <a
                     style="color: #F9A826 ;text-decoration: underline;"
                     @click="redirectToSignup"
-                    >{{ $t('SIGNIN.dont-have-account') }}</a
                   >
+                    {{ $t('SIGNIN.dont-have-account') }}
+                  </a>
                 </p>
               </v-card-actions>
             </v-col>
@@ -66,7 +68,6 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-//import AuthController from "@/controllers/AuthController";
 
 export default {
   components: {

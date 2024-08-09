@@ -29,7 +29,15 @@
     "save": "Salvar",
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
-    "noNotifications": "Você não tem notificações ainda"
+    "noNotifications": "Você não tem notificações ainda",
+    "timeAgo": {
+      "years": "[TODO] {count}",
+      "months": "[TODO] {count}",
+      "days": "[TODO] {count}",
+      "hours": "[TODO] {count}",
+      "minutes": "[TODO] {count}",
+      "now": "[TODO]"
+    }
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -156,6 +164,166 @@
       "positiveValue": "O valor precisa ser um número positivo"
     }
   },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "[TODO]"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "[TODO]",
+      "heuristics": "[TODO]"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "[TODO]"
+    },
+    "actions": {
+      "saveWeights": "[TODO]"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "[TODO]"
+    },
+    "messages": {
+      "acceptCsv": "[TODO]",
+      "noCsvFileSelected": "[TODO]"
+    },
+    "placeHolders": {
+      "importCsv": "[TODO]"
+    },
+    "actions": {
+      "downloadCsvTemplate": "[TODO]",
+      "update": "[TODO]"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "[TODO]",
+      "submitOnce": "[TODO]",
+      "noHeuristics": "[TODO]"
+    },
+    "actions": {
+      "cancel": "[TODO]",
+      "submit": "[TODO]",
+      "save": "[TODO]",
+      "continueAs": "[TODO]",
+      "notMail": "[TODO]",
+      "changeAccount": "[TODO]",
+      "startTest": "[TODO]"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "[TODO]",
+      "options": "[TODO]",
+      "weights": "[TODO]",
+      "settings": "[TODO]"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "[TODO]",
+      "statistics": "[TODO]",
+      "evaluators": "[TODO]",
+      "heuristics": "[TODO]",
+      "analytics": "[TODO]"
+    },
+    "statistics": {
+      "usabilityPercentage": "[TODO]",
+      "max": "[TODO]",
+      "min": "[TODO]",
+      "std": "[TODO]"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "[TODO]",
+        "graphic": "[TODO]"
+      },
+      "messages": {
+        "graphForMoreThan3": "[TODO]"
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "[TODO]",
+        "answersByEvaluator": "[TODO]",
+        "answersByHeuristics": "[TODO]",
+        "graphic": "[TODO]",
+        "weights": "[TODO]"
+      },
+      "messages": {
+        "needMoreThan1Answer": "[TODO]",
+        "runWeightFunction": "[TODO]"
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "[TODO]",
+      "last_updated": "[TODO]"
+    },
+    "headers": {
+      "evaluator": "[TODO]",
+      "last_update": "[TODO]",
+      "progress": "[TODO]",
+      "status": "[TODO]",
+      "more": "[TODO]"
+    },
+    "messages": {
+      "confirm_delete_report": "[TODO]",
+      "reports_loading": "[TODO]",
+      "remove_report": "[TODO]",
+      "sure_to_delete": "[TODO] {user}",
+      "report_deleted": "[TODO]"
+    },
+    "status": {
+      "submitted": "[TODO]",
+      "in_progress": "[TODO]"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "[TODO]"
+    },
+    "headers": {
+      "email": "[TODO]",
+      "role": "[TODO]",
+      "invited": "[TODO]",
+      "accepted": "[TODO]",
+      "more": "[TODO]",
+      "title": "[TODO]",
+      "content": "[TODO]"
+    },
+    "actions": {
+      "send_invitation": "[TODO]",
+      "send_message": "[TODO]",
+      "reinvite": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "cancel": "[TODO]",
+      "send": "[TODO]",
+      "select_cooperator": "[TODO]"
+    },
+    "roles": {
+      "administrator": "[TODO]",
+      "evaluator": "[TODO]",
+      "guest": "[TODO]"
+    },
+    "messages": {
+      "cooperators_loading": "[TODO]",
+      "no_users": "[TODO]",
+      "remove_cooperator": "[TODO]",
+      "cancel_invitation": "[TODO]",
+      "change_role": "[TODO]",
+      "message_title_hint": "[TODO]",
+      "message_content_hint": "[TODO]"
+    }
+  },
   "UserTestTable": {
     "titles": {
       "consentForm": "Formulário de Consentimento",
@@ -222,7 +390,9 @@
         "answersByHeuristics": "Respostas por heurística",
         "finalReport": "Relatório Final",
         "loading": "Carregando..."
-      }
+      },
+      "ContructionHeading": "Página em Construção",
+      "ContructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Por favor, volte em breve!"
     },
     "landing": {
       "feedbackTitle": "Receba feedback rapidamente sobre seus projetos",

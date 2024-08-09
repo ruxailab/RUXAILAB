@@ -10,6 +10,8 @@ export default class TaskAnswer {
     postTestCompleted,
     tasks,
     progress,
+    cameraUrlModerator,
+    cameraUrlEvaluator,
     total,
     submitted,
     userDocId,
@@ -23,6 +25,8 @@ export default class TaskAnswer {
     this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
+    this.cameraUrlModerator = cameraUrlModerator ?? ''
+    this.cameraUrlEvaluator = cameraUrlEvaluator ?? ''
     this.total = total ?? 0
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? ''
@@ -54,6 +58,8 @@ export default class TaskAnswer {
         ]),
       ),
       progress: this.progress,
+      cameraUrlEvaluator: this.cameraUrlEvaluator,
+      cameraUrlModerator: this.cameraUrlModerator,
       total: this.total,
       submitted: this.submitted,
       userDocId: this.userDocId,

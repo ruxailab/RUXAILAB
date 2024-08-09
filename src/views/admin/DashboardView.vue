@@ -6,6 +6,7 @@
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          data-testid="create-test-btn"
           large
           dark
           fab
@@ -91,6 +92,7 @@
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
             <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
+            <v-tab>Sessions</v-tab>
 
             <v-spacer />
           </v-tabs>
@@ -161,6 +163,35 @@
             @clicked="goTo"
           />
 
+          <!-- Tests -> Sessions -->
+          <List
+            v-if="
+              filteredModeratedSessions.length > 0 &&
+                mainIndex == 0 &&
+                subIndex == 3
+            "
+            :items="filteredModeratedSessions"
+            type="sessions"
+            @clicked="goTo"
+          />
+          <v-col
+            v-if="
+              filteredModeratedSessions.length == 0 &&
+                mainIndex == 0 &&
+                subIndex == 3
+            "
+            align="center"
+            class="my-5"
+          >
+            <span style="color: #575757; font-size: 1.25rem !important;">
+              You don't have active sessions
+            </span>
+            <br>
+            <v-icon style="color: #575757;" class="mt-2" large>
+              mdi-clock-remove-outline
+            </v-icon>
+          </v-col>
+
           <!-- Templates -> Personal -->
           <List
             v-if="mainIndex == 1 && subIndex == 0"
@@ -227,25 +258,24 @@ export default {
     disablePrevious: true,
     tempDialog: false,
     temp: {},
+    filteredModeratedSessions: [],
   }),
 
   computed: {
     user() {
       return this.$store.getters.user
     },
-
+    test() {
+      return this.$store.getters.test
+    },
     tests() {
       return this.$store.state.Tests.tests
     },
 
     filteredTests() {
-      let arr = null
-
-      arr = this.tests?.filter((test) => {
+      return this.tests?.filter(test => {
         return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-
-      return arr ?? this.tests
+      }) ?? this.tests
     },
 
     templates() {
@@ -253,11 +283,9 @@ export default {
     },
 
     filteredTemplates() {
-      return this.templates.filter((temp) =>
-        temp.header.templateTitle
-          .toLowerCase()
-          .includes(this.search.toLowerCase()),
-      )
+      return this.templates.filter(temp => {
+        return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
+      })
     },
 
     loading() {
@@ -268,7 +296,6 @@ export default {
       return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
     },
   },
-
   watch: {
     async mainIndex(val) {
       this.subIndex = 0 //reset subIndex when main index change
@@ -295,6 +322,9 @@ export default {
       }
     },
   },
+  mounted() {
+    this.filterModeratedSessions()
+  },
 
   async created() {
     await this.getMyPersonalTests()
@@ -305,6 +335,7 @@ export default {
     async cleanTestStore() {
       await this.$store.dispatch('cleanTest')
     },
+    
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
@@ -325,12 +356,42 @@ export default {
       await this.$store.dispatch('getSharedWithMeTests', this.user.id)
     },
 
+    async filterModeratedSessions() {
+      const userModeratedTests = Object.values(this.user.myAnswers).filter(
+        (answer) => answer.userTestType === 'moderated',
+      )
+
+      const cooperatorArray = []
+
+      for (let i = 0; i < userModeratedTests.length; i++) {
+        const testId = userModeratedTests[i].testDocId
+        const testObj = await this.$store.dispatch('getTest', { id: testId })
+
+        if (testObj) {
+          const cooperatorObj = testObj.cooperators.find(
+            (coop) => coop.userDocId == this.user.id,
+          )
+          cooperatorObj.testTitle = testObj.testTitle
+          cooperatorObj.testAdmin = testObj.testAdmin
+          cooperatorObj.id = testObj.id
+
+          const today = new Date()
+          const testDate = new Date(cooperatorObj.testDate)
+
+          if (cooperatorObj && testDate.getDate() === today.getDate()) {
+            cooperatorArray.push(cooperatorObj)
+          }
+        }
+      }
+      this.filteredModeratedSessions = cooperatorArray
+      return cooperatorArray
+    },
+
     goToCreateTestRoute() {
       this.$router.push('/createtest')
     },
 
     goTo(test) {
-      // if it is from the my tests tab
       if (this.mainIndex === 0) {
         if (this.subIndex === 0) {
           this.$router.push({
@@ -356,6 +417,8 @@ export default {
             name: 'ManagerView',
             params: { id: test.id },
           })
+        } else if (this.subIndex === 3) {
+          this.$router.push(`testview/${test.id}/${this.user.id}`)
         }
       }
     },

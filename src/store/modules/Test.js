@@ -7,7 +7,6 @@
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
-// import Test from '../../models/Test'
 
 const testController = new TestController()
 
@@ -28,8 +27,10 @@ export default {
     postTest: [],
     scoresPercentage: [],
     finalMessage: '',
-    remoteStream: null,
-    localStream: null,
+    remoteCameraStream: null,
+    localCameraStream: null,
+    peerConnection: null,
+    isDisconnected: false,
   },
   getters: {
     tests(state) {
@@ -68,11 +69,17 @@ export default {
     finalMessage(state) {
       return state.finalMessage
     },
-    remoteStream(state) {
-      return state.remoteStream
+    remoteCameraStream(state) {
+      return state.remoteCameraStream
     },
-    localStream(state) {
-      return state.localStream
+    localCameraStream(state) {
+      return state.localCameraStream
+    },
+    peerConnection(state) {
+      return state.peerConnection
+    },
+    isDisconnected(state) {
+      return state.isDisconnected
     },
   },
   mutations: {
@@ -83,7 +90,6 @@ export default {
       state.tests = payload
     },
     ADD_TASKS(state, payload) {
-      //state.tasks.push(payload)
       state.tasks = [...state.tasks, payload]
     },
     SET_TASKS(state, payload) {
@@ -117,13 +123,20 @@ export default {
       state.finalMessage = payload
     },
     SET_REMOTE_STREAM(state, stream) {
-      state.remoteStream = stream
+      state.remoteCameraStream = stream
     },
     SET_LOCAL_STREAM(state, stream) {
-      state.localStream = stream
+      state.localCameraStream = stream
+    },
+    SET_PEER_CONNECTION(state, connection) {
+      // Adiciona mutação para peerConnection
+      state.peerConnection = connection
+    },
+    SET_DISCONNECTED(state, status) {
+      state.isDisconnected = status
     },
     updateCurrentImageUrl(state, url) {
-      state.currentImageUrl = url // Update currentImageUrl with the new URL
+      state.currentImageUrl = url
     },
     CLEAN_TEST(state) {
       state.Test = null
@@ -139,45 +152,56 @@ export default {
       state.landingPage = ''
       state.participantCamera = ''
       state.finalMessage = ''
+      state.peerConnection = null // Reseta peerConnection
     },
     removeHeuristic(state, payload) {
       state.Test.testStructure.splice(payload, 1)
     },
     setupHeuristicQuestionDescription(state, payload) {
-      // If empty
-      if (state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions == null) state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions = []
+      if (
+        state.Test.testStructure[payload.heuristic].questions[payload.question]
+          .descriptions == null
+      )
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions = []
 
-      // If is editing
       if (payload.editIndex != null) {
-        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions[payload.editIndex] = Object.assign({}, payload.description)
-      }
-      // New Description
-      else {
-        state.Test.testStructure[payload.heuristic].questions[payload.question].descriptions.push(payload.description)
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions[payload.editIndex] = Object.assign(
+          {},
+          payload.description,
+        )
+      } else {
+        state.Test.testStructure[payload.heuristic].questions[
+          payload.question
+        ].descriptions.push(payload.description)
       }
     },
   },
   actions: {
-    /**
-     * This action creates a new Test, using the generic action "createObject"
-     * to creates the object, passing the Test data.
-     *
-     * @param {Test} payload the test creation data
-     */
-
     async createNewTest({ commit }, payload) {
       commit('setLoading', true)
 
       try {
         const res = await testController.createTest(payload)
-
         commit('SET_TEST', res.id)
-
         return res.id
       } catch (err) {
-        console.log('erro', err)
-        commit('setError', true)
+        commit('set Error', true)
+        return null
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async duplicateTest({ commit }, payload) {
+      commit('setLoading', true)
 
+      try {
+        await testController.duplicateTest(payload)
+      } catch (err) {
+        commit('set Error', true)
         return null
       } finally {
         commit('setLoading', false)
@@ -192,13 +216,11 @@ export default {
      */
 
     async deleteTest({ commit }, payload) {
-      // Connect to controllers
       try {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in deleteTest')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -217,7 +239,6 @@ export default {
         await testController.updateTest(payload)
       } catch (e) {
         console.error('Error in updateTest', e)
-        // commit("setError", true);
       } finally {
         commit('setLoading', false)
       }
@@ -246,27 +267,24 @@ export default {
     async getTest({ commit }, payload) {
       commit('setLoading', true)
 
-      // Connect to controllers
       try {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
+        return res
       } catch {
-        console.log('Error in getTest')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
     },
 
     async getAllTests({ commit }) {
-      // Connect to controllers
       try {
         commit('setLoading', true)
         const res = await testController.getAllTests()
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in getAllTests')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -284,8 +302,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
-        console.log('Error in getSharedWithMeTests: ', e)
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -297,8 +314,7 @@ export default {
         const res = await testController.getPublicTests()
         commit('SET_TESTS', res)
       } catch {
-        console.log('Error in getPublicTests')
-        commit('setError', true)
+        commit('set Error', true)
       } finally {
         commit('setLoading', false)
       }
@@ -398,16 +414,15 @@ export default {
         commit('setError', true)
       }
     },
-    setRemoteStream({ commit }, stream) {
+    setremoteCameraStream({ commit }, stream) {
       commit('SET_REMOTE_STREAM', stream)
     },
-    setLocalStream({ commit }, stream) {
+    setlocalCameraStream({ commit }, stream) {
       commit('SET_LOCAL_STREAM', stream)
     },
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
-        console.log('clean test')
       } catch {
         commit('setError', true)
       }
@@ -418,14 +433,11 @@ export default {
 
         const roomSnapshot = await getDoc(roomRef)
         if (roomSnapshot.exists()) {
-          console.log('Room document exists. Deleting...')
-
           const calleeCandidatesSnapshot = await getDocs(
             collection(roomRef, 'calleeCandidates'),
           )
           calleeCandidatesSnapshot.forEach(async (candidate) => {
             await deleteDoc(candidate.ref)
-            console.log('Deleted callee candidate:', candidate.id)
           })
 
           const callerCandidatesSnapshot = await getDocs(
@@ -433,29 +445,50 @@ export default {
           )
           callerCandidatesSnapshot.forEach(async (candidate) => {
             await deleteDoc(candidate.ref)
-            console.log('Deleted caller candidate:', candidate.id)
           })
 
           await deleteDoc(roomRef)
-          console.log('Deleted room document:', roomId)
-        } else {
-          console.log('Room document does not exist.')
         }
       } catch (error) {
         console.error('Error deleting room and candidates:', error)
       }
     },
-    coops(state) {
-      return state.test.coop
+    async createPeerConnection({ commit }, configuration) {
+      // Adiciona ação para criar peerConnection
+      try {
+        const peerConnection = new RTCPeerConnection(configuration)
+        commit('SET_PEER_CONNECTION', peerConnection)
+        return peerConnection
+      } catch (error) {
+        console.error('Error creating peer connection:', error)
+      }
     },
-    snackColor(state) {
-      return state.snackColor
+    async closePeerConnection({ commit, state }) {
+      if (state.peerConnection) {
+        state.peerConnection.close()
+        commit('SET_PEER_CONNECTION', null)
+      }
     },
-    snackMessage(state) {
-      return state.snackMessage
-    },
-    managerIDs(state) {
-      return state.managerIDs
+    async changeTrack({ commit, state }, stream) {
+      const newTrack = stream.getVideoTracks()[0]
+
+      if (state.peerConnection) {
+        const senders = state.peerConnection.getSenders()
+        const videoSender = senders.find(
+          (sender) => sender.track.kind === 'video',
+        )
+
+        if (videoSender) {
+          await videoSender.replaceTrack(newTrack)
+          const newStream = new MediaStream([
+            ...state.localCameraStream.getAudioTracks(),
+            newTrack,
+          ])
+          commit('SET_LOCAL_STREAM', newStream)
+        } else {
+          console.error('videoSender is not set')
+        }
+      }
     },
   },
 }

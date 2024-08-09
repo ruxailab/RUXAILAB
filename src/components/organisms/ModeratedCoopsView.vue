@@ -540,6 +540,7 @@ export default {
         this.$store.dispatch('addNotification', {
           userId: guest.userDocId,
           notification: new Notification({
+            accessLevel: 1,
             title: `You have been invited to test ${this.test.testTitle}!`,
             description: this.inviteMessage,
             redirectsTo: `${path}/${this.test.id}/${guest.userDocId}`,
@@ -617,6 +618,7 @@ export default {
       this.cooperatorsEdit.splice(index, 1)
     },
     async sendInvitationMail(guest) {
+      console.log(guest)
       let domain = window.location.href
       domain = domain.replace(window.location.pathname, '')
       let email = {
@@ -629,15 +631,15 @@ export default {
       if (guest.accessLevel === 1) {
         email = Object.assign(email, {
           path: 'testview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       } else {
         email = Object.assign(email, {
           path: 'managerview',
-          token: guest.token,
+          token: guest.userDocId,
         })
       }
-      await this.$store.dispatch('sendEmailInvitation', email)
+      await this.$store.dispatch('sendModeratedEmailInvitation', email)
     },
     async cancelInvitation(guest) {
       const ok = confirm(

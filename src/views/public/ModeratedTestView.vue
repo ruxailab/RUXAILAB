@@ -192,7 +192,7 @@
               ref="VideoCall"
               :index="index"
               :is-admin="isAdmin"
-              @emit-confirm="confirmConnect()"
+              @emit-confirm="confirmConnect(), (index = 1)"
             />
           </v-row>
         </v-card>
@@ -375,7 +375,7 @@
                 dark
                 depressed
                 block
-                @click="finishTest(), stopRecording()"
+                @click="stopRecording(), finishTest()"
               >
                 Finish Test
               </v-btn>
@@ -474,7 +474,7 @@
                     :index="index"
                     :is-admin="isAdmin"
                     :consent-completed="consentCompleted"
-                    @emit-confirm="confirmConnect(), (index = 1)"
+                    @emit-confirm="confirmConnect(), (index = 2)"
                   />
                 </v-col>
               </v-row>
@@ -568,7 +568,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.preTestStatus != 'done'"
+                    v-if="userTestStatus.preTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -728,7 +728,7 @@
               <v-row justify="center">
                 <v-col cols="10" class="mx-4">
                   <v-btn
-                    v-if="test.userTestStatus.postTestStatus != 'done'"
+                    v-if="userTestStatus.postTestStatus != 'done'"
                     block
                     dark
                     style="border-radius: 10px"
@@ -796,34 +796,26 @@
         <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+    <!-- \\\\\\\\\\\\\\\\\\\\\\\ LOADING \\\\\\\\\\\\\\\\\\\\\\\ -->
     <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving Answer
-      </div>
+      <v-card class="pa-4" rounded="xl" color="grey darken-4">
+        <v-progress-linear
+          style="border-radius: 20px; width: 20wv;"
+          :value="uploadProgress"
+          color="#fca326"
+          height="20"
+          class="mb-2"
+          ><template v-slot:default="{ value }">
+            <span>{{ Math.ceil(value) }}%</span>
+          </template></v-progress-linear
+        >
+        <div class="white-text mx-16">
+          Saving Your Answer...
+        </div>
+      </v-card>
     </v-overlay>
-    <!-- Authentication Dialog -->
-    <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-      <CardSignIn
-        v-if="selected"
-        @logined="logined = true"
-        @change="selected = !selected"
-      />
-      <CardSignUp
-        v-else
-        @logined="
-          logined = true
-          setTest()
-        "
-        @change="selected = !selected"
-      />
-    </v-dialog>
-    <!-- Existing User Confirmation Dialog -->
-    <v-dialog
-      :value="fromlink && !noExistUser && !logined"
-      width="500"
-      persistent
-    >
+
+    <v-dialog :value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
         <v-row class="ma-0 pa-0 pt-5" justify="center">
           <v-avatar class="justify-center" color="orange lighten-4" size="150">
@@ -845,27 +837,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <DisconnectedCard v-if="isDisconnected" />
+    <video ref="remoteAudio" autoplay playsinline style="display:none;"></video>
   </div>
 </template>
 
 <script>
-import VClamp from 'vue-clamp'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import VideoCall from '@/components/molecules/VideoCall.vue'
+import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue'
 import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage'
 import { db } from '@/firebase'
 import FeedbackView from '@/components/molecules/FeedbackView.vue'
 
 export default {
   props: { token: { type: String, default: null } },
   components: {
-    VClamp,
-    CardSignIn,
-    CardSignUp,
     VideoCall,
     FeedbackView,
+    DisconnectedCard,
   },
   data: () => ({
     conectionStatus: false,
@@ -902,6 +897,8 @@ export default {
     sessionCooperator: null,
     testDate: null,
     saved: false,
+    uploadProgress: 0,
+    backupInterval: null,
   }),
   computed: {
     test() {
@@ -923,14 +920,17 @@ export default {
     roomTestId() {
       return this.$store.getters.test.id
     },
-    localStream() {
-      return this.$store.getters.localStream
+    localCameraStream() {
+      return this.$store.getters.localCameraStream
     },
-    remoteStream() {
-      return this.$store.getters.remoteStream
+    remoteCameraStream() {
+      return this.$store.getters.remoteCameraStream
     },
     isTestAvailable() {
       return new Date() > new Date(this.testDate)
+    },
+    isDisconnected() {
+      return this.$store.getters.isDisconnected
     },
   },
   watch: {
@@ -951,13 +951,24 @@ export default {
         if (this.logined) this.setTest()
       }
     },
-    async localStream(value) {
+    async localCameraStream(value) {
       if (value && !this.isAdmin) {
         this.startRecordingEvaluator()
       } else if (value && this.isAdmin) {
         this.startRecordingModerator()
       }
     },
+    async remoteCameraStream(value) {
+      this.setRemoteAudio()
+    },
+    'userTestStatus.preTestStatus': function(newValue) {
+      if (newValue === 'done') {
+        if (!this.isAdmin) {
+          window.open(this.test.testStructure.landingPage)
+        }
+      }
+    },
+
     'userTestStatus.postTestStatus': function(newValue) {
       if (newValue === 'done') {
         this.postTestFinished = true
@@ -968,9 +979,6 @@ export default {
     evaluatorStatus(newValue) {
       if (newValue === true && this.moderatorStatus === true) {
         this.bothConnected = true
-        if (!this.isAdmin) {
-          window.open(this.test.testStructure.landingPage)
-        }
       }
     },
   },
@@ -978,7 +986,7 @@ export default {
     await this.verifyAdmin()
     if (this.token != null) {
       if (this.token == this.test.id) {
-        this.$toast.info('Use a session your session link to the test')
+        this.$toast.info('Use a session link to access your moderated test!')
         this.$router.push('/managerview/' + this.test.id)
       }
       this.sessionCooperator = this.test.cooperators.find(
@@ -998,6 +1006,14 @@ export default {
       this.$toast.info('Use a session your session link to the test')
       this.$router.push('/managerview/' + this.test.id)
     }
+
+    if (!this.isAdmin) {
+      await this.$store.dispatch('acceptTestCollaboration', {
+        test: this.test,
+        cooperator: this.user,
+      })
+    }
+
     await this.mappingSteps()
     this.consentCompleted = this.currentUserTestAnswer.consentCompleted
     const ref = doc(db, 'tests/', this.roomTestId)
@@ -1031,8 +1047,19 @@ export default {
   async beforeDestroy() {
     if (this.isAdmin) {
       this.disconnect()
+      this.stopRecording()
       window.onbeforeunload = null
       await this.$store.dispatch('hangUp', this.roomTestId)
+    } else {
+      this.stopRecording()
+    }
+  },
+  mounted() {
+    if (this.user == null) {
+      this.$toast.error(
+        'Login to your RUXAILAB account first to access the test!',
+      )
+      this.$router.push('/signin')
     }
   },
   methods: {
@@ -1043,6 +1070,7 @@ export default {
       return this.start
     },
     async saveAnswer() {
+      this.currentUserTestAnswer.submitted = true
       await this.$store.dispatch('saveTestAnswer', {
         data: this.currentUserTestAnswer,
         answerDocId: this.test.answersDocId,
@@ -1108,6 +1136,9 @@ export default {
         }
       })
     },
+    setExistUser() {
+      this.noExistUser = false
+    },
 
     changeStatus(id, type, newStatus) {
       const testRef = doc(db, 'tests', this.roomTestId)
@@ -1146,10 +1177,44 @@ export default {
           console.error('Erro ao atualizar o status:', error)
         })
     },
+    async setRemoteAudio() {
+      this.$refs.remoteAudio.srcObject = this.remoteCameraStream
+    },
+    async uploadVideo(recordedChunks, storagePath) {
+      const videoBlob = new Blob(recordedChunks, { type: 'video/webm' })
+      const storage = getStorage()
+      const storageRef = ref(storage, storagePath)
+
+      const uploadTask = uploadBytesResumable(storageRef, videoBlob)
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            this.uploadProgress = progress
+          },
+          (error) => {
+            console.error('Upload failed:', error)
+            this.isLoading = false
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(storageRef)
+            resolve(downloadURL)
+          },
+        )
+      })
+    },
+
     async startRecordingEvaluator() {
       this.recording = true
       this.recordedChunksEvaluator = []
-      this.mediaRecorderEvaluator = new MediaRecorder(this.localStream)
+      let evaluatorCamera = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      })
+      this.mediaRecorderEvaluator = new MediaRecorder(evaluatorCamera)
 
       this.mediaRecorderEvaluator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1159,35 +1224,42 @@ export default {
 
       this.mediaRecorderEvaluator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}`
-        const videoBlobEvaluator = new Blob(this.recordedChunksEvaluator, {
-          type: 'video/webm',
-        })
-        const storageEvaluator = getStorage()
-        const storageRefEvaluator = ref(
-          storageEvaluator,
-          `tests/${this.roomTestId}/${formattedDate}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`,
-        )
-        await uploadBytes(storageRefEvaluator, videoBlobEvaluator)
-
-        this.recordedVideoEvaluator = await getDownloadURL(storageRefEvaluator)
-        this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
-        this.isLoading = false
-        this.saved = true
-        this.localStream.getTracks().forEach((track) => track.stop())
-        window.onbeforeunload = null
-        this.$router.push('/testslist')
+        const storagePath = `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`
+        try {
+          this.recordedVideoEvaluator = await this.uploadVideo(
+            this.recordedChunksEvaluator,
+            storagePath,
+          )
+          this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
+          this.isLoading = false
+          this.saved = true
+          window.onbeforeunload = null
+          this.$router.push('/testslist')
+        } catch (error) {
+          console.error('Upload failed:', error)
+          this.isLoading = false
+        }
       }
 
       this.mediaRecorderEvaluator.start()
+
+      // Set up periodic backups
+      this.backupInterval = setInterval(async () => {
+        if (this.recording) {
+          await this.uploadVideo(this.recordedChunksEvaluator, storagePath)
+        }
+      }, 300000) // 5 minutes
     },
 
     async startRecordingModerator() {
       this.recording = true
       this.recordedChunksModerator = []
-      this.mediaRecorderModerator = new MediaRecorder(this.localStream)
+      const storagePath = `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`
+      let moderatorCamera = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      })
+      this.mediaRecorderModerator = new MediaRecorder(moderatorCamera)
 
       this.mediaRecorderModerator.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -1197,41 +1269,45 @@ export default {
 
       this.mediaRecorderModerator.onstop = async () => {
         this.isLoading = true
-        const currentDate = new Date()
-        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() +
-          1}-${currentDate.getFullYear()}-${currentDate.getHours()}` // In the future we update to a session ID
-        const videoBlobModerator = new Blob(this.recordedChunksModerator, {
-          type: 'video/webm',
-        })
-        const storageModerator = getStorage()
-        const storageRefModerator = ref(
-          storageModerator,
-          `tests/${this.roomTestId}/${formattedDate}/moderator/video/${this.recordedVideoModerator}`,
-        )
-        await uploadBytes(storageRefModerator, videoBlobModerator)
-
-        this.recordedVideoModerator = await getDownloadURL(storageRefModerator)
-        this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
-        this.isLoading = false
-        this.$router.push('/testslist')
+        try {
+          this.recordedVideoModerator = await this.uploadVideo(
+            this.recordedChunksModerator,
+            storagePath,
+          )
+          this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
+          this.isLoading = false
+          this.saved = true
+          window.onbeforeunload = null
+          this.$router.push('/testslist')
+        } catch (error) {
+          console.error('Upload failed:', error)
+          this.isLoading = false
+        }
       }
 
       this.mediaRecorderModerator.start()
+
+      this.backupInterval = setInterval(async () => {
+        if (this.recording) {
+          await this.uploadVideo(this.recordedChunksModerator, storagePath)
+        }
+      }, 300000) // 5 minutes
     },
 
     async stopRecording() {
       if (this.mediaRecorderEvaluator) {
         this.mediaRecorderEvaluator.stop()
-        this.localStream.stop()
+        this.localCameraStream.stop()
+        clearInterval(this.backupInterval)
         this.recording = false
       }
       if (this.mediaRecorderModerator) {
         this.mediaRecorderModerator.stop()
-        this.localStream.stop()
+        this.localCameraStream.stop()
+        clearInterval(this.backupInterval)
         this.recording = false
       }
     },
-
     async confirmConnect() {
       const ref = doc(db, 'tests', this.roomTestId)
       if (this.isAdmin) {
@@ -1293,14 +1369,6 @@ export default {
       }
       this.start = !this.start
     },
-    callTimerSave() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.stopTimer()
-    },
-    handleTimerStopped(elapsedTime, taskIndex) {
-      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
-    },
     calculateProgress() {
       const totalSteps = 3
 
@@ -1325,9 +1393,6 @@ export default {
     async setTest() {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
-    },
-    setExistUser() {
-      this.noExistUser = false
     },
     async verifyAdmin() {
       if (this.test.testAdmin.email == this.user.email) {
@@ -1383,7 +1448,6 @@ export default {
       }
     },
     async finishTest() {
-      this.localStream.getTracks().forEach((track) => track.stop())
       await this.$store.dispatch('hangUp', this.roomTestId)
       this.saved = true
       window.onbeforeunload = null

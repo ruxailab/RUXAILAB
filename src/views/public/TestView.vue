@@ -7,11 +7,11 @@
       <v-dialog v-model="dialog" width="600" persistent>
         <v-card>
           <v-card-title class="headline error white--text" primary-title>
-            Are you sure you want to submit this test?
+            {{ $t('HeuristicsTestView.messages.submitTest') }}
           </v-card-title>
 
           <v-card-text>
-            Are you sure you want to submit your test. You can only do it once.
+            {{ $t('HeuristicsTestView.messages.submitOnce') }}
           </v-card-text>
 
           <v-divider />
@@ -19,14 +19,14 @@
           <v-card-actions>
             <v-spacer />
             <v-btn class="grey lighten-3" text @click="dialog = false">
-              Cancel
+              {{ $t('HeuristicsTestView.actions.cancel') }}
             </v-btn>
             <v-btn
               class="red white--text ml-1"
               text
               @click="submitAnswer(), (dialog = false)"
             >
-              Submit
+              {{ $t('HeuristicsTestView.actions.submit') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -35,22 +35,6 @@
       <v-overlay v-model="loading">
         <v-progress-circular indeterminate size="64" />
       </v-overlay>
-
-      <v-dialog :value="fromlink && noExistUser" width="500" persistent>
-        <CardSignIn
-          v-if="selected"
-          @logined="logined = true"
-          @change="selected = !selected"
-        />
-        <CardSignUp
-          v-else
-          @logined="
-            logined = true
-            setTest()
-          "
-          @change="selected = !selected"
-        />
-      </v-dialog>
 
       <v-dialog
         :value="fromlink && !noExistUser && !logined"
@@ -71,13 +55,24 @@
           </v-row>
           <v-card-actions class="justify-center mt-4">
             <v-btn color="#F9A826" class="white--text" @click="setTest()">
-              Continue as {{ user.email }}
+              {{
+                $t('HeuristicsTestView.actions.continueAs', {
+                  userMail: user.email,
+                })
+              }}
             </v-btn>
           </v-card-actions>
           <v-card-actions class="justify-center mt-4">
             <p>
-              Not {{ user.email }}?
-              <a style="color: #f9a826" @click="signOut()">Change account</a>
+              <!-- Not {{ user.email }}? -->
+              {{
+                $t('HeuristicsTestView.actions.notMail', {
+                  userEmail: user.email,
+                })
+              }}
+              <a style="color: #f9a826" @click="signOut()">{{
+                $t('HeuristicsTestView.actions.changeAccount')
+              }}</a>
             </p>
           </v-card-actions>
         </v-card>
@@ -98,7 +93,7 @@
           </p>
           <v-row justify="center" class>
             <v-btn color="white" outlined rounded @click="startTest()">
-              Start Test
+              {{ $t('HeuristicsTestView.actions.startTest') }}
             </v-btn>
           </v-row>
         </v-col>
@@ -139,7 +134,7 @@
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
             </template>
-            <span>Save</span>
+            <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
           </v-tooltip>
 
           <v-tooltip v-if="currentUserTestAnswer" left>
@@ -157,7 +152,7 @@
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
             </template>
-            <span>Submit</span>
+            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </v-tooltip>
 
           <v-tooltip v-else left>
@@ -174,7 +169,7 @@
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
             </template>
-            <span>Submit</span>
+            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </v-tooltip>
         </v-speed-dial>
 
@@ -278,7 +273,10 @@
                     v-for="(heuris, i) in item.value"
                     :key="i"
                     link
-                    @click="heurisIndex = i"
+                    @click="
+                      heurisIndex = i
+                      setReviewTrue()
+                    "
                   >
                     <v-list-item-icon>
                       <v-progress-circular
@@ -312,6 +310,18 @@
                         "
                       >
                         {{ heuris.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item style="cursor:pointer" v-if="review==true && calculatedProgress==100" @click="review=false" >
+                    <v-list-item-icon>
+                      <v-icon color="#fca326">
+                        mdi-send-circle-outline
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <div style="color: #fca326;">Submit</div>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -356,7 +366,7 @@
         >
           <!-- Heuristics -->
           <ShowInfo
-            v-if="index == 1"
+            v-if="index == 1 && review == true"
             :title="test.testStructure[heurisIndex].title"
           >
             <div slot="content" class="ma-0 pa-0">
@@ -413,6 +423,46 @@
               </v-row>
             </div>
           </ShowInfo>
+          <div v-if="calculatedProgress == 100 && review == false">
+            <ShowInfo title="Finish Test">
+              <div slot="content" class="ma-0 pa-0">
+                <v-row justify="center" class="ma-4">
+                  <v-col cols="11" class="mt-3">
+                    <span class="cardsTitle">Final Message!</span>
+                    <br />
+                    <span class="cardsSubtitle">
+                      Congratulations you finished this test, now you can submit
+                      your answer.
+                    </span>
+                    <v-row justify="center" class="mt-3">
+                      <v-col cols="4">
+                        <img
+                          draggable="false"
+                          src="../../../public/finalMessage.svg"
+                          alt="Final test svg"
+                        />
+                      </v-col>
+                      <v-col cols="4" class="pt-2 my-8">
+                        <span class="cardsSubtitle"
+                          >Click here to submit your answer, when submitted your
+                          answer can't be changed!</span
+                        >
+                        <v-col class="mt-2">
+                          <v-btn
+                            @click="dialog = true"
+                            color="orange"
+                            depressed
+                            dark
+                            ><v-icon class="ma-2">mdi-send</v-icon>Submit</v-btn
+                          >
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </div>
+            </ShowInfo>
+          </div>
         </v-col>
       </v-row>
     </div>
@@ -431,8 +481,6 @@ import AddCommentBtn from '@/components/atoms/AddCommentBtn'
 import HelpBtn from '@/components/atoms/QuestionHelpBtn'
 import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
-import CardSignIn from '@/components/atoms/CardSignIn'
-import CardSignUp from '@/components/atoms/CardSignUp'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
@@ -444,8 +492,6 @@ export default {
     HelpBtn,
     VClamp,
     Snackbar,
-    CardSignIn,
-    CardSignUp,
     UserTestView,
     ModeratedTestView,
   },
@@ -470,6 +516,7 @@ export default {
     res: 0,
     dialog: false,
     calculatedProgress: 0,
+    review: true,
   }),
   computed: {
     test() {
@@ -522,6 +569,11 @@ export default {
         if (this.logined) this.setTest()
       }
     },
+    calculatedProgress(newVal) {
+      if (newVal == 100) {
+        this.review = false
+      }
+    },
   },
 
   async created() {
@@ -548,7 +600,7 @@ export default {
       if (this.test.testStructure.length == 0) {
         this.$store.commit('setError', {
           errorCode: 400,
-          message: "This test don't have any heuristic",
+          message: this.$t('HeuristicsTestView.messages.noHeuristics'),
         })
         this.$router.push('/managerview/' + this.test.id)
       }
@@ -634,6 +686,8 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
+      this.$toast.success('Your response has been Recorded')
+      this.$router.push('/testslist')
     },
     setExistUser() {
       this.noExistUser = false
@@ -674,6 +728,10 @@ export default {
       this.logined = true
       await this.$store.dispatch('getCurrentTestAnswerDoc')
       this.populateWithHeuristicQuestions()
+    },
+    setReviewTrue() {
+      console.log('click done')
+      this.review = true
     },
   },
   beforeRouteEnter(to, from, next) {

@@ -12,7 +12,7 @@
       justify="center"
       class="ma-0 mt-4"
     >
-      <ShowInfo title="Answers">
+      <ShowInfo :title="$t('HeuristicsTestAnswer.titles.answers')">
         <!-- Main Tabs -->
         <v-tabs
           slot="top"
@@ -22,16 +22,16 @@
           class="ml-4"
         >
           <v-tab @click=";(tab = 0), (ind = 0)">
-            Statistics
+            {{ $t('HeuristicsTestAnswer.titles.statistics') }}
           </v-tab>
           <v-tab @click=";(tab = 1), (ind = 0)">
-            Evaluators
+            {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
           </v-tab>
           <v-tab @click=";(tab = 2), (ind = 0)">
-            Heuristics
+            {{ $t('HeuristicsTestAnswer.titles.heuristics') }}
           </v-tab>
           <v-tab @click=";(tab = 3), (ind = 0)">
-            Analytics
+            {{ $t('HeuristicsTestAnswer.titles.analytics') }}
           </v-tab>
         </v-tabs>
 
@@ -40,7 +40,7 @@
           <!-- Tab 1 - Statistics -->
           <v-card v-if="tab == 0" flat rounded="xl" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
-              Statistics
+              {{ $t('HeuristicsTestAnswer.titles.statistics') }}
             </v-card-title>
 
             <v-divider />
@@ -54,7 +54,11 @@
                     <v-col cols="4">
                       <v-row justify="center" class="ma-0">
                         <v-card-title class="mt-4">
-                          Usability Percentage
+                          {{
+                            $t(
+                              'HeuristicsTestAnswer.statistics.usabilityPercentage',
+                            )
+                          }}
                         </v-card-title>
                         <v-card-text>
                           <v-row align="center" justify="center">
@@ -76,7 +80,9 @@
                             <v-icon>mdi-arrow-up-bold-hexagon-outline</v-icon>
                           </v-list-item-icon>
 
-                          <v-list-item-title>Max</v-list-item-title>
+                          <v-list-item-title>
+                            {{ $t('HeuristicsTestAnswer.statistics.max') }}
+                          </v-list-item-title>
                           <v-list-item-subtitle class="text-right">
                             {{ showFinalResult.max }}
                           </v-list-item-subtitle>
@@ -85,7 +91,9 @@
                           <v-list-item-icon>
                             <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
                           </v-list-item-icon>
-                          <v-list-item-title>Min</v-list-item-title>
+                          <v-list-item-title>
+                            {{ $t('HeuristicsTestAnswer.statistics.min') }}
+                          </v-list-item-title>
                           <v-list-item-subtitle class="text-right">
                             {{ showFinalResult.min }}
                           </v-list-item-subtitle>
@@ -95,7 +103,7 @@
                             <v-icon>mdi-plus-minus</v-icon>
                           </v-list-item-icon>
                           <v-list-item-title>
-                            Standard deviation
+                            {{ $t('HeuristicsTestAnswer.statistics.std') }}
                           </v-list-item-title>
                           <v-list-item-subtitle class="text-right">
                             {{ showFinalResult.sd }}
@@ -112,7 +120,7 @@
           <!-- Tab 2 - Evaluators -->
           <v-card v-if="tab == 1" flat rounded="xl" style="background: #f5f7ff">
             <v-card-title class="subtitleView">
-              Evaluators
+              {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
             </v-card-title>
 
             <v-divider />
@@ -128,14 +136,14 @@
                 style="text-transform: none !important"
                 @click="ind = 0"
               >
-                Table
+                {{ $t('HeuristicsTestAnswer.evaluators.headers.table') }}
               </v-tab>
               <v-tab
                 class="tab-text"
                 style="text-transform: none !important"
                 @click="ind = 1"
               >
-                Graphic
+                {{ $t('HeuristicsTestAnswer.evaluators.headers.graphic') }}
               </v-tab>
             </v-tabs>
 
@@ -168,6 +176,19 @@
                     {{ item.answered }}%
                   </template>
                 </v-data-table>
+                <v-btn
+                  class="mx-2"
+                  small
+                  outlined
+                  :loading="loading"
+                  :disabled="loading"
+                  @click="DownloadEvaluatorCsv"
+                >
+                  Export as CSV
+                  <v-icon right dark>
+                    mdi-download
+                  </v-icon>
+                </v-btn>
               </v-col>
 
               <v-col v-if="ind == 1" cols="10">
@@ -187,8 +208,11 @@
                   align="center"
                   width="970px"
                 >
-                  The graphic can only be generated with 3 or more evaluators,
-                  please colect more data from your research to procede.
+                  {{
+                    $t(
+                      'HeuristicsTestAnswer.evaluators.messages.graphForMoreThan3',
+                    )
+                  }}
                 </v-card>
               </v-col>
             </v-row>
@@ -202,9 +226,23 @@
             class="mb-6 py-2"
             style="background: #f5f7ff"
           >
-            <div>
+            <v-card
+              v-if="evaluatorStatistics.items.length <= 1"
+              class="mx-auto mt-10 mb-10 py-6 if-card"
+              align="center"
+              width="970px"
+            >
+              {{
+                $t(
+                  'HeuristicsTestAnswer.heuristics.messages.needMoreThan1Answer',
+                )
+              }}
+            </v-card>
+            <div v-else>
               <v-card-title class="subtitleView">
-                Heuristics Data
+                {{
+                  $t('HeuristicsTestAnswer.heuristics.headers.heuristicsData')
+                }}
               </v-card-title>
 
               <v-divider />
@@ -221,28 +259,36 @@
                   style="text-transform: none !important"
                   @click="ind = 0"
                 >
-                  Answers by Evaluator
+                  {{
+                    $t(
+                      'HeuristicsTestAnswer.heuristics.headers.answersByEvaluator',
+                    )
+                  }}
                 </v-tab>
                 <v-tab
                   class="tab-text"
                   style="text-transform: none !important"
                   @click="ind = 1"
                 >
-                  Answers By Heuristics
+                  {{
+                    $t(
+                      'HeuristicsTestAnswer.heuristics.headers.answersByHeuristics',
+                    )
+                  }}
                 </v-tab>
                 <v-tab
                   class="tab-text"
                   style="text-transform: none !important"
                   @click="ind = 2"
                 >
-                  Graphic
+                  {{ $t('HeuristicsTestAnswer.heuristics.headers.graphic') }}
                 </v-tab>
                 <v-tab
                   class="tab-text"
                   style="text-transform: none !important"
                   @click="ind = 3"
                 >
-                  Weights
+                  {{ $t('HeuristicsTestAnswer.heuristics.headers.weights') }}
                 </v-tab>
               </v-tabs>
 
@@ -343,9 +389,11 @@
                         align="center"
                         width="970px"
                       >
-                        This page needs weight function (python) to be running,
-                        can be in emulators or in deploy mode, and the weights
-                        to be full marked on your creating test page.
+                        {{
+                          $t(
+                            'HeuristicsTestAnswer.heuristics.messages.runWeightFunction',
+                          )
+                        }}
                       </v-card>
                       <div v-else>
                         <v-row align="center" justify="space-around">
@@ -357,7 +405,7 @@
                             >
                               <v-card-title class="mt-4 mb-4 font-weight-bold">
                                 <v-row align="center" justify="center">
-                                  Usability Percentage <br />
+                                  Usability Percentage <br>
                                   With Weights
                                 </v-row>
                               </v-card-title>
@@ -389,7 +437,7 @@
                                 :data="
                                   weightsStatistics.items.map((item) => item.rw)
                                 "
-                                :maxValue="maxValue"
+                                :max-value="maxValue"
                               />
                             </v-card>
                           </v-col>
@@ -412,7 +460,7 @@
             </div>
           </v-card>
 
-          <!-- tab 3 analytics -->
+          <!-- tab 4 analytics -->
           <AnalyticsView v-if="tab == 3" />
         </div>
       </ShowInfo>
@@ -450,6 +498,7 @@ export default {
     decisionmatrix: null,
     relative: null,
     usability_total: 0,
+    loading: false,
   }),
 
   computed: {
@@ -461,9 +510,6 @@ export default {
     },
     testWeights() {
       return this.$store.state.Tests.Test.testWeights
-    },
-    scoresPercentageHTA() {
-      return this.$store.state.Tests.scoresPercentage
     },
     heuristicsEvaluator() {
       const table = {
@@ -570,10 +616,6 @@ export default {
         })
       }
       return table
-    },
-
-    testAll() {
-      return this.$store.state.Tests.Test
     },
 
     heuristics() {
@@ -755,6 +797,30 @@ export default {
         console.error('Erro ao chamar Cloud Function:', erro)
       }
     },
+    DownloadEvaluatorCsv() {
+      this.loading = true
+      const headers = this.evaluatorStatistics.header
+        .map((header) => header.text)
+        .join(',')
+      const rows = this.evaluatorStatistics.items
+        .map((item) => {
+          return this.evaluatorStatistics.header
+            .map((header) => item[header.value])
+            .join(',')
+        })
+        .join('\n')
+      const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'evaluatorStatistics.csv')
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      setTimeout(() => {
+        this.loading = false
+      }, 1000)
+    },
   },
 }
 </script>
@@ -790,23 +856,12 @@ export default {
   border: 0.2px solid rgba(0, 0, 0, 0.25);
 }
 
-.cardAnswers {
-  background: #e6e4e4;
-  border-radius: 34px;
-}
-
 .tab-text {
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
   align-items: center;
   color: #000000;
-}
-
-.container {
-  height: 400px;
-  padding: 0px;
-  margin: 0px 10px 0px;
 }
 
 .list-scroll {
@@ -841,11 +896,6 @@ export default {
   border-radius: 20px;
   border: 0.2px solid #fca326;
   width: 950px;
-}
-
-.weightsStatisticsRadar {
-  border-radius: 20px;
-  border: 0.2px solid #fca326;
 }
 
 .radar {
