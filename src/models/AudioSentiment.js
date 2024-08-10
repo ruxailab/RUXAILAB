@@ -4,6 +4,7 @@
  * @param {Object[]} regions - An array of sentiment regions in the audio.
  * @param {number} regions[].start - The start time of the sentiment region (in seconds).
  * @param {number} regions[].end - The end time of the sentiment region (in seconds).
+ * @param {string} regions[].transcipt - The transcipt of the sentiment region.
  * @param {string} regions[].sentiment - The sentiment expressed in this region.
  * @param {number} regions[].score - The sentiment score for the region.
  */
@@ -41,6 +42,7 @@ export default class AudioSentiment {
             data.regions.map(region => ({
                 start: region.start,
                 end: region.end,
+                transcipt: region.transcipt,
                 sentiment: region.sentiment,
                 score: region.score // Directly including the score
             }))
@@ -58,6 +60,7 @@ export default class AudioSentiment {
             regions: this.regions.map(region => ({
                 start: region.start,
                 end: region.end,
+                transcript: region.transcript,
                 sentiment: region.sentiment,
                 score: region.score // Directly including the score
             }))
