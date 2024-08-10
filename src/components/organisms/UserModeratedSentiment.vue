@@ -1,6 +1,7 @@
 <template>
   <div v-if="answers">
-    <!-- {{ answersDocument }} -->
+    {{testDocument}}
+    {{ answersDocument }}
     <!-- <h3>aaaaaaa</h3> -->
     <!-- {{ answers }} -->
     <ShowInfo title="Sentiment Analysis">
@@ -28,11 +29,22 @@
             <!-- Answer Sentiment -->
             <v-col class="ma-0 pa-1 answer-list" cols="9">
               <!-- Co-operators -->
+               <div>Copoprators</div>
 
               <!-- Audio Wave -->
-              <AudioWave :file="cameraUrlEvaluator" />
+              <AudioWave :file="selectedAnswerDocument.cameraUrlEvaluator" />
 
               <!-- Transcript -->
+               <div>Transcript</div>
+
+
+              <v-btn color="orange" @click="creatSentimenteObject">
+                Create Object
+              </v-btn>  
+              aaa: {{ selectedAnswerDocument }}
+
+
+
 
               <!-- <v-data-table :headers="dataHeaders" :items="taskAnswers">
                 <template v-slot:item.userDocId="{ item }">
@@ -72,6 +84,13 @@ import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import AudioWave from '@/components/molecules/AudioWave.vue'
 // import TranscriptGridView from './TranscriptGridView.vue'
 
+
+// Controller
+import AudioSentimentController from '@/controllers/AudioSentimentController';
+// import answerController from '@/controllers/AnswerController';
+
+const audioSentimentController = new AudioSentimentController()
+
 export default {
   components: {
     ShowInfo,
@@ -92,15 +111,25 @@ export default {
       }
       return this.$store.getters.testAnswerDocument.taskAnswers
     },
-    cameraUrlEvaluator() {
+
+    // cameraUrlEvaluator() {
+    //   if (this.answers.length > 0 && this.answerSelect !== null) {
+    //     const selectedAnswer = this.answersDocument[
+    //       this.answers[this.answerSelect]
+    //     ]
+    //     return selectedAnswer.cameraUrlEvaluator
+    //   }
+    //   return null
+    // },
+
+    selectedAnswerDocument() {
       if (this.answers.length > 0 && this.answerSelect !== null) {
-        const selectedAnswer = this.answersDocument[
-          this.answers[this.answerSelect]
-        ]
-        return selectedAnswer.cameraUrlEvaluator
+        return this.answersDocument[this.answers[this.answerSelect]]
       }
       return null
     },
+
+
   },
 
   created() {
@@ -130,6 +159,31 @@ export default {
         }
       }
       return cooperatorEmail
+    },
+
+
+    async creatSentimenteObject() {
+      // console.log("testDocument",this.testDocument)
+      // console.log("answersDocument",this.answersDocument)
+
+      // console.log("answers",this.answers)
+
+      // console.log(this.selectedAnswerDocument)
+
+      const answerDocId = this.answers[this.answerSelect]
+
+      try {  
+        const res = await audioSentimentController.create({
+          answerDocId:answerDocId,
+        })
+        
+      } catch (err) {
+        console.error(err.message)
+
+      } finally {
+        // commit('setLoading', false)
+      }
+
     },
   },
 }
