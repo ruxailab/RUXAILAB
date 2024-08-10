@@ -13,8 +13,10 @@
       </v-icon>
     </v-btn>
 
+    <!-- <h1>Basmaaa {{ file }}</h1> -->
+
     <!--  -->
-    {{ regionStart }} - {{ regionEnd }}
+    <!-- {{ regionStart }} - {{ regionEnd }} -->
     
 
 
@@ -38,28 +40,29 @@ export default {
       required: false, // allowing for the file to be undefined
       default: null,
     },
+    regions: {
+      type: Array,
+      default: () => [],
+    },
     newRegion: {
       type: Object,
-      default: () => ({ start: 0, end: 0 }),
+      default: () => ({ start: 0, end: 10 }),
     }
   },
   data() {
     return {
       wave_surfer: null,
-      playing: false,
-      regions: null,
-      regionStart: 0,
-      regionEnd: 8,
-      url: null,
+      playing: false,      
     }
   },
 
   watch: {
-
+    file: 'loadAudioFile',
   },
+
   mounted() {
     // Regions
-    this.regions = RegionsPlugin.create()
+    this.regionsPlugin = RegionsPlugin.create()
 
     // Initialize WaveSurfer
     this.initWaveSurfer()
@@ -68,13 +71,81 @@ export default {
 
   },
   methods: {
-    // updateRegion(newStart, newEnd) {
-      updateRegion() {
-      const newStart=0
-      const newEnd=8
-      this.$emit('update:newRegion', { start: newStart, end: newEnd });
+      // WaveSurfer Initializer
+      initWaveSurfer() {
+        this.wave_surfer = WaveSurfer.create({
+          container: this.$refs.waveform,
+          waveColor: 'orange',
+          progressColor: '#666',
+          cursorColor: '#666',
+          barWidth: 2,
+          barRadius: 3,
+          plugins: [this.regionsPlugin],
+          // cursorWidth: 1,
+          // height: 500,
+      })
+
+      // Update play/pause state when WaveSurfer's playback state changes
+      this.wave_surfer.on('play', () => (this.playing = true))
+      this.wave_surfer.on('pause', () => (this.playing = false))
+
+
+      // When the audio is both decoded and can play
+      this.wave_surfer.on('ready', () => {
+        // The ready event in WaveSurfer.js is triggered when the audio file has been completely loaded, decoded, and is ready for playback.
+        // This means that:
+        // - The audio file is fully loaded: The waveform is generated and displayed.
+        // - The audio data is decoded: The audio data is processed into a format that can be played back.
+
+        console.log('Ready')
+
+        // Add Regions
+        // 1. Initialize any existing regions
+        this.regions.forEach(region => {
+          // this.regionsPlugin.addRegion(region);
+        });
+
+        // 2. Add a new region [intial region]
+        const initialRegion = this.regionsPlugin.addRegion({
+          start: this.newRegion.start,
+          end: this.newRegion.end,
+          color: 'rgba(0, 123, 255, 0.3)',
+          drag: true,
+          resize: true,
+        });
+
+        // Listen to updates on the region and emit the changes
+        initialRegion.on('update-end', () => {
+          this.$emit('update:newRegion', {
+            start: initialRegion.start,
+            end: initialRegion.end,
+          });
+        });
+      })
+
+      // When the audio has been decoded
+      this.wave_surfer.on('decode', () => {
+        console.log('Decoded')
+      })
+
+      // Load Audio File
+      this.loadAudioFile()
+
+      console.log('Basmaaaaaaaaaa')
+
     },
-  
+    
+    // Play/Pause
+    playPause() {
+      if (!this.wave_surfer) return
+
+      if (this.wave_surfer.isPlaying()) {
+        this.wave_surfer.pause()
+      } else {
+        this.wave_surfer.play()
+      }
+    },
+
     async loadAudioFile() {
       if (!this.wave_surfer){
         console.error('Wave Surfer not initialized')
@@ -86,10 +157,10 @@ export default {
         return
       }
 
-      // // Clear regions
-      // if (this.regions) {
-      //   this.regions.clearRegions()
-      // }
+      // Clear regions
+      if (this.regionsPlugin) {
+        this.regionsPlugin.clearRegions()
+      }
 
       // Get Audio File URL
       const storage = getStorage()
@@ -100,10 +171,7 @@ export default {
             console.log('URL:', url)
 
             // Load the audio file
-            this.wave_surfer.load(url)
-
-            // Set the URL
-            this.url = url           
+            this.wave_surfer.load(url)         
           }
         })
         .catch((error) => {
@@ -128,75 +196,11 @@ export default {
           console.error(error)
         })
     },
-
-    // WaveSurfer Initializer
-    initWaveSurfer() {
-      this.wave_surfer = WaveSurfer.create({
-        container: this.$refs.waveform,
-        waveColor: 'orange',
-        progressColor: '#666',
-        cursorColor: '#666',
-        barWidth: 2,
-        barRadius: 3,
-        plugins: [this.regions],
-        // cursorWidth: 1,
-        // height: 500,
-      })
-
-
-      // Update play/pause state when WaveSurfer's playback state changes
-      this.wave_surfer.on('play', () => (this.playing = true))
-      this.wave_surfer.on('pause', () => (this.playing = false))
-
-
-      // When the audio is both decoded and can play
-      this.wave_surfer.on('ready', () => {
-      // The ready event in WaveSurfer.js is triggered when the audio file has been completely loaded, decoded, and is ready for playback.
-      // This means that:
-      // - The audio file is fully loaded: The waveform is generated and displayed.
-      // - The audio data is decoded: The audio data is processed into a format that can be played back.
-
-        console.log('Ready')
-      })
-
-      // When the audio has been decoded
-      this.wave_surfer.on('decode', () => {
-        console.log('Decoded')
-      })
-
-
-      // Load Audio File
-      this.loadAudioFile()
-
-      // this.wave_surfer.on('decode', () => {
-      //   if (!this.wave_surfer) return
-      //   if (!this.regions) return
-      //   // Regions
-      //   const init_region = this.regions.addRegion({
-      //     start: 0,
-      //     end: 8,
-      //     content: '',
-      //     color: 'rgba(252, 162, 42, 0.24)',
-      //     drag: true,
-      //     resize: true,
-      //   })
-
-      //   init_region.on('update-end', () => {
-      //     this.regionStart = init_region.start
-      //     this.regionEnd = init_region.end
-      //   })
-      // })
-    },
-
-    // Play/Pause
-    playPause() {
-      if (!this.wave_surfer) return
-
-      if (this.wave_surfer.isPlaying()) {
-        this.wave_surfer.pause()
-      } else {
-        this.wave_surfer.play()
-      }
+    // updateRegion(newStart, newEnd) {
+      updateRegion() {
+      const newStart=0
+      const newEnd=8
+      this.$emit('update:newRegion', { start: newStart, end: newEnd });
     },
   },
 }
