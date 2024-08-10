@@ -34,8 +34,11 @@ export default class AudioSentimentController extends Controller {
         }
     }
 
-    async getAudioSentimentById(payload) {
-        const res = await super.readOne(COLLECTION, payload)
-        return new AudioSentiment({ id: res.id, ...res.data() })
+    async getById(docId) {
+        const res = await super.readOne(COLLECTION, docId)
+        return new AudioSentiment({ ...res.data() })
+
+        // This code isn't used bec
+        // return new AudioSentiment({ id: res.id, ...res.data() })
     }
 }
