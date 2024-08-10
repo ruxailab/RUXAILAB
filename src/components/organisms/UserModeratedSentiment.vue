@@ -170,19 +170,36 @@ export default {
 
       // console.log(this.selectedAnswerDocument)
 
-      const answerDocId = this.answers[this.answerSelect]
 
-      try {  
-        const res = await audioSentimentController.create({
-          answerDocId:answerDocId,
-        })
-        
-      } catch (err) {
-        console.error(err.message)
+      // // 1. Create Sentiment Object in Firestore
+      // const answerDocId = this.answers[this.answerSelect]
 
-      } finally {
-        // commit('setLoading', false)
-      }
+      // try {  
+      //   const res = await audioSentimentController.create({
+      //     answerDocId:answerDocId,
+      //   })
+
+      // } catch (err) {
+      //   console.error(err.message)
+
+      // } finally {
+      // }
+
+
+      // // 2. Get Sentiment Object from Firestore
+      // const answerDocId = this.answers[this.answerSelect]
+
+      // try {  
+      //   const res = await audioSentimentController.getById(answerDocId)
+
+      //   console.log("res",res)
+
+      // } catch (err) {
+      //   console.error(err.message)
+
+      // } finally {
+      // }
+
 
     },
   },

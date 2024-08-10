@@ -11,7 +11,7 @@
 export default class AudioSentiment {
     /**
      * Constructs an instance of AudioSentiment.
-     * @param {string} answerDocId - The document ID related to the audio answer.
+     * @param {string} answerDocId - The document ID related to the audio answer. [Used as the document ID in Firestore for this audio sentiment.]
      * @param {Object[]} regions - An array of sentiment regions in the audio.
      */
     constructor({ answerDocId, regions } = {}) {
