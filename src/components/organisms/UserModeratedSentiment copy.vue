@@ -1,6 +1,9 @@
 <template>
   <div v-if="answers">
-
+    <!-- {{ testDocument }} -->
+    <!-- {{ answersDocument }} -->
+    <!-- <h3>aaaaaaa</h3> -->
+    <!-- {{ answers }} -->
     <ShowInfo title="Sentiment Analysis">
       <div slot="content">
         <v-card flat class="task-container">
@@ -29,62 +32,56 @@
               <div>Copoprators</div>
 
               <!-- Audio Wave -->
-              <AudioWave 
-                :file="selectedAnswerDocument.cameraUrlEvaluator" 
-                :regions="selectedAnswerSentimentDocument.regions" 
-                :newRegion.sync="newRegion"
-              />
-
-
-              <!-- Control Wave -->
-              <v-btn
-                color="#F9A826"
-                class="white--text custom-btn"
-                @click="analyzeTimeStamp()"
-              >
-                + Analyze
-              </v-btn>
-
-              {{ newRegion.start }} - {{ newRegion.end }}
-
+              <AudioWave :file="selectedAnswerDocument.cameraUrlEvaluator" :regions="selectedAnswerSentimentDocument.regions" />
 
               <!-- Transcript -->
               <div>Transcript</div>
 
 
+              <!-- <v-btn color="orange" @click="creatSentimenteObject">
+                Create Object
+              </v-btn>   -->
+
+              <!-- {{ selectedAnswerSentimentDocument }} -->
+              <!-- aaa: {{ selecteadAnswerDocument }} -->
+               <!-- {{  selectedAnswerSentimentDocument }}
+
+               {{ selectedAnswerSentimentDocument.regions }} -->
+
+
+              <!-- <v-data-table :headers="dataHeaders" :items="taskAnswers">
+                <template v-slot:item.userDocId="{ item }">
+                  <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                </template>
+                <template v-slot:item.actions="{ item }">
+                  <v-btn color="orange" text @click="viewAnswers(item)">
+                    Show Answers
+                  </v-btn>
+                </template>
+              </v-data-table> -->
             </v-col>
           </v-row>
         </v-card>
       </div>
     </ShowInfo>
 
+    <!-- User Moderated Sentiment -->
+    <!-- <h5>{{ testAnswerDocument.type }}</h5> -->
+    <!-- <h4>{{ answers.length }}</h4> -->
+    <!-- <h4>{{ answers }}</h4> -->
+    <!-- Audio Wave -->
+    <!-- <AudioWave /> -->
 
-    <v-overlay :value="overlay">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
-      <h3>Analyzing ... </h3>
-    </v-overlay>
+    <!-- Transcripts -->
+    <!-- <TranscriptGridView /> -->
 
-    <v-snackbar
-    v-model="snackbar.visible"
-    :color="snackbar.color"
-    :timeout="4000"
-    >
-      {{ snackbar.text }}
-      <template v-slot:action>
-        <v-btn color="white" text @click="snackbar.visible = false">Close</v-btn>
-      </template>
-    </v-snackbar>
+    <!-- <template> -->
+    <!-- Answer Body -->
+    <!-- </template> -->
   </div>
 </template>
 
 <script>
-
-// External Libraries
-import axios from 'axios'
-
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import AudioWave from '@/components/molecules/AudioWave.vue'
@@ -93,6 +90,7 @@ import AudioWave from '@/components/molecules/AudioWave.vue'
 
 // Controller
 import AudioSentimentController from '@/controllers/AudioSentimentController';
+// import answerController from '@/controllers/AnswerController';
 
 const audioSentimentController = new AudioSentimentController()
 
@@ -107,23 +105,7 @@ export default {
     answers: [], // Array of answers IDs
     regions:[],
 
-    selectedAnswerSentimentDocument: null,
-
-
-    // New Region Data
-    newRegion: {
-      start: 0,
-      end: 0,
-    },
-
-    // State Management
-    overlay: false,
-    snackbar: {
-      visible: false,
-      text: '',
-      color: '' // Use a valid color name or hex code
-    },
-      
+    selectedAnswerSentimentDocument: null
   }),
   watch: {
     selectedAnswerDocument: 'fetchSelectedAnswerSentimentDocument',
@@ -151,6 +133,51 @@ export default {
       }
       return null
     },
+
+
+
+    
+    
+        // cameraUrlEvaluator() {
+        //   if (this.answers.length > 0 && this.answerSelect !== null) {
+        //     const selectedAnswer = this.answersDocument[
+        //       this.answers[this.answerSelect]
+        //     ]
+        //     return selectedAnswer.cameraUrlEvaluator
+        //   }
+        //   return null
+        // },
+    
+
+    // selectedAnswerSentimentDocument() {
+      // if (this.selectedAnswerDocument){
+      //   const answerDocId = this.answers[this.answerSelect]
+
+      //   return await audioSentimentController.getById(answerDocId)
+      // }
+      // return null
+
+
+      // // 2. Get Sentiment Object from Firestore
+      // const answerDocId = this.answers[this.answerSelect]
+
+      // try {  
+      //   const res = await audioSentimentController.getById(answerDocId)
+
+      //   console.log("res",res)
+
+      // } catch (err) {
+      //   console.error(err.message)
+
+      // } finally {
+      // }
+      // if (this.selectedAnswerDocument && this.selectedAnswerDocument.regions) {
+      //   return this.selectedAnswerDocument.regions
+      // }
+      // return null
+    // },
+
+
   },
 
   created() {
@@ -199,43 +226,83 @@ export default {
     },
 
 
-    // Analyze the timestamp of the selected answer [AI Service]
     analyzeTimeStamp() {
-      // Show the overlay
-      this.overlay = !this.overlay
-
       axios.post('http://localhost:5000/test', 
       {
-        url: this.selectedAnswerDocument.cameraUrlEvaluator,
+        url: selectedAnswerDocument.cameraUrlEvaluator,
         start_time: 0,
         end_time: 10,
         whisper_model_size:"base",
       }).then((response) => {
-        // Hide the overlay
-        this.overlay = false
-
-        // Show the snackbar
-        this.snackbar['visible']=true
-        this.snackbar['color']='success'
-        this.snackbar['text']='Analysis Completed'
-
-
         const utterances_sentiment = response.data.utterances_sentiment
-        console.log(utterances_sentiment)        
+        // console.log(utterances_sentiment)
+        
       }).catch((error) => {
-        // Hide the overlay
-        this.overlay = false
-
-        // Show the snackbar
-        this.snackbar['visible']=true
-        this.snackbar['color']='error'
-        this.snackbar['text']='Analysis Failed'
-      
-
         // Log the error
         console.error(error)
       })
     }
+
+
+    // async creatSentimenteObject() {
+    //   // console.log("testDocument",this.testDocument)
+    //   // console.log("answersDocument",this.answersDocument)
+
+    //   // console.log("answers",this.answers)
+
+    //   console.log(this.selectedAnswerDocument)
+
+
+    //   // // 1. Create Sentiment Object in Firestore
+    //   // const answerDocId = this.answers[this.answerSelect]
+
+    //   // try {  
+    //   //   const res = await audioSentimentController.create({
+    //   //     answerDocId:answerDocId,
+    //   //   })
+
+    //   // } catch (err) {
+    //   //   console.error(err.message)
+
+    //   // } finally {
+    //   // }
+
+
+    //   // // 2. Get Sentiment Object from Firestore
+    //   // const answerDocId = this.answers[this.answerSelect]
+
+    //   // try {  
+    //   //   const res = await audioSentimentController.getById(answerDocId)
+
+    //   //   console.log("res",res)
+
+    //   // } catch (err) {
+    //   //   console.error(err.message)
+
+    //   // } finally {
+    //   // }
+
+
+    //   // // 3. Add Result to Sentiment Object in Firestore
+    //   // const answerDocId = this.answers[this.answerSelect]
+
+    //   // try {  
+    //   //   const res = await audioSentimentController.addRegionSentiment(answerDocId,
+    //   //     {
+    //   //       "start": 0,
+    //   //       "end": 10,
+    //   //       "transcript": "I am happy",
+    //   //       "sentiment": "positive",
+    //   //       "score": 0.9
+    //   //     }
+    //   //   )
+
+    //   // } catch (err) {
+    //   //   console.error(err.message)
+
+    //   // } finally {
+    //   // }
+    // },
   },
 }
 </script>
