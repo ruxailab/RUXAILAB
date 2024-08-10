@@ -201,6 +201,31 @@ export default {
       // }
 
 
+      // // 3. Add Result to Sentiment Object in Firestore
+      // const answerDocId = this.answers[this.answerSelect]
+
+      // try {  
+      //   const res = await audioSentimentController.addRegionSentiment(answerDocId,
+      //     {
+      //       "start": 0,
+      //       "end": 10,
+      //       "transcript": "I am happy",
+      //       "sentiment": "positive",
+      //       "score": 0.9
+      //     }
+      //   )
+
+      // } catch (err) {
+      //   console.error(err.message)
+
+      // } finally {
+      // }
+
+
+
+
+
+
     },
   },
 }
