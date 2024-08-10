@@ -113,7 +113,7 @@ export default {
     // New Region Data
     newRegion: {
       start: 0,
-      end: 0,
+      end: 5,
     },
 
     // State Management
