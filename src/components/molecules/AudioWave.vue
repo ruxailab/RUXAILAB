@@ -13,7 +13,8 @@
       </v-icon>
     </v-btn>
 
-    <!-- <h1>Basmaaa {{ file }}</h1> -->
+    <h6>{{ this.regions }}</h6>
+
 
     <!--  -->
     <!-- {{ regionStart }} - {{ regionEnd }} -->
@@ -81,6 +82,30 @@ export default {
           barWidth: 2,
           barRadius: 3,
           plugins: [this.regionsPlugin],
+
+        //   renderer: WaveSurfer.CanvasRenderer.extend({
+        //   drawBars: function(peaks, channelIndex, start, end) {
+        //     const { width, height } = this.params;
+        //     const halfH = height / 2;
+        //     const length = peaks.length / 2;
+
+        //     const regionStart = 5; // Specify the start of the region (in seconds)
+        //     const regionEnd = 10; // Specify the end of the region (in seconds)
+        //     const sampleRate = this.wave_surfer.getDuration() / width;
+
+        //     for (let i = start; i < end; i += 1) {
+        //       const barHeight = Math.round((peaks[i] * halfH) / 2) || 1;
+        //       const offset = Math.round((i / length) * width);
+        //       const timestamp = i * sampleRate;
+
+        //       if (timestamp >= regionStart && timestamp <= regionEnd) {
+        //         this.fillRect(offset, halfH - barHeight, this.params.barWidth, barHeight * 2, '#00ff00'); // Green bars
+        //       } else {
+        //         this.fillRect(offset, halfH - barHeight, this.params.barWidth, barHeight * 2, this.params.waveColor); // Default color
+        //       }
+        //     }
+        //   },
+        // })
           // cursorWidth: 1,
           // height: 500,
       })
@@ -102,14 +127,27 @@ export default {
         // Add Regions
         // 1. Initialize any existing regions
         this.regions.forEach(region => {
-          // this.regionsPlugin.addRegion(region);
+          this.regionsPlugin.addRegion({
+            start: region.start,
+            end: region.end,
+            color: (region.sentiment == 'POS') 
+            ? 'rgba(0, 255, 0, 0.2)' // Green color for positive sentiment
+            : (region.sentiment == 'NEG')
+            ? 'rgba(255, 0, 0, 0.2)' // Red color for negative sentiment
+            : (region.sentiment == 'NEU')
+            ? 'rgba(0, 0, 255, 0.2)' // Blue color for neutral sentiment
+            : 'rgba(0, 0, 0, 0.2)', // Default color            
+            drag: false,
+            resize: false,
+          });
         });
 
         // 2. Add a new region [intial region]
         const initialRegion = this.regionsPlugin.addRegion({
           start: this.newRegion.start,
           end: this.newRegion.end,
-          color: 'rgba(0, 123, 255, 0.3)',
+          // color: 'rgba(0, 123, 255, 0.3)',
+          color: 'rgba(0, 0, 255, 0.1)',
           drag: true,
           resize: true,
         });
@@ -130,8 +168,6 @@ export default {
 
       // Load Audio File
       this.loadAudioFile()
-
-      console.log('Basmaaaaaaaaaa')
 
     },
     

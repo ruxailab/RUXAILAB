@@ -207,10 +207,11 @@ export default {
       axios.post('http://localhost:5000/test', 
       {
         url: this.selectedAnswerDocument.cameraUrlEvaluator,
-        start_time: 0,
-        end_time: 10,
+        start_time: newRegion.start,
+        end_time: newRegion.end,
         whisper_model_size:"base",
-      }).then((response) => {
+        
+      }).then(async(response) => {
         // Hide the overlay
         this.overlay = false
 
@@ -222,6 +223,43 @@ export default {
 
         const utterances_sentiment = response.data.utterances_sentiment
         console.log(utterances_sentiment)        
+
+
+        // Add this Region to the sentiment document for the selected answer [Firebase]
+        const answerDocId = this.answers[this.answerSelect]
+        console.log(answerDocId)
+
+        //         confidence
+        // : 
+        // 0.8060277700424194
+        // sentiment
+        // : 
+        // "NEU"
+        // text
+        // : 
+        // " I'm going to go."
+        // timestamp
+        // : 
+        // (2) [0, 7]
+
+        try {  
+          for (const utterance of utterances_sentiment) {
+            const res = await audioSentimentController.addRegionSentiment(answerDocId,
+              {
+                "start": utterance.timestamp[0],
+                "end": utterance.timestamp[1],
+                "transcript": utterance.text,
+                "sentiment": utterance.sentiment,
+                "confidence": utterance.confidence
+              }
+            )
+          }
+        } catch (err) {
+          console.error(err.message)
+
+        } finally {
+        }
+
       }).catch((error) => {
         // Hide the overlay
         this.overlay = false

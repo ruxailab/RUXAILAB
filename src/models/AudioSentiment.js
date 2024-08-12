@@ -6,7 +6,7 @@
  * @param {number} regions[].end - The end time of the sentiment region (in seconds).
  * @param {string} regions[].transcipt - The transcipt of the sentiment region.
  * @param {string} regions[].sentiment - The sentiment expressed in this region.
- * @param {number} regions[].score - The sentiment score for the region.
+ * @param {number} regions[].confidence - The sentiment confidence for the region.
  */
 
 export default class AudioSentiment {
@@ -44,7 +44,7 @@ export default class AudioSentiment {
                 end: region.end,
                 transcipt: region.transcipt,
                 sentiment: region.sentiment,
-                score: region.score // Directly including the score
+                confidence: region.confidence // Directly including the confidence
             }))
         );
     }
@@ -62,7 +62,7 @@ export default class AudioSentiment {
                 end: region.end,
                 transcript: region.transcript,
                 sentiment: region.sentiment,
-                score: region.score // Directly including the score
+                confidence: region.confidence // Directly including the confidence
             }))
         };
     }
