@@ -207,8 +207,8 @@ export default {
       axios.post('http://localhost:5000/test', 
       {
         url: this.selectedAnswerDocument.cameraUrlEvaluator,
-        start_time: newRegion.start,
-        end_time: newRegion.end,
+        start_time: this.newRegion.start,
+        end_time: this.newRegion.end,
         whisper_model_size:"base",
         
       }).then(async(response) => {
@@ -229,35 +229,16 @@ export default {
         const answerDocId = this.answers[this.answerSelect]
         console.log(answerDocId)
 
-        //         confidence
-        // : 
-        // 0.8060277700424194
-        // sentiment
-        // : 
-        // "NEU"
-        // text
-        // : 
-        // " I'm going to go."
-        // timestamp
-        // : 
-        // (2) [0, 7]
-
-        try {  
-          for (const utterance of utterances_sentiment) {
-            const res = await audioSentimentController.addRegionSentiment(answerDocId,
-              {
-                "start": utterance.timestamp[0],
-                "end": utterance.timestamp[1],
-                "transcript": utterance.text,
-                "sentiment": utterance.sentiment,
-                "confidence": utterance.confidence
-              }
-            )
-          }
-        } catch (err) {
-          console.error(err.message)
-
-        } finally {
+        for (const utterance of utterances_sentiment) {
+          const res = await audioSentimentController.addRegionSentiment(answerDocId,
+            {
+              "start": utterance.timestamp[0],
+              "end": utterance.timestamp[1],
+              "transcript": utterance.text,
+              "sentiment": utterance.sentiment,
+              "confidence": utterance.confidence
+            }
+          )
         }
 
       }).catch((error) => {
