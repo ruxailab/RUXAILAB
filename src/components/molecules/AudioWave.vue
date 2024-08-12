@@ -82,30 +82,6 @@ export default {
           barWidth: 2,
           barRadius: 3,
           plugins: [this.regionsPlugin],
-
-        //   renderer: WaveSurfer.CanvasRenderer.extend({
-        //   drawBars: function(peaks, channelIndex, start, end) {
-        //     const { width, height } = this.params;
-        //     const halfH = height / 2;
-        //     const length = peaks.length / 2;
-
-        //     const regionStart = 5; // Specify the start of the region (in seconds)
-        //     const regionEnd = 10; // Specify the end of the region (in seconds)
-        //     const sampleRate = this.wave_surfer.getDuration() / width;
-
-        //     for (let i = start; i < end; i += 1) {
-        //       const barHeight = Math.round((peaks[i] * halfH) / 2) || 1;
-        //       const offset = Math.round((i / length) * width);
-        //       const timestamp = i * sampleRate;
-
-        //       if (timestamp >= regionStart && timestamp <= regionEnd) {
-        //         this.fillRect(offset, halfH - barHeight, this.params.barWidth, barHeight * 2, '#00ff00'); // Green bars
-        //       } else {
-        //         this.fillRect(offset, halfH - barHeight, this.params.barWidth, barHeight * 2, this.params.waveColor); // Default color
-        //       }
-        //     }
-        //   },
-        // })
           // cursorWidth: 1,
           // height: 500,
       })
