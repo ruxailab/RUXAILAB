@@ -50,7 +50,7 @@ export default class AudioSentimentController extends Controller {
      * @param {number} payload.end - The end time of the sentiment region (in seconds).
      * @param {string} payload.transcript - The transcript of the sentiment region.
      * @param {string} payload.sentiment - The sentiment expressed in this region.
-     * @param {number} payload.score - The sentiment score for the region.
+     * @param {number} payload.confidence - The sentiment confidence for the region.
      * @returns {Promise<void>}
      * @throws {Error} Throws an error if the document is not found or if an update fails.
      */
