@@ -67,6 +67,18 @@ export default class Controller {
     return getDocs(q)
   }
 
+  async queryWithMultipleConditions(col, conditions) {
+    const conditionArray = conditions.map((condition) =>
+      where(condition.field, condition.condition, condition.value)
+    );
+  
+    const q = query(collection(db, col), ...conditionArray);
+  
+    return getDocs(q);
+  }
+
+  
+
   /**
    * Makes a query to get data from the database.
    *
