@@ -1,9 +1,11 @@
 <template>
   <div class="waveform-container">
+    <!-- audioFile: {{ file }} -->
+    <!-- <h6> Regions: {{ this.regions }}</h6> -->
+     
     <!-- Wave Reference -->
     <div ref="waveform" />
 
-    {{ file }}
 
     <!-- Controls -->
       <v-btn icon @click="playPause">
@@ -12,12 +14,7 @@
       </v-icon>
     </v-btn>
 
-    <h6>{{ this.regions }}</h6>
 
-
-    <!--  -->
-    <!-- {{ regionStart }} - {{ regionEnd }} -->
-    
 
 
   </div>
