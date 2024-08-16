@@ -8,6 +8,8 @@
         </v-col>
       </v-row>
 
+      {{ selected }}
+
       <!-- Scrollable List -->
       <v-row>
         <v-col cols="12">
@@ -17,22 +19,42 @@
             active-class="orange--text"
             class="scrollable-list"
           >
-            <template v-for="(item, index) in items">
-              <v-list-item :key="item.title">
-                <template v-slot:default="{ active }">
+            <template v-for="(region, index) in regions">
+              <v-list-item :key="region.title"> 
+                <!-- <template v-slot:default="{ active }"> -->
+                  <template>
                   <v-list-item-content>
-                    <v-list-item-title v-text="item.title"></v-list-item-title>
+                    <v-list-item-title v-text="'item.title'"></v-list-item-title>
 
                     <v-list-item-subtitle
                       class="text--primary"
-                      v-text="item.headline"
+                      v-text="'item.headline'"
                     ></v-list-item-subtitle>
 
-                    <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                    <v-list-item-subtitle v-text="'item.subtitle'"></v-list-item-subtitle>
                   </v-list-item-content>
 
                   <v-list-item-action>
-                    <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
+                    <!-- The <v-list-item-action> is a Vuetify component that is typically used inside a <v-list-item> to align content to the right side of the list item. -->
+                    <div class="icon-and-confidence">
+                      <!-- Face Icon based on sentiment -->
+                      <v-icon v-if="region.sentiment === 'POS'" color="green">
+                        mdi-emoticon-happy-outline
+                      </v-icon>
+                      <v-icon v-else-if="region.sentiment === 'NEU'" color="blue">
+                        mdi-emoticon-neutral-outline
+                      </v-icon>
+                      <v-icon v-else-if="region.sentiment === 'NEG'" color="red">
+                        mdi-emoticon-sad-outline
+                      </v-icon>
+
+                      <!-- Confidence Value Below the Icon -->
+                      <v-list-item-action-text v-text="(region.confidence*100).toFixed(2) + '%'"></v-list-item-action-text>
+                    </div>
+                  </v-list-item-action>
+
+                  <!-- <v-list-item-action>
+                    <v-list-item-action-text v-text="'item.action'"></v-list-item-action-text>
 
                     <v-icon
                       v-if="!active"
@@ -47,12 +69,12 @@
                     >
                       mdi-star
                     </v-icon>
-                  </v-list-item-action>
+                  </v-list-item-action> -->
                 </template>
               </v-list-item>
 
               <v-divider
-                v-if="index < items.length - 1"
+                v-if="index < regions.length - 1"
                 :key="index"
               ></v-divider>
             </template>
@@ -66,8 +88,6 @@
 
 
 <script>
-import { computed } from 'vue-clamp';
-
 // import SentimentTranscript from '@/components/molecules/SentimentTranscript.vue';
 
 export default {
@@ -82,39 +102,7 @@ export default {
   },
 
   data: () => ({
-      selected: [2],
-      items: [
-        {
-          action: '15 min',
-          headline: 'Brunch this weekend?',
-          subtitle: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-          title: 'Ali Connors',
-        },
-        {
-          action: '2 hr',
-          headline: 'Summer BBQ',
-          subtitle: `Wish I could come, but I'm out of town this weekend.`,
-          title: 'me, Scrott, Jennifer',
-        },
-        {
-          action: '6 hr',
-          headline: 'Oui oui',
-          subtitle: 'Do you have Paris recommendations? Have you ever been?',
-          title: 'Sandra Adams',
-        },
-        {
-          action: '12 hr',
-          headline: 'Birthday gift',
-          subtitle: 'Have any ideas about what we should get Heidi for her birthday?',
-          title: 'Trevor Hansen',
-        },
-        {
-          action: '18hr',
-          headline: 'Recipe to try',
-          subtitle: 'We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-          title: 'Britta Holt',
-        },
-      ],
+      selected: null,
     }),
 }
 </script>
@@ -153,5 +141,13 @@ h3 {
 
 .scrollable-list::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.5); /* Darker color on hover */
+}
+
+
+.icon-and-confidence{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
