@@ -22,16 +22,23 @@
             <template v-for="(region, index) in regions">
               <v-list-item :key="region.title"> 
                 <!-- <template v-slot:default="{ active }"> -->
-                  <template>
+                <template>
+                  <!-- Left Item: Avatar or Icon -->
+                  <v-list-item-icon>
+                    <v-icon color="primary">mdi-account</v-icon>
+                    <v-list-item-text v-text="'item.avatar'"></v-list-item-text>
+                  </v-list-item-icon>
+
+                  <!-- List Item Content -->
                   <v-list-item-content>
                     <v-list-item-title v-text="'item.title'"></v-list-item-title>
 
                     <v-list-item-subtitle
                       class="text--primary"
-                      v-text="'item.headline'"
+                      v-text="region.transcript"
                     ></v-list-item-subtitle>
 
-                    <v-list-item-subtitle v-text="'item.subtitle'"></v-list-item-subtitle>
+                    <!-- <v-list-item-subtitle v-text="region.transcript"></v-list-item-subtitle> -->
                   </v-list-item-content>
 
                   <v-list-item-action>
@@ -51,6 +58,18 @@
                       <!-- Confidence Value Below the Icon -->
                       <v-list-item-action-text v-text="(region.confidence*100).toFixed(2) + '%'"></v-list-item-action-text>
                     </div>
+
+                    </v-list-item-action>             
+                     <v-list-item-action>
+
+
+
+
+                    <!-- Delete Icon Button -->
+                    <v-btn icon @click="deleteRegion(region)">
+                      <v-icon color="red">mdi-delete</v-icon>
+                    </v-btn>
+                   
                   </v-list-item-action>
 
                   <!-- <v-list-item-action>
@@ -104,6 +123,16 @@ export default {
   data: () => ({
       selected: null,
     }),
+
+  methods: {
+    deleteRegion(region) {
+      // Confirm the deletion
+      if (!confirm('Are you sure you want to delete this region?')) return;
+
+      console.log('Deleting region:', region);
+      // this.$emit('delete-region', region);
+    },
+  },
 }
 </script>
 
