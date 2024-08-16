@@ -114,6 +114,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    deleteRegion: {
+      type: Function,
+      default: () => {},
+    },
   },
 
   data: () => ({
@@ -121,13 +125,7 @@ export default {
     }),
 
   methods: {
-    deleteRegion(region) {
-      // Confirm the deletion
-      if (!confirm('Are you sure you want to delete this region?')) return;
-
-      console.log('Deleting region:', region);
-      // this.$emit('delete-region', region);
-    },
+    
   },
 }
 </script>

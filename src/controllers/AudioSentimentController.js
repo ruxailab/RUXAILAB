@@ -39,6 +39,7 @@ export default class AudioSentimentController extends Controller {
         const audioSentiment = new AudioSentiment({
             answerDocId: payload.answerDocId,
             userDocId: payload.userDocId,
+            regionsCount: 0,
             regions: [],
         }).toFirestore();
 
@@ -85,6 +86,8 @@ export default class AudioSentimentController extends Controller {
         if (!doc.exists()) {
             return null;
         }
+
+        console.log("doc.data()............", doc.data());
 
         return new AudioSentiment({
             id: doc.id,
@@ -143,7 +146,28 @@ export default class AudioSentimentController extends Controller {
             return null;
         }
 
+        // Set the index of the region
+        region.idx = audioSentimentDocuemnt.regionsCount;
+
+
+        // Increment the regions count
+        audioSentimentDocuemnt.regionsCount += 1;
+
+        // Add the region to the document object array
         audioSentimentDocuemnt.regions.push(region);
+
+        return await super.update(COLLECTION, id, audioSentimentDocuemnt.toFirestore());
+    }
+
+
+    async deleteSentimentRegion(id, regionIdx) {
+        const audioSentimentDocuemnt = await this.getById(id);
+
+        if (audioSentimentDocuemnt == null) {
+            throw new Error(`Audio sentiment document with id ${id} does not exist.`);
+        }
+        // Remove the region
+        audioSentimentDocuemnt.regions = audioSentimentDocuemnt.regions.filter(region => region.idx !== regionIdx);
 
         return await super.update(COLLECTION, id, audioSentimentDocuemnt.toFirestore());
     }
