@@ -31,6 +31,8 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 
 import WaveSurfer from 'wavesurfer.js'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
+import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
+
 
 
 // Components
@@ -67,6 +69,20 @@ export default {
     // Regions
     this.regionsPlugin = RegionsPlugin.create()
 
+
+    // Timeline
+    this.timelinePlugin = TimelinePlugin.create({
+      height: 12,  
+      timeInterval: 1,
+      primaryLabelInterval: 10,
+      secondaryLabelInterval:10,
+      style: {
+        fontSize: '10px',
+        // color: '#6A3274',
+    }
+    })
+    
+
     // Initialize WaveSurfer
     this.initWaveSurfer()
 
@@ -83,7 +99,11 @@ export default {
           cursorColor: '#666',
           barWidth: 2,
           barRadius: 3,
-          plugins: [this.regionsPlugin],
+
+          minPxPerSec: 10,
+          dragToSeek: true,
+
+          plugins: [this.regionsPlugin,this.timelinePlugin],
           // cursorWidth: 1,
           // height: 500,
       })
