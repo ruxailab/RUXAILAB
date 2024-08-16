@@ -54,8 +54,12 @@
               {{ newRegion.start }} - {{ newRegion.end }}
 
 
-              <!-- Transcript -->
-              <div>Transcript</div>
+              <!-- Transcripts -->
+              <SentimentTranscriptsList
+              :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
+              />
+              <!-- <div>Transcript</div> -->
+
 
             </v-col>
           </v-row>
@@ -94,7 +98,7 @@ import axios from 'axios'
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import AudioWave from '@/components/molecules/AudioWave.vue'
-// import TranscriptGridView from './TranscriptGridView.vue'
+import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
 
 
 // Controller
@@ -106,7 +110,7 @@ export default {
   components: {
     ShowInfo,
     AudioWave,
-    // TranscriptGridView,
+    SentimentTranscriptsList
   },
   data: () => ({
     userSelect: 0, // Index of the selected answer [Based on the usersID array]
