@@ -60,6 +60,7 @@
               <SentimentTranscriptsList
               :playSegment="playSegmentInAudioWave"
               :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
+              :deleteRegion="deleteRegion"
               />
               <!-- <div>Transcript</div> -->
 
@@ -137,6 +138,7 @@ export default {
       text: '',
       color: '' // Use a valid color name or hex code
     },
+    isFetchingSentimentDocument: false,
       
   }),
   watch: {
@@ -198,6 +200,10 @@ export default {
 
     // Fetch the sentiment document for the selected answer [Firebase]
     async fetchSelectedAnswerSentimentDocument() {
+        // Prevent multiple fetches
+        if (this.isFetchingSentimentDocument) return;
+        this.isFetchingSentimentDocument = true;
+
         console.log('Fetching Sentiment Document..............................')
         if (this.selectedAnswerDocument) {
             const answerDocId = this.testDocument.answersDocId;
@@ -213,7 +219,6 @@ export default {
                     const payload = {
                         answerDocId: answerDocId,
                         userDocId: userDocId,
-                        regions: [] // Initialize with an empty array or default value
                     };
                     result = await audioSentimentController.create(payload);
                     console.warn(`Created new sentiment document with ID ${result.id}.`);
@@ -225,9 +230,13 @@ export default {
             } catch (error) {
                 this.selectedAnswerSentimentDocument = null;
                 console.error('Error fetching sentiment document:', error);
+            } finally {
+              // Reset fetching flag
+              this.isFetchingSentimentDocument = false;
             }
         } else {
             this.selectedAnswerSentimentDocument = null;
+            this.isFetchingSentimentDocument = false;
         }
     },
 
@@ -276,6 +285,10 @@ export default {
           )
         }
 
+
+        // Fetch the updated sentiment document
+        // await this.fetchSelectedAnswerSentimentDocument()
+
       }).catch((error) => {
         // Hide the overlay
         this.overlay = false
@@ -294,6 +307,44 @@ export default {
     playSegmentInAudioWave(start, end) {
       this.$refs.audioWave.playSegment(start, end)
     },
+
+
+    async deleteRegion(region) {
+      // Confirm the deletion
+      if (!confirm('Are you sure you want to delete this region?')) return;
+
+      // Show the overlay
+      this.overlay = !this.overlay
+
+      try{
+
+        const result = await audioSentimentController.deleteSentimentRegion(this.selectedAnswerSentimentDocument.id, region.idx);
+
+        // Hide the overlay
+        this.overlay = false
+
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='success'
+        this.snackbar['text']='Region Deletec Successfully'
+
+
+        
+        // Fetch the updated sentiment document
+        // await this.fetchSelectedAnswerSentimentDocument()
+      }
+      catch(error){
+        console.error('Error deleting region:', error);
+
+        // Hide the overlay
+        this.overlay = false
+
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='error'
+        this.snackbar['text']='Error Deleting Region'
+      }   
+    }
   },
 }
 </script>

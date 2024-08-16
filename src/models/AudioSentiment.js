@@ -16,14 +16,16 @@ export default class AudioSentiment {
      * @param {string} [params.id=null] - The unique ID of the document (optional).
      * @param {string} params.answerDocId - The Answer document ID.
      * @param {string} params.userDocId - The User document ID.
+     * @param {number} regionsCount - The number of sentiment regions in the audio.
      * @param {Object[]} params.regions - An array of sentiment regions in the audio.
+     * @param {number} params.regions[].idx - The index of the sentiment region.
      * @param {number} params.regions[].start - The start time of the sentiment region (in seconds).
      * @param {number} params.regions[].end - The end time of the sentiment region (in seconds).
      * @param {string} params.regions[].transcript - The transcript of the sentiment region.
      * @param {string} params.regions[].sentiment - The sentiment expressed in this region.
      * @param {number} params.regions[].confidence - The sentiment confidence for the region.
      */
-    constructor({ id = null, answerDocId, userDocId, regions } = {}) {
+    constructor({ id = null, answerDocId, userDocId, regionsCount, regions } = {}) {
 
         /**
          * The unique ID of the document (optional)
@@ -42,6 +44,12 @@ export default class AudioSentiment {
          * @type {string}
          */
         this.userDocId = userDocId;
+
+        /**
+         * The number of sentiment regions in the audio.
+         * @type {number}
+         */
+        this.regionsCount = regionsCount;
 
         /**
          * An array of sentiment regions in the audio.
@@ -71,7 +79,9 @@ export default class AudioSentiment {
             id: data.id, // Include the ID here
             answerDocId: data.answerDocId,
             userDocId: data.userDocId,
+            regionsCount: data.regionsCount,
             regions: data.regions.map(region => ({
+                idx: region.idx,
                 start: region.start,
                 end: region.end,
                 transcript: region.transcript, // Fixed typo here
@@ -87,7 +97,9 @@ export default class AudioSentiment {
      * @returns {Object} - The object representation of the AudioSentiment instance.
      * @returns {string} - The Answer document ID.
      * @returns {string} - The User document ID.
+     * @returns {number} - The number of sentiment regions in the audio.
      * @returns {Object[]} - An array of sentiment regions in the audio.
+     * @returns {number} - The index of the sentiment region.
      * @returns {number} - The start time of the sentiment region (in seconds).
      * @returns {number} - The end time of the sentiment region (in seconds).
      * @returns {string} - The transcript of the sentiment region.
@@ -100,7 +112,9 @@ export default class AudioSentiment {
         return {
             answerDocId: this.answerDocId,
             userDocId: this.userDocId,
+            regionsCount: this.regionsCount,
             regions: this.regions.map(region => ({
+                idx: region.idx,
                 start: region.start,
                 end: region.end,
                 transcript: region.transcript,
