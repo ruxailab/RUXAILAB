@@ -37,12 +37,14 @@
               <!-- Co-operators -->
               <div>Copoprators</div>
 
+    
+
               <!-- Audio Wave -->
-              <!-- <AudioWave 
+              <AudioWave 
                 :file="selectedAnswerDocument.cameraUrlEvaluator" 
-                :regions="selectedAnswerSentimentDocument.regions || []" 
+                :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
                 :newRegion.sync="newRegion"
-              /> -->
+              />
 
 
               <!-- Control Wave -->
@@ -59,11 +61,7 @@
 
               <!-- Transcript -->
               <div>Transcript</div>
-
-              <!-- {{ answersDocument }} -->
-                {{this.selectedAnswerSentimentDocument}}
-
-
+              
             </v-col>
           </v-row>
         </v-card>
@@ -100,7 +98,7 @@ import axios from 'axios'
 
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-// import AudioWave from '@/components/molecules/AudioWave.vue'
+import AudioWave from '@/components/molecules/AudioWave.vue'
 // import TranscriptGridView from './TranscriptGridView.vue'
 
 
@@ -112,7 +110,7 @@ const audioSentimentController = new AudioSentimentController()
 export default {
   components: {
     ShowInfo,
-    // AudioWave,
+    AudioWave,
     // TranscriptGridView,
   },
   data: () => ({
@@ -176,14 +174,7 @@ export default {
       Object.keys(this.answersDocument).forEach((key, index) => {
         // populate the usersID array
         this.usersID.push(this.answersDocument[key].userDocId)
-        // console.log(this.usersID)
-
-        // // Set the answer ID
-        // this.answerID = key
-        // console.log(this.answerID)
       })
-      // console.log(this.usersID)
-      // console.log(this.testDocument.answersDocId)
     }
   },
 
