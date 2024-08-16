@@ -37,14 +37,14 @@
                     </v-btn>
 
                     <!-- Start and End Times -->
-                    <v-list-item-text class="segment-time">
+                    <v-list-item-subtitle class="segment-time">
                       {{ region.start.toFixed(2) }} - {{ region.end.toFixed(2) }}
-                    </v-list-item-text>
+                    </v-list-item-subtitle>
                   </v-list-item-icon>
 
                   <!-- List Item Content -->
                   <v-list-item-content>
-                    <v-list-item-title v-text="'item.title'"></v-list-item-title>
+                    <!-- <v-list-item-title v-text="'item.title'"></v-list-item-title> -->
 
                     <v-list-item-subtitle
                       class="text--primary"
