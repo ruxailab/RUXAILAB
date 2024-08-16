@@ -87,8 +87,6 @@ export default class AudioSentimentController extends Controller {
             return null;
         }
 
-        console.log("doc.data()............", doc.data());
-
         return new AudioSentiment({
             id: doc.id,
             ...doc.data()
