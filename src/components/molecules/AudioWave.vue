@@ -2,7 +2,7 @@
   <div class="waveform-container">
     <!-- audioFile: {{ file }} -->
     <!-- <h6> Regions: {{ this.regions }}</h6> -->
-     
+
     <!-- Wave Reference -->
     <div ref="waveform" />
 
@@ -13,6 +13,12 @@
         {{ playing ? 'mdi-pause' : 'mdi-play' }}
       </v-icon>
     </v-btn>
+
+    <v-btn icon @click="playSegment(0, 5)">
+      <v-icon>
+        mdi-plus
+      </v-icon>
+    </v-btn>  
 
 
 
@@ -152,6 +158,31 @@ export default {
       } else {
         this.wave_surfer.play()
       }
+    },
+
+    // Function to play a specific segment of the audio
+    playSegment(start, end) {
+      if (!this.wave_surfer) return;
+
+       
+      // Seek to the start position
+      this.wave_surfer.seekTo(start / this.wave_surfer.getDuration());
+        
+      // Start playing from the specified start time
+      this.wave_surfer.play();
+
+      // Stop the playback when it reaches the end time
+      this.wave_surfer.on('audioprocess', () => {
+        // console.log(this.wave_surfer.getCurrentTime());
+        // console.log(end);
+        if (this.wave_surfer.getCurrentTime() >= end) {
+          this.wave_surfer.pause();
+          // console.log('Stopping')
+        }
+        else{
+          // console.log('Playing')
+        }
+      });
     },
 
     async loadAudioFile() {
