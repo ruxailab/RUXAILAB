@@ -6,8 +6,7 @@
     {{ file }}
 
     <!-- Controls -->
-    <!-- <v-btn icon @click="playPause"> -->
-      <v-btn icon @click="updateRegion">
+      <v-btn icon @click="playPause">
       <v-icon>
         {{ playing ? 'mdi-pause' : 'mdi-play' }}
       </v-icon>
