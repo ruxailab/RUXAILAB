@@ -1,5 +1,14 @@
 <template>
-  <div v-if="answers">
+  <div v-if="usersID">
+    <!-- {{ testDocument }}
+
+    <h1>qq</h1>
+    {{answersDocument}}
+
+    <h1>aa</h1>
+    {{ selectedAnswerDocument }} -->
+
+    <!-- {{ usersID }} -->
 
     <ShowInfo title="Sentiment Analysis">
       <div slot="content">
@@ -10,8 +19,8 @@
               <v-list dense class="list-scroll">
                 <v-subheader>Evaluators</v-subheader>
                 <v-divider />
-                <v-list-item-group v-model="answerSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in answers" :key="i">
+                <v-list-item-group v-model="userSelect" color="#fca326">
+                  <v-list-item v-for="(item, i) in usersID" :key="i">
                     <v-list-item-content>
                       <v-list-item-title>
                         {{ getCooperatorEmail(item) }}
@@ -29,11 +38,11 @@
               <div>Copoprators</div>
 
               <!-- Audio Wave -->
-              <AudioWave 
+              <!-- <AudioWave 
                 :file="selectedAnswerDocument.cameraUrlEvaluator" 
-                :regions="selectedAnswerSentimentDocument.regions" 
+                :regions="selectedAnswerSentimentDocument.regions || []" 
                 :newRegion.sync="newRegion"
-              />
+              /> -->
 
 
               <!-- Control Wave -->
@@ -51,6 +60,9 @@
               <!-- Transcript -->
               <div>Transcript</div>
 
+              <!-- {{ answersDocument }} -->
+                {{this.selectedAnswerSentimentDocument}}
+
 
             </v-col>
           </v-row>
@@ -59,7 +71,8 @@
     </ShowInfo>
 
 
-    <v-overlay :value="overlay">
+
+    <!-- <v-overlay :value="overlay">
       <v-progress-circular
         indeterminate
         size="64"
@@ -76,7 +89,7 @@
       <template v-slot:action>
         <v-btn color="white" text @click="snackbar.visible = false">Close</v-btn>
       </template>
-    </v-snackbar>
+    </v-snackbar> -->
   </div>
 </template>
 
@@ -87,7 +100,7 @@ import axios from 'axios'
 
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import AudioWave from '@/components/molecules/AudioWave.vue'
+// import AudioWave from '@/components/molecules/AudioWave.vue'
 // import TranscriptGridView from './TranscriptGridView.vue'
 
 
@@ -99,13 +112,14 @@ const audioSentimentController = new AudioSentimentController()
 export default {
   components: {
     ShowInfo,
-    AudioWave,
+    // AudioWave,
     // TranscriptGridView,
   },
   data: () => ({
-    answerSelect: 0,
-    answers: [], // Array of answers IDs
+    userSelect: 0, // Index of the selected answer [Based on the usersID array]
+    usersID: [], // Array of users IDs
     regions:[],
+
 
     selectedAnswerSentimentDocument: null,
 
@@ -146,23 +160,30 @@ export default {
     },
 
     selectedAnswerDocument() {
-      if (this.answers.length > 0 && this.answerSelect !== null) {
-        return this.answersDocument[this.answers[this.answerSelect]]
+      if (this.usersID.length > 0 && this.userSelect !== null) {
+        return this.answersDocument[this.usersID[this.userSelect]]
       }
       return null
     },
   },
 
   created() {
-    // Reset answers array in case created is called multiple times
-    this.answers = []
+    // Reset usersID array in case created is called multiple times
+    this.usersID = []
     // Check if answersDocument is not empty
     if (this.answersDocument) {
       // Iterate over the keys of the answersDocument object
       Object.keys(this.answersDocument).forEach((key, index) => {
-        // Populate the answers array
-        this.answers.push(this.answersDocument[key].userDocId)
+        // populate the usersID array
+        this.usersID.push(this.answersDocument[key].userDocId)
+        // console.log(this.usersID)
+
+        // // Set the answer ID
+        // this.answerID = key
+        // console.log(this.answerID)
       })
+      // console.log(this.usersID)
+      // console.log(this.testDocument.answersDocId)
     }
   },
 
@@ -185,10 +206,15 @@ export default {
 
     // Fetch the sentiment document for the selected answer [Firebase]
     async fetchSelectedAnswerSentimentDocument() {
+      console.log('Fetching Sentiment Document..............................')
       if (this.selectedAnswerDocument) {
-        const answerDocId = this.answers[this.answerSelect];
+        const answerDocId = this.testDocument.answersDocId;
+        // console.log(answerDocId)
+
+        const userDocId = this.usersID[this.userSelect]
+        // console.log(userDocId)
         try {
-          this.selectedAnswerSentimentDocument = await audioSentimentController.getById(answerDocId);
+          this.selectedAnswerSentimentDocument = await audioSentimentController.getByAnswerDocIdandUserDocId(answerDocId, userDocId);
         } catch (error) {
           this.selectedAnswerSentimentDocument = null;
           console.error('Error fetching sentiment document:', error);
@@ -200,60 +226,81 @@ export default {
 
 
     // Analyze the timestamp of the selected answer [AI Service]
-    analyzeTimeStamp() {
-      // Show the overlay
-      this.overlay = !this.overlay
+    async analyzeTimeStamp() {
+      console.log('Analyzing Timestamp..............................')
+      // // 1. Create Sentiment Object in Firestore
+      // const answerDocId = this.testDocument.answersDocId
+      // console.log(answerDocId)
 
-      axios.post('http://localhost:5000/test', 
-      {
-        url: this.selectedAnswerDocument.cameraUrlEvaluator,
-        start_time: this.newRegion.start,
-        end_time: this.newRegion.end,
-        whisper_model_size:"base",
+      // const userDocId = this.usersID[this.userSelect]
+      // console.log(userDocId)
+
+      // try {  
+      //   const res = await audioSentimentController.create({
+      //     answerDocId:answerDocId,
+      //     userDocId:userDocId,
+      //   })
+
+      // } catch (err) {
+      //   console.error(err.message)
+
+      // } finally {
+      // }
+
+
+    //   // Show the overlay
+    //   this.overlay = !this.overlay
+
+    //   axios.post('http://localhost:5000/test', 
+    //   {
+    //     url: this.selectedAnswerDocument.cameraUrlEvaluator,
+    //     start_time: this.newRegion.start,
+    //     end_time: this.newRegion.end,
+    //     whisper_model_size:"base",
         
-      }).then(async(response) => {
-        // Hide the overlay
-        this.overlay = false
+    //   }).then(async(response) => {
+    //     // Hide the overlay
+    //     this.overlay = false
 
-        // Show the snackbar
-        this.snackbar['visible']=true
-        this.snackbar['color']='success'
-        this.snackbar['text']='Analysis Completed'
-
-
-        const utterances_sentiment = response.data.utterances_sentiment
-        console.log(utterances_sentiment)        
+    //     // Show the snackbar
+    //     this.snackbar['visible']=true
+    //     this.snackbar['color']='success'
+    //     this.snackbar['text']='Analysis Completed'
 
 
-        // Add this Region to the sentiment document for the selected answer [Firebase]
-        const answerDocId = this.answers[this.answerSelect]
-        console.log(answerDocId)
+    //     const utterances_sentiment = response.data.utterances_sentiment
+    //     console.log(utterances_sentiment)        
 
-        for (const utterance of utterances_sentiment) {
-          const res = await audioSentimentController.addRegionSentiment(answerDocId,
-            {
-              "start": utterance.timestamp[0],
-              "end": utterance.timestamp[1],
-              "transcript": utterance.text,
-              "sentiment": utterance.sentiment,
-              "confidence": utterance.confidence
-            }
-          )
-        }
 
-      }).catch((error) => {
-        // Hide the overlay
-        this.overlay = false
+    //     // Add this Region to the sentiment document for the selected answer [Firebase]
+    //     const answerDocId = this.answers[this.userSelect]
+    //     console.log(answerDocId)
 
-        // Show the snackbar
-        this.snackbar['visible']=true
-        this.snackbar['color']='error'
-        this.snackbar['text']='Analysis Failed'
+    //     for (const utterance of utterances_sentiment) {
+    //       const res = await audioSentimentController.addRegionSentiment(answerDocId,
+    //         {
+    //           "start": utterance.timestamp[0],
+    //           "end": utterance.timestamp[1],
+    //           "transcript": utterance.text,
+    //           "sentiment": utterance.sentiment,
+    //           "confidence": utterance.confidence
+    //         }
+    //       )
+    //     }
+
+    //   }).catch((error) => {
+    //     // Hide the overlay
+    //     this.overlay = false
+
+    //     // Show the snackbar
+    //     this.snackbar['visible']=true
+    //     this.snackbar['color']='error'
+    //     this.snackbar['text']='Analysis Failed'
       
 
-        // Log the error
-        console.error(error)
-      })
+    //     // Log the error
+    //     console.error(error)
+    //   })
     }
   },
 }
