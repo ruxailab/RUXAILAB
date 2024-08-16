@@ -12,15 +12,23 @@
 export default class AudioSentiment {
     /**
      * Constructs an instance of AudioSentiment.
-     * @param {string} answerDocId - The document ID related to the audio answer. [Used as the document ID in Firestore for this audio sentiment.]
+     * @param {string} answerDocId - The Answer document ID.
+     * @param {string} userDocId - The User document ID.
      * @param {Object[]} regions - An array of sentiment regions in the audio.
      */
-    constructor({ answerDocId, regions } = {}) {
+    constructor({ answerDocId, userDocId, regions } = {}) {
+
         /**
-         * The document ID related to the audio answer.
+         * The Answer document ID
          * @type {string}
          */
         this.answerDocId = answerDocId;
+
+        /**
+         * The User document ID
+         * @type {string}
+         */
+        this.userDocId = userDocId;
 
         /**
          * An array of sentiment regions in the audio.
@@ -37,16 +45,17 @@ export default class AudioSentiment {
      * @returns {AudioSentiment} - The newly created AudioSentiment instance.
      */
     static toAudioSentiment(data) {
-        return new AudioSentiment(
-            data.answerDocId,
-            data.regions.map(region => ({
+        return new AudioSentiment({
+            answerDocId: data.answerDocId,
+            userDocId: data.userDocId,
+            regions: data.regions.map(region => ({
                 start: region.start,
                 end: region.end,
                 transcipt: region.transcipt,
                 sentiment: region.sentiment,
                 confidence: region.confidence // Directly including the confidence
             }))
-        );
+        });
     }
 
 
@@ -57,6 +66,7 @@ export default class AudioSentiment {
     toFirestore() {
         return {
             answerDocId: this.answerDocId,
+            userDocId: this.userDocId,
             regions: this.regions.map(region => ({
                 start: region.start,
                 end: region.end,
