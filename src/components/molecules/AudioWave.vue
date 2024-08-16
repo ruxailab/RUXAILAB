@@ -14,11 +14,11 @@
       </v-icon>
     </v-btn>
 
-    <v-btn icon @click="playSegment(0, 5)">
+    <!-- <v-btn icon @click="playSegment(0, 5)">
       <v-icon>
         mdi-plus
       </v-icon>
-    </v-btn>  
+    </v-btn>   -->
 
 
 
@@ -163,6 +163,7 @@ export default {
     // Function to play a specific segment of the audio
     playSegment(start, end) {
       if (!this.wave_surfer) return;
+      console.log("playing segment",start,end)
 
        
       // Seek to the start position
