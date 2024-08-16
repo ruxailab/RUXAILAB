@@ -1,14 +1,8 @@
 <template>
   <div v-if="usersID">
-    <!-- {{ testDocument }}
-
-    <h1>qq</h1>
-    {{answersDocument}}
-
-    <h1>aa</h1>
-    {{ selectedAnswerDocument }} -->
-
-    <!-- {{ usersID }} -->
+    <!-- testDocument: {{ testDocument }} -->
+    <!-- answersDocument: {{answersDocument}} -->
+    <!-- selectedAnswerDocument "{{selectedAnswerDocument}} -->
 
     <ShowInfo title="Sentiment Analysis">
       <div slot="content">
@@ -37,7 +31,6 @@
               <!-- Co-operators -->
               <div>Copoprators</div>
 
-              {{ selectedAnswerSentimentDocument }}
 
     
 
@@ -235,35 +228,7 @@ export default {
     // Analyze the timestamp of the selected answer [AI Service]
     async analyzeTimeStamp() {
       console.log('Analyzing Timestamp..............................')
-      // // 1. Create Sentiment Object in Firestore
-      // const answerDocId = this.testDocument.answersDocId
-      // console.log(answerDocId)
-
-      // const userDocId = this.usersID[this.userSelect]
-      // console.log(userDocId)
-
-      // try {  
-      //   const res = await audioSentimentController.create({
-      //     answerDocId:answerDocId,
-      //     userDocId:userDocId,
-      //   })
-
-      //   console.log('Sentiment Document Created:', res)
-
-      // } catch (err) {
-      //   console.error(err.message)
-
-      // } finally {
-      // }
-
-      //  // Add this Region to the sentiment document for the selected answer [Firebase]
-      // const answerSentimentDocId = this.selectedAnswerSentimentDocument.id
-      // console.log(answerSentimentDocId)
-
-      // const res = await audioSentimentController.addSentimentRegion(answerSentimentDocId,"a")
-
-
-
+  
       // Show the overlay
       this.overlay = !this.overlay
 
@@ -285,30 +250,11 @@ export default {
 
 
         const utterances_sentiment = response.data.utterances_sentiment
-        // console.log(utterances_sentiment)      
-        
-//         0
-// : 
-// confidence
-// : 
-// 0.7347357273101807
-// sentiment
-// : 
-// "POS"
-// text
-// : 
-// " Hello, good morning, Karen. How are you?"
-// timestamp
-// : 
-// (2) [0, 4]
-// [[Prototype]]
-// : 
-// Object
-
+        // console.log(utterances_sentiment)
 
         // Add this Region to the sentiment document for the selected answer [Firebase]
         const answerSentimentDocId = this.selectedAnswerSentimentDocument.id
-        console.log(answerSentimentDocId)
+        // console.log(answerSentimentDocId)
 
        
         for (const utterance of utterances_sentiment) {
