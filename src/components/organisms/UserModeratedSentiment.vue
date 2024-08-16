@@ -36,6 +36,7 @@
 
               <!-- Audio Wave -->
               <AudioWave 
+                ref="audioWave"
                 :file="selectedAnswerDocument.cameraUrlEvaluator" 
                 :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
                 :newRegion.sync="newRegion"
@@ -51,11 +52,13 @@
                 + Analyze
               </v-btn>
 
+
               {{ newRegion.start }} - {{ newRegion.end }}
 
 
               <!-- Transcripts -->
               <SentimentTranscriptsList
+              :playSegment="playSegmentInAudioWave"
               :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
               />
               <!-- <div>Transcript</div> -->
@@ -286,7 +289,11 @@ export default {
         // Log the error
         console.error(error)
       })
-    }
+    },
+
+    playSegmentInAudioWave(start, end) {
+      this.$refs.audioWave.playSegment(start, end)
+    },
   },
 }
 </script>

@@ -10,6 +10,12 @@
 
       {{ selected }}
 
+      <!-- <v-btn @click="playSegment(10, 15)">
+        <v-icon>
+          mdi-plus
+        </v-icon>
+      </v-btn>   -->
+
       <!-- Scrollable List -->
       <v-row>
         <v-col cols="12">
@@ -24,9 +30,16 @@
                 <!-- <template v-slot:default="{ active }"> -->
                 <template>
                   <!-- Left Item: Avatar or Icon -->
-                  <v-list-item-icon>
-                    <v-icon color="primary">mdi-account</v-icon>
-                    <v-list-item-text v-text="'item.avatar'"></v-list-item-text>
+                  <v-list-item-icon class="play-segment-container">
+                    <!-- Play Button -->
+                    <v-btn icon @click="playSegment(region.start, region.end)">
+                      <v-icon color="orange" large >mdi-play</v-icon>
+                    </v-btn>
+
+                    <!-- Start and End Times -->
+                    <v-list-item-text class="segment-time">
+                      {{ region.start.toFixed(2) }} - {{ region.end.toFixed(2) }}
+                    </v-list-item-text>
                   </v-list-item-icon>
 
                   <!-- List Item Content -->
@@ -62,33 +75,12 @@
                     </v-list-item-action>             
                      <v-list-item-action>
 
-
-
-
                     <!-- Delete Icon Button -->
                     <v-btn icon @click="deleteRegion(region)">
                       <v-icon color="red">mdi-delete</v-icon>
                     </v-btn>
                    
                   </v-list-item-action>
-
-                  <!-- <v-list-item-action>
-                    <v-list-item-action-text v-text="'item.action'"></v-list-item-action-text>
-
-                    <v-icon
-                      v-if="!active"
-                      color="grey lighten-1"
-                    >
-                      mdi-star-outline
-                    </v-icon>
-
-                    <v-icon
-                      v-else
-                      color="yellow darken-3"
-                    >
-                      mdi-star
-                    </v-icon>
-                  </v-list-item-action> -->
                 </template>
               </v-list-item>
 
@@ -118,6 +110,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    playSegment: {
+      type: Function,
+      default: () => {},
+    },
   },
 
   data: () => ({
@@ -145,7 +141,6 @@ h3 {
   color: #000000;
 }
 
-
 .scrollable-list {
   /* background-color: red; */
   height: 250px;
@@ -172,6 +167,18 @@ h3 {
   background: rgba(0, 0, 0, 0.5); /* Darker color on hover */
 }
 
+
+.play-segment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.segment-time {
+  font-size: 10px;
+  color: grey;
+  margin-top: 4px;
+}
 
 .icon-and-confidence{
   display: flex;
