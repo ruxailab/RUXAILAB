@@ -8,30 +8,39 @@
 
 
     <!-- Controls -->
-     <!-- Play -->
-    <v-btn icon @click="playPause">
-      <v-icon>
-        {{ playing ? 'mdi-pause' : 'mdi-play' }}
-      </v-icon>
-    </v-btn>
+    <v-row align="center" no-gutters class="controls-row">
+      <!-- Play -->
+      <v-col cols="auto">
+        <v-btn icon @click="playPause">
+          <v-icon>{{ playing ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+        </v-btn>
+      </v-col>
 
-    <!-- Speed -->
-    <div class="speed-control">
-      <button id="speedButton" @click="changeSpeed">{{speedText}}</button>
-    </div>
+      <!-- Speed -->
+      <v-col cols="auto">
+        <v-btn @click="changeSpeed">
+          {{ speedText }}
+        </v-btn>
+      </v-col>
 
+      <!-- Volume -->
+      <v-col cols="auto" class="volume-col">
+        <v-slider
+          v-model="volume"
+          min="0"
+          max="1"
+          step="0.01"
+          label="Volume"
+          @change="setVolume"
+          hide-details
+          class="volume-slider"
+        />
+      </v-col>
 
-    <!-- Volume -->
-    <div class="volume-control">
-      <v-slider
-        v-model="volume"
-        min="0"
-        max="1"
-        step="0.01"
-        label="Volume"
-        @change="setVolume"
-      />
-    </div>
+      <!-- Download -->
+      
+    </v-row>
+
   </div>
 </template>
 
@@ -283,12 +292,6 @@ export default {
           console.error(error)
         })
     },
-    // updateRegion(newStart, newEnd) {
-      updateRegion() {
-      const newStart=0
-      const newEnd=8
-      this.$emit('update:newRegion', { start: newStart, end: newEnd });
-    },
   },
 }
 </script>
@@ -297,6 +300,20 @@ export default {
 .custom-btn {
   text-transform: none; /* Preserve the original text case */
 }
+
+.controls-row {
+  margin-top: 16px;
+}
+
+.volume-col {
+  flex: 1;
+  max-width: 300px; /* Adjust width as needed */
+}
+
+.volume-slider {
+  width: 100%;
+}
+
 /* .waveform-container { */
 /* height: 100px; */
 /* Additional styles can be added here */
