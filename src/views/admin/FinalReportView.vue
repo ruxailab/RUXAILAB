@@ -84,24 +84,25 @@ import TextControls from '@/components/atoms/FinalReportControls.vue'
 import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 
-import i18n from '@/i18n'
-
 export default {
-  components: { TextControls, FinalReportSelectionBox, ShowInfo },
+  components: {
+    TextControls,
+    FinalReportSelectionBox,
+    ShowInfo,
+  },
+
   data: () => ({
     title: 'Final report',
-    inputText: '',
     object: {},
-    textIsDone: false,
     step: 1,
-    selectedTestElements: null,
   }),
+
   computed: {
     test() {
       return this.$store.getters.test
     },
   },
-  watch: {},
+
   mounted() {
     this.setInnerHtml()
   },
@@ -126,32 +127,18 @@ export default {
 </script>
 
 <style scoped>
-/* * {
-  padding: 0;
-} */
 .teste {
   position: fixed;
   right: 8%;
   bottom: 10%;
 }
-.teste2 {
-  position: fixed;
-  left: 13%;
-  bottom: 5.5%;
-}
-.cloud-button {
-  padding: 10px;
-}
-.left {
-  justify-items: right;
-}
 
 .final-report-box {
   background-color: whitesmoke;
   width: 100%;
-
   padding: 0;
 }
+
 .form-control {
   background-color: white;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
@@ -163,11 +150,5 @@ export default {
   border-radius: 12px;
   overflow: auto;
   font-size: small;
-}
-
-.text-editor {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
 }
 </style>
