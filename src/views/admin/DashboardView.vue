@@ -273,13 +273,9 @@ export default {
     },
 
     filteredTests() {
-      let arr = null
-
-      arr = this.tests?.filter((test) => {
+      return this.tests?.filter(test => {
         return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-
-      return arr ?? this.tests
+      }) ?? this.tests
     },
 
     templates() {
@@ -287,11 +283,9 @@ export default {
     },
 
     filteredTemplates() {
-      return this.templates.filter((temp) =>
-        temp.header.templateTitle
-          .toLowerCase()
-          .includes(this.search.toLowerCase()),
-      )
+      return this.templates.filter(temp => {
+        return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
+      })
     },
 
     loading() {
@@ -341,6 +335,7 @@ export default {
     async cleanTestStore() {
       await this.$store.dispatch('cleanTest')
     },
+    
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
