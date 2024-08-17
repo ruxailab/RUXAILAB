@@ -70,23 +70,9 @@
       </div>
     </v-overlay>
 
-    <!--
-        <IntroEdit v-if="test && intro == true" @closeIntro="intro = false" />
-          <IntroEdit v-if="test.testStructure" @closeIntro="intro = false" />  -->
-
-    <!--
-        <ShowInfo v-if="test" title="Test Edit">  -->
-    <!-- Heuristics tests -->
-    <!--TODO: change hard coded type
-            <EditHeuristicsTest
-                v-if="test.testType == "HEURISTICS""
-                type="tabs"
-                @tabClicked="setIndex"
-                slot="top"
-            />
-        -->
     <v-row>
       <v-col cols="12" class="pb-0">
+        <!-- Heuristic Tests -->
         <EditHeuristicsTest
           v-if="test.testType === 'HEURISTICS'"
           slot="content"
@@ -113,6 +99,7 @@
           type="content"
           @valForm="validate"
         />
+
         <!-- Moderated User tests -->
         <EditModeratedUserTest
           v-if="test.testType === 'User' && test.userTestType === 'moderated'"
@@ -153,8 +140,9 @@ export default {
     EditUserTest,
     EditModeratedUserTest,
   },
-  // eslint-disable-next-line vue/require-prop-types
+
   props: ['id'],
+
   data: () => ({
     index: 0,
     object: {},
@@ -163,22 +151,25 @@ export default {
     dialog: false,
     intro: false,
   }),
+
   computed: {
     accessLevel() {
-      // If user is superadmin
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0
-        // Check if user is collaborator or owner
-        const isTestOwner = this.test.testAdmin.userDocId === this.user.id
-        if (isTestOwner) return 0
-        const isCooperator = this.test.cooperators.find((a) => a.userDocId === this.user.id)
-        if (isCooperator) {
-          return isCooperator.accessLevel
-        }
-      }
+      // Check if the user is defined
+      if (!this.user) return 1
 
+      // If the user is a superadmin
+      if (this.user.accessLevel === 0) return 0
+
+      // Check if the user is a collaborator or owner
+      const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
+      if (isTestOwner) return 0
+
+      // Check if the user is a cooperator and get their access level
+      const coopsInfo = this.test.cooperators?.find((coops) => coops.userDocId === this.user.id)
+      if (coopsInfo) return coopsInfo.accessLevel
       return 1
     },
+
     testAnswerDocLength() {
       if (!this.$store.getters.testAnswerDocument) {
         return 0
@@ -189,18 +180,23 @@ export default {
 
       return heuristicAnswersCount
     },
+
     loading() {
       return this.$store.getters.loading
     },
+
     user() {
       return this.$store.getters.user
     },
+
     test() {
       return this.$store.getters.test
     },
+
     answers() {
       return this.$store.getters.answers || []
     },
+
     totalQuestions() {
       let result = 0
       if (this.object?.heuristics) {
@@ -216,6 +212,7 @@ export default {
       return result
     },
   },
+
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
@@ -223,18 +220,20 @@ export default {
       }
     },
   },
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-  },
+
   async created() {
     await this.$store.dispatch('getTest', { id: this.id })
+    await this.$store.dispatch('getCurrentTestAnswerDoc')
   },
+
   beforeMount() {
     window.addEventListener('beforeunload', this.preventNav)
   },
+
   beforeDestroy() {
     window.removeEventListener('beforeunload', this.preventNav)
   },
+
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
@@ -254,64 +253,30 @@ export default {
       this.$store.dispatch('updateTest', auxT)
     },
 
-    mountAnswerSheet() {
-      const aux = {
-        heuristics: [],
-        tasks: [],
-        progress: 0,
-        total: this.totalQuestions,
-      }
-
-      if (this.object?.heuristics) {
-        this.object.heuristics.forEach((heuris) => {
-          const questions = Array.from(heuris.questions)
-          const arrayQuestions = []
-
-          questions.forEach((el) => {
-            arrayQuestions.push(
-              Object.assign({}, { id: el.id, res: '', com: '', imgUrl: '' }),
-            )
-          })
-
-          aux.heuristics.push(
-            Object.assign(
-              {},
-              {
-                id: heuris.id,
-                total: heuris.total,
-                questions: arrayQuestions,
-              },
-            ),
-          )
-        })
-
-        delete aux.tasks
-      } else if (this.object?.tasks) {
-        aux.tasks = [...this.object.tasks]
-        delete aux.heuristics
-      }
-
-      return aux
-    },
     validate(valid, index) {
       this.valids[index] = valid
     },
+
     validateAll() {
       this.submit()
       this.change=false
     },
+
     preventNav(event) {
       if (!this.change) return
       event.preventDefault()
       event.returnValue = ''
     },
+
     async setIntro() {
       this.object = await Object.assign(this.object, this.test)
     },
+
     setIndex(ind) {
       this.index = ind
     },
   },
+
   beforeRouteLeave(to, from, next) {
     if (this.change) {
       this.dialog = true

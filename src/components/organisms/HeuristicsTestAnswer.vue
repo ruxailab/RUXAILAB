@@ -511,9 +511,6 @@ export default {
     testWeights() {
       return this.$store.state.Tests.Test.testWeights
     },
-    scoresPercentageHTA() {
-      return this.$store.state.Tests.scoresPercentage
-    },
     heuristicsEvaluator() {
       const table = {
         header: [],
@@ -619,10 +616,6 @@ export default {
         })
       }
       return table
-    },
-
-    testAll() {
-      return this.$store.state.Tests.Test
     },
 
     heuristics() {
@@ -863,23 +856,12 @@ export default {
   border: 0.2px solid rgba(0, 0, 0, 0.25);
 }
 
-.cardAnswers {
-  background: #e6e4e4;
-  border-radius: 34px;
-}
-
 .tab-text {
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
   align-items: center;
   color: #000000;
-}
-
-.container {
-  height: 400px;
-  padding: 0px;
-  margin: 0px 10px 0px;
 }
 
 .list-scroll {
@@ -914,11 +896,6 @@ export default {
   border-radius: 20px;
   border: 0.2px solid #fca326;
   width: 950px;
-}
-
-.weightsStatisticsRadar {
-  border-radius: 20px;
-  border: 0.2px solid #fca326;
 }
 
 .radar {
