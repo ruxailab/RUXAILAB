@@ -51,7 +51,7 @@ import ShowInfo from '@/components/organisms/ShowInfo'
 import IntroAnswer from '@/components/molecules/IntroAnswer'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue'
-import SentimentAnalysisView from '@/views/SentimentAnalysisView.vue'
+import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue'
 
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
 
