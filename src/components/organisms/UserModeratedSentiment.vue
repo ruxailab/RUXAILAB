@@ -56,7 +56,7 @@
 
                 <!-- Right Controls -->
                 <v-col cols="12" md="4" class="text-right">
-                  <v-btn color="orange" class="white--text">
+                  <v-btn color="orange" class="white--text" @click="analyzeTimeStamp()">
                     + Analyze
                   </v-btn>
                 </v-col>
@@ -90,7 +90,7 @@
 
 
 
-    <!-- <v-overlay :value="overlay">
+    <v-overlay :value="overlay">
       <v-progress-circular
         indeterminate
         size="64"
@@ -107,7 +107,7 @@
       <template v-slot:action>
         <v-btn color="white" text @click="snackbar.visible = false">Close</v-btn>
       </template>
-    </v-snackbar> -->
+    </v-snackbar>
   </div>
 </template>
 
@@ -266,7 +266,7 @@ export default {
       console.log('Analyzing Timestamp..............................')
   
       // Show the overlay
-      this.overlay = !this.overlay
+      this.overlay = true
 
       axios.post('http://localhost:5000/test', 
       {
