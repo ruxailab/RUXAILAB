@@ -25,19 +25,17 @@
 
       <!-- Volume -->
       <v-col cols="auto" class="volume-col">
+        <v-icon> mdi-volume-high</v-icon>
         <v-slider
           v-model="volume"
           min="0"
           max="1"
           step="0.01"
-          label="Volume"
-          @change="setVolume"
           hide-details
+          @change="setVolume"
           class="volume-slider"
         />
       </v-col>
-
-      <!-- Download -->
       
     </v-row>
 
@@ -307,7 +305,7 @@ export default {
 
 .volume-col {
   flex: 1;
-  max-width: 300px; /* Adjust width as needed */
+  max-width: 300px;
 }
 
 .volume-slider {
