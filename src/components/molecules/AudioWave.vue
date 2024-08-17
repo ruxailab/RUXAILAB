@@ -8,21 +8,30 @@
 
 
     <!-- Controls -->
-      <v-btn icon @click="playPause">
+     <!-- Play -->
+    <v-btn icon @click="playPause">
       <v-icon>
         {{ playing ? 'mdi-pause' : 'mdi-play' }}
       </v-icon>
     </v-btn>
 
-    <!-- <v-btn icon @click="playSegment(0, 5)">
-      <v-icon>
-        mdi-plus
-      </v-icon>
-    </v-btn>   -->
+    <!-- Speed -->
+    <div class="speed-control">
+      <button id="speedButton" @click="changeSpeed">{{speedText}}</button>
+    </div>
 
 
-
-
+    <!-- Volume -->
+    <div class="volume-control">
+      <v-slider
+        v-model="volume"
+        min="0"
+        max="1"
+        step="0.01"
+        label="Volume"
+        @change="setVolume"
+      />
+    </div>
   </div>
 </template>
 
@@ -58,6 +67,8 @@ export default {
     return {
       wave_surfer: null,
       playing: false,      
+      volume: 1, // Volume level (0 to 1)
+      speedText: '1x', // Display text for speed
     }
   },
 
@@ -103,6 +114,7 @@ export default {
           minPxPerSec: 10,
           dragToSeek: true,
 
+          // plugins: [this.regionsPlugin,this.timelinePlugin],
           plugins: [this.regionsPlugin,this.timelinePlugin],
           // cursorWidth: 1,
           // height: 500,
@@ -206,6 +218,21 @@ export default {
       });
     },
 
+    changeSpeed() {
+      const speeds = [0.5,1, 1.5, 2]
+      let currentSpeedIndex = speeds.indexOf(this.wave_surfer.getPlaybackRate())
+      currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length
+      const newSpeed = speeds[currentSpeedIndex]
+      this.wave_surfer.setPlaybackRate(newSpeed)
+      this.speedText = `${newSpeed}x` // Update the speed display text
+    },
+
+    setVolume() {
+      if (this.wave_surfer) {
+        this.wave_surfer.setVolume(this.volume)
+      }
+    },
+  
     async loadAudioFile() {
       if (!this.wave_surfer){
         console.error('Wave Surfer not initialized')
