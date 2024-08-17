@@ -28,10 +28,11 @@
 
             <!-- Answer Sentiment -->
             <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <!-- Co-operators -->
-              <div>Copoprators</div>
-
-
+              <!-- Co-operators -->              
+              <ModeratedTestCard
+                :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
+                :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }"
+              />              
     
 
               <!-- Audio Wave -->
@@ -44,7 +45,23 @@
 
 
               <!-- Control Wave -->
-              <v-btn
+
+              <v-row class="align-center justify-space-between pa-3">
+                <!-- Left Text -->
+                <v-col cols="12" md="8">
+                  <span class="text--secondary caption">
+                    Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
+                  </span>
+                </v-col>
+
+                <!-- Right Controls -->
+                <v-col cols="12" md="4" class="text-right">
+                  <v-btn color="orange" class="white--text">
+                    + Analyze
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <!-- <v-btn
                 color="#F9A826"
                 class="white--text custom-btn"
                 @click="analyzeTimeStamp()"
@@ -54,7 +71,7 @@
 
 
               {{ newRegion.start }} - {{ newRegion.end }}
-
+ -->
 
               <!-- Transcripts -->
               <SentimentTranscriptsList
@@ -101,18 +118,21 @@ import axios from 'axios'
 
 // Components
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
+import ModeratedTestCard from '@/components/molecules/ModeratedTestCard.vue';
 import AudioWave from '@/components/molecules/AudioWave.vue'
 import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
 
 
 // Controller
 import AudioSentimentController from '@/controllers/AudioSentimentController';
+import { evaluatorStatisticsHeaders } from '@/utils/headers';
 
 const audioSentimentController = new AudioSentimentController()
 
 export default {
   components: {
     ShowInfo,
+    ModeratedTestCard,
     AudioWave,
     SentimentTranscriptsList
   },
