@@ -200,6 +200,7 @@ export default {
 
       try {
         await testController.duplicateTest(payload)
+        commit('ADD_TASKS', payload.test)
       } catch (err) {
         commit('set Error', true)
         return null
