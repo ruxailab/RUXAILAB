@@ -268,7 +268,7 @@ export default {
       // Show the overlay
       this.overlay = true
 
-      axios.post('http://localhost:5000/test', 
+      axios.post('http://localhost:8000/sentiment-analysis-timestamped/whisper', 
       {
         url: this.selectedAnswerDocument.cameraUrlEvaluator,
         start_time: this.newRegion.start,
