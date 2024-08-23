@@ -110,6 +110,7 @@ export default {
       this.$router.replace({ name: 'ManagerView', params: { id: testId } })
     },
 
+
     go(item) {
       if (this.$route.path === item.path) return
       if (item.path === `/testview/${this.test.id}`) return window.open(item.path)

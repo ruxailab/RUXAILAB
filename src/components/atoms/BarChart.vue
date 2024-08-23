@@ -5,9 +5,8 @@ export default {
   extends: Bar,
   props: {
     labels: {
-      type: String,
-      default: 'Data One',
-    },
+      type: Array,
+      default: () => ['Label 1', 'Label 2', 'Label 3'],    },
     data: {
       type: Array,
       default: () => [],
