@@ -3,23 +3,23 @@
     <v-row justify="center">
       <v-text-field
         v-if="type === 'textField'"
-        v-model="data"
+        v-model="internalValue"
         outlined
         color="orange"
         class="mx-3"
         :label="label"
-        @change="$emit('change', data)"
+        @change="$emit('change', internalValue)"
       />
 
       <v-textarea
         v-else
-        v-model="data"
+        v-model="internalValue"
         :rows="rows"
         outlined
         color="orange"
         class="mx-3"
         :label="label"
-        @change="$emit('change', data)"
+        @change="$emit('change', internalValue)"
       />
     </v-row>
   </v-container>
@@ -28,6 +28,11 @@
 <script>
 export default {
   props: {
+    value: {
+      type: String,
+      required: true
+    },
+
     type: {
       type: String,
       default: 'textArea',
@@ -47,15 +52,16 @@ export default {
     },
   },
 
-  data: () => ({
-    data: '',
-  }),
-
-  watch: {
-    data (newValue) {
-      this.$emit('input', newValue)
-    },
-  },
+  computed: {
+    internalValue: {
+      get() {
+        return this.value
+      },
+      set(newValue) {
+        this.$emit('input', newValue)
+      }
+    }
+  }
 }
 </script>
 
