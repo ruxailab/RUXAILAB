@@ -10,7 +10,7 @@
           v-model="preTest.consent"
           label="Consent Form..."
           :rows="3"
-          @change="onChange"
+          @input="onChange"
         />
       </CardForm>
     </v-col>
@@ -26,7 +26,7 @@
           v-model="preTest.welcomeMessage"
           label="Thank you for participating..."
           :rows="3"
-          @change="onChange"
+          @input="onChange"
         />
       </CardForm>
 
@@ -40,7 +40,7 @@
           v-model="preTest.landingPage"
           label="URL"
           :rows="1"
-          @change="onChange"
+          @input="onChange"
         />
       </CardForm>
 
@@ -70,44 +70,51 @@
 </template>
 
 <script>
+import CardForm from '@/components/molecules/CardForm'
 import InputTextEditTest from '@/components/atoms/InputTextEditTest'
 import VariableManager from '@/components/molecules/VariableManager'
-import CardForm from '@/components/molecules/CardForm'
 
 export default {
   components: {
+    CardForm,
     InputTextEditTest,
     VariableManager,
-    CardForm,
   },
 
   data: () => ({
     preTest: {
       consent: '',
-      welcomeMessage: '',
       landingPage: '',
-      participantCamera: '',
+      // participantCamera: '',
       preForm: [],
-    },
+      welcomeMessage: '',
+    }
   }),
 
   computed: {
     test() {
       return this.$store.getters.test
     },
+
+    testStructure() {
+      return this.$store.getters.testStructure
+    },
   },
 
   created() {
-    this.preTest.consent = this.test?.testStructure?.consent || ''
-    this.preTest.welcomeMessage = this.test?.testStructure?.welcomeMessage || ''
-    this.preTest.landingPage = this.test?.testStructure?.landingPage || ''
-    this.preTest.participantCamera = this.test?.testStructure?.participantCamera || ''
+    if (!this.testStructure) {
+      this.$store.commit('SET_TEST_STRUCTURE', this.test.testStructure)
+    }
+
+    const { consent = '', welcomeMessage = '', landingPage = '' } = this.testStructure || {}
+    this.preTest = { consent, welcomeMessage, landingPage }
   },
 
   methods: {
     onChange() {
+      this.$store.commit('SET_TEST_STRUCTURE', this.preTest)
       this.$store.commit('SET_LOCAL_CHANGES', true)
     }
-  },
+  }
 }
 </script>
