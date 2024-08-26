@@ -191,7 +191,7 @@ export default {
       if (this.accessLevel == 0) {
         items.push(
           { title: 'Test', icon: 'mdi-file-document-edit', path: `/cardSorting/edittest/${this.test.id}` },
-          // { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${this.test.id}` },
+          { title: 'Preview', icon: 'mdi-file-eye', path: `/cardSorting/testview/${this.test.id}` },
           // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
           // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
           // { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${this.test.id}` },

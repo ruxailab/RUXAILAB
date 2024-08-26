@@ -1,3 +1,4 @@
+import TestView from '@/views/cardSorting/TestView.vue'
 import ManagerView from '@/views/cardSorting/ManagerView'
 import EditTestView from '@/views/cardSorting/EditTestView.vue'
 import SettingsView from '@/views/cardSorting/SettingsView.vue'
@@ -25,5 +26,12 @@ export default [
         component: SettingsView,
       },
     ],
+  },
+  {
+    path: '/cardSorting/testview/:id/:token?',
+    name: 'CardSortingTestView',
+    props: true,
+    meta: { authorize: [] },
+    component: TestView,
   },
 ]

@@ -3,21 +3,21 @@
     <!-- Create Dialog -->
     <CreateVariable 
       :dialog="dialog"
-      title="Category"
+      title="Card"
       @close="dialog = false"
       @save="save"
     />
 
     <CardForm
-      v-if="categories.length === 0"
-      title="Categories"
-      subtitle="Categories are groups or themes used to organize items during card sorting. They must be clear, separated and aligned with the objective of the exercise, helping those evaluated to classify the items in a logical and intuitive way."
+      v-if="cards.length === 0"
+      title="Cards"
+      subtitle="Cards are items that represent ideas or information in a categorization exercise. Each card must be clear and concise, allowing the person being evaluated to organize them logically within the categories."
     >
       <v-row justify="center">
         <v-col cols="8">
           <CardButton
             icon="mdi-plus-circle"
-            text="Add your first task"
+            text="Add your first Card"
             @click="dialog = true"
           />
         </v-col>
@@ -25,35 +25,33 @@
     </CardForm>
 
     <Draggable
-      v-model="categories"
+      v-model="cards"
       class="list-group"
       @start="dragging = true"
       @end="dragging = false"
     >
-      <transition-group>
-        <v-card
-          v-for="(category, i) in categories"
-          :key="i"
-          class="cards mb-5"
-        >
-          <v-col cols="12" class="pb-0 px-5">
-            <v-icon style="cursor: pointer;">
-              mdi-drag
-            </v-icon>
-            
-            <span class="cardsTitle ml-3">{{ category.title }}</span>
-            <br />
-            <span class="cardsSubtitle ml-9">{{ category.description }}</span>
-            
-            <v-icon class="delete-icon" @click="deleteCategory(i)">
-              mdi-delete
-            </v-icon>
-          </v-col>
-        </v-card>
-      </transition-group>
+      <v-card
+        v-for="(card, i) in cards"
+        :key="i"
+        class="cards mb-5"
+      >
+        <v-col cols="12" class="pb-0 px-5">
+          <v-icon style="cursor: pointer;">
+            mdi-drag
+          </v-icon>
+          
+          <span class="cardsTitle ml-3">{{ card.title }}</span>
+          <br />
+          <span class="cardsSubtitle ml-9">{{ card.description }}</span>
+          
+          <v-icon class="delete-icon" @click="deleteCategory(i)">
+            mdi-delete
+          </v-icon>
+        </v-col>
+      </v-card>
     </Draggable>
 
-    <v-row justify="center" v-if="categories.length > 0">
+    <v-row justify="center" v-if="cards.length > 0">
       <v-btn
         fab
         depressed
@@ -84,19 +82,45 @@ export default {
   },
 
   data: () => ({
-    categories: [],
+    cards: [],
     dialog: false,
     dragging: false,
   }),
 
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+
+    testStructure() {
+      return this.$store.getters.testStructure
+    },
+  },
+
+  watch: {
+    cards (newValue) {
+      this.$store.commit('SET_CARD_TEST_STRUCTURE', this.cards)
+      this.$store.commit('SET_LOCAL_CHANGES', true)
+    },
+  },
+
+  created() {
+    if (!this.testStructure) {
+      this.$store.commit('SET_TEST_STRUCTURE', this.test.testStructure)
+    }
+
+    const { cards = [] } = this.testStructure?.cardSorting || {}
+    this.cards = cards
+  },
+
   methods: {
     save(item) {
       this.dialog = false
-      this.categories.push(item)
+      this.cards.push(item)
     },
 
     deleteCategory(i) {
-      this.categories.splice(i, 1)
+      this.cards.splice(i, 1)
     }
   },
 }
