@@ -573,6 +573,7 @@
                           :task="test.testStructure.userTasks[taskIndex]"
                         />
                       </v-col>
+                     
                       <v-col
                         cols="1"
                         v-if="
@@ -583,9 +584,14 @@
                         <AudioRecorder
                           @showLoading="isLoading = true"
                           @stopShowLoading="isLoading = false"
+                          @recordingStarted="isVisualizerVisible = $event"
                           :testId="testId"
                           :taskIndex="taskIndex"
                         ></AudioRecorder>
+                      </v-col>
+
+                      <v-col cols="1" v-if="isVisualizerVisible"  >
+                       <AudioVisualizer/>
                       </v-col>
                       <v-col
                         cols="1"
@@ -837,8 +843,10 @@ import Snackbar from '@/components/atoms/Snackbar'
 import TipButton from '@/components/atoms/TipButton'
 import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
+import AudioVisualizer from '@/components/atoms/AudioVisualizer'
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
+
 
 export default {
   components: {
@@ -849,7 +857,9 @@ export default {
     TipButton,
     Timer,
     AudioRecorder,
+    AudioVisualizer,
     ScreenRecorder,
+
   },
   data: () => ({
     videoUrl: '',
@@ -868,6 +878,7 @@ export default {
     dialog: false,
     allTasksCompleted: false,
     isLoading: false,
+    isVisualizerVisible:false,
   }),
   computed: {
     test() {
