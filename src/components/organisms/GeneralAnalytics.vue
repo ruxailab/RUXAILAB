@@ -686,7 +686,7 @@ export default {
 
 /* Handle */
 .list-scroll::-webkit-scrollbar-thumb {
-  background: #ffcd86;
+  background:rgb(244, 159, 39);
   border-radius: 4px;
 }
 

@@ -239,11 +239,11 @@ export default {
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #ffcd86;
+  background:rgb(233, 140, 11);
   border-radius: 2px;
 }
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+  background:rgb(141, 111, 69);
 }
 </style>
