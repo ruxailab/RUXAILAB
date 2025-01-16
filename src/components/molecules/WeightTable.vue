@@ -22,7 +22,7 @@
           color="orange"
           show-arrows
         >
-          <v-tabs-slider color="#FF9800" />
+          <v-tabs-slider color="#ffcd86" />
           <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
