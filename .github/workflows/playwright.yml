@@ -23,6 +23,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+          
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install docker-compose
 
       - name: Build and start services
         run: docker-compose up -d --build
@@ -30,7 +33,7 @@ jobs:
       - name: Wait for container to become available
         run: |
           npx wait-on http://localhost:8080
-          sleep 30  # Aumenta el tiempo de espera adicional para asegurarte de que el servidor está listo
+          sleep 30  # Increase additional wait time to ensure the server is ready
 
       - name: Check Docker logs
         run: docker-compose logs
@@ -44,7 +47,7 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
