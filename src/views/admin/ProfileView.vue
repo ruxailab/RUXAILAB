@@ -77,7 +77,15 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from 'firebase/auth'
-
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  deleteDoc,
+} from 'firebase/firestore'
 export default {
   data() {
     return {
@@ -88,52 +96,66 @@ export default {
     }
   },
   methods: {
-    // deleteAccount() {
-    //   // Placeholder for actual delete account logic
-    //   console.log('Account deleted')
-    //   this.showDeleteModal = false
-    //   this.$router.push('/')
-    // },
-    deleteAccount() {
-      const auth = getAuth()
-      const user = auth.currentUser
+  async deleteAccount() {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-      if (user) {
-        // Prompt the user for their password
-        const email = user.email
-        const password = prompt(
-          'Please enter your password to confirm deletion:',
-        )
-
-        if (password) {
-          const credential = EmailAuthProvider.credential(email, password)
-
-          // Reauthenticate the user
-          reauthenticateWithCredential(user, credential)
-            .then(() => {
-              // Proceeding to delete the account after a verify
-              return user.delete()
-            })
-            .then(() => {
-              console.log('Account deleted successfully.')
-              window.location.reload()
-              this.$router.push('/') // Redirect after successful deletion
-            })
-            .catch((error) => {
-              console.error(
-                'Error during reauthentication or account deletion:',
-                error.message,
-              )
-              alert('Failed to delete account. Please try again.')
-            })
-        } else {
-          alert('Password is required to delete your account.')
+    if (user) {
+      try {
+        // Prompt the user for their password for reauthentication
+        const email = user.email;
+        const password = prompt('Please enter your password to confirm deletion:');
+        if (!password) {
+          alert('Password is required to delete your account.');
+          return;
         }
-      } else {
-        console.error('No user is signed in.')
+
+        // Reauthenticate the user
+        const credential = EmailAuthProvider.credential(email, password);
+        await reauthenticateWithCredential(user, credential);
+
+        const db = getFirestore(); // Initialize Firestore
+        const userDocId = user.uid; // Get the user's UID
+
+        // Delete related Firestore data
+        const testsCollectionRef = collection(db, 'tests');
+        const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId));
+        const testsSnapshot = await getDocs(testsQuery);
+
+        if (!testsSnapshot.empty) {
+          for (const testDoc of testsSnapshot.docs) {
+            const testData = testDoc.data();
+            const answersDocId = testData.answersDocId;
+
+            if (answersDocId) {
+              const answersDocRef = doc(db, 'answers', answersDocId);
+              await deleteDoc(answersDocRef);
+            }
+
+            const testDocRef = doc(db, 'tests', testDoc.id);
+            await deleteDoc(testDocRef);
+          }
+        }
+
+        // Delete user document from `users` collection
+        const userDocRef = doc(db, 'users', userDocId);
+        await deleteDoc(userDocRef);
+
+        // Finally, delete the user's authentication account
+        await user.delete();
+        console.log('Account and related data deleted successfully.');
+
+        // Redirect after successful deletion
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Error during account deletion:', error.message);
+        alert('Failed to delete account. Please try again.');
       }
-    },
+    } else {
+      console.error('No user is signed in.');
+    }
   },
+},
   computed: {
     user() {
       return this.$store.getters.user || { email: '' } // Fallback if user is undefined
