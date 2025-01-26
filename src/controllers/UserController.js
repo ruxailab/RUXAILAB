@@ -64,6 +64,7 @@ export default class UserController extends Controller {
     // Update inbox array
     if (inboxIndex !== -1) {
         userToUpdate.inbox[inboxIndex].read = true;
+        userToUpdate.inbox[inboxIndex].readAt = Date.now();
     }
 
     if (notificationIndex !== -1 || inboxIndex !== -1) {
