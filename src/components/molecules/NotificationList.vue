@@ -1,6 +1,6 @@
 <template>
   <v-list two-line>
-    <template v-for="(notification, index) in formattedNotifications">
+    <template v-for="(notification, index) in notifications">
       <v-list-item
         :key="notification.id"
         @click="$emit('go-to-redirect', notification)"
@@ -26,9 +26,19 @@
           <v-list-item-subtitle
             >Sent by {{ notification.author }}</v-list-item-subtitle
           >
-          <v-list-item-subtitle>{{
-            notification.createdDate
-          }}</v-list-item-subtitle>
+          <v-list-item-subtitle
+            class="text-caption grey--text text--darken-1 mt-1"
+          >
+            At: {{ formatFrontendDate(notification.createdDate) }}
+          </v-list-item-subtitle>
+
+          <!-- Notification read date (conditional) -->
+          <v-list-item-subtitle
+            v-if="notification.readAt"
+            class="text-caption success--text mt-1"
+          >
+            Seen: {{ formatFrontendDate(notification.readAt) }}
+          </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
           <v-btn icon @click.stop="$emit('mark-as-read', notification)">
@@ -40,7 +50,7 @@
       </v-list-item>
       <v-divider
         v-if="index < notifications.length - 1"
-        :key="`divider-${notification.id}`"
+        :key="`divider-${index}`"
       ></v-divider>
     </template>
   </v-list>
@@ -55,18 +65,10 @@ export default {
       required: true,
     },
   },
-  computed: {
-    formattedNotifications() {
-      return this.notifications.map((notification) => ({
-        ...notification,
-        createdDate: this.formatDate(notification.createdDate), // Convert date
-      }))
-    },
-  },
   methods: {
-    formatDate(timestamp) {
+    formatFrontendDate(timestamp) {
       const date = new Date(timestamp)
-      return date.toLocaleString()
+      return date.toLocaleString() // Format the date in a human-readable way
     },
   },
 }

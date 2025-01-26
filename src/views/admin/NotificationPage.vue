@@ -96,6 +96,7 @@ export default {
       window.open(`/${notification.redirectsTo}`)
     },
     async markAsRead(notification) {
+      console.log(notification);
       await this.$store.dispatch('markNotificationAsRead', {
         notification: notification,
         user: this.user,
