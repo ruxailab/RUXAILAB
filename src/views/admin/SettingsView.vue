@@ -122,6 +122,16 @@
             <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
               Duplicate test
             </v-btn>
+
+            <v-btn
+              :disabled="!change"
+              color="primary"
+              :loading="loading"
+              @click="submit()"
+            >
+              <v-icon left>mdi-content-save</v-icon>
+              {{ $t('buttons.save_edit') }}
+            </v-btn>
           </v-row>
 
           <v-divider class="my-3 mx-2" />
@@ -303,12 +313,13 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid
     },
+    
     async submit() {
       const element = this.object.testTitle
       if (element.length > 0 && element.length < 200) {
         await this.$store.dispatch('updateTest', new Test(this.object))
         this.$store.commit('SET_LOCAL_CHANGES', false)
-        console.log('changes Saved')
+        console.log('Changes Saved')
         this.$toast.success('Changes Saved')
       } else if (element.length >= 200) {
         this.$toast.warning('Title must not exceed 200 characters.')

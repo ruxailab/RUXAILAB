@@ -460,7 +460,8 @@
     "stay": "Stay",
     "leave": "Leave",
     "help": "Help",
-    "delete": "Delete"
+    "delete": "Delete",
+    "save_edit": "Save Changes"
   },
   "switches": {
     "noAnswer": "No answer",
