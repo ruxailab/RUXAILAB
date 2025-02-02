@@ -146,7 +146,8 @@ export default {
         console.log('Account and related data deleted successfully.');
 
         // Redirect after successful deletion
-        this.$router.push('/');
+        this.signOut();
+        
       } catch (error) {
         console.error('Error during account deletion:', error.message);
         alert('Failed to delete account. Please try again.');
@@ -155,6 +156,13 @@ export default {
       console.error('No user is signed in.');
     }
   },
+  async signOut() {
+      this.$store.dispatch('logout').then(() => {
+        this.$router
+          .push('/')
+          .catch((error) => {console.log(error)})
+      })
+    },
 },
   computed: {
     user() {
