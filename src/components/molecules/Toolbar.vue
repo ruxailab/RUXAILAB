@@ -84,7 +84,7 @@
       style="cursor: pointer"
       @click="goTo('/testslist')"
     >
-      Remote Testing Lab
+      RUXAILAB
     </v-toolbar-title>
     <v-toolbar-title v-else style="cursor: pointer" @click="goTo('/testslist')">
       Help Center
