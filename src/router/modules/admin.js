@@ -12,6 +12,8 @@ import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
+import Notification from '@/views/admin/NotificationPage.vue'
+
 export default [
   {
     path: '/testslist',
@@ -24,7 +26,12 @@ export default [
     name:'Profile',
     meta: { authorize: [1] },
     component:Profile,
-
+  },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    meta: { authorize: [1] },
+    component: Notification,
   },
   {
     path: '/managerview/:id/:token?',
