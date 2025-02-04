@@ -1,8 +1,9 @@
-FROM node:lts AS build-stage
+FROM node:20.18-alpine AS build-stage
 
 WORKDIR /app
 
 COPY package*.json ./
+COPY .env ./
 
 RUN npm install
 
@@ -12,7 +13,7 @@ COPY . .
 RUN npm run build-dev
 
 # Production stage using a minimal Node.js image
-FROM node:alpine AS production-stage
+FROM node:20.18-alpine AS production-stage
 
 # Install 'serve' to serve the application
 RUN npm install -g serve
