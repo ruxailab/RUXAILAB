@@ -35,11 +35,12 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 
 ### Support
 
-- [Report a Bug 🐛](https://github.com/uramakilab/remote-usability-lab/issues/new)
+- [Report a Bug 🦛](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
 
 For commercial support, academic collaborations, and answers to common questions, please use [Get Support]() to contact us.
+
 ### Development Environment
 
 - Node.js version: ≤ 16.20.1
@@ -64,39 +65,47 @@ Follow these steps to set up the development environment and run the application
  Open Firebase / Firestore and start a project.
 
    - In the project dashboard, click on the settings button on the left side of the screen (gear icon).
-  - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen. 
+   - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen.
+
 <div align="center">
   <img src="public/FBexample.png" alt="FBexample" height="450" />
-</div> 
+</div>
 
-In the folder of your project, create a file with the name .env and put the following data:
+### Retrieve Database URL from Firebase Realtime Database
+
+1. Go to the [Firebase Console](https://console.firebase.google.com).
+2. Select your project.
+3. In the left-hand menu, click on "Realtime Database."
+4. The Database URL will be displayed in the top-right corner of the Realtime Database section. Copy this URL.
+
+In the folder of your project, create a file with the name `.env` and put the following data:
 
   ```javascript
   VUE_APP_FIREBASE_API_KEY=""
   VUE_APP_FIREBASE_AUTH_DOMAIN=""
-  VUE_APP_FIREBASE_DB_URL=""
+  VUE_APP_FIREBASE_DB_URL="PASTE_YOUR_DATABASE_URL_HERE"
   VUE_APP_FIREBASE_PROJECT_ID=""
   VUE_APP_FIREBASE_STORAGE_BUCKET=""
   VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
   VUE_APP_FIREBASE_APP_ID=""
 
-
   // Doesn't need changes
   VUE_APP_I18N_LOCALE="en"
   VUE_APP_I18N_FALLBACK_LOCALE="en"
   ```
-Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
-
+Then, complete the information in your `.env` file with the Firebase details and run:
 
   ```bash
    # Run the application locally
    npm run serve
    ```
-## Running with Firebase Emulators 
-- Add ```firebase.json``` file with the following code snippet:
+
+## Running with Firebase Emulators
+
+- Add `firebase.json` file with the following code snippet:
 
 ```javascript
-    {
+{
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
@@ -106,11 +115,6 @@ Then, complete the information in your .env file with the firebase information, 
       "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
       "source": "functions",
       "codebase": "functions"
-    },
-    {
-      "source": "weight_function",
-      "codebase": "weight_function",
-      "ignore": ["venv", ".git", "firebase-debug.log", "firebase-debug.*.log"]
     }
   ],
   "hosting": {
@@ -140,63 +144,16 @@ Then, complete the information in your .env file with the firebase information, 
     "ui": {
       "enabled": true
     },
-    "singleProjectMode": true,
-    "storage": {
-      "port": 9199
-    }
-  },
-  "storage": {
-    "rules": "storage.rules"
+    "singleProjectMode": true
   }
 }
-	
 ```
-Setup your Firebase Emulators
-
-Run:
-
-```bash
-
-firebase use (choose your option)
-firebase emulators:start
-
-```
-
-## Running Python Function 
-
-To calculate heuristic weights, run:
-
- ```bash	
- # Run locally
-  firebase init functions
-  firebase use (choose your option)
-  firebase emulators:start --only functions
-   ```
-Then get the url, go to the .env file and add the following sentence:
-
-  ```javascript
-    // Your previous code
-   VUE_APP_FIREBASE_PYTHON_FUNCTION="url"
-   ```
-
-If you want to deply the fuction, change your account from spark to blaze, run:
-
- ```bash	
-    firebase deploy --only functions
-   ```
-Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
-There you can get the url and replace on .env file.
-
-
-
 
 ## Docker Setup
 
-
-
 ### Building the Docker Image
 
-To build the Docker image for UX Remote LAB, navigate to the project's root directory and run the following command:
+To build the Docker image for UX Remote LAB, navigate to the project's root directory and run:
 
 ```bash
 docker build -t uxremotelab .
@@ -204,11 +161,7 @@ docker build -t uxremotelab .
 
 ### Running the Application using Docker
 
-After building the image, you can run the application in a Docker container using:
-
- 
-Note: Ensure you have created the .env file and filled it with all required variables before running the following command:
-  
+Ensure you have created the `.env` file and filled it with all required variables before running:
 
 ```bash
 docker run -d --env-file .env -p 5000:5000 uxremotelab
@@ -216,10 +169,7 @@ docker run -d --env-file .env -p 5000:5000 uxremotelab
 
 Visit `http://localhost:5000` in your browser to access the UX Remote LAB platform.
 
-
-
-
-
 ## License
 
 MIT © [UX Remote LAB](https://github.com/uramakilab/remote-usability-lab)
+
