@@ -40,7 +40,10 @@
       "hours": "[TODO] {count}",
       "minutes": "[TODO] {count}",
       "now": "[TODO]"
-    }
+    },
+    "viewAll": "सभी देखें",
+    "sentBy": "के द्वारा भेजा गया है",
+    "new": "नया"
   },
   "titles": {
     "manager": "प्रबंधक",
