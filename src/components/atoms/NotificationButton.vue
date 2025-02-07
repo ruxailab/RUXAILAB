@@ -33,7 +33,7 @@
       <!--  navigation bar -->
       <v-card>
         <v-app-bar
-          color="primary"
+          color="orange"
           dark
           dense
         >
@@ -43,7 +43,7 @@
             text
             @click="goToNotificationPage"
           >
-            View All
+            {{ $t('common.viewAll') }}
           </v-btn>
         </v-app-bar>
 
@@ -73,12 +73,12 @@
                     {{ notification.description }}
                   </v-list-item-subtitle>
                   <v-list-item-subtitle>
-                    Sent by {{ notification.author }}
+                    {{ $t('common.sentBy') }} {{ notification.author }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon v-if="!notification.read">
                   <v-chip x-small color="success" outlined label>
-                    NEW!
+                    {{ $t('common.new') }}!
                   </v-chip>
                 </v-list-item-icon>
               </v-list-item>
