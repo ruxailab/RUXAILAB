@@ -40,7 +40,10 @@
       "hours": "Hace {count} hora{count !== 1 ? 's' : ''}",
       "minutes": "Hace {count} minuto{count !== 1 ? 's' : ''}",
       "now": "Ahora"
-    }
+    },
+    "viewAll": "Ver todo",
+    "sentBy": "Enviado por",
+    "new": "NUEVO"
   },
   "titles": {
     "manager": "Gerente",
