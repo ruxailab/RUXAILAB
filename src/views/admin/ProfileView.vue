@@ -1,13 +1,12 @@
 <template>
   <div class="container h-screen py-8 flex gap-4">
-    <!-- Left Profile Section (Fixed width with buttons) -->
     <div class="flex-shrink-0 h-screen mr-4" style="max-width: 35%; min-width: 350px;">
       <v-card class="profile-card h-full" elevation="0">
         <v-card-text class="text-center">
           <v-avatar size="128" class="mb-4">
-            <v-img :src="userprofile.profileImage || 'https://via.placeholder.com/128'" alt="Profile" />
+            <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" alt="Profile" />
           </v-avatar>
-          <h2 class="text-h6 mb-2">{{ user.displayName || 'User' }}</h2>
+          <h2 class="text-h6 mb-2">{{ user.displayName || 'USER' }}</h2>
           <v-chip small class="mb-6" color="grey lighten-3">Author</v-chip>
 
           <div class="text-left">
@@ -15,46 +14,46 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>Username:</v-list-item-subtitle>
-                  <v-list-item-title>{{ userprofile.username }}</v-list-item-title>
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.username}">
+                    {{ userprofile.username || displayMissingInfo }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>Email:</v-list-item-subtitle>
-                  <v-list-item-title>{{ user.email }}</v-list-item-title>
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !user.email}">
+                    {{ user.email || displayMissingInfo }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>Contact No:</v-list-item-subtitle>
-                  <v-list-item-title>{{ userprofile.contactNo }}</v-list-item-title>
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.contactNo}">
+                    {{ userprofile.contactNo || displayMissingInfo }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>Country:</v-list-item-subtitle>
-                  <v-list-item-title>{{ userprofile.country }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Status:</v-list-item-subtitle>
-                  <v-list-item-title>Active</v-list-item-title>
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.country}">
+                    {{ userprofile.country || displayMissingInfo }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
           </div>
           
-          <!-- Edit and Suspend Buttons -->
           <v-btn color="primary" class="mt-4 mr-2 edit-button" @click="editProfile">Edit</v-btn>
           <v-btn color="error" class="mt-4 ml-2 suspend-button" @click="suspendAccount">Suspend</v-btn>
-          </v-card-text>
-        </v-card>
-      </div>
+        </v-card-text>
+      </v-card>
+    </div>
 
     <!-- Right Navigation and Content Section (Flexible width) -->
 
@@ -142,6 +141,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  getDoc
 } from 'firebase/firestore'
 
 export default {
@@ -150,11 +150,13 @@ export default {
   data() {
     return {
       userprofile: {
-        profileImage: 'https://picsum.photos/id/1005/400/300',
-        username: 'Not set',
-        contactNo: 'Not set',
-        country: 'Not set',
+        profileImage: '',
+        username: null,
+        contactNo: null,
+        country: null
       },
+      displayMissingInfo: 'INFO MISSING',
+      loading:true,
       showDeleteModal: false,
       valid: false,
       newPassword: '',
@@ -172,6 +174,10 @@ export default {
     }
   },
 
+  async created() {
+    await this.fetchUserProfile()
+  },
+  
   computed: {
     user() {
       return this.$store.getters.user || { email: '' }
@@ -179,6 +185,33 @@ export default {
   },
 
   methods: {
+    async fetchUserProfile() {
+      try {
+        const auth = getAuth()
+        const user = auth.currentUser
+        
+        if (user) {
+          const db = getFirestore()
+          const userDoc = await getDoc(doc(db, 'users', user.uid))
+          
+          if (userDoc.exists()) {
+            const data = userDoc.data()
+            this.userprofile = {
+              profileImage: data.profileImage || '',
+              username: data.username || null,
+              contactNo: data.contactNo || null,
+              country: data.country || null
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+        this.$toast.error('Failed to load profile data')
+      }finally{
+        this.loading = false;
+      }
+    },
+
     async changePassword() {
       if (this.$refs.passwordForm.validate()) {
         try {
@@ -262,12 +295,10 @@ export default {
       })
     },
 
-    // Edit profile action
     editProfile() {
+      this.$router.push('/editprofile');
       console.log("Edit profile clicked");
     },
-
-    // Suspend account action
     suspendAccount() {
       console.log("Suspend account clicked");
     },
