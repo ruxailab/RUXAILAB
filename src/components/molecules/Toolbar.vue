@@ -71,7 +71,7 @@
         <v-btn
           dark
           text
-          style="text-transform: none !important; font: Roboto; font-size: 17px"
+          style="text-transform: none !important; font-family: Roboto, sans-serif; font-size: 17px"
           @click.stop="signOut()"
         >
           {{ $t('buttons.signout') }}
@@ -183,7 +183,7 @@
           </v-btn>
         </template>
         <v-list dense class="ma-0 py-1" style="border-radius: 0px !important">
-          <v-list-item dense style="font-size: 14px; font: Roboto" class="px-2">
+          <v-list-item dense style="font-size: 14px; font-family: Roboto, sans-serif" class="px-2">
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold">
                 {{ $t('buttons.username') }}
@@ -193,13 +193,23 @@
           </v-list-item>
 
           <div class="divider" />
-
           <v-list-item
             dense
             style="font-size: 14px; font: Roboto"
             class="px-2"
+            @click="goToProfile(), (menu = false)"
+          >
+            <v-icon class="px-2">mdi-check-decagram</v-icon>
+            {{ $t('buttons.profile') }}
+          </v-list-item>
+          <div class="divider" />
+          <v-list-item
+            dense
+            style="font-size: 14px; font-family: Roboto, sans-serif"
+            class="px-2"
             @click="signOut(), (menu = false)"
           >
+            <v-icon class="px-2"> mdi-logout</v-icon>
             {{ $t('buttons.signout') }}
           </v-list-item>
         </v-list>
@@ -386,6 +396,10 @@ export default {
           .catch(() => {})
       })
     },
+    goToProfile() {
+      console.log('profile')
+      this.$router.push('/profile')
+    },
   },
 }
 </script>
@@ -393,7 +407,7 @@ export default {
 <style scoped>
 .console-button {
   font-size: 13px;
-  font: Roboto;
+  font-family: Roboto, sans-serif;
   text-transform: none !important;
   padding: 7px !important;
 }
