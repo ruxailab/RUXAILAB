@@ -96,8 +96,8 @@ export default {
       requiredRule: [v => !!v || 'This field is required'],
       emailRules: [
         v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'Email must be valid'
-      ]
+        v => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || 'Email must be valid'
+    ]
     }
   },
 
