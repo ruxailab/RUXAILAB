@@ -13,6 +13,7 @@ import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
+import EditProfile from '@/views/admin/EditProfile.vue'
 
 export default [
   {
@@ -26,6 +27,12 @@ export default [
     name:'Profile',
     meta: { authorize: [1] },
     component:Profile,
+  },
+  {
+    path: '/editprofile',
+    name: 'EditProfile',
+    meta: { authorize: [1] },
+    component: EditProfile,
   },
   {
     path: '/notifications',
