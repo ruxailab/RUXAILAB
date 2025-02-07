@@ -27,6 +27,13 @@ jobs:
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install docker-compose
 
+      - name: Install WebKit dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libicudata70 libicui18n70 libicuuc70 libvpx7 libevent-2.1-7
+          npx playwright install-deps webkit
+          npx playwright install webkit
+
       - name: Create .env file
         run: |
           cat << EOF > .env
