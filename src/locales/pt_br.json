@@ -40,7 +40,10 @@
       "hours": "[TODO] {count}",
       "minutes": "[TODO] {count}",
       "now": "[TODO]"
-    }
+    },
+    "viewAll": "Ver tudo",
+    "sentBy": "Enviado por",
+    "new": "NOVO"
   },
   "titles": {
     "manager": "Gerenciamento",

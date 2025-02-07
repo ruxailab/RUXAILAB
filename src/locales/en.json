@@ -40,7 +40,10 @@
       "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
       "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
       "now": "Now"
-    }
+    },
+    "viewAll": "View all",
+    "sentBy": "Sent by",
+    "new": "NEW"
   },
   "titles": {
     "manager": "Manager",
