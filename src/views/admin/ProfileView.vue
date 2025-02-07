@@ -1,75 +1,131 @@
 <template>
-  <v-card class="profile-card mx-auto my-8" max-width="800" elevation="0">
-    <v-card-title class="text-h5 pb-6">
-      {{ $t('buttons.profile') }}
-    </v-card-title>
-    <v-divider />
-    <v-card-text>
-      <div class="form-section mb-6">
-        <label for="profile-image" class="text-subtitle-1 text-medium-emphasis mb-2 d-block">
-          {{ $t('labels.profileImage') }}
-        </label>
-        <v-avatar id="profile-image" size="120" class="mb-4">
-          <v-img
-            :src="userprofile.profileImage || 'https://via.placeholder.com/120'"
-            alt="Profile"
-          />
-        </v-avatar>
+  <div class="container h-screen py-8 flex gap-4">
+    <!-- Left Profile Section (Fixed width with buttons) -->
+    <div class="flex-shrink-0 h-screen mr-4" style="max-width: 35%; min-width: 350px;">
+      <v-card class="profile-card h-full" elevation="0">
+        <v-card-text class="text-center">
+          <v-avatar size="128" class="mb-4">
+            <v-img :src="userprofile.profileImage || 'https://via.placeholder.com/128'" alt="Profile" />
+          </v-avatar>
+          <h2 class="text-h6 mb-2">{{ user.displayName || 'User' }}</h2>
+          <v-chip small class="mb-6" color="grey lighten-3">Author</v-chip>
+
+          <div class="text-left">
+            <v-list dense>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Username:</v-list-item-subtitle>
+                  <v-list-item-title>{{ userprofile.username }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Email:</v-list-item-subtitle>
+                  <v-list-item-title>{{ user.email }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Contact No:</v-list-item-subtitle>
+                  <v-list-item-title>{{ userprofile.contactNo }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Country:</v-list-item-subtitle>
+                  <v-list-item-title>{{ userprofile.country }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Status:</v-list-item-subtitle>
+                  <v-list-item-title>Active</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </div>
+          
+          <!-- Edit and Suspend Buttons -->
+          <v-btn color="primary" class="mt-4 mr-2 edit-button" @click="editProfile">Edit</v-btn>
+          <v-btn color="error" class="mt-4 ml-2 suspend-button" @click="suspendAccount">Suspend</v-btn>
+          </v-card-text>
+        </v-card>
       </div>
 
-      <div class="form-section mb-6">
-        <label for="user-email" class="text-subtitle-1 text-medium-emphasis mb-2 d-block">
-          {{ $t('SIGNIN.email') }}
-        </label>
-        <v-text-field
-          id="user-email"
-          v-model="user.email"
-          tonal
-          dense
-          readonly
-          background-color="white"
-          hide-details
-        />
-      </div>
+    <!-- Right Navigation and Content Section (Flexible width) -->
 
-      <div class="d-flex justify-space-between mt-8">
-        <v-btn
-          color="error"
-          tonal
-          class="px-6"
-          height="40"
-          @click="showDeleteModal = true"
-        >
-          {{ $t('buttons.deleteAccount') }}
-        </v-btn>
-      </div>
-    </v-card-text>
+      <v-card flat class="w-full" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <!-- Tabs Section -->
+        <v-tabs background-color="transparent" color="primary" style="min-width: 800px;">
+          <v-tab>
+            <v-icon small class="mr-2">mdi-account</v-icon>
+            Account
+          </v-tab>
+          <v-tab>
+            <v-icon small class="mr-2">mdi-shield-key</v-icon>
+            Security
+          </v-tab>
+          <v-tab>
+            <v-icon small class="mr-2">mdi-credit-card</v-icon>
+            Billing & Plans
+          </v-tab>
+          <v-tab>
+            <v-icon small class="mr-2">mdi-bell</v-icon>
+            Notifications
+          </v-tab>
+          <v-tab>
+            <v-icon small class="mr-2">mdi-link</v-icon>
+            Connections
+          </v-tab>
+        </v-tabs>
 
-    <!-- Delete Confirmation Modal -->
-    <v-dialog v-model="showDeleteModal" max-width="400">
-      <v-card class="pa-4">
-        <v-card-title class="headline error white--text" primary-title>
-          {{ $t('buttons.deleteAccount') }}
-        </v-card-title>
-        <v-card-text class="pa-0 mb-6">
-          {{ $t('alerts.deleteAccount') }}
+        <!-- Change Password Section -->
+        <div class="password-card">
+        <v-card-title>Change Password</v-card-title>
+        <v-card-text>
+          <v-alert type="warning" colored-border border="left" class="mb-4">
+            <div class="text-h6 font-weight-medium">Ensure that these requirements are met</div>
+            <div class="text-body-2">Minimum 8 characters long, uppercase & symbol</div>
+          </v-alert>
+
+          <v-form ref="passwordForm" v-model="valid" lazy-validation>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="newPassword"
+                  :rules="passwordRules"
+                  label="New Password"
+                  type="password"
+                  outlined
+                  dense
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="confirmPassword"
+                  :rules="confirmPasswordRules"
+                  label="Confirm New Password"
+                  type="password"
+                  outlined
+                  dense
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
+              Change Password
+            </v-btn>
+          </v-form>
         </v-card-text>
-        <v-card-actions class="pa-0">
-          <v-spacer />
-          <v-btn
-            tonal
-            class="mr-3 grey lighten-3"
-            @click="showDeleteModal = false"
-          >
-            {{ $t('buttons.cancel') }}
-          </v-btn>
-          <v-btn color="error" tonal @click="deleteAccount">
-            {{ $t('buttons.delete') }}
-          </v-btn>
-        </v-card-actions>
+        </div>
       </v-card>
-    </v-dialog>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -87,94 +143,153 @@ import {
   doc,
   deleteDoc,
 } from 'firebase/firestore'
+
 export default {
+  name: 'SecurityProfile',
+  
   data() {
     return {
       userprofile: {
         profileImage: 'https://picsum.photos/id/1005/400/300',
+        username: 'Not set',
+        contactNo: 'Not set',
+        country: 'Not set',
       },
       showDeleteModal: false,
+      valid: false,
+      newPassword: '',
+      confirmPassword: '',
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => v.length >= 8 || 'Password must be at least 8 characters',
+        v => /[A-Z]/.test(v) || 'Must contain an uppercase letter',
+        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Must contain a symbol'
+      ],
+      confirmPasswordRules: [
+        v => !!v || 'Confirm password is required',
+        v => v === this.newPassword || 'Passwords must match'
+      ]
     }
   },
-   computed: {
+
+  computed: {
     user() {
-      return this.$store.getters.user || { email: '' } // Fallback if user is undefined
+      return this.$store.getters.user || { email: '' }
     },
   },
+
   methods: {
-  async deleteAccount() {
-    const auth = getAuth()
-    const user = auth.currentUser
+    async changePassword() {
+      if (this.$refs.passwordForm.validate()) {
+        try {
+          const auth = getAuth()
+          const user = auth.currentUser
 
-    if (user) {
-      try {
-        // Prompt the user for their password for reauthentication
-        const email = user.email
-        const password = prompt('Please enter your password to confirm deletion:')
-        if (!password) {
-          alert('Password is required to delete your account.')
-          return
-        }
-
-        // Reauthenticate the user
-        const credential = EmailAuthProvider.credential(email, password)
-        await reauthenticateWithCredential(user, credential)
-
-        const db = getFirestore() // Initialize Firestore
-        const userDocId = user.uid// Get the user's UID
-
-        // Delete related Firestore data
-        const testsCollectionRef = collection(db, 'tests')
-        const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId))
-        const testsSnapshot = await getDocs(testsQuery)
-
-        if (!testsSnapshot.empty) {
-          for (const testDoc of testsSnapshot.docs) {
-            const testData = testDoc.data()
-            const answersDocId = testData.answersDocId
-
-            if (answersDocId) {
-              const answersDocRef = doc(db, 'answers', answersDocId)
-              await deleteDoc(answersDocRef)
-            }
-
-            const testDocRef = doc(db, 'tests', testDoc.id)
-            await deleteDoc(testDocRef)
+          if (user) {
+            await updatePassword(user, this.newPassword)
+            this.$toast.success('Password changed successfully')
+            
+            // Reset form
+            this.newPassword = ''
+            this.confirmPassword = ''
+            this.$refs.passwordForm.reset()
           }
+        } catch (error) {
+          this.$toast.error('Failed to change password: ' + error.message)
         }
+      }
+    },
 
-        // Delete user document from `users` collection
-        const userDocRef = doc(db, 'users', userDocId)
-        await deleteDoc(userDocRef)
+    async deleteAccount() {
+      const auth = getAuth()
+      const user = auth.currentUser
 
-        // Finally, delete the user's authentication account
-        await user.delete()
+      if (user) {
+        try {
+          const email = user.email
+          const password = prompt('Please enter your password to confirm deletion:')
+          if (!password) {
+            alert('Password is required to delete your account.')
+            return
+          }
+
+          const credential = EmailAuthProvider.credential(email, password)
+          await reauthenticateWithCredential(user, credential)
+
+          const db = getFirestore()
+          const userDocId = user.uid
+
+          const testsCollectionRef = collection(db, 'tests')
+          const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId))
+          const testsSnapshot = await getDocs(testsQuery)
+
+          if (!testsSnapshot.empty) {
+            for (const testDoc of testsSnapshot.docs) {
+              const testData = testDoc.data()
+              const answersDocId = testData.answersDocId
+
+              if (answersDocId) {
+                const answersDocRef = doc(db, 'answers', answersDocId)
+                await deleteDoc(answersDocRef)
+              }
+
+              const testDocRef = doc(db, 'tests', testDoc.id)
+              await deleteDoc(testDocRef)
+            }
+          }
+
+          const userDocRef = doc(db, 'users', userDocId)
+          await deleteDoc(userDocRef)
+
+          await user.delete()
           console.log('Account and related data deleted successfully.')
 
           this.signOut()
         } catch (error) {
           console.error('Error during account deletion:', error.message)
           alert('Failed to delete account. Please try again.')
+        }
+      } else {
+        console.error('No user is signed in.')
       }
-    } else {
-      console.error('No user is signed in.')
-    }
-  },
-  async signOut() {
+    },
+
+    async signOut() {
       this.$store.dispatch('logout').then(() => {
         this.$router
           .push('/')
           .catch((error) => {console.log(error)})
       })
     },
-},
+
+    // Edit profile action
+    editProfile() {
+      console.log("Edit profile clicked");
+    },
+
+    // Suspend account action
+    suspendAccount() {
+      console.log("Suspend account clicked");
+    },
+  },
 }
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 .profile-card {
   background-color: #f8f9fe !important;
   border-radius: 8px !important;
+  height: 100%;
+  margin-left: -120px !important;
 }
 
 .v-btn {
@@ -183,7 +298,7 @@ export default {
   letter-spacing: 0 !important;
 }
 
-.v-text-field ::v-deep .v-input__slot,
+.v-text-field ::v-deep(.class-name) .v-input__slot,
 .v-select ::v-deep .v-input__slot {
   min-height: 40px !important;
   box-shadow: none !important;
@@ -192,4 +307,74 @@ export default {
 .form-section label {
   color: #666 !important;
 }
+
+/* Adjustments for the layout */
+.profile-card {
+  width: 100%;
+  margin-bottom: 2rem;
+  height: 100vh; /* Ensures the profile card covers the full screen height */
+}
+
+.v-tabs {
+  margin-bottom: 2rem;
+}
+
+.v-tab {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.v-card {
+  border-radius: 20px !important;
+  margin-left: -200px;
+  
+}
+
+
+.v-list-item {
+  min-height: 40px !important;
+}
+
+.v-list-item__subtitle {
+  color: #666 !important;
+}
+
+.v-btn.edit-button {
+  background-color: #007bff; 
+  color: white !important;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 8px 16px;
+  letter-spacing: 0.5px; 
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3); 
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.v-btn.edit-button:hover {
+  background-color: #0056b3; 
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5); 
+}
+
+.v-btn.suspend-button {
+  background-color: #dc3545;
+  color: white !important;
+  border-radius: 8px; 
+  font-weight: 500;
+  padding: 8px 16px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.v-btn.suspend-button:hover {
+  background-color: #c82333;
+  box-shadow: 0 6px 10px rgba(220, 53, 69, 0.5); 
+}
+
+.password-card {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; 
+  padding: 20px; 
+}
+
 </style>
