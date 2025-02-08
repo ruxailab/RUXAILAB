@@ -8,7 +8,7 @@
             <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" alt="Profile" />
           </v-avatar>
           <h2 class="text-h6 mb-2">{{ user.displayName || 'USER' }}</h2>
-          <v-chip small class="mb-6" color="grey lighten-3">Author</v-chip>
+          <v-chip small class="mb-6" color="grey lighten-3">Admin</v-chip>
 
           <div class="text-left">
             <v-list dense>
