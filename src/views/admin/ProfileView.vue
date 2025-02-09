@@ -132,8 +132,10 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" @click="saveProfile">Save</v-btn>
-          <v-btn color="error" @click="editProfileDialog = false">Cancel</v-btn>
+          <div class="mb-2">
+            <v-btn color="primary" class="mr-2" @click="saveProfile">Save</v-btn>
+            <v-btn color="error" @click="editProfileDialog = false">Cancel</v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -146,8 +148,10 @@
           Are you absolutely sure? This action cannot be undone. This will permanently delete your account and remove your data from our servers.
         </v-card-text>
         <v-card-actions>
-          <v-btn color="error" @click="deleteAccount">Delete Account</v-btn>
-          <v-btn color="primary" @click="deleteAccountDialog = false">Cancel</v-btn>
+          <div class="mb-2">
+            <v-btn color="error" class="mr-2" @click="deleteAccount">Delete Account</v-btn>
+            <v-btn color="primary" @click="deleteAccountDialog = false">Cancel</v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
