@@ -1,13 +1,14 @@
 <template>
-  <div class="container h-screen py-8 flex gap-4">
-    <div class="flex-shrink-0 h-screen mr-4" style="max-width: 35%; min-width: 350px;">
+  <div class="container h-screen py-8 flex flex-col md:flex-row gap-4">
+    <!-- Left Section: Profile Details -->
+    <div class="flex-shrink-0 w-full md:w-auto" style="max-width: 100%; min-width: 350px;">
       <v-card class="profile-card h-full" elevation="0">
         <v-card-text class="text-center">
           <v-avatar size="128" class="mb-4">
             <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" alt="Profile" />
           </v-avatar>
           <h2 class="text-h6 mb-2">{{ user.displayName || 'USER' }}</h2>
-          <v-chip small class="mb-6" color="grey lighten-3">Author</v-chip>
+          <v-chip small class="mb-6" color="grey lighten-3">Admin</v-chip>
 
           <div class="text-left">
             <v-list dense>
@@ -48,82 +49,112 @@
               </v-list-item>
             </v-list>
           </div>
-          
-          <v-btn color="primary" class="mt-4 mr-2 edit-button" @click="editProfile">Edit</v-btn>
-          <v-btn color="error" class="mt-4 ml-2 suspend-button" @click="suspendAccount">Suspend</v-btn>
         </v-card-text>
       </v-card>
     </div>
 
-    <!-- Right Navigation and Content Section (Flexible width) -->
-
-      <v-card flat class="w-full" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <!-- Right Section: Tabs and Content -->
+    <div class="flex-grow-1 w-full">
+      <v-card flat class="w-full">
         <!-- Tabs Section -->
-        <v-tabs background-color="transparent" color="primary" style="min-width: 800px;">
+        <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
           <v-tab>
             <v-icon small class="mr-2">mdi-account</v-icon>
             Account
           </v-tab>
-          <v-tab>
-            <v-icon small class="mr-2">mdi-shield-key</v-icon>
-            Security
-          </v-tab>
-          <v-tab>
-            <v-icon small class="mr-2">mdi-credit-card</v-icon>
-            Billing & Plans
-          </v-tab>
-          <v-tab>
-            <v-icon small class="mr-2">mdi-bell</v-icon>
-            Notifications
-          </v-tab>
-          <v-tab>
-            <v-icon small class="mr-2">mdi-link</v-icon>
-            Connections
-          </v-tab>
         </v-tabs>
 
         <!-- Change Password Section -->
-        <div class="password-card">
-        <v-card-title>Change Password</v-card-title>
-        <v-card-text>
-          <v-alert type="warning" colored-border border="left" class="mb-4">
-            <div class="text-h6 font-weight-medium">Ensure that these requirements are met</div>
-            <div class="text-body-2">Minimum 8 characters long, uppercase & symbol</div>
-          </v-alert>
+        <v-card class="password-card mt-4">
+          <v-card-title>Change Password</v-card-title>
+          <v-card-text>
+            <v-alert type="warning" colored-border border="left" class="mb-4">
+              <div class="text-h6 font-weight-medium">Ensure that these requirements are met</div>
+              <div class="text-body-2">Minimum 8 characters long, uppercase & symbol</div>
+            </v-alert>
 
-          <v-form ref="passwordForm" v-model="valid" lazy-validation>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="newPassword"
-                  :rules="passwordRules"
-                  label="New Password"
-                  type="password"
-                  outlined
-                  dense
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="confirmPassword"
-                  :rules="confirmPasswordRules"
-                  label="Confirm New Password"
-                  type="password"
-                  outlined
-                  dense
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
+            <v-form ref="passwordForm" v-model="valid" lazy-validation>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="newPassword"
+                    :rules="passwordRules"
+                    label="New Password"
+                    type="password"
+                    outlined
+                    dense
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="confirmPassword"
+                    :rules="confirmPasswordRules"
+                    label="Confirm New Password"
+                    type="password"
+                    outlined
+                    dense
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-            <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
-              Change Password
-            </v-btn>
-          </v-form>
-        </v-card-text>
+              <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
+                Change Password
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+
+        <!-- Edit Details and Delete Account Buttons -->
+        <div class="mt-4 d-flex justify-space-between flex-wrap">
+          <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
+            <v-icon left>mdi-pencil</v-icon>
+            Edit Details
+          </v-btn>
+          <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
+            <v-icon left>mdi-delete</v-icon>
+            Delete Account
+          </v-btn>
         </div>
       </v-card>
+    </div>
+
+    <!-- Edit Details Dialog -->
+    <v-dialog v-model="editProfileDialog" max-width="600">
+      <v-card>
+        <v-card-title>Edit Profile Details</v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-text-field v-model="editProfileData.username" label="Username"></v-text-field>
+            <v-text-field v-model="editProfileData.contactNo" label="Contact No"></v-text-field>
+            <v-text-field v-model="editProfileData.country" label="Country"></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <div class="mb-2">
+            <v-btn color="primary" class="mr-2" @click="saveProfile">Save</v-btn>
+            <v-btn color="error" @click="editProfileDialog = false">Cancel</v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Account Dialog -->
+    <v-dialog v-model="deleteAccountDialog" max-width="500">
+      <v-card>
+        <v-card-title>Delete Account</v-card-title>
+        <v-card-text>
+          Are you absolutely sure? This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+        </v-card-text>
+        <v-card-actions>
+          <div class="mb-2">
+            <v-btn color="error" class="mr-2" @click="deleteAccount">Delete Account</v-btn>
+            <v-btn color="primary" @click="deleteAccountDialog = false">Cancel</v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -133,6 +164,7 @@ import {
   reauthenticateWithCredential,
   updatePassword,
   EmailAuthProvider,
+  updatePassword,
 } from 'firebase/auth'
 import {
   getFirestore,
@@ -142,7 +174,8 @@ import {
   getDocs,
   doc,
   deleteDoc,
-  getDoc
+  getDoc,
+  updateDoc
 } from 'firebase/firestore'
 
 export default {
@@ -156,9 +189,13 @@ export default {
         contactNo: null,
         country: null
       },
+      editProfileData: {
+        username: null,
+        contactNo: null,
+        country: null
+      },
       displayMissingInfo: 'INFO MISSING',
-      loading:true,
-      showDeleteModal: false,
+      loading: true,
       valid: false,
       newPassword: '',
       confirmPassword: '',
@@ -171,14 +208,23 @@ export default {
       confirmPasswordRules: [
         v => !!v || 'Confirm password is required',
         v => v === this.newPassword || 'Passwords must match'
-      ]
+      ],
+      editProfileDialog: false,
+      deleteAccountDialog: false,
+      isSmallScreen: false
     }
   },
 
   async created() {
     await this.fetchUserProfile()
+    this.checkScreenSize()
+    window.addEventListener('resize', this.checkScreenSize)
   },
-  
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkScreenSize)
+  },
+
   computed: {
     user() {
       return this.$store.getters.user || { email: '' }
@@ -186,6 +232,10 @@ export default {
   },
 
   methods: {
+    checkScreenSize() {
+      this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
+    },
+
     async fetchUserProfile() {
       try {
         const auth = getAuth()
@@ -208,8 +258,45 @@ export default {
       } catch (error) {
         console.error('Error fetching profile:', error)
         this.$toast.error('Failed to load profile data')
-      }finally{
-        this.loading = false;
+      } finally {
+        this.loading = false
+      }
+    },
+
+    openEditProfileDialog() {
+      this.editProfileData = {
+        username: this.userprofile.username,
+        contactNo: this.userprofile.contactNo,
+        country: this.userprofile.country
+      }
+      this.editProfileDialog = true
+    },
+
+    async saveProfile() {
+      try {
+        const auth = getAuth()
+        const user = auth.currentUser
+        
+        if (user) {
+          const db = getFirestore()
+          const userDocRef = doc(db, 'users', user.uid)
+          await updateDoc(userDocRef, {
+            username: this.editProfileData.username,
+            contactNo: this.editProfileData.contactNo,
+            country: this.editProfileData.country
+          })
+          this.userprofile = {
+            ...this.userprofile,
+            username: this.editProfileData.username,
+            contactNo: this.editProfileData.contactNo,
+            country: this.editProfileData.country
+          }
+          this.$toast.success('Profile updated successfully')
+          this.editProfileDialog = false
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error)
+        this.$toast.error('Failed to update profile')
       }
     },
 
@@ -223,7 +310,6 @@ export default {
             await updatePassword(user, this.newPassword)
             this.$toast.success('Password changed successfully')
             
-            // Reset form
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
@@ -295,14 +381,6 @@ export default {
           .catch((error) => {console.log(error)})
       })
     },
-
-    editProfile() {
-      this.$router.push('/editprofile');
-      console.log("Edit profile clicked");
-    },
-    suspendAccount() {
-      console.log("Suspend account clicked");
-    },
   },
 }
 </script>
@@ -321,7 +399,12 @@ export default {
   background-color: #f8f9fe !important;
   border-radius: 8px !important;
   height: 100%;
-  margin-left: -120px !important;
+}
+
+.password-card {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
 }
 
 .v-btn {
@@ -330,38 +413,11 @@ export default {
   letter-spacing: 0 !important;
 }
 
-.v-text-field ::v-deep(.class-name) .v-input__slot,
+.v-text-field ::v-deep(.v-input__slot),
 .v-select ::v-deep .v-input__slot {
   min-height: 40px !important;
   box-shadow: none !important;
 }
-
-.form-section label {
-  color: #666 !important;
-}
-
-/* Adjustments for the layout */
-.profile-card {
-  width: 100%;
-  margin-bottom: 2rem;
-  height: 100vh; /* Ensures the profile card covers the full screen height */
-}
-
-.v-tabs {
-  margin-bottom: 2rem;
-}
-
-.v-tab {
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-}
-
-.v-card {
-  border-radius: 20px !important;
-  margin-left: -200px;
-  
-}
-
 
 .v-list-item {
   min-height: 40px !important;
@@ -371,42 +427,19 @@ export default {
   color: #666 !important;
 }
 
-.v-btn.edit-button {
-  background-color: #007bff; 
-  color: white !important;
-  border-radius: 8px;
-  font-weight: 500;
-  padding: 8px 16px;
-  letter-spacing: 0.5px; 
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3); 
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+.missing-info {
+  color: #ff5252 !important;
+  font-style: italic;
 }
 
-.v-btn.edit-button:hover {
-  background-color: #0056b3; 
-  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5); 
-}
+@media (max-width: 960px) {
+  .container {
+    flex-direction: column;
+  }
 
-.v-btn.suspend-button {
-  background-color: #dc3545;
-  color: white !important;
-  border-radius: 8px; 
-  font-weight: 500;
-  padding: 8px 16px;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  .profile-card {
+    max-width: 100%;
+    min-width: 100%;
+  }
 }
-
-.v-btn.suspend-button:hover {
-  background-color: #c82333;
-  box-shadow: 0 6px 10px rgba(220, 53, 69, 0.5); 
-}
-
-.password-card {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px; 
-  padding: 20px; 
-}
-
 </style>
