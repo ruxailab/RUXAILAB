@@ -162,6 +162,7 @@
 import {
   getAuth,
   reauthenticateWithCredential,
+  updatePassword,
   EmailAuthProvider,
   updatePassword,
 } from 'firebase/auth'
