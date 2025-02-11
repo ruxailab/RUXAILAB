@@ -26,20 +26,18 @@ jobs:
           
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install docker-compose
-
+        
       - name: Create .env file
         run: |
           missing=false
-          check_secret() {
-            if [ -z "${{ secrets.$1 }}" ]; then
-              echo "❌ Error: Missing secret $1"
-              missing=true
-            fi
-          }
       
-          # Check all required secrets
-          check_secret VUE_APP_FIREBASE_API_KEY
+          # Check each secret explicitly
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_API_KEY }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_API_KEY"
+            missing=true
+          fi
          
+          # Exit if any secrets are missing
           if [ "$missing" = true ]; then
             echo "⛔ Missing required environment variables. Exiting..."
             exit 1
@@ -48,7 +46,6 @@ jobs:
           # If all secrets exist, create the .env file
           cat << EOF > .env
           VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
-        
           EOF
 
           
