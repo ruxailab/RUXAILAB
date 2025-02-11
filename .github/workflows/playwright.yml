@@ -71,14 +71,34 @@ jobs:
         run: |
           source .env
           missing_vars=()
-          for var in VUE_APP_FIREBASE_API_KEY VUE_APP_FIREBASE_AUTH_DOMAIN VUE_APP_FIREBASE_PROJECT_ID VUE_APP_FIREBASE_STORAGE_BUCKET VUE_APP_FIREBASE_MESSAGING_SENDER_ID VUE_APP_FIREBASE_APP_ID; do
-            if [ -z "${!var}" ]; then
-              missing_vars+=($var)
+          has_empty=false
+          
+          check_var() {
+            local var=$1
+            local value="${!var}"
+            if [ -z "$value" ]; then
+              echo "❌ $var is empty or not set"
+              has_empty=true
+            else
+              # Show first 4 chars and rest as * for sensitive data
+              local masked="${value:0:4}${'*' * ${#value-4}}"
+              echo "✓ $var is set (value starts with: $masked)"
             fi
-          done
-          if [ ${#missing_vars[@]} -ne 0 ]; then
-            echo "Error: Missing required environment variables: ${missing_vars[*]}"
+          }
+          
+          echo "Checking environment variables..."
+          check_var "VUE_APP_FIREBASE_API_KEY"
+          check_var "VUE_APP_FIREBASE_AUTH_DOMAIN"
+          check_var "VUE_APP_FIREBASE_PROJECT_ID"
+          check_var "VUE_APP_FIREBASE_STORAGE_BUCKET"
+          check_var "VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
+          check_var "VUE_APP_FIREBASE_APP_ID"
+          
+          if [ "$has_empty" = true ]; then
+            echo "Error: Some environment variables are missing or empty"
             exit 1
+          else
+            echo "✓ All environment variables are properly set"
           fi
 
       - name: Run Playwright tests
