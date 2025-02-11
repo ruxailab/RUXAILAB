@@ -38,6 +38,16 @@ jobs:
           VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
           EOF
 
+          if [ ! -f .env ]; then
+            echo "Error: .env file was not created"
+            exit 1
+          fi
+          
+          if [ ! -s .env ]; then
+            echo "Error: .env file is empty"
+            exit 1
+          fi
+
       - name: Build and start services
         run: docker-compose up -d --build
 
@@ -53,7 +63,23 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: |
+          npx playwright install --with-deps
+          npx playwright install webkit # Installing webkit separately
+
+      - name: Verify environment variables
+        run: |
+          source .env
+          missing_vars=()
+          for var in VUE_APP_FIREBASE_API_KEY VUE_APP_FIREBASE_AUTH_DOMAIN VUE_APP_FIREBASE_PROJECT_ID VUE_APP_FIREBASE_STORAGE_BUCKET VUE_APP_FIREBASE_MESSAGING_SENDER_ID VUE_APP_FIREBASE_APP_ID; do
+            if [ -z "${!var}" ]; then
+              missing_vars+=($var)
+            fi
+          done
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "Error: Missing required environment variables: ${missing_vars[*]}"
+            exit 1
+          fi
 
       - name: Run Playwright tests
         run: npx playwright test 
