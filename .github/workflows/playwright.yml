@@ -65,7 +65,7 @@ jobs:
       - name: Install Playwright Browsers
         run: |
           npx playwright install --with-deps
-          npx playwright install webkit # Installing webkit separately
+          npx playwright install webkit # Installing the webkit separately
 
       - name: Verify environment variables
         run: |
