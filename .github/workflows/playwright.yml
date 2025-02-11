@@ -29,19 +29,32 @@ jobs:
 
       - name: Create .env file
         run: |
+          missing=false
+          check_secret() {
+            if [ -z "${{ secrets.$1 }}" ]; then
+              echo "❌ Error: Missing secret $1"
+              missing=true
+            fi
+          }
+      
+          # Check all required secrets
+          check_secret VUE_APP_FIREBASE_API_KEY
+         
+          if [ "$missing" = true ]; then
+            echo "⛔ Missing required environment variables. Exiting..."
+            exit 1
+          fi
+      
+          # If all secrets exist, create the .env file
           cat << EOF > .env
           VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
-          VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
-          VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
-          VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
-          VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
-
-          VUE_APP_USE_FIREBASE_EMULATOR=true
-          VUE_APP_FIREBASE_AUTH_EMULATOR_URL=http://localhost:9099
-          VUE_APP_FIREBASE_FIRESTORE_EMULATOR_HOST=localhost:8081
+        
           EOF
 
+          
+      - name: Debug .env file
+        run: cat .env
+  
       - name: Build and start services
         run: docker-compose up -d --build
 
