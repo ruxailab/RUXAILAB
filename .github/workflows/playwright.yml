@@ -30,8 +30,7 @@ jobs:
       - name: Create .env file
         run: |
           missing=false
-      
-          # Check each secret explicitly
+
           if [ -z "${{ secrets.VUE_APP_FIREBASE_API_KEY }}" ]; then
             echo "❌ Error: Missing secret VUE_APP_FIREBASE_API_KEY"
             missing=true
@@ -40,19 +39,45 @@ jobs:
             echo "❌ Error: Missing secret VUE_APP_FIREBASE_AUTH_DOMAIN"
             missing=true
           fi
-         
-          # Exit if any secrets are missing
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_PROJECT_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_STORAGE_BUCKET"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_APP_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_APP_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_MEASUREMENT_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_MEASUREMENT_ID"
+            missing=true
+          fi
+
+      
+          # Exit if any required secret is missing
           if [ "$missing" = true ]; then
             echo "⛔ Missing required environment variables. Exiting..."
             exit 1
           fi
-      
-          # If all secrets exist, create the .env file
-          cat << EOF > .env
-          VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
-          VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+          
+          # Create the .env file
+          echo "Creating .env file..."
+          cat > .env <<EOF
+            VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
+            VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+            VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+            VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
+            VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
+            VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
+            VUE_APP_FIREBASE_MEASUREMENT_ID=${{ secrets.VUE_APP_FIREBASE_MEASUREMENT_ID }}
           EOF
 
-          
       - name: Debug .env file
         run: cat .env
