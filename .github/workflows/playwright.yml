@@ -50,6 +50,7 @@ jobs:
           # If all secrets exist, create the .env file
           cat << EOF > .env
           VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
+          VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
           EOF
 
           
