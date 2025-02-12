@@ -80,10 +80,12 @@
                     v-model="newPassword"
                     :rules="passwordRules"
                     label="New Password"
-                    type="password"
+                    :type="showPassword ? 'text' : 'password'"
                     outlined
                     dense
                     required
+                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showPassword = !showPassword"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6">
@@ -91,10 +93,12 @@
                     v-model="confirmPassword"
                     :rules="confirmPasswordRules"
                     label="Confirm New Password"
-                    type="password"
+                    :type="showConfirmPassword ? 'text' : 'password'"
                     outlined
                     dense
                     required
+                    :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showConfirmPassword = !showConfirmPassword"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -196,6 +200,8 @@ export default {
       displayMissingInfo: 'INFO MISSING',
       loading: true,
       valid: false,
+      showPassword: false,
+      showConfirmPassword: false,
       newPassword: '',
       confirmPassword: '',
       passwordRules: [
