@@ -5,45 +5,45 @@
       <v-card class="profile-card h-full" elevation="0">
         <v-card-text class="text-center">
           <v-avatar size="128" class="mb-4">
-            <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" alt="Profile" />
+            <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" :alt="$t('PROFILE.title')" />
           </v-avatar>
           <h2 class="text-h6 mb-2">{{ user.displayName || 'USER' }}</h2>
-          <v-chip small class="mb-6" color="grey lighten-3">Admin</v-chip>
+          <v-chip small class="mb-6" color="grey lighten-3">{{ $t('PROFILE.admin') }}</v-chip>
 
           <div class="text-left">
             <v-list dense>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle>Username:</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ $t('buttons.username') }}:</v-list-item-subtitle>
                   <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.username}">
-                    {{ userprofile.username || displayMissingInfo }}
+                    {{ userprofile.username || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle>Email:</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ $t('SIGNIN.email') }}:</v-list-item-subtitle>
                   <v-list-item-title v-if="!loading" :class="{'missing-info': !user.email}">
-                    {{ user.email || displayMissingInfo }}
+                    {{ user.email || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle>Contact No:</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ $t('SIGNIN.contact') }}:</v-list-item-subtitle>
                   <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.contactNo}">
-                    {{ userprofile.contactNo || displayMissingInfo }}
+                    {{ userprofile.contactNo || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle>Country:</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ $t('PROFILE.country') }}:</v-list-item-subtitle>
                   <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.country}">
-                    {{ userprofile.country || displayMissingInfo }}
+                    {{ userprofile.country || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -60,17 +60,17 @@
         <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
           <v-tab>
             <v-icon small class="mr-2">mdi-account</v-icon>
-            Account
+            {{ $t('PROFILE.account') }}
           </v-tab>
         </v-tabs>
 
         <!-- Change Password Section -->
         <v-card class="password-card mt-4">
-          <v-card-title>Change Password</v-card-title>
+          <v-card-title>{{ $t('PROFILE.changePassword') }}</v-card-title>
           <v-card-text>
             <v-alert type="warning" colored-border border="left" class="mb-4">
-              <div class="text-h6 font-weight-medium">Ensure that these requirements are met</div>
-              <div class="text-body-2">Minimum 8 characters long, uppercase & symbol</div>
+              <div class="text-h6 font-weight-medium">{{ $t('PROFILE.passwordRequirements') }}</div>
+              <div class="text-body-2">{{ $t('PROFILE.passwordMinimumRequirements') }}</div>
             </v-alert>
 
             <v-form ref="passwordForm" v-model="valid" lazy-validation>
@@ -79,28 +79,32 @@
                   <v-text-field
                     v-model="newPassword"
                     :rules="passwordRules"
-                    label="New Password"
-                    type="password"
+                    :label="$t('PROFILE.newPassword')"
+                    :type="showPassword ? 'text' : 'password'"
                     outlined
                     dense
                     required
+                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showPassword = !showPassword"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     v-model="confirmPassword"
                     :rules="confirmPasswordRules"
-                    label="Confirm New Password"
-                    type="password"
+                    :label="$t('PROFILE.confirmNewPassword')"
+                    :type="showConfirmPassword ? 'text' : 'password'"
                     outlined
                     dense
                     required
+                    :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showConfirmPassword = !showConfirmPassword"  
                   ></v-text-field>
                 </v-col>
               </v-row>
 
               <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
-                Change Password
+                {{ $t('PROFILE.changePassword') }}
               </v-btn>
             </v-form>
           </v-card-text>
@@ -110,11 +114,11 @@
         <div class="mt-4 d-flex justify-space-between flex-wrap">
           <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
             <v-icon left>mdi-pencil</v-icon>
-            Edit Details
+            {{ $t('PROFILE.editDetails') }}
           </v-btn>
           <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
             <v-icon left>mdi-delete</v-icon>
-            Delete Account
+            {{ $t('buttons.deleteAccount') }}
           </v-btn>
         </div>
       </v-card>
@@ -123,18 +127,18 @@
     <!-- Edit Details Dialog -->
     <v-dialog v-model="editProfileDialog" max-width="600">
       <v-card>
-        <v-card-title>Edit Profile Details</v-card-title>
+        <v-card-title>{{ $t('PROFILE.editProfile') }}</v-card-title>
         <v-card-text>
           <v-form>
-            <v-text-field v-model="editProfileData.username" label="Username"></v-text-field>
-            <v-text-field v-model="editProfileData.contactNo" label="Contact No"></v-text-field>
-            <v-text-field v-model="editProfileData.country" label="Country"></v-text-field>
+            <v-text-field v-model="editProfileData.username" :label="$t('buttons.username')"></v-text-field>
+            <v-text-field v-model="editProfileData.contactNo" :label="$t('SIGNIN.contact')"></v-text-field>
+            <v-text-field v-model="editProfileData.country" :label="$t('PROFILE.country')"></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <div class="mb-2">
-            <v-btn color="primary" class="mr-2" @click="saveProfile">Save</v-btn>
-            <v-btn color="error" @click="editProfileDialog = false">Cancel</v-btn>
+            <v-btn color="primary" class="mr-2" @click="saveProfile">{{ $t('PROFILE.saveChanges') }}</v-btn>
+            <v-btn color="error" @click="editProfileDialog = false">{{ $t('buttons.cancel') }}</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -143,14 +147,15 @@
     <!-- Delete Account Dialog -->
     <v-dialog v-model="deleteAccountDialog" max-width="500">
       <v-card>
-        <v-card-title>Delete Account</v-card-title>
+        <v-card-title>{{ $t('PROFILE.deleteAccountTitle') }}</v-card-title>
         <v-card-text>
-          Are you absolutely sure? This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+          {{ $t('PROFILE.deleteAccountConfirm') }}<br>
+          {{ $t('PROFILE.deleteAccountWarning') }}
         </v-card-text>
         <v-card-actions>
           <div class="mb-2">
-            <v-btn color="error" class="mr-2" @click="deleteAccount">Delete Account</v-btn>
-            <v-btn color="primary" @click="deleteAccountDialog = false">Cancel</v-btn>
+            <v-btn color="error" class="mr-2" @click="deleteAccount">{{ $t('buttons.deleteAccount') }}</v-btn>
+            <v-btn color="primary" @click="deleteAccountDialog = false">{{ $t('buttons.cancel') }}</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -193,20 +198,22 @@ export default {
         contactNo: null,
         country: null
       },
-      displayMissingInfo: 'INFO MISSING',
+     displayMissingInfo: this.$t('PROFILE.infoMissing'),
       loading: true,
       valid: false,
+      showPassword: false,
+      showConfirmPassword: false,
       newPassword: '',
       confirmPassword: '',
       passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 8 || 'Password must be at least 8 characters',
-        v => /[A-Z]/.test(v) || 'Must contain an uppercase letter',
-        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Must contain a symbol'
+        v => !!v || this.$t('PROFILE.passwordRequired'),
+        v => v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
+        v => /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
+        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('PROFILE.passwordSymbol')
       ],
       confirmPasswordRules: [
-        v => !!v || 'Confirm password is required',
-        v => v === this.newPassword || 'Passwords must match'
+        v => !!v || this.$t('PROFILE.confirmPasswordRequired'),
+        v => v === this.newPassword || this.$t('PROFILE.passwordsMatch')
       ],
       editProfileDialog: false,
       deleteAccountDialog: false,
