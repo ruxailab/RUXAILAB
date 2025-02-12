@@ -80,14 +80,7 @@ jobs:
                 echo "❌ $var is empty or not set"
                 has_empty=true
             else
-                # Show first 4 chars and mask the rest with asterisks
-                local visible="${value:0:4}"
-                local masked=""
-                local remainder=$((${#value} - 4))
-                for ((i=0; i<remainder; i++)); do
-                    masked="${masked}*"
-                done
-                echo "✓ $var is set (value starts with: ${visible}${masked})"
+                echo "✓ $var is set"
             fi
           }
 
