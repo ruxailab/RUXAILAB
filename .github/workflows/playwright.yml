@@ -26,27 +26,61 @@ jobs:
           
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install docker-compose
-
+        
       - name: Create .env file
         run: |
-          cat << EOF > .env
-          VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
-          VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
-          VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
-          VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
-          VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
-          EOF
+          missing=false
 
-          if [ ! -f .env ]; then
-            echo "Error: .env file was not created"
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_API_KEY }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_API_KEY"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_AUTH_DOMAIN"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_PROJECT_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_STORAGE_BUCKET"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_APP_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_APP_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_DB_URL }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_DB_URL"
+            missing=true
+          fi
+
+      
+          # Exit if any required secret is missing
+          if [ "$missing" = true ]; then
+            echo "⛔ Missing required environment variables. Exiting..."
             exit 1
           fi
           
-          if [ ! -s .env ]; then
-            echo "Error: .env file is empty"
-            exit 1
-          fi
+          # Create the .env file
+          echo "Creating .env file..."
+          cat > .env <<EOF
+            VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
+            VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+            VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+            VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
+            VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
+            VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
+            VUE_APP_FIREBASE_DB_URL=${{secrets.VUE_APP_FIREBASE_DB_URL}}
+          EOF
+
+      - name: Debug .env file
+        run: cat .env
 
       - name: Build and start services
         run: docker-compose up -d --build
@@ -111,4 +145,3 @@ jobs:
 
       - name: Stop services
         run: docker-compose down
-        
