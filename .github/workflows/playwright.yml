@@ -101,38 +101,6 @@ jobs:
           npx playwright install --with-deps
           npx playwright install webkit # Installing the webkit separately
 
-      - name: Verify environment variables
-        run: |
-          source .env
-          missing_vars=()
-          has_empty=false
-
-          check_var() {
-            local var=$1
-            local value="${!var}"
-            if [ -z "$value" ]; then
-                echo "❌ $var is empty or not set"
-                has_empty=true
-            else
-                echo "✓ $var is set"
-            fi
-          }
-
-          echo "Checking environment variables..."
-          check_var "VUE_APP_FIREBASE_API_KEY"
-          check_var "VUE_APP_FIREBASE_AUTH_DOMAIN"
-          check_var "VUE_APP_FIREBASE_PROJECT_ID"
-          check_var "VUE_APP_FIREBASE_STORAGE_BUCKET"
-          check_var "VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
-          check_var "VUE_APP_FIREBASE_APP_ID"
-
-          if [ "$has_empty" = true ]; then
-            echo "Error: Some environment variables are missing or empty"
-            exit 1
-          else
-            echo "✓ All environment variables are properly set"
-          fi
-
       - name: Run Playwright tests
         run: npx playwright test 
 
