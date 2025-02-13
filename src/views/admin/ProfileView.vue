@@ -1,172 +1,163 @@
 <template>
-  <div class="container h-screen py-8 flex flex-col md:flex-row gap-4">
-    <!-- Left Section: Profile Details -->
-    <div class="flex-shrink-0 w-full md:w-auto" style="max-width: 100%; min-width: 350px;">
-      <v-card class="profile-card h-full" elevation="0">
-        <v-card-text class="text-center">
-          <v-avatar size="128" class="mb-4">
-            <v-img :src="userprofile.profileImage || defaultImage" :alt="$t('PROFILE.title')" />
-          </v-avatar>
-          <h2 class="text-h6 mb-2">{{ userprofile.username || 'USER' }}</h2>
-          <v-chip small class="mb-6" color="grey lighten-3">{{ $t('PROFILE.admin') }}</v-chip>
+  <div v-if="loading" class="loading-spinner">
+    <!-- Add a spinner or skeleton loader here -->
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+  </div>
+  <div v-else>
+    <div class="container h-screen py-8 flex flex-col md:flex-row gap-4">
+      <!-- Left Section: Profile Details -->
+      <div class="flex-shrink-0 w-full md:w-auto" style="max-width: 100%; min-width: 350px;">
+        <v-card class="profile-card h-full" elevation="0">
+          <v-card-text class="text-center">
+            <v-avatar size="128" class="mb-4">
+              <v-img :src="userprofile.profileImage || defaultImage" :alt="$t('PROFILE.title')" />
+            </v-avatar>
+            <h2 class="text-h6 mb-2">{{ userprofile.username || 'USER' }}</h2>
+            <v-chip small class="mb-6" color="grey lighten-3">{{ $t('PROFILE.admin') }}</v-chip>
 
-          <div class="text-left">
-            <v-list dense>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>{{ $t('buttons.username') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.username }">
-                    {{ userprofile.username || $t('PROFILE.missingInfo') }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+            <div class="text-left">
+              <v-list dense>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>{{ $t('buttons.username') }}:</v-list-item-subtitle>
+                    <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.username }">
+                      {{ userprofile.username || $t('PROFILE.missingInfo') }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
 
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>{{ $t('SIGNIN.email') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !user.email }">
-                    {{ user.email || $t('PROFILE.missingInfo') }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>{{ $t('SIGNIN.email') }}:</v-list-item-subtitle>
+                    <v-list-item-title v-if="!loading" :class="{ 'missing-info': !user.email }">
+                      {{ user.email || $t('PROFILE.missingInfo') }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
 
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>{{ $t('SIGNIN.contact') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.contactNo }">
-                    {{ userprofile.contactNo || $t('PROFILE.missingInfo') }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>{{ $t('SIGNIN.contact') }}:</v-list-item-subtitle>
+                    <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.contactNo }">
+                      {{ userprofile.contactNo || $t('PROFILE.missingInfo') }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
 
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle>{{ $t('PROFILE.country') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.country }">
-                    {{ userprofile.country || $t('PROFILE.missingInfo') }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </div>
-        </v-card-text>
-      </v-card>
-    </div>
-
-    <!-- Right Section: Tabs and Content -->
-    <div class="flex-grow-1 w-full">
-      <v-card flat class="w-full">
-        <!-- Tabs Section -->
-        <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
-          <v-tab>
-            <v-icon small class="mr-2">mdi-account</v-icon>
-            {{ $t('PROFILE.account') }}
-          </v-tab>
-        </v-tabs>
-
-        <!-- Change Password Section -->
-        <v-card class="password-card mt-4">
-          <v-card-title>{{ $t('PROFILE.changePassword') }}</v-card-title>
-          <v-card-text>
-            <v-alert type="warning" colored-border border="left" class="mb-4">
-              <div class="text-h6 font-weight-medium">{{ $t('PROFILE.passwordRequirements') }}</div>
-              <div class="text-body-2">{{ $t('PROFILE.passwordMinimumRequirements') }}</div>
-            </v-alert>
-
-            <v-form ref="passwordForm" v-model="valid" lazy-validation>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('PROFILE.newPassword')"
-                    :type="showPassword ? 'text' : 'password'" outlined dense required
-                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showPassword = !showPassword"></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
-                    :label="$t('PROFILE.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'" outlined
-                    dense required :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showConfirmPassword = !showConfirmPassword"></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
-                {{ $t('PROFILE.changePassword') }}
-              </v-btn>
-            </v-form>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>{{ $t('PROFILE.country') }}:</v-list-item-subtitle>
+                    <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.country }">
+                      {{ userprofile.country || $t('PROFILE.missingInfo') }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </div>
           </v-card-text>
         </v-card>
+      </div>
 
-        <!-- Edit Details and Delete Account Buttons -->
-        <div class="mt-4 d-flex justify-space-between flex-wrap">
-          <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
-            <v-icon left>mdi-pencil</v-icon>
-            {{ $t('PROFILE.editDetails') }}
-          </v-btn>
-          <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
-            <v-icon left>mdi-delete</v-icon>
-            {{ $t('buttons.deleteAccount') }}
-          </v-btn>
-        </div>
-      </v-card>
+      <!-- Right Section: Tabs and Content -->
+      <div class="flex-grow-1 w-full">
+        <v-card flat class="w-full">
+          <!-- Tabs Section -->
+          <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
+            <v-tab>
+              <v-icon small class="mr-2">mdi-account</v-icon>
+              {{ $t('PROFILE.account') }}
+            </v-tab>
+          </v-tabs>
+
+          <!-- Change Password Section -->
+          <v-card class="password-card mt-4">
+            <v-card-title>{{ $t('PROFILE.changePassword') }}</v-card-title>
+            <v-card-text>
+              <v-alert type="warning" colored-border border="left" class="mb-4">
+                <div class="text-h6 font-weight-medium">{{ $t('PROFILE.passwordRequirements') }}</div>
+                <div class="text-body-2">{{ $t('PROFILE.passwordMinimumRequirements') }}</div>
+              </v-alert>
+
+              <v-form ref="passwordForm" v-model="valid" lazy-validation>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('PROFILE.newPassword')"
+                      :type="showPassword ? 'text' : 'password'" outlined dense required
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showPassword = !showPassword"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
+                      :label="$t('PROFILE.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'" outlined
+                      dense required :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showConfirmPassword = !showConfirmPassword"></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
+                  {{ $t('PROFILE.changePassword') }}
+                </v-btn>
+              </v-form>
+            </v-card-text>
+          </v-card>
+
+          <!-- Edit Details and Delete Account Buttons -->
+          <div class="mt-4 d-flex justify-space-between flex-wrap">
+            <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
+              <v-icon left>mdi-pencil</v-icon>
+              {{ $t('PROFILE.editDetails') }}
+            </v-btn>
+            <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
+              <v-icon left>mdi-delete</v-icon>
+              {{ $t('buttons.deleteAccount') }}
+            </v-btn>
+          </div>
+        </v-card>
+      </div>
+
+      <!-- Edit Details Dialog -->
+      <v-dialog v-model="editProfileDialog" max-width="600">
+        <v-card>
+          <v-card-title>{{ $t('PROFILE.editProfile') }}</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-text-field v-model="editProfileData.username" :label="$t('buttons.username')"></v-text-field>
+              <v-text-field v-model="editProfileData.contactNo" :label="$t('SIGNIN.contact')"></v-text-field>
+              <v-text-field v-model="editProfileData.country" :label="$t('PROFILE.country')"></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <div class="mb-2">
+              <v-btn color="primary" class="mr-2" @click="saveProfile">{{ $t('PROFILE.saveChanges') }}</v-btn>
+              <v-btn color="error" @click="editProfileDialog = false">{{ $t('buttons.cancel') }}</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Delete Account Dialog -->
+      <v-dialog v-model="deleteAccountDialog" max-width="500">
+        <v-card>
+          <v-card-title>{{ $t('PROFILE.deleteAccountTitle') }}</v-card-title>
+          <v-card-text>
+            {{ $t('PROFILE.deleteAccountConfirm') }}<br>
+            {{ $t('PROFILE.deleteAccountWarning') }}
+          </v-card-text>
+          <v-card-actions>
+            <div class="mb-2">
+              <v-btn color="error" class="mr-2" @click="deleteAccount">{{ $t('buttons.deleteAccount') }}</v-btn>
+              <v-btn color="primary" @click="deleteAccountDialog = false">{{ $t('buttons.cancel') }}</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
-
-    <!-- Edit Details Dialog -->
-    <v-dialog v-model="editProfileDialog" max-width="600">
-      <v-card>
-        <v-card-title>{{ $t('PROFILE.editProfile') }}</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field v-model="editProfileData.username" :label="$t('buttons.username')"></v-text-field>
-            <v-text-field v-model="editProfileData.contactNo" :label="$t('SIGNIN.contact')"></v-text-field>
-            <v-text-field v-model="editProfileData.country" :label="$t('PROFILE.country')"></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="mb-2">
-            <v-btn color="primary" class="mr-2" @click="saveProfile">{{ $t('PROFILE.saveChanges') }}</v-btn>
-            <v-btn color="error" @click="editProfileDialog = false">{{ $t('buttons.cancel') }}</v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Delete Account Dialog -->
-    <v-dialog v-model="deleteAccountDialog" max-width="500">
-      <v-card>
-        <v-card-title>{{ $t('PROFILE.deleteAccountTitle') }}</v-card-title>
-        <v-card-text>
-          {{ $t('PROFILE.deleteAccountConfirm') }}<br>
-          {{ $t('PROFILE.deleteAccountWarning') }}
-        </v-card-text>
-        <v-card-actions>
-          <div class="mb-2">
-            <v-btn color="error" class="mr-2" @click="deleteAccount">{{ $t('buttons.deleteAccount') }}</v-btn>
-            <v-btn color="primary" @click="deleteAccountDialog = false">{{ $t('buttons.cancel') }}</v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import {
-  getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updatePassword,
-} from 'firebase/auth'
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  deleteDoc,
-  getDoc,
-  updateDoc
-} from 'firebase/firestore'
+import { getAuth } from 'firebase/auth';
+import UserController from '@/controllers/UserController';
 
 export default {
   name: 'SecurityProfile',
@@ -177,15 +168,14 @@ export default {
         profileImage: '',
         username: null,
         contactNo: null,
-        country: null
+        country: null,
       },
       editProfileData: {
         username: null,
         contactNo: null,
-        country: null
+        country: null,
       },
       defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      displayMissingInfo: this.$t('PROFILE.infoMissing'),
       loading: true,
       valid: false,
       showPassword: false,
@@ -196,63 +186,66 @@ export default {
         v => !!v || this.$t('PROFILE.passwordRequired'),
         v => v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
         v => /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
-        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('PROFILE.passwordSymbol')
+        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('PROFILE.passwordSymbol'),
       ],
       confirmPasswordRules: [
         v => !!v || this.$t('PROFILE.confirmPasswordRequired'),
-        v => v === this.newPassword || this.$t('PROFILE.passwordsMatch')
+        v => v === this.newPassword || this.$t('PROFILE.passwordsMatch'),
       ],
       editProfileDialog: false,
       deleteAccountDialog: false,
-      isSmallScreen: false
-    }
-  },
-
-  async created() {
-    await this.fetchUserProfile()
-    this.checkScreenSize()
-    window.addEventListener('resize', this.checkScreenSize)
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkScreenSize)
+      isSmallScreen: false,
+    };
   },
 
   computed: {
     user() {
-      return this.$store.getters.user || { email: '' }
+      return this.$store.getters.user || { email: '' };
     },
+  },
+
+  async created() {
+    await this.fetchUserProfile();
+    this.checkScreenSize();
+    window.addEventListener('resize', this.checkScreenSize);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkScreenSize);
   },
 
   methods: {
     checkScreenSize() {
-      this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
+      this.isSmallScreen = window.innerWidth < 960;
     },
 
     async fetchUserProfile() {
       try {
-        const auth = getAuth()
-        const user = auth.currentUser
+        const auth = getAuth();
+        const user = auth.currentUser;
 
         if (user) {
-          const db = getFirestore()
-          const userDoc = await getDoc(doc(db, 'users', user.uid))
+          const userController = new UserController();
+          const userDoc = await userController.getById(user.uid);
 
-          if (userDoc.exists()) {
-            const data = userDoc.data()
+          if (userDoc) {
             this.userprofile = {
-              profileImage: data.profileImage || '',
-              username: data.username || null,
-              contactNo: data.contactNo || null,
-              country: data.country || null
-            }
+              profileImage: userDoc.profileImage || '',
+              username: userDoc.username || null,
+              contactNo: userDoc.contactNo || null,
+              country: userDoc.country || null,
+            };
+          } else {
+            console.error('User document not found in Firestore');
           }
+        } else {
+          console.error('No user is currently signed in');
         }
       } catch (error) {
-        console.error('Error fetching profile:', error)
-        this.$toast.error('Failed to load profile data')
+        console.error('Error fetching profile:', error);
+        this.$toast.error('Failed to load profile data');
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 
@@ -260,110 +253,82 @@ export default {
       this.editProfileData = {
         username: this.userprofile.username,
         contactNo: this.userprofile.contactNo,
-        country: this.userprofile.country
-      }
-      this.editProfileDialog = true
+        country: this.userprofile.country,
+      };
+      this.editProfileDialog = true;
     },
 
     async saveProfile() {
       try {
-        const auth = getAuth()
-        const user = auth.currentUser
+        const auth = getAuth();
+        const user = auth.currentUser;
 
         if (user) {
-          const db = getFirestore()
-          const userDocRef = doc(db, 'users', user.uid)
-          await updateDoc(userDocRef, {
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country
-          })
+          const userController = new UserController();
+          await userController.updateProfile(user.uid, this.editProfileData);
+
           this.userprofile = {
             ...this.userprofile,
             username: this.editProfileData.username,
             contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country
-          }
-          this.$toast.success('Profile updated successfully')
-          this.editProfileDialog = false
+            country: this.editProfileData.country,
+          };
+          this.$toast.success('Profile updated successfully');
+          this.editProfileDialog = false;
         }
+        console.log('Updated profile data:', this.editProfileData);
       } catch (error) {
-        console.error('Error updating profile:', error)
-        this.$toast.error('Failed to update profile')
+        console.error('Error updating profile:', error);
+        this.$toast.error('Failed to update profile');
       }
     },
 
     async changePassword() {
       if (this.$refs.passwordForm.validate()) {
         try {
-          const auth = getAuth()
-          const user = auth.currentUser
+          const auth = getAuth();
+          const user = auth.currentUser;
 
           if (user) {
-            await updatePassword(user, this.newPassword)
-            this.$toast.success('Password changed successfully')
+            const userController = new UserController();
+            await userController.changePassword(user, this.newPassword);
+            this.$toast.success('Password changed successfully');
 
-            this.newPassword = ''
-            this.confirmPassword = ''
-            this.$refs.passwordForm.reset()
+            this.newPassword = '';
+            this.confirmPassword = '';
+            this.$refs.passwordForm.reset();
           }
         } catch (error) {
-          this.$toast.error('Failed to change password: ' + error.message)
+          this.$toast.error('Failed to change password: ' + error.message);
         }
       }
     },
 
     async deleteAccount() {
-      const auth = getAuth()
-      const user = auth.currentUser
+      const auth = getAuth();
+      const user = auth.currentUser;
 
       if (user) {
         try {
-          const email = user.email
-          const password = prompt('Please enter your password to confirm deletion:')
+          const email = user.email;
+          const password = prompt('Please enter your password to confirm deletion:');
           if (!password) {
-            alert('Password is required to delete your account.')
-            return
+            alert('Password is required to delete your account.');
+            return;
           }
 
-          const credential = EmailAuthProvider.credential(email, password)
-          await reauthenticateWithCredential(user, credential)
+          const userController = new UserController();
+          await userController.reauthenticateUser(user, email, password);
+          await userController.deleteUser(user.uid);
+          await user.delete();
 
-          const db = getFirestore()
-          const userDocId = user.uid
-
-          const testsCollectionRef = collection(db, 'tests')
-          const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId))
-          const testsSnapshot = await getDocs(testsQuery)
-
-          if (!testsSnapshot.empty) {
-            for (const testDoc of testsSnapshot.docs) {
-              const testData = testDoc.data()
-              const answersDocId = testData.answersDocId
-
-              if (answersDocId) {
-                const answersDocRef = doc(db, 'answers', answersDocId)
-                await deleteDoc(answersDocRef)
-              }
-
-              const testDocRef = doc(db, 'tests', testDoc.id)
-              await deleteDoc(testDocRef)
-            }
-          }
-
-          const userDocRef = doc(db, 'users', userDocId)
-          await deleteDoc(userDocRef)
-
-          await user.delete()
-          console.log('Account and related data deleted successfully.')
-
-          this.signOut()
+          this.signOut();
         } catch (error) {
-          console.error('Error during account deletion:', error.message)
-          alert('Failed to delete account. Please try again.')
+          console.error('Error during account deletion:', error.message);
+          alert('Failed to delete account. Please try again.');
         }
       } else {
-        console.error('No user is signed in.')
+        console.error('No user is signed in.');
       }
     },
 
@@ -371,14 +336,24 @@ export default {
       this.$store.dispatch('logout').then(() => {
         this.$router
           .push('/')
-          .catch((error) => { console.log(error) })
-      })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped>
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999; /* Ensure it's above other content */
+}
+
 .container {
   display: flex;
   justify-content: space-between;
