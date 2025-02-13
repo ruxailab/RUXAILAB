@@ -5,9 +5,9 @@
       <v-card class="profile-card h-full" elevation="0">
         <v-card-text class="text-center">
           <v-avatar size="128" class="mb-4">
-            <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" :alt="$t('PROFILE.title')" />
+            <v-img :src="userprofile.profileImage || defaultImage" :alt="$t('PROFILE.title')" />
           </v-avatar>
-          <h2 class="text-h6 mb-2">{{ user.displayName || 'USER' }}</h2>
+          <h2 class="text-h6 mb-2">{{ userprofile.username || 'USER' }}</h2>
           <v-chip small class="mb-6" color="grey lighten-3">{{ $t('PROFILE.admin') }}</v-chip>
 
           <div class="text-left">
@@ -15,7 +15,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('buttons.username') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.username}">
+                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.username }">
                     {{ userprofile.username || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -24,7 +24,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('SIGNIN.email') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{'missing-info': !user.email}">
+                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !user.email }">
                     {{ user.email || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -33,7 +33,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('SIGNIN.contact') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.contactNo}">
+                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.contactNo }">
                     {{ userprofile.contactNo || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -42,7 +42,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('PROFILE.country') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.country}">
+                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.country }">
                     {{ userprofile.country || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -76,30 +76,16 @@
             <v-form ref="passwordForm" v-model="valid" lazy-validation>
               <v-row>
                 <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="newPassword"
-                    :rules="passwordRules"
-                    :label="$t('PROFILE.newPassword')"
-                    :type="showPassword ? 'text' : 'password'"
-                    outlined
-                    dense
-                    required
+                  <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('PROFILE.newPassword')"
+                    :type="showPassword ? 'text' : 'password'" outlined dense required
                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showPassword = !showPassword"
-                  ></v-text-field>
+                    @click:append="showPassword = !showPassword"></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="confirmPassword"
-                    :rules="confirmPasswordRules"
-                    :label="$t('PROFILE.confirmNewPassword')"
-                    :type="showConfirmPassword ? 'text' : 'password'"
-                    outlined
-                    dense
-                    required
-                    :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showConfirmPassword = !showConfirmPassword"  
-                  ></v-text-field>
+                  <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
+                    :label="$t('PROFILE.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'" outlined
+                    dense required :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showConfirmPassword = !showConfirmPassword"></v-text-field>
                 </v-col>
               </v-row>
 
@@ -184,7 +170,7 @@ import {
 
 export default {
   name: 'SecurityProfile',
-  
+
   data() {
     return {
       userprofile: {
@@ -198,7 +184,8 @@ export default {
         contactNo: null,
         country: null
       },
-     displayMissingInfo: this.$t('PROFILE.infoMissing'),
+      defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
+      displayMissingInfo: this.$t('PROFILE.infoMissing'),
       loading: true,
       valid: false,
       showPassword: false,
@@ -246,11 +233,11 @@ export default {
       try {
         const auth = getAuth()
         const user = auth.currentUser
-        
+
         if (user) {
           const db = getFirestore()
           const userDoc = await getDoc(doc(db, 'users', user.uid))
-          
+
           if (userDoc.exists()) {
             const data = userDoc.data()
             this.userprofile = {
@@ -282,7 +269,7 @@ export default {
       try {
         const auth = getAuth()
         const user = auth.currentUser
-        
+
         if (user) {
           const db = getFirestore()
           const userDocRef = doc(db, 'users', user.uid)
@@ -315,7 +302,7 @@ export default {
           if (user) {
             await updatePassword(user, this.newPassword)
             this.$toast.success('Password changed successfully')
-            
+
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
@@ -384,7 +371,7 @@ export default {
       this.$store.dispatch('logout').then(() => {
         this.$router
           .push('/')
-          .catch((error) => {console.log(error)})
+          .catch((error) => { console.log(error) })
       })
     },
   },
@@ -434,7 +421,7 @@ export default {
 }
 
 .missing-info {
-  color: #ff5252 !important;
+  color: #d84646 !important;
   font-style: italic;
 }
 
