@@ -101,10 +101,10 @@ export default {
       (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
     ],
     passwordRules: [
-      v => !!v || 'Password is required',
-      v => v.length >= 8 || 'Password must be at least 8 characters',
-      v => /[A-Z]/.test(v) || 'Must contain an uppercase letter',
-      v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Must contain a symbol'
+      (v) => !!v || i18n.t('errors.passwordRequired'),
+      (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
+      (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
+      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
     ],
     confirmpassword: '',
     showPassword: false,
