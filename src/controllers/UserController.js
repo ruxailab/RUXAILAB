@@ -1,5 +1,3 @@
-// imports
-
 import Controller from '@/controllers/BaseController'
 import User from '@/models/UserModel'
 const COLLECTION = 'users'
@@ -11,27 +9,57 @@ export default class UserController extends Controller {
   async create(payload) {
     const user = new User({
       email: payload.email,
+      username: payload.username || '',
+      contactNo: payload.contactNo || '',
+      country: payload.country || '',
       accessLevel: 1,
       myTests: {},
       myAnswers: {},
       notifications: [],
-      inbox:[],
-    }).toFirestore()
-    return super.set(COLLECTION, payload.id, user)
+      inbox: [],
+    }).toFirestore();
+    return super.set(COLLECTION, payload.id, user);
   }
 
   async update(docId, payload) {
-    return super.update(COLLECTION, docId, payload)
+    return super.update(COLLECTION, docId, payload);
   }
 
   async readAll() {
-    const docs = await super.readAll(COLLECTION)
-    return docs.map((doc) => new User(doc))
+    const docs = await super.readAll(COLLECTION);
+    return docs.map((doc) => new User(doc));
   }
 
   async getById(docId) {
-    const res = await super.readOne(COLLECTION, docId)
-    return new User.toUser(Object.assign({ id: res.id }, res.data()))
+    const res = await super.readOne(COLLECTION, docId);
+    return new User(Object.assign({ id: res.id }, res.data()));
+  }
+
+  async updateProfile(docId, payload) {
+    const userData = {
+      username: payload.username,
+      contactNo: payload.contactNo,
+      country: payload.country,
+    };
+    return super.update(COLLECTION, docId, userData);
+  }
+
+  async deleteUser(docId) {
+    return super.delete(COLLECTION, docId);
+  }
+
+  async changePassword(user, newPassword) {
+    try {
+      await updatePassword(user, newPassword);
+      return true;
+    } catch (error) {
+      throw new Error('Failed to change password: ' + error.message);
+    }
+  }
+
+  async reauthenticateUser(user, email, password) {
+    const credential = EmailAuthProvider.credential(email, password);
+    await reauthenticateWithCredential(user, credential);
   }
 
   async addNotification(payload) {
