@@ -289,9 +289,15 @@ export default {
           const auth = getAuth();
           const user = auth.currentUser;
 
+          const currentPassword = prompt('Please enter your current password to confirm the change:');
+          if (!currentPassword) {
+            alert('Password is required.');
+            return;
+          }
+
           if (user) {
             const userController = new UserController();
-            await userController.changePassword(user, this.newPassword);
+            await userController.changePassword(user, currentPassword, this.newPassword);
             this.$toast.success('Password changed successfully');
 
             this.newPassword = '';
