@@ -1,5 +1,6 @@
 import Controller from '@/controllers/BaseController'
 import User from '@/models/UserModel'
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -48,10 +49,12 @@ export default class UserController extends Controller {
     return super.delete(COLLECTION, docId);
   }
 
-  async changePassword(user, newPassword) {
+  async changePassword(user, currentPassword, newPassword) {
     try {
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
-      return true;
+      console.log('Password updated successfully!');
     } catch (error) {
       throw new Error('Failed to change password: ' + error.message);
     }
