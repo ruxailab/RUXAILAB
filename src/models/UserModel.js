@@ -23,10 +23,10 @@ export default class User {
         this.notifications = notifications;
         this.myAnswers = myAnswers;
         this.myTests = myTests;
-        this.inbox = inbox; // Add inbox field
-        this.username = username; // Add username field
-        this.contactNo = contactNo; // Add contactNo field
-        this.country = country; // Add country field
+        this.inbox = inbox; 
+        this.username = username; 
+        this.contactNo = contactNo; 
+        this.country = country; 
         this.profileImage = profileImage; // Add profileImage field
     }
 
