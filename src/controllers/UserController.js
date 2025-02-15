@@ -75,24 +75,24 @@ export default class UserController extends Controller {
 
     // Find notification in notifications array
     const notificationIndex = userToUpdate.notifications.findIndex(
-        (n) => n.createdDate === payload.notification.createdDate,
+      (n) => n.createdDate === payload.notification.createdDate,
     );
 
     // Find notification in inbox array
     const inboxIndex = userToUpdate.inbox.findIndex(
-        (n) => n.createdDate === payload.notification.createdDate,
+      (n) => n.createdDate === payload.notification.createdDate,
     );
 
     // Update notifications array
     if (notificationIndex !== -1) {
-        userToUpdate.notifications[notificationIndex].read = true;
-        userToUpdate.notifications.splice(notificationIndex, 1);
+      userToUpdate.notifications[notificationIndex].read = true;
+      userToUpdate.notifications.splice(notificationIndex, 1);
     }
 
     // Update inbox array
     if (inboxIndex !== -1) {
-        userToUpdate.inbox[inboxIndex].read = true;
-        userToUpdate.inbox[inboxIndex].readAt = Date.now();
+      userToUpdate.inbox[inboxIndex].read = true;
+      userToUpdate.inbox[inboxIndex].readAt = Date.now();
     }
 
     if (notificationIndex !== -1 || inboxIndex !== -1) {
@@ -101,11 +101,11 @@ export default class UserController extends Controller {
             userToUpdate.id,
             userToUpdate.toFirestore(),
         );
-        return updatedUser;
+      return updatedUser;
     } else {
-        throw new Error('Notification not found.');
+      throw new Error('Notification not found.');
     }
-}
+  }
 
   async removeNotificationsForTest(testId, cooperators) {
     try {
