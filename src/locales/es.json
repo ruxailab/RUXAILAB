@@ -512,5 +512,17 @@
     "consentForm": "Formulario de Consentimiento",
     "preForm": "Formulario Previo",
     "postForm": "Formulario Posterior"
+  },
+  "Createblank": {
+    "title": "¿Qué tipo de prueba estás buscando iniciar?",
+    "test": "Prueba",
+    "testType_1": {
+      "testTitle": "Heurística de Usabilidad",
+      "text": ["Porcentaje de Usabilidad", "Informe Final en PDF", "Invita a especialistas a evaluar tu aplicación"]
+    },
+    "testType_2": {
+      "testTitle": "Usuario de Usabilidad",
+      "text": ["Grabación de webcam, audio y pantalla", "Análisis mejorado de respuestas", "Pruebas moderadas o no moderadas"]
+    }
   }
 }
