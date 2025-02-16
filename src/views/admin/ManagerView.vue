@@ -43,7 +43,7 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row align="center" justify="center" style="height: 100%">
+            <v-row align="center" justify="center" style="height: 100%; margin: 0 !important; ">
               <v-col class="text-div">
                 <div v-if="accessLevel == 0" class="white--text">
                   <p
@@ -142,7 +142,7 @@
               </div>
 
               <!-- Bottom Cards -->
-              <v-row justify="center" justify-md="space-around">
+              <v-row justify="center" justify-md="space-around" style="margin: 0">
                 <v-col
                   v-for="(item, i) in bottomCards"
                   :key="i"
