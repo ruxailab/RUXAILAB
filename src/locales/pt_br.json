@@ -523,5 +523,12 @@
       "testTitle": "Usuário de Usabilidade",
       "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
     }
+  },
+  "TestDialog": {
+    "heading": "Criação de Teste",
+    "sub-heading": "Adicione um nome ao seu teste!",
+    "test-name": "Nome do Teste",
+    "test-description": "Descrição do Teste",
+    "test-label": "Teste público para todos os usuários"
   }
 }
