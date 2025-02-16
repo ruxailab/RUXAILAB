@@ -37,6 +37,11 @@
     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
+      :heading="$t('TestDialog.heading')"
+      :subHeading="$t('TestDialog.sub-heading')"
+      :testName="$t('TestDialog.test-name')"
+      :testDescription="$t('TestDialog.test-description')"
+      :testLabel="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>

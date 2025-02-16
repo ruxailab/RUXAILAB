@@ -526,5 +526,12 @@
       "testTitle": "Usability User",
       "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
     }
+  },
+  "TestDialog": {
+    "heading": "Test Creation",
+    "sub-heading": "Add a name to your test!",
+    "test-name": "Test Name",
+    "test-description": "Test Description",
+    "test-label": "Test public to all users"
   }
 }
