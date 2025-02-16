@@ -10,9 +10,10 @@
 
 export default class User {
     constructor({
-        id, accessLevel, email, notifications = [], myAnswers = [], myTests = [], inbox = [],
+        id, accessLevel, email, username ,notifications = [], myAnswers = [], myTests = [], inbox = [],
     } = {}) {
         this.id = id
+        this.username  = username
         this.accessLevel = accessLevel
         this.email = email
         this.notifications = notifications

@@ -21,7 +21,7 @@
       temporary
       class="hidden-md-and-up"
     >
-      <v-row align="center" class="ma-0" justify="center">
+      <v-row align="center" class="ma-0" justify="center" @click="goToProfile" style="cursor: pointer;">
         <v-list-item-avatar>
           <v-icon large dark>
             mdi-account-circle
@@ -30,7 +30,8 @@
 
         <v-col>
           <v-list-item-content v-if="user">
-            <v-list-item-title>{{ $t('buttons.username') }}</v-list-item-title>
+          
+            <v-list-item-title :key="usernameKey">{{ user.username || $t('buttons.username') }}</v-list-item-title>
             <div class="caption">
               {{ user.email }}
             </div>
@@ -38,7 +39,7 @@
         </v-col>
       </v-row>
 
-      <v-divider />
+      <v-divider /> 
 
       <!-- Landing Page Options -->
       <v-list v-if="this.$route.path === '/' && user" dense dark>
@@ -186,7 +187,7 @@
           <v-list-item dense style="font-size: 14px; font-family: Roboto, sans-serif" class="px-2">
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold">
-                {{ $t('buttons.username') }}
+                {{ user.username || $t('buttons.username') }}
               </v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -236,6 +237,9 @@ export default {
     isManager: false,
   }),
   computed: {
+    usernameKey() {
+    return this.user && this.user.username ? this.user.username : 'default-key';
+  },
     user() {
       return this.$store.getters.user
     },
@@ -397,8 +401,9 @@ export default {
       })
     },
     goToProfile() {
-      console.log('profile')
-      this.$router.push('/profile')
+      if (this.$route.path !== '/profile') {
+        this.$router.push('/profile').catch(() => {});
+      }
     },
   },
 }
