@@ -530,5 +530,27 @@
     "test-name": "Nome do Teste",
     "test-description": "Descrição do Teste",
     "test-label": "Teste público para todos os usuários"
+  },
+  "help": {
+    "createtest": "Como criar um teste?",
+    "createtestanswer": "Para criar um teste, clique no ícone de mais e selecione Teste Heurístico. Em seguida, especifique os detalhes do seu projeto. Por fim, acesse a página do gerenciador dedicada.",
+    "heuristictest": "Como configurar meu Teste Heurístico?",
+    "heuristictestanswer": "Para configurar seu Teste Heurístico, acesse a opção 'Editar Teste'. Em seguida, clique no botão de ícone de mais para adicionar um título e a pergunta do seu teste. Depois, vá até a seção de opções para criar as opções de resposta e seus respectivos valores. Por fim, salve as modificações.",
+    "deletetest": "Como excluir meu teste?",
+    "deletetestanswer": "Para excluir seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione o botão 'EXCLUIR TESTE'.",
+    "createtemplate": "Como criar um modelo?",
+    "createtemplateanswer": "Para criar um modelo para seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione a opção 'CRIAR MODELO'.",
+    "usetemplate": "Como usar um modelo?",
+    "usetemplateanswer": "Para utilizar um modelo, acesse a página de Testes. Na seção Criar Modelos, você encontrará seus modelos pessoais. Além disso, você pode explorar modelos públicos.",
+    "previewtest": "Como visualizar meu teste?",
+    "previewtestanswer": "Na barra lateral esquerda, clique na opção 'Visualizar', inicie o teste respondendo às perguntas e, por fim, clique no botão no canto inferior direito para salvar e enviar a visualização. Posteriormente, ela poderá ser analisada na seção 'Respostas'.",
+    "importcsv": "Como importar meu arquivo CSV?",
+    "importcsvanswer": "Para importar seu CSV, vá até a seção 'Editar Teste' e clique no botão 'ATUALIZAR'. Selecione seu arquivo CSV contendo as heurísticas.",
+    "invitecooperators": "Como convidar colaboradores?",
+    "invitecooperatorsanswer": "Para convidar colaboradores, vá até a página do gerenciador do seu teste. Lá, selecione 'Colaboradores' na barra lateral esquerda. Clique em 'Selecionar colaborador' e insira o e-mail do colaborador. Escolha o papel do colaborador e envie o convite clicando no botão no canto inferior direito.",
+    "analyseresults": "Como analisar os resultados?",
+    "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
+    "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
+    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
   }
 }
