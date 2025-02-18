@@ -122,77 +122,69 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 export default {
   data() {
     return {
       items: [
         {
-          title: 'How do I create a test?',
-          content:
-            'To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.',
+          title: i18n.t('help.createtest'),
+          content: i18n.t('help.createtestanswer'),
           gif: 'create_test.gif',
           isCollapsed: true, // Initially collapsed
         },
         {
-          title: 'How I setup my Heuristic test?',
-          content:
-            'To set up your Heuristic test, start by accessing the "Edit Test" option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.',
+          title: i18n.t('help.heuristictest'),
+          content: i18n.t('help.heuristictestanswer'),
           gif: 'hsetup.gif',
           isCollapsed: true,
         },
         {
-          title: 'How I delete my test?',
-          content:
-            'To delete your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "DELETE TEST" button.',
+          title: i18n.t('help.deletetest'),
+          content: i18n.t('help.deletetestanswer'),
           gif: 'del_test.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to create a template?',
-          content:
-            'To create a template for your test, navigate to the left sidebar and click on the "Settings" button. Then, select the "CREATE TEMPLATE" option.',
+          title: i18n.t('help.createtemplate'),
+          content: i18n.t('help.createtemplateanswer'),
           gif: 'create-temp.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to use a template?',
-          content:
-            "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+          title: i18n.t('help.usetemplate'),
+          content: i18n.t('help.usetemplateanswer'),
           gif: 'use-temp.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to preview your Test?',
-          content:
-            'On the leftside bar, click on the "Preview" option then start the test answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the "Answers" section.',
+          title: i18n.t('help.previewtest'),
+          content: i18n.t('help.previewtestanswer'),
           gif: 'preview_test.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to import my CSV?',
-          content:
-            'To import your CSV, navigate to the "Edit Test" section, then click the "UPDATE" button. Select your CSV file containing the heuristics.',
+          title: i18n.t('help.importcsv'),
+          content: i18n.t('help.importcsvanswer'),
           gif: 'csv.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to invite cooperators?',
-          content:
-            'To invite collaborators, navigate to the manager page of your test. From there, select "Cooperators" on the left sidebar. Click on "Select cooperator" and enter the email of your collaborator. Choose the collaborator\'s role, then send the invitation by clicking on the bottom right button.',
+          title: i18n.t('help.invitecooperators'),
+          content: i18n.t('help.invitecooperatorsanswer'),
           gif: 'sendinvite.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to analyse the results?',
-          content:
-            'To analyze your results, navigate to the manager page of your test. From there, select "Answers" on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.',
+          title: i18n.t('help.analyseresults'),
+          content: i18n.t('help.analyseresultsanswer'),
           gif: 'analytics.gif',
           isCollapsed: true,
         },
         {
-          title: 'How to send a message to my cooperators?',
-          content:
-            'To send a message, navigate to the manager page of your test. Select "Cooperators" from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose "Send a message" and write your message with a title and content.',
+          title: i18n.t('help.sendmessage'),
+          content: i18n.t('help.sendmessageanswer'),
           gif: 'send_message.gif',
           isCollapsed: true,
         },
