@@ -533,5 +533,27 @@
     "test-name": "Test Name",
     "test-description": "Test Description",
     "test-label": "Test public to all users"
+  },
+  "help": {
+    "createtest": "How do I create a test?",
+    "createtestanswer": "To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.",
+    "heuristictest": "How I setup my Heuristic test?",
+    "heuristictestanswer": "To set up your Heuristic test, start by accessing the 'Edit Test' option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.",
+    "deletetest": "How I delete my test?",
+    "deletetestanswer": "To delete your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'DELETE TEST' button.",
+    "createtemplate": "How to create a template?",
+    "createtemplateanswer": "To create a template for your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'CREATE TEMPLATE' option.",
+    "usetemplate": "How to use a template?",
+    "usetemplateanswer": "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+    "previewtest": "How to preview your Test?",
+    "previewtestanswer": "On the leftside bar, click on the 'Preview' option then start the test answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the 'Answers' section.",
+    "importcsv": "How to import my CSV?",
+    "importcsvanswer": "To import your CSV, navigate to the 'Edit Test' section, then click the 'UPDATE' button. Select your CSV file containing the heuristics.",
+    "invitecooperators": "How to invite cooperators?",
+    "invitecooperatorsanswer": "To invite collaborators, navigate to the manager page of your test. From there, select 'Cooperators' on the left sidebar. Click on 'Select cooperator' and enter the email of your collaborator. Choose the collaborators role, then send the invitation by clicking on the bottom right button.",
+    "analyseresults": "How to analyse the results?",
+    "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
+    "sendmessage": "How to send a message to my cooperators?",
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
   }
 }
