@@ -219,4 +219,172 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.v-list-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 12px 0;
+  border-radius: 16px !important;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(250, 250, 250, 0.95);
+}
+
+.v-list-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
+  border-color: rgba(24, 103, 192, 0.3);
+}
+
+.v-list-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.v-list-item:hover::before {
+  opacity: 1;
+}
+
+.v-list {
+  background: rgba(245, 245, 245, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(200, 200, 200, 0.5) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  padding: 16px;
+}
+
+.subtitle-1 {
+  line-height: 1.8;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  padding: 8px 0;
+}
+
+.v-list-item-title {
+  cursor: pointer;
+  padding: 16px 0;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-size: 1.1rem;
+  color: #1565c0;
+}
+
+.v-list-item-title:hover {
+  color: #1976d2;
+  transform: translateX(8px);
+}
+
+.v-expand-transition-enter-active,
+.v-expand-transition-leave-active {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v-expand-transition-enter,
+.v-expand-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+.display-3,
+.display-2 {
+  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.6);
+  animation: slideDown 1s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.v-icon {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.5rem;
+  color: #1565c0;
+  margin-right: 8px;
+}
+
+.v-list-item:hover .v-icon {
+  transform: scale(1.3) rotate(180deg);
+  color: #1976d2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtle-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.v-list-item:not(.v-list-item--active):active {
+  transform: scale(0.98);
+  background: linear-gradient(135deg, #e1e9f1 0%, #ffffff 100%);
+}
+
+.v-list-item-title::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #1565c0;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(21, 101, 192, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(21, 101, 192, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(21, 101, 192, 0);
+  }
+}
+
+.v-list-item:focus-visible {
+  outline: 3px solid #1565c0;
+  outline-offset: 2px;
+}
+</style>
