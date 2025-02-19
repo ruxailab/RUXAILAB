@@ -21,7 +21,7 @@
       temporary
       class="hidden-md-and-up"
     >
-      <v-row align="center" class="ma-0" justify="center">
+      <v-row align="center" class="ma-0" justify="center" style="cursor: pointer;" @click="goToProfile">
         <v-list-item-avatar>
           <v-icon large dark>
             mdi-account-circle
@@ -30,7 +30,7 @@
 
         <v-col>
           <v-list-item-content v-if="user">
-            <v-list-item-title>{{ $t('buttons.username') }}</v-list-item-title>
+            <v-list-item-title>{{ username || $t('buttons.username') }}</v-list-item-title>
             <div class="caption">
               {{ user.email }}
             </div>
@@ -186,7 +186,7 @@
           <v-list-item dense style="font-size: 14px; font-family: Roboto, sans-serif" class="px-2">
             <v-list-item-content>
               <v-list-item-title style="font-weight: bold">
-                {{ $t('buttons.username') }}
+                {{ username || $t('buttons.username') }}
               </v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -222,6 +222,8 @@
 import LocaleChanger from '@/components/atoms/LocaleChanger.vue'
 import NotificationBtn from '../atoms/NotificationButton.vue'
 import HelpButton from '../atoms/HelpButton.vue'
+import UserController from '@/controllers/UserController';
+import { getAuth } from 'firebase/auth';
 
 export default {
   components: {
@@ -234,6 +236,7 @@ export default {
     menu: false,
     item: 0,
     isManager: false,
+    username: null,
   }),
   computed: {
     user() {
@@ -378,7 +381,35 @@ export default {
       },
     },
   },
+  
+  async created() {
+    await this.fetchUsername();
+  },
+
   methods: {
+    async fetchUsername() {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          const userController = new UserController();
+          const userDoc = await userController.getById(user.uid);
+
+          if (userDoc) {
+            this.username = userDoc.username || null
+          } else {
+            console.error('User document not found in Firestore');
+          }
+        } else {
+          console.error('No user is currently signed in');
+        } 
+        
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        this.$toast.error('Failed to load profile data');
+      }
+    },
     goTo(route) {
       if (route.includes('/testview')) window.open(route)
       else {
@@ -398,7 +429,9 @@ export default {
     },
     goToProfile() {
       console.log('profile')
-      this.$router.push('/profile')
+      if (this.$route.path !== '/profile') {
+        this.$router.push('/profile').catch(() => {});
+      }
     },
   },
 }
