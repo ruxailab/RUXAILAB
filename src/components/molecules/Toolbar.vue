@@ -231,13 +231,15 @@ export default {
     LocaleChanger,
     HelpButton,
   },
-  data: () => ({
-    drawer: false,
-    menu: false,
-    item: 0,
-    isManager: false,
-    username: null,
-  }),
+  data() {
+    return {
+      drawer: false,
+      menu: false,
+      item: 0,
+      isManager: false,
+      username: null,
+    }
+  },
   computed: {
     user() {
       return this.$store.getters.user
@@ -380,10 +382,23 @@ export default {
         }
       },
     },
+    user: {
+      immediate: true,
+      handler(newUser) {
+        if (newUser) {
+          this.fetchUsername();
+        } else {
+          this.username = null; // Clear the username when the user logs out
+        }
+      },
+    },
   },
   
-  async created() {
-    await this.fetchUsername();
+  mounted() {
+    if (this.user) {
+      console.log(this.username)
+      this.fetchUsername();
+    }
   },
 
   methods: {
@@ -397,14 +412,13 @@ export default {
           const userDoc = await userController.getById(user.uid);
 
           if (userDoc) {
-            this.username = userDoc.username || null
+            this.username = userDoc.username || null;
           } else {
             console.error('User document not found in Firestore');
           }
         } else {
           console.error('No user is currently signed in');
         } 
-        
       } catch (error) {
         console.error('Error fetching profile:', error);
         this.$toast.error('Failed to load profile data');
