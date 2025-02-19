@@ -1,7 +1,6 @@
-// imports
-
 import Controller from '@/controllers/BaseController'
 import User from '@/models/UserModel'
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -11,27 +10,59 @@ export default class UserController extends Controller {
   async create(payload) {
     const user = new User({
       email: payload.email,
+      username: payload.username || '',
+      contactNo: payload.contactNo || '',
+      country: payload.country || '',
       accessLevel: 1,
       myTests: {},
       myAnswers: {},
       notifications: [],
-      inbox:[],
-    }).toFirestore()
-    return super.set(COLLECTION, payload.id, user)
+      inbox: [],
+    }).toFirestore();
+    return super.set(COLLECTION, payload.id, user);
   }
 
   async update(docId, payload) {
-    return super.update(COLLECTION, docId, payload)
+    return super.update(COLLECTION, docId, payload);
   }
 
   async readAll() {
-    const docs = await super.readAll(COLLECTION)
-    return docs.map((doc) => new User(doc))
+    const docs = await super.readAll(COLLECTION);
+    return docs.map((doc) => new User(doc));
   }
 
   async getById(docId) {
-    const res = await super.readOne(COLLECTION, docId)
-    return new User.toUser(Object.assign({ id: res.id }, res.data()))
+    const res = await super.readOne(COLLECTION, docId);
+    return new User(Object.assign({ id: res.id }, res.data()));
+  }
+
+  async updateProfile(docId, payload) {
+    const userData = {
+      username: payload.username,
+      contactNo: payload.contactNo,
+      country: payload.country,
+    };
+    return super.update(COLLECTION, docId, userData);
+  }
+
+  async deleteUser(docId) {
+    return super.delete(COLLECTION, docId);
+  }
+
+  async changePassword(user, currentPassword, newPassword) {
+    try {
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, newPassword);
+      console.log('Password updated successfully!');
+    } catch (error) {
+      throw new Error('Failed to change password: ' + error.message);
+    }
+  }
+
+  async reauthenticateUser(user, email, password) {
+    const credential = EmailAuthProvider.credential(email, password);
+    await reauthenticateWithCredential(user, credential);
   }
 
   async addNotification(payload) {
@@ -47,24 +78,24 @@ export default class UserController extends Controller {
 
     // Find notification in notifications array
     const notificationIndex = userToUpdate.notifications.findIndex(
-        (n) => n.createdDate === payload.notification.createdDate,
+      (n) => n.createdDate === payload.notification.createdDate,
     );
 
     // Find notification in inbox array
     const inboxIndex = userToUpdate.inbox.findIndex(
-        (n) => n.createdDate === payload.notification.createdDate,
+      (n) => n.createdDate === payload.notification.createdDate,
     );
 
     // Update notifications array
     if (notificationIndex !== -1) {
-        userToUpdate.notifications[notificationIndex].read = true;
-        userToUpdate.notifications.splice(notificationIndex, 1);
+      userToUpdate.notifications[notificationIndex].read = true;
+      userToUpdate.notifications.splice(notificationIndex, 1);
     }
 
     // Update inbox array
     if (inboxIndex !== -1) {
-        userToUpdate.inbox[inboxIndex].read = true;
-        userToUpdate.inbox[inboxIndex].readAt = Date.now();
+      userToUpdate.inbox[inboxIndex].read = true;
+      userToUpdate.inbox[inboxIndex].readAt = Date.now();
     }
 
     if (notificationIndex !== -1 || inboxIndex !== -1) {
@@ -73,11 +104,11 @@ export default class UserController extends Controller {
             userToUpdate.id,
             userToUpdate.toFirestore(),
         );
-        return updatedUser;
+      return updatedUser;
     } else {
-        throw new Error('Notification not found.');
+      throw new Error('Notification not found.');
     }
-}
+  }
 
   async removeNotificationsForTest(testId, cooperators) {
     try {
