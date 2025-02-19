@@ -104,7 +104,8 @@ export default {
       (v) => !!v || i18n.t('errors.passwordRequired'),
       (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
       (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
-      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
+      (v) =>
+        /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
     ],
     confirmpassword: '',
     showPassword: false,
@@ -147,6 +148,7 @@ export default {
   background-color: #e8eaf2;
   height: 100vh;
   align-content: center;
+  padding: 30px; 
 }
 .card-title {
   font-style: normal;
@@ -155,6 +157,7 @@ export default {
   line-height: 56px;
   margin-left: 12px;
   margin-bottom: 20px;
+  text-align: center; 
 }
 .divider {
   margin-bottom: 40px;
@@ -165,5 +168,11 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
+}
+.v-form {
+  padding: 0 20px;
+}
+.v-card-actions {
+  margin: 0 20px;
 }
 </style>
