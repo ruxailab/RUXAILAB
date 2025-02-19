@@ -4,7 +4,6 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import 'vue-toastification/dist/index.css'
 
 export default {
   data() {
@@ -29,9 +28,7 @@ export default {
           (newError.message !== this.previousErrorMessage ||
             newError.errorCode !== this.previousErrorCode)
         ) {
-          const toast = useToast()
-          toast.error(`${newError.errorCode}: ${newError.message}`)
-
+          this.$toast.error(`${newError.errorCode}: ${newError.message}`)
           this.previousErrorMessage = newError.message
           this.previousErrorCode = newError.errorCode
           this.clearError()
