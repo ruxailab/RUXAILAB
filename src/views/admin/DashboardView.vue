@@ -277,8 +277,8 @@ export default {
 
     filteredTests() {
       return this.tests?.filter(test => {
-        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      }) ?? this.tests
+        return test.testTitle.toLowerCase().includes(this.search.toLowerCase());
+      }) ?? this.tests;
     },
 
     templates() {
@@ -399,7 +399,7 @@ export default {
         if (this.subIndex === 0) {
           this.$router.push({
             name: 'ManagerView',
-            params: { id: test.testDocId },
+            params: { id: test.id },
           })
         }
         // if it is the shared with me tests
@@ -407,12 +407,12 @@ export default {
           if (test.accessLevel >= 2) {
             this.$router.push({
               name: 'TestView',
-              params: { id: test.testDocId },
+              params: { id: test.id },
             })
           } else {
             this.$router.push({
               name: 'ManagerView',
-              params: { id: test.testDocId },
+              params: { id: test.id },
             })
           }
         } else if (this.subIndex === 2) {

@@ -3,10 +3,10 @@
  * @module Test
  */
 
-// import TestController
-import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, getDoc, deleteDoc, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
+import { getAuth } from 'firebase/auth'
 
 const testController = new TestController()
 
@@ -181,18 +181,21 @@ export default {
     },
   },
   actions: {
-    async createNewTest({ commit }, payload) {
-      commit('setLoading', true)
-
+    async createNewTest({ commit, dispatch }, payload) {
+      commit('setLoading', true);
+    
       try {
-        const res = await testController.createTest(payload)
-        commit('SET_TEST', res.id)
-        return res.id
+        const res = await testController.createTest(payload);
+        commit('SET_TEST', res.id);
+        
+        await dispatch('getTestsAdminByUser');
+        
+        return res.id;
       } catch (err) {
-        commit('set Error', true)
-        return null
+        commit('setError', true);
+        return null;
       } finally {
-        commit('setLoading', false)
+        commit('setLoading', false);
       }
     },
     async duplicateTest({ commit }, payload) {
@@ -320,21 +323,35 @@ export default {
       }
     },
 
-    async getTestsAdminByUser({ commit, rootState }) {
+    async getTestsAdminByUser({ commit }) {
+      commit('setLoading', true);
+    
       try {
-        commit('setLoading', true)
-        const tests = []
-
-        const testsEntries = Object.entries(rootState.Auth.user.myTests)
-        testsEntries.forEach((a) => {
-          tests.push(a[1])
-        })
-        commit('SET_TESTS', tests)
-      } catch (e) {
-        console.error('Error in get tests by admin', e)
-        commit('setError', true)
+        const auth = getAuth();
+        const user = auth.currentUser;
+    
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+    
+        const userId = user.uid;
+    
+        // Query the tests collection for tests where testAdmin.userDocId matches the current user's ID
+        const testsCollectionRef = collection(db, 'tests');
+        const q = query(testsCollectionRef, where('testAdmin.userDocId', '==', userId));
+        const querySnapshot = await getDocs(q);
+    
+        const tests = [];
+        querySnapshot.forEach((doc) => {
+          tests.push({ id: doc.id, ...doc.data() });
+        });
+    
+        commit('SET_TESTS', tests);
+      } catch (error) {
+        console.error('Error in get tests by admin:', error);
+        commit('setError', true);
       } finally {
-        commit('setLoading', false)
+        commit('setLoading', false);
       }
     },
 
