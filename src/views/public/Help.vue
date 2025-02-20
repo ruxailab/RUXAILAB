@@ -32,13 +32,24 @@
       <v-row>
         <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
           <v-list outlined rounded>
-            <v-list-item v-for="(item, index) in itemsLeft" :key="index">
+            <v-list-item
+              v-for="(item, index) in itemsLeft"
+              :key="index"
+              @click="toggleCollapse(index)"
+              :class="{ 'item-expanded': !item.isCollapsed }"
+              role="button"
+              tabindex="0"
+            >
               <v-list-item-content>
-                <v-list-item-title class="title" @click="toggleCollapse(index)">
-                  <v-icon v-if="!item.isCollapsed" small>
+                <v-list-item-title class="title">
+                  <v-icon
+                    v-if="!item.isCollapsed"
+                    small
+                    class="transition-icon"
+                  >
                     mdi-chevron-down
                   </v-icon>
-                  <v-icon v-else small>
+                  <v-icon v-else small class="transition-icon">
                     mdi-chevron-right
                   </v-icon>
                   {{ item.title }}
@@ -74,16 +85,24 @@
 
         <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
           <v-list outlined rounded>
-            <v-list-item v-for="(item, index) in itemsRight" :key="index">
+            <v-list-item
+              v-for="(item, index) in itemsRight"
+              :key="index"
+              @click="toggleCollapse(index + 5)"
+              :class="{ 'item-expanded': !item.isCollapsed }"
+              role="button"
+              tabindex="0"
+            >
               <v-list-item-content>
-                <v-list-item-title
-                  class="title"
-                  @click="toggleCollapse(index + 5)"
-                >
-                  <v-icon v-if="!item.isCollapsed" small>
+                <v-list-item-title class="title">
+                  <v-icon
+                    v-if="!item.isCollapsed"
+                    small
+                    class="transition-icon"
+                  >
                     mdi-chevron-down
                   </v-icon>
-                  <v-icon v-else small>
+                  <v-icon v-else small class="transition-icon">
                     mdi-chevron-right
                   </v-icon>
                   {{ item.title }}
@@ -221,7 +240,10 @@ export default {
 
 <style>
 .v-list-item {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   margin: 12px 0;
   border-radius: 16px !important;
   position: relative;
@@ -244,7 +266,11 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.2) 100%);
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -262,39 +288,44 @@ export default {
 }
 
 .subtitle-1 {
-  line-height: 1.8;
+  line-height: 0.5;
   opacity: 0;
-  animation: fadeIn 0.6s ease forwards;
+  animation: slideUpFade 0.6s ease forwards 0.2s;
   color: rgba(0, 0, 0, 0.87);
   font-weight: 500;
   letter-spacing: 0.015em;
-  padding: 8px 0;
+  padding: 16px 0;
+  font-size: 1.1rem;
+  margin: 0 auto;
+  max-width: 800px;
 }
 
 .v-list-item-title {
-  cursor: pointer;
   padding: 16px 0;
   transition: all 0.3s ease;
   font-weight: 600;
   letter-spacing: 0.01em;
-  font-size: 1.1rem;
+  font-size: 1.25rem; /* Increased from 1.1rem */
   color: #1565c0;
+  line-height: 1.4;
 }
 
 .v-list-item-title:hover {
   color: #1976d2;
-  transform: translateX(8px);
+  transform: none;
 }
 
 .v-expand-transition-enter-active,
 .v-expand-transition-leave-active {
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 2000px; /* Adjust based on your content */
 }
 
 .v-expand-transition-enter,
 .v-expand-transition-leave-to {
   opacity: 0;
-  transform: translateY(-15px);
+  max-height: 0;
+  transform: translateY(-10px);
 }
 
 .display-3,
@@ -306,8 +337,18 @@ export default {
   font-weight: 700;
 }
 
+.display-3 {
+  font-size: 3.5rem !important;
+  line-height: 1.2;
+}
+
+.display-2 {
+  font-size: 2.5rem !important;
+  line-height: 1.3;
+}
+
 .v-icon {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
   font-size: 1.5rem;
   color: #1565c0;
   margin-right: 8px;
@@ -344,9 +385,26 @@ export default {
 }
 
 @keyframes subtle-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 html {
@@ -359,16 +417,7 @@ html {
 }
 
 .v-list-item-title::after {
-  content: '';
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  background-color: #1565c0;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
+  display: none;
 }
 
 @keyframes pulse {
@@ -386,5 +435,83 @@ html {
 .v-list-item:focus-visible {
   outline: 3px solid #1565c0;
   outline-offset: 2px;
+}
+
+.item-expanded {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  border-color: rgba(21, 101, 192, 0.5);
+  background: linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+}
+
+.item-expanded .transition-icon {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 960px) {
+  .v-list-item-title {
+    font-size: 1.15rem;
+  }
+
+  .subtitle-1 {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .display-3 {
+    font-size: 2.75rem !important;
+  }
+
+  .display-2 {
+    font-size: 2rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .v-list-item {
+    margin: 8px 0;
+    padding: 8px;
+  }
+
+  .v-list-item-title {
+    font-size: 1.1rem;
+    padding: 12px 0;
+  }
+
+  .subtitle-1 {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 12px 0;
+  }
+
+  .display-3 {
+    font-size: 2.25rem !important;
+  }
+
+  .display-2 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Add transition for images */
+.v-img {
+  opacity: 0;
+  animation: fadeScale 0.6s ease forwards 0.3s;
+}
+
+@keyframes fadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
