@@ -512,6 +512,25 @@
     "preForm": "Pré-Formulário",
     "postForm": "Pós-Formulário"
   },
+  "Createblank": {
+    "title": "Que tipo de teste você está procurando iniciar?",
+    "test": "Teste",
+    "testType_1": {
+      "testTitle": "Heurística de Usabilidade",
+      "text": ["Porcentagem de Usabilidade", "Relatório Final em PDF", "Convide especialistas para avaliar sua aplicação"]
+    },
+    "testType_2": {
+      "testTitle": "Usuário de Usabilidade",
+      "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
+    }
+  },
+  "TestDialog": {
+    "heading": "Criação de Teste",
+    "sub-heading": "Adicione um nome ao seu teste!",
+    "test-name": "Nome do Teste",
+    "test-description": "Descrição do Teste",
+    "test-label": "Teste público para todos os usuários"
+  },
   "help": {
     "createtest": "Como criar um teste?",
     "createtestanswer": "Para criar um teste, clique no ícone de mais e selecione Teste Heurístico. Em seguida, especifique os detalhes do seu projeto. Por fim, acesse a página do gerenciador dedicada.",

@@ -112,19 +112,101 @@
             </v-form>
           </v-card-text>
         </v-card>
+      </div>
 
-        <!-- Edit Details and Delete Account Buttons -->
-        <div class="mt-4 d-flex justify-space-between flex-wrap">
-          <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
-            <v-icon left>mdi-pencil</v-icon>
-            {{ $t('PROFILE.editDetails') }}
-          </v-btn>
-          <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
-            <v-icon left>mdi-delete</v-icon>
-            {{ $t('buttons.deleteAccount') }}
-          </v-btn>
-        </div>
-      </v-card>
+      <!-- Right Section: Tabs and Content -->
+      <div class="flex-grow-1 w-full">
+        <v-card flat class="w-full">
+          <!-- Tabs Section -->
+          <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
+            <v-tab>
+              <v-icon small class="mr-2">mdi-account</v-icon>
+              {{ $t('PROFILE.account') }}
+            </v-tab>
+          </v-tabs>
+
+          <!-- Change Password Section -->
+          <v-card class="password-card mt-4">
+            <v-card-title>{{ $t('PROFILE.changePassword') }}</v-card-title>
+            <v-card-text>
+              <v-alert type="warning" colored-border border="left" class="mb-4">
+                <div class="text-h6 font-weight-medium">{{ $t('PROFILE.passwordRequirements') }}</div>
+                <div class="text-body-2">{{ $t('PROFILE.passwordMinimumRequirements') }}</div>
+              </v-alert>
+
+              <v-form ref="passwordForm" v-model="valid" lazy-validation>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('PROFILE.newPassword')"
+                      :type="showPassword ? 'text' : 'password'" outlined dense required
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showPassword = !showPassword"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
+                      :label="$t('PROFILE.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'" outlined
+                      dense required :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showConfirmPassword = !showConfirmPassword"></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-btn color="primary" class="mt-4" @click="changePassword" :disabled="!valid">
+                  {{ $t('PROFILE.changePassword') }}
+                </v-btn>
+              </v-form>
+            </v-card-text>
+          </v-card>
+
+          <!-- Edit Details and Delete Account Buttons -->
+          <div class="mt-4 d-flex justify-space-between flex-wrap">
+            <v-btn color="primary" @click="openEditProfileDialog" class="mb-2">
+              <v-icon left>mdi-pencil</v-icon>
+              {{ $t('PROFILE.editDetails') }}
+            </v-btn>
+            <v-btn color="error" @click="deleteAccountDialog = true" class="mb-2">
+              <v-icon left>mdi-delete</v-icon>
+              {{ $t('buttons.deleteAccount') }}
+            </v-btn>
+          </div>
+        </v-card>
+      </div>
+
+      <!-- Edit Details Dialog -->
+      <v-dialog v-model="editProfileDialog" max-width="600">
+        <v-card>
+          <v-card-title>{{ $t('PROFILE.editProfile') }}</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-text-field v-model="editProfileData.username" :label="$t('buttons.username')"></v-text-field>
+              <v-text-field v-model="editProfileData.contactNo" :label="$t('SIGNIN.contact')"></v-text-field>
+              <v-text-field v-model="editProfileData.country" :label="$t('PROFILE.country')"></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <div class="mb-2">
+              <v-btn color="primary" class="mr-2" @click="saveProfile">{{ $t('PROFILE.saveChanges') }}</v-btn>
+              <v-btn color="error" @click="editProfileDialog = false">{{ $t('buttons.cancel') }}</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Delete Account Dialog -->
+      <v-dialog v-model="deleteAccountDialog" max-width="500">
+        <v-card>
+          <v-card-title>{{ $t('PROFILE.deleteAccountTitle') }}</v-card-title>
+          <v-card-text>
+            {{ $t('PROFILE.deleteAccountConfirm') }}<br>
+            {{ $t('PROFILE.deleteAccountWarning') }}
+          </v-card-text>
+          <v-card-actions>
+            <div class="mb-2">
+              <v-btn color="error" class="mr-2" @click="deleteAccount">{{ $t('buttons.deleteAccount') }}</v-btn>
+              <v-btn color="primary" @click="deleteAccountDialog = false">{{ $t('buttons.cancel') }}</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
 
     <!-- Edit Details Dialog -->
@@ -184,23 +266,8 @@
 </template>
 
 <script>
-import {
-  getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updatePassword,
-} from 'firebase/auth'
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  deleteDoc,
-  getDoc,
-  updateDoc
-} from 'firebase/firestore'
+import { getAuth } from 'firebase/auth';
+import UserController from '@/controllers/UserController';
 
 export default {
   name: 'SecurityProfile',
@@ -211,12 +278,12 @@ export default {
         profileImage: '',
         username: null,
         contactNo: null,
-        country: null
+        country: null,
       },
       editProfileData: {
         username: null,
         contactNo: null,
-        country: null
+        country: null,
       },
       displayMissingInfo: this.$t('PROFILE.infoMissing'),
       loading: true,
@@ -230,37 +297,37 @@ export default {
         v => !!v || this.$t('PROFILE.passwordRequired'),
         v => v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
         v => /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
-        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('PROFILE.passwordSymbol')
+        v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('PROFILE.passwordSymbol'),
       ],
       confirmPasswordRules: [
         v => !!v || this.$t('PROFILE.confirmPasswordRequired'),
-        v => v === this.newPassword || this.$t('PROFILE.passwordsMatch')
+        v => v === this.newPassword || this.$t('PROFILE.passwordsMatch'),
       ],
       editProfileDialog: false,
       deleteAccountDialog: false,
-      isSmallScreen: false
-    }
-  },
-
-  async created() {
-    await this.fetchUserProfile()
-    this.checkScreenSize()
-    window.addEventListener('resize', this.checkScreenSize)
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkScreenSize)
+      isSmallScreen: false,
+    };
   },
 
   computed: {
     user() {
-      return this.$store.getters.user || { email: '' }
+      return this.$store.getters.user || { email: '' };
     },
+  },
+
+  async created() {
+    await this.fetchUserProfile();
+    this.checkScreenSize();
+    window.addEventListener('resize', this.checkScreenSize);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkScreenSize);
   },
 
   methods: {
     checkScreenSize() {
-      this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
+      this.isSmallScreen = window.innerWidth < 960;
     },
 
     async fetchUserProfile() {
@@ -274,18 +341,22 @@ export default {
           if (userDoc.exists()) {
             const data = userDoc.data()
             this.userprofile = {
-              profileImage: data.profileImage || '',
-              username: data.username || null,
-              contactNo: data.contactNo || null,
-              country: data.country || null
-            }
+              profileImage: userDoc.profileImage || '',
+              username: userDoc.username || null,
+              contactNo: userDoc.contactNo || null,
+              country: userDoc.country || null,
+            };
+          } else {
+            console.error('User document not found in Firestore');
           }
+        } else {
+          console.error('No user is currently signed in');
         }
       } catch (error) {
-        console.error('Error fetching profile:', error)
-        this.$toast.error('Failed to load profile data')
+        console.error('Error fetching profile:', error);
+        this.$toast.error('Failed to load profile data');
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 
@@ -293,9 +364,9 @@ export default {
       this.editProfileData = {
         username: this.userprofile.username,
         contactNo: this.userprofile.contactNo,
-        country: this.userprofile.country
-      }
-      this.editProfileDialog = true
+        country: this.userprofile.country,
+      };
+      this.editProfileDialog = true;
     },
 
     async saveProfile() {
@@ -303,33 +374,36 @@ export default {
         const auth = getAuth()
         const user = auth.currentUser
         if (user) {
-          const db = getFirestore()
-          const userDocRef = doc(db, 'users', user.uid)
-          await updateDoc(userDocRef, {
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country
-          })
+          const userController = new UserController();
+          await userController.updateProfile(user.uid, this.editProfileData);
+
           this.userprofile = {
             ...this.userprofile,
             username: this.editProfileData.username,
             contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country
-          }
-          this.$toast.success('Profile updated successfully')
-          this.editProfileDialog = false
+            country: this.editProfileData.country,
+          };
+          this.$toast.success('Profile updated successfully');
+          this.editProfileDialog = false;
         }
+        console.log('Updated profile data:', this.editProfileData);
       } catch (error) {
-        console.error('Error updating profile:', error)
-        this.$toast.error('Failed to update profile')
+        console.error('Error updating profile:', error);
+        this.$toast.error('Failed to update profile');
       }
     },
 
     async changePassword() {
       if (this.$refs.passwordForm.validate()) {
         try {
-          const auth = getAuth()
-          const user = auth.currentUser
+          const auth = getAuth();
+          const user = auth.currentUser;
+
+          const currentPassword = prompt('Please enter your current password to confirm the change:');
+          if (!currentPassword) {
+            alert('Password is required.');
+            return;
+          }
 
           if (user) {
             await updatePassword(user, this.newPassword)
@@ -339,7 +413,7 @@ export default {
             this.$refs.passwordForm.reset()
           }
         } catch (error) {
-          this.$toast.error('Failed to change password: ' + error.message)
+          this.$toast.error('Failed to change password: ' + error.message);
         }
       }
     },
@@ -400,10 +474,18 @@ export default {
       })
     },
   },
-}
+};
 </script>
 
 <style scoped>
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999; /* Ensure it's above other content */
+}
+
 .container {
   display: flex;
   justify-content: space-between;
