@@ -5,17 +5,20 @@
       <v-card class="profile-card h-full" elevation="0">
         <v-card-text class="text-center">
           <v-avatar size="128" class="mb-4">
-            <v-img :src="userprofile.profileImage || defaultImage" :alt="$t('PROFILE.title')" />
+            <v-img :src="userprofile.profileImage || 'https://picsum.photos/id/1005/400/300'" :alt="$t('PROFILE.title')" />
           </v-avatar>
-          <h2 class="text-h6 mb-2">{{ userprofile.username || 'USER' }}</h2>
-          <v-chip small class="mb-6" color="grey lighten-3">{{ $t('PROFILE.admin') }}</v-chip>
-
+          <h2 class="text-h6 mb-2">
+            {{ user.displayName || 'USER' }}
+          </h2>
+          <v-chip small class="mb-6" color="grey lighten-3">
+            {{ $t('PROFILE.admin') }}
+          </v-chip>
           <div class="text-left">
             <v-list dense>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('buttons.username') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.username }">
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.username}">
                     {{ userprofile.username || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -24,7 +27,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('SIGNIN.email') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !user.email }">
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !user.email}">
                     {{ user.email || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -33,7 +36,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('SIGNIN.contact') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.contactNo }">
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.contactNo}">
                     {{ userprofile.contactNo || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -42,7 +45,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle>{{ $t('PROFILE.country') }}:</v-list-item-subtitle>
-                  <v-list-item-title v-if="!loading" :class="{ 'missing-info': !userprofile.country }">
+                  <v-list-item-title v-if="!loading" :class="{'missing-info': !userprofile.country}">
                     {{ userprofile.country || $t('PROFILE.missingInfo') }}
                   </v-list-item-title>
                 </v-list-item-content>
@@ -57,7 +60,7 @@
     <div class="flex-grow-1 w-full">
       <v-card flat class="w-full">
         <!-- Tabs Section -->
-        <v-tabs background-color="transparent" color="primary" v-if="!isSmallScreen">
+        <v-tabs v-if="!isSmallScreen" background-color="transparent" color="primary">
           <v-tab>
             <v-icon small class="mr-2">mdi-account</v-icon>
             {{ $t('PROFILE.account') }}
@@ -76,16 +79,30 @@
             <v-form ref="passwordForm" v-model="valid" lazy-validation>
               <v-row>
                 <v-col cols="12" md="6">
-                  <v-text-field v-model="newPassword" :rules="passwordRules" :label="$t('PROFILE.newPassword')"
-                    :type="showPassword ? 'text' : 'password'" outlined dense required
+                  <v-text-field
+                    v-model="newPassword"
+                    :rules="passwordRules"
+                    :label="$t('PROFILE.newPassword')"
+                    :type="showPassword ? 'text' : 'password'"
+                    outlined
+                    dense
+                    required
                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showPassword = !showPassword"></v-text-field>
+                    @click:append="showPassword = !showPassword"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field v-model="confirmPassword" :rules="confirmPasswordRules"
-                    :label="$t('PROFILE.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'" outlined
-                    dense required :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    @click:append="showConfirmPassword = !showConfirmPassword"></v-text-field>
+                  <v-text-field
+                    v-model="confirmPassword"
+                    :rules="confirmPasswordRules"
+                    :label="$t('PROFILE.confirmNewPassword')"
+                    :type="showConfirmPassword ? 'text' : 'password'"
+                    outlined
+                    dense
+                    required
+                    :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showConfirmPassword = !showConfirmPassword"  
+                  ></v-text-field>
                 </v-col>
               </v-row>
 
@@ -135,14 +152,31 @@
       <v-card>
         <v-card-title>{{ $t('PROFILE.deleteAccountTitle') }}</v-card-title>
         <v-card-text>
-          {{ $t('PROFILE.deleteAccountConfirm') }}<br>
-          {{ $t('PROFILE.deleteAccountWarning') }}
+          <p>{{ $t('PROFILE.deleteAccountConfirm') }}</p>
+          <p class="red--text font-weight-bold">{{ $t('PROFILE.deleteAccountWarning') }}</p>
+
+          <!-- Password Input Field -->
+          <v-text-field
+            v-model="password"
+            :type="showPass ? 'text' : 'password'"
+            outlined
+            dense
+            required
+            prepend-inner-icon="mdi-lock"
+            :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="showPass = !showPass"  
+          ></v-text-field>
+
         </v-card-text>
-        <v-card-actions>
-          <div class="mb-2">
-            <v-btn color="error" class="mr-2" @click="deleteAccount">{{ $t('buttons.deleteAccount') }}</v-btn>
-            <v-btn color="primary" @click="deleteAccountDialog = false">{{ $t('buttons.cancel') }}</v-btn>
-          </div>
+
+        <v-card-actions class="justify-end">
+          <v-btn color="grey" class="mr-2" @click="deleteAccountDialog = false">
+              {{ $t('buttons.cancel') }}
+          </v-btn>
+      
+          <v-btn color="red" :loading="loading" @click="deleteAccount">
+            {{ $t('buttons.deleteAccount') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -170,7 +204,7 @@ import {
 
 export default {
   name: 'SecurityProfile',
-
+  
   data() {
     return {
       userprofile: {
@@ -184,11 +218,11 @@ export default {
         contactNo: null,
         country: null
       },
-      defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
       displayMissingInfo: this.$t('PROFILE.infoMissing'),
       loading: true,
       valid: false,
       showPassword: false,
+      showPass: false,
       showConfirmPassword: false,
       newPassword: '',
       confirmPassword: '',
@@ -233,11 +267,10 @@ export default {
       try {
         const auth = getAuth()
         const user = auth.currentUser
-
+        
         if (user) {
           const db = getFirestore()
           const userDoc = await getDoc(doc(db, 'users', user.uid))
-
           if (userDoc.exists()) {
             const data = userDoc.data()
             this.userprofile = {
@@ -269,7 +302,6 @@ export default {
       try {
         const auth = getAuth()
         const user = auth.currentUser
-
         if (user) {
           const db = getFirestore()
           const userDocRef = doc(db, 'users', user.uid)
@@ -302,7 +334,6 @@ export default {
           if (user) {
             await updatePassword(user, this.newPassword)
             this.$toast.success('Password changed successfully')
-
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
@@ -314,64 +345,58 @@ export default {
     },
 
     async deleteAccount() {
+      this.loading = true
       const auth = getAuth()
       const user = auth.currentUser
 
-      if (user) {
-        try {
-          const email = user.email
-          const password = prompt('Please enter your password to confirm deletion:')
-          if (!password) {
-            alert('Password is required to delete your account.')
-            return
-          }
+      if (!user || !this.password) {
+        alert('Password is required to delete your account.')
+        this.loading = false
+        return
+      }
 
-          const credential = EmailAuthProvider.credential(email, password)
-          await reauthenticateWithCredential(user, credential)
+      try {
+        const credential = EmailAuthProvider.credential(user.email, this.password)
+        await reauthenticateWithCredential(user, credential)
 
-          const db = getFirestore()
-          const userDocId = user.uid
+        const db = getFirestore()
+        const userDocId = user.uid
 
-          const testsCollectionRef = collection(db, 'tests')
-          const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId))
-          const testsSnapshot = await getDocs(testsQuery)
+        const testsCollectionRef = collection(db, 'tests')
+        const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId))
+        const testsSnapshot = await getDocs(testsQuery)
 
-          if (!testsSnapshot.empty) {
-            for (const testDoc of testsSnapshot.docs) {
-              const testData = testDoc.data()
-              const answersDocId = testData.answersDocId
+        if (!testsSnapshot.empty) {
+          for (const testDoc of testsSnapshot.docs) {
+            const testData = testDoc.data()
+            const answersDocId = testData.answersDocId
 
-              if (answersDocId) {
-                const answersDocRef = doc(db, 'answers', answersDocId)
-                await deleteDoc(answersDocRef)
-              }
-
-              const testDocRef = doc(db, 'tests', testDoc.id)
-              await deleteDoc(testDocRef)
+            if (answersDocId) {
+              await deleteDoc(doc(db, 'answers', answersDocId))
             }
+            await deleteDoc(doc(db, 'tests', testDoc.id))
           }
-
-          const userDocRef = doc(db, 'users', userDocId)
-          await deleteDoc(userDocRef)
-
-          await user.delete()
-          console.log('Account and related data deleted successfully.')
-
-          this.signOut()
-        } catch (error) {
-          console.error('Error during account deletion:', error.message)
-          alert('Failed to delete account. Please try again.')
         }
-      } else {
-        console.error('No user is signed in.')
+
+        await deleteDoc(doc(db, 'users', userDocId))
+
+        await user.delete()
+        console.log('Account and related data deleted successfully.')
+
+        this.signOut()
+      } catch (error) {
+        console.error('Error during account deletion:', error.message)
+        alert('Failed to delete account. Please check your password and try again.')
+      } finally {
+        this.loading = false
+        this.deleteAccountDialog = false
+        this.password = ''
       }
     },
 
     async signOut() {
       this.$store.dispatch('logout').then(() => {
-        this.$router
-          .push('/')
-          .catch((error) => { console.log(error) })
+        this.$router.push('/').catch((error) => console.log(error))
       })
     },
   },
@@ -421,7 +446,7 @@ export default {
 }
 
 .missing-info {
-  color: #d84646 !important;
+  color: #ff5252 !important;
   font-style: italic;
 }
 
