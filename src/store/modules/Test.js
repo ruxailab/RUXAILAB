@@ -204,7 +204,7 @@ export default {
       try {
         await testController.duplicateTest(payload)
       } catch (err) {
-        commit('set Error', true)
+        commit('setError', true)
         return null
       } finally {
         commit('setLoading', false)
@@ -223,7 +223,7 @@ export default {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
       } catch {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -275,7 +275,7 @@ export default {
         commit('SET_TEST', res)
         return res
       } catch {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -287,7 +287,7 @@ export default {
         const res = await testController.getAllTests()
         commit('SET_TESTS', res)
       } catch {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -305,7 +305,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -317,7 +317,7 @@ export default {
         const res = await testController.getPublicTests()
         commit('SET_TESTS', res)
       } catch {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
