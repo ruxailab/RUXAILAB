@@ -498,7 +498,7 @@ export default {
 }
 
 .card-container {
-  width: 70%;
+  width: 80%;
 }
 @media screen and (max-width: 960px) {
   .presentation-text {
