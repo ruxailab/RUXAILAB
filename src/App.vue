@@ -2,12 +2,12 @@
   <v-app>
     <Toolbar />
     <GlobalErrorHandler />
-    <v-main>
+    <v-main> 
       <v-container fluid class="pa-0">
         <router-view />
       </v-container>
     </v-main>
-  </v-app>
+  </v-app>                
 </template>
 
 <script>

@@ -7,7 +7,7 @@ import VueI18n from 'vue-i18n'
 import en from '@/locales/en.json'
 import store from '@/store/index'
 import Toast from 'vue-toastification'
-
+import '@fortawesome/fontawesome-free/css/all.css'; 
 export * from '@testing-library/vue'
 
 Vue.use(Vuetify)
