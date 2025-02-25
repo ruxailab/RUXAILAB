@@ -515,6 +515,25 @@
     "preForm": "Pre Form",
     "postForm": "Post Form"
   },
+  "Createblank": {
+    "title": "What kind of test are you looking to start?",
+    "test": "Test",
+    "testType_1": {
+      "testTitle": "Usability Heuristic",
+      "text": ["Usability Percentage", "Final Report PDF", "Invite specialists to evaluate your application"]
+    },
+    "testType_2": {
+      "testTitle": "Usability User",
+      "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
+    }
+  },
+  "TestDialog": {
+    "heading": "Test Creation",
+    "sub-heading": "Add a name to your test!",
+    "test-name": "Test Name",
+    "test-description": "Test Description",
+    "test-label": "Test public to all users"
+  },
   "help": {
     "createtest": "How do I create a test?",
     "createtestanswer": "To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.",

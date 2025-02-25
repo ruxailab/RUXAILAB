@@ -81,21 +81,29 @@
       <!-- Start Screen -->
       <v-row
         v-if="test && start"
-        class="background background-img pa-0 ma-0"
-        align="center"
+        class="background align-center justify-center pa-0 ma-0"
       >
-        <v-col cols="6" class="ml-5">
-          <h1 class="titleView pb-1">
+        <v-col  cols="12" md="6" sm="12" xs="12" class="ml-md-3 mr-md-3">
+          <h1 class="titleView text-center text-md-left text-sm-center pb-1">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description">
+          <p align="justify" class="description" >
             {{ test.testDescription }}
           </p>
-          <v-row justify="center" class>
+          <v-row justify="center" justify-md="start" justify-sm="center" class="pa-4">
             <v-btn color="white" outlined rounded @click="startTest()">
               {{ $t('HeuristicsTestView.actions.startTest') }}
             </v-btn>
           </v-row>
+        </v-col>
+        <v-col cols="6" md="5" sm="6" xs="6" class="d-flex justify-center">
+          <v-img 
+            src="../../assets/BackgroundTestView.png" 
+            contain
+            class="mx-auto"
+            max-width="100%" 
+            height="auto"
+          />
         </v-col>
       </v-row>
 
@@ -766,8 +774,7 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  background-image: url(../../assets/BackgroundTestView.png);
+  right: 0; 
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right 0px top -20px;
@@ -778,9 +785,9 @@ body {
   font-weight: 300;
   font-size: 60px;
   line-height: 70px;
-  display: flex;
   align-items: center;
   color: #ffffff;
+  word-wrap:break-word;
 }
 .description {
   font-style: normal;
@@ -789,6 +796,8 @@ body {
   line-height: 21px;
   align-items: flex-end;
   color: #ffffff;
+  padding-top: 3%;
+  padding-bottom:3%;
 }
 .nav {
   position: fixed;
