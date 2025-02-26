@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log
 database-debug.log
+ui-debug.log
 
 # Editor directories and files
 .idea
