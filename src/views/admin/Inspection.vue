@@ -38,7 +38,7 @@
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/specialist.png')"
-              title="Guided Walkthroughs"
+              title="Guided Walkthrough"
               type="Test"
               segund-type="GUIDED"
               :texts="['Step-by-step simulation of typical tasks']"
@@ -51,7 +51,7 @@
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/user.png')"
-              title="Automated Evaluations"
+              title="Automated Evaluation"
               type="Test"
               segund-type="AUTOMATED"
               :texts="['Use of tools to verify accessibility or detect errors']"
@@ -62,9 +62,14 @@
       </v-row>
     </v-col>
 
-    <CreateTestNameDialog
+     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
+      :heading="$t('TestDialog.heading')"
+      :subHeading="$t('TestDialog.sub-heading')"
+      :testName="$t('TestDialog.test-name')"
+      :testDescription="$t('TestDialog.test-description')"
+      :testLabel="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>
@@ -107,52 +112,61 @@ export default {
   text-align: center;
   font-weight: 600;
   color: #f99726;
+  margin: 0 auto;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap; /* Ensures all cards stay in one row */
+  max-width: 100%;
 }
 
 .card {
-  margin: auto;
+  flex: 1 1 23%; /* Ensures four cards in a row */
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  word-wrap: break-word; /* Ensures text wraps */
-  overflow-wrap: break-word;
-  max-width: 100%;
-  height: 100%;
-  flex-grow: 1;
+  padding: 0.1rem; 
   overflow: hidden;
+  word-wrap: break-word;
 }
 
-.inactive-card {
-  opacity: 0.6;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  transition: opacity 0.3s ease;
+.card-content {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
 }
 
-@media (max-width: 600px) {
+.card-content p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  font-size: 10px;
+  width: 100%;
+  max-width: 90%;
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 1264px) {
   .card {
-    padding: 0.5rem; /* Reduces padding for small screens */
-    text-align: center; /* Centers text inside cards */
-    max-width: 100%;
-  }
-
-  .titles {
-    font-size: 28px;
+    flex: 1 1 32%;
+    margin-bottom: 1rem;
   }
 }
 
-@media (min-width: 601px) and (max-width: 1160px) {
+@media (max-width: 1360px) {
+  .cards-container {
+    flex-wrap: wrap; 
+  }
+  
   .card {
-    padding: 1rem;
+    flex: 1 1 45%;
   }
 }
 
-@media (min-width: 1160px) {
-  .titles {
-    font-size: 38px;
+@media (max-width: 1000px) {
+  .card {
+    flex: 1 1 100%;
   }
 }
+
 </style>

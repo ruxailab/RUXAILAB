@@ -95,7 +95,7 @@ export default {
 }
 
 .cardsTitle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   background-color: #f99726;
   background-clip: text;
