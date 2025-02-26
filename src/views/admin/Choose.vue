@@ -41,7 +41,7 @@
             type="Category"
             segund-type="INQUIRY"
             :texts="['Interviews', 'Focus Groups', 'Surveys & Questionnaires']"
-            @click="navigateToTest('inquiry')"
+            :disabled="true"
           />
         </v-col>
       </v-row>
