@@ -17,6 +17,7 @@ import Choose from '@/views/admin/Choose.vue'
 import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
 
+
 export default [
   {
     path: '/testslist',
@@ -25,16 +26,16 @@ export default [
     component: TestList,
   },
   {
-    path:'/profile',
-    name:'Profile',
-    meta: { authorize: [1] },
-    component:Profile,
-  },
-  {
     path:'/choose',
     name:'Choose',
     meta: { authorize: [1] },
     component:Choose,
+  },
+  {
+    path:'/profile',
+    name:'Profile',
+    meta: { authorize: [1] },
+    component:Profile,
   },
   {
     path: '/notifications',
@@ -113,7 +114,6 @@ export default [
     meta: { authorize: [1] },
     component: CreateView,
   },
-
   {
     path: '/createBlank',
     name: 'Create Blank View',

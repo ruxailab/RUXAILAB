@@ -9,22 +9,22 @@
     </v-col>
 
     <v-col cols="12" class="mt-6">
-      <v-row>
+      <v-row class="cards-container">
         <!-- Active Card: User Testing -->
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" sm="6" md="3" lg="3" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
             title="Usability User"
             type="Test"
             segund-type="User"
-            :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated or non moderated tests']"
+            :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated or non-moderated tests']"
             @click="setTestType"
           />
         </v-col>
 
         <!-- Inactive Card: A/B Testing -->
-        <v-col cols="10" md="5" sm="10" class="card">
-          <div class="inactive-card">
+        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+          <div>
             <CardTypeTest
               :img="require('../../../public/user.png')"
               title="A/B Testing"
@@ -37,8 +37,8 @@
         </v-col>
 
         <!-- Inactive Card: Eye-Tracking -->
-        <v-col cols="10" md="5" sm="10" class="card">
-          <div class="inactive-card">
+        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+          <div>
             <CardTypeTest
               :img="require('../../../public/specialist.png')"
               title="Eye-Tracking"
@@ -51,8 +51,8 @@
         </v-col>
 
         <!-- Inactive Card: Log Analysis -->
-        <v-col cols="10" md="5" sm="10" class="card">
-          <div class="inactive-card">
+        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+          <div>
             <CardTypeTest
               :img="require('../../../public/user.png')"
               title="Log Analysis"
@@ -69,6 +69,11 @@
     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
+      :heading="$t('TestDialog.heading')"
+      :subHeading="$t('TestDialog.sub-heading')"
+      :testName="$t('TestDialog.test-name')"
+      :testDescription="$t('TestDialog.test-description')"
+      :testLabel="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>
@@ -114,72 +119,57 @@ export default {
   margin: 0 auto;
 }
 
-.card {
-  margin: auto;
+.cards-container {
   display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  justify-content: center;
+  flex-wrap: nowrap; /* Ensures all cards stay in one row */
   max-width: 100%;
-  height: 100%;
-  flex-grow: 1;
-  overflow: hidden;
 }
 
-.inactive-card {
-  opacity: 0.6;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  transition: opacity 0.3s ease;
+.card {
+  flex: 1 1 23%; /* Ensures four cards in a row */
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-}
-
-.inactive-message {
-  font-size: 14px;
-  color: #888;
-  text-align: center;
-  margin-top: 10px;
-  font-style: italic;
+  padding: 0.1rem; 
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .card-content {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
 }
 
-.card img {
-  max-width: 40px;
+.card-content p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  width: 100%;
+  max-width: 90%;
 }
 
-@media (max-width: 600px) {
+/* Adjust for smaller screens */
+@media (max-width: 1264px) {
   .card {
-    padding: 0.5rem;
-    text-align: center;
-    max-width: 100%;
-  }
-
-  .titles {
-    font-size: 28px;
-  }
-
-  .card img {
-    max-width: 30px;
+    flex: 1 1 32%;
+    margin-bottom: 1rem;
   }
 }
 
-@media (min-width: 601px) and (max-width: 1160px) {
+@media (max-width: 1360px) {
+  .cards-container {
+    flex-wrap: wrap; 
+  }
+  
   .card {
-    padding: 1rem;
+    flex: 1 1 45%;
   }
 }
 
-@media (min-width: 1160px) {
-  .titles {
-    font-size: 38px;
+@media (max-width: 1000px) {
+  .card {
+    flex: 1 1 100%;
   }
 }
+
 </style>
