@@ -478,7 +478,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView ref="ModeratedTestView" :token="token" />
+      <ModeratedTestView ref="ModeratedTestView.vue" :token="token" />
     </div>
   </div>
 </template>
