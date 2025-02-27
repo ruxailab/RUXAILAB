@@ -43,7 +43,7 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row align="center" justify="center" style="height: 100%; margin: 0 !important; ">
+            <v-row align="center" justify="center" class="manager-bg">
               <v-col class="text-div">
                 <div v-if="accessLevel == 0" class="white--text">
                   <p
@@ -142,7 +142,7 @@
               </div>
 
               <!-- Bottom Cards -->
-              <v-row justify="center" justify-md="space-around" style="margin: 0">
+              <v-row justify="center" justify-md="space-around" class="bottom-cards">
                 <v-col
                   v-for="(item, i) in bottomCards"
                   :key="i"
@@ -493,6 +493,11 @@ export default {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
+.manager-bg{
+  height:100%;
+  margin: 0 !important;
+}
+
 .text-div {
   max-width: 45%;
 }
@@ -500,6 +505,11 @@ export default {
 .card-container {
   width: 80%;
 }
+
+.bottom-cards{
+  margin: 0;
+}
+
 @media screen and (max-width: 960px) {
   .presentation-text {
     display: flex;
