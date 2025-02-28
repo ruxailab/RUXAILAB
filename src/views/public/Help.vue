@@ -1,142 +1,312 @@
 <template>
-  <div>
-    <v-card
-      align="center"
-      img="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
-      height="250"
-      elevation="0"
-      rounded="0"
-    >
-      <v-col
-        cols="12"
-        xs="4"
-        sm="8"
-        md="6"
-        lg="6"
-        xl="6"
-        style="user-select: none;"
+  <div class="grey lighten-4">
+    <v-card height="260" elevation="0" rounded="0" class="mb-6">
+      <v-img
+        src="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
+        :aspect-ratio="16 / 9"
+        height="100%"
       >
-        <div
-          class="mt-12 display-3 bold font-weight-bold"
-          style="color: white;"
-        >
-          Help Center
-        </div>
-        <div class="mt-3 display-2 bold font-weight-bold" style="color: white;">
-          How can we help?
-        </div>
-      </v-col>
+        <v-container class="fill-height">
+          <v-row justify="center" align="center">
+            <v-col
+              cols="12"
+              xs="12"
+              sm="10"
+              md="8"
+              lg="7"
+              xl="6"
+              class="text-center"
+            >
+              <h1
+                class="text-h2 font-weight-bold white--text mb-2"
+                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+              >
+                Help Center
+              </h1>
+              <h2
+                class="text-h4 font-weight-medium white--text mb-6"
+                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+              >
+                How can we help?
+              </h2>
+              <div
+                class="mx-auto"
+                style="max-width: 560px; margin-top: 10px; position: relative; z-index: 5;"
+              >
+                <v-text-field
+                  v-model="searchQuery"
+                  prepend-inner-icon="mdi-magnify"
+                  placeholder="Search help articles..."
+                  outlined
+                  dense
+                  hide-details
+                  @input="searchArticles"
+                  @focus="searchActive = true"
+                  @blur="searchActive = searchQuery ? true : false"
+                  clearable
+                  color="deep-orange accent-3"
+                  background-color="white"
+                  class="rounded-lg"
+                  @mouseenter="isHovered = true"
+                  @mouseleave="isHovered = false"
+                >
+                  <template v-slot:prepend-inner>
+                    <v-icon :color="searchActive ? 'black' : 'grey darken-2'">
+                      mdi-magnify
+                    </v-icon>
+                  </template>
+                  <template v-slot:append>
+                    <v-fade-transition>
+                      <v-progress-circular
+                        v-if="isSearching"
+                        indeterminate
+                        color="black"
+                        size="20"
+                        width="2"
+                      ></v-progress-circular>
+                    </v-fade-transition>
+                  </template>
+                </v-text-field>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-img>
     </v-card>
-
-    <v-container>
+    <v-container class="mt-n8">
       <v-row>
-        <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
-          <v-list outlined rounded>
-            <v-list-item
-              v-for="(item, index) in itemsLeft"
-              :key="index"
-              @click="toggleCollapse(index)"
-              :class="{ 'item-expanded': !item.isCollapsed }"
-              role="button"
-              tabindex="0"
-            >
-              <v-list-item-content>
-                <v-list-item-title class="title">
-                  <v-icon
-                    v-if="!item.isCollapsed"
-                    small
-                    class="transition-icon"
+        <v-col cols="12" md="4" lg="3">
+          <div class="sticky-top" style="top: 24px;">
+            <v-card rounded="lg" elevation="2">
+              <v-list nav rounded>
+                <v-subheader
+                  class="grey lighten-4 subtitle-2 font-weight-bold amber--text text--darken-2"
+                  >CATEGORIES</v-subheader
+                >
+                <v-list-item-group v-model="activeCategory" color="black">
+                  <v-list-item
+                    v-for="(category, index) in categories"
+                    :key="index"
+                    @click="filterByCategory(category.id)"
+                    class="my-1 mx-2 rounded"
+                    :class="{
+                      'grey lighten-4': selectedCategory === category.id,
+                    }"
                   >
-                    mdi-chevron-down
-                  </v-icon>
-                  <v-icon v-else small class="transition-icon">
-                    mdi-chevron-right
-                  </v-icon>
-                  {{ item.title }}
-                </v-list-item-title>
-                <v-expand-transition>
-                  <v-row v-if="!item.isCollapsed">
-                    <v-col
-                      cols="6"
-                      xs="4"
-                      sm="6"
-                      md="6"
-                      lg="7"
-                      xl="6"
-                      align="justify"
-                    >
-                      <div class="subtitle-1 ml-5">
-                        {{ item.content }}
-                      </div>
-                      <div class="ml-5">
-                        <v-img
-                          max-width="800"
-                          :src="require(`@/assets/faqs/${item.gif}`)"
-                          style="object-fit: contain"
-                        />
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-expand-transition>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+                    <v-list-item-icon>
+                      <v-icon
+                        :color="
+                          selectedCategory === category.id
+                            ? 'black'
+                            : 'grey darken-1'
+                        "
+                        >{{ category.icon }}</v-icon
+                      >
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :class="{
+                          'black--text font-weight-medium':
+                            selectedCategory === category.id,
+                        }"
+                        >{{ category.name }}</v-list-item-title
+                      >
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-chip small color="black" text-color="white">{{
+                        getCategoryItemCount(category.id)
+                      }}</v-chip>
+                    </v-list-item-action>
+                  </v-list-item>
+                  <v-divider class="my-2"></v-divider>
+                  <v-list-item
+                    @click="filterByCategory(null)"
+                    class="my-1 mx-2 rounded"
+                    :class="{ 'grey lighten-4': selectedCategory === null }"
+                  >
+                    <v-list-item-icon>
+                      <v-icon
+                        :color="
+                          selectedCategory === null ? 'black' : 'grey darken-1'
+                        "
+                        >mdi-view-grid</v-icon
+                      >
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        :class="{
+                          'black--text font-weight-medium':
+                            selectedCategory === null,
+                        }"
+                        >View All</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-card>
+          </div>
         </v-col>
-
-        <v-col cols="12" xs="4" sm="8" md="6" lg="6" xl="6">
-          <v-list outlined rounded>
-            <v-list-item
-              v-for="(item, index) in itemsRight"
-              :key="index"
-              @click="toggleCollapse(index + 5)"
-              :class="{ 'item-expanded': !item.isCollapsed }"
-              role="button"
-              tabindex="0"
+        <v-col cols="12" md="8" lg="9">
+          <div v-if="filteredItems.length > 0">
+            <div
+              v-for="(category, catIndex) in displayedCategories"
+              :key="'cat-' + catIndex"
+              class="mb-8"
             >
-              <v-list-item-content>
-                <v-list-item-title class="title">
-                  <v-icon
-                    v-if="!item.isCollapsed"
-                    small
-                    class="transition-icon"
+              <v-card
+                flat
+                v-if="getItemsByCategory(category.id).length > 0"
+                class="mb-4 rounded-lg"
+                style="border-left: 4px solid rgb(249, 168, 38);"
+              >
+                <v-card-title class="py-3 black--text font-weight-medium">
+                  <v-icon left color="black">{{ category.icon }}</v-icon>
+                  {{ category.name }}
+                </v-card-title>
+              </v-card>
+              <v-expansion-panels flat hover>
+                <v-expansion-panel
+                  v-for="(item, index) in getItemsByCategory(category.id)"
+                  :key="'item-' + index"
+                  class="mb-3 rounded-lg"
+                  style="border: 1px solid rgba(0,0,0,0.08);"
+                >
+                  <v-expansion-panel-header
+                    class="py-3 subtitle-1 grey--text text--darken-3 font-weight-medium"
                   >
-                    mdi-chevron-down
-                  </v-icon>
-                  <v-icon v-else small class="transition-icon">
-                    mdi-chevron-right
-                  </v-icon>
-                  {{ item.title }}
-                </v-list-item-title>
-                <v-expand-transition>
-                  <v-row v-if="!item.isCollapsed">
-                    <v-col
-                      cols="6"
-                      xs="4"
-                      sm="6"
-                      md="7"
-                      lg="7"
-                      xl="6"
-                      align="justify"
-                    >
-                      <div class="subtitle-1 ml-5">
-                        {{ item.content }}
-                      </div>
-                      <div class="ml-5">
-                        <v-img
-                          max-width="800"
-                          :src="require(`@/assets/faqs/${item.gif}`)"
-                          style="object-fit: contain"
-                        />
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-expand-transition>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+                    {{ item.title }}
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content class="grey lighten-5">
+                    <p class="body-1 grey--text text--darken-2 mb-4">
+                      {{ item.content }}
+                    </p>
+                    <v-img
+                      :src="require(`@/assets/faqs/${item.gif}`)"
+                      max-height="500"
+                      contain
+                      class="rounded-lg"
+                      style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                    />
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </div>
+          <v-card
+            v-if="filteredItems.length === 0"
+            class="pa-6 rounded-lg text-center grey lighten-5"
+            style="border: 1px dashed rgba(0,0,0,0.15);"
+          >
+            <v-card-text>
+              <v-icon size="64" color="grey lighten-1" class="mb-4"
+                >mdi-help-circle-outline</v-icon
+              >
+              <h3 class="mb-3">No articles found</h3>
+              <p class="mb-4 grey--text text--darken-1">
+                Try adjusting your search or browse all categories
+              </p>
+              <v-btn color="black" @click="filterByCategory(null)">
+                View All Articles
+              </v-btn>
+            </v-card-text>
+          </v-card>
+          <div class="text-center mt-8" v-if="pageCount > 1">
+            <v-pagination
+              v-model="page"
+              :length="pageCount"
+              :total-visible="5"
+              circle
+              color="black"
+              class="white elevation-2 py-2 px-4 d-inline-flex rounded-pill"
+              @input="handlePageChange"
+            ></v-pagination>
+          </div>
         </v-col>
       </v-row>
     </v-container>
+    <v-footer padless class="mt-12" color="grey darken-4">
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="4" class="pt-6">
+            <h3
+              class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
+              style="position: relative;"
+            >
+              Contact Us
+              <span
+                style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
+              ></span>
+            </h3>
+            <p class="white--text mb-3" style="opacity: 0.7;">
+              <v-icon small class="mr-2 white--text">mdi-email</v-icon>
+              ruxailab@gmail.com
+            </p>
+            <p class="white--text mb-3" style="opacity: 0.7;">
+              <v-icon small class="mr-2 white--text">mdi-phone</v-icon> +1 (555)
+              123-4567
+            </p>
+          </v-col>
+          <v-col cols="12" md="4" class="pt-6">
+            <h3
+              class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
+              style="position: relative;"
+            >
+              Still Have Questions?
+              <span
+                style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
+              ></span>
+            </h3>
+            <p class="white--text mb-4" style="opacity: 0.7;">
+              We're here to help! Reach out to our support team for assistance.
+            </p>
+            <v-btn color="black" outlined class="white--text">
+              Submit a Request
+            </v-btn>
+          </v-col>
+          <v-col cols="12" md="4" class="pt-6">
+            <h3
+              class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
+              style="position: relative;"
+            >
+              Quick Links
+              <span
+                style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
+              ></span>
+            </h3>
+            <div class="d-flex flex-column">
+              <v-btn
+                text
+                class="white--text justify-start px-0 text-caption"
+                style="opacity: 0.7;"
+              >
+                Terms of Service
+              </v-btn>
+              <v-btn
+                text
+                class="white--text justify-start px-0 text-caption"
+                style="opacity: 0.7;"
+              >
+                Privacy Policy
+              </v-btn>
+              <v-btn
+                text
+                class="white--text justify-start px-0 text-caption"
+                style="opacity: 0.7;"
+              >
+                FAQs
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col cols="12" class="text-center mt-8">
+            <v-divider dark class="mb-4"></v-divider>
+            <p class="text-caption white--text" style="opacity: 0.5;">
+              © 2025 Ruxailab. All rights reserved.
+            </p>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-footer>
   </div>
 </template>
 
@@ -146,372 +316,189 @@ import i18n from '@/i18n'
 export default {
   data() {
     return {
+      searchQuery: '',
+      activeCategory: null,
+      selectedCategory: null,
+      page: 1,
+      itemsPerPage: 5,
+      searchActive: false,
+      isSearching: false,
+      searchTimeout: null,
+      isHovered: false,
+      categories: [
+        {
+          id: 'test-creation',
+          name: 'Test Creation',
+          icon: 'mdi-file-document-edit',
+        },
+        { id: 'templates', name: 'Templates', icon: 'mdi-file-table-outline' },
+        { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
+        { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
+      ],
       items: [
         {
           title: i18n.t('help.createtest'),
           content: i18n.t('help.createtestanswer'),
           gif: 'create_test.gif',
-          isCollapsed: true, // Initially collapsed
+          isCollapsed: true,
+          category: 'test-creation',
         },
         {
           title: i18n.t('help.heuristictest'),
           content: i18n.t('help.heuristictestanswer'),
           gif: 'hsetup.gif',
           isCollapsed: true,
+          category: 'test-creation',
         },
         {
           title: i18n.t('help.deletetest'),
           content: i18n.t('help.deletetestanswer'),
           gif: 'del_test.gif',
           isCollapsed: true,
+          category: 'test-creation',
         },
         {
           title: i18n.t('help.createtemplate'),
           content: i18n.t('help.createtemplateanswer'),
           gif: 'create-temp.gif',
           isCollapsed: true,
+          category: 'templates',
         },
         {
           title: i18n.t('help.usetemplate'),
           content: i18n.t('help.usetemplateanswer'),
           gif: 'use-temp.gif',
           isCollapsed: true,
+          category: 'templates',
         },
         {
           title: i18n.t('help.previewtest'),
           content: i18n.t('help.previewtestanswer'),
           gif: 'preview_test.gif',
           isCollapsed: true,
+          category: 'test-creation',
         },
         {
           title: i18n.t('help.importcsv'),
           content: i18n.t('help.importcsvanswer'),
           gif: 'csv.gif',
           isCollapsed: true,
+          category: 'test-creation',
         },
         {
           title: i18n.t('help.invitecooperators'),
           content: i18n.t('help.invitecooperatorsanswer'),
           gif: 'sendinvite.gif',
           isCollapsed: true,
+          category: 'cooperators',
         },
         {
           title: i18n.t('help.analyseresults'),
           content: i18n.t('help.analyseresultsanswer'),
           gif: 'analytics.gif',
           isCollapsed: true,
+          category: 'analytics',
         },
         {
           title: i18n.t('help.sendmessage'),
           content: i18n.t('help.sendmessageanswer'),
           gif: 'send_message.gif',
           isCollapsed: true,
+          category: 'cooperators',
         },
       ],
     }
   },
 
   computed: {
-    itemsLeft() {
-      const totalItems = this.items.length
-      const halfItems = Math.ceil(totalItems / 2)
-      return this.items.slice(0, halfItems)
+    filteredItems() {
+      let items = this.items
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase()
+        items = items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(query) ||
+            item.content.toLowerCase().includes(query),
+        )
+      }
+
+      if (this.selectedCategory) {
+        items = items.filter((item) => item.category === this.selectedCategory)
+      }
+
+      return items
     },
-    itemsRight() {
-      const totalItems = this.items.length
-      const halfItems = Math.ceil(totalItems / 2)
-      return this.items.slice(halfItems)
+
+    pageCount() {
+      return Math.ceil(this.filteredItems.length / this.itemsPerPage)
+    },
+
+    paginatedItems() {
+      const start = (this.page - 1) * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.filteredItems.slice(start, end)
+    },
+
+    displayedCategories() {
+      if (this.selectedCategory) {
+        return this.categories.filter((cat) => cat.id === this.selectedCategory)
+      }
+      return this.categories
     },
   },
 
   methods: {
     toggleCollapse(index) {
-      this.items.forEach((item, i) => {
-        if (i !== index) {
-          item.isCollapsed = true
-        }
-      })
+      if (index !== -1) {
+        this.items.forEach((item, i) => {
+          if (i !== index) {
+            item.isCollapsed = true
+          }
+        })
 
-      this.items[index].isCollapsed = !this.items[index].isCollapsed
+        this.items[index].isCollapsed = !this.items[index].isCollapsed
+      }
+    },
+
+    searchArticles() {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout)
+      }
+
+      this.isSearching = true
+
+      this.searchTimeout = setTimeout(() => {
+        this.page = 1
+        this.isSearching = false
+      }, 300)
+    },
+
+    filterByCategory(categoryId) {
+      this.selectedCategory = categoryId
+      this.page = 1
+    },
+
+    handlePageChange() {
+      const contentEl = document.querySelector('.content-area')
+      if (contentEl) {
+        contentEl.scrollIntoView({ behavior: 'smooth' })
+      }
+    },
+
+    getItemsByCategory(categoryId) {
+      if (!categoryId) return this.paginatedItems
+
+      return this.paginatedItems.filter((item) => item.category === categoryId)
+    },
+
+    getCategoryItemCount(categoryId) {
+      return this.items.filter((item) => item.category === categoryId).length
+    },
+
+    getItemIndex(item) {
+      return this.items.findIndex((i) => i.title === item.title)
     },
   },
 }
 </script>
-
-<style>
-.v-list-item {
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  margin: 12px 0;
-  border-radius: 16px !important;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: rgba(250, 250, 250, 0.95);
-}
-
-.v-list-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
-  border-color: rgba(24, 103, 192, 0.3);
-}
-
-.v-list-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.v-list-item:hover::before {
-  opacity: 1;
-}
-
-.v-list {
-  background: rgba(245, 245, 245, 0.95) !important;
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba(200, 200, 200, 0.5) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  padding: 16px;
-}
-
-.subtitle-1 {
-  line-height: 0.5;
-  opacity: 0;
-  animation: slideUpFade 0.6s ease forwards 0.2s;
-  color: rgba(0, 0, 0, 0.87);
-  font-weight: 500;
-  letter-spacing: 0.015em;
-  padding: 16px 0;
-  font-size: 1.1rem;
-  margin: 0 auto;
-  max-width: 800px;
-}
-
-.v-list-item-title {
-  padding: 16px 0;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  font-size: 1.25rem; /* Increased from 1.1rem */
-  color: #1565c0;
-  line-height: 1.4;
-}
-
-.v-list-item-title:hover {
-  color: #1976d2;
-  transform: none;
-}
-
-.v-expand-transition-enter-active,
-.v-expand-transition-leave-active {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 2000px; /* Adjust based on your content */
-}
-
-.v-expand-transition-enter,
-.v-expand-transition-leave-to {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-10px);
-}
-
-.display-3,
-.display-2 {
-  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.6);
-  animation: slideDown 1s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.display-3 {
-  font-size: 3.5rem !important;
-  line-height: 1.2;
-}
-
-.display-2 {
-  font-size: 2.5rem !important;
-  line-height: 1.3;
-}
-
-.v-icon {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
-  font-size: 1.5rem;
-  color: #1565c0;
-  margin-right: 8px;
-}
-
-.v-list-item:hover .v-icon {
-  transform: scale(1.3) rotate(180deg);
-  color: #1976d2;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  50% {
-    opacity: 0.7;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes subtle-pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes slideUpFade {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.v-list-item:not(.v-list-item--active):active {
-  transform: scale(0.98);
-  background: linear-gradient(135deg, #e1e9f1 0%, #ffffff 100%);
-}
-
-.v-list-item-title::after {
-  display: none;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(21, 101, 192, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(21, 101, 192, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(21, 101, 192, 0);
-  }
-}
-
-.v-list-item:focus-visible {
-  outline: 3px solid #1565c0;
-  outline-offset: 2px;
-}
-
-.item-expanded {
-  transform: scale(1.02);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  border-color: rgba(21, 101, 192, 0.5);
-  background: linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.transition-icon {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
-}
-
-.item-expanded .transition-icon {
-  transform: rotate(180deg);
-}
-
-@media (max-width: 960px) {
-  .v-list-item-title {
-    font-size: 1.15rem;
-  }
-
-  .subtitle-1 {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-
-  .display-3 {
-    font-size: 2.75rem !important;
-  }
-
-  .display-2 {
-    font-size: 2rem !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .v-list-item {
-    margin: 8px 0;
-    padding: 8px;
-  }
-
-  .v-list-item-title {
-    font-size: 1.1rem;
-    padding: 12px 0;
-  }
-
-  .subtitle-1 {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    padding: 12px 0;
-  }
-
-  .display-3 {
-    font-size: 2.25rem !important;
-  }
-
-  .display-2 {
-    font-size: 1.75rem !important;
-  }
-}
-
-/* Add transition for images */
-.v-img {
-  opacity: 0;
-  animation: fadeScale 0.6s ease forwards 0.3s;
-}
-
-@keyframes fadeScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-</style>
