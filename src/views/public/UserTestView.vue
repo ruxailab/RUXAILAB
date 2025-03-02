@@ -601,6 +601,7 @@
                         "
                       >
                         <VideoRecorder
+                          ref="videoRecorder"
                           @showLoading="isLoading = true"
                           @stopShowLoading="isLoading = false"
                           :testId="testId"
@@ -942,7 +943,9 @@ export default {
     this.calculateProgress()
   },
   beforeDestroy() {
-    this.stopRecording()
+  if(this.$refs.videoRecorder) {
+      this.$refs.videoRecorder.stopRecording();
+    }
   },
   methods: {
     isTaskDisabled(taskIndex) {
