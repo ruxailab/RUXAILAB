@@ -94,7 +94,7 @@
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
             <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sessions') }}</v-tab>
+            <v-tab>Sessions</v-tab>
 
             <v-spacer />
           </v-tabs>
