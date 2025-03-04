@@ -1,0 +1,5 @@
+messages:
+  pr-merged: |
+    🎉 Great work! Your PR has been successfully merged. Thanks for your contribution! 🚀
+  pr-not-merged: |
+    🚨 Oops! Your PR was not merged. Please check the status and try again. 🚨

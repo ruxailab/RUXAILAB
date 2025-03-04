@@ -1,0 +1,24 @@
+name: PR Merged Greetings
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  greet:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Greeting Message
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const message = `🎉 Great work! Your PR has been successfully merged. Thanks for your contribution! 🚀`;
+            const issue_number = context.payload.pull_request.number;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: message
+            });
