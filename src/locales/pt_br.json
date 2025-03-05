@@ -490,12 +490,14 @@
     "create": "Criar",
     "cancel": "Cancelar",
     "close": "Fechar",
+    "save": "salvar",
     "leave": "Sair",
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
     "deleteAccount":"Excluir conta",
-    "back":"Trás"
+    "back":"Trás",
+    "duplicateTest":"Duplicar Teste"
   },
   "switches": {
     "noAnswer": "Sem resposta",

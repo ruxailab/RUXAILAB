@@ -492,13 +492,14 @@
     "cancel": "Cancel",
     "create": "Create",
     "close": "Close",
-    "save": "Save",
+    "save": "ahorrar",
     "stay": "Stay",
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
     "deleteAccount":"Delete Account",
-    "back":"Back"
+    "back":"Back",
+    "duplicateTest":"Duplicate Test"
   },
   "switches": {
     "noAnswer": "No answer",
