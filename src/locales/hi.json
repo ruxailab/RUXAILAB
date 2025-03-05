@@ -409,7 +409,8 @@
     "help": "मदद",
     "delete": "हटाएं",
     "deleteAccount":"खाता हटाएं",
-    "back":"पीछे"
+    "back":"पीछे",
+    "duplicateTest":"परीक्षण डुप्लिकेट करें"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",

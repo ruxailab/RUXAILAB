@@ -120,7 +120,7 @@
             </v-btn>
 
             <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
-              Duplicate test
+              {{ $t('buttons.duplicateTest') }}
             </v-btn>
           </v-row>
 
