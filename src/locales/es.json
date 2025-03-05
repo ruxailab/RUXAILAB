@@ -31,9 +31,9 @@
     "editDelete": "Editar/Borrar",
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
-    "notifications":"notificaciones",
-    "unread":"no leído",
-    "inbox":"Bandeja de entrada",
+    "notifications": "notificaciones",
+    "unread": "no leído",
+    "inbox": "Bandeja de entrada",
     "timeAgo": {
       "years": "Hace {count} año{count !== 1 ? 's' : ''}",
       "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
@@ -70,7 +70,6 @@
     "confirmPasswordRequired": "Se requiere confirmar la contraseña",
     "passwordsMatch": "Las contraseñas deben coincidir"
   },
-
   "titles": {
     "manager": "Gerente",
     "test": "Prueba",
@@ -476,7 +475,7 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount":"¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
   },
   "buttons": {
     "next": "Siguiente",
@@ -485,7 +484,7 @@
     "username": "Nombre de usuario",
     "goToConsole": "Ir a la consola",
     "signout": "Desconectar",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Volver a la consola",
     "tip": "Consejo",
     "create": "Crear",
@@ -495,8 +494,8 @@
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
-    "deleteAccount":"Eliminar cuenta",    
-    "back":"Atrás"
+    "deleteAccount": "Eliminar cuenta",
+    "back": "Atrás"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -518,12 +517,40 @@
     "test": "Prueba",
     "testType_1": {
       "testTitle": "Heurística de Usabilidad",
-      "text": ["Porcentaje de Usabilidad", "Informe Final en PDF", "Invita a especialistas a evaluar tu aplicación"]
+      "text": [
+        "Porcentaje de Usabilidad",
+        "Informe Final en PDF",
+        "Invita a especialistas a evaluar tu aplicación"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuario de Usabilidad",
-      "text": ["Grabación de webcam, audio y pantalla", "Análisis mejorado de respuestas", "Pruebas moderadas o no moderadas"]
+      "text": [
+        "Grabación de webcam, audio y pantalla",
+        "Análisis mejorado de respuestas",
+        "Pruebas moderadas o no moderadas"
+      ]
+    },
+    "UsabilityUser": {
+    "SelfTest": {
+      "title": "Prueba de Usuario",
+      "type":"no moderado",
+      "text": [
+        "Responder en tiempo libre",
+        "Análisis mejorado de respuestas",
+        "Personalización de tareas"
+      ]
+    },
+    "LiveTest": {
+      "title": "Prueba en Vivo",
+      "type":"moderado",
+      "text": [
+        "Grabación de webcam, audio y pantalla",
+        "Análisis mejorado de respuestas",
+        "Prueba en vivo moderada"
+      ]
     }
+  }
   },
   "TestDialog": {
     "heading": "Creación de Prueba",
