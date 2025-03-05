@@ -6,7 +6,7 @@
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
-    "contact": "Contact No",  
+    "contact": "Contact No",
     "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
@@ -31,9 +31,9 @@
     "editDelete": "Edit/Delete",
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
-    "notifications":"Notifications",
-    "unread":"unread",
-    "inbox":"inbox",
+    "notifications": "Notifications",
+    "unread": "unread",
+    "inbox": "inbox",
     "timeAgo": {
       "years": "{count} year{count !== 1 ? 's' : ''} ago",
       "months": "{count} month{count !== 1 ? 's' : ''} ago",
@@ -46,30 +46,30 @@
     "sentBy": "Sent by",
     "new": "NEW"
   },
-    "PROFILE": {
-      "title": "Profile",
-      "editProfile": "Edit Profile",
-      "account": "Account",
-      "admin": "Admin",
-      "changePassword": "Change Password",
-      "passwordRequirements": "Ensure these requirements",
-      "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
-      "newPassword": "New Password",
-      "confirmNewPassword": "Confirm New Password",
-      "editDetails": "Edit Details",
-      "saveChanges": "Save Changes",
-      "country": "Country",
-      "missingInfo": "Missing Information",
-      "deleteAccountTitle": "Delete Account",
-      "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
-      "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
-      "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be at least 8 characters long",
-      "passwordUppercase": "Must contain an uppercase letter",
-      "passwordSymbol": "Must contain a symbol",
-      "confirmPasswordRequired": "Confirm password is required",
-      "passwordsMatch": "Passwords must match"
-    },
+  "PROFILE": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "account": "Account",
+    "admin": "Admin",
+    "changePassword": "Change Password",
+    "passwordRequirements": "Ensure these requirements",
+    "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "editDetails": "Edit Details",
+    "saveChanges": "Save Changes",
+    "country": "Country",
+    "missingInfo": "Missing Information",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
+    "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsMatch": "Passwords must match"
+  },
   "titles": {
     "manager": "Manager",
     "test": "Test",
@@ -476,8 +476,7 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount":" Are you sure you want to delete your account? This action cannot be undone."
-
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
   },
   "buttons": {
     "next": "Next",
@@ -486,7 +485,7 @@
     "username": "Username",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
-    "profile":"profile",
+    "profile": "profile",
     "returnToConsole": "Return to Console",
     "tip": "Tip",
     "cancel": "Cancel",
@@ -497,8 +496,8 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount":"Delete Account",
-    "back":"Back"
+    "deleteAccount": "Delete Account",
+    "back": "Back"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -520,11 +519,39 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability Heuristic",
-      "text": ["Usability Percentage", "Final Report PDF", "Invite specialists to evaluate your application"]
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF",
+        "Invite specialists to evaluate your application"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability User",
-      "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Self Test",
+        "type":"Unmoderated",
+        "text": [
+          "Answer on free time",
+          "Enhanced answer analysis",
+          "Task Customization"
+        ]
+      },
+      "LiveTest": {
+        "title": "Live Test",
+        "type":"Moderated",
+        "text": [
+          "Webcam, audio & screen record",
+          "Enhanced answer analysis",
+          "Moderated live test"
+        ]
+      }
     }
   },
   "TestDialog": {
