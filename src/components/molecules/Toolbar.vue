@@ -71,7 +71,7 @@
         <v-btn
           dark
           text
-          style="text-transform: none !important; font-family: Roboto, sans-serif; font-size: 17px"
+          class="text-none font-weight-regular text-body-1"
           @click.stop="signOut()"
         >
           {{ $t('buttons.signout') }}
@@ -158,61 +158,62 @@
     </v-btn>
 
     <!-- Profile Button Desktop -->
-    <div class="hidden-sm-and-down">
+    <div class="hidden-sm-down">
       <v-menu
         v-if="user"
         v-model="menu"
         offset-y
-        min-width="200"
+        min-width="300"
+        transition="slide-y-transition"
         :close-on-content-click="false"
+        rounded="lg"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             text
             v-bind="attrs"
-            class="pa-0 btn-fix"
             v-on="on"
-            @click="menu = !menu"
+            class="profile-trigger"
           >
-            <v-icon class="mr-1" dark>
-              mdi-account-circle
-            </v-icon>
-            <v-icon small>
-              mdi-chevron-down
-            </v-icon>
+            <v-avatar size="32" color="primary" class="white--text">
+              {{ userInitial }}
+            </v-avatar>
+            <v-icon small class="ml-1">mdi-chevron-down</v-icon>
           </v-btn>
         </template>
-        <v-list dense class="ma-0 py-1" style="border-radius: 0px !important">
-          <v-list-item dense style="font-size: 14px; font-family: Roboto, sans-serif" class="px-2">
-            <v-list-item-content>
-              <v-list-item-title style="font-weight: bold">
-                {{ username || $t('buttons.username') }}
-              </v-list-item-title>
-              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
 
-          <div class="divider" />
-          <v-list-item
-            dense
-            style="font-size: 14px; font: Roboto"
-            class="px-2"
-            @click="goToProfile(), (menu = false)"
-          >
-            <v-icon class="px-2">mdi-check-decagram</v-icon>
-            {{ $t('buttons.profile') }}
-          </v-list-item>
-          <div class="divider" />
-          <v-list-item
-            dense
-            style="font-size: 14px; font-family: Roboto, sans-serif"
-            class="px-2"
-            @click="signOut(), (menu = false)"
-          >
-            <v-icon class="px-2"> mdi-logout</v-icon>
-            {{ $t('buttons.signout') }}
-          </v-list-item>
-        </v-list>
+        <div class="custom-dropdown white rounded-lg">
+          <!-- User Info Section -->
+          <div class="pa-6 d-flex align-center">
+            <v-avatar size="48" color="primary" class="user-avatar white--text">
+              <span class="text-h5 font-weight-medium">{{ userInitial }}</span>
+            </v-avatar>
+            <div class="ml-4 flex-grow-1">
+              <div class="d-flex align-center">
+                <span class="user-name">{{ username || $t('buttons.username') }}</span>
+                <v-icon color="primary" size="20" class="ml-2 verified-icon">mdi-check-decagram</v-icon>
+              </div>
+              <span class="user-email mt-1 grey--text text--darken-1">{{ user.email }}</span>
+            </div>
+          </div>
+
+          <v-divider></v-divider>
+
+          <!-- Menu Items -->
+          <div class="pa-2">
+            <div class="menu-item d-flex align-center px-4 py-3 rounded-lg" @click="goToProfile(); menu = false;">
+              <v-icon color="primary" size="20">mdi-account</v-icon>
+              <span class="ml-3 menu-text">{{ $t('buttons.profile') }}</span>
+            </div>
+
+            <v-divider class="my-2"></v-divider>
+
+            <div class="menu-item d-flex align-center px-4 py-3 rounded-lg" @click="signOut(); menu = false;">
+              <v-icon color="error" size="20">mdi-logout</v-icon>
+              <span class="ml-3 menu-text">{{ $t('buttons.signout') }}</span>
+            </div>
+          </div>
+        </div>
       </v-menu>
     </div>
   </v-app-bar>
@@ -222,10 +223,11 @@
 import LocaleChanger from '@/components/atoms/LocaleChanger.vue'
 import NotificationBtn from '../atoms/NotificationButton.vue'
 import HelpButton from '../atoms/HelpButton.vue'
-import UserController from '@/controllers/UserController';
-import { getAuth } from 'firebase/auth';
+import UserController from '@/controllers/UserController'
+import { getAuth } from 'firebase/auth'
 
 export default {
+  name: 'Toolbar',
   components: {
     NotificationBtn,
     LocaleChanger,
@@ -370,6 +372,12 @@ export default {
       }
       return 1
     },
+    userInitial() {
+      if (this.username) {
+        return this.username.charAt(0).toUpperCase()
+      }
+      return 'U'
+    }
   },
   watch: {
     $route: {
@@ -452,28 +460,59 @@ export default {
 </script>
 
 <style scoped>
-.console-button {
-  font-size: 13px;
-  font-family: Roboto, sans-serif;
-  text-transform: none !important;
-  padding: 7px !important;
+/* Only keeping styles that can't be handled by Vuetify */
+.custom-dropdown {
+  min-width: 300px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
 }
-.footer {
-  background-color: transparent;
-  height: 8%;
-  width: 100%;
-  display: flex;
-  align-content: center;
-  justify-content: center;
 
-  position: absolute;
-  bottom: 0px;
+.user-avatar {
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
 }
-.divider {
-  background: #c4c4c4 !important;
-  height: 1.5px;
+
+.user-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
 }
-.btn-fix:focus::before {
-  opacity: 0 !important;
+
+.user-email {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.verified-icon {
+  filter: drop-shadow(0 2px 4px rgba(33, 150, 243, 0.2));
+}
+
+.menu-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Profile hover */
+.menu-item:first-child:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.menu-item:first-child:hover .menu-text {
+  color: #2196F3;
+}
+
+/* Signout hover */
+.menu-item:last-child:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.menu-item:last-child:hover .menu-text {
+  color: #F44336;
+}
+
+.menu-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #424242;
+  transition: color 0.2s ease;
 }
 </style>
