@@ -295,6 +295,15 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
+    "UsabilityCooperators":{
+      "inviteEvaluator": "परीक्षक को परीक्षण के लिए आमंत्रित करें",
+      "email": "ईमेल",
+      "scheduledAt": "अनुसूचित समय",
+      "inviteMessage": "आमंत्रण संदेश",
+      "placeholderMessage": "अरे, चलो एक परीक्षण करें...",
+      "inviteInfo": "निमंत्रण लिंक निर्दिष्ट समय पर परीक्षक के ईमेल पर भेजा जाएगा",
+      "send": "भेजें"
+  },
     "HeuristicsOptionsTable": {
       "titles": {
         "options": "[TODO]"
