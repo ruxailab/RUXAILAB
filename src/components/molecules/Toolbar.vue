@@ -4,12 +4,12 @@
       v-if="user"
       icon
       dark
-      class="hidden-md-and-up"
+      class="d-flex d-lg-none"
       @click.stop="drawer = !drawer"
     >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
-    <v-icon left class="hidden-sm-and-down" @click="goTo('/testslist')">
+    <v-icon left class="d-none d-lg-flex" @click="goTo('/testslist')">
       mdi-alpha-r-circle
     </v-icon>
 
@@ -19,63 +19,58 @@
       app
       absolute
       temporary
-      class="hidden-md-and-up"
+      dark
+      class="d-flex d-lg-none drawer-animate"
+      :class="{ 'drawer-open': drawer }"
     >
-      <v-row align="center" class="ma-0" justify="center" style="cursor: pointer;" @click="goToProfile">
-        <v-list-item-avatar>
-          <v-icon large dark>
-            mdi-account-circle
-          </v-icon>
-        </v-list-item-avatar>
-
-        <v-col>
-          <v-list-item-content v-if="user">
-            <v-list-item-title>{{ username || $t('buttons.username') }}</v-list-item-title>
-            <div class="caption">
-              {{ user.email }}
+      <!-- User Info Section - Clickable for Profile -->
+      <div class="mobile-dropdown">
+        <div class="pa-4 d-flex align-center" style="cursor: pointer" @click="goToProfile(); drawer = false;">
+          <v-avatar size="48" color="primary" class="user-avatar white--text">
+            <span class="text-h5 font-weight-medium">{{ userInitial }}</span>
+          </v-avatar>
+          <div class="ml-4 flex-grow-1">
+            <div class="d-flex align-center">
+              <span class="mobile-user-name white--text">{{ username || $t('buttons.username') }}</span>
+              <v-icon color="primary" size="20" class="ml-2 verified-icon">mdi-check-decagram</v-icon>
             </div>
-          </v-list-item-content>
-        </v-col>
-      </v-row>
+            <span class="mobile-user-email grey--text text--lighten-1">{{ user.email }}</span>
+          </div>
+        </div>
 
-      <v-divider />
+        <v-divider dark></v-divider>
 
-      <!-- Landing Page Options -->
-      <v-list v-if="this.$route.path === '/' && user" dense dark>
-        <v-list-item link @click="goTo('/testslist')">
-          <v-list-item-icon>
-            <v-icon>mdi-console</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ $t('buttons.goToConsole') }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
+        <!-- Manager Options -->
+        <v-list v-if="isManager && test" dark>
+          <v-list-item-group v-model="item">
+            <v-list-item
+              v-for="(item, i) in items"
+              :key="i"
+              link
+              @click="goTo(item.path)"
+              class="mobile-menu-item rounded-lg mx-2"
+            >
+              <v-list-item-icon>
+                <v-icon color="white">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title class="white--text">{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
 
-      <!-- Manager Options -->
-      <v-list v-if="isManager && test" dense dark>
-        <v-list-item-group v-model="item">
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            link
-            @click="goTo(item.path)"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+        <!-- Spacer for pushing signout to bottom -->
+        <v-spacer></v-spacer>
 
-      <div class="footer">
-        <v-btn
-          dark
-          text
-          class="text-none font-weight-regular text-body-1"
-          @click.stop="signOut()"
-        >
-          {{ $t('buttons.signout') }}
-        </v-btn>
+        <!-- Signout Button - Always visible at bottom -->
+        <div class="mobile-signout">
+          <v-divider dark></v-divider>
+          <div class="pa-2">
+            <div class="mobile-menu-item d-flex align-center px-4 py-3 rounded-lg" @click="signOut(); drawer = false;">
+              <v-icon color="error" size="20">mdi-logout</v-icon>
+              <span class="ml-3 white--text">{{ $t('buttons.signout') }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </v-navigation-drawer>
 
@@ -99,7 +94,7 @@
       v-if="this.$route.path === '/' && user"
       text
       color="#f9a826"
-      class="console-button mx-1 hidden-sm-and-down"
+      class="console-button mx-1 d-none d-lg-flex"
       @click="goTo('/testslist')"
     >
       {{ $t('buttons.goToConsole') }}
@@ -113,7 +108,7 @@
       "
       text
       color="#f9a826"
-      class="console-button mx-1 hidden-sm-and-down"
+      class="console-button mx-1 d-none d-lg-flex"
       @click="goTo('/')"
     >
       {{ $t('AccessNotAllowed.goHome') }}
@@ -128,20 +123,20 @@
       "
       text
       color="#f9a826"
-      class="console-button mx-1 hidden-sm-and-down"
+      class="console-button mx-1 d-none d-lg-flex"
       @click="goTo('/testslist')"
     >
       {{ $t('buttons.returnToConsole') }}
     </v-btn>
 
-    <HelpButton class="mx-2" />
-    <NotificationBtn v-if="user" class="mx-2" />
+    <HelpButton :class="$vuetify.breakpoint.smAndDown ? 'mx-1' : 'mx-2'" />
+    <NotificationBtn v-if="user" :class="$vuetify.breakpoint.smAndDown ? 'mx-1' : 'mx-2'" />
 
     <!-- Sign-in Desktop -->
     <v-btn
       v-if="!user"
       text
-      class="hidden-sm-and-down"
+      class="d-none d-lg-flex"
       @click="goTo('/signin')"
     >
       <v-icon left>
@@ -151,14 +146,19 @@
     </v-btn>
 
     <!-- Sign-in Mobile -->
-    <v-btn v-if="!user" icon class="hidden-md-and-up" @click="goTo('/signin')">
-      <v-icon size="20">
+    <v-btn 
+      v-if="!user" 
+      icon 
+      class="d-flex d-lg-none" 
+      @click="goTo('/signin')"
+    >
+      <v-icon :size="$vuetify.breakpoint.xsOnly ? '18' : '20'">
         mdi-lock
       </v-icon>
     </v-btn>
 
     <!-- Profile Button Desktop -->
-    <div class="hidden-sm-down">
+    <div class="d-none d-lg-flex">
       <v-menu
         v-if="user"
         v-model="menu"
@@ -185,15 +185,15 @@
         <div class="custom-dropdown white rounded-lg">
           <!-- User Info Section -->
           <div class="pa-6 d-flex align-center">
-            <v-avatar size="48" color="primary" class="user-avatar white--text">
-              <span class="text-h5 font-weight-medium">{{ userInitial }}</span>
+            <v-avatar size="48" color="primary" class="elevation-2">
+              <span class="text-h5 font-weight-medium white--text">{{ userInitial }}</span>
             </v-avatar>
             <div class="ml-4 flex-grow-1">
               <div class="d-flex align-center">
-                <span class="user-name">{{ username || $t('buttons.username') }}</span>
-                <v-icon color="primary" size="20" class="ml-2 verified-icon">mdi-check-decagram</v-icon>
+                <span class="text-h6 font-weight-bold grey--text text--darken-4">{{ username || $t('buttons.username') }}</span>
+                <v-icon color="primary" size="20" class="ml-2">mdi-check-decagram</v-icon>
               </div>
-              <span class="user-email mt-1 grey--text text--darken-1">{{ user.email }}</span>
+              <span class="subtitle-2 grey--text text--darken-1">{{ user.email }}</span>
             </div>
           </div>
 
@@ -201,17 +201,33 @@
 
           <!-- Menu Items -->
           <div class="pa-2">
-            <div class="menu-item d-flex align-center px-4 py-3 rounded-lg" @click="goToProfile(); menu = false;">
-              <v-icon color="primary" size="20">mdi-account</v-icon>
-              <span class="ml-3 menu-text">{{ $t('buttons.profile') }}</span>
-            </div>
+            <v-hover v-slot="{ hover }">
+              <div 
+                class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer"
+                :class="{ 'primary lighten-5': hover }"
+                @click="goToProfile(); menu = false;"
+              >
+                <v-icon color="primary" size="20">mdi-account</v-icon>
+                <span class="ml-3 subtitle-1 font-weight-medium" :class="{ 'primary--text': hover }">
+                  {{ $t('buttons.profile') }}
+                </span>
+              </div>
+            </v-hover>
 
             <v-divider class="my-2"></v-divider>
 
-            <div class="menu-item d-flex align-center px-4 py-3 rounded-lg" @click="signOut(); menu = false;">
-              <v-icon color="error" size="20">mdi-logout</v-icon>
-              <span class="ml-3 menu-text">{{ $t('buttons.signout') }}</span>
-            </div>
+            <v-hover v-slot="{ hover }">
+              <div 
+                class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer"
+                :class="{ 'error lighten-5': hover }"
+                @click="signOut(); menu = false;"
+              >
+                <v-icon color="error" size="20">mdi-logout</v-icon>
+                <span class="ml-3 subtitle-1 font-weight-medium" :class="{ 'error--text': hover }">
+                  {{ $t('buttons.signout') }}
+                </span>
+              </div>
+            </v-hover>
           </div>
         </div>
       </v-menu>
@@ -461,58 +477,57 @@ export default {
 
 <style scoped>
 /* Only keeping styles that can't be handled by Vuetify */
-.custom-dropdown {
-  min-width: 300px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
-}
-
-.user-avatar {
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
-}
-
-.user-name {
-  font-size: 22px;
-  font-weight: 600;
-  color: #1a1a1a;
-  letter-spacing: -0.3px;
-}
-
-.user-email {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.verified-icon {
-  filter: drop-shadow(0 2px 4px rgba(33, 150, 243, 0.2));
-}
-
-.menu-item {
+.cursor-pointer {
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-/* Profile hover */
-.menu-item:first-child:hover {
-  background-color: rgba(33, 150, 243, 0.1);
+/* Drawer animations - can't be handled by Vuetify */
+.drawer-animate {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform: translateX(-100%);
 }
 
-.menu-item:first-child:hover .menu-text {
-  color: #2196F3;
+.drawer-animate.drawer-open {
+  transform: translateX(0);
 }
 
-/* Signout hover */
-.menu-item:last-child:hover {
-  background-color: rgba(244, 67, 54, 0.1);
+.drawer-animate .mobile-dropdown {
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-.menu-item:last-child:hover .menu-text {
-  color: #F44336;
+.drawer-animate.drawer-open .mobile-dropdown {
+  opacity: 1;
+  transition-delay: 0.2s;
 }
 
-.menu-text {
-  font-size: 15px;
-  font-weight: 500;
-  color: #424242;
-  transition: color 0.2s ease;
+.drawer-animate .mobile-menu-item {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.3s ease;
+}
+
+.drawer-animate.drawer-open .mobile-menu-item {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger animations - can't be handled by Vuetify */
+.drawer-animate.drawer-open .mobile-menu-item:nth-child(1) { transition-delay: 0.2s; }
+.drawer-animate.drawer-open .mobile-menu-item:nth-child(2) { transition-delay: 0.25s; }
+.drawer-animate.drawer-open .mobile-menu-item:nth-child(3) { transition-delay: 0.3s; }
+.drawer-animate.drawer-open .mobile-menu-item:nth-child(4) { transition-delay: 0.35s; }
+.drawer-animate.drawer-open .mobile-menu-item:nth-child(5) { transition-delay: 0.4s; }
+
+.drawer-animate .mobile-signout {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.drawer-animate.drawer-open .mobile-signout {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s;
 }
 </style>
