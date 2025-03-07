@@ -81,29 +81,21 @@
       <!-- Start Screen -->
       <v-row
         v-if="test && start"
-        class="background align-center justify-center pa-0 ma-0"
+        class="background background-img pa-0 ma-0"
+        align="center"
       >
-        <v-col  cols="12" md="6" sm="12" xs="12" class="ml-md-3 mr-md-3">
-          <h1 class="titleView text-center text-md-left text-sm-center pb-1">
+        <v-col cols="6" class="ml-5">
+          <h1 class="titleView pb-1">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description" >
+          <p align="justify" class="description">
             {{ test.testDescription }}
           </p>
-          <v-row justify="center" justify-md="start" justify-sm="center" class="pa-4">
+          <v-row justify="center" class>
             <v-btn color="white" outlined rounded @click="startTest()">
               {{ $t('HeuristicsTestView.actions.startTest') }}
             </v-btn>
           </v-row>
-        </v-col>
-        <v-col cols="6" md="5" sm="6" xs="6" class="d-flex justify-center">
-          <v-img 
-            src="../../assets/BackgroundTestView.png" 
-            contain
-            class="mx-auto"
-            max-width="100%" 
-            height="auto"
-          />
         </v-col>
       </v-row>
 
@@ -432,15 +424,14 @@
             </div>
           </ShowInfo>
           <div v-if="calculatedProgress == 100 && review == false">
-            <ShowInfo title="Finish Test">
+            <ShowInfo :title="$t('finishTest.title')">
               <div slot="content" class="ma-0 pa-0">
                 <v-row justify="center" class="ma-4">
                   <v-col cols="11" class="mt-3">
-                    <span class="cardsTitle">Final Message!</span>
+                    <span class="cardsTitle">{{$t('finishTest.finalMessage')}}!</span>
                     <br />
                     <span class="cardsSubtitle">
-                      Congratulations you finished this test, now you can submit
-                      your answer.
+                      {{ $t('finishTest.congratulations') }}
                     </span>
                     <v-row justify="center" class="mt-3">
                       <v-col cols="4">
@@ -452,8 +443,7 @@
                       </v-col>
                       <v-col cols="4" class="pt-2 my-8">
                         <span class="cardsSubtitle"
-                          >Click here to submit your answer, when submitted your
-                          answer can't be changed!</span
+                          >{{ $t('finishTest.submitMessage') }}</span
                         >
                         <v-col class="mt-2">
                           <v-btn
@@ -461,7 +451,7 @@
                             color="orange"
                             depressed
                             dark
-                            ><v-icon class="ma-2">mdi-send</v-icon>Submit</v-btn
+                            ><v-icon class="ma-2">mdi-send</v-icon>{{ $t('buttons.submit') }}</v-btn
                           >
                         </v-col>
                       </v-col>
@@ -478,7 +468,7 @@
       <UserTestView />
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
-      <ModeratedTestView ref="ModeratedTestView" :token="token" />
+      <ModeratedTestView ref="ModeratedTestView.vue" :token="token" />
     </div>
   </div>
 </template>
@@ -774,7 +764,8 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0; 
+  right: 0;
+  background-image: url(../../assets/BackgroundTestView.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right 0px top -20px;
@@ -785,9 +776,9 @@ body {
   font-weight: 300;
   font-size: 60px;
   line-height: 70px;
+  display: flex;
   align-items: center;
   color: #ffffff;
-  word-wrap:break-word;
 }
 .description {
   font-style: normal;
@@ -796,8 +787,6 @@ body {
   line-height: 21px;
   align-items: flex-end;
   color: #ffffff;
-  padding-top: 3%;
-  padding-bottom:3%;
 }
 .nav {
   position: fixed;
