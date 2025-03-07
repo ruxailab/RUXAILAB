@@ -496,7 +496,8 @@
     "help": "Ayuda",
     "delete": "Borrar",
     "deleteAccount":"Eliminar cuenta",    
-    "back":"Atrás"
+    "back":"Atrás",
+    "submit": "Enviar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -531,6 +532,13 @@
     "test-name": "Nombre de la Prueba",
     "test-description": "Descripción de la Prueba",
     "test-label": "Prueba pública para todos los usuarios"
+  },
+  "finishTest": {
+    "title": "Finalizar Prueba",
+    "finalMessage": "¡Mensaje final!",
+    "congratulations": "¡Felicidades! Has terminado esta prueba, ahora puedes enviar tu respuesta.",
+    "submitMessage": "Haz clic aquí para enviar tu respuesta. Una vez enviada, ¡no podrás cambiarla!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "¿Cómo creo una prueba?",
