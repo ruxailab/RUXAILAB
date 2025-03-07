@@ -552,5 +552,28 @@
     "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
     "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
+  },
+  "ModeratedTest": {
+    "preTest": "PRÉ-TESTE",
+    "tasks": "TAREFAS",
+    "postTest": "PÓS-TESTE",
+    "consentForm": "Termo de Consentimento",
+    "consentDescription": "Este é um campo de consentimento com um texto para confirmar o consentimento.",
+    "welcomeMessage": "Mensagem de boas-vindas",
+    "welcomeMessageDescription": "Esta mensagem será a primeira coisa que os participantes verão antes da sessão começar.",
+    "landingPage": "Página Inicial",
+    "landingPageDescription": "Este URL será carregado automaticamente quando o participante iniciar a sessão.",
+    "participantCamera": "Câmera do participante",
+    "cameraOptions": {
+      "optional": "Opcional",
+      "required": "Obrigatório",
+      "disabled": "Desativado"
+    },
+    "preForm": "Pré-Formulário",
+    "preFormDescription": "Este é um questionário prévio para coletar dados dos participantes.",
+    "postForm": "Pós-Formulário",
+    "postFormDescription": "Este é um questionário posterior para coletar dados dos participantes.",
+    "finalMessage": "Mensagem final",
+    "finalMessageDescription": "Esta é uma mensagem final que você deixa para o participante ao concluir o teste."
   }
 }
