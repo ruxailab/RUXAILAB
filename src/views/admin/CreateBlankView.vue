@@ -1,16 +1,10 @@
 <template>
   <div class="outermost">
-    <v-col cols="12">
-      <v-row justify="center">
-        <p class="titles ma-16">
-          {{ $t('Createblank.title') }}
-        </p>
-      </v-row>
-    </v-col>
-
-    <v-col cols="12" class="mt-6">
-      <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+    <div class="content-container">
+      <h1 class="title">{{ $t('Createblank.title') }}</h1>
+      
+      <div class="cards-container">
+        <div class="card-wrapper">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="$t('Createblank.testType_1.testTitle')"
@@ -19,9 +13,9 @@
             :texts="$t('Createblank.testType_1.text')"
             @click="setTestType"
           />
-        </v-col>
+        </div>
 
-        <v-col cols="12" md="5" sm="10" class="card">
+        <div class="card-wrapper">
           <CardTypeTest
             :img="require('../../../public/user.png')"
             :title="$t('Createblank.testType_2.testTitle')"
@@ -30,9 +24,9 @@
             :texts="$t('Createblank.testType_2.text')"
             @click="setTestType"
           />
-        </v-col>
-      </v-row>
-    </v-col>
+        </div>
+      </div>
+    </div>
 
     <CreateTestNameDialog
       :is-open="nameDialog"
@@ -73,40 +67,82 @@ export default {
 
 <style scoped>
 .outermost {
-  height: 93vh;
+  min-height: 100vh;
   background-color: #f9f5f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.titles {
+.content-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.title {
   font-size: 38px;
   text-align: center;
   font-weight: 600;
   color: #f99726;
+  margin-bottom: 40px;
+  padding: 0 20px;
 }
 
-.card {
-  margin: auto;
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
 }
 
+.card-wrapper {
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+}
+
+/* Mobile styles */
 @media (max-width: 600px) {
-  .titles {
-    font-size: 28px; /* Adjust font size for smaller screens */
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1160px) {
   .outermost {
-    height: auto;
+    padding: 10px;
   }
-
-  .titles {
-    font-size: 32px; /* Adjust font size for medium screens */
+  
+  .title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+  
+  .cards-container {
+    gap: 20px;
+  }
+  
+  .card-wrapper {
+    width: 100%;
   }
 }
 
-@media (min-width: 1160px) {
-  .titles {
-    font-size: 38px; /* Adjust font size for larger screens */
+/* Tablet styles */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .title {
+    font-size: 32px;
+  }
+  
+  .card-wrapper {
+    width: calc(50% - 15px);
+    min-width: 280px;
+  }
+}
+
+/* Ensuring minimum height on smaller screens */
+@media (max-height: 700px) {
+  .outermost {
+    min-height: 100vh;
   }
 }
 </style>
