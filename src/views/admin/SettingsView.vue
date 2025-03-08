@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="true">
+  <v-container v-if="true" class="settings-container pa-0 pa-md-3">
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -7,26 +7,34 @@
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
-      <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+      <v-card class="rounded-lg elevation-8 delete-dialog">
+        <v-card-title class="headline error white--text py-4 px-5" primary-title>
+          <v-icon left class="mr-2" size="28">mdi-alert-circle</v-icon>
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
-        <v-card-text>{{ dialogText }}</v-card-text>
+        <v-card-text class="py-5 px-5 text-body-1">{{ dialogText }}</v-card-text>
 
         <v-divider />
 
-        <v-card-actions>
+        <v-card-actions class="pa-5">
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">
+          <v-btn 
+            class="grey lighten-3 px-6 py-2" 
+            height="42" 
+            elevation="0" 
+            @click="dialogDel = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="red white--text ml-4 px-6 py-2"
+            height="42"
             :loading="loading"
-            text
+            elevation="2"
             @click="deleteTest(object)"
           >
+            <v-icon left small class="mr-1">mdi-trash-can-outline</v-icon>
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -34,13 +42,14 @@
     </v-dialog>
 
     <!-- Create Template Dialog -->
-    <v-dialog v-model="tempDialog" max-width="80%">
-      <v-card>
-        <p class="dialog-title ma-2 pa-2">
+    <v-dialog v-model="tempDialog" max-width="80%" overlay-opacity="0.8">
+      <v-card class="rounded-lg elevation-10 template-dialog">
+        <v-card-title class="dialog-title ma-0 pa-5 grey lighten-4 d-flex align-center">
+          <v-icon left class="mr-3" color="#F9A826" size="32">mdi-file-document-outline</v-icon>
           Create Template
-        </p>
+        </v-card-title>
         <v-divider />
-        <v-form ref="tempform" class="px-5">
+        <v-form ref="tempform" class="px-6 py-4">
           <v-row justify="space-around" class="pa-2">
             <v-col cols="12">
               <v-text-field
@@ -50,6 +59,7 @@
                 :rules="titleRequired"
                 counter="200"
                 outlined
+                class="rounded-lg template-field"
                 dense
                 @input="$emit('change')"
               />
@@ -58,6 +68,7 @@
                 v-model="template.templateDescription"
                 label="Description"
                 outlined
+                class="rounded-lg template-field mt-3"
                 dense
                 @input="$emit('change')"
               />
@@ -66,21 +77,30 @@
                 v-model="template.isTemplatePublic"
                 label="Make template public to all users"
                 color="#F9A826"
+                hide-details
+                class="mt-4"
               />
             </v-col>
           </v-row>
-          <v-divider />
-          <v-card-actions>
+          <v-divider class="mt-6" />
+          <v-card-actions class="pa-5">
             <v-spacer />
-            <v-btn class="error" @click="closeDialog()">
+            <v-btn 
+              class="grey darken-1 white--text px-6 py-2" 
+              height="42"
+              elevation="1"
+              @click="closeDialog()"
+            >
               {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn
-              text
               :disabled="hasTemplate ? true : false"
-              class="success"
+              class="success px-6 py-2 ml-4"
+              height="42"
+              elevation="3"
               @click="createTemplate()"
             >
+              <v-icon left small class="mr-1">mdi-content-save-outline</v-icon>
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -90,50 +110,71 @@
 
     <ShowInfo :title="$t('pages.settings.title')">
       <div slot="content">
-        <v-card style="background: #f5f7ff">
-          <v-col class="mb-1 pa-4 pb-1">
-            <p class="subtitleView">
+        <v-card class="rounded-lg settings-card my-2" elevation="4">
+          <div class="header-gradient px-5 py-4 d-flex align-center">
+            <v-icon class="mr-3" color="white" size="28">mdi-cog-outline</v-icon>
+            <h2 class="subtitleView font-weight-medium mb-0 white--text">
               {{ $t('pages.settings.currentTest') }}
-            </p>
-          </v-col>
+            </h2>
+          </div>
 
           <v-divider />
-          <FormTestDescription
-            v-if="object"
-            ref="form1"
-            :test="object"
-            :lock="true"
-            @valForm="validate"
-            @change="change = true"
-          />
+          
+          <div class="form-container pa-4">
+            <FormTestDescription
+              v-if="object"
+              ref="form1"
+              :test="object"
+              :lock="true"
+              @valForm="validate"
+              @change="change = true"
+            />
+          </div>
 
-          <v-row justify="space-around" class="mx-4 mb-3">
-            <v-spacer />
-            <v-btn
-              style="margin-right: 25px"
-              outlined
-              color="green"
-              :disabled="hasTemplate || !object ? true : false"
-              @click="tempDialog = true"
-            >
-              {{ $t('pages.settings.createTemplate') }}
-            </v-btn>
+          <v-divider class="mx-4" />
 
-            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
-              Duplicate test
-            </v-btn>
+          <v-row justify="space-around" class="action-buttons mx-2 my-6 px-4">
+            <v-col cols="12" md="6" class="d-flex justify-center justify-md-end px-2">
+              <v-btn
+                class="primary-btn px-5 py-2"
+                height="42"
+                color="green"
+                outlined
+                elevation="1"
+                :disabled="hasTemplate || !object ? true : false"
+                @click="tempDialog = true"
+              >
+                <v-icon left class="mr-2">mdi-content-copy</v-icon>
+                {{ $t('pages.settings.createTemplate') }}
+              </v-btn>
+            </v-col>
+
+            <v-col cols="12" md="6" class="d-flex justify-center justify-md-start px-2">
+              <v-btn 
+                class="primary-btn px-5 py-2" 
+                height="42"
+                color="green" 
+                outlined 
+                elevation="1" 
+                @click="duplicateTest()"
+              >
+                <v-icon left class="mr-2">mdi-content-duplicate</v-icon>
+                Duplicate test
+              </v-btn>
+            </v-col>
           </v-row>
 
-          <v-divider class="my-3 mx-2" />
+          <v-divider class="mx-4" />
 
-          <v-row justify="center" class="mt-3">
+          <v-row justify="center" class="py-6">
             <v-btn
               color="#f26363"
-              class="white--text mb-4"
-              style="justify-self: center"
+              class="white--text px-6 py-2 delete-btn"
+              height="42"
+              elevation="3"
               @click="dialogDel = true"
             >
-              <v-icon left>
+              <v-icon left class="mr-2">
                 mdi-trash-can-outline
               </v-icon>
               {{ $t('pages.settings.deleteTest') }}
@@ -153,6 +194,7 @@
               right
               color="#F9A826"
               v-bind="attrs"
+              class="elevation-8 pulse-animation"
               @click="submit()"
               v-on="on"
             >
@@ -167,9 +209,11 @@
     </ShowInfo>
   </v-container>
   <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
-    <v-progress-circular indeterminate color="#fca326" size="50" />
-    <div class="white-text mt-3">
-      Loading Settings
+    <div class="loading-container">
+      <v-progress-circular indeterminate color="#fca326" size="60" width="5" />
+      <div class="white-text mt-4 text-h6 font-weight-medium">
+        Loading Settings
+      </div>
     </div>
   </v-overlay>
   <AccessNotAllowed v-else />
@@ -505,6 +549,7 @@ export default {
 </script>
 
 <style scoped>
+/* Base Typography */
 .titleView {
   font-style: normal;
   font-weight: 300;
@@ -514,31 +559,331 @@ export default {
   align-items: center;
   color: #000000;
 }
+
 .subtitleView {
   font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  line-height: 21px;
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 24px;
   align-items: flex-end;
-  color: #000000;
+  color: #ffffff;
   margin-bottom: 0px;
   padding-bottom: 0px;
-}
-.dialog-title {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 40px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.dialog-title {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 60px;
+  display: flex;
+  align-items: center;
+  color: #333333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Card Styling */
+.settings-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.settings-card:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.form-container {
+  background-color: #fafbff;
+  padding: 24px !important;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Gradient Header */
+.header-gradient {
+  background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Dialog Styling */
+.template-dialog, .delete-dialog {
+  overflow: hidden;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+}
+
+.template-dialog .v-card__title {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.delete-dialog .v-card__title {
+  background: linear-gradient(45deg, #ff5252, #ff867f);
+  box-shadow: 0 4px 12px rgba(255, 82, 82, 0.2);
+}
+
+/* Enhanced Form Elements */
+.template-field .v-input__slot {
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease;
+  background-color: rgba(250, 250, 255, 0.8) !important;
+}
+
+.template-field .v-input__slot:hover {
+  border-color: #F9A826 !important;
+  background-color: rgba(250, 250, 255, 1) !important;
+}
+
+.template-field .v-input__slot:focus-within {
+  border-color: #3a7bd5 !important;
+  box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1) !important;
+}
+
+/* Button Styling */
+.v-btn {
+  text-transform: none;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.v-btn.success, .v-btn.error {
+  font-weight: 500;
+}
+
+.v-btn::before {
+  border-radius: 8px;
+}
+
+.primary-btn {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(45deg);
+  transition: all 0.7s ease;
+  z-index: 0;
+  opacity: 0;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.primary-btn:hover::after {
+  transform: rotate(45deg) translate(150%, 150%);
+  opacity: 1;
+}
+
+.delete-btn {
+  box-shadow: 0 4px 12px rgba(242, 99, 99, 0.25);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.delete-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(45deg);
+  transition: all 0.7s ease;
+  z-index: 0;
+  opacity: 0;
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(242, 99, 99, 0.35);
+}
+
+.delete-btn:hover::after {
+  transform: rotate(45deg) translate(150%, 150%);
+  opacity: 1;
+}
+
+/* Loading Animation */
+.loading-container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.white-text {
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Save Button Animation */
+.pulse-animation {
+  animation: pulse 2s infinite;
+  box-shadow: 0 6px 16px rgba(249, 168, 38, 0.4);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 168, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(249, 168, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 168, 38, 0);
+  }
+}
+
+/* Action Buttons Container */
+.action-buttons {
+  margin: 40px 0 !important;
+}
+
+/* Dividers */
+.v-divider {
+  opacity: 0.7;
+}
+
+/* Responsive Adjustments */
 @media screen and (max-width: 960px) {
+  .settings-container {
+    padding: 0;
+  }
+  
   .dialog-title {
-    display: flex;
+    font-size: 28px;
+    line-height: 40px;
     text-align: center;
     justify-content: center;
   }
+  
+  .subtitleView {
+    font-size: 18px;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .header-gradient {
+    justify-content: center;
+  }
+  
+  .v-btn {
+    margin: 8px 0;
+    width: 100%;
+  }
+  
+  .primary-btn, .delete-btn {
+    width: 90%;
+    margin: 8px auto;
+  }
+  
+  .settings-card {
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .form-container {
+    padding: 16px !important;
+  }
+}
+
+/* More responsive details for smaller screens */
+@media screen and (max-width: 600px) {
+  .header-gradient {
+    padding: 16px;
+  }
+  
+  .dialog-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  
+  .v-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .v-card-actions .v-btn {
+    margin: 5px 0 !important;
+    width: 100%;
+  }
+  
+  .v-dialog .v-card-actions .v-btn {
+    margin: 5px 0 !important;
+  }
+  
+  .action-buttons {
+    margin: 24px 0 !important;
+  }
+  
+  .pulse-animation {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+}
+
+/* High-density screens */
+@media screen and (min-width: 1920px) {
+  .settings-container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  .settings-card {
+    max-width: 1400px;
+    margin: 24px auto;
+  }
+}
+
+/* Transition Animations */
+.v-btn {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.template-field .v-input__slot {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
