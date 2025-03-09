@@ -23,7 +23,12 @@
     >
       <v-row align="center" class="ma-0" justify="center" style="cursor: pointer;" @click="goToProfile">
         <v-list-item-avatar>
-          <v-icon large dark>
+          <v-img 
+            v-if="profileImage" 
+            :src="profileImage" 
+            alt="User Profile"
+          ></v-img>
+          <v-icon v-else large dark>
             mdi-account-circle
           </v-icon>
         </v-list-item-avatar>
@@ -168,19 +173,26 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            text
-            v-bind="attrs"
-            class="pa-0 btn-fix"
-            v-on="on"
-            @click="menu = !menu"
-          >
-            <v-icon class="mr-1" dark>
-              mdi-account-circle
-            </v-icon>
-            <v-icon small>
-              mdi-chevron-down
-            </v-icon>
-          </v-btn>
+  text
+  v-bind="attrs"
+  class="pa-0 btn-fix"
+  v-on="on"
+  @click="menu = !menu"
+>
+  <v-avatar size="24" class="mr-1">
+    <v-img 
+      v-if="profileImage" 
+      :src="profileImage" 
+      alt="User Profile"
+    ></v-img>
+    <v-icon v-else dark>
+      mdi-account-circle
+    </v-icon>
+  </v-avatar>
+  <v-icon small>
+    mdi-chevron-down
+  </v-icon>
+</v-btn>
         </template>
         <v-list dense class="ma-0 py-1" style="border-radius: 0px !important">
           <v-list-item dense style="font-size: 14px; font-family: Roboto, sans-serif" class="px-2">
@@ -233,12 +245,14 @@ export default {
   },
   data() {
     return {
-      drawer: false,
-      menu: false,
-      item: 0,
-      isManager: false,
-      username: null,
-    }
+    drawer: false,
+    menu: false,
+    item: 0,
+    isManager: false,
+    username: null,
+    profileImage: null,
+    defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png'
+  }
   },
   computed: {
     user() {
@@ -403,27 +417,28 @@ export default {
 
   methods: {
     async fetchUsername() {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-        if (user) {
-          const userController = new UserController();
-          const userDoc = await userController.getById(user.uid);
+    if (user) {
+      const userController = new UserController();
+      const userDoc = await userController.getById(user.uid);
 
-          if (userDoc) {
-            this.username = userDoc.username || null;
-          } else {
-            console.error('User document not found in Firestore');
-          }
-        } else {
-          console.error('No user is currently signed in');
-        } 
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        this.$toast.error('Failed to load profile data');
+      if (userDoc) {
+        this.username = userDoc.username || null;
+        this.profileImage = userDoc.profileImage || null;
+      } else {
+        console.error('User document not found in Firestore');
       }
-    },
+    } else {
+      console.error('No user is currently signed in');
+    } 
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    this.$toast.error('Failed to load profile data');
+  }
+},
     goTo(route) {
       if (route.includes('/testview')) window.open(route)
       else {
