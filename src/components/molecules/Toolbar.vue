@@ -105,9 +105,7 @@
     >
       {{ $t('buttons.goToConsole') }}
     </v-btn>
-    <v-btn @click="toggleDarkMode">
-      <v-icon>{{ darkMode ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-    </v-btn>
+    
     <v-btn
       v-if="
         this.$route.path == '/testslist' ||
@@ -241,7 +239,6 @@ export default {
       item: 0,
       isManager: false,
       username: null,
-      darkMode: localStorage.getItem('darkMode') === 'true',
     }
   },
   computed: {
@@ -399,7 +396,6 @@ export default {
   },
   
   mounted() {
-    this.applyDarkMode();
     if (this.user) {
       console.log(this.username)
       this.fetchUsername();
@@ -452,29 +448,7 @@ export default {
         this.$router.push('/profile').catch(() => {});
       }
     },
-    toggleDarkMode() {
-
-      console.log('Toggling dark mode');
-      this.isDarkMode = !this.isDarkMode;
-      localStorage.setItem('darkMode', this.isDarkMode);
-      this.applyDarkMode();
-      // Check if the 'dark-mode' class is added to <html>
-console.log(document.documentElement.classList.contains('dark-mode'));  // true or false
-
-// Check the background color applied to the body
-console.log(getComputedStyle(document.body).backgroundColor);  // Will return the current background color
-
-    },
-    applyDarkMode() {
-      // Add or remove the dark-mode class on <html> or <body>
-      if (this.isDarkMode) {
-        document.documentElement.classList.add('dark-mode');  // This targets <html>
-        // Or you can use document.body.classList.add('dark-mode') if you prefer body
-      } else {
-        document.documentElement.classList.remove('dark-mode');
-      }
-    }
-
+    
   },
 }
 
