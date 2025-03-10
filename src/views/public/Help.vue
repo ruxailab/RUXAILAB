@@ -252,16 +252,16 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Still Have Questions?
+              {{ $t('help.footer.questions.title') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
             </h3>
             <p class="white--text mb-4" style="opacity: 0.7;">
-              We're here to help! Reach out to our support team for assistance.
+              {{ $t('help.footer.questions.message') }}
             </p>
             <v-btn color="black" outlined class="white--text">
-              Submit a Request
+              {{ $t('help.footer.questions.button') }}
             </v-btn>
           </v-col>
           <v-col cols="12" md="4" class="pt-6">
@@ -269,7 +269,7 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Quick Links
+              {{ $t('help.footer.quickLinks.title') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
@@ -280,28 +280,28 @@
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                Terms of Service
+                {{ $t('help.footer.quickLinks.terms') }}
               </v-btn>
               <v-btn
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                Privacy Policy
+                {{ $t('help.footer.quickLinks.privacy') }}
               </v-btn>
               <v-btn
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                FAQs
+                {{ $t('help.footer.quickLinks.faqs') }}
               </v-btn>
             </div>
           </v-col>
           <v-col cols="12" class="text-center mt-8">
             <v-divider dark class="mb-4"></v-divider>
             <p class="text-caption white--text" style="opacity: 0.5;">
-              © 2025 Ruxailab. All rights reserved.
+              {{ $t('help.footer.copyright') }}
             </p>
           </v-col>
         </v-row>
