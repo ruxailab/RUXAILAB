@@ -23,11 +23,11 @@ const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 
 
-if (process.env.NODE_ENV === 'development') {
-  connectFirestoreEmulator(db, 'localhost', 8081)
-  connectAuthEmulator(auth, 'http://localhost:9099')
-  connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
-  connectStorageEmulator(storage, '127.0.0.1', 9199)
-}
+// if (process.env.NODE_ENV === 'development') {
+//   connectFirestoreEmulator(db, 'localhost', 8081)
+//   connectAuthEmulator(auth, 'http://localhost:9099')
+//   connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+//   connectStorageEmulator(storage, '127.0.0.1', 9199)
+// }
 
 export { auth, db, analytics, fbFunctions, storage }
