@@ -36,9 +36,7 @@
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
       <v-card>
-        <p class="dialog-title ma-2 pa-2">
-          Create Template
-        </p>
+        <p class="dialog-title ma-2 pa-2">Create Template</p>
         <v-divider />
         <v-form ref="tempform" class="px-5">
           <v-row justify="space-around" class="pa-2">
@@ -106,20 +104,24 @@
             @valForm="validate"
             @change="change = true"
           />
-
-          <v-row justify="space-around" class="mx-4 mb-3">
-            <v-spacer />
+<!-- fixed this  -->
+          <v-row justify="center" align="center" class="mx-4 mb-3 button-row">
             <v-btn
-              style="margin-right: 25px"
               outlined
               color="green"
               :disabled="hasTemplate || !object ? true : false"
+              class="button-spacing"
               @click="tempDialog = true"
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
 
-            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+            <v-btn
+              outlined
+              color="green"
+              class="button-spacing"
+              @click="duplicateTest()"
+            >
               Duplicate test
             </v-btn>
           </v-row>
@@ -133,9 +135,7 @@
               style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left>
-                mdi-trash-can-outline
-              </v-icon>
+              <v-icon left> mdi-trash-can-outline </v-icon>
               {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </v-row>
@@ -156,9 +156,7 @@
               @click="submit()"
               v-on="on"
             >
-              <v-icon large>
-                mdi-content-save
-              </v-icon>
+              <v-icon large> mdi-content-save </v-icon>
             </v-btn>
           </template>
           <span>{{ $t('buttons.save') }}</span>
@@ -168,9 +166,7 @@
   </v-container>
   <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
     <v-progress-circular indeterminate color="#fca326" size="50" />
-    <div class="white-text mt-3">
-      Loading Settings
-    </div>
+    <div class="white-text mt-3">Loading Settings</div>
   </v-overlay>
   <AccessNotAllowed v-else />
 </template>
@@ -282,7 +278,7 @@ export default {
     },
   },
   watch: {
-    test: async function() {
+    test: async function () {
       if (this.test !== null && this.test !== undefined) {
         this.object = await Object.assign({}, this.test)
       }
@@ -534,11 +530,43 @@ export default {
   color: #000000;
 }
 
+/* Styles for the button row */
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Default spacing for buttons on desktop */
+.button-spacing {
+  margin: 0 12px; /* Horizontal spacing between buttons on desktop */
+}
+
+/* Mobile adjustments (≤ 960px) */
 @media screen and (max-width: 960px) {
   .dialog-title {
     display: flex;
     text-align: center;
     justify-content: center;
+  }
+
+  /* Stack buttons vertically and center them on mobile */
+  .button-row {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Adjust button spacing and width on mobile */
+  .button-spacing {
+    margin: 8px 0; /* Vertical spacing (8px above/below, 16px gap between buttons) */
+    width: 100%; /* Full width for better touch targets */
+    max-width: 300px; /* Limit width for aesthetics, matching "Delete Test" button style */
+  }
+
+  /* Remove bottom margin from the last button to avoid extra space */
+  .button-spacing:last-child {
+    margin-bottom: 0;
   }
 }
 </style>
