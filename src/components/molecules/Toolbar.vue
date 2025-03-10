@@ -1,4 +1,5 @@
 <template>
+  
   <v-app-bar app dark dense>
     <v-btn
       v-if="user"
@@ -78,13 +79,13 @@
         </v-btn>
       </div>
     </v-navigation-drawer>
-
+  
     <v-toolbar-title
       v-if="this.$route.path != '/help'"
       style="cursor: pointer"
       @click="goTo('/testslist')"
     >
-      RUXAILAB
+      RUXAILAR
     </v-toolbar-title>
     <v-toolbar-title v-else style="cursor: pointer" @click="goTo('/testslist')">
       Help Center
@@ -104,7 +105,9 @@
     >
       {{ $t('buttons.goToConsole') }}
     </v-btn>
-
+    <v-btn @click="toggleDarkMode">
+      <v-icon>{{ darkMode ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+    </v-btn>
     <v-btn
       v-if="
         this.$route.path == '/testslist' ||
@@ -238,6 +241,7 @@ export default {
       item: 0,
       isManager: false,
       username: null,
+      darkMode: localStorage.getItem('darkMode') === 'true',
     }
   },
   computed: {
@@ -395,6 +399,7 @@ export default {
   },
   
   mounted() {
+    this.applyDarkMode();
     if (this.user) {
       console.log(this.username)
       this.fetchUsername();
@@ -447,11 +452,36 @@ export default {
         this.$router.push('/profile').catch(() => {});
       }
     },
+    toggleDarkMode() {
+
+      console.log('Toggling dark mode');
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem('darkMode', this.isDarkMode);
+      this.applyDarkMode();
+      // Check if the 'dark-mode' class is added to <html>
+console.log(document.documentElement.classList.contains('dark-mode'));  // true or false
+
+// Check the background color applied to the body
+console.log(getComputedStyle(document.body).backgroundColor);  // Will return the current background color
+
+    },
+    applyDarkMode() {
+      // Add or remove the dark-mode class on <html> or <body>
+      if (this.isDarkMode) {
+        document.documentElement.classList.add('dark-mode');  // This targets <html>
+        // Or you can use document.body.classList.add('dark-mode') if you prefer body
+      } else {
+        document.documentElement.classList.remove('dark-mode');
+      }
+    }
+
   },
 }
+
 </script>
 
 <style scoped>
+
 .console-button {
   font-size: 13px;
   font-family: Roboto, sans-serif;
@@ -476,4 +506,21 @@ export default {
 .btn-fix:focus::before {
   opacity: 0 !important;
 }
+</style>
+<style>
+  :root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+  }
+
+  .dark-mode {
+    --background-color: #121212;
+    --text-color: #ffffff;
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
 </style>
