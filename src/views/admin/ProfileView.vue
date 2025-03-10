@@ -3,10 +3,7 @@
     <v-row>
       <!-- Left Section: Profile Details -->
       <v-col cols="12" md="4" lg="3">
-        <v-card
-        outlined
-          class="rounded-lg h-100"
-        >
+        <v-card outlined class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ hover }">
@@ -241,7 +238,7 @@
                                 : 'mdi-circle-outline'
                             }}
                           </v-icon>
-                          <span>At least 8 characters</span>
+                          <span>{{ $t('At least 8 characters') }}</span>
                         </div>
                         <div class="d-flex align-center mb-1">
                           <v-icon
@@ -257,7 +254,7 @@
                                 : 'mdi-circle-outline'
                             }}
                           </v-icon>
-                          <span>At least one uppercase letter</span>
+                          <span>{{ $t('At least one uppercase letter') }}</span>
                         </div>
                         <div class="d-flex align-center">
                           <v-icon
@@ -267,7 +264,9 @@
                           >
                             {{ specialCharIcon }}
                           </v-icon>
-                          <span>At least one special character</span>
+                          <span>{{
+                            $t('At least one special character')
+                          }}</span>
                         </div>
                       </div>
                     </v-alert>
@@ -505,7 +504,14 @@
             </p>
 
             <div class="text-center mb-4">
-              <p class="font-weight-bold">Type "DELETE" to confirm</p>
+              <p class="font-weight-bold">
+                {{
+                  $t('Type "DELETE_WORD" to confirm').replace(
+                    'DELETE_WORD',
+                    $t('DELETE_WORD'),
+                  )
+                }}
+              </p>
               <v-text-field
                 v-model="deleteConfirmText"
                 outlined
@@ -513,7 +519,12 @@
                 hide-details
                 class="mt-2 input-field-hover"
                 :rules="[
-                  (v) => v === 'DELETE' || 'Please type DELETE to confirm',
+                  (v) =>
+                    v === $t('DELETE_WORD') ||
+                    $t('Please type DELETE_WORD to confirm').replace(
+                      'DELETE_WORD',
+                      $t('DELETE_WORD'),
+                    ),
                 ]"
               ></v-text-field>
             </div>
@@ -536,10 +547,13 @@
                 class="mx-2 transition-swing"
                 @click="deleteStep = 2"
                 min-width="120"
-                :disabled="deleteConfirmText !== 'DELETE'"
-                :elevation="hover && deleteConfirmText === 'DELETE' ? 4 : 2"
+                :disabled="deleteConfirmText !== $t('DELETE_WORD')"
+                :elevation="
+                  hover && deleteConfirmText === $t('DELETE_WORD') ? 4 : 2
+                "
                 :class="{
-                  'transform-button': hover && deleteConfirmText === 'DELETE',
+                  'transform-button':
+                    hover && deleteConfirmText === $t('DELETE_WORD'),
                 }"
               >
                 {{ $t('Proceed') }}
@@ -552,12 +566,16 @@
         <div v-else>
           <v-card-text>
             <v-alert type="error" class="mb-4" outlined>
-              Final step: Verify your identity
+              {{ $t('PROFILE.Final step: Verify your identity') }}
             </v-alert>
 
             <div class="mb-4">
               <p class="text-center font-weight-bold mb-4">
-                Enter your password to proceed with account deletion
+                {{
+                  $t(
+                    'PROFILE.Enter your password to proceed with account deletion',
+                  )
+                }}
               </p>
               <v-text-field
                 v-model="userPassword"
@@ -567,7 +585,7 @@
                 dense
                 prepend-inner-icon="mdi-lock"
                 :disabled="isDeleting"
-                :rules="[(v) => !!v || 'Password is required']"
+                :rules="[(v) => !!v || $t('PROFILE.passwordRequired')]"
                 class="input-field-hover"
               ></v-text-field>
             </div>
@@ -649,15 +667,13 @@ export default {
       },
       countries: countries,
       usernameRules: [
-        (v) => !!v || 'Username is required',
+        (v) => !!v || this.$t('Username is required'),
         (v) => (v && v.length >= 3) || 'Username must be at least 3 characters',
       ],
-      countryRules: [(v) => !!v || 'Country is required'],
+      countryRules: [(v) => !!v || this.$t('Country is required')],
       contactRules: [
         (v) => !!v || 'Contact number is required',
-        (v) =>
-          /^\d{9,15}$/.test(v) ||
-          'Please enter a valid phone number (9-15 digits only)',
+        (v) => /^\d{9,15}$/.test(v) || this.$t('Enter a valid phone number'),
       ],
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
@@ -716,12 +732,12 @@ export default {
           icon: 'mdi-email',
         },
         {
-          label: this.$t('SIGNIN.contact'),
+          label: this.$t('Contact'),
           value: this.userprofile.contactNo,
           icon: 'mdi-phone',
         },
         {
-          label: this.$t('PROFILE.country'),
+          label: this.$t('Country'),
           value: this.userprofile.country,
           icon: 'mdi-map-marker',
         },

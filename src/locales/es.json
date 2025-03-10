@@ -31,9 +31,9 @@
     "editDelete": "Editar/Borrar",
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
-    "notifications":"notificaciones",
-    "unread":"no leído",
-    "inbox":"Bandeja de entrada",
+    "notifications": "notificaciones",
+    "unread": "no leído",
+    "inbox": "Bandeja de entrada",
     "timeAgo": {
       "years": "Hace {count} año{count !== 1 ? 's' : ''}",
       "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
@@ -44,7 +44,8 @@
     },
     "viewAll": "Ver todo",
     "sentBy": "Enviado por",
-    "new": "NUEVO"
+    "new": "NUEVO",
+    "user": "Usuario"
   },
   "PROFILE": {
     "title": "Perfil",
@@ -68,9 +69,35 @@
     "passwordUppercase": "Debe contener una letra mayúscula",
     "passwordSymbol": "Debe contener un símbolo",
     "confirmPasswordRequired": "Se requiere confirmar la contraseña",
-    "passwordsMatch": "Las contraseñas deben coincidir"
+    "passwordsMatch": "Las contraseñas deben coincidir",
+    "Enter a valid phone number": "Introduzca un número de teléfono válido",
+    "Username is required": "El nombre de usuario es obligatorio",
+    "Country is required": "El país es obligatorio",
+    "Type \"DELETE\" to confirm": "Escriba \"DELETE\" para confirmar",
+    "Final step: Verify your identity": "Paso final: Verifique su identidad",
+    "Enter your password to proceed with account deletion": "Ingrese su contraseña para proceder con la eliminación de la cuenta",
+    "Please type DELETE to confirm": "Por favor escribe DELETE para confirmar"
   },
-
+  "Account": "Cuenta",
+  "Security": "Seguridad",
+  "Personal Info": "Información Personal",
+  "Edit Details": "Editar Detalles",
+  "Change Password": "Cambiar Contraseña",
+  "Password Requirements": "Requisitos de Contraseña",
+  "Password Minimum Requirements": "Requisitos Mínimos de Contraseña",
+  "New Password": "Nueva Contraseña",
+  "Confirm New Password": "Confirmar Nueva Contraseña",
+  "Contact": "Contacto",
+  "Country": "País",
+  "Delete account": "Eliminar cuenta",
+  "Delete Account": "Eliminar Cuenta",
+  "Proceed": "Continuar",
+  "Back": "Atrás",
+  "Your Password": "Tu Contraseña",
+  "Delete Forever": "Eliminar Permanentemente",
+  "At least 8 characters": "Al menos 8 caracteres",
+  "At least one uppercase letter": "Al menos una letra mayúscula",
+  "At least one special character": "Al menos un carácter especial",
   "titles": {
     "manager": "Gerente",
     "test": "Prueba",
@@ -117,7 +144,7 @@
   "errors": {
     "invalidInvitation": "Invitación inválida",
     "signupWithInvitationEmail": "El usuario necesita registrarse utilizando el mismo correo electrónico que la invitación.",
-    "emailIsRequired": "E-mail é obrigatório",
+    "emailIsRequired": "Correo electrónico es requerido",
     "invalidEmail": "Email inválido",
     "passwordRequired": "Se requiere contraseña",
     "passwordValidate": "La contraseña debe tener al menos 8 caracteres",
@@ -477,7 +504,7 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount":"¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
   },
   "buttons": {
     "next": "Siguiente",
@@ -486,7 +513,7 @@
     "username": "Nombre de usuario",
     "goToConsole": "Ir a la consola",
     "signout": "Desconectar",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Volver a la consola",
     "tip": "Consejo",
     "create": "Crear",
@@ -496,8 +523,8 @@
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
-    "deleteAccount":"Eliminar cuenta",    
-    "back":"Atrás"
+    "deleteAccount": "Eliminar cuenta",
+    "back": "Atrás"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -519,11 +546,19 @@
     "test": "Prueba",
     "testType_1": {
       "testTitle": "Heurística de Usabilidad",
-      "text": ["Porcentaje de Usabilidad", "Informe Final en PDF", "Invita a especialistas a evaluar tu aplicación"]
+      "text": [
+        "Porcentaje de Usabilidad",
+        "Informe Final en PDF",
+        "Invita a especialistas a evaluar tu aplicación"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuario de Usabilidad",
-      "text": ["Grabación de webcam, audio y pantalla", "Análisis mejorado de respuestas", "Pruebas moderadas o no moderadas"]
+      "text": [
+        "Grabación de webcam, audio y pantalla",
+        "Análisis mejorado de respuestas",
+        "Pruebas moderadas o no moderadas"
+      ]
     }
   },
   "TestDialog": {
@@ -554,5 +589,8 @@
     "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
-  }
+  },
+  "DELETE_WORD": "DELETE",
+  "Type \"DELETE_WORD\" to confirm": "Escriba \"DELETE\" para confirmar",
+  "Please type DELETE_WORD to confirm": "Por favor escriba DELETE_WORD para confirmar"
 }

@@ -6,7 +6,7 @@
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
-    "contact": "Contact No",  
+    "contact": "Contact No",
     "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
@@ -15,6 +15,7 @@
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
     "name": "Name",
+    "user": "User",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
     "analyzeProject": "Analyze the project and evaluators",
@@ -31,9 +32,9 @@
     "editDelete": "Edit/Delete",
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
-    "notifications":"Notifications",
-    "unread":"unread",
-    "inbox":"inbox",
+    "notifications": "Notifications",
+    "unread": "unread",
+    "inbox": "inbox",
     "timeAgo": {
       "years": "{count} year{count !== 1 ? 's' : ''} ago",
       "months": "{count} month{count !== 1 ? 's' : ''} ago",
@@ -46,30 +47,33 @@
     "sentBy": "Sent by",
     "new": "NEW"
   },
-    "PROFILE": {
-      "title": "Profile",
-      "editProfile": "Edit Profile",
-      "account": "Account",
-      "admin": "Admin",
-      "changePassword": "Change Password",
-      "passwordRequirements": "Ensure these requirements",
-      "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
-      "newPassword": "New Password",
-      "confirmNewPassword": "Confirm New Password",
-      "editDetails": "Edit Details",
-      "saveChanges": "Save Changes",
-      "country": "Country",
-      "missingInfo": "Missing Information",
-      "deleteAccountTitle": "Delete Account",
-      "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
-      "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
-      "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be at least 8 characters long",
-      "passwordUppercase": "Must contain an uppercase letter",
-      "passwordSymbol": "Must contain a symbol",
-      "confirmPasswordRequired": "Confirm password is required",
-      "passwordsMatch": "Passwords must match"
-    },
+  "PROFILE": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "account": "Account",
+    "admin": "Admin",
+    "changePassword": "Change Password",
+    "passwordRequirements": "Ensure these requirements",
+    "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "editDetails": "Edit Details",
+    "saveChanges": "Save Changes",
+    "country": "Country",
+    "missingInfo": "Missing Information",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
+    "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsMatch": "Passwords must match",
+    "Final step: Verify your identity": "Final step: Verify your identity",
+    "Enter your password to proceed with account deletion": "Enter your password to proceed with account deletion",
+    "Please type DELETE to confirm": "Please type DELETE to confirm"
+  },
   "titles": {
     "manager": "Manager",
     "test": "Test",
@@ -126,7 +130,14 @@
     "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
-    "incorrectCredential": "Incorrect username or password."
+    "incorrectCredential": "Incorrect username or password.",
+    "Type \"DELETE\" to confirm": "Type \"DELETE\" to confirm",
+    "Please type DELETE to confirm": "Please type DELETE to confirm",
+    "Enter a valid phone number": "Enter a valid phone number",
+    "Username is required": "Username is required",
+    "Country is required": "Country is required",
+    "Final step: Verify your identity": "Final step: Verify your identity",
+    "Enter your password to proceed with account deletion": "Enter your password to proceed with account deletion"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -477,8 +488,7 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount":" Are you sure you want to delete your account? This action cannot be undone."
-
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
   },
   "buttons": {
     "next": "Next",
@@ -487,7 +497,7 @@
     "username": "Username",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
-    "profile":"profile",
+    "profile": "profile",
     "returnToConsole": "Return to Console",
     "tip": "Tip",
     "cancel": "Cancel",
@@ -498,8 +508,8 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount":"Delete Account",
-    "back":"Back"
+    "deleteAccount": "Delete Account",
+    "back": "Back"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -521,11 +531,19 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability Heuristic",
-      "text": ["Usability Percentage", "Final Report PDF", "Invite specialists to evaluate your application"]
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF",
+        "Invite specialists to evaluate your application"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability User",
-      "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
     }
   },
   "TestDialog": {
@@ -556,5 +574,9 @@
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
-  }
+  },
+  "DELETE_WORD": "DELETE",
+  "Type \"DELETE_WORD\" to confirm": "Type \"DELETE\" to confirm",
+  "Please type DELETE_WORD to confirm": "Please type DELETE to confirm",
+  "Your Password": "Your Password"
 }

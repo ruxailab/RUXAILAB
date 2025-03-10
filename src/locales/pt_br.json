@@ -6,7 +6,7 @@
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
-    "contact":"Número de contato",
+    "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
@@ -31,9 +31,10 @@
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
-    "notifications":"Notificações",
-    "unread":"não lido",
-    "inbox":"Caixa de entrada",
+    "notifications": "Notificações",
+    "unread": "não lido",
+    "inbox": "Caixa de entrada",
+    "user": "Usuário",
     "timeAgo": {
       "years": "[TODO] {count}",
       "months": "[TODO] {count}",
@@ -68,7 +69,14 @@
     "passwordUppercase": "Deve conter uma letra maiúscula",
     "passwordSymbol": "Deve conter um símbolo",
     "confirmPasswordRequired": "Confirmação de senha é obrigatória",
-    "passwordsMatch": "As senhas devem corresponder"
+    "passwordsMatch": "As senhas devem corresponder",
+    "Final step: Verify your identity": "Etapa final: Verifique sua identidade",
+    "Enter your password to proceed with account deletion": "Digite sua senha para prosseguir com a exclusão da conta",
+    "Please type DELETE to confirm": "Por favor, digite DELETE para confirmar",
+    "Enter a valid phone number": "Digite um número de telefone válido",
+    "Username is required": "Nome de usuário é obrigatório",
+    "Country is required": "País é obrigatório",
+    "Type \"DELETE\" to confirm": "Digite \"DELETE\" para confirmar"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -116,9 +124,9 @@
   "errors": {
     "invalidInvitation": "Convite inválido",
     "signupWithInvitationEmail": "O usuário precisa se inscrever usando o mesmo e-mail que o convite.",
-    "emailIsRequired": "Correo electronico es requerido",
+    "emailIsRequired": "E-mail é obrigatório",
     "invalidEmail": "Email inválido",
-    "passwordRequired": "Senha requerida",
+    "passwordRequired": "Senha é obrigatória",
     "passwordValidate": "A senha deve ter pelo menos 8 caracteres",
     "differentPasswords": "Senhas diferentes",
     "fieldRequired": "Campo requerido",
@@ -476,7 +484,15 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "Enter a valid phone number": "Digite um número de telefone válido",
+    "Username is required": "Nome de usuário é obrigatório",
+    "Country is required": "País é obrigatório",
+    "Type \"DELETE\" to confirm": "Digite \"DELETE\" para confirmar",
+    "Please type DELETE to confirm": "Por favor, digite DELETE para confirmar",
+    "DELETE_WORD": "DELETE",
+    "Type \"DELETE_WORD\" to confirm": "Digite \"DELETE\" para confirmar",
+    "Please type DELETE_WORD to confirm": "Por favor, digite DELETE para confirmar"
   },
   "buttons": {
     "next": "Próximo",
@@ -485,7 +501,7 @@
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
     "create": "Criar",
@@ -495,8 +511,8 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount":"Excluir conta",
-    "back":"Trás"
+    "deleteAccount": "Excluir conta",
+    "back": "Trás"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -518,11 +534,19 @@
     "test": "Teste",
     "testType_1": {
       "testTitle": "Heurística de Usabilidade",
-      "text": ["Porcentagem de Usabilidade", "Relatório Final em PDF", "Convide especialistas para avaliar sua aplicação"]
+      "text": [
+        "Porcentagem de Usabilidade",
+        "Relatório Final em PDF",
+        "Convide especialistas para avaliar sua aplicação"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuário de Usabilidade",
-      "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Testes moderados ou não moderados"
+      ]
     }
   },
   "TestDialog": {
@@ -553,5 +577,28 @@
     "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
     "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
-  }
+  },
+  "Account": "Conta",
+  "Security": "Segurança",
+  "Personal Info": "Informações Pessoais",
+  "Edit Details": "Editar Detalhes",
+  "Change Password": "Alterar Senha",
+  "Password Requirements": "Requisitos de Senha",
+  "Password Minimum Requirements": "Requisitos Mínimos de Senha",
+  "New Password": "Nova Senha",
+  "Confirm New Password": "Confirmar Nova Senha",
+  "Contact": "Contato",
+  "Country": "País",
+  "Delete account": "Excluir conta",
+  "Delete Account": "Excluir Conta",
+  "Proceed": "Prosseguir",
+  "Back": "Voltar",
+  "Your Password": "Sua Senha",
+  "Delete Forever": "Excluir Permanentemente",
+  "At least 8 characters": "No mínimo 8 caracteres",
+  "At least one uppercase letter": "Pelo menos uma letra maiúscula",
+  "At least one special character": "Pelo menos um caractere especial",
+  "DELETE_WORD": "DELETE",
+  "Type \"DELETE_WORD\" to confirm": "Digite \"DELETE\" para confirmar",
+  "Please type DELETE_WORD to confirm": "Por favor, digite DELETE para confirmar"
 }
