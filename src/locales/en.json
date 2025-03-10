@@ -555,6 +555,43 @@
     "analyseresults": "How to analyse the results?",
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
-    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content.",
+    "header": {
+      "title": "Help Center",
+      "subtitle": "How can we help?",
+      "searchPlaceholder": "Search help articles..."
+    },
+    "categories": {
+      "title": "CATEGORIES",
+      "testCreation": "Test Creation",
+      "templates": "Templates",
+      "cooperators": "Cooperators",
+      "analytics": "Analytics",
+      "viewAll": "View All"
+    },
+    "noResults": {
+      "title": "No articles found",
+      "message": "Try adjusting your search or browse all categories",
+      "button": "View All Articles"
+    },
+    "footer": {
+      "contactUs": {
+        "title": "Contact Us",
+        "email": "ruxailab@gmail.com",
+        "phone": "+1 (555) 123-4567"
+      },
+      "questions": {
+        "title": "Still Have Questions?",
+        "message": "We're here to help! Reach out to our support team for assistance.",
+        "button": "Submit a Request"
+      },
+      "quickLinks": {
+        "title": "Quick Links",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "faqs": "FAQs"
+      },
+      "copyright": "© 2025 Ruxailab. All rights reserved."
+    }
   }
 }

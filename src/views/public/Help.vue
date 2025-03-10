@@ -21,13 +21,13 @@
                 class="text-h2 font-weight-bold white--text mb-2"
                 style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
               >
-                Help Center
+                {{ $t('help.header.title') }}
               </h1>
               <h2
                 class="text-h4 font-weight-medium white--text mb-6"
                 style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
               >
-                How can we help?
+                {{ $t('help.header.subtitle') }}
               </h2>
               <div
                 class="mx-auto"
@@ -36,7 +36,7 @@
                 <v-text-field
                   v-model="searchQuery"
                   prepend-inner-icon="mdi-magnify"
-                  placeholder="Search help articles..."
+                  :placeholder="$t('help.header.searchPlaceholder')"
                   outlined
                   dense
                   hide-details
@@ -81,7 +81,7 @@
               <v-list nav rounded>
                 <v-subheader
                   class="grey lighten-4 subtitle-2 font-weight-bold amber--text text--darken-2"
-                  >CATEGORIES</v-subheader
+                  >{{ $t('help.categories.title') }}</v-subheader
                 >
                 <v-list-item-group v-model="activeCategory" color="black">
                   <v-list-item
@@ -138,7 +138,7 @@
                           'black--text font-weight-medium':
                             selectedCategory === null,
                         }"
-                        >View All</v-list-item-title
+                        >{{ $t('help.categories.viewAll') }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
@@ -202,12 +202,12 @@
               <v-icon size="64" color="grey lighten-1" class="mb-4"
                 >mdi-help-circle-outline</v-icon
               >
-              <h3 class="mb-3">No articles found</h3>
+              <h3 class="mb-3">{{ $t('help.noResults.title') }}</h3>
               <p class="mb-4 grey--text text--darken-1">
-                Try adjusting your search or browse all categories
+                {{ $t('help.noResults.message') }}
               </p>
               <v-btn color="black" @click="filterByCategory(null)">
-                View All Articles
+                {{ $t('help.noResults.button') }}
               </v-btn>
             </v-card-text>
           </v-card>
@@ -233,14 +233,14 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Contact Us
+              {{ $t('help.footer.contactUs.title') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
             </h3>
             <p class="white--text mb-3" style="opacity: 0.7;">
               <v-icon small class="mr-2 white--text">mdi-email</v-icon>
-              ruxailab@gmail.com
+              {{ $t('help.footer.contactUs.email') }}
             </p>
             <p class="white--text mb-3" style="opacity: 0.7;">
               <v-icon small class="mr-2 white--text">mdi-phone</v-icon> +1 (555)
@@ -328,12 +328,24 @@ export default {
       categories: [
         {
           id: 'test-creation',
-          name: 'Test Creation',
+          name: this.$t('help.categories.testCreation'),
           icon: 'mdi-file-document-edit',
         },
-        { id: 'templates', name: 'Templates', icon: 'mdi-file-table-outline' },
-        { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
-        { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
+        { 
+          id: 'templates', 
+          name: this.$t('help.categories.templates'), 
+          icon: 'mdi-file-table-outline' 
+        },
+        { 
+          id: 'cooperators', 
+          name: this.$t('help.categories.cooperators'), 
+          icon: 'mdi-account-group' 
+        },
+        { 
+          id: 'analytics', 
+          name: this.$t('help.categories.analytics'), 
+          icon: 'mdi-chart-bar' 
+        },
       ],
       items: [
         {
@@ -446,6 +458,111 @@ export default {
       }
       return this.categories
     },
+  },
+
+  watch: {
+    // Add watcher for language changes
+    '$i18n.locale': {
+      immediate: true,
+      handler() {
+        // Update items when language changes
+        this.items = [
+          {
+            title: this.$t('help.createtest'),
+            content: this.$t('help.createtestanswer'),
+            gif: 'create_test.gif',
+            isCollapsed: true,
+            category: 'test-creation',
+          },
+          {
+            title: this.$t('help.heuristictest'),
+            content: this.$t('help.heuristictestanswer'),
+            gif: 'hsetup.gif',
+            isCollapsed: true,
+            category: 'test-creation',
+          },
+          {
+            title: this.$t('help.deletetest'),
+            content: this.$t('help.deletetestanswer'),
+            gif: 'del_test.gif',
+            isCollapsed: true,
+            category: 'test-creation',
+          },
+          {
+            title: this.$t('help.createtemplate'),
+            content: this.$t('help.createtemplateanswer'),
+            gif: 'create-temp.gif',
+            isCollapsed: true,
+            category: 'templates',
+          },
+          {
+            title: this.$t('help.usetemplate'),
+            content: this.$t('help.usetemplateanswer'),
+            gif: 'use-temp.gif',
+            isCollapsed: true,
+            category: 'templates',
+          },
+          {
+            title: this.$t('help.previewtest'),
+            content: this.$t('help.previewtestanswer'),
+            gif: 'preview_test.gif',
+            isCollapsed: true,
+            category: 'test-creation',
+          },
+          {
+            title: this.$t('help.importcsv'),
+            content: this.$t('help.importcsvanswer'),
+            gif: 'csv.gif',
+            isCollapsed: true,
+            category: 'test-creation',
+          },
+          {
+            title: this.$t('help.invitecooperators'),
+            content: this.$t('help.invitecooperatorsanswer'),
+            gif: 'sendinvite.gif',
+            isCollapsed: true,
+            category: 'cooperators',
+          },
+          {
+            title: this.$t('help.analyseresults'),
+            content: this.$t('help.analyseresultsanswer'),
+            gif: 'analytics.gif',
+            isCollapsed: true,
+            category: 'analytics',
+          },
+          {
+            title: this.$t('help.sendmessage'),
+            content: this.$t('help.sendmessageanswer'),
+            gif: 'send_message.gif',
+            isCollapsed: true,
+            category: 'cooperators',
+          },
+        ]
+        // Update categories when language changes
+        this.categories = [
+          {
+            id: 'test-creation',
+            name: this.$t('help.categories.testCreation'),
+            icon: 'mdi-file-document-edit',
+          },
+          { 
+            id: 'templates', 
+            name: this.$t('help.categories.templates'), 
+            icon: 'mdi-file-table-outline' 
+          },
+          { 
+            id: 'cooperators', 
+            name: this.$t('help.categories.cooperators'), 
+            icon: 'mdi-account-group' 
+          },
+          { 
+            id: 'analytics', 
+            name: this.$t('help.categories.analytics'), 
+            icon: 'mdi-chart-bar' 
+          },
+        ]
+      }
+    }
   },
 
   methods: {

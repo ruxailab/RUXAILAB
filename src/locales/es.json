@@ -553,6 +553,43 @@
     "analyseresults": "¿Cómo analizar los resultados?",
     "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
-    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
+    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
+    "header": {
+      "title": "Centro de Ayuda",
+      "subtitle": "¿Cómo podemos ayudarte?",
+      "searchPlaceholder": "Buscar artículos de ayuda..."
+    },
+    "categories": {
+      "title": "CATEGORÍAS",
+      "testCreation": "Creación de Pruebas",
+      "templates": "Plantillas",
+      "cooperators": "Cooperadores",
+      "analytics": "Analítica",
+      "viewAll": "Ver Todo"
+    },
+    "noResults": {
+      "title": "No se encontraron artículos",
+      "message": "Intenta ajustar tu búsqueda o navegar por todas las categorías",
+      "button": "Ver Todos los Artículos"
+    },
+    "footer": {
+      "contactUs": {
+        "title": "Contáctanos",
+        "email": "ruxailab@gmail.com",
+        "phone": "+1 (555) 123-4567"
+      },
+      "questions": {
+        "title": "¿Todavía tienes preguntas?",
+        "message": "¡Estamos aquí para ayudar! Comunícate con nuestro equipo de soporte para obtener asistencia.",
+        "button": "Enviar una Solicitud"
+      },
+      "quickLinks": {
+        "title": "Enlaces Rápidos",
+        "terms": "Términos de Servicio",
+        "privacy": "Política de Privacidad", 
+        "faqs": "Preguntas Frecuentes"
+      },
+      "copyright": "© 2025 Ruxailab. Todos los derechos reservados."
+    }
   }
 }

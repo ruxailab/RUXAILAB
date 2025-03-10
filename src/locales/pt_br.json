@@ -552,6 +552,43 @@
     "analyseresults": "Como analisar os resultados?",
     "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
-    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
+    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo.",
+    "header": {
+      "title": "Central de Ajuda",
+      "subtitle": "Como podemos ajudar?",
+      "searchPlaceholder": "Pesquisar artigos de ajuda..."
+    },
+    "categories": {
+      "title": "CATEGORIAS",
+      "testCreation": "Criação de Testes",
+      "templates": "Modelos",
+      "cooperators": "Colaboradores",
+      "analytics": "Análises",
+      "viewAll": "Ver Tudo"
+    },
+    "noResults": {
+      "title": "Nenhum artigo encontrado",
+      "message": "Tente ajustar sua pesquisa ou navegar por todas as categorias",
+      "button": "Ver Todos os Artigos"
+    },
+    "footer": {
+      "contactUs": {
+        "title": "Entre em Contato",
+        "email": "ruxailab@gmail.com",
+        "phone": "+1 (555) 123-4567"
+      },
+      "questions": {
+        "title": "Ainda tem dúvidas?",
+        "message": "Estamos aqui para ajudar! Entre em contato com nossa equipe de suporte para assistência.",
+        "button": "Enviar uma Solicitação"
+      },
+      "quickLinks": {
+        "title": "Links Rápidos",
+        "terms": "Termos de Serviço",
+        "privacy": "Política de Privacidade",
+        "faqs": "Perguntas Frequentes"
+      },
+      "copyright": "© 2025 Ruxailab. Todos os direitos reservados."
+    }
   }
 }
