@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="true" class="pa-0 pa-md-3">
+  <v-container v-if="true">
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
@@ -7,32 +7,26 @@
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
-      <v-card class="rounded-lg">
-        <v-card-title class="headline error white--text py-4 px-5" primary-title>
-          <v-icon left class="mr-2" size="28">mdi-alert-circle</v-icon>
+      <v-card>
+        <v-card-title class="headline error white--text" primary-title>
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
-        <v-card-text class="py-5 px-5 text-body-1">{{ dialogText }}</v-card-text>
+        <v-card-text>{{ dialogText }}</v-card-text>
 
         <v-divider />
 
-        <v-card-actions class="pa-5">
+        <v-card-actions>
           <v-spacer />
-          <v-btn 
-            class="grey lighten-3 px-6" 
-            height="42" 
-            @click="dialogDel = false"
-          >
+          <v-btn class="grey lighten-3" text @click="dialogDel = false">
             {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-4 px-6"
-            height="42"
+            class="red white--text ml-1"
             :loading="loading"
+            text
             @click="deleteTest(object)"
           >
-            <v-icon left small class="mr-1">mdi-trash-can-outline</v-icon>
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -41,13 +35,12 @@
 
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
-      <v-card class="rounded-lg">
-        <v-card-title class="grey lighten-4 pa-5 d-flex align-center">
-          <v-icon left class="mr-3" color="#F9A826" size="32">mdi-file-document-outline</v-icon>
+      <v-card>
+        <p class="dialog-title ma-2 pa-2">
           Create Template
-        </v-card-title>
+        </p>
         <v-divider />
-        <v-form ref="tempform" class="px-6 py-4">
+        <v-form ref="tempform" class="px-5">
           <v-row justify="space-around" class="pa-2">
             <v-col cols="12">
               <v-text-field
@@ -65,7 +58,6 @@
                 v-model="template.templateDescription"
                 label="Description"
                 outlined
-                class="mt-3"
                 dense
                 @input="$emit('change')"
               />
@@ -74,28 +66,21 @@
                 v-model="template.isTemplatePublic"
                 label="Make template public to all users"
                 color="#F9A826"
-                hide-details
-                class="mt-4"
               />
             </v-col>
           </v-row>
-          <v-divider class="mt-6" />
-          <v-card-actions class="pa-5">
+          <v-divider />
+          <v-card-actions>
             <v-spacer />
-            <v-btn 
-              class="grey darken-1 white--text px-6" 
-              height="42"
-              @click="closeDialog()"
-            >
+            <v-btn class="error" @click="closeDialog()">
               {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn
+              text
               :disabled="hasTemplate ? true : false"
-              class="success px-6 ml-4"
-              height="42"
+              class="success"
               @click="createTemplate()"
             >
-              <v-icon left small class="mr-1">mdi-content-save-outline</v-icon>
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -105,68 +90,50 @@
 
     <ShowInfo :title="$t('pages.settings.title')">
       <div slot="content">
-        <v-card class="rounded-lg my-2">
-          <div class="primary px-5 py-4 d-flex align-center">
-            <v-icon class="mr-3" color="white" size="28">mdi-cog-outline</v-icon>
-            <h2 class="mb-0 white--text font-weight-medium">
+        <v-card style="background: #f5f7ff">
+          <v-col class="mb-1 pa-4 pb-1">
+            <p class="subtitleView">
               {{ $t('pages.settings.currentTest') }}
-            </h2>
-          </div>
+            </p>
+          </v-col>
 
           <v-divider />
-          
-          <div class="pa-4">
-            <FormTestDescription
-              v-if="object"
-              ref="form1"
-              :test="object"
-              :lock="true"
-              @valForm="validate"
-              @change="change = true"
-            />
-          </div>
+          <FormTestDescription
+            v-if="object"
+            ref="form1"
+            :test="object"
+            :lock="true"
+            @valForm="validate"
+            @change="change = true"
+          />
 
-          <v-divider class="mx-4" />
+          <v-row justify="space-around" class="mx-4 mb-3">
+            <v-spacer />
+            <v-btn
+              style="margin-right: 25px"
+              outlined
+              color="green"
+              :disabled="hasTemplate || !object ? true : false"
+              @click="tempDialog = true"
+            >
+              {{ $t('pages.settings.createTemplate') }}
+            </v-btn>
 
-          <v-row justify="space-around" class="mx-2 my-6 px-4">
-            <v-col cols="12" md="6" class="d-flex justify-center justify-md-end px-2">
-              <v-btn
-                class="px-5"
-                height="42"
-                color="green"
-                outlined
-                :disabled="hasTemplate || !object ? true : false"
-                @click="tempDialog = true"
-              >
-                <v-icon left class="mr-2">mdi-content-copy</v-icon>
-                {{ $t('pages.settings.createTemplate') }}
-              </v-btn>
-            </v-col>
-
-            <v-col cols="12" md="6" class="d-flex justify-center justify-md-start px-2">
-              <v-btn 
-                class="px-5" 
-                height="42"
-                color="green" 
-                outlined 
-                @click="duplicateTest()"
-              >
-                <v-icon left class="mr-2">mdi-content-duplicate</v-icon>
-                Duplicate test
-              </v-btn>
-            </v-col>
+            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+              Duplicate test
+            </v-btn>
           </v-row>
 
-          <v-divider class="mx-4" />
+          <v-divider class="my-3 mx-2" />
 
-          <v-row justify="center" class="py-6">
+          <v-row justify="center" class="mt-3">
             <v-btn
               color="#f26363"
-              class="white--text px-6"
-              height="42"
+              class="white--text mb-4"
+              style="justify-self: center"
               @click="dialogDel = true"
             >
-              <v-icon left class="mr-2">
+              <v-icon left>
                 mdi-trash-can-outline
               </v-icon>
               {{ $t('pages.settings.deleteTest') }}
@@ -200,11 +167,9 @@
     </ShowInfo>
   </v-container>
   <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
-    <div>
-      <v-progress-circular indeterminate color="#fca326" size="60" width="5" />
-      <div class="white--text mt-4 text-h6 font-weight-medium">
-        Loading Settings
-      </div>
+    <v-progress-circular indeterminate color="#fca326" size="50" />
+    <div class="white-text mt-3">
+      Loading Settings
     </div>
   </v-overlay>
   <AccessNotAllowed v-else />
@@ -350,6 +315,102 @@ export default {
       } else {
         this.$toast.warning('Test must contain a title.')
       }
+
+      // await this.$store.dispatch("getAnswers", { id: this.test.answers });
+      // await this.$store.dispatch("getReports", { id: this.test.reports });
+      // delete this.object.id;
+      // this.$store
+      //   .dispatch("updateTest", {
+      //     docId: this.id,
+      //     data: this.object,
+      //   })
+      //   .then(() => {
+      //     let element = this.myObject;
+      //     //update attributes
+      //     element.title = this.object.title;
+      //     element.description = this.object.description;
+      //     if ("template" in this.object)
+      //       element = Object.assign(element, {
+      //         template: this.object.template,
+      //       });
+      //     else if ("template" in this.myObject) {
+      //       delete element.template;
+      //     }
+      //     this.$store.dispatch("updateMyTest", {
+      //       docId: this.object.admin.id,
+      //       element: element,
+      //     });
+      //     this.cooperators.cooperators.forEach((coop) => {
+      //       let isAdmin = coop.accessLevel.value <= 1;
+      //       if (isAdmin) {
+      //         element = Object.assign(
+      //           {},
+      //           {
+      //             id: this.id,
+      //             title: this.object.title,
+      //             type: this.object.type,
+      //             reports: this.object.reports,
+      //             answers: this.object.answers,
+      //             cooperators: this.object.cooperators,
+      //             accessLevel: coop.accessLevel,
+      //           }
+      //         );
+      //       } else {
+      // element = Object.assign(
+      //   {},
+      //   {
+      //     id: this.id,
+      //     title: this.object.title,
+      //     type: this.object.type,
+      //     reports: this.object.reports,
+      //     answers: this.object.answers,
+      //     cooperators: this.object.cooperators,
+      //     accessLevel: coop.accessLevel,
+      //     author: this.test.admin.email,
+      //     answersSheet: this.test.answersSheet,
+      //     date: new Date().toLocaleString("en-Us"),
+      //   }
+      // );
+      //       }
+      //       if ("template" in this.object && isAdmin)
+      //         element = Object.assign(element, {
+      //           template: this.object.template,
+      //         });
+      //       if (isAdmin)
+      //         this.$store.dispatch("updateMyCoops", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //       else
+      //         this.$store.dispatch("updateMyAnswers", {
+      //           docId: coop.id,
+      //           element: element,
+      //         });
+      //     });
+      //     this.answers.test.title = this.object.title;
+      //     this.reports.test.title = this.object.title;
+      //     this.cooperators.test.title = this.object.title;
+      //     delete this.answers.id;
+      //     delete this.reports.id;
+      //     delete this.cooperators.id;
+      //     this.$store.dispatch("updateTestAnswer", {
+      //       docId: this.test.answers,
+      //       data: this.answers,
+      //     });
+      //     this.$store.dispatch("updateTestReport", {
+      //       docId: this.test.reports,
+      //       data: this.reports,
+      //     });
+      //     this.$store.dispatch("updateTestCooperators", {
+      //       docId: this.test.cooperators,
+      //       data: this.cooperators,
+      //     });
+      //     this.$store.commit("setSuccess", "Test updated succesfully");
+      //     this.change = false; //reset change
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("setError", err);
+      //   });
     },
     preventNav(event) {
       if (!this.change) return
@@ -444,7 +505,40 @@ export default {
 </script>
 
 <style scoped>
-.white--text {
-  color: white;
+.titleView {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+.subtitleView {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 18.1818px;
+  line-height: 21px;
+  align-items: flex-end;
+  color: #000000;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.dialog-title {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+}
+
+@media screen and (max-width: 960px) {
+  .dialog-title {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
 }
 </style>
