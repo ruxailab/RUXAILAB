@@ -17,6 +17,7 @@
           v-bind="attrs"
           @click="goToCreateTestRoute()"
           v-on="on"
+          elevation="4"
         >
           <v-icon large>
             mdi-plus
@@ -28,188 +29,241 @@
 
     <!-- LOADING -->
     <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular indeterminate color="#F9A826" size="64" />
     </v-overlay>
 
     <div>
       <v-row justify="center" class="fill-height">
-        <v-col cols="10">
-          <!-- Mobile search button -->
+        <v-col cols="12" md="10" lg="9">
+          <!-- Mobile search button and title -->
           <v-row v-if="!searching" align="center">
-            <span class="titleText ml-3 mb-2">{{ $t('Dashboard.tests') }}</span>
+            <div class="titleText ml-3 mb-2 primary--text">{{ $t('Dashboard.tests') }}</div>
             <v-spacer />
             <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
+          
+          <!-- Mobile search field -->
           <v-text-field
-            v-else
+            v-if="searching"
             v-model="search"
-            :autofocus="searching"
+            autofocus
             dense
             :label="$t('Dashboard.search')"
             prepend-inner-icon="mdi-magnify"
+            append-icon="mdi-close"
             outlined
-            color="grey darken-2"
+            color="#F9A826"
             @blur="searching = false"
+            @click:append="searching = false"
+            class="mb-3"
           />
-          <v-divider class="mb-1" />
+          
+          <v-divider class="mb-3" />
 
-          <!-- Desktop Main Tabs -->
+          <!-- Desktop Main Tabs - Enhanced -->
           <v-tabs
             v-model="mainIndex"
             background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down mt-4"
+            color="#F9A826"
+            class="hidden-sm-and-down mt-4 custom-tabs"
             active-class="active-tab"
+            slider-color="#F9A826"
+            slider-size="3"
           >
-            <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
+            <v-tab class="px-6 text-subtitle-1">
+              <v-icon left>mdi-clipboard-text</v-icon>
+              {{ $t('Dashboard.tests') }}
+            </v-tab>
             <!-- <v-tab>Answers</v-tab>-->
-            <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
+            <v-tab class="px-6 text-subtitle-1">
+              <v-icon left>mdi-file-document-outline</v-icon>
+              {{ $t('Dashboard.templates') }}
+            </v-tab>
 
             <v-spacer />
 
+            <!-- Desktop search field -->
             <v-text-field
               v-model="search"
               dense
-              class="mt-1"
+              class="mt-1 custom-search-width"
               :label="$t('Dashboard.search')"
               prepend-inner-icon="mdi-magnify"
-              :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
+              :disabled="mainIndex == 1 && subIndex == 1 ? true : false"
               outlined
-              color="grey darken-2"
+              color="#F9A826"
+              hide-details
             />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
+          <v-divider class="hidden-sm-and-down mb-3" />
 
-          <!-- Desktop Tests/Answers Sub tabs -->
+          <!-- Desktop Tests/Answers Sub tabs - Enhanced -->
           <v-tabs
             v-if="mainIndex === 0"
             v-model="subIndex"
             background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
+            color="#F9A826"
+            class="hidden-sm-and-down custom-tabs"
             active-class="active-tab"
+            slider-color="#F9A826"
+            slider-size="3"
           >
-            <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sessions') }}</v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-account</v-icon>
+              {{ $t('Dashboard.myTests') }}
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-share-variant</v-icon>
+              {{ $t('Dashboard.sharedWithMe') }}
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-earth</v-icon>
+              {{ $t('Dashboard.publicTests') }}
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-clock-outline</v-icon>
+              {{ $t('Dashboard.sessions') }}
+            </v-tab>
 
             <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
+          <v-divider class="hidden-sm-and-down mb-4" />
 
-          <!-- Desktop Templates Sub tabs -->
+          <!-- Desktop Templates Sub tabs - Enhanced -->
           <v-tabs
             v-if="mainIndex == 1"
             v-model="subIndex"
             background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
+            color="#F9A826"
+            class="hidden-sm-and-down custom-tabs"
             active-class="active-tab"
+            slider-color="#F9A826"
+            slider-size="3"
           >
-            <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-folder-account</v-icon>
+              {{ $t('Dashboard.personal') }}
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              <v-icon small class="mr-1">mdi-compass</v-icon>
+              {{ $t('Dashboard.explore') }}
+            </v-tab>
 
             <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
-          <!-- Mobile Main Button -->
+          <v-divider class="hidden-sm-and-down mb-4" />
+          
+          <!-- Mobile Main Button - Enhanced -->
           <v-select
             v-model="mainIndex"
             dense
             outlined
-            class="hidden-md-and-up mx-2 mt-4"
+            class="hidden-md-and-up mx-2 mt-4 mb-3"
             :items="buttonItems"
+            item-color="#F9A826"
+            color="#F9A826"
+            prepend-inner-icon="mdi-filter-variant"
+            hide-details
           />
 
-          <!-- Mobile Sub Buttons -->
+          <!-- Mobile Sub Buttons - Enhanced -->
           <v-select
             v-if="mainIndex == 1"
             v-model="subIndex"
             dense
             outlined
-            class="hidden-md-and-up mx-2"
+            class="hidden-md-and-up mx-2 mb-4"
             :items="templateButtonItems"
+            item-color="#F9A826"
+            color="#F9A826"
+            hide-details
           />
           <v-select
             v-else
             v-model="subIndex"
             dense
             outlined
-            class="hidden-md-and-up mx-2"
+            class="hidden-md-and-up mx-2 mb-4"
             :items="testButtonItems"
+            item-color="#F9A826"
+            color="#F9A826"
+            hide-details
           />
 
-          <!-- Tests -> Personal  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 0"
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
+          <!-- Content Container - Enhanced -->
+          <v-card outlined class="rounded-lg mb-4 content-container">
+            <!-- Tests -> Personal  -->
+            <List
+              v-if="mainIndex == 0 && subIndex == 0"
+              :items="filteredTests"
+              type="myTests"
+              @clicked="goTo"
+            />
 
-          <!-- Tests -> Others  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredTests"
-            type="sharedWithMe"
-            @clicked="goTo"
-          />
+            <!-- Tests -> Others  -->
+            <List
+              v-if="mainIndex == 0 && subIndex == 1"
+              :items="filteredTests"
+              type="sharedWithMe"
+              @clicked="goTo"
+            />
 
-          <!-- Tests -> Public Tests -->
-          <List
-            v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
-            :items="filteredTests"
-            type="publicTests"
-            @clicked="goTo"
-          />
+            <!-- Tests -> Public Tests -->
+            <List
+              v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
+              :items="filteredTests"
+              type="publicTests"
+              @clicked="goTo"
+            />
 
-          <!-- Tests -> Sessions -->
-          <List
-            v-if="
-              filteredModeratedSessions.length > 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
-            :items="filteredModeratedSessions"
-            type="sessions"
-            @clicked="goTo"
-          />
-          <v-col
-            v-if="
-              filteredModeratedSessions.length == 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
-            align="center"
-            class="my-5"
-          >
-            <span style="color: #575757; font-size: 1.25rem !important;">
-              You don't have active sessions
-            </span>
-            <br>
-            <v-icon style="color: #575757;" class="mt-2" large>
-              mdi-clock-remove-outline
-            </v-icon>
-          </v-col>
+            <!-- Tests -> Sessions -->
+            <List
+              v-if="
+                filteredModeratedSessions.length > 0 &&
+                  mainIndex == 0 &&
+                  subIndex == 3
+              "
+              :items="filteredModeratedSessions"
+              type="sessions"
+              @clicked="goTo"
+            />
+            
+            <!-- Empty Sessions State -->
+            <v-card-text
+              v-if="
+                filteredModeratedSessions.length == 0 &&
+                  mainIndex == 0 &&
+                  subIndex == 3
+              "
+              align="center"
+              class="py-12"
+            >
+              <v-icon size="64" color="grey lighten-1" class="mb-3">
+                mdi-clock-remove-outline
+              </v-icon>
+              <div class="text-subtitle-1 grey--text text--darken-1">
+                You don't have active sessions
+              </div>
+            </v-card-text>
 
-          <!-- Templates -> Personal -->
-          <List
-            v-if="mainIndex == 1 && subIndex == 0"
-            :items="filteredTemplates"
-            type="myTemplates"
-            @clicked="setupTempDialog"
-          />
+            <!-- Templates -> Personal -->
+            <List
+              v-if="mainIndex == 1 && subIndex == 0"
+              :items="filteredTemplates"
+              type="myTemplates"
+              @clicked="setupTempDialog"
+            />
 
-          <!-- Templates -> Public Templates -->
-          <List
-            v-if="mainIndex == 1 && subIndex == 1"
-            :items="filteredTemplates"
-            type="publicTemplates"
-            @clicked="setupTempDialog"
-          />
+            <!-- Templates -> Public Templates -->
+            <List
+              v-if="mainIndex == 1 && subIndex == 1"
+              :items="filteredTemplates"
+              type="publicTemplates"
+              @clicked="setupTempDialog"
+            />
+          </v-card>
         </v-col>
       </v-row>
 
@@ -241,17 +295,18 @@ export default {
     subIndex: 0,
     searching: false,
     buttonItems: [
-      { text: 'Tests', value: 0 },
-      { text: 'Templates', value: 1 },
+      { text: 'Tests', value: 0, icon: 'mdi-clipboard-text' },
+      { text: 'Templates', value: 1, icon: 'mdi-file-document-outline' },
     ],
     testButtonItems: [
-      { text: 'My Tests', value: 0 },
-      { text: 'Shared With Me', value: 1 },
-      { text: 'Public Tests', value: 2 },
+      { text: 'My Tests', value: 0, icon: 'mdi-account' },
+      { text: 'Shared With Me', value: 1, icon: 'mdi-share-variant' },
+      { text: 'Public Tests', value: 2, icon: 'mdi-earth' },
+      { text: 'Sessions', value: 3, icon: 'mdi-clock-outline' },
     ],
     templateButtonItems: [
-      { text: 'Personal', value: 0 },
-      { text: 'Explore', value: 1 },
+      { text: 'Personal', value: 0, icon: 'mdi-folder-account' },
+      { text: 'Explore', value: 1, icon: 'mdi-compass' },
     ],
     page: 1,
     lastPage: 1,
@@ -325,6 +380,7 @@ export default {
       }
     },
   },
+  
   mounted() {
     this.filterModeratedSessions()
   },
@@ -437,13 +493,50 @@ export default {
 <style scoped>
 .titleText {
   font-size: 40px;
-  font-weight: 300;
+  font-weight: 400;
+  letter-spacing: -0.5px;
 }
 
 .active-tab {
-  background-color: rgba(249, 168, 38, 0.2) !important; 
-  border-radius: 4px; 
-  color: #000000 !important; 
-  font-weight: bold;
+  background-color: rgba(249, 168, 38, 0.1) !important; 
+  border-radius: 4px 4px 0 0; 
+  color: #F9A826 !important; 
+  font-weight: 500;
+}
+
+.custom-tabs .v-tab {
+  letter-spacing: 0.5px;
+  text-transform: none;
+  min-width: 100px;
+}
+
+.custom-search-width {
+  max-width: 300px;
+}
+
+.content-container {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 300px;
+}
+
+.primary--text {
+  color: #F9A826 !important;
+}
+
+/* Override Vuetify default colors for this component */
+:deep(.v-tab--active) {
+  color: #F9A826 !important;
+}
+
+:deep(.v-input__slot:focus-within) {
+  border-color: #F9A826 !important;
+}
+
+:deep(.v-text-field--outlined fieldset) {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+:deep(.v-text-field--outlined:focus-within fieldset) {
+  border-color: #F9A826 !important;
 }
 </style>
