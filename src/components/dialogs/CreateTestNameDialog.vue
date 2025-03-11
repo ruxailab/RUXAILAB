@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-dialog v-model="isOpen" fullscreen persistent transition="dialog-bottom-transition">
+<v-dialog v-model="dialogOpen" fullscreen persistent transition="dialog-bottom-transition">
+
       <v-card color="#f9f5f0">
         <ButtonBack @click="$emit('close')" />
 
@@ -163,11 +164,20 @@ export default {
     },
   }),
 
-  computed: {
-    user() {
-      return this.$store.getters.user
+ computed: {
+  dialogOpen: {
+    get() {
+      return this.isOpen; // Get the prop value
+    },
+    set(value) {
+      this.$emit('update:isOpen', value); // Emit an event to update the prop in the parent
     },
   },
+},
+// //Why This Works?
+// Getter (get): Returns the current value of isOpen (the prop).
+// Setter (set): Emits an event (update:isOpen) to inform the parent that isOpen has changed.
+// Parent Component: Must listen for update:isOpen and update isOpen accordingly.
 
   methods: {
     validate() {
