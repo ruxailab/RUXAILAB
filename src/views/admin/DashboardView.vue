@@ -1,85 +1,162 @@
 <template>
   <v-sheet class="fill-height">
-    <v-container class="mt-6">
+    <v-container
+      class="mt-6"
+      :class="{
+        'pa-2': $vuetify.breakpoint.xsOnly,
+        'pa-4': $vuetify.breakpoint.smOnly,
+      }"
+    >
       <Snackbar />
 
-      <!-- Simplified Dashboard Header -->
+      <!-- Responsive Dashboard Header -->
       <v-card dark class="mb-4" :style="headerGradientStyle" elevation="2">
-        <v-card-text class="text-center py-4">
-          <h1 class="text-h4 font-weight-bold white--text mb-2">
+        <v-card-text
+          :class="{
+            'text-center py-4': $vuetify.breakpoint.smAndUp,
+            'text-center py-3': $vuetify.breakpoint.xsOnly,
+          }"
+        >
+          <h1
+            :class="[
+              {
+                'text-h4': $vuetify.breakpoint.mdAndUp,
+                'text-h5': $vuetify.breakpoint.sm,
+                'text-h6': $vuetify.breakpoint.xsOnly,
+              },
+              'font-weight-bold',
+              'white--text',
+              'mb-2',
+            ]"
+          >
             RUXAILAB Dashboard
           </h1>
-          <div class="white--text text-body-1">
+          <div
+            class="white--text"
+            :class="{
+              'text-body-1': $vuetify.breakpoint.smAndUp,
+              'text-body-2': $vuetify.breakpoint.xsOnly,
+            }"
+          >
             Manage your tests and templates
           </div>
 
-          <!-- Quick Access Buttons Instead of Stats -->
-          <v-row justify="center" class="mt-5">
+          <!-- Responsive Quick Access Buttons -->
+          <v-row
+            justify="center"
+            :class="{
+              'mt-5': $vuetify.breakpoint.smAndUp,
+              'mt-3': $vuetify.breakpoint.xsOnly,
+            }"
+          >
             <v-btn
               color="white"
-              class="mx-2"
+              :class="{
+                'mx-2': $vuetify.breakpoint.smAndUp,
+                'mx-1': $vuetify.breakpoint.xsOnly,
+              }"
+              :small="$vuetify.breakpoint.xsOnly"
               outlined
               @click="goToCreateTestRoute"
             >
-              <v-icon left>mdi-plus</v-icon>
-              New Test
+              <v-icon left :small="$vuetify.breakpoint.xsOnly">mdi-plus</v-icon>
+              <span :class="{ 'd-none d-sm-inline': true }">New Test</span>
+              <span :class="{ 'd-inline d-sm-none': true }">New</span>
             </v-btn>
 
             <v-btn
               color="white"
-              class="mx-2"
+              :class="{
+                'mx-2': $vuetify.breakpoint.smAndUp,
+                'mx-1': $vuetify.breakpoint.xsOnly,
+              }"
+              :small="$vuetify.breakpoint.xsOnly"
               outlined
               @click="
                 mainIndex = 1
                 subIndex = 0
               "
             >
-              <v-icon left>mdi-file-document-outline</v-icon>
+              <v-icon left :small="$vuetify.breakpoint.xsOnly"
+                >mdi-file-document-outline</v-icon
+              >
               Templates
             </v-btn>
 
             <v-btn
               v-if="filteredModeratedSessions.length > 0"
               color="white"
-              class="mx-2"
+              :class="{
+                'mx-2': $vuetify.breakpoint.smAndUp,
+                'mx-1': $vuetify.breakpoint.xsOnly,
+              }"
+              :small="$vuetify.breakpoint.xsOnly"
               outlined
               @click="
                 mainIndex = 0
                 subIndex = 3
               "
             >
-              <v-icon left>mdi-clock-outline</v-icon>
-              Sessions
+              <v-icon left :small="$vuetify.breakpoint.xsOnly"
+                >mdi-clock-outline</v-icon
+              >
+              <span :class="{ 'd-none d-sm-inline': true }">Sessions</span>
+              <span :class="{ 'd-inline d-sm-none': true }">Sessions</span>
             </v-btn>
           </v-row>
         </v-card-text>
       </v-card>
 
-      <!-- Main Content Card -->
+      <!-- Main Content Card - Responsive -->
       <v-card class="rounded-lg" elevation="2" :style="mainCardStyle">
-        <!-- Simplified Toolbar without options menu -->
-        <v-toolbar flat color="transparent" height="60">
-          <v-card-title class="d-none d-sm-flex pa-0">
-            <span :style="gradientTextStyle" class="font-weight-bold">
+        <!-- Responsive Toolbar -->
+        <v-toolbar
+          flat
+          color="transparent"
+          :height="$vuetify.breakpoint.xsOnly ? '52' : '60'"
+        >
+          <v-card-title
+            :class="{
+              'pa-0': $vuetify.breakpoint.smAndUp,
+              'pa-0 text-subtitle-1': $vuetify.breakpoint.xsOnly,
+            }"
+          >
+            <span
+              :style="gradientTextStyle"
+              class="font-weight-bold"
+              :class="{ 'd-none d-sm-flex': true }"
+            >
               {{ currentTabTitle }}
+            </span>
+            <span
+              :style="gradientTextStyle"
+              class="font-weight-bold d-flex d-sm-none"
+            >
+              {{ mobileTabTitle }}
             </span>
           </v-card-title>
 
           <v-spacer></v-spacer>
 
-          <!-- Search functionality only -->
+          <!-- Responsive Search -->
           <v-text-field
             v-model="search"
             :disabled="isSearchDisabled"
             hide-details
-            :label="$t('Dashboard.search')"
+            :label="
+              $vuetify.breakpoint.xsOnly ? 'Search' : $t('Dashboard.search')
+            "
             prepend-inner-icon="mdi-magnify"
             clearable
             outlined
             dense
             color="deep-orange accent-3"
             :style="{
-              'max-width': $vuetify.breakpoint.mdAndUp ? '280px' : '100%',
+              'max-width': $vuetify.breakpoint.mdAndUp
+                ? '280px'
+                : $vuetify.breakpoint.sm
+                ? '180px'
+                : '120px',
             }"
             @click:clear="search = ''"
           />
@@ -87,7 +164,7 @@
 
         <v-divider></v-divider>
 
-        <!-- Desktop Tabs -->
+        <!-- Desktop Tabs - Unchanged -->
         <v-card class="mb-2 hidden-sm-and-down" flat>
           <v-tabs
             v-model="mainIndex"
@@ -108,7 +185,7 @@
           </v-tabs>
         </v-card>
 
-        <!-- Desktop Sub Tabs - without numbers -->
+        <!-- Desktop Sub Tabs - Unchanged -->
         <v-card v-if="mainIndex === 0" class="mb-2 hidden-sm-and-down" flat>
           <v-tabs
             v-model="subIndex"
@@ -136,7 +213,7 @@
           </v-tabs>
         </v-card>
 
-        <!-- Add Desktop Sub Tabs for Templates -->
+        <!-- Add Desktop Sub Tabs for Templates - Unchanged -->
         <v-card v-if="mainIndex === 1" class="mb-2 hidden-sm-and-down" flat>
           <v-tabs
             v-model="subIndex"
@@ -156,13 +233,57 @@
           </v-tabs>
         </v-card>
 
-        <!-- Mobile Tab Selectors -->
-        <div class="px-4 pt-2 hidden-md-and-up">
-          <!-- ... existing mobile selectors ... -->
+        <!-- Enhanced Mobile Tab Selectors -->
+        <div class="px-3 pt-2 hidden-md-and-up">
+          <v-select
+            v-model="mainIndex"
+            :items="buttonItems"
+            item-text="text"
+            item-value="value"
+            label="Section"
+            dense
+            outlined
+            hide-details
+            class="mb-2"
+            color="deep-orange"
+          ></v-select>
+
+          <v-select
+            v-if="mainIndex === 0"
+            v-model="subIndex"
+            :items="testButtonItems"
+            item-text="text"
+            item-value="value"
+            label="Category"
+            dense
+            outlined
+            hide-details
+            class="mb-2"
+            color="deep-orange"
+          ></v-select>
+
+          <v-select
+            v-if="mainIndex === 1"
+            v-model="subIndex"
+            :items="templateButtonItems"
+            item-text="text"
+            item-value="value"
+            label="Category"
+            dense
+            outlined
+            hide-details
+            class="mb-2"
+            color="deep-orange"
+          ></v-select>
         </div>
 
-        <!-- Content Area -->
-        <v-card-text class="pa-4">
+        <!-- Content Area - Responsive padding -->
+        <v-card-text
+          :class="{
+            'pa-4': $vuetify.breakpoint.smAndUp,
+            'pa-2': $vuetify.breakpoint.xsOnly,
+          }"
+        >
           <!-- Tests -> Personal  -->
           <div v-if="mainIndex === 0 && subIndex === 0">
             <v-skeleton-loader
@@ -177,25 +298,55 @@
               @refresh="getMyPersonalTests"
             />
 
-            <!-- Empty state -->
+            <!-- Empty state - Responsive - FIXED class binding syntax -->
             <v-card
               v-if="!loading && (!filteredTests || filteredTests.length === 0)"
-              class="pa-6 text-center mt-4"
+              :class="[
+                { 'text-center': true, 'mt-4': true },
+                'pa-6',
+                'pa-4',
+                'pa-3',
+              ]"
               outlined
             >
-              <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+              <v-icon
+                :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+                color="deep-orange lighten-4"
+                class="mb-3"
+              >
                 mdi-clipboard-text-outline
               </v-icon>
               <h3
-                class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+                :class="{
+                  'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                  'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                  'font-weight-medium': true,
+                  'grey--text': true,
+                  'text--darken-2': true,
+                }"
               >
                 No tests found
               </h3>
-              <p class="text-body-2 grey--text text--darken-1 mt-2 mb-4">
+              <p
+                :class="{
+                  'text-caption': $vuetify.breakpoint.xsOnly,
+                  'grey--text': true,
+                  'text--darken-1': true,
+                  'mt-2': true,
+                  'mb-4': true,
+                }"
+              >
                 Create a new test to get started
               </p>
-              <v-btn color="deep-orange" outlined @click="goToCreateTestRoute">
-                <v-icon left>mdi-plus</v-icon>
+              <v-btn
+                color="deep-orange"
+                outlined
+                @click="goToCreateTestRoute"
+                :small="$vuetify.breakpoint.xsOnly"
+              >
+                <v-icon left :small="$vuetify.breakpoint.xsOnly"
+                  >mdi-plus</v-icon
+                >
                 New Test
               </v-btn>
             </v-card>
@@ -214,27 +365,50 @@
               @clicked="goTo"
             />
 
-            <!-- Empty state -->
+            <!-- Empty state - Fixed class binding syntax -->
             <v-card
               v-if="!loading && (!filteredTests || filteredTests.length === 0)"
-              class="pa-6 text-center mt-4"
+              :class="[
+                { 'text-center': true, 'mt-4': true },
+                'pa-6',
+                'pa-4',
+                'pa-3',
+              ]"
               outlined
             >
-              <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+              <v-icon
+                :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+                color="deep-orange lighten-4"
+                class="mb-3"
+              >
                 mdi-share-variant
               </v-icon>
               <h3
-                class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+                :class="{
+                  'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                  'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                  'font-weight-medium': true,
+                  'grey--text': true,
+                  'text--darken-2': true,
+                }"
               >
                 No shared tests
               </h3>
-              <p class="text-body-2 grey--text text--darken-1 mt-2">
+              <p
+                :class="{
+                  'text-body-2': $vuetify.breakpoint.smAndUp,
+                  'text-caption': $vuetify.breakpoint.xsOnly,
+                  'grey--text': true,
+                  'text--darken-1': true,
+                  'mt-2': true,
+                }"
+              >
                 Tests shared with you will appear here
               </p>
             </v-card>
           </div>
 
-          <!-- Tests -> Public Tests -->
+          <!-- Tests -> Public Tests - Similar responsive improvements for other sections -->
           <div v-else-if="mainIndex === 0 && subIndex === 2">
             <v-skeleton-loader
               v-if="loading"
@@ -247,21 +421,48 @@
               @clicked="goTo"
             />
 
-            <!-- Empty state -->
+            <!-- Empty state - Responsive -->
             <v-card
               v-if="!loading && (!filteredTests || filteredTests.length === 0)"
-              class="pa-6 text-center mt-4"
+              :class="{
+                'pa-6': $vuetify.breakpoint.mdAndUp,
+                'pa-4': $vuetify.breakpoint.sm,
+                'pa-3': $vuetify.breakpoint.xsOnly,
+                'text-center mt-4': true,
+              }"
               outlined
             >
-              <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+              <v-icon
+                :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+                color="deep-orange lighten-4"
+                class="mb-3"
+              >
                 mdi-earth
               </v-icon>
               <h3
-                class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+                :class="[
+                  {
+                    'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                    'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                  },
+                  'font-weight-medium',
+                  'grey--text',
+                  'text--darken-2',
+                ]"
               >
                 No public tests found
               </h3>
-              <p class="text-body-2 grey--text text--darken-1 mt-2">
+              <p
+                :class="[
+                  {
+                    'text-body-2': $vuetify.breakpoint.smAndUp,
+                    'text-caption': $vuetify.breakpoint.xsOnly,
+                  },
+                  'grey--text',
+                  'text--darken-1',
+                  'mt-2',
+                ]"
+              >
                 Public tests will appear here
               </p>
             </v-card>
@@ -287,21 +488,48 @@
             />
           </div>
 
-          <!-- Empty sessions state -->
+          <!-- Empty sessions state - Responsive -->
           <v-card
             v-else-if="mainIndex === 0 && subIndex === 3"
-            class="pa-6 text-center"
+            :class="{
+              'pa-6': $vuetify.breakpoint.mdAndUp,
+              'pa-4': $vuetify.breakpoint.sm,
+              'pa-3': $vuetify.breakpoint.xsOnly,
+              'text-center': true,
+            }"
             outlined
           >
-            <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+            <v-icon
+              :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+              color="deep-orange lighten-4"
+              class="mb-3"
+            >
               mdi-clock-outline
             </v-icon>
             <h3
-              class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+              :class="[
+                {
+                  'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                  'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                },
+                'font-weight-medium',
+                'grey--text',
+                'text--darken-2',
+              ]"
             >
               No active sessions
             </h3>
-            <p class="text-body-2 grey--text text--darken-1 mt-2">
+            <p
+              :class="[
+                {
+                  'text-body-2': $vuetify.breakpoint.smAndUp,
+                  'text-caption': $vuetify.breakpoint.xsOnly,
+                },
+                'grey--text',
+                'text--darken-1',
+                'mt-2',
+              ]"
+            >
               Create a session to start moderating tests
             </p>
           </v-card>
@@ -319,24 +547,51 @@
               @clicked="setupTempDialog"
             />
 
-            <!-- Empty state -->
+            <!-- Empty state - Responsive -->
             <v-card
               v-if="
                 !loading &&
                   (!filteredTemplates || filteredTemplates.length === 0)
               "
-              class="pa-6 text-center mt-4"
+              :class="{
+                'pa-6': $vuetify.breakpoint.mdAndUp,
+                'pa-4': $vuetify.breakpoint.sm,
+                'pa-3': $vuetify.breakpoint.xsOnly,
+                'text-center mt-4': true,
+              }"
               outlined
             >
-              <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+              <v-icon
+                :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+                color="deep-orange lighten-4"
+                class="mb-3"
+              >
                 mdi-file-document-outline
               </v-icon>
               <h3
-                class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+                :class="[
+                  {
+                    'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                    'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                  },
+                  'font-weight-medium',
+                  'grey--text',
+                  'text--darken-2',
+                ]"
               >
                 No templates found
               </h3>
-              <p class="text-body-2 grey--text text--darken-1 mt-2">
+              <p
+                :class="[
+                  {
+                    'text-body-2': $vuetify.breakpoint.smAndUp,
+                    'text-caption': $vuetify.breakpoint.xsOnly,
+                  },
+                  'grey--text',
+                  'text--darken-1',
+                  'mt-2',
+                ]"
+              >
                 Create a template to get started
               </p>
             </v-card>
@@ -355,70 +610,135 @@
               @clicked="setupTempDialog"
             />
 
-            <!-- Empty state -->
+            <!-- Empty state - Responsive -->
             <v-card
               v-if="
                 !loading &&
                   (!filteredTemplates || filteredTemplates.length === 0)
               "
-              class="pa-6 text-center mt-4"
+              :class="{
+                'pa-6': $vuetify.breakpoint.mdAndUp,
+                'pa-4': $vuetify.breakpoint.sm,
+                'pa-3': $vuetify.breakpoint.xsOnly,
+                'text-center mt-4': true,
+              }"
               outlined
             >
-              <v-icon size="48" color="deep-orange lighten-4" class="mb-3">
+              <v-icon
+                :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+                color="deep-orange lighten-4"
+                class="mb-3"
+              >
                 mdi-file-document-multiple-outline
               </v-icon>
               <h3
-                class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+                :class="[
+                  {
+                    'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                    'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                  },
+                  'font-weight-medium',
+                  'grey--text',
+                  'text--darken-2',
+                ]"
               >
                 No public templates found
               </h3>
-              <p class="text-body-2 grey--text text--darken-1 mt-2">
+              <p
+                :class="[
+                  {
+                    'text-body-2': $vuetify.breakpoint.smAndUp,
+                    'text-caption': $vuetify.breakpoint.xsOnly,
+                  },
+                  'grey--text',
+                  'text--darken-1',
+                  'mt-2',
+                ]"
+              >
                 Public templates will appear here
               </p>
             </v-card>
           </div>
 
-          <!-- No search results message with better UI -->
+          <!-- No search results message - Responsive -->
           <v-card
             v-if="search && resultCount === 0 && !loading"
-            class="pa-6 text-center"
+            :class="{
+              'pa-6': $vuetify.breakpoint.mdAndUp,
+              'pa-4': $vuetify.breakpoint.sm,
+              'pa-3': $vuetify.breakpoint.xsOnly,
+              'text-center': true,
+            }"
             outlined
           >
-            <v-icon size="48" color="grey lighten-1" class="mb-3">
+            <v-icon
+              :size="$vuetify.breakpoint.xsOnly ? '36' : '48'"
+              color="grey lighten-1"
+              class="mb-3"
+            >
               mdi-file-search-outline
             </v-icon>
             <h3
-              class="text-subtitle-1 font-weight-medium grey--text text--darken-2"
+              :class="[
+                {
+                  'text-subtitle-1': $vuetify.breakpoint.smAndUp,
+                  'text-subtitle-2': $vuetify.breakpoint.xsOnly,
+                },
+                'font-weight-medium',
+                'grey--text',
+                'text--darken-2',
+              ]"
             >
               No results found
             </h3>
-            <p class="text-body-2 grey--text text--darken-1 mt-2">
+            <p
+              :class="[
+                {
+                  'text-body-2': $vuetify.breakpoint.smAndUp,
+                  'text-caption': $vuetify.breakpoint.xsOnly,
+                },
+                'grey--text',
+                'text--darken-1',
+                'mt-2',
+              ]"
+            >
               Try using different keywords or filters
             </p>
           </v-card>
         </v-card-text>
 
-        <!-- Pagination for large datasets - simplified -->
+        <!-- Responsive Pagination -->
         <v-card-actions v-if="shouldShowPagination">
           <v-spacer></v-spacer>
           <v-pagination
             v-model="page"
             :length="totalPages"
-            :total-visible="$vuetify.breakpoint.xsOnly ? 3 : 5"
+            :total-visible="
+              $vuetify.breakpoint.xsOnly
+                ? 3
+                : $vuetify.breakpoint.smOnly
+                ? 4
+                : 5
+            "
             color="deep-orange"
+            :class="{ 'my-2': $vuetify.breakpoint.xsOnly }"
           ></v-pagination>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
 
-      <!-- Create Button -->
+      <!-- Create Button - Responsive sizing -->
       <v-btn
         fab
         fixed
         bottom
         right
         color="deep-orange accent-3"
-        class="mb-4 mr-4"
+        :class="{
+          'mb-4 mr-4': $vuetify.breakpoint.smAndUp,
+          'mb-3 mr-3': $vuetify.breakpoint.xsOnly,
+        }"
+        :small="$vuetify.breakpoint.xsOnly"
         elevation="2"
         @click="goToCreateTestRoute"
         data-testid="create-test-btn"
@@ -431,7 +751,7 @@
         <v-progress-circular
           indeterminate
           color="deep-orange accent-3"
-          size="64"
+          :size="$vuetify.breakpoint.xsOnly ? '48' : '64'"
         />
       </v-overlay>
 
@@ -529,6 +849,26 @@ export default {
         }
       } else {
         return this.subIndex === 0 ? 'Personal Templates' : 'Explore Templates'
+      }
+    },
+
+    // Shortened title for mobile displays
+    mobileTabTitle() {
+      if (this.mainIndex === 0) {
+        switch (this.subIndex) {
+          case 0:
+            return 'My Tests'
+          case 1:
+            return 'Shared'
+          case 2:
+            return 'Public'
+          case 3:
+            return 'Sessions'
+          default:
+            return 'Tests'
+        }
+      } else {
+        return this.subIndex === 0 ? 'My Templates' : 'Explore'
       }
     },
 
@@ -891,4 +1231,11 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Add responsive styles */
+@media (max-width: 600px) {
+  .v-btn {
+    min-width: 0 !important;
+  }
+}
+</style>
