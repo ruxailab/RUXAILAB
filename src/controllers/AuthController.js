@@ -6,10 +6,11 @@ import {
 	onAuthStateChanged,
 } from 'firebase/auth'
 
+
 export default class AuthController {
 	// Register new users
 	async signUp(email, password) {
-		return createUserWithEmailAndPassword(auth, email, password)
+		return  createUserWithEmailAndPassword(auth, email, password)
 	}
 
 	// Sign In

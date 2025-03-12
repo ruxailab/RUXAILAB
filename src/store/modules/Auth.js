@@ -8,6 +8,7 @@ import UserController from '@/controllers/UserController'
 import i18n from '@/i18n'
 
 const authController = new AuthController()
+
 const userController = new UserController()
 
 export default {
@@ -43,9 +44,12 @@ export default {
           email: user.email,
         })
         const dbUser = await userController.getById(user.uid)
+
         commit('SET_USER', dbUser)
+
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
+        //  return err
       } finally {
         commit('setLoading', false)
       }

@@ -1,3 +1,4 @@
+import { projectID, storageBucket } from 'firebase-functions/params'
 import { initializeApp } from 'firebase/app'
 import {
   getAuth,
@@ -18,10 +19,13 @@ import {
 const authUser = require('../../fixtures/authUser.json')
 
 const firebaseConfig = {
-  apiKey: Cypress.env('VUE_APP_FIREBASE_API_KEY'),
-  authDomain: Cypress.env('VUE_APP_FIREBASE_AUTH_DOMAIN'),
+apiKey: Cypress.env('VUE_APP_FIREBASE_API_KEY'),
+ 
+
+authDomain: Cypress.env('VUE_APP_FIREBASE_AUTH_DOMAIN'),
   storageBucket: Cypress.env('VUE_APP_FIREBASE_STORAGE_BUCKET'),
-  projectId: Cypress.env('VUE_APP_FIREBASE_PROJECT_ID'),
+projectId: Cypress.env('VUE_APP_FIREBASE_PROJECT_ID'),
+
   appId: Cypress.env('VUE_APP_FIREBASE_APP_ID'),
 }
 
