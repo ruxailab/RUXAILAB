@@ -117,14 +117,16 @@ export default class Controller {
     return res
   }
 
-  async update(col, docId, payload) {
-    try {
-      const ref = doc(db, `${col}/${docId}`)
-      return updateDoc(ref, payload)
-    } catch(e) {
-      console.log(e)
-    }
+ async update(col, docId, payload) {
+  try {
+    const ref = doc(db, col, docId) // Removed unnecessary template literal
+    return await updateDoc(ref, payload)
+  } catch (e) {
+    console.error("Failed to update document:", e) // More informative error logging
+    throw new Error("Could not update the document. Please try again.") // Propagate error
   }
+}
+
 
   async delete(col, docId) {
     return deleteDoc(doc(db, col, docId))
