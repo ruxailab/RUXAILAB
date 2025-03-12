@@ -46,10 +46,11 @@ export default {
         const dbUser = await userController.getById(user.uid)
 
         commit('SET_USER', dbUser)
+        localStorage.setItem('isLoggedIn', 'true')
 
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
-        //  return err
+        localStorage.setItem('isLoggedIn', 'false')
       } finally {
         commit('setLoading', false)
       }

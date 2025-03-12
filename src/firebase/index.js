@@ -13,8 +13,8 @@ const firebaseConfig = {
   projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID || '',
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
-
 }
+
 
 
 const firebaseApp = initializeApp(firebaseConfig)
@@ -26,11 +26,11 @@ const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 
 // Emulators if running locally
 
-// if (process.env.NODE_ENV === 'development') {
-//   connectFirestoreEmulator(db, 'localhost', 8081)
-//   connectAuthEmulator(auth, 'http://localhost:9099')
-//   connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
-//   connectStorageEmulator(storage, '127.0.0.1', 9199)
-// }
+if (process.env.NODE_ENV === 'development') {
+  connectFirestoreEmulator(db, 'localhost', 8081)
+  connectAuthEmulator(auth, 'http://localhost:9099')
+  connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+  connectStorageEmulator(storage, '127.0.0.1', 9199)
+}
 
 export { auth, db, analytics, fbFunctions, storage }

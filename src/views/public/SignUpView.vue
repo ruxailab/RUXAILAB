@@ -135,7 +135,17 @@ export default {
           email: this.email,
           password: this.password,
         })
-        await this.$router.push('/')
+        const isLoggedInLocal = localStorage.getItem('isLoggedIn')
+        if (
+          isLoggedInLocal &&
+          isLoggedInLocal !== undefined &&
+          isLoggedInLocal === 'true'
+        ) {
+          await this.$router.push('/')
+          localStorage.removeItem('isLoggedIn')
+        }
+
+        
       }
     },
     redirectToSignin() {
