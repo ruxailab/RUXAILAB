@@ -430,8 +430,10 @@
             md="4"
           >
             <v-card height="560px" elevation="0" class="pa-0 ma-0">
-              <v-subheader class="px-2 pt-0 ma-0 " style="font-size: 12px; height: 40px">
-                {{ heuristics[itemSelect].questions[questionSelect].title }}
+              <v-subheader class="px-2 ma-0 " style="font-size: 12px; height: 40px;">
+                <div class="py-1 overflow-auto" style="max-height: 40px; scrollbar-width: none;">
+                  {{ heuristics[itemSelect].questions[questionSelect].title }}
+               </div>
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
                   <template v-slot:activator="{ on, attrs }">
