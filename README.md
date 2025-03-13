@@ -71,7 +71,7 @@ Follow these steps to set up the development environment and run the application
 
 In the folder of your project, create a file with the name .env and put the following data:
 
-  ```javascript
+  ```bash
   VUE_APP_FIREBASE_API_KEY=""
   VUE_APP_FIREBASE_AUTH_DOMAIN=""
   VUE_APP_FIREBASE_DB_URL=""
@@ -81,7 +81,7 @@ In the folder of your project, create a file with the name .env and put the foll
   VUE_APP_FIREBASE_APP_ID=""
 
 
-  // Doesn't need changes
+  # Doesn't need changes
   VUE_APP_I18N_LOCALE="en"
   VUE_APP_I18N_FALLBACK_LOCALE="en"
   ```
