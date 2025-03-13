@@ -260,7 +260,12 @@
             <p class="white--text mb-4" style="opacity: 0.7;">
               We're here to help! Reach out to our support team for assistance.
             </p>
-            <v-btn color="black" outlined class="white--text">
+            <v-btn
+              color="black"
+              outlined
+              class="white--text"
+              @click="openRequestDialog"
+            >
               Submit a Request
             </v-btn>
           </v-col>
@@ -307,6 +312,158 @@
         </v-row>
       </v-container>
     </v-footer>
+
+    <!-- Request Dialog -->
+    <v-dialog
+      v-model="requestDialogOpen"
+      max-width="600px"
+      transition="dialog-bottom-transition"
+      overlay-opacity="0.8"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="black"
+          outlined
+          class="white--text elevation-1 hover-elevation-3"
+          v-bind="attrs"
+          v-on="on"
+        >
+          Submit a Request
+        </v-btn>
+      </template>
+      <v-card class="pa-4" rounded="lg">
+        <v-card-title class="headline pb-2" style="color: #ff5722;">
+          <v-icon left color="deep-orange" class="mr-3">mdi-email-send</v-icon>
+          <span class="font-weight-medium">Submit a Support Request</span>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="requestDialogOpen = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-divider class="mb-4"></v-divider>
+        <v-card-text class="pt-4">
+          <v-form ref="requestForm" v-model="requestFormValid" lazy-validation>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="requestForm.name"
+                  :rules="nameRules"
+                  label="Your Name"
+                  required
+                  outlined
+                  dense
+                  prepend-inner-icon="mdi-account"
+                  color="deep-orange"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="requestForm.email"
+                  :rules="emailRules"
+                  label="Email Address"
+                  required
+                  outlined
+                  dense
+                  prepend-inner-icon="mdi-email"
+                  color="deep-orange"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-text-field
+              v-model="requestForm.subject"
+              :rules="subjectRules"
+              label="Subject"
+              required
+              outlined
+              dense
+              prepend-inner-icon="mdi-format-title"
+              color="deep-orange"
+              class="mb-3"
+            ></v-text-field>
+
+            <v-textarea
+              v-model="requestForm.message"
+              :rules="messageRules"
+              label="Your Message"
+              required
+              outlined
+              counter="500"
+              rows="4"
+              prepend-inner-icon="mdi-comment-text"
+              color="deep-orange"
+              auto-grow
+              class="mb-2"
+            ></v-textarea>
+
+            <!-- Remove the checkbox here -->
+          </v-form>
+        </v-card-text>
+
+        <v-divider class="mt-2"></v-divider>
+
+        <v-card-actions class="pa-4">
+          <v-chip small outlined class="mr-2">
+            <v-icon left small>mdi-lock</v-icon>
+            Secure Form
+          </v-chip>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="requestDialogOpen = false"
+            color="grey darken-1"
+            class="px-5"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="deep-orange"
+            :loading="submitLoading"
+            :disabled="!requestFormValid"
+            @click="submitRequest"
+            class="px-5 white--text elevation-1"
+          >
+            <v-icon left>mdi-send</v-icon>
+            Submit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Success Snackbar with Vuetify Progress Bar -->
+    <v-snackbar
+      v-model="snackbarVisible"
+      :timeout="4000"
+      top
+      right
+      color="deep-orange"
+      elevation="6"
+      shaped
+      auto-height
+      multi-line
+    >
+      <div class="d-flex flex-column w-100">
+        <div class="d-flex align-center">
+          <v-icon left class="mr-3">mdi-check-circle</v-icon>
+          <span
+            >Your request has been submitted. We'll get back to you
+            shortly!</span
+          >
+        </div>
+        <v-progress-linear
+          v-model="timerProgress"
+          color="white"
+          height="4"
+          rounded
+          class="mt-2"
+        ></v-progress-linear>
+      </div>
+      <template v-slot:action="{ attrs }">
+        <v-btn icon v-bind="attrs" @click="snackbarVisible = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -325,6 +482,35 @@ export default {
       isSearching: false,
       searchTimeout: null,
       isHovered: false,
+      // New data properties for request form
+      requestDialogOpen: false,
+      requestFormValid: false,
+      submitLoading: false,
+      snackbarVisible: false,
+      requestForm: {
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+        // Remove agreeToTerms field
+      },
+      nameRules: [
+        (v) => !!v || 'Name is required',
+        (v) => v.length >= 2 || 'Name must be at least 2 characters',
+      ],
+      emailRules: [
+        (v) => !!v || 'Email is required',
+        (v) => /.+@.+\..+/.test(v) || 'Email must be valid',
+      ],
+      messageRules: [
+        (v) => !!v || 'Message is required',
+        (v) => v.length >= 10 || 'Message must be at least 10 characters',
+        (v) => v.length <= 500 || 'Message must be less than 500 characters',
+      ],
+      subjectRules: [
+        (v) => !!v || 'Subject is required',
+        (v) => v.length >= 3 || 'Subject must be at least 3 characters',
+      ],
       categories: [
         {
           id: 'test-creation',
@@ -407,6 +593,8 @@ export default {
           category: 'cooperators',
         },
       ],
+      timerProgress: 100,
+      timerInterval: null,
     }
   },
 
@@ -449,6 +637,50 @@ export default {
   },
 
   methods: {
+    // New methods for request dialog
+    openRequestDialog() {
+      this.requestDialogOpen = true
+    },
+
+    submitRequest() {
+      if (this.$refs.requestForm.validate()) {
+        this.submitLoading = true
+
+        // Simulate API call
+        setTimeout(() => {
+          this.submitLoading = false
+          this.requestDialogOpen = false
+
+          // Reset and start the timer progress
+          this.timerProgress = 100
+          this.snackbarVisible = true
+
+          // Clear any existing interval
+          if (this.timerInterval) {
+            clearInterval(this.timerInterval)
+          }
+
+          // Start the circular progress countdown
+          this.timerInterval = setInterval(() => {
+            this.timerProgress -= 1 // Smoother animation (100 steps over 4 seconds)
+            if (this.timerProgress <= 0) {
+              clearInterval(this.timerInterval)
+              this.snackbarVisible = false
+            }
+          }, 40) // 40ms interval for smoother animation (4000ms / 100 steps)
+
+          // Reset form
+          this.$refs.requestForm.reset()
+          this.requestForm = {
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+          }
+        }, 1500)
+      }
+    },
+
     toggleCollapse(index) {
       if (index !== -1) {
         this.items.forEach((item, i) => {
@@ -500,5 +732,27 @@ export default {
       return this.items.findIndex((i) => i.title === item.title)
     },
   },
+
+  watch: {
+    // Reset the timer when snackbar is manually closed
+    snackbarVisible(val) {
+      if (!val && this.timerInterval) {
+        clearInterval(this.timerInterval)
+        this.timerProgress = 100
+      }
+    },
+  },
 }
 </script>
+
+<style scoped>
+.hover-elevation-3:hover {
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12) !important;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.w-100 {
+  width: 100%;
+}
+</style>
