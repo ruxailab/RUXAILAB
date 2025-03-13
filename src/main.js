@@ -6,17 +6,22 @@ import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
-
+import "@/assets/styles/toast.css"
 Vue.config.productionTip = false
 
 const options = {
+  transition: "Vue-Toastification__fade",
+  maxToasts: 3,
   newestOnTop: true,
-  position: 'top-right',
-  draggable: true,
-  pauseOnHover: true,
-  closeOnClick: true,
   timeout: 4000,
-}
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  closeButton: "button",
+  icon: true,
+  position: "top-center",
+};
 Vue.use(Toast, options)
 
 new Vue({

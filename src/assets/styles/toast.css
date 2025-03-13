@@ -1,0 +1,105 @@
+/* Add branding bar to all toasts */
+.Vue-Toastification__toast {
+  margin-top: 28px !important;
+  position: relative;
+  overflow: visible !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* Ruxailab Branding Bar */
+.Vue-Toastification__toast::before {
+  content: 'RUXAILAB';
+  position: absolute;
+  top: -28px;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: rgba(229, 228, 224, 0.95);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 2;
+  
+  /* Logo setup */
+  background-image: url('/R.png');
+  background-size: 18px 18px;
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  
+  /* Text styling */
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding-left: 38px;
+  line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Color indicators for different toast types */
+.Vue-Toastification__toast--success::before {
+  border-left: 4px solid #059669;
+}
+
+.Vue-Toastification__toast--error::before {
+  border-left: 4px solid #dc2626;
+}
+
+.Vue-Toastification__toast--info::before {
+  border-left: 4px solid #1e40af;
+}
+
+.Vue-Toastification__toast--warning::before {
+  border-left: 4px solid #b45309;
+}
+
+/* Container adjustments */
+.Vue-Toastification__container {
+  padding-top: 28px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .Vue-Toastification__toast {
+    margin-top: 24px !important;
+  }
+  
+  .Vue-Toastification__toast::before {
+    top: -24px;
+    height: 24px;
+    background-size: 16px 16px;
+    font-size: 11px;
+    line-height: 24px;
+    padding-left: 36px;
+  }
+  
+  .Vue-Toastification__container {
+    padding-top: 24px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .Vue-Toastification__toast::before {
+    padding-left: 32px;
+    background-size: 14px 14px;
+    background-position: 10px center;
+    font-size: 10px;
+  }
+}
+
+/* Animation fixes */
+.Vue-Toastification__toast-container .Vue-Toastification__toast {
+  transform-origin: right center;
+}
+
+/* Consistent border radius */
+.Vue-Toastification__toast--success,
+.Vue-Toastification__toast--error,
+.Vue-Toastification__toast--info,
+.Vue-Toastification__toast--warning,
+.Vue-Toastification__toast--default {
+  border-radius: 0 0 12px 12px !important;
+}
