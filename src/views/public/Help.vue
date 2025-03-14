@@ -335,7 +335,12 @@ export default {
         { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
         { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
       ],
-      items: [
+    }
+  },
+
+  computed: {
+    items() {
+      return [
         {
           title: i18n.t('help.createtest'),
           content: i18n.t('help.createtestanswer'),
@@ -406,11 +411,10 @@ export default {
           isCollapsed: true,
           category: 'cooperators',
         },
-      ],
-    }
+      ];
   },
 
-  computed: {
+
     filteredItems() {
       let items = this.items
 
