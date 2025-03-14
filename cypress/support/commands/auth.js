@@ -1,4 +1,3 @@
-import { projectID, storageBucket } from 'firebase-functions/params'
 import { initializeApp } from 'firebase/app'
 import {
   getAuth,
