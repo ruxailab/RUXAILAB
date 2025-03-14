@@ -20,10 +20,10 @@ export default {
 
         if (state.testAnswerDocument && state.testAnswerDocument.heuristicAnswers) {
           for (const [key, value] of Object.entries(state.testAnswerDocument.heuristicAnswers)) {
-            value.heuristicQuestions.forEach(heuristic => {
-              heuristic.heuristicQuestions.forEach(question => {
+            value.heuristicQuestions.forEach((heuristic) => {
+              heuristic.heuristicQuestions.forEach((question) => {
                 question.heuristicAnswer = question.heuristicAnswer?.text ? question.heuristicAnswer : {
-                  text: testOptions.find(op => op.value === question.heuristicAnswer)?.text ?? "", value: question.heuristicAnswer,
+                  text: testOptions.find((op) => op.value === question.heuristicAnswer)?.text ?? '', value: question.heuristicAnswer,
                 }
               })
             })

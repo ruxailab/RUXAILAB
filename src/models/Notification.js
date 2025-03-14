@@ -4,7 +4,7 @@
  * @param {string} description - The description value.
  */
 
-import { read } from "fs"
+import { read } from 'fs'
 
 export default class Notification {
   constructor({

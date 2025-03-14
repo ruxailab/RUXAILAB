@@ -286,7 +286,7 @@ END:VCALENDAR
     `.trim()
 
         // Adiciona o anexo ao payload
-        let attachments = [
+        const attachments = [
           {
             filename: 'moderatedTest.ics',
             content: Buffer.from(icsContent).toString('base64'),

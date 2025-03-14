@@ -1,7 +1,7 @@
 // @ts-check
-const { defineConfig, devices } = require('@playwright/test');
+const { defineConfig, devices } = require('@playwright/test')
 
-const devBaseUrl = 'http://localhost:8080';
+const devBaseUrl = 'http://localhost:8080'
 
 module.exports = defineConfig({
   testDir: './e2e',
@@ -55,9 +55,9 @@ module.exports = defineConfig({
     },
     {
       name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'], 
+      use: {
+        ...devices['Desktop Safari'],
       },
     },
   ],
-});
+})

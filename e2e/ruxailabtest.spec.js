@@ -57,17 +57,17 @@ test.describe('Link Page Tests', () => {
       await test.step('Navigate to signin page', async () => {
         await page.goto('http://localhost:8080/signin', {
           waitUntil: 'networkidle',
-          timeout: 45000
-        });
-      });
+          timeout: 45000,
+        })
+      })
 
       await test.step('Check if #app is visible', async () => {
-        await expect(page.locator('#app')).toBeVisible({ timeout: 30000 });
-      });
+        await expect(page.locator('#app')).toBeVisible({ timeout: 30000 })
+      })
 
       await test.step('Check page title', async () => {
-        await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 30000 });
-      });
+        await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 30000 })
+      })
 
       await page.screenshot({
         path: 'debug-screenshot.png',

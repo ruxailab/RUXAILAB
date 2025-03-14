@@ -7,8 +7,8 @@ describe('Authentication Suite', () => {
       cy.visit(url + '/signup')
       const { email, password } = authUser
       cy.get('form').findByLabelText(/e-mail/i).type(email)
-      cy.get('form').findByLabelText("Password").type(password)
-      cy.get('form').findByLabelText("Confirm your password").type(password)
+      cy.get('form').findByLabelText('Password').type(password)
+      cy.get('form').findByLabelText('Confirm your password').type(password)
       cy.findByRole('button', {name: 'Sign-up'}).click()
       cy.wait(500)
       cy.contains(email)
@@ -18,8 +18,8 @@ describe('Authentication Suite', () => {
       cy.visit(url + '/signup')
       const { email, invalidPassword } = authUser
       cy.get('form').findByLabelText(/e-mail/i).type(email)
-      cy.get('form').findByLabelText("Password").type(invalidPassword)
-      cy.get('form').findByLabelText("Confirm your password").type(invalidPassword)
+      cy.get('form').findByLabelText('Password').type(invalidPassword)
+      cy.get('form').findByLabelText('Confirm your password').type(invalidPassword)
       cy.findByRole('button', {name: 'Sign-up'}).click()
       cy.contains('Password must be at least 6 characters')
     })
@@ -27,8 +27,8 @@ describe('Authentication Suite', () => {
       cy.visit(url + '/signup')
       const { email, password, invalidPassword } = authUser
       cy.get('form').findByLabelText(/e-mail/i).type(email)
-      cy.get('form').findByLabelText("Password").type(password)
-      cy.get('form').findByLabelText("Confirm your password").type(invalidPassword)
+      cy.get('form').findByLabelText('Password').type(password)
+      cy.get('form').findByLabelText('Confirm your password').type(invalidPassword)
       cy.findByRole('button', {name: 'Sign-up'}).click()
       cy.contains('Different passwords')
     })

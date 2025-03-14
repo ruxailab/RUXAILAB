@@ -38,7 +38,7 @@
                   :rules="passwordRules"
                   @click:append="showPassword = !showPassword"
                 />
-
+                
                 <v-text-field
                   v-model="confirmpassword"
                   dense
@@ -144,8 +144,6 @@ export default {
           await this.$router.push('/')
           localStorage.removeItem('isLoggedIn')
         }
-
-        
       }
     },
     redirectToSignin() {
