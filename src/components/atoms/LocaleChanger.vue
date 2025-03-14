@@ -56,6 +56,7 @@ export default {
   },
   watch: {
     lang: function (newValue) {
+      localStorage.setItem('locale', newValue)
       this.$i18n.locale = newValue
     },
   },
