@@ -27,12 +27,22 @@ export default {
   data: () => ({
     prevRoute: null,
   }),
-  methods: {
-    sendHome() {
-      if (this.prevRoute !== null) this.$router.push(this.prevRoute.path).catch(() => {})
-      else this.$router.push('/').catch(() => {})
-    },
+ methods: {
+  sendHome() {
+    // Check if prevRoute exists and has a valid path before attempting navigation
+    if (this.prevRoute && this.prevRoute.path) {
+      this.$router.push(this.prevRoute.path).catch(() => {
+        // Catch any navigation errors to prevent unexpected crashes
+      });
+    } else {
+      // If no previous route exists, redirect the user to the home page
+      this.$router.push('/').catch(() => {
+        // Catch any navigation errors to prevent unexpected crashes
+      });
+    }
   },
+},
+
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.prevRoute = from
