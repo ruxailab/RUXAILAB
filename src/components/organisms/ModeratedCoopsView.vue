@@ -247,14 +247,14 @@
       <v-dialog class="rounded-lg" v-model="inviteModal" max-width="950" @click:outside="$refs.inviteForm.resetValidation()">
         <v-card class="rounded-xxl">
           <v-card-title style="color: #626E76;" class="rounded-top-lg">
-            Invite Evaluator To Test
+            {{ $t('UsabilityCooperators.inviteEvaluator')}}
           </v-card-title>
           <v-divider class="mb-4"></v-divider>
           <v-card-text>
             <v-form ref="inviteForm" v-model="valid" lazy-validation>
             <v-row>
               <v-col cols="5" class="ml-4 mt-2">
-                <span class="modalInternTitles">Email</span>
+                <span class="modalInternTitles">{{ $t('UsabilityCooperators.email')}}</span>
                 <v-col cols="7" class="pa-0">
                   <v-text-field
                     :value="comboboxModel.email"
@@ -265,7 +265,7 @@
                     class="rounded-lg"
                   />
                 </v-col>
-                <span class="modalInternTitles">Scheduled at</span>
+                <span class="modalInternTitles">{{ $t('UsabilityCooperators.scheduledAt')}}</span>
                 <v-row justify="center" style="margin-top: -9px;">
                   <v-col cols="5" class="pr-0">
                     <v-menu
@@ -339,7 +339,7 @@
                       ></v-time-picker></v-menu
                   ></v-col>
                 </v-row>
-                <span class="modalInternTitles">Invite message</span>
+                <span class="modalInternTitles">{{ $t('UsabilityCooperators.inviteMessage') }} </span>
                 <v-row>
                   <v-col cols="9">
                     <v-textarea
@@ -347,7 +347,7 @@
                       color="orange"
                       background-color="grey lighten-3"
                       required
-                      placeholder="Hey lets make a test..."
+                      :placeholder="$t('UsabilityCooperators.placeholderMessage')"
                       outlined
                       class="rounded-lg mt-1"
                   /></v-col>
@@ -363,8 +363,7 @@
                 <v-row
                   ><v-col cols="9" style="text-align: center"
                     ><span class="modalInternTitles"
-                      >Invite with test link will be send at to evaluator email
-                      at scheduled time</span
+                      >{{ $t('UsabilityCooperators.inviteInfo')}}</span
                     >
                   </v-col>
                   <v-col cols="2"
@@ -374,7 +373,7 @@
                       dark
                       large
                       @click="saveInvitation()"
-                      >Send
+                      >{{ $t('UsabilityCooperators.send')}}
                     </v-btn></v-col
                   ></v-row
                 >
