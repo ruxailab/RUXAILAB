@@ -175,7 +175,6 @@ export default class UserController extends Controller {
   async updateLevel(uid, accessLevel) {
     try {
       return super.update(COLLECTION, uid, { accessLevel });
-      console.log('User access level updated successfully.');
     } catch (error) {
       console.error('Error updating user access level:', error);
       throw error;
