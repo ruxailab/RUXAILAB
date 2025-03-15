@@ -320,6 +320,15 @@
       "in_progress": "En progreso"
     }
   },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Invitar Evaluador a la Prueba",
+    "email": "Correo Electrónico",
+    "scheduledAt": "Programado para",
+    "inviteMessage": "Mensaje de invitación",
+    "placeholderMessage": "Hola, hagamos una prueba...",
+    "inviteInfo": "La invitación con el enlace de prueba se enviará al correo del evaluador en el horario programado",
+    "send": "Enviar"
+  },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperadores"

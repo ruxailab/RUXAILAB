@@ -320,6 +320,15 @@
       "in_progress": "[TODO]"
     }
   },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Convidar Avaliador para Teste",
+    "email": "E-mail",
+    "scheduledAt": "Agendado para",
+    "inviteMessage": "Mensagem de convite",
+    "placeholderMessage": "Ei, vamos fazer um teste...",
+    "inviteInfo": "O convite com o link do teste será enviado para o e-mail do avaliador no horário agendado",
+    "send": "Enviar"
+  },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "[TODO]"
