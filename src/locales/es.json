@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
   },
   "common": {
+    "user": "Usuario",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -51,6 +52,7 @@
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
+    "superAdmin": "Super Administrador",
     "changePassword": "Cambiar contraseña",
     "passwordRequirements": "Asegúrese de cumplir estos requisitos",
     "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
@@ -82,6 +84,11 @@
     "template": "Plantilla",
     "finalReport": "Reporte Final",
     "answerType": "Tipo de respuesta:",
+    "users": "Usuarios",
+    "tests": "Pruebas",
+    "id": "Id",
+    "accessLevel": "Nivel de acceso",
+    "actions": "Acciones",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",
@@ -477,7 +484,8 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount":"¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount":"¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
+    "deleteUser": "¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer."
   },
   "buttons": {
     "next": "Siguiente",
