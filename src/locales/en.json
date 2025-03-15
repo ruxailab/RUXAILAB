@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
   "common": {
+    "user": "User",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -51,6 +52,7 @@
       "editProfile": "Edit Profile",
       "account": "Account",
       "admin": "Admin",
+      "superAdmin": "Super Admin",
       "changePassword": "Change Password",
       "passwordRequirements": "Ensure these requirements",
       "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
@@ -81,6 +83,11 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "users": "Users",
+    "tests": "Tests",
+    "id": "Id",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -471,6 +478,7 @@
     "noCopy": "Copy unsuccessful",
     "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
+    "deleteUser": "Are you sure you want to delete this user?",
     "addDescription": "Please add a descritpion",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
