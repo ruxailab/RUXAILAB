@@ -60,5 +60,17 @@ export default {
         console.error(e)
       }
     },
+    async updateLevel({ commit }, { data }) {
+      commit('setLoading', true)
+      try {
+        await userController.updateLevel(data.uid, data.customClaims.accessLevel)
+        const updatedUsers = await userController.readAll()
+        commit('SET_USERS', updatedUsers)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
 }
