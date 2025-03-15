@@ -99,11 +99,11 @@ export default class UserController extends Controller {
     }
 
     if (notificationIndex !== -1 || inboxIndex !== -1) {
-        // Save updated user data to Firestore
-        const updatedUser = await this.update(
-            userToUpdate.id,
-            userToUpdate.toFirestore(),
-        );
+      // Save updated user data to Firestore
+      const updatedUser = await this.update(
+        userToUpdate.id,
+        userToUpdate.toFirestore(),
+      );
       return updatedUser;
     } else {
       throw new Error('Notification not found.');
@@ -170,6 +170,15 @@ export default class UserController extends Controller {
     } catch (error) {
       console.error('Error removing test from user:', error)
       throw error
+    }
+  }
+  async updateLevel(uid, accessLevel) {
+    try {
+      return super.update(COLLECTION, uid, { accessLevel });
+      console.log('User access level updated successfully.');
+    } catch (error) {
+      console.error('Error updating user access level:', error);
+      throw error;
     }
   }
 }
