@@ -5,7 +5,7 @@
       style="display:contents; background-color:#f4b700; height:300px"
       class="hidden-sm-and-down"
     >
-      <v-img
+      <v-img 
         v-if="desktopImagePreloaded"
         src="@/assets/landing/introductionDesktop.svg"
       >
