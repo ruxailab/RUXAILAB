@@ -102,7 +102,9 @@ export default {
     ],
     passwordRules: [
       (v) => !!v || i18n.t('errors.passwordRequired'),
-      (v) => v.length >= 6 || i18n.t('errors.passwordValidate'),
+      (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
+      (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
+      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
     ],
     confirmpassword: '',
     showPassword: false,
