@@ -2,7 +2,7 @@
   <section>
     <!-- Desktop -->
     <v-container
-      style="display:contents; d-color:#f4b700; height:300px"
+      style="display:contents; background-color:#f4b700; height:300px"
       class="hidden-sm-and-down"
     >
       <v-img
@@ -38,8 +38,8 @@
 
     <!-- Mobile -->
     <v-container class="hidden-md-and-up ma-0 pa-0">
-      <div style="d-color: #f4b700">
-        <div style="d-color: #f4b700">
+      <div style="background-color: #f4b700">
+        <div style="background-color: #f4b700">
           <v-col>
             <h1
               class="display-3 font-weight-regular white--text text-center mt-5"
@@ -55,12 +55,12 @@
           max-height="350"
           contain
         />
-        <div style="d-color: #f4b700" class="mx-1">
+        <div style="background-color: #f4b700" class="mx-1">
           <h4 class="display-1 white--text mb-4 text-center">
             {{ $t('Introduction.subtitle') }}
           </h4>
         </div>
-        <div style="d-color: #f4b700" class="mx-3">
+        <div style="background-color: #f4b700" class="mx-3">
           <v-row justify="center">
             <p class="white--text mb-4 mx-4 text-center">
               {{ $t('Introduction.description') }}
@@ -77,7 +77,7 @@
           </v-row>
         </div>
         <!-- div for margin at bottom -->
-        <div style="d-color: #f4b700; height: 40px" />
+        <div style="background-color: #f4b700; height: 40px" />
       </div>
 
       <div style="height: 10px" />
