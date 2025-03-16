@@ -193,6 +193,8 @@
                         ref="videoPlayer"
                         @play="updatePlayState()"
                         @pause="updatePlayState()"
+                        muted
+                        aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
                         style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
                       ></video>
                       <div
@@ -205,7 +207,7 @@
                           @click="skipBackward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'blue-hover': true}"
+                          :class="{'button-hover': true}"
                         >
                            <v-icon>mdi-rewind-10</v-icon>
                         </v-btn>
@@ -215,7 +217,7 @@
                           @click="togglePlay(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'blue-hover': true}"
+                          :class="{'button-hover': true}"
                         >
                            <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
                         </v-btn>
@@ -225,7 +227,7 @@
                           @click="skipForward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'blue-hover': true}"
+                          :class="{'button-hover': true}"
                         >
                           <v-icon>mdi-fast-forward-10</v-icon>
                         </v-btn>
@@ -378,78 +380,7 @@ export default {
         { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
         { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
       ],
-      items: [
-        {
-          title: i18n.t('help.createtest'),
-          content: i18n.t('help.createtestanswer'),
-          gif: 'create_test.mp4',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.heuristictest'),
-          content: i18n.t('help.heuristictestanswer'),
-          gif: 'hsetup.mp4',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.deletetest'),
-          content: i18n.t('help.deletetestanswer'),
-          gif: 'del_test.mp4',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.createtemplate'),
-          content: i18n.t('help.createtemplateanswer'),
-          gif: 'create-temp.mp4',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.usetemplate'),
-          content: i18n.t('help.usetemplateanswer'),
-          gif: 'use-temp.mp4',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.previewtest'),
-          content: i18n.t('help.previewtestanswer'),
-          gif: 'preview_test.mp4',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.importcsv'),
-          content: i18n.t('help.importcsvanswer'),
-          gif: 'csv.mp4',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.invitecooperators'),
-          content: i18n.t('help.invitecooperatorsanswer'),
-          gif: 'sendinvite.mp4',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-        {
-          title: i18n.t('help.analyseresults'),
-          content: i18n.t('help.analyseresultsanswer'),
-          gif: 'analytics.mp4',
-          isCollapsed: true,
-          category: 'analytics',
-        },
-        {
-          title: i18n.t('help.sendmessage'),
-          content: i18n.t('help.sendmessageanswer'),
-          gif: 'send_message.mp4',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-      ],
+      items: this.generateFaqItems(),
     }
   },
 
@@ -492,6 +423,29 @@ export default {
   },
 
   methods: {
+    generateFaqItems() {
+         const createFaqItem = (keyPrefix, category, gif) => ({
+           title: i18n.t(`help.${keyPrefix}`),
+           content: i18n.t(`help.${keyPrefix}answer`),
+           gif: `${gif}.mp4`,
+           isCollapsed: true,
+           category
+         });
+  
+         return [
+           createFaqItem('createtest', 'test-creation', 'create_test'),
+           createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+           createFaqItem('deletetest', 'test-creation', 'del_test'),
+           createFaqItem('createtemplate', 'templates', 'create-temp'),
+           createFaqItem('usetemplate', 'templates', 'use-temp'),
+           createFaqItem('previewtest', 'test-creation', 'preview_test'),
+           createFaqItem('importcsv', 'test-creation', 'csv'),
+           createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+           createFaqItem('analyseresults', 'analytics', 'analytics'),
+           createFaqItem('sendmessage', 'cooperators', 'send_message'),
+          ];
+    },
+
     toggleCollapse(index) {
       if (index !== -1) {
         this.items.forEach((item, i) => {
@@ -617,11 +571,11 @@ export default {
 </script>
 
 <style>
-.blue-hover:hover {
+.button-hover:hover {
   background-color: rgb(249, 168, 38) !important;
 }
 
-.blue-hover:hover .v-icon {
+.button-hover:hover .v-icon {
   color: white !important;
 }
 
