@@ -196,7 +196,7 @@
           <div class="divider" />
           <v-list-item
             dense
-            style="font-size: 14px; font-family: Roboto"
+            style="font-size: 14px; font-family: Roboto, sans-serif"
             class="px-2"
             @click="goToProfile(), (menu = false)"
           >
