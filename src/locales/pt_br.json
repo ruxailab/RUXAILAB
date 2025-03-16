@@ -476,7 +476,14 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "responseRecorded":"Sua resposta foi registrada!",
+    "screenRecordSaved":"Registro de tela salvo!",
+    "videoRecordSaved":"Gravação de vídeo salva!",
+    "profileUpdated": "Perfil atualizado com sucesso",
+    "passwordUpdated":"La contraseña se cambió correctamente",
+    "accountDeleted":"Conta excluída com sucesso",
+    "changesSaved":"Alterações salvas"
   },
   "buttons": {
     "next": "Próximo",
@@ -506,7 +513,8 @@
     "screenRecord": "Gravação de tela",
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
-    "audioRecord": "Gravação de audio"
+    "audioRecord": "Gravação de audio",
+    "audioRecordSaved": "Gravação de áudio salva"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
