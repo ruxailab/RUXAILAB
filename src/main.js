@@ -4,9 +4,16 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
+<<<<<<< HEAD
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
+=======
+import Toast from "vue-toastification"; 
+import "vue-toastification/dist/index.css";
+import '@mdi/font/css/materialdesignicons.css' 
+import '@fortawesome/fontawesome-free/css/all.css';
+>>>>>>> 48d9fd99 (DarkLightModeFeature)
 Vue.config.productionTip = false
 
 const options = {

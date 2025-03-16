@@ -1,5 +1,10 @@
 <template>
-  <div style="height: 93vh;background-color: #f9f5f0;">
+  <div
+    :style="{
+      height: '93vh',
+      backgroundColor: backgroundColor
+    }"
+  >
     <v-col cols="12" />
     <span
       class="Title mb-14 mt-8"
@@ -86,6 +91,10 @@ export default {
     user() {
       return this.$store.getters.user
     },
+    backgroundColor() {
+      // Dynamically apply background color based on the theme
+      return this.$vuetify.theme.dark ? '#121212' : '#f9f5f0';
+    }
   },
   watch: {
     dialog() {

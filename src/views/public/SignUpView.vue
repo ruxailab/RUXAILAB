@@ -1,9 +1,13 @@
 <template>
-  <div class="background-grey">
+  <div :class="['background-grey', { 'background-dark': isDarkMode }]">
     <Snackbar />
     <v-row justify="center" style="height: 90%" align="center">
       <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" class="mx-2">
+        <v-card 
+          :color="isDarkMode ? 'grey darken-4' : '#f5f7ff'" 
+          class="mx-2 rounded-xl" 
+          :class="{ 'bg-dark': isDarkMode }"
+        >
           <v-row>
             <v-col cols="12" md="5" align-self="center">
               <div class="card-title">
@@ -24,6 +28,7 @@
                   :label="$t('SIGNIN.email')"
                   :rules="emailRules"
                   prepend-inner-icon="mdi-account-circle"
+                  :class="{ 'input-dark': isDarkMode }"
                 />
 
                 <v-text-field
@@ -36,6 +41,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   :rules="passwordRules"
                   @click:append="showPassword = !showPassword"
+                  :class="{ 'input-dark': isDarkMode }"
                 />
 
                 <v-text-field
@@ -48,6 +54,7 @@
                   :type="showConfirmPassword ? 'text' : 'password'"
                   :rules="[comparePassword]"
                   @click:append="showConfirmPassword = !showConfirmPassword"
+                  :class="{ 'input-dark': isDarkMode }"
                 />
               </v-form>
               <v-card-actions class="justify-center mt-4">
@@ -93,9 +100,7 @@ export default {
   data: () => ({
     email: '',
     password: '',
-
     valid: true,
-
     emailRules: [
       (v) => !!v || i18n.t('errors.emailIsRequired'),
       (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
@@ -113,8 +118,7 @@ export default {
   computed: {
     comparePassword() {
       return () =>
-        (this.confirmpassword == this.password &&
-          this.confirmpassword !== '') ||
+        (this.confirmpassword == this.password && this.confirmpassword !== '') ||
         i18n.t('errors.differentPasswords')
     },
     user() {
@@ -122,6 +126,9 @@ export default {
     },
     loading() {
       return this.$store.getters.loading
+    },
+    isDarkMode() {
+      return this.$vuetify.theme.isDark;
     },
   },
 
@@ -148,6 +155,10 @@ export default {
   height: 100vh;
   align-content: center;
 }
+.background-dark {
+  background-color: #121212;
+}
+
 .card-title {
   font-style: normal;
   font-weight: 300;
@@ -159,11 +170,25 @@ export default {
 .divider {
   margin-bottom: 40px;
   margin-left: 8px;
-  background: linear-gradient(
-    90deg,
-    #c4c4c4,
-    rgba(196, 196, 196, 0)
-  ) !important;
+  background: linear-gradient(90deg, #c4c4c4, rgba(196, 196, 196, 0)) !important;
   height: 0.5px;
+}
+
+.v-card {
+  border-radius: 15px !important;
+}
+
+.input-dark .v-input__control {
+  background-color: #333;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.input-dark .v-label {
+  color: #fff;
+}
+
+.input-dark .v-input__append-inner {
+  color: #fff;
 }
 </style>

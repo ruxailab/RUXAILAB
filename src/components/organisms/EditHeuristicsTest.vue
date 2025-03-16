@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
       <v-tab @click="tabClicked(0)">
         {{ $t('HeuristicsEditTest.titles.heuristics') }}

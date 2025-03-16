@@ -118,7 +118,7 @@
     >
       {{ $t('AccessNotAllowed.goHome') }}
     </v-btn>
-
+    
     <v-btn
       v-if="
         this.$route.path !== '/' &&
@@ -136,6 +136,9 @@
 
     <HelpButton class="mx-2" />
     <NotificationBtn v-if="user" class="mx-2" />
+    <v-btn icon @click="darkMode = !darkMode">
+  <v-icon>{{ darkMode ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+</v-btn>
 
     <!-- Sign-in Desktop -->
     <v-btn
@@ -238,6 +241,7 @@ export default {
       item: 0,
       isManager: false,
       username: null,
+      darkMode: false, 
     }
   },
   computed: {
@@ -372,34 +376,49 @@ export default {
     },
   },
   watch: {
-    $route: {
-      immediate: true,
-      handler(to) {
-        const parentRoute = to.matched[0]
-        if (parentRoute) {
-          if (parentRoute.name === 'ManagerView') this.isManager = true
-          else this.isManager = false
-        }
-      },
-    },
-    user: {
-      immediate: true,
-      handler(newUser) {
-        if (newUser) {
-          this.fetchUsername();
-        } else {
-          this.username = null; // Clear the username when the user logs out
-        }
-      },
+  $route: {
+    immediate: true,
+    handler(to) {
+      const parentRoute = to.matched[0];
+      if (parentRoute) {
+        this.isManager = parentRoute.name === 'ManagerView';
+      }
     },
   },
+  user: {
+    immediate: true,
+    handler(newUser) {
+      if (newUser) {
+        this.fetchUsername();
+      } else {
+        this.username = null; // Clear the username when the user logs out
+      }
+    },
+  },
+  darkMode: {
+    handler(newVal) {
+      if (this.$vuetify.theme) {
+        this.$vuetify.theme.dark = newVal; // Vuetify 2 uses this syntax
+        localStorage.setItem('darkMode', newVal); // Save preference
+      }
+    },
+    immediate: true,
+  },
+},
+
   
-  mounted() {
-    if (this.user) {
-      console.log(this.username)
-      this.fetchUsername();
-    }
-  },
+mounted() {
+  const savedTheme = localStorage.getItem('darkMode');
+  if (savedTheme !== null) {
+    this.darkMode = savedTheme === 'true';
+    this.$vuetify.theme.dark = this.darkMode;
+  }
+
+  if (this.user) {
+    console.log("Current Username:", this.username);
+    this.fetchUsername();
+  }
+},
 
   methods: {
     async fetchUsername() {

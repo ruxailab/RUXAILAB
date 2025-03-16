@@ -15,12 +15,11 @@
           right
           color="#F9A826"
           v-bind="attrs"
+          class="elevation-6 hover:shadow-lg"
           @click="goToCreateTestRoute()"
           v-on="on"
         >
-          <v-icon large>
-            mdi-plus
-          </v-icon>
+          <v-icon large class="text-white">mdi-plus</v-icon>
         </v-btn>
       </template>
       <span>{{ $t('Dashboard.createNewTest') }}</span>
@@ -28,32 +27,36 @@
 
     <!-- LOADING -->
     <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular indeterminate size="64" color="primary" />
     </v-overlay>
 
     <div>
       <v-row justify="center" class="fill-height">
         <v-col cols="10">
-          <!-- Mobile search button -->
+          <!-- Mobile Search Button -->
           <v-row v-if="!searching" align="center">
-            <span class="titleText ml-3 mb-2">{{ $t('Dashboard.tests') }}</span>
+            <span class="titleText ml-3 mb-2 font-weight-bold text-h5">
+              {{ $t('Dashboard.tests') }}
+            </span>
             <v-spacer />
-            <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
+            <v-btn class="mr-3 hidden-md-and-up" icon color="grey darken-2" @click="searching = true">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
+
           <v-text-field
             v-else
             v-model="search"
             :autofocus="searching"
             dense
-            :label="$t('Dashboard.search')"
-            prepend-inner-icon="mdi-magnify"
             outlined
             color="grey darken-2"
+            class="rounded-lg"
+            :label="$t('Dashboard.search')"
+            prepend-inner-icon="mdi-magnify"
             @blur="searching = false"
           />
-          <v-divider class="mb-1" />
+          <v-divider class="mb-2" />
 
           <!-- Desktop Main Tabs -->
           <v-tabs
@@ -63,9 +66,8 @@
             class="hidden-sm-and-down mt-4"
             active-class="active-tab"
           >
-            <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
-            <!-- <v-tab>Answers</v-tab>-->
-            <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('Dashboard.tests') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('Dashboard.templates') }}</v-tab>
 
             <v-spacer />
 
@@ -73,16 +75,16 @@
               v-model="search"
               dense
               class="mt-1"
+              outlined
+              color="grey darken-2"
               :label="$t('Dashboard.search')"
               prepend-inner-icon="mdi-magnify"
               :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
-              outlined
-              color="grey darken-2"
             />
           </v-tabs>
           <v-divider class="hidden-sm-and-down" />
 
-          <!-- Desktop Tests/Answers Sub tabs -->
+          <!-- Sub Tabs -->
           <v-tabs
             v-if="mainIndex === 0"
             v-model="subIndex"
@@ -91,31 +93,15 @@
             class="hidden-sm-and-down"
             active-class="active-tab"
           >
-            <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.sessions') }}</v-tab>
-
+            <v-tab class="text-capitalize">{{ $t('Dashboard.myTests') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('Dashboard.sharedWithMe') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('Dashboard.publicTests') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('Dashboard.sessions') }}</v-tab>
             <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
+          <v-divider class="hidden-sm-and-down mb-4" />
 
-          <!-- Desktop Templates Sub tabs -->
-          <v-tabs
-            v-if="mainIndex == 1"
-            v-model="subIndex"
-            background-color="transparent"
-            color="black"
-            class="hidden-sm-and-down"
-            active-class="active-tab"
-          >
-            <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
-            <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
-
-            <v-spacer />
-          </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
-          <!-- Mobile Main Button -->
+          <!-- Mobile Select Buttons -->
           <v-select
             v-model="mainIndex"
             dense
@@ -123,8 +109,6 @@
             class="hidden-md-and-up mx-2 mt-4"
             :items="buttonItems"
           />
-
-          <!-- Mobile Sub Buttons -->
           <v-select
             v-if="mainIndex == 1"
             v-model="subIndex"
@@ -142,68 +126,54 @@
             :items="testButtonItems"
           />
 
-          <!-- Tests -> Personal  -->
+          <!-- Tests & Templates Sections -->
           <List
             v-if="mainIndex == 0 && subIndex == 0"
             :items="filteredTests"
             type="myTests"
             @clicked="goTo"
           />
-
-          <!-- Tests -> Others  -->
           <List
             v-if="mainIndex == 0 && subIndex == 1"
             :items="filteredTests"
             type="sharedWithMe"
             @clicked="goTo"
           />
-
-          <!-- Tests -> Public Tests -->
           <List
-            v-if="filteredTests != null && mainIndex == 0 && subIndex == 2"
+            v-if="filteredTests && mainIndex == 0 && subIndex == 2"
             :items="filteredTests"
             type="publicTests"
             @clicked="goTo"
           />
-
-          <!-- Tests -> Sessions -->
           <List
-            v-if="
-              filteredModeratedSessions.length > 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
+            v-if="filteredModeratedSessions.length > 0 && mainIndex == 0 && subIndex == 3"
             :items="filteredModeratedSessions"
             type="sessions"
             @clicked="goTo"
           />
+
+          <!-- No Active Sessions Message -->
           <v-col
-            v-if="
-              filteredModeratedSessions.length == 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
+            v-if="filteredModeratedSessions.length == 0 && mainIndex == 0 && subIndex == 3"
             align="center"
-            class="my-5"
+            class="my-5 text-center"
           >
-            <span style="color: #575757; font-size: 1.25rem !important;">
-              You don't have active sessions
+            <span class="text-grey-darken-1 text-h6">
+              {{ $t("Dashboard.noActiveSessions") }}
             </span>
             <br>
-            <v-icon style="color: #575757;" class="mt-2" large>
+            <v-icon class="mt-2 text-grey-darken-1" size="48">
               mdi-clock-remove-outline
             </v-icon>
           </v-col>
 
-          <!-- Templates -> Personal -->
+          <!-- Templates Section -->
           <List
             v-if="mainIndex == 1 && subIndex == 0"
             :items="filteredTemplates"
             type="myTemplates"
             @clicked="setupTempDialog"
           />
-
-          <!-- Templates -> Public Templates -->
           <List
             v-if="mainIndex == 1 && subIndex == 1"
             :items="filteredTemplates"
@@ -213,6 +183,7 @@
         </v-col>
       </v-row>
 
+      <!-- Template Dialog -->
       <TempDialog
         :dialog="tempDialog"
         :template="temp"
@@ -223,17 +194,15 @@
   </v-container>
 </template>
 
+
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex'
 import Snackbar from '@/components/atoms/Snackbar'
 import List from '@/components/atoms/ListComponent'
 import TempDialog from '@/components/molecules/TemplateInfoDialog'
 
 export default {
-  components: {
-    Snackbar,
-    List,
-    TempDialog,
-  },
+  components: { Snackbar, List, TempDialog },
 
   data: () => ({
     search: '',
@@ -256,77 +225,57 @@ export default {
     page: 1,
     lastPage: 1,
     itemsPerPage: 4,
-    exploreTemplates: [],
-    disableNext: false,
-    disablePrevious: true,
     tempDialog: false,
     temp: {},
     filteredModeratedSessions: [],
   }),
 
   computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    tests() {
-      return this.$store.state.Tests.tests
-    },
+    ...mapState({
+      tests: (state) => state.Tests.tests,
+      templates: (state) => state.Templates.templates,
+    }),
+    ...mapGetters(['user', 'test', 'loading']),
 
     filteredTests() {
-      return this.tests?.filter(test => {
-        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      }) ?? this.tests
-    },
-
-    templates() {
-      return this.$store.state.Templates.templates || []
+      return this.tests?.filter(test =>
+        test.testTitle.toLowerCase().includes(this.search.toLowerCase())
+      ) ?? this.tests
     },
 
     filteredTemplates() {
-      return this.templates.filter(temp => {
-        return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-    },
-
-    loading() {
-      return this.$store.getters.loading
+      return this.templates?.filter(temp =>
+        temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
+      ) ?? this.templates
     },
 
     showTempDetails() {
-      return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
+      return !(this.mainIndex === 2 && this.subIndex === 0)
     },
   },
+
   watch: {
-    async mainIndex(val) {
-      this.subIndex = 0 //reset subIndex when main index change
-
-      // If it is on tab tests
-      if (val == 0) await this.getMyPersonalTests()
-
-      // If it is on tab templates
-      if (val == 1) await this.getMyTemplates()
-    },
-
-    async subIndex(val) {
-      if (this.mainIndex == 0) {
-        // If it is on tab tests
-        if (val == 0) await this.getMyPersonalTests()
-
-        // If it is on tab templates
-        if (val == 1) await this.getSharedWithMeTests()
-
-        if (val == 2) await this.getPublicTests()
-      } else if (this.mainIndex == 1) {
-        if (val == 0) await this.getMyTemplates()
-        if (val == 1) await this.getPublicTemplates()
+    mainIndex: {
+      immediate: true,
+      async handler(val) {
+        this.subIndex = 0
+        if (val === 0) await this.getMyPersonalTests()
+        if (val === 1) await this.getMyTemplates()
       }
     },
-  },
-  mounted() {
-    this.filterModeratedSessions()
+
+    subIndex: {
+      async handler(val) {
+        if (this.mainIndex === 0) {
+          if (val === 0) await this.getMyPersonalTests()
+          else if (val === 1) await this.getSharedWithMeTests()
+          else if (val === 2) await this.getPublicTests()
+        } else if (this.mainIndex === 1) {
+          if (val === 0) await this.getMyTemplates()
+          else if (val === 1) await this.getPublicTemplates()
+        }
+      }
+    }
   },
 
   async created() {
@@ -335,59 +284,49 @@ export default {
   },
 
   methods: {
-    async cleanTestStore() {
-      await this.$store.dispatch('cleanTest')
-    },
-    
+    ...mapActions([
+      'cleanTest',
+      'getTestsAdminByUser',
+      'getPublicTests',
+      'getPublicTemplates',
+      'getTemplatesOfUser',
+      'getSharedWithMeTests',
+      'getTest'
+    ]),
+
     async getMyPersonalTests() {
-      await this.$store.dispatch('getTestsAdminByUser')
-    },
-
-    async getPublicTests() {
-      await this.$store.dispatch('getPublicTests')
-    },
-
-    async getPublicTemplates() {
-      await this.$store.dispatch('getPublicTemplates')
+      await this.getTestsAdminByUser()
     },
 
     async getMyTemplates() {
-      await this.$store.dispatch('getTemplatesOfUser')
-    },
-
-    async getSharedWithMeTests() {
-      await this.$store.dispatch('getSharedWithMeTests', this.user.id)
+      await this.getTemplatesOfUser()
     },
 
     async filterModeratedSessions() {
-      const userModeratedTests = Object.values(this.user.myAnswers).filter(
-        (answer) => answer.userTestType === 'moderated',
+      const userModeratedTests = Object.values(this.user?.myAnswers || []).filter(
+        (answer) => answer.userTestType === 'moderated'
       )
 
-      const cooperatorArray = []
+      const today = new Date().setHours(0, 0, 0, 0)
+      this.filteredModeratedSessions = await Promise.all(
+        userModeratedTests.map(async (test) => {
+          const testObj = await this.getTest({ id: test.testDocId })
+          if (!testObj) return null
 
-      for (let i = 0; i < userModeratedTests.length; i++) {
-        const testId = userModeratedTests[i].testDocId
-        const testObj = await this.$store.dispatch('getTest', { id: testId })
+          const cooperatorObj = testObj.cooperators.find(coop => coop.userDocId === this.user.id)
+          if (!cooperatorObj) return null
 
-        if (testObj) {
-          const cooperatorObj = testObj.cooperators.find(
-            (coop) => coop.userDocId == this.user.id,
-          )
-          cooperatorObj.testTitle = testObj.testTitle
-          cooperatorObj.testAdmin = testObj.testAdmin
-          cooperatorObj.id = testObj.id
+          const testDate = new Date(cooperatorObj.testDate).setHours(0, 0, 0, 0)
+          if (testDate !== today) return null
 
-          const today = new Date()
-          const testDate = new Date(cooperatorObj.testDate)
-
-          if (cooperatorObj && testDate.getDate() === today.getDate()) {
-            cooperatorArray.push(cooperatorObj)
+          return {
+            ...cooperatorObj,
+            testTitle: testObj.testTitle,
+            testAdmin: testObj.testAdmin,
+            id: testObj.id
           }
-        }
-      }
-      this.filteredModeratedSessions = cooperatorArray
-      return cooperatorArray
+        })
+      ).then(results => results.filter(Boolean))
     },
 
     goToCreateTestRoute() {
@@ -395,55 +334,62 @@ export default {
     },
 
     goTo(test) {
+      let routeName = 'ManagerView'
+      let params = { id: test.testDocId || test.id }
+
       if (this.mainIndex === 0) {
-        if (this.subIndex === 0) {
-          this.$router.push({
-            name: 'ManagerView',
-            params: { id: test.testDocId },
-          })
-        }
-        // if it is the shared with me tests
-        else if (this.subIndex === 1) {
-          if (test.accessLevel >= 2) {
-            this.$router.push({
-              name: 'TestView',
-              params: { id: test.testDocId },
-            })
-          } else {
-            this.$router.push({
-              name: 'ManagerView',
-              params: { id: test.testDocId },
-            })
-          }
-        } else if (this.subIndex === 2) {
-          this.$router.push({
-            name: 'ManagerView',
-            params: { id: test.id },
-          })
+        if (this.subIndex === 1 && test.accessLevel >= 2) {
+          routeName = 'TestView'
         } else if (this.subIndex === 3) {
-          this.$router.push(`testview/${test.id}/${this.user.id}`)
+          routeName = `testview/${test.id}/${this.user.id}`
         }
       }
+
+      this.$router.push({ name: routeName, params })
     },
 
     setupTempDialog(temp) {
-      this.temp = Object.assign({}, temp)
+      this.temp = { ...temp }
       this.tempDialog = true
     },
-  },
+  }
 }
 </script>
 
+
 <style scoped>
-.titleText {
-  font-size: 40px;
-  font-weight: 300;
+/* Light Mode (Default) */
+.navbar {
+  background-color: #ffffff; /* White background */
+  color: #000000; /* Black text */
+  padding: 10px 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
+/* Dark Mode */
+.dark-mode .navbar {
+  background-color: #f9a826; /* Yellow navbar background */
+  color: #ffffff; /* White text */
+}
+
+/* Default Tab Styling */
+.nav-item {
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Active Tab (Clicked Option) */
 .active-tab {
-  background-color: rgba(249, 168, 38, 0.2) !important; 
-  border-radius: 4px; 
-  color: #000000 !important; 
+  background-color: rgba(249, 168, 38, 0.8) !important; /* Yellow background */
+  border-radius: 4px;
+  color: #000000 !important; /* Black text */
   font-weight: bold;
 }
 </style>

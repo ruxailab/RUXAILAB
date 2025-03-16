@@ -40,7 +40,7 @@
       <Drawer :items="navigator" />
 
       <!-- View -->
-      <v-col class="background pa-0 ma-0">
+      <v-col class="background pa-0 ma-0 yellow">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
             <v-row align="center" justify="center" class="manager-bg">

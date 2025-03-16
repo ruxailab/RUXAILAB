@@ -1,9 +1,9 @@
-<template>
-  <v-container>
+<template >
+  <v-container >
     <Snackbar />
     <!-- Leave Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
+      <v-card >
         <v-card-title class="headline error accent-4 white--text" primary-title>
           Are you sure you want to leave?
         </v-card-title>
@@ -70,7 +70,7 @@
       </div>
     </v-overlay>
 
-    <v-row>
+    <v-row class="ma-0 pa-0">
       <v-col cols="12" class="pb-0">
         <!-- Heuristic Tests -->
         <EditHeuristicsTest
