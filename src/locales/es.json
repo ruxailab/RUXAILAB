@@ -201,7 +201,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "[TODO]"
+      "options": "Opciones"
     },
     "messages": {},
     "placeHolders": {},
@@ -221,128 +221,136 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "[TODO]"
+      "settings": "Configuración"
     },
     "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+      "acceptCsv": "Aceptar archivo CSV",
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV"
     },
     "placeHolders": {
-      "importCsv": "[TODO]"
+      "importCsv": "Importar CSV"
     },
     "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
+      "downloadCsvTemplate": "Descargar plantilla CSV",
+      "update": "Actualizar"
     }
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+      "submitTest": "Enviar prueba",
+      "submitOnce": "Solo puede enviar una vez",
+      "noHeuristics": "No hay heurísticas disponibles"
     },
     "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "save": "Guardar",
+      "continueAs": "Continuar como",
+      "notMail": "¿No es tu correo?",
+      "changeAccount": "Cambiar cuenta",
+      "startTest": "Comenzar prueba"
     }
   },
   "HeuristicsEditTest": {
     "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
+      "heuristics": "Heurísticas",
+      "options": "Opciones",
+      "weights": "Pesos",
+      "settings": "Configuración"
     }
   },
   "HeuristicsTestAnswer": {
     "titles": {
-      "answers": "[TODO]",
-      "statistics": "[TODO]",
-      "evaluators": "[TODO]",
-      "heuristics": "[TODO]",
-      "analytics": "[TODO]"
+      "answers": "Respuestas",
+      "statistics": "Estadísticas",
+      "evaluators": "Evaluadores",
+      "heuristics": "Heurísticas",
+      "analytics": "Análisis"
     },
     "statistics": {
-      "usabilityPercentage": "[TODO]",
-      "max": "[TODO]",
-      "min": "[TODO]",
-      "std": "[TODO]"
+      "usabilityPercentage": "Porcentaje de usabilidad",
+      "max": "Máximo",
+      "min": "Mínimo",
+      "std": "Desviación estándar"
     },
     "evaluators": {
       "headers": {
-        "table": "[TODO]",
-        "graphic": "[TODO]"
+        "table": "Tabla",
+        "graphic": "Gráfico"
       },
       "messages": {
-        "graphForMoreThan3": "[TODO]"
+        "graphForMoreThan3": "El gráfico está disponible para más de 3 evaluadores"
       }
     },
     "heuristics": {
       "headers": {
-        "heuristicsData": "[TODO]",
-        "answersByEvaluator": "[TODO]",
-        "answersByHeuristics": "[TODO]",
-        "graphic": "[TODO]",
-        "weights": "[TODO]"
+        "heuristicsData": "Datos heurísticos",
+        "answersByEvaluator": "Respuestas por evaluador",
+        "answersByHeuristics": "Respuestas por heurísticas",
+        "graphic": "Gráfico",
+        "weights": "Pesos"
       },
       "messages": {
-        "needMoreThan1Answer": "[TODO]",
-        "runWeightFunction": "[TODO]"
+        "needMoreThan1Answer": "Necesita más de una respuesta",
+        "runWeightFunction": "Ejecutar función de peso"
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
-      "reports": "[TODO]",
-      "last_updated": "[TODO]"
+      "reports": "Informes",
+      "last_updated": "Última actualización"
     },
     "headers": {
-      "evaluator": "[TODO]",
-      "last_update": "[TODO]",
-      "progress": "[TODO]",
-      "status": "[TODO]",
-      "more": "[TODO]"
+      "evaluator": "Evaluador",
+      "last_update": "Última actualización",
+      "progress": "Progreso",
+      "status": "Estado",
+      "more": "Más"
     },
     "messages": {
-      "confirm_delete_report": "[TODO]",
-      "reports_loading": "[TODO]",
-      "remove_report": "[TODO]",
-      "sure_to_delete": "[TODO] {user}",
-      "report_deleted": "[TODO]"
+      "confirm_delete_report": "Confirmar eliminación del informe",
+      "reports_loading": "Cargando informes",
+      "remove_report": "Eliminar informe",
+      "sure_to_delete": "¿Está seguro de eliminar el informe de {user}?",
+      "report_deleted": "Informe eliminado"
     },
     "status": {
-      "submitted": "[TODO]",
-      "in_progress": "[TODO]"
+      "submitted": "Enviado",
+      "in_progress": "En progreso"
     }
+  },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Invitar Evaluador a la Prueba",
+    "email": "Correo Electrónico",
+    "scheduledAt": "Programado para",
+    "inviteMessage": "Mensaje de invitación",
+    "placeholderMessage": "Hola, hagamos una prueba...",
+    "inviteInfo": "La invitación con el enlace de prueba se enviará al correo del evaluador en el horario programado",
+    "send": "Enviar"
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "[TODO]"
+      "cooperators": "Cooperadores"
     },
     "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "invited": "Invitado",
+      "accepted": "Aceptado",
+      "more": "Más",
+      "title": "Título",
+      "content": "Contenido"
     },
     "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
+      "send_invitation": "Enviar invitación",
+      "send_message": "Enviar mensaje",
+      "reinvite": "Reinvitar",
+      "remove_cooperator": "Eliminar cooperador",
+      "cancel_invitation": "Cancelar invitación",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "select_cooperator": "Seleccionar cooperador"
     },
     "roles": {
       "administrator": "[TODO]",
