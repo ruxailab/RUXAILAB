@@ -34,20 +34,18 @@
           {{ $t('pages.landing.feedbackTitle') }}
         </h4>
 
-        <p align="justify" class="text-subtitle-1" style="line-height: 1.6">
+        <p class="text-subtitle-1" style="line-height: 1.6; text-align: justify;">
           {{ $t('pages.landing.feedbackSubtitle1') }}
         </p>
-        <p align="justify" class="text-subtitle-1" style="line-height: 1.6">
+        <p class="text-subtitle-1" style="line-height: 1.6; text-align: justify;">
           {{ $t('pages.landing.feedbackSubtitle2') }}
         </p>
       </v-col>
     </v-row>
 
     <v-row
-      justify="space-around"
-      align="center"
-      class="my-10 background-blob-mobile2"
-    >
+  class="my-10 background-blob-mobile2 d-flex justify-space-around align-center"
+>
       <v-col cols="12" md="5" class="middle-content">
         <h4 class="display-1 text-left mb-3 hidden-sm-and-down">
           {{ $t('pages.landing.uxTitle') }}
@@ -63,10 +61,10 @@
           class="mb-4 hidden-md-and-up"
         />
 
-        <p align="justify" class="text-subtitle-1" style="line-height: 1.6">
+        <p class="text-subtitle-1" style="line-height: 1.6; text-align: justify;">
           {{ $t('pages.landing.uxSubtitle1') }}
         </p>
-        <p align="justify" class="text-subtitle-1" style="line-height: 1.6">
+        <p class="text-subtitle-1" style="line-height: 1.6; text-align: justify;">
           {{ $t('pages.landing.uxSubtitle2') }}
         </p>
         <v-row class="hidden-sm-and-down">
