@@ -507,11 +507,17 @@ export default {
         //if is object then no need to validate
         if (this.email.length) {
           if (!this.email.includes('@') || !this.email.includes('.')) {
-            this.$toast.error(this.email + ' is not a valid email')
+            this.$toast.error(
+              this.email + ' ' + this.$t('alerts.emailNotValid'),
+            )
           }
           if (!this.users.find((user) => user.email === this.email)) {
             this.$toast.error(
-              this.email + ' is not a valid email or does not exist',
+              this.email +
+                ' ' +
+                this.$t('alerts.emailNotValid') +
+                ' ' +
+                this.$t('alerts.orDoesNotExist'),
             )
             return
           } else if (!this.selectedCoops.includes(this.email)) {

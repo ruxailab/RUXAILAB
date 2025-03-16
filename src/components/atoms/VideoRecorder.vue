@@ -76,7 +76,9 @@ export default {
         }
       } catch (e) {
         this.recording = false
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error(
+          this.$t('alerts.errCaptureMediaDevice') + ': ' + e.message,
+        )
       }
 
       try {
@@ -107,7 +109,9 @@ export default {
 
         this.mediaRecorder.start()
       } catch (e) {
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error(
+          this.$t('alerts.errCaptureMediaDevice') + ': ' + e.message,
+        )
       }
     },
     stopRecording() {

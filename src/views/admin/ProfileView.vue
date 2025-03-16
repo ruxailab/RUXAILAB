@@ -3,10 +3,7 @@
     <v-row>
       <!-- Left Section: Profile Details -->
       <v-col cols="12" md="4" lg="3">
-        <v-card
-        outlined
-          class="rounded-lg h-100"
-        >
+        <v-card outlined class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ hover }">
@@ -770,7 +767,7 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching profile:', error)
-        this.$toast.error('Failed to load profile data')
+        this.$toast.error(this.$t('alerts.failedLoadProfile'))
       } finally {
         this.loading = false
       }
@@ -815,7 +812,7 @@ export default {
         }
       } catch (error) {
         console.error('Error updating profile:', error)
-        this.$toast.error('Failed to update profile')
+        this.$toast.error(this.$t('alerts.failedProfileUpdate'))
       }
     },
 
@@ -833,14 +830,16 @@ export default {
             this.$refs.passwordForm.reset()
           }
         } catch (error) {
-          this.$toast.error('Failed to change password: ' + error.message)
+          this.$toast.error(
+            this.$t('alerts.failedPasswordChange') + ': ' + error.message,
+          )
         }
       }
     },
 
     async deleteAccount() {
       if (!this.userPassword) {
-        this.$toast.error('Password is required to delete your account.')
+        this.$toast.error(this.$t('alerts.passwordRequredForDelete'))
         return
       }
 
@@ -897,12 +896,14 @@ export default {
           this.signOut()
         } catch (error) {
           console.error('Error during account deletion:', error)
-          this.$toast.error('Failed to delete account: ' + error.message)
+          this.$toast.error(
+            this.$t('alerts.failedDeleteAccount') + ': ' + error.message,
+          )
         } finally {
           this.isDeleting = false
         }
       } else {
-        this.$toast.error('No user is signed in.')
+        this.$toast.error(this.$t('alerts.noUserSignedIn'))
       }
     },
 

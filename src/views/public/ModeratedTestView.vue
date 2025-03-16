@@ -993,7 +993,7 @@ export default {
         (user) => user.userDocId === this.token,
       )
       if (this.user.id != this.token && !this.isAdmin) {
-        this.$toast.error(`You don't have access to this session.`)
+        this.$toast.error(this.$t('alerts.noAccessForSession'))
         this.$router.push('/testslist')
       }
       if (this.sessionCooperator.testDate) {
@@ -1056,9 +1056,7 @@ export default {
   },
   mounted() {
     if (this.user == null) {
-      this.$toast.error(
-        'Login to your RUXAILAB account first to access the test!',
-      )
+      this.$toast.error(this.$t('alerts.needAccessTest'))
       this.$router.push('/signin')
     }
   },

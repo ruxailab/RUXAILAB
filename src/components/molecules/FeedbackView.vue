@@ -139,7 +139,7 @@ export default {
           this.usingCamera = !this.usingCamera
         }
       } catch (e) {
-        this.$toast.error('Error in toggling camera/screen: ' + e.message)
+        this.$toast.error(this.$t('alerts.errToggleCamera') + ': ' + +e.message)
       }
     },
     hangUp() {
