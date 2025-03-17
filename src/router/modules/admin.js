@@ -8,11 +8,15 @@ import SettingsView from '@/views/admin/SettingsView.vue'
 import AnalyticsView from '@/views/admin/AnalyticsView.vue'
 import TemplateView from '@/views/admin/TemplateView.vue'
 import CreateView from '@/views/admin/CreateView.vue'
-import CreateBlankView from '@/views/admin/CreateBlankView'
+// import CreateBlankView from '@/views/admin/CreateBlankView'
+import UsabilityEvaluation from '@/views/admin/UsabilityEvaluation'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
+import Testing from '@/views/admin/Testing.vue'
+import Inspection from '@/views/admin/Inspection.vue'
+import Inquiry from '@/views/admin/Inquiry.vue'
 
 export default [
   {
@@ -22,10 +26,10 @@ export default [
     component: TestList,
   },
   {
-    path:'/profile',
-    name:'Profile',
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
-    component:Profile,
+    component: Profile,
   },
   {
     path: '/notifications',
@@ -104,11 +108,35 @@ export default [
     meta: { authorize: [1] },
     component: CreateView,
   },
+  // {
+  //   path: '/createBlank',
+  //   name: 'Create Blank View',
+  //   meta: { authorize: [1] },
+  //   component: CreateBlankView,
+  // },
   {
-    path: '/createBlank',
-    name: 'Create Blank View',
+    path: '/usability-evaluation',
+    name: 'UsabilityEvaluation',
     meta: { authorize: [1] },
-    component: CreateBlankView,
+    component: UsabilityEvaluation,
+  },
+  {
+    path: '/testing',
+    name: 'Testing',
+    meta: { authorize: [1] },
+    component: Testing,
+  },
+  {
+    path: '/inspection',
+    name: 'Inspection',
+    meta: { authorize: [1] },
+    component: Inspection,
+  },
+  {
+    path: '/inquiry',
+    name: 'Inquiry',
+    meta: { authorize: [1] },
+    component: Inquiry,
   },
   {
     path: '/fromtemplate',

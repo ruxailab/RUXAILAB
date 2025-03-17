@@ -3,10 +3,7 @@
     <v-row>
       <!-- Left Section: Profile Details -->
       <v-col cols="12" md="4" lg="3">
-        <v-card
-        outlined
-          class="rounded-lg h-100"
-        >
+        <v-card outlined class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ hover }">

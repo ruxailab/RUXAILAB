@@ -8,18 +8,11 @@
       @click="$emit('click', segundType)"
     >
       <v-row>
-        <v-sheet
-          class="ml-8 mt-6 mb-10 insideCards"
-          height="50"
-          width="50"
-        >
-          <v-img
-            class="ma-2"
-            :src="img"
-          />
+        <v-sheet class="ml-8 mt-6 mb-10 insideCards" height="50" width="50">
+          <v-img class="ma-2" :src="img" />
         </v-sheet>
 
-        <div class="mt-6">
+        <div class="mt-6" style="flex: 1; min-width: 0;">
           <span class="cardsTitle ml-4">{{ title }}</span>
           <p class="cardSubtitle ml-4">
             {{ type }}
@@ -68,7 +61,7 @@ export default {
 
     texts: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
       require: true,
     },
   },
@@ -101,6 +94,9 @@ export default {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: block; /* Ensures it doesn’t affect flex alignment */
+  word-wrap: break-word; /* Allow long words to wrap */
+  max-width: 80%; /* Prevents overflow */
 }
 
 .cardSubtitle {
@@ -135,7 +131,7 @@ export default {
   }
 
   .cardsTitle {
-    font-size: 16 px;
+    font-size: 16px;
   }
 
   .cardSubtitle {

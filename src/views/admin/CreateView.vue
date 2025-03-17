@@ -15,7 +15,7 @@
             hover
             class="card"
             :ripple="false"
-            @click="$router.push('/createBlank')"
+            @click="$router.push('/usability-evaluation')"
           >
             <v-row align="center">
               <v-col cols="12" md="5">

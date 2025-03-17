@@ -1,34 +1,47 @@
+<!-- Desc -> It'll allow users to select a category (Inspection, Inquiry, or Testing) and then choose from available methodologies (for now, only "Testing" and "Heuristic Evaluation" is active) -->
+
 <template>
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
         <p class="titles ma-16">
-          {{ $t('Createblank.title') }}
+          {{ $t('UsabilityEvaluation.title') }}
         </p>
       </v-row>
     </v-col>
 
     <v-col cols="12" class="mt-6">
       <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" md="4" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
-            :title="$t('Createblank.testType_1.testTitle')"
-            :type="$t('Createblank.test')"
-            segund-type="HEURISTICS"
-            :texts="$t('Createblank.testType_1.text')"
-            @click="setTestType"
+            :title="$t('UsabilityEvaluation.testType_1.testTitle')"
+            :type="$t('UsabilityEvaluation.test')"
+            segund-type="TESTING"
+            :texts="$t('UsabilityEvaluation.testType_1.text')"
+            @click="navigateToTest('testing')"
           />
         </v-col>
 
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col cols="12" md="4" sm="10" class="card">
           <CardTypeTest
-            :img="require('../../../public/user.png')"
-            :title="$t('Createblank.testType_2.testTitle')"
-            :type="$t('Createblank.test')"
-            segund-type="User"
-            :texts="$t('Createblank.testType_2.text')"
-            @click="setTestType"
+            :img="require('../../../public/specialist.png')"
+            :title="$t('UsabilityEvaluation.testType_2.testTitle')"
+            :type="$t('UsabilityEvaluation.test')"
+            segund-type="INSPECTION"
+            :texts="$t('UsabilityEvaluation.testType_2.text')"
+            @click="navigateToTest('inspection')"
+          />
+        </v-col>
+
+        <v-col cols="12" md="4" sm="10" class="card">
+          <CardTypeTest
+            :img="require('../../../public/specialist.png')"
+            :title="$t('UsabilityEvaluation.testType_3.testTitle')"
+            :type="$t('UsabilityEvaluation.test')"
+            segund-type="INQUIRY"
+            :texts="$t('UsabilityEvaluation.testType_3.text')"
+            @click="navigateToTest('inquiry')"
           />
         </v-col>
       </v-row>
@@ -63,9 +76,9 @@ export default {
   }),
 
   methods: {
-    setTestType(type) {
+    navigateToTest(type) {
       this.testType = type
-      this.nameDialog = true
+      this.$router.push(`/${type}`)
     },
   },
 }

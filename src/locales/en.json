@@ -6,7 +6,7 @@
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
-    "contact": "Contact No",  
+    "contact": "Contact No",
     "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
@@ -31,9 +31,9 @@
     "editDelete": "Edit/Delete",
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
-    "notifications":"Notifications",
-    "unread":"unread",
-    "inbox":"inbox",
+    "notifications": "Notifications",
+    "unread": "unread",
+    "inbox": "inbox",
     "timeAgo": {
       "years": "{count} year{count !== 1 ? 's' : ''} ago",
       "months": "{count} month{count !== 1 ? 's' : ''} ago",
@@ -46,30 +46,30 @@
     "sentBy": "Sent by",
     "new": "NEW"
   },
-    "PROFILE": {
-      "title": "Profile",
-      "editProfile": "Edit Profile",
-      "account": "Account",
-      "admin": "Admin",
-      "changePassword": "Change Password",
-      "passwordRequirements": "Ensure these requirements",
-      "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
-      "newPassword": "New Password",
-      "confirmNewPassword": "Confirm New Password",
-      "editDetails": "Edit Details",
-      "saveChanges": "Save Changes",
-      "country": "Country",
-      "missingInfo": "Missing Information",
-      "deleteAccountTitle": "Delete Account",
-      "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
-      "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
-      "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be at least 8 characters long",
-      "passwordUppercase": "Must contain an uppercase letter",
-      "passwordSymbol": "Must contain a symbol",
-      "confirmPasswordRequired": "Confirm password is required",
-      "passwordsMatch": "Passwords must match"
-    },
+  "PROFILE": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "account": "Account",
+    "admin": "Admin",
+    "changePassword": "Change Password",
+    "passwordRequirements": "Ensure these requirements",
+    "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "editDetails": "Edit Details",
+    "saveChanges": "Save Changes",
+    "country": "Country",
+    "missingInfo": "Missing Information",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
+    "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsMatch": "Passwords must match"
+  },
   "titles": {
     "manager": "Manager",
     "test": "Test",
@@ -477,8 +477,7 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount":" Are you sure you want to delete your account? This action cannot be undone."
-
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
   },
   "buttons": {
     "next": "Next",
@@ -487,7 +486,7 @@
     "username": "Username",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
-    "profile":"profile",
+    "profile": "profile",
     "returnToConsole": "Return to Console",
     "tip": "Tip",
     "cancel": "Cancel",
@@ -498,8 +497,8 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount":"Delete Account",
-    "back":"Back"
+    "deleteAccount": "Delete Account",
+    "back": "Back"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -521,11 +520,153 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability Heuristic",
-      "text": ["Usability Percentage", "Final Report PDF", "Invite specialists to evaluate your application"]
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF",
+        "Invite specialists to evaluate your application"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability User",
-      "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
+    }
+  },
+  "UsabilityEvaluation": {
+    "title": "What kind of test are you looking to start?",
+    "test": "Test",
+    "testType_1": {
+      "testTitle": "Testing",
+      "text": ["User Testing", "A/B Testing", "Eye-Tracking", "Log Analysis"],
+      "SubTest": {
+        "subTitle": "What kind of test are you looking to start?",
+        "subTest": "Test",
+        "subTestType-1": {
+          "subTestTitle": "User Testing",
+          "text": [
+            "Webcam, audio & screen record",
+            "Enhanced answer analysis",
+            "Moderated or non moderated tests"
+          ]
+        },
+        "subTestType-2": {
+          "subTestTitle": "A/B Testing",
+          "text": [
+            "Compare two versions of a design",
+            "Measure conversion rates",
+            "Statistical significance analysis"
+          ]
+        },
+        "subTestType-3": {
+          "subTestTitle": "Eye-Tracking",
+          "text": [
+            "Analyze visual attention patterns",
+            "Heatmaps & gaze tracking",
+            "Evaluate user focus"
+          ]
+        },
+        "subTestType-4": {
+          "subTestTitle": "Log Analysis",
+          "text": [
+            "Collect and analyze real user interactions",
+            "Identify bottlenecks and inefficiencies",
+            "Data-driven usability improvements"
+          ]
+        }
+      }
+    },
+    "testType_2": {
+      "testTitle": "Inspection",
+      "text": [
+        "Heuristic Evaluation",
+        "Cognitive Walkthrough",
+        "Guided Walkthroughs",
+        "Automated Evaluations"
+      ],
+      "SubTest": {
+        "subTitle": "What kind of Inspection are you looking to start?",
+        "subTest": "Test",
+        "subTestType-1": {
+          "subTestTitle": "Heuristic Evaluation",
+          "text": [
+            "Usability Percentage",
+            "Final Report PDF",
+            "Invite specialists to evaluate your application"
+          ]
+        },
+        "subTestType-2": {
+          "subTestTitle": "Cognitive Walkthrough",
+          "text": [
+            "Evaluate task complexity",
+            "Analyze cognitive load during interactions",
+            "Identify usability barriers in task flows"
+          ]
+        },
+        "subTestType-3": {
+          "subTestTitle": "Guided Walkthroughs",
+          "text": [
+            "Step-by-step task simulation",
+            "Identify workflow issues",
+            "Evaluate user understanding"
+          ]
+        },
+        "subTestType-4": {
+          "subTestTitle": "Automated Evaluations",
+          "text": [
+            "AI-powered usability analysis",
+            "Auto-detect accessibility issues",
+            "Generate reports from real data"
+          ]
+        }
+      }
+    },
+    "testType_3": {
+      "testTitle": "Inquiry",
+      "text": [
+        "Interviews",
+        "Focus Groups",
+        "Surveys and Questionnaires",
+        "Field Studies"
+      ],
+      "SubTest": {
+        "subTitle": "What kind of Inquiry are you looking to start?",
+        "subTest": "Test",
+        "subTestType-1": {
+          "subTestTitle": "Interviews",
+          "text": [
+            "Conduct one-on-one discussions",
+            "Gather in-depth user insights",
+            "Explore user needs and pain points"
+          ]
+        },
+        "subTestType-2": {
+          "subTestTitle": "Focus Groups",
+          "text": [
+            "Moderated discussions with multiple users",
+            "Identify common usability concerns",
+            "Gain collective user feedback"
+          ]
+        },
+        "subTestType-3": {
+          "subTestTitle": "Surveys and Questionnaires",
+          "text": [
+            "Collect structured user feedback",
+            "Measure satisfaction with tools like SUS, QUIS, UMUX",
+            "Analyze quantitative usability metrics"
+          ]
+        },
+        "subTestType-4": {
+          "subTestTitle": "Field Studies",
+          "text": [
+            "Observe users in their natural environment",
+            "Understand real-world interactions",
+            "Identify contextual usability challenges"
+          ]
+        }
+      }
     }
   },
   "TestDialog": {
