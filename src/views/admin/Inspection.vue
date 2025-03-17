@@ -124,7 +124,6 @@ export default {
 .outermost {
   height: 93vh;
   background-color: #f9f5f0;
-  padding: 20px;
 }
 
 .titles {

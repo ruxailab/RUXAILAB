@@ -9,8 +9,8 @@
     </v-col>
 
     <v-col cols="12" class="mt-6">
-      <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+      <v-row justify="center">
+        <v-col cols="12" md="6" sm="6" lg="4" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
             :title="
@@ -28,7 +28,7 @@
           />
         </v-col>
 
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col cols="12" md="6" sm="6" lg="4" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="
@@ -45,7 +45,7 @@
             @click="!isDisabled && setTestType"
           />
         </v-col>
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" md="6" sm="6" lg="4" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
             :title="
@@ -63,7 +63,7 @@
           />
         </v-col>
 
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" md="6" sm="6" lg="4" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="
@@ -135,6 +135,9 @@ export default {
 }
 
 .card {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
   margin: auto;
 }
 
@@ -147,6 +150,9 @@ export default {
   .titles {
     font-size: 28px; /* Adjust font size for smaller screens */
   }
+  .card {
+    max-width: 100%; /* Full width on small screens */
+  }
 }
 
 @media (min-width: 601px) and (max-width: 1160px) {
@@ -156,6 +162,10 @@ export default {
 
   .titles {
     font-size: 32px; /* Adjust font size for medium screens */
+  }
+
+  .card {
+    max-width: 90%;
   }
 }
 
