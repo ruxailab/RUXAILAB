@@ -352,9 +352,9 @@
       "select_cooperator": "Seleccionar cooperador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "administrador",
+      "evaluator": "evaluador",
+      "guest": "invitado"
     },
     "messages": {
       "cooperators_loading": "[TODO]",
