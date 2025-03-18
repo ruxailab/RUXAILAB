@@ -78,6 +78,7 @@ export default class TestController extends Controller {
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
       console.error(e)
+      throw e
     }
   }
 
@@ -135,14 +136,13 @@ export default class TestController extends Controller {
   }
 
   async getAllTests() {
-    return await super
-      .readAll('tests')
-      .then((response) => {
-        const res = response.map(Test.toTest)
-        return res
-      })
-      .catch((err) => {
-        console.log('TestController error: ', err)
-      })
+    try {
+      const response = await super.readAll('tests')
+      const res = response.map(Test.toTest)
+      return res
+    } catch (err) {
+      console.log('TestController error: ', err)
+      throw err
+    }
   }
 }
