@@ -331,40 +331,40 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "[TODO]"
+      "cooperators": "Cooperadores"
     },
     "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
+      "email": "email",
+      "role": "função",
+      "invited": "convidado",
+      "accepted": "aceito",
+      "more": "mais",
+      "title": "título",
+      "content": "conteúdo"
     },
     "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
+      "send_invitation": "enviar convite",
+      "send_message": "enviar mensagem",
+      "reinvite": "reconvidar",
+      "remove_cooperator": "remover cooperador",
+      "cancel_invitation": "cancelar convite",
+      "cancel": "cancelar",
+      "send": "enviar",
+      "select_cooperator": "selecionar cooperador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "administrador",
+      "evaluator": "avaliador",
+      "guest": "convidado"
     },
     "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
+      "cooperators_loading": "carregando cooperadores",
+      "no_users": "sem usuários",
+      "remove_cooperator": "remover cooperador",
+      "cancel_invitation": "cancelar convite",
+      "change_role": "alterar função",
+      "message_title_hint": "dica de título da mensagem",
+      "message_content_hint": "dica de conteúdo da mensagem"
     }
   },
   "UserTestTable": {

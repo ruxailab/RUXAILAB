@@ -98,10 +98,11 @@ test.describe('Link Page Tests', () => {
 //   /*login*/
 //   await logIn(page)
 
-//   await page.click(
-//     'button.v-btn.v-btn--bottom.v-btn--is-elevated.v-btn--fab.v-btn--fixed.v-btn--has-bg.v-btn--right.v-btn--round',
-//   ) // Click create new test button
-//   await page.click('.card-title:has-text("Create from template")')
+//   // Click the create new test button using data-testid
+//   await page.click('[data-testid="create-test-btn"]');
+
+//   // Click the "Create from template" card title
+//   await page.click('.card-title:has-text("Create from template")');
 
 //   //create MARCTEST
 //   await page.click('.v-list-item.v-list-item--link.theme--light') // Select template

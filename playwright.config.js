@@ -55,9 +55,21 @@ module.exports = defineConfig({
     },
     {
       name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'], 
+      use: {
+        ...devices['Desktop Safari'],
       },
+    },
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },  // Simulate mobile Chrome
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 12'] },  // Simulate iOS Safari
+    },
+    {
+      name: 'tablet',
+      use: { ...devices['iPad Air'] },  // Simulate tablet view
     },
   ],
 });
