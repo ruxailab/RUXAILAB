@@ -5,9 +5,9 @@
         <slot name="answer" />
       </v-col>
       <v-col cols="1" class="mb-6 py-0">
-        <v-tooltip v-if="!show" bottom>
+        <v-tooltip v-if="!shouldShowComment" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+            <v-btn icon v-bind="attrs" @click="toggleComment" v-on="on">
               <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -22,7 +22,7 @@
         </v-tooltip>
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+            <v-btn icon v-bind="attrs" @click="toggleComment" v-on="on">
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
@@ -32,7 +32,7 @@
 
       <v-col cols="12" class="py-0">
         <v-textarea
-          v-if="show"
+          v-if="shouldShowComment"
           v-model="answerHeu.heuristicComment"
           outlined
           dense
@@ -43,7 +43,7 @@
           @change="updateComment"
         />
         <ImageImport
-          v-if="show"
+          v-if="shouldShowComment"
           :heuristic-id="test.testStructure[heurisIndex]"
           :question-id="answerHeu.heuristicId"
           :test-id="this.$store.getters.test.id"
@@ -54,6 +54,7 @@
   </div>
 </template>
 
+
 <script>
 import ImageImport from '@/components/atoms/ImportImage.vue'
 export default {
@@ -61,8 +62,8 @@ export default {
   props: {
     answerHeu: {
       type: Object,
-      default: () => {},
-      require: true,
+      default: () => ({ heuristicComment: '' }), // Fix: Ensuring default structure
+      required: true,
     },
     heurisIndex: {
       type: Number,
@@ -74,22 +75,22 @@ export default {
   }),
   computed: {
     test() {
-      return this.$store.getters.test
+      return this.$store.getters.test;
     },
-  },
-  watch: {
-    heurisIndex() {
-      this.show = false //close comment when changing heuristic
+    shouldShowComment() {
+      return this.answerHeu.heuristicComment?.trim().length > 0 || this.show;
     },
   },
   methods: {
+    toggleComment() {
+      this.show = !this.show;
+    },
     updateComment(input) {
-      this.$emit('updateComment', input)
+      this.$emit('updateComment', input);
     },
     handleImageUploaded() {
-      // Handle the image URL from the event emitted by ImportImage
-      this.updateComment('')
+      this.updateComment('');
     },
   },
-}
+};
 </script>
