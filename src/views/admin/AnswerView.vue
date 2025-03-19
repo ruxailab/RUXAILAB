@@ -4,7 +4,7 @@
     <div v-if="testAnswerDocument.type === 'HEURISTICS'">
       <HeuristicsTestAnswer />
     </div>
-    <div v-else>
+    <div v-else-if="testAnswerDocument">
       <UserTestAnswer />
     </div>
   </div>
@@ -21,7 +21,7 @@ export default {
 
   computed: {
     testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
+      return this.$store.state.Answer.testAnswerDocument|| {};
     },
   },
 }
