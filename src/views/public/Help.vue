@@ -305,7 +305,7 @@
           <v-col cols="12" class="text-center mt-8">
             <v-divider dark class="mb-4"></v-divider>
             <p class="text-caption white--text" style="opacity: 0.5;">
-              © 2025 Ruxailab. All rights reserved.
+              © {{ currentYear }} Ruxailab. All rights reserved.
             </p>
           </v-col>
         </v-row>
@@ -320,6 +320,7 @@ import i18n from '@/i18n'
 export default {
   data() {
     return {
+      currentYear: new Date().getFullYear(),
       searchQuery: '',
       activeCategory: null,
       selectedCategory: null,
