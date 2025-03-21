@@ -22,16 +22,21 @@ export default {
       immediate: true,
       deep: true,
       handler(newError) {
-        if (
-          newError &&
-          (newError.message || newError.errorCode) &&
-          (newError.message !== this.previousErrorMessage ||
-            newError.errorCode !== this.previousErrorCode)
-        ) {
-          this.$toast.error(`${newError.errorCode}: ${newError.message}`)
-          this.previousErrorMessage = newError.message
-          this.previousErrorCode = newError.errorCode
-          this.clearError()
+        if (newError) {
+          // Handle different error object structures
+          const errorMessage = newError.message || 'Unknown error'
+          const errorCode = newError.errorCode || 'ERROR'
+
+          if (
+            (errorMessage !== this.previousErrorMessage ||
+              errorCode !== this.previousErrorCode) &&
+            (errorMessage || errorCode)
+          ) {
+            this.$toast.error(`${errorCode}: ${errorMessage}`)
+            this.previousErrorMessage = errorMessage
+            this.previousErrorCode = errorCode
+            this.clearError()
+          }
         }
       },
     },
