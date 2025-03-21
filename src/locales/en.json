@@ -224,7 +224,8 @@
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "emptyCsvFile": "The CSV file is empty. Please provide a file with data."
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
