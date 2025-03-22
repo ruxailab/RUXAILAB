@@ -441,6 +441,14 @@ export default {
       this.sendInvitationMail(guest)
     },
     sendMessage(guest, messageTitle, messageContent) {
+      if (!messageTitle.trim()) {
+    alert('Title cannot be empty!') // Show alert if title is empty
+    return
+  }
+  if (!messageContent.trim()) {
+    alert('Message content cannot be empty!') // Show alert if content is empty
+    return
+  }
       this.messageModel = false
       if (guest.userDocId) {
         let path = ''
