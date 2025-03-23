@@ -315,31 +315,11 @@ export default {
     deleteUser(user) {
       this.dialogDel = false
       this.$store
-        .dispatch('deleteAuth', user)
+        .dispatch('deleteUser', user)
         .then(() => {
-          this.$store
-            .dispatch('deleteUser', user)
-            .then(() => {
-              this.$store.commit(
-                'setSuccess',
-                `Successfully deleted user ${this.userClicked.email}`,
-              )
-              this.$delete(this.users, this.users.indexOf(this.userClicked))
-              this.userClicked = null
-            })
-            .catch((err) => {
-              this.commit('setError', {
-                errorCode: 'auth',
-                message: 'Error deleting user',
-              })
-            })
+          this.userClicked = null
         })
-        .catch((err) => {
-          this.commit('setError', {
-            errorCode: 'auth',
-            message: 'Error deleting user',
-          })
-        })
+        .catch(() => {}) // Errors are handled in the store
     },
     openManager(test) {
       this.$router.push(`managerview/${test.id}`)
