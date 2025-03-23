@@ -69,7 +69,13 @@
                 />
               </template>
               <template v-slot:[`item.accessLevel`]="{ item }">
-                <div>{{ level(item.accessLevel) }}</div>
+                <v-chip
+                  :color="getAccessLevelColor(item.accessLevel)"
+                  text-color="white"
+                  small
+                >
+                  {{ level(item.accessLevel) }}
+                </v-chip>
               </template>
 
               <template v-slot:[`item.actions`]="{ item }">
@@ -261,6 +267,18 @@ export default {
     await this.$store.dispatch('getAllTests')
   },
   methods: {
+    getAccessLevelColor(level) {
+      switch (level) {
+        case 0:
+          return 'red darken-2' // Super Admin
+        case 1:
+          return 'blue darken-2' // Admin
+        case 2:
+          return 'green darken-1' // User
+        default:
+          return 'grey' // Unknown level
+      }
+    },
     editUser(item) {
       this.editedIndex = this.users.indexOf(item)
       this.editedUser = { ...item }
