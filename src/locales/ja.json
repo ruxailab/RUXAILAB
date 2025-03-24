@@ -425,8 +425,8 @@
           "finalReport": "最終レポート",
           "loading": "読み込み中..."
         },
-        "ContructionHeading": "ページは作成中です",
-        "ContructionParagraph": "私たちはサイトの改善に努めています。もうすぐ戻ってきてください！"
+        "ConstructionHeading": "ページは作成中です",
+        "ConstructionParagraph": "私たちはサイトの改善に努めています。もうすぐ戻ってきてください！"
       },
       "landing": {
         "feedbackTitle": "プロジェクトに関するフィードバックを迅速に得る",
@@ -448,8 +448,8 @@
       },
       "createTest": {
         "title": "新しいテストを作成",
-        "blanckTitle": "空白のテストを作成",
-        "blanckSubtitle": "完全に新しいテンプレートで始めるために空白のテストを作成します。",
+        "blankTitle": "空白のテストを作成",
+        "blankSubtitle": "完全に新しいテンプレートで始めるために空白のテストを作成します。",
         "templateTitle": "テンプレートから作成",
         "templateSubtitle": "ユーザーが作成したテンプレートに基づいてテストを作成します。",
         "create": "テストを作成",
