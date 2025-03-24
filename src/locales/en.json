@@ -521,11 +521,19 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability Heuristic",
-      "text": ["Usability Percentage", "Final Report PDF", "Invite specialists to evaluate your application"]
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF", 
+        "Invite specialists to evaluate your application"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability User",
-      "text": ["Webcam, audio & screen record", "Enhanced answer analysis", "Moderated or non moderated tests"]
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
     },
     "UsabilityUser": {
       "SelfTest": {
@@ -533,7 +541,7 @@
         "type": "Unmoderated",
         "text": [
           "Answer on free time",
-          "Enhanced answer analysis",
+          "Enhanced answer analysis", 
           "Task Customization"
         ]
       },
