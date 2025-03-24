@@ -15,6 +15,7 @@
               <v-form
                 v-model="valid"
                 class="mx-3"
+                ref="form"
                 @keyup.native.enter="onSignUp()"
               >
                 <v-text-field
@@ -127,6 +128,7 @@ export default {
 
   methods: {
     async onSignUp() {
+      this.$refs.form.validate()
       if (this.valid) {
         await this.$store.dispatch('signup', {
           email: this.email,
