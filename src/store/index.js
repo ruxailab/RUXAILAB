@@ -1,19 +1,15 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import Auth from '@/store/modules/Auth';
-import Templates from '@/store/modules/Template';
-import Tests from '@/store/modules/Test';
-import Users from '@/store/modules/User';
-import Database from '@/store/modules/Database';
-import Cooperators from '@/store/modules/Cooperators';
-import Reports from '@/store/modules/Reports';
-import Heuristic from '@/store/modules/Heuristic';
-import Answer from '@/store/modules/Answer';
-import Language from '@/store/modules/Language'; 
+import { createStore } from 'vuex'
+import Auth from '@/store/modules/Auth'
+import Templates from '@/store/modules/Template'
+import Tests from '@/store/modules/Test'
+import Users from '@/store/modules/User'
+import Database from '@/store/modules/Database'
+import Cooperators from '@/store/modules/Cooperators'
+import Reports from '@/store/modules/Reports'
+import Heuristic from '@/store/modules/Heuristic'
+import Answer from '@/store/modules/Answer'
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     loading: false,
     error: null,
@@ -23,30 +19,30 @@ export default new Vuex.Store({
   },
   mutations: {
     setLoading(state, payload) {
-      state.loading = payload;
+      state.loading = payload
     },
     setError(state, payload) {
       state.error = {
         errorCode: payload.errorCode,
         message: payload.message,
-      };
+      }
     },
     SET_DIALOG_LEAVE(state, payload) {
-      state.dialogLeave = payload;
+      state.dialogLeave = payload
     },
     SET_LOCAL_CHANGES(state, payload) {
-      state.localChanges = payload;
+      state.localChanges = payload
     },
     SET_PATH_TO(state, payload) {
-      state.pathTo = payload;
+      state.pathTo = payload
     },
   },
   getters: {
     getDialogLeaveStatus(state) {
-      return state.dialogLeave;
+      return state.dialogLeave
     },
     localChanges(state) {
-      return state.localChanges;
+      return state.localChanges
     },
   },
   modules: {
@@ -60,5 +56,5 @@ export default new Vuex.Store({
     Heuristic,
     Answer,
     Language, 
-  },
-});
+  }
+})
