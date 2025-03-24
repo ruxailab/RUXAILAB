@@ -425,8 +425,8 @@
           "finalReport": "Rapport final",
           "loading": "Chargement..."
         },
-        "ContructionHeading": "Page en construction",
-        "ContructionParagraph": "Nous travaillons dur pour améliorer notre site. Veuillez revenir bientôt !"
+        "ConstructionHeading": "Page en construction",
+        "ConstructionParagraph": "Nous travaillons dur pour améliorer notre site. Veuillez revenir bientôt !"
       },
       "landing": {
         "feedbackTitle": "Obtenez rapidement des commentaires sur vos projets",
@@ -448,8 +448,8 @@
       },
       "createTest": {
         "title": "Créer un nouveau test",
-        "blanckTitle": "Créer un test vierge",
-        "blanckSubtitle": "Créez un test vierge pour commencer avec un modèle entièrement nouveau.",
+        "blankTitle": "Créer un test vierge",
+        "blankSubtitle": "Créez un test vierge pour commencer avec un modèle entièrement nouveau.",
         "templateTitle": "Créer à partir d'un modèle",
         "templateSubtitle": "Créez un test basé sur un modèle créé par l'un de nos utilisateurs.",
         "create": "Créer un test",
