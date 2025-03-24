@@ -3,6 +3,7 @@
   "SIGNIN": {
     "sign-in": "Iniciar sesión",
     "email": "Correo electrónico",
+    "username": "Nombre de usuario",
     "password": "Contraseña",
     "dont-have-account": "¿No tienes una cuenta? Regístrate",
     "sign-up": "Inscribirse",
@@ -319,7 +320,7 @@
       "in_progress": "En progreso"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invitar Evaluador a la Prueba",
     "email": "Correo Electrónico",
     "scheduledAt": "Programado para",
@@ -541,25 +542,25 @@
       ]
     },
     "UsabilityUser": {
-    "SelfTest": {
-      "title": "Prueba de Usuario",
-      "type":"no moderado",
-      "text": [
-        "Responder en tiempo libre",
-        "Análisis mejorado de respuestas",
-        "Personalización de tareas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Prueba en Vivo",
-      "type":"moderado",
-      "text": [
-        "Grabación de webcam, audio y pantalla",
-        "Análisis mejorado de respuestas",
-        "Prueba en vivo moderada"
-      ]
+      "SelfTest": {
+        "title": "Prueba de Usuario",
+        "type": "no moderado",
+        "text": [
+          "Responder en tiempo libre",
+          "Análisis mejorado de respuestas",
+          "Personalización de tareas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Prueba en Vivo",
+        "type": "moderado",
+        "text": [
+          "Grabación de webcam, audio y pantalla",
+          "Análisis mejorado de respuestas",
+          "Prueba en vivo moderada"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Creación de Prueba",
@@ -589,5 +590,22 @@
     "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
-  }
+  },
+  "user": "USUARIO",
+  "account": "Cuenta",
+  "security": "Seguridad",
+  "personalInfo": "Información personal",
+  "contact": "Contacto",
+  "country": "País",
+  "editDetails": "Editar detalles",
+  "typeDeleteToConfirm": "Escriba \"DELETE\" para confirmar",
+  "pleaseTypeDeleteToConfirm": "Por favor escriba DELETE para confirmar",
+  "finalStepVerifyIdentity": "Paso final: Verifique su identidad",
+  "enterPasswordForAccountDeletion": "Ingrese su contraseña para proceder con la eliminación de la cuenta",
+  "yourPassword": "Su contraseña",
+  "usernameRequired": "Nombre de usuario es requerido",
+  "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+  "countryRequired": "País es requerido",
+  "contactNumberRequired": "Número de contacto es requerido",
+  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)"
 }
