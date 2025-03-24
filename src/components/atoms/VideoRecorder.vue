@@ -102,7 +102,7 @@ export default {
           this.recording = false
 
           this.$emit('stopShowLoading')
-          this.$toast.success('Video record saved!')
+          this.$toast.success(this.$t('alerts.videoRecordSaved'))
         }
 
         this.mediaRecorder.start()
