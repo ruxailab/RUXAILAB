@@ -6,7 +6,7 @@
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
-    "contact":"Número de contato",
+    "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
@@ -31,9 +31,9 @@
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
-    "notifications":"Notificações",
-    "unread":"não lido",
-    "inbox":"Caixa de entrada",
+    "notifications": "Notificações",
+    "unread": "não lido",
+    "inbox": "Caixa de entrada",
     "timeAgo": {
       "years": "[TODO] {count}",
       "months": "[TODO] {count}",
@@ -476,7 +476,15 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "audioSaved": "Gravação de áudio salva!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved": "Gravação de vídeo salva!",
+    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
+    "passwordChangedSuccess": "Senha alterada com sucesso",
+    "accountDeletedSuccess": "Conta excluída com sucesso",
+    "savedChanges": "Alterações salvas",
+    "responseRecorded": "Sua resposta foi registrada"
   },
   "buttons": {
     "next": "Próximo",
@@ -485,7 +493,7 @@
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
     "create": "Criar",
@@ -495,8 +503,8 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount":"Excluir conta",
-    "back":"Trás"
+    "deleteAccount": "Excluir conta",
+    "back": "Trás"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -518,11 +526,19 @@
     "test": "Teste",
     "testType_1": {
       "testTitle": "Heurística de Usabilidade",
-      "text": ["Porcentagem de Usabilidade", "Relatório Final em PDF", "Convide especialistas para avaliar sua aplicação"]
+      "text": [
+        "Porcentagem de Usabilidade",
+        "Relatório Final em PDF",
+        "Convide especialistas para avaliar sua aplicação"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuário de Usabilidade",
-      "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Testes moderados ou não moderados"
+      ]
     }
   },
   "TestDialog": {

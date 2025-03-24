@@ -83,25 +83,30 @@
         v-if="test && start"
         class="background align-center justify-center pa-0 ma-0"
       >
-        <v-col  cols="12" md="6" sm="12" xs="12" class="ml-md-3 mr-md-3">
+        <v-col cols="12" md="6" sm="12" xs="12" class="ml-md-3 mr-md-3">
           <h1 class="titleView text-center text-md-left text-sm-center pb-1">
             {{ test.testTitle }}
           </h1>
-          <p align="justify" class="description" >
+          <p align="justify" class="description">
             {{ test.testDescription }}
           </p>
-          <v-row justify="center" justify-md="start" justify-sm="center" class="pa-4">
+          <v-row
+            justify="center"
+            justify-md="start"
+            justify-sm="center"
+            class="pa-4"
+          >
             <v-btn color="white" outlined rounded @click="startTest()">
               {{ $t('HeuristicsTestView.actions.startTest') }}
             </v-btn>
           </v-row>
         </v-col>
         <v-col cols="6" md="5" sm="6" xs="6" class="d-flex justify-center">
-          <v-img 
-            src="../../assets/BackgroundTestView.png" 
+          <v-img
+            src="../../assets/BackgroundTestView.png"
             contain
             class="mx-auto"
-            max-width="100%" 
+            max-width="100%"
             height="auto"
           />
         </v-col>
@@ -321,7 +326,11 @@
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item style="cursor:pointer" v-if="review==true && calculatedProgress==100" @click="review=false" >
+                  <v-list-item
+                    style="cursor:pointer"
+                    v-if="review == true && calculatedProgress == 100"
+                    @click="review = false"
+                  >
                     <v-list-item-icon>
                       <v-icon color="#fca326">
                         mdi-send-circle-outline
@@ -694,7 +703,7 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
-      this.$toast.success('Your response has been Recorded')
+      this.$toast.success(this.$t('alerts.responseRecorded'))
       this.$router.push('/testslist')
     },
     setExistUser() {
@@ -774,7 +783,7 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0; 
+  right: 0;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right 0px top -20px;
@@ -787,7 +796,7 @@ body {
   line-height: 70px;
   align-items: center;
   color: #ffffff;
-  word-wrap:break-word;
+  word-wrap: break-word;
 }
 .description {
   font-style: normal;
@@ -797,7 +806,7 @@ body {
   align-items: flex-end;
   color: #ffffff;
   padding-top: 3%;
-  padding-bottom:3%;
+  padding-bottom: 3%;
 }
 .nav {
   position: fixed;
