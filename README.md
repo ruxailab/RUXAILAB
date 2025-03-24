@@ -40,6 +40,7 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
 
 For commercial support, academic collaborations, and answers to common questions, please use [Get Support]() to contact us.
+
 ### Development Environment
 
 - Node.js version: ≤ 16.20.1
@@ -50,50 +51,52 @@ For commercial support, academic collaborations, and answers to common questions
 
 ## Video Guide
 
-<a href='https://youtu.be/dAf4LRxITCc'>Tutorial - Running RUXAILAB with Firebase Emulators   🖥️</a>
+<a href='https://youtu.be/dAf4LRxITCc'>Tutorial - Running RUXAILAB with Firebase Emulators 🖥️</a>
 
 ## Getting Started
 
 Follow these steps to set up the development environment and run the application locally:
 
-   ```bash
-   # Install dependencies
-   npm install
-   pip install
-   ```
- Open Firebase / Firestore and start a project.
+```bash
+# Install dependencies
+npm install
+pip install
+```
 
-   - In the project dashboard, click on the settings button on the left side of the screen (gear icon).
-  - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen. 
-<div align="center">
-  <img src="public/FBexample.png" alt="FBexample" height="450" />
-</div> 
+Open Firebase / Firestore and start a project.
+
+- In the project dashboard, click on the settings button on the left side of the screen (gear icon).
+- In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen.
+  <div align="center">
+    <img src="public/FBexample.png" alt="FBexample" height="450" />
+  </div>
 
 In the folder of your project, create a file with the name .env and put the following data:
 
-  ```javascript
-  VUE_APP_FIREBASE_API_KEY=""
-  VUE_APP_FIREBASE_AUTH_DOMAIN=""
-  VUE_APP_FIREBASE_DB_URL=""
-  VUE_APP_FIREBASE_PROJECT_ID=""
-  VUE_APP_FIREBASE_STORAGE_BUCKET=""
-  VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
-  VUE_APP_FIREBASE_APP_ID=""
+```ini
+VUE_APP_FIREBASE_API_KEY=""
+VUE_APP_FIREBASE_AUTH_DOMAIN=""
+VUE_APP_FIREBASE_DB_URL=""
+VUE_APP_FIREBASE_PROJECT_ID=""
+VUE_APP_FIREBASE_STORAGE_BUCKET=""
+VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
+VUE_APP_FIREBASE_APP_ID=""
 
+# Doesn't need changes
+VUE_APP_I18N_LOCALE="en"
+VUE_APP_I18N_FALLBACK_LOCALE="en"
+```
 
-  // Doesn't need changes
-  VUE_APP_I18N_LOCALE="en"
-  VUE_APP_I18N_FALLBACK_LOCALE="en"
-  ```
 Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
 
+```bash
+ # Run the application locally
+ npm run serve
+```
 
-  ```bash
-   # Run the application locally
-   npm run serve
-   ```
-## Running with Firebase Emulators 
-- Add ```firebase.json``` file with the following code snippet:
+## Running with Firebase Emulators
+
+- Add `firebase.json` file with the following code snippet:
 
 ```javascript
     {
@@ -149,8 +152,9 @@ Then, complete the information in your .env file with the firebase information, 
     "rules": "storage.rules"
   }
 }
-	
+
 ```
+
 Setup your Firebase Emulators
 
 Run:
@@ -162,37 +166,34 @@ firebase emulators:start
 
 ```
 
-## Running Python Function 
+## Running Python Function
 
 To calculate heuristic weights, run:
 
- ```bash	
- # Run locally
-  firebase init functions
-  firebase use (choose your option)
-  firebase emulators:start --only functions
-   ```
+```bash
+# Run locally
+ firebase init functions
+ firebase use (choose your option)
+ firebase emulators:start --only functions
+```
+
 Then get the url, go to the .env file and add the following sentence:
 
-  ```javascript
-    // Your previous code
-   VUE_APP_FIREBASE_PYTHON_FUNCTION="url"
-   ```
+```javascript
+// Your previous code
+VUE_APP_FIREBASE_PYTHON_FUNCTION = 'url'
+```
 
 If you want to deply the fuction, change your account from spark to blaze, run:
 
- ```bash	
-    firebase deploy --only functions
-   ```
+```bash
+   firebase deploy --only functions
+```
+
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
 There you can get the url and replace on .env file.
 
-
-
-
 ## Docker Setup
-
-
 
 ### Building the Docker Image
 
@@ -206,19 +207,13 @@ docker build -t uxremotelab .
 
 After building the image, you can run the application in a Docker container using:
 
- 
 Note: Ensure you have created the .env file and filled it with all required variables before running the following command:
-  
 
 ```bash
 docker run -d --env-file .env -p 5000:5000 uxremotelab
 ```
 
 Visit `http://localhost:5000` in your browser to access the UX Remote LAB platform.
-
-
-
-
 
 ## License
 
