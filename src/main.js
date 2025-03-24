@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import vuetify from './plugins/vuetify'
-import i18n from './i18n'
-import Toast from 'vue-toastification'
-import Vue2Editor from "vue2-editor";
-import 'vue-toastification/dist/index.css'
+import { createApp, configureCompat } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import vuetify from './plugins/vuetify';
+import i18n from './i18n';
+import Toast from 'vue-toastification';
+import TextClamp from 'vue3-text-clamp';
+import 'vue-toastification/dist/index.css';
 
-Vue.config.productionTip = false
+const app = createApp(App);
 
 const options = {
   newestOnTop: true,
@@ -17,14 +17,19 @@ const options = {
   pauseOnHover: true,
   closeOnClick: true,
   timeout: 4000,
-}
-Vue.use(Toast, options)
+};
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  i18n,
-  Vue2Editor,
-  render: (h) => h(App),
-}).$mount('#app')
+// Use plugins
+app.use(router);
+app.use(store);
+app.use(vuetify);
+app.use(i18n);
+app.use(Toast, options);
+app.use(TextClamp);
+
+configureCompat({
+  MODE: 2
+})
+
+// Mount the app
+app.mount('#app');
