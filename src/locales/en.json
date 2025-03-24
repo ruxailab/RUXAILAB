@@ -320,6 +320,15 @@
       "in_progress": "in progress"
     }
   },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Invite Evaluator To Test",
+    "email": "Email",
+    "scheduledAt": "Scheduled at",
+    "inviteMessage": "Invite message",
+    "placeholderMessage": "Hey, let's make a test...",
+    "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
+    "send": "Send"
+  },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperators"
@@ -545,6 +554,28 @@
         "Enhanced answer analysis",
         "Moderated or non moderated tests"
       ]
+
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Self Test",
+        "type":"Unmoderated",
+        "text": [
+          "Answer on free time",
+          "Enhanced answer analysis",
+          "Task Customization"
+        ]
+      },
+      "LiveTest": {
+        "title": "Live Test",
+        "type":"Moderated",
+        "text": [
+          "Webcam, audio & screen record",
+          "Enhanced answer analysis",
+          "Moderated live test"
+        ]
+      }
+
     }
   },
   "TestDialog": {
