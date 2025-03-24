@@ -6,7 +6,7 @@
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
-    "contact":"Número de contato",
+    "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
@@ -31,16 +31,16 @@
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
-    "notifications":"Notificações",
-    "unread":"não lido",
-    "inbox":"Caixa de entrada",
+    "notifications": "Notificações",
+    "unread": "não lido",
+    "inbox": "Caixa de entrada",
     "timeAgo": {
-      "years": "[TODO] {count}",
-      "months": "[TODO] {count}",
-      "days": "[TODO] {count}",
-      "hours": "[TODO] {count}",
-      "minutes": "[TODO] {count}",
-      "now": "[TODO]"
+      "years": "{count} ano{count !== 1 ? 's' : ''} atrás",
+      "months": "{count} mês{count !== 1 ? 'es' : ''} atrás",
+      "days": "{count} dia{count !== 1 ? 's' : ''} atrás",
+      "hours": "{count} hora{count !== 1 ? 's' : ''} atrás",
+      "minutes": "{count} minuto{count !== 1 ? 's' : ''} atrás",
+      "now": "Agora"
     },
     "viewAll": "Ver tudo",
     "sentBy": "Enviado por",
@@ -200,7 +200,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "[TODO]"
+      "options": "Opções"
     },
     "messages": {},
     "placeHolders": {},
@@ -208,154 +208,163 @@
   },
   "HeuristicsWeightsTable": {
     "titles": {
-      "weights": "[TODO]",
-      "heuristics": "[TODO]"
+      "weights": "Pesos",
+      "heuristics": "Heurísticas"
     },
     "messages": {
-      "atLeast2HeuristicsForWeighting": "[TODO]"
+      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para poder colocar os pesos"
     },
     "actions": {
-      "saveWeights": "[TODO]"
+      "saveWeights": "Salvar valores de peso"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "[TODO]"
+      "settings": "Configurações"
     },
     "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+      "acceptCsv": "Aceitar arquivo CSV",
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
     },
     "placeHolders": {
-      "importCsv": "[TODO]"
+      "importCsv": "Importar CSV"
     },
     "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
+      "downloadCsvTemplate": "Baixar modelo CSV",
+      "update": "Atualizar"
     }
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+      "submitTest": "Enviar teste",
+      "submitOnce": "Você só pode enviar uma vez",
+      "noHeuristics": "Não há heurísticas disponíveis"
     },
     "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "save": "Salvar",
+      "continueAs": "Continuar como",
+      "notMail": "Não é seu e-mail?",
+      "changeAccount": "Mudar conta",
+      "startTest": "Iniciar teste"
     }
   },
   "HeuristicsEditTest": {
     "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
+      "heuristics": "Heurísticas",
+      "options": "Opções",
+      "weights": "Pesos",
+      "settings": "Configurações"
     }
   },
   "HeuristicsTestAnswer": {
     "titles": {
-      "answers": "[TODO]",
-      "statistics": "[TODO]",
-      "evaluators": "[TODO]",
-      "heuristics": "[TODO]",
-      "analytics": "[TODO]"
+      "answers": "Respostas",
+      "statistics": "Estatísticas",
+      "evaluators": "Avaliadores",
+      "heuristics": "Heurísticas",
+      "analytics": "Análises"
     },
     "statistics": {
-      "usabilityPercentage": "[TODO]",
-      "max": "[TODO]",
-      "min": "[TODO]",
-      "std": "[TODO]"
+      "usabilityPercentage": "Porcentagem de Usabilidade",
+      "max": "Máximo",
+      "min": "Mínimo",
+      "std": "Desvio Padrão"
     },
     "evaluators": {
       "headers": {
-        "table": "[TODO]",
-        "graphic": "[TODO]"
+        "table": "Tabela",
+        "graphic": "Gráfico"
       },
       "messages": {
-        "graphForMoreThan3": "[TODO]"
+        "graphForMoreThan3": "Gráfico disponível para mais de 3 avaliadores"
       }
     },
     "heuristics": {
       "headers": {
-        "heuristicsData": "[TODO]",
-        "answersByEvaluator": "[TODO]",
-        "answersByHeuristics": "[TODO]",
-        "graphic": "[TODO]",
-        "weights": "[TODO]"
+        "heuristicsData": "Dados das Heurísticas",
+        "answersByEvaluator": "Respostas por Avaliador",
+        "answersByHeuristics": "Respostas por Heurísticas",
+        "graphic": "Gráfico",
+        "weights": "Pesos"
       },
       "messages": {
-        "needMoreThan1Answer": "[TODO]",
-        "runWeightFunction": "[TODO]"
+        "needMoreThan1Answer": "Necessário mais de uma resposta",
+        "runWeightFunction": "Executar função de peso"
       }
     },
     "analytics": {}
   },
   "HeuristicsReport": {
     "titles": {
-      "reports": "[TODO]",
-      "last_updated": "[TODO]"
+      "reports": "Relatórios",
+      "last_updated": "Última Atualização"
     },
     "headers": {
-      "evaluator": "[TODO]",
-      "last_update": "[TODO]",
-      "progress": "[TODO]",
-      "status": "[TODO]",
-      "more": "[TODO]"
+      "evaluator": "Avaliador",
+      "last_update": "Última Atualização",
+      "progress": "Progresso",
+      "status": "Status",
+      "more": "Mais"
     },
     "messages": {
-      "confirm_delete_report": "[TODO]",
-      "reports_loading": "[TODO]",
-      "remove_report": "[TODO]",
-      "sure_to_delete": "[TODO] {user}",
-      "report_deleted": "[TODO]"
+      "confirm_delete_report": "Confirmar exclusão do relatório",
+      "reports_loading": "Carregando relatórios",
+      "remove_report": "Remover relatório",
+      "sure_to_delete": "Tem certeza que deseja excluir o relatório de {user}",
+      "report_deleted": "Relatório excluído"
     },
     "status": {
-      "submitted": "[TODO]",
-      "in_progress": "[TODO]"
+      "submitted": "Enviado",
+      "in_progress": "Em Progresso"
     }
+  },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Convidar Avaliador para Teste",
+    "email": "E-mail",
+    "scheduledAt": "Agendado para",
+    "inviteMessage": "Mensagem de convite",
+    "placeholderMessage": "Ei, vamos fazer um teste...",
+    "inviteInfo": "O convite com o link do teste será enviado para o e-mail do avaliador no horário agendado",
+    "send": "Enviar"
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "[TODO]"
+      "cooperators": "Colaboradores"
     },
     "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
+      "email": "E-mail",
+      "role": "Função",
+      "invited": "Convidado",
+      "accepted": "Aceito",
+      "more": "Mais",
+      "title": "Título",
+      "content": "Conteúdo"
     },
     "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
+      "send_invitation": "Enviar convite",
+      "send_message": "Enviar mensagem",
+      "reinvite": "Reconvidar",
+      "remove_cooperator": "Remover colaborador",
+      "cancel_invitation": "Cancelar convite",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "select_cooperator": "Selecionar colaborador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "Administrador",
+      "evaluator": "Avaliador",
+      "guest": "Convidado"
     },
     "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
+      "cooperators_loading": "Carregando colaboradores",
+      "no_users": "Nenhum usuário encontrado",
+      "remove_cooperator": "Remover colaborador",
+      "cancel_invitation": "Cancelar convite",
+      "change_role": "Alterar função",
+      "message_title_hint": "Digite o título da mensagem",
+      "message_content_hint": "Digite o conteúdo da mensagem"
     }
   },
   "UserTestTable": {
@@ -476,7 +485,7 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
   },
   "buttons": {
     "next": "Próximo",
@@ -485,7 +494,7 @@
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
     "create": "Criar",
@@ -495,8 +504,8 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount":"Excluir conta",
-    "back":"Trás"
+    "deleteAccount": "Excluir conta",
+    "back": "Trás"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -518,12 +527,40 @@
     "test": "Teste",
     "testType_1": {
       "testTitle": "Heurística de Usabilidade",
-      "text": ["Porcentagem de Usabilidade", "Relatório Final em PDF", "Convide especialistas para avaliar sua aplicação"]
+      "text": [
+        "Porcentagem de Usabilidade",
+        "Relatório Final em PDF",
+        "Convide especialistas para avaliar sua aplicação"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuário de Usabilidade",
-      "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Testes moderados ou não moderados"
+      ]
+    },
+"UsabilityUser": {
+    "SelfTest": {
+      "title": "Auto Teste",
+      "type":"não moderado",
+      "text": [
+        "Responder no tempo livre",
+        "Análise aprimorada de respostas",
+        "Personalização de tarefas"
+      ]
+    },
+    "LiveTest": {
+      "title": "Teste ao Vivo",
+      "type":"moderado",
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Teste ao vivo moderado"
+      ]
     }
+  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
@@ -561,7 +598,7 @@
     "categories": {
       "title": "CATEGORIAS",
       "testCreation": "Criação de Testes",
-      "templates": "Modelos",
+      "templates": "Modelos", 
       "cooperators": "Colaboradores",
       "analytics": "Análises",
       "viewAll": "Ver Tudo"
