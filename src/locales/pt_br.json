@@ -3,6 +3,7 @@
   "SIGNIN": {
     "sign-in": "Entrar",
     "email": "E-mail",
+    "username": "Nome de usuário",
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
@@ -320,7 +321,7 @@
       "in_progress": "[TODO]"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Convidar Avaliador para Teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
@@ -541,26 +542,26 @@
         "Testes moderados ou não moderados"
       ]
     },
-"UsabilityUser": {
-    "SelfTest": {
-      "title": "Auto Teste",
-      "type":"não moderado",
-      "text": [
-        "Responder no tempo livre",
-        "Análise aprimorada de respostas",
-        "Personalização de tarefas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Teste ao Vivo",
-      "type":"moderado",
-      "text": [
-        "Gravação de webcam, áudio e tela",
-        "Análise aprimorada de respostas",
-        "Teste ao vivo moderado"
-      ]
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Auto Teste",
+        "type": "não moderado",
+        "text": [
+          "Responder no tempo livre",
+          "Análise aprimorada de respostas",
+          "Personalização de tarefas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Teste ao Vivo",
+        "type": "moderado",
+        "text": [
+          "Gravação de webcam, áudio e tela",
+          "Análise aprimorada de respostas",
+          "Teste ao vivo moderado"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
@@ -590,5 +591,22 @@
     "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
     "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
-  }
+  },
+  "user": "USUÁRIO",
+  "account": "Conta",
+  "security": "Segurança",
+  "personalInfo": "Informações pessoais",
+  "contact": "Contato",
+  "country": "País",
+  "editDetails": "Editar detalhes",
+  "typeDeleteToConfirm": "Digite \"DELETE\" para confirmar",
+  "pleaseTypeDeleteToConfirm": "Por favor, digite DELETE para confirmar",
+  "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
+  "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
+  "yourPassword": "Sua senha",
+  "usernameRequired": "Nome de usuário é obrigatório",
+  "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+  "countryRequired": "País é obrigatório",
+  "contactNumberRequired": "Número de contato é obrigatório",
+  "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)"
 }
