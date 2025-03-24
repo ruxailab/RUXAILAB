@@ -17,7 +17,10 @@
     />
 
     <!-- Mobile -->
-    <div class="hidden-md-and-up mr-1" style="display: flex; justify-content: center">
+    <div
+      class="hidden-md-and-up mr-1"
+      style="display: flex; justify-content: center"
+    >
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn small color="primary" v-bind="attrs" icon v-on="on">
@@ -49,16 +52,22 @@ export default {
         { label: 'English', value: 'en' },
         { label: 'Español', value: 'es' },
         { label: 'Português', value: 'pt_br' },
-        { label: 'हिन्दी', value: 'hi'},
+        { label: 'हिन्दी', value: 'hi' },
       ],
       lang: this.$i18n.locale,
     }
   },
   watch: {
-    lang: function (newValue) {
+    lang: function(newValue) {
       this.$i18n.locale = newValue
     },
   },
 }
 </script>
 
+<style>
+.v-select.v-input--dense .v-select__selection--comma,
+.v-select__selection--comma {
+  padding-bottom: 4px !important;
+}
+</style>
