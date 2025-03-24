@@ -425,8 +425,8 @@
         "finalReport": "Abschlussbericht",
         "loading": "Lade..."
       },
-      "ContructionHeading": "Seite im Aufbau",
-      "ContructionParagraph": "Wir arbeiten hart daran, unsere Website zu verbessern. Bitte schauen Sie bald wieder vorbei!"
+      "ConstructionHeading": "Seite im Aufbau",
+      "ConstructionParagraph": "Wir arbeiten hart daran, unsere Website zu verbessern. Bitte schauen Sie bald wieder vorbei!"
     },
     "landing": {
       "feedbackTitle": "Erhalten Sie schnell Feedback zu Ihren Projekten",
@@ -448,8 +448,8 @@
     },
     "createTest": {
       "title": "Neuen Test erstellen",
-      "blanckTitle": "Leeren Test erstellen",
-      "blanckSubtitle": "Erstellen Sie einen leeren Test, um mit einer völlig neuen und frischen Vorlage zu beginnen.",
+      "blankTitle": "Leeren Test erstellen",
+      "blankSubtitle": "Erstellen Sie einen leeren Test, um mit einer völlig neuen und frischen Vorlage zu beginnen.",
       "templateTitle": "Aus Vorlage erstellen",
       "templateSubtitle": "Erstellen Sie einen Test basierend auf einer Vorlage, die von einem unserer Benutzer erstellt wurde.",
       "create": "Test erstellen",
