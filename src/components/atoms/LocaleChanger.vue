@@ -62,3 +62,9 @@ export default {
 }
 </script>
 
+<style>
+.v-select.v-input--dense .v-select__selection--comma,
+.v-select__selection--comma {
+  padding-bottom: 4px !important;
+}
+</style>
