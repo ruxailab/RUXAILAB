@@ -1,8 +1,9 @@
 {
   "language": "Language",
   "SIGNIN": {
-    "sign-in": "Sign-In",
-    "email": "E-mail",
+    "sign-in": "Sign in",
+    "email": "Email",
+    "username": "Username",
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
@@ -320,7 +321,7 @@
       "in_progress": "in progress"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invite Evaluator To Test",
     "email": "Email",
     "scheduledAt": "Scheduled at",
@@ -546,7 +547,7 @@
     "UsabilityUser": {
       "SelfTest": {
         "title": "Self Test",
-        "type":"Unmoderated",
+        "type": "Unmoderated",
         "text": [
           "Answer on free time",
           "Enhanced answer analysis",
@@ -555,7 +556,7 @@
       },
       "LiveTest": {
         "title": "Live Test",
-        "type":"Moderated",
+        "type": "Moderated",
         "text": [
           "Webcam, audio & screen record",
           "Enhanced answer analysis",
@@ -592,5 +593,24 @@
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
-  }
+  },
+  "user": "USER",
+  "account": "Account",
+  "security": "Security",
+  "personalInfo": "Personal Info",
+  "contact": "Contact",
+  "country": "Country",
+  "editDetails": "Edit Details",
+  "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
+  "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
+  "finalStepVerifyIdentity": "Final step: Verify your identity",
+  "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
+  "yourPassword": "Your Password",
+  "usernameRequired": "Username is required",
+  "usernameMinLength": "Username must be at least 3 characters",
+  "countryRequired": "Country is required",
+  "contactNumberRequired": "Contact number is required",
+  "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+  "email": "Email",
+  "username": "Username"
 }
