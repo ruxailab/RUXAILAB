@@ -181,7 +181,12 @@
         </v-col>
       </v-row>
 
-      <TempDialog :dialog="tempDialog" :template="temp" :allow-create="true" @close="tempDialog = false" />
+      <TempDialog
+        :dialog.sync="tempDialog"
+        :template="temp"
+        :allow-create="true"
+        @close="tempDialog = false"
+      />
     </div>
   </v-container>
 </template>

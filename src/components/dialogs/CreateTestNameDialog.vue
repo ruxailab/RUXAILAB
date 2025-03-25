@@ -58,16 +58,19 @@
       </v-card>
     </v-dialog>
 
-    <CreateTestUserDialog :is-open="userDialog"
-      @setUser="; (test = { ...test, ...$event }), (userDialog = false), submit()" @close="userDialog = false" />
+    <CreateTestUserDialog
+      :is-open="userDialog"
+      @setUser="; (test = { ...test, ...$event}), (userDialog = false), submit()"
+      @close="userDialog = false"
+    />
   </div>
 </template>
 
 <script>
-import Test from '@/models/Test'
-import TestAdmin from '@/models/TestAdmin'
-import ButtonBack from '@/components/atoms/ButtonBack.vue'
-import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue'
+import Test from '@/models/Test';
+import TestAdmin from '@/models/TestAdmin';
+import ButtonBack from '@/components/atoms/ButtonBack.vue';
+import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
 
 export default {
   components: {
@@ -79,44 +82,44 @@ export default {
     isOpen: {
       type: Boolean,
       default: false,
-      require: true,
+      required: true,
     },
 
     testType: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
 
     heading: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
 
     subHeading: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
 
     testName: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
 
     testDescription: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
 
     testLabel: {
       type: String,
       default: '',
-      require: true,
-    }
+      required: true,
+    },
   },
 
   data: () => ({
@@ -126,22 +129,23 @@ export default {
       description: '',
       isPublic: false,
       userTestType: '',
-      userTestStatus: {}
+      userTestStatus: {},
     },
   }),
 
   computed: {
     user() {
-      return this.$store.getters.user
+      return this.$store.getters.user;
     },
   },
 
   methods: {
     validate() {
-      if (this.test.title.length === 0) return this.$toast.warning('Enter a Title')
-      if (this.test.title.length > 200) return this.$toast.warning('Title cannot exceed 200 characters')
-      if (this.test.description.length > 600) return this.$toast.warning('Description cannot exceed 600 characters')
-      this.handleTestType()
+      if (this.test.title.length === 0) return this.$toast.warning('Enter a Title');
+      if (this.test.title.length > 200) return this.$toast.warning('Title cannot exceed 200 characters');
+      if (this.test.description.length > 600) return this.$toast.warning('Description cannot exceed 600 characters');
+
+      this.handleTestType();
     },
 
     handleTestType() {
@@ -164,7 +168,7 @@ export default {
         }),
         creationDate: Date.now(),
         updateDate: Date.now(),
-      })
+      });
 
       const testId = await this.$store.dispatch('createNewTest', test)
       
@@ -195,7 +199,7 @@ export default {
 .titles {
   font-size: 38px;
   font-weight: 600;
-  color: #f99726
+  color: #f99726;
 }
 
 .cardSubtitle {

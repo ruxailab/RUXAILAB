@@ -1,8 +1,7 @@
 <template>
   <v-list two-line>
-    <template v-for="(notification, index) in notifications">
+    <template v-for="(notification, index) in notifications" :key="notification.id">
       <v-list-item
-        :key="notification.id"
         @click="$emit('go-to-redirect', notification)"
       >
         <v-list-item-content>

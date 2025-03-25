@@ -313,12 +313,9 @@
           >
             <v-list dense height="560px" class="ma-0 pa-0">
               <v-subheader>
-                <v-clamp autoresize :max-lines="2">
-                  {{ heuristics[itemSelect].title }} -
-                  {{ $t('HeuristicsTable.titles.questions') }}
-                </v-clamp>
+                <text-clamp :text="heuristics[itemSelect].title + ' - ' + $t('HeuristicsTable.titles.questions')" :max-lines="2" autoresize />
                 <template v-slot:top>
-                  <v-row class>
+                  <v-row>
                     <v-col class="ml-2 mb-1 pa-4 pb-0">
                       <p class="subtitleView">
                         {{ $t('HeuristicsTable.titles.descriptions') }}
@@ -565,14 +562,13 @@
 
 <script>
 import AddDescBtn from '@/components/atoms/AddDescBtn'
-
-import VClamp from 'vue-clamp'
+import TextClamp from 'vue3-text-clamp'
 import i18n from '@/i18n'
 
 export default {
   components: {
     AddDescBtn,
-    VClamp,
+    TextClamp,
   },
   data: () => ({
     menuHeuristics: false,

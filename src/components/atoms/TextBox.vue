@@ -1,19 +1,15 @@
 <template>
-  <!-- https://github.com/ueberdosis/tiptap -->
+  <!-- https://tiptap.dev -->
   <div>
     <div v-if="editable" class="main-box">
       <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
         <div class="grey lighten-3 editor-bar">
           <v-btn text small color="#FCA326" @click="commands.undo">
-            <v-icon color="grey darken-1">
-              mdi-undo
-            </v-icon>
+            <v-icon color="grey darken-1">mdi-undo</v-icon>
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="commands.redo">
-            <v-icon color="grey darken-1">
-              mdi-redo
-            </v-icon>
+            <v-icon color="grey darken-1">mdi-redo</v-icon>
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="commands.bold">
@@ -35,52 +31,40 @@
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="commands.heading({ level: 1 })">
-            <v-icon
-              :color="isActive.heading({ level: 1 }) ? '#FCA326' : 'grey darken-1'"
-            >
+            <v-icon :color="isActive.heading({ level: 1 }) ? '#FCA326' : 'grey darken-1'">
               mdi-format-header-1
             </v-icon>
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="commands.heading({ level: 2 })">
-            <v-icon
-              :color="isActive.heading({ level: 2 }) ? '#FCA326' : 'grey darken-1'"
-            >
+            <v-icon :color="isActive.heading({ level: 2 }) ? '#FCA326' : 'grey darken-1'">
               mdi-format-header-2
             </v-icon>
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="commands.heading({ level: 3 })">
-            <v-icon
-              :color="isActive.heading({ level: 3 }) ? '#FCA326' : 'grey darken-1'"
-            >
+            <v-icon :color="isActive.heading({ level: 3 }) ? '#FCA326' : 'grey darken-1'">
               mdi-format-header-3
             </v-icon>
           </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.bullet_list">
-            <v-icon
-              :color="isActive.bullet_list() ? '#FCA326' : 'grey darken-1'"
-            >
+          <v-btn text small color="#FCA326" @click="commands.bulletList">
+            <v-icon :color="isActive.bulletList() ? '#FCA326' : 'grey darken-1'">
               mdi-format-list-bulleted
             </v-icon>
           </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.ordered_list">
-            <v-icon
-              :color="isActive.ordered_list() ? '#FCA326' : 'grey darken-1'"
-            >
+          <v-btn text small color="#FCA326" @click="commands.orderedList">
+            <v-icon :color="isActive.orderedList() ? '#FCA326' : 'grey darken-1'">
               mdi-format-list-numbered
             </v-icon>
           </v-btn>
 
           <v-btn text small color="#FCA326" @click="loadImage(commands.image)">
-            <v-icon color="grey darken-1">
-              mdi-image
-            </v-icon>
+            <v-icon color="grey darken-1">mdi-image</v-icon>
           </v-btn>
 
-          <v-btn text small color="#FCA326" @click="setLink(commands.link)">
+          <v-btn text small color="#FCA326" @click="setLink(commands.setLink)">
             <v-icon :color="isActive.link() ? '#FCA326' : 'grey darken-1'">
               mdi-link-variant-plus
             </v-icon>
@@ -97,21 +81,13 @@
 </template>
 
 <script>
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-import {
-  Heading,
-  OrderedList,
-  BulletList,
-  ListItem,
-  Bold,
-  Italic,
-  Link,
-  Underline,
-  History,
-  Strike,
-  Image,
-} from 'tiptap-extensions'
-import i18n from '@/i18n'
+import { Editor } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import Underline from '@tiptap/extension-underline';
+import { EditorContent, EditorMenuBar } from '@tiptap/vue-3';
+import i18n from '@/i18n';
 
 export default {
   components: {
@@ -130,82 +106,78 @@ export default {
   },
   data() {
     return {
-      editor: new Editor({
-        extensions: [
-          new BulletList(),
-          new Heading({ levels: [1, 2, 3] }),
-          new ListItem(),
-          new OrderedList(),
-          new Link(),
-          new Bold(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new History(),
-          new Image(),
-        ],
-        content: '',
-        editable: this.editable,
-        onUpdate: ({ getJSON, getHTML }) => {
-          this.json = getJSON()
-          this.html = getHTML()
-        },
-      }),
+      editor: null,
       json: null,
       html: null,
+    };
+  },
+  mounted() {
+    this.editor = new Editor({
+      content: this.text || '',
+      extensions: [
+        StarterKit.configure({
+          heading: { levels: [1, 2, 3] },
+        }),
+        Link.configure({
+          openOnClick: false,
+        }),
+        Image,
+        Underline,
+      ],
+      editable: this.editable,
+      onUpdate: ({ editor }) => {
+        this.json = editor.getJSON();
+        this.html = editor.getHTML();
+      },
+    });
+    this.$emit('mounted');
+  },
+  beforeUnmount() {
+    if (this.editor) {
+      this.editor.destroy();
     }
   },
   watch: {
     json() {
-      this.$emit('updateJson', this.json)
+      this.$emit('updateJson', this.json);
     },
     html() {
-      this.$emit('updateHtml', this.html)
+      this.$emit('updateHtml', this.html);
     },
-    text() {
-      this.editor.setContent(this.text)
+    text(newText) {
+      this.editor.commands.setContent(newText);
     },
-  },
-  beforeDestroy() {
-    this.editor.destroy()
-  },
-  mounted() {
-    this.$emit('mounted')
-    if(this.text.length > 0) this.editor.setContent(this.text)
   },
   methods: {
     loadImage(command) {
-      const url = prompt(i18n.t('alerts.imageURL'))
-      if (url)
-        command({
-          src: url,
-        })
-    },
-    getJson() {
-      return this.json
-    },
-    getHtml() {
-      return this.html
-    },
-    setLink(command) {
-      let link = prompt('Link: ')
-
-      if (link) {
-        if (link.indexOf('http://') !== 0 && link.indexOf('https://') !== 0) {
-          link = 'http://'.concat(link)
-        }
-
-        command({ href: link })
+      const url = prompt(i18n.t('alerts.imageURL'));
+      if (url) {
+        command({ src: url });
       }
     },
+    setLink(command) {
+      let link = prompt('Link: ');
+      if (link) {
+        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+          link = 'http://' + link;
+        }
+        command({ href: link });
+      }
+    },
+    getJson() {
+      return this.json;
+    },
+    getHtml() {
+      return this.html;
+    },
     setContent(text) {
-      this.editor.setContent(text)
+      this.editor.commands.setContent(text);
     },
     resetContent() {
-      this.editor.clearContent()
+      this.editor.commands.clearContent();
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -220,10 +192,6 @@ export default {
   caret-color: #fca326;
   line-height: 1.3em;
   outline-color: none !important;
-
-  /* overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word; */
 }
 .main-box {
   border: 1px solid #3f3d56;
