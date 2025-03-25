@@ -1,5 +1,5 @@
 module.exports = {
-  'transpileDependencies': [
+  transpileDependencies: [
     'vuetify',
     'resize-detector',
   ],
@@ -13,8 +13,17 @@ module.exports = {
     },
   },
 
+  configureWebpack: {
+    resolve: {
+      fallback: {
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+      },
+    },
+  },
+
   chainWebpack: (config) => {
-    config.resolve.alias.set('vue', '@vue/compat')
+    config.resolve.alias.set('vue', '@vue/compat');
 
     config.module
       .rule('vue')
@@ -24,10 +33,10 @@ module.exports = {
           ...options,
           compilerOptions: {
             compatConfig: {
-              MODE: 2
-            }
-          }
-        }
-      })
-  }
-}
+              MODE: 2,
+            },
+          },
+        };
+      });
+  },
+};
