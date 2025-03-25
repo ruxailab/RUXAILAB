@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-dialog v-if="template.header" v-model="dialog" max-width="80%" persistent>
+    <v-dialog
+      v-if="template.header"
+      :value="dialog"
+      @input="$emit('update:dialog', $event)"
+      max-width="80%"
+      persistent
+    >
       <v-stepper v-model="step" style="background-color: #e8eaf2">
         <v-stepper-header>
           <v-stepper-step color="#F9A826" :complete="step > 1" step="1">

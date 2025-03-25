@@ -200,9 +200,7 @@
             <v-list-item>
               <v-row dense align="center" justify="space-around">
                 <v-col class="pa-0 ma-0" cols="8">
-                  <v-clamp class="titleText" autoresize :max-lines="2">
-                    {{ test.testTitle }}
-                  </v-clamp>
+                  <text-clamp class="titleText" :text="test.testTitle" :max-lines="2" />
                 </v-col>
                 <v-col>
                   <v-progress-circular
@@ -289,10 +287,7 @@
                     v-for="(heuris, i) in item.value"
                     :key="i"
                     link
-                    @click="
-                      heurisIndex = i
-                      setReviewTrue()
-                    "
+                    @click="handleHeurisClick(i)"
                   >
                     <v-list-item-icon>
                       <v-progress-circular
@@ -497,7 +492,7 @@
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
 import AddCommentBtn from '@/components/atoms/AddCommentBtn'
 import HelpBtn from '@/components/atoms/QuestionHelpBtn'
-import VClamp from 'vue-clamp'
+import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
@@ -508,7 +503,7 @@ export default {
     ShowInfo,
     AddCommentBtn,
     HelpBtn,
-    VClamp,
+    TextClamp,
     Snackbar,
     UserTestView,
     ModeratedTestView,
@@ -758,6 +753,10 @@ export default {
         vm.fromlink = true
       })
     next()
+  },
+  handleHeurisClick(i) {
+    this.heurisIndex = i;
+    this.setReviewTrue();
   },
 }
 </script>

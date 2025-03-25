@@ -14,7 +14,12 @@
       {{ $t('HeuristicsTable.titles.addOption') }}
     </v-btn>
 
-    <v-dialog v-model="dialog" width="500" persistent>
+    <v-dialog
+      :value="dialog"
+      @input="$emit('update:dialog', $event)"
+      width="500"
+      persistent
+    >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addOption') }}
@@ -77,7 +82,7 @@
             small
             text
             color="red lighten-1 white--text"
-            @click="$emit('dialog', false), resetVal()"
+            @click="$emit('update:dialog', false), resetVal()"
           >
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
