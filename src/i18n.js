@@ -1,23 +1,23 @@
 import { createI18n } from 'vue-i18n'
 
 function loadLocaleMessages() {
-  const locales = import.meta.glob('./locales/*.json', { eager: true })
+  const locales = require.context('./locales', true, /[A-Za-z0-9-_,\s]+\.json$/i)
   const messages = {}
-  
-  for (const path in locales) {
-    const matched = path.match(/([A-Za-z0-9-_]+)\./i)
+  locales.keys().forEach((key) => {
+    const matched = key.match(/([A-Za-z0-9-_]+)\./i)
     if (matched && matched.length > 1) {
       const locale = matched[1]
-      messages[locale] = locales[path].default
+      messages[locale] = locales(key)
     }
-  }
+  })
   return messages
 }
 
-export default createI18n({
-  legacy: false, // Set to false to use Composition API
-  locale: import.meta.env.VITE_I18N_LOCALE || 'en',
-  fallbackLocale: import.meta.env.VITE_I18N_FALLBACK_LOCALE || 'en',
+const i18n = createI18n({
+  legacy: true, // Use Composition API mode
+  locale: process.env.VUE_APP_I18N_LOCALE || 'en',
+  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
   messages: loadLocaleMessages(),
-  globalInjection: true, // Makes $t available globally
 })
+
+export default i18n
