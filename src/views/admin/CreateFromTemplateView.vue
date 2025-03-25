@@ -42,7 +42,7 @@
     </v-row>
     <TempDialog
       v-if="temp"
-      :dialog="dialog"
+      :dialog.sync="dialog"
       :template="temp"
       :allow-create="true"
       @close="dialog = false"

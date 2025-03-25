@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="70%" persistent>
+  <v-dialog :value="dialog" width="70%" persistent @input="$emit('update:dialog', $event)">
     <v-card class="dataCard">
       <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
         New task
