@@ -32,6 +32,7 @@
     <v-tooltip v-if="accessLevel === 0" left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          v-bind="attrs"
           large
           dark
           fab
@@ -39,7 +40,6 @@
           bottom
           right
           color="#F9A826"
-          v-bind="attrs"
           style="z-index: 100"
           :disabled="testAnswerDocLength > 0 ? true : false"
           :class="{

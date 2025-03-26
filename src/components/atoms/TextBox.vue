@@ -1,76 +1,74 @@
 <template>
-  <!-- https://tiptap.dev -->
   <div>
     <div v-if="editable" class="main-box">
-      <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
-        <div class="grey lighten-3 editor-bar">
-          <v-btn text small color="#FCA326" @click="commands.undo">
-            <v-icon color="grey darken-1">mdi-undo</v-icon>
-          </v-btn>
+      <!-- Custom Toolbar -->
+      <div class="grey lighten-3 editor-bar">
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().undo().run()">
+          <v-icon color="grey darken-1">mdi-undo</v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.redo">
-            <v-icon color="grey darken-1">mdi-redo</v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().redo().run()">
+          <v-icon color="grey darken-1">mdi-redo</v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.bold">
-            <v-icon :color="isActive.bold() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-bold
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleBold().run()">
+          <v-icon :color="editor.isActive('bold') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-bold
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.italic">
-            <v-icon :color="isActive.italic() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-italic
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleItalic().run()">
+          <v-icon :color="editor.isActive('italic') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-italic
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.underline">
-            <v-icon :color="isActive.underline() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-underline
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleUnderline().run()">
+          <v-icon :color="editor.isActive('underline') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-underline
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 1 })">
-            <v-icon :color="isActive.heading({ level: 1 }) ? '#FCA326' : 'grey darken-1'">
-              mdi-format-header-1
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
+          <v-icon :color="editor.isActive('heading', { level: 1 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-1
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 2 })">
-            <v-icon :color="isActive.heading({ level: 2 }) ? '#FCA326' : 'grey darken-1'">
-              mdi-format-header-2
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+          <v-icon :color="editor.isActive('heading', { level: 2 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-2
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 3 })">
-            <v-icon :color="isActive.heading({ level: 3 }) ? '#FCA326' : 'grey darken-1'">
-              mdi-format-header-3
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()">
+          <v-icon :color="editor.isActive('heading', { level: 3 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-3
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.bulletList">
-            <v-icon :color="isActive.bulletList() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-list-bulleted
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleBulletList().run()">
+          <v-icon :color="editor.isActive('bulletList') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-list-bulleted
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.orderedList">
-            <v-icon :color="isActive.orderedList() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-list-numbered
-            </v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleOrderedList().run()">
+          <v-icon :color="editor.isActive('orderedList') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-list-numbered
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="loadImage(commands.image)">
-            <v-icon color="grey darken-1">mdi-image</v-icon>
-          </v-btn>
+        <v-btn text small color="#FCA326" @click="loadImage()">
+          <v-icon color="grey darken-1">mdi-image</v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="setLink(commands.setLink)">
-            <v-icon :color="isActive.link() ? '#FCA326' : 'grey darken-1'">
-              mdi-link-variant-plus
-            </v-icon>
-          </v-btn>
-        </div>
-      </editor-menu-bar>
+        <v-btn text small color="#FCA326" @click="setLink()">
+          <v-icon :color="editor.isActive('link') ? '#FCA326' : 'grey darken-1'">
+            mdi-link-variant-plus
+          </v-icon>
+        </v-btn>
+      </div>
 
       <v-divider />
       <editor-content class="text-box pa-1" :editor="editor" />
@@ -86,13 +84,12 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent, EditorMenuBar } from '@tiptap/vue-3';
+import { EditorContent } from '@tiptap/vue-3';
 import i18n from '@/i18n';
 
 export default {
   components: {
     EditorContent,
-    EditorMenuBar,
   },
   props: {
     editable: {
@@ -149,19 +146,19 @@ export default {
     },
   },
   methods: {
-    loadImage(command) {
+    loadImage() {
       const url = prompt(i18n.t('alerts.imageURL'));
       if (url) {
-        command({ src: url });
+        this.editor.chain().focus().setImage({ src: url }).run();
       }
     },
-    setLink(command) {
+    setLink() {
       let link = prompt('Link: ');
       if (link) {
         if (!link.startsWith('http://') && !link.startsWith('https://')) {
           link = 'http://' + link;
         }
-        command({ href: link });
+        this.editor.chain().focus().setLink({ href: link }).run();
       }
     },
     getJson() {

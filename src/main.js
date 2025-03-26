@@ -1,4 +1,4 @@
-import { createApp, configureCompat } from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -28,10 +28,6 @@ app.use(Toast, options);
 app.use(TextClamp);
 
 app.config.globalProperties.$toast = useToast();
-
-configureCompat({
-  MODE: 2
-})
 
 // Mount the app
 app.mount('#app');

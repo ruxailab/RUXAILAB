@@ -103,8 +103,13 @@
     </v-btn>
 
     <!-- Sign-in Mobile -->
-    <v-btn v-if="!user" icon class="d-flex d-lg-none" @click="goTo('/signin')">
-      <v-icon :size="$vuetify.breakpoint.xsOnly ? '18' : '20'">
+    <v-btn 
+      v-if="!user" 
+      icon 
+      class="d-flex d-lg-none" 
+      @click="goTo('/signin')"
+    >
+      <v-icon :size="iconSize">
         mdi-lock
       </v-icon>
     </v-btn>
@@ -114,9 +119,19 @@
       <v-menu v-if="user" v-model="menu" offset-y min-width="300" transition="slide-y-transition"
         :close-on-content-click="false" rounded="lg">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn text v-bind="attrs" class="pa-0 btn-fix" v-on="on" @click="menu = !menu">
+          <v-btn
+            v-bind="attrs"
+            text
+            class="pa-0 btn-fix"
+            v-on="on"
+            @click="menu = !menu"
+          >
             <v-avatar size="24" class="mr-1">
-              <v-img v-if="profileImage" :src="profileImage" alt="User Profile"></v-img>
+              <v-img 
+                v-if="profileImage" 
+                :src="profileImage" 
+                alt="User Profile"
+              ></v-img>
               <v-icon v-else dark>
                 mdi-account-circle
               </v-icon>
@@ -340,6 +355,9 @@ export default {
     },
     smAndDown() {
       return this.display.smAndDown.value
+    },
+    iconSize() {
+      return this.$vuetify?.breakpoint?.xsOnly ? '18' : '20';
     },
   },
   watch: {

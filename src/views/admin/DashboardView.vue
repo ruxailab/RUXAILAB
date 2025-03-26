@@ -6,6 +6,7 @@
     <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          v-bind="attrs"
           data-testid="create-test-btn"
           large
           dark
@@ -14,7 +15,6 @@
           bottom
           right
           color="#F9A826"
-          v-bind="attrs"
           @click="goToCreateTestRoute()"
           v-on="on"
         >

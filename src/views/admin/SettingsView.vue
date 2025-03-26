@@ -150,6 +150,7 @@
         <v-tooltip v-if="change" left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               v-if="change"
               large
               dark
@@ -158,7 +159,6 @@
               bottom
               right
               color="#F9A826"
-              v-bind="attrs"
               @click="submit()"
               v-on="on"
             >

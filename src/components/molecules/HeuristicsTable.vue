@@ -96,7 +96,7 @@
             <v-form
               v-if="heuristicForm"
               ref="formHeuris"
-              @keyup.native.enter="addHeuris()"
+              @keyup.enter="addHeuris()"
             >
               <v-text-field
                 v-model="heuristicForm.title"
@@ -336,8 +336,8 @@
                 <v-menu v-model="menuHeuristics" offset-x>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      icon
                       v-bind="attrs"
+                      icon
                       v-on="on"
                       @click="HandleNotEditable"
                     >
@@ -434,8 +434,8 @@
                 <v-menu v-model="menuQuestions" offset-x style="flex-shrink: 0;">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      icon
                       v-bind="attrs"
+                      icon
                       v-on="on"
                       @click="HandleNotEditable"
                     >

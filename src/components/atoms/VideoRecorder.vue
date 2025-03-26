@@ -5,11 +5,11 @@
         <v-tooltip bottom v-if="!recording">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               @click="startRecording"
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon>mdi-camera</v-icon>
@@ -20,11 +20,11 @@
         <v-tooltip bottom v-if="recording">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               @click="stopRecording"
               class="ml-4 my-2 mr-auto"
               color="red"
               icon
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon dark>mdi-stop</v-icon>
