@@ -137,15 +137,14 @@
           </template>
 
           <v-tooltip left>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
+                v-bind="props"
                 fab
                 dark
                 small
                 color="#F9A826"
-                v-bind="attrs"
                 @click="saveAnswer()"
-                v-on="on"
               >
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
@@ -154,16 +153,15 @@
           </v-tooltip>
 
           <v-tooltip v-if="currentUserTestAnswer" left>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
+                v-bind="props"
                 :disabled="calculatedProgress < 100"
                 class="white--text"
                 fab
                 small
                 color="#F9A826"
-                v-bind="attrs"
                 @click="dialog = true"
-                v-on="on"
               >
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
@@ -172,15 +170,14 @@
           </v-tooltip>
 
           <v-tooltip v-else left>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
+                v-bind="props"
                 class="white--text"
                 fab
                 small
                 color="#F9A826"
-                v-bind="attrs"
                 @click="dialog = true"
-                v-on="on"
               >
                 <v-icon>mdi-file-move</v-icon>
               </v-btn>
@@ -233,12 +230,11 @@
               >
                 <div v-if="mini">
                   <v-tooltip v-for="(heuris, i) in item.value" :key="i" right>
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props }">
                       <v-list-item
+                        v-bind="props"
                         link
-                        v-bind="attrs"
                         @click="heurisIndex = i"
-                        v-on="on"
                       >
                         <v-list-item-icon>
                           <v-progress-circular

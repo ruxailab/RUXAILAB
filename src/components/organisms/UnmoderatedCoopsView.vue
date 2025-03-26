@@ -22,6 +22,7 @@
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               large
               dark
               fab
@@ -29,7 +30,6 @@
               bottom
               right
               color="#F9A826"
-              v-bind="attrs"
               @click="saveInvitations()"
               v-on="on"
             >
@@ -155,7 +155,7 @@
               <template v-slot:item.more="{ item }">
                 <v-menu>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
+                    <v-btn v-bind="attrs" icon v-on="on">
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>

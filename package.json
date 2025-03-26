@@ -28,7 +28,6 @@
     "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/vue-3": "^2.11.5",
     "@vue/babel-plugin-jsx": "^1.4.0",
-    "@vue/compat": "^3.5.13",
     "axios": "^1.5.0",
     "bluebird": "^3.7.2",
     "buffer": "^6.0.3",

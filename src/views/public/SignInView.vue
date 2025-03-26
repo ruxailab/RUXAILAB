@@ -12,7 +12,7 @@
 
               <div class="divider" />
 
-              <v-form class="mx-3" @keyup.native.enter="onSignIn()" ref="form">
+              <v-form class="mx-3" @keyup.enter="onSignIn()">
                 <v-text-field
                   v-model="email"
                   :label="$t('SIGNIN.email')"

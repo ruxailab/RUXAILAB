@@ -15,7 +15,7 @@
               <v-form
                 v-model="valid"
                 class="mx-3"
-                @keyup.native.enter="onSignUp()"
+                @keyup.enter="onSignUp()"
               >
                 <v-text-field
                   v-model="email"
@@ -111,29 +111,28 @@ export default {
   data: () => ({
     email: '',
     password: '',
-
-    valid: true,
-
-    emailRules: [
-      (v) => !!v || i18n.t('errors.emailIsRequired'),
-      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
-    ],
-    passwordRules: [
-      (v) => !!v || i18n.t('errors.passwordRequired'),
-      (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
-      (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
-      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
-    ],
     confirmpassword: '',
     showPassword: false,
     showConfirmPassword: false,
+    valid: true,
   }),
   computed: {
+    emailRules() {
+      return [
+        (v) => !!v || this.$t('errors.emailIsRequired'),
+        (v) => /.+@.+\..+/.test(v) || this.$t('errors.invalidEmail'),
+      ]
+    },
+    passwordRules() {
+      return [
+        (v) => !!v || this.$t('errors.passwordRequired'),
+        (v) => v.length >= 8 || this.$t('errors.passwordValidate'),
+        (v) => /[A-Z]/.test(v) || this.$t('errors.passwordUppercase'),
+        (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('errors.passwordSymbol'),
+      ]
+    },
     comparePassword() {
-      return () =>
-        (this.confirmpassword == this.password &&
-          this.confirmpassword !== '') ||
-        i18n.t('errors.differentPasswords')
+      return (v) => (v === this.password && v !== '') || this.$t('errors.differentPasswords')
     },
     user() {
       return this.$store.getters.user
@@ -142,7 +141,6 @@ export default {
       return this.$store.getters.loading
     },
   },
-
   methods: {
     async onSignUp() {
       if (this.valid) {
