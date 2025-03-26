@@ -86,12 +86,11 @@
               <v-row class="ma-0" align="center">
                 <div class="hidden-sm-and-down">
                   <v-tooltip v-if="type === 'myTests'" top>
-                    <template v-slot:activator="{ on, attrs }">
+                    <template v-slot:activator="{ props }">
                       <v-row
+                        v-bind="props"
                         class="ma-0 pa-0 mr-4"
-                        v-bind="attrs"
                         align="center"
-                        v-on="on"
                       >
                         {{
                           item.numberColaborators >= 0
@@ -106,9 +105,11 @@
                     <span>{{ $t('titles.cooperators') }}</span>
                   </v-tooltip>
                   <v-tooltip v-else-if="type === 'sharedWithMe'" top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-row class="mr-3" v-bind="attrs" v-on="on">
-                        <div class="caption">{{ item.progress }}%</div>
+                    <template v-slot:activator="{ props }">
+                      <v-row v-bind="props" class="mr-3">
+                        <div class="caption">
+                          {{ item.progress }}%
+                        </div>
                         <v-progress-circular
                           rotate="-90"
                           :value="item.progress"

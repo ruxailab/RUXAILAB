@@ -7,7 +7,7 @@
       <v-col cols="1" class="mb-6 py-0">
         <v-tooltip v-if="!show" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+            <v-btn v-bind="attrs" icon @click="show = !show" v-on="on">
               <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -22,7 +22,7 @@
         </v-tooltip>
         <v-tooltip v-else bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+            <v-btn v-bind="attrs" icon @click="show = !show" v-on="on">
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>

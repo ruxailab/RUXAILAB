@@ -87,18 +87,48 @@
         </template>
 
         <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn fab dark small color="#F9A826" v-bind="attrs" @click="saveAnswer()" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              fab
+              dark
+              small
+              color="#F9A826"
+              @click="saveAnswer()"
+            >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
           <span>Save</span>
         </v-tooltip>
 
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn :disabled="!localTestAnswer.postTestCompleted" class="white--text" fab small color="#F9A826"
-              v-bind="attrs" @click="dialog = true" v-on="on">
+        <v-tooltip v-if="currentUserTestAnswer" left>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :disabled="!currentUserTestAnswer.postTestCompleted"
+              class="white--text"
+              fab
+              small
+              color="#F9A826"
+              @click="dialog = true"
+            >
+              <v-icon>mdi-file-move</v-icon>
+            </v-btn>
+          </template>
+          <span>Submit</span>
+        </v-tooltip>
+
+        <v-tooltip v-else left>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              class="white--text"
+              fab
+              small
+              color="#F9A826"
+              @click="dialog = true"
+            >
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -159,17 +189,22 @@
                 </v-list-item-title>
               </template>
               <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item link v-bind="attrs" :disabled="(localTestAnswer.consentCompleted &&
-                    i == 0 &&
-                    !localTestAnswer.submitted) ||
-                    (!localTestAnswer.consentCompleted &&
-                      i == 1 &&
-                      !localTestAnswer.submitted) ||
-                    (localTestAnswer.preTestCompleted &&
-                      i == 1 &&
-                      !localTestAnswer.submitted)
-                    " :class="{
+                <template v-slot:activator="{ props }">
+                  <v-list-item
+                    v-bind="props"
+                    link
+                    :disabled="
+                      (currentUserTestAnswer.consentCompleted &&
+                        i == 0 &&
+                        !currentUserTestAnswer.submitted) ||
+                        (!currentUserTestAnswer.consentCompleted &&
+                          i == 1 &&
+                          !currentUserTestAnswer.submitted) ||
+                        (currentUserTestAnswer.preTestCompleted &&
+                          i == 1 &&
+                          !currentUserTestAnswer.submitted)
+                    "
+                    :class="{
                       'disabled-group':
                         (localTestAnswer.consentCompleted &&
                           i == 0 &&
@@ -243,9 +278,15 @@
                 </v-list-item-title>
               </template>
               <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-list-item link v-bind="attrs" @click="; (taskIndex = i), startTimer()" v-on="on" :disabled="isTaskDisabled(i) && !localTestAnswer.submitted
-                    " :class="{
+                <template v-slot:activator="{ props }">
+                  <v-list-item
+                    v-bind="props"
+                    link
+                    @click=";(taskIndex = i), startTimer()"
+                    :disabled="
+                      isTaskDisabled(i) && !currentUserTestAnswer.submitted
+                    "
+                    :class="{
                       'disabled-group':
                         isTaskDisabled(i) && !localTestAnswer.submitted,
                     }">
