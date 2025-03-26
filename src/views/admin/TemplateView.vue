@@ -129,8 +129,8 @@
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        outlined
                         v-bind="attrs"
+                        outlined
                         @click="updateTemplate(), (change = true)"
                         v-on="on"
                       >
@@ -165,6 +165,7 @@
     <v-tooltip v-if="change" left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          v-bind="attrs"
           v-if="change"
           large
           dark
@@ -173,7 +174,6 @@
           bottom
           right
           color="#F9A826"
-          v-bind="attrs"
           @click="update()"
           v-on="on"
         >

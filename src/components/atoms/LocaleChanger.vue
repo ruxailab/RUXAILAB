@@ -23,8 +23,10 @@
     >
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn small color="primary" v-bind="attrs" icon v-on="on">
-            <v-icon size="20" color="white"> mdi-translate </v-icon>
+          <v-btn v-bind="attrs" small color="primary" icon v-on="on">
+            <v-icon size="20" color="white">
+              mdi-translate
+            </v-icon>
           </v-btn>
         </template>
         <v-list>

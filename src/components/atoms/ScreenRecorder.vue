@@ -5,11 +5,11 @@
         <v-tooltip bottom v-if="!isCapturing">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+               v-bind="attrs"
               @click="captureScreen"
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon>mdi-monitor-screenshot</v-icon>
@@ -20,13 +20,13 @@
         <v-tooltip bottom v-if="isCapturing">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               @click="recordScreen"
               class="ml-4 my-2 mr-auto"
               :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
               :dark="isRecording"
               elevation="0"
               icon
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon>{{

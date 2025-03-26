@@ -27,8 +27,8 @@
     <v-list v-if="items" flat dense>
       <div v-if="mini">
         <v-tooltip v-for="(item, n) in items" :key="n" right>
-          <template v-slot:activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" @click="go(item)" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props" @click="go(item)">
               <v-list-item-icon>
                 <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
                   {{ item.icon }}

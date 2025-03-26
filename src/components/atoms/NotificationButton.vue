@@ -10,11 +10,11 @@
           :value="checkIfHasNewNotifications()"
         >
           <v-btn
+            v-bind="attrs"
             v-if="checkIfHasNewNotifications() === 0"
             small
             icon
             class="mr-1"
-            v-bind="attrs"
             v-on="on"
           >
             <v-icon size="20">
@@ -22,7 +22,7 @@
             </v-icon>
           </v-btn>
 
-          <v-btn v-else small icon v-bind="attrs" class="mr-1" v-on="on">
+          <v-btn v-bind="attrs" v-else small icon class="mr-1" v-on="on">
             <v-icon size="20">
               mdi-bell-ring
             </v-icon>

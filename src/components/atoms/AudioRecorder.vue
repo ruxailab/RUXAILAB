@@ -5,11 +5,11 @@
         <v-tooltip bottom v-if="!recordingAudio">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               @click="startAudioRecording"
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto"
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon>mdi-microphone</v-icon>
@@ -20,13 +20,13 @@
         <v-tooltip bottom v-if="recordingAudio">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               @click="stopAudioRecording"
               color="red"
               dark
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto xl"
-              v-bind="attrs"
               v-on="on"
             >
               <v-icon>mdi-stop</v-icon>

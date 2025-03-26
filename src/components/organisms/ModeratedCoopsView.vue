@@ -22,6 +22,7 @@
         <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-bind="attrs"
               large
               dark
               fab
@@ -29,7 +30,6 @@
               bottom
               right
               color="#F9A826"
-              v-bind="attrs"
               :disabled="!comboboxModel.email"
               @click="openInvitationModal()"
               v-on="on"
@@ -147,7 +147,7 @@
                 <template v-slot:item.more="{ item }">
                   <v-menu>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn icon v-bind="attrs" v-on="on">
+                      <v-btn v-bind="attrs" icon v-on="on">
                         <v-icon>mdi-dots-vertical</v-icon>
                       </v-btn>
                     </template>
@@ -278,11 +278,11 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
+                          v-bind="attrs"
                           v-model="date"
                           readonly
                           color="orange"
                           background-color="grey lighten-3"
-                          v-bind="attrs"
                           v-on="on"
                           outlined
                           dense
@@ -316,6 +316,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
+                          v-bind="attrs"
                           prepend-icon="mdi-clock-time-four-outline"
                           dense
                           background-color="grey lighten-3"
@@ -324,7 +325,6 @@
                           v-model="hour"
                           class="rounded-lg"
                           readonly
-                          v-bind="attrs"
                           v-on="on"
                           :rules="[(v) => !!v || 'Required Time']"
                           required

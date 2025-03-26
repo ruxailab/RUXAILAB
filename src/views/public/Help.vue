@@ -199,8 +199,8 @@
                         style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
                       ></video>
                       <div
-                         class="custom-controls d-flex justify-center align-center"
-                         :class="{'controls-mobile': $vuetify.breakpoint.xsOnly}"
+                        class="custom-controls d-flex justify-center align-center"
+                        :class="{ 'controls-mobile': isXsOnly }"
                       >
                         <v-btn
                           icon
@@ -208,9 +208,9 @@
                           @click="skipBackward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
-                           <v-icon>mdi-rewind-10</v-icon>
+                          <v-icon>mdi-rewind-10</v-icon>
                         </v-btn>
                         <v-btn
                           icon
@@ -218,9 +218,9 @@
                           @click="togglePlay(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
-                           <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+                          <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
                         </v-btn>
                         <v-btn
                           icon
@@ -228,12 +228,12 @@
                           @click="skipForward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
                           <v-icon>mdi-fast-forward-10</v-icon>
                         </v-btn>
-                     </div>
-                   </div>
+                      </div>
+                    </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -525,6 +525,11 @@ export default {
   },
 
   computed: {
+    // Add this computed property to safely handle xsOnly
+    isXsOnly() {
+      return this.$vuetify?.breakpoint?.xsOnly || false;
+    },
+
     filteredItems() {
       let items = this.items
 
@@ -573,26 +578,26 @@ export default {
 
   methods: {
     generateFaqItems() {
-         const createFaqItem = (keyPrefix, category, gif) => ({
-           title: i18n.t(`help.${keyPrefix}`),
-           content: i18n.t(`help.${keyPrefix}answer`),
-           gif: `${gif}.mp4`,
-           isCollapsed: true,
-           category
-         });
+      const createFaqItem = (keyPrefix, category, gif) => ({
+        title: i18n.t(`help.${keyPrefix}`),
+        content: i18n.t(`help.${keyPrefix}answer`),
+        gif: `${gif}.mp4`,
+        isCollapsed: true,
+        category
+      });
   
-         return [
-           createFaqItem('createtest', 'test-creation', 'create_test'),
-           createFaqItem('heuristictest', 'test-creation', 'hsetup'),
-           createFaqItem('deletetest', 'test-creation', 'del_test'),
-           createFaqItem('createtemplate', 'templates', 'create-temp'),
-           createFaqItem('usetemplate', 'templates', 'use-temp'),
-           createFaqItem('previewtest', 'test-creation', 'preview_test'),
-           createFaqItem('importcsv', 'test-creation', 'csv'),
-           createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
-           createFaqItem('analyseresults', 'analytics', 'analytics'),
-           createFaqItem('sendmessage', 'cooperators', 'send_message'),
-          ];
+      return [
+        createFaqItem('createtest', 'test-creation', 'create_test'),
+        createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+        createFaqItem('deletetest', 'test-creation', 'del_test'),
+        createFaqItem('createtemplate', 'templates', 'create-temp'),
+        createFaqItem('usetemplate', 'templates', 'use-temp'),
+        createFaqItem('previewtest', 'test-creation', 'preview_test'),
+        createFaqItem('importcsv', 'test-creation', 'csv'),
+        createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+        createFaqItem('analyseresults', 'analytics', 'analytics'),
+        createFaqItem('sendmessage', 'cooperators', 'send_message'),
+      ];
     },
 
     toggleCollapse(index) {
@@ -653,15 +658,15 @@ export default {
     },
 
     skipBackward(item) {
-       const videos = this.$refs.videoPlayer;
-       let video;
+      const videos = this.$refs.videoPlayer;
+      let video;
   
-       if (Array.isArray(videos)) {
-         const index = this.filteredItems.findIndex(i => i.title === item.title);
-         video = videos[index];
-       } else {
-         video = videos;
-       }
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+        video = videos;
+      }
   
       if (video) {
         video.currentTime = Math.max(0, video.currentTime - 10);
@@ -712,7 +717,7 @@ export default {
         const index = this.filteredItems.findIndex(i => i.title === item.title);
         video = videos[index];
       } else {
-       video = videos;
+        video = videos;
       }
   
       return video ? !video.paused : false;

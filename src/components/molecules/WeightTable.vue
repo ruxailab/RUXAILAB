@@ -13,129 +13,122 @@
       {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
     </v-card>
     <v-card v-else class="mx-auto mt-4 mb-5 rounded-0" elevation="0">
-      <!-- tabs  -->
-      <template>
-        <v-tabs
-          v-model="tabs"
-          centered
-          background-color="#F5F7FF"
-          color="orange"
-          show-arrows
+      <!-- tabs -->
+      <v-tabs
+        v-model="tabs"
+        centered
+        background-color="#F5F7FF"
+        color="orange"
+        show-arrows
+      >
+        <v-tabs-slider color="#FF9800" />
+        <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
+          <v-tooltip top>
+            <template v-slot:activator="{ props }">
+              <span v-bind="props"> H {{ heuri }}</span>
+            </template>
+            <span>{{ heuristics[index].title }}</span>
+          </v-tooltip>
+        </v-tab>
+      </v-tabs>
+      <!-- tab items -->
+      <v-tabs-items v-model="tabs">
+        <v-tab-item
+          v-for="(n, pes) in heuristics && heuristics.length
+            ? heuristics.length - 1
+            : 0"
+          :key="pes"
+          style="background-color:#F5F7FF"
         >
-          <v-tabs-slider color="#FF9800" />
-          <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <span v-bind="attrs" v-on="on"> H {{ heuri }}</span>
-              </template>
-              <span>{{ heuristics[index].title }}</span>
-            </v-tooltip>
-          </v-tab>
-        </v-tabs>
-        <!-- tbody  -->
-        <v-tabs-items v-model="tabs">
-          <v-tab-item
-            v-for="(n, pes) in heuristics && heuristics.length
-              ? heuristics.length - 1
-              : 0"
-            :key="pes"
-            style="background-color:#F5F7FF"
-          >
-            <v-card flat class="mx-4 mt-2 mb-8">
-              <v-card-text class="tablebody">
-                <v-simple-table>
-                  <template>
-                    <thead>
-                      <tr>
-                        <th class="text-left">
-                          {{ $t('HeuristicsWeightsTable.titles.heuristics') }}
-                        </th>
-                        <th class="text-center">
-                          {{ $t('HeuristicsWeightsTable.titles.weights') }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <!-- tbody -->
-                    <tbody>
-                      <tr
-                        v-for="(f, tam) in heuristics.length - (tabs + 1)"
-                        :key="tam"
-                      >
-                        <td>
-                          H {{ f + (tabs + 1) }}
-                          <!-- tooltips -->
-                          <v-tooltip right>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-icon
-                                color="#FCA326"
-                                small
-                                dark
-                                v-bind="attrs"
-                                v-on="on"
-                              >
-                                mdi-help-circle
-                              </v-icon>
-                            </template>
-                            <span>{{ heuristics[f + tabs].title }}</span>
-                          </v-tooltip>
-                        </td>
-                        <!-- radio-group -->
-                        <td>
-                          <v-radio-group
-                            v-model="group[tabs][tam]"
-                            dense
-                            row
-                            class="px-10 mx-2 v-input--radio-group__input justify-space-around"
-                          >
-                            <v-tooltip
-                              v-for="(r, rad) in importance"
-                              :key="rad"
-                              bottom
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-radio
-                                  :label="`${r}`"
-                                  :value="r"
-                                  active-class
-                                  class="padding-left mx-4"
-                                  on-icon="mdi-check-circle-outline"
-                                  off-icon="mdi-checkbox-blank-circle-outline"
-                                  color="#FCA326"
-                                  v-bind="attrs"
-                                  v-on="on"
-                                />
-                              </template>
-                              <span>
-                                H{{ tabs + 1 }} has
-                                {{ importt[r - 1] }} than H{{ f + (tabs + 1) }}</span
-                              >
-                            </v-tooltip>
-                          </v-radio-group>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-                <!-- save button -->
-                <v-row align="center" justify="space-around">
-                  <v-btn
-                    dark
-                    depressed
-                    class="mt-8 mb-4"
-                    large
-                    align="center"
-                    color="orange"
-                    type="submit"
-                    @click="updateDatas()"
+          <v-card flat class="mx-4 mt-2 mb-8">
+            <v-card-text class="tablebody">
+              <v-simple-table>
+                <thead>
+                  <tr>
+                    <th class="text-left">
+                      {{ $t('HeuristicsWeightsTable.titles.heuristics') }}
+                    </th>
+                    <th class="text-center">
+                      {{ $t('HeuristicsWeightsTable.titles.weights') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(f, tam) in heuristics.length - (tabs + 1)"
+                    :key="tam"
                   >
-                    {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
-                  </v-btn>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
-      </template>
+                    <td>
+                      H {{ f + (tabs + 1) }}
+                      <!-- tooltips -->
+                      <v-tooltip right>
+                        <template v-slot:activator="{ props }">
+                          <v-icon
+                            v-bind="props"
+                            color="#FCA326"
+                            small
+                            dark
+                          >
+                            mdi-help-circle
+                          </v-icon>
+                        </template>
+                        <span>{{ heuristics[f + tabs].title }}</span>
+                      </v-tooltip>
+                    </td>
+                    <!-- radio-group -->
+                    <td>
+                      <v-radio-group
+                        v-model="group[tabs][tam]"
+                        dense
+                        row
+                        class="px-10 mx-2 v-input--radio-group__input justify-space-around"
+                      >
+                        <v-tooltip
+                          v-for="(r, rad) in importance"
+                          :key="rad"
+                          bottom
+                        >
+                          <template v-slot:activator="{ props }">
+                            <v-radio
+                              v-bind="props"
+                              :label="`${r}`"
+                              :value="r"
+                              active-class
+                              class="padding-left mx-4"
+                              true-icon="mdi-check-circle-outline"
+                              false-icon="mdi-checkbox-blank-circle-outline"
+                              color="#FCA326"
+                            />
+                          </template>
+                          <span>
+                            H{{ tabs + 1 }} has
+                            {{ importt[r - 1] }} than H{{ f + (tabs + 1) }}
+                          </span>
+                        </v-tooltip>
+                      </v-radio-group>
+                    </td>
+                  </tr>
+                </tbody>
+              </v-simple-table>
+              <!-- save button -->
+              <v-row align="center" justify="space-around">
+                <v-btn
+                  dark
+                  depressed
+                  class="mt-8 mb-4"
+                  large
+                  align="center"
+                  color="orange"
+                  type="submit"
+                  @click="updateDatas()"
+                >
+                  {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
+                </v-btn>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
     </v-card>
   </v-col>
 </template>
@@ -204,7 +197,6 @@ export default {
       this.group = weightMap
     }
   },
-
   methods: {
     updateDatas() {
       this.testAll.testWeights = this.group
@@ -223,8 +215,6 @@ export default {
 }
 
 .if-card {
-  /*border-radius: 15px;
-  border: 0.2px solid #fca326;*/
   width: 950px;
   font-size: 18px;
 }
