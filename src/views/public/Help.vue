@@ -181,13 +181,58 @@
                     <p class="body-1 grey--text text--darken-2 mb-4">
                       {{ item.content }}
                     </p>
-                    <v-img
-                      :src="require(`@/assets/faqs/${item.gif}`)"
-                      max-height="500"
-                      contain
-                      class="rounded-lg"
-                      style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
-                    />
+                    <div class="video-container position-relative">
+                      <video
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        class="rounded-lg"
+                        width="100%"
+                        max-height="500"
+                        controls
+                        controlslist="nodownload"
+                        preload="metadata"
+                        ref="videoPlayer"
+                        @play="updatePlayState()"
+                        @pause="updatePlayState()"
+                        muted
+                        aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
+                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                      ></video>
+                      <div
+                         class="custom-controls d-flex justify-center align-center"
+                         :class="{'controls-mobile': $vuetify.breakpoint.xsOnly}"
+                      >
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="skipBackward(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                           <v-icon>mdi-rewind-10</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="togglePlay(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                           <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="skipForward(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                          <v-icon>mdi-fast-forward-10</v-icon>
+                        </v-btn>
+                     </div>
+                   </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -206,7 +251,11 @@
               <p class="mb-4 grey--text text--darken-1">
                 Try adjusting your search or browse all categories
               </p>
-              <v-btn color="black" @click="filterByCategory(null)">
+              <v-btn
+                color="black"
+                style="color: white;"
+                @click="filterByCategory(null)"
+              >
                 View All Articles
               </v-btn>
             </v-card-text>
@@ -301,7 +350,7 @@
           <v-col cols="12" class="text-center mt-8">
             <v-divider dark class="mb-4"></v-divider>
             <p class="text-caption white--text" style="opacity: 0.5;">
-              © 2025 Ruxailab. All rights reserved.
+              © {{ currentYear }} Ruxailab. All rights reserved.
             </p>
           </v-col>
         </v-row>
@@ -316,6 +365,7 @@ import i18n from '@/i18n'
 export default {
   data() {
     return {
+      currentYear: new Date().getFullYear(),
       searchQuery: '',
       activeCategory: null,
       selectedCategory: null,
@@ -335,78 +385,7 @@ export default {
         { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
         { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
       ],
-      items: [
-        {
-          title: i18n.t('help.createtest'),
-          content: i18n.t('help.createtestanswer'),
-          gif: 'create_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.heuristictest'),
-          content: i18n.t('help.heuristictestanswer'),
-          gif: 'hsetup.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.deletetest'),
-          content: i18n.t('help.deletetestanswer'),
-          gif: 'del_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.createtemplate'),
-          content: i18n.t('help.createtemplateanswer'),
-          gif: 'create-temp.gif',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.usetemplate'),
-          content: i18n.t('help.usetemplateanswer'),
-          gif: 'use-temp.gif',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.previewtest'),
-          content: i18n.t('help.previewtestanswer'),
-          gif: 'preview_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.importcsv'),
-          content: i18n.t('help.importcsvanswer'),
-          gif: 'csv.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.invitecooperators'),
-          content: i18n.t('help.invitecooperatorsanswer'),
-          gif: 'sendinvite.gif',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-        {
-          title: i18n.t('help.analyseresults'),
-          content: i18n.t('help.analyseresultsanswer'),
-          gif: 'analytics.gif',
-          isCollapsed: true,
-          category: 'analytics',
-        },
-        {
-          title: i18n.t('help.sendmessage'),
-          content: i18n.t('help.sendmessageanswer'),
-          gif: 'send_message.gif',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-      ],
+      items: this.generateFaqItems(),
     }
   },
 
@@ -449,6 +428,29 @@ export default {
   },
 
   methods: {
+    generateFaqItems() {
+         const createFaqItem = (keyPrefix, category, gif) => ({
+           title: i18n.t(`help.${keyPrefix}`),
+           content: i18n.t(`help.${keyPrefix}answer`),
+           gif: `${gif}.mp4`,
+           isCollapsed: true,
+           category
+         });
+  
+         return [
+           createFaqItem('createtest', 'test-creation', 'create_test'),
+           createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+           createFaqItem('deletetest', 'test-creation', 'del_test'),
+           createFaqItem('createtemplate', 'templates', 'create-temp'),
+           createFaqItem('usetemplate', 'templates', 'use-temp'),
+           createFaqItem('previewtest', 'test-creation', 'preview_test'),
+           createFaqItem('importcsv', 'test-creation', 'csv'),
+           createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+           createFaqItem('analyseresults', 'analytics', 'analytics'),
+           createFaqItem('sendmessage', 'cooperators', 'send_message'),
+          ];
+    },
+
     toggleCollapse(index) {
       if (index !== -1) {
         this.items.forEach((item, i) => {
@@ -499,6 +501,105 @@ export default {
     getItemIndex(item) {
       return this.items.findIndex((i) => i.title === item.title)
     },
+
+    skipBackward(item) {
+       const videos = this.$refs.videoPlayer;
+       let video;
+  
+       if (Array.isArray(videos)) {
+         const index = this.filteredItems.findIndex(i => i.title === item.title);
+         video = videos[index];
+       } else {
+         video = videos;
+       }
+  
+      if (video) {
+        video.currentTime = Math.max(0, video.currentTime - 10);
+      }
+    },
+
+    skipForward(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+        video = videos;
+      }
+  
+      if (video) {
+        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+      }
+    },
+
+    togglePlay(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+        video = videos;
+      }
+  
+      if (video) {
+        if (video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    },
+
+    isPlaying(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+       video = videos;
+      }
+  
+      return video ? !video.paused : false;
+    },
+
+    updatePlayState() {
+      this.$forceUpdate(); 
+    },
   },
 }
 </script>
+
+<style>
+.button-hover:hover {
+  background-color: rgb(249, 168, 38) !important;
+}
+
+.button-hover:hover .v-icon {
+  color: white !important;
+}
+
+.custom-controls {
+  position: absolute;
+  bottom: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 2;
+}
+
+.controls-mobile {
+  bottom: 25%; 
+}
+
+@media (max-width: 600px) {
+  .custom-control-btn {
+    transform: scale(0.9);
+  }
+}
+</style>
