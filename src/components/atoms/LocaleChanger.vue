@@ -52,7 +52,13 @@ export default {
         { label: 'English', value: 'en' },
         { label: 'Español', value: 'es' },
         { label: 'Português', value: 'pt_br' },
-        { label: 'हिन्दी', value: 'hi' },
+        { label: 'हिन्दी', value: 'hi'},
+        { label: 'Deutsch' , value:'de'},
+        { label: 'Français', value: 'fr' },
+        { label: '中文', value: 'zh' },
+        { label: 'العربية', value: 'ar' },
+        { label: 'Русский', value: 'ru' },
+        { label: '日本語', value: 'ja' }
       ],
     };
   },
