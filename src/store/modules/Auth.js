@@ -46,6 +46,7 @@ export default {
         commit('SET_USER', dbUser)
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
+        throw err // 👈 Rethrow the error so the caller knows signup failed
       } finally {
         commit('setLoading', false)
       }
