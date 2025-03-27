@@ -6,7 +6,7 @@
     "password": "पासवर्ड",
     "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
     "sign-up": "साइन-अप",
-    "contact":"संपर्क नंबर",
+    "contact": "संपर्क नंबर",
     "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
     "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
   },
@@ -31,16 +31,16 @@
     "editDelete": "संपादित/हटाएं",
     "type": "प्रकार",
     "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं",
-    "notifications":"सूचनाएं",
-    "unread":"अनपढ़",
-    "inbox":"इनबॉक्स",
+    "notifications": "सूचनाएं",
+    "unread": "अनपढ़",
+    "inbox": "इनबॉक्स",
     "timeAgo": {
-      "years": "[TODO] {count}",
-      "months": "[TODO] {count}",
-      "days": "[TODO] {count}",
-      "hours": "[TODO] {count}",
-      "minutes": "[TODO] {count}",
-      "now": "[TODO]"
+      "years": "{count} साल पहले",
+      "months": "{count} महीने पहले",
+      "days": "{count} दिन पहले",
+      "hours": "{count} घंटे पहले",
+      "minutes": "{count} मिनट पहले",
+      "now": "अभी"
     },
     "viewAll": "सभी देखें",
     "sentBy": "के द्वारा भेजा गया है",
@@ -296,9 +296,18 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
+    "UsabilityCooperators":{
+      "inviteEvaluator": "परीक्षक को परीक्षण के लिए आमंत्रित करें",
+      "email": "ईमेल",
+      "scheduledAt": "अनुसूचित समय",
+      "inviteMessage": "आमंत्रण संदेश",
+      "placeholderMessage": "अरे, चलो एक परीक्षण करें...",
+      "inviteInfo": "निमंत्रण लिंक निर्दिष्ट समय पर परीक्षक के ईमेल पर भेजा जाएगा",
+      "send": "भेजें"
+  },
     "HeuristicsOptionsTable": {
       "titles": {
-        "options": "[TODO]"
+        "options": "विकल्प"
       },
       "messages": {},
       "placeHolders": {},
@@ -306,54 +315,54 @@
     },
     "HeuristicsWeightsTable": {
       "titles": {
-        "weights": "[TODO]",
-        "heuristics": "[TODO]"
+        "weights": "वज़न",
+        "heuristics": "ह्यूरिस्टिक्स"
       },
       "messages": {
-        "atLeast2HeuristicsForWeighting": "[TODO]"
+        "atLeast2HeuristicsForWeighting": "वज़न निर्धारित करने के लिए कम से कम 2 ह्यूरिस्टिक्स की आवश्यकता है"
       },
       "actions": {
-        "saveWeights": "[TODO]"
+        "saveWeights": "वज़न मान सहेजें"
       }
     },
     "HeuristicsSettings": {
       "titles": {
-        "settings": "[TODO]"
+        "settings": "सेटिंग्स"
       },
       "messages": {
-        "acceptCsv": "[TODO]",
-        "noCsvFileSelected": "[TODO]"
+        "acceptCsv": "CSV फ़ाइल स्वीकार करें",
+        "noCsvFileSelected": "कोई CSV फ़ाइल नहीं चुनी गई"
       },
       "placeHolders": {
-        "importCsv": "[TODO]"
+        "importCsv": "CSV आयात करें"
       },
       "actions": {
-        "downloadCsvTemplate": "[TODO]",
-        "update": "[TODO]"
+        "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें",
+        "update": "अपडेट करें"
       }
     },
     "HeuristicsTestView": {
       "messages": {
-        "submitTest": "[TODO]",
-        "submitOnce": "[TODO]",
-        "noHeuristics": "[TODO]"
+        "submitTest": "परीक्षण जमा करें",
+        "submitOnce": "आप केवल एक बार जमा कर सकते हैं",
+        "noHeuristics": "कोई ह्यूरिस्टिक्स उपलब्ध नहीं हैं"
       },
       "actions": {
-        "cancel": "[TODO]",
-        "submit": "[TODO]",
-        "save": "[TODO]",
-        "continueAs": "[TODO]",
-        "notMail": "[TODO]",
-        "changeAccount": "[TODO]",
-        "startTest": "[TODO]"
+        "cancel": "रद्द करें",
+        "submit": "जमा करें",
+        "save": "सहेजें",
+        "continueAs": "जारी रखें",
+        "notMail": "आपका ईमेल नहीं है?",
+        "changeAccount": "खाता बदलें",
+        "startTest": "परीक्षण शुरू करें"
       }
     },
     "HeuristicsEditTest": {
       "titles": {
-        "heuristics": "[TODO]",
-        "options": "[TODO]",
-        "weights": "[TODO]",
-        "settings": "[TODO]"
+        "heuristics": "ह्यूरिस्टिक्स",
+        "options": "विकल्प",
+        "weights": "वज़न",
+        "settings": "सेटिंग्स"
       }
     },
     "HeuristicsTestAnswer": {
@@ -363,12 +372,12 @@
     },
     "forms": {
       "labels": {
-        "testName": "[TODO]",
-        "name": "[TODO]",
-        "variableName": "[TODO]",
-        "question": "[TODO]",
-        "text": "[TODO]",
-        "value": "[TODO]"
+        "testName": "परीक्षण का नाम",
+        "name": "नाम",
+        "variableName": "चर का नाम",
+        "question": "प्रश्न",
+        "text": "पाठ",
+        "value": "मान"
       }
     },
     "settings": {
@@ -389,7 +398,7 @@
     "sureLeave": "क्या आप वाकई जाना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
     "imageURL": "छवि URL टाइप करें:",
     "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं ",
-    "deleteAccount":" क्या आप निश्चित हैं कि आप अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती। "
+    "deleteAccount": " क्या आप निश्चित हैं कि आप अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती। "
   },
   "buttons": {
     "next": "अगला",
@@ -398,7 +407,7 @@
     "username": "उपयोगकर्ता नाम",
     "goToConsole": "कंसोल पर जाएं",
     "signout": "साइन-आउट",
-    "profile":"प्रोफ़ाइल ",
+    "profile": "प्रोफ़ाइल ",
     "returnToConsole": "कंसोल पर लौटें",
     "tip": "टिप",
     "cancel": "रद्द करें",
@@ -409,8 +418,8 @@
     "leave": "छोड़ें",
     "help": "मदद",
     "delete": "हटाएं",
-    "deleteAccount":"खाता हटाएं",
-    "back":"पीछे"
+    "deleteAccount": "खाता हटाएं",
+    "back": "पीछे"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
@@ -432,11 +441,39 @@
     "test": "टेस्ट",
     "testType_1": {
       "testTitle": "उपयोगिता ह्यूरिस्टिक",
-      "text": ["उपयोगिता प्रतिशत", "अंतिम रिपोर्ट पीडीएफ", "अपने एप्लिकेशन का मूल्यांकन करने के लिए विशेषज्ञों को आमंत्रित करें"]
+      "text": [
+        "उपयोगिता प्रतिशत",
+        "अंतिम रिपोर्ट पीडीएफ",
+        "अपने एप्लिकेशन का मूल्यांकन करने के लिए विशेषज्ञों को आमंत्रित करें"
+      ]
     },
     "testType_2": {
       "testTitle": "उपयोगकर्ता उपयोगिता",
-      "text": ["वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग", "उन्नत उत्तर विश्लेषण", "मॉडरेटेड या गैर-मॉडरेटेड टेस्ट"]
+      "text": [
+        "वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग",
+        "उन्नत उत्तर विश्लेषण",
+        "मॉडरेटेड या गैर-मॉडरेटेड टेस्ट"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "स्व-परीक्षण",
+        "type":"अनियंत्रित",
+        "text": [
+          "खाली समय में उत्तर दें",
+          "उन्नत उत्तर विश्लेषण",
+          "कार्य अनुकूलन"
+        ]
+      },
+      "LiveTest": {
+        "title": "लाइव परीक्षण",
+        "type":"नियंत्रित",
+        "text": [
+          "वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग",
+          "उन्नत उत्तर विश्लेषण",
+          "मॉडरेटेड लाइव परीक्षण"
+        ]
+      }
     }
   },
   "TestDialog": {
@@ -467,5 +504,12 @@
     "analyseresultsanswer": "परिणामों का विश्लेषण करने के लिए, अपने परीक्षण के प्रबंधक पृष्ठ पर जाएं। वहां से, बाएँ साइडबार में 'उत्तर' चुनें। यहां, आप आँकड़े, मूल्यांकनकर्ता और हीयूरिस्टिक्स देख सकते हैं।",
     "sendmessage": "मैं अपने सहयोगियों को संदेश कैसे भेजूं?",
     "sendmessageanswer": "संदेश भेजने के लिए, अपने परीक्षण के प्रबंधक पृष्ठ पर जाएं। बाएँ साइडबार से 'सहयोगी' चुनें। उस सहयोगी के नाम के बगल में तीन बिंदु वाले आइकन पर क्लिक करें जिसे आप संदेश भेजना चाहते हैं। फिर, 'संदेश भेजें' विकल्प चुनें और शीर्षक और सामग्री सहित अपना संदेश लिखें।"
+  },
+  "HeuristicsCooperators": {
+    "roles": {
+      "administrator": "प्रशासक",
+      "evaluator": "मूल्यांकनकर्ता",
+      "guest": "अतिथि"
+    }
   }
 }
