@@ -51,6 +51,7 @@
     "title": "Profile",
     "editProfile": "Edit Profile",
     "account": "Account",
+    "superAdmin": "Super Admin",
     "admin": "Admin",
     "changePassword": "Change Password",
     "passwordRequirements": "Ensure these requirements",
