@@ -130,8 +130,8 @@
   },
   "Introduction": {
     "title": "UX Remote LAB",
-    "subtitle": "What about conducting usability tests remotely?",
-    "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Conducting research has never been easier!",
+    "subtitle": "How about conducting usability tests remotely?",
+    "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
     "cta": "Get started"
   },
   "Dashboard": {
@@ -238,7 +238,7 @@
     "messages": {
       "submitTest": "Are you sure you want to submit this test?",
       "submitOnce": "Are you sure you want to submit your test? You can only do it once.",
-      "noHeuristics": "This test doesn't have any heuristic"
+      "noHeuristics": "This test does not have any heuristic"
     },
     "actions": {
       "cancel": "Cancel",
@@ -444,7 +444,7 @@
       "feedbackSubtitle2": "COVID-19 showed the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
       "uxTitle": "Start your own UX LAB",
       "uxSubtitle1": "If you are a researcher, a company, or a professional who wants to perform a UX test, here you will find several tools to help you analyze and track your tests using different UX techniques.",
-      "uxSubtitle2": "Help us grow up this open-source community and join us on GitHub! :)",
+      "uxSubtitle2": "Help us to grow our open-source community and join us on GitHub! :)",
       "footer": "We are looking for new partners to help us grow the project! Feel free to contact us on "
     },
     "listTests": {
