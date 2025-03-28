@@ -30,6 +30,18 @@ export default {
     SET_USERS(state, payload) {
       state.users = payload
     },
+    REMOVE_USER(state, userId) {
+      state.users = state.users.filter(user => user.id !== userId)
+    },
+    setSuccess(state, message) {
+      state.successMessage = message
+    },
+    setError(state, error) {
+      state.error = error
+    },
+    setLoading(state, loading) {
+      state.loading = loading
+    }
   },
   actions: {
     async addNotification({ commit }, payload) {
@@ -60,6 +72,7 @@ export default {
         console.error(e)
       }
     },
+
     async updateLevel({ commit }, { data }) {
       commit('setLoading', true)
       try {
@@ -72,5 +85,6 @@ export default {
         commit('setLoading', false)
       }
     },
+
   },
 }
