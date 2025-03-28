@@ -19,12 +19,10 @@ router.beforeEach(async (to, from, next) => {
   const { authorize } = to.meta
   await store.dispatch('autoSignIn')
   const user = store.state.Auth.user
-
   if (
     authorize.length > 0 &&
     to.path !== '/signin' &&
-    !to.params.token &&
-    from.path !== '/signup'
+    !to.params.token
   ) {
     if (!user) {
       return next(redirect())
@@ -44,7 +42,6 @@ router.beforeEach(async (to, from, next) => {
 function redirect() {
   if (!store.state.Auth.user) return '/'
   const level = store.state.Auth.user.accessLevel
-
   if (level == 0) return '/superadmin'
   if (level == 1) return '/testslist'
   return '/'
