@@ -327,6 +327,15 @@
       "in_progress": "in progress"
     }
   },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Invite Evaluator To Test",
+    "email": "Email",
+    "scheduledAt": "Scheduled at",
+    "inviteMessage": "Invite message",
+    "placeholderMessage": "Hey, let's make a test...",
+    "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
+    "send": "Send"
+  },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperators"
