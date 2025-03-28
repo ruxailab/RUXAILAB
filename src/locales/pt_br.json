@@ -492,8 +492,7 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
-    "deleteUser": "Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita."
+    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
   },
   "buttons": {
     "next": "Próximo",
