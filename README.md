@@ -43,10 +43,10 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 16.20.1
+- Node.js version: ≤ 20.18.1
 - Vue.js version: 2.6.12
-- Vue CLI version: 4.3.1
-- Vuetify version: 2.3.10
+- Vue CLI version: 5.0.8
+- Vuetify version: 2.7.1
 - Python version: 3.11.8
 
 ## Video Guide
@@ -65,6 +65,7 @@ pip install
 
 Open Firebase / Firestore and start a project.
 
+- In the project dashboard, on the left hand side menu, click on build, click on realtime database and activate it.
 - In the project dashboard, click on the settings button on the left side of the screen (gear icon).
 - In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen.
   <div align="center">
@@ -155,7 +156,7 @@ Then, complete the information in your .env file with the firebase information, 
 
 ```
 
-Setup your Firebase Emulators
+Setup your Firebase Emulators by uncommenting the lines under 'emulators if running locally' in src/index.js.
 
 Run:
 
@@ -173,7 +174,7 @@ To calculate heuristic weights, run:
 ```bash
 # Run locally
  firebase init functions
- firebase use (choose your option)
+ firebase use weight_function
  firebase emulators:start --only functions
 ```
 

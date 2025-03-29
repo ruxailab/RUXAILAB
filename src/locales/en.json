@@ -514,8 +514,9 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount": "Delete Account",
-    "back": "Back"
+    "deleteAccount":"Delete Account",
+    "back":"Back",
+    "submit":"Submit"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -578,6 +579,13 @@
     "test-name": "Test Name",
     "test-description": "Test Description",
     "test-label": "Test public to all users"
+  },
+  "finishTest":{
+    "title": "Finish Test",
+    "finalMessage": "Final Message!",
+    "congratulations": "Congratulations! You finished this test, now you can submit your answer.",
+    "submitMessage": "Click here to submit your answer. Once submitted, your answer cannot be changed!"
+
   },
   "help": {
     "createtest": "How do I create a test?",
