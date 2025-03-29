@@ -504,8 +504,14 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
+
+    "deleteAccount":"Excluir conta",
+    "back":"Trás",
+    "submit": "enviar"
+
     "deleteAccount": "Excluir conta",
     "back": "Trás"
+
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -568,6 +574,13 @@
     "test-name": "Nome do Teste",
     "test-description": "Descrição do Teste",
     "test-label": "Teste público para todos os usuários"
+  },
+  "finishTest": {
+    "title": "Finalizar Teste",
+    "finalMessage": "Mensagem Final!",
+    "congratulations": "Parabéns! Você concluiu este teste, agora pode enviar sua resposta.",
+    "submitMessage": "Clique aqui para enviar sua resposta. Uma vez enviada, sua resposta não poderá ser alterada!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "Como criar um teste?",
