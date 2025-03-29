@@ -486,7 +486,15 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
+    "audioSaved": "Audio record saved!",
+    "screenRecordSaved": "Screen record saved!",
+    "videoRecordSaved": "Video record saved!",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "passwordChangedSuccess": "Password changed successfully",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "savedChanges": "Changes saved",
+    "responseRecorded":"Your response has been recorded"
   },
   "buttons": {
     "next": "Next",
