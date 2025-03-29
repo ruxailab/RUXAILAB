@@ -1,17 +1,11 @@
 name: SonarCloud Issue Creator
 
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - completed
-    branches:
-      - develop
+  workflow_dispatch:
 
 jobs:
   create-issues:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout code
@@ -31,4 +25,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: python sonarcloud_to_github.py 
+        run: python sonarcloud_to_github.py
