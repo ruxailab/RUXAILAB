@@ -484,7 +484,15 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
+    "audioSaved": "Grabación de audio guardada!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved":"Grabación de vídeo guardada!",
+    "profileUpdatedSuccess":"Perfil actualizado exitosamente",
+    "passwordChangedSuccess": "La contraseña se cambió correctamente",
+    "accountDeletedSuccess": "Cuenta eliminada exitosamente",
+    "savedChanges": "Cambios guardados",
+    "responseRecorded":"Su respuesta ha sido registrada"
   },
   "buttons": {
     "next": "Siguiente",
