@@ -239,6 +239,7 @@ export default {
         await testController.updateTest(payload)
       } catch (e) {
         console.error('Error in updateTest', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -250,6 +251,7 @@ export default {
         await testController.acceptTestCollaboration(payload)
       } catch (e) {
         console.error('Error accept test collaboration', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
