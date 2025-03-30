@@ -1,18 +1,16 @@
 <template>
   <div>
-    <template>
-      <v-btn
-        v-if="!isHelp"
-        small
-        icon
-        class="mr-1"
-        @click="$router.push('/help')"
-      >
-        <v-icon size="20">
-          mdi-help-circle-outline
-        </v-icon>
-      </v-btn>
-    </template>
+    <v-btn
+      v-if="!isHelp"
+      small
+      icon
+      class="mr-1"
+      @click="$router.push('/help')"
+    >
+      <v-icon size="20">
+        mdi-help-circle-outline
+      </v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -20,7 +18,7 @@
 export default {
   computed: {
     isHelp() {
-      return this.$route.name == 'Help'
+      return this.$route.name === 'Help'; // Use strict equality
     },
   },
 }
