@@ -8,7 +8,7 @@
         </v-col>
       </v-row>
 
-      {{ selected }}
+      <!-- {{ selected }} -->
 
       <!-- <v-btn @click="playSegment(10, 15)">
         <v-icon>
