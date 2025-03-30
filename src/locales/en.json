@@ -6,6 +6,7 @@
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
     "sign-up": "Sign-Up",
+    "contact": "Contact No",
     "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
@@ -30,6 +31,9 @@
     "editDelete": "Edit/Delete",
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
+    "notifications": "Notifications",
+    "unread": "unread",
+    "inbox": "inbox",
     "timeAgo": {
       "years": "{count} year{count !== 1 ? 's' : ''} ago",
       "months": "{count} month{count !== 1 ? 's' : ''} ago",
@@ -37,7 +41,34 @@
       "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
       "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
       "now": "Now"
-    }
+    },
+    "viewAll": "View all",
+    "sentBy": "Sent by",
+    "new": "NEW"
+  },
+  "PROFILE": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "account": "Account",
+    "admin": "Admin",
+    "changePassword": "Change Password",
+    "passwordRequirements": "Ensure these requirements",
+    "passwordMinimumRequirements": "Minimum 8 characters, uppercase, and symbol",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "editDetails": "Edit Details",
+    "saveChanges": "Save Changes",
+    "country": "Country",
+    "missingInfo": "Missing Information",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountConfirm": "Are you absolutely sure? This action cannot be undone.",
+    "deleteAccountWarning": "This will permanently delete your account and remove your data from our servers.",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsMatch": "Passwords must match"
   },
   "titles": {
     "manager": "Manager",
@@ -88,9 +119,11 @@
     "emailIsRequired": "Email is required",
     "invalidEmail": "Invalid email",
     "passwordRequired": "Password is required",
-    "passwordValidate": "Password must be at least 6 characters",
+    "passwordValidate": "Password must be at least 8 characters",
     "differentPasswords": "Different passwords",
     "fieldRequired": "Field required",
+    "passwordUppercase": "Must contain an uppercase letter",
+    "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password."
@@ -109,6 +142,7 @@
     "myTests": "My tests",
     "sharedWithMe": "Shared with me",
     "publicTests": "Public tests",
+    "sessions": "Sessions",
     "personal": "Personal",
     "explore": "Explore"
   },
@@ -286,6 +320,15 @@
       "in_progress": "in progress"
     }
   },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Invite Evaluator To Test",
+    "email": "Email",
+    "scheduledAt": "Scheduled at",
+    "inviteMessage": "Invite message",
+    "placeholderMessage": "Hey, let's make a test...",
+    "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
+    "send": "Send"
+  },
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperators"
@@ -442,7 +485,16 @@
     "leave": "Are you sure you want to leave?",
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
-    "deleteHeuristic": "Are you sure delete the heuristic "
+    "deleteHeuristic": "Are you sure delete the heuristic ",
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
+    "audioSaved": "Audio record saved!",
+    "screenRecordSaved": "Screen record saved!",
+    "videoRecordSaved": "Video record saved!",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "passwordChangedSuccess": "Password changed successfully",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "savedChanges": "Changes saved",
+    "responseRecorded":"Your response has been recorded"
   },
   "buttons": {
     "next": "Next",
@@ -451,6 +503,7 @@
     "username": "Username",
     "goToConsole": "Go to Console",
     "signout": "Sign-out",
+    "profile": "profile",
     "returnToConsole": "Return to Console",
     "tip": "Tip",
     "cancel": "Cancel",
@@ -460,7 +513,10 @@
     "stay": "Stay",
     "leave": "Leave",
     "help": "Help",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleteAccount":"Delete Account",
+    "back":"Back",
+    "submit":"Submit"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -476,5 +532,81 @@
     "consentForm": "Consent Form",
     "preForm": "Pre Form",
     "postForm": "Post Form"
+  },
+  "Createblank": {
+    "title": "What kind of test are you looking to start?",
+    "test": "Test",
+    "testType_1": {
+      "testTitle": "Usability Heuristic",
+      "text": [
+        "Usability Percentage",
+        "Final Report PDF",
+        "Invite specialists to evaluate your application"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "Usability User",
+      "text": [
+        "Webcam, audio & screen record",
+        "Enhanced answer analysis",
+        "Moderated or non moderated tests"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Self Test",
+        "type":"Unmoderated",
+        "text": [
+          "Answer on free time",
+          "Enhanced answer analysis",
+          "Task Customization"
+        ]
+      },
+      "LiveTest": {
+        "title": "Live Test",
+        "type":"Moderated",
+        "text": [
+          "Webcam, audio & screen record",
+          "Enhanced answer analysis",
+          "Moderated live test"
+        ]
+      }
+    }
+  },
+  "TestDialog": {
+    "heading": "Test Creation",
+    "sub-heading": "Add a name to your test!",
+    "test-name": "Test Name",
+    "test-description": "Test Description",
+    "test-label": "Test public to all users"
+  },
+  "finishTest":{
+    "title": "Finish Test",
+    "finalMessage": "Final Message!",
+    "congratulations": "Congratulations! You finished this test, now you can submit your answer.",
+    "submitMessage": "Click here to submit your answer. Once submitted, your answer cannot be changed!"
+
+  },
+  "help": {
+    "createtest": "How do I create a test?",
+    "createtestanswer": "To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.",
+    "heuristictest": "How I setup my Heuristic test?",
+    "heuristictestanswer": "To set up your Heuristic test, start by accessing the 'Edit Test' option. Then, click on the plus icon button to add a title and the question to your heuristic. Next, navigate to the options section to create the answer options and their respective values. Finally, save the modifications.",
+    "deletetest": "How I delete my test?",
+    "deletetestanswer": "To delete your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'DELETE TEST' button.",
+    "createtemplate": "How to create a template?",
+    "createtemplateanswer": "To create a template for your test, navigate to the left sidebar and click on the 'Settings' button. Then, select the 'CREATE TEMPLATE' option.",
+    "usetemplate": "How to use a template?",
+    "usetemplateanswer": "To utilize a template, navigate to the Tests page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
+    "previewtest": "How to preview your Test?",
+    "previewtestanswer": "On the leftside bar, click on the 'Preview' option then start the test answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the 'Answers' section.",
+    "importcsv": "How to import my CSV?",
+    "importcsvanswer": "To import your CSV, navigate to the 'Edit Test' section, then click the 'UPDATE' button. Select your CSV file containing the heuristics.",
+    "invitecooperators": "How to invite cooperators?",
+    "invitecooperatorsanswer": "To invite collaborators, navigate to the manager page of your test. From there, select 'Cooperators' on the left sidebar. Click on 'Select cooperator' and enter the email of your collaborator. Choose the collaborators role, then send the invitation by clicking on the bottom right button.",
+    "analyseresults": "How to analyse the results?",
+    "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
+    "sendmessage": "How to send a message to my cooperators?",
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
   }
 }

@@ -6,6 +6,7 @@
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
+    "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
@@ -30,14 +31,44 @@
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
+    "notifications": "Notificações",
+    "unread": "não lido",
+    "inbox": "Caixa de entrada",
     "timeAgo": {
-      "years": "[TODO] {count}",
-      "months": "[TODO] {count}",
-      "days": "[TODO] {count}",
-      "hours": "[TODO] {count}",
-      "minutes": "[TODO] {count}",
-      "now": "[TODO]"
-    }
+      "years": "{count} ano{count !== 1 ? 's' : ''} atrás",
+      "months": "{count} mês{count !== 1 ? 'es' : ''} atrás",
+      "days": "{count} dia{count !== 1 ? 's' : ''} atrás",
+      "hours": "{count} hora{count !== 1 ? 's' : ''} atrás",
+      "minutes": "{count} minuto{count !== 1 ? 's' : ''} atrás",
+      "now": "Agora"
+    },
+    "viewAll": "Ver tudo",
+    "sentBy": "Enviado por",
+    "new": "NOVO"
+  },
+  "PROFILE": {
+    "title": "Perfil",
+    "editProfile": "Editar perfil",
+    "account": "Conta",
+    "admin": "Administrador",
+    "changePassword": "Alterar senha",
+    "passwordRequirements": "Certifique-se de atender a esses requisitos",
+    "passwordMinimumRequirements": "Mínimo de 8 caracteres, maiúscula e símbolo",
+    "newPassword": "Nova senha",
+    "confirmNewPassword": "Confirmar nova senha",
+    "editDetails": "Editar detalhes",
+    "saveChanges": "Salvar alterações",
+    "country": "País",
+    "missingInfo": "Informação ausente",
+    "deleteAccountTitle": "Excluir conta",
+    "deleteAccountConfirm": "Tem certeza absoluta? Esta ação não pode ser desfeita.",
+    "deleteAccountWarning": "Isso excluirá permanentemente sua conta e removerá seus dados de nossos servidores.",
+    "passwordRequired": "Senha é obrigatória",
+    "passwordMinLength": "A senha deve ter pelo menos 8 caracteres",
+    "passwordUppercase": "Deve conter uma letra maiúscula",
+    "passwordSymbol": "Deve conter um símbolo",
+    "confirmPasswordRequired": "Confirmação de senha é obrigatória",
+    "passwordsMatch": "As senhas devem corresponder"
   },
   "titles": {
     "manager": "Gerenciamento",
@@ -88,9 +119,11 @@
     "emailIsRequired": "Correo electronico es requerido",
     "invalidEmail": "Email inválido",
     "passwordRequired": "Senha requerida",
-    "passwordValidate": "A senha deve ter pelo menos 6 caracteres",
+    "passwordValidate": "A senha deve ter pelo menos 8 caracteres",
     "differentPasswords": "Senhas diferentes",
     "fieldRequired": "Campo requerido",
+    "passwordUppercase": "Deve conter uma letra maiúscula",
+    "passwordSymbol": "Deve conter um símbolo",
     "userNotExist": "Este usuário não existe.",
     "incorrectPassword": "Senha incorreta.",
     "incorrectCredential": "Usuário ou senha incorretos."
@@ -109,6 +142,7 @@
     "myTests": "Meus testes",
     "sharedWithMe": "Compartilhados comigo",
     "publicTests": "Testes públicos",
+    "sessions": "Sessões",
     "personal": "Pessoais",
     "explore": "Explorar"
   },
@@ -166,7 +200,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "[TODO]"
+      "options": "Opções"
     },
     "messages": {},
     "placeHolders": {},
@@ -174,54 +208,54 @@
   },
   "HeuristicsWeightsTable": {
     "titles": {
-      "weights": "[TODO]",
-      "heuristics": "[TODO]"
+      "weights": "Pesos",
+      "heuristics": "Heurísticas"
     },
     "messages": {
-      "atLeast2HeuristicsForWeighting": "[TODO]"
+      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para poder colocar os pesos"
     },
     "actions": {
-      "saveWeights": "[TODO]"
+      "saveWeights": "Salvar valores de peso"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "[TODO]"
+      "settings": "Configurações"
     },
     "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+      "acceptCsv": "Aceitar arquivo CSV",
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
     },
     "placeHolders": {
-      "importCsv": "[TODO]"
+      "importCsv": "Importar CSV"
     },
     "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
+      "downloadCsvTemplate": "Baixar modelo CSV",
+      "update": "Atualizar"
     }
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+      "submitTest": "Enviar teste",
+      "submitOnce": "Você só pode enviar uma vez",
+      "noHeuristics": "Não há heurísticas disponíveis"
     },
     "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "save": "Salvar",
+      "continueAs": "Continuar como",
+      "notMail": "Não é seu e-mail?",
+      "changeAccount": "Mudar conta",
+      "startTest": "Iniciar teste"
     }
   },
   "HeuristicsEditTest": {
     "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
+      "heuristics": "Heurísticas",
+      "options": "Opções",
+      "weights": "Pesos",
+      "settings": "Configurações"
     }
   },
   "HeuristicsTestAnswer": {
@@ -285,6 +319,15 @@
       "submitted": "[TODO]",
       "in_progress": "[TODO]"
     }
+  },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Convidar Avaliador para Teste",
+    "email": "E-mail",
+    "scheduledAt": "Agendado para",
+    "inviteMessage": "Mensagem de convite",
+    "placeholderMessage": "Ei, vamos fazer um teste...",
+    "inviteInfo": "O convite com o link do teste será enviado para o e-mail do avaliador no horário agendado",
+    "send": "Enviar"
   },
   "HeuristicsCooperators": {
     "title": {
@@ -441,7 +484,16 @@
     "leave": "Tem certeza que deseja sair?",
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
-    "deleteHeuristic": "Tem certeza de excluir a heurística "
+    "deleteHeuristic": "Tem certeza de excluir a heurística ",
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "audioSaved": "Gravação de áudio salva!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved": "Gravação de vídeo salva!",
+    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
+    "passwordChangedSuccess": "Senha alterada com sucesso",
+    "accountDeletedSuccess": "Conta excluída com sucesso",
+    "savedChanges": "Alterações salvas",
+    "responseRecorded": "Sua resposta foi registrada"
   },
   "buttons": {
     "next": "Próximo",
@@ -450,6 +502,7 @@
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
+    "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
     "create": "Criar",
@@ -458,7 +511,11 @@
     "leave": "Sair",
     "stay": "Ficar",
     "help": "Ajuda",
-    "delete": "Deletar"
+    "delete": "Deletar",
+
+    "deleteAccount":"Excluir conta",
+    "back":"Trás",
+    "submit": "enviar"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -474,5 +531,81 @@
     "consentForm": "Formulário de consentimento",
     "preForm": "Pré-Formulário",
     "postForm": "Pós-Formulário"
+  },
+  "Createblank": {
+    "title": "Que tipo de teste você está procurando iniciar?",
+    "test": "Teste",
+    "testType_1": {
+      "testTitle": "Heurística de Usabilidade",
+      "text": [
+        "Porcentagem de Usabilidade",
+        "Relatório Final em PDF",
+        "Convide especialistas para avaliar sua aplicação"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "Usuário de Usabilidade",
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Testes moderados ou não moderados"
+      ]
+    },
+"UsabilityUser": {
+    "SelfTest": {
+      "title": "Auto Teste",
+      "type":"não moderado",
+      "text": [
+        "Responder no tempo livre",
+        "Análise aprimorada de respostas",
+        "Personalização de tarefas"
+      ]
+    },
+    "LiveTest": {
+      "title": "Teste ao Vivo",
+      "type":"moderado",
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Teste ao vivo moderado"
+      ]
+    }
+  }
+  },
+  "TestDialog": {
+    "heading": "Criação de Teste",
+    "sub-heading": "Adicione um nome ao seu teste!",
+    "test-name": "Nome do Teste",
+    "test-description": "Descrição do Teste",
+    "test-label": "Teste público para todos os usuários"
+  },
+  "finishTest": {
+    "title": "Finalizar Teste",
+    "finalMessage": "Mensagem Final!",
+    "congratulations": "Parabéns! Você concluiu este teste, agora pode enviar sua resposta.",
+    "submitMessage": "Clique aqui para enviar sua resposta. Uma vez enviada, sua resposta não poderá ser alterada!",
+    "submitButton": "Enviar"
+  },
+  "help": {
+    "createtest": "Como criar um teste?",
+    "createtestanswer": "Para criar um teste, clique no ícone de mais e selecione Teste Heurístico. Em seguida, especifique os detalhes do seu projeto. Por fim, acesse a página do gerenciador dedicada.",
+    "heuristictest": "Como configurar meu Teste Heurístico?",
+    "heuristictestanswer": "Para configurar seu Teste Heurístico, acesse a opção 'Editar Teste'. Em seguida, clique no botão de ícone de mais para adicionar um título e a pergunta do seu teste. Depois, vá até a seção de opções para criar as opções de resposta e seus respectivos valores. Por fim, salve as modificações.",
+    "deletetest": "Como excluir meu teste?",
+    "deletetestanswer": "Para excluir seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione o botão 'EXCLUIR TESTE'.",
+    "createtemplate": "Como criar um modelo?",
+    "createtemplateanswer": "Para criar um modelo para seu teste, vá até a barra lateral esquerda e clique no botão 'Configurações'. Depois, selecione a opção 'CRIAR MODELO'.",
+    "usetemplate": "Como usar um modelo?",
+    "usetemplateanswer": "Para utilizar um modelo, acesse a página de Testes. Na seção Criar Modelos, você encontrará seus modelos pessoais. Além disso, você pode explorar modelos públicos.",
+    "previewtest": "Como visualizar meu teste?",
+    "previewtestanswer": "Na barra lateral esquerda, clique na opção 'Visualizar', inicie o teste respondendo às perguntas e, por fim, clique no botão no canto inferior direito para salvar e enviar a visualização. Posteriormente, ela poderá ser analisada na seção 'Respostas'.",
+    "importcsv": "Como importar meu arquivo CSV?",
+    "importcsvanswer": "Para importar seu CSV, vá até a seção 'Editar Teste' e clique no botão 'ATUALIZAR'. Selecione seu arquivo CSV contendo as heurísticas.",
+    "invitecooperators": "Como convidar colaboradores?",
+    "invitecooperatorsanswer": "Para convidar colaboradores, vá até a página do gerenciador do seu teste. Lá, selecione 'Colaboradores' na barra lateral esquerda. Clique em 'Selecionar colaborador' e insira o e-mail do colaborador. Escolha o papel do colaborador e envie o convite clicando no botão no canto inferior direito.",
+    "analyseresults": "Como analisar os resultados?",
+    "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
+    "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
+    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
   }
 }

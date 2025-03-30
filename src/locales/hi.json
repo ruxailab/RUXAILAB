@@ -6,6 +6,7 @@
     "password": "पासवर्ड",
     "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
     "sign-up": "साइन-अप",
+    "contact": "संपर्क नंबर",
     "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
     "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
   },
@@ -30,14 +31,44 @@
     "editDelete": "संपादित/हटाएं",
     "type": "प्रकार",
     "noNotifications": "आपके पास अभी तक कोई सूचनाएं नहीं हैं",
+    "notifications": "सूचनाएं",
+    "unread": "अनपढ़",
+    "inbox": "इनबॉक्स",
     "timeAgo": {
-      "years": "[TODO] {count}",
-      "months": "[TODO] {count}",
-      "days": "[TODO] {count}",
-      "hours": "[TODO] {count}",
-      "minutes": "[TODO] {count}",
-      "now": "[TODO]"
-    }
+      "years": "{count} साल पहले",
+      "months": "{count} महीने पहले",
+      "days": "{count} दिन पहले",
+      "hours": "{count} घंटे पहले",
+      "minutes": "{count} मिनट पहले",
+      "now": "अभी"
+    },
+    "viewAll": "सभी देखें",
+    "sentBy": "के द्वारा भेजा गया है",
+    "new": "नया"
+  },
+  "PROFILE": {
+    "title": "प्रोफ़ाइल",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "account": "खाता",
+    "admin": "व्यवस्थापक",
+    "changePassword": "पासवर्ड बदलें",
+    "passwordRequirements": "इन आवश्यकताओं को सुनिश्चित करें",
+    "passwordMinimumRequirements": "न्यूनतम 8 वर्ण लंबा, अपरकेस और प्रतीक (चिह्न) के साथ",
+    "newPassword": "नया पासवर्ड",
+    "confirmNewPassword": "नए पासवर्ड की पुष्टि करें",
+    "editDetails": "विवरण संपादित करें",
+    "saveChanges": "परिवर्तन सहेजें",
+    "country": "देश",
+    "missingInfo": "जानकारी अनुपलब्ध",
+    "deleteAccountTitle": "खाता हटाएं",
+    "deleteAccountConfirm": "क्या आप पूरी तरह से सुनिश्चित हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "deleteAccountWarning": "यह आपके खाते को स्थायी रूप से हटा देगा और हमारे सर्वर से आपका डेटा हटा देगा।",
+    "passwordRequired": "पासवर्ड आवश्यक है",
+    "passwordMinLength": "पासवर्ड कम से कम 8 वर्ण का होना चाहिए",
+    "passwordUppercase": "एक अपरकेस अक्षर होना चाहिए",
+    "passwordSymbol": "एक प्रतीक होना चाहिए",
+    "confirmPasswordRequired": "पासवर्ड की पुष्टि आवश्यक है",
+    "passwordsMatch": "पासवर्ड मेल खाना चाहिए"
   },
   "titles": {
     "manager": "प्रबंधक",
@@ -88,8 +119,10 @@
     "emailIsRequired": "ईमेल आवश्यक है",
     "invalidEmail": "अमान्य ईमेल",
     "passwordRequired": "पासवर्ड आवश्यक है",
-    "passwordValidate": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए",
+    "passwordValidate": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
     "differentPasswords": "अलग पासवर्ड",
+    "passwordUppercase": "एक अपरकेस अक्षर होना चाहिए",
+    "passwordSymbol": "एक प्रतीक होना चाहिए",
     "fieldRequired": "फील्ड आवश्यक है",
     "userNotExist": "यह उपयोगकर्ता मौजूद नहीं है।",
     "incorrectPassword": "गलत पासवर्ड",
@@ -109,6 +142,7 @@
     "myTests": "मेरे परीक्षण",
     "sharedWithMe": "मेरे साथ साझा किया गया",
     "publicTests": "सार्वजनिक परीक्षण",
+    "sessions": "सत्र",
     "personal": "व्यक्तिगत",
     "explore": "अन्वेषण करें"
   },
@@ -262,9 +296,18 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
+    "UsabilityCooperators":{
+      "inviteEvaluator": "परीक्षक को परीक्षण के लिए आमंत्रित करें",
+      "email": "ईमेल",
+      "scheduledAt": "अनुसूचित समय",
+      "inviteMessage": "आमंत्रण संदेश",
+      "placeholderMessage": "अरे, चलो एक परीक्षण करें...",
+      "inviteInfo": "निमंत्रण लिंक निर्दिष्ट समय पर परीक्षक के ईमेल पर भेजा जाएगा",
+      "send": "भेजें"
+  },
     "HeuristicsOptionsTable": {
       "titles": {
-        "options": "[TODO]"
+        "options": "विकल्प"
       },
       "messages": {},
       "placeHolders": {},
@@ -272,54 +315,54 @@
     },
     "HeuristicsWeightsTable": {
       "titles": {
-        "weights": "[TODO]",
-        "heuristics": "[TODO]"
+        "weights": "वज़न",
+        "heuristics": "ह्यूरिस्टिक्स"
       },
       "messages": {
-        "atLeast2HeuristicsForWeighting": "[TODO]"
+        "atLeast2HeuristicsForWeighting": "वज़न निर्धारित करने के लिए कम से कम 2 ह्यूरिस्टिक्स की आवश्यकता है"
       },
       "actions": {
-        "saveWeights": "[TODO]"
+        "saveWeights": "वज़न मान सहेजें"
       }
     },
     "HeuristicsSettings": {
       "titles": {
-        "settings": "[TODO]"
+        "settings": "सेटिंग्स"
       },
       "messages": {
-        "acceptCsv": "[TODO]",
-        "noCsvFileSelected": "[TODO]"
+        "acceptCsv": "CSV फ़ाइल स्वीकार करें",
+        "noCsvFileSelected": "कोई CSV फ़ाइल नहीं चुनी गई"
       },
       "placeHolders": {
-        "importCsv": "[TODO]"
+        "importCsv": "CSV आयात करें"
       },
       "actions": {
-        "downloadCsvTemplate": "[TODO]",
-        "update": "[TODO]"
+        "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें",
+        "update": "अपडेट करें"
       }
     },
     "HeuristicsTestView": {
       "messages": {
-        "submitTest": "[TODO]",
-        "submitOnce": "[TODO]",
-        "noHeuristics": "[TODO]"
+        "submitTest": "परीक्षण जमा करें",
+        "submitOnce": "आप केवल एक बार जमा कर सकते हैं",
+        "noHeuristics": "कोई ह्यूरिस्टिक्स उपलब्ध नहीं हैं"
       },
       "actions": {
-        "cancel": "[TODO]",
-        "submit": "[TODO]",
-        "save": "[TODO]",
-        "continueAs": "[TODO]",
-        "notMail": "[TODO]",
-        "changeAccount": "[TODO]",
-        "startTest": "[TODO]"
+        "cancel": "रद्द करें",
+        "submit": "जमा करें",
+        "save": "सहेजें",
+        "continueAs": "जारी रखें",
+        "notMail": "आपका ईमेल नहीं है?",
+        "changeAccount": "खाता बदलें",
+        "startTest": "परीक्षण शुरू करें"
       }
     },
     "HeuristicsEditTest": {
       "titles": {
-        "heuristics": "[TODO]",
-        "options": "[TODO]",
-        "weights": "[TODO]",
-        "settings": "[TODO]"
+        "heuristics": "ह्यूरिस्टिक्स",
+        "options": "विकल्प",
+        "weights": "वज़न",
+        "settings": "सेटिंग्स"
       }
     },
     "HeuristicsTestAnswer": {
@@ -329,12 +372,12 @@
     },
     "forms": {
       "labels": {
-        "testName": "[TODO]",
-        "name": "[TODO]",
-        "variableName": "[TODO]",
-        "question": "[TODO]",
-        "text": "[TODO]",
-        "value": "[TODO]"
+        "testName": "परीक्षण का नाम",
+        "name": "नाम",
+        "variableName": "चर का नाम",
+        "question": "प्रश्न",
+        "text": "पाठ",
+        "value": "मान"
       }
     },
     "settings": {
@@ -354,7 +397,16 @@
     "leave": "क्या आप वाकई जाना चाहते हैं?",
     "sureLeave": "क्या आप वाकई जाना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
     "imageURL": "छवि URL टाइप करें:",
-    "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं "
+    "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं ",
+    "deleteAccount":" क्या आप निश्चित हैं कि आप अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती। ",
+    "audioSaved":"ऑडियो रिकॉर्ड सहेजा गया!",
+    "screenRecordSaved": "स्क्रीन रिकॉर्ड सहेजा गया!",
+    "videoRecordSaved":"वीडियो रिकॉर्ड सहेजा गया!",
+    "profileUpdatedSuccess":"प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+    "passwordChangedSuccess": "पासवर्ड सफलतापूर्वक बदला गया",
+    "accountDeletedSuccess": "खाता सफलतापूर्वक हटा दिया गया",
+    "savedChanges": "परिवर्तन सहेजे गए",
+    "responseRecorded":"आपकी प्रतिक्रिया दर्ज कर ली गई है"
   },
   "buttons": {
     "next": "अगला",
@@ -363,6 +415,7 @@
     "username": "उपयोगकर्ता नाम",
     "goToConsole": "कंसोल पर जाएं",
     "signout": "साइन-आउट",
+    "profile": "प्रोफ़ाइल ",
     "returnToConsole": "कंसोल पर लौटें",
     "tip": "टिप",
     "cancel": "रद्द करें",
@@ -372,7 +425,11 @@
     "stay": "रुकें",
     "leave": "छोड़ें",
     "help": "मदद",
-    "delete": "हटाएं"
+    "delete": "हटाएं",
+
+    "deleteAccount":"खाता हटाएं",
+    "back":"पीछे",
+    "submit":"प्रस्तुत"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
@@ -388,5 +445,88 @@
     "consentForm": "सहमति फॉर्म",
     "preForm": "प्री फॉर्म",
     "postForm": "पोस्ट फॉर्म"
+  },
+  "Createblank": {
+    "title": "आप किस प्रकार का टेस्ट शुरू करना चाहते हैं?",
+    "test": "टेस्ट",
+    "testType_1": {
+      "testTitle": "उपयोगिता ह्यूरिस्टिक",
+      "text": [
+        "उपयोगिता प्रतिशत",
+        "अंतिम रिपोर्ट पीडीएफ",
+        "अपने एप्लिकेशन का मूल्यांकन करने के लिए विशेषज्ञों को आमंत्रित करें"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "उपयोगकर्ता उपयोगिता",
+      "text": [
+        "वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग",
+        "उन्नत उत्तर विश्लेषण",
+        "मॉडरेटेड या गैर-मॉडरेटेड टेस्ट"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "स्व-परीक्षण",
+        "type":"अनियंत्रित",
+        "text": [
+          "खाली समय में उत्तर दें",
+          "उन्नत उत्तर विश्लेषण",
+          "कार्य अनुकूलन"
+        ]
+      },
+      "LiveTest": {
+        "title": "लाइव परीक्षण",
+        "type":"नियंत्रित",
+        "text": [
+          "वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग",
+          "उन्नत उत्तर विश्लेषण",
+          "मॉडरेटेड लाइव परीक्षण"
+        ]
+      }
+    }
+  },
+  "TestDialog": {
+    "heading": "टेस्ट निर्माण",
+    "sub-heading": "अपने टेस्ट को एक नाम दें!",
+    "test-name": "टेस्ट का नाम",
+    "test-description": "टेस्ट का विवरण",
+    "test-label": "सभी उपयोगकर्ताओं के लिए सार्वजनिक टेस्ट"
+  },
+  "finishTest": {
+    "title": "परीक्षा समाप्त करें",
+    "finalMessage": "अंतिम संदेश!",
+    "congratulations": "बधाई हो! आपने यह परीक्षा पूरी कर ली है, अब आप अपना उत्तर जमा कर सकते हैं।",
+    "submitMessage": "यहाँ क्लिक करें अपने उत्तर को सबमिट करने के लिए। एक बार सबमिट करने के बाद, आप अपना उत्तर बदल नहीं सकते!",
+    "submitButton": "सबमिट करें"
+  },
+  "help": {
+    "createtest": "मैं परीक्षण कैसे बनाऊं?",
+    "createtestanswer": "परीक्षण बनाने के लिए, प्लस आइकन पर क्लिक करें और हीयूरिस्टिक परीक्षण चुनें। फिर, अपने प्रोजेक्ट का विवरण निर्दिष्ट करें। अंत में, समर्पित प्रबंधक पृष्ठ पर जाएं।",
+    "heuristictest": "मैं अपना हीयूरिस्टिक परीक्षण कैसे सेटअप करूं?",
+    "heuristictestanswer": "हीयूरिस्टिक परीक्षण सेटअप करने के लिए, 'परीक्षण संपादित करें' विकल्प पर जाएं। फिर, प्लस आइकन पर क्लिक करके शीर्षक और प्रश्न जोड़ें। इसके बाद, विकल्प अनुभाग में जाकर उत्तर विकल्प और उनके संबंधित मान बनाएं। अंत में, संशोधन सहेजें।",
+    "deletetest": "मैं अपना परीक्षण कैसे हटाऊं?",
+    "deletetestanswer": "अपना परीक्षण हटाने के लिए, बाएँ साइडबार में 'सेटिंग्स' बटन पर क्लिक करें। फिर, 'परीक्षण हटाएं' बटन चुनें।",
+    "createtemplate": "मैं टेम्पलेट कैसे बनाऊं?",
+    "createtemplateanswer": "परीक्षण के लिए टेम्पलेट बनाने के लिए, बाएँ साइडबार में 'सेटिंग्स' बटन पर क्लिक करें। फिर, 'टेम्पलेट बनाएं' विकल्प चुनें।",
+    "usetemplate": "मैं टेम्पलेट का उपयोग कैसे करूं?",
+    "usetemplateanswer": "टेम्पलेट का उपयोग करने के लिए, परीक्षण पृष्ठ पर जाएं। 'टेम्पलेट बनाएं' अनुभाग के तहत, आपको अपने व्यक्तिगत टेम्पलेट मिलेंगे। इसके अलावा, आप सार्वजनिक टेम्पलेट भी देख सकते हैं।",
+    "previewtest": "मैं अपने परीक्षण का पूर्वावलोकन कैसे करूं?",
+    "previewtestanswer": "बाएँ साइडबार में 'पूर्वावलोकन' विकल्प पर क्लिक करें, फिर प्रश्नों का उत्तर देकर परीक्षण शुरू करें और अंत में निचले दाएँ बटन पर क्लिक करके पूर्वावलोकन को सहेजें और जमा करें। इसे बाद में 'उत्तर' अनुभाग में विश्लेषण किया जा सकता है।",
+    "importcsv": "मैं अपना CSV कैसे आयात करूं?",
+    "importcsvanswer": "CSV आयात करने के लिए, 'परीक्षण संपादित करें' अनुभाग में जाएं, फिर 'अपडेट' बटन पर क्लिक करें। हीयूरिस्टिक्स युक्त अपना CSV फ़ाइल चुनें।",
+    "invitecooperators": "मैं सहयोगियों को कैसे आमंत्रित करूं?",
+    "invitecooperatorsanswer": "सहयोगियों को आमंत्रित करने के लिए, अपने परीक्षण के प्रबंधक पृष्ठ पर जाएं। वहां से, बाएँ साइडबार में 'सहयोगी' चुनें। 'सहयोगी चुनें' पर क्लिक करें और सहयोगी का ईमेल दर्ज करें। सहयोगी की भूमिका चुनें, फिर निचले दाएँ बटन पर क्लिक करके निमंत्रण भेजें।",
+    "analyseresults": "मैं परिणामों का विश्लेषण कैसे करूं?",
+    "analyseresultsanswer": "परिणामों का विश्लेषण करने के लिए, अपने परीक्षण के प्रबंधक पृष्ठ पर जाएं। वहां से, बाएँ साइडबार में 'उत्तर' चुनें। यहां, आप आँकड़े, मूल्यांकनकर्ता और हीयूरिस्टिक्स देख सकते हैं।",
+    "sendmessage": "मैं अपने सहयोगियों को संदेश कैसे भेजूं?",
+    "sendmessageanswer": "संदेश भेजने के लिए, अपने परीक्षण के प्रबंधक पृष्ठ पर जाएं। बाएँ साइडबार से 'सहयोगी' चुनें। उस सहयोगी के नाम के बगल में तीन बिंदु वाले आइकन पर क्लिक करें जिसे आप संदेश भेजना चाहते हैं। फिर, 'संदेश भेजें' विकल्प चुनें और शीर्षक और सामग्री सहित अपना संदेश लिखें।"
+  },
+  "HeuristicsCooperators": {
+    "roles": {
+      "administrator": "प्रशासक",
+      "evaluator": "मूल्यांकनकर्ता",
+      "guest": "अतिथि"
+    }
   }
 }
