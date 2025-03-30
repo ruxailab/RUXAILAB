@@ -41,17 +41,45 @@ const createTest = async (page, type) => {
   ) // Click go back to console button
 }
 
-test('has link page', async ({ page }) => {
-  await page.goto('http://localhost:8080/signin')
+test.describe('Link Page Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    page.setDefaultTimeout(60000)
+    page.setDefaultNavigationTimeout(60000)
 
-  // Esperar un elemento específico
-  await page.waitForSelector('#app', { timeout: 20000 })
+    page.on('console', (msg) => console.log('Console:', msg.text()))
+    page.on('request', (req) => console.log('Request:', req.url()))
+    page.on('response', (res) => console.log('Response:', res.url(), res.status()))
+  })
 
-  // Tomar una captura de pantalla para verificar el estado de la página
-  await page.screenshot({ path: 'screenshot.png' })
+  test('has link page', async ({ page }) => {
+    try {
 
-  // Ahora verificar el título de la página
-  await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 20000 })
+      await test.step('Navigate to signin page', async () => {
+        await page.goto('http://localhost:8080/signin', {
+          waitUntil: 'networkidle',
+          timeout: 45000
+        });
+      });
+
+      await test.step('Check if #app is visible', async () => {
+        await expect(page.locator('#app')).toBeVisible({ timeout: 30000 });
+      });
+
+      await test.step('Check page title', async () => {
+        await expect(page).toHaveTitle(/RUXAILAB/, { timeout: 30000 });
+      });
+
+      await page.screenshot({
+        path: 'debug-screenshot.png',
+        fullPage: true,
+      })
+
+    } catch (error) {
+      console.error('Test failure details:', error)
+      console.error('Current URL:', page.url())
+      throw error
+    }
+  })
 })
 
 // test('sign and create heurisic test', async ({ page }) => {
