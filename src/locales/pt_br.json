@@ -320,7 +320,7 @@
       "in_progress": "[TODO]"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Convidar Avaliador para Teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
@@ -513,13 +513,9 @@
     "help": "Ajuda",
     "delete": "Deletar",
 
-    "deleteAccount":"Excluir conta",
-    "back":"Trás",
-    "submit": "enviar"
-
     "deleteAccount": "Excluir conta",
-    "back": "Trás"
-
+    "back": "Trás",
+    "submit": "enviar"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -555,26 +551,26 @@
         "Testes moderados ou não moderados"
       ]
     },
-"UsabilityUser": {
-    "SelfTest": {
-      "title": "Auto Teste",
-      "type":"não moderado",
-      "text": [
-        "Responder no tempo livre",
-        "Análise aprimorada de respostas",
-        "Personalização de tarefas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Teste ao Vivo",
-      "type":"moderado",
-      "text": [
-        "Gravação de webcam, áudio e tela",
-        "Análise aprimorada de respostas",
-        "Teste ao vivo moderado"
-      ]
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Auto Teste",
+        "type": "não moderado",
+        "text": [
+          "Responder no tempo livre",
+          "Análise aprimorada de respostas",
+          "Personalização de tarefas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Teste ao Vivo",
+        "type": "moderado",
+        "text": [
+          "Gravação de webcam, áudio e tela",
+          "Análise aprimorada de respostas",
+          "Teste ao vivo moderado"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
