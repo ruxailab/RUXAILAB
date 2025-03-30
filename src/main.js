@@ -29,9 +29,9 @@ app.use(TextClamp);
 
 app.config.globalProperties.$toast = useToast();
 
-// configureCompat({
-//   MODE: 3
-// })
+configureCompat({
+  MODE: 3
+})
 
 // Mount the app
 app.mount('#app');
