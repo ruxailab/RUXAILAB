@@ -263,18 +263,16 @@ export default {
 
     // Analyze the timestamp of the selected answer [AI Service]
     async analyzeTimeStamp() {
-      console.log('Analyzing Timestamp..............................')
+      console.log('Analyzing Timestamp..............................', this.newRegion.start, this.newRegion.end)
   
       // Show the overlay
       this.overlay = true
 
-      axios.post('http://localhost:8000/sentiment-analysis-timestamped/whisper', 
+      axios.post('http://localhost:8001/audio-transcript-sentiment/process', 
       {
         url: this.selectedAnswerDocument.cameraUrlEvaluator,
-        start_time: this.newRegion.start,
-        end_time: this.newRegion.end,
-        whisper_model_size:"base",
-        
+        start_time_ms: Math.ceil(this.newRegion.start * 1000),
+        end_time_ms: Math.ceil(this.newRegion.end * 1000),
       }).then(async(response) => {
         // Hide the overlay
         this.overlay = false
@@ -285,7 +283,15 @@ export default {
         this.snackbar['text']='Analysis Completed'
 
 
-        const utterances_sentiment = response.data.utterances_sentiment
+        // Check if API returned a successful status
+        if (!response.data || response.data.status !== 'success') {
+          throw new Error(`API Error: ${response.data?.error || 'Unknown error'}`);
+        }
+    
+        const data = response.data.data
+        console.log('Analysis Completed', data)
+
+        const utterances_sentiment = data.utterances_sentiment
         // console.log(utterances_sentiment)
 
         // Add this Region to the sentiment document for the selected answer [Firebase]
@@ -296,18 +302,17 @@ export default {
         for (const utterance of utterances_sentiment) {
           const res = await audioSentimentController.addSentimentRegion(answerSentimentDocId,
             {
-              "start": utterance.timestamp[0],
-              "end": utterance.timestamp[1],
+              "start": utterance.timestamp[0]+this.newRegion.start,
+              "end": utterance.timestamp[1]+this.newRegion.start,
               "transcript": utterance.text,
-              "sentiment": utterance.sentiment,
+              "sentiment": utterance.label,
               "confidence": utterance.confidence
             }
           )
         }
 
-
-        // Fetch the updated sentiment document
-        // await this.fetchSelectedAnswerSentimentDocument()
+      // Fetch the updated sentiment document
+      await this.fetchSelectedAnswerSentimentDocument()
 
       }).catch((error) => {
         // Hide the overlay
@@ -320,7 +325,7 @@ export default {
       
 
         // Log the error
-        console.error(error)
+        console.error("error",error)
       })
     },
 
@@ -346,12 +351,12 @@ export default {
         // Show the snackbar
         this.snackbar['visible']=true
         this.snackbar['color']='success'
-        this.snackbar['text']='Region Deletec Successfully'
+        this.snackbar['text']='Region Deleted Successfully'
 
 
         
         // Fetch the updated sentiment document
-        // await this.fetchSelectedAnswerSentimentDocument()
+        await this.fetchSelectedAnswerSentimentDocument()
       }
       catch(error){
         console.error('Error deleting region:', error);
