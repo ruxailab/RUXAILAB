@@ -162,6 +162,7 @@ export default class Controller {
       return updateDoc(ref, payload)
     } catch(e) {
       console.log(e)
+      throw e
     }
   }
 

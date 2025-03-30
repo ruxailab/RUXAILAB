@@ -102,7 +102,9 @@ export default {
     ],
     passwordRules: [
       (v) => !!v || i18n.t('errors.passwordRequired'),
-      (v) => v.length >= 6 || i18n.t('errors.passwordValidate'),
+      (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
+      (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
+      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
     ],
     confirmpassword: '',
     showPassword: false,
@@ -125,14 +127,19 @@ export default {
 
   methods: {
     async onSignUp() {
-      if (this.valid) {
-        await this.$store.dispatch('signup', {
-          email: this.email,
-          password: this.password,
-        })
-        await this.$router.push('/')
-      }
-    },
+  if (this.valid) {
+    try {
+      await this.$store.dispatch('signup', {
+        email: this.email,
+        password: this.password,
+      })
+      await this.$router.push('/')
+    } catch (error) {
+      console.error('Signup failed:', error)
+      this.errorMessage = 'Signup failed. Please check your credentials.'
+    }
+  }
+},
     redirectToSignin() {
       this.$router.push('/signin')
     },

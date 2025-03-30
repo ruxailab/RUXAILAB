@@ -12,11 +12,11 @@
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title>
-          Are you sure you want to submit this test?
+          {{$t('HeuristicsTestView.messages.submitTest')}}
         </v-card-title>
 
         <v-card-text class="mt-5">
-          Are you sure you want to submit your test. You can only do it once.
+          {{$t('HeuristicsTestView.messages.submitOnce')}}
         </v-card-text>
 
         <v-divider />
@@ -24,14 +24,14 @@
         <v-card-actions>
           <v-spacer />
           <v-btn class="grey lighten-3" text @click="dialog = false">
-            Cancel
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
             class="red white--text ml-1"
             text
             @click="submitAnswer(), (dialog = false)"
           >
-            Submit
+            {{ $t('buttons.submit') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -573,6 +573,7 @@
                           :task="test.testStructure.userTasks[taskIndex]"
                         />
                       </v-col>
+                     
                       <v-col
                         cols="1"
                         v-if="
@@ -583,9 +584,14 @@
                         <AudioRecorder
                           @showLoading="isLoading = true"
                           @stopShowLoading="isLoading = false"
+                          @recordingStarted="isVisualizerVisible = $event"
                           :testId="testId"
                           :taskIndex="taskIndex"
                         ></AudioRecorder>
+                      </v-col>
+
+                      <v-col cols="1" v-if="isVisualizerVisible"  >
+                       <AudioVisualizer/>
                       </v-col>
                       <v-col
                         cols="1"
@@ -786,16 +792,15 @@
         </ShowInfo>
         <ShowInfo
           v-else-if="index == 2 && currentUserTestAnswer.postTestCompleted"
-          title="Finish Test"
+          :title="$t('finishTest.title')"
         >
           <div slot="content" class="ma-0 pa-0">
             <v-row justify="center" class="ma-4">
               <v-col cols="11" class="mt-3">
-                <span class="cardsTitle">Final Message!</span>
+                <span class="cardsTitle">{{$t('finishTest.finalMessage')}}!</span>
                 <br />
                 <span class="cardsSubtitle">
-                  Congratulations you finished this test, now you can submit
-                  your answer.
+                  {{ $t('finishTest.congratulations') }}
                 </span>
                 <v-row justify="center" class="mt-3">
                   <v-col cols="4">
@@ -807,8 +812,7 @@
                   </v-col>
                   <v-col cols="4" class="pt-2 my-8">
                     <span class="cardsSubtitle"
-                      >Click here to submit your answer, when submitted your
-                      answer can't be changed!</span
+                      >{{ $t('finishTest.submitMessage') }}</span
                     >
                     <v-col class="mt-2">
                       <v-btn
@@ -816,7 +820,7 @@
                         color="orange"
                         depressed
                         dark
-                        ><v-icon class="ma-2">mdi-send</v-icon>Submit</v-btn
+                        ><v-icon class="ma-2">mdi-send</v-icon>{{ $t('buttons.submit') }}</v-btn
                       >
                     </v-col>
                   </v-col>
@@ -837,8 +841,10 @@ import Snackbar from '@/components/atoms/Snackbar'
 import TipButton from '@/components/atoms/TipButton'
 import Timer from '@/components/atoms/Timer'
 import AudioRecorder from '@/components/atoms/AudioRecorder'
+import AudioVisualizer from '@/components/atoms/AudioVisualizer'
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
+
 
 export default {
   components: {
@@ -849,7 +855,9 @@ export default {
     TipButton,
     Timer,
     AudioRecorder,
+    AudioVisualizer,
     ScreenRecorder,
+
   },
   data: () => ({
     videoUrl: '',
@@ -868,6 +876,7 @@ export default {
     dialog: false,
     allTasksCompleted: false,
     isLoading: false,
+    isVisualizerVisible:false,
   }),
   computed: {
     test() {

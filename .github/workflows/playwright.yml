@@ -4,25 +4,83 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}-${{ github.run_id }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20.18.x'
+          
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install docker-compose
+        
+      - name: Create .env file
+        run: |
+          missing=false
+
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_API_KEY }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_API_KEY"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_AUTH_DOMAIN"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_PROJECT_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_STORAGE_BUCKET"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_MESSAGING_SENDER_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_APP_ID }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_APP_ID"
+            missing=true
+          fi
+          if [ -z "${{ secrets.VUE_APP_FIREBASE_DB_URL }}" ]; then
+            echo "❌ Error: Missing secret VUE_APP_FIREBASE_DB_URL"
+            missing=true
+          fi
+
+      
+          # Exit if any required secret is missing
+          if [ "$missing" = true ]; then
+            echo "⛔ Missing required environment variables. Exiting..."
+            exit 1
+          fi
+          
+          # Create the .env file
+          echo "Creating .env file..."
+          cat > .env <<EOF
+            VUE_APP_FIREBASE_API_KEY=${{ secrets.VUE_APP_FIREBASE_API_KEY }}
+            VUE_APP_FIREBASE_AUTH_DOMAIN=${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+            VUE_APP_FIREBASE_PROJECT_ID=${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+            VUE_APP_FIREBASE_STORAGE_BUCKET=${{ secrets.VUE_APP_FIREBASE_STORAGE_BUCKET }}
+            VUE_APP_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VUE_APP_FIREBASE_MESSAGING_SENDER_ID }}
+            VUE_APP_FIREBASE_APP_ID=${{ secrets.VUE_APP_FIREBASE_APP_ID }}
+            VUE_APP_FIREBASE_DB_URL=${{secrets.VUE_APP_FIREBASE_DB_URL}}
+          EOF
+
+      - name: Debug .env file
+        run: cat .env
 
       - name: Build and start services
         run: docker-compose up -d --build
@@ -30,7 +88,7 @@ jobs:
       - name: Wait for container to become available
         run: |
           npx wait-on http://localhost:8080
-          sleep 30  # Aumenta el tiempo de espera adicional para asegurarte de que el servidor está listo
+          sleep 30  # Increase additional wait time to ensure the server is ready
 
       - name: Check Docker logs
         run: docker-compose logs
@@ -39,13 +97,15 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: |
+          npx playwright install --with-deps
+          npx playwright install webkit # Installing the webkit separately
 
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npx playwright test 
 
-      - uses: actions/upload-artifact@v2
-        if: always()
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
