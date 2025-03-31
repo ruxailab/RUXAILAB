@@ -3,10 +3,7 @@
     <v-row>
       <!-- Left Section: Profile Details -->
       <v-col cols="12" md="4" lg="3">
-        <v-card
-        outlined
-          class="rounded-lg h-100"
-        >
+        <v-card outlined class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ hover }">
@@ -861,7 +858,7 @@ export default {
             country: this.editProfileData.country,
           }
 
-          this.$toast.success('Profile updated successfully')
+          this.$toast.success(this.$t('alerts.profileUpdatedSuccess'))
           this.editProfileDialog = false
         }
       } catch (error) {
@@ -878,7 +875,7 @@ export default {
 
           if (user) {
             await updatePassword(user, this.newPassword)
-            this.$toast.success('Password changed successfully')
+            this.$toast.success(this.$t('alerts.passwordChangedSuccess'))
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
@@ -942,8 +939,7 @@ export default {
 
           // Delete the Firebase Auth user
           await user.delete()
-
-          this.$toast.success('Account deleted successfully')
+          this.$toast.success(this.$t('alerts.accountDeletedSuccess'))
           this.deleteAccountDialog = false
           this.signOut()
         } catch (error) {
