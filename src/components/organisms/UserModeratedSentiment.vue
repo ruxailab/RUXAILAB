@@ -1,11 +1,9 @@
 <template>
   <div>
-    <!-- testDocument: {{ testDocument }} -->
-    <!-- testAnswerDocument : {{ testAnswerDocument }} -->
-    <!-- usersID : {{ usersID }} -->
-    <!-- selectedUserID : {{ selectedUserID }} -->
-    <!-- selectedAnswerDocument : {{ selectedAnswerDocument }} -->
-    <!-- selectedAnswerSentiment : {{ selectedAnswerSentiment }}  -->
+    <!-- usersID : {{ usersID }}
+    selectedUserID : {{ selectedUserID }}
+    selectedAnswerDocument : {{ selectedAnswerDocument }}
+    selectedAnswerSentiment : {{ selectedAnswerSentiment }}  -->
     <div v-if="usersID" slot="content">
       <v-card flat class="task-container">
         <v-row class="ma-0 pa-0">
@@ -175,7 +173,7 @@ export default {
       return cooperatorEmail
     },
     async fetchSelectedAnswerSentiment() {
-      // console.log('Fetching Sentiment Document..............................');
+      console.log('Fetching Sentiment Document..............................');
 
       const answerDocId = this.testDocument.answersDocId;
       const userDocId = this.selectedUserID;
