@@ -2,10 +2,10 @@
   <div>
     <!-- testDocument: {{ testDocument }} -->
     <!-- testAnswerDocument : {{ testAnswerDocument }} -->
-    usersID : {{ usersID }}
-    selectedUserID : {{ selectedUserID }}
-    selectedAnswerDocument : {{ selectedAnswerDocument }}
-    selectedAnswerSentiment : {{ selectedAnswerSentiment }} 
+    <!-- usersID : {{ usersID }} -->
+    <!-- selectedUserID : {{ selectedUserID }} -->
+    <!-- selectedAnswerDocument : {{ selectedAnswerDocument }} -->
+    <!-- selectedAnswerSentiment : {{ selectedAnswerSentiment }}  -->
     <div v-if="usersID" slot="content">
       <v-card flat class="task-container">
         <v-row class="ma-0 pa-0">
