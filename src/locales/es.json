@@ -507,13 +507,16 @@
     "create": "Crear",
     "cancel": "Cancelar",
     "close": "Cerca",
+    "save": "ahorrar",
     "leave": "Dejar",
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
-    "deleteAccount":"Eliminar cuenta",    
-    "back":"Atrás",
+    "deleteAccount": "Eliminar cuenta",
+    "back": "Atrás",
+    "duplicateTest": "Duplicar Prueba", 
     "submit": "Enviar"
+
 
   },
   "switches": {
