@@ -9,42 +9,72 @@
     <v-col cols="12">
       <v-row justify="center">
         <v-card class="pa-2 buttonCard" depressed>
-          <v-btn
-            v-if="localCameraStream"
-            class="mx-3"
-            :dark="isMicrophoneMuted"
-            :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
-            fab
-            depressed
-            @click="toggleMicrophone"
-          >
-            <v-icon v-if="!isMicrophoneMuted">
-              mdi-microphone
-            </v-icon>
-            <v-icon v-else>
-              mdi-microphone-off
-            </v-icon>
-          </v-btn>
-          <v-btn
-            class="mx-3"
-            :dark="isSharingScreen"
-            :class="{ red: isSharingScreen, white: !isSharingScreen }"
-            depressed
-            fab
-            @click="toggleCameraScreen"
-          >
-            <v-icon v-if="!isSharingScreen">
-              mdi-monitor-screenshot
-            </v-icon>
-            <v-icon v-else>
-              mdi-monitor-off
-            </v-icon></v-btn
-          >
-          <v-btn class="mx-3 white" depressed fab @click="redirect()">
-            <v-icon>
-              mdi-link
-            </v-icon></v-btn
-          >
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-if="localCameraStream"
+                class="mx-3"
+                :dark="isMicrophoneMuted"
+                :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
+                fab
+                depressed
+                @click="toggleMicrophone"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon v-if="!isMicrophoneMuted">
+                  mdi-microphone
+                </v-icon>
+                <v-icon v-else>
+                  mdi-microphone-off
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{
+              isMicrophoneMuted ? 'Unmute microphone' : 'Mute microphone'
+            }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="mx-3"
+                :dark="isSharingScreen"
+                :class="{ red: isSharingScreen, white: !isSharingScreen }"
+                depressed
+                fab
+                @click="toggleCameraScreen"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon v-if="!isSharingScreen">
+                  mdi-monitor-screenshot
+                </v-icon>
+                <v-icon v-else>
+                  mdi-monitor-off
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{
+              isSharingScreen ? 'Stop screen sharing' : 'Share screen'
+            }}</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="mx-3 white"
+                depressed
+                fab
+                @click="redirect()"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>
+                  mdi-link
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Open link</span>
+          </v-tooltip>
         </v-card>
       </v-row>
     </v-col>
@@ -100,6 +130,11 @@ export default {
   },
   methods: {
     redirect() {
+      if(this.test.testStructure.landingPage.trim() == '') {
+        this.$toast.error('No landing page provided')
+        return
+      }
+      console.log(this.test.testStructure.landingPage)
       window.open(this.test.testStructure.landingPage)
     },
     setupStreams() {
