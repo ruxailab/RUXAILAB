@@ -512,14 +512,9 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-
     "deleteAccount":"Excluir conta",
     "back":"Trás",
     "submit": "enviar"
-
-    "deleteAccount": "Excluir conta",
-    "back": "Trás"
-
   },
   "switches": {
     "noAnswer": "Sem resposta",
