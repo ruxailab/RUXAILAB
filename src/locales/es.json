@@ -491,7 +491,15 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
+    "audioSaved": "Grabación de audio guardada!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved":"Grabación de vídeo guardada!",
+    "profileUpdatedSuccess":"Perfil actualizado exitosamente",
+    "passwordChangedSuccess": "La contraseña se cambió correctamente",
+    "accountDeletedSuccess": "Cuenta eliminada exitosamente",
+    "savedChanges": "Cambios guardados",
+    "responseRecorded":"Su respuesta ha sido registrada"
   },
   "buttons": {
     "next": "Siguiente",
@@ -510,8 +518,14 @@
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
+
+    "deleteAccount":"Eliminar cuenta",    
+    "back":"Atrás",
+    "submit": "Enviar"
+
     "deleteAccount": "Eliminar cuenta",
     "back": "Atrás"
+
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -574,6 +588,13 @@
     "test-name": "Nombre de la Prueba",
     "test-description": "Descripción de la Prueba",
     "test-label": "Prueba pública para todos los usuarios"
+  },
+  "finishTest": {
+    "title": "Finalizar Prueba",
+    "finalMessage": "¡Mensaje final!",
+    "congratulations": "¡Felicidades! Has terminado esta prueba, ahora puedes enviar tu respuesta.",
+    "submitMessage": "Haz clic aquí para enviar tu respuesta. Una vez enviada, ¡no podrás cambiarla!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "¿Cómo creo una prueba?",
