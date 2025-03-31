@@ -63,6 +63,14 @@ export default {
   },
   watch: {
     file: 'loadAudioFile',
+    regions: {
+      deep: true,
+      handler(newRegions) {
+        if (!this.wave_surfer) return;
+
+        this.initilzieRegions();
+      }
+    }
   },
   mounted() {
     this.regionsPlugin = RegionsPlugin.create();
@@ -103,49 +111,51 @@ export default {
         // - The audio data is decoded: The audio data is processed into a format that can be played back.
 
         this.loading = false; // <-- Hide loading when audio is ready
- 
-        // Remove any existing regions
-        this.regionsPlugin.getRegions().forEach(region => region.remove());
-        
 
-        // Add Regions
-        // Initialize any existing regions
-        this.regions.forEach(region => {
-          this.regionsPlugin.addRegion({
-            start: region.start,
-            end: region.end,
-            color: (region.sentiment == 'POS') 
-            ? 'rgba(0, 255, 0, 0.2)' // Green color for positive sentiment
-            : (region.sentiment == 'NEG')
-            ? 'rgba(255, 0, 0, 0.2)' // Red color for negative sentiment
-            : (region.sentiment == 'NEU')
-            ? 'rgba(0, 0, 255, 0.2)' // Blue color for neutral sentiment
-            : 'rgba(0, 0, 0, 0.2)', // Default color            
-            drag: false,
-            resize: false,
-          });
-        });
-
-        // Add a active region
-        const initialRegion = this.regionsPlugin.addRegion({
-          start: this.activeRegion.start,
-          end: this.activeRegion.end,
-          color: 'rgba(0, 0, 255, 0.1)',
-          drag: true,
-          resize: true,
-        });
-
-         // Listen to updates on the region and emit the changes
-         initialRegion.on('update-end', () => {
-          this.$emit('update:activeRegion', {
-            start: initialRegion.start,
-            end: initialRegion.end,
-          });
-        });
-
+        this.initilzieRegions();
       });
 
       this.loadAudioFile();
+    },
+
+    initilzieRegions(){
+      // Remove any existing regions
+      this.regionsPlugin.getRegions().forEach(region => region.remove());
+
+      // Add Regions
+      // Initialize any existing regions
+      this.regions.forEach(region => {
+        this.regionsPlugin.addRegion({
+          start: region.start,
+          end: region.end,
+          color: (region.sentiment == 'POS') 
+          ? 'rgba(0, 255, 0, 0.2)' // Green color for positive sentiment
+          : (region.sentiment == 'NEG')
+          ? 'rgba(255, 0, 0, 0.2)' // Red color for negative sentiment
+          : (region.sentiment == 'NEU')
+          ? 'rgba(0, 0, 255, 0.2)' // Blue color for neutral sentiment
+          : 'rgba(0, 0, 0, 0.2)', // Default color            
+          drag: false,
+          resize: false,
+        });
+      });
+
+      // Add a active region
+      const initialRegion = this.regionsPlugin.addRegion({
+        start: this.activeRegion.start,
+        end: this.activeRegion.end,
+        color: 'rgba(0, 0, 255, 0.1)',
+        drag: true,
+        resize: true,
+      });
+
+        // Listen to updates on the region and emit the changes
+        initialRegion.on('update-end', () => {
+        this.$emit('update:activeRegion', {
+          start: initialRegion.start,
+          end: initialRegion.end,
+        });
+      });
     },
 
     loadAudioFile() {
