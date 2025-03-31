@@ -49,7 +49,7 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 export default {
   props: {
     file: { type: String, required: false, default: null },
-    // regions: { type: Array, default: () => [] },
+    regions: { type: Array, default: () => [] },
     activeRegion: { type: Object, required: true }
   },
   data() {
@@ -74,12 +74,12 @@ export default {
     initWaveSurfer() {
       console.log("Initializing WaveSurfer...");
 
-      // Delete existing instance if it exists
+      // 1. Delete existing instance if it exists
       if (this.wave_surfer) {
         this.wave_surfer.destroy();
       }
 
-      // Create a new instance of WaveSurfer
+      // 2. Create a new instance of WaveSurfer
       this.wave_surfer = WaveSurfer.create({
         container: this.$refs.waveform,
         waveColor: 'orange',
@@ -92,7 +92,7 @@ export default {
         plugins: [this.regionsPlugin, this.timelinePlugin],
       });
       
-      // Update play/pause state when WaveSurfer's playback state changes
+      // 3. Update play/pause state when WaveSurfer's playback state changes
       this.wave_surfer.on('play', () => (this.playing = true));
       this.wave_surfer.on('pause', () => (this.playing = false));
 
@@ -109,10 +109,24 @@ export default {
         
 
         // Add Regions
-        // 1. Initialize any existing regions
+        // Initialize any existing regions
+        this.regions.forEach(region => {
+          this.regionsPlugin.addRegion({
+            start: region.start,
+            end: region.end,
+            color: (region.sentiment == 'POS') 
+            ? 'rgba(0, 255, 0, 0.2)' // Green color for positive sentiment
+            : (region.sentiment == 'NEG')
+            ? 'rgba(255, 0, 0, 0.2)' // Red color for negative sentiment
+            : (region.sentiment == 'NEU')
+            ? 'rgba(0, 0, 255, 0.2)' // Blue color for neutral sentiment
+            : 'rgba(0, 0, 0, 0.2)', // Default color            
+            drag: false,
+            resize: false,
+          });
+        });
 
-
-        // 2. Add a active region
+        // Add a active region
         const initialRegion = this.regionsPlugin.addRegion({
           start: this.activeRegion.start,
           end: this.activeRegion.end,
