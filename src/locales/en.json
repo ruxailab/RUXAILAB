@@ -516,7 +516,9 @@
     "delete": "Delete",
     "deleteAccount":"Delete Account",
     "back":"Back",
+    "duplicateTest":"Duplicate Test",
     "submit":"Submit"
+
   },
   "switches": {
     "noAnswer": "No answer",
