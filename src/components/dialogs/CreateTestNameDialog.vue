@@ -181,6 +181,7 @@ export default {
     handleTestType() {
       if (this.testType === 'User') return this.userDialog = true
       if (this.testType === 'HEURISTICS') return this.submit()
+      if (this.testType === 'Accessibility') return this.submit()
     },
 
     async submit() {
@@ -201,7 +202,12 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      this.$router.push(`/managerview/${testId}`)
+      
+      if (this.testType === 'Accessibility') {
+        this.$router.push(`/sample`)
+      } else {
+        this.$router.push(`/managerview/${testId}`)
+      }
     },
   },
 }
