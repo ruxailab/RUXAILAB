@@ -20,7 +20,6 @@
             @click="setTestType"
           />
         </v-col>
-
         <v-col cols="12" md="5" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
@@ -41,6 +40,7 @@
             @click="setTestType"
           />
         </v-col>
+
       </v-row>
     </v-col>
 
