@@ -49,7 +49,7 @@ props: {
       taskTip: '',
     }),
   },
-}
+},
 
   data: () => ({
     dialog: false,
