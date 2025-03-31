@@ -10,7 +10,7 @@
 
     <v-col cols="12" class="mt-6">
       <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" md="5" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="$t('Createblank.testType_1.testTitle')"
@@ -20,7 +20,6 @@
             @click="setTestType"
           />
         </v-col>
-
         <v-col cols="12" md="5" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
