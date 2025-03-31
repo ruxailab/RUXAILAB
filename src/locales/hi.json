@@ -409,6 +409,7 @@
     "responseRecorded":"आपकी प्रतिक्रिया दर्ज कर ली गई है"
   },
   "buttons": {
+    "saveandleave": "बचाओ और छोड़ो",
     "next": "अगला",
     "previous": "पिछला",
     "seeCode": "कोड देखें",
