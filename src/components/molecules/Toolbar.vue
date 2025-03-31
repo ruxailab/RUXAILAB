@@ -170,16 +170,26 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            text
-            v-bind="attrs"
-            v-on="on"
-            class="profile-trigger"
-          >
-            <v-avatar size="32" color="primary" class="white--text">
-              {{ userInitial }}
-            </v-avatar>
-            <v-icon small class="ml-1">mdi-chevron-down</v-icon>
-          </v-btn>
+  text
+  v-bind="attrs"
+  class="pa-0 btn-fix"
+  v-on="on"
+  @click="menu = !menu"
+>
+  <v-avatar size="24" class="mr-1">
+    <v-img 
+      v-if="profileImage" 
+      :src="profileImage" 
+      alt="User Profile"
+    ></v-img>
+    <v-icon v-else dark>
+      mdi-account-circle
+    </v-icon>
+  </v-avatar>
+  <v-icon small>
+    mdi-chevron-down
+  </v-icon>
+</v-btn>
         </template>
 
         <div class="custom-dropdown white rounded-lg">
@@ -251,12 +261,14 @@ export default {
   },
   data() {
     return {
-      drawer: false,
-      menu: false,
-      item: 0,
-      isManager: false,
-      username: null,
-    }
+    drawer: false,
+    menu: false,
+    item: 0,
+    isManager: false,
+    username: null,
+    profileImage: null,
+    defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png'
+  }
   },
   computed: {
     user() {
@@ -427,27 +439,28 @@ export default {
 
   methods: {
     async fetchUsername() {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-        if (user) {
-          const userController = new UserController();
-          const userDoc = await userController.getById(user.uid);
+    if (user) {
+      const userController = new UserController();
+      const userDoc = await userController.getById(user.uid);
 
-          if (userDoc) {
-            this.username = userDoc.username || null;
-          } else {
-            console.error('User document not found in Firestore');
-          }
-        } else {
-          console.error('No user is currently signed in');
-        } 
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        this.$toast.error('Failed to load profile data');
+      if (userDoc) {
+        this.username = userDoc.username || null;
+        this.profileImage = userDoc.profileImage || null;
+      } else {
+        console.error('User document not found in Firestore');
       }
-    },
+    } else {
+      console.error('No user is currently signed in');
+    } 
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    this.$toast.error('Failed to load profile data');
+  }
+},
     goTo(route) {
       if (route.includes('/testview')) window.open(route)
       else {
