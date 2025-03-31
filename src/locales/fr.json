@@ -479,6 +479,7 @@
       "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée."
     },
     "buttons": {
+      "saveandleave": "sauvegarder et quitter",
       "next": "Suivant",
       "previous": "Précédent",
       "seeCode": "Voir le code",
