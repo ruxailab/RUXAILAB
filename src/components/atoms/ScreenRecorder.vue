@@ -104,7 +104,7 @@ export default {
           this.isRecording = false
           this.isCapturing = false
           this.$emit('stopShowLoading')
-          this.$toast.success('Screen record saved!')
+          this.$toast.success(this.$t('alerts.screenRecordSaved'))
         }
         this.isRecording = true
       } else {
