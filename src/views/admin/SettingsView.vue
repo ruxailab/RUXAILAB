@@ -120,7 +120,7 @@
             </v-btn>
 
             <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
-              Duplicate test
+              {{ $t('buttons.duplicateTest') }}
             </v-btn>
           </v-row>
 
@@ -309,7 +309,7 @@ export default {
         await this.$store.dispatch('updateTest', new Test(this.object))
         this.$store.commit('SET_LOCAL_CHANGES', false)
         console.log('changes Saved')
-        this.$toast.success('Changes Saved')
+        this.$toast.success(this.$t('alerts.savedChanges'))
       } else if (element.length >= 200) {
         this.$toast.warning('Title must not exceed 200 characters.')
       } else {

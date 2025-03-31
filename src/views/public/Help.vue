@@ -252,8 +252,6 @@
                 Try adjusting your search or browse all categories
               </p>
 
-              <v-btn color="black" @click="filterByCategory(null)" class="white--text" elevation="2">
-                <span class="text-body-1">View All Articles</span>
               <v-btn
                 color="black"
                 style="color: white;"
