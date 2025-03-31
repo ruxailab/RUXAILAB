@@ -426,14 +426,9 @@
     "leave": "छोड़ें",
     "help": "मदद",
     "delete": "हटाएं",
-
     "deleteAccount":"खाता हटाएं",
     "back":"पीछे",
     "submit":"प्रस्तुत"
-
-    "deleteAccount": "खाता हटाएं",
-    "back": "पीछे"
-
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
