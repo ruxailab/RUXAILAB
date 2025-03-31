@@ -426,9 +426,9 @@
     "leave": "छोड़ें",
     "help": "मदद",
     "delete": "हटाएं",
-
     "deleteAccount":"खाता हटाएं",
     "back":"पीछे",
+    "duplicateTest":"परीक्षण डुप्लिकेट करें",
     "submit":"प्रस्तुत"
   },
   "switches": {
