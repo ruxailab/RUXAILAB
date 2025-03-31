@@ -511,13 +511,9 @@
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
-
     "deleteAccount":"Eliminar cuenta",    
     "back":"Atrás",
     "submit": "Enviar"
-
-    "deleteAccount": "Eliminar cuenta",
-    "back": "Atrás"
 
   },
   "switches": {
