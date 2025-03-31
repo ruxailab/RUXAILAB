@@ -88,14 +88,12 @@
     </div>       
     
       
-    <v-overlay :value="overlay.visible">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
-      <h3> {{ overlay.text }}</h3>
+    <v-overlay :value="overlay.visible" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        {{  overlay.text }}
+      </div>
     </v-overlay>
-
 
     <v-snackbar
     v-model="snackbar.visible"
