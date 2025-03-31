@@ -6,7 +6,7 @@
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
     "sign-up": "Inscrever-se",
-    "contact":"Número de contato",
+    "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
@@ -31,16 +31,16 @@
     "editDelete": "Editar/Apagar",
     "type": "Tipo",
     "noNotifications": "Você não tem notificações ainda",
-    "notifications":"Notificações",
-    "unread":"não lido",
-    "inbox":"Caixa de entrada",
+    "notifications": "Notificações",
+    "unread": "não lido",
+    "inbox": "Caixa de entrada",
     "timeAgo": {
-      "years": "[TODO] {count}",
-      "months": "[TODO] {count}",
-      "days": "[TODO] {count}",
-      "hours": "[TODO] {count}",
-      "minutes": "[TODO] {count}",
-      "now": "[TODO]"
+      "years": "{count} ano{count !== 1 ? 's' : ''} atrás",
+      "months": "{count} mês{count !== 1 ? 'es' : ''} atrás",
+      "days": "{count} dia{count !== 1 ? 's' : ''} atrás",
+      "hours": "{count} hora{count !== 1 ? 's' : ''} atrás",
+      "minutes": "{count} minuto{count !== 1 ? 's' : ''} atrás",
+      "now": "Agora"
     },
     "viewAll": "Ver tudo",
     "sentBy": "Enviado por",
@@ -142,6 +142,7 @@
     "myTests": "Meus testes",
     "sharedWithMe": "Compartilhados comigo",
     "publicTests": "Testes públicos",
+    "sessions": "Sessões",
     "personal": "Pessoais",
     "explore": "Explorar"
   },
@@ -199,7 +200,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "[TODO]"
+      "options": "Opções"
     },
     "messages": {},
     "placeHolders": {},
@@ -207,54 +208,54 @@
   },
   "HeuristicsWeightsTable": {
     "titles": {
-      "weights": "[TODO]",
-      "heuristics": "[TODO]"
+      "weights": "Pesos",
+      "heuristics": "Heurísticas"
     },
     "messages": {
-      "atLeast2HeuristicsForWeighting": "[TODO]"
+      "atLeast2HeuristicsForWeighting": "É necessário pelo menos 2 heurísticas para poder colocar os pesos"
     },
     "actions": {
-      "saveWeights": "[TODO]"
+      "saveWeights": "Salvar valores de peso"
     }
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "[TODO]"
+      "settings": "Configurações"
     },
     "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+      "acceptCsv": "Aceitar arquivo CSV",
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
     },
     "placeHolders": {
-      "importCsv": "[TODO]"
+      "importCsv": "Importar CSV"
     },
     "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
+      "downloadCsvTemplate": "Baixar modelo CSV",
+      "update": "Atualizar"
     }
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+      "submitTest": "Enviar teste",
+      "submitOnce": "Você só pode enviar uma vez",
+      "noHeuristics": "Não há heurísticas disponíveis"
     },
     "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "save": "Salvar",
+      "continueAs": "Continuar como",
+      "notMail": "Não é seu e-mail?",
+      "changeAccount": "Mudar conta",
+      "startTest": "Iniciar teste"
     }
   },
   "HeuristicsEditTest": {
     "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
+      "heuristics": "Heurísticas",
+      "options": "Opções",
+      "weights": "Pesos",
+      "settings": "Configurações"
     }
   },
   "HeuristicsTestAnswer": {
@@ -318,6 +319,15 @@
       "submitted": "[TODO]",
       "in_progress": "[TODO]"
     }
+  },
+  "UsabilityCooperators":{
+    "inviteEvaluator": "Convidar Avaliador para Teste",
+    "email": "E-mail",
+    "scheduledAt": "Agendado para",
+    "inviteMessage": "Mensagem de convite",
+    "placeholderMessage": "Ei, vamos fazer um teste...",
+    "inviteInfo": "O convite com o link do teste será enviado para o e-mail do avaliador no horário agendado",
+    "send": "Enviar"
   },
   "HeuristicsCooperators": {
     "title": {
@@ -475,7 +485,15 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount":"Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "audioSaved": "Gravação de áudio salva!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved": "Gravação de vídeo salva!",
+    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
+    "passwordChangedSuccess": "Senha alterada com sucesso",
+    "accountDeletedSuccess": "Conta excluída com sucesso",
+    "savedChanges": "Alterações salvas",
+    "responseRecorded": "Sua resposta foi registrada"
   },
   "buttons": {
     "next": "Próximo",
@@ -484,7 +502,7 @@
     "username": "Nome de usuário",
     "goToConsole": "Ir para o console",
     "signout": "Sair",
-    "profile":"Perfil",
+    "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
     "create": "Criar",
@@ -494,8 +512,14 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
+
     "deleteAccount":"Excluir conta",
-    "back":"Trás"
+    "back":"Trás",
+    "submit": "enviar"
+
+    "deleteAccount": "Excluir conta",
+    "back": "Trás"
+
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -517,12 +541,40 @@
     "test": "Teste",
     "testType_1": {
       "testTitle": "Heurística de Usabilidade",
-      "text": ["Porcentagem de Usabilidade", "Relatório Final em PDF", "Convide especialistas para avaliar sua aplicação"]
+      "text": [
+        "Porcentagem de Usabilidade",
+        "Relatório Final em PDF",
+        "Convide especialistas para avaliar sua aplicação"
+      ]
     },
     "testType_2": {
       "testTitle": "Usuário de Usabilidade",
-      "text": ["Gravação de webcam, áudio e tela", "Análise aprimorada de respostas", "Testes moderados ou não moderados"]
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Testes moderados ou não moderados"
+      ]
+    },
+"UsabilityUser": {
+    "SelfTest": {
+      "title": "Auto Teste",
+      "type":"não moderado",
+      "text": [
+        "Responder no tempo livre",
+        "Análise aprimorada de respostas",
+        "Personalização de tarefas"
+      ]
+    },
+    "LiveTest": {
+      "title": "Teste ao Vivo",
+      "type":"moderado",
+      "text": [
+        "Gravação de webcam, áudio e tela",
+        "Análise aprimorada de respostas",
+        "Teste ao vivo moderado"
+      ]
     }
+  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
@@ -530,6 +582,13 @@
     "test-name": "Nome do Teste",
     "test-description": "Descrição do Teste",
     "test-label": "Teste público para todos os usuários"
+  },
+  "finishTest": {
+    "title": "Finalizar Teste",
+    "finalMessage": "Mensagem Final!",
+    "congratulations": "Parabéns! Você concluiu este teste, agora pode enviar sua resposta.",
+    "submitMessage": "Clique aqui para enviar sua resposta. Uma vez enviada, sua resposta não poderá ser alterada!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "Como criar um teste?",

@@ -27,15 +27,19 @@ export default class AuthController {
 		return signOut(auth)
 	}
 
-	async autoSignIn() {
-		return new Promise((resolve, rejecj) => {
-			const unsubscribe = onAuthStateChanged(
-				auth,
-				(user) => {
-					unsubscribe()
-					resolve(user)
-				},
-			)
-		})
-	}
+    async autoSignIn() {
+        return new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(
+                auth,
+                (user) => {
+                    unsubscribe()
+                    resolve(user)
+                },
+                (error) => {
+                    unsubscribe()
+                    reject(error)
+                }
+            )
+        })
+    }
 }
