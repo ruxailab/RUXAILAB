@@ -6,7 +6,6 @@
     selectedUserID : {{ selectedUserID }}
     selectedAnswerDocument : {{ selectedAnswerDocument }}
     <div v-if="usersID">
-      <ShowInfo title="Sentiment Analysis">
       <div slot="content">
         <v-card flat class="task-container">
           <v-row class="ma-0 pa-0">
@@ -53,16 +52,35 @@
                 ref="audioWave"
                 :file="selectedAnswerDocument.cameraUrlEvaluator" 
                 :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
-                :newRegion.sync="newRegion"
+                :activeRegion.sync="activeRegion"
               />
-              
+
+
+              <!-- Audio Wave End Banner-->
+              <v-row class="align-center justify-space-between pa-3">
+                <!-- Left Text -->
+                <v-col cols="12" md="8">
+                  <span class="text--secondary caption">
+                    Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
+                  </span>
+                </v-col>
+
+                <!-- Right Controls -->
+                <v-col cols="12" md="4" class="text-right">
+                  <v-btn color="orange" class="white--text" @click="analyzeTimeStamp()">
+                    + Analyze
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+
+              <!-- Segments Transcripts Sentiment -->
+
             </v-col>  
 
           </v-row>
         </v-card>
-      </div>
-    </ShowInfo>
-            
+      </div>            
     </div>
 
   </div>
@@ -79,6 +97,7 @@
 import ModeratedTestCard from '@/components/molecules/ModeratedTestCard.vue';
 import AudioWave from '@/components/molecules/AudioWave.vue'
 
+
 // Controllers
 // const audioSentimentController = new AudioSentimentController();
 
@@ -94,6 +113,12 @@ export default {
     // like useState in React
     return {
       selectedUserID: null, // Will store the selected user ID [use]
+
+      // Region Data
+      activeRegion:{
+        start:0,
+        end:5,
+      }
     };
   },
   methods: {
