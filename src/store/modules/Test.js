@@ -239,6 +239,7 @@ export default {
         await testController.updateTest(payload)
       } catch (e) {
         console.error('Error in updateTest', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -250,6 +251,7 @@ export default {
         await testController.acceptTestCollaboration(payload)
       } catch (e) {
         console.error('Error accept test collaboration', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -461,16 +463,32 @@ export default {
         return peerConnection
       } catch (error) {
         console.error('Error creating peer connection:', error)
-      }
-    },
-    async closePeerConnection({ commit, state }) {
-      if (state.peerConnection) {
-        state.peerConnection.close()
-        commit('SET_PEER_CONNECTION', null)
-      }
-    },
-    async changeTrack({ commit, state }, stream) {
-      const newTrack = stream.getVideoTracks()[0]
+    }
+},
+async closePeerConnection({ commit, state }) {
+    try {
+        if (state.localCameraStream) {
+            state.localCameraStream.getTracks().forEach(track => track.stop())
+            commit('SET_LOCAL_STREAM', null)
+        }
+
+        if (state.remoteCameraStream) {
+            state.remoteCameraStream.getTracks().forEach(track => track.stop())
+            commit('SET_REMOTE_STREAM', null)
+        }
+
+        if (state.peerConnection) {
+            state.peerConnection.close()
+            commit('SET_PEER_CONNECTION', null)
+        }
+
+        commit('SET_DISCONNECTED', true)
+    } catch (error) {
+        console.error('Error closing connection:', error)
+    }
+},
+async changeTrack({ commit, state }, stream) {
+    const newTrack = stream.getVideoTracks()[0]
 
       if (state.peerConnection) {
         const senders = state.peerConnection.getSenders()
