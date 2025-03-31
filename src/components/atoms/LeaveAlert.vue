@@ -25,7 +25,7 @@
           text
           @click="submit()"
         >
-          {{ $t('Save And Leave') }}
+          {{ $t('buttons.saveandleave') }}
         </v-btn>
       </v-card-actions>
     </v-card>

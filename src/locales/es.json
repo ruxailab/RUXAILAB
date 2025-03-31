@@ -495,6 +495,7 @@
     "responseRecorded":"Su respuesta ha sido registrada"
   },
   "buttons": {
+    "saveandleave": "guardar y salir",
     "next": "Siguiente",
     "previous": "Anterior",
     "seeCode": "Ver el código",

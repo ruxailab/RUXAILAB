@@ -497,6 +497,7 @@
     "responseRecorded":"Your response has been recorded"
   },
   "buttons": {
+    "saveandleave": "Save and Leave",
     "next": "Next",
     "previous": "Previous",
     "seeCode": "See the code",
