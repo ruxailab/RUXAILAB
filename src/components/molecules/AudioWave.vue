@@ -179,7 +179,32 @@ export default {
         this.wave_surfer.setVolume(this.volume)
       }
     },
-  
+
+    // Function to play a specific segment of the audio
+    playSegment(start, end) {
+      if (!this.wave_surfer) return;
+      console.log("playing segment",start,end)
+
+      // Seek to the start position
+      this.wave_surfer.seekTo(start / this.wave_surfer.getDuration());
+
+
+      // Start playing from the specified start time
+      this.wave_surfer.play();
+
+      // // Stop the playback when it reaches the end time
+      // this.wave_surfer.on('audioprocess', () => {
+      //   // console.log(this.wave_surfer.getCurrentTime());
+      //   // console.log(end);
+      //   if (this.wave_surfer.getCurrentTime() >= end) {
+      //     this.wave_surfer.pause();
+      //     // console.log('Stopping')
+      //   }
+      //   else{
+      //     // console.log('Playing')
+      //   }
+      // });
+    }
   }
 }
 </script>

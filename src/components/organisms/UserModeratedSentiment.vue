@@ -6,83 +6,108 @@
     selectedUserID : {{ selectedUserID }}
     selectedAnswerDocument : {{ selectedAnswerDocument }}
     selectedAnswerSentiment : {{ selectedAnswerSentiment }} 
-    <div v-if="usersID">
-      <div slot="content">
-        <v-card flat class="task-container">
-          <v-row class="ma-0 pa-0">
+    <div v-if="usersID" slot="content">
+      <v-card flat class="task-container">
+        <v-row class="ma-0 pa-0">
 
-            <!------------------------------------------------------------------------------------------------------------------------->
-            <!--------------------------------------------- Answers List [Left] ------------------------------------------------------->
-            <!------------------------------------------------------------------------------------------------------------------------->
-            <v-col class="ma-0 pa-0 task-list" cols="3">
-              <v-list dense class="list-scroll">
-                <v-subheader>Evaluators</v-subheader>
-                <v-divider />
+          <!------------------------------------------------------------------------------------------------------------------------->
+          <!--------------------------------------------- Answers List [Left] ------------------------------------------------------->
+          <!------------------------------------------------------------------------------------------------------------------------->
+          <v-col class="ma-0 pa-0 task-list" cols="3">
+            <v-list dense class="list-scroll">
+              <v-subheader>Evaluators</v-subheader>
+              <v-divider />
 
-                  <v-list-item-group v-model="selectedUserID" color="#fca326">
-                  <v-list-item v-for="(item, i) in usersID" :key="i" :value="item">
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ getCooperatorEmail(item) }}
-                        <!-- {{ item }} -->
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-col>
+                <v-list-item-group v-model="selectedUserID" color="#fca326">
+                <v-list-item v-for="(item, i) in usersID" :key="i" :value="item">
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ getCooperatorEmail(item) }}
+                      <!-- {{ item }} -->
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
 
-            <!------------------------------------------------------------------------------------------------------------------------->
-            <!--------------------------------------------- Vertical Line [Split] ----------------------------------------------------->
-            <!------------------------------------------------------------------------------------------------------------------------->
+          <!------------------------------------------------------------------------------------------------------------------------->
+          <!--------------------------------------------- Vertical Line [Split] ----------------------------------------------------->
+          <!------------------------------------------------------------------------------------------------------------------------->
 
-            <v-divider vertical inset />
+          <v-divider vertical inset />
 
-            <!------------------------------------------------------------------------------------------------------------------------->
-            <!---------------------------------------------------------- Body [Right] ------------------------------------------------->
-            <!------------------------------------------------------------------------------------------------------------------------->
-            <v-col class="ma-0 pa-1 answer-list" cols="9" v-if="selectedAnswerDocument">
-              <!-- Co-operators -->              
-              <ModeratedTestCard
-              :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
-              :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }"
-              />   
+          <!------------------------------------------------------------------------------------------------------------------------->
+          <!---------------------------------------------------------- Body [Right] ------------------------------------------------->
+          <!------------------------------------------------------------------------------------------------------------------------->
+          <v-col class="ma-0 pa-1 answer-list" cols="9" v-if="selectedAnswerDocument">
+            <!-- Co-operators -->              
+            <ModeratedTestCard
+            :moderator="{ name: testDocument ? testDocument.testAdmin.email : '<Error>' }"
+            :evaluator="{ name: selectedAnswerDocument ? getCooperatorEmail(selectedAnswerDocument.userDocId) : '<Error>' }"
+            />   
 
-              <!-- Audio Wave -->
-              <AudioWave 
-                ref="audioWave"
-                :file="selectedAnswerDocument.cameraUrlEvaluator" 
-                :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" 
-                :activeRegion.sync="activeRegion"
-              />
-
-
-              <!-- Audio Wave End Banner-->
-              <v-row class="align-center justify-space-between pa-3">
-                <!-- Left Text -->
-                <v-col cols="12" md="8">
-                  <span class="text--secondary caption">
-                    Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
-                  </span>
-                </v-col>
-
-                <!-- Right Controls -->
-                <v-col cols="12" md="4" class="text-right">
-                  <v-btn color="orange" class="white--text" @click="analyzeTimeStamp()">
-                    + Analyze
-                  </v-btn>
-                </v-col>
-              </v-row>
+            <!-- Audio Wave -->
+            <AudioWave 
+              ref="audioWave"
+              :file="selectedAnswerDocument.cameraUrlEvaluator" 
+              :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" 
+              :activeRegion.sync="activeRegion"
+            />
 
 
-              <!-- Segments Transcripts Sentiment -->
+            <!-- Audio Wave End Banner-->
+            <v-row class="align-center justify-space-between pa-3">
+              <!-- Left Text -->
+              <v-col cols="12" md="8">
+                <span class="text--secondary caption">
+                  Drag the sliders to adjust the start and end points or enter the exact times in the input fields.
+                </span>
+              </v-col>
 
-            </v-col>  
+              <!-- Right Controls -->
+              <v-col cols="12" md="4" class="text-right">
+                <v-btn color="orange" class="white--text" @click="analyzeTimeStamp()">
+                  + Analyze
+                </v-btn>
+              </v-col>
+            </v-row>
 
-          </v-row>
-        </v-card>
-      </div>            
-    </div>
+
+            <!-- Segments Transcripts Sentiment -->
+            <SentimentTranscriptsList
+            :playSegment="playSegmentInAudioWave"
+            :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" 
+            :deleteRegion="deleteRegion"
+            />
+
+          </v-col>  
+
+        </v-row>
+      </v-card>
+    </div>       
+    
+      
+    <v-overlay :value="overlay.visible">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+      <h3> {{ overlay.text }}</h3>
+    </v-overlay>
+
+
+    <v-snackbar
+    v-model="snackbar.visible"
+    :color="snackbar.color"
+    :timeout="4000"
+    >
+      {{ snackbar.text }}
+      <template v-slot:action>
+        <v-btn color="white" text @click="snackbar.visible = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+
 
   </div>
 </template>
@@ -91,12 +116,11 @@
 // // External Libraries
 // import axios from 'axios'
 
-// import ShowInfo from '@/components/organisms/ShowInfo.vue';
-// import AudioSentimentController from '@/controllers/AudioSentimentController';
 
 // Components
 import ModeratedTestCard from '@/components/molecules/ModeratedTestCard.vue';
 import AudioWave from '@/components/molecules/AudioWave.vue'
+import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
 
 
 // Controllers
@@ -109,6 +133,7 @@ export default {
   components: {
     ModeratedTestCard,
     AudioWave,
+    SentimentTranscriptsList,
   },
   mounted() {
     console.log("Component is mounted!"); // Similar to useEffect(() => {}, [])
@@ -117,14 +142,25 @@ export default {
     // like useState in React
     return {
       selectedUserID: null, // Will store the selected user ID [use]
-
+      
       selectedAnswerSentiment : null, // the sentiment state for the selectedUserID
       
       // Active Region Data
       activeRegion:{
         start:0,
         end:5,
-      }
+      },
+
+      // State Management
+      overlay : {
+        visible:false,
+        text:""
+      },
+      snackbar: {
+        visible: false,
+        text: '',
+        color: '' // Use a valid color name or hex code
+      },
     };
   },
   methods: {
@@ -164,7 +200,51 @@ export default {
         console.error('Error fetching sentiment document:', error);
         this.selectedAnswerSentiment = null;
       }
-    }
+    },
+    
+    playSegmentInAudioWave(start, end) {
+      this.$refs.audioWave.playSegment(start, end)
+    },
+
+    
+    async deleteRegion(region) {
+      // Confirm the deletion
+      if (!confirm('Are you sure you want to delete this region?')) return;
+      
+      // Show the overlay
+      this.overlay = {
+        visible:true,
+        text:"Deleting..."
+      }
+
+      try{
+        // Delete Region in firestore :D
+        const result = await audioSentimentController.deleteSentimentRegion(this.selectedAnswerSentiment.id, region.idx);
+        
+        // Fetch the updated sentiment document
+        await this.fetchSelectedAnswerSentiment();
+        
+        // Hide the overlay
+        this.overlay['visible'] = false
+        
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='success'
+        this.snackbar['text']='Region Deleted Successfully'
+      }
+      catch(error){
+        console.error('Error deleting region:', error);
+
+        // Hide the overlay
+        this.overlay = false
+
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='error'
+        this.snackbar['text']='Error Deleting Region'
+      }
+    },
+
   },
   computed: {
     // In Vue, computed properties are similar to derived state in React. They automatically update when their dependencies change, just like useMemo in React.
