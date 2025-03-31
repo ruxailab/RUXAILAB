@@ -1,13 +1,14 @@
 <template>
   <div>
     <v-tooltip v-if="question.descriptions.length > 0" bottom>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn icon>
-          <v-icon v-bind="attrs" v-on="on" @click="dialog = true">
-            mdi-help-circle-outline
-          </v-icon>
-        </v-btn>
-      </template>
+     <template v-slot:activator="{ props }">
+  <v-btn icon v-bind="props" @click="dialog = true">
+    <v-icon>
+      mdi-help-circle-outline
+    </v-icon>
+  </v-btn>
+</template>
+
       <span>{{ $t('buttons.help') }}</span>
     </v-tooltip>
 
