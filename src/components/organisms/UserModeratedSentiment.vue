@@ -113,15 +113,13 @@
 </template>
 
 <script>
-// // External Libraries
-// import axios from 'axios'
-
+// External Libraries
+import axios from 'axios'
 
 // Components
 import ModeratedTestCard from '@/components/molecules/ModeratedTestCard.vue';
 import AudioWave from '@/components/molecules/AudioWave.vue'
 import SentimentTranscriptsList from './SentimentTranscriptsList.vue';
-
 
 // Controllers
 import AudioSentimentController from '@/controllers/AudioSentimentController';
@@ -245,6 +243,78 @@ export default {
       }
     },
 
+  
+    // Analyze the timestamp of the selected answer [AI Service]
+    async analyzeTimeStamp() {
+      console.log('Analyzing Timestamp..............................', this.activeRegion.start, this.activeRegion.end)
+
+      // Show the overlay
+      this.overlay = {
+        visible:true,
+        text:"Analyzing..."
+      }
+
+      // Call Backend
+      try {
+        const response = await axios.post('http://localhost:8001/audio-transcript-sentiment/process', 
+          {
+            url: this.selectedAnswerDocument.cameraUrlEvaluator,
+            start_time_ms: this.activeRegion.start * 1000.0, // Convert to milli seconds
+            end_time_ms: this.activeRegion.end * 1000.0, // Convert to milli seconds
+          });
+
+        // Check if API returned a successful status
+        if (!response.data || response.data.status !== 'success') {
+          throw new Error(`API Error: ${response.data?.error || 'Unknown error'}`);
+        }
+        
+        // Extract Data
+        const data = response.data.data
+        console.log('Analysis Completed', data)
+
+        const utterances_sentiment = data.utterances_sentiment
+        // console.log(utterances_sentiment)
+
+        // Add this Region to the sentiment document for the selected answer [Firebase]
+        const answerSentimentDocId = this.selectedAnswerSentiment.id
+        // console.log(answerSentimentDocId)
+
+        for (const utterance of utterances_sentiment) {
+          const res = await audioSentimentController.addSentimentRegion(answerSentimentDocId,
+            {
+              "start": utterance.timestamp[0]+this.activeRegion.start,
+              "end": utterance.timestamp[1]+this.activeRegion.start,
+              "transcript": utterance.text,
+              "sentiment": utterance.label,
+              "confidence": utterance.confidence
+            }
+          )
+        }
+
+        // Fetch the updated sentiment document
+        await this.fetchSelectedAnswerSentiment()
+
+        // Hide the overlay
+        this.overlay['visible'] = false
+
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='success'
+        this.snackbar['text']='Analysis Completed'
+      } 
+      catch(error) {
+        // Hide the overlay
+        this.overlay['visible'] = false
+
+        // Show the snackbar
+        this.snackbar['visible']=true
+        this.snackbar['color']='error'
+        this.snackbar['text']='Analysis Failed'
+      
+        // Log the error
+        console.error("error",error)
+      }
+    }
   },
   computed: {
     // In Vue, computed properties are similar to derived state in React. They automatically update when their dependencies change, just like useMemo in React.
