@@ -5,6 +5,7 @@
     usersID : {{ usersID }}
     selectedUserID : {{ selectedUserID }}
     selectedAnswerDocument : {{ selectedAnswerDocument }}
+    selectedAnswerSentiment : {{ selectedAnswerSentiment }} 
     <div v-if="usersID">
       <div slot="content">
         <v-card flat class="task-container">
@@ -51,7 +52,7 @@
               <AudioWave 
                 ref="audioWave"
                 :file="selectedAnswerDocument.cameraUrlEvaluator" 
-                :regions="selectedAnswerSentimentDocument ? selectedAnswerSentimentDocument.regions || [] : []" 
+                :regions="selectedAnswerSentiment ? selectedAnswerSentiment.regions || [] : []" 
                 :activeRegion.sync="activeRegion"
               />
 
@@ -99,7 +100,10 @@ import AudioWave from '@/components/molecules/AudioWave.vue'
 
 
 // Controllers
-// const audioSentimentController = new AudioSentimentController();
+import AudioSentimentController from '@/controllers/AudioSentimentController';
+
+// Init audioSentimentController
+const audioSentimentController = new AudioSentimentController();
 
 export default {
   components: {
@@ -114,7 +118,9 @@ export default {
     return {
       selectedUserID: null, // Will store the selected user ID [use]
 
-      // Region Data
+      selectedAnswerSentiment : null, // the sentiment state for the selectedUserID
+      
+      // Active Region Data
       activeRegion:{
         start:0,
         end:5,
@@ -136,6 +142,29 @@ export default {
       }
       return cooperatorEmail
     },
+    async fetchSelectedAnswerSentiment() {
+      // console.log('Fetching Sentiment Document..............................');
+
+      const answerDocId = this.testDocument.answersDocId;
+      const userDocId = this.selectedUserID;
+
+      try {
+        let result = await audioSentimentController.getByAnswerDocIdandUserDocId(answerDocId, userDocId);
+        if (!result) {
+          console.warn(`Sentiment document for answerDocId ${answerDocId} and userDocId ${userDocId} does not exist. Creating new document.`);
+          const payload = {
+            answerDocId: answerDocId,
+            userDocId: userDocId,
+          };
+          result = await audioSentimentController.create(payload);
+          console.warn(`Created new sentiment document with ID ${result.id}.`);
+        }
+        this.selectedAnswerSentiment = result;
+      } catch (error) {
+        console.error('Error fetching sentiment document:', error);
+        this.selectedAnswerSentiment = null;
+      }
+    }
   },
   computed: {
     // In Vue, computed properties are similar to derived state in React. They automatically update when their dependencies change, just like useMemo in React.
@@ -154,7 +183,18 @@ export default {
     // Compute selectedAnswerDocument based on selectedUserID
     selectedAnswerDocument() {
       return this.testAnswerDocument[this.selectedUserID] || null;
-    }
+    },
+  },
+
+  watch: {
+    selectedUserID: {
+      immediate: true, // Runs when the component is mounted
+      async handler(newUserId) {
+        if (!newUserId) return;
+
+        this.fetchSelectedAnswerSentiment();
+      },
+    },
   },
 };
 </script>
