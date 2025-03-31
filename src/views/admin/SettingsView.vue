@@ -4,6 +4,7 @@
 
     <!-- Leave Alert Dialog -->
     <LeaveAlert />
+    <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -302,6 +303,11 @@ export default {
   methods: {
     validate(valid, index) {
       this.valids[index] = valid
+    },
+    async onSubmit() {
+        await this.submit();
+        this.$store.commit('SET_LOCAL_CHANGES', false);
+        this.$router.push({ name: this.$store.state.pathTo });
     },
     async submit() {
       const element = this.object.testTitle
