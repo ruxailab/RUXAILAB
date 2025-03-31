@@ -49,8 +49,8 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 export default {
   props: {
     file: { type: String, required: false, default: null },
-    regions: { type: Array, default: () => [] },
-    newRegion: { type: Object, default: () => ({ start: 0, end: 10 }) }
+    // regions: { type: Array, default: () => [] },
+    activeRegion: { type: Object, required: true }
   },
   data() {
     return {
@@ -72,6 +72,14 @@ export default {
   },
   methods: {
     initWaveSurfer() {
+      console.log("Initializing WaveSurfer...");
+
+      // Delete existing instance if it exists
+      if (this.wave_surfer) {
+        this.wave_surfer.destroy();
+      }
+
+      // Create a new instance of WaveSurfer
       this.wave_surfer = WaveSurfer.create({
         container: this.$refs.waveform,
         waveColor: 'orange',
@@ -83,12 +91,44 @@ export default {
         dragToSeek: true,
         plugins: [this.regionsPlugin, this.timelinePlugin],
       });
-
+      
+      // Update play/pause state when WaveSurfer's playback state changes
       this.wave_surfer.on('play', () => (this.playing = true));
       this.wave_surfer.on('pause', () => (this.playing = false));
 
       this.wave_surfer.on('ready', () => {
+        // The ready event in WaveSurfer.js is triggered when the audio file has been completely loaded, decoded, and is ready for playback.
+        // This means that:
+        // - The audio file is fully loaded: The waveform is generated and displayed.
+        // - The audio data is decoded: The audio data is processed into a format that can be played back.
+
         this.loading = false; // <-- Hide loading when audio is ready
+ 
+        // Remove any existing regions
+        this.regionsPlugin.getRegions().forEach(region => region.remove());
+        
+
+        // Add Regions
+        // 1. Initialize any existing regions
+
+
+        // 2. Add a active region
+        const initialRegion = this.regionsPlugin.addRegion({
+          start: this.activeRegion.start,
+          end: this.activeRegion.end,
+          color: 'rgba(0, 0, 255, 0.1)',
+          drag: true,
+          resize: true,
+        });
+
+         // Listen to updates on the region and emit the changes
+         initialRegion.on('update-end', () => {
+          this.$emit('update:activeRegion', {
+            start: initialRegion.start,
+            end: initialRegion.end,
+          });
+        });
+
       });
 
       this.loadAudioFile();
@@ -101,9 +141,9 @@ export default {
 
       if (this.wave_surfer) {
         this.wave_surfer.stop(); // Stop playback
+        this.wave_surfer.load(this.file);
       }
 
-      this.wave_surfer.load(this.file);
     },
 
     playPause() {
