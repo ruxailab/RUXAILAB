@@ -258,7 +258,6 @@
                 @click="filterByCategory(null)"
               >
                 View All Articles
-
               </v-btn>
             </v-card-text>
           </v-card>
