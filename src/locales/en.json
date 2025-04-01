@@ -611,5 +611,28 @@
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
+  },
+  "ModeratedTest": {
+    "preTest": "PRE-TEST",
+    "tasks": "TASKS",
+    "postTest": "POST-TEST",
+    "consentForm": "Consent Form",
+    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
+    "landingPage": "Landing Page",
+    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "participantCamera": "Participant camera",
+    "cameraOptions": {
+      "optional": "Optional",
+      "required": "Required",
+      "disabled": "Disabled"
+    },
+    "preForm": "Pre-Form",
+    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
+    "postForm": "Post Form",
+    "postFormDescription": "This is a post-questionnaire to collect participant data.",
+    "finalMessage": "Final message",
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
   }
 }
