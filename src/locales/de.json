@@ -1,0 +1,559 @@
+{
+  "language": "Sprache",
+  "SIGNIN": {
+    "sign-in": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "dont-have-account": "Noch kein Konto? Registrieren",
+    "sign-up": "Registrieren",
+    "contact": "Kontaktnummer",  
+    "confirmPassword": "Passwort bestätigen",
+    "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden"
+  },
+  "common": {
+    "loading": "Lade Test",
+    "continueAs": "Fortfahren als",
+    "notUser": "Nicht {userEmail}?",
+    "name": "Name",
+    "changeAccount": "Konto ändern",
+    "editAndInvite": "Bearbeiten und Personen zu Ihrem Test einladen",
+    "analyzeProject": "Projekt und Evaluatoren analysieren",
+    "comment": "Kommentar",
+    "inputImage": "Geben Sie ein Bild Ihrer Wahl zum Thema ein",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "add": "Hinzufügen",
+    "text": "Text",
+    "value": "Wert",
+    "save": "Speichern",
+    "editDelete": "Bearbeiten/Löschen",
+    "type": "Typ",
+    "noNotifications": "Sie haben noch keine Benachrichtigungen",
+    "notifications": "Benachrichtigungen",
+    "unread": "ungelesen",
+    "inbox": "Posteingang",
+    "timeAgo": {
+      "years": "vor {count} Jahr{count !== 1 ? 'e' : ''}",
+      "months": "vor {count} Monat{count !== 1 ? 'en' : ''}",
+      "days": "vor {count} Tag{count !== 1 ? 'en' : ''}",
+      "hours": "vor {count} Stunde{count !== 1 ? 'n' : ''}",
+      "minutes": "vor {count} Minute{count !== 1 ? 'n' : ''}",
+      "now": "Jetzt"
+    },
+    "viewAll": "Alle anzeigen",
+    "sentBy": "Gesendet von",
+    "new": "NEU"
+  },
+  "PROFILE": {
+    "title": "Profil",
+    "editProfile": "Profil bearbeiten",
+    "account": "Konto",
+    "admin": "Admin",
+    "changePassword": "Passwort ändern",
+    "passwordRequirements": "Stellen Sie sicher, dass diese Anforderungen erfüllt sind",
+    "passwordMinimumRequirements": "Mindestens 8 Zeichen, Großbuchstaben und ein Symbol",
+    "newPassword": "Neues Passwort",
+    "confirmNewPassword": "Neues Passwort bestätigen",
+    "editDetails": "Details bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "country": "Land",
+    "missingInfo": "Fehlende Informationen",
+    "deleteAccountTitle": "Konto löschen",
+    "deleteAccountConfirm": "Sind Sie absolut sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteAccountWarning": "Dadurch wird Ihr Konto dauerhaft gelöscht und Ihre Daten von unseren Servern entfernt.",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordMinLength": "Das Passwort muss mindestens 8 Zeichen lang sein",
+    "passwordUppercase": "Muss einen Großbuchstaben enthalten",
+    "passwordSymbol": "Muss ein Symbol enthalten",
+    "confirmPasswordRequired": "Passwortbestätigung ist erforderlich",
+    "passwordsMatch": "Passwörter müssen übereinstimmen"
+  },
+  "titles": {
+    "manager": "Manager",
+    "test": "Test",
+    "preview": "Vorschau",
+    "reports": "Berichte",
+    "answers": "Antworten",
+    "analytics": "Analysen",
+    "cooperators": "Mitarbeiter",
+    "template": "Vorlage",
+    "finalReport": "Abschlussbericht",
+    "answerType": "Antworttyp:",
+    "drawer": {
+      "Manager": "Manager",
+      "Test": "Test",
+      "Preview": "Vorschau",
+      "Reports": "Berichte",
+      "Answers": "Antworten",
+      "Analytics": "Analysen",
+      "Cooperators": "Mitarbeiter",
+      "Template": "Vorlage",
+      "Final Report": "Abschlussbericht",
+      "Answer Test": "Test beantworten",
+      "Settings": "Einstellungen"
+    },
+    "heuristic": "Usability-Heuristik-Evaluation"
+  },
+  "descriptions": {
+    "edit": "Beginnen Sie mit der Erstellung und Bearbeitung Ihres Tests.",
+    "cooperators": "Laden Sie Personen ein, die Ihnen bei Ihrem Test helfen.",
+    "reports": "Sehen Sie sich an, wie es Ihren Evaluatoren geht.",
+    "answers": "Sehen Sie, wie Ihre Evaluatoren Ihr Projekt bewerten.",
+    "analytics": "Analysieren Sie Kommentare und Antworten Ihrer Evaluatoren.",
+    "finalReport": "Fügen Sie Ihrem Test zusätzliche Daten hinzu.",
+    "intro": {
+      "reports": "Verfolgen Sie den Fortschritt und den Antwortstatus Ihrer Evaluatoren, während sie Ihren Test abschließen.",
+      "answers": "Erhalten Sie schnell Feedback zu Ihrem Projekt, indem Sie Daten aus den Antworten anderer Benutzer analysieren.",
+      "analytics": "Werfen Sie einen detaillierten Blick auf Ihren Test und sehen Sie, was die Leute darüber sagen.",
+      "invite": "Laden Sie Evaluatoren ein, Ihren Test zu beantworten!",
+      "cooperators": "Fügen Sie Mitarbeiter hinzu, die Ihnen helfen können, Ihr Projekt zu verbessern und Daten für Ihre Studien zu sammeln.",
+      "start": "Loslegen!",
+      "edit": "Erstellen und passen Sie Ihre Aufgaben und Heuristiken für Ihre Forschungsbedürfnisse an."
+    }
+  },
+  "errors": {
+    "invalidInvitation": "Ungültige Einladung",
+    "signupWithInvitationEmail": "Der Benutzer muss sich mit derselben E-Mail wie in der Einladung registrieren.",
+    "emailIsRequired": "E-Mail ist erforderlich",
+    "invalidEmail": "Ungültige E-Mail",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordValidate": "Das Passwort muss mindestens 8 Zeichen lang sein",
+    "differentPasswords": "Unterschiedliche Passwörter",
+    "fieldRequired": "Feld erforderlich",
+    "passwordUppercase": "Muss einen Großbuchstaben enthalten",
+    "passwordSymbol": "Muss ein Symbol enthalten",
+    "userNotExist": "Dieser Benutzer existiert nicht.",
+    "incorrectPassword": "Falsches Passwort",
+    "incorrectCredential": "Falscher Benutzername oder Passwort."
+  },
+  "Introduction": {
+    "title": "UX Remote LAB",
+    "subtitle": "Wie wäre es mit Usability-Tests aus der Ferne?",
+    "description": "Nehmen Sie an unserem OpenSource-Projekt teil und erstellen Sie Ihr eigenes Usability-LAB, das Sie mit Freunden teilen können. Forschen war noch nie so einfach!",
+    "cta": "Loslegen"
+  },
+  "Dashboard": {
+    "createNewTest": "Neuen Test erstellen",
+    "tests": "Tests",
+    "templates": "Vorlagen",
+    "search": "Suchen",
+    "myTests": "Meine Tests",
+    "sharedWithMe": "Mit mir geteilt",
+    "publicTests": "Öffentliche Tests",
+    "personal": "Persönlich",
+    "explore": "Erkunden"
+  },
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "Heuristik bearbeiten",
+      "editQuestion": "Frage bearbeiten",
+      "newQuestion": "Neue Frage",
+      "creatingHeuristic": "Erstellen einer Heuristik",
+      "currentHeuristics": "Heuristiken",
+      "addNewHeuristic": "Neue Heuristik hinzufügen",
+      "searchHeuristics": "Heuristiken suchen...",
+      "noHeuristicsFound": "Keine Heuristiken gefunden",
+      "addNewQuestion": "Neue Frage hinzufügen",
+      "questions": "Fragen",
+      "descriptions": "Beschreibungen",
+      "actions": "Aktionen",
+      "titles": "Titel",
+      "cancel": "Abbrechen",
+      "ok": "Ok",
+      "add": "Hinzufügen",
+      "deleteHeuristic": "Heuristik löschen",
+      "deleteQuestion": "Frage löschen",
+      "addNewDescription": "Neue Beschreibung hinzufügen",
+      "addOption": "Neue Option hinzufügen",
+      "hasValue": "Hat Wert"
+    },
+    "placeholders": {
+      "titleHeuristic": "Titel Heuristik",
+      "titleYourHeuristic": "Titel Ihrer Heuristik",
+      "titleYourQuestion": "Titel Ihrer Frage",
+      "titleQuestion": "Titel Frage",
+      "titleNewQuestion": "Titel neue Frage",
+      "optionDescription": "Option Beschreibung"
+    },
+    "messages": {
+      "noHeuristics": "Sie haben keine Heuristik, erstellen Sie eine, um fortzufahren.",
+      "youMustHave": "Sie müssen etwas falsch eingegeben haben...",
+      "noHeuristicsDeleteAll": "Sorry, aber Sie können nicht alle Heuristikfragen löschen.",
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. Bitte wählen Sie eine aus, bevor Sie fortfahren.",
+      "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern."
+    },
+    "validation": {
+      "nameRequired": "Name ist obligatorisch",
+      "questionRequired": "Die Frage muss ausgefüllt werden",
+      "textRequired": "Text ist erforderlich",
+      "positiveValue": "Wert muss eine positive Zahl sein",
+      "addQuestion": "Bitte fügen Sie mindestens eine Frage zu Ihrer Heuristik hinzu"
+    },
+    "AddCommentBtn": {
+      "showComment": "Kommentar anzeigen",
+      "addComment": "Kommentar hinzufügen",
+      "hideTextArea": "Textbereich ausblenden"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "Optionen"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "Gewichte",
+      "heuristics": "Heuristiken"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "Mindestens 2 Heuristiken benötigt, um Gewichte zu setzen."
+    },
+    "actions": {
+      "saveWeights": "Gewichtswerte speichern"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "Einstellungen"
+    },
+    "messages": {
+      "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren."
+    },
+    "placeHolders": {
+      "importCsv": "Importieren Sie Ihre CSV-Testdatei hier."
+    },
+    "actions": {
+      "downloadCsvTemplate": "CSV-Vorlage herunterladen",
+      "update": "Aktualisieren"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "Sind Sie sicher, dass Sie diesen Test einreichen möchten?",
+      "submitOnce": "Sind Sie sicher, dass Sie Ihren Test einreichen möchten? Sie können dies nur einmal tun.",
+      "noHeuristics": "Dieser Test hat keine Heuristiken"
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "submit": "Einreichen",
+      "save": "Speichern",
+      "continueAs": "Fortfahren als {userEmail}",
+      "notMail": "Nicht {userEmail}?",
+      "changeAccount": "Konto ändern",
+      "startTest": "Test starten"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "Heuristiken",
+      "options": "Optionen",
+      "weights": "Gewichte",
+      "settings": "Einstellungen"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "Antworten",
+      "statistics": "Statistiken",
+      "evaluators": "Evaluatoren",
+      "heuristics": "Heuristiken",
+      "analytics": "Analysen"
+    },
+    "statistics": {
+      "usabilityPercentage": "Usability-Prozentsatz",
+      "max": "Max",
+      "min": "Min",
+      "std": "Standardabweichung"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "Tabelle",
+        "graphic": "Grafik"
+      },
+      "messages": {
+        "graphForMoreThan3": "Die Grafik kann nur mit 3 oder mehr Evaluatoren generiert werden. Bitte sammeln Sie mehr Daten von Ihrer Forschung, um fortzufahren."
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "Heuristikdaten",
+        "answersByEvaluator": "Antworten nach Evaluator",
+        "answersByHeuristics": "Antworten nach Heuristiken",
+        "graphic": "Grafik",
+        "weights": "Gewichte"
+      },
+      "messages": {
+        "needMoreThan1Answer": "Diese Seite benötigt mehr als 1 Antwort, um generiert zu werden.",
+        "runWeightFunction": "Diese Seite benötigt die Gewichtsfunktion (Python), die in Emulatoren oder im Bereitstellungsmodus ausgeführt wird, und die Gewichte müssen auf Ihrer Testseite vollständig markiert sein."
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "Berichte",
+      "last_updated": "Zuletzt aktualisiert"
+    },
+    "headers": {
+      "evaluator": "Evaluator",
+      "last_update": "Letzte Aktualisierung",
+      "progress": "Fortschritt",
+      "status": "Status",
+      "more": "Mehr"
+    },
+    "messages": {
+      "confirm_delete_report": "Sind Sie sicher, dass Sie diesen Bericht löschen möchten?",
+      "reports_loading": "Lade Berichte",
+      "remove_report": "Bericht entfernen",
+      "sure_to_delete": "Sind Sie sicher, dass Sie den Bericht von {user} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "report_deleted": "Bericht erfolgreich gelöscht"
+    },
+    "status": {
+      "submitted": "eingereicht",
+      "in_progress": "in Bearbeitung"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "Mitarbeiter"
+    },
+    "headers": {
+      "email": "E-Mail",
+      "role": "Rolle",
+      "invited": "Eingeladen",
+      "accepted": "Akzeptiert",
+      "more": "Mehr",
+      "title": "Titel",
+      "content": "Inhalt"
+    },
+    "actions": {
+      "send_invitation": "Einladung senden",
+      "send_message": "Nachricht senden",
+      "reinvite": "Erneut einladen",
+      "remove_cooperator": "Mitarbeiter entfernen",
+      "cancel_invitation": "Einladung stornieren",
+      "cancel": "Abbrechen",
+      "send": "Senden",
+      "select_cooperator": "Mitarbeiter auswählen"
+    },
+    "roles": {
+      "administrator": "Administrator",
+      "evaluator": "Evaluator",
+      "guest": "Gast"
+    },
+    "messages": {
+      "cooperators_loading": "Lade Mitarbeiter",
+      "no_users": "Es gibt keine Benutzer, die mit dieser E-Mail registriert sind. Drücken Sie die Eingabetaste, um trotzdem auszuwählen.",
+      "remove_cooperator": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern entfernen möchten?",
+      "cancel_invitation": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern stornieren möchten?",
+      "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
+      "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
+      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein"
+    }
+  },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "Einverständniserklärung",
+      "userVariables": "Benutzervariablen",
+      "currentTasks": "Aktuelle Aufgaben",
+      "postForm": "Nachtest-Formular",
+      "writeNewPost": "Neue Frage schreiben"
+    },
+    "inputs": {
+      "consent": "Einverständnis",
+      "variableName": "Variablenname",
+      "description": "Beschreibung",
+      "selection": "Auswahl",
+      "writeQuestion": "Frage schreiben"
+    },
+    "checkboxes": {
+      "selectionField": "Auswahlfeld",
+      "textField": "Textfeld",
+      "textAnswer": "Textantwort",
+      "selectionAnswer": "Auswahlantwort"
+    },
+    "buttons": {
+      "createNewVariable": "Neue Variable erstellen",
+      "createNewPost": "Neue Frage erstellen"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "Vor dem Test - Einverständnis",
+      "preTestForm": "Vor dem Test - Formular",
+      "preTest": "Vor dem Test",
+      "postTest": "Nach dem Test"
+    },
+    "buttons": {
+      "done": "Fertig"
+    }
+  },
+  "AccessNotAllowed": {
+    "notAllowed": "Zugriff nicht erlaubt",
+    "noAccess": "Sie haben keinen Zugriff auf die Seite, die Sie aufrufen möchten.",
+    "goHome": "Zur Startseite"
+  },
+  "pages": {
+    "intros": {
+      "click": "Hier klicken!",
+      "learnMore": "Mehr erfahren",
+      "docTitle": "Dokumentation lesen",
+      "docSubtitle": "Klicken Sie hier, um auf die Dokumentation zur Verwendung der Seite zuzugreifen.",
+      "discTitle": "Treten Sie der Community bei!",
+      "discSubtitle": "Sie finden Unterstützung auf unserem Discord-Server."
+    },
+    "finalReport": {
+      "select": "WÄHLEN SIE IHRE PDF-ELEMENTE",
+      "heuristic": "Heuristik",
+      "to": "bis",
+      "createHeuristics": "Bitte erstellen Sie Heuristiken, damit Sie sie hier auswählen können.",
+      "createUserTask": "Bitte erstellen Sie Aufgaben, damit Sie sie hier auswählen können.",
+      "pdf": "PDF generieren",
+      "elements": "Elemente",
+      "options": {
+        "options": "Testoptionen",
+        "comments": "Antwortkommentare",
+        "statistics": "Statistiken",
+        "answersByEvaluator": "Antworten nach Evaluatoren",
+        "answersByHeuristics": "Antworten nach Heuristiken",
+        "finalReport": "Abschlussbericht",
+        "loading": "Lade..."
+      },
+      "ContructionHeading": "Seite im Aufbau",
+      "ContructionParagraph": "Wir arbeiten hart daran, unsere Website zu verbessern. Bitte schauen Sie bald wieder vorbei!"
+    },
+    "landing": {
+      "feedbackTitle": "Erhalten Sie schnell Feedback zu Ihren Projekten",
+      "feedbackSubtitle1": "UX Remote LAB wurde entwickelt, um UX-Experten eine Reihe von Tools zur Verfügung zu stellen, die ihre eigenen UX-Tests erstellen und mit den Benutzern durchführen möchten.",
+      "feedbackSubtitle2": "COVID-19 hat der Welt gezeigt, dass die physische Anwesenheit von echten Benutzern manchmal nicht möglich ist, daher sind wir hier, um dieses Problem zu lösen!",
+      "uxTitle": "Starten Sie Ihr eigenes UX-LAB",
+      "uxSubtitle1": "Wenn Sie Forscher, ein Unternehmen oder ein Profi sind, der einen UX-Test durchführen möchte, finden Sie hier verschiedene Tools, die Ihnen helfen, Ihre Tests mit verschiedenen UX-Techniken zu analysieren und zu verfolgen.",
+      "uxSubtitle2": "Helfen Sie uns, diese Open-Source-Community zu vergrößern, und treten Sie uns auf GitHub bei! :)",
+      "footer": "Wir suchen neue Partner, die uns helfen, das Projekt zu vergrößern! Kontaktieren Sie uns gerne unter "
+    },
+    "listTests": {
+      "createdBy": "Erstellt von",
+      "me": "Ich",
+      "progress": "Fortschritt",
+      "updated": "Zuletzt aktualisiert am",
+      "version": "Version:",
+      "noTests": "Keine Tests gefunden",
+      "noTemplates": "Keine Vorlagen gefunden"
+    },
+    "createTest": {
+      "title": "Neuen Test erstellen",
+      "blanckTitle": "Leeren Test erstellen",
+      "blanckSubtitle": "Erstellen Sie einen leeren Test, um mit einer völlig neuen und frischen Vorlage zu beginnen.",
+      "templateTitle": "Aus Vorlage erstellen",
+      "templateSubtitle": "Erstellen Sie einen Test basierend auf einer Vorlage, die von einem unserer Benutzer erstellt wurde.",
+      "create": "Test erstellen",
+      "templateInfo": "Vorlageninfo",
+      "deleteTemplate": "Vorlage löschen",
+      "noDescription": "Vorlage hat keine Beschreibung.",
+      "public": "Machen Sie den Test für alle Benutzer öffentlich (nur lesbar)"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "currentTest": "Aktueller Test",
+      "createTemplate": "VORLAGE ERSTELLEN",
+      "deleteTest": "TEST LÖSCHEN"
+    }
+  },
+  "alerts": {
+    "copy": "Kopieren erfolgreich",
+    "noCopy": "Kopieren nicht erfolgreich",
+    "deleteTemplate": "Sind Sie sicher, dass Sie diese Vorlage löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!",
+    "deleteTest": "Sind Sie sicher, dass Sie diesen Test löschen möchten?",
+    "addDescription": "Bitte fügen Sie eine Beschreibung hinzu",
+    "errorOccurred": "Ein Fehler ist aufgetreten",
+    "leave": "Sind Sie sicher, dass Sie gehen möchten?",
+    "sureLeave": "Sind Sie sicher, dass Sie gehen möchten? Alle Ihre Änderungen werden verworfen.",
+    "imageURL": "Geben Sie die Bild-URL ein:",
+    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten?",
+    "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+  },
+  "buttons": {
+    "saveandleave": "speichern und verlassen",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "seeCode": "Code anzeigen",
+    "username": "Benutzername",
+    "goToConsole": "Zur Konsole gehen",
+    "signout": "Abmelden",
+    "profile": "Profil",
+    "returnToConsole": "Zurück zur Konsole",
+    "tip": "Tipp",
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "stay": "Bleiben",
+    "leave": "Verlassen",
+    "help": "Hilfe",
+    "delete": "Löschen",
+    "deleteAccount": "Konto löschen",
+    "back": "Zurück"
+  },
+  "switches": {
+    "noAnswer": "Keine Antwort",
+    "textArea": "Textbereich",
+    "timer": "Timer",
+    "postTest": "Nachtest-Frage",
+    "screenRecord": "Bildschirmaufnahme",
+    "camera": "Kamera",
+    "eyeTracker": "Eye-Tracker",
+    "audioRecord": "Audioaufnahme"
+  },
+  "inputs": {
+    "consentForm": "Einverständniserklärung",
+    "preForm": "Vor dem Test - Formular",
+    "postForm": "Nach dem Test - Formular"
+  },
+  "Createblank": {
+    "title": "Welche Art von Test möchten Sie starten?",
+    "test": "Test",
+    "testType_1": {
+      "testTitle": "Usability-Heuristik",
+      "text": ["Usability-Prozentsatz", "Abschlussbericht PDF", "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"]
+    },
+    "testType_2": {
+      "testTitle": "Usability-Benutzer",
+      "text": ["Webcam, Audio & Bildschirmaufnahme", "Erweiterte Antwortanalyse", "Moderierte oder nicht moderierte Tests"]
+    }
+  },
+  "TestDialog": {
+    "heading": "Test erstellen",
+    "sub-heading": "Geben Sie Ihrem Test einen Namen!",
+    "test-name": "Testname",
+    "test-description": "Testbeschreibung",
+    "test-label": "Test für alle Benutzer öffentlich"
+  },
+  "help": {
+    "createtest": "Wie erstelle ich einen Test?",
+    "createtestanswer": "Um einen Test zu erstellen, klicken Sie auf das Plus-Symbol, wählen Sie Heuristischer Test. Geben Sie dann die Details Ihres Projekts an. Gehen Sie schließlich zur speziellen Manager-Seite.",
+    "heuristictest": "Wie richte ich meinen Heuristik-Test ein?",
+    "heuristictestanswer": "Um Ihren Heuristik-Test einzurichten, gehen Sie zu 'Test bearbeiten'. Klicken Sie dann auf das Plus-Symbol, um einen Titel und eine Frage zu Ihrer Heuristik hinzuzufügen. Gehen Sie anschließend zum Abschnitt Optionen, um die Antwortoptionen und ihre jeweiligen Werte zu erstellen. Speichern Sie schließlich die Änderungen.",
+    "deletetest": "Wie lösche ich meinen Test?",
+    "deletetestanswer": "Um Ihren Test zu löschen, gehen Sie zur linken Seitenleiste und klicken Sie auf die Schaltfläche 'Einstellungen'. Wählen Sie dann die Schaltfläche 'TEST LÖSCHEN'.",
+    "createtemplate": "Wie erstelle ich eine Vorlage?",
+    "createtemplateanswer": "Um eine Vorlage für Ihren Test zu erstellen, gehen Sie zur linken Seitenleiste und klicken Sie auf die Schaltfläche 'Einstellungen'. Wählen Sie dann die Option 'VORLAGE ERSTELLEN'.",
+    "usetemplate": "Wie verwende ich eine Vorlage?",
+    "usetemplateanswer": "Um eine Vorlage zu verwenden, gehen Sie zur Seite Tests. Unter dem Abschnitt Vorlagen erstellen finden Sie Ihre persönlichen Vorlagen. Darüber hinaus können Sie öffentliche Vorlagen erkunden.",
+    "previewtest": "Wie kann ich meinen Test in der Vorschau anzeigen?",
+    "previewtestanswer": "Klicken Sie in der linken Seitenleiste auf die Option 'Vorschau' und starten Sie den Test, indem Sie die Fragen beantworten und schließlich auf die Schaltfläche unten rechts klicken, um die Vorschau zu speichern und einzureichen, die später im Abschnitt 'Antworten' analysiert werden kann.",
+    "importcsv": "Wie importiere ich meine CSV?",
+    "importcsvanswer": "Um Ihre CSV zu importieren, gehen Sie zum Abschnitt 'Test bearbeiten' und klicken Sie dann auf die Schaltfläche 'AKTUALISIEREN'. Wählen Sie Ihre CSV-Datei aus, die die Heuristiken enthält.",
+    "invitecooperators": "Wie lade ich Mitarbeiter ein?",
+    "invitecooperatorsanswer": "Um Mitarbeiter einzuladen, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie dort 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf 'Mitarbeiter auswählen' und geben Sie die E-Mail Ihres Mitarbeiters ein. Wählen Sie die Rolle des Mitarbeiters und senden Sie die Einladung, indem Sie auf die Schaltfläche unten rechts klicken.",
+    "analyseresults": "Wie analysiere ich die Ergebnisse?",
+    "analyseresultsanswer": "Um Ihre Ergebnisse zu analysieren, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie dort 'Antworten' in der linken Seitenleiste. Hier können Sie Statistiken, Evaluatoren und Heuristiken visualisieren.",
+    "sendmessage": "Wie sende ich eine Nachricht an meine Mitarbeiter?",
+    "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt."
+  }
+}
