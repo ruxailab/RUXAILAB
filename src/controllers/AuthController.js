@@ -4,6 +4,7 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
+	sendPasswordResetEmail
 } from 'firebase/auth'
 
 export default class AuthController {
@@ -25,6 +26,11 @@ export default class AuthController {
 	// Sign Out
 	async signOut() {
 		return signOut(auth)
+	}
+
+	// Reset Password
+	async resetPassword(email) {
+		return sendPasswordResetEmail(auth, email)
 	}
 
 	async autoSignIn() {
