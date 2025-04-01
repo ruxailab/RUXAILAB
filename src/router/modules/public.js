@@ -1,6 +1,7 @@
 import TestView from '@/views/public/TestView.vue'
 import SignIn from '@/views/public/SignInView.vue'
 import SignUp from '@/views/public/SignUpView.vue'
+import ForgotPassword from '@/views/public/ForgotPasswordView.vue'
 import LandingPage from '@/views/public/LandingPageView.vue'
 import PageNotFound from '@/views/public/PageNotFoundView.vue'
 import Help from '@/views/public/Help.vue'
@@ -24,6 +25,12 @@ export default [
     name: 'Sign Up',
     meta: { authorize: [] },
     component: SignUp,
+  },
+  {
+    path: '/forgot-password',
+    name: 'Forgot Password',
+    meta: { authorize: [] },
+    component: ForgotPassword,
   },
   {
     path: '/help',
