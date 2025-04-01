@@ -39,7 +39,7 @@
                   {{ $t('FORGOT_PASSWORD.reset_button') }}
                 </v-btn>
               </v-card-actions>
-              
+
               <v-card-actions class="justify-center mt-1">
                 <p>
                   <a
@@ -72,7 +72,7 @@ export default {
     email: '',
     emailRules: [
       (v) => !!v || i18n.t('errors.emailIsRequired'),
-      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
+      (v) => /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || i18n.t('errors.invalidEmail'),
     ],
   }),
   computed: {
