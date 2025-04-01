@@ -103,5 +103,21 @@ export default {
         console.error(err)
       }
     },
+
+    async resetPassword({ commit }, payload) {
+      commit('setLoading', true)
+      try {
+        await authController.resetPassword(payload.email)
+        //console.log("If this email is registered, you'll receive a reset link")
+      } catch (err) {
+        if (err.code === 'auth/invalid-email') {
+          console.error('Error: Invalid email format')
+        } else {
+          console.error('Error sending password reset email:', err.message)
+        }
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
 }

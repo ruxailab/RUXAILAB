@@ -45,12 +45,20 @@
                 </v-btn>
               </v-card-actions>
               <v-card-actions class="justify-center mt-1">
-                <p>
+                <p style="margin-right: 10px;">
                   <a
                     style="color: #F9A826 ;text-decoration: underline;"
                     @click="redirectToSignup"
                   >
                     {{ $t('SIGNIN.dont-have-account') }}
+                  </a>
+                </p>
+                <p>
+                  <a
+                    style="color: #F9A826; text-decoration: underline;"
+                    @click="redirectToForgotPassword"
+                  >
+                    {{ $t('SIGNIN.forgot-password') }}
                   </a>
                 </p>
               </v-card-actions>
@@ -103,6 +111,9 @@ export default {
     redirectToSignup() {
       this.$router.push('/signup')
     },
+    redirectToForgotPassword() {
+      this.$router.push('/forgot-password')
+    }
   },
 }
 </script>
