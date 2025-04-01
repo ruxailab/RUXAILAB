@@ -5,10 +5,18 @@
     "email": "ई-मेल",
     "password": "पासवर्ड",
     "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
+    "forgot-password": "पासवर्ड भूल गए",
     "sign-up": "साइन-अप",
     "contact": "संपर्क नंबर",
     "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
     "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
+  },
+  "FORGOT_PASSWORD": {
+    "reset_password": "पासवर्ड रीसेट करें",
+    "email": "ईमेल",
+    "instructions": "अपना ईमेल दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।",
+    "reset_button": "रीसेट लिंक भेजें",
+    "back_to_signin": "साइन इन पर वापस जाएं"
   },
   "common": {
     "loading": "लोड हो रहा है",
