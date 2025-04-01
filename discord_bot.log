@@ -1,0 +1,10 @@
+2025-03-31 20:17:31,511 - INFO - Bot Token: MTM1NjQxND...
+2025-03-31 20:17:31,511 - INFO - Guild ID: 1356416175558492370
+2025-03-31 20:17:31,511 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-03-31 20:17:31,511 - DEBUG - Using selector: KqueueSelector
+2025-03-31 20:17:31,511 - INFO - logging in using static token
+2025-03-31 20:17:31,839 - INFO - Logged in as Ruxailab Bot#4971
+2025-03-31 20:17:31,840 - INFO - Bot ID: 1356414751391088852
+2025-03-31 20:17:31,840 - INFO - Connected guilds:
+2025-03-31 20:17:31,840 - ERROR - Guild not found! Looking for ID: 1356416175558492370
+2025-03-31 20:17:31,840 - INFO - Available guilds:

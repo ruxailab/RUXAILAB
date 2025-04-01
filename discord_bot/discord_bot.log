@@ -1,0 +1,23 @@
+2025-03-31 20:17:40,982 - INFO - Bot Token: MTM1NjQxND...
+2025-03-31 20:17:40,982 - INFO - Guild ID: 1356416175558492370
+2025-03-31 20:17:40,982 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-03-31 20:17:40,983 - DEBUG - Using selector: KqueueSelector
+2025-03-31 20:17:40,983 - INFO - logging in using static token
+2025-03-31 20:17:41,467 - INFO - Logged in as Ruxailab Bot#4971
+2025-03-31 20:17:41,467 - INFO - Bot ID: 1356414751391088852
+2025-03-31 20:17:41,468 - INFO - Connected guilds:
+2025-03-31 20:17:41,468 - ERROR - Guild not found! Looking for ID: 1356416175558492370
+2025-03-31 20:17:41,468 - INFO - Available guilds:
+2025-03-31 20:18:54,792 - INFO - Bot Token: MTM1NjQxND...
+2025-03-31 20:18:54,793 - INFO - Guild ID: 1356416175558492370
+2025-03-31 20:18:54,793 - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-03-31 20:18:54,793 - DEBUG - Using selector: KqueueSelector
+2025-03-31 20:18:54,793 - INFO - logging in using static token
+2025-03-31 20:18:55,156 - INFO - Logged in as Ruxailab Bot#4971
+2025-03-31 20:18:55,156 - INFO - Bot ID: 1356414751391088852
+2025-03-31 20:18:55,156 - INFO - Connected guilds:
+2025-03-31 20:18:55,156 - ERROR - Guild not found! Looking for ID: 1356416175558492370
+2025-03-31 20:18:55,156 - INFO - Available guilds:
+2025-03-31 20:18:55,372 - INFO - Shard ID None has connected to Gateway (Session ID: 8d2642cb2f890ab943fd93b9d078e295).
+2025-03-31 20:20:51,920 - ERROR - Task was destroyed but it is pending!
+task: <Task cancelling name='Task-1' coro=<Client.run.<locals>.runner() running at /Users/tianqinmeng/Desktop/RUXAILAB/discord_bot/venv/lib/python3.12/site-packages/discord/client.py:895> wait_for=<Future cancelled>>
