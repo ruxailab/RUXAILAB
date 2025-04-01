@@ -1,0 +1,12 @@
+{
+  "anotherUser": {
+      "pr_count": 5,
+      "issues_count": 3,
+      "commits_count": 10
+  },
+  "anotherUser2": {
+    "pr_count": 5,
+    "issues_count": 3,
+    "commits_count": 10
+}
+}
