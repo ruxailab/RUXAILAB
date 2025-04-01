@@ -494,9 +494,18 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
+    "audioSaved": "Audio record saved!",
+    "screenRecordSaved": "Screen record saved!",
+    "videoRecordSaved": "Video record saved!",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "passwordChangedSuccess": "Password changed successfully",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "savedChanges": "Changes saved",
+    "responseRecorded":"Your response has been recorded"
   },
   "buttons": {
+    "saveandleave": "Save and Leave",
     "next": "Next",
     "previous": "Previous",
     "seeCode": "See the code",
@@ -514,8 +523,11 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount": "Delete Account",
-    "back": "Back"
+    "deleteAccount":"Delete Account",
+    "back":"Back",
+    "duplicateTest":"Duplicate Test",
+    "submit":"Submit"
+
   },
   "switches": {
     "noAnswer": "No answer",
@@ -578,6 +590,13 @@
     "test-name": "Test Name",
     "test-description": "Test Description",
     "test-label": "Test public to all users"
+  },
+  "finishTest":{
+    "title": "Finish Test",
+    "finalMessage": "Final Message!",
+    "congratulations": "Congratulations! You finished this test, now you can submit your answer.",
+    "submitMessage": "Click here to submit your answer. Once submitted, your answer cannot be changed!"
+
   },
   "help": {
     "createtest": "How do I create a test?",

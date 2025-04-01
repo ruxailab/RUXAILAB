@@ -493,9 +493,18 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "audioSaved": "Gravação de áudio salva!",
+    "screenRecordSaved": "Registro de tela salvo!",
+    "videoRecordSaved": "Gravação de vídeo salva!",
+    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
+    "passwordChangedSuccess": "Senha alterada com sucesso",
+    "accountDeletedSuccess": "Conta excluída com sucesso",
+    "savedChanges": "Alterações salvas",
+    "responseRecorded": "Sua resposta foi registrada"
   },
   "buttons": {
+    "saveandleave": "salvar e sair",
     "next": "Próximo",
     "previous": "Anterior",
     "seeCode": "Veja o código",
@@ -508,12 +517,15 @@
     "create": "Criar",
     "cancel": "Cancelar",
     "close": "Fechar",
+    "save": "salvar",
     "leave": "Sair",
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount": "Excluir conta",
-    "back": "Trás"
+    "deleteAccount":"Excluir conta",
+    "back":"Trás",
+    "duplicateTest":"Duplicar Teste",
+    "submit": "enviar"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -576,6 +588,13 @@
     "test-name": "Nome do Teste",
     "test-description": "Descrição do Teste",
     "test-label": "Teste público para todos os usuários"
+  },
+  "finishTest": {
+    "title": "Finalizar Teste",
+    "finalMessage": "Mensagem Final!",
+    "congratulations": "Parabéns! Você concluiu este teste, agora pode enviar sua resposta.",
+    "submitMessage": "Clique aqui para enviar sua resposta. Uma vez enviada, sua resposta não poderá ser alterada!",
+    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "Como criar um teste?",
