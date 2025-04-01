@@ -5,10 +5,18 @@
     "email": "E-mail",
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
+    "forgot-password": "Forgot Password",
     "sign-up": "Sign-Up",
     "contact": "Contact No",
     "confirmPassword": "Confirm your password",
     "alreadyHaveAnAccount": "Already have an account? Sign in"
+  },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Reset Password",
+    "email": "Email",
+    "instructions": "Enter your email and we'll send you a link to reset your password.",
+    "reset_button": "Send Reset Link",
+    "back_to_signin": "Back to Sign In"
   },
   "common": {
     "loading": "Loading Test",
