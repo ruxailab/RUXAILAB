@@ -92,6 +92,7 @@ def load_data():
 
 async def update_roles_for_guild(guild: discord.Guild):
     contributions, user_mappings = load_data()
+    print(contributions, user_mappings)
     # Get all the roles and create missing ones, similar to your current logic
     roles = {role.name: role for role in guild.roles}
     for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
