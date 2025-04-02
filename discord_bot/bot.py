@@ -18,10 +18,6 @@ intents.members = True
 # Bot setup
 bot = commands.Bot(command_prefix="!", intents=intents) # Creates a bot and uses the intents created earlier
 
-@bot.event
-async def on_ready():
-    await bot.tree.sync()
-    print(f"{bot.user} is online!") 
 
 @bot.event
 async def on_message(msg):
@@ -77,31 +73,32 @@ def determine_role(pr_count, issues_count, commits_count):
     # Return the highest role in each category
     return pr_role, issue_role, commit_role
 
+contributions = {}
+user_mappings = {}
 
-# Load contribution data
-try:
-    with open("contributions.json", "r") as f:
-        contributions = json.load(f)
-    print("Successfully loaded contributions.json")
-except Exception as e:
-    print(f"Error loading contributions.json: {e}")
-    traceback.print_exc()
-    sys.exit(1)
+def load_data():
+    global contributions, user_mappings
+    try:
+        with open("contributions.json", "r") as f:
+            contributions = json.load(f)
+        print("Successfully loaded contributions.json")
+    except Exception as e:
+        print(f"Error loading contributions.json: {e}")  
 
-# Load or create user mappings
-try:
-    with open("user_mappings.json", "r") as f:
-        user_mappings = json.load(f)
-    print("Successfully loaded user mappings")
-except FileNotFoundError:
-    print("No user mappings found, creating new mapping file")
-    user_mappings = {}
-    with open("user_mappings.json", "w") as f:
-        json.dump(user_mappings, f)
-except Exception as e:
-    print(f"Error loading user mappings: {e}")
-    traceback.print_exc()
-    sys.exit(1)
+    # Load or create user mappings
+    try:
+        with open("user_mappings.json", "r") as f:
+            user_mappings = json.load(f)
+        print("Successfully loaded user mappings")
+    except FileNotFoundError:
+        print("No user mappings found, creating new mapping file")
+        user_mappings = {}
+        with open("user_mappings.json", "w") as f:
+            json.dump(user_mappings, f)
+    except Exception as e:
+        print(f"Error loading user mappings: {e}") 
+
+load_data()
 
 @bot.tree.command(name="link", description="Links your Discord account to your GitHub username")
 async def link(interaction: discord.Interaction, github_username: str):
@@ -127,8 +124,7 @@ async def link(interaction: discord.Interaction, github_username: str):
         print(f"Linked Discord user {interaction.user.name} to GitHub user {github_username}")
 
     except Exception as e:
-        print(f"Error linking user: {e}")
-        traceback.print_exc()
+        print(f"Error linking user: {e}") 
         await interaction.response.send_message("An error occurred while linking your account.", ephemeral=True)
 
 @bot.tree.command(name="unlink", description="Unlinks your Discord account from your GitHub username")
@@ -155,8 +151,7 @@ async def unlink(interaction: discord.Interaction):
             )
 
     except Exception as e:
-        print(f"Error unlinking user: {e}")
-        traceback.print_exc()
+        print(f"Error unlinking user: {e}") 
         await interaction.response.send_message("An error occurred while unlinking your account.", ephemeral=True)
 
 
@@ -206,105 +201,72 @@ async def getstats(interaction: discord.Interaction):
             ephemeral=True
         )
 
-
-@bot.tree.command(name="update_roles", description="Update roles for all users based on GitHub contributions")
-async def update_roles(interaction: discord.Interaction):
-    """Update roles for all users in the current server."""
-    await interaction.response.send_message("Updating roles, this may take a while...", ephemeral=True)
-
-    try:
-        guild = interaction.guild
-        print(f"Starting update_roles in {guild.name}...")
-        print(f"Guild ID: {guild.id}")
-        print(f"Bot permissions: {guild.me.guild_permissions}")
-
-        # Get all roles
-        print("Fetching existing roles...")
-        roles = {role.name: role for role in guild.roles}
-        print(f"Found {len(roles)} existing roles")
-
-        # Create missing roles
-        print("Checking for missing roles...")
-        for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
-            if role_name not in roles:
-                try:
-                    print(f"Creating role: {role_name}")
-                    roles[role_name] = await guild.create_role(name=role_name)
-                    print(f"Created role: {role_name}")
-                except discord.Forbidden as e:
-                    print(f"Failed to create role: {role_name}")
-                    print(f"Error: {e}")
-                    continue
-                except Exception as e:
-                    print(f"Unexpected error creating role {role_name}: {e}") 
-                    continue
-
-        # Update roles for each user
-        print(f"Starting role updates for {len(guild.members)} members...")
-        updated_count = 0
-        skipped_count = 0
-
-        for member in guild.members:
+async def update_roles_for_guild(guild: discord.Guild):
+    # Get all the roles and create missing ones, similar to your current logic
+    roles = {role.name: role for role in guild.roles}
+    for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
+        if role_name not in roles:
             try:
-                print(f"\nProcessing member: {member.name}")
-                github_username = user_mappings.get(str(member.id))
-                if not github_username:
-                    print(f"No GitHub username linked for {member.name}")
-                    skipped_count += 1
-                    continue
-
-                user_data = contributions.get(github_username)
-                if not user_data:
-                    print(f"No contribution data found for GitHub user {github_username}")
-                    skipped_count += 1
-                    continue
-
-                pr_count = user_data["pr_count"]
-                issues_count = user_data["issues_count"]
-                commits_count = user_data["commits_count"]
-
-                print(f"Stats for {member.name} (GitHub: {github_username}):")
-                print(f"- PRs: {pr_count}")
-                print(f"- Issues: {issues_count}")
-                print(f"- Commits: {commits_count}")
-
-                pr_role, issue_role, commit_role = determine_role(pr_count, issues_count, commits_count)
-
-                # Update user's roles
-                current_roles = [role.name for role in member.roles]
-                new_roles = [roles[role] for role in (pr_role, issue_role, commit_role) if role]
-
-                # Remove all old roles
-                print(f"Removing old roles for {member.name}")
-                for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
-                    if role_name in current_roles:
-                        try:
-                            await member.remove_roles(roles[role_name])
-                            print(f"Removed role: {role_name}")
-                        except Exception as e:
-                            print(f"Error removing role {role_name}: {e}")
-
-                # Add new roles
-                for new_role in new_roles:
-                    if new_role.name not in current_roles:
-                        try:
-                            await member.add_roles(new_role)
-                            print(f"Added new role: {new_role.name}")
-                        except Exception as e:
-                            print(f"Error adding role {new_role.name}: {e}")
-
-                updated_count += 1
-
+                print(f"Creating role: {role_name}")
+                roles[role_name] = await guild.create_role(name=role_name)
+            except discord.Forbidden:
+                print(f"Insufficient permissions to create role: {role_name}")
+                continue
             except Exception as e:
-                print(f"Error processing member {member.name}: {e}") 
-                skipped_count += 1
+                print(f"Error creating role {role_name}: {e}")
+                continue
 
-                status_msg = f"✅ Role update completed!\n- Updated: {updated_count} members\n- Skipped: {skipped_count} members"
-                await interaction.followup.send(status_msg)
-                print("\n" + status_msg)
+    # Update roles for each member (you might want to adjust the logic as needed)
+    updated_count = 0
+    for member in guild.members:
+        github_username = user_mappings.get(str(member.id))
+        if not github_username:
+            continue
+        user_data = contributions.get(github_username)
+        if not user_data:
+            continue
+        pr_count = user_data["pr_count"]
+        issues_count = user_data["issues_count"]
+        commits_count = user_data["commits_count"]
 
-    except Exception as e:
-        print(f"Error in update_roles command: {e}") 
-        await interaction.followup.send("❌ An error occurred while updating roles.", ephemeral=True)
+        pr_role, issue_role, commit_role = determine_role(pr_count, issues_count, commits_count)
+        new_role_names = [pr_role, issue_role, commit_role]
+        current_roles = {role.name for role in member.roles}
+
+        # Remove old roles if necessary
+        for role_name in (PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys()):
+            if role_name in current_roles:
+                try:
+                    await member.remove_roles(roles[role_name])
+                    print(f"Removed role {role_name} from {member.name}")
+                except Exception as e:
+                    print(f"Error removing role {role_name} from {member.name}: {e}")
+
+        # Add new roles
+        for role_name in new_role_names:
+            if role_name and role_name not in current_roles:
+                try:
+                    await member.add_roles(roles[role_name])
+                    print(f"Added role {role_name} to {member.name}")
+                except Exception as e:
+                    print(f"Error adding role {role_name} to {member.name}: {e}")
+
+        updated_count += 1
+
+    print(f"Role update completed for {updated_count} members in guild {guild.name}")
+
+
+@bot.event
+async def on_ready():
+    print(f"{bot.user} is online!")
+
+    load_data()
+    # Use a flag to ensure this update runs only once per startup
+    if not hasattr(bot, 'roles_updated'):
+        bot.roles_updated = True
+        # Iterate through all guilds (or target specific guilds if needed)
+        for guild in bot.guilds:
+            await update_roles_for_guild(guild)
+    await bot.close()
 
 bot.run(TOKEN)    
