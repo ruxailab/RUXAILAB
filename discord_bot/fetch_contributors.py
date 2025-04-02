@@ -35,62 +35,36 @@ def get_contributions(username):
     commits_count = commits_response.json().get("total_count", 0) if commits_response.status_code == 200 else 0
     
     return {
-        "username": username,
         "pr_count": pr_count,
         "issues_count": issues_count,
         "commits_count": commits_count
     }
 
-def determine_role(pr_count, issues_count, commits_count):
-    """Determine role based on contribution counts."""
-    # PR-based roles
-    if pr_count >= 60:
-        return "🔴 Grandmaster"
-    elif pr_count >= 40:
-        return "🟠 Master"
-    elif pr_count >= 20:
-        return "🟡 Expert"
-    elif pr_count >= 10:
-        return "🟢 Advanced"
-    elif pr_count >= 7:
-        return "🔵 Proficient"
-    elif pr_count >= 4:
-        return "🔵 Intermediate"
-    elif pr_count >= 1:
-        return "🟣 Entry"
-    
-    # Issue-based roles
-    if issues_count >= 7:
-        return "🕵️‍♂️ Investigator"
-    elif issues_count >= 3:
-        return "🔍 Debugger"
-    elif issues_count >= 1:
-        return "📝 Bug Reporter"
-    
-    # Commit-based roles
-    if commits_count >= 30:
-        return "🚀 Commit Machine"
-    elif commits_count >= 10:
-        return "🔧 Committer"
-    
-    return "⚪ Member (General)"
+def fetch_all_contributors():
+    """Fetch all contributors to the repository."""
+    headers = {
+        "Authorization": f"token {os.getenv('GITHUB_TOKEN')}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    contributors_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/contributors"
+    response = requests.get(contributors_url, headers=headers)
+    if response.status_code == 200:
+        return [contributor['login'] for contributor in response.json()]
+    else:
+        print(f"Failed to fetch contributors: {response.status_code}")
+        return []
 
 if __name__ == "__main__":
-    # Test with a sample user
-    test_username = "marcgc21"  # Using one of the contributors from the main repo
-    contributions = get_contributions(test_username)
-    role = determine_role(
-        contributions["pr_count"],
-        contributions["issues_count"],
-        contributions["commits_count"]
-    )
-    
-    print(f"User: {test_username}")
-    print(f"PRs: {contributions['pr_count']}")
-    print(f"Issues: {contributions['issues_count']}")
-    print(f"Commits: {contributions['commits_count']}")
-    print(f"Role: {role}")
+    all_contributions = {}
+    contributors = fetch_all_contributors()
+    for username in contributors:
+        contributions = get_contributions(username)
+        all_contributions[username] = contributions
+        print(f"User: {username}")
+        print(f"PRs: {contributions['pr_count']}")
+        print(f"Issues: {contributions['issues_count']}")
+        print(f"Commits: {contributions['commits_count']}")
     
     # Save to a JSON file for the Discord bot to use
     with open("contributions.json", "w") as f:
-        json.dump(contributions, f, indent=2) 
+        json.dump(all_contributions, f, indent=2) 
