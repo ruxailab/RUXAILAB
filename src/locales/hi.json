@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
   },
   "common": {
+    "user": "उपयोगकर्ता",
     "loading": "लोड हो रहा है",
     "continueAs": "के रूप में जारी रखें",
     "notUser": "{userEmail} नहीं हैं?",
@@ -51,6 +52,7 @@
     "editProfile": "प्रोफ़ाइल संपादित करें",
     "account": "खाता",
     "admin": "व्यवस्थापक",
+    "superAdmin": "सुपर व्यवस्थापक",
     "changePassword": "पासवर्ड बदलें",
     "passwordRequirements": "इन आवश्यकताओं को सुनिश्चित करें",
     "passwordMinimumRequirements": "न्यूनतम 8 वर्ण लंबा, अपरकेस और प्रतीक (चिह्न) के साथ",
