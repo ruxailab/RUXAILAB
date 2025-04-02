@@ -11,10 +11,12 @@ body:
 
         Fill in the information below to help us understand and evaluate your feature request.
 
-        Instructions:
+        **Instructions:**
           1. Provide a clear and concise description of the new feature.
           2. Explain the motivation behind the feature request.
           3. Specify the expected behavior.
+          4. Share any alternative solutions considered.
+          5. Describe real-world use cases where this feature would be helpful.
 
         Thank you for contributing to the growth of our project! 🙌
 
@@ -24,19 +26,53 @@ body:
       description: A clear and concise description of the new feature.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Motivation 🌟
-      description: Explain the motivation behind the feature request.
+      description: Explain the problem this feature solves or the improvement it brings.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Expected Behavior 🤔
-      description: Specify the expected behavior of the new feature.
+      description: Describe how the feature should function.
     validations:
       required: true
+
+  - type: dropdown
+    attributes:
+      label: Priority Level ⚡
+      description: How urgent is this feature request?
+      options:
+        - High (Critical improvement needed)
+        - Medium (Important but not urgent)
+        - Low (Nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Use Case 📌
+      description: Provide real-world scenarios where this feature would be useful.
+      placeholder: |
+        Example:
+        - As a user, I want to...
+        - This feature would help when...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Alternatives Considered 🔍
+      description: Have you explored any alternative solutions? If so, why were they not sufficient?
+    validations:
+      required: false
+
   - type: textarea
     attributes:
       label: Additional Information ℹ️
-      description: Add any other information or context about the feature request.
+      description: Add any other relevant details or context about the feature request.
+    validations:
+      required: false
