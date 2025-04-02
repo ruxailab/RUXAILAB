@@ -1,4 +1,4 @@
-name: get contribution data
+name: Update Discord Roles
 
 on:
   schedule:
