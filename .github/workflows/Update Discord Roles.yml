@@ -31,7 +31,7 @@ jobs:
 
       - name: Update Discord roles
         env: 
-            TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+            DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: |
           cd discord_bot 
           python update_discord_roles.py
