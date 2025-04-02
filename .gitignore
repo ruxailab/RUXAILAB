@@ -41,4 +41,4 @@ ui-debug.log
 /playwright/output
 debug-screenshot.png
 
-/discord_bot/venv/
+/venv/
