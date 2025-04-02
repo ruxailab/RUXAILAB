@@ -230,17 +230,9 @@ async def update_roles_for_guild(guild: discord.Guild):
         commits_count = user_data["commits_count"]
 
         pr_role, issue_role, commit_role = determine_role(pr_count, issues_count, commits_count)
+        print(pr_role, issue_role, commit_role)
         new_role_names = [pr_role, issue_role, commit_role]
-        current_roles = {role.name for role in member.roles}
-
-        # Remove old roles if necessary
-        for role_name in (PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys()):
-            if role_name in current_roles:
-                try:
-                    await member.remove_roles(roles[role_name])
-                    print(f"Removed role {role_name} from {member.name}")
-                except Exception as e:
-                    print(f"Error removing role {role_name} from {member.name}: {e}")
+        current_roles = {role.name for role in member.roles} 
 
         # Add new roles
         for role_name in new_role_names:
