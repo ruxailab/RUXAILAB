@@ -14,7 +14,7 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN") # Reads and stores the Discord Token from
 # Setup of intents. Intents are permissions the bot has on the server
 intents = discord.Intents.default() # Intents can be set through this object
 intents.message_content = True  # This intent allows you to read and handle messages from users
-
+intents.members = True
 # Bot setup
 bot = commands.Bot(command_prefix="!", intents=intents) # Creates a bot and uses the intents created earlier
 
@@ -33,21 +33,50 @@ async def greet(interaction: discord.Interaction):
     username = interaction.user.mention
     await interaction.response.send_message(f"Hello there, {username}")
 
-ROLE_THRESHOLDS = {
-    "🔴 Grandmaster": 60,
-    "🟠 Master": 40,
-    "🟡 Expert": 20,
-    "🟢 Advanced": 10,
-    "🔵 Proficient": 7,
-    "🔵 Intermediate": 4,
+PR_THRESHOLDS = {
+    "⚪ Member (General)": 0,
     "🟣 Entry": 1,
-    "🕵️‍♂️ Investigator": 7,
-    "🔍 Debugger": 3,
-    "📝 Bug Reporter": 1,
-    "🚀 Commit Machine": 30,
-    "🔧 Committer": 10,
-    "⚪ Member (General)": 0
+    "🔵 Intermediate": 4,
+    "🔵 Proficient": 7,
+    "🟢 Advanced": 10,
+    "🟡 Expert": 20,
+    "🟠 Master": 40,
+    "🔴 Grandmaster": 60
 }
+
+ISSUE_THRESHOLDS = {
+    "📝 Bug Reporter": 1,
+    "🔍 Debugger": 3,
+    "🕵️‍♂️ Investigator": 7
+}
+
+COMMIT_THRESHOLDS = {
+    "🔧 Committer": 10,
+    "🚀 Commit Machine": 30
+}
+
+def determine_role(pr_count, issues_count, commits_count):
+    # Determine PR role
+    pr_role = "⚪ Member (General)"
+    for role, threshold in PR_THRESHOLDS.items():
+        if pr_count >= threshold:
+            pr_role = role
+
+    # Determine issue role
+    issue_role = None
+    for role, threshold in ISSUE_THRESHOLDS.items():
+        if issues_count >= threshold:
+            issue_role = role
+
+    # Determine commit role
+    commit_role = None
+    for role, threshold in COMMIT_THRESHOLDS.items():
+        if commits_count >= threshold:
+            commit_role = role
+
+    # Return the highest role in each category
+    return pr_role, issue_role, commit_role
+
 
 # Load contribution data
 try:
@@ -165,10 +194,7 @@ async def getstats(interaction: discord.Interaction):
         embed.add_field(name="Commits (30 days)", value=str(user_data["commits_count"]), inline=True)
 
         # Get user's current role based on contribution thresholds
-        current_role = next(
-            (role.name for role in interaction.user.roles if role.name in ROLE_THRESHOLDS),
-            "⚪ Member (General)"
-        )
+    
         # Add role information to the embed
         embed.add_field(name="Current Role", value=current_role, inline=False)
 
@@ -199,7 +225,7 @@ async def update_roles(interaction: discord.Interaction):
 
         # Create missing roles
         print("Checking for missing roles...")
-        for role_name in ROLE_THRESHOLDS.keys():
+        for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
             if role_name not in roles:
                 try:
                     print(f"Creating role: {role_name}")
@@ -210,8 +236,7 @@ async def update_roles(interaction: discord.Interaction):
                     print(f"Error: {e}")
                     continue
                 except Exception as e:
-                    print(f"Unexpected error creating role {role_name}: {e}")
-                    traceback.print_exc()
+                    print(f"Unexpected error creating role {role_name}: {e}") 
                     continue
 
         # Update roles for each user
@@ -234,7 +259,6 @@ async def update_roles(interaction: discord.Interaction):
                     skipped_count += 1
                     continue
 
-                # Determine appropriate role
                 pr_count = user_data["pr_count"]
                 issues_count = user_data["issues_count"]
                 commits_count = user_data["commits_count"]
@@ -244,22 +268,15 @@ async def update_roles(interaction: discord.Interaction):
                 print(f"- Issues: {issues_count}")
                 print(f"- Commits: {commits_count}")
 
-                highest_role = "⚪ Member (General)"
-                for role_name, threshold in ROLE_THRESHOLDS.items():
-                    if (role_name.startswith("🔴") and pr_count >= threshold) or \
-                        (role_name.startswith("🕵️") and issues_count >= threshold) or \
-                        (role_name.startswith("🚀") and commits_count >= threshold):
-                        highest_role = role_name
-
-                print(f"Qualified for role: {highest_role}")
+                pr_role, issue_role, commit_role = determine_role(pr_count, issues_count, commits_count)
 
                 # Update user's roles
                 current_roles = [role.name for role in member.roles]
-                new_role = roles[highest_role]
+                new_roles = [roles[role] for role in (pr_role, issue_role, commit_role) if role]
 
                 # Remove all old roles
                 print(f"Removing old roles for {member.name}")
-                for role_name in ROLE_THRESHOLDS.keys():
+                for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():
                     if role_name in current_roles:
                         try:
                             await member.remove_roles(roles[role_name])
@@ -267,28 +284,27 @@ async def update_roles(interaction: discord.Interaction):
                         except Exception as e:
                             print(f"Error removing role {role_name}: {e}")
 
-                # Add new role
-                if highest_role not in current_roles:
-                    try:
-                        await member.add_roles(new_role)
-                        print(f"Added new role: {highest_role}")
-                    except Exception as e:
-                        print(f"Error adding role {highest_role}: {e}")
+                # Add new roles
+                for new_role in new_roles:
+                    if new_role.name not in current_roles:
+                        try:
+                            await member.add_roles(new_role)
+                            print(f"Added new role: {new_role.name}")
+                        except Exception as e:
+                            print(f"Error adding role {new_role.name}: {e}")
 
                 updated_count += 1
 
             except Exception as e:
-                print(f"Error processing member {member.name}: {e}")
-                traceback.print_exc()
+                print(f"Error processing member {member.name}: {e}") 
                 skipped_count += 1
 
-        status_msg = f"✅ Role update completed!\n- Updated: {updated_count} members\n- Skipped: {skipped_count} members"
-        await interaction.followup.send(status_msg)
-        print("\n" + status_msg)
+                status_msg = f"✅ Role update completed!\n- Updated: {updated_count} members\n- Skipped: {skipped_count} members"
+                await interaction.followup.send(status_msg)
+                print("\n" + status_msg)
 
     except Exception as e:
-        print(f"Error in update_roles command: {e}")
-        traceback.print_exc()
+        print(f"Error in update_roles command: {e}") 
         await interaction.followup.send("❌ An error occurred while updating roles.", ephemeral=True)
 
-bot.run(TOKEN)
+bot.run(TOKEN)    
