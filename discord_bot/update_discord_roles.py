@@ -73,135 +73,25 @@ def determine_role(pr_count, issues_count, commits_count):
     # Return the highest role in each category
     return pr_role, issue_role, commit_role
 
-contributions = {}
-user_mappings = {}
-
 def load_data():
-    global contributions, user_mappings
+    """Loads contributions and user mappings from JSON files."""
     try:
+        # Load contributions data
         with open("contributions.json", "r") as f:
             contributions = json.load(f)
-        print("Successfully loaded contributions.json")
-    except Exception as e:
-        print(f"Error loading contributions.json: {e}")  
 
-    # Load or create user mappings
-    try:
+        # Load user mappings data
         with open("user_mappings.json", "r") as f:
             user_mappings = json.load(f)
-        print("Successfully loaded user mappings")
-    except FileNotFoundError:
-        print("No user mappings found, creating new mapping file")
-        user_mappings = {}
-        with open("user_mappings.json", "w") as f:
-            json.dump(user_mappings, f)
-    except Exception as e:
-        print(f"Error loading user mappings: {e}") 
-
-load_data()
-
-@bot.tree.command(name="link", description="Links your Discord account to your GitHub username")
-async def link(interaction: discord.Interaction, github_username: str):
-    """Link your Discord account to your GitHub username."""
-    try:
-        # Check if the GitHub username exists in contributions
-        if github_username not in contributions:
-            await interaction.response.send_message(
-                f"No contribution data found for GitHub user '{github_username}'. Are you sure that's your GitHub username?", 
-                ephemeral=True
-            )
-            return
-
-        # Save the mapping
-        user_mappings[str(interaction.user.id)] = github_username
-        with open("user_mappings.json", "w") as f:
-            json.dump(user_mappings, f)
-
-        await interaction.response.send_message(
-            f"Successfully linked your Discord account to GitHub user '{github_username}'!", 
-            ephemeral=True
-        )
-        print(f"Linked Discord user {interaction.user.name} to GitHub user {github_username}")
-
-    except Exception as e:
-        print(f"Error linking user: {e}") 
-        await interaction.response.send_message("An error occurred while linking your account.", ephemeral=True)
-
-@bot.tree.command(name="unlink", description="Unlinks your Discord account from your GitHub username")
-async def unlink(interaction: discord.Interaction):
-    """Unlink your Discord account from your GitHub username."""
-    try:
-        user_id = str(interaction.user.id)
-
-        if user_id in user_mappings:
-            github_username = user_mappings.pop(user_id)
-            with open("user_mappings.json", "w") as f:
-                json.dump(user_mappings, f)
-
-            await interaction.response.send_message(
-                f"Successfully unlinked your Discord account from GitHub user '{github_username}'!", 
-                ephemeral=True
-            )
-            print(f"Unlinked Discord user {interaction.user.name} from GitHub user {github_username}")
-
-        else:
-            await interaction.response.send_message(
-                "Your Discord account is not linked to any GitHub username.", 
-                ephemeral=True
-            )
-
-    except Exception as e:
-        print(f"Error unlinking user: {e}") 
-        await interaction.response.send_message("An error occurred while unlinking your account.", ephemeral=True)
-
-
-@bot.tree.command(name="getstats", description="Displays your GitHub stats and current role")
-async def getstats(interaction: discord.Interaction): 
-    """Display user's GitHub stats and current role."""
-    try:
-        user_id = str(interaction.user.id)
-        github_username = user_mappings.get(user_id)
-
-        if not github_username:
-            await interaction.response.send_message(
-                "Your Discord account is not linked to a GitHub username. Use `/link your_github_username` to link it.",
-                ephemeral=True
-            )
-            return
-         
-        user_data = contributions.get(github_username)
         
-        print(user_data)  # Make sure you are getting the right data
-        
-        if not user_data:
-            await interaction.response.send_message(
-                f"AAANo contribution data found for GitHub user '{github_username}'.",
-                ephemeral=True
-            )
-            return
-
-        embed = discord.Embed(
-            title=f"GitHub Stats for {github_username}",
-            color=discord.Color.blue()
-        )
-        embed.add_field(name="Merged PRs", value=str(user_data["pr_count"]), inline=True)
-        embed.add_field(name="Issues Opened", value=str(user_data["issues_count"]), inline=True)
-        embed.add_field(name="Commits (30 days)", value=str(user_data["commits_count"]), inline=True)
-
-        # Get user's current role based on contribution thresholds
-    
-        # Add role information to the embed
-        embed.add_field(name="Current Role", value=current_role, inline=False)
-
-        await interaction.response.send_message(embed=embed)
-
+        return contributions, user_mappings
     except Exception as e:
-        await interaction.response.send_message(
-            f"An error occurred: {str(e)}",
-            ephemeral=True
-        )
+        print(f"Error loading data: {e}")
+        return None, None  # Return None in case of an error
+
 
 async def update_roles_for_guild(guild: discord.Guild):
+    contributions, user_mappings = load_data()
     # Get all the roles and create missing ones, similar to your current logic
     roles = {role.name: role for role in guild.roles}
     for role_name in PR_THRESHOLDS.keys() | ISSUE_THRESHOLDS.keys() | COMMIT_THRESHOLDS.keys():

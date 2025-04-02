@@ -33,38 +33,12 @@ async def greet(interaction: discord.Interaction):
     username = interaction.user.mention
     await interaction.response.send_message(f"Hello there, {username}")
 
-contributions = {}
-user_mappings = {}
-
-def load_data():
-    global contributions, user_mappings
-    try:
-        with open("contributions.json", "r") as f:
-            contributions = json.load(f)
-        print("Successfully loaded contributions.json")
-    except Exception as e:
-        print(f"Error loading contributions.json: {e}")  
-
-    # Load or create user mappings
-    try:
-        with open("user_mappings.json", "r") as f:
-            user_mappings = json.load(f)
-        print("Successfully loaded user mappings")
-    except FileNotFoundError:
-        print("No user mappings found, creating new mapping file")
-        user_mappings = {}
-        with open("user_mappings.json", "w") as f:
-            json.dump(user_mappings, f)
-    except Exception as e:
-        print(f"Error loading user mappings: {e}") 
-
-load_data()
 
 @bot.tree.command(name="link", description="Links your Discord account to your GitHub username")
 async def link(interaction: discord.Interaction, github_username: str):
+    contributions, user_mappings = load_data()
     """Link your Discord account to your GitHub username."""
     try:
-        # Check if the GitHub username exists in contributions
         if github_username not in contributions:
             await interaction.response.send_message(
                 f"No contribution data found for GitHub user '{github_username}'. Are you sure that's your GitHub username?", 
@@ -98,7 +72,7 @@ async def link(interaction: discord.Interaction, github_username: str):
 
 @bot.tree.command(name="unlink", description="Unlinks your Discord account from your GitHub username")
 async def unlink(interaction: discord.Interaction):
-    """Unlink your Discord account from your GitHub username."""
+    contributions, user_mappings = load_data()
     try:
         user_id = str(interaction.user.id)
 
@@ -126,6 +100,7 @@ async def unlink(interaction: discord.Interaction):
 
 @bot.tree.command(name="getstats", description="Displays your GitHub stats and current role")
 async def getstats(interaction: discord.Interaction): 
+    contributions, user_mappings = load_data()
     print("getstats")
     """Display user's GitHub stats and current role."""
     try:
