@@ -72,10 +72,19 @@ async def link(interaction: discord.Interaction, github_username: str):
             )
             return
 
-        # Save the mapping
+        # Load existing mappings
+        try:
+            with open("user_mappings.json", "r") as f:
+                user_mappings = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            user_mappings = {}
+
+        # Insert the new mapping
         user_mappings[str(interaction.user.id)] = github_username
+
+        # Save the updated mappings
         with open("user_mappings.json", "w") as f:
-            json.dump(user_mappings, f)
+            json.dump(user_mappings, f, indent=4)
 
         await interaction.response.send_message(
             f"Successfully linked your Discord account to GitHub user '{github_username}'!", 
