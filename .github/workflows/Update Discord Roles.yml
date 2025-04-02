@@ -25,6 +25,7 @@ jobs:
       - name: Fetch GitHub contributions & update roles
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: |
           cd discord_bot
           python fetch_contributors.py 
