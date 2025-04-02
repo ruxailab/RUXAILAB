@@ -1,4 +1,27 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "email", "order": "asc" },
+        { "fieldPath": "createdAt", "order": "desc" }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category", "order": "asc" },
+        { "fieldPath": "publishedAt", "order": "desc" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "logs",
+      "fieldPath": "message",
+      "arrayConfig": "CONTAINS"
+    }
+  ]
 }
