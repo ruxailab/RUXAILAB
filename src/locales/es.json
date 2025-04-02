@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
   },
   "common": {
+    "user": "Usuario",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -51,6 +52,7 @@
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
+    "superAdmin": "Super Administrador",
     "changePassword": "Cambiar contraseña",
     "passwordRequirements": "Asegúrese de cumplir estos requisitos",
     "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
@@ -81,6 +83,11 @@
     "template": "Plantilla",
     "finalReport": "Reporte Final",
     "answerType": "Tipo de respuesta:",
+    "users": "Usuarios",
+    "tests": "Pruebas",
+    "id": "Id",
+    "accessLevel": "Nivel de acceso",
+    "actions": "Acciones",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",

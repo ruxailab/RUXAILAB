@@ -5,7 +5,7 @@
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="headline error white--text" primary-title>
-          Are you sure you want to delete this user?
+          {{ $t('alerts.deleteUser') }}
         </v-card-title>
 
         <v-card-text>{{ dialogText }}</v-card-text>
@@ -19,27 +19,27 @@
             text
             @click=";(dialogDel = false), (userClicked = null)"
           >
-            Cancel
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
             class="red white--text ml-1"
             text
             @click="deleteUser(userClicked)"
           >
-            Delete
+            {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <h1 style="margin-left: 8%; font-weight: 300">
-      Super Admin
+      {{ $t('PROFILE.superAdmin') }}
     </h1>
     <v-row align="center" justify="center">
       <v-col cols="10">
         <v-tabs v-model="tab">
-          <v-tab>Users</v-tab>
-          <v-tab>Tests</v-tab>
+          <v-tab>{{ $t('titles.users') }}</v-tab>
+          <v-tab>{{ $t('titles.tests') }}</v-tab>
         </v-tabs>
         <v-divider />
       </v-col>
@@ -57,7 +57,7 @@
             >
               <template v-slot:top>
                 <v-toolbar flat color="white">
-                  <v-toolbar-title>Users</v-toolbar-title>
+                  <v-toolbar-title>{{ $t('titles.users') }}</v-toolbar-title>
                 </v-toolbar>
                 <v-text-field
                   v-model="search"
@@ -65,7 +65,7 @@
                   prepend-inner-icon="mdi-magnify"
                   class="mx-3"
                   dense
-                  label="Search"
+                  :label="$t('Dashboard.search')"
                 />
               </template>
               <template v-slot:[`item.accessLevel`]="{ item }">
@@ -96,7 +96,7 @@
             <v-dialog v-model="dialog" max-width="500px">
               <v-card>
                 <v-card-title>
-                  <span class="headline">Edit User</span>
+                  <span class="headline">{{ $t('PROFILE.editProfile') }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
@@ -196,26 +196,6 @@ export default {
     dialogDel: false,
     userClicked: null,
     search: '',
-    usersHeaders: [
-      {
-        text: 'Id',
-        align: 'start',
-        value: 'id',
-      },
-      { text: 'E-mail', value: 'email', align: 'center' },
-      { text: 'Access Level', value: 'accessLevel', align: 'center' },
-      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
-    ],
-    testsHeaders: [
-      {
-        text: 'Title',
-        align: 'start',
-        value: 'testTitle',
-      },
-      { text: 'Created by', value: 'testAdmin.email' },
-      { text: 'Created Date', value: 'creationDate' },
-      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
-    ],
     editedIndex: -1,
     editedUser: {
       uid: '',
@@ -227,11 +207,6 @@ export default {
       email: '',
       accessLevel: 0,
     },
-    accessLevels: [
-      { text: 'Super Admin', level: 0 },
-      { text: 'Admin', level: 1 },
-      { text: 'User', level: 2 },
-    ],
     tab: 0,
   }),
   computed: {
@@ -245,9 +220,40 @@ export default {
       return this.$store.getters.loading
     },
     dialogText() {
-      return `Are you sure you want to delete the user ${
+      return `${this.$t('alerts.deleteUser')} ${
         this.userClicked !== null ? this.userClicked.email : ''
-      }? This action can't be undone.`
+      }`
+    },
+    usersHeaders() {
+      return [
+        {
+          text: this.$t('titles.id'),
+          align: 'start',
+          value: 'id',
+        },
+        { text: this.$t('SIGNIN.email'), value: 'email', align: 'center' },
+        { text: this.$t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
+        { text: this.$t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+      ]
+    },
+    testsHeaders() {
+      return [
+        {
+          text: this.$t('common.title'),
+          align: 'start',
+          value: 'testTitle',
+        },
+        { text: this.$t('pages.listTests.createdBy'), value: 'testAdmin.email' },
+        { text: this.$t('pages.listTests.updated'), value: 'creationDate' },
+        { text: this.$t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+      ]
+    },
+    accessLevels() {
+      return [
+        { text: this.$t('PROFILE.superAdmin'), level: 0 },
+        { text: this.$t('PROFILE.admin'), level: 1 },
+        { text: this.$t('common.user'), level: 2 },
+      ]
     },
   },
   watch: {
