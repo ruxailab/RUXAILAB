@@ -306,6 +306,7 @@ export default {
           accessLevel: user.accessLevel,
         },
       }
+      
       this.$store.dispatch('updateLevel', { data: payload })
       this.close()
     },
