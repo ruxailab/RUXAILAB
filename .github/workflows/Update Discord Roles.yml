@@ -22,11 +22,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r discord_bot/requirements.txt
 
-      - name: Fetch GitHub contributions & update roles
+      - name: Fetch GitHub contributions
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} 
         run: |
           cd discord_bot
-          python fetch_contributors.py 
+          python fetch_contributors.py  
+
+      - name: Update Discord roles
+        env: 
+            TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          cd discord_bot 
           python update_discord_roles.py
