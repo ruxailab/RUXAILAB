@@ -28,4 +28,4 @@ jobs:
         run: |
           cd discord_bot
           python fetch_contributors.py 
-          python bot.py
+          python update_discord_roles.py
