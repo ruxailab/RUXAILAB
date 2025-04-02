@@ -7,19 +7,20 @@ on:
     types: [opened]
   push:
     branches:
-      - main
+      - feature/discord-role-assignment
 
 jobs:
   assign-role:
     uses: yashitz07/GitHub-Actions-workflow/.github/workflows/discord-role.yml@main
     with:
+      ACTOR: ${{ github.actor }}
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+      GITHUB_EVENT_ACTION: ${{ github.event.action }}
+    secrets:
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
       GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
       GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-      ACTOR: ${{ github.actor }}
       GUILD_ID: ${{ secrets.GUILD_ID }}
       ROLE_ID_PR: ${{ secrets.ROLE_ID_PR }}
       ROLE_ID_ISSUE: ${{ secrets.ROLE_ID_ISSUE }}
       ROLE_ID_COMMIT: ${{ secrets.ROLE_ID_COMMIT }}
-      GITHUB_EVENT_NAME: ${{ github.event_name }}
-      GITHUB_EVENT_ACTION: ${{ github.event.action }}
