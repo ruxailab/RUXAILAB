@@ -26,12 +26,26 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+
   - type: input
     attributes:
       label: Link 🔗
       description: Link to the page where the bug occurred.
     validations:
       required: true
+
+  - type: dropdown
+    attributes:
+      label: Severity ⚠️
+      description: How critical is the bug?
+      options:
+        - Critical (Blocks functionality)
+        - High (Major issue but not blocking)
+        - Medium (Affects usability)
+        - Low (Minor issue)
+    validations:
+      required: true
+
   - type: textarea
     attributes:
       label: Steps to Reproduce 🔄
@@ -43,24 +57,41 @@ body:
         4. See error
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Screenshots 📸
       description: If applicable, add screenshots to help explain the problem.
     validations:
-      required: true
+      required: false
+
   - type: textarea
     attributes:
       label: Expected Behavior 🤔
       description: A clear and concise description of what you expected to happen.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Actual Behavior 😱
       description: A clear and concise description of what actually happened.
     validations:
       required: true
+
+  - type: textarea
+    attributes:
+      label: Error Logs 🐞
+      description: Copy-paste any relevant error logs (browser console, server logs, etc.).
+      placeholder: |
+        Example:
+        ```
+        TypeError: Cannot read properties of null (reading 'data')
+            at App.vue:42
+        ```
+    validations:
+      required: false
+
   - type: textarea
     attributes:
       label: Environment 🌍
@@ -73,6 +104,7 @@ body:
         - Version: [e.g., 22]
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Additional Information ℹ️
