@@ -88,6 +88,7 @@ export default {
         commit('SET_USER', null)
       } catch (err) {
         console.error(err)
+        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error during logout' })
       } finally {
         commit('setLoading', false)
       }
@@ -101,7 +102,8 @@ export default {
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
-        console.error(err)
+        console.error(e)
+        commit('setError', { errorCode: 'FIREBASE', message: e.code || 'Error during auto sign in' })
       }
     },
   },
