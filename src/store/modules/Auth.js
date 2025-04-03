@@ -46,7 +46,7 @@ export default {
         commit('SET_USER', dbUser)
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
-        throw err // 👈 Rethrow the error so the caller knows signup failed
+        throw err // Rethrow the error so the caller knows signup failed
       } finally {
         commit('setLoading', false)
       }
@@ -77,6 +77,50 @@ export default {
             message: i18n.t('errors.incorrectCredential'),
           })
         }
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    /**
+ * Handle Google Authentication
+ * @action signInWithGoogle
+ * @returns {void}
+ */
+    async signInWithGoogle({ commit }) {
+      commit('setLoading', true)
+      try {
+        const { user } = await authController.signInWithGoogle()
+
+        // Check if user already exists in database
+        let dbUser = null
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch (error) {
+          // User doesn't exist in DB, will be created below
+          console.log('User not found in database, creating new profile')
+        }
+
+        // Create user if they don't exist yet
+        if (!dbUser) {
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+            displayName: user.displayName || '',
+            createdAt: new Date().toISOString(),
+            authProvider: 'google',
+          })
+          dbUser = await userController.getById(user.uid)
+        }
+
+        commit('SET_USER', dbUser)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'FIREBASE',
+          message: err.code || 'Error during Google sign in'
+        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
