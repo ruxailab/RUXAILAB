@@ -251,12 +251,14 @@
               <p class="mb-4 grey--text text--darken-1">
                 Try adjusting your search or browse all categories
               </p>
+
               <v-btn
                 color="black"
                 style="color: white;"
                 @click="filterByCategory(null)"
               >
                 View All Articles
+
               </v-btn>
             </v-card-text>
           </v-card>
