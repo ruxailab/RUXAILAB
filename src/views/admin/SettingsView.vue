@@ -4,6 +4,7 @@
 
     <!-- Leave Alert Dialog -->
     <LeaveAlert />
+    <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -119,13 +120,8 @@
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
 
-            <v-btn
-              style="margin-right: 40px"
-              outlined
-              color="green"
-              @click="duplicateTest()"
-            >
-              Duplicate test
+            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+              {{ $t('buttons.duplicateTest') }}
             </v-btn>
           </v-row>
 
@@ -307,6 +303,11 @@ export default {
   methods: {
     validate(valid, index) {
       this.valids[index] = valid
+    },
+    async onSubmit() {
+        await this.submit();
+        this.$store.commit('SET_LOCAL_CHANGES', false);
+        this.$router.push({ name: this.$store.state.pathTo });
     },
     async submit() {
       const element = this.object.testTitle
