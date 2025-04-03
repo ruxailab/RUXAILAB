@@ -479,6 +479,7 @@
       "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。"
     },
     "buttons": {
+      "saveandleave": "保存并离开",
       "next": "下一步",
       "previous": "上一步",
       "seeCode": "查看代码",

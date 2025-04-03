@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "Already have an account? Sign in"
   },
   "common": {
+    "user": "User",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -50,6 +51,7 @@
     "title": "Profile",
     "editProfile": "Edit Profile",
     "account": "Account",
+    "superAdmin": "Super Admin",
     "admin": "Admin",
     "changePassword": "Change Password",
     "passwordRequirements": "Ensure these requirements",
@@ -81,6 +83,11 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "users": "Users",
+    "tests": "Tests",
+    "id": "Id",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -480,6 +487,7 @@
     "noCopy": "Copy unsuccessful",
     "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
+    "deleteUser": "Are you sure you want to delete this user?",
     "addDescription": "Please add a descritpion",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
@@ -497,6 +505,7 @@
     "responseRecorded":"Your response has been recorded"
   },
   "buttons": {
+    "saveandleave": "Save and Leave",
     "next": "Next",
     "previous": "Previous",
     "seeCode": "See the code",
@@ -516,7 +525,9 @@
     "delete": "Delete",
     "deleteAccount":"Delete Account",
     "back":"Back",
+    "duplicateTest":"Duplicate Test",
     "submit":"Submit"
+
   },
   "switches": {
     "noAnswer": "No answer",
@@ -608,5 +619,28 @@
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
+  },
+  "ModeratedTest": {
+    "preTest": "PRE-TEST",
+    "tasks": "TASKS",
+    "postTest": "POST-TEST",
+    "consentForm": "Consent Form",
+    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
+    "landingPage": "Landing Page",
+    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "participantCamera": "Participant camera",
+    "cameraOptions": {
+      "optional": "Optional",
+      "required": "Required",
+      "disabled": "Disabled"
+    },
+    "preForm": "Pre-Form",
+    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
+    "postForm": "Post Form",
+    "postFormDescription": "This is a post-questionnaire to collect participant data.",
+    "finalMessage": "Final message",
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
   }
 }

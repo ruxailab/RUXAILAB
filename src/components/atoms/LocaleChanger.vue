@@ -2,7 +2,8 @@
   <v-col cols="1" md="2">
     <!-- Desktop -->
     <v-select
-      v-model="lang"
+      :value="lang" 
+      @input="updateLang" 
       class="pt-7 hidden-sm-and-down"
       prepend-inner-icon="mdi-translate"
       :items="languages"
@@ -31,7 +32,7 @@
             v-for="(item, index) in languages"
             :key="index"
             link
-            @click="lang = item.value"
+            @click="updateLang(item.value)" 
           >
             <v-list-item-title>{{ item.label }}</v-list-item-title>
           </v-list-item>
@@ -42,6 +43,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -57,14 +60,25 @@ export default {
         { label: 'Русский', value: 'ru' },
         { label: '日本語', value: 'ja' }
       ],
-      lang: this.$i18n.locale,
-    }
+    };
   },
-  watch: {
-    lang: function (newValue) {
-      this.$i18n.locale = newValue
+
+  computed: {
+    ...mapGetters('Language', ['lang']),
+  },
+  
+  methods: {
+
+    ...mapActions('Language', ['setLang']), 
+
+    updateLang(newLang) {
+      this.setLang(newLang);
+      this.$i18n.locale = newLang; 
     },
   },
-}
-</script>
 
+  mounted() {
+    this.$i18n.locale = this.lang;
+  },
+};
+</script>
