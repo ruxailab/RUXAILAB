@@ -6,9 +6,11 @@
     "password": "Passwort",
     "dont-have-account": "Noch kein Konto? Registrieren",
     "sign-up": "Registrieren",
-    "contact": "Kontaktnummer",  
+    "contact": "Kontaktnummer",
     "confirmPassword": "Passwort bestätigen",
-    "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden"
+    "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "or": "oder"
   },
   "common": {
     "loading": "Lade Test",
@@ -520,11 +522,19 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability-Heuristik",
-      "text": ["Usability-Prozentsatz", "Abschlussbericht PDF", "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"]
+      "text": [
+        "Usability-Prozentsatz",
+        "Abschlussbericht PDF",
+        "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability-Benutzer",
-      "text": ["Webcam, Audio & Bildschirmaufnahme", "Erweiterte Antwortanalyse", "Moderierte oder nicht moderierte Tests"]
+      "text": [
+        "Webcam, Audio & Bildschirmaufnahme",
+        "Erweiterte Antwortanalyse",
+        "Moderierte oder nicht moderierte Tests"
+      ]
     }
   },
   "TestDialog": {
