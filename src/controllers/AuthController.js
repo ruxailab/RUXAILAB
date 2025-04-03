@@ -1,45 +1,79 @@
-import { auth } from '@/firebase'
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
+	GoogleAuthProvider,
+	signInWithPopup,
 } from 'firebase/auth'
+import { auth } from '@/firebase'
 
+/**
+ * Controller for authentication operations
+ */
 export default class AuthController {
-	// Register new users
+	/**
+	 * Signs up a new user with email and password
+	 * @param {string} email - User email
+	 * @param {string} password - User password
+	 * @returns {Promise} - Firebase auth user credential
+	 */
 	async signUp(email, password) {
 		return createUserWithEmailAndPassword(auth, email, password)
 	}
 
-	// Sign In
+	/**
+	 * Signs in a user with email and password
+	 * @param {string} email - User email
+	 * @param {string} password - User password
+	 * @returns {Promise} - Firebase auth user credential
+	 */
 	async signIn(email, password) {
 		return signInWithEmailAndPassword(auth, email, password)
 	}
 
-	// Get Current User
+	/**
+	 * Signs in a user with Google
+	 * @returns {Promise} - Firebase auth user credential
+	 */
+	async signInWithGoogle() {
+		const provider = new GoogleAuthProvider()
+		return signInWithPopup(auth, provider)
+	}
+
+	/**
+	 * Gets the current user
+	 * @returns {Object} - Current Firebase user
+	 */
 	async getCurrentUser() {
 		return auth.currentUser
 	}
 
-	// Sign Out
+	/**
+	 * Signs out the current user
+	 * @returns {Promise} - Firebase auth signOut promise
+	 */
 	async signOut() {
 		return signOut(auth)
 	}
 
-    async autoSignIn() {
-        return new Promise((resolve, reject) => {
-            const unsubscribe = onAuthStateChanged(
-                auth,
-                (user) => {
-                    unsubscribe()
-                    resolve(user)
-                },
-                (error) => {
-                    unsubscribe()
-                    reject(error)
-                }
-            )
-        })
-    }
+	/**
+	 * Auto sign in with Firebase observer
+	 * @returns {Promise} - Current user or null
+	 */
+	async autoSignIn() {
+		return new Promise((resolve, reject) => {
+			const unsubscribe = onAuthStateChanged(
+				auth,
+				(user) => {
+					unsubscribe()
+					resolve(user)
+				},
+				(error) => {
+					unsubscribe()
+					reject(error)
+				},
+			)
+		})
+	}
 }
