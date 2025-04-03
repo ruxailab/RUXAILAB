@@ -479,6 +479,7 @@
       "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。"
     },
     "buttons": {
+      "saveandleave": "保存して残す",
       "next": "次へ",
       "previous": "前へ",
       "seeCode": "コードを見る",
