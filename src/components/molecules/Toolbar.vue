@@ -13,6 +13,7 @@
       mdi-alpha-r-circle
     </v-icon>
 
+    <!-- MOBILE DRAWER -->
     <v-navigation-drawer
       v-if="user"
       v-model="drawer"
@@ -23,7 +24,7 @@
       class="d-flex d-lg-none drawer-animate"
       :class="{ 'drawer-open': drawer }"
     >
-      <!-- User Info Section - Clickable for Profile -->
+      <!-- User Info -->
       <div class="mobile-dropdown">
         <div class="pa-4 d-flex align-center" style="cursor: pointer" @click="goToProfile(); drawer = false;">
           <v-avatar size="48" color="primary" class="user-avatar white--text">
@@ -40,7 +41,7 @@
 
         <v-divider dark></v-divider>
 
-        <!-- Manager Options -->
+        <!-- Manager Items -->
         <v-list v-if="isManager && test" dark>
           <v-list-item-group v-model="item">
             <v-list-item
@@ -58,10 +59,9 @@
           </v-list-item-group>
         </v-list>
 
-        <!-- Spacer for pushing signout to bottom -->
         <v-spacer></v-spacer>
 
-        <!-- Signout Button - Always visible at bottom -->
+        <!-- Sign Out -->
         <div class="mobile-signout">
           <v-divider dark></v-divider>
           <div class="pa-2">
@@ -89,7 +89,30 @@
 
     <locale-changer />
 
-    <!-- Go to console Desktop -->
+    <!-- THEME TOGGLE BUTTON -->
+    <v-menu offset-y rounded="lg">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on" :title="'Toggle Theme'">
+          <v-icon>{{ themeIcon }}</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item @click="setTheme('light')">
+          <v-list-item-icon><v-icon>mdi-white-balance-sunny</v-icon></v-list-item-icon>
+          <v-list-item-title>Light</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="setTheme('dark')">
+          <v-list-item-icon><v-icon>mdi-weather-night</v-icon></v-list-item-icon>
+          <v-list-item-title>Dark</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="setTheme('auto')">
+          <v-list-item-icon><v-icon>mdi-theme-light-dark</v-icon></v-list-item-icon>
+          <v-list-item-title>Auto</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
+    <!-- Go to console buttons based on route -->
     <v-btn
       v-if="this.$route.path === '/' && user"
       text
@@ -101,11 +124,7 @@
     </v-btn>
 
     <v-btn
-      v-if="
-        this.$route.path == '/testslist' ||
-          this.$route.path == '/signin' ||
-          this.$route.path == '/signup'
-      "
+      v-if="['/testslist', '/signin', '/signup'].includes(this.$route.path)"
       text
       color="#f9a826"
       class="console-button mx-1 d-none d-lg-flex"
@@ -115,12 +134,7 @@
     </v-btn>
 
     <v-btn
-      v-if="
-        this.$route.path !== '/' &&
-          this.$route.path !== '/testslist' &&
-          this.$route.path !== '/signin' &&
-          this.$route.path !== '/signup'
-      "
+      v-if="!['/', '/testslist', '/signin', '/signup'].includes(this.$route.path)"
       text
       color="#f9a826"
       class="console-button mx-1 d-none d-lg-flex"
@@ -132,32 +146,16 @@
     <HelpButton :class="$vuetify.breakpoint.smAndDown ? 'mx-1' : 'mx-2'" />
     <NotificationBtn v-if="user" :class="$vuetify.breakpoint.smAndDown ? 'mx-1' : 'mx-2'" />
 
-    <!-- Sign-in Desktop -->
-    <v-btn
-      v-if="!user"
-      text
-      class="d-none d-lg-flex"
-      @click="goTo('/signin')"
-    >
-      <v-icon left>
-        mdi-lock
-      </v-icon>
+    <!-- Sign-in Buttons -->
+    <v-btn v-if="!user" text class="d-none d-lg-flex" @click="goTo('/signin')">
+      <v-icon left>mdi-lock</v-icon>
       {{ $t('SIGNIN.sign-in') }}
     </v-btn>
-
-    <!-- Sign-in Mobile -->
-    <v-btn 
-      v-if="!user" 
-      icon 
-      class="d-flex d-lg-none" 
-      @click="goTo('/signin')"
-    >
-      <v-icon :size="$vuetify.breakpoint.xsOnly ? '18' : '20'">
-        mdi-lock
-      </v-icon>
+    <v-btn v-if="!user" icon class="d-flex d-lg-none" @click="goTo('/signin')">
+      <v-icon :size="$vuetify.breakpoint.xsOnly ? '18' : '20'">mdi-lock</v-icon>
     </v-btn>
 
-    <!-- Profile Button Desktop -->
+    <!-- Profile Desktop -->
     <div class="d-none d-lg-flex">
       <v-menu
         v-if="user"
@@ -169,31 +167,17 @@
         rounded="lg"
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-  text
-  v-bind="attrs"
-  class="pa-0 btn-fix"
-  v-on="on"
-  @click="menu = !menu"
->
-  <v-avatar size="24" class="mr-1">
-    <v-img 
-      v-if="profileImage" 
-      :src="profileImage" 
-      alt="User Profile"
-    ></v-img>
-    <v-icon v-else dark>
-      mdi-account-circle
-    </v-icon>
-  </v-avatar>
-  <v-icon small>
-    mdi-chevron-down
-  </v-icon>
-</v-btn>
+          <v-btn text v-bind="attrs" class="pa-0 btn-fix" v-on="on" @click="menu = !menu">
+            <v-avatar size="24" class="mr-1">
+              <v-img v-if="profileImage" :src="profileImage" alt="User Profile"></v-img>
+              <v-icon v-else dark>mdi-account-circle</v-icon>
+            </v-avatar>
+            <v-icon small>mdi-chevron-down</v-icon>
+          </v-btn>
         </template>
 
         <div class="custom-dropdown white rounded-lg">
-          <!-- User Info Section -->
+          <!-- User Info -->
           <div class="pa-6 d-flex align-center">
             <v-avatar size="48" color="primary" class="elevation-2">
               <span class="text-h5 font-weight-medium white--text">{{ userInitial }}</span>
@@ -209,14 +193,10 @@
 
           <v-divider></v-divider>
 
-          <!-- Menu Items -->
+          <!-- Actions -->
           <div class="pa-2">
             <v-hover v-slot="{ hover }">
-              <div 
-                class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer"
-                :class="{ 'primary lighten-5': hover }"
-                @click="goToProfile(); menu = false;"
-              >
+              <div class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer" :class="{ 'primary lighten-5': hover }" @click="goToProfile(); menu = false;">
                 <v-icon color="primary" size="20">mdi-account</v-icon>
                 <span class="ml-3 subtitle-1 font-weight-medium" :class="{ 'primary--text': hover }">
                   {{ $t('buttons.profile') }}
@@ -227,11 +207,7 @@
             <v-divider class="my-2"></v-divider>
 
             <v-hover v-slot="{ hover }">
-              <div 
-                class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer"
-                :class="{ 'error lighten-5': hover }"
-                @click="signOut(); menu = false;"
-              >
+              <div class="d-flex align-center px-4 py-3 rounded-lg transition-swing cursor-pointer" :class="{ 'error lighten-5': hover }" @click="signOut(); menu = false;">
                 <v-icon color="error" size="20">mdi-logout</v-icon>
                 <span class="ml-3 subtitle-1 font-weight-medium" :class="{ 'error--text': hover }">
                   {{ $t('buttons.signout') }}
@@ -254,21 +230,17 @@ import { getAuth } from 'firebase/auth'
 
 export default {
   name: 'Toolbar',
-  components: {
-    NotificationBtn,
-    LocaleChanger,
-    HelpButton,
-  },
+  components: { NotificationBtn, LocaleChanger, HelpButton },
   data() {
     return {
-    drawer: false,
-    menu: false,
-    item: 0,
-    isManager: false,
-    username: null,
-    profileImage: null,
-    defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png'
-  }
+      drawer: false,
+      menu: false,
+      item: 0,
+      isManager: false,
+      username: null,
+      profileImage: null,
+      theme: localStorage.getItem('theme') || 'auto'
+    }
   },
   computed: {
     user() {
@@ -277,270 +249,92 @@ export default {
     test() {
       return this.$store.state.Tests.Test
     },
+    accessLevel() {
+      return this.test?.accessLevel || 0
+    },
+    userInitial() {
+      return this.username?.charAt(0)?.toUpperCase() || 'U'
+    },
+    themeIcon() {
+      switch (this.theme) {
+        case 'light': return 'mdi-white-balance-sunny'
+        case 'dark': return 'mdi-weather-night'
+        default: return 'mdi-theme-light-dark'
+      }
+    },
     items() {
-      let items
-      if (this.test) {
-        items = [
-          {
-            title: 'Manager',
-            icon: 'mdi-home',
-            path: `/managerview/${this.test.id}`,
-            id: 0,
-          },
-        ]
+      const test = this.test
+      const items = []
+      if (!test) return items
 
-        if (this.accessLevel <= 2) {
-          if (this.accessLevel == 0) {
-            items.push(
-              {
-                title: 'Test',
-                icon: 'mdi-file-document-edit',
-                path: `/edittest/${this.test.id}`,
-                id: 1,
-              },
-              {
-                title: 'Preview',
-                icon: 'mdi-file-eye',
-                path: `/testview/${this.test.id}`,
-                id: 2,
-              },
-            )
-          } else if (this.accessLevel == 1) {
-            items.push({
-              title: 'Answer Test',
-              icon: 'mdi-file-document',
-              path: `/testview/${this.test.id}`,
-              id: 1,
-            })
-          }
-        }
-        if (this.accessLevel == 0) {
+      items.push({ title: 'Manager', icon: 'mdi-home', path: `/managerview/${test.id}` })
+      if (this.accessLevel <= 2) {
+        if (this.accessLevel === 0) {
           items.push(
-            {
-              title: 'Reports',
-              icon: 'mdi-book-multiple',
-              path: `/reportview/${this.test.id}`,
-              id: 3,
-            },
-            {
-              title: 'Answers',
-              icon: 'mdi-order-bool-ascending-variant',
-              path: `/answerview/${this.test.id}`,
-              id: 4,
-            },
+            { title: 'Test', icon: 'mdi-file-document-edit', path: `/edittest/${test.id}` },
+            { title: 'Preview', icon: 'mdi-file-eye', path: `/testview/${test.id}` }
           )
-        } else if (this.accessLevel == 1) {
-          items.push(
-            {
-              title: 'Reports',
-              icon: 'mdi-book-multiple',
-              path: `/reportview/${this.test.id}`,
-              id: 2,
-            },
-            {
-              title: 'Answers',
-              icon: 'mdi-order-bool-ascending-variant',
-              path: `/answerview/${this.test.id}`,
-              id: 3,
-            },
-          )
+        } else if (this.accessLevel === 1) {
+          items.push({ title: 'Answer Test', icon: 'mdi-file-document', path: `/testview/${test.id}` })
         }
-        if (this.accessLevel == 0) {
-          items.push(
-            {
-              title: 'Final Report',
-              icon: 'mdi-file-document',
-              path: `/finalreportview/${this.test.id}`,
-              id: 5,
-            },
-            {
-              title: 'Cooperators',
-              icon: 'mdi-account-group',
-              path: `/cooperators/${this.test.id}`,
-              id: 6,
-            },
-          )
-        }
-
-        if (this.test.template) {
-          items.push({
-            title: 'Template',
-            icon: 'mdi-file-compare',
-            path: `/templateview/${this.test.template.id}`,
-            id: 7,
-          })
-        }
+      }
+      if (this.accessLevel === 0 || this.accessLevel === 1) {
+        items.push(
+          { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${test.id}` },
+          { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${test.id}` }
+        )
+      }
+      if (this.accessLevel === 0) {
+        items.push(
+          { title: 'Final Report', icon: 'mdi-file-document', path: `/finalreportview/${test.id}` },
+          { title: 'Cooperators', icon: 'mdi-account-group', path: `/cooperators/${test.id}` }
+        )
+      }
+      if (test.template) {
+        items.push({ title: 'Template', icon: 'mdi-file-compare', path: `/templateview/${test.template.id}` })
       }
 
       return items
-    },
-    accessLevel() {
-      // If the user is a superadmin
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0
-        // Check if the user is a collaborator or owner
-        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
-        if (isTestOwner) return 0
-
-        const answers = []
-        const answersEntries = Object.entries(this.user.myAnswers)
-        answersEntries.forEach((answer) => {
-          answers.push(answer[1])
-        })
-        if (this.test.cooperators) {
-          const coopsInfo = this.test.cooperators.find(
-            (coops) => coops.userDocId === this.user.id,
-          )
-          if (coopsInfo) {
-            return coopsInfo.accessLevel
-          }
-        }
-        if (this.test.isPublic) return 1
-        else return 2
-      }
-      return 1
-    },
-    userInitial() {
-      if (this.username) {
-        return this.username.charAt(0).toUpperCase()
-      }
-      return 'U'
     }
   },
   watch: {
-    $route: {
+    theme: {
       immediate: true,
-      handler(to) {
-        const parentRoute = to.matched[0]
-        if (parentRoute) {
-          if (parentRoute.name === 'ManagerView') this.isManager = true
-          else this.isManager = false
-        }
-      },
-    },
-    user: {
-      immediate: true,
-      handler(newUser) {
-        if (newUser) {
-          this.fetchUsername();
+      handler(newTheme) {
+        if (newTheme === 'auto') {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          this.$vuetify.theme.dark = prefersDark
         } else {
-          this.username = null; // Clear the username when the user logs out
+          this.$vuetify.theme.dark = newTheme === 'dark'
         }
-      },
-    },
-  },
-  
-  mounted() {
-    if (this.user) {
-      console.log(this.username)
-      this.fetchUsername();
+      }
     }
   },
-
   methods: {
-    async fetchUsername() {
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (user) {
-      const userController = new UserController();
-      const userDoc = await userController.getById(user.uid);
-
-      if (userDoc) {
-        this.username = userDoc.username || null;
-        this.profileImage = userDoc.profileImage || null;
-      } else {
-        console.error('User document not found in Firestore');
-      }
-    } else {
-      console.error('No user is currently signed in');
-    } 
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    this.$toast.error('Failed to load profile data');
-  }
-},
-    goTo(route) {
-      if (route.includes('/testview')) window.open(route)
-      else {
-        this.$router
-          .push(route)
-          .catch(() => {})
-          .catch(() => {})
-      }
-    },
-    async signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.$router
-          .push('/')
-          .catch(() => {})
-          .catch(() => {})
-      })
+    goTo(path) {
+      this.$router.push(path)
     },
     goToProfile() {
-      console.log('profile')
-      if (this.$route.path !== '/profile') {
-        this.$router.push('/profile').catch(() => {});
-      }
+      this.$router.push('/profile')
     },
+    signOut() {
+      getAuth().signOut().then(() => {
+        this.$store.commit('setUser', null)
+        this.$router.push('/signin')
+      })
+    },
+    setTheme(value) {
+      this.theme = value
+      localStorage.setItem('theme', value)
+    }
   },
+  async mounted() {
+    if (this.user) {
+      const data = await UserController.getUserData(this.user.uid)
+      this.username = data.username || ''
+      this.profileImage = data.image || ''
+      this.isManager = !!this.test
+    }
+  }
 }
 </script>
-
-<style scoped>
-/* Only keeping styles that can't be handled by Vuetify */
-.cursor-pointer {
-  cursor: pointer;
-}
-
-/* Drawer animations - can't be handled by Vuetify */
-.drawer-animate {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transform: translateX(-100%);
-}
-
-.drawer-animate.drawer-open {
-  transform: translateX(0);
-}
-
-.drawer-animate .mobile-dropdown {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.drawer-animate.drawer-open .mobile-dropdown {
-  opacity: 1;
-  transition-delay: 0.2s;
-}
-
-.drawer-animate .mobile-menu-item {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.3s ease;
-}
-
-.drawer-animate.drawer-open .mobile-menu-item {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Stagger animations - can't be handled by Vuetify */
-.drawer-animate.drawer-open .mobile-menu-item:nth-child(1) { transition-delay: 0.2s; }
-.drawer-animate.drawer-open .mobile-menu-item:nth-child(2) { transition-delay: 0.25s; }
-.drawer-animate.drawer-open .mobile-menu-item:nth-child(3) { transition-delay: 0.3s; }
-.drawer-animate.drawer-open .mobile-menu-item:nth-child(4) { transition-delay: 0.35s; }
-.drawer-animate.drawer-open .mobile-menu-item:nth-child(5) { transition-delay: 0.4s; }
-
-.drawer-animate .mobile-signout {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-}
-
-.drawer-animate.drawer-open .mobile-signout {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.4s;
-}
-</style>

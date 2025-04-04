@@ -1,6 +1,9 @@
 <template>
   <v-app>
     <Toolbar />
+
+    <!-- Removed Duplicate Theme Switcher -->
+
     <GlobalErrorHandler />
     <v-main>
       <v-container fluid class="pa-0">
@@ -20,6 +23,11 @@ export default {
     Toolbar,
     GlobalErrorHandler,
   },
+  data() {
+    return {
+      theme: localStorage.getItem('theme') || 'auto',
+    }
+  },
   watch: {
     $route: {
       immediate: true,
@@ -28,10 +36,36 @@ export default {
       },
     },
   },
+  methods: {
+    applyTheme() {
+      localStorage.setItem('theme', this.theme)
+
+      if (this.theme === 'dark') {
+        this.$vuetify.theme.dark = true
+      } else if (this.theme === 'light') {
+        this.$vuetify.theme.dark = false
+      } else {
+        // Auto mode: use system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        this.$vuetify.theme.dark = prefersDark
+
+        // Listen for system preference change
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          if (this.theme === 'auto') {
+            this.$vuetify.theme.dark = e.matches
+          }
+        })
+      }
+    },
+  },
+  mounted() {
+    this.applyTheme()
+  },
 }
 </script>
 
 <style>
+/* Your existing styles */
 * {
   margin: 0;
   padding: 0;
