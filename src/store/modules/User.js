@@ -72,23 +72,19 @@ export default {
         console.error(e)
       }
     },
-    async deleteUser({ commit }, user) {
+
+    async updateLevel({ commit }, { data }) {
       commit('setLoading', true)
       try {
-        await userController.deleteUser(user.id)
-        commit('REMOVE_USER', user.id)
-        commit('setSuccess', `Successfully deleted user ${user.email}`)
-        return Promise.resolve()
+        await userController.updateLevel(data.uid, data.customClaims.accessLevel)
+        const updatedUsers = await userController.readAll()
+        commit('SET_USERS', updatedUsers)
       } catch (e) {
-        console.error('Error deleting user:', e)
-        commit('setError', {
-          errorCode: 'auth',
-          message: 'Error deleting user'
-        })
-        return Promise.reject(e)
+        console.error(e)
       } finally {
         commit('setLoading', false)
       }
-    }
+    },
+
   },
 }
