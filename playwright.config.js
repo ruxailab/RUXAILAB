@@ -1,63 +1,52 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-const devBaseUrl = 'http://localhost:8080';
+const devBaseUrl = process.env.BASE_URL || 'http://localhost:8080'; // Allows dynamic override
 
 module.exports = defineConfig({
   testDir: './e2e',
-  /* Run tests in files in parallel */
   fullyParallel: true,
 
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-
-  /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-
-  /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
 
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [['html', { open: 'never' }], ['list']], // Multi-reporter setup
 
-  /* Output directory for screenshots of failed tests */
   outputDir: './playwright/output',
 
   use: {
     baseURL: devBaseUrl,
     ...devices['Desktop Chrome'],
-    /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',
-
-    /* Create a screenshot if a test fails */
-    screenshot: { mode: 'only-on-failure', fullPage: true },
-
-    /* Set global timeout for actions (e.g., click, fill) */
+    screenshot: 'only-on-failure',
     actionTimeout: 10000,
-
-    /* Set global timeout for navigation */
     navigationTimeout: 30000,
+    video: 'retain-on-failure', // Optional: keep videos for debugging
+    headless: true, // Optional: force headless
+    viewport: { width: 1280, height: 720 }, // Consistent viewport
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
+      use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'], 
-      },
+      use: { ...devices['Desktop Safari'] },
     },
   ],
+
+  webServer: {
+    command: 'npm run dev', // Optional: auto-launch server before tests
+    port: 8080,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
 });
+
