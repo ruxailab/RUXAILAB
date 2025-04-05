@@ -56,7 +56,7 @@
                 </div>
               </v-form>
               <v-row>
-                <v-col cols="6">
+                <v-col :cols="6" class="checkbox-container">
                   <v-checkbox
                     v-model="items[i].selectionField"
                     :label="$t('UserTestTable.checkboxes.selectionField')"
@@ -64,7 +64,7 @@
                     @click="selectField(i)"
                   />
                 </v-col>
-                <v-col cols="5">
+                <v-col :cols="5" class="checkbox-container">
                   <v-checkbox
                     v-model="items[i].textField"
                     :label="$t('UserTestTable.checkboxes.textField')"
@@ -227,5 +227,18 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+@media (max-width: 600px) {
+  .checkbox-container {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+  .v-row {
+    flex-direction: column;
+  }
+  .v-btn.mt-5 {
+    margin-top: 0 !important;
+  }
+}
 </style>
