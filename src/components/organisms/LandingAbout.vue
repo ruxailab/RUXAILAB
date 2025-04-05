@@ -89,7 +89,7 @@ export default {
 
 <style scoped>
 .background-blob-desktop {
-  background-image: url('https://i.ibb.co/C7F8Vmq/blob.png');
+  background-image: url('/public/blob.png');
   background-size: contain;
   background-position: center;
 }
@@ -105,12 +105,12 @@ export default {
     background-image: none;
   }
   .background-blob-mobile1 {
-    background-image: url('https://i.ibb.co/C7F8Vmq/blob.png');
+    background-image: url('/public/blob.png');
     background-size: contain;
     background-position: center;
   }
   .background-blob-mobile2 {
-    background-image: url('https://i.ibb.co/hgZWz0Z/blob2.png');
+    background-image: url('/public/blob.png');
     background-size: contain;
     background-position: center;
   }

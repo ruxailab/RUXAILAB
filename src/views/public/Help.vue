@@ -1,5 +1,5 @@
 <template>
-  <div class="grey lighten-4">
+  <div :class="[ $vuetify.theme.dark ? 'bg-black' : 'grey lighten-4' ]">
     <v-card height="260" elevation="0" rounded="0" class="mb-6">
       <v-img
         src="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
@@ -85,6 +85,7 @@
                 >
                 <v-list-item-group v-model="activeCategory" color="black">
                   <v-list-item
+                    style="background-color: white !important; color: black !important;"
                     v-for="(category, index) in categories"
                     :key="index"
                     @click="filterByCategory(category.id)"
@@ -119,7 +120,8 @@
                     </v-list-item-action>
                   </v-list-item>
                   <v-divider class="my-2"></v-divider>
-                  <v-list-item
+                  <v-list-item 
+                    style="background-color: white !important; color: black !important;"
                     @click="filterByCategory(null)"
                     class="my-1 mx-2 rounded"
                     :class="{ 'grey lighten-4': selectedCategory === null }"
@@ -133,7 +135,7 @@
                       >
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title
+                      <v-list-item-title 
                         :class="{
                           'black--text font-weight-medium':
                             selectedCategory === null,
@@ -156,6 +158,7 @@
             >
               <v-card
                 flat
+                
                 v-if="getItemsByCategory(category.id).length > 0"
                 class="mb-4 rounded-lg"
                 style="border-left: 4px solid rgb(249, 168, 38);"
@@ -200,8 +203,10 @@
                       <div
                          class="custom-controls d-flex justify-center align-center"
                          :class="{'controls-mobile': $vuetify.breakpoint.xsOnly}"
+                         
                       >
                         <v-btn
+                          
                           icon
                           color="white"
                           @click="skipBackward(item)"
@@ -229,7 +234,7 @@
                           style="background-color: rgba(0,0,0,0.5);"
                           :class="{'button-hover': true}"
                         >
-                          <v-icon>mdi-fast-forward-10</v-icon>
+                          <v-icon >mdi-fast-forward-10</v-icon>
                         </v-btn>
                      </div>
                    </div>
