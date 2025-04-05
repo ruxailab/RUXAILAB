@@ -1,21 +1,36 @@
 <template>
   <div>
-    <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0">
+    <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
       <v-tab @click="tabClicked(0)">
-        {{ $t('HeuristicsEditTest.titles.heuristics') }}
+        <div class="tab-content">
+          {{ $t('HeuristicsEditTest.titles.heuristics') }}
+          <img v-if="index === 0" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+        </div>
       </v-tab>
+
       <v-tab @click="tabClicked(1)">
-        {{ $t('HeuristicsEditTest.titles.options') }}
+        <div class="tab-content">
+          {{ $t('HeuristicsEditTest.titles.options') }}
+          <img v-if="index === 1" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+        </div>
       </v-tab>
+
       <v-tab @click="tabClicked(2)">
-        {{ $t('HeuristicsEditTest.titles.weights') }}
+        <div class="tab-content">
+          {{ $t('HeuristicsEditTest.titles.weights') }}
+          <img v-if="index === 2" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+        </div>
       </v-tab>
+
       <v-tab @click="tabClicked(3)">
-        {{ $t('HeuristicsEditTest.titles.settings') }}
+        <div class="tab-content">
+          {{ $t('HeuristicsEditTest.titles.settings') }}
+          <img v-if="index === 3" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+        </div>
       </v-tab>
     </v-tabs>
 
-    <div>
+    <div class="mt-responsive">
       <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="change" />
       <OptionsTable v-if="index == 1" :options="object.options" />
       <WeightTable v-if="index == 2" :options="object.weight" />
@@ -68,3 +83,67 @@ export default {
   
 }
 </script>
+
+<style scoped>
+/* Mobile-responsive styles */
+@media (max-width: 960px) {
+
+  .responsive-tabs {
+    margin-top: 16px;
+    padding: 6px;
+    height: auto;
+    border: 1px solid #9e9e9e; 
+    border-radius: 4px;
+  }
+  
+  .responsive-tabs >>> .v-tabs-slider {
+    display: none;
+  }
+
+  .responsive-tabs >>> .v-tabs-bar {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .responsive-tabs >>> .v-tabs-bar__content {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .responsive-tabs >>> .v-tab {
+    min-width: 100%;
+    justify-content: space-between;
+    padding-left: 0;
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .tab-content {
+    display: flex;
+    justify-content: space-between; 
+    width: 100%;
+  }
+
+  .tab-icon {
+    width: 20px; 
+    height: 20px;
+    display: block;
+  }
+
+  .responsive-tabs >>> .v-slide-group__wrapper {
+    overflow: visible;
+  }
+
+  .mt-responsive {
+  margin-top: 16px;
+  }
+}
+
+/* Desktop-responsive styles */
+@media (min-width: 960px) {
+    .tab-icon {
+      display: none; /* Hide icon on larger screens */
+    }
+  }
+</style>
