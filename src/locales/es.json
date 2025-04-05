@@ -11,6 +11,7 @@
     "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
   },
   "common": {
+    "user": "Usuario",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -51,6 +52,7 @@
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
+    "superAdmin": "Super Administrador",
     "changePassword": "Cambiar contraseña",
     "passwordRequirements": "Asegúrese de cumplir estos requisitos",
     "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
@@ -81,6 +83,11 @@
     "template": "Plantilla",
     "finalReport": "Reporte Final",
     "answerType": "Tipo de respuesta:",
+    "users": "Usuarios",
+    "tests": "Pruebas",
+    "id": "Id",
+    "accessLevel": "Nivel de acceso",
+    "actions": "Acciones",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",
@@ -495,6 +502,7 @@
     "responseRecorded":"Su respuesta ha sido registrada"
   },
   "buttons": {
+    "saveandleave": "guardar y salir",
     "next": "Siguiente",
     "previous": "Anterior",
     "seeCode": "Ver el código",
@@ -507,17 +515,16 @@
     "create": "Crear",
     "cancel": "Cancelar",
     "close": "Cerca",
+    "save": "ahorrar",
     "leave": "Dejar",
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
-
-    "deleteAccount":"Eliminar cuenta",    
-    "back":"Atrás",
-    "submit": "Enviar",
-
     "deleteAccount": "Eliminar cuenta",
-    "back": "Atrás"
+    "back": "Atrás",
+    "duplicateTest": "Duplicar Prueba", 
+    "submit": "Enviar"
+
 
   },
   "switches": {
@@ -610,5 +617,28 @@
     "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
+  },
+  "ModeratedTest": {
+    "preTest": "PRE-PRUEBA",
+    "tasks": "TAREAS",
+    "postTest": "POST-PRUEBA",
+    "consentForm": "Formulario de consentimiento",
+    "consentDescription": "Este es un cuadro de consentimiento con un texto para confirmar el consentimiento.",
+    "welcomeMessage": "Mensaje de bienvenida",
+    "welcomeMessageDescription": "Este mensaje será lo primero que los participantes verán antes de que comience la sesión.",
+    "landingPage": "Página de inicio",
+    "landingPageDescription": "Esta URL se cargará automáticamente cuando el participante inicie la sesión.",
+    "participantCamera": "Cámara del participante",
+    "cameraOptions": {
+      "optional": "Opcional",
+      "required": "Requerido",
+      "disabled": "Deshabilitado"
+    },
+    "preForm": "Pre-Formulario",
+    "preFormDescription": "Este es un cuestionario previo para recopilar datos de los participantes.",
+    "postForm": "Post-Formulario",
+    "postFormDescription": "Este es un cuestionario posterior para recopilar datos de los participantes.",
+    "finalMessage": "Mensaje final",
+    "finalMessageDescription": "Este es un mensaje final que dejas para el participante al finalizar la prueba."
   }
 }
