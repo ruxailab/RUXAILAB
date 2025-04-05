@@ -8,36 +8,43 @@ module.exports = {
     parser: 'babel-eslint',
   },
   rules: {
+    // Environment-specific rules
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': 'off',
-    semi: ['warn', 'never'],
-    quotes: ['warn', 'single'],
+
+    // Style & formatting
+    'semi': ['warn', 'never'],
+    'quotes': ['warn', 'single'],
     'prefer-const': 'warn',
-    indent: 'off',
-    eqeqeq: 'off',
-    'no-plusplus': 'off',
+    'no-unused-vars': 'off',
+    'indent': 'off',
     'max-len': ['warn', {
-      'code': 200,
-      'ignoreStrings': true,
-      'ignoreComments': true,
-      'ignoreTemplateLiterals': true,
+      code: 200,
+      ignoreStrings: true,
+      ignoreComments: true,
+      ignoreTemplateLiterals: true,
     }],
-    'no-empty': 'warn',
-    'arrow-parens': 'warn',
     'no-trailing-spaces': 'warn',
+    'arrow-parens': 'warn',
     'comma-dangle': ['warn', 'always-multiline'],
     'object-curly-newline': 'off',
-    'class-methods-use-this': 'off',
+    'linebreak-style': 'off',
+    'operator-linebreak': 'off',
+
+    // General logic & best practices
+    'eqeqeq': 'off',
+    'no-plusplus': 'off',
+    'no-empty': 'warn',
     'no-continue': 'off',
     'no-loop-func': 'off',
-    'linebreak-style': 'off',
     'no-restricted-syntax': 'off',
-    'operator-linebreak': 'off',
-    'vue/max-attributes-per-line': 'off',
+    'class-methods-use-this': 'off',
 
-    'vue/require-prop-types':'warn',
-    'vue/require-default-prop':'warn',
+    // Vue-specific rules
+    'vue/max-attributes-per-line': 'off',
+    'vue/require-prop-types': 'warn',
+    'vue/require-default-prop': 'warn',
     'vue/prop-name-casing': 'warn',
   },
 }
+
