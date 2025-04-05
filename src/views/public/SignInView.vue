@@ -12,17 +12,18 @@
 
               <div class="divider" />
 
-              <v-form class="mx-3" @keyup.native.enter="onSignIn()">
+              <v-form class="mx-3" @keyup.native.enter="onSignIn()" ref="form">
                 <v-text-field
                   v-model="email"
                   :label="$t('SIGNIN.email')"
                   outlined
                   prepend-inner-icon="mdi-account-circle"
                   dense
+                  :rules="emailRules"
                 />
 
                 <v-text-field
-                  v-model="password"
+                  v-model.trim="password"
                   :label="$t('SIGNIN.password')"
                   prepend-inner-icon="mdi-lock"
                   outlined
@@ -30,6 +31,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   dense
                   @click:append="showPassword = !showPassword"
+                  :rules="[rules.required]"
                 />
               </v-form>
               <v-card-actions class="justify-center mt-4">
@@ -68,7 +70,7 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-
+import i18n from '@/i18n'
 export default {
   components: {
     Snackbar,
@@ -77,6 +79,13 @@ export default {
     showPassword: false,
     email: '',
     password: '',
+    emailRules: [
+      (v) => !!v || i18n.t('errors.emailIsRequired'),
+      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
+    ],
+    rules: {
+      required: (value) => !!value || i18n.t('PROFILE.passwordRequired'),
+    },
   }),
   computed: {
     loading() {
@@ -87,8 +96,14 @@ export default {
     },
   },
   methods: {
+    checkForm() {
+      const isValid = this.$refs.form.validate()
+      return isValid
+    },
     async onSignIn() {
-      try {
+      const result = this.checkForm()
+      if (result) {
+        try {
         await this.$store.dispatch('signin', {
           email: this.email,
           password: this.password,
@@ -99,6 +114,8 @@ export default {
       } catch (error) {
         console.error('Erro de autenticação:', error)
       }
+      }
+     
     },
     redirectToSignup() {
       this.$router.push('/signup')
