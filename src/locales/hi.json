@@ -333,7 +333,8 @@
       },
       "messages": {
         "acceptCsv": "CSV फ़ाइल स्वीकार करें",
-        "noCsvFileSelected": "कोई CSV फ़ाइल नहीं चुनी गई"
+        "noCsvFileSelected": "कोई CSV फ़ाइल नहीं चुनी गई",
+        "emptyCsvFile": "CSV फ़ाइल खाली है। कृपया डेटा के साथ एक फ़ाइल प्रदान करें।"
       },
       "placeHolders": {
         "importCsv": "CSV आयात करें"
