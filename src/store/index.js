@@ -8,6 +8,7 @@ import Cooperators from '@/store/modules/Cooperators'
 import Reports from '@/store/modules/Reports'
 import Heuristic from '@/store/modules/Heuristic'
 import Answer from '@/store/modules/Answer'
+import Language from './modules/Language'
 
 export default createStore({
   state: {
