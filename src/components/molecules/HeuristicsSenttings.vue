@@ -132,7 +132,14 @@ export default {
           const reader = new FileReader()
           reader.readAsText(this.csvFile, 'UTF-8') // Use readAsText with UTF-8 encoding
           reader.onload = async () => {
-            const csv = reader.result
+            const csv = reader.result.trim()
+
+            if (!csv) {
+              this.errorMessage = this.$t('HeuristicsSettings.messages.emptyCsvFile');
+              this.loadingUpdate = false;
+              return;
+            }
+            
             const lines = csv.split('\r\n') // Split lines using '\r\n' for cross-platform compatibility
             const headers = lines[0].split(';').map((header) => header.trim()) // Trim headers
             const heuristicMap = new Map()

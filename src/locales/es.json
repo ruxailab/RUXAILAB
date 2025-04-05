@@ -231,7 +231,8 @@
     },
     "messages": {
       "acceptCsv": "Aceptar archivo CSV",
-      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV"
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV",
+      "emptyCsvFile": "El archivo CSV está vacío. Por favor, proporciona un archivo con datos."
     },
     "placeHolders": {
       "importCsv": "Importar CSV"
