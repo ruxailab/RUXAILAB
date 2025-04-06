@@ -4,28 +4,28 @@
       <v-tab @click="tabClicked(0)">
         <div class="tab-content">
           {{ $t('HeuristicsEditTest.titles.heuristics') }}
-          <img v-if="index === 0" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+          <v-icon v-if="index === 0" class="tab-icon">mdi-chevron-down</v-icon>
         </div>
       </v-tab>
 
       <v-tab @click="tabClicked(1)">
         <div class="tab-content">
           {{ $t('HeuristicsEditTest.titles.options') }}
-          <img v-if="index === 1" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+          <v-icon v-if="index === 1" class="tab-icon">mdi-chevron-down</v-icon>
         </div>
       </v-tab>
 
       <v-tab @click="tabClicked(2)">
         <div class="tab-content">
           {{ $t('HeuristicsEditTest.titles.weights') }}
-          <img v-if="index === 2" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+          <v-icon v-if="index === 2" class="tab-icon">mdi-chevron-down</v-icon>
         </div>
       </v-tab>
 
       <v-tab @click="tabClicked(3)">
         <div class="tab-content">
           {{ $t('HeuristicsEditTest.titles.settings') }}
-          <img v-if="index === 3" class="tab-icon" src="@/assets/downwardArrow.svg" alt="Downward Arrow" />
+          <v-icon v-if="index === 3" class="tab-icon">mdi-chevron-down</v-icon>
         </div>
       </v-tab>
     </v-tabs>
