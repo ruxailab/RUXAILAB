@@ -1,32 +1,24 @@
 <template>
   <div>
     <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
-      <v-tab @click="tabClicked(0)">
-        <div class="tab-content">
+      <v-tab @click="tabClicked(0)" class="tab-content">
           {{ $t('HeuristicsEditTest.titles.heuristics') }}
           <v-icon v-if="index === 0" class="tab-icon">mdi-chevron-down</v-icon>
-        </div>
       </v-tab>
 
-      <v-tab @click="tabClicked(1)">
-        <div class="tab-content">
+      <v-tab @click="tabClicked(1)" class="tab-content">
           {{ $t('HeuristicsEditTest.titles.options') }}
           <v-icon v-if="index === 1" class="tab-icon">mdi-chevron-down</v-icon>
-        </div>
       </v-tab>
 
-      <v-tab @click="tabClicked(2)">
-        <div class="tab-content">
+      <v-tab @click="tabClicked(2)" class="tab-content" >
           {{ $t('HeuristicsEditTest.titles.weights') }}
           <v-icon v-if="index === 2" class="tab-icon">mdi-chevron-down</v-icon>
-        </div>
       </v-tab>
 
-      <v-tab @click="tabClicked(3)">
-        <div class="tab-content">
+      <v-tab @click="tabClicked(3)" class="tab-content">
           {{ $t('HeuristicsEditTest.titles.settings') }}
           <v-icon v-if="index === 3" class="tab-icon">mdi-chevron-down</v-icon>
-        </div>
       </v-tab>
     </v-tabs>
 
