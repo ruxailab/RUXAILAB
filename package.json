@@ -47,7 +47,9 @@
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.7.1",
     "vuex": "^3.6.2",
-    "webpack": "^4.47.0"
+    "webpack": "^4.47.0",
+    "heatmap.js": "^2.0.5"
+
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.1.0",

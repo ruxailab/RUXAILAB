@@ -99,7 +99,12 @@
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
-      "Settings": "Settings"
+      "Settings": "Settings",
+
+      "dashboard": "Dashboard",
+      
+      "heatmap": "Heatmap"
+    
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
