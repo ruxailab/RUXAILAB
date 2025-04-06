@@ -21,13 +21,13 @@
                 class="text-h2 font-weight-bold white--text mb-2"
                 style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
               >
-                Help Center
+                {{ $t('help.helpCenter') }}
               </h1>
               <h2
                 class="text-h4 font-weight-medium white--text mb-6"
                 style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
               >
-                How can we help?
+                {{ $t('help.howCanWeHelp') }}
               </h2>
               <div
                 class="mx-auto"
@@ -81,7 +81,7 @@
               <v-list nav rounded>
                 <v-subheader
                   class="grey lighten-4 subtitle-2 font-weight-bold amber--text text--darken-2"
-                  >CATEGORIES</v-subheader
+                  >{{ $t('help.categories') }}</v-subheader
                 >
                 <v-list-item-group v-model="activeCategory" color="black">
                   <v-list-item
@@ -198,8 +198,10 @@
                         style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
                       ></video>
                       <div
-                         class="custom-controls d-flex justify-center align-center"
-                         :class="{'controls-mobile': $vuetify.breakpoint.xsOnly}"
+                        class="custom-controls d-flex justify-center align-center"
+                        :class="{
+                          'controls-mobile': $vuetify.breakpoint.xsOnly,
+                        }"
                       >
                         <v-btn
                           icon
@@ -207,9 +209,9 @@
                           @click="skipBackward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
-                           <v-icon>mdi-rewind-10</v-icon>
+                          <v-icon>mdi-rewind-10</v-icon>
                         </v-btn>
                         <v-btn
                           icon
@@ -217,9 +219,11 @@
                           @click="togglePlay(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
-                           <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+                          <v-icon>{{
+                            isPlaying(item) ? 'mdi-pause' : 'mdi-play'
+                          }}</v-icon>
                         </v-btn>
                         <v-btn
                           icon
@@ -227,12 +231,12 @@
                           @click="skipForward(item)"
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
-                          :class="{'button-hover': true}"
+                          :class="{ 'button-hover': true }"
                         >
                           <v-icon>mdi-fast-forward-10</v-icon>
                         </v-btn>
-                     </div>
-                   </div>
+                      </div>
+                    </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -247,9 +251,9 @@
               <v-icon size="64" color="grey lighten-1" class="mb-4"
                 >mdi-help-circle-outline</v-icon
               >
-              <h3 class="mb-3">No articles found</h3>
+              <h3 class="mb-3">{{ $t('help.noArticlesFound') }}</h3>
               <p class="mb-4 grey--text text--darken-1">
-                Try adjusting your search or browse all categories
+                {{ $t('help.tryAdjustingSearch') }}
               </p>
 
               <v-btn
@@ -257,8 +261,7 @@
                 style="color: white;"
                 @click="filterByCategory(null)"
               >
-                View All Articles
-
+                {{ $t('help.viewAllArticles') }}
               </v-btn>
             </v-card-text>
           </v-card>
@@ -284,7 +287,7 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Contact Us
+              {{ $t('help.contactUs') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
@@ -303,16 +306,16 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Still Have Questions?
+              {{ $t('help.stillHaveQuestions') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
             </h3>
             <p class="white--text mb-4" style="opacity: 0.7;">
-              We're here to help! Reach out to our support team for assistance.
+              {{ $t('help.reachOutSupport') }}
             </p>
             <v-btn color="black" outlined class="white--text">
-              Submit a Request
+              {{ $t('help.submitRequest') }}
             </v-btn>
           </v-col>
           <v-col cols="12" md="4" class="pt-6">
@@ -320,7 +323,7 @@
               class="text-subtitle-1 font-weight-medium amber--text mb-4 pb-2"
               style="position: relative;"
             >
-              Quick Links
+              {{ $t('help.quickLinks') }}
               <span
                 style="position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: rgb(249, 168, 38);"
               ></span>
@@ -331,28 +334,29 @@
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                Terms of Service
+                {{ $t('help.termsOfService') }}
               </v-btn>
               <v-btn
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                Privacy Policy
+                {{ $t('help.privacyPolicy') }}
               </v-btn>
               <v-btn
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
               >
-                FAQs
+                {{ $t('help.faqs') }}
               </v-btn>
             </div>
           </v-col>
           <v-col cols="12" class="text-center mt-8">
             <v-divider dark class="mb-4"></v-divider>
             <p class="text-caption white--text" style="opacity: 0.5;">
-              © {{ currentYear }} Ruxailab. All rights reserved.
+              © {{ currentYear }} {{ $t('common.ruxailab') }}.
+              {{ $t('help.allRightsReserved') }}
             </p>
           </v-col>
         </v-row>
@@ -377,17 +381,11 @@ export default {
       isSearching: false,
       searchTimeout: null,
       isHovered: false,
-      categories: [
-        {
-          id: 'test-creation',
-          name: 'Test Creation',
-          icon: 'mdi-file-document-edit',
-        },
-        { id: 'templates', name: 'Templates', icon: 'mdi-file-table-outline' },
-        { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
-        { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
+      categories: [],
+      items: [],
+      helpItems: [
+        // ...existing code...
       ],
-      items: this.generateFaqItems(),
     }
   },
 
@@ -431,26 +429,26 @@ export default {
 
   methods: {
     generateFaqItems() {
-         const createFaqItem = (keyPrefix, category, gif) => ({
-           title: i18n.t(`help.${keyPrefix}`),
-           content: i18n.t(`help.${keyPrefix}answer`),
-           gif: `${gif}.mp4`,
-           isCollapsed: true,
-           category
-         });
-  
-         return [
-           createFaqItem('createtest', 'test-creation', 'create_test'),
-           createFaqItem('heuristictest', 'test-creation', 'hsetup'),
-           createFaqItem('deletetest', 'test-creation', 'del_test'),
-           createFaqItem('createtemplate', 'templates', 'create-temp'),
-           createFaqItem('usetemplate', 'templates', 'use-temp'),
-           createFaqItem('previewtest', 'test-creation', 'preview_test'),
-           createFaqItem('importcsv', 'test-creation', 'csv'),
-           createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
-           createFaqItem('analyseresults', 'analytics', 'analytics'),
-           createFaqItem('sendmessage', 'cooperators', 'send_message'),
-          ];
+      const createFaqItem = (keyPrefix, category, gif) => ({
+        title: this.$t(`help.${keyPrefix}`),
+        content: this.$t(`help.${keyPrefix}answer`),
+        gif: `${gif}.mp4`,
+        isCollapsed: true,
+        category,
+      })
+
+      return [
+        createFaqItem('createtest', 'test-creation', 'create_test'),
+        createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+        createFaqItem('deletetest', 'test-creation', 'del_test'),
+        createFaqItem('createtemplate', 'templates', 'create-temp'),
+        createFaqItem('usetemplate', 'templates', 'use-temp'),
+        createFaqItem('previewtest', 'test-creation', 'preview_test'),
+        createFaqItem('importcsv', 'test-creation', 'csv'),
+        createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+        createFaqItem('analyseresults', 'analytics', 'analytics'),
+        createFaqItem('sendmessage', 'cooperators', 'send_message'),
+      ]
     },
 
     toggleCollapse(index) {
@@ -505,73 +503,139 @@ export default {
     },
 
     skipBackward(item) {
-       const videos = this.$refs.videoPlayer;
-       let video;
-  
-       if (Array.isArray(videos)) {
-         const index = this.filteredItems.findIndex(i => i.title === item.title);
-         video = videos[index];
-       } else {
-         video = videos;
-       }
-  
+      const videos = this.$refs.videoPlayer
+      let video
+
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(
+          (i) => i.title === item.title,
+        )
+        video = videos[index]
+      } else {
+        video = videos
+      }
+
       if (video) {
-        video.currentTime = Math.max(0, video.currentTime - 10);
+        video.currentTime = Math.max(0, video.currentTime - 10)
       }
     },
 
     skipForward(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
+      const videos = this.$refs.videoPlayer
+      let video
+
       if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
+        const index = this.filteredItems.findIndex(
+          (i) => i.title === item.title,
+        )
+        video = videos[index]
       } else {
-        video = videos;
+        video = videos
       }
-  
+
       if (video) {
-        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        video.currentTime = Math.min(video.duration, video.currentTime + 10)
       }
     },
 
     togglePlay(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
+      const videos = this.$refs.videoPlayer
+      let video
+
       if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
+        const index = this.filteredItems.findIndex(
+          (i) => i.title === item.title,
+        )
+        video = videos[index]
       } else {
-        video = videos;
+        video = videos
       }
-  
+
       if (video) {
         if (video.paused) {
-          video.play();
+          video.play()
         } else {
-          video.pause();
+          video.pause()
         }
       }
     },
 
     isPlaying(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
+      const videos = this.$refs.videoPlayer
+      let video
+
       if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
+        const index = this.filteredItems.findIndex(
+          (i) => i.title === item.title,
+        )
+        video = videos[index]
       } else {
-       video = videos;
+        video = videos
       }
-  
-      return video ? !video.paused : false;
+
+      return video ? !video.paused : false
     },
 
     updatePlayState() {
-      this.$forceUpdate(); 
+      this.$forceUpdate()
+    },
+  },
+
+  created() {
+    // Initialize category names with translations
+    this.categories = [
+      {
+        id: 'test-creation',
+        name: this.$t('help.categories_testCreation'),
+        icon: 'mdi-file-document-edit',
+      },
+      {
+        id: 'templates',
+        name: this.$t('help.categories_templates'),
+        icon: 'mdi-file-table-outline',
+      },
+      {
+        id: 'cooperators',
+        name: this.$t('help.categories_cooperators'),
+        icon: 'mdi-account-group',
+      },
+      {
+        id: 'analytics',
+        name: this.$t('help.categories_analytics'),
+        icon: 'mdi-chart-bar',
+      },
+    ]
+
+    // Generate FAQ items with translations
+    this.items = this.generateFaqItems()
+  },
+
+  watch: {
+    // Watch for language changes to update translations
+    '$i18n.locale': function() {
+      this.categories = [
+        {
+          id: 'test-creation',
+          name: this.$t('help.categories_testCreation'),
+          icon: 'mdi-file-document-edit',
+        },
+        {
+          id: 'templates',
+          name: this.$t('help.categories_templates'),
+          icon: 'mdi-file-table-outline',
+        },
+        {
+          id: 'cooperators',
+          name: this.$t('help.categories_cooperators'),
+          icon: 'mdi-account-group',
+        },
+        {
+          id: 'analytics',
+          name: this.$t('help.categories_analytics'),
+          icon: 'mdi-chart-bar',
+        },
+      ]
+      this.items = this.generateFaqItems()
     },
   },
 }
@@ -596,7 +660,7 @@ export default {
 }
 
 .controls-mobile {
-  bottom: 25%; 
+  bottom: 25%;
 }
 
 @media (max-width: 600px) {

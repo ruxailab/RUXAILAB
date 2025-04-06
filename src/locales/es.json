@@ -231,8 +231,7 @@
     },
     "messages": {
       "acceptCsv": "Aceptar archivo CSV",
-      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV",
-      "emptyCsvFile": "El archivo CSV está vacío. Por favor, proporciona un archivo con datos."
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV"
     },
     "placeHolders": {
       "importCsv": "Importar CSV"
@@ -327,7 +326,7 @@
       "in_progress": "En progreso"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invitar Evaluador a la Prueba",
     "email": "Correo Electrónico",
     "scheduledAt": "Programado para",
@@ -495,12 +494,12 @@
     "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
     "audioSaved": "Grabación de audio guardada!",
     "screenRecordSaved": "Registro de tela salvo!",
-    "videoRecordSaved":"Grabación de vídeo guardada!",
-    "profileUpdatedSuccess":"Perfil actualizado exitosamente",
+    "videoRecordSaved": "Grabación de vídeo guardada!",
+    "profileUpdatedSuccess": "Perfil actualizado exitosamente",
     "passwordChangedSuccess": "La contraseña se cambió correctamente",
     "accountDeletedSuccess": "Cuenta eliminada exitosamente",
     "savedChanges": "Cambios guardados",
-    "responseRecorded":"Su respuesta ha sido registrada"
+    "responseRecorded": "Su respuesta ha sido registrada"
   },
   "buttons": {
     "saveandleave": "guardar y salir",
@@ -523,10 +522,8 @@
     "delete": "Borrar",
     "deleteAccount": "Eliminar cuenta",
     "back": "Atrás",
-    "duplicateTest": "Duplicar Prueba", 
+    "duplicateTest": "Duplicar Prueba",
     "submit": "Enviar"
-
-
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -563,25 +560,25 @@
       ]
     },
     "UsabilityUser": {
-    "SelfTest": {
-      "title": "Prueba de Usuario",
-      "type":"no moderado",
-      "text": [
-        "Responder en tiempo libre",
-        "Análisis mejorado de respuestas",
-        "Personalización de tareas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Prueba en Vivo",
-      "type":"moderado",
-      "text": [
-        "Grabación de webcam, audio y pantalla",
-        "Análisis mejorado de respuestas",
-        "Prueba en vivo moderada"
-      ]
+      "SelfTest": {
+        "title": "Prueba de Usuario",
+        "type": "no moderado",
+        "text": [
+          "Responder en tiempo libre",
+          "Análisis mejorado de respuestas",
+          "Personalización de tareas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Prueba en Vivo",
+        "type": "moderado",
+        "text": [
+          "Grabación de webcam, audio y pantalla",
+          "Análisis mejorado de respuestas",
+          "Prueba en vivo moderada"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Creación de Prueba",
@@ -598,26 +595,47 @@
     "submitButton": "Enviar"
   },
   "help": {
+    "helpCenter": "Centro de Ayuda",
+    "howCanWeHelp": "¿Cómo podemos ayudar?",
+    "categories": "CATEGORÍAS",
+    "categories_testCreation": "Creación de Pruebas",
+    "categories_templates": "Plantillas",
+    "categories_cooperators": "Colaboradores",
+    "categories_analytics": "Análisis",
+    "noArticlesFound": "No se encontraron artículos",
+    "tryAdjustingSearch": "Intente ajustar su búsqueda o explore todas las categorías",
+    "viewAllArticles": "Ver todos los artículos",
+    "contactUs": "Contáctenos",
+    "stillHaveQuestions": "¿Todavía tiene preguntas?",
+    "reachOutSupport": "¡Estamos aquí para ayudar! Contacte a nuestro equipo de soporte para recibir asistencia.",
+    "submitRequest": "Enviar solicitud",
+    "quickLinks": "Enlaces rápidos",
+    "termsOfService": "Términos de servicio",
+    "privacyPolicy": "Política de privacidad",
+    "faqs": "Preguntas frecuentes",
+    "allRightsReserved": "Todos los derechos reservados.",
     "createtest": "¿Cómo creo una prueba?",
-    "createtestanswer": "Para crear una prueba, comienza haciendo clic en el ícono de más y selecciona Prueba Heurística. Luego, especifica los detalles de tu proyecto. Finalmente, dirígete a la página del administrador dedicada.",
+    "createtestanswer": "Para crear una prueba, comience haciendo clic en el ícono de más, seleccione Prueba Heurística. Luego, especifique los detalles de su proyecto. Finalmente, vaya a la página de administrador dedicada.",
     "heuristictest": "¿Cómo configuro mi prueba heurística?",
-    "heuristictestanswer": "Para configurar tu prueba heurística, accede a la opción 'Editar Prueba'. Luego, haz clic en el botón de más para agregar un título y la pregunta a tu heurística. A continuación, ve a la sección de opciones para crear las opciones de respuesta y sus respectivos valores. Finalmente, guarda los cambios.",
+    "heuristictestanswer": "Para configurar su prueba heurística, comience accediendo a la opción 'Editar Prueba'. Luego, haga clic en el botón de más para agregar un título y la pregunta a su heurística. A continuación, navegue a la sección de opciones para crear las opciones de respuesta y sus respectivos valores. Finalmente, guarde las modificaciones.",
     "deletetest": "¿Cómo elimino mi prueba?",
-    "deletetestanswer": "Para eliminar tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona el botón 'ELIMINAR PRUEBA'.",
+    "deletetestanswer": "Para eliminar su prueba, navegue a la barra lateral izquierda y haga clic en el botón 'Configuración'. Luego, seleccione el botón 'ELIMINAR PRUEBA'.",
     "createtemplate": "¿Cómo crear una plantilla?",
-    "createtemplateanswer": "Para crear una plantilla para tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona la opción 'CREAR PLANTILLA'.",
+    "createtemplateanswer": "Para crear una plantilla para su prueba, navegue a la barra lateral izquierda y haga clic en el botón 'Configuración'. Luego, seleccione la opción 'CREAR PLANTILLA'.",
     "usetemplate": "¿Cómo utilizar una plantilla?",
-    "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Pruebas. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
-    "previewtest": "¿Cómo previsualizar mi prueba?",
-    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia la prueba respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
-    "importcsv": "¿Cómo importar mi archivo CSV?",
-    "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Prueba' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
+    "usetemplateanswer": "Para utilizar una plantilla, navegue a la página de Pruebas. En la sección Crear Plantillas, encontrará sus plantillas personales. Además, puede explorar plantillas públicas.",
+    "previewtest": "¿Cómo previsualizar su Prueba?",
+    "previewtestanswer": "En la barra lateral izquierda, haga clic en la opción 'Vista Previa', luego inicie la prueba respondiendo las preguntas y finalmente haga clic en el botón inferior derecho para guardar y enviar la vista previa que más tarde se puede analizar en la sección 'Respuestas'.",
+    "importcsv": "¿Cómo importar mi CSV?",
+    "importcsvanswer": "Para importar su CSV, navegue a la sección 'Editar Prueba', luego haga clic en el botón 'ACTUALIZAR'. Seleccione su archivo CSV que contiene las heurísticas.",
     "invitecooperators": "¿Cómo invitar a colaboradores?",
-    "invitecooperatorsanswer": "Para invitar a colaboradores, ve a la página de administración de tu prueba. Desde allí, selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en 'Seleccionar colaborador' e ingresa el correo electrónico de tu colaborador. Elige el rol del colaborador y luego envía la invitación haciendo clic en el botón de la esquina inferior derecha.",
+    "invitecooperatorsanswer": "Para invitar a colaboradores, navegue a la página de administrador de su prueba. Desde allí, seleccione 'Colaboradores' en la barra lateral izquierda. Haga clic en 'Seleccionar colaborador' e ingrese el correo electrónico de su colaborador. Elija el rol del colaborador, luego envíe la invitación haciendo clic en el botón en la parte inferior derecha.",
     "analyseresults": "¿Cómo analizar los resultados?",
-    "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
+    "analyseresultsanswer": "Para analizar sus resultados, navegue a la página de administrador de su prueba. Desde allí, seleccione 'Respuestas' en la barra lateral izquierda. Aquí, puede visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
-    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
+    "sendmessageanswer": "Para enviar un mensaje, navegue a la página de administrador de su prueba. Seleccione 'Colaboradores' desde la barra lateral izquierda. Haga clic en el ícono de tres puntos junto al colaborador al que desea enviar un mensaje. Luego, elija 'Enviar un mensaje' y escriba su mensaje con un título y contenido.",
+    "searchHelpArticles": "Buscar artículos de ayuda",
+    "viewAll": "Ver todos"
   },
   "ModeratedTest": {
     "preTest": "PRE-PRUEBA",

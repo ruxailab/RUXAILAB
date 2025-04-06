@@ -231,8 +231,7 @@
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
-      "emptyCsvFile": "The CSV file is empty. Please provide a file with data."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -328,7 +327,7 @@
       "in_progress": "in progress"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invite Evaluator To Test",
     "email": "Email",
     "scheduledAt": "Scheduled at",
@@ -503,7 +502,7 @@
     "passwordChangedSuccess": "Password changed successfully",
     "accountDeletedSuccess": "Account deleted successfully",
     "savedChanges": "Changes saved",
-    "responseRecorded":"Your response has been recorded"
+    "responseRecorded": "Your response has been recorded"
   },
   "buttons": {
     "saveandleave": "Save and Leave",
@@ -524,11 +523,10 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount":"Delete Account",
-    "back":"Back",
-    "duplicateTest":"Duplicate Test",
-    "submit":"Submit"
-
+    "deleteAccount": "Delete Account",
+    "back": "Back",
+    "duplicateTest": "Duplicate Test",
+    "submit": "Submit"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -567,7 +565,7 @@
     "UsabilityUser": {
       "SelfTest": {
         "title": "Self Test",
-        "type":"Unmoderated",
+        "type": "Unmoderated",
         "text": [
           "Answer on free time",
           "Enhanced answer analysis",
@@ -576,7 +574,7 @@
       },
       "LiveTest": {
         "title": "Live Test",
-        "type":"Moderated",
+        "type": "Moderated",
         "text": [
           "Webcam, audio & screen record",
           "Enhanced answer analysis",
@@ -592,12 +590,11 @@
     "test-description": "Test Description",
     "test-label": "Test public to all users"
   },
-  "finishTest":{
+  "finishTest": {
     "title": "Finish Test",
     "finalMessage": "Final Message!",
     "congratulations": "Congratulations! You finished this test, now you can submit your answer.",
     "submitMessage": "Click here to submit your answer. Once submitted, your answer cannot be changed!"
-
   },
   "help": {
     "createtest": "How do I create a test?",
@@ -619,7 +616,28 @@
     "analyseresults": "How to analyse the results?",
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
-    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content.",
+    "helpCenter": "Help Center",
+    "howCanWeHelp": "How can we help?",
+    "categories": "CATEGORIES",
+    "categories_testCreation": "Test Creation",
+    "categories_templates": "Templates",
+    "categories_cooperators": "Cooperators",
+    "categories_analytics": "Analytics",
+    "noArticlesFound": "No articles found",
+    "tryAdjustingSearch": "Try adjusting your search or browse all categories",
+    "viewAllArticles": "View all articles",
+    "contactUs": "Contact Us",
+    "stillHaveQuestions": "Still have questions?",
+    "reachOutSupport": "We're here to help! Reach out to our support team for assistance.",
+    "submitRequest": "Submit Request",
+    "quickLinks": "Quick Links",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "faqs": "FAQs",
+    "allRightsReserved": "All rights reserved.",
+    "searchHelpArticles": "Search help articles",
+    "viewAll": "View all"
   },
   "ModeratedTest": {
     "preTest": "PRE-TEST",
@@ -645,3 +663,4 @@
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
   }
 }
+

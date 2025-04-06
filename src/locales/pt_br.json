@@ -231,8 +231,7 @@
     },
     "messages": {
       "acceptCsv": "Aceitar arquivo CSV",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado",
-      "emptyCsvFile": "O arquivo CSV está vazio. Por favor, forneça um arquivo com dados."
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
     },
     "placeHolders": {
       "importCsv": "Importar CSV"
@@ -328,7 +327,7 @@
       "in_progress": "[TODO]"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Convidar Avaliador para Teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
@@ -522,9 +521,9 @@
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount":"Excluir conta",
-    "back":"Trás",
-    "duplicateTest":"Duplicar Teste",
+    "deleteAccount": "Excluir conta",
+    "back": "Trás",
+    "duplicateTest": "Duplicar Teste",
     "submit": "enviar"
   },
   "switches": {
@@ -561,26 +560,26 @@
         "Testes moderados ou não moderados"
       ]
     },
-"UsabilityUser": {
-    "SelfTest": {
-      "title": "Auto Teste",
-      "type":"não moderado",
-      "text": [
-        "Responder no tempo livre",
-        "Análise aprimorada de respostas",
-        "Personalização de tarefas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Teste ao Vivo",
-      "type":"moderado",
-      "text": [
-        "Gravação de webcam, áudio e tela",
-        "Análise aprimorada de respostas",
-        "Teste ao vivo moderado"
-      ]
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Auto Teste",
+        "type": "não moderado",
+        "text": [
+          "Responder no tempo livre",
+          "Análise aprimorada de respostas",
+          "Personalização de tarefas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Teste ao Vivo",
+        "type": "moderado",
+        "text": [
+          "Gravação de webcam, áudio e tela",
+          "Análise aprimorada de respostas",
+          "Teste ao vivo moderado"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
@@ -616,7 +615,28 @@
     "analyseresults": "Como analisar os resultados?",
     "analyseresultsanswer": "Para analisar seus resultados, vá até a página do gerenciador do seu teste. Lá, selecione 'Respostas' na barra lateral esquerda. Aqui, você poderá visualizar estatísticas, avaliadores e heurísticas.",
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
-    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
+    "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo.",
+    "helpCenter": "Central de Ajuda",
+    "howCanWeHelp": "Como podemos ajudar?",
+    "categories": "CATEGORIAS",
+    "categories_testCreation": "Criação de Teste",
+    "categories_templates": "Modelos",
+    "categories_cooperators": "Colaboradores",
+    "categories_analytics": "Análise",
+    "noArticlesFound": "Nenhum artigo encontrado",
+    "tryAdjustingSearch": "Tente ajustar sua pesquisa ou navegue por todas as categorias",
+    "viewAllArticles": "Ver todos os artigos",
+    "contactUs": "Contate-nos",
+    "stillHaveQuestions": "Ainda tem dúvidas?",
+    "reachOutSupport": "Estamos aqui para ajudar! Entre em contato com nossa equipe de suporte para obter assistência.",
+    "submitRequest": "Enviar solicitação",
+    "quickLinks": "Links rápidos",
+    "termsOfService": "Termos de serviço",
+    "privacyPolicy": "Política de privacidade",
+    "faqs": "Perguntas frequentes",
+    "allRightsReserved": "Todos os direitos reservados.",
+    "searchHelpArticles": "Pesquisar artigos de ajuda",
+    "viewAll": "Ver todos"
   },
   "ModeratedTest": {
     "preTest": "PRÉ-TESTE",

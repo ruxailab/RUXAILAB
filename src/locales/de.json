@@ -6,7 +6,7 @@
     "password": "Passwort",
     "dont-have-account": "Noch kein Konto? Registrieren",
     "sign-up": "Registrieren",
-    "contact": "Kontaktnummer",  
+    "contact": "Kontaktnummer",
     "confirmPassword": "Passwort bestätigen",
     "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden"
   },
@@ -520,11 +520,19 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability-Heuristik",
-      "text": ["Usability-Prozentsatz", "Abschlussbericht PDF", "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"]
+      "text": [
+        "Usability-Prozentsatz",
+        "Abschlussbericht PDF",
+        "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability-Benutzer",
-      "text": ["Webcam, Audio & Bildschirmaufnahme", "Erweiterte Antwortanalyse", "Moderierte oder nicht moderierte Tests"]
+      "text": [
+        "Webcam, Audio & Bildschirmaufnahme",
+        "Erweiterte Antwortanalyse",
+        "Moderierte oder nicht moderierte Tests"
+      ]
     }
   },
   "TestDialog": {
@@ -554,6 +562,27 @@
     "analyseresults": "Wie analysiere ich die Ergebnisse?",
     "analyseresultsanswer": "Um Ihre Ergebnisse zu analysieren, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie dort 'Antworten' in der linken Seitenleiste. Hier können Sie Statistiken, Evaluatoren und Heuristiken visualisieren.",
     "sendmessage": "Wie sende ich eine Nachricht an meine Mitarbeiter?",
-    "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt."
+    "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt.",
+    "helpCenter": "Hilfezentrum",
+    "howCanWeHelp": "Wie können wir helfen?",
+    "categories": "KATEGORIEN",
+    "categories_testCreation": "Testerstellung",
+    "categories_templates": "Vorlagen",
+    "categories_cooperators": "Mitarbeiter",
+    "categories_analytics": "Analyse",
+    "noArticlesFound": "Keine Artikel gefunden",
+    "tryAdjustingSearch": "Versuchen Sie, Ihre Suche anzupassen oder durchsuchen Sie alle Kategorien",
+    "viewAllArticles": "Alle Artikel anzeigen",
+    "contactUs": "Kontakt",
+    "stillHaveQuestions": "Noch Fragen?",
+    "reachOutSupport": "Wir sind hier, um zu helfen! Wenden Sie sich an unser Support-Team, um Hilfe zu erhalten.",
+    "submitRequest": "Anfrage einreichen",
+    "quickLinks": "Schnelllinks",
+    "termsOfService": "Nutzungsbedingungen",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "faqs": "Häufig gestellte Fragen",
+    "allRightsReserved": "Alle Rechte vorbehalten.",
+    "searchHelpArticles": "Hilfeartikel durchsuchen",
+    "viewAll": "Alle anzeigen"
   }
 }
