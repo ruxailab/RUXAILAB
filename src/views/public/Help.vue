@@ -149,19 +149,19 @@
             </v-card>
           </div>
         </v-col>
-        <v-col cols="12" md="8" lg="9">
+        <v-col cols="12" md="8" lg="9" >
           <div v-if="filteredItems.length > 0">
-            <div
+            <div 
               v-for="(category, catIndex) in displayedCategories"
               :key="'cat-' + catIndex"
               class="mb-8"
             >
-              <v-card
+              <v-card  
                 flat
                 
                 v-if="getItemsByCategory(category.id).length > 0"
                 class="mb-4 rounded-lg"
-                style="border-left: 4px solid rgb(249, 168, 38);"
+                style="background-color: white !important; color: black !important; border-left: 4px solid rgb(249, 168, 38);"
               >
                 <v-card-title class="py-3 black--text font-weight-medium">
                   <v-icon left color="black">{{ category.icon }}</v-icon>
@@ -169,13 +169,14 @@
                 </v-card-title>
               </v-card>
               <v-expansion-panels flat hover>
-                <v-expansion-panel
+                <v-expansion-panel  
                   v-for="(item, index) in getItemsByCategory(category.id)"
                   :key="'item-' + index"
                   class="mb-3 rounded-lg"
                   style="border: 1px solid rgba(0,0,0,0.08);"
                 >
-                  <v-expansion-panel-header
+                  <v-expansion-panel-header 
+                  style="background-color: white !important; color: black !important;"
                     class="py-3 subtitle-1 grey--text text--darken-3 font-weight-medium"
                   >
                     {{ item.title }}

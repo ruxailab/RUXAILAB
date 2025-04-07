@@ -1,9 +1,9 @@
 <template>
-  <div class="background-grey">
+  <div :style="{ backgroundColor: $vuetify.theme.dark ? 'black' : '#e8eaf2' }" class="background-grey">
     <Snackbar />
     <v-row justify="center" style="height: 90%" align="center">
       <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" class="mx-2">
+        <v-card color="#f5f7ff" class="mx-2" :style="{ backgroundColor: $vuetify.theme.dark ? 'gray' : '#f5f7ff' }">
           <v-row>
             <v-col cols="12" md="5" align-self="center">
               <div class="card-title">

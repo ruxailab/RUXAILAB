@@ -1,9 +1,9 @@
 <template>
-  <div class="background-grey">
+  <div :style="{ backgroundColor: $vuetify.theme.dark ? 'black' : '#e8eaf2' }" class="background-grey">
     <Snackbar />
-    <v-row justify="center" style="height: 90%" align="center">
-      <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" rounded="xl" flat>
+    <v-row  justify="center" style="height: 90%" align="center">
+      <v-col  cols="12" md="8">
+        <v-card color="#f5f7ff" rounded="xl" flat  :style="{ backgroundColor: $vuetify.theme.dark ? 'gray' : '#f5f7ff' }">
           <v-row>
             <v-col cols="10" md="5" align-self="center" class="ma-8">
               <div class="card-title">
@@ -19,6 +19,7 @@
                   outlined
                   prepend-inner-icon="mdi-account-circle"
                   dense
+                  
                 />
 
                 <v-text-field
@@ -30,6 +31,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   dense
                   @click:append="showPassword = !showPassword"
+                  
                 />
               </v-form>
               <v-card-actions class="justify-center mt-4">
@@ -131,4 +133,5 @@ export default {
   ) !important;
   height: 0.5px;
 }
+
 </style>
