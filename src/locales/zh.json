@@ -1,0 +1,559 @@
+{
+    "language": "语言",
+    "SIGNIN": {
+      "sign-in": "登录",
+      "email": "电子邮件",
+      "password": "密码",
+      "dont-have-account": "还没有账户？注册",
+      "sign-up": "注册",
+      "contact": "联系电话",  
+      "confirmPassword": "确认密码",
+      "alreadyHaveAnAccount": "已有账户？登录"
+    },
+    "common": {
+      "loading": "加载测试",
+      "continueAs": "继续作为",
+      "notUser": "不是 {userEmail}？",
+      "name": "姓名",
+      "changeAccount": "更改账户",
+      "editAndInvite": "编辑并邀请人员参加您的测试",
+      "analyzeProject": "分析项目和评估者",
+      "comment": "评论",
+      "inputImage": "输入与主题相关的图片",
+      "title": "标题",
+      "description": "描述",
+      "cancel": "取消",
+      "confirm": "确认",
+      "add": "添加",
+      "text": "文本",
+      "value": "值",
+      "save": "保存",
+      "editDelete": "编辑/删除",
+      "type": "类型",
+      "noNotifications": "您还没有通知",
+      "notifications": "通知",
+      "unread": "未读",
+      "inbox": "收件箱",
+      "timeAgo": {
+        "years": "{count} 年前",
+        "months": "{count} 个月前",
+        "days": "{count} 天前",
+        "hours": "{count} 小时前",
+        "minutes": "{count} 分钟前",
+        "now": "现在"
+      },
+      "viewAll": "查看全部",
+      "sentBy": "发送者",
+      "new": "新"
+    },
+    "PROFILE": {
+      "title": "个人资料",
+      "editProfile": "编辑个人资料",
+      "account": "账户",
+      "admin": "管理员",
+      "changePassword": "更改密码",
+      "passwordRequirements": "确保满足以下要求",
+      "passwordMinimumRequirements": "至少8个字符，包含大写字母和符号",
+      "newPassword": "新密码",
+      "confirmNewPassword": "确认新密码",
+      "editDetails": "编辑详细信息",
+      "saveChanges": "保存更改",
+      "country": "国家",
+      "missingInfo": "缺少信息",
+      "deleteAccountTitle": "删除账户",
+      "deleteAccountConfirm": "您确定吗？此操作无法撤销。",
+      "deleteAccountWarning": "这将永久删除您的账户并从我们的服务器中移除您的数据。",
+      "passwordRequired": "密码是必填项",
+      "passwordMinLength": "密码必须至少8个字符",
+      "passwordUppercase": "必须包含大写字母",
+      "passwordSymbol": "必须包含符号",
+      "confirmPasswordRequired": "确认密码是必填项",
+      "passwordsMatch": "密码必须匹配"
+    },
+    "titles": {
+      "manager": "管理员",
+      "test": "测试",
+      "preview": "预览",
+      "reports": "报告",
+      "answers": "答案",
+      "analytics": "分析",
+      "cooperators": "合作者",
+      "template": "模板",
+      "finalReport": "最终报告",
+      "answerType": "答案类型：",
+      "drawer": {
+        "Manager": "管理员",
+        "Test": "测试",
+        "Preview": "预览",
+        "Reports": "报告",
+        "Answers": "答案",
+        "Analytics": "分析",
+        "Cooperators": "合作者",
+        "Template": "模板",
+        "Final Report": "最终报告",
+        "Answer Test": "回答测试",
+        "Settings": "设置"
+      },
+      "heuristic": "可用性启发式评估"
+    },
+    "descriptions": {
+      "edit": "开始创建和编辑您的测试。",
+      "cooperators": "邀请人员帮助您完成测试。",
+      "reports": "查看您的评估者的表现。",
+      "answers": "查看您的评估者如何评估您的项目。",
+      "analytics": "分析您的评估者的评论和答案。",
+      "finalReport": "为您的测试添加额外数据。",
+      "intro": {
+        "reports": "跟踪您的评估者在完成测试时的进度和回答状态。",
+        "answers": "通过分析其他用户的答案数据，快速获得对您项目的反馈。",
+        "analytics": "深入了解您的测试，看看人们对其的评价。",
+        "invite": "邀请评估者回答您的测试！",
+        "cooperators": "添加合作者，他们可以帮助您改进项目并为研究收集数据。",
+        "start": "开始！",
+        "edit": "根据研究需求创建和自定义您的任务和启发式方法。"
+      }
+    },
+    "errors": {
+      "invalidInvitation": "无效邀请",
+      "signupWithInvitationEmail": "用户需要使用与邀请相同的电子邮件注册。",
+      "emailIsRequired": "电子邮件是必填项",
+      "invalidEmail": "无效的电子邮件",
+      "passwordRequired": "密码是必填项",
+      "passwordValidate": "密码必须至少8个字符",
+      "differentPasswords": "密码不一致",
+      "fieldRequired": "必填字段",
+      "passwordUppercase": "必须包含大写字母",
+      "passwordSymbol": "必须包含符号",
+      "userNotExist": "该用户不存在。",
+      "incorrectPassword": "密码错误",
+      "incorrectCredential": "用户名或密码错误。"
+    },
+    "Introduction": {
+      "title": "UX远程实验室",
+      "subtitle": "远程进行可用性测试怎么样？",
+      "description": "加入我们的开源项目，开始创建您自己的可用性实验室并与朋友分享。研究从未如此简单！",
+      "cta": "开始"
+    },
+    "Dashboard": {
+      "createNewTest": "创建新测试",
+      "tests": "测试",
+      "templates": "模板",
+      "search": "搜索",
+      "myTests": "我的测试",
+      "sharedWithMe": "与我共享",
+      "publicTests": "公开测试",
+      "personal": "个人",
+      "explore": "探索"
+    },
+    "HeuristicsTable": {
+      "titles": {
+        "editHeuristic": "编辑启发式",
+        "editQuestion": "编辑问题",
+        "newQuestion": "新问题",
+        "creatingHeuristic": "创建启发式",
+        "currentHeuristics": "启发式",
+        "addNewHeuristic": "添加新启发式",
+        "searchHeuristics": "搜索启发式...",
+        "noHeuristicsFound": "未找到启发式",
+        "addNewQuestion": "添加新问题",
+        "questions": "问题",
+        "descriptions": "描述",
+        "actions": "操作",
+        "titles": "标题",
+        "cancel": "取消",
+        "ok": "确定",
+        "add": "添加",
+        "deleteHeuristic": "删除启发式",
+        "deleteQuestion": "删除问题",
+        "addNewDescription": "添加新描述",
+        "addOption": "添加新选项",
+        "hasValue": "有值"
+      },
+      "placeholders": {
+        "titleHeuristic": "启发式标题",
+        "titleYourHeuristic": "为您的启发式命名",
+        "titleYourQuestion": "为您的问题命名",
+        "titleQuestion": "问题标题",
+        "titleNewQuestion": "新问题标题",
+        "optionDescription": "选项描述"
+      },
+      "messages": {
+        "noHeuristics": "您没有任何启发式，请创建一个以继续。",
+        "youMustHave": "您可能输入了错误的内容...",
+        "noHeuristicsDeleteAll": "抱歉，您不能删除所有启发式问题。",
+        "noCsvFileSelected": "未选择CSV文件。请选择一个以继续。",
+        "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。"
+      },
+      "validation": {
+        "nameRequired": "名称是必填项",
+        "questionRequired": "问题必须填写",
+        "textRequired": "文本是必填项",
+        "positiveValue": "值必须为正数",
+        "addQuestion": "请至少为您的启发式添加一个问题"
+      },
+      "AddCommentBtn": {
+        "showComment": "显示评论",
+        "addComment": "添加评论",
+        "hideTextArea": "隐藏文本区域"
+      }
+    },
+    "HeuristicsOptionsTable": {
+      "titles": {
+        "options": "选项"
+      },
+      "messages": {},
+      "placeHolders": {},
+      "actions": {}
+    },
+    "HeuristicsWeightsTable": {
+      "titles": {
+        "weights": "权重",
+        "heuristics": "启发式"
+      },
+      "messages": {
+        "atLeast2HeuristicsForWeighting": "至少需要2个启发式才能设置权重。"
+      },
+      "actions": {
+        "saveWeights": "保存权重值"
+      }
+    },
+    "HeuristicsSettings": {
+      "titles": {
+        "settings": "设置"
+      },
+      "messages": {
+        "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
+        "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      },
+      "placeHolders": {
+        "importCsv": "在此导入您的CSV测试文件。"
+      },
+      "actions": {
+        "downloadCsvTemplate": "下载CSV模板",
+        "update": "更新"
+      }
+    },
+    "HeuristicsTestView": {
+      "messages": {
+        "submitTest": "您确定要提交此测试吗？",
+        "submitOnce": "您确定要提交您的测试吗？您只能提交一次。",
+        "noHeuristics": "此测试没有任何启发式"
+      },
+      "actions": {
+        "cancel": "取消",
+        "submit": "提交",
+        "save": "保存",
+        "continueAs": "继续作为 {userEmail}",
+        "notMail": "不是 {userEmail}？",
+        "changeAccount": "更改账户",
+        "startTest": "开始测试"
+      }
+    },
+    "HeuristicsEditTest": {
+      "titles": {
+        "heuristics": "启发式",
+        "options": "选项",
+        "weights": "权重",
+        "settings": "设置"
+      }
+    },
+    "HeuristicsTestAnswer": {
+      "titles": {
+        "answers": "答案",
+        "statistics": "统计",
+        "evaluators": "评估者",
+        "heuristics": "启发式",
+        "analytics": "分析"
+      },
+      "statistics": {
+        "usabilityPercentage": "可用性百分比",
+        "max": "最大",
+        "min": "最小",
+        "std": "标准差"
+      },
+      "evaluators": {
+        "headers": {
+          "table": "表格",
+          "graphic": "图表"
+        },
+        "messages": {
+          "graphForMoreThan3": "图表只能在3个或更多评估者时生成，请收集更多研究数据以继续。"
+        }
+      },
+      "heuristics": {
+        "headers": {
+          "heuristicsData": "启发式数据",
+          "answersByEvaluator": "按评估者的答案",
+          "answersByHeuristics": "按启发式的答案",
+          "graphic": "图表",
+          "weights": "权重"
+        },
+        "messages": {
+          "needMoreThan1Answer": "此页面需要多于1个答案才能生成。",
+          "runWeightFunction": "此页面需要权重函数（Python）运行，可以在模拟器或部署模式下运行，并且权重必须在创建测试页面上完全标记。"
+        }
+      },
+      "analytics": {}
+    },
+    "HeuristicsReport": {
+      "titles": {
+        "reports": "报告",
+        "last_updated": "最后更新"
+      },
+      "headers": {
+        "evaluator": "评估者",
+        "last_update": "最后更新",
+        "progress": "进度",
+        "status": "状态",
+        "more": "更多"
+      },
+      "messages": {
+        "confirm_delete_report": "您确定要删除此报告吗？",
+        "reports_loading": "加载报告中",
+        "remove_report": "删除报告",
+        "sure_to_delete": "您确定要删除 {user} 的报告吗？此操作无法撤销。",
+        "report_deleted": "报告已成功删除"
+      },
+      "status": {
+        "submitted": "已提交",
+        "in_progress": "进行中"
+      }
+    },
+    "HeuristicsCooperators": {
+      "title": {
+        "cooperators": "合作者"
+      },
+      "headers": {
+        "email": "电子邮件",
+        "role": "角色",
+        "invited": "已邀请",
+        "accepted": "已接受",
+        "more": "更多",
+        "title": "标题",
+        "content": "内容"
+      },
+      "actions": {
+        "send_invitation": "发送邀请",
+        "send_message": "发送消息",
+        "reinvite": "重新邀请",
+        "remove_cooperator": "删除合作者",
+        "cancel_invitation": "取消邀请",
+        "cancel": "取消",
+        "send": "发送",
+        "select_cooperator": "选择合作者"
+      },
+      "roles": {
+        "administrator": "管理员",
+        "evaluator": "评估者",
+        "guest": "访客"
+      },
+      "messages": {
+        "cooperators_loading": "加载合作者中",
+        "no_users": "没有使用该电子邮件注册的用户，按Enter键继续选择。",
+        "remove_cooperator": "您确定要删除 {email} 的合作者吗？",
+        "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
+        "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
+        "message_title_hint": "输入您的消息标题",
+        "message_content_hint": "输入您的消息内容"
+      }
+    },
+    "UserTestTable": {
+      "titles": {
+        "consentForm": "同意书",
+        "userVariables": "用户变量",
+        "currentTasks": "当前任务",
+        "postForm": "后测表单",
+        "writeNewPost": "写一个新的后测问题"
+      },
+      "inputs": {
+        "consent": "同意",
+        "variableName": "变量名",
+        "description": "描述",
+        "selection": "选择",
+        "writeQuestion": "写一个问题"
+      },
+      "checkboxes": {
+        "selectionField": "选择字段",
+        "textField": "文本字段",
+        "textAnswer": "文本答案",
+        "selectionAnswer": "选择答案"
+      },
+      "buttons": {
+        "createNewVariable": "创建新变量",
+        "createNewPost": "创建新后测问题"
+      }
+    },
+    "UserTestView": {
+      "titles": {
+        "preTestConsent": "前测 - 同意",
+        "preTestForm": "前测 - 表单",
+        "preTest": "前测",
+        "postTest": "后测"
+      },
+      "buttons": {
+        "done": "完成"
+      }
+    },
+    "AccessNotAllowed": {
+      "notAllowed": "访问被拒绝",
+      "noAccess": "您无权访问您尝试访问的页面。",
+      "goHome": "返回首页"
+    },
+    "pages": {
+      "intros": {
+        "click": "点击这里！",
+        "learnMore": "了解更多",
+        "docTitle": "阅读文档",
+        "docSubtitle": "点击访问有关如何使用页面的文档。",
+        "discTitle": "加入社区！",
+        "discSubtitle": "您将在我们的Discord服务器上找到支持。"
+      },
+      "finalReport": {
+        "select": "选择您的PDF元素",
+        "heuristic": "启发式",
+        "to": "至",
+        "createHeuristics": "请创建启发式以便在此选择。",
+        "createUserTask": "请创建任务以便在此选择。",
+        "pdf": "生成PDF",
+        "elements": "元素",
+        "options": {
+          "options": "测试选项",
+          "comments": "答案评论",
+          "statistics": "统计",
+          "answersByEvaluator": "按评估者的答案",
+          "answersByHeuristics": "按启发式的答案",
+          "finalReport": "最终报告",
+          "loading": "加载中..."
+        },
+        "ConstructionHeading": "页面正在建设中",
+        "ConstructionParagraph": "我们正在努力改进我们的网站。请稍后再来查看！"
+      },
+      "landing": {
+        "feedbackTitle": "快速获取对您项目的反馈",
+        "feedbackSubtitle1": "UX远程实验室旨在为希望创建自己的UX测试并与用户一起执行的UX专家提供一套工具。",
+        "feedbackSubtitle2": "COVID-19向世界表明，有时无法实现真实用户的物理存在，因此我们在这里解决这个问题！",
+        "uxTitle": "开始您自己的UX实验室",
+        "uxSubtitle1": "如果您是研究人员、公司或希望执行UX测试的专业人士，您将在这里找到多种工具来帮助您使用不同的UX技术分析和跟踪您的测试。",
+        "uxSubtitle2": "帮助我们发展这个开源社区，并在GitHub上加入我们！ :)",
+        "footer": "我们正在寻找新的合作伙伴来帮助我们发展项目！请随时联系我们："
+      },
+      "listTests": {
+        "createdBy": "创建者",
+        "me": "我",
+        "progress": "进度",
+        "updated": "最后更新于",
+        "version": "版本：",
+        "noTests": "未找到测试",
+        "noTemplates": "未找到模板"
+      },
+      "createTest": {
+        "title": "创建新测试",
+        "blankTitle": "创建空白测试",
+        "blankSubtitle": "创建一个空白测试以开始一个全新的模板。",
+        "templateTitle": "从模板创建",
+        "templateSubtitle": "基于我们用户创建的模板创建测试。",
+        "create": "创建测试",
+        "templateInfo": "模板信息",
+        "deleteTemplate": "删除模板",
+        "noDescription": "模板没有描述。",
+        "public": "使测试对所有用户公开（只读）"
+      },
+      "settings": {
+        "title": "设置",
+        "currentTest": "当前测试",
+        "createTemplate": "创建模板",
+        "deleteTest": "删除测试"
+      }
+    },
+    "alerts": {
+      "copy": "复制成功",
+      "noCopy": "复制失败",
+      "deleteTemplate": "您确定要删除此模板吗？此操作无法撤销！",
+      "deleteTest": "您确定要删除此测试吗？",
+      "addDescription": "请添加描述",
+      "errorOccurred": "发生错误",
+      "leave": "您确定要离开吗？",
+      "sureLeave": "您确定要离开吗？所有更改将被丢弃。",
+      "imageURL": "输入图片URL：",
+      "deleteHeuristic": "您确定要删除启发式吗？",
+      "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。"
+    },
+    "buttons": {
+      "saveandleave": "保存并离开",
+      "next": "下一步",
+      "previous": "上一步",
+      "seeCode": "查看代码",
+      "username": "用户名",
+      "goToConsole": "前往控制台",
+      "signout": "注销",
+      "profile": "个人资料",
+      "returnToConsole": "返回控制台",
+      "tip": "提示",
+      "cancel": "取消",
+      "create": "创建",
+      "close": "关闭",
+      "save": "保存",
+      "stay": "留下",
+      "leave": "离开",
+      "help": "帮助",
+      "delete": "删除",
+      "deleteAccount": "删除账户",
+      "back": "返回"
+    },
+    "switches": {
+      "noAnswer": "无答案",
+      "textArea": "文本区域",
+      "timer": "计时器",
+      "postTest": "后测问题",
+      "screenRecord": "屏幕录制",
+      "camera": "摄像头",
+      "eyeTracker": "眼动追踪",
+      "audioRecord": "音频录制"
+    },
+    "inputs": {
+      "consentForm": "同意书",
+      "preForm": "前测表单",
+      "postForm": "后测表单"
+    },
+    "Createblank": {
+      "title": "您想开始哪种类型的测试？",
+      "test": "测试",
+      "testType_1": {
+        "testTitle": "可用性启发式",
+        "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      },
+      "testType_2": {
+        "testTitle": "用户可用性",
+        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持或无主持的测试"]
+      }
+    },
+    "TestDialog": {
+      "heading": "测试创建",
+      "sub-heading": "为您的测试命名！",
+      "test-name": "测试名称",
+      "test-description": "测试描述",
+      "test-label": "使测试对所有用户公开"
+    },
+    "help": {
+      "createtest": "如何创建测试？",
+      "createtestanswer": "要创建测试，请单击加号图标，选择启发式测试。然后，指定您的项目详细信息。最后，转到专用的管理页面。",
+      "heuristictest": "如何设置我的启发式测试？",
+      "heuristictestanswer": "要设置您的启发式测试，请访问“编辑测试”选项。然后，单击加号按钮为您的启发式添加标题和问题。接下来，导航到选项部分以创建答案选项及其相应的值。最后，保存更改。",
+      "deletetest": "如何删除我的测试？",
+      "deletetestanswer": "要删除您的测试，请导航到左侧边栏并单击“设置”按钮。然后，选择“删除测试”按钮。",
+      "createtemplate": "如何创建模板？",
+      "createtemplateanswer": "要为您的测试创建模板，请导航到左侧边栏并单击“设置”按钮。然后，选择“创建模板”选项。",
+      "usetemplate": "如何使用模板？",
+      "usetemplateanswer": "要使用模板，请导航到测试页面。在“创建模板”部分下，您将找到您的个人模板。此外，您可以探索公共模板。",
+      "previewtest": "如何预览您的测试？",
+      "previewtestanswer": "在左侧边栏中，单击“预览”选项，然后开始测试，回答问题，最后单击右下角的按钮以保存并提交预览，稍后可以在“答案”部分进行分析。",
+      "importcsv": "如何导入我的CSV？",
+      "importcsvanswer": "要导入您的CSV，请导航到“编辑测试”部分，然后单击“更新”按钮。选择包含启发式的CSV文件。",
+      "invitecooperators": "如何邀请合作者？",
+      "invitecooperatorsanswer": "要邀请合作者，请导航到您的测试的管理页面。从那里，选择左侧边栏中的“合作者”。单击“选择合作者”并输入您的合作者的电子邮件。选择合作者的角色，然后单击右下角的按钮发送邀请。",
+      "analyseresults": "如何分析结果？",
+      "analyseresultsanswer": "要分析您的结果，请导航到您的测试的管理页面。从那里，选择左侧边栏中的“答案”。在这里，您可以查看统计信息、评估者和启发式。",
+      "sendmessage": "如何向我的合作者发送消息？",
+      "sendmessageanswer": "要发送消息，请导航到您的测试的管理页面。从左侧边栏中选择“合作者”。单击您要发送消息的合作者旁边的三点图标。然后，选择“发送消息”并编写您的消息，包括标题和内容。"
+    }
+  }

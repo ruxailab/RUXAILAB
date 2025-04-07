@@ -4,7 +4,7 @@ import SignUp from '@/views/public/SignUpView.vue'
 import LandingPage from '@/views/public/LandingPageView.vue'
 import PageNotFound from '@/views/public/PageNotFoundView.vue'
 import Help from '@/views/public/Help.vue'
-
+import Sample from '@/views/public/Sample.vue'
 export default [
   {
     path: '/testview/:id/:token?',
@@ -32,6 +32,13 @@ export default [
     component: Help,
   },
   {
+    path: '/help/all-articles',
+    name: 'AllArticles',
+    meta: { authorize: [] },
+    component: Help,
+    props: { showAllOnLoad: true }
+  },
+  {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
@@ -42,5 +49,17 @@ export default [
     name: 'Page not Found',
     meta: { authorize: [] },
     component: PageNotFound,
+  },
+  {
+    path: '/sample',
+    name: 'Sample',
+    meta: { authorize: [] },
+    component: Sample,
+  },
+  {
+    path: '/wacg',
+    name: 'accessibility docs',
+    meta: { authorize: [] },
+    component: () => import('@/views/public/Documentation.vue'),
   },
 ]

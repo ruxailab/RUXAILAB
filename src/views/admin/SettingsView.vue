@@ -4,6 +4,7 @@
 
     <!-- Leave Alert Dialog -->
     <LeaveAlert />
+    <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
     <v-dialog v-model="dialogDel" width="600" persistent>
@@ -115,6 +116,7 @@
             >
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
+
 
             <v-btn
               outlined
@@ -299,13 +301,18 @@ export default {
     validate(valid, index) {
       this.valids[index] = valid
     },
+    async onSubmit() {
+        await this.submit();
+        this.$store.commit('SET_LOCAL_CHANGES', false);
+        this.$router.push({ name: this.$store.state.pathTo });
+    },
     async submit() {
       const element = this.object.testTitle
       if (element.length > 0 && element.length < 200) {
         await this.$store.dispatch('updateTest', new Test(this.object))
         this.$store.commit('SET_LOCAL_CHANGES', false)
         console.log('changes Saved')
-        this.$toast.success('Changes Saved')
+        this.$toast.success(this.$t('alerts.savedChanges'))
       } else if (element.length >= 200) {
         this.$toast.warning('Title must not exceed 200 characters.')
       } else {

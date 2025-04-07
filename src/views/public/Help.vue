@@ -120,7 +120,7 @@
                   </v-list-item>
                   <v-divider class="my-2"></v-divider>
                   <v-list-item
-                    @click="filterByCategory(null)"
+                    @click="openAllArticlesModal()"
                     class="my-1 mx-2 rounded"
                     :class="{ 'grey lighten-4': selectedCategory === null }"
                   >
@@ -181,13 +181,58 @@
                     <p class="body-1 grey--text text--darken-2 mb-4">
                       {{ item.content }}
                     </p>
-                    <v-img
-                      :src="require(`@/assets/faqs/${item.gif}`)"
-                      max-height="500"
-                      contain
-                      class="rounded-lg"
-                      style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
-                    />
+                    <div class="video-container position-relative">
+                      <video
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        class="rounded-lg"
+                        width="100%"
+                        max-height="500"
+                        controls
+                        controlslist="nodownload"
+                        preload="metadata"
+                        ref="videoPlayer"
+                        @play="updatePlayState()"
+                        @pause="updatePlayState()"
+                        muted
+                        aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
+                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                      ></video>
+                      <div
+                         class="custom-controls d-flex justify-center align-center"
+                         :class="{'controls-mobile': $vuetify.breakpoint.xsOnly}"
+                      >
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="skipBackward(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                           <v-icon>mdi-rewind-10</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="togglePlay(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                           <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          color="white"
+                          @click="skipForward(item)"
+                          class="custom-control-btn mx-2"
+                          style="background-color: rgba(0,0,0,0.5);"
+                          :class="{'button-hover': true}"
+                        >
+                          <v-icon>mdi-fast-forward-10</v-icon>
+                        </v-btn>
+                     </div>
+                   </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -206,7 +251,12 @@
               <p class="mb-4 grey--text text--darken-1">
                 Try adjusting your search or browse all categories
               </p>
-              <v-btn color="black" @click="filterByCategory(null)">
+
+              <v-btn
+                color="black"
+                style="color: white;"
+                @click="openAllArticlesModal()"
+              >
                 View All Articles
               </v-btn>
             </v-card-text>
@@ -221,6 +271,29 @@
               class="white elevation-2 py-2 px-4 d-inline-flex rounded-pill"
               @input="handlePageChange"
             ></v-pagination>
+          </div>
+          
+          <!-- Read All Articles Button at the bottom -->
+          <div class="text-center mt-4 mb-8">
+            <v-btn
+              color="black"
+              outlined
+              @click="openAllArticlesModal()"
+              class="px-4 mr-2"
+            >
+              <v-icon left>mdi-book-open-variant</v-icon>
+              Read All Articles
+            </v-btn>
+            
+            <v-btn
+              color="grey darken-1"
+              text
+              @click="openInNewPage()"
+              class="px-4"
+            >
+              <v-icon small left>mdi-open-in-new</v-icon>
+              Open in New Tab
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -301,12 +374,102 @@
           <v-col cols="12" class="text-center mt-8">
             <v-divider dark class="mb-4"></v-divider>
             <p class="text-caption white--text" style="opacity: 0.5;">
-              © 2025 Ruxailab. All rights reserved.
+              © {{ currentYear }} Ruxailab. All rights reserved.
             </p>
           </v-col>
         </v-row>
       </v-container>
     </v-footer>
+
+    <!-- All Articles Modal -->
+    <v-dialog
+      v-model="showAllArticlesModal"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
+    >
+      <v-card>
+        <v-toolbar dark color="black">
+          <v-btn icon dark @click="showAllArticlesModal = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>All Help Articles</v-toolbar-title>
+          <v-spacer></v-spacer>
+          
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                dark 
+                v-bind="attrs"
+                v-on="on"
+                @click="openInNewPage()"
+              >
+                <v-icon>mdi-open-in-new</v-icon>
+              </v-btn>
+            </template>
+            <span>Open in new page</span>
+          </v-tooltip>
+        </v-toolbar>
+        
+        <!-- Loading overlay -->
+        <v-overlay :value="isLoadingModal" absolute>
+          <v-progress-circular
+            indeterminate
+            size="64"
+            color="amber"
+          ></v-progress-circular>
+        </v-overlay>
+        
+        <v-card-text class="pt-4">
+          <v-container>
+            <div v-for="(category, catIndex) in categories" :key="'modal-cat-' + catIndex" class="mb-8">
+              <v-card flat class="mb-4 rounded-lg" style="border-left: 4px solid rgb(249, 168, 38);">
+                <v-card-title class="py-3 black--text font-weight-medium">
+                  <v-icon left color="black">{{ category.icon }}</v-icon>
+                  {{ category.name }}
+                </v-card-title>
+              </v-card>
+              <v-expansion-panels flat hover>
+                <v-expansion-panel
+                  v-for="(item, index) in items.filter(i => i.category === category.id)"
+                  :key="'modal-item-' + index"
+                  class="mb-3 rounded-lg"
+                  style="border: 1px solid rgba(0,0,0,0.08);"
+                >
+                  <v-expansion-panel-header
+                    class="py-3 subtitle-1 grey--text text--darken-3 font-weight-medium"
+                  >
+                    {{ item.title }}
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content class="grey lighten-5">
+                    <p class="body-1 grey--text text--darken-2 mb-4">
+                      {{ item.content }}
+                    </p>
+                    <div class="video-container position-relative" v-if="item.gif">
+                      <video
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        class="rounded-lg"
+                        width="100%"
+                        max-height="500"
+                        controls
+                        controlslist="nodownload"
+                        preload="metadata"
+                        ref="modalVideoPlayer"
+                        muted
+                        aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
+                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                      ></video>
+                    </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -314,8 +477,16 @@
 import i18n from '@/i18n'
 
 export default {
+  props: {
+    showAllOnLoad: {
+      type: Boolean,
+      default: false
+    }
+  },
+  
   data() {
     return {
+      currentYear: new Date().getFullYear(),
       searchQuery: '',
       activeCategory: null,
       selectedCategory: null,
@@ -325,6 +496,8 @@ export default {
       isSearching: false,
       searchTimeout: null,
       isHovered: false,
+      showAllArticlesModal: false,
+      isLoadingModal: false,
       categories: [
         {
           id: 'test-creation',
@@ -335,78 +508,7 @@ export default {
         { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
         { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
       ],
-      items: [
-        {
-          title: i18n.t('help.createtest'),
-          content: i18n.t('help.createtestanswer'),
-          gif: 'create_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.heuristictest'),
-          content: i18n.t('help.heuristictestanswer'),
-          gif: 'hsetup.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.deletetest'),
-          content: i18n.t('help.deletetestanswer'),
-          gif: 'del_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.createtemplate'),
-          content: i18n.t('help.createtemplateanswer'),
-          gif: 'create-temp.gif',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.usetemplate'),
-          content: i18n.t('help.usetemplateanswer'),
-          gif: 'use-temp.gif',
-          isCollapsed: true,
-          category: 'templates',
-        },
-        {
-          title: i18n.t('help.previewtest'),
-          content: i18n.t('help.previewtestanswer'),
-          gif: 'preview_test.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.importcsv'),
-          content: i18n.t('help.importcsvanswer'),
-          gif: 'csv.gif',
-          isCollapsed: true,
-          category: 'test-creation',
-        },
-        {
-          title: i18n.t('help.invitecooperators'),
-          content: i18n.t('help.invitecooperatorsanswer'),
-          gif: 'sendinvite.gif',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-        {
-          title: i18n.t('help.analyseresults'),
-          content: i18n.t('help.analyseresultsanswer'),
-          gif: 'analytics.gif',
-          isCollapsed: true,
-          category: 'analytics',
-        },
-        {
-          title: i18n.t('help.sendmessage'),
-          content: i18n.t('help.sendmessageanswer'),
-          gif: 'send_message.gif',
-          isCollapsed: true,
-          category: 'cooperators',
-        },
-      ],
+      items: this.generateFaqItems(),
     }
   },
 
@@ -448,7 +550,39 @@ export default {
     },
   },
 
+  mounted() {
+    // If showAllOnLoad is true, open the modal when the component is mounted
+    if (this.showAllOnLoad) {
+      this.$nextTick(() => {
+        this.openAllArticlesModal();
+      });
+    }
+  },
+
   methods: {
+    generateFaqItems() {
+         const createFaqItem = (keyPrefix, category, gif) => ({
+           title: i18n.t(`help.${keyPrefix}`),
+           content: i18n.t(`help.${keyPrefix}answer`),
+           gif: `${gif}.mp4`,
+           isCollapsed: true,
+           category
+         });
+  
+         return [
+           createFaqItem('createtest', 'test-creation', 'create_test'),
+           createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+           createFaqItem('deletetest', 'test-creation', 'del_test'),
+           createFaqItem('createtemplate', 'templates', 'create-temp'),
+           createFaqItem('usetemplate', 'templates', 'use-temp'),
+           createFaqItem('previewtest', 'test-creation', 'preview_test'),
+           createFaqItem('importcsv', 'test-creation', 'csv'),
+           createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+           createFaqItem('analyseresults', 'analytics', 'analytics'),
+           createFaqItem('sendmessage', 'cooperators', 'send_message'),
+          ];
+    },
+
     toggleCollapse(index) {
       if (index !== -1) {
         this.items.forEach((item, i) => {
@@ -475,8 +609,14 @@ export default {
     },
 
     filterByCategory(categoryId) {
-      this.selectedCategory = categoryId
-      this.page = 1
+      if (categoryId === 'all') {
+        // Show all articles in the modal
+        this.openAllArticlesModal();
+        return;
+      }
+      
+      this.selectedCategory = categoryId;
+      this.page = 1;
     },
 
     handlePageChange() {
@@ -499,6 +639,169 @@ export default {
     getItemIndex(item) {
       return this.items.findIndex((i) => i.title === item.title)
     },
+
+    skipBackward(item) {
+       const videos = this.$refs.videoPlayer;
+       let video;
+  
+       if (Array.isArray(videos)) {
+         const index = this.filteredItems.findIndex(i => i.title === item.title);
+         video = videos[index];
+       } else {
+         video = videos;
+       }
+  
+      if (video) {
+        video.currentTime = Math.max(0, video.currentTime - 10);
+      }
+    },
+
+    skipForward(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+        video = videos;
+      }
+  
+      if (video) {
+        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+      }
+    },
+
+    togglePlay(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+        video = videos;
+      }
+  
+      if (video) {
+        if (video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    },
+
+    isPlaying(item) {
+      const videos = this.$refs.videoPlayer;
+      let video;
+  
+      if (Array.isArray(videos)) {
+        const index = this.filteredItems.findIndex(i => i.title === item.title);
+        video = videos[index];
+      } else {
+       video = videos;
+      }
+  
+      return video ? !video.paused : false;
+    },
+
+    updatePlayState() {
+      this.$forceUpdate(); 
+    },
+
+    openAllArticlesModal() {
+      this.isLoadingModal = true;
+      this.showAllArticlesModal = true;
+      
+      // Simulate loading time (can be removed in production)
+      setTimeout(() => {
+        this.isLoadingModal = false;
+      }, 500);
+      
+      // Update the URL without refreshing the page
+      if (this.$route.name !== 'AllArticles') {
+        this.$router.push({ 
+          name: 'AllArticles' 
+        }).catch(err => {
+          if (err.name !== 'NavigationDuplicated') {
+            throw err;
+          }
+        });
+      }
+    },
+    
+    openInNewPage() {
+      // Close the modal
+      this.showAllArticlesModal = false;
+      
+      // Open the all articles page in a new tab
+      const newPageUrl = this.$router.resolve({ name: 'AllArticles' }).href;
+      window.open(newPageUrl, '_blank');
+    },
   },
+  
+  watch: {
+    showAllArticlesModal(val) {
+      if (!val && this.$route.name === 'AllArticles') {
+        // When modal is closed, go back to the help page
+        this.$router.push({ name: 'Help' }).catch(err => {
+          if (err.name !== 'NavigationDuplicated') {
+            throw err;
+          }
+        });
+      }
+    }
+  }
 }
 </script>
+
+<style>
+.button-hover:hover {
+  background-color: rgb(249, 168, 38) !important;
+}
+
+.button-hover:hover .v-icon {
+  color: white !important;
+}
+
+.custom-controls {
+  position: absolute;
+  bottom: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 2;
+}
+
+.controls-mobile {
+  bottom: 25%; 
+}
+
+@media (max-width: 600px) {
+  .custom-control-btn {
+    transform: scale(0.9);
+  }
+}
+
+.dialog-bottom-transition-enter-active,
+.dialog-bottom-transition-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+.dialog-bottom-transition-enter,
+.dialog-bottom-transition-leave-to {
+  transform: translateY(100%);
+}
+
+/* Add some responsive styling for the modal */
+@media (max-width: 600px) {
+  .v-dialog .v-card-text {
+    padding: 12px;
+  }
+  
+  .v-dialog .v-container {
+    padding: 8px;
+  }
+}
+</style>
