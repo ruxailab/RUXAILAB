@@ -110,7 +110,7 @@
               outlined
               color="green"
               :disabled="hasTemplate || !object ? true : false"
-              class="button-spacing"
+              class="ma-2"
               @click="tempDialog = true"
             >
               {{ $t('pages.settings.createTemplate') }}
@@ -119,11 +119,11 @@
             <v-btn
               outlined
               color="green"
-              class="button-spacing"
+              class="ma-2"
               @click="duplicateTest()"
             >
-              Duplicate test
-            </v-btn>
+            {{ $t('pages.settings.duplicateTest') }}          
+           </v-btn>
           </v-row>
 
           <v-divider class="my-3 mx-2" />
@@ -537,10 +537,6 @@ export default {
   align-items: center;
 }
 
-/* Default spacing for buttons on desktop */
-.button-spacing {
-  margin: 0 12px; /* Horizontal spacing between buttons on desktop */
-}
 
 /* Mobile adjustments (≤ 960px) */
 @media screen and (max-width: 960px) {

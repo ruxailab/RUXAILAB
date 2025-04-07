@@ -463,7 +463,8 @@
       "title": "Settings",
       "currentTest": "Current test",
       "createTemplate": "CREATE TEMPLATE",
-      "deleteTest": "DELETE TEST"
+      "deleteTest": "DELETE TEST",
+      "duplicateTest": "DUPLICATE TEST"
     }
   },
   "alerts": {
