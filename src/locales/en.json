@@ -20,7 +20,7 @@
     "editAndInvite": "Edit and invite people to your test",
     "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
-    "inputImage": "Input an image of your choice referent to the topic",
+    "inputImage": "Input an image of your choice relevant to the topic",
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
@@ -137,7 +137,7 @@
   },
   "Introduction": {
     "title": "UX Remote LAB",
-    "subtitle": "What about doing Usability Tests in remote?",
+    "subtitle": "How about conducting usability tests remotely?",
     "description": "Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!",
     "cta": "Get started"
   },
@@ -187,7 +187,7 @@
     },
     "messages": {
       "noHeuristics": "You don't have any heuristic, create one to proceed.",
-      "youMustHave": "You must have typen something wrong...",
+      "youMustHave": "You must have typed something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
       "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
@@ -231,7 +231,8 @@
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "emptyCsvFile": "The CSV file is empty. Please provide a file with data."
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -244,8 +245,8 @@
   "HeuristicsTestView": {
     "messages": {
       "submitTest": "Are you sure you want to submit this test?",
-      "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
-      "noHeuristics": "This test don't have any heuristic"
+      "submitOnce": "Are you sure you want to submit your test? You can only do it once.",
+      "noHeuristics": "This test does not have any heuristic"
     },
     "actions": {
       "cancel": "Cancel",
@@ -442,17 +443,17 @@
         "finalReport": "Final Report",
         "loading": "Loading..."
       },
-      "ContructionHeading": "Page Under Construction",
-      "ContructionParagraph": "We're working hard to improve our website. Please check back soon!"
+      "ConstructionHeading": "Page Under Construction",
+      "ConstructionParagraph": "We're working hard to improve our website. Please check back soon!"
     },
     "landing": {
       "feedbackTitle": "Quickly get feedback on your projects",
-      "feedbackSubtitle1": "UX Remote LAB has been created to give a set of tools for different UX experts that want to create their own UX tests and perform it with the users.",
-      "feedbackSubtitle2": "COVID-19 has shown to the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
+      "feedbackSubtitle1": "UX Remote LAB was created to give a set of tools for different UX experts who want to create their own UX tests and perform it with the users.",
+      "feedbackSubtitle2": "COVID-19 showed the world that sometimes the physical presence of real users is not possible so we are here to solve this problem!",
       "uxTitle": "Start your own UX LAB",
-      "uxSubtitle1": "If you are a researcher, a company, or a professional that you want to perform an UX test, here you will find several tools to help to analyze and track your tests using different UX techniques.",
-      "uxSubtitle2": "Help us to grow up this Open Source community and join us on GitHub! :)",
-      "footer": "We are looking for new partners to help us to grow the project! Feel free to contact us on "
+      "uxSubtitle1": "If you are a researcher, a company, or a professional who wants to perform a UX test, here you will find several tools to help you analyze and track your tests using different UX techniques.",
+      "uxSubtitle2": "Help us to grow our open-source community and join us on GitHub! :)",
+      "footer": "We are looking for new partners to help us grow the project! Feel free to contact us on "
     },
     "listTests": {
       "createdBy": "Created by",
@@ -465,8 +466,8 @@
     },
     "createTest": {
       "title": "Create a new test",
-      "blanckTitle": "Create a blank test",
-      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "blankTitle": "Create a blank test",
+      "blankSubtitle": "Create a blank test to begin with a completely new and fresh template.",
       "templateTitle": "Create from template",
       "templateSubtitle": "Create a test based on a template created by one of our users.",
       "create": "Create test",
@@ -488,7 +489,7 @@
     "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
     "deleteUser": "Are you sure you want to delete this user?",
-    "addDescription": "Please add a descritpion",
+    "addDescription": "Please add a description",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
@@ -568,7 +569,7 @@
         "title": "Self Test",
         "type":"Unmoderated",
         "text": [
-          "Answer on free time",
+          "Answer in your own time",
           "Enhanced answer analysis",
           "Task Customization"
         ]

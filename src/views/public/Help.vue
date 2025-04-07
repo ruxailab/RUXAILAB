@@ -122,7 +122,9 @@
                   <v-divider class="my-2"></v-divider>
                   <v-list-item 
                     style="background-color: white !important; color: black !important;"
-                    @click="filterByCategory(null)"
+                    @click="filterByCategory(null)
+                  <v-list-item
+                    @click="openAllArticlesModal()"
                     class="my-1 mx-2 rounded"
                     :class="{ 'grey lighten-4': selectedCategory === null }"
                   >
@@ -261,10 +263,9 @@
               <v-btn
                 color="black"
                 style="color: white;"
-                @click="filterByCategory(null)"
+                @click="openAllArticlesModal()"
               >
                 View All Articles
-
               </v-btn>
             </v-card-text>
           </v-card>
@@ -278,6 +279,29 @@
               class="white elevation-2 py-2 px-4 d-inline-flex rounded-pill"
               @input="handlePageChange"
             ></v-pagination>
+          </div>
+          
+          <!-- Read All Articles Button at the bottom -->
+          <div class="text-center mt-4 mb-8">
+            <v-btn
+              color="black"
+              outlined
+              @click="openAllArticlesModal()"
+              class="px-4 mr-2"
+            >
+              <v-icon left>mdi-book-open-variant</v-icon>
+              Read All Articles
+            </v-btn>
+            
+            <v-btn
+              color="grey darken-1"
+              text
+              @click="openInNewPage()"
+              class="px-4"
+            >
+              <v-icon small left>mdi-open-in-new</v-icon>
+              Open in New Tab
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -364,6 +388,96 @@
         </v-row>
       </v-container>
     </v-footer>
+
+    <!-- All Articles Modal -->
+    <v-dialog
+      v-model="showAllArticlesModal"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
+    >
+      <v-card>
+        <v-toolbar dark color="black">
+          <v-btn icon dark @click="showAllArticlesModal = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>All Help Articles</v-toolbar-title>
+          <v-spacer></v-spacer>
+          
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                icon 
+                dark 
+                v-bind="attrs"
+                v-on="on"
+                @click="openInNewPage()"
+              >
+                <v-icon>mdi-open-in-new</v-icon>
+              </v-btn>
+            </template>
+            <span>Open in new page</span>
+          </v-tooltip>
+        </v-toolbar>
+        
+        <!-- Loading overlay -->
+        <v-overlay :value="isLoadingModal" absolute>
+          <v-progress-circular
+            indeterminate
+            size="64"
+            color="amber"
+          ></v-progress-circular>
+        </v-overlay>
+        
+        <v-card-text class="pt-4">
+          <v-container>
+            <div v-for="(category, catIndex) in categories" :key="'modal-cat-' + catIndex" class="mb-8">
+              <v-card flat class="mb-4 rounded-lg" style="border-left: 4px solid rgb(249, 168, 38);">
+                <v-card-title class="py-3 black--text font-weight-medium">
+                  <v-icon left color="black">{{ category.icon }}</v-icon>
+                  {{ category.name }}
+                </v-card-title>
+              </v-card>
+              <v-expansion-panels flat hover>
+                <v-expansion-panel
+                  v-for="(item, index) in items.filter(i => i.category === category.id)"
+                  :key="'modal-item-' + index"
+                  class="mb-3 rounded-lg"
+                  style="border: 1px solid rgba(0,0,0,0.08);"
+                >
+                  <v-expansion-panel-header
+                    class="py-3 subtitle-1 grey--text text--darken-3 font-weight-medium"
+                  >
+                    {{ item.title }}
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content class="grey lighten-5">
+                    <p class="body-1 grey--text text--darken-2 mb-4">
+                      {{ item.content }}
+                    </p>
+                    <div class="video-container position-relative" v-if="item.gif">
+                      <video
+                        :src="require(`@/assets/faqs/${item.gif}`)"
+                        class="rounded-lg"
+                        width="100%"
+                        max-height="500"
+                        controls
+                        controlslist="nodownload"
+                        preload="metadata"
+                        ref="modalVideoPlayer"
+                        muted
+                        aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
+                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                      ></video>
+                    </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -371,6 +485,13 @@
 import i18n from '@/i18n'
 
 export default {
+  props: {
+    showAllOnLoad: {
+      type: Boolean,
+      default: false
+    }
+  },
+  
   data() {
     return {
       currentYear: new Date().getFullYear(),
@@ -383,6 +504,8 @@ export default {
       isSearching: false,
       searchTimeout: null,
       isHovered: false,
+      showAllArticlesModal: false,
+      isLoadingModal: false,
       categories: [
         {
           id: 'test-creation',
@@ -435,6 +558,15 @@ export default {
     },
   },
 
+  mounted() {
+    // If showAllOnLoad is true, open the modal when the component is mounted
+    if (this.showAllOnLoad) {
+      this.$nextTick(() => {
+        this.openAllArticlesModal();
+      });
+    }
+  },
+
   methods: {
     generateFaqItems() {
          const createFaqItem = (keyPrefix, category, gif) => ({
@@ -485,8 +617,14 @@ export default {
     },
 
     filterByCategory(categoryId) {
-      this.selectedCategory = categoryId
-      this.page = 1
+      if (categoryId === 'all') {
+        // Show all articles in the modal
+        this.openAllArticlesModal();
+        return;
+      }
+      
+      this.selectedCategory = categoryId;
+      this.page = 1;
     },
 
     handlePageChange() {
@@ -579,7 +717,50 @@ export default {
     updatePlayState() {
       this.$forceUpdate(); 
     },
+
+    openAllArticlesModal() {
+      this.isLoadingModal = true;
+      this.showAllArticlesModal = true;
+      
+      // Simulate loading time (can be removed in production)
+      setTimeout(() => {
+        this.isLoadingModal = false;
+      }, 500);
+      
+      // Update the URL without refreshing the page
+      if (this.$route.name !== 'AllArticles') {
+        this.$router.push({ 
+          name: 'AllArticles' 
+        }).catch(err => {
+          if (err.name !== 'NavigationDuplicated') {
+            throw err;
+          }
+        });
+      }
+    },
+    
+    openInNewPage() {
+      // Close the modal
+      this.showAllArticlesModal = false;
+      
+      // Open the all articles page in a new tab
+      const newPageUrl = this.$router.resolve({ name: 'AllArticles' }).href;
+      window.open(newPageUrl, '_blank');
+    },
   },
+  
+  watch: {
+    showAllArticlesModal(val) {
+      if (!val && this.$route.name === 'AllArticles') {
+        // When modal is closed, go back to the help page
+        this.$router.push({ name: 'Help' }).catch(err => {
+          if (err.name !== 'NavigationDuplicated') {
+            throw err;
+          }
+        });
+      }
+    }
+  }
 }
 </script>
 
@@ -608,6 +789,27 @@ export default {
 @media (max-width: 600px) {
   .custom-control-btn {
     transform: scale(0.9);
+  }
+}
+
+.dialog-bottom-transition-enter-active,
+.dialog-bottom-transition-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+.dialog-bottom-transition-enter,
+.dialog-bottom-transition-leave-to {
+  transform: translateY(100%);
+}
+
+/* Add some responsive styling for the modal */
+@media (max-width: 600px) {
+  .v-dialog .v-card-text {
+    padding: 12px;
+  }
+  
+  .v-dialog .v-container {
+    padding: 8px;
   }
 }
 </style>

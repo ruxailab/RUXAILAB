@@ -231,7 +231,8 @@
     },
     "messages": {
       "acceptCsv": "Aceitar arquivo CSV",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado"
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado",
+      "emptyCsvFile": "O arquivo CSV está vazio. Por favor, forneça um arquivo com dados."
     },
     "placeHolders": {
       "importCsv": "Importar CSV"
@@ -327,7 +328,7 @@
       "in_progress": "[TODO]"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Convidar Avaliador para Teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
@@ -441,8 +442,8 @@
         "finalReport": "Relatório Final",
         "loading": "Carregando..."
       },
-      "ContructionHeading": "Página em Construção",
-      "ContructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Por favor, volte em breve!"
+      "ConstructionHeading": "Página em Construção",
+      "ConstructionParagraph": "Estamos trabalhando arduamente para melhorar nosso site. Por favor, volte em breve!"
     },
     "landing": {
       "feedbackTitle": "Receba feedback rapidamente sobre seus projetos",
@@ -464,8 +465,8 @@
     },
     "createTest": {
       "title": "Criar um novo teste",
-      "blanckTitle": "Criar um teste em branco",
-      "blanckSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
+      "blankTitle": "Criar um teste em branco",
+      "blankSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
       "templateTitle": "Criar a partir do modelo",
       "templateSubtitle": "Crie um teste baseado em um modelo criado por um de nossos usuários.",
       "create": "Criar teste",
@@ -560,26 +561,26 @@
         "Testes moderados ou não moderados"
       ]
     },
-"UsabilityUser": {
-    "SelfTest": {
-      "title": "Auto Teste",
-      "type":"não moderado",
-      "text": [
-        "Responder no tempo livre",
-        "Análise aprimorada de respostas",
-        "Personalização de tarefas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Teste ao Vivo",
-      "type":"moderado",
-      "text": [
-        "Gravação de webcam, áudio e tela",
-        "Análise aprimorada de respostas",
-        "Teste ao vivo moderado"
-      ]
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Auto Teste",
+        "type": "não moderado",
+        "text": [
+          "Responder no tempo livre",
+          "Análise aprimorada de respostas",
+          "Personalização de tarefas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Teste ao Vivo",
+        "type": "moderado",
+        "text": [
+          "Gravação de webcam, áudio e tela",
+          "Análise aprimorada de respostas",
+          "Teste ao vivo moderado"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
