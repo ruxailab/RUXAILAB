@@ -40,16 +40,16 @@
 
 <script>
 export default {
-// Fix default prop handling in task object
-props: {
-  task: {
-    type: Object,
-    default: () => ({
-      taskName: '',
-      taskTip: '',
-    }),
+  // Fix default prop handling in task object
+  props: {
+    task: {
+      type: Object,
+      default: () => ({
+        taskName: '',
+        taskTip: '',
+      }),
+    },
   },
-},
 
   data: () => ({
     dialog: false,
