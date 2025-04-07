@@ -32,6 +32,13 @@ export default [
     component: Help,
   },
   {
+    path: '/help/all-articles',
+    name: 'AllArticles',
+    meta: { authorize: [] },
+    component: Help,
+    props: { showAllOnLoad: true }
+  },
+  {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
