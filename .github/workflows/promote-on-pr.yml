@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Call Promotion API
         run: |
-          curl -X POST https://de88-207-23-249-161.ngrok-free.app/promote \
+          curl -X POST https://43e0-207-23-249-161.ngrok-free.app/promote \
           -H "Content-Type: application/json" \
-          -d '{
-            "username": "${{ github.event.pull_request.user.login }}"
-          }'
+            -d '{"username": "armanmoztar"}'
