@@ -76,5 +76,4 @@ app.post('/promote', async (req, res) => {
   res.send('Role assigned + notified!');
 });
 
-
 app.listen(3000, () => console.log('Server running'));
