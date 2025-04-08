@@ -312,9 +312,17 @@
               ></span>
             </h3>
             <p class="white--text mb-3" style="opacity: 0.7;">
-              <v-icon small class="mr-2 white--text">mdi-email</v-icon>
-              ruxailab@gmail.com
-            </p>
+  <v-icon small class="mr-2 white--text">mdi-email</v-icon>
+  <a 
+    href="mailto:ruxailab@gmail.com"
+    class="white--text"
+    style="text-decoration: none; opacity: 0.7;"
+    @mouseover="$event.target.style.opacity = '1'"
+    @mouseleave="$event.target.style.opacity = '0.7'"
+  >
+    ruxailab@gmail.com
+  </a>
+</p>
             <p class="white--text mb-3" style="opacity: 0.7;">
               <v-icon small class="mr-2 white--text">mdi-phone</v-icon> +1 (555)
               123-4567
