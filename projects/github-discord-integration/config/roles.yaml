@@ -1,0 +1,61 @@
+roles:
+  code_ninja:
+    name: "New Ninja"
+    id_env_var: "ROLE_NINJA"
+    color: 0x2ecc71
+    position: 1
+    emoji: "🥷"
+    criteria:
+      commits: 3
+      operator: "OR"
+    description: "Started their coding journey"
+
+  bug_hunter:
+    name: "Bug Slayer"
+    id_env_var: "ROLE_SLAYER"
+    color: 0xe74c3c
+    position: 2
+    emoji: "🐛"
+    criteria:
+      closed_issues: 5
+      operator: "AND"
+    description: "Expert at finding and fixing bugs"
+
+  pr_master:
+    name: "⭐ PR Flash"
+    id_env_var: "ROLE_PR_MASTER"
+    color: 0x3498db  # Blue
+    position: 3
+    emoji: "⭐"
+    criteria:
+      merged_prs: 5
+      reviewed_prs: 3
+      operator: "OR"
+    description: "Master of Pull Requests"
+
+  code_architect:
+    name: "🏛️ Arc  "
+    id_env_var: "ROLE_ARCHITECT"
+    color: 0x9b59b6  # Purple
+    position: 4
+    emoji: "🏛️"
+    criteria:
+      commits: 20
+      merged_prs: 10
+      reviewed_prs: 5
+      operator: "OR"
+    description: "Shapes the project's architecture"
+
+  project_guardian:
+    name: "🛡️ Project Guardian"
+    id_env_var: "ROLE_GUARDIAN"
+    color: 0xf1c40f  # Gold
+    position: 5
+    emoji: "🛡️"
+    criteria:
+      commits: 50
+      merged_prs: 15
+      reviewed_prs: 10
+      closed_issues: 20
+      operator: "OR"
+    description: "Trusted project maintainer"
