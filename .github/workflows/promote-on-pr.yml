@@ -1,0 +1,18 @@
+name: Promote on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  promote:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Promotion API
+        run: |
+          curl -X POST https://de88-207-23-249-161.ngrok-free.app/promote \
+          -H "Content-Type: application/json" \
+          -d '{
+            "username": "${{ github.event.pull_request.user.login }}"
+          }'
