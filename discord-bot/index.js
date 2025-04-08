@@ -42,7 +42,6 @@ app.post('/promote', async (req, res) => {
 
   const url = `https://discord.com/api/guilds/${process.env.GUILD_ID}/members/${discordId}/roles/${roleToAssign}`;
 
-  
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -60,7 +59,7 @@ app.post('/promote', async (req, res) => {
   });
 
   if (!response.ok) {
-    console.error(`Failed to assign role. Discord returned ${response.status}`);
+    console.error(`⚠️ Failed to assign role. Discord returned ${response.status}`);
     return res.status(500).send("Failed to assign role.");
   }
 
