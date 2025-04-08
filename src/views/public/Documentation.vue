@@ -36,7 +36,7 @@
                   class="mt-3"
                 >
                   <v-expansion-panel
-                    v-for="(guideline, guidelineIndex) in Object.values(principle)[0].Guidelines"
+                    v-for="(guideline) in Object.values(principle)[0].Guidelines"
                     :key="guideline.id"
                     class="guideline-panel"
                   >
