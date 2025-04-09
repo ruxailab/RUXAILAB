@@ -327,7 +327,7 @@
       "in_progress": "En progreso"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invitar Evaluador a la Prueba",
     "email": "Correo Electrónico",
     "scheduledAt": "Programado para",
@@ -441,8 +441,8 @@
         "finalReport": "Informe final",
         "loading": "Cargando..."
       },
-      "ContructionHeading": "Página en Construcción",
-      "ContructionParagraph": "Estamos trabajando arduamente para mejorar nuestro sitio web. ¡Por favor, vuelva pronto!"
+      "ConstructionHeading": "Página en Construcción",
+      "ConstructionParagraph": "Estamos trabajando arduamente para mejorar nuestro sitio web. ¡Por favor, vuelva pronto!"
     },
     "landing": {
       "feedbackTitle": "Recibe rápidamente comentarios sobre tus proyectos",
@@ -464,8 +464,8 @@
     },
     "createTest": {
       "title": "Crear una nueva prueba",
-      "blanckTitle": "Crear una prueba en blanco",
-      "blanckSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
+      "blankTitle": "Crear una prueba en blanco",
+      "blankSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
       "templateTitle": "Crear a partir de plantilla",
       "templateSubtitle": "Crea una prueba basada en una plantilla creada por uno de nuestros usuarios.",
       "create": "Crear prueba",
@@ -495,12 +495,12 @@
     "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
     "audioSaved": "Grabación de audio guardada!",
     "screenRecordSaved": "Registro de tela salvo!",
-    "videoRecordSaved":"Grabación de vídeo guardada!",
-    "profileUpdatedSuccess":"Perfil actualizado exitosamente",
+    "videoRecordSaved": "Grabación de vídeo guardada!",
+    "profileUpdatedSuccess": "Perfil actualizado exitosamente",
     "passwordChangedSuccess": "La contraseña se cambió correctamente",
     "accountDeletedSuccess": "Cuenta eliminada exitosamente",
     "savedChanges": "Cambios guardados",
-    "responseRecorded":"Su respuesta ha sido registrada"
+    "responseRecorded": "Su respuesta ha sido registrada"
   },
   "buttons": {
     "saveandleave": "guardar y salir",
@@ -521,6 +521,7 @@
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
+
     "deleteAccount": "Eliminar cuenta",
     "back": "Atrás",
     "duplicateTest": "Duplicar Prueba", 
@@ -563,25 +564,25 @@
       ]
     },
     "UsabilityUser": {
-    "SelfTest": {
-      "title": "Prueba de Usuario",
-      "type":"no moderado",
-      "text": [
-        "Responder en tiempo libre",
-        "Análisis mejorado de respuestas",
-        "Personalización de tareas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Prueba en Vivo",
-      "type":"moderado",
-      "text": [
-        "Grabación de webcam, audio y pantalla",
-        "Análisis mejorado de respuestas",
-        "Prueba en vivo moderada"
-      ]
+      "SelfTest": {
+        "title": "Prueba de Usuario",
+        "type": "no moderado",
+        "text": [
+          "Responder en tiempo libre",
+          "Análisis mejorado de respuestas",
+          "Personalización de tareas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Prueba en Vivo",
+        "type": "moderado",
+        "text": [
+          "Grabación de webcam, audio y pantalla",
+          "Análisis mejorado de respuestas",
+          "Prueba en vivo moderada"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Creación de Prueba",
