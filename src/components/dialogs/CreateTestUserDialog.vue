@@ -60,10 +60,11 @@ export default {
 
   methods: {
     setType(type) {
+      const normalizedType = type.toLowerCase()
       const test = {}
-      if (type === 'UNMODERATED') test.userTestType = type.toLowerCase()
-      if (type === 'MODERATED') {
-        test.userTestType = 'moderated'
+      if (normalizedType === 'unmoderated') test.userTestType = normalizedType
+      if (normalizedType === 'moderated') {
+        test.userTestType = normalizedType
         test.userTestStatus = {
           user: false,
           moderator: false,
@@ -74,8 +75,8 @@ export default {
       }
 
       this.$emit('setUser', test)
-    }
-  }
+    },
+  },
 }
 </script>
 
