@@ -106,11 +106,11 @@ export default {
     email: '',
     password: '',
     emailRules: [
-      (v) => !!v || i18n.t('errors.emailIsRequired'),
-      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
+      (v) => !!v || this.$t('errors.emailIsRequired'),
+      (v) => /.+@.+\..+/.test(v) || this.$t('errors.invalidEmail'),
     ],
     rules: {
-      required: (value) => !!value || i18n.t('PROFILE.passwordRequired'),
+      required: (value) => !!value || this.$t('PROFILE.passwordRequired'),
     },
   }),
   computed: {
