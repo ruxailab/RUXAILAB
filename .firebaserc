@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "retlab-dev",
+    "default": "ruxailab-ch",
     "dev": "retlab-dev",
     "production": "retlab",
     "prod": "ruxailab-prod"
