@@ -10,7 +10,7 @@
 
     <v-col cols="12" class="mt-6">
       <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" md="5" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="$t('Createblank.testType_1.testTitle')"
@@ -20,7 +20,6 @@
             @click="setTestType"
           />
         </v-col>
-
         <v-col cols="12" md="5" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/user.png')"
@@ -31,9 +30,21 @@
             @click="setTestType"
           />
         </v-col>
+        <v-col cols="12" md="5" sm="10" class="card">
+          <CardTypeTest
+            :img="require('../../../public/user.png')"
+            title="Accessibility Test"
+            :type="$t('Createblank.test')"
+            segund-type="Accessibility"
+            :texts="$t('Createblank.testType_2.text')"
+            @click="setTestType"
+          />
+        </v-col>
+
       </v-row>
     </v-col>
 
+    <!-- Move the dialog outside the grid structure -->
     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
@@ -73,7 +84,7 @@ export default {
 
 <style scoped>
 .outermost {
-  height: 93vh;
+  height: 100%;
   background-color: #f9f5f0;
 }
 

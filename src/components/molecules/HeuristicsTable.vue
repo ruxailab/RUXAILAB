@@ -433,7 +433,7 @@
               <v-subheader class="px-2 ma-0 " style="font-size: 12px; height: 40px;">
                 <div class="py-1 overflow-auto" style="max-height: 40px; scrollbar-width: none;">
                   {{ heuristics[itemSelect].questions[questionSelect].title }}
-               </div>
+                </div>
                 <v-spacer />
                 <v-menu v-model="menuQuestions" offset-x>
                   <template v-slot:activator="{ on, attrs }">
@@ -1063,5 +1063,22 @@ export default {
   .questionsContent {
     margin-top: 0px;
   }
+}
+
+.custom-scrollbar {
+  overflow: auto;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: none;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bdbdbd;
 }
 </style>

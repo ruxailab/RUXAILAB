@@ -3,10 +3,7 @@
     <v-row>
       <!-- Left Section: Profile Details -->
       <v-col cols="12" md="4" lg="3">
-        <v-card
-        outlined
-          class="rounded-lg h-100"
-        >
+        <v-card outlined class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ hover }">
@@ -391,6 +388,15 @@
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
+          <div class="text-center">
+        <v-avatar size="100">
+          <img :src="editProfileData.profileImage || defaultImage" alt="Profile Image" />
+        </v-avatar>
+        <v-btn icon class="ml-2" @click="selectImage">
+          <v-icon>mdi-camera</v-icon>
+        </v-btn>
+        <input type="file" ref="fileInput" accept="image/*" style="display: none" @change="uploadProfileImage" />
+      </div>
           <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
@@ -621,6 +627,7 @@ import {
 import {
   getFirestore,
   collection,
+  storage,
   query,
   where,
   getDocs,
@@ -629,6 +636,8 @@ import {
   getDoc,
   updateDoc,
 } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+
 import { countries } from '@/utils/countries'
 
 export default {
@@ -642,6 +651,7 @@ export default {
         contactNo: null,
         country: null,
       },
+      
       editProfileData: {
         username: null,
         contactNo: null,
@@ -745,6 +755,43 @@ export default {
       return specialChars.test(str)
     },
 
+     selectImage() {
+    this.$refs.fileInput.click(); // Opens file selection dialog
+  },
+
+  async uploadProfileImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `profileImages/${user.uid}`);
+
+      // Upload file
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // Save URL to Firestore
+      const db = getFirestore();
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, { profileImage: downloadURL });
+      
+      // Update UI
+      this.userprofile.profileImage = downloadURL;
+      if (this.editProfileData) {
+      this.editProfileData.profileImage = downloadURL;
+    }
+      this.$toast.success("Profile image updated successfully!");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      this.$toast.error("Failed to upload image.");
+    }
+  },
+
     checkScreenSize() {
       this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
     },
@@ -782,6 +829,7 @@ export default {
         username: this.userprofile.username,
         contactNo: this.userprofile.contactNo,
         country: this.userprofile.country, // Store just the country name
+        profileImage: this.userprofile.profileImage
       }
       this.editProfileDialog = true
     },
@@ -810,7 +858,7 @@ export default {
             country: this.editProfileData.country,
           }
 
-          this.$toast.success('Profile updated successfully')
+          this.$toast.success(this.$t('alerts.profileUpdatedSuccess'))
           this.editProfileDialog = false
         }
       } catch (error) {
@@ -827,7 +875,7 @@ export default {
 
           if (user) {
             await updatePassword(user, this.newPassword)
-            this.$toast.success('Password changed successfully')
+            this.$toast.success(this.$t('alerts.passwordChangedSuccess'))
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
@@ -891,8 +939,7 @@ export default {
 
           // Delete the Firebase Auth user
           await user.delete()
-
-          this.$toast.success('Account deleted successfully')
+          this.$toast.success(this.$t('alerts.accountDeletedSuccess'))
           this.deleteAccountDialog = false
           this.signOut()
         } catch (error) {
