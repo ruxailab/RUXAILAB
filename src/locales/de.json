@@ -3,10 +3,11 @@
   "SIGNIN": {
     "sign-in": "Anmelden",
     "email": "E-Mail",
+    "username": "Benutzername",
     "password": "Passwort",
     "dont-have-account": "Noch kein Konto? Registrieren",
     "sign-up": "Registrieren",
-    "contact": "Kontaktnummer",  
+    "contact": "Kontaktnummer",
     "confirmPassword": "Passwort bestätigen",
     "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden"
   },
@@ -425,8 +426,8 @@
         "finalReport": "Abschlussbericht",
         "loading": "Lade..."
       },
-      "ConstructionHeading": "Seite im Aufbau",
-      "ConstructionParagraph": "Wir arbeiten hart daran, unsere Website zu verbessern. Bitte schauen Sie bald wieder vorbei!"
+      "ContructionHeading": "Seite im Aufbau",
+      "ContructionParagraph": "Wir arbeiten hart daran, unsere Website zu verbessern. Bitte schauen Sie bald wieder vorbei!"
     },
     "landing": {
       "feedbackTitle": "Erhalten Sie schnell Feedback zu Ihren Projekten",
@@ -448,8 +449,8 @@
     },
     "createTest": {
       "title": "Neuen Test erstellen",
-      "blankTitle": "Leeren Test erstellen",
-      "blankSubtitle": "Erstellen Sie einen leeren Test, um mit einer völlig neuen und frischen Vorlage zu beginnen.",
+      "blanckTitle": "Leeren Test erstellen",
+      "blanckSubtitle": "Erstellen Sie einen leeren Test, um mit einer völlig neuen und frischen Vorlage zu beginnen.",
       "templateTitle": "Aus Vorlage erstellen",
       "templateSubtitle": "Erstellen Sie einen Test basierend auf einer Vorlage, die von einem unserer Benutzer erstellt wurde.",
       "create": "Test erstellen",
@@ -479,7 +480,6 @@
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
-    "saveandleave": "speichern und verlassen",
     "next": "Weiter",
     "previous": "Zurück",
     "seeCode": "Code anzeigen",
@@ -520,11 +520,19 @@
     "test": "Test",
     "testType_1": {
       "testTitle": "Usability-Heuristik",
-      "text": ["Usability-Prozentsatz", "Abschlussbericht PDF", "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"]
+      "text": [
+        "Usability-Prozentsatz",
+        "Abschlussbericht PDF",
+        "Laden Sie Spezialisten ein, um Ihre Anwendung zu bewerten"
+      ]
     },
     "testType_2": {
       "testTitle": "Usability-Benutzer",
-      "text": ["Webcam, Audio & Bildschirmaufnahme", "Erweiterte Antwortanalyse", "Moderierte oder nicht moderierte Tests"]
+      "text": [
+        "Webcam, Audio & Bildschirmaufnahme",
+        "Erweiterte Antwortanalyse",
+        "Moderierte oder nicht moderierte Tests"
+      ]
     }
   },
   "TestDialog": {
@@ -555,5 +563,22 @@
     "analyseresultsanswer": "Um Ihre Ergebnisse zu analysieren, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie dort 'Antworten' in der linken Seitenleiste. Hier können Sie Statistiken, Evaluatoren und Heuristiken visualisieren.",
     "sendmessage": "Wie sende ich eine Nachricht an meine Mitarbeiter?",
     "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt."
-  }
+  },
+  "user": "BENUTZER",
+  "account": "Konto",
+  "security": "Sicherheit",
+  "personalInfo": "Persönliche Informationen",
+  "contact": "Kontakt",
+  "country": "Land",
+  "editDetails": "Details bearbeiten",
+  "typeDeleteToConfirm": "Geben Sie \"DELETE\" ein, um zu bestätigen",
+  "pleaseTypeDeleteToConfirm": "Bitte geben Sie DELETE ein, um zu bestätigen",
+  "finalStepVerifyIdentity": "Letzter Schritt: Identität bestätigen",
+  "enterPasswordForAccountDeletion": "Geben Sie Ihr Passwort ein, um mit der Kontolöschung fortzufahren",
+  "yourPassword": "Ihr Passwort",
+  "usernameRequired": "Benutzername ist erforderlich",
+  "usernameMinLength": "Benutzername muss mindestens 3 Zeichen lang sein",
+  "countryRequired": "Land ist erforderlich",
+  "contactNumberRequired": "Kontaktnummer ist erforderlich",
+  "enterValidPhoneNumber": "Bitte geben Sie eine gültige Telefonnummer ein (nur 9-15 Ziffern)"
 }
