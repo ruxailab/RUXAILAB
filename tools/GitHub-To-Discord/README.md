@@ -1,6 +1,6 @@
 # TemplateGitHub
 
-Current implementation is showing in the template discord server https://discord.gg/R7kkg4j6W6 while tracking the RUXAILAB repository
+Current implementation is shown in the template discord server https://discord.gg/R7kkg4j6W6 while tracking the RUXAILAB repository
 
 To activate the discord bot:
 
@@ -13,3 +13,13 @@ To activate the discord bot:
 Future feature:
 
 1. add workflows folder in project directory to implement automatic refresh of data whenever someone sends a PR
+
+OverView:
+
+bot.py: Main logic of the bot
+
+github_links.json: Maps GitHub usernames to Discord users
+
+requirements.txt: Python dependencies
+
+.env: Secret token for Discord bot (not committed)
