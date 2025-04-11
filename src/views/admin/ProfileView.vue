@@ -23,7 +23,7 @@
             </div>
 
             <h2 class="text-h5 mb-2 font-weight-bold">
-              {{ userprofile.username || 'USER' }}
+              {{ userprofile.username || $t('user') }}
             </h2>
             <v-chip
               small
@@ -98,7 +98,7 @@
               <v-icon small class="mr-2">
                 mdi-account
               </v-icon>
-              {{ $t('Account') }}
+              {{ $t('account') }}
             </v-tab>
             <v-tab
               class="text-subtitle-1 font-weight-medium px-4 transition-swing"
@@ -106,7 +106,7 @@
               <v-icon small class="mr-2">
                 mdi-shield-lock
               </v-icon>
-              {{ $t('Security') }}
+              {{ $t('security') }}
             </v-tab>
           </v-tabs>
 
@@ -124,7 +124,7 @@
                     <v-icon left color="primary">
                       mdi-account-details
                     </v-icon>
-                    {{ $t('Personal Info') }}
+                    {{ $t('personalInfo') }}
                   </v-card-title>
                   <v-card-text>
                     <v-form>
@@ -132,7 +132,7 @@
                         <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.username"
-                            :label="$t('buttons.username')"
+                            :label="$t('username')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-account"
@@ -154,7 +154,7 @@
                         <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.contactNo"
-                            :label="$t('Contact')"
+                            :label="$t('contact')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-phone"
@@ -165,7 +165,7 @@
                         <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.country"
-                            :label="$t('Country')"
+                            :label="$t('country')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-map-marker"
@@ -187,7 +187,7 @@
                         <v-icon left>
                           mdi-pencil
                         </v-icon>
-                        {{ $t('Edit Details') }}
+                        {{ $t('editDetails') }}
                       </v-btn>
                     </v-hover>
                   </v-card-text>
@@ -208,7 +208,7 @@
                     <v-icon left color="primary">
                       mdi-lock
                     </v-icon>
-                    {{ $t('Change Password') }}
+                    {{ $t('PROFILE.changePassword') }}
                   </v-card-title>
                   <v-card-text>
                     <v-alert
@@ -218,10 +218,10 @@
                       class="mb-3"
                     >
                       <div class="text-h6 font-weight-medium mb-2">
-                        {{ $t('Password Requirements') }}
+                        {{ $t('PROFILE.passwordRequirements') }}
                       </div>
                       <div class="text-body-2 mb-3">
-                        {{ $t('Password Minimum Requirements') }}
+                        {{ $t('PROFILE.passwordMinimumRequirements') }}
                       </div>
                       <div>
                         <div class="d-flex align-center mb-1">
@@ -238,7 +238,7 @@
                                 : 'mdi-circle-outline'
                             }}
                           </v-icon>
-                          <span>At least 8 characters</span>
+                          <span>{{ $t('PROFILE.passwordMinLength') }}</span>
                         </div>
                         <div class="d-flex align-center mb-1">
                           <v-icon
@@ -254,7 +254,7 @@
                                 : 'mdi-circle-outline'
                             }}
                           </v-icon>
-                          <span>At least one uppercase letter</span>
+                          <span>{{ $t('PROFILE.passwordUppercase') }}</span>
                         </div>
                         <div class="d-flex align-center">
                           <v-icon
@@ -264,7 +264,7 @@
                           >
                             {{ specialCharIcon }}
                           </v-icon>
-                          <span>At least one special character</span>
+                          <span>{{ $t('PROFILE.passwordSymbol') }}</span>
                         </div>
                       </div>
                     </v-alert>
@@ -275,7 +275,7 @@
                           <v-text-field
                             v-model="newPassword"
                             :rules="passwordRules"
-                            :label="$t('New Password')"
+                            :label="$t('PROFILE.newPassword')"
                             :type="showPassword ? 'text' : 'password'"
                             outlined
                             dense
@@ -292,7 +292,7 @@
                           <v-text-field
                             v-model="confirmPassword"
                             :rules="confirmPasswordRules"
-                            :label="$t('Confirm New Password')"
+                            :label="$t('PROFILE.confirmNewPassword')"
                             :type="showConfirmPassword ? 'text' : 'password'"
                             outlined
                             dense
@@ -322,7 +322,7 @@
                             <v-icon left>
                               mdi-key
                             </v-icon>
-                            {{ $t('Change Password') }}
+                            {{ $t('PROFILE.changePassword') }}
                           </v-btn>
                         </v-hover>
                       </div>
@@ -343,7 +343,7 @@
                     <v-icon left color="error">
                       mdi-alert-circle
                     </v-icon>
-                    {{ $t('Delete account') }}
+                    {{ $t('PROFILE.deleteAccountTitle') }}
                   </v-card-title>
                   <v-card-text>
                     <p class="text-body-1 mb-4">
@@ -362,7 +362,7 @@
                         <v-icon left>
                           mdi-delete
                         </v-icon>
-                        <span>{{ $t('buttons.deleteAccount') }}</span>
+                        <span>{{ $t('deleteAccount') }}</span>
                       </v-btn>
                     </v-hover>
                   </v-card-text>
@@ -388,19 +388,10 @@
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
-          <div class="text-center">
-        <v-avatar size="100">
-          <img :src="editProfileData.profileImage || defaultImage" alt="Profile Image" />
-        </v-avatar>
-        <v-btn icon class="ml-2" @click="selectImage">
-          <v-icon>mdi-camera</v-icon>
-        </v-btn>
-        <input type="file" ref="fileInput" accept="image/*" style="display: none" @change="uploadProfileImage" />
-      </div>
           <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
-              :label="$t('buttons.username')"
+              :label="$t('username')"
               outlined
               dense
               prepend-inner-icon="mdi-account"
@@ -414,7 +405,7 @@
               dense
               prepend-inner-icon="mdi-phone"
               :rules="contactRules"
-              hint="Enter a valid phone number"
+              :hint="$t('enterValidPhoneNumber')"
               persistent-hint
               class="input-field-hover"
             />
@@ -459,7 +450,7 @@
               :class="{ 'scale-button': hover }"
               class="transition-swing"
             >
-              {{ $t('buttons.cancel') }}
+              {{ $t('cancel') }}
             </v-btn>
           </v-hover>
           <v-hover v-slot="{ hover }">
@@ -493,7 +484,7 @@
           <v-icon left color="error">
             mdi-alert-circle
           </v-icon>
-          {{ $t('Delete Account') }}
+          {{ $t('PROFILE.deleteAccountTitle') }}
           <v-spacer></v-spacer>
           <v-btn icon @click="closeDeleteDialog" :disabled="isDeleting">
             <v-icon>mdi-close</v-icon>
@@ -511,7 +502,9 @@
             </p>
 
             <div class="text-center mb-4">
-              <p class="font-weight-bold">Type "DELETE" to confirm</p>
+              <p class="font-weight-bold">
+                {{ $t('typeDeleteToConfirm') }}
+              </p>
               <v-text-field
                 v-model="deleteConfirmText"
                 outlined
@@ -519,7 +512,7 @@
                 hide-details
                 class="mt-2 input-field-hover"
                 :rules="[
-                  (v) => v === 'DELETE' || 'Please type DELETE to confirm',
+                  (v) => v === 'DELETE' || $t('pleaseTypeDeleteToConfirm'),
                 ]"
               ></v-text-field>
             </div>
@@ -533,7 +526,7 @@
                 class="mx-2 transition-swing"
                 :class="{ 'scale-button': hover }"
               >
-                {{ $t('buttons.cancel') }}
+                {{ $t('cancel') }}
               </v-btn>
             </v-hover>
             <v-hover v-slot="{ hover }">
@@ -548,7 +541,7 @@
                   'transform-button': hover && deleteConfirmText === 'DELETE',
                 }"
               >
-                {{ $t('Proceed') }}
+                {{ $t('proceed') }}
               </v-btn>
             </v-hover>
           </v-card-actions>
@@ -558,22 +551,22 @@
         <div v-else>
           <v-card-text>
             <v-alert type="error" class="mb-4" outlined>
-              Final step: Verify your identity
+              {{ $t('finalStepVerifyIdentity') }}
             </v-alert>
 
             <div class="mb-4">
               <p class="text-center font-weight-bold mb-4">
-                Enter your password to proceed with account deletion
+                {{ $t('enterPasswordForAccountDeletion') }}
               </p>
               <v-text-field
                 v-model="userPassword"
-                :label="$t('Your Password')"
+                :label="$t('yourPassword')"
                 type="password"
                 outlined
                 dense
                 prepend-inner-icon="mdi-lock"
                 :disabled="isDeleting"
-                :rules="[(v) => !!v || 'Password is required']"
+                :rules="[(v) => !!v || $t('PROFILE.passwordRequired')]"
                 class="input-field-hover"
               ></v-text-field>
             </div>
@@ -588,7 +581,7 @@
                 min-width="120"
                 :class="{ 'scale-button': hover && !isDeleting }"
               >
-                {{ $t('Back') }}
+                {{ $t('back') }}
               </v-btn>
             </v-hover>
             <v-hover v-slot="{ hover }">
@@ -607,7 +600,7 @@
                 <v-icon left>
                   mdi-delete
                 </v-icon>
-                {{ $t('Delete Forever') }}
+                {{ $t('deleteForever') }}
               </v-btn>
             </v-hover>
           </v-card-actions>
@@ -627,7 +620,6 @@ import {
 import {
   getFirestore,
   collection,
-  storage,
   query,
   where,
   getDocs,
@@ -636,8 +628,6 @@ import {
   getDoc,
   updateDoc,
 } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-
 import { countries } from '@/utils/countries'
 
 export default {
@@ -651,7 +641,6 @@ export default {
         contactNo: null,
         country: null,
       },
-      
       editProfileData: {
         username: null,
         contactNo: null,
@@ -659,15 +648,13 @@ export default {
       },
       countries: countries,
       usernameRules: [
-        (v) => !!v || 'Username is required',
-        (v) => (v && v.length >= 3) || 'Username must be at least 3 characters',
+        (v) => !!v || $t('usernameRequired'),
+        (v) => (v && v.length >= 3) || $t('usernameMinLength'),
       ],
-      countryRules: [(v) => !!v || 'Country is required'],
+      countryRules: [(v) => !!v || $t('countryRequired')],
       contactRules: [
-        (v) => !!v || 'Contact number is required',
-        (v) =>
-          /^\d{9,15}$/.test(v) ||
-          'Please enter a valid phone number (9-15 digits only)',
+        (v) => !!v || $t('contactNumberRequired'),
+        (v) => /^\d{9,15}$/.test(v) || $t('enterValidPhoneNumber'),
       ],
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
@@ -716,22 +703,22 @@ export default {
     profileItems() {
       return [
         {
-          label: this.$t('buttons.username'),
+          label: this.$t('username'),
           value: this.userprofile.username,
           icon: 'mdi-account',
         },
         {
-          label: this.$t('SIGNIN.email'),
+          label: this.$t('email'),
           value: this.user.email,
           icon: 'mdi-email',
         },
         {
-          label: this.$t('SIGNIN.contact'),
+          label: this.$t('contact'),
           value: this.userprofile.contactNo,
           icon: 'mdi-phone',
         },
         {
-          label: this.$t('PROFILE.country'),
+          label: this.$t('country'),
           value: this.userprofile.country,
           icon: 'mdi-map-marker',
         },
@@ -754,43 +741,6 @@ export default {
       const specialChars = /[!@#$%^&*(),.{}|<>]/
       return specialChars.test(str)
     },
-
-     selectImage() {
-    this.$refs.fileInput.click(); // Opens file selection dialog
-  },
-
-  async uploadProfileImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const storage = getStorage();
-      const storageRef = ref(storage, `profileImages/${user.uid}`);
-
-      // Upload file
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-
-      // Save URL to Firestore
-      const db = getFirestore();
-      const userDocRef = doc(db, "users", user.uid);
-      await updateDoc(userDocRef, { profileImage: downloadURL });
-      
-      // Update UI
-      this.userprofile.profileImage = downloadURL;
-      if (this.editProfileData) {
-      this.editProfileData.profileImage = downloadURL;
-    }
-      this.$toast.success("Profile image updated successfully!");
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      this.$toast.error("Failed to upload image.");
-    }
-  },
 
     checkScreenSize() {
       this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
@@ -829,7 +779,6 @@ export default {
         username: this.userprofile.username,
         contactNo: this.userprofile.contactNo,
         country: this.userprofile.country, // Store just the country name
-        profileImage: this.userprofile.profileImage
       }
       this.editProfileDialog = true
     },
