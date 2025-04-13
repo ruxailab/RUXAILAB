@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "lint": "vue-cli-service lint",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit",
@@ -64,6 +65,8 @@
     "webpack": "^5.98.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/eslint-parser": "^7.27.0",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@playwright/test": "^1.44.1",
     "@testing-library/cypress": "^10.0.1",
@@ -81,8 +84,13 @@
     "@vue/test-utils": "^2.4.6",
     "babel-plugin-transform-require-context": "^0.1.1",
     "cypress": "^13.8.1",
+    "eslint": "^9.24.0",
+    "eslint-plugin-vue": "^10.0.0",
+    "eslint-plugin-vuetify": "^2.5.2",
+    "globals": "^16.0.0",
     "jsdoc": "^3.6.11",
     "sass": "~1.32.6",
-    "sass-loader": "~8.0.0"
+    "sass-loader": "~8.0.0",
+    "vue-eslint-parser": "^10.1.3"
   }
 }
