@@ -1,10 +1,12 @@
 {
   "language": "Language",
   "SIGNIN": {
-    "sign-in": "Sign-In",
-    "email": "E-mail",
+    "sign-in": "Sign in",
+    "email": "Email",
+    "username": "Username",
     "password": "Password",
     "dont-have-account": "Don't have an account yet? Sign up",
+    "forgot-password": "Forgot Password",
     "sign-up": "Sign-Up",
     "contact": "Contact No",
     "confirmPassword": "Confirm your password",
@@ -12,8 +14,14 @@
     "continueWithGoogle": "Continue with Google",
     "or": "or"
   },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Reset Password",
+    "email": "Email",
+    "instructions": "Enter your email and we'll send you a link to reset your password.",
+    "reset_button": "Send Reset Link",
+    "back_to_signin": "Back to Sign In"
+  },
   "common": {
-    "user": "User",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -53,7 +61,6 @@
     "title": "Profile",
     "editProfile": "Edit Profile",
     "account": "Account",
-    "superAdmin": "Super Admin",
     "admin": "Admin",
     "changePassword": "Change Password",
     "passwordRequirements": "Ensure these requirements",
@@ -85,11 +92,6 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
-    "users": "Users",
-    "tests": "Tests",
-    "id": "Id",
-    "accessLevel": "Access Level",
-    "actions": "Actions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -329,7 +331,7 @@
       "in_progress": "in progress"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invite Evaluator To Test",
     "email": "Email",
     "scheduledAt": "Scheduled at",
@@ -489,25 +491,15 @@
     "noCopy": "Copy unsuccessful",
     "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
-    "deleteUser": "Are you sure you want to delete this user?",
     "addDescription": "Please add a descritpion",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "audioSaved": "Audio record saved!",
-    "screenRecordSaved": "Screen record saved!",
-    "videoRecordSaved": "Video record saved!",
-    "profileUpdatedSuccess": "Profile updated successfully",
-    "passwordChangedSuccess": "Password changed successfully",
-    "accountDeletedSuccess": "Account deleted successfully",
-    "savedChanges": "Changes saved",
-    "responseRecorded":"Your response has been recorded"
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
   },
   "buttons": {
-    "saveandleave": "Save and Leave",
     "next": "Next",
     "previous": "Previous",
     "seeCode": "See the code",
@@ -525,11 +517,8 @@
     "leave": "Leave",
     "help": "Help",
     "delete": "Delete",
-    "deleteAccount":"Delete Account",
-    "back":"Back",
-    "duplicateTest":"Duplicate Test",
-    "submit":"Submit"
-
+    "deleteAccount": "Delete Account",
+    "back": "Back"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -568,7 +557,7 @@
     "UsabilityUser": {
       "SelfTest": {
         "title": "Self Test",
-        "type":"Unmoderated",
+        "type": "Unmoderated",
         "text": [
           "Answer on free time",
           "Enhanced answer analysis",
@@ -577,7 +566,7 @@
       },
       "LiveTest": {
         "title": "Live Test",
-        "type":"Moderated",
+        "type": "Moderated",
         "text": [
           "Webcam, audio & screen record",
           "Enhanced answer analysis",
@@ -592,13 +581,6 @@
     "test-name": "Test Name",
     "test-description": "Test Description",
     "test-label": "Test public to all users"
-  },
-  "finishTest":{
-    "title": "Finish Test",
-    "finalMessage": "Final Message!",
-    "congratulations": "Congratulations! You finished this test, now you can submit your answer.",
-    "submitMessage": "Click here to submit your answer. Once submitted, your answer cannot be changed!"
-
   },
   "help": {
     "createtest": "How do I create a test?",
@@ -622,27 +604,23 @@
     "sendmessage": "How to send a message to my cooperators?",
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
   },
-  "ModeratedTest": {
-    "preTest": "PRE-TEST",
-    "tasks": "TASKS",
-    "postTest": "POST-TEST",
-    "consentForm": "Consent Form",
-    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
-    "welcomeMessage": "Welcome message",
-    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
-    "landingPage": "Landing Page",
-    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
-    "participantCamera": "Participant camera",
-    "cameraOptions": {
-      "optional": "Optional",
-      "required": "Required",
-      "disabled": "Disabled"
-    },
-    "preForm": "Pre-Form",
-    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
-    "postForm": "Post Form",
-    "postFormDescription": "This is a post-questionnaire to collect participant data.",
-    "finalMessage": "Final message",
-    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
-  }
+  "user": "USER",
+  "account": "Account",
+  "security": "Security",
+  "personalInfo": "Personal Info",
+  "contact": "Contact",
+  "country": "Country",
+  "editDetails": "Edit Details",
+  "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
+  "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
+  "finalStepVerifyIdentity": "Final step: Verify your identity",
+  "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
+  "yourPassword": "Your Password",
+  "usernameRequired": "Username is required",
+  "usernameMinLength": "Username must be at least 3 characters",
+  "countryRequired": "Country is required",
+  "contactNumberRequired": "Contact number is required",
+  "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+  "email": "Email",
+  "username": "Username"
 }
