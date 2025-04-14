@@ -9,7 +9,9 @@
     "sign-up": "Registrieren",
     "contact": "Kontaktnummer",
     "confirmPassword": "Passwort bestätigen",
-    "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden"
+    "alreadyHaveAnAccount": "Haben Sie bereits ein Konto? Anmelden",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "or": "oder"
   },
   "common": {
     "loading": "Lade Test",

@@ -50,6 +50,7 @@
                   @click:append="showConfirmPassword = !showConfirmPassword"
                 />
               </v-form>
+              
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   color="#F9A826"
@@ -61,6 +62,21 @@
                   Sign-up
                 </v-btn>
               </v-card-actions>
+              
+              <div class="text-center my-3">
+                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
+              </div>
+              
+              <div class="mx-3">
+                <google-sign-in-button 
+                  :button-text="$t('SIGNIN.continueWithGoogle')"
+                  :loading="loading"
+                  @google-sign-in-start="onGoogleSignInStart"
+                  @google-sign-in-success="onGoogleSignInSuccess"
+                  @google-sign-in-error="onGoogleSignInError"
+                />
+              </div>
+              
               <v-card-actions class="justify-center mt-1">
                 <p>
                   <a
@@ -84,11 +100,13 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 import i18n from '@/i18n'
 
 export default {
   components: {
     Snackbar,
+    GoogleSignInButton
   },
   data: () => ({
     email: '',
@@ -127,22 +145,33 @@ export default {
 
   methods: {
     async onSignUp() {
-  if (this.valid) {
-    try {
-      await this.$store.dispatch('signup', {
-        email: this.email,
-        password: this.password,
-      })
-      await this.$router.push('/')
-    } catch (error) {
-      console.error('Signup failed:', error)
-      this.errorMessage = 'Signup failed. Please check your credentials.'
-    }
-  }
-},
+      if (this.valid) {
+        try {
+          await this.$store.dispatch('signup', {
+            email: this.email,
+            password: this.password,
+          })
+          await this.$router.push('/')
+        } catch (error) {
+          console.error('Signup failed:', error)
+          this.errorMessage = 'Signup failed. Please check your credentials.'
+        }
+      }
+    },
     redirectToSignin() {
       this.$router.push('/signin')
     },
+    onGoogleSignInStart() {
+      // Event when Google sign-in starts
+    },
+    async onGoogleSignInSuccess() {
+      // Event when Google sign-in is successful
+      await this.$router.push('/')
+    },
+    onGoogleSignInError(error) {
+      // Event when Google sign-in fails
+      console.error('Google sign-in error:', error)
+    }
   },
 }
 </script>
@@ -170,5 +199,27 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
+}
+.or-divider {
+  position: relative;
+  color: #757575;
+  font-size: 14px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background-color: #c4c4c4;
+}
+.or-divider::before {
+  left: 0;
+  margin-left: 16px;
+}
+.or-divider::after {
+  right: 0;
+  margin-right: 16px;
 }
 </style>
