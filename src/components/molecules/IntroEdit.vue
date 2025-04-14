@@ -21,10 +21,9 @@ export default {
   components: {
     IntroComp,
   },
-  data: () => ({}),
-  computed: {
-    items() {
-      return [
+  data() {
+    return {
+      items: [
         {
           iconColor: '#D128C9',
           icon: 'mdi-file-document',
@@ -32,7 +31,6 @@ export default {
           subtitle: i18n.t('pages.intros.docSubtitle') + i18n.t('titles.test'),
           func: 'goToDoc',
         },
-
         {
           iconColor: '#D128C9',
           icon: 'mdi-emoticon-happy',
@@ -40,8 +38,8 @@ export default {
           subtitle: i18n.t('pages.intros.discSubtitle'),
           func: 'goToDisc',
         },
-      ]
-    },
+      ],
+    }
   },
   methods: {
     goToDoc() {
@@ -54,7 +52,7 @@ export default {
       this.$emit('closeIntro')
     },
     callFunc(func) {
-      this[func]() //call item function
+      this[func]() // call item function dynamically
     },
   },
 }
