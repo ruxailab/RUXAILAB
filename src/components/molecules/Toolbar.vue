@@ -104,7 +104,8 @@
       v-if="
         this.$route.path == '/testslist' ||
           this.$route.path == '/signin' ||
-          this.$route.path == '/signup'
+          this.$route.path == '/signup' ||
+          this.$route.path == '/forgot-password'
       "
       text
       color="#f9a826"
@@ -119,7 +120,8 @@
         this.$route.path !== '/' &&
           this.$route.path !== '/testslist' &&
           this.$route.path !== '/signin' &&
-          this.$route.path !== '/signup'
+          this.$route.path !== '/signup' &&
+          this.$route.path !== '/forgot-password'
       "
       text
       color="#f9a826"
