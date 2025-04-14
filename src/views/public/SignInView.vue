@@ -34,6 +34,7 @@
                   :rules="[rules.required]"
                 />
               </v-form>
+              
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   data-testid="sign-in-button"
@@ -46,6 +47,21 @@
                   {{ $t('SIGNIN.sign-in') }}
                 </v-btn>
               </v-card-actions>
+              
+              <div class="text-center my-3">
+                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
+              </div>
+              
+              <div class="mx-3">
+                <google-sign-in-button 
+                  :button-text="$t('SIGNIN.continueWithGoogle')"
+                  :loading="loading"
+                  @google-sign-in-start="onGoogleSignInStart"
+                  @google-sign-in-success="onGoogleSignInSuccess"
+                  @google-sign-in-error="onGoogleSignInError"
+                />
+              </div>
+              
               <v-card-actions class="justify-center mt-1">
                 <p style="margin-right: 10px;">
                   <a
@@ -78,10 +94,12 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 import i18n from '@/i18n'
 export default {
   components: {
     Snackbar,
+    GoogleSignInButton
   },
   data: () => ({
     showPassword: false,
@@ -128,6 +146,19 @@ export default {
     redirectToSignup() {
       this.$router.push('/signup')
     },
+    onGoogleSignInStart() {
+      // Event when Google sign-in starts
+    },
+    async onGoogleSignInSuccess() {
+      // Event when Google sign-in is successful
+      if (this.$store.getters.user) {
+        this.$router.push('/testslist').catch(() => {})
+      }
+    },
+    onGoogleSignInError(error) {
+      // Event when Google sign-in fails
+      console.error('Google sign-in error:', error)
+      },
     redirectToForgotPassword() {
       this.$router.push('/forgot-password')
     }
@@ -158,5 +189,27 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
+}
+.or-divider {
+  position: relative;
+  color: #757575;
+  font-size: 14px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background-color: #c4c4c4;
+}
+.or-divider::before {
+  left: 0;
+  margin-left: 16px;
+}
+.or-divider::after {
+  right: 0;
+  margin-right: 16px;
 }
 </style>
