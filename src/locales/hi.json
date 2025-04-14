@@ -2,16 +2,24 @@
   "language": "भाषा",
   "SIGNIN": {
     "sign-in": "साइन-इन करें",
-    "email": "ई-मेल",
+    "email": "ईमेल",
+    "username": "उपयोगकर्ता नाम",
     "password": "पासवर्ड",
     "dont-have-account": "अभी तक खाता नहीं है? साइन अप करें",
+    "forgot-password": "पासवर्ड भूल गए",
     "sign-up": "साइन-अप",
-    "contact": "संपर्क नंबर",
+    "contact": "संपर्क",
     "confirmPassword": "अपना पासवर्ड कन्फर्म करें",
     "alreadyHaveAnAccount": "पहले से ही एक खाता है? साइन इन करें"
   },
+  "FORGOT_PASSWORD": {
+    "reset_password": "पासवर्ड रीसेट करें",
+    "email": "ईमेल",
+    "instructions": "अपना ईमेल दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।",
+    "reset_button": "रीसेट लिंक भेजें",
+    "back_to_signin": "साइन इन पर वापस जाएं"
+  },
   "common": {
-    "user": "उपयोगकर्ता",
     "loading": "लोड हो रहा है",
     "continueAs": "के रूप में जारी रखें",
     "notUser": "{userEmail} नहीं हैं?",
@@ -52,7 +60,6 @@
     "editProfile": "प्रोफ़ाइल संपादित करें",
     "account": "खाता",
     "admin": "व्यवस्थापक",
-    "superAdmin": "सुपर व्यवस्थापक",
     "changePassword": "पासवर्ड बदलें",
     "passwordRequirements": "इन आवश्यकताओं को सुनिश्चित करें",
     "passwordMinimumRequirements": "न्यूनतम 8 वर्ण लंबा, अपरकेस और प्रतीक (चिह्न) के साथ",
@@ -298,7 +305,7 @@
       "noDescription": "टेम्पलेट में कोई विवरण नहीं है।",
       "public": "सभी उपयोगकर्ताओं के लिए परीक्षण सार्वजनिक करें (केवल पढ़ने के लिए)"
     },
-    "UsabilityCooperators":{
+    "UsabilityCooperators": {
       "inviteEvaluator": "परीक्षक को परीक्षण के लिए आमंत्रित करें",
       "email": "ईमेल",
       "scheduledAt": "अनुसूचित समय",
@@ -306,7 +313,7 @@
       "placeholderMessage": "अरे, चलो एक परीक्षण करें...",
       "inviteInfo": "निमंत्रण लिंक निर्दिष्ट समय पर परीक्षक के ईमेल पर भेजा जाएगा",
       "send": "भेजें"
-  },
+    },
     "HeuristicsOptionsTable": {
       "titles": {
         "options": "विकल्प"
@@ -400,18 +407,9 @@
     "sureLeave": "क्या आप वाकई जाना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
     "imageURL": "छवि URL टाइप करें:",
     "deleteHeuristic": "क्या आप वाकई ह्यूरिस्टिक को हटाना चाहते हैं ",
-    "deleteAccount":" क्या आप निश्चित हैं कि आप अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती। ",
-    "audioSaved":"ऑडियो रिकॉर्ड सहेजा गया!",
-    "screenRecordSaved": "स्क्रीन रिकॉर्ड सहेजा गया!",
-    "videoRecordSaved":"वीडियो रिकॉर्ड सहेजा गया!",
-    "profileUpdatedSuccess":"प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
-    "passwordChangedSuccess": "पासवर्ड सफलतापूर्वक बदला गया",
-    "accountDeletedSuccess": "खाता सफलतापूर्वक हटा दिया गया",
-    "savedChanges": "परिवर्तन सहेजे गए",
-    "responseRecorded":"आपकी प्रतिक्रिया दर्ज कर ली गई है"
+    "deleteAccount": " क्या आप निश्चित हैं कि आप अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती। "
   },
   "buttons": {
-    "saveandleave": "बचाओ और छोड़ो",
     "next": "अगला",
     "previous": "पिछला",
     "seeCode": "कोड देखें",
@@ -429,11 +427,8 @@
     "leave": "छोड़ें",
     "help": "मदद",
     "delete": "हटाएं",
-    "deleteAccount":"खाता हटाएं",
-    "back":"पीछे",
-    "duplicateTest":"परीक्षण डुप्लिकेट करें",
-    "submit":"प्रस्तुत"
-
+    "deleteAccount": "खाता हटाएं",
+    "back": "पीछे"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
@@ -472,7 +467,7 @@
     "UsabilityUser": {
       "SelfTest": {
         "title": "स्व-परीक्षण",
-        "type":"अनियंत्रित",
+        "type": "अनियंत्रित",
         "text": [
           "खाली समय में उत्तर दें",
           "उन्नत उत्तर विश्लेषण",
@@ -481,7 +476,7 @@
       },
       "LiveTest": {
         "title": "लाइव परीक्षण",
-        "type":"नियंत्रित",
+        "type": "नियंत्रित",
         "text": [
           "वेबकैम, ऑडियो और स्क्रीन रिकॉर्डिंग",
           "उन्नत उत्तर विश्लेषण",
@@ -555,5 +550,28 @@
       "evaluator": "मूल्यांकनकर्ता",
       "guest": "अतिथि"
     }
-  }
+  },
+  "user": "उपयोगकर्ता",
+  "account": "खाता",
+  "security": "सुरक्षा",
+  "personalInfo": "व्यक्तिगत जानकारी",
+  "contact": "संपर्क",
+  "country": "देश",
+  "editDetails": "विवरण संपादित करें",
+  "typeDeleteToConfirm": "पुष्टि करने के लिए \"DELETE\" टाइप करें",
+  "pleaseTypeDeleteToConfirm": "कृपया पुष्टि करने के लिए DELETE टाइप करें",
+  "finalStepVerifyIdentity": "अंतिम चरण: अपनी पहचान सत्यापित करें",
+  "enterPasswordForAccountDeletion": "खाता हटाने के लिए अपना पासवर्ड दर्ज करें",
+  "yourPassword": "आपका पासवर्ड",
+  "usernameRequired": "उपयोगकर्ता नाम आवश्यक है",
+  "usernameMinLength": "उपयोगकर्ता नाम कम से कम 3 अक्षर का होना चाहिए",
+  "countryRequired": "देश आवश्यक है",
+  "contactNumberRequired": "संपर्क नंबर आवश्यक है",
+  "enterValidPhoneNumber": "कृपया एक वैध फोन नंबर दर्ज करें (केवल 9-15 अंक)",
+  "username": "उपयोगकर्ता नाम",
+  "cancel": "रद्द करें",
+  "proceed": "आगे बढ़ें",
+  "back": "वापस",
+  "deleteForever": "हमेशा के लिए हटाएं",
+  "deleteAccount": "खाता हटाएं"
 }

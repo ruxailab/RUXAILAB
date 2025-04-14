@@ -3,8 +3,10 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
+  feature-googleauthentication
 	GoogleAuthProvider,
 	signInWithPopup,
+	sendPasswordResetEmail
 } from 'firebase/auth'
 import { auth } from '@/firebase'
 
@@ -76,4 +78,24 @@ export default class AuthController {
 			)
 		})
 	}
+	// Reset Password
+	async resetPassword(email) {
+		return sendPasswordResetEmail(auth, email)
+	}
+
+    async autoSignIn() {
+        return new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(
+                auth,
+                (user) => {
+                    unsubscribe()
+                    resolve(user)
+                },
+                (error) => {
+                    unsubscribe()
+                    reject(error)
+                }
+            )
+        })
+    }
 }
