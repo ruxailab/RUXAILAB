@@ -28,6 +28,7 @@ import '@testing-library/cypress/add-commands'
 import { deleteUser,
   logInWithEmailAndPassword,
   logOut,
+  resetPassword,
   signUpWithEmailAndPassword }
   from './commands/auth'
 
@@ -36,3 +37,4 @@ Cypress.Commands.add('deleteUser', deleteUser)
 Cypress.Commands.add('login', logInWithEmailAndPassword)
 Cypress.Commands.add('logout', logOut)
 Cypress.Commands.add('signup', signUpWithEmailAndPassword)
+Cypress.Commands.add('resetPassword', resetPassword)

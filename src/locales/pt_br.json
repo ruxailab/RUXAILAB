@@ -6,10 +6,18 @@
     "username": "Nome de usuário",
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
+    "forgot-password": "Esqueci minha senha",
     "sign-up": "Inscrever-se",
     "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
+  },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Redefinir senha",
+    "email": "E-mail",
+    "instructions": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
+    "reset_button": "Enviar link de redefinição",
+    "back_to_signin": "Voltar para Entrar"
   },
   "common": {
     "loading": "Carregando Teste",
