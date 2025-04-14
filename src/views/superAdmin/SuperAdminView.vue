@@ -172,7 +172,7 @@
                 </v-icon>
               </template>
 
-               <template v-slot:[`item.creationDate`]="{ item }">
+              <template v-slot:[`item.creationDate`]="{ item }">
                 {{ new Date(item.creationDate).toLocaleString() }}
               </template>
             </v-data-table>
@@ -306,7 +306,6 @@ export default {
           accessLevel: user.accessLevel,
         },
       }
-      
       this.$store.dispatch('updateLevel', { data: payload })
       this.close()
     },

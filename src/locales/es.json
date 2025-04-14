@@ -3,15 +3,23 @@
   "SIGNIN": {
     "sign-in": "Iniciar sesión",
     "email": "Correo electrónico",
+    "username": "Nombre de usuario",
     "password": "Contraseña",
     "dont-have-account": "¿No tienes una cuenta? Regístrate",
+    "forgot-password": "Olvidé mi contraseña",
     "sign-up": "Inscribirse",
     "contact": "Número de contacto",
     "confirmPassword": "Confirmar Contraseña",
     "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
   },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Restablecer contraseña",
+    "email": "Correo electrónico",
+    "instructions": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
+    "reset_button": "Enviar enlace de restablecimiento",
+    "back_to_signin": "Volver a iniciar sesión"
+  },
   "common": {
-    "user": "Usuario",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
@@ -52,7 +60,6 @@
     "editProfile": "Editar perfil",
     "account": "Cuenta",
     "admin": "Administrador",
-    "superAdmin": "Super Administrador",
     "changePassword": "Cambiar contraseña",
     "passwordRequirements": "Asegúrese de cumplir estos requisitos",
     "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
@@ -83,11 +90,6 @@
     "template": "Plantilla",
     "finalReport": "Reporte Final",
     "answerType": "Tipo de respuesta:",
-    "users": "Usuarios",
-    "tests": "Pruebas",
-    "id": "Id",
-    "accessLevel": "Nivel de acceso",
-    "actions": "Acciones",
     "drawer": {
       "Manager": "Gerente",
       "Test": "Prueba",
@@ -326,7 +328,7 @@
       "in_progress": "En progreso"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Invitar Evaluador a la Prueba",
     "email": "Correo Electrónico",
     "scheduledAt": "Programado para",
@@ -491,18 +493,9 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
-    "audioSaved": "Grabación de audio guardada!",
-    "screenRecordSaved": "Registro de tela salvo!",
-    "videoRecordSaved":"Grabación de vídeo guardada!",
-    "profileUpdatedSuccess":"Perfil actualizado exitosamente",
-    "passwordChangedSuccess": "La contraseña se cambió correctamente",
-    "accountDeletedSuccess": "Cuenta eliminada exitosamente",
-    "savedChanges": "Cambios guardados",
-    "responseRecorded":"Su respuesta ha sido registrada"
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
   },
   "buttons": {
-    "saveandleave": "guardar y salir",
     "next": "Siguiente",
     "previous": "Anterior",
     "seeCode": "Ver el código",
@@ -515,17 +508,12 @@
     "create": "Crear",
     "cancel": "Cancelar",
     "close": "Cerca",
-    "save": "ahorrar",
     "leave": "Dejar",
     "stay": "Quédate",
     "help": "Ayuda",
     "delete": "Borrar",
     "deleteAccount": "Eliminar cuenta",
-    "back": "Atrás",
-    "duplicateTest": "Duplicar Prueba", 
-    "submit": "Enviar"
-
-
+    "back": "Atrás"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -562,25 +550,25 @@
       ]
     },
     "UsabilityUser": {
-    "SelfTest": {
-      "title": "Prueba de Usuario",
-      "type":"no moderado",
-      "text": [
-        "Responder en tiempo libre",
-        "Análisis mejorado de respuestas",
-        "Personalización de tareas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Prueba en Vivo",
-      "type":"moderado",
-      "text": [
-        "Grabación de webcam, audio y pantalla",
-        "Análisis mejorado de respuestas",
-        "Prueba en vivo moderada"
-      ]
+      "SelfTest": {
+        "title": "Prueba de Usuario",
+        "type": "no moderado",
+        "text": [
+          "Responder en tiempo libre",
+          "Análisis mejorado de respuestas",
+          "Personalización de tareas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Prueba en Vivo",
+        "type": "moderado",
+        "text": [
+          "Grabación de webcam, audio y pantalla",
+          "Análisis mejorado de respuestas",
+          "Prueba en vivo moderada"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Creación de Prueba",
@@ -588,13 +576,6 @@
     "test-name": "Nombre de la Prueba",
     "test-description": "Descripción de la Prueba",
     "test-label": "Prueba pública para todos los usuarios"
-  },
-  "finishTest": {
-    "title": "Finalizar Prueba",
-    "finalMessage": "¡Mensaje final!",
-    "congratulations": "¡Felicidades! Has terminado esta prueba, ahora puedes enviar tu respuesta.",
-    "submitMessage": "Haz clic aquí para enviar tu respuesta. Una vez enviada, ¡no podrás cambiarla!",
-    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "¿Cómo creo una prueba?",
@@ -618,27 +599,21 @@
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
   },
-  "ModeratedTest": {
-    "preTest": "PRE-PRUEBA",
-    "tasks": "TAREAS",
-    "postTest": "POST-PRUEBA",
-    "consentForm": "Formulario de consentimiento",
-    "consentDescription": "Este es un cuadro de consentimiento con un texto para confirmar el consentimiento.",
-    "welcomeMessage": "Mensaje de bienvenida",
-    "welcomeMessageDescription": "Este mensaje será lo primero que los participantes verán antes de que comience la sesión.",
-    "landingPage": "Página de inicio",
-    "landingPageDescription": "Esta URL se cargará automáticamente cuando el participante inicie la sesión.",
-    "participantCamera": "Cámara del participante",
-    "cameraOptions": {
-      "optional": "Opcional",
-      "required": "Requerido",
-      "disabled": "Deshabilitado"
-    },
-    "preForm": "Pre-Formulario",
-    "preFormDescription": "Este es un cuestionario previo para recopilar datos de los participantes.",
-    "postForm": "Post-Formulario",
-    "postFormDescription": "Este es un cuestionario posterior para recopilar datos de los participantes.",
-    "finalMessage": "Mensaje final",
-    "finalMessageDescription": "Este es un mensaje final que dejas para el participante al finalizar la prueba."
-  }
+  "user": "USUARIO",
+  "account": "Cuenta",
+  "security": "Seguridad",
+  "personalInfo": "Información personal",
+  "contact": "Contacto",
+  "country": "País",
+  "editDetails": "Editar detalles",
+  "typeDeleteToConfirm": "Escriba \"DELETE\" para confirmar",
+  "pleaseTypeDeleteToConfirm": "Por favor escriba DELETE para confirmar",
+  "finalStepVerifyIdentity": "Paso final: Verifique su identidad",
+  "enterPasswordForAccountDeletion": "Ingrese su contraseña para proceder con la eliminación de la cuenta",
+  "yourPassword": "Su contraseña",
+  "usernameRequired": "Nombre de usuario es requerido",
+  "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+  "countryRequired": "País es requerido",
+  "contactNumberRequired": "Número de contacto es requerido",
+  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)"
 }
