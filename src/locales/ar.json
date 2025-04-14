@@ -9,6 +9,9 @@
     "sign-up": "التسجيل",
     "contact": "رقم الاتصال",
     "confirmPassword": "تأكيد كلمة المرور",
+    "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول",
+    "continueWithGoogle": "المتابعة باستخدام جوجل",
+    "or": "أو",
     "alreadyHaveAnAccount": "هل لديك حساب بالفعل؟ سجل الدخول"
   },
   "common": {
@@ -480,6 +483,7 @@
     "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء."
   },
   "buttons": {
+    "saveandleave": "حفظ وترك",
     "next": "التالي",
     "previous": "السابق",
     "seeCode": "رؤية الكود",

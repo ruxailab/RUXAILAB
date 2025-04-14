@@ -10,7 +10,9 @@
     "sign-up": "Sign-Up",
     "contact": "Contact No",
     "confirmPassword": "Confirm your password",
-    "alreadyHaveAnAccount": "Already have an account? Sign in"
+    "alreadyHaveAnAccount": "Already have an account? Sign in",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or"
   },
   "FORGOT_PASSWORD": {
     "reset_password": "Reset Password",
