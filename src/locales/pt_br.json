@@ -3,15 +3,23 @@
   "SIGNIN": {
     "sign-in": "Entrar",
     "email": "E-mail",
+    "username": "Nome de usuário",
     "password": "Senha",
     "dont-have-account": "Ainda não tem uma conta? Inscreva-se",
+    "forgot-password": "Esqueci minha senha",
     "sign-up": "Inscrever-se",
     "contact": "Número de contato",
     "confirmPassword": "Confirme sua senha",
     "alreadyHaveAnAccount": "Já tem uma conta? Entrar"
   },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Redefinir senha",
+    "email": "E-mail",
+    "instructions": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
+    "reset_button": "Enviar link de redefinição",
+    "back_to_signin": "Voltar para Entrar"
+  },
   "common": {
-    "user": "Usuário",
     "loading": "Carregando Teste",
     "continueAs": "Continuar como",
     "notUser": "Não é {userEmail}?",
@@ -52,7 +60,6 @@
     "editProfile": "Editar perfil",
     "account": "Conta",
     "admin": "Administrador",
-    "superAdmin": "Super Administrador",
     "changePassword": "Alterar senha",
     "passwordRequirements": "Certifique-se de atender a esses requisitos",
     "passwordMinimumRequirements": "Mínimo de 8 caracteres, maiúscula e símbolo",
@@ -83,11 +90,6 @@
     "template": "Modelo",
     "finalReport": "Relatório final",
     "answerType": "Tipo de resposta:",
-    "users": "Usuários",
-    "tests": "Testes",
-    "id": "Id",
-    "accessLevel": "Nível de acesso",
-    "actions": "Ações",
     "drawer": {
       "Manager": "Gerenciamento",
       "Test": "Teste",
@@ -327,7 +329,7 @@
       "in_progress": "[TODO]"
     }
   },
-  "UsabilityCooperators":{
+  "UsabilityCooperators": {
     "inviteEvaluator": "Convidar Avaliador para Teste",
     "email": "E-mail",
     "scheduledAt": "Agendado para",
@@ -492,18 +494,9 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
-    "audioSaved": "Gravação de áudio salva!",
-    "screenRecordSaved": "Registro de tela salvo!",
-    "videoRecordSaved": "Gravação de vídeo salva!",
-    "profileUpdatedSuccess": "Perfil atualizado com sucesso",
-    "passwordChangedSuccess": "Senha alterada com sucesso",
-    "accountDeletedSuccess": "Conta excluída com sucesso",
-    "savedChanges": "Alterações salvas",
-    "responseRecorded": "Sua resposta foi registrada"
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
   },
   "buttons": {
-    "saveandleave": "salvar e sair",
     "next": "Próximo",
     "previous": "Anterior",
     "seeCode": "Veja o código",
@@ -516,15 +509,12 @@
     "create": "Criar",
     "cancel": "Cancelar",
     "close": "Fechar",
-    "save": "salvar",
     "leave": "Sair",
     "stay": "Ficar",
     "help": "Ajuda",
     "delete": "Deletar",
-    "deleteAccount":"Excluir conta",
-    "back":"Trás",
-    "duplicateTest":"Duplicar Teste",
-    "submit": "enviar"
+    "deleteAccount": "Excluir conta",
+    "back": "Trás"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -560,26 +550,26 @@
         "Testes moderados ou não moderados"
       ]
     },
-"UsabilityUser": {
-    "SelfTest": {
-      "title": "Auto Teste",
-      "type":"não moderado",
-      "text": [
-        "Responder no tempo livre",
-        "Análise aprimorada de respostas",
-        "Personalização de tarefas"
-      ]
-    },
-    "LiveTest": {
-      "title": "Teste ao Vivo",
-      "type":"moderado",
-      "text": [
-        "Gravação de webcam, áudio e tela",
-        "Análise aprimorada de respostas",
-        "Teste ao vivo moderado"
-      ]
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Auto Teste",
+        "type": "não moderado",
+        "text": [
+          "Responder no tempo livre",
+          "Análise aprimorada de respostas",
+          "Personalização de tarefas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Teste ao Vivo",
+        "type": "moderado",
+        "text": [
+          "Gravação de webcam, áudio e tela",
+          "Análise aprimorada de respostas",
+          "Teste ao vivo moderado"
+        ]
+      }
     }
-  }
   },
   "TestDialog": {
     "heading": "Criação de Teste",
@@ -587,13 +577,6 @@
     "test-name": "Nome do Teste",
     "test-description": "Descrição do Teste",
     "test-label": "Teste público para todos os usuários"
-  },
-  "finishTest": {
-    "title": "Finalizar Teste",
-    "finalMessage": "Mensagem Final!",
-    "congratulations": "Parabéns! Você concluiu este teste, agora pode enviar sua resposta.",
-    "submitMessage": "Clique aqui para enviar sua resposta. Uma vez enviada, sua resposta não poderá ser alterada!",
-    "submitButton": "Enviar"
   },
   "help": {
     "createtest": "Como criar um teste?",
@@ -617,27 +600,21 @@
     "sendmessage": "Como enviar uma mensagem para meus colaboradores?",
     "sendmessageanswer": "Para enviar uma mensagem, vá até a página do gerenciador do seu teste. Selecione 'Colaboradores' na barra lateral esquerda. Clique no ícone de três pontos ao lado do colaborador para quem deseja enviar uma mensagem. Depois, escolha 'Enviar uma mensagem' e escreva seu título e conteúdo."
   },
-  "ModeratedTest": {
-    "preTest": "PRÉ-TESTE",
-    "tasks": "TAREFAS",
-    "postTest": "PÓS-TESTE",
-    "consentForm": "Termo de Consentimento",
-    "consentDescription": "Este é um campo de consentimento com um texto para confirmar o consentimento.",
-    "welcomeMessage": "Mensagem de boas-vindas",
-    "welcomeMessageDescription": "Esta mensagem será a primeira coisa que os participantes verão antes da sessão começar.",
-    "landingPage": "Página Inicial",
-    "landingPageDescription": "Este URL será carregado automaticamente quando o participante iniciar a sessão.",
-    "participantCamera": "Câmera do participante",
-    "cameraOptions": {
-      "optional": "Opcional",
-      "required": "Obrigatório",
-      "disabled": "Desativado"
-    },
-    "preForm": "Pré-Formulário",
-    "preFormDescription": "Este é um questionário prévio para coletar dados dos participantes.",
-    "postForm": "Pós-Formulário",
-    "postFormDescription": "Este é um questionário posterior para coletar dados dos participantes.",
-    "finalMessage": "Mensagem final",
-    "finalMessageDescription": "Esta é uma mensagem final que você deixa para o participante ao concluir o teste."
-  }
+  "user": "USUÁRIO",
+  "account": "Conta",
+  "security": "Segurança",
+  "personalInfo": "Informações pessoais",
+  "contact": "Contato",
+  "country": "País",
+  "editDetails": "Editar detalhes",
+  "typeDeleteToConfirm": "Digite \"DELETE\" para confirmar",
+  "pleaseTypeDeleteToConfirm": "Por favor, digite DELETE para confirmar",
+  "finalStepVerifyIdentity": "Passo final: Verifique sua identidade",
+  "enterPasswordForAccountDeletion": "Digite sua senha para prosseguir com a exclusão da conta",
+  "yourPassword": "Sua senha",
+  "usernameRequired": "Nome de usuário é obrigatório",
+  "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
+  "countryRequired": "País é obrigatório",
+  "contactNumberRequired": "Número de contato é obrigatório",
+  "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)"
 }

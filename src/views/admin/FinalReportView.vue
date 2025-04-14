@@ -68,10 +68,10 @@
             mdi-tools
           </v-icon>
           <h1 class="display-1">
-            {{ $t('pages.finalReport.ContructionHeading') }}
+            {{ $t('pages.finalReport.ConstructionHeading') }}
           </h1>
           <p class="subtitle-1">
-            {{ $t('pages.finalReport.ContructionParagraph') }}
+            {{ $t('pages.finalReport.ConstructionParagraph') }}
           </p>
         </v-col>
       </v-row>
