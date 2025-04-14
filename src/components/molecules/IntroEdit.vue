@@ -21,7 +21,7 @@ export default {
   components: {
     IntroComp,
   },
-  data() {
+ data() {
     return {
       items: [
         {
@@ -52,7 +52,7 @@ export default {
       this.$emit('closeIntro')
     },
     callFunc(func) {
-      this[func]() // call item function dynamically
+      this[func]() //call item function
     },
   },
 }
