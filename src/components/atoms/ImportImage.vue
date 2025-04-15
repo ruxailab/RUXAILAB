@@ -23,7 +23,7 @@ export default {
     testId: { type: String, default: '', required: true },
   },
   data: () => ({
-    url: {},
+    url: '',
     object: {},
     imageUploaded: false,
   }),
@@ -34,14 +34,16 @@ export default {
     currentUserTestAnswer() {
       return this.$store.getters.currentUserTestAnswer
     },
+    hasExistingImage() {
+      return this.currentUserTestAnswer?.heuristicQuestions?.[this.heuristicId.id]?.heuristicQuestions?.[this.questionId]?.answerImageUrl
+    },
   },
 
   mounted() {
-    this.url = this.currentUserTestAnswer.heuristicQuestions[
-      this.heuristicId.id
-    ].heuristicQuestions[this.questionId].answerImageUrl
-
-    this.imageUploaded = true
+    if (this.hasExistingImage) {
+      this.url = this.hasExistingImage
+      this.imageUploaded = true
+    }
   },
   methods: {
     async uploadFile() {
