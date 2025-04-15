@@ -3,7 +3,7 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
-  feature-googleauthentication
+	// Removed problematic line: feature-googleauthentication
 	GoogleAuthProvider,
 	signInWithPopup,
 	sendPasswordResetEmail
@@ -82,20 +82,4 @@ export default class AuthController {
 	async resetPassword(email) {
 		return sendPasswordResetEmail(auth, email)
 	}
-
-    async autoSignIn() {
-        return new Promise((resolve, reject) => {
-            const unsubscribe = onAuthStateChanged(
-                auth,
-                (user) => {
-                    unsubscribe()
-                    resolve(user)
-                },
-                (error) => {
-                    unsubscribe()
-                    reject(error)
-                }
-            )
-        })
-    }
 }
