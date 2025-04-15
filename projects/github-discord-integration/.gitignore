@@ -1,0 +1,36 @@
+# Python Bytecode and Caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Secrets
+.env* # Ignore .env and any variants like .env.local
+
+# Databases
+data/
+*.db
+*.db-journal*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.swp
+*~
+
+# Charts/Images if saved locally
+*.png
+*.jpg
+
+# Coverage reports
+.coverage*
+htmlcov/
