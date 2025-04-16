@@ -76,11 +76,29 @@ export default {
     test() {
       return this.$store.getters.test
     },
+    hasContent() {
+      return this.answerHeu.heuristicComment || this.answerHeu.answerImageUrl
+    },
   },
   watch: {
     heurisIndex() {
       this.show = false //close comment when changing heuristic
     },
+    'answerHeu.heuristicComment'(newVal) {
+      if (newVal && !this.show) {
+        this.show = true
+      }
+    },
+    'answerHeu.answerImageUrl'(newVal) {
+      if (newVal && !this.show) {
+        this.show = true
+      }
+    },
+  },
+  mounted() {
+    if (this.hasContent) {
+      this.show = true
+    }
   },
   methods: {
     updateComment(input) {
