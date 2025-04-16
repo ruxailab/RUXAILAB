@@ -3,7 +3,6 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
-	featureGoogleAuthentication,
 	GoogleAuthProvider,
 	signInWithPopup,
 	sendPasswordResetEmail
