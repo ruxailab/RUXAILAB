@@ -1,3 +1,4 @@
+// src/router/modules/admin.js
 import EditTest from '@/views/admin/EditTestView.vue'
 import TestList from '@/views/admin/DashboardView.vue'
 import AnswerView from '@/views/admin/AnswerView.vue'
@@ -22,10 +23,10 @@ export default [
     component: TestList,
   },
   {
-    path:'/profile',
-    name:'Profile',
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
-    component:Profile,
+    component: Profile,
   },
   {
     path: '/notifications',
@@ -41,56 +42,57 @@ export default [
     props: true,
     children: [
       {
-        path: '/reportview/:id',
+        // Make child paths relative—drop the leading slash!
+        path: 'reportview/:id',
         name: 'ReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: '/finalreportview/:id',
+        path: 'finalreportview/:id',
         name: 'FinalReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: FinalReportView,
       },
       {
-        path: '/answerview/:id',
+        path: 'answerview/:id',
         name: 'AnswerView',
         props: true,
         meta: { authorize: [0, 1] },
         component: AnswerView,
       },
       {
-        path: '/edittest/:id',
+        path: 'edittest/:id',
         name: 'EditTest',
         props: true,
         meta: { authorize: [0, 1] },
         component: EditTest,
       },
       {
-        path: '/settingsview/:id',
+        path: 'settingsview/:id',
         name: 'SettingsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: SettingsView,
       },
       {
-        path: '/cooperators/:id',
+        path: 'cooperators/:id',
         name: 'CooperatorsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
       },
       {
-        path: '/analyticsview/:id/:heuristic?',
+        path: 'analyticsview/:id/:heuristic?',
         name: 'AnalyticsView',
         props: true,
         meta: { authorize: [0, 1] },
         component: AnalyticsView,
       },
       {
-        path: '/templateview/:id',
+        path: 'templateview/:id',
         name: 'TemplateView',
         props: true,
         meta: { authorize: [0, 1] },

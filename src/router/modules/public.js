@@ -1,3 +1,4 @@
+// src/router/modules/public.js
 import TestView from '@/views/public/TestView.vue'
 import SignIn from '@/views/public/SignInView.vue'
 import SignUp from '@/views/public/SignUpView.vue'
@@ -38,8 +39,9 @@ export default [
     component: LandingPage,
   },
   {
-    path: '*',
-    name: 'Page not Found',
+    // For Vue Router 4, replace wildcard '*' with the new catch-all syntax:
+    path: '/:pathMatch(.*)*',
+    name: 'PageNotFound',
     meta: { authorize: [] },
     component: PageNotFound,
   },
