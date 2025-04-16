@@ -80,30 +80,31 @@ async def link(interaction: discord.Interaction):
 
 @bot.tree.command(name="unlink", description="Unlinks your Discord account from your GitHub username")
 async def unlink(interaction: discord.Interaction):
-    contributions, user_mappings = load_data_from_firestore()
     try:
-        user_id = str(interaction.user.id)
+        # Defer the response immediately to prevent timeout
+        await interaction.response.defer(ephemeral=True)
 
-        if user_id in user_mappings:
-            github_username = user_mappings.pop(user_id)
-            with open("user_mappings.json", "w") as f:
-                json.dump(user_mappings, f)
+        # Reference the Firestore document
+        doc_ref = db.collection('discord').document(str(interaction.user.id))
 
-            await interaction.response.send_message(
-                f"Successfully unlinked your Discord account from GitHub user '{github_username}'!", 
+        # Check if the document exists
+        if doc_ref.get().exists:
+            # Delete the document
+            doc_ref.delete()
+            await interaction.followup.send(
+                "Successfully unlinked your Discord account from your GitHub username.",
                 ephemeral=True
             )
-            print(f"Unlinked Discord user {interaction.user.name} from GitHub user {github_username}")
-
+            print(f"Unlinked Discord user {interaction.user.name}")
         else:
-            await interaction.response.send_message(
-                "Your Discord account is not linked to any GitHub username.", 
+            await interaction.followup.send(
+                "Your Discord account is not linked to any GitHub username.",
                 ephemeral=True
             )
 
     except Exception as e:
-        print(f"Error unlinking user: {e}") 
-        await interaction.response.send_message("An error occurred while unlinking your account.", ephemeral=True)
+        print(f"Error unlinking user: {e}")
+        await interaction.followup.send("An error occurred while unlinking your account.", ephemeral=True)
 
 
 @bot.tree.command(name="getstats", description="Displays your GitHub stats and current role")
