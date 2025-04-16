@@ -137,7 +137,8 @@
     "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
-    "incorrectCredential": "Incorrect username or password."
+    "incorrectCredential": "Incorrect username or password.",
+    "globalError": "An error has occurred, sorry for the inconvenience."
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -497,7 +498,8 @@
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
-    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone."
+    "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
+    "genericSuccess": "Operation successful" 
   },
   "buttons": {
     "next": "Next",
