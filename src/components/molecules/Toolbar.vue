@@ -460,7 +460,7 @@ export default {
     } 
   } catch (error) {
     console.error('Error fetching profile:', error);
-    this.$toast.error('Failed to load profile data');
+    this.$toast.error(i18n.t(errors.globalError));
   }
 },
     goTo(route) {

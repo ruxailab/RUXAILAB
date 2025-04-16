@@ -6,6 +6,9 @@ import LandingPage from '@/views/public/LandingPageView.vue'
 import PageNotFound from '@/views/public/PageNotFoundView.vue'
 import Help from '@/views/public/Help.vue'
 import Sample from '@/views/public/Sample.vue'
+import TermsOfService from '@/views/public/TermsOfService.vue'
+import PrivacyPolicy from '@/views/public/PrivacyPolicy.vue'
+import FAQ from '@/views/public/FAQ.vue'
 export default [
   {
     path: '/testview/:id/:token?',
@@ -68,5 +71,23 @@ export default [
     name: 'accessibility docs',
     meta: { authorize: [] },
     component: () => import('@/views/public/Documentation.vue'),
+  },
+  {
+    path: '/terms-of-service',
+    name: 'TermsOfService',
+    meta: { authorize: [] },
+    component: TermsOfService,
+  },
+  {
+    path: '/privacy-policy',
+    name: 'PrivacyPolicy',
+    meta: { authorize: [] },
+    component: PrivacyPolicy,
+  },
+  {
+    path: '/faq',
+    name: 'FAQ',
+    meta: { authorize: [] },
+    component: FAQ,
   },
 ]
