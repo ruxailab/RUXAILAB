@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - develop # or any branches you want to scan on push
+      - develop 
 
 jobs:
   scanning:
@@ -19,5 +19,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: GitGuardian scan
-        uses: GitGuardian/ggshield/actions/secret@v
+      - name: Run GitGuardian scan
+        uses: GitGuardian/ggshield-action@v1.38.0
+        env:
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
