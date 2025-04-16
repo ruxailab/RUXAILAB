@@ -767,7 +767,7 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching profile:', error)
-        this.$toast.error('Failed to load profile data')
+        this.$toast.error(i18n.t(errors.globalError))
       } finally {
         this.loading = false
       }
@@ -807,12 +807,12 @@ export default {
             country: this.editProfileData.country,
           }
 
-          this.$toast.success(this.$t('alerts.profileUpdatedSuccess'))
+          this.$toast.success(i18n.$t('alerts.genericSuccess'))
           this.editProfileDialog = false
         }
       } catch (error) {
         console.error('Error updating profile:', error)
-        this.$toast.error('Failed to update profile')
+        this.$toast.error(i18n.t(errors.globalError))
       }
     },
 
@@ -824,20 +824,20 @@ export default {
 
           if (user) {
             await updatePassword(user, this.newPassword)
-            this.$toast.success(this.$t('alerts.passwordChangedSuccess'))
+            this.$toast.success(i18n.$t('alerts.genericSuccess'))
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
           }
         } catch (error) {
-          this.$toast.error('Failed to change password: ' + error.message)
+          this.$toast.error(i18n.t(errors.globalError))
         }
       }
     },
 
     async deleteAccount() {
       if (!this.userPassword) {
-        this.$toast.error('Password is required to delete your account.')
+        this.$toast.error(i18n.t(errors.globalError))
         return
       }
 
@@ -888,17 +888,17 @@ export default {
 
           // Delete the Firebase Auth user
           await user.delete()
-          this.$toast.success(this.$t('alerts.accountDeletedSuccess'))
+          this.$toast.success(i18n.$t('alerts.genericSuccess'))
           this.deleteAccountDialog = false
           this.signOut()
         } catch (error) {
           console.error('Error during account deletion:', error)
-          this.$toast.error('Failed to delete account: ' + error.message)
+          this.$toast.error(i18n.t(errors.globalError))
         } finally {
           this.isDeleting = false
         }
       } else {
-        this.$toast.error('No user is signed in.')
+        this.$toast.error(i18n.t(errors.globalError))
       }
     },
 

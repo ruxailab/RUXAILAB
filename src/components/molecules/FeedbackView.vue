@@ -131,7 +131,7 @@ export default {
   methods: {
     redirect() {
       if(this.test.testStructure.landingPage.trim() == '') {
-        this.$toast.error('No landing page provided')
+        this.$toast.error(i18n.t(errors.globalError))
         return
       }
       console.log(this.test.testStructure.landingPage)
@@ -174,7 +174,7 @@ export default {
           this.usingCamera = !this.usingCamera
         }
       } catch (e) {
-        this.$toast.error('Error in toggling camera/screen: ' + e.message)
+        this.$toast.error(i18n.t(errors.globalError))
       }
     },
     hangUp() {
