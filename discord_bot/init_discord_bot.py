@@ -54,7 +54,7 @@ async def link(interaction: discord.Interaction):
         
         # Simulate the process of linking the GitHub username
         github_username = get_github_username()
-        print("okay", github_username)
+        print("Retrieved: ", github_username)
         
         # Create or update the Firestore document
         doc_ref = db.collection('discord').document(str(interaction.user.id))
