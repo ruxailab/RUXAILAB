@@ -993,7 +993,7 @@ export default {
         (user) => user.userDocId === this.token,
       )
       if (this.user.id != this.token && !this.isAdmin) {
-        this.$toast.error(`You don't have access to this session.`)
+        this.$toast.error(i18n.t(errors.globalError))
         this.$router.push('/testslist')
       }
       if (this.sessionCooperator.testDate) {

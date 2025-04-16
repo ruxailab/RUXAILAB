@@ -42,6 +42,13 @@
   </v-col>
 </template>
 
+<style >
+.v-select.v-input--dense .v-select__selection,
+.v-select__selection {
+  padding-bottom: 4px !important;
+}
+</style>
+
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
