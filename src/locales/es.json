@@ -135,7 +135,9 @@
     "passwordSymbol": "Debe contener un símbolo",
     "userNotExist": "Este usuario no existe.",
     "incorrectPassword": "Contraseña incorrecta.",
-    "incorrectCredential": "Usuario o contraseña incorrectos."
+    "incorrectCredential": "Usuario o contraseña incorrectos.",
+    "globalError": "Ha ocurrido un error, disculpa las molestias."
+    
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -361,18 +363,18 @@
       "select_cooperator": "Seleccionar cooperador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "Administrador",
+      "evaluator": "Evaluador",
+      "guest": "Invitado"
     },
     "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
+      "cooperators_loading": "Cargando cooperadores...",
+      "no_users": "¿Estás seguro de que deseas eliminar a este cooperador?",
+      "remove_cooperator": "¿Estás seguro de que deseas cancelar esta invitación?",
+      "cancel_invitation": "¿Estás seguro de que deseas cancelar esta invitación?",
+      "change_role": "¿Cambiar el rol de {email} de {old} a {new}?",
+      "message_title_hint": "Ingresa el título del mensaje",
+      "message_content_hint": "Ingresa el contenido del mensaje"
     }
   },
   "UserTestTable": {
@@ -493,7 +495,8 @@
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
     "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
-    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer."
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
+    "genericSuccess": "Operación exitosa"
   },
   "buttons": {
     "next": "Siguiente",

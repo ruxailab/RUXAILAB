@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
@@ -76,7 +77,7 @@ export default {
         }
       } catch (e) {
         this.recording = false
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error(i18n.t(errors.globalError))
       }
 
       try {
@@ -102,12 +103,12 @@ export default {
           this.recording = false
 
           this.$emit('stopShowLoading')
-          this.$toast.success(this.$t('alerts.videoRecordSaved'))
+          this.$toast.success(i18n.$t('alerts.genericSuccess'))
         }
 
         this.mediaRecorder.start()
       } catch (e) {
-        this.$toast.error('Error in capturing your media device: ' + e.message)
+        this.$toast.error(i18n.t(errors.globalError))
       }
     },
     stopRecording() {

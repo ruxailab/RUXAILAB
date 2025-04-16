@@ -704,7 +704,7 @@ export default {
     async submitAnswer() {
       this.currentUserTestAnswer.submitted = true
       await this.saveAnswer()
-      this.$toast.success(this.$t('alerts.responseRecorded'))
+      this.$toast.success(i18n.$t('alerts.genericSuccess'))
       this.$router.push('/testslist')
     },
     setExistUser() {

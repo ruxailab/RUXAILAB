@@ -357,6 +357,7 @@
             </h3>
             <div class="d-flex flex-column">
               <v-btn
+              @click="$router.push('/terms-of-service')"
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
@@ -364,6 +365,7 @@
                 Terms of Service
               </v-btn>
               <v-btn
+              @click="$router.push('/privacy-policy')"
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"
@@ -371,6 +373,7 @@
                 Privacy Policy
               </v-btn>
               <v-btn
+              @click="$router.push('/faq')"
                 text
                 class="white--text justify-start px-0 text-caption"
                 style="opacity: 0.7;"

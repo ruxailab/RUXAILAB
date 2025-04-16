@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
@@ -118,7 +119,7 @@ export default {
           this.$emit('recordingStarted', false)
 
           this.$emit('stopShowLoading')
-          this.$toast.success(this.$t('alerts.audioSaved'))
+          this.$toast.success(i18n.$t('alerts.genericSuccess'))
           this.recordingAudio = false
         }
 
