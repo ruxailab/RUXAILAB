@@ -931,7 +931,7 @@ export default {
     HandleNotEditable() {
       console.log('not editable')
       // if (this.testAnswerDocLength > 0) {
-      //   this.$toast.error('Not Editable : this test already has answers')
+      //   this.$toast.error(i18n.t(errors.globalError))
       // }
     },
   },
