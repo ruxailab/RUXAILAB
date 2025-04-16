@@ -10,7 +10,7 @@ from firestore import load_data_from_firestore
 import json  
 import firebase_admin
 from firebase_admin import credentials, firestore
-
+from auth import get_github_username
 # Initialize Firebase app only if it hasn't been initialized yet
 if not firebase_admin._apps:
     cred = credentials.Certificate("discord_bot/credentials.json")
@@ -47,13 +47,15 @@ async def greet(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="link", description="Links your Discord account to your GitHub username")
-async def link(interaction: discord.Interaction, github_username: str): 
+async def link(interaction: discord.Interaction): 
     try:
-        # Check if the GitHub username exists in contributions
-        # Assuming contributions is a dictionary loaded from Firestore or elsewhere 
-        contributions, user_mappings = load_data_from_firestore() 
-        user_mappings[str(interaction.user.id)] = github_username 
-
+        # Defer the response immediately to prevent timeout
+        await interaction.response.defer(ephemeral=True)
+        
+        # Simulate the process of linking the GitHub username
+        github_username = get_github_username()
+        print("okay", github_username)
+        
         # Create or update the Firestore document
         doc_ref = db.collection('discord').document(str(interaction.user.id))
         doc_ref.set({
@@ -62,17 +64,19 @@ async def link(interaction: discord.Interaction, github_username: str):
             'issues_count': 0,
             'commits_count': 0,
             'role': 'member'  # Default role
-        })
-
-        await interaction.response.send_message(
+        }) 
+        
+        # Send a follow-up message once the task is done
+        await interaction.followup.send(
             f"Successfully linked your Discord account to GitHub user '{github_username}'!", 
             ephemeral=True
         )
+        
         print(f"Linked Discord user {interaction.user.name} to GitHub user {github_username}")
 
     except Exception as e:
         print(f"Error linking user: {e}") 
-        await interaction.response.send_message("An error occurred while linking your account.", ephemeral=True)
+        await interaction.followup.send("An error occurred while linking your account.", ephemeral=True)
 
 @bot.tree.command(name="unlink", description="Unlinks your Discord account from your GitHub username")
 async def unlink(interaction: discord.Interaction):

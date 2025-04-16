@@ -1,4 +1,7 @@
 discord.py[voice]==2.0.0
 python-dotenv==1.0.0
 firebase-admin==6.7.0
-audioop-lts
+audioop-lts 
+Flask 
+Flask-Dance 
+requests
