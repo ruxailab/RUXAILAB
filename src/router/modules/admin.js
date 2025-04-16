@@ -14,6 +14,9 @@ import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
 import Profile from '@/views/admin/ProfileView.vue'
 import Notification from '@/views/admin/NotificationPage.vue'
+import Choose from '@/views/admin/Choose.vue'
+import Inspection from '@/views/admin/Inspection.vue'
+import Testing from '@/views/admin/Testing.vue'
 
 export default [
   {
@@ -23,6 +26,12 @@ export default [
     component: TestList,
   },
   {
+    path: '/choose',
+    name: 'Choose',
+    meta: { authorize: [1] },
+    component: Choose,
+  },
+  {
     path: '/profile',
     name: 'Profile',
     meta: { authorize: [1] },
@@ -30,7 +39,7 @@ export default [
   },
   {
     path: '/notifications',
-    name: 'notifications',
+    name: 'Notifications',
     meta: { authorize: [1] },
     component: Notification,
   },
@@ -42,7 +51,7 @@ export default [
     props: true,
     children: [
       {
-        // Make child paths relative—drop the leading slash!
+        // Child routes are relative to parent
         path: 'reportview/:id',
         name: 'ReportView',
         props: true,
@@ -102,19 +111,31 @@ export default [
   },
   {
     path: '/createtest',
-    name: 'Create View',
+    name: 'CreateView',
     meta: { authorize: [1] },
     component: CreateView,
   },
   {
     path: '/createBlank',
-    name: 'Create Blank View',
+    name: 'CreateBlankView',
     meta: { authorize: [1] },
     component: CreateBlankView,
   },
   {
+    path: '/inspection',
+    name: 'Inspection',
+    meta: { authorize: [1] },
+    component: Inspection,
+  },
+  {
+    path: '/testing',
+    name: 'Testing',
+    meta: { authorize: [1] },
+    component: Testing,
+  },
+  {
     path: '/fromtemplate',
-    name: 'Create from template',
+    name: 'CreateFromTemplate',
     meta: { authorize: [1] },
     component: CreateFromTemplate,
   },
