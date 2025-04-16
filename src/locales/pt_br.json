@@ -135,7 +135,9 @@
     "passwordSymbol": "Deve conter um símbolo",
     "userNotExist": "Este usuário não existe.",
     "incorrectPassword": "Senha incorreta.",
-    "incorrectCredential": "Usuário ou senha incorretos."
+    "incorrectCredential": "Usuário ou senha incorretos.",
+    "globalError": "Ocorreu um erro, desculpe pelo transtorno."
+    
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -340,40 +342,40 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "[TODO]"
+      "cooperators": "Cooperadores"
     },
     "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
+      "email": "E-mail",
+      "role": "Função",
+      "invited": "Convidado",
+      "accepted": "Aceito",
+      "more": "Mais",
+      "title": "Título",
+      "content": "Conteúdo"
     },
     "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
+      "send_invitation": "Enviar convite",
+      "send_message": "Enviar mensagem",
+      "reinvite": "Reenviar convite",
+      "remove_cooperator": "Remover cooperador",
+      "cancel_invitation": "Cancelar convite",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "select_cooperator": "Selecionar cooperador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "Administrador",
+      "evaluator": "Avaliador",
+      "guest": "Convidado"
     },
     "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
+      "cooperators_loading": "Carregando cooperadores...",
+      "no_users": "Nenhum usuário encontrado",
+      "remove_cooperator": "Tem certeza de que deseja remover este cooperador?",
+      "cancel_invitation": "Tem certeza de que deseja cancelar este convite?",
+      "change_role": "Alterar a função de {email} de {old} para {new}?",
+      "message_title_hint": "Digite o título da mensagem",
+      "message_content_hint": "Digite o conteúdo da mensagem"
     }
   },
   "UserTestTable": {
@@ -494,7 +496,8 @@
     "sureLeave": "Você tem certeza de que quer sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
     "deleteHeuristic": "Tem certeza de excluir a heurística ",
-    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita."
+    "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
+    "genericSuccess": "Operação bem-sucedida"
   },
   "buttons": {
     "next": "Próximo",

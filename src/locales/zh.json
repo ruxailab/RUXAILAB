@@ -127,7 +127,9 @@
     "passwordSymbol": "必须包含符号",
     "userNotExist": "该用户不存在。",
     "incorrectPassword": "密码错误",
-    "incorrectCredential": "用户名或密码错误。"
+    "incorrectCredential": "用户名或密码错误。",
+    "globalError": "发生错误，给您带来不便，敬请谅解。"
+    
   },
   "Introduction": {
     "title": "UX远程实验室",
@@ -477,7 +479,8 @@
     "sureLeave": "您确定要离开吗？所有更改将被丢弃。",
     "imageURL": "输入图片URL：",
     "deleteHeuristic": "您确定要删除启发式吗？",
-    "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。"
+    "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
+    "genericSuccess": "操作成功"
   },
   "buttons": {
     "next": "下一步",

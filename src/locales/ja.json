@@ -127,7 +127,9 @@
     "passwordSymbol": "記号を含める必要があります",
     "userNotExist": "このユーザーは存在しません。",
     "incorrectPassword": "パスワードが間違っています",
-    "incorrectCredential": "ユーザー名またはパスワードが間違っています。"
+    "incorrectCredential": "ユーザー名またはパスワードが間違っています。",
+    "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。"
+    
   },
   "Introduction": {
     "title": "UXリモートラボ",
@@ -477,7 +479,8 @@
     "sureLeave": "本当に終了しますか？すべての変更が破棄されます。",
     "imageURL": "画像のURLを入力してください:",
     "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
-    "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。"
+    "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
+    "genericSuccess": "操作が成功しました"
   },
   "buttons": {
     "next": "次へ",
