@@ -604,7 +604,14 @@
     "analyseresults": "How to analyse the results?",
     "analyseresultsanswer": "To analyze your results, navigate to the manager page of your test. From there, select 'Answers' on the left sidebar. Here, you can visualize statistics, evaluators, and heuristics.",
     "sendmessage": "How to send a message to my cooperators?",
-    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content."
+    "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content.",
+    "testCreation": "Test Creation",
+    "templates": "Templates",
+    "cooperators": "Cooperators",
+    "analytics": "Analytics",
+    "help_center": "Help Center",
+    "howCanWeHelp": "How can we help?"
+    
   },
   "user": "USER",
   "account": "Account",

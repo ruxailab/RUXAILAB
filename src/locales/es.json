@@ -600,7 +600,13 @@
     "analyseresults": "¿Cómo analizar los resultados?",
     "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
-    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido."
+    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
+    "testCreation": "Creación de Pruebas",
+    "templates": "Plantillas",
+    "cooperators": "Colaboradores",
+    "analytics": "Análisis",
+    "help_center": "Centro de Ayuda",
+    "howCanWeHelp": "¿Cómo podemos ayudar?"
   },
   "user": "USUARIO",
   "account": "Cuenta",
