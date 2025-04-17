@@ -18,8 +18,7 @@ jobs:
       GITHUB_EVENT_ACTION: ${{ github.event.action }}
     secrets:
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-      GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
-      GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+      FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
       GUILD_ID: ${{ secrets.GUILD_ID }}
       ROLE_ID_PR: ${{ secrets.ROLE_ID_PR }}
       ROLE_ID_ISSUE: ${{ secrets.ROLE_ID_ISSUE }}
