@@ -567,7 +567,13 @@
     "analyseresults": "Wie analysiere ich die Ergebnisse?",
     "analyseresultsanswer": "Um Ihre Ergebnisse zu analysieren, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie dort 'Antworten' in der linken Seitenleiste. Hier können Sie Statistiken, Evaluatoren und Heuristiken visualisieren.",
     "sendmessage": "Wie sende ich eine Nachricht an meine Mitarbeiter?",
-    "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt."
+    "sendmessageanswer": "Um eine Nachricht zu senden, gehen Sie zur Manager-Seite Ihres Tests. Wählen Sie 'Mitarbeiter' in der linken Seitenleiste. Klicken Sie auf das Dreipunkt-Menü neben dem Mitarbeiter, dem Sie eine Nachricht senden möchten. Wählen Sie dann 'Nachricht senden' und schreiben Sie Ihre Nachricht mit einem Titel und Inhalt.",
+    "testCreation": "Test-Erstellung",
+    "templates": "Vorlagen",
+    "cooperators": "Mitarbeiter",
+    "analytics": "Analysen",
+    "help_center": "Hilfezentrum",
+    "howCanWeHelp": "Wie können wir Ihnen helfen?"
   },
   "user": "BENUTZER",
   "account": "Konto",
