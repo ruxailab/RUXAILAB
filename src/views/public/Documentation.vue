@@ -13,18 +13,18 @@
             multiple
           >
             <v-expansion-panel
-              v-for="(principle, index) in wcagData"
-              :key="index"
+              v-for="(principle, index) in processedPrinciples"
+              :key="principle.id || index"
               class="principle-panel"
             >
               <v-expansion-panel-header class="py-4">
                 <div>
                   <div class="d-flex flex-wrap align-center">
                     <div class="principle-number mr-3">{{ index + 1 }}</div>
-                    <h2 class="headline font-weight-bold mb-0">{{ Object.values(principle)[0].title }}</h2>
+                    <h2 class="headline font-weight-bold mb-0">{{ principle.title }}</h2>
                   </div>
                   <div class="subtitle-1 grey--text text--darken-2 mt-2">
-                    {{ Object.values(principle)[0].description }}
+                    {{ principle.description }}
                   </div>
                 </div>
               </v-expansion-panel-header>
@@ -36,7 +36,7 @@
                   class="mt-3"
                 >
                   <v-expansion-panel
-                    v-for="(guideline) in Object.values(principle)[0].Guidelines"
+                    v-for="guideline in principle.Guidelines"
                     :key="guideline.id"
                     class="guideline-panel"
                   >
@@ -125,13 +125,25 @@ import wcagData from '@/assets/WacgAxe.json'
 export default {
   name: 'WcagDocumentation',
   data: () => ({
-    wcagData,
-    openPrinciple: [], // Array to track open principles
-    openGuidelines: {} // Object to track open guidelines for each principle
+    openPrinciple: [],
+    openGuidelines: {},
+    rawWcagData: wcagData
   }),
+  computed: {
+    processedPrinciples() {
+      return this.rawWcagData.map(principle => {
+        // Extract the first (and only) value from each principle object
+        const key = Object.keys(principle)[0]
+        return {
+          id: key, // Use the key as ID for better keying
+          ...principle[key]
+        }
+      })
+    }
+  },
   created() {
     // Initialize the openGuidelines object
-    this.wcagData.forEach((_, index) => {
+    this.rawWcagData.forEach((_, index) => {
       this.$set(this.openGuidelines, index, [])
     })
   },
@@ -144,7 +156,7 @@ export default {
       }
       return colors[level] || 'primary'
     },
-  },
+  }
 }
 </script>
 
