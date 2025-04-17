@@ -5,15 +5,12 @@
         <h1 class="display-1 font-weight-bold primary--text">WCAG Accessibility Guidelines</h1>
         <div class="subtitle-1 grey--text text--darken-1">Web Content Accessibility Guidelines Documentation</div>
       </v-col>
-      
+
       <v-col cols="12">
         <v-card class="elevation-2 mb-12">
-          <v-expansion-panels
-            v-model="openPrinciple"
-            multiple
-          >
+          <v-expansion-panels v-model="openPrinciple" multiple>
             <v-expansion-panel
-              v-for="(principle, index) in wcagData"
+              v-for="(principleObj, index) in wcagData"
               :key="index"
               class="principle-panel"
             >
@@ -21,22 +18,20 @@
                 <div>
                   <div class="d-flex flex-wrap align-center">
                     <div class="principle-number mr-3">{{ index + 1 }}</div>
-                    <h2 class="headline font-weight-bold mb-0">{{ Object.values(principle)[0].title }}</h2>
+                    <h2 class="headline font-weight-bold mb-0">
+                      {{ getPrinciple(principleObj).title }}
+                    </h2>
                   </div>
                   <div class="subtitle-1 grey--text text--darken-2 mt-2">
-                    {{ Object.values(principle)[0].description }}
+                    {{ getPrinciple(principleObj).description }}
                   </div>
                 </div>
               </v-expansion-panel-header>
-              
+
               <v-expansion-panel-content>
-                <v-expansion-panels
-                  v-model="openGuidelines[index]"
-                  multiple
-                  class="mt-3"
-                >
+                <v-expansion-panels v-model="openGuidelines[index]" multiple class="mt-3">
                   <v-expansion-panel
-                    v-for="(guideline) in Object.values(principle)[0].Guidelines"
+                    v-for="(guideline) in getPrinciple(principleObj).Guidelines"
                     :key="guideline.id"
                     class="guideline-panel"
                   >
@@ -51,7 +46,7 @@
                         </div>
                       </div>
                     </v-expansion-panel-header>
-                    
+
                     <v-expansion-panel-content>
                       <v-card
                         v-for="rule in guideline.Rules"
@@ -87,9 +82,9 @@
                             </v-col>
                           </v-row>
                         </v-card-title>
-                        
+
                         <v-divider></v-divider>
-                        
+
                         <v-card-text class="pa-4">
                           <v-list dense class="transparent">
                             <v-list-item
@@ -126,8 +121,8 @@ export default {
   name: 'WcagDocumentation',
   data: () => ({
     wcagData,
-    openPrinciple: [], // Array to track open principles
-    openGuidelines: {} // Object to track open guidelines for each principle
+    openPrinciple: [],
+    openGuidelines: {},
   }),
   created() {
     // Initialize the openGuidelines object
@@ -136,6 +131,9 @@ export default {
     })
   },
   methods: {
+    getPrinciple(principleObj) {
+      return Object.values(principleObj)[0]
+    },
     getLevelColor(level) {
       const colors = {
         A: 'error',
