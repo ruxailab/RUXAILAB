@@ -17,18 +17,19 @@
               xl="6"
               class="text-center"
             >
-              <h1
-                class="text-h2 font-weight-bold white--text mb-2"
-                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
-              >
-                Help Center
-              </h1>
-              <h2
-                class="text-h4 font-weight-medium white--text mb-6"
-                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
-              >
-                How can we help?
-              </h2>
+            <h1
+  class="text-h2 font-weight-bold white--text mb-2"
+  style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+>
+  {{ $t('help.help_center') }}
+</h1>
+
+<h2
+  class="text-h4 font-weight-medium white--text mb-6"
+  style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+>
+  {{ $t('help.howCanWeHelp') }}
+</h2>
               <div
                 class="mx-auto"
                 style="max-width: 560px; margin-top: 10px; position: relative; z-index: 5;"

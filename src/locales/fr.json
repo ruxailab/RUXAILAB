@@ -565,7 +565,13 @@
     "analyseresults": "Comment analyser les résultats ?",
     "analyseresultsanswer": "Pour analyser vos résultats, accédez à la page gestionnaire de votre test. À partir de là, sélectionnez 'Réponses' dans la barre latérale gauche. Ici, vous pouvez visualiser les statistiques, les évaluateurs et les heuristiques.",
     "sendmessage": "Comment envoyer un message à mes collaborateurs ?",
-    "sendmessageanswer": "Pour envoyer un message, accédez à la page gestionnaire de votre test. Sélectionnez 'Collaborateurs' dans la barre latérale gauche. Cliquez sur l'icône des trois points à côté du collaborateur à qui vous souhaitez envoyer un message. Ensuite, choisissez 'Envoyer un message' et écrivez votre message avec un titre et un contenu."
+    "sendmessageanswer": "Pour envoyer un message, accédez à la page gestionnaire de votre test. Sélectionnez 'Collaborateurs' dans la barre latérale gauche. Cliquez sur l'icône des trois points à côté du collaborateur à qui vous souhaitez envoyer un message. Ensuite, choisissez 'Envoyer un message' et écrivez votre message avec un titre et un contenu.",
+    "testCreation": "Création de Tests",
+    "templates": "Modèles",
+    "cooperators": "Collaborateurs",
+    "analytics": "Analyses",
+    "help_center": "Centre d'aide",
+    "howCanWeHelp": "Comment pouvons-nous vous aider ?"
   },
   "user": "UTILISATEUR",
   "account": "Compte",
