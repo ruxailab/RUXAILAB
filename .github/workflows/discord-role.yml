@@ -2,7 +2,7 @@ name: Trigger Assign Discord Role Workflow
 
 on:
   pull_request:
-    types: [closed]
+    types: [opened]
   issues:
     types: [opened]
   push:
