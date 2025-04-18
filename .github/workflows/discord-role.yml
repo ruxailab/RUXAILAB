@@ -20,6 +20,14 @@ jobs:
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
       FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
       GUILD_ID: ${{ secrets.GUILD_ID }}
-      ROLE_ID_PR: ${{ secrets.ROLE_ID_PR }}
-      ROLE_ID_ISSUE: ${{ secrets.ROLE_ID_ISSUE }}
-      ROLE_ID_COMMIT: ${{ secrets.ROLE_ID_COMMIT }}
+      GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+
+      ROLE_ID_PR_1: ${{ secrets.ROLE_ID_PR_1 }}
+      ROLE_ID_PR_5: ${{ secrets.ROLE_ID_PR_5 }}
+      ROLE_ID_PR_10: ${{ secrets.ROLE_ID_PR_10 }}
+
+      ROLE_ID_ISSUE_1: ${{ secrets.ROLE_ID_ISSUE_1 }}
+      ROLE_ID_ISSUE_5: ${{ secrets.ROLE_ID_ISSUE_5 }}
+
+      ROLE_ID_COMMIT_1: ${{ secrets.ROLE_ID_COMMIT_1 }}
+      ROLE_ID_COMMIT_15: ${{ secrets.ROLE_ID_COMMIT_15 }}
