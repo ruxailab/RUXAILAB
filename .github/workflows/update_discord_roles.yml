@@ -34,11 +34,11 @@ jobs:
           python discord_bot/fetch_contributors.py   
 
       - name: Set up Google Credentials
-        run: echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" | base64 --decode > discord_bot/credentials.json
+        run: echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" | base64 --decode > credentials.json
 
       - name: Update Firestore
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: discord_bot/credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: credentials.json
         run: |
           python discord_bot/firestore.py
 

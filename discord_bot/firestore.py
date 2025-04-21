@@ -6,18 +6,11 @@ from firebase_admin import credentials, firestore
 import json
 
 if not firebase_admin._apps:
-    cred = credentials.Certificate("discord_bot/credentials.json")
+    cred = credentials.Certificate("credentials.json")
     firebase_admin.initialize_app(cred)
 
 # Initialize Firestore
 db = firestore.client()
-
-# Load data from JSON files
-with open('contributions.json', 'r') as f:
-    contributions = json.load(f)
-
-# with open('user_mappings.json', 'r') as f:
-#     user_mappings = json.load(f)
 
 # Function to update a user document in Firestore
 def update_user_in_firestore(discord_id, pr_count, issues_count, commits_count):
@@ -30,25 +23,7 @@ def update_user_in_firestore(discord_id, pr_count, issues_count, commits_count):
             'issues_count': issues_count,
             'commits_count': commits_count
         })
-
-# Update Firestore with contributions data
-for github_id, user_data in contributions.items():
-    # Query Firestore to find the document with the matching GitHub ID
-    docs = db.collection('discord').where('github_id', '==', github_id).stream()
-    for doc in docs:
-        discord_id = doc.id
-        update_user_in_firestore(
-            discord_id,
-            user_data.get('pr_count', 0),
-            user_data.get('issues_count', 0),
-            user_data.get('commits_count', 0)
-        )
-
-print("Firestore update completed.")
-
-# Remove any Realtime Database references
-# Firestore does not use db.reference()
-
+  
 # Function to load data from Firestore
 def load_data_from_firestore():
     contributions = {}
