@@ -102,13 +102,13 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+// import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 import i18n from '@/i18n'
 
 export default {
   components: {
     Snackbar,
-    GoogleSignInButton
+    // GoogleSignInButton
   },
   data: () => ({
     email: '',

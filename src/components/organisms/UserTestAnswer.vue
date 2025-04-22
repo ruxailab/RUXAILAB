@@ -1,22 +1,46 @@
 <template>
   <div>
     <v-overlay :model-value="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular
+        indeterminate
+        size="64"
+      />
     </v-overlay>
-    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
-    <v-row v-else-if="hasAnswers" justify="center" class="ma-0 mt-4">
+    <IntroAnswer
+      v-if="intro"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="hasAnswers"
+      justify="center"
+      class="ma-0 mt-4"
+    >
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326" class="ml-4">
-            <v-tab @click="tab = 0">General Analytics</v-tab>
-            <v-tab @click="tab = 1">Individual Analytics</v-tab>
-            <v-tab @click="tab = 2">Sentiment Analysis</v-tab>
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="#FCA326"
+            class="ml-4"
+          >
+            <v-tab @click="tab = 0">
+              General Analytics
+            </v-tab>
+            <v-tab @click="tab = 1">
+              Individual Analytics
+            </v-tab>
+            <v-tab @click="tab = 2">
+              Sentiment Analysis
+            </v-tab>
           </v-tabs>
         </template>
 
         <template #content>
-          <div style="background-color: #E8EAF2;" class="ma-0 pa-0">
+          <div
+            style="background-color: #E8EAF2;"
+            class="ma-0 pa-0"
+          >
             <GeneralAnalytics v-if="tab === 0" />
             <AnalyticsView v-if="tab === 1" />
             <SentimentAnalysisView v-if="tab === 2" />
