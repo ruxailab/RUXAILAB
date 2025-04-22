@@ -41,7 +41,7 @@ export default {
           func: 'goToDisc',
         },
       ],
-    }
+    },
   },
   methods: {
     goToDoc() {
