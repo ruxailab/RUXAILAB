@@ -2,6 +2,7 @@ import os
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
+from update_discord_roles import determine_role
 
 # ---------- Firebase Initialization ----------
 try:
@@ -18,10 +19,16 @@ def update_user_in_firestore(discord_id, pr_count, issues_count, commits_count):
     doc_ref = db.collection('discord').document(discord_id)
     doc = doc_ref.get()
     
+    # Determine the role using the determine_role function
+    pr_role, issue_role, commit_role = determine_role(pr_count, issues_count, commits_count)
+    # Format the roles as a comma-separated string
+    role = ', '.join(filter(None, [pr_role, issue_role, commit_role]))  # Filter out None values and join
+
     data = {
         'pr_count': pr_count,
         'issues_count': issues_count,
-        'commits_count': commits_count
+        'commits_count': commits_count,
+        'role': role  # Update the role field
     }
 
     if doc.exists:
@@ -30,8 +37,7 @@ def update_user_in_firestore(discord_id, pr_count, issues_count, commits_count):
         # Optional: set default values for missing fields
         doc_ref.set({
             **data,
-            'github_id': None,
-            'role': 'member'
+            'github_id': None
         })
 
 def load_data_from_firestore():
