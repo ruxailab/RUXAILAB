@@ -1,25 +1,45 @@
 <template>
   <div class="background-grey">
     <Snackbar />
-    <v-row justify="center" style="height: 90%" align="center">
-      <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" rounded="xl" flat>
+    <v-row
+      justify="center"
+      style="height: 90%"
+      align="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <v-card
+          color="#f5f7ff"
+          rounded="xl"
+          flat
+        >
           <v-row>
-            <v-col cols="10" md="5" align-self="center" class="ma-8">
+            <v-col
+              cols="10"
+              md="5"
+              align-self="center"
+              class="ma-8"
+            >
               <div class="card-title">
                 {{ $t('FORGOT_PASSWORD.reset_password') }}
               </div>
 
               <div class="divider" />
 
-              <v-form ref="form" v-model="valid" lazy-validation class="mx-3">
+              <v-form
+                ref="form"
+                v-model="valid"
+                class="mx-3"
+              >
                 <v-text-field
                   v-model="email"
                   :label="$t('FORGOT_PASSWORD.email')"
                   :rules="emailRules"
-                  outlined
+                  variant="outlined"
                   prepend-inner-icon="mdi-email"
-                  dense
+                  density="compact"
                   required
                 />
 
@@ -32,7 +52,7 @@
                 <v-btn
                   color="#F9A826"
                   rounded
-                  class="white--text"
+                  class="text-white"
                   :loading="loading"
                   @click="onResetRequest()"
                 >
