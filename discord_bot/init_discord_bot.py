@@ -8,6 +8,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 import asyncio
+import threading
 
 from auth import get_github_username, wait_for_username, start_flask
 
@@ -26,6 +27,9 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# Create a lock for the verification process
+verification_lock = threading.Lock()
+
 @bot.event
 async def on_ready():
     await bot.tree.sync()
@@ -34,6 +38,11 @@ async def on_ready():
 @bot.tree.command(name="link", description="Link your Discord to GitHub")
 async def link(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
+
+    # Attempt to acquire the lock
+    if not verification_lock.acquire(blocking=False):
+        await interaction.followup.send("The verification process is currently busy. Please try again later.", ephemeral=True)
+        return
 
     try:
         github_auth_url = await asyncio.get_event_loop().run_in_executor(None, get_github_username)
@@ -56,5 +65,9 @@ async def link(interaction: discord.Interaction):
     except Exception as e:
         print("Error in /link:", e)
         await interaction.followup.send("Failed to link GitHub account.", ephemeral=True)
+
+    finally:
+        # Release the lock
+        verification_lock.release()
 
 bot.run(TOKEN)
