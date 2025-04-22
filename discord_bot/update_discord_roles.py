@@ -8,6 +8,7 @@ from dotenv import load_dotenv # Allows the use of environment variables (this i
  
 import json  
 from firestore import load_data_from_firestore
+from role_utils import determine_role
 # Environment variables for tokens and other sensitive data
 load_dotenv() # Loads and reads the .env file 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN") # Reads and stores the Discord Token from the .env file
@@ -51,28 +52,6 @@ COMMIT_THRESHOLDS = {
     "🔧 Committer": 10,
     "🚀 Commit Machine": 30
 }
-
-def determine_role(pr_count, issues_count, commits_count):
-    # Determine PR role
-    pr_role = "⚪ Member (General)"
-    for role, threshold in PR_THRESHOLDS.items():
-        if pr_count >= threshold:
-            pr_role = role
-
-    # Determine issue role
-    issue_role = None
-    for role, threshold in ISSUE_THRESHOLDS.items():
-        if issues_count >= threshold:
-            issue_role = role
-
-    # Determine commit role
-    commit_role = None
-    for role, threshold in COMMIT_THRESHOLDS.items():
-        if commits_count >= threshold:
-            commit_role = role
-
-    # Return the highest role in each category
-    return pr_role, issue_role, commit_role
 
 def load_data():
     """Loads contributions and user mappings from JSON files."""

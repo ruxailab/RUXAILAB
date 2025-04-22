@@ -2,7 +2,7 @@ import os
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-from update_discord_roles import determine_role
+from role_utils import determine_role
 
 # ---------- Firebase Initialization ----------
 try:
