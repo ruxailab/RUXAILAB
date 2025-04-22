@@ -1,53 +1,93 @@
-# firebase_demo.py
-
-# Import required modules
+import os
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-import json
 
-if not firebase_admin._apps:
-    cred = credentials.Certificate("credentials.json")
-    firebase_admin.initialize_app(cred)
+# ---------- Firebase Initialization ----------
+try:
+    if not firebase_admin._apps:
+        cred = credentials.Certificate("credentials.json")
+        firebase_admin.initialize_app(cred)
+    db = firestore.client()
+except Exception as e:
+    print(f"Firebase init error: {e}")
+    exit(1)
 
-# Initialize Firestore
-db = firestore.client()
-
-# Function to update a user document in Firestore
+# ---------- Firestore Helper Functions ----------
 def update_user_in_firestore(discord_id, pr_count, issues_count, commits_count):
     doc_ref = db.collection('discord').document(discord_id)
     doc = doc_ref.get()
+    
+    data = {
+        'pr_count': pr_count,
+        'issues_count': issues_count,
+        'commits_count': commits_count
+    }
+
     if doc.exists:
-        # Update existing document
-        doc_ref.update({
-            'pr_count': pr_count,
-            'issues_count': issues_count,
-            'commits_count': commits_count
+        doc_ref.update(data)
+    else:
+        # Optional: set default values for missing fields
+        doc_ref.set({
+            **data,
+            'github_id': None,
+            'role': 'member'
         })
-  
-# Function to load data from Firestore
+
 def load_data_from_firestore():
     contributions = {}
     user_mappings = {}
 
-    # Fetch all documents in the 'discord' collection
-    docs = db.collection('discord').stream()
+    try:
+        docs = db.collection('discord').stream()
+        for doc in docs:
+            if not doc.exists:
+                continue
 
-    for doc in docs:
-        data = doc.to_dict()
-        discord_id = doc.id
-        github_id = data.get('github_id')
-        
-        # Populate contributions and user_mappings
-        contributions[github_id] = {
-            'pr_count': data.get('pr_count', 0),
-            'issues_count': data.get('issues_count', 0),
-            'commits_count': data.get('commits_count', 0)
-        }
-        user_mappings[discord_id] = github_id
+            data = doc.to_dict()
+            github_id = data.get('github_id')
+            if not github_id:
+                continue
+
+            discord_id = doc.id
+            contributions[github_id] = {
+                'pr_count': data.get('pr_count', 0),
+                'issues_count': data.get('issues_count', 0),
+                'commits_count': data.get('commits_count', 0)
+            }
+            user_mappings[discord_id] = github_id
+    except Exception as e:
+        print(f"Firestore read error: {e}")
 
     return contributions, user_mappings
 
-# Example usage
-contributions, user_mappings = load_data_from_firestore()
-print(contributions)
-print(user_mappings)
+# ---------- Load JSON Contributions ----------
+if not os.path.exists('contributions.json'):
+    with open('contributions.json', 'w') as f:
+        json.dump({}, f)
+
+with open('contributions.json', 'r') as f:
+    try:
+        contributions = json.load(f)
+    except json.JSONDecodeError:
+        print("Invalid JSON format in contributions.json.")
+        contributions = {}
+
+# ---------- Sync to Firestore ----------
+for github_id, user_data in contributions.items():
+    try:
+        docs = db.collection('discord').where('github_id', '==', github_id).stream()
+        for doc in docs:
+            if not doc.exists:
+                continue
+            discord_id = doc.id
+            update_user_in_firestore(
+                discord_id,
+                user_data.get('pr_count', 0),
+                user_data.get('issues_count', 0),
+                user_data.get('commits_count', 0)
+            )
+    except Exception as e:
+        print(f"Error updating Firestore for GitHub user {github_id}: {e}")
+
+print("Firestore update completed.")
