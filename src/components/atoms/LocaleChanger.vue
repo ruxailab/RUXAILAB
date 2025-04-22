@@ -54,26 +54,7 @@
     </div>
   </v-col>
 </template>
-<style>
 
-.v-select.v-input--dense .v-select__selection,
-.v-select__selection {
-  padding-bottom: 4px !important;
-  padding-top: 6px !important; 
-  line-height: 1.4 !important; 
-}
-
-.hindi-fix .v-select__selection {
-  padding-top: 8px !important;
-  min-height: 24px !important;
-}
-
-.v-list-item-title.hindi-fix {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  min-height: 24px;
-}
-</style>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 export default {
@@ -109,3 +90,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.v-select.v-input--dense .v-select__selection,
+.v-select__selection {
+  padding-bottom: 4px !important;
+}
+</style>
