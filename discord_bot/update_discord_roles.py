@@ -8,7 +8,7 @@ from dotenv import load_dotenv # Allows the use of environment variables (this i
  
 import json  
 from firestore import load_data_from_firestore
-from role_utils import determine_role
+from role_utils import determine_role, PR_THRESHOLDS, ISSUE_THRESHOLDS, COMMIT_THRESHOLDS
 # Environment variables for tokens and other sensitive data
 load_dotenv() # Loads and reads the .env file 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN") # Reads and stores the Discord Token from the .env file
@@ -30,28 +30,6 @@ async def on_message(msg):
 async def greet(interaction: discord.Interaction):
     username = interaction.user.mention
     await interaction.response.send_message(f"Hello there, {username}")
-
-PR_THRESHOLDS = {
-    "⚪ Member (General)": 0,
-    "🟣 Entry": 1,
-    "🔵 Intermediate": 4,
-    "🔵 Proficient": 7,
-    "🟢 Advanced": 10,
-    "🟡 Expert": 20,
-    "🟠 Master": 40,
-    "🔴 Grandmaster": 60
-}
-
-ISSUE_THRESHOLDS = {
-    "📝 Bug Reporter": 1,
-    "🔍 Debugger": 3,
-    "🕵️‍♂️ Investigator": 7
-}
-
-COMMIT_THRESHOLDS = {
-    "🔧 Committer": 10,
-    "🚀 Commit Machine": 30
-}
 
 def load_data():
     """Loads contributions and user mappings from JSON files."""
