@@ -2,18 +2,19 @@
   <v-container class="container-max-width">
     <v-row justify="center">
       <v-col cols="12" class="text-center mb-6">
-        <h1 class="display-1 font-weight-bold primary--text">WCAG Accessibility Guidelines</h1>
-        <div class="subtitle-1 grey--text text--darken-1">Web Content Accessibility Guidelines Documentation</div>
+        <h1 class="display-1 font-weight-bold primary--text">
+          WCAG Accessibility Guidelines
+        </h1>
+        <div class="subtitle-1 grey--text text--darken-1">
+          Web Content Accessibility Guidelines Documentation
+        </div>
       </v-col>
-      
+
       <v-col cols="12">
         <v-card class="elevation-2 mb-12">
-          <v-expansion-panels
-            v-model="openPrinciple"
-            multiple
-          >
+          <v-expansion-panels v-model="openPrinciple" multiple>
             <v-expansion-panel
-              v-for="(principle, index) in wcagData"
+              v-for="(principle, index) in flattenedWcagData"
               :key="index"
               class="principle-panel"
             >
@@ -21,14 +22,16 @@
                 <div>
                   <div class="d-flex flex-wrap align-center">
                     <div class="principle-number mr-3">{{ index + 1 }}</div>
-                    <h2 class="headline font-weight-bold mb-0">{{ Object.values(principle)[0].title }}</h2>
+                    <h2 class="headline font-weight-bold mb-0">
+                      {{ principle.title }}
+                    </h2>
                   </div>
                   <div class="subtitle-1 grey--text text--darken-2 mt-2">
-                    {{ Object.values(principle)[0].description }}
+                    {{ principle.description }}
                   </div>
                 </div>
               </v-expansion-panel-header>
-              
+
               <v-expansion-panel-content>
                 <v-expansion-panels
                   v-model="openGuidelines[index]"
@@ -36,22 +39,26 @@
                   class="mt-3"
                 >
                   <v-expansion-panel
-                    v-for="(guideline) in Object.values(principle)[0].Guidelines"
+                    v-for="guideline in principle.Guidelines"
                     :key="guideline.id"
                     class="guideline-panel"
                   >
                     <v-expansion-panel-header class="py-3">
                       <div>
                         <div class="d-flex flex-wrap align-center">
-                          <div class="guideline-id font-weight-medium mr-2">{{ guideline.id }}</div>
-                          <div class="title font-weight-medium">{{ guideline.title }}</div>
+                          <div class="guideline-id font-weight-medium mr-2">
+                            {{ guideline.id }}
+                          </div>
+                          <div class="title font-weight-medium">
+                            {{ guideline.title }}
+                          </div>
                         </div>
                         <div class="body-2 grey--text text--darken-1 mt-1">
                           {{ guideline.description }}
                         </div>
                       </div>
                     </v-expansion-panel-header>
-                    
+
                     <v-expansion-panel-content>
                       <v-card
                         v-for="rule in guideline.Rules"
@@ -64,7 +71,9 @@
                             <v-col cols="12" sm="8">
                               <div class="d-flex align-center">
                                 <div class="rule-id mr-2">{{ rule.id }}</div>
-                                <div class="subtitle-1 font-weight-bold">{{ rule.title }}</div>
+                                <div class="subtitle-1 font-weight-bold">
+                                  {{ rule.title }}
+                                </div>
                               </div>
                             </v-col>
                             <v-col cols="12" sm="4" class="text-sm-right">
@@ -87,9 +96,9 @@
                             </v-col>
                           </v-row>
                         </v-card-title>
-                        
+
                         <v-divider></v-divider>
-                        
+
                         <v-card-text class="pa-4">
                           <v-list dense class="transparent">
                             <v-list-item
@@ -98,10 +107,14 @@
                               class="px-0"
                             >
                               <v-list-item-icon class="mr-3">
-                                <v-icon :color="getLevelColor(rule.level)">mdi-check-circle</v-icon>
+                                <v-icon :color="getLevelColor(rule.level)"
+                                  >mdi-check-circle</v-icon
+                                >
                               </v-list-item-icon>
                               <v-list-item-content>
-                                <v-list-item-title class="body-1">{{ criterion }}</v-list-item-title>
+                                <v-list-item-title class="body-1">{{
+                                  criterion
+                                }}</v-list-item-title>
                               </v-list-item-content>
                             </v-list-item>
                           </v-list>
@@ -127,11 +140,16 @@ export default {
   data: () => ({
     wcagData,
     openPrinciple: [], // Array to track open principles
-    openGuidelines: {} // Object to track open guidelines for each principle
+    openGuidelines: {}, // Object to track open guidelines for each principle
   }),
+  computed: {
+    flattenedWcagData() {
+      return wcagData.map((principle) => Object.values(principle)[0])
+    },
+  },
   created() {
     // Initialize the openGuidelines object
-    this.wcagData.forEach((_, index) => {
+    this.flattenedWcagData.forEach((_, index) => {
       this.$set(this.openGuidelines, index, [])
     })
   },
@@ -193,4 +211,3 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
 }
 </style>
-
