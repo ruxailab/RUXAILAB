@@ -1,43 +1,27 @@
 <template>
   <div>
-    <v-overlay :value="loading">
+    <v-overlay :model-value="loading">
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
-    <IntroAnswer v-if="intro" @goToCoops="goToCoops" />
+    <IntroAnswer v-if="intro" @go-to-coops="goToCoops" />
     <v-row v-else-if="hasAnswers" justify="center" class="ma-0 mt-4">
       <ShowInfo title="Answers">
         <!-- Main Tabs -->
-        <v-tabs
-          slot="top"
-          v-model="tab"
-          background-color="transparent"
-          color="#FCA326"
-          class="ml-4"
-        >
-          <v-tab @click="tab = 0">
-            General Analytics
-          </v-tab>
-          <v-tab @click="tab = 1">
-            Individual Analytics
-          </v-tab>
-          <v-tab @click="tab = 2">
-            Sentiment Analysis
-          </v-tab>
-        </v-tabs>
+        <template #top>
+          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326" class="ml-4">
+            <v-tab @click="tab = 0">General Analytics</v-tab>
+            <v-tab @click="tab = 1">Individual Analytics</v-tab>
+            <v-tab @click="tab = 2">Sentiment Analysis</v-tab>
+          </v-tabs>
+        </template>
 
-        <div
-          slot="content"
-          style="background-color: #E8EAF2;"
-          class="ma-0 pa-0"
-        >
-          <GeneralAnalytics v-if="tab === 0" />
-        </div>
-        <div slot="content" class="ma-0 pa-0">
-          <AnalyticsView v-if="tab === 1" />
-        </div>
-        <div slot="content" class="ma-0 pa-0">
-          <SentimentAnalysisView v-if="tab === 2" />
-        </div>
+        <template #content>
+          <div style="background-color: #E8EAF2;" class="ma-0 pa-0">
+            <GeneralAnalytics v-if="tab === 0" />
+            <AnalyticsView v-if="tab === 1" />
+            <SentimentAnalysisView v-if="tab === 2" />
+          </div>
+        </template>
       </ShowInfo>
     </v-row>
     <div v-else>
@@ -47,13 +31,13 @@
 </template>
 
 <script>
-import ShowInfo from '@/components/organisms/ShowInfo'
-import IntroAnswer from '@/components/molecules/IntroAnswer'
-import AnalyticsView from '@/views/admin/AnalyticsView.vue'
-import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue'
-import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue'
+import ShowInfo from '@/components/organisms/ShowInfo';
+import IntroAnswer from '@/components/molecules/IntroAnswer';
+import AnalyticsView from '@/views/admin/AnalyticsView.vue';
+import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue';
+import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue';
 
-import { standardDeviation, finalResult, statistics } from '@/utils/statistics'
+import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
 
 export default {
   components: {
@@ -64,54 +48,54 @@ export default {
     SentimentAnalysisView,
   },
   props: { id: { type: String, default: '' } },
+  emits: ['goToCoops'],
   data: () => ({
     tab: 0,
-    // tab: 2,
     ind: 0,
     resultEvaluator: statistics(),
     intro: null,
   }),
   computed: {
     testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
+      return this.$store.state.Answer.testAnswerDocument;
     },
     answers() {
       return this.testAnswerDocument
         ? Object.values(this.$store.state.Answer.testAnswerDocument)
-        : []
+        : [];
     },
     hasAnswers() {
       return (
         this.testAnswerDocument &&
         Object.keys(this.testAnswerDocument.taskAnswers).length > 0
-      )
+      );
     },
     loading() {
-      return this.$store.getters.loading
+      return this.$store.getters.loading;
     },
   },
   watch: {
     hasAnswers() {
       if (this.hasAnswers) {
-        statistics()
-        this.intro = false
+        statistics();
+        this.intro = false;
       } else {
-        this.intro = true
+        this.intro = true;
       }
     },
     index() {
-      this.ind = 0
+      this.ind = 0;
     },
   },
   async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
+    await this.$store.dispatch('getCurrentTestAnswerDoc');
   },
   methods: {
     goToCoops() {
-      this.$emit('goToCoops')
+      this.$emit('goToCoops');
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -189,10 +173,8 @@ export default {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
-  /* background: #515069; */
 }
-</style>
-<style>
+
 .v-chip {
   min-width: 50px;
   justify-content: center;

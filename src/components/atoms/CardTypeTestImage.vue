@@ -25,7 +25,10 @@
       >
 
       <div class="mt-1">
-        <v-row v-for="text in texts" :key="text">
+        <v-row
+          v-for="text in texts"
+          :key="text"
+        >
           <v-sheet class="ml-10 mb-8 circle" />
           <span class="cardInternTitles ml-3">{{ text }}</span>
         </v-row>
@@ -61,6 +64,7 @@ export default {
       require: true,
     },
   },
+  emits: ['click'],
 }
 </script>
 

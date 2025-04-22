@@ -3,8 +3,8 @@
     <v-btn
       rounded
       color="#f9a826"
-      class="white--text"
-      small
+      class="text-white"
+      size="small"
       :disabled="testAnswerDocLength > 0 ? true : false"
       :class="{
         disabledBtnBackground: testAnswerDocLength > 0,
@@ -14,22 +14,32 @@
       {{ $t('HeuristicsTable.titles.addNewDescription') }}
     </v-btn>
 
-    <v-dialog v-model="dialog" width="700" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="700"
+      persistent
+    >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
-            <v-form ref="form" @submit.prevent="validate()">
+            <v-form
+              ref="form"
+              @submit.prevent="validate()"
+            >
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field
                     v-model="desc.title"
                     :rules="rule"
-                    dense
-                    outlined
+                    density="compact"
+                    variant="outlined"
                     :label="$t('common.title')"
                   />
 
@@ -37,7 +47,7 @@
                   <TextBox
                     ref="textbox"
                     @mounted="setDescriptionText"
-                    @updateHtml="updateText"
+                    @update-html="updateText"
                   />
                 </v-col>
               </v-row>
@@ -47,24 +57,29 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn small text color="red lighten-1 white--text" @click="reset()">
+          <v-btn
+            size="small"
+            variant="text"
+            color="red-lighten-1"
+            @click="reset()"
+          >
             {{ $t('common.cancel') }}
           </v-btn>
 
           <v-btn
             v-if="editIndex !== null"
-            small
+            size="small"
             color="#f9a826"
-            class="white--text"
+            class="text-white"
             @click="submitEdit()"
           >
             {{ $t('common.confirm') }}
           </v-btn>
           <v-btn
             v-else
-            small
+            size="small"
             color="#f9a826"
-            class="white--text"
+            class="text-white"
             @click="validate()"
           >
             {{ $t('common.add') }}
@@ -95,6 +110,7 @@ export default {
       default: 0,
     },
   },
+  emits: ['update-description'], 
   data: () => ({
     dialog: false,
     desc: {

@@ -1,30 +1,39 @@
 <template>
-  <v-col style="background-color:#F5F7FF" class="rounded pa-0 pb-1 mb-10">
+  <v-col
+    style="background-color:#F5F7FF"
+    class="rounded pa-0 pb-1 mb-10"
+  >
     <v-card-title class="subtitleView">
       {{ $t('HeuristicsWeightsTable.titles.weights') }}
     </v-card-title>
     <v-divider class="mb-4" />
     <v-card
       v-if="heuristics.length < 2"
-      class="mx-auto mb-5 py-4 transparent rounded-0 subtitleView"
+      class="mx-auto mb-5 py-4 bg-transparent rounded-0 subtitleView"
       elevation="0"
       align="center"
     >
       {{ $t('HeuristicsWeightsTable.messages.atLeast2HeuristicsForWeighting') }}
     </v-card>
-    <v-card v-else class="mx-auto mt-4 mb-5 rounded-0" elevation="0">
+    <v-card
+      v-else
+      class="mx-auto mt-4 mb-5 rounded-0"
+      elevation="0"
+    >
       <!-- tabs -->
       <v-tabs
         v-model="tabs"
-        centered
-        background-color="#F5F7FF"
+        align-tabs="center"
+        bg-color="#F5F7FF"
         color="orange"
         show-arrows
       >
-        <v-tabs-slider color="#FF9800" />
-        <v-tab v-for="(heuri, index) in heuristics.length - 1" :key="index">
-          <v-tooltip top>
-            <template v-slot:activator="{ props }">
+        <v-tab
+          v-for="(heuri, index) in heuristics.length - 1"
+          :key="index"
+        >
+          <v-tooltip location="top">
+            <template #activator="{ props }">
               <span v-bind="props"> H {{ heuri }}</span>
             </template>
             <span>{{ heuristics[index].title }}</span>
@@ -32,17 +41,20 @@
         </v-tab>
       </v-tabs>
       <!-- tab items -->
-      <v-tabs-items v-model="tabs">
-        <v-tab-item
+      <v-window v-model="tabs">
+        <v-window-item
           v-for="(n, pes) in heuristics && heuristics.length
             ? heuristics.length - 1
             : 0"
           :key="pes"
           style="background-color:#F5F7FF"
         >
-          <v-card flat class="mx-4 mt-2 mb-8">
+          <v-card
+            flat
+            class="mx-4 mt-2 mb-8"
+          >
             <v-card-text class="tablebody">
-              <v-simple-table>
+              <v-table>
                 <thead>
                   <tr>
                     <th class="text-left">
@@ -61,13 +73,12 @@
                     <td>
                       H {{ f + (tabs + 1) }}
                       <!-- tooltips -->
-                      <v-tooltip right>
-                        <template v-slot:activator="{ props }">
+                      <v-tooltip location="right">
+                        <template #activator="{ props }">
                           <v-icon
                             v-bind="props"
                             color="#FCA326"
-                            small
-                            dark
+                            size="small"
                           >
                             mdi-help-circle
                           </v-icon>
@@ -79,21 +90,21 @@
                     <td>
                       <v-radio-group
                         v-model="group[tabs][tam]"
-                        dense
-                        row
+                        density="compact"
+                        inline
                         class="px-10 mx-2 v-input--radio-group__input justify-space-around"
                       >
                         <v-tooltip
                           v-for="(r, rad) in importance"
                           :key="rad"
-                          bottom
+                          location="bottom"
                         >
-                          <template v-slot:activator="{ props }">
+                          <template #activator="{ props }">
                             <v-radio
                               v-bind="props"
                               :label="`${r}`"
                               :value="r"
-                              active-class
+                              false
                               class="padding-left mx-4"
                               true-icon="mdi-check-circle-outline"
                               false-icon="mdi-checkbox-blank-circle-outline"
@@ -109,14 +120,16 @@
                     </td>
                   </tr>
                 </tbody>
-              </v-simple-table>
+              </v-table>
               <!-- save button -->
-              <v-row align="center" justify="space-around">
+              <v-row
+                align="center"
+                justify="space-around"
+              >
                 <v-btn
-                  dark
-                  depressed
+                  variant="flat"
                   class="mt-8 mb-4"
-                  large
+                  size="large"
                   align="center"
                   color="orange"
                   type="submit"
@@ -127,8 +140,8 @@
               </v-row>
             </v-card-text>
           </v-card>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-window-item>
+      </v-window>
     </v-card>
   </v-col>
 </template>
@@ -213,7 +226,6 @@ export default {
 .padding-left {
   padding-left: 23px;
 }
-
 .if-card {
   width: 950px;
   font-size: 18px;
@@ -228,7 +240,6 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
 .tablebody {
   display: contents;
 }
@@ -238,5 +249,9 @@ export default {
   display: flex;
   width: 100%;
   justify-content: space-evenly !important;
+}
+/* Optional: Customize the active tab indicator */
+:deep(.v-tabs .v-tab--active .v-tab__slider) {
+  background-color: #FF9800 !important;
 }
 </style>

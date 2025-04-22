@@ -3,22 +3,22 @@
     <Snackbar />
 
     <!-- CREATE TEST BTN -->
-    <v-tooltip left>
-      <template v-slot:activator="{ on, attrs }">
+    <v-tooltip location="left">
+      <template #activator="{ props }">
         <v-btn
-          v-bind="attrs"
           data-testid="create-test-btn"
-          large
-          dark
-          fab
-          fixed
-          bottom
-          right
+          size="large"
+          icon
+          position="fixed"
+          location="bottom right"
           color="#F9A826"
+          variant="elevated"
+          class="mr-4 mb-5"
+          rounded="circle"
+          v-bind="props"
           @click="goToCreateTestRoute()"
-          v-on="on"
         >
-          <v-icon large>
+          <v-icon size="large">
             mdi-plus
           </v-icon>
         </v-btn>
@@ -28,17 +28,30 @@
 
     <!-- LOADING -->
     <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular
+        indeterminate
+        size="64"
+      />
     </v-overlay>
 
     <div>
-      <v-row justify="center" class="fill-height">
+      <v-row
+        justify="center"
+        class="fill-height"
+      >
         <v-col cols="10">
           <!-- Mobile search button -->
-          <v-row v-if="!searching" align="center">
+          <v-row
+            v-if="!searching"
+            align="center"
+          >
             <span class="titleText ml-3 mb-2">{{ $t('Dashboard.tests') }}</span>
             <v-spacer />
-            <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
+            <v-btn
+              class="mr-3 hidden-md-and-up"
+              icon
+              @click="searching = true"
+            >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-row>
@@ -46,11 +59,11 @@
             v-else
             v-model="search"
             :autofocus="searching"
-            dense
+            density="compact"
             :label="$t('Dashboard.search')"
             prepend-inner-icon="mdi-magnify"
-            outlined
-            color="grey darken-2"
+            variant="outlined"
+            color="grey-darken-2"
             @blur="searching = false"
           />
           <v-divider class="mb-1" />
@@ -58,10 +71,9 @@
           <!-- Desktop Main Tabs -->
           <v-tabs
             v-model="mainIndex"
-            background-color="transparent"
+            bg-color="transparent"
             color="black"
             class="hidden-sm-and-down mt-4"
-            active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
@@ -70,13 +82,13 @@
 
             <v-text-field
               v-model="search"
-              dense
+              density="compact"
               class="mt-1"
               :label="$t('Dashboard.search')"
               prepend-inner-icon="mdi-magnify"
               :disabled="mainIndex == 2 && subIndex == 1 ? true : false"
-              outlined
-              color="grey darken-2"
+              variant="outlined"
+              color="grey-darken-2"
             />
           </v-tabs>
           <v-divider class="hidden-sm-and-down" />
@@ -85,10 +97,9 @@
           <v-tabs
             v-if="mainIndex === 0"
             v-model="subIndex"
-            background-color="transparent"
+            bg-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
@@ -103,10 +114,9 @@
           <v-tabs
             v-if="mainIndex == 1"
             v-model="subIndex"
-            background-color="transparent"
+            bg-color="transparent"
             color="black"
             class="hidden-sm-and-down"
-            active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
             <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
@@ -115,18 +125,31 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down" />
           <!-- Mobile Main Button -->
-          <v-select v-model="mainIndex" dense outlined class="hidden-md-and-up mx-2 mt-4" :items="buttonItems" />
+          <v-select
+            v-model="mainIndex"
+            density="compact"
+            variant="outlined"
+            class="hidden-md-and-up mx-2 mt-4"
+            :items="buttonItems"
+          />
 
           <!-- Mobile Sub Buttons -->
           <v-select
             v-if="mainIndex == 1"
             v-model="subIndex"
-            dense
-            outlined
+            density="compact"
+            variant="outlined"
             class="hidden-md-and-up mx-2"
             :items="templateButtonItems"
           />
-          <v-select v-else v-model="subIndex" dense outlined class="hidden-md-and-up mx-2" :items="testButtonItems" />
+          <v-select
+            v-else
+            v-model="subIndex"
+            density="compact"
+            variant="outlined"
+            class="hidden-md-and-up mx-2"
+            :items="testButtonItems"
+          />
 
           <!-- Tests -> Personal  -->
           <List v-if="mainIndex == 0 && subIndex == 0" :items="filteredTests" type="myTests" @clicked="goTo" />
@@ -158,7 +181,11 @@
               You don't have active sessions
             </span>
             <br>
-            <v-icon style="color: #575757;" class="mt-2" large>
+            <v-icon
+              style="color: #575757;"
+              class="mt-2"
+              size="large"
+            >
               mdi-clock-remove-outline
             </v-icon>
           </v-col>
@@ -182,7 +209,7 @@
       </v-row>
 
       <TempDialog
-        :dialog.sync="tempDialog"
+        v-model:dialog="tempDialog"
         :template="temp"
         :allow-create="true"
         @close="tempDialog = false"
@@ -378,8 +405,12 @@ export default {
     },
 
     setupTempDialog(temp) {
-      this.temp = Object.assign({}, temp)
-      this.tempDialog = true
+      if (!temp || !temp.header || !temp.body) {
+        console.warn('Invalid template provided to setupTempDialog:', temp);
+        return; // Prevent opening dialog
+      }
+      this.temp = Object.assign({}, temp); // Clone the temp object
+      this.tempDialog = true;
     },
   },
 }
@@ -391,10 +422,10 @@ export default {
   font-weight: 300;
 }
 
-.active-tab {
-  background-color: rgba(249, 168, 38, 0.2) !important; 
-  border-radius: 4px; 
-  color: #000000 !important; 
+.v-tab--selected {
+  background-color: rgba(249, 168, 38, 0.2) !important;
+  border-radius: 4px;
+  color: #000000 !important;
   font-weight: bold;
 }
 </style>

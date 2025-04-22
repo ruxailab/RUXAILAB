@@ -3,21 +3,21 @@
     <Snackbar />
     <Intro />
     <About />
-    <Footer />
+    <AppFooter />
   </div>
 </template>
 
 <script>
 import Intro from '@/components/atoms/Introduction'
 import About from '@/components/organisms/LandingAbout'
-import Footer from '@/components/organisms/Footer'
+import AppFooter from '@/components/organisms/AppFooter'
 import Snackbar from '@/components/atoms/Snackbar'
 
 export default {
   components: {
     Intro,
     About,
-    Footer,
+    AppFooter,
     Snackbar,
   },
   data: () => ({}),

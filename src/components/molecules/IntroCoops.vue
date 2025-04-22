@@ -6,8 +6,8 @@
     :main="$t('descriptions.intro.cooperators')"
     :link="$t('descriptions.intro.start')"
     :items="items"
-    @linkClicked="closeIntro()"
-    @callFunc="callFunc"
+    @link-clicked="closeIntro()"
+    @call-func="callFunc"
   />
 </template>
 
@@ -19,6 +19,7 @@ export default {
   components: {
     IntroComp,
   },
+  emits: ['closeIntro'],
   data: () => ({}),
   computed: {
     items() {
@@ -26,17 +27,17 @@ export default {
         {
           iconColor: '#daf01a',
           icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
+          title: i18n.global.t('pages.intros.docTitle'),
           subtitle:
-            i18n.t('pages.intros.docSubtitle') + i18n.t('titles.cooperators'),
+            i18n.global.t('pages.intros.docSubtitle') + i18n.global.t('titles.cooperators'),
           func: 'goToDoc',
         },
 
         {
           iconColor: '#daf01a',
           icon: 'mdi-emoticon-happy',
-          title: i18n.t('pages.intros.discTitle'),
-          subtitle: i18n.t('pages.intros.discSubtitle'),
+          title: i18n.global.t('pages.intros.discTitle'),
+          subtitle: i18n.global.t('pages.intros.discSubtitle'),
           func: 'goToDisc',
         },
       ]

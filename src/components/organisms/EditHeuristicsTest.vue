@@ -1,32 +1,81 @@
 <template>
   <div>
-    <v-tabs background-color="transparent" color="#FCA326" class="pb-0 mb-0 responsive-tabs">
-      <v-tab @click="tabClicked(0)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.heuristics') }}
-          <v-icon v-if="index === 0" class="tab-icon">mdi-chevron-down</v-icon>
+    <v-tabs
+      bg-color="transparent"
+      color="#FCA326"
+      class="pb-0 mb-0 responsive-tabs"
+    >
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(0)"
+      >
+        {{ $t('HeuristicsEditTest.titles.heuristics') }}
+        <v-icon
+          v-if="index === 0"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(1)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.options') }}
-          <v-icon v-if="index === 1" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(1)"
+      >
+        {{ $t('HeuristicsEditTest.titles.options') }}
+        <v-icon
+          v-if="index === 1"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(2)" class="tab-content" >
-          {{ $t('HeuristicsEditTest.titles.weights') }}
-          <v-icon v-if="index === 2" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(2)"
+      >
+        {{ $t('HeuristicsEditTest.titles.weights') }}
+        <v-icon
+          v-if="index === 2"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab @click="tabClicked(3)" class="tab-content">
-          {{ $t('HeuristicsEditTest.titles.settings') }}
-          <v-icon v-if="index === 3" class="tab-icon">mdi-chevron-down</v-icon>
+      <v-tab
+        class="tab-content"
+        @click="tabClicked(3)"
+      >
+        {{ $t('HeuristicsEditTest.titles.settings') }}
+        <v-icon
+          v-if="index === 3"
+          class="tab-icon"
+        >
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
     </v-tabs>
 
     <div class="mt-responsive">
-      <Heuristic v-if="index == 0" :heuristics="object.heuristics" @change="change" />
-      <OptionsTable v-if="index == 1" :options="object.options" />
-      <WeightTable v-if="index == 2" :options="object.weight" />
-      <Settings v-if="index == 3" :options="object.settings" />
+      <Heuristic
+        v-if="index == 0"
+        :heuristics="object.heuristics"
+        @change="change"
+      />
+      <OptionsTable
+        v-if="index == 1"
+        :options="object.options"
+      />
+      <WeightTable
+        v-if="index == 2"
+        :options="object.weight"
+      />
+      <Settings
+        v-if="index == 3"
+        :options="object.settings"
+      />
     </div>
   </div>
 </template>
@@ -59,6 +108,7 @@ export default {
       default: 0,
     },
   },
+  emits: ['tabClicked', 'change'],
   computed: {
     currentTest() {
       return this.$store.state.Tests.Test.testStructure
