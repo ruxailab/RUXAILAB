@@ -31,23 +31,6 @@ async def greet(interaction: discord.Interaction):
     username = interaction.user.mention
     await interaction.response.send_message(f"Hello there, {username}")
 
-def load_data():
-    """Loads contributions and user mappings from JSON files."""
-    try:
-        # Load contributions data
-        with open("contributions.json", "r") as f:
-            contributions = json.load(f)
-
-        # Load user mappings data
-        with open("user_mappings.json", "r") as f:
-            user_mappings = json.load(f)
-        
-        return contributions, user_mappings
-    except Exception as e:
-        print(f"Error loading data: {e}")
-        return None, None  # Return None in case of an error
-
-
 async def update_roles_for_guild(guild: discord.Guild):
     contributions, user_mappings = load_data_from_firestore()
     print(contributions, user_mappings)
@@ -117,8 +100,6 @@ async def update_roles_for_guild(guild: discord.Guild):
 @bot.event
 async def on_ready():
     print(f"{bot.user} is online!")
-
-    load_data()
     # Use a flag to ensure this update runs only once per startup
     if not hasattr(bot, 'roles_updated'):
         bot.roles_updated = True
