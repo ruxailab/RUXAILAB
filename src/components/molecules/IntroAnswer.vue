@@ -8,8 +8,8 @@
     "
     :link="$t('descriptions.intro.invite')"
     :items="items"
-    @linkClicked="goToCoops()"
-    @callFunc="callFunc"
+    @link-clicked="goToCoops()"
+    @call-func="callFunc"
   />
 </template>
 
@@ -21,6 +21,7 @@ export default {
   components: {
     IntroComp,
   },
+  emits: ['goToCoops'],
   data: () => ({}),
   computed: {
     items() {
@@ -28,17 +29,17 @@ export default {
         {
           iconColor: '#4bbdaf',
           icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
+          title: i18n.global.t('pages.intros.docTitle'),
           subtitle:
-          i18n.t('pages.intros.docSubtitle')  + i18n.t('titles.answers'),
+          i18n.global.t('pages.intros.docSubtitle')  + i18n.global.t('titles.answers'),
           func: 'goToDoc',
         },
 
         {
           iconColor: '#4bbdaf',
           icon: 'mdi-emoticon-happy',
-          title: i18n.t('pages.intros.discTitle'),
-          subtitle: i18n.t('pages.intros.discSubtitle'),
+          title: i18n.global.t('pages.intros.discTitle'),
+          subtitle: i18n.global.t('pages.intros.discSubtitle'),
           func: 'goToDisc',
         },
       ]

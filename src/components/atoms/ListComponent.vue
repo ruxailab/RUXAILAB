@@ -1,11 +1,29 @@
 <template>
   <div>
-    <v-list v-if="items" class="py-0">
-      <div v-for="(item, n) in sortedItems" :key="n">
-        <v-list-item v-if="item" :ripple="false" @click="emitClick(item)">
+    <v-list
+      v-if="items"
+      class="py-0"
+    >
+      <div
+        v-for="(item, n) in sortedItems"
+        :key="n"
+      >
+        <v-list-item
+          v-if="item"
+          :ripple="false"
+          @click="emitClick(item)"
+        >
           <!-- Avatar -->
-          <v-list-item-avatar tile style="border-radius: 5px" size="40">
-            <v-avatar tile :color="generateColor()" style="color: #545454">
+          <v-avatar
+            tile
+            style="border-radius: 5px"
+            size="40"
+          >
+            <v-avatar
+              tile
+              :color="generateColor()"
+              style="color: #545454"
+            >
               <span v-if="type === 'myTemplates' || type === 'publicTemplates'">
                 {{
                   item.header &&
@@ -28,52 +46,70 @@
                 }}
               </span>
             </v-avatar>
-          </v-list-item-avatar>
+          </v-avatar>
 
-          <v-list-item-content>
-            <!-- Title -->
-            <v-list-item-title
-              v-if="type === 'myTemplates' || type === 'publicTemplates'"
+          
+          <!-- Title -->
+          <v-list-item-title
+            v-if="type === 'myTemplates' || type === 'publicTemplates'"
+          >
+            {{ item.header ? item.header.templateTitle : item.testTitle }}
+            <v-chip
+              label
+              variant="outlined"
+              style="color: grey"
+              size="small"
+              class="ml-1"
             >
-              {{ item.header ? item.header.templateTitle : item.testTitle }}
-              <v-chip label outlined style="color: grey" small class="ml-1">
-                {{ item.header ? item.header.templateType : item.testType }}
-              </v-chip>
-            </v-list-item-title>
-            <v-list-item-title v-else-if="type === 'sessions'">
-              {{ item.testTitle }}
-              <v-chip label outlined style="color: grey" small class="ml-1">
-                Session
-              </v-chip>
-            </v-list-item-title>
-            <v-list-item-title v-else>
-              {{ item.testTitle ? item.testTitle : item.email }}
-              <!-- Chip for Test Type -->
-              <v-chip label outlined style="color: grey" small class="ml-1">
-                {{ item.testType ? item.testType : 'User' }}
-              </v-chip>
-            </v-list-item-title>
+              {{ item.header ? item.header.templateType : item.testType }}
+            </v-chip>
+          </v-list-item-title>
+          <v-list-item-title v-else-if="type === 'sessions'">
+            {{ item.testTitle }}
+            <v-chip
+              label
+              variant="outlined"
+              style="color: grey"
+              size="small"
+              class="ml-1"
+            >
+              Session
+            </v-chip>
+          </v-list-item-title>
+          <v-list-item-title v-else>
+            {{ item.testTitle ? item.testTitle : item.email }}
+            <!-- Chip for Test Type -->
+            <v-chip
+              label
+              variant="outlined"
+              style="color: grey"
+              size="small"
+              class="ml-1"
+            >
+              {{ item.testType ? item.testType : 'User' }}
+            </v-chip>
+          </v-list-item-title>
 
-            <!-- Subtitle -->
-            <v-list-item-subtitle>
-              {{ $t('pages.listTests.createdBy') }}
-              <strong v-if="type === 'myTests' || type === 'myTemplates'">
-                {{ $t('pages.listTests.me') }}
-              </strong>
-              <strong v-else-if="type === 'sessions'">
-                {{ item.testAdmin.email }}
-              </strong>
-              <strong v-else>
-                {{
-                  item.testAdmin
-                    ? item.testAdmin.email
-                    : item.header
+          <!-- Subtitle -->
+          <v-list-item-subtitle>
+            {{ $t('pages.listTests.createdBy') }}
+            <strong v-if="type === 'myTests' || type === 'myTemplates'">
+              {{ $t('pages.listTests.me') }}
+            </strong>
+            <strong v-else-if="type === 'sessions'">
+              {{ item.testAdmin.email }}
+            </strong>
+            <strong v-else>
+              {{
+                item.testAdmin
+                  ? item.testAdmin.email
+                  : item.header
                     ? item.header.templateAuthor.userEmail
                     : item.testAuthorEmail
-                }}
-              </strong>
-            </v-list-item-subtitle>
-          </v-list-item-content>
+              }}
+            </strong>
+          </v-list-item-subtitle>
+          
 
           <!-- Actions -->
           <v-list-item-action class="hidden-sm-and-down">
@@ -83,10 +119,16 @@
             <v-list-item-action-text
               v-if="item.updateDate && type != 'sessions'"
             >
-              <v-row class="ma-0" align="center">
+              <v-row
+                class="ma-0"
+                align="center"
+              >
                 <div class="hidden-sm-and-down">
-                  <v-tooltip v-if="type === 'myTests'" top>
-                    <template v-slot:activator="{ props }">
+                  <v-tooltip
+                    v-if="type === 'myTests'"
+                    location="top"
+                  >
+                    <template #activator="{ props }">
                       <v-row
                         v-bind="props"
                         class="ma-0 pa-0 mr-4"
@@ -104,16 +146,22 @@
                     </template>
                     <span>{{ $t('titles.cooperators') }}</span>
                   </v-tooltip>
-                  <v-tooltip v-else-if="type === 'sharedWithMe'" top>
-                    <template v-slot:activator="{ props }">
-                      <v-row v-bind="props" class="mr-3">
-                        <div class="caption">
+                  <v-tooltip
+                    v-else-if="type === 'sharedWithMe'"
+                    location="top"
+                  >
+                    <template #activator="{ props }">
+                      <v-row
+                        v-bind="props"
+                        class="mr-3"
+                      >
+                        <div class="text-caption">
                           {{ item.progress }}%
                         </div>
                         <v-progress-circular
                           rotate="-90"
-                          :value="item.progress"
-                          color="grey darken-1"
+                          :model-value="item.progress"
+                          color="grey-darken-1"
                           :size="20"
                           class="ml-1"
                         />
@@ -129,14 +177,22 @@
               </v-row>
             </v-list-item-action-text>
             <v-list-item-action-text v-if="type === 'sessions'">
-              <v-chip outlined class="mb-1 mr-6">
+              <v-chip
+                variant="outlined"
+                class="mb-1 mr-6"
+              >
                 <span>Scheduled for {{ getFormattedDate(item.testDate) }}</span>
               </v-chip>
             </v-list-item-action-text>
             <v-list-item-action-text
               v-if="type === 'myTemplates' || type === 'publicTemplates'"
             >
-              <v-chip outlined small class="ml-1" label>
+              <v-chip
+                variant="outlined"
+                size="small"
+                class="ml-1"
+                label
+              >
                 {{ $t('pages.listTests.version') }}
                 {{ item.header ? item.header.templateVersion : '-' }}
               </v-chip>
@@ -197,6 +253,7 @@ export default {
       type: Boolean,
     },
   },
+  emits: ['clicked', 'nextPage', 'previousPage'],
   data: () => ({}),
   computed: {
     // Compute the sorted items based on the updateDate property in descending order

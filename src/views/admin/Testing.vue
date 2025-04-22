@@ -8,10 +8,19 @@
       </v-row>
     </v-col>
 
-    <v-col cols="12" class="mt-6">
-      <v-row class="cards-container" justify="center">
+    <v-col
+      cols="12"
+      class="mt-6"
+    >
+      <v-row class="cards-container">
         <!-- Active Card: User Testing -->
-        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+          lg="3"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/user.png')"
             title="Usability User"
@@ -23,7 +32,13 @@
         </v-col>
 
         <!-- Inactive Card: A/B Testing -->
-        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+          lg="3"
+          class="card"
+        >
           <div>
             <CardTypeTest
               :img="require('../../../public/user.png')"
@@ -37,7 +52,13 @@
         </v-col>
 
         <!-- Inactive Card: Eye-Tracking -->
-        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+          lg="3"
+          class="card"
+        >
           <div>
             <CardTypeTest
               :img="require('../../../public/specialist.png')"
@@ -51,7 +72,13 @@
         </v-col>
 
         <!-- Inactive Card: Log Analysis -->
-        <v-col cols="12" sm="6" md="3" lg="3" class="card">
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+          lg="3"
+          class="card"
+        >
           <div>
             <CardTypeTest
               :img="require('../../../public/user.png')"
@@ -70,10 +97,10 @@
       :is-open="nameDialog"
       :test-type="testType"
       :heading="$t('TestDialog.heading')"
-      :subHeading="$t('TestDialog.sub-heading')"
-      :testName="$t('TestDialog.test-name')"
-      :testDescription="$t('TestDialog.test-description')"
-      :testLabel="$t('TestDialog.test-label')"
+      :sub-heading="$t('TestDialog.sub-heading')"
+      :test-name="$t('TestDialog.test-name')"
+      :test-description="$t('TestDialog.test-description')"
+      :test-label="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>

@@ -1,34 +1,47 @@
 <template>
   <v-app>
-    <v-navigation-drawer permanent width="370" class="ruxailab-sidebar">
+    <v-navigation-drawer
+      permanent
+      width="370"
+      class="ruxailab-sidebar"
+    >
       <!-- Logo and Title -->
       <div class="pa-4 d-flex align-center">
-        <v-avatar color="orange" size="40" class="mr-3">
-          <span class="white--text text-h5">R</span>
+        <v-avatar
+          color="orange"
+          size="40"
+          class="mr-3"
+        >
+          <span class="text-white text-h5">R</span>
         </v-avatar>
         <div>
-          <h1 class="text-h5 grey--text text--darken-3 font-weight-medium mb-0">
+          <h1 class="text-h5 text-grey-darken-3 font-weight-medium mb-0">
             RUXAILAB
           </h1>
-          <div class="caption grey--text">
+          <div class="text-caption text-grey">
             web accessibility evaluation tool
           </div>
         </div>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </div>
 
       <!-- Address Bar -->
       <div class="px-4 py-2">
         <div class="d-flex align-center mb-1">
-          <div class="mr-2">Address:</div>
+          <div class="mr-2">
+            Address:
+          </div>
           <v-text-field
-            dense
+            density="compact"
             hide-details
-            outlined
-            value="https://www.example.com/page"
+            variant="outlined"
+            model-value="https://www.example.com/page"
             class="flex-grow-1"
-          ></v-text-field>
-          <v-btn icon class="ml-1">
+          />
+          <v-btn
+            icon
+            class="ml-1"
+          >
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </div>
@@ -36,38 +49,54 @@
 
       <!-- Styles Toggle -->
       <div class="px-4 py-2">
-        <v-card outlined class="pa-3">
+        <v-card
+          border
+          class="pa-3"
+        >
           <div class="d-flex align-center">
-            <div class="mr-4">Styles:</div>
-            <div class="grey--text mr-2">OFF</div>
+            <div class="mr-4">
+              Styles:
+            </div>
+            <div class="text-grey mr-2">
+              OFF
+            </div>
             <v-switch
               v-model="stylesEnabled"
               color="primary"
               hide-details
               inset
-              dense
-            ></v-switch>
-            <div class="primary--text ml-2">ON</div>
+              density="compact"
+            />
+            <div class="text-primary ml-2">
+              ON
+            </div>
           </div>
         </v-card>
       </div>
 
       <!-- Summary Section -->
       <div class="px-4 pt-4">
-        <h2 class="text-h5 mb-2">Summary</h2>
+        <h2 class="text-h5 mb-2">
+          Summary
+        </h2>
 
         <!-- Tabs -->
-        <div class="d-flex mb-4 grey lighten-4">
+        <div class="d-flex mb-4 bg-grey-lighten-4">
           <v-btn
             v-for="(tab, index) in tabs"
             :key="index"
-            text
-            small
+            variant="text"
+            size="small"
             :class="activeTab === index ? 'primary--text' : ''"
-            @click="activeTab = index"
             class="px-2"
+            @click="activeTab = index"
           >
-            <v-icon small class="mr-1">{{ tab.icon }}</v-icon>
+            <v-icon
+              size="small"
+              class="mr-1"
+            >
+              {{ tab.icon }}
+            </v-icon>
             {{ tab.name }}
           </v-btn>
         </div>
@@ -75,53 +104,130 @@
         <!-- Statistics Grid -->
         <v-row>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="error" large>mdi-close-circle</v-icon>
-              <div class="text-h4 error--text">6</div>
-              <div class="caption">Errors</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="error"
+                size="large"
+              >
+                mdi-close-circle
+              </v-icon>
+              <div class="text-h4 text-error">
+                6
+              </div>
+              <div class="text-caption">
+                Errors
+              </div>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="deep-orange" large>mdi-contrast-circle</v-icon>
-              <div class="text-h4 deep-orange--text">2</div>
-              <div class="caption">Contrast Errors</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="deep-orange"
+                size="large"
+              >
+                mdi-contrast-circle
+              </v-icon>
+              <div class="text-h4 text-deep-orange">
+                2
+              </div>
+              <div class="text-caption">
+                Contrast Errors
+              </div>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="amber darken-2" large>mdi-alert</v-icon>
-              <div class="text-h4 amber--text text--darken-2">4</div>
-              <div class="caption">Alerts</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="amber-darken-2"
+                size="large"
+              >
+                mdi-alert
+              </v-icon>
+              <div class="text-h4 text-amber-darken-2">
+                4
+              </div>
+              <div class="text-caption">
+                Alerts
+              </div>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="success" large>mdi-check-circle</v-icon>
-              <div class="text-h4 success--text">5</div>
-              <div class="caption">Features</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="success"
+                size="large"
+              >
+                mdi-check-circle
+              </v-icon>
+              <div class="text-h4 text-success">
+                5
+              </div>
+              <div class="text-caption">
+                Features
+              </div>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="primary" large>mdi-sitemap</v-icon>
-              <div class="text-h4 primary--text">10</div>
-              <div class="caption">Structural Elements</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="primary"
+                size="large"
+              >
+                mdi-sitemap
+              </v-icon>
+              <div class="text-h4 text-primary">
+                10
+              </div>
+              <div class="text-caption">
+                Structural Elements
+              </div>
             </v-card>
           </v-col>
           <v-col cols="6">
-            <v-card outlined class="pa-3 text-center">
-              <v-icon color="deep-purple" large>mdi-cube-outline</v-icon>
-              <div class="text-h4 deep-purple--text">0</div>
-              <div class="caption">ARIA</div>
+            <v-card
+              border
+              class="pa-3 text-center"
+            >
+              <v-icon
+                color="deep-purple"
+                size="large"
+              >
+                mdi-cube-outline
+              </v-icon>
+              <div class="text-h4 text-deep-purple">
+                0
+              </div>
+              <div class="text-caption">
+                ARIA
+              </div>
             </v-card>
           </v-col>
         </v-row>
 
         <!-- View Details Button -->
         <div class="text-center mt-4 mb-4">
-          <v-btn color="primary" class="px-4">
-            <v-icon left>mdi-format-list-bulleted</v-icon>
+          <v-btn
+            color="primary"
+            class="px-4"
+          >
+            <v-icon start>
+              mdi-format-list-bulleted
+            </v-icon>
             View details
           </v-btn>
         </div>

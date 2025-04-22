@@ -1,42 +1,73 @@
 <template>
   <div v-if="answers">
-    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
-    <ShowInfo v-if="answers != null && !intro" title="Analytics">
-      <div slot="content">
-        <v-card flat class="task-container">
-          <v-row class="ma-0 pa-0">
-            <!-- Tasks List -->
-            <v-col class="ma-0 pa-0 task-list" cols="3">
-              <v-list dense class="list-scroll">
-                <v-subheader>Tasks</v-subheader>
-                <v-divider />
-                <v-list-item-group v-model="taskSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in testTasks" :key="i">
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item }}</v-list-item-title>
-                    </v-list-item-content>
+    <IntroAnalytics
+      v-if="answers != null && intro"
+      @go-to-coops="goToCoops"
+    />
+    <ShowInfo
+      v-if="answers != null && !intro"
+      title="Analytics"
+    >
+      <template #content>
+        <div>
+          <v-card
+            flat
+            class="task-container"
+          >
+            <v-row class="ma-0 pa-0">
+              <!-- Tasks List -->
+              <v-col
+                class="ma-0 pa-0 task-list"
+                cols="3"
+              >
+                <v-list
+                  v-model="taskSelect"
+                  density="compact"
+                  class="list-scroll"
+                  color="#fca326"
+                >
+                  <v-list-subheader>Tasks</v-list-subheader>
+                  <v-divider />
+                  <v-list-item
+                    v-for="(item, i) in testTasks"
+                    :key="i"
+                  >
+                    <v-list-item-title>{{ item }}</v-list-item-title>
                   </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-col>
-            <v-divider vertical inset />
+                </v-list>
+              </v-col>
+              <v-divider
+                vertical
+                inset
+              />
 
-            <!-- Answer List -->
-            <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <v-data-table :headers="dataHeaders" :items="taskAnswers">
-                <template v-slot:item.userDocId="{ item }">
-                  <span>{{ getCooperatorEmail(item.userDocId) }}</span>
-                </template>
-                <template v-slot:item.actions="{ item }">
-                  <v-btn color="orange" text @click="viewAnswers(item)">
-                    Show Answers
-                  </v-btn>
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row>
-        </v-card>
-      </div>
+              <!-- Answer List -->
+              <v-col
+                class="ma-0 pa-1 answer-list"
+                cols="9"
+              >
+                <v-data-table
+                  :headers="dataHeaders"
+                  :items="taskAnswers"
+                >
+                  <template #item.userDocId="{ item }">
+                    <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                  </template>
+                  <template #item.actions="{ item }">
+                    <v-btn
+                      color="orange"
+                      variant="text"
+                      @click="viewAnswers(item)"
+                    >
+                      Show Answers
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+      </template>
     </ShowInfo>
     <template>
       <v-dialog
@@ -46,9 +77,16 @@
         transition="dialog-bottom-transition"
       >
         <v-card>
-          <v-toolbar color="orange" dark>
-            <span class="headline">Answer and Observation</span>
-            <v-btn class="ml-auto" icon @click="showDialog = false">
+          <v-toolbar
+            color="orange"
+            dark
+          >
+            <span class="text-h5">Answer and Observation</span>
+            <v-btn
+              class="ml-auto"
+              icon
+              @click="showDialog = false"
+            >
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -61,10 +99,14 @@
                 "
                 class="pt-8"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Variables</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Variables</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       v-for="(question, index) in testStructure.preTest"
@@ -86,9 +128,11 @@
                 <span
                   class="t-5 font-weight-bold text-h6"
                   style="color: #252525"
-                  >Task Time</span
+                >Task Time</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <p class="text-h6">
                       {{ formatTime(dialogItem.tasks[taskSelect].taskTime) }}
@@ -101,10 +145,14 @@
                 cols="12"
                 class="pt-8"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post-Test Answer</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Post-Test Answer</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       v-for="(question, index) in testStructure.postTest"
@@ -127,10 +175,14 @@
                 "
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Answer</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Answer</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskAnswer }}
@@ -143,10 +195,14 @@
                 cols="12"
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post Question</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Post Question</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <strong>{{
                       testStructure.userTasks[taskSelect].postQuestion
@@ -165,10 +221,14 @@
                 "
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Observation</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Observation</span>
+                <v-card
+                  border
+                  rounded="xxl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskObservations }}
@@ -182,9 +242,10 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Web Cam Record</span
-                  >
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >Web Cam Record</span>
                   <video
                     v-if="dialogItem"
                     class="my-3"
@@ -200,9 +261,10 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Screen Record</span
-                  >
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >Screen Record</span>
                   <video
                     class="my-3"
                     :src="dialogItem.tasks[taskSelect].screenRecordURL"
@@ -217,14 +279,17 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525">
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >
                     Audio Record
                   </span>
                   <audio
                     class="mx-auto my-3"
                     :src="dialogItem.tasks[taskSelect].audioRecordURL"
                     controls
-                  ></audio>
+                  />
                 </v-col>
               </div>
             </v-row>
@@ -242,6 +307,7 @@ export default {
   components: {
     ShowInfo,
   },
+  emits: ['goToCoops'],
   data: () => ({
     showDialog: false,
     dialogItem: null,

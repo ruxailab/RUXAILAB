@@ -3,52 +3,82 @@
     <v-data-table height="420" style="background: #f5f7ff; border-radius: 20px;" :headers="headers" :items="allTasks"
       :items-per-page="5" class="elevation-1">
       <!-- Table Header -->
-      <template v-slot:top>
-        <v-row align="center" class="ma-0">
+      <template #top>
+        <v-row
+          align="center"
+          class="ma-0"
+        >
           <v-col class="ml-2 mb-1 pa-4 pb-0">
             <p class="subtitleView">
               {{ $t('UserTestTable.titles.currentTasks') }}
             </p>
           </v-col>
           <v-col>
-            <v-row justify="end" class="mx-0">
-              <v-btn depressed rounded color="#f9a826" class="white--text" small @click="dialog = true">
+            <v-row
+              justify="end"
+              class="mx-0"
+            >
+              <v-btn
+                variant="flat"
+                rounded
+                color="#f9a826"
+                class="text-white"
+                size="small"
+                @click="dialog = true"
+              >
                 Add new task
               </v-btn>
-              <FormDialog :task="task" :dialog="dialog" @closeDialog="dialog = false" @addTask="addTask()" />
+              <FormDialog
+                v-model:dialog="dialog"
+                v-model:task="task"
+                @add-task="addTask"
+              />
             </v-row>
           </v-col>
         </v-row>
         <v-divider class="mb-4" />
       </template>
       <!-- Checkbox Columns -->
-      <template v-slot:[`item.hasEye`]="{ item }">
-        <v-simple-checkbox v-model="item.hasEye" disabled />
+      <template #[`item.hasEye`]="{ item }">
+        <v-checkbox-btn
+          v-model="item.hasEye"
+          disabled
+        />
       </template>
-      <template v-slot:[`item.hasCamRecord`]="{ item }">
-        <v-simple-checkbox v-model="item.hasCamRecord" disabled />
+      <template #[`item.hasCamRecord`]="{ item }">
+        <v-checkbox-btn
+          v-model="item.hasCamRecord"
+          disabled
+        />
       </template>
-      <template v-slot:[`item.hasAudioRecord`]="{ item }">
-        <v-simple-checkbox v-model="item.hasAudioRecord" disabled />
+      <template #[`item.hasAudioRecord`]="{ item }">
+        <v-checkbox-btn
+          v-model="item.hasAudioRecord"
+          disabled
+        />
       </template>
-      <template v-slot:[`item.hasScreenRecord`]="{ item }">
-        <v-simple-checkbox v-model="item.hasScreenRecord" disabled />
+      <template #[`item.hasScreenRecord`]="{ item }">
+        <v-checkbox-btn
+          v-model="item.hasScreenRecord"
+          disabled
+        />
       </template>
-      <template v-slot:[`item.postQuestion`]="{ item }">
-        <v-checkbox v-model="item.postQuestion" disabled />
+      <!-- Text Columns -->
+      <template #[`item.taskDescription`]="{ item }">
+        {{ item.taskDescription || '-' }}
       </template>
-      <template v-slot:[`item.taskTip`]="{ item }">
-        <v-checkbox v-model="item.taskTip" disabled />
+      <template #[`item.taskTip`]="{ item }">
+        {{ item.taskTip || '-' }}
       </template>
-      <template v-slot:[`item.taskDescription`]="{ item }">
-        <v-checkbox v-model="item.taskDescription" disabled />
+      <template #[`item.postQuestion`]="{ item }">
+        {{ item.postQuestion || '-' }}
       </template>
-      <!-- Edit and Delete icons -->
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item)">
+      <!-- Edit and Delete Icons -->
+      <template #[`item.actions`]="{ item }">
+        <v-icon
+          size="small"
+          @click="deleteItem(item)"
+        >
           mdi-delete
         </v-icon>
       </template>
@@ -66,12 +96,13 @@ export default {
   props: {
     tasks: {
       type: Array,
-      requeired: true,
-      default: function () {
+      required: true,
+      default: function() {
         return []
       },
     },
   },
+  emits: ['change'],
   data: () => ({
     dialog: false,
     itemsTasks: [],
@@ -128,12 +159,12 @@ export default {
         this.allTasks.splice(index, 1)
       }
     },
-    addTask() {
+    addTask(newTask) {
       if (this.editedIndex > -1) {
-        Object.assign(this.allTasks[this.editedIndex], this.task)
-        this.editedIndex = -1
+        Object.assign(this.tasks[this.editedIndex], newTask)
+        this.$emit('change')
       } else {
-        this.$store.dispatch('addItemsTasks', this.task)
+        this.$store.dispatch('addItemsTasks', newTask).then(() => {})
         this.allTasks = Object.assign(
           this.$store.getters.tasks,
           this.$store.state.Tests.Test.testStructure.userTasks,

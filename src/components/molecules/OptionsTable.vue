@@ -7,35 +7,41 @@
       :items="optionsWithFormattedValue"
       :items-per-page="-1"
     >
-      <template v-slot:[`item.actions`]="{ item }">
+      <template #[`item.actions`]="{ item }">
         <v-icon
           :disabled="testAnswerDocLength > 0 ? true : false"
-          small
+          size="small"
           @click="editItem(item)"
         >
           mdi-pencil
         </v-icon>
         <v-icon
           :disabled="testAnswerDocLength > 0 ? true : false"
-          small
+          size="small"
           @click="deleteItem(item)"
         >
           mdi-delete
         </v-icon>
       </template>
 
-      <template v-slot:top>
-        <v-row class="ma-0" align="center">
+      <template #top>
+        <v-row
+          class="ma-0"
+          align="center"
+        >
           <v-card-title class="subtitleView">
             {{ $t('HeuristicsOptionsTable.titles.options') }}
           </v-card-title>
-          <v-row justify="end" class="ma-0 pa-0 mr-4">
+          <v-row
+            justify="end"
+            class="ma-0 pa-0 mr-4"
+          >
             <AddOptionBtn
               :option="option"
               :dialog="dialog"
               :has-value="hasValue"
-              @changeHasValue="hasValue = !hasValue"
-              @addOption="updateOptions"
+              @change-has-value="hasValue = !hasValue"
+              @add-option="updateOptions"
               @dialog="changeDialog"
               @change="emitChange()"
             />
@@ -55,21 +61,22 @@ export default {
   components: {
     AddOptionBtn,
   },
+  emits: ['change'],
   data: () => ({
     headers: [
       {
-        text: i18n.t('common.text'),
+        text: i18n.global.t('common.text'),
         align: 'start',
         value: 'text',
       },
       {
-        text: i18n.t('common.description'),
+        text: i18n.global.t('common.description'),
         align: 'end',
         value: 'description',
       },
-      { text: i18n.t('common.value'), align: 'end', value: 'value' },
+      { text: i18n.global.t('common.value'), align: 'end', value: 'value' },
       {
-        text: i18n.t('common.editDelete'),
+        text: i18n.global.t('common.editDelete'),
         value: 'actions',
         align: 'end',
         sortable: false,

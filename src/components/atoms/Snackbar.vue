@@ -3,11 +3,15 @@
     v-model="snackbar"
     :color="snackColor"
     :timeout="4000"
-    top
+    location="top"
   >
     <div>{{ snackMessage }}</div>
-    <template v-slot:action="{ attrs }">
-      <v-btn v-bind="attrs" text @click="snackbar = false">
+    <template #actions="{ attrs }">
+      <v-btn
+        v-bind="attrs"
+        variant="text"
+        @click="snackbar = false"
+      >
         {{ $t('buttons.close') }}
       </v-btn>
     </template>
@@ -27,7 +31,7 @@ export default {
       return this.$store.getters.snackColor
     },
   },
-watch: {
+  watch: {
     snackMessage(newVal) {
       if (newVal) this.snackbar = true;
     },

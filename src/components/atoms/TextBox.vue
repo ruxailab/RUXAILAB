@@ -1,69 +1,138 @@
 <template>
   <div>
-    <div v-if="editable" class="main-box">
+    <div
+      v-if="editable"
+      class="main-box"
+    >
       <!-- Custom Toolbar -->
-      <div class="grey lighten-3 editor-bar">
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().undo().run()">
-          <v-icon color="grey darken-1">mdi-undo</v-icon>
+      <div class="bg-grey-lighten-3 editor-bar">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().undo().run()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-undo
+          </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().redo().run()">
-          <v-icon color="grey darken-1">mdi-redo</v-icon>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().redo().run()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-redo
+          </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleBold().run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleBold().run()"
+        >
           <v-icon :color="editor.isActive('bold') ? '#FCA326' : 'grey darken-1'">
             mdi-format-bold
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleItalic().run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleItalic().run()"
+        >
           <v-icon :color="editor.isActive('italic') ? '#FCA326' : 'grey darken-1'">
             mdi-format-italic
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleUnderline().run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleUnderline().run()"
+        >
           <v-icon :color="editor.isActive('underline') ? '#FCA326' : 'grey darken-1'">
             mdi-format-underline
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        >
           <v-icon :color="editor.isActive('heading', { level: 1 }) ? '#FCA326' : 'grey darken-1'">
             mdi-format-header-1
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        >
           <v-icon :color="editor.isActive('heading', { level: 2 }) ? '#FCA326' : 'grey darken-1'">
             mdi-format-header-2
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+        >
           <v-icon :color="editor.isActive('heading', { level: 3 }) ? '#FCA326' : 'grey darken-1'">
             mdi-format-header-3
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleBulletList().run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleBulletList().run()"
+        >
           <v-icon :color="editor.isActive('bulletList') ? '#FCA326' : 'grey darken-1'">
             mdi-format-list-bulleted
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="editor.chain().focus().toggleOrderedList().run()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleOrderedList().run()"
+        >
           <v-icon :color="editor.isActive('orderedList') ? '#FCA326' : 'grey darken-1'">
             mdi-format-list-numbered
           </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="loadImage()">
-          <v-icon color="grey darken-1">mdi-image</v-icon>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="loadImage()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-image
+          </v-icon>
         </v-btn>
 
-        <v-btn text small color="#FCA326" @click="setLink()">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="setLink()"
+        >
           <v-icon :color="editor.isActive('link') ? '#FCA326' : 'grey darken-1'">
             mdi-link-variant-plus
           </v-icon>
@@ -71,10 +140,17 @@
       </div>
 
       <v-divider />
-      <editor-content class="text-box pa-1" :editor="editor" />
+      <editor-content
+        class="text-box pa-1"
+        :editor="editor"
+      />
     </div>
     <!-- Read only -->
-    <editor-content v-else style="outline-color: none !important;" :editor="editor" />
+    <editor-content
+      v-else
+      style="outline-color: none !important;"
+      :editor="editor"
+    />
   </div>
 </template>
 
@@ -101,12 +177,24 @@ export default {
       default: '',
     },
   },
+  emits: ['updateJson', 'updateHtml', 'mounted'],
   data() {
     return {
       editor: null,
       json: null,
       html: null,
     };
+  },
+  watch: {
+    json() {
+      this.$emit('updateJson', this.json);
+    },
+    html() {
+      this.$emit('updateHtml', this.html);
+    },
+    text(newText) {
+      this.editor.commands.setContent(newText);
+    },
   },
   mounted() {
     this.editor = new Editor({
@@ -133,17 +221,6 @@ export default {
     if (this.editor) {
       this.editor.destroy();
     }
-  },
-  watch: {
-    json() {
-      this.$emit('updateJson', this.json);
-    },
-    html() {
-      this.$emit('updateHtml', this.html);
-    },
-    text(newText) {
-      this.editor.commands.setContent(newText);
-    },
   },
   methods: {
     loadImage() {

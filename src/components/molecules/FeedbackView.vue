@@ -1,26 +1,46 @@
 <template>
   <v-row>
-    <v-col class="mt-8" cols="8">
-      <video ref="remoteMedia" class="video" muted autoplay playsinline />
+    <v-col
+      class="mt-8"
+      cols="8"
+    >
+      <video
+        ref="remoteMedia"
+        class="video"
+        muted
+        autoplay
+        playsinline
+      />
     </v-col>
-    <v-col class="mt-8" cols="4">
-      <video ref="localMedia" class="video" muted autoplay playsinline />
+    <v-col
+      class="mt-8"
+      cols="4"
+    >
+      <video
+        ref="localMedia"
+        class="video"
+        muted
+        autoplay
+        playsinline
+      />
     </v-col>
     <v-col cols="12">
       <v-row justify="center">
-        <v-card class="pa-2 buttonCard" depressed>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+        <v-card
+          class="pa-2 buttonCard"
+          depressed
+        >
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
               <v-btn
                 v-if="localCameraStream"
                 class="mx-3"
-                :dark="isMicrophoneMuted"
                 :class="{ red: isMicrophoneMuted, white: !isMicrophoneMuted }"
-                fab
-                depressed
+                icon
+                variant="flat"
+                v-bind="props"
+               
                 @click="toggleMicrophone"
-                v-bind="attrs"
-                v-on="on"
               >
                 <v-icon v-if="!isMicrophoneMuted">
                   mdi-microphone
@@ -34,17 +54,15 @@
               isMicrophoneMuted ? 'Unmute microphone' : 'Mute microphone'
             }}</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
               <v-btn
                 class="mx-3"
-                :dark="isSharingScreen"
                 :class="{ red: isSharingScreen, white: !isSharingScreen }"
-                depressed
-                fab
+                variant="flat"
+                icon
+                v-bind="props"
                 @click="toggleCameraScreen"
-                v-bind="attrs"
-                v-on="on"
               >
                 <v-icon v-if="!isSharingScreen">
                   mdi-monitor-screenshot
@@ -58,15 +76,14 @@
               isSharingScreen ? 'Stop screen sharing' : 'Share screen'
             }}</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
               <v-btn
-                class="mx-3 white"
-                depressed
-                fab
+                class="mx-3 bg-white"
+                variant="flat"
+                icon
+                v-bind="props"
                 @click="redirect()"
-                v-bind="attrs"
-                v-on="on"
               >
                 <v-icon>
                   mdi-link
@@ -117,9 +134,6 @@ export default {
       return this.$store.getters.peerConnection
     },
   },
-  mounted() {
-    this.setupStreams()
-  },
   watch: {
     localCameraStream(newVal) {
       this.setupStreams()
@@ -127,6 +141,9 @@ export default {
     remoteCameraStream(newVal) {
       this.setupStreams()
     },
+  },
+  mounted() {
+    this.setupStreams()
   },
   methods: {
     redirect() {

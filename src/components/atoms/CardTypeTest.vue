@@ -7,20 +7,23 @@
       height="350"
       @click="$emit('click', segundType)"
     >
-    <v-card-title class="cardsTitle">
-      {{ title }}
-    </v-card-title>
-    <v-card-subtitle class="cardSubtitle">
+      <v-card-title class="cardsTitle">
+        {{ title }}
+      </v-card-title>
+      <v-card-subtitle class="cardSubtitle">
         {{ type }} 
-    </v-card-subtitle>
+      </v-card-subtitle>
 
       <v-divider />
       <v-card-text>
-        <v-row v-for="text in texts" :key="text" class="ml-6 mt-6 mb-6">
+        <v-row
+          v-for="text in texts"
+          :key="text"
+          class="ml-6 mt-6 mb-6"
+        >
           <p>{{ text }}</p>
         </v-row>
       </v-card-text>
-
     </v-card>
   </div>
 </template>
@@ -58,6 +61,7 @@ export default {
       require: true,
     },
   },
+  emits: ['click'],
 }
 </script>
 

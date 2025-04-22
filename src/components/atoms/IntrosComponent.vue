@@ -1,31 +1,45 @@
 <template>
   <v-container style="display: contents; background-color: #f4b700">
-    <div class="background-gradient" :style="backgroundImage">
-      <v-row class="ml-0" align="center" justify="center" style="height: 100%">
+    <div
+      class="background-gradient"
+      :style="backgroundImage"
+    >
+      <v-row
+        class="ml-0"
+        align="center"
+        justify="center"
+        style="height: 100%"
+      >
         <div class="text-div">
           <div
-            class="mb-4 white--text mobile-center"
+            class="mb-4 text-white mobile-center"
             style="font-size: 60px; font-weight: 500"
           >
             {{ $t('titles.drawer.' + title) }}
           </div>
           <v-img
             class="mb-5 hidden-md-and-up"
-            contain
+            cover
             :src="require('../../assets/manager/' + image)"
             max-height="350"
           />
-          <div style="font-size: 22px" class="white--text mb-4 mobile-center">
+          <div
+            style="font-size: 22px"
+            class="text-white mb-4 mobile-center"
+          >
             {{ main }}
           </div>
-          <button class="edit-btn rounded-lg white--text" @click="emitClick()">
+          <button
+            class="edit-btn rounded-lg text-white"
+            @click="emitClick()"
+          >
             {{ $t('pages.intros.click') }}
           </button>
         </div>
 
         <v-img
           class="hidden-sm-and-down"
-          contain
+          cover
           max-width="40%"
           max-height="400"
           :src="require('../../assets/manager/' + image)"
@@ -34,8 +48,14 @@
     </div>
 
     <v-col>
-      <v-row justify="center" class="ml-0">
-        <v-col cols="12" md="8">
+      <v-row
+        justify="center"
+        class="ml-0"
+      >
+        <v-col
+          cols="12"
+          md="8"
+        >
           <div class="learn-text">
             {{ $t('pages.intros.learnMore') }}
           </div>
@@ -45,24 +65,33 @@
             style="border-radius: 10px !important"
           >
             <v-list class="ma-0 pa-0">
-              <div v-for="(item, i) in items" :key="i">
+              <div
+                v-for="(item, i) in items"
+                :key="i"
+              >
                 <v-list-item
                   class="py-5"
                   :ripple="false"
                   style="border-radius: 10px !important"
                   @click="emitCallFunc(item.func)"
                 >
-                  <v-list-item-avatar size="50" :color="item.iconColor">
-                    <v-icon dark size="35" v-text="item.icon" />
-                  </v-list-item-avatar>
+                  <v-avatar
+                    size="50"
+                    :color="item.iconColor"
+                  >
+                    <v-icon
+                      size="35"
+                    >
+                      {{ item.icon }}
+                    </v-icon>
+                  </v-avatar>
 
-                  <v-list-item-content>
-                    <v-list-item-title
-                      style="font-size: 25px"
-                      v-text="item.title"
-                    />
-                    <v-list-item-subtitle v-text="item.subtitle" />
-                  </v-list-item-content>
+                  <v-list-item-title style="font-size: 25px">
+                    {{ item.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ item.subtitle }}
+                  </v-list-item-subtitle>
                 </v-list-item>
 
                 <v-divider />
@@ -81,34 +110,35 @@ export default {
     title: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
     image: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
     main: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
     link: {
       type: String,
       default: '',
-      require: true,
+      required: true,
     },
     items: {
       type: Array,
       default: () => [],
-      require: true,
+      required: true,
     },
     colors: {
       type: Array,
       default: () => [],
-      require: true,
+      required: true,
     },
   },
+  emits: ['linkClicked', 'callFunc'],
   data: () => ({}),
   computed: {
     backgroundImage() {
