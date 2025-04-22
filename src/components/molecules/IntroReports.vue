@@ -6,8 +6,8 @@
     :main="$t('descriptions.intro.reports')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
-    @linkClicked="goToCoops()"
-    @callFunc="callFunc"
+    @link-clicked="goToCoops()"
+    @call-func="callFunc"
   />
 </template>
 
@@ -19,6 +19,7 @@ export default {
   components: {
     IntroComp,
   },
+  emits: ['goToCoops'],
   data: () => ({}),
   computed: {
     items() {
@@ -26,8 +27,8 @@ export default {
         {
           iconColor: '#ff6224',
           icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
-          subtitle: i18n.t('pages.intros.docSubtitle') + i18n.t('titles.reports'),
+          title: i18n.global.t('pages.intros.docTitle'),
+          subtitle: i18n.global.t('pages.intros.docSubtitle') + i18n.global.t('titles.reports'),
           func: 'goToDoc',
         },
       ]

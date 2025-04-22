@@ -27,34 +27,46 @@
               </div>
             </div>
           </div>
-          <div v-else class="column with-border">
+          <div
+            v-else
+            class="column with-border"
+          >
             <div style="margin-top: 10%">
               {{ $t('pages.finalReport.createHeuristics') }}
             </div>
           </div>
         </v-col>
         <v-col>
-          <div class="column with-margin ">
+          <div class="column with-margin">
             {{ $t('pages.finalReport.elements') + ':' }}
-            <div v-for="option in options" :key="option.id" class="option">
+            <div
+              v-for="option in options"
+              :key="option.id"
+              class="option"
+            >
               <input
                 :id="option.id"
                 type="checkbox"
                 :name="option.name"
                 style="margin-right: 10px;"
               >
-              <label class="option" :for="option.id">{{ option.label }}</label>
+              <label
+                class="option"
+                :for="option.id"
+              >{{ option.label }}</label>
             </div>
           </div>
         </v-col>
       </v-row>
     </div>
-    <v-row class="ma-0" justify="space-between">
+    <v-row
+      class="ma-0"
+      justify="space-between"
+    >
       <v-btn
         class="teste2"
-        color="blue-grey darken-3"
+        color="blue-grey-darken-3"
         elevation="0"
-        dark
         @click="$emit('return-step')"
       >
         {{ $t('buttons.previous') }}
@@ -62,7 +74,6 @@
       <v-btn
         :disabled="isLoading"
         class=""
-        :dark="!isLoading"
         color="orange"
         @click="submitPdf"
       >
@@ -76,10 +87,10 @@
 <script>
 import axios from 'axios'
 import { finalResult, statistics } from '@/utils/statistics'
-
 import i18n from '@/i18n'
 
 export default {
+  emits: ['return-step'],
   data: () => ({
     preview: new Object(),
     formattedDate: '',
@@ -114,27 +125,27 @@ export default {
         {
           id: 'options',
           name: 'options',
-          label: i18n.t('pages.finalReport.options.options'),
+          label: i18n.global.t('pages.finalReport.options.options'),
         },
         {
           id: 'comments',
           name: 'comments',
-          label: i18n.t('pages.finalReport.options.comments'),
+          label: i18n.global.t('pages.finalReport.options.comments'),
         },
         {
           id: 'results',
           name: 'results',
-          label: i18n.t('pages.finalReport.options.statistics'),
+          label: i18n.global.t('pages.finalReport.options.statistics'),
         },
         {
           id: 'evaluators-results',
           name: 'evaluators-results',
-          label: i18n.t('pages.finalReport.options.answersByEvaluator'),
+          label: i18n.global.t('pages.finalReport.options.answersByEvaluator'),
         },
         {
           id: 'finalReport',
           name: 'finalReport',
-          label: i18n.t('pages.finalReport.options.finalReport'),
+          label: i18n.global.t('pages.finalReport.options.finalReport'),
         },
       ]
     },
@@ -146,22 +157,18 @@ export default {
         items: [],
       }
 
-      // Your existing data
-      const testOptions = this.test.testOptions // Provide your testOptions array here
-      const resultEvaluator = statistics() // Provide your resultEvaluator array here
+      const testOptions = this.test.testOptions
+      const resultEvaluator = statistics()
 
-      // Code to calculate max and min values
       const options = testOptions.map((op) => op.value)
       const max = Math.max(...options)
       const min = Math.min(...options)
 
-      // Add "HEURISTICS" to the table header
       table.header.push({
         text: 'HEURISTICS',
         value: 'heuristic',
       })
 
-      // Process each evaluator in resultEvaluator
       if (resultEvaluator) {
         resultEvaluator.forEach((evaluator) => {
           const header = table.header.find((h) => h.text === evaluator.id)
@@ -204,47 +211,38 @@ export default {
       const results = document.getElementById('results')
       const finalReport = document.getElementById('finalReport')
       const evaluatorsResults = document.getElementById('evaluators-results')
-      // const heuristicsResults = document.getElementById('heuristics-results')
 
-      //test options
       if (options.checked == true) {
         this.preview.testOptions = this.test.testOptions
-      } else this.preview.testOptions = '' //end of test options
+      } else this.preview.testOptions = ''
 
-      //test comments
       if (comments.checked == true) {
         this.preview.testComments = true
-      } else this.preview.testComments = false //end of test comments
+      } else this.preview.testComments = false
 
-      //test statistics
       if (results.checked == true) {
         const answersDocId = this.test.answersDocId
         this.preview.results = answersDocId
-      } else this.preview.results = '' //end of test statistics
+      } else this.preview.results = ''
 
-      //Statistics
       if (evaluatorsResults.checked == true) {
         this.preview.statistics = true
-      } else this.preview.statistics = false //end of test statistics
-
-      // if (heuristicsResults.checked == true) {
-      //   this.preview.heuristicEvaluator = this.heuristicsEvaluator()
-      // } else this.preview.heuristicEvaluator = '' //end of test statistics
+      } else this.preview.statistics = false
 
       if (finalReport.checked) {
-        this.preview.finalReport = this.test.finalReport //
+        this.preview.finalReport = this.test.finalReport
       }
     },
 
     finalResult,
 
     async submitPdf() {
-      this.isLoading = true // Set isLoading to true to indicate PDF generation is in progress
+      this.isLoading = true
 
       try {
         await this.genPreview()
-        const date = new Date() // Get current date
-        const dayOfMonth = date.getDate() // Get day of the month
+        const date = new Date()
+        const dayOfMonth = date.getDate()
         const monthNames = [
           'January',
           'February',
@@ -259,10 +257,9 @@ export default {
           'November',
           'December',
         ]
-        const monthName = monthNames[date.getMonth()] // Get month name
-        const year = date.getFullYear() // Get year
+        const monthName = monthNames[date.getMonth()]
+        const year = date.getFullYear()
 
-        // Add ordinal suffix to day of month (e.g. 1st, 2nd, 3rd)
         let dayOfMonthStr
         switch (dayOfMonth) {
           case 1:
@@ -289,14 +286,11 @@ export default {
           if (this.test.cooperators.length > 0) {
             this.test.cooperators.forEach((element) => {
               if (element && element.email) {
-                this.cooperatorsEmail.push(element.email) // Extract and push emails to the array
+                this.cooperatorsEmail.push(element.email)
               }
             })
 
-            // Assign the extracted email addresses to the preview object
             this.preview.cooperatorsEmail = this.cooperatorsEmail
-
-            // Reset the cooperatorsEmail array to an empty array
             this.cooperatorsEmail = []
           } else {
             console.log('cooperators email not empty')
@@ -304,7 +298,7 @@ export default {
         } else {
           this.preview.cooperatorsEmail = ''
         }
-        // TODO: Fix this, right now I've just removed the option to send images
+
         this.answers.forEach((answer) => {
           answer.heuristicQuestions.forEach((heuristic) => {
             heuristic.heuristicQuestions.forEach((question) => {
@@ -312,32 +306,28 @@ export default {
             })
           })
         })
-        //this.preview.cooperatorsEmail = this.test.cooperators[i].email
+
         await axios
           .post(
             'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
             {
               items: [
                 {
-                  title: this.test.testTitle, //---------------basic pdf elements section  |
+                  title: this.test.testTitle,
                   date: this.formattedDate,
                   creationDate: this.test.creationDate,
                   testDescription: this.test.testDescription,
                   cooperatorsEmail: this.preview.cooperatorsEmail,
-                  creatorEmail: this.test.testAdmin.email, //-------------------------------|
-
-                  finalReport: this.preview.finalReport, //
-                  allOptions: this.preview.testOptions, //
-
+                  creatorEmail: this.test.testAdmin.email,
+                  finalReport: this.preview.finalReport,
+                  allOptions: this.preview.testOptions,
                   allAnswers: this.answers,
                   testStructure: this.test.testStructure,
                   selectedHeuristics: this.selectedHeuristics,
-
                   statistics: this.preview.statistics,
                   gstatistics: this.statistics,
                   statisticstable: this.$store.state.Answer.evaluatorStatistics,
                   heuristicStatistics: this.preview.heuristicEvaluator,
-
                   testComments: this.preview.testComments,
                 },
               ],
@@ -358,7 +348,7 @@ export default {
       } catch (error) {
         console.error(error)
       } finally {
-        this.isLoading = false // Set isLoading back to false after the PDF generation is complete or encountered an error.
+        this.isLoading = false
       }
     },
   },

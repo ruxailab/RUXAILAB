@@ -1,23 +1,32 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col cols="10" class="pt-16">
-        <v-row v-if="!searching" align="center">
+      <v-col
+        cols="10"
+        class="pt-16"
+      >
+        <v-row
+          v-if="!searching"
+          align="center"
+        >
           <span class="titleText ml-3 mb-2">{{
             $t('pages.createTest.templateTitle')
           }}</span>
           <v-text-field
             v-model="search"
-            full-width
-            dense
+            density="compact"
             class="ml-4 mt-6 hidden-sm-and-down"
             :label="$t('Dashboard.search')"
             prepend-inner-icon="mdi-magnify"
-            outlined
-            color="grey darken-2"
+            variant="outlined"
+            color="grey-darken-2"
           />
           <v-spacer class="hidden-md-and-up" />
-          <v-btn class="mr-3 hidden-md-and-up" icon @click="searching = true">
+          <v-btn
+            class="mr-3 hidden-md-and-up"
+            icon
+            @click="searching = true"
+          >
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-row>
@@ -25,11 +34,11 @@
           v-else
           v-model="search"
           :autofocus="searching"
-          dense
+          density="compact"
           :label="$t('Dashboard.search')"
           prepend-inner-icon="mdi-magnify"
-          outlined
-          color="grey darken-2"
+          variant="outlined"
+          color="grey-darken-2"
           @blur="searching = false"
         />
         <v-divider class="mb-1" />
@@ -42,7 +51,7 @@
     </v-row>
     <TempDialog
       v-if="temp"
-      :dialog.sync="dialog"
+      v-model:dialog="dialog"
       :template="temp"
       :allow-create="true"
       @close="dialog = false"

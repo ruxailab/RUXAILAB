@@ -2,7 +2,7 @@
   <div>
     <v-btn
       v-if="!isHelp"
-      small
+      size="small"
       icon
       class="mr-1"
       @click="$router.push('/help')"

@@ -3,35 +3,39 @@
     <v-btn
       rounded
       color="#f9a826"
-      class="white--text"
-      small
-      :disabled="testAnswerDocLength > 0 ? true : false"
-      :class="{
-        disabledBtnBackground: testAnswerDocLength > 0,
-      }"
+      class="text-white"
+      size="small"
+      :disabled="testAnswerDocLength > 0"
+      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
       @click="$emit('dialog', true)"
     >
       {{ $t('HeuristicsTable.titles.addOption') }}
     </v-btn>
 
     <v-dialog
-      :value="dialog"
-      @input="$emit('update:dialog', $event)"
+      :model-value="dialog"
       width="500"
       persistent
+      @update:model-value="$emit('update:dialog', $event)"
     >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
             <v-form ref="form">
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="6">
                   <v-text-field
-                    v-model="option.text"
+                    v-model="localOption.text"
                     max-length="100"
                     counter="100"
                     :label="$t('common.text')"
@@ -41,9 +45,9 @@
 
                 <v-col cols="6">
                   <v-text-field
-                    v-model.number="option.value"
+                    v-model.number="localOption.value"
                     :label="$t('common.value')"
-                    :disabled="!hasValue"
+                    :disabled="!localHasValue"
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
@@ -53,22 +57,23 @@
               </v-row>
 
               <!-- New row for Option description -->
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="12">
                   <v-text-field
-                    v-model="option.description"
+                    v-model="localOption.description"
                     max-length="250"
                     counter="250"
-                    :label="
-                      $t('HeuristicsTable.placeholders.optionDescription')
-                    "
+                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
                   />
                 </v-col>
               </v-row>
 
               <v-row justify="center">
                 <v-checkbox
-                  v-model="hasValueState"
+                  v-model="localHasValue"
                   :label="$t('HeuristicsTable.titles.hasValue')"
                 />
               </v-row>
@@ -79,15 +84,20 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            small
-            text
-            color="red lighten-1 white--text"
+            size="small"
+            variant="text"
+            color="red-lighten-1"
             @click="$emit('update:dialog', false), resetVal()"
           >
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
 
-          <v-btn small color="#f9a826" class="white--text" @click="validate()">
+          <v-btn
+            size="small"
+            color="#f9a826"
+            class="text-white"
+            @click="validate()"
+          >
             {{ $t('common.save') }}
           </v-btn>
         </v-card-actions>
@@ -97,7 +107,8 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
+import i18n from '@/i18n';
+
 export default {
   props: {
     option: {
@@ -111,72 +122,76 @@ export default {
     hasValue: {
       type: Boolean,
       required: true,
-      default: true,
+      default: true, 
     },
   },
+  emits: ['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change'],
   data: () => ({
-    textRequired: [
-      (v) => !!v || i18n.t('HeuristicsTable.validation.textRequired'),
-    ],
+    textRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.textRequired')],
+    localOption: { text: '', value: null, description: '' },
+    localHasValue: true,
   }),
   computed: {
     testAnswerDocLength() {
       if (!this.$store.getters.testAnswerDocument) {
-        return 0
+        return 0;
       }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
-    },
-    hasValueState: {
-      get() {
-        return this.hasValue
-      },
-      set() {
-        this.$emit('changeHasValue')
-      },
+      const heuristicAnswers = this.$store.getters.testAnswerDocument.heuristicAnswers;
+      return Object.keys(heuristicAnswers).length;
     },
     valueRequired() {
-      if (
-        this.hasValue ||
-        (this.option.value !== null && this.option.value >= 0)
-      ) {
+      if (this.localHasValue || (this.localOption.value !== null && this.localOption.value >= 0)) {
         return [
           (v) =>
             (v !== '' && v !== null && v >= 0) ||
             i18n.t('HeuristicsTable.validation.textRequired'),
-        ]
-      } else {
-        return []
+        ];
       }
+      return [];
     },
   },
   watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.hasValue = true
+    option: {
+      handler(newOption) {
+        this.localOption = { ...newOption };
+      },
+      deep: true,
+      immediate: true,
+    },
+    hasValue: {
+      handler(newValue) {
+        this.localHasValue = newValue;
+      },
+      immediate: true,
+    },
+    localHasValue(newValue) {
+      this.$emit('changeHasValue', newValue);
+    },
+    dialog(newValue) {
+      if (!newValue) {
+        this.localHasValue = true;
       }
     },
   },
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        if (!this.hasValue) {
-          this.option.value = null
+        if (!this.localHasValue) {
+          this.localOption.value = null;
         }
-        this.$emit('dialog', false)
-        this.$emit('addOption')
-        this.$emit('change')
-        this.resetVal()
+        this.$emit('addOption', { ...this.localOption });
+        this.$emit('change');
+        this.$emit('update:dialog', false);
+        this.resetVal();
       }
     },
     resetVal() {
-      this.$refs.form.resetValidation()
+      this.localOption = { text: '', value: null, description: '' };
+      this.localHasValue = true;
+      this.$refs.form.resetValidation();
     },
   },
-}
+};
 </script>
 
 <style scoped>

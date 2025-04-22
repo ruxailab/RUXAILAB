@@ -1,9 +1,9 @@
 <template>
-    <div class="sample-page">
-        <h1>Web Accessibility Checklist</h1>
-        <p>Answer the following questions about your web content to assess its accessibility compliance with WCAG standards.</p>
-        <AccessibilityQuiz />
-    </div>
+  <div class="sample-page">
+    <h1>Web Accessibility Checklist</h1>
+    <p>Answer the following questions about your web content to assess its accessibility compliance with WCAG standards.</p>
+    <AccessibilityQuiz />
+  </div>
 </template>
 
 <script>

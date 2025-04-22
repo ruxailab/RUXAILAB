@@ -9,9 +9,16 @@
       <slot name="top" />
     </v-row>
     <slot name="warning" />
-    <v-row justify="center" class="ma-0">
+    <v-row
+      justify="center"
+      class="ma-0"
+    >
       <v-col cols="12">
-        <v-card flat rounded="xl" class="dataCard ma-0 pa-0">
+        <v-card
+          flat
+          rounded="xl"
+          class="dataCard ma-0 pa-0"
+        >
           <slot name="content" />
         </v-card>
       </v-col>

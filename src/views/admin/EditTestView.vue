@@ -2,25 +2,32 @@
   <v-container>
     <Snackbar />
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error-accent-4 text-white"
+        >
           Are you sure you want to leave?
         </v-card-title>
-
         <v-card-text>All your changes will be discarded</v-card-text>
-
         <v-divider />
-
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialog = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="closeDialog"
+          >
             Stay
           </v-btn>
           <v-btn
-            class="error accent-4 white--text ml-1"
-            text
-            @click=";(change = false), $router.push(go)"
+            class="bg-error-accent-4 text-white ml-1"
+            variant="text"
+            @click="leave"
           >
             Leave
           </v-btn>
@@ -28,32 +35,24 @@
       </v-card>
     </v-dialog>
 
-    <!-- Save button -->
-    <v-tooltip v-if="accessLevel === 0" left>
-      <template v-slot:activator="{ on, attrs }">
+    <!-- Save Button -->
+    <v-tooltip
+      v-if="accessLevel === 0"
+      location="left"
+    >
+      <template #activator="{ props }">
         <v-btn
-          v-bind="attrs"
-          large
-          dark
-          fab
-          fixed
-          bottom
-          right
+          size="large"
+          icon
           color="#F9A826"
-          style="z-index: 100"
-          :disabled="testAnswerDocLength > 0 ? true : false"
-          :class="{
-            disabledBtnBackground: testAnswerDocLength > 0,
-            disabledBtn: testAnswerDocLength > 0,
-          }"
-          @click="validateAll()"
-          v-on="on"
+          :disabled="testAnswerDocLength > 0"
+          v-bind="props"
+          class="save-btn"
+          @click="validateAll"
         >
           <v-icon
-            large
-            :class="{
-              disabledBtn: testAnswerDocLength > 0,
-            }"
+            size="large"
+            :class="{ 'disabled-btn': testAnswerDocLength > 0 }"
           >
             mdi-content-save
           </v-icon>
@@ -63,61 +62,84 @@
     </v-tooltip>
 
     <!-- Loading Overlay -->
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+    <v-overlay
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         Loading Test
       </div>
     </v-overlay>
 
     <v-row>
-      <v-col cols="12" class="pb-0">
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
         <!-- Heuristic Tests -->
         <EditHeuristicsTest
           v-if="test.testType === 'HEURISTICS'"
-          slot="content"
           type="content"
           :object="object"
           :index="index"
-          @tabClicked="setIndex"
-          @change="change=true"
-        />
+          @tab-clicked="setIndex"
+          @change="change = true"
+        >
+          <template #content>
+            <!-- Content slot for Heuristics Test -->
+          </template>
+        </EditHeuristicsTest>
 
-        <!-- Unmoderated User tests -->
+        <!-- Unmoderated User Tests -->
         <EditUserTest
           v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          slot="top"
           type="tabs"
-          @tabClicked="setIndex"
-        />
-
+          @tab-clicked="setIndex"
+        >
+          <template #top>
+            <!-- Top slot for Unmoderated User Test -->
+          </template>
+        </EditUserTest>
         <EditUserTest
           v-if="test.testType === 'User' && test.userTestType === 'unmoderated'"
-          slot="content"
+          type="content"
           :object="object"
           :index="index"
-          type="content"
-          @valForm="validate"
-        />
+          @val-form="validate"
+        >
+          <template #content>
+            <!-- Content slot for Unmoderated User Test -->
+          </template>
+        </EditUserTest>
 
-        <!-- Moderated User tests -->
+        <!-- Moderated User Tests -->
         <EditModeratedUserTest
           v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          slot="top"
           type="tabs"
-          @tabClicked="setIndex"
+          @tab-clicked="setIndex"
           @change="change = true"
-        />
-
+        >
+          <template #top>
+            <!-- Top slot for Moderated User Test -->
+          </template>
+        </EditModeratedUserTest>
         <EditModeratedUserTest
           v-if="test.testType === 'User' && test.userTestType === 'moderated'"
-          slot="content"
+          type="content"
           :object="object"
           :index="index"
-          type="content"
           @change="change = true"
-          @valForm="validate"
-        />
+          @val-form="validate"
+        >
+          <template #content>
+            <!-- Content slot for Moderated User Test -->
+          </template>
+        </EditModeratedUserTest>
       </v-col>
     </v-row>
   </v-container>
@@ -125,23 +147,34 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-//import ShowInfo from "@/components/organisms/ShowInfo";
-//import IntroEdit from "@/components/molecules/IntroEdit.vue";
 import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest'
 import EditUserTest from '@/components/organisms/EditUserTest'
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest'
 
 export default {
+  name: 'EditTestView',
   components: {
     Snackbar,
-    //ShowInfo,
-    // IntroEdit,
     EditHeuristicsTest,
     EditUserTest,
     EditModeratedUserTest,
   },
 
-  props: ['id'],
+  beforeRouteLeave(to, from, next) {
+    if (this.change) {
+      this.dialog = true
+      this.go = to.path
+    } else {
+      next()
+    }
+  },
+
+  props: {
+    id: {
+      type: [String, Number],
+      required: true,
+    },
+  },
 
   data: () => ({
     index: 0,
@@ -149,36 +182,22 @@ export default {
     valids: [true, true],
     change: false,
     dialog: false,
-    intro: false,
+    go: '',
   }),
 
   computed: {
     accessLevel() {
-      // Check if the user is defined
       if (!this.user) return 1
-
-      // If the user is a superadmin
       if (this.user.accessLevel === 0) return 0
-
-      // Check if the user is a collaborator or owner
-      const isTestOwner = this.test.testAdmin?.userDocId === this.user.id
-      if (isTestOwner) return 0
-
-      // Check if the user is a cooperator and get their access level
-      const coopsInfo = this.test.cooperators?.find((coops) => coops.userDocId === this.user.id)
-      if (coopsInfo) return coopsInfo.accessLevel
-      return 1
+      if (this.test.testAdmin?.userDocId === this.user.id) return 0
+      const coopsInfo = this.test.cooperators?.find(
+        (coops) => coops.userDocId === this.user.id
+      )
+      return coopsInfo?.accessLevel ?? 1
     },
 
     testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
-
-      return heuristicAnswersCount
+      return Object.keys(this.$store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length
     },
 
     loading() {
@@ -194,50 +213,48 @@ export default {
     },
 
     answers() {
-      return this.$store.getters.answers || []
+      return this.$store.getters.answers ?? []
     },
 
     totalQuestions() {
-      let result = 0
-      if (this.object?.heuristics) {
-        this.object?.heuristics.forEach((h) => {
-          result += h.total
-        })
-      } else if (this.object?.tasks) {
-        this.object?.tasks.forEach((h) => {
-          result += h.total
-        })
-      }
-
-      return result
+      const items = this.object?.heuristics ?? this.object?.tasks ?? []
+      return items.reduce((sum, h) => sum + (h.total || 0), 0)
     },
   },
 
   watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.setIntro()
-      }
+    test: {
+      handler(newTest) {
+        if (newTest) this.setIntro()
+      },
+      immediate: true,
     },
   },
 
   async created() {
-    await this.$store.dispatch('getTest', { id: this.id })
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
+    try {
+      await Promise.all([
+        this.$store.dispatch('getTest', { id: this.id }),
+        this.$store.dispatch('getCurrentTestAnswerDoc'),
+      ])
+    } catch (error) {
+      console.error('Failed to load test data:', error)
+      // Optionally show a snackbar or redirect
+    }
   },
 
   beforeMount() {
     window.addEventListener('beforeunload', this.preventNav)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('beforeunload', this.preventNav)
   },
 
   methods: {
     async submit() {
       this.object.testStructure = this.$store.state.Tests.Test.testStructure
-      if (this.test.testType == 'User') {
+      if (this.test.testType === 'User') {
         this.object.testStructure = {
           welcomeMessage: this.$store.getters.welcomeMessage,
           landingPage: this.$store.getters.landingPage,
@@ -249,50 +266,58 @@ export default {
           finalMessage: this.$store.getters.finalMessage,
         }
       }
-      const auxT = Object.assign(this.test, this.object)
-      this.$store.dispatch('updateTest', auxT)
+      await this.$store.dispatch('updateTest', { ...this.test, ...this.object })
     },
 
     validate(valid, index) {
       this.valids[index] = valid
     },
 
-    validateAll() {
-      this.submit()
-      this.change=false
+    async validateAll() {
+      await this.submit()
+      this.change = false
     },
 
     preventNav(event) {
-      if (!this.change) return
-      event.preventDefault()
-      event.returnValue = ''
+      if (this.change) {
+        event.preventDefault()
+        event.returnValue = ''
+      }
     },
 
     async setIntro() {
-      this.object = await Object.assign(this.object, this.test)
+      this.object = { ...this.test }
     },
 
     setIndex(ind) {
       this.index = ind
     },
-  },
 
-  beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialog = true
-      this.go = to.path
-    } else {
-      next()
-    }
+    closeDialog() {
+      this.dialog = false
+      this.go = ''
+    },
+
+    leave() {
+      this.change = false
+      this.$router.push(this.go)
+    },
   },
 }
 </script>
 
-<style>
-.disabledBtn {
+<style scoped>
+.save-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+}
+.save-btn.disabled-btn,
+.disabled-btn {
   color: rgba(134, 125, 125, 0.438) !important;
 }
-.disabledBtnBackground {
+.save-btn.disabled-btn {
   background-color: rgba(185, 185, 185, 0.308) !important;
 }
 </style>

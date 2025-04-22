@@ -1,11 +1,25 @@
 <template>
   <div class="background-grey">
     <Snackbar />
-    <v-row justify="center" style="height: 90%" align="center">
-      <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" class="mx-2">
+    <v-row
+      justify="center"
+      style="height: 90%"
+      align="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <v-card
+          color="#f5f7ff"
+          class="mx-2"
+        >
           <v-row>
-            <v-col cols="12" md="5" align-self="center">
+            <v-col
+              cols="12"
+              md="5"
+              align-self="center"
+            >
               <div class="card-title">
                 {{ $t('SIGNIN.sign-up') }}
               </div>
@@ -13,14 +27,15 @@
               <div class="divider" />
 
               <v-form
+                ref="form"
                 v-model="valid"
                 class="mx-3"
                 @keyup.enter="onSignUp()"
               >
                 <v-text-field
                   v-model="email"
-                  dense
-                  outlined
+                  density="compact"
+                  variant="outlined"
                   :label="$t('SIGNIN.email')"
                   :rules="emailRules"
                   prepend-inner-icon="mdi-account-circle"
@@ -28,68 +43,55 @@
 
                 <v-text-field
                   v-model="password"
-                  dense
-                  outlined
+                  density="compact"
+                  variant="outlined"
                   :label="$t('SIGNIN.password')"
                   prepend-inner-icon="mdi-lock"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showPassword ? 'text' : 'password'"
                   :rules="passwordRules"
-                  @click:append="showPassword = !showPassword"
+                  @click:append-inner="showPassword = !showPassword"
                 />
 
                 <v-text-field
                   v-model="confirmpassword"
-                  dense
-                  outlined
+                  density="compact"
+                  variant="outlined"
                   :label="$t('SIGNIN.confirmPassword')"
                   prepend-inner-icon="mdi-lock"
-                  :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showConfirmPassword ? 'text' : 'password'"
                   :rules="[comparePassword]"
-                  @click:append="showConfirmPassword = !showConfirmPassword"
+                  @click:append-inner="showConfirmPassword = !showConfirmPassword"
                 />
               </v-form>
-              
               <v-card-actions class="justify-center mt-4">
                 <v-btn
-                  color="#F9A826"
                   rounded
-                  class="white--text"
+                  class="text-white"
+                  style="background-color: #F9A826;"
                   :loading="loading"
                   @click="onSignUp()"
                 >
                   Sign-up
                 </v-btn>
               </v-card-actions>
-              
-              <div class="text-center my-3">
-                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
-              </div>
-              
-              <div class="mx-3">
-                <google-sign-in-button 
-                  :button-text="$t('SIGNIN.continueWithGoogle')"
-                  :loading="loading"
-                  @google-sign-in-start="onGoogleSignInStart"
-                  @google-sign-in-success="onGoogleSignInSuccess"
-                  @google-sign-in-error="onGoogleSignInError"
-                />
-              </div>
-              
               <v-card-actions class="justify-center mt-1">
                 <p>
                   <a
-                    style="color: #F9A826; text-decoration: underline;"
+                    style="color: #F9A826; text-decoration: underline; cursor: pointer;"
                     @click="redirectToSignin"
-                    >{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a
-                  >
+                  >{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a>
                 </p>
               </v-card-actions>
             </v-col>
 
-            <v-col cols="7" class="hidden-sm-and-down" align-self="center">
-              <v-img src="@/assets/signUp.svg" />
+            <v-col
+              cols="7"
+              class="d-none d-sm-flex"
+              align-self="center"
+            >
+              <v-img :src="require('@/assets/signUp.svg')" />
             </v-col>
           </v-row>
         </v-card>
@@ -143,7 +145,8 @@ export default {
   },
   methods: {
     async onSignUp() {
-      if (this.valid) {
+      const isValid = await this.$refs.form.validate()
+      if (isValid) {
         try {
           await this.$store.dispatch('signup', {
             email: this.email,
@@ -152,7 +155,6 @@ export default {
           await this.$router.push('/')
         } catch (error) {
           console.error('Signup failed:', error)
-          this.errorMessage = 'Signup failed. Please check your credentials.'
         }
       }
     },
@@ -197,27 +199,5 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
-}
-.or-divider {
-  position: relative;
-  color: #757575;
-  font-size: 14px;
-}
-.or-divider::before,
-.or-divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 35%;
-  height: 1px;
-  background-color: #c4c4c4;
-}
-.or-divider::before {
-  left: 0;
-  margin-left: 16px;
-}
-.or-divider::after {
-  right: 0;
-  margin-right: 16px;
 }
 </style>

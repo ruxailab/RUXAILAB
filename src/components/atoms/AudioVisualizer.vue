@@ -1,25 +1,30 @@
 <template>
-    <v-container>
-      <v-row >
-        <v-col >
+  <v-container>
+    <v-row>
+      <v-col>
+        <div>
           <div>
-            <div>
-              <v-row  no-gutters>
-                <v-col v-for="index in 5" :key="index" cols="auto" class="mx-1">
-                  <v-sheet
-                    :color="index <= activeBars ? 'green' : 'grey lighten-1'"
-                    height="21"
-                    width="8"
-                    rounded="pill"
-                  ></v-sheet>
-                </v-col>
-              </v-row>
-            </div>
+            <v-row no-gutters>
+              <v-col
+                v-for="index in 5"
+                :key="index"
+                cols="auto"
+                class="mx-1"
+              >
+                <v-sheet
+                  :color="index <= activeBars ? 'green' : 'grey lighten-1'"
+                  height="21"
+                  width="8"
+                  rounded="pill"
+                />
+              </v-col>
+            </v-row>
           </div>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
   
   <script>
     export default {
@@ -35,7 +40,7 @@
       mounted() {
         this.initAudio()
       },
-      beforeDestroy() {
+      beforeUnmount() {
         this.cleanup()
       },
       methods: {

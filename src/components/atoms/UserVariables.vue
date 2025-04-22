@@ -11,11 +11,10 @@
             :key="i"
             style="border-radius: 20px;"
           >
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               {{ items[i].title }}
-            </v-expansion-panel-header>
-            
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-form>
                 <v-text-field
                   v-model="items[i].title"
@@ -36,7 +35,7 @@
                     :label="$t('UserTestTable.inputs.selection')"
                     @change="saveState()"
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <v-icon @click="newSelection(i)">
                         mdi-plus
                       </v-icon>
@@ -63,15 +62,21 @@
                 </div>
               </v-form>
               <v-row>
-                <v-col :cols="6" class="checkbox-container">
+                <v-col
+                  :cols="6"
+                  class="checkbox-container"
+                >
                   <v-checkbox
                     v-model="items[i].selectionField"
                     :label="$t('UserTestTable.checkboxes.selectionField')"
-                    @change="saveState"
+                    @update:model-value="saveState"
                     @click="selectField(i)"
                   />
                 </v-col>
-                <v-col :cols="5" class="checkbox-container">
+                <v-col
+                  :cols="5"
+                  class="checkbox-container"
+                >
                   <v-checkbox
                     v-model="items[i].textField"
                     :label="$t('UserTestTable.checkboxes.textField')"
@@ -79,21 +84,25 @@
                   />
                 </v-col>
                 <v-col>
-                  <v-btn class="mt-5" icon @click="deleteItem(i)">
+                  <v-btn
+                    class="mt-5"
+                    icon
+                    @click="deleteItem(i)"
+                  >
                     <v-icon>mdi-trash-can</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
         
         <v-card
           class="mt-2"
           rounded="xl"
-          outlined
+          border
           elevation="0"
-          color="grey lighten-2"
+          color="grey-lighten-2"
           @click="showModal"
         >
           <p class="text-subtitle-1 text-center ma-2">
@@ -103,8 +112,11 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="show" max-width="600" persistent>
+    <v-dialog
+      v-model="show"
+      max-width="600"
+      persistent
+    >
       <v-card>
         <v-card-title class="text-h6 mb-2">
           {{
@@ -113,10 +125,13 @@
         </v-card-title>
         
         <v-card-text>
-          <v-form ref="form" v-model="valid">
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-text-field
               v-model="newItem"
-              filled
+              variant="filled"
               :rules="[(newItem) => !!newItem || 'This Name field is required']"
               color="orange"
               :label="$t('UserTestTable.inputs.variableName')"
@@ -126,13 +141,20 @@
         </v-card-text>
         
         <v-card-actions>
-          <v-btn color="red" class="ml-auto" dark @click="closeModal">
+          <v-btn
+            color="red"
+            class="ml-auto"
+            @click="closeModal"
+          >
             <v-icon class="mr-1">
               mdi-close
             </v-icon>
             {{ $t('buttons.close') }}
           </v-btn>
-          <v-btn color="orange" dark @click="saveNewItem(), saveState()">
+          <v-btn
+            color="orange"
+            @click="saveNewItem(), saveState()"
+          >
             <v-icon class="mr-1">
               mdi-content-save
             </v-icon>
@@ -213,10 +235,10 @@ export default {
       }
     },
     newSelection(index) {
-      this.$set(this.items, index, {
+      this.items[index] = {
         ...this.items[index],
         selectionFields: [...this.items[index].selectionFields, ''],
-      })
+      }
     },
     deleteSelection(index) {
       this.items[index].selectionFields.splice(

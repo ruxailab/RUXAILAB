@@ -1,46 +1,41 @@
 <template>
   <div v-if="user.notifications">
-    <v-menu :position-x="x" :position-y="y" absolute offset-y min-width="300">
-      <template v-slot:activator="{ on, attrs }">
+    <v-menu
+      :location="`${x} ${y}`"
+      absolute
+      offset="8"
+      min-width="300"
+    >
+      <template #activator="{ props }">
         <v-badge
           color="red"
-          bottom
-          overlap
+          location="bottom end"
           :content="checkIfHasNewNotifications()"
-          :value="checkIfHasNewNotifications()"
+          :model-value="checkIfHasNewNotifications() > 0"
         >
           <v-btn
-            v-bind="attrs"
-            v-if="checkIfHasNewNotifications() === 0"
-            small
+            size="small"
             icon
             class="mr-1"
-            v-on="on"
+            v-bind="props"
           >
             <v-icon size="20">
-              mdi-bell-outline
-            </v-icon>
-          </v-btn>
-
-          <v-btn v-bind="attrs" v-else small icon class="mr-1" v-on="on">
-            <v-icon size="20">
-              mdi-bell-ring
+              {{ checkIfHasNewNotifications() > 0 ? 'mdi-bell-ring' : 'mdi-bell-outline' }}
             </v-icon>
           </v-btn>
         </v-badge>
       </template>
-      
-      <!--  navigation bar -->
+
       <v-card>
+        <!-- Top bar -->
         <v-app-bar
           color="orange"
-          dark
           dense
         >
-          <v-toolbar-title> {{ $t('common.notifications') }}</v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-toolbar-title>{{ $t('common.notifications') }}</v-toolbar-title>
+          <v-spacer />
           <v-btn
-            text
+            variant="text"
             @click="goToNotificationPage"
           >
             {{ $t('common.viewAll') }}
@@ -53,52 +48,60 @@
             style="max-height: 50vh; overflow-y: auto;"
           >
             <v-list
-              v-for="(notification, i) in user.notifications"
-              :key="i"
-              dense
+              density="compact"
               class="ma-0 py-1"
             >
               <v-list-item
-                dense
-                style="font-size: 14px; font-family: Roboto;"
+                v-for="(notification, i) in user.notifications"
+                :key="i"
                 class="px-2"
+                style="font-size: 14px; font-family: Roboto;"
                 :disabled="notification.read"
                 @click="goToNotificationRedirect(notification)"
               >
-                <v-list-item-content>
-                  <v-list-item-title style="font-weight: bold">
-                    {{ notification.title }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ notification.description }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle>
-                    {{ $t('common.sentBy') }} {{ notification.author }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-icon v-if="!notification.read">
-                  <v-chip x-small color="success" outlined label>
+                <v-list-item-title style="font-weight: bold">
+                  {{ notification.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ notification.description }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{ $t('common.sentBy') }} {{ notification.author }}
+                </v-list-item-subtitle>
+
+                <template
+                  v-if="!notification.read"
+                  #prepend
+                >
+                  <v-chip
+                    size="x-small"
+                    color="success"
+                    variant="outlined"
+                    label
+                  >
                     {{ $t('common.new') }}!
                   </v-chip>
-                </v-list-item-icon>
+                </template>
               </v-list-item>
-              <v-divider></v-divider>
+
+              <v-divider />
             </v-list>
           </div>
-          <v-list v-else>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title class="text-center grey--text">
+
+          <div v-else>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title class="text-center text-grey">
                   <strong>{{ $t('common.noNotifications') }}</strong>
                 </v-list-item-title>
-                <v-list-item-subtitle class="text-center">
-                  <v-icon class="mt-2 mb-3">
-                    mdi-bell-off
-                  </v-icon>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+              </v-list-item>
+              <v-list-item-subtitle class="text-center">
+                <v-icon class="mt-2 mb-3">
+                  mdi-bell-off
+                </v-icon>
+              </v-list-item-subtitle>
+            </v-list>
+          </div>
         </v-card-text>
       </v-card>
     </v-menu>
@@ -108,37 +111,34 @@
 <script>
 export default {
   data: () => ({
-    x: 0,
-    y: 50,
+    x: 'right',
+    y: 'top',
   }),
   computed: {
     user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
+      return this.$store.getters.user;
     },
   },
   methods: {
     async goToNotificationRedirect(notification) {
       await this.$store.dispatch('markNotificationAsRead', {
-        notification: notification,
+        notification,
         user: this.user,
-      })
-      window.open(`/${notification.redirectsTo}`)
+      });
+      window.open(`/${notification.redirectsTo}`, '_blank');
     },
     checkIfHasNewNotifications() {
-      const newNot = this.user.notifications.filter((n) => n.read === false)
-      return newNot.length ?? 0
+      return this.user.notifications.filter((n) => !n.read).length;
     },
     goToNotificationPage() {
-      this.$router.push('/notifications')
-      console.log("Navigating to notifications page")
+      this.$router.push('/notifications');
     },
   },
-}
+};
 </script>
 
 <style scoped>
-/* You can remove this style block as we're using Vuetify's built-in dividers now */
+.text-grey {
+  color: #9e9e9e;
+}
 </style>

@@ -1,7 +1,15 @@
 <template>
   <div v-if="test">
-    <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+    <!-- Loading Overlay -->
+    <v-overlay
+      v-model="isLoading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         Saving...
       </div>
@@ -9,123 +17,172 @@
     <Snackbar />
 
     <!-- Submit Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title class="text-h5 bg-error text-white">
           {{ $t('HeuristicsTestView.messages.submitTest') }}
         </v-card-title>
-
         <v-card-text class="mt-5">
           {{ $t('HeuristicsTestView.messages.submitOnce') }}
         </v-card-text>
-
         <v-divider />
-
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialog = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialog = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn class="red white--text ml-1" text @click="submitAnswer(), (dialog = false)">
+          <v-btn
+            class="bg-red text-white ml-1"
+            variant="text"
+            @click="handleSubmit"
+          >
             {{ $t('buttons.submit') }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog :value="fromlink && !noExistUser && !logined" width="500" persistent>
+    <!-- User Login Dialog -->
+    <v-dialog
+      :model-value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
       <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange lighten-4" size="150">
-            <v-icon size="120" dark>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon
+              size="120"
+            >
               mdi-account
             </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="white--text" @click="setTest()">
+          <v-btn
+            color="#F9A826"
+            class="text-white"
+            @click="setTest"
+          >
             Continue as {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
+            <a
+              style="color: #f9a826"
+              @click="signOut"
+            >Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Start Screen -->
-    <v-row v-if="test && start" class="background background-img pa-0 ma-0" align="center">
-      <v-col cols="6" class="ml-5">
+    <v-row
+      v-if="test && start"
+      class="background background-img pa-0 ma-0"
+      align="center"
+    >
+      <v-col
+        cols="6"
+        class="ml-5"
+      >
         <h1 class="titleView pb-1">
           {{ test.testTitle }}
         </h1>
-        <p align="justify" class="description">
+        <p
+          align="justify"
+          class="description"
+        >
           {{ test.testDescription }}
         </p>
-        <v-row justify="center" class>
-          <v-btn color="white" outlined rounded @click="startTest()">
+        <v-row justify="center">
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            @click="startTest"
+          >
             Start Test
           </v-btn>
         </v-row>
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" dense>
-      <v-speed-dial v-if="showSaveBtn" v-model="fab" fixed class="mr-3" bottom right open-on-hover>
-        <template v-slot:activator>
-          <v-btn v-model="fab" large color="#F9A826" dark fab class="btn-fix">
+    <!-- Main Test Interface -->
+    <v-row
+      v-else
+      class="nav pa-0 ma-0"
+      dense
+    >
+      <!-- Floating Action Button -->
+      <v-speed-dial
+        v-if="showSaveBtn"
+        v-model="fab"
+        fixed
+        class="mr-3"
+        bottom
+        right
+        open-on-hover
+      >
+        <template #activator>
+          <v-btn
+            v-model="fab"
+            size="large"
+            color="#F9A826"
+            icon
+            class="btn-fix"
+          >
             <v-icon v-if="fab">
               mdi-close
             </v-icon>
-            <v-icon v-else large>
+            <v-icon
+              v-else
+              size="large"
+            >
               mdi-hammer-screwdriver
             </v-icon>
           </v-btn>
         </template>
-
-        <v-tooltip left>
-          <template v-slot:activator="{ props }">
+        <v-tooltip location="left">
+          <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              fab
-              dark
-              small
+              icon
+              size="small"
               color="#F9A826"
-              @click="saveAnswer()"
+              @click="saveAnswer"
             >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
           <span>Save</span>
         </v-tooltip>
-
-        <v-tooltip v-if="currentUserTestAnswer" left>
-          <template v-slot:activator="{ props }">
+        <v-tooltip location="left">
+          <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              :disabled="!currentUserTestAnswer.postTestCompleted"
-              class="white--text"
-              fab
-              small
-              color="#F9A826"
-              @click="dialog = true"
-            >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-
-        <v-tooltip v-else left>
-          <template v-slot:activator="{ props }">
-            <v-btn
-              v-bind="props"
-              class="white--text"
-              fab
-              small
+              :disabled="currentUserTestAnswer && !currentUserTestAnswer.postTestCompleted"
+              class="text-white"
+              icon
+              size="small"
               color="#F9A826"
               @click="dialog = true"
             >
@@ -136,19 +193,41 @@
         </v-tooltip>
       </v-speed-dial>
 
-      <v-navigation-drawer v-model="drawer" clipped :mini-variant="mini" permanent color="#3F3D56">
-        <div v-if="!mini" class="header">
+      <!-- Navigation Drawer -->
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="mini"
+        permanent
+        color="#3F3D56"
+      >
+        <div
+          v-if="!mini"
+          class="header"
+        >
           <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <text-clamp 
-                  class="titleText" 
-                  :text="test.testTitle" 
+            <v-row
+              dense
+              align="center"
+              justify="space-around"
+            >
+              <v-col
+                class="pa-0 ma-0"
+                cols="8"
+              >
+                <text-clamp
+                  class="titleText"
+                  :text="test.testTitle"
                   :max-lines="2"
                 />
               </v-col>
               <v-col>
-                <v-progress-circular rotate="-90" :value="calculateProgress()" color="#fca326" :size="50" class="mt-2">
+                <v-progress-circular
+                  rotate="-90"
+                  :model-value="calculateProgress()"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >
                   {{ calculateProgress() }}%
                 </v-progress-circular>
               </v-col>
@@ -156,304 +235,307 @@
           </v-list-item>
         </div>
 
-        <v-list class="nav-list" flat dense max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
-          <div v-for="(item, n) in items" :key="n">
-            <!--Pre Test-->
-            <v-list-group v-if="item.id == 0" :disabled="localTestAnswer.consentCompleted &&
-              localTestAnswer.preTestCompleted &&
-              !localTestAnswer.submitted
-              " :class="{
-                'disabled-group':
-                  localTestAnswer.consentCompleted &&
-                  localTestAnswer.preTestCompleted &&
-                  !localTestAnswer.submitted,
-              }" :value="index == 0 ? true : false" no-action @click="index = item.id">
-              <v-icon slot="appendIcon" :color="index == item.id ? '#ffffff' : '#fca326'">
-                mdi-chevron-down
-              </v-icon>
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      localTestAnswer.consentCompleted &&
-                        localTestAnswer.preTestCompleted &&
-                        !localTestAnswer.submitted
-                        ? 'mdi-lock'
-                        : item.icon
-                    }}
-                  </v-icon>
-                </v-list-item-icon>
-                <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
-                  {{ item.title }}
-                </v-list-item-title>
-              </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ props }">
-                  <v-list-item
-                    v-bind="props"
-                    link
-                    :disabled="
-                      (currentUserTestAnswer.consentCompleted &&
-                        i == 0 &&
-                        !currentUserTestAnswer.submitted) ||
-                        (!currentUserTestAnswer.consentCompleted &&
-                          i == 1 &&
-                          !currentUserTestAnswer.submitted) ||
-                        (currentUserTestAnswer.preTestCompleted &&
-                          i == 1 &&
-                          !currentUserTestAnswer.submitted)
-                    "
-                    :class="{
-                      'disabled-group':
-                        (localTestAnswer.consentCompleted &&
-                          i == 0 &&
-                          !localTestAnswer.submitted) ||
-                        (!localTestAnswer.consentCompleted &&
-                          i == 1 &&
-                          !localTestAnswer.submitted) ||
-                        (localTestAnswer.preTestCompleted &&
-                          i == 1 &&
-                          !localTestAnswer.submitted),
-                    }" @click="taskIndex = i">
-                    <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{
-                          (localTestAnswer.consentCompleted &&
-                            i == 0 &&
-                            !localTestAnswer.submitted) ||
-                            (!localTestAnswer.consentCompleted &&
-                              i == 1 &&
-                              !localTestAnswer.submitted) ||
-                            (localTestAnswer.preTestCompleted &&
-                              i == 1 &&
-                              !localTestAnswer.submitted)
-                            ? 'mdi-lock'
-                            : task.icon
-                        }}
-                      </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'">
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group>
-            <!--Tasks--->
-            <v-list-group v-if="item.id == 1" :disabled="(!localTestAnswer.consentCompleted &&
-              !localTestAnswer.submitted) ||
-              (!localTestAnswer.preTestCompleted &&
-                !localTestAnswer.submitted)
-              " :class="{
-                'disabled-group':
-                  (!localTestAnswer.consentCompleted &&
-                    !localTestAnswer.submitted) ||
-                  (!localTestAnswer.preTestCompleted &&
-                    !localTestAnswer.submitted) ||
-                  (allTasksCompleted && !localTestAnswer.submitted),
-              }" :value="index == 1 ? true : false" no-action @click="index = item.id">
-              <v-icon slot="appendIcon" :color="index == item.id ? '#ffffff' : '#fca326'">
-                mdi-chevron-down
-              </v-icon>
-              <template v-slot:activator>
-                <v-list-item-icon>
-                  <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                    {{
-                      (!localTestAnswer.consentCompleted &&
-                        !localTestAnswer.submitted) ||
-                        (!localTestAnswer.preTestCompleted &&
-                          !localTestAnswer.submitted) ||
-                        (allTasksCompleted && !localTestAnswer.submitted)
-                        ? 'mdi-lock'
-                        : item.icon
-                    }}
-                  </v-icon>
-                </v-list-item-icon>
-                <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
-                  {{ item.title }}
-                </v-list-item-title>
-              </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" right>
-                <template v-slot:activator="{ props }">
-                  <v-list-item
-                    v-bind="props"
-                    link
-                    @click=";(taskIndex = i), startTimer()"
-                    :disabled="
-                      isTaskDisabled(i) && !currentUserTestAnswer.submitted
-                    "
-                    :class="{
-                      'disabled-group':
-                        isTaskDisabled(i) && !localTestAnswer.submitted,
-                    }">
-                    <v-list-item-icon>
-                      <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
-                        {{
-                          isTaskDisabled(i) && !localTestAnswer.submitted
-                            ? 'mdi-lock'
-                            : items[1].value[i].icon
-                        }}
-                      </v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'">
-                        {{ task.title }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group>
-            <!--Post Test-->
-            <v-list-item v-else-if="item.id == 2" @click="index = item.id"
-              :disabled="!allTasksCompleted && !localTestAnswer.submitted" :class="{
-                'disabled-group':
-                  !allTasksCompleted && !localTestAnswer.submitted,
-              }">
-              <v-list-item-icon>
-                <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
-                  {{
-                    !allTasksCompleted && !localTestAnswer.submitted
-                      ? 'mdi-lock'
-                      : item.icon
-                  }}
+        <v-list
+          class="nav-list"
+          density="compact"
+          max-height="85%"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+        >
+          <div
+            v-for="item in items"
+            :key="item.id"
+          >
+            <!-- Pre Test -->
+            <v-list-group
+              v-if="item.id === 0"
+              :class="{ 'disabled-group': currentUserTestAnswer.consentCompleted && currentUserTestAnswer.preTestCompleted && !currentUserTestAnswer.submitted }"
+              :value="index === 0"
+              @click="index = item.id"
+            >
+              <template #appendIcon>
+                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                  mdi-chevron-down
                 </v-icon>
-              </v-list-item-icon>
+              </template>
+              <template #activator="{ props }">
+                <v-list-item v-bind="props">
+                  <template #prepend>
+                    <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                      {{ currentUserTestAnswer.consentCompleted && currentUserTestAnswer.preTestCompleted && !currentUserTestAnswer.submitted ? 'mdi-lock' : item.icon }}
+                    </v-icon>
+                  </template>
+                  <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
+                    {{ item.title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-tooltip
+                v-for="(task, i) in item.value"
+                :key="i"
+                location="right"
+              >
+                <template #activator="{ props }">
+                  <v-list-item
+                    v-bind="props"
+                    link
+                    :disabled="isPreTestTaskDisabled(i)"
+                    @click="taskIndex = i"
+                  >
+                    <template #prepend>
+                      <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
+                        {{ isPreTestTaskDisabled(i) ? 'mdi-lock' : task.icon }}
+                      </v-icon>
+                    </template>
+                    <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
+                      {{ task.title }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
+            </v-list-group>
 
-              <v-list-item-content>
-                <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
-                  {{ item.title }}
-                </v-list-item-title>
-              </v-list-item-content>
+            <!-- Tasks -->
+            <v-list-group
+              v-if="item.id === 1"
+              :class="{ 'disabled-group': !currentUserTestAnswer.consentCompleted || !currentUserTestAnswer.preTestCompleted }"
+              :value="index === 1"
+              @click="index = item.id"
+            >
+              <template #appendIcon>
+                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                  mdi-chevron-down
+                </v-icon>
+              </template>
+              <template #activator="{ props }">
+                <v-list-item v-bind="props">
+                  <template #prepend>
+                    <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                      {{ (!currentUserTestAnswer.consentCompleted || !currentUserTestAnswer.preTestCompleted) ? 'mdi-lock' : item.icon }}
+                    </v-icon>
+                  </template>
+                  <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
+                    {{ item.title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-tooltip
+                v-for="(task, i) in item.value"
+                :key="i"
+                location="right"
+              >
+                <template #activator="{ props }">
+                  <v-list-item
+                    v-bind="props"
+                    link
+                    :disabled="isTaskDisabled(i)"
+                    @click="taskIndex = i; startTimer()"
+                  >
+                    <template #prepend>
+                      <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
+                        {{ isTaskDisabled(i) ? 'mdi-lock' : task.icon }}
+                      </v-icon>
+                    </template>
+                    <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
+                      {{ task.title }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </template>
+                <span>{{ task.title }}</span>
+              </v-tooltip>
+            </v-list-group>
+
+            <!-- Post Test -->
+            <v-list-item
+              v-if="item.id === 2"
+              :disabled="!allTasksCompleted"
+              @click="index = item.id"
+            >
+              <template #prepend>
+                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                  {{ !allTasksCompleted ? 'mdi-lock' : item.icon }}
+                </v-icon>
+              </template>
+              <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
+                {{ item.title }}
+              </v-list-item-title>
             </v-list-item>
           </div>
         </v-list>
 
         <div class="footer">
           <v-spacer />
-          <v-btn icon class="mr-2" @click.stop="mini = !mini">
-            <v-icon v-if="mini" color="white">
+          <v-btn
+            icon
+            class="mr-2"
+            @click.stop="mini = !mini"
+          >
+            <v-icon
+              v-if="mini"
+              color="white"
+            >
               mdi-chevron-right
             </v-icon>
-            <v-icon v-else color="white">
+            <v-icon
+              v-else
+              color="white"
+            >
               mdi-chevron-left
             </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
 
-      <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
-        <!-- Consent - Pre Test -->
-        <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
-          <div slot="content" class="ma-0 pa-0">
-            <v-row class="fill-height" align="center" justify="center">
+      <!-- Right View -->
+      <v-col
+        ref="rightView"
+        class="backgroundTest pa-0 ma-0 right-view"
+      >
+        <!-- Consent -->
+        <ShowInfo
+          v-if="index === 0 && taskIndex === 0"
+          :title="$t('UserTestView.titles.preTestConsent')"
+        >
+          <template #content>
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
-                    {{ test.testTitle }} -
-                    {{ $t('UserTestView.titles.preTest') }}
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
+                    {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
                   </h1>
                 </v-row>
               </v-col>
             </v-row>
             <v-divider class="my-8" />
-
             <v-row>
-              <v-col cols="8" class="mx-auto py-0">
-                <div v-html="test.testStructure.consent" class="rich-text mb-6" />
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
+                <v-checkbox
+                  v-model="currentUserTestAnswer.consentCompleted"
+                  :label="currentUserTestAnswer.consent"
+                  :disabled="currentUserTestAnswer.consentCompleted"
+                  @click="completeStep(taskIndex, 'consent'); taskIndex = 1"
+                />
               </v-col>
             </v-row>
-
-            <v-row>
-              <v-col cols="6" class="mx-auto">
-                <!-- Full Name Input -->
-                <v-text-field v-model="fullName" label="Full Name" outlined dense
-                  :rules="[v => !!v || 'Name is required']" />
-              </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col cols="6" class="mx-auto">
-                <!-- Accept / Decline Checkboxes in a Group -->
-                <v-radio-group v-model="localTestAnswer.consentCompleted">
-                  <v-radio :label="'I accept the consent terms'" :disabled="fullName == ''" :value="true" />
-                  <v-radio :label="'I do not accept the consent terms'" :value="false" />
-                </v-radio-group>
-              </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col cols="6" class="mx-auto text-center">
-                <v-btn color="primary" :disabled="!localTestAnswer.consentCompleted || fullName == ''"
-                  @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)">
-                  Continue
-                </v-btn>
-              </v-col>
-            </v-row>
-          </div>
+          </template>
         </ShowInfo>
 
-        <!-- Form - Pre Test -->
-        <ShowInfo v-if="index == 0 && taskIndex == 1" :title="$t('UserTestView.titles.preTestForm')">
-          <div slot="content" class="ma-0 pa-0">
-            <v-row class="fill-height" align="center" justify="center">
+        <!-- Pre Test Form -->
+        <ShowInfo
+          v-if="index === 0 && taskIndex === 1"
+          :title="$t('UserTestView.titles.preTestForm')"
+        >
+          <template #content>
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
-                    {{ test.testTitle }} -
-                    {{ $t('UserTestView.titles.preTest') }}
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
+                    {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
                   </h1>
                 </v-row>
               </v-col>
             </v-row>
             <v-divider class="my-8" />
-
-            <v-row v-for="(item, index) in test.testStructure.preTest" :key="index">
-              <v-col cols="5" class="mx-auto py-0">
+            <v-row
+              v-for="(item, i) in test.testStructure.preTest"
+              :key="i"
+            >
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
                 <span class="cardsTitle">{{ item.title }}</span>
-                <br />
-                <span class="cardsSubtitle" v-if="item.description">{{ item.description }}</span>
-                <v-text-field v-if="item.textField" v-model="localTestAnswer.preTestAnswer[index].answer"
-                  :disabled="localTestAnswer.preTestCompleted" :placeholder="item.title" outlined />
-                <v-radio-group v-if="item.selectionField" v-model="localTestAnswer.preTestAnswer[index].answer"
-                  :disabled="localTestAnswer.preTestCompleted" column>
-                  <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
-                    <v-radio :disabled="localTestAnswer.preTestCompleted" class="ml-3 mb-1" :label="selection"
-                      :value="selection" />
-                  </v-row>
-                  <v-row justify="end" />
+                <br>
+                <span
+                  v-if="item.description"
+                  class="cardsSubtitle"
+                >{{ item.description }}</span>
+                <v-text-field
+                  v-if="item.textField"
+                  v-model="currentUserTestAnswer.preTestAnswer[i].answer"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  :placeholder="item.title"
+                  variant="outlined"
+                />
+                <v-radio-group
+                  v-if="item.selectionField"
+                  v-model="currentUserTestAnswer.preTestAnswer[i].answer"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  direction="vertical"
+                >
+                  <v-radio
+                    v-for="(selection, j) in item.selectionFields"
+                    :key="j"
+                    :disabled="currentUserTestAnswer.preTestCompleted"
+                    class="ml-3 mb-1"
+                    :label="selection"
+                    :value="selection"
+                  />
                 </v-radio-group>
               </v-col>
             </v-row>
-
             <v-row justify="center">
               <v-col class="mx-10">
-                <v-btn block :dark="!localTestAnswer.preTestCompleted" color="orange lighten-1"
-                  :disabled="localTestAnswer.preTestCompleted" @click="
-                    completeStep(taskIndex, 'preTest'),
-                    (index = 1),
-                    (taskIndex = 0)
-                    ">{{ $t('UserTestView.buttons.done') }}
+                <v-btn
+                  block
+                  color="orange-lighten-1"
+                  :disabled="currentUserTestAnswer.preTestCompleted"
+                  @click="completeStep(taskIndex, 'preTest'); index = 1; taskIndex = 0"
+                >
+                  {{ $t('UserTestView.buttons.done') }}
                 </v-btn>
               </v-col>
             </v-row>
-          </div>
+          </template>
         </ShowInfo>
+
         <!-- Tasks -->
-        <ShowInfo v-if="index == 1 && test.testType === 'User'"
-          :title="test.testStructure.userTasks[taskIndex].taskName">
-          <div slot="content" class="ma-0 pa-0">
+        <ShowInfo
+          v-if="index === 1 && test.testType === 'User'"
+          :title="test.testStructure.userTasks[taskIndex].taskName"
+        >
+          <template #content>
+            <v-divider class="mb-5" />
             <v-container>
-              <v-row class="fill-height" align="center" justify="center">
-                <v-col cols="12" class="mb-0 pb-0">
-                  <v-spacer />
+              <v-row
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <v-col
+                  cols="12"
+                  class="mb-0 pb-0"
+                >
                   <v-row justify="center">
-                    <p class="paragraph mt-5" style="color: #455a64;">
+                    <h1
+                      style="color: #455a64;"
+                      class="mt-2"
+                    >
+                      {{ test.testStructure.userTasks[taskIndex].taskName }}
+                    </h1>
+                  </v-row>
+                  <v-row justify="center">
+                    <p
+                      class="paragraph"
+                      style="color: #455a64;"
+                    >
                       {{ test.testStructure.userTasks[taskIndex].taskDescription }}
                     </p>
                   </v-row>
@@ -466,43 +548,85 @@
                   </v-row>
                   <div v-if="!localTestAnswer.submitted">
                     <v-row>
-                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].taskTip !== null" justify="end">
+                      <v-col
+                        v-if="test.testStructure.userTasks[taskIndex].taskTip"
+                        cols="1"
+                        justify="end"
+                      >
                         <TipButton :task="test.testStructure.userTasks[taskIndex]" />
                       </v-col>
-
-                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasAudioRecord !== false">
-                        <AudioRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
-                          @recordingStarted="isVisualizerVisible = $event" :testId="testId" :taskIndex="taskIndex">
-                        </AudioRecorder>
+                      <v-col
+                        v-if="test.testStructure.userTasks[taskIndex].hasAudioRecord !== false"
+                        cols="1"
+                      >
+                        <AudioRecorder
+                          :test-id="testId"
+                          :task-index="taskIndex"
+                          @show-loading="isLoading = true"
+                          @stop-show-loading="isLoading = false"
+                          @recording-started="isVisualizerVisible = $event"
+                        />
                       </v-col>
-
-                      <v-col cols="1" v-if="isVisualizerVisible">
+                      <v-col
+                        v-if="isVisualizerVisible"
+                        cols="1"
+                      >
                         <AudioVisualizer />
                       </v-col>
-                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasCamRecord !== false">
-                        <VideoRecorder ref="videoRecorder" @showLoading="isLoading = true"
-                          @stopShowLoading="isLoading = false" :testId="testId" :taskIndex="taskIndex"></VideoRecorder>
+                      <v-col
+                        v-if="test.testStructure.userTasks[taskIndex].hasCamRecord !== false"
+                        cols="1"
+                      >
+                        <VideoRecorder
+                          ref="videoRecorder"
+                          :test-id="testId"
+                          :task-index="taskIndex"
+                          @show-loading="isLoading = true"
+                          @stop-show-loading="isLoading = false"
+                        />
                       </v-col>
-                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasScreenRecord !== false">
-                        <ScreenRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
-                          :testId="testId" :taskIndex="taskIndex"></ScreenRecorder>
+                      <v-col
+                        v-if="test.testStructure.userTasks[taskIndex].hasScreenRecord !== false"
+                        cols="1"
+                      >
+                        <ScreenRecorder
+                          :test-id="testId"
+                          :task-index="taskIndex"
+                          @show-loading="isLoading = true"
+                          @stop-show-loading="isLoading = false"
+                        />
                       </v-col>
                       <v-col cols="4">
-                        <Timer ref="timerComponent" :taskIndex="taskIndex" @timerStopped="handleTimerStopped" />
+                        <Timer
+                          ref="timerComponent"
+                          :task-index="taskIndex"
+                          @timer-stopped="handleTimerStopped"
+                        />
                       </v-col>
                     </v-row>
                   </div>
-
-                  <v-spacer />
-                  <v-row class="paragraph" justify="space-around">
-                    <v-col class="mb-0 pb-0" v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'">
-                      <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
-                        v-model="localTestAnswer.tasks[taskIndex].taskAnswer" outlined label="answer" />
+                  <v-row
+                    class="paragraph"
+                    justify="space-around"
+                  >
+                    <v-col
+                      v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'"
+                      class="mb-0 pb-0"
+                    >
+                      <v-textarea
+                        :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                        v-model="currentUserTestAnswer.tasks[taskIndex].taskAnswer"
+                        variant="outlined"
+                        label="answer"
+                      />
                     </v-col>
                     <v-col class="mb-0 pb-0">
-                      <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
-                        v-model="localTestAnswer.tasks[taskIndex].taskObservations" outlined
-                        label="observation (optional)" />
+                      <v-textarea
+                        :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                        v-model="currentUserTestAnswer.tasks[taskIndex].taskObservations"
+                        variant="outlined"
+                        label="observation (optional)"
+                      />
                     </v-col>
                   </v-row>
                 </v-col>
@@ -513,118 +637,153 @@
                   <p class="text-h5">
                     {{ test.testStructure.userTasks[taskIndex].postQuestion }}
                   </p>
-
-                  <v-text-field v-model="localTestAnswer.tasks[taskIndex].postAnswer" class="mx-2"
-                    :placeholder="test.testStructure.userTasks[taskIndex].postQuestion" outlined />
+                  <v-text-field
+                    v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
+                    class="mx-2"
+                    :placeholder="test.testStructure.userTasks[taskIndex].postQuestion"
+                    variant="outlined"
+                  />
                 </v-col>
               </v-row>
-
-              <v-row v-if="test.testStructure.userTasks[taskIndex].postForm" class="fill-height" align="center"
-                justify="center">
-                <v-col cols=12>
-                  <p class="text-h5">
-                    Post Form
-                  </p>
-                </v-col>
-                <iframe v-if="test.testStructure.userTasks[taskIndex].postForm"
-                  :src="test.testStructure.userTasks[taskIndex].postForm" width="100%" height="500" frameborder="0"
-                  marginheight="0" marginwidth="0">Loading...</iframe>
-              </v-row>
-
-              <video v-if="videoUrl == ''" id="vpreview" class="preview" style="max-width: 0px" autoplay />
               <div class="pa-2 text-end">
-                <v-row>
-                  <v-col cols="6">
-                    <v-btn block dark color="red lighten-1"
-                      @click="completeStep(taskIndex, 'tasks', false), callTimerSave()">
-                      {{ $t('buttons.couldNotFinish') }}
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-btn block dark color="orange lighten-1"
-                      @click="completeStep(taskIndex, 'tasks', true), callTimerSave()">
-                      {{ $t('UserTestView.buttons.done') }}
-                    </v-btn>
-                  </v-col>
-                </v-row>
-
+                <v-btn
+                  block
+                  color="orange-lighten-1"
+                  @click="completeStep(taskIndex, 'tasks'); callTimerSave()"
+                >
+                  {{ $t('UserTestView.buttons.done') }}
+                </v-btn>
               </div>
             </v-container>
-          </div>
+          </template>
         </ShowInfo>
 
         <!-- Post Test -->
-        <ShowInfo v-if="(index == 2 && !localTestAnswer.postTestCompleted) || (index == 2 && localTestAnswer.submitted)"
-          title="Post Test">
-          <div slot="content" class="ma-0 pa-0">
-            <v-row class="fill-height" align="center" justify="center">
+        <ShowInfo
+          v-if="index === 2 && (!currentUserTestAnswer.postTestCompleted || currentUserTestAnswer.submitted)"
+          title="Post Test"
+        >
+          <template #content>
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
-                    {{ test.testTitle }} -
-                    {{ $t('UserTestView.titles.postTest') }}
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
+                    {{ test.testTitle }} - {{ $t('UserTestView.titles.postTest') }}
                   </h1>
                 </v-row>
               </v-col>
             </v-row>
             <v-divider class="my-8" />
-
-            <v-row v-for="(item, index) in test.testStructure.postTest" :key="index">
-              <v-col cols="5" class="mx-auto py-0">
+            <v-row
+              v-for="(item, i) in test.testStructure.postTest"
+              :key="i"
+            >
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
                 <span class="cardsTitle">{{ item.title }}</span>
-                <br />
-                <span class="cardsSubtitle" v-if="item.description">{{ item.description }}</span>
-                <v-text-field v-if="item.textField" v-model="localTestAnswer.postTestAnswer[index].answer"
-                  :disabled="localTestAnswer.postTestCompleted" :placeholder="item.title" outlined />
-                <v-radio-group v-if="item.selectionField" v-model="localTestAnswer.postTestAnswer[index].answer"
-                  :disabled="localTestAnswer.postTestCompleted" column>
-                  <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
-                    <v-radio :disabled="localTestAnswer.postTestCompleted" class="ml-3 mb-1" :label="selection"
-                      :value="selection" />
-                  </v-row>
-                  <v-row justify="end" />
+                <br>
+                <span
+                  v-if="item.description"
+                  class="cardsSubtitle"
+                >{{ item.description }}</span>
+                <v-text-field
+                  v-if="item.textField"
+                  v-model="currentUserTestAnswer.postTestAnswer[i].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  :placeholder="item.title"
+                  variant="outlined"
+                />
+                <v-radio-group
+                  v-if="item.selectionField"
+                  v-model="currentUserTestAnswer.postTestAnswer[i].answer"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  direction="vertical"
+                >
+                  <v-radio
+                    v-for="(selection, j) in item.selectionFields"
+                    :key="j"
+                    :disabled="currentUserTestAnswer.postTestCompleted"
+                    class="ml-3 mb-1"
+                    :label="selection"
+                    :value="selection"
+                  />
                 </v-radio-group>
               </v-col>
             </v-row>
-            <v-col cols="12">
-              <v-row justify="center">
-                <v-col class="mx-10">
-                  <v-btn block :dark="!localTestAnswer.postTestCompleted" color="orange lighten-1" class="mt-3"
-                    :disabled="localTestAnswer.postTestCompleted" @click="
-                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
-                      ">
-                    {{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </div>
+            <v-row justify="center">
+              <v-col class="mx-10">
+                <v-btn
+                  block
+                  color="orange-lighten-1"
+                  class="mt-3"
+                  :disabled="currentUserTestAnswer.postTestCompleted"
+                  @click="completeStep(taskIndex, 'postTest'); taskIndex = 3"
+                >
+                  {{ $t('UserTestView.buttons.done') }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </template>
         </ShowInfo>
-        <ShowInfo v-else-if="index == 2 && localTestAnswer.postTestCompleted" :title="$t('finishTest.title')">
-          <div slot="content" class="ma-0 pa-0">
-            <v-row justify="center" class="ma-4">
-              <v-col cols="11" class="mt-3">
+
+        <!-- Test Completion -->
+        <ShowInfo
+          v-if="index === 2 && currentUserTestAnswer.postTestCompleted && !currentUserTestAnswer.submitted"
+          :title="$t('finishTest.title')"
+        >
+          <template #content>
+            <v-row
+              justify="center"
+              class="ma-4"
+            >
+              <v-col
+                cols="11"
+                class="mt-3"
+              >
                 <span class="cardsTitle">{{ $t('finishTest.finalMessage') }}!</span>
-                <br />
-                <span class="cardsSubtitle">
-                  {{ $t('finishTest.congratulations') }}
-                </span>
-                <v-row justify="center" class="mt-3">
+                <br>
+                <span class="cardsSubtitle">{{ $t('finishTest.congratulations') }}</span>
+                <v-row
+                  justify="center"
+                  class="mt-3"
+                >
                   <v-col cols="4">
-                    <img draggable="false" src="../../../public/finalMessage.svg" alt="Final test svg" />
+                    <img
+                      draggable="false"
+                      src="../../../public/finalMessage.svg"
+                      alt="Final test svg"
+                    >
                   </v-col>
-                  <v-col cols="4" class="pt-2 my-8">
+                  <v-col
+                    cols="4"
+                    class="pt-2 my-8"
+                  >
                     <span class="cardsSubtitle">{{ $t('finishTest.submitMessage') }}</span>
                     <v-col class="mt-2">
-                      <v-btn @click="dialog = true" color="orange" depressed dark><v-icon
-                          class="ma-2">mdi-send</v-icon>{{
-                            $t('buttons.submit') }}</v-btn>
+                      <v-btn
+                        color="orange"
+                        variant="flat"
+                        @click="dialog = true"
+                      >
+                        <v-icon class="ma-2">
+                          mdi-send
+                        </v-icon>{{ $t('buttons.submit') }}
+                      </v-btn>
                     </v-col>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
-          </div>
+          </template>
         </ShowInfo>
       </v-col>
     </v-row>
@@ -737,8 +896,8 @@ export default {
       this.calculateProgress();
     }
   },
-  beforeDestroy() {
-    if (this.$refs.videoRecorder) {
+  beforeUnmount() {
+  if(this.$refs.videoRecorder) {
       this.$refs.videoRecorder.stopRecording();
     }
   },

@@ -1,7 +1,14 @@
 <template>
-  <v-dialog v-model="dialogLeaveStatus" width="600" persistent>
+  <v-dialog
+    v-model="dialogLeaveStatus"
+    width="600"
+    persistent
+  >
     <v-card>
-      <v-card-title class="headline error accent-4 white--text" primary-title>
+      <v-card-title
+        class="text-h5 bg-error-accent-4 text-white"
+        primary-title
+      >
         {{ $t('alerts.leave') }}
       </v-card-title>
       <v-card-text>
@@ -10,20 +17,24 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn class="grey lighten-3" text @click="setDialog">
+        <v-btn
+          class="bg-grey-lighten-3"
+          variant="text"
+          @click="setDialog"
+        >
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
-          class="error accent-4 white--text ml-1"
-          text
+          class="bg-error-accent-4 text-white ml-1"
+          variant="text"
           @click="handleLeave"
         >
           {{ $t('buttons.leave') }}
         </v-btn>
         <v-btn
-          class="green white--text ml-1"
-          text
-          @click="submit()"
+          class="bg-green text-white ml-1"
+          variant="text"
+          @click="submit"
         >
           {{ $t('buttons.saveandleave') }}
         </v-btn>
@@ -35,6 +46,7 @@
 <script>
 export default {
   name: 'LeaveAlert',
+  emits: ['save-and-leave'],
   computed: {
     dialogLeaveStatus() {
       return this.$store.getters.getDialogLeaveStatus;
@@ -53,7 +65,7 @@ export default {
       console.log(this.$store.state.pathTo);
     },
     submit() {
-      this.$emit('submit');
+      this.$emit('save-and-leave');
     }
   }
 };

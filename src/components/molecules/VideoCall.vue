@@ -1,17 +1,20 @@
 <template>
   <v-container fluid>
-    <v-row class="mb-2" justify="center">
+    <v-row
+      class="mb-2"
+      justify="center"
+    >
       <v-col cols="10">
         <v-btn
           v-if="index === 0"
           :disabled="!consentCompleted && !isAdmin"
-          :dark="(consentCompleted && !isAdmin) || isAdmin"
-          @click="openUserCamera"
           color="green"
           block
-          depressed
-          >CONNECT</v-btn
+          variant="flat"
+          @click="openUserCamera"
         >
+          CONNECT
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -32,6 +35,21 @@ import {
 import { db } from '@/firebase'
 
 export default {
+  beforeRouteLeave() {
+    this.hangUp()
+  },
+  props: {
+    isAdmin: {
+      type: Boolean,
+    },
+    index: {
+      type: Number,
+    },
+    consentCompleted: {
+      type: Boolean,
+    },
+  },
+  emits: ['emit-confirm'],
   data() {
     return {
       createBtnDisabled: false,
@@ -56,20 +74,6 @@ export default {
       roomDialog: false,
       roomCollection: null,
     }
-  },
-  beforeRouteLeave() {
-    this.hangUp()
-  },
-  props: {
-    isAdmin: {
-      type: Boolean,
-    },
-    index: {
-      type: Number,
-    },
-    consentCompleted: {
-      type: Boolean,
-    },
   },
   computed: {
     localCameraStream() {

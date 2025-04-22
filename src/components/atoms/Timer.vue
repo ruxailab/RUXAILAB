@@ -1,5 +1,21 @@
 <template>
-  <div></div>
+  <div class="mr-auto">
+    <v-tooltip location="bottom">
+      <template #activator="{ props }">
+        <v-icon
+          class="ml-4 mr-2 my-4"
+          style="cursor: pointer"
+          v-bind="props"
+         
+          @click="toggleTimer"
+        >
+          {{ timerRunning ? 'mdi-clock' : 'mdi-clock-outline' }}
+        </v-icon>
+      </template>
+      <span>{{ timerVisible ? 'Hide Timer' : 'Show Timer' }}</span>
+    </v-tooltip>
+    <span v-if="timerVisible"> {{ formatTime(elapsedTime) }} </span>
+  </div>
 </template>
 
 <script>
@@ -10,6 +26,7 @@ export default {
       required: true,
     },
   },
+  emits: ['timerStopped'],
   data() {
     return {
       timerRunning: false,

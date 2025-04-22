@@ -1,14 +1,24 @@
 <template>
   <div class="input">
-    <v-file-input :id="`${heuristicId.id}${questionId}`" class="ml-2" type="file" name="my-image"
-                  accept="image/gif, image/jpeg, image/png" :placeholder="imageUploaded
-                    ? $t('common.inputImage')
-                    : url
-                  " @change="uploadFile()"
+    <v-file-input
+      :id="`${heuristicId.id}${questionId}`"
+      class="ml-2"
+      name="my-image"
+      accept="image/gif, image/jpeg, image/png"
+      :placeholder="imageUploaded
+        ? $t('common.inputImage')
+        : url
+      "
+      @change="uploadFile()"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
-      <v-img v-if="imageUploaded" max-height="225" :src="url" contain />
+      <v-img
+        v-if="imageUploaded"
+        max-height="225"
+        :src="url"
+        cover
+      />
     </v-row>
   </div>
 </template>
@@ -22,6 +32,7 @@ export default {
     questionId: { type: String, default: '', required: true },
     testId: { type: String, default: '', required: true },
   },
+  emits: ['imageUploaded'],
   data: () => ({
     url: '',
     object: {},

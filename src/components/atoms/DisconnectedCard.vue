@@ -3,17 +3,17 @@
     v-model="dialog"
     persistent
     :max-width="dialogMaxWidth"
-    :value="true"
+    :model-value="true"
   >
     <v-card class="rounded-xl">
-      <v-card-title class="text-h5 pb-0">Desconexão Detectada!</v-card-title>
+      <v-card-title class="text-h5 pb-0">
+        Desconexão Detectada!
+      </v-card-title>
       <v-container fluid>
         <v-row no-gutters>
           <v-col class="text-center cardSubtitle">
-            <span
-              >Infelizmente ocorreu uma desconexão. Você precisará realizar a
-              conexão novamente!</span
-            >
+            <span>Infelizmente ocorreu uma desconexão. Você precisará realizar a
+              conexão novamente!</span>
           </v-col>
           <v-col class="text-center">
             <v-img
@@ -28,11 +28,11 @@
       </v-container>
       <v-card-actions class="text-center">
         <v-btn
-          color="orange darken-1"
-          depressed
-          large
-          @click="reconnect"
+          color="orange-darken-1"
+          variant="flat"
+          size="large"
           class="mx-auto my-3"
+          @click="reconnect"
         >
           Recomeçar
         </v-btn>
@@ -49,6 +49,16 @@ export default {
       dialogMaxWidth: '40vw', // Define o valor inicial para desktop
     }
   },
+  mounted() {
+    // Chama a função para definir o valor inicial de dialogMaxWidth
+    this.updateDialogMaxWidth()
+    // Adiciona um listener para ajustar o dialogMaxWidth quando a tela for redimensionada
+    window.addEventListener('resize', this.updateDialogMaxWidth)
+  },
+  beforeUnmount() {
+    // Remove o listener do evento resize para evitar vazamentos de memória
+    window.removeEventListener('resize', this.updateDialogMaxWidth)
+  },
   methods: {
     reconnect() {
       location.reload()
@@ -64,16 +74,6 @@ export default {
         this.dialogMaxWidth = '40vw' // Define o valor para telas maiores que 600px de largura
       }
     },
-  },
-  mounted() {
-    // Chama a função para definir o valor inicial de dialogMaxWidth
-    this.updateDialogMaxWidth()
-    // Adiciona um listener para ajustar o dialogMaxWidth quando a tela for redimensionada
-    window.addEventListener('resize', this.updateDialogMaxWidth)
-  },
-  beforeDestroy() {
-    // Remove o listener do evento resize para evitar vazamentos de memória
-    window.removeEventListener('resize', this.updateDialogMaxWidth)
   },
 }
 </script>

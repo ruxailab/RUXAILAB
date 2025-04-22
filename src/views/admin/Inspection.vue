@@ -8,20 +8,37 @@
       </v-row>
     </v-col>
 
-    <v-col cols="12" class="mt-6">
-      <v-row justify="center">
-        <v-col cols="12" sm="6" md="4" lg="3" class="card">
+    <v-col
+      cols="12"
+      class="mt-6"
+    >
+      <v-row>
+        <v-col
+          cols="10"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Usability Heuristic"
             type="Test"
             segund-type="HEURISTICS"
-            :texts="['Usability Percentage', 'Final Report PDF', 'Invite specialists to evaluate your application']"
-            @click="setTestType"
+            :texts="[
+              'Usability Percentage',
+              'Final Report PDF',
+              'Invite specialists to evaluate your application'
+            ]"
+            @click="() => setTestType('HEURISTICS')"
           />
         </v-col>
 
-        <v-col cols="12" sm="6" md="4" lg="3" class="card">
+        <v-col
+          cols="10"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/user.png')"
@@ -34,7 +51,12 @@
           </div>
         </v-col>
 
-        <v-col cols="12" sm="6" md="4" lg="3" class="card">
+        <v-col
+          cols="10"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/specialist.png')"
@@ -47,14 +69,21 @@
           </div>
         </v-col>
 
-        <v-col cols="12" sm="6" md="4" lg="3" class="card">
+        <v-col
+          cols="10"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/user.png')"
               title="Automated Evaluation"
               type="Test"
               segund-type="AUTOMATED"
-              :texts="['Use of tools to verify accessibility or detect errors']"
+              :texts="[
+                'Use of tools to verify accessibility or detect errors'
+              ]"
               :disabled="true"
             />
           </div>
@@ -66,10 +95,10 @@
       :is-open="nameDialog"
       :test-type="testType"
       :heading="$t('TestDialog.heading')"
-      :subHeading="$t('TestDialog.sub-heading')"
-      :testName="$t('TestDialog.test-name')"
-      :testDescription="$t('TestDialog.test-description')"
-      :testLabel="$t('TestDialog.test-label')"
+      :sub-heading="$t('TestDialog.sub-heading')"
+      :test-name="$t('TestDialog.test-name')"
+      :test-description="$t('TestDialog.test-description')"
+      :test-label="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>
@@ -116,8 +145,18 @@ export default {
   margin: 0 auto;
 }
 
+.cards-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+
 .card {
-  padding: 0.5rem;
+  flex: 1 1 23%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.1rem;
   overflow: hidden;
   word-wrap: break-word;
 }
@@ -134,21 +173,18 @@ export default {
     font-size: clamp(20px, 5vw, 28px);
     margin: 1rem 0;
   }
+}
 
+@media (max-width: 1264px) {
   .card {
     padding: 0.25rem;
     margin-bottom: 1rem;
   }
 }
 
-/* Tablets (601px - 960px) */
-@media (min-width: 601px) and (max-width: 960px) {
-  .outermost {
-    padding: 1rem;
-  }
-
-  .titles {
-    font-size: clamp(24px, 5vw, 32px);
+@media (max-width: 1360px) {
+  .cards-container {
+    flex-wrap: wrap;
   }
 
   .card {
