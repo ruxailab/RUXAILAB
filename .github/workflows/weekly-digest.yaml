@@ -1,0 +1,16 @@
+name: Trigger Weekly Digest Workflow
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'  # Every Sunday at 9:00 AM UTC
+  workflow_dispatch:      # Optional: for manual testing via "Run workflow" button
+
+jobs:
+  weekly-digest:
+    uses: yashitz07/GitHub-Actions-workflow/.github/workflows/weekly-digest.yml@main
+    secrets:
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
+      GUILD_ID: ${{ secrets.GUILD_ID }}
+      GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+      WEEKLY_DIGEST_CHANNEL_ID: ${{ secrets.WEEKLY_DIGEST_CHANNEL_ID }}
