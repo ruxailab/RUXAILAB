@@ -1,21 +1,36 @@
 <template>
   <div>
-    <v-tooltip v-if="question.descriptions.length > 0" bottom>
-     <template v-slot:activator="{ props }">
-  <v-btn icon v-bind="props" @click="dialog = true">
-    <v-icon>
-      mdi-help-circle-outline
-    </v-icon>
-  </v-btn>
-</template>
+    <v-tooltip
+      v-if="question.descriptions.length > 0"
+      location="bottom"
+    >
+      <template #activator="{ props }">
+        <v-btn
+          icon
+          v-bind="props"
+          @click="dialog = true"
+        >
+          <v-icon>
+            mdi-help-circle-outline
+          </v-icon>
+        </v-btn>
+      </template>
 
       <span>{{ $t('buttons.help') }}</span>
     </v-tooltip>
 
-    <v-dialog v-model="dialog" width="85%">
+    <v-dialog
+      v-model="dialog"
+      width="85%"
+    >
       <v-card>
         <div style="display: flex; justify-content: flex-end">
-          <v-btn small icon class="ma-1" @click="dialog = false">
+          <v-btn
+            size="small"
+            icon
+            class="ma-1"
+            @click="dialog = false"
+          >
             <v-icon color="error">
               mdi-close
             </v-icon>
@@ -25,7 +40,10 @@
           {{ question.title }}
         </div>
 
-        <div v-for="(description, i) in question.descriptions" :key="i">
+        <div
+          v-for="(description, i) in question.descriptions"
+          :key="i"
+        >
           <div class="subtitleView mx-4 mb-1 mt-5">
             {{ description.title }}
           </div>

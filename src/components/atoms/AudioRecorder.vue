@@ -2,32 +2,35 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip bottom v-if="!recordingAudio">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="!recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              v-bind="attrs"
-              @click="startAudioRecording"
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto"
-              v-on="on"
+              v-bind="props"
+              @click="startAudioRecording"
             >
               <v-icon>mdi-microphone</v-icon>
             </v-btn>
           </template>
           <span>Start Audio Record</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="recordingAudio">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              v-bind="attrs"
-              @click="stopAudioRecording"
               color="red"
-              dark
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto xl"
-              v-on="on"
+              v-bind="props"
+              @click="stopAudioRecording"
             >
               <v-icon>mdi-stop</v-icon>
             </v-btn>
@@ -42,15 +45,23 @@
 <script>
 import i18n from '@/i18n'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+
 export default {
   props: {
-    testId: String,
-    taskIndex: Number,
+    testId: {
+      type: String,
+      default: '',
+    },
+    taskIndex: {
+      type: Number,
+      default: 0,
+    },
     showVisualizer: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['recordingStarted', 'showLoading', 'stopShowLoading'],
   data() {
     return {
       recordingAudio: false,
@@ -68,8 +79,8 @@ export default {
   methods: {
     async startAudioRecording() {
       this.recordingAudio = true
-
       this.$emit('recordingStarted', true)
+      
       try {
         this.audioStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
@@ -117,7 +128,6 @@ export default {
           this.audioStream = null
           this.recordingAudio = false
           this.$emit('recordingStarted', false)
-
           this.$emit('stopShowLoading')
           this.$toast.success(i18n.$t('alerts.genericSuccess'))
           this.recordingAudio = false

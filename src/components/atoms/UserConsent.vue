@@ -2,7 +2,15 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <VueEditor v-model="consent" rows="3" outlined color="orange" class=" mt-3" placeholder="Consent Form..." />
+        <v-textarea
+          v-model="consent"
+          rows="3"
+          variant="outlined"
+          color="orange"
+          class="mx-6 mt-3"
+          placeholder="Consent Form..."
+          @change="saveState()"
+        />
       </v-col>
     </v-row>
   </v-container>

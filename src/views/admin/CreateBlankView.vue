@@ -8,7 +8,10 @@
       </v-row>
     </v-col>
 
-    <v-col cols="12" class="mt-6">
+    <v-col
+      cols="12"
+      class="mt-6"
+    >
       <v-row>
         <v-col cols="12" md="4" sm="10" class="card">
           <CardTypeTest
@@ -31,7 +34,12 @@
             @click="setTestType"
           />
         </v-col>
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col
+          cols="12"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/user.png')"
             :title="$t('Createblank.testType_2.testTitle')"
@@ -41,7 +49,12 @@
             @click="setTestType"
           />
         </v-col>
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col
+          cols="12"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/user.png')"
             title="Accessibility Test"
@@ -51,7 +64,6 @@
             @click="setTestType"
           />
         </v-col>
-
       </v-row>
     </v-col>
 
@@ -60,10 +72,10 @@
       :is-open="nameDialog"
       :test-type="testType"
       :heading="$t('TestDialog.heading')"
-      :subHeading="$t('TestDialog.sub-heading')"
-      :testName="$t('TestDialog.test-name')"
-      :testDescription="$t('TestDialog.test-description')"
-      :testLabel="$t('TestDialog.test-label')"
+      :sub-heading="$t('TestDialog.sub-heading')"
+      :test-name="$t('TestDialog.test-name')"
+      :test-description="$t('TestDialog.test-description')"
+      :test-label="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>

@@ -1,5 +1,9 @@
 <template>
-  <div id="FileUpload" class="rounded" style="background-color:#f5f7ff">
+  <div
+    id="FileUpload"
+    class="rounded"
+    style="background-color:#f5f7ff"
+  >
     <v-card-title class="subtitleView">
       {{ $t('HeuristicsSettings.titles.settings') }}
     </v-card-title>
@@ -7,8 +11,7 @@
     <v-col justify="center">
       <v-row class="px-6 ">
         <v-btn
-          depressed
-          dark
+          variant="flat"
           color="orange"
           class="ma-2"
           @click="downloadTemplate"
@@ -18,7 +21,11 @@
       </v-row>
       <v-divider class="ma-8" />
       <v-row>
-        <v-row class="px-8 mb-2" justify="center" align="center">
+        <v-row
+          class="px-8 mb-2"
+          justify="center"
+          align="center"
+        >
           <v-file-input
             ref="myFile"
             v-model="csvFile"
@@ -33,17 +40,25 @@
             :loading="loadingUpdate"
             :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
             color="blue-grey"
-            class="ma-3 white--text"
+            class="ma-3 text-white"
             @click="changeToJSON"
           >
             {{ $t('HeuristicsSettings.actions.update') }}
-            <v-icon right dark>
+            <v-icon
+              end
+            >
               mdi-cloud-upload
             </v-icon>
           </v-btn>
         </v-row>  
       </v-row>
-      <v-alert v-if="errorMessage" type="error" dense class="ma-2"> {{ errorMessage }}
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        density="compact"
+        class="ma-2"
+      >
+        {{ errorMessage }}
       </v-alert>  
     </v-col>
   </div>

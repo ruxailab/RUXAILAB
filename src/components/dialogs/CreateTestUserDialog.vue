@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-dialog
-      :value="isOpen"
-      @input="$emit('update:isOpen', $event)"
+      :model-value="isOpen"
       fullscreen
       transition="dialog-bottom-transition"
+      @update:model-value="$emit('update:isOpen', $event)"
     >
       <v-card color="#f9f5f0">
         <ButtonBack @click="$emit('close')" />
@@ -19,7 +19,12 @@
 
         <v-col cols="12">
           <v-row class="cardsContainer">
-            <v-col cols="12" md="4" sm="10" class="card">
+            <v-col
+              cols="12"
+              md="4"
+              sm="10"
+              class="card"
+            >
               <CardTypeTestImage
                 :title="$t('Createblank.UsabilityUser.SelfTest.title')"
                 :type="$t('Createblank.UsabilityUser.SelfTest.type')"
@@ -29,7 +34,12 @@
               />
             </v-col>
 
-            <v-col cols="12" md="4" sm="10" class="card">
+            <v-col
+              cols="12"
+              md="4"
+              sm="10"
+              class="card"
+            >
               <CardTypeTestImage
                 :title="$t('Createblank.UsabilityUser.LiveTest.title')"
                 :type="$t('Createblank.UsabilityUser.LiveTest.type')"
@@ -62,6 +72,8 @@ export default {
       required: true, 
     },
   },
+
+  emits: ['update:isOpen', 'close', 'setUser'],
 
   methods: {
     setType(type) {

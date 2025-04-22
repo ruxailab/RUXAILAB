@@ -1,23 +1,41 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="10">
-        <v-card class="rounded-xxl" outlined>
-          <v-card-title class="headline">
+      <v-col
+        cols="12"
+        md="10"
+      >
+        <v-card
+          class="rounded-xxl"
+          border
+        >
+          <v-card-title class="text-h5">
             {{ $t('common.notifications') }}
-            <v-spacer></v-spacer>
-            <v-btn color="primary" v-if="activeTab=='unread'" @click="markAllAsRead" :disabled="allRead">
+            <v-spacer />
+            <v-btn
+              v-if="activeTab=='unread'"
+              color="primary"
+              :disabled="allRead"
+              @click="markAllAsRead"
+            >
               Mark all as read
             </v-btn>
           </v-card-title>
 
-          <v-tabs v-model="activeTab" background-color="#f3a426" dark>
-            <v-tab href="#unread">{{ $t('common.unread') }}</v-tab>
-            <v-tab href="#inbox">{{ $t('common.inbox') }}</v-tab>
+          <v-tabs
+            v-model="activeTab"
+            bg-color="#f3a426"
+          >
+            <v-tab href="#unread">
+              {{ $t('common.unread') }}
+            </v-tab>
+            <v-tab href="#inbox">
+              {{ $t('common.inbox') }}
+            </v-tab>
           </v-tabs>
 
-          <v-tabs-items v-model="activeTab">
-            <v-tab-item value="unread">
+          <v-window v-model="activeTab">
+            <v-window-item value="unread">
               <v-card-text v-if="unreadNotifications.length > 0">
                 <notification-list
                   :notifications="unreadNotifications"
@@ -26,13 +44,16 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert type="info" outlined>
-                    {{ $t('common.noNotifications') }}
+                <v-alert
+                  type="info"
+                  variant="outlined"
+                >
+                  {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
-            </v-tab-item>
+            </v-window-item>
 
-            <v-tab-item value="inbox">
+            <v-window-item value="inbox">
               <v-card-text
                 v-if="user.inbox && user.inbox.length > 0"
               >
@@ -43,17 +64,24 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert type="info" outlined>
-                    {{ $t('common.noNotifications') }}
+                <v-alert
+                  type="info"
+                  variant="outlined"
+                >
+                  {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
-            </v-tab-item>
-          </v-tabs-items>
+            </v-window-item>
+          </v-window>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="secondary" text @click="goBack">
-                {{ $t('buttons.back') }}
+            <v-spacer />
+            <v-btn
+              color="secondary"
+              variant="text"
+              @click="goBack"
+            >
+              {{ $t('buttons.back') }}
             </v-btn>
           </v-card-actions>
         </v-card>

@@ -12,18 +12,35 @@
         class="final-report-box rounded pt-0 mb-4"
         elevation="0"
       >
-        <v-stepper-header style="background-color: #F5F7FF;" class="pt-2">
-          <v-stepper-step :complete="step > 1" step="1" color="orange">
+        <v-stepper-header
+          style="background-color: #F5F7FF;"
+          class="pt-2"
+        >
+          <v-stepper-step
+            :complete="step > 1"
+            step="1"
+            color="orange"
+          >
             Conclusion
           </v-stepper-step>
           <v-divider />
-          <v-stepper-step :complete="step > 2" step="2" color="orange">
+          <v-stepper-step
+            :complete="step > 2"
+            step="2"
+            color="orange"
+          >
             Elements
           </v-stepper-step>
         </v-stepper-header>
 
-        <v-stepper-items style="background-color:#F5F7FF" class="mt-0">
-          <v-stepper-content step="1" class="align-mid pt-2">
+        <v-stepper-items
+          style="background-color:#F5F7FF"
+          class="mt-0"
+        >
+          <v-stepper-content
+            step="1"
+            class="align-mid pt-2"
+          >
             <div class="container">
               <div class="row">
                 <TextControls />
@@ -31,7 +48,11 @@
 
               <div class="row">
                 <div class="col">
-                  <div id="myTextarea" contenteditable class="form-control" />
+                  <div
+                    id="myTextarea"
+                    contenteditable
+                    class="form-control"
+                  />
                 </div>
               </div>
               <v-btn
@@ -39,7 +60,6 @@
                 align="right"
                 color="orange"
                 elevation="0"
-                dark
                 @click="step++, update()"
               >
                 {{ $t('buttons.next') }}
@@ -64,13 +84,17 @@
     >
       <v-row>
         <v-col class="text-center">
-          <v-icon size="100" color="primary" class="mb-4">
+          <v-icon
+            size="100"
+            color="primary"
+            class="mb-4"
+          >
             mdi-tools
           </v-icon>
-          <h1 class="display-1">
+          <h1 class="text-h4">
             {{ $t('pages.finalReport.ConstructionHeading') }}
           </h1>
-          <p class="subtitle-1">
+          <p class="text-subtitle-1">
             {{ $t('pages.finalReport.ConstructionParagraph') }}
           </p>
         </v-col>

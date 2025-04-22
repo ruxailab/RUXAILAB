@@ -2,32 +2,40 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip bottom v-if="!recording">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="!recording"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              v-bind="attrs"
-              @click="startRecording"
+             
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
-              v-on="on"
+              v-bind="props"
+              @click="startRecording"
             >
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
           <span>Start Recording</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="recording">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="recording"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              v-bind="attrs"
-              @click="stopRecording"
+             
               class="ml-4 my-2 mr-auto"
               color="red"
               icon
-              v-on="on"
+              v-bind="props"
+              @click="stopRecording"
             >
-              <v-icon dark>mdi-stop</v-icon>
+              <v-icon>
+                mdi-stop
+              </v-icon>
             </v-btn>
           </template>
           <span>Stop Recording</span>
@@ -45,6 +53,7 @@ export default {
     testId: String,
     taskIndex: Number,
   },
+  emits: ['showLoading', 'stopShowLoading'],
   data() {
     return {
       recording: false,

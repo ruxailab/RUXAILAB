@@ -3,9 +3,16 @@
     <Snackbar />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           <!-- Are you sure you want to delete this report? -->
           {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
         </v-card-title>
@@ -16,13 +23,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialog = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialog = false"
+          >
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loadingBtn"
-            text
+            variant="text"
             @click="removeReport(report), (loadingBtn = true)"
           >
             {{ $t('buttons.delete') }}
@@ -31,63 +42,87 @@
       </v-card>
     </v-dialog>
 
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+    <v-overlay
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         {{ $t('HeuristicsReport.messages.reports_loading') }}
       </div>
     </v-overlay>
 
-    <Intro v-if="reports.length == 0 && !loading" @goToCoops="goToCoops()" />
-    <ShowInfo v-else :title="$t('HeuristicsReport.titles.reports')">
-      <v-row slot="top" justify="end" dense class="mr-3">
-        <p class="subtitleView">
-          {{ $t('HeuristicsReport.titles.last_updated') }}:
-          {{ new Date().toLocaleString('en') }}
-        </p>
-      </v-row>
-
-      <div slot="content" class="ma-0 pa-0">
-        <v-data-table
-          style="background: #f5f7ff"
-          :headers="headers"
-          :items="reports"
-          :items-per-page="10"
-          height="420px"
+    <Intro
+      v-if="reports.length == 0 && !loading"
+      @go-to-coops="goToCoops()"
+    />
+    <ShowInfo
+      v-else
+      :title="$t('HeuristicsReport.titles.reports')"
+    >
+      <template #top>
+        <v-row
+          justify="end"
           dense
+          class="mr-3"
         >
-          <template v-slot:item.more="{ item }">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" icon v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list v-if="test.testAdmin.email == user.email">
-                <v-list-item @click=";(dialog = true), (report = item)">
-                  <v-list-item-title>
-                    {{ $t('HeuristicsReport.messages.remove_report') }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
+          <p class="subtitleView">
+            {{ $t('HeuristicsReport.titles.last_updated') }}:
+            {{ new Date().toLocaleString('en') }}
+          </p>
+        </v-row>
+      </template>
 
-          <template v-slot:item.userDocId="{ item, index }">
-            <!-- <div>{{ getCooperatorEmail(item.userDocId) }}</div> -->
-            {{ `Ev${index + 1}` }}
-          </template>
-          <template v-slot:item.progress="{ item }">
-            <div>{{ item.progress }}</div>
-          </template>
-          <template v-slot:item.submitted="{ item }">
-            <div>{{ item.submitted }}</div>
-          </template>
-          <template v-slot:item.lastUpdate="{ item }">
-            <div>{{ formatDate(item.lastUpdate) }}</div>
-          </template>
-        </v-data-table>
-      </div>
+      <template #content>
+        <div class="ma-0 pa-0">
+          <v-data-table
+            style="background: #f5f7ff"
+            :headers="headers"
+            :items="reports"
+            :items-per-page="10"
+            height="420px"
+            dense
+          >
+            <template #item.more="{ item }">
+              <v-menu :offset="[0, 4]">
+                <template #activator="{ props }">
+                  <v-btn
+                    icon
+                    v-bind="props"
+                  >
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list v-if="test.testAdmin.email == user.email">
+                  <v-list-item @click=";(dialog = true), (report = item)">
+                    <v-list-item-title>
+                      {{ $t('HeuristicsReport.messages.remove_report') }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+
+            <template #item.userDocId="{ index }">
+              <!-- <div>{{ getCooperatorEmail(item.userDocId) }}</div> -->
+              {{ `Ev${index + 1}` }}
+            </template>
+            <template #item.progress="{ item }">
+              <div>{{ item.progress }}</div>
+            </template>
+            <template #item.submitted="{ item }">
+              <div>{{ item.submitted }}</div>
+            </template>
+            <template #item.lastUpdate="{ item }">
+              <div>{{ formatDate(item.lastUpdate) }}</div>
+            </template>
+          </v-data-table>
+        </div>
+      </template>
     </ShowInfo>
   </div>
 </template>
@@ -107,7 +142,7 @@ export default {
   },
 
   props: { id: { type: String, default: '' } },
-
+  emits: ['goToCoops'],
   data: () => ({
     // headers: [
     //   // { text: 'Evaluator', value: 'userDocId' },

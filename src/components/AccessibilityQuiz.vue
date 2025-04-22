@@ -3,39 +3,40 @@
     <!-- Sidebar -->
     <v-col cols="12" md="3" class="pa-2">
       <v-card class="sidebar-card h-100" elevation="2">
-        <v-list nav>
-          <v-list-item-group v-model="selectedPrinciple" color="primary">
-            <v-subheader class="text-h6">WCAG Principles</v-subheader>
-            <v-list-item
-              v-for="(principle, index) in principles"
-              :key="index"
-              @click="selectPrinciple(principle)"
-              dense
-            >
-              <v-list-item-icon>
-                <v-icon>{{ getPrincipleIcon(principle.title) }}</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ principle.title }}</v-list-item-title>
-                <v-list-item-subtitle class="text-wrap">
-                  {{ principle.description }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
+        <v-list v-model="selectedPrinciple" nav>
+          <v-list-subheader class="text-h6">WCAG Principles</v-list-subheader>
+          <v-list-item
+            v-for="(principle, index) in principles"
+            :key="index"
+            :value="principle"
+            density="compact"
+            color="primary"
+            @click="selectPrinciple(principle)"
+          >
+            <template #prepend>
+              <v-icon>{{ getPrincipleIcon(principle.title) }}</v-icon>
+            </template>
+            <v-list-item-title>{{ principle.title }}</v-list-item-title>
+            <v-list-item-subtitle class="text-wrap">
+              {{ principle.description }}
+            </v-list-item-subtitle>
+          </v-list-item>
 
-            <!-- All Principles Option -->
-            <v-list-item @click="selectAllPrinciples" dense>
-              <v-list-item-icon>
-                <v-icon>mdi-check-all</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>All Principles</v-list-item-title>
-                <v-list-item-subtitle class="text-wrap">
-                  Test all WCAG principles
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+          <!-- All Principles Option -->
+          <v-list-item
+            density="compact"
+            :value="null"
+            color="primary"
+            @click="selectAllPrinciples"
+          >
+            <template #prepend>
+              <v-icon>mdi-check-all</v-icon>
+            </template>
+            <v-list-item-title>All Principles</v-list-item-title>
+            <v-list-item-subtitle class="text-wrap">
+              Test all WCAG principles
+            </v-list-item-subtitle>
+          </v-list-item>
         </v-list>
       </v-card>
     </v-col>
@@ -45,65 +46,47 @@
       <!-- Progress bar with percentage -->
       <div v-if="!isComplete && isStarted" class="progress-container mb-3">
         <v-progress-linear
-          :value="progress"
+          :model-value="progress"
           color="success"
           height="12"
           class="mt-0"
-        ></v-progress-linear>
+        />
         <div class="progress-percentage">{{ Math.round(progress) }}%</div>
       </div>
 
       <!-- Current principle being tested -->
-      <v-row
-        v-if="currentPrinciple && isStarted"
-        justify="center"
-        class="ma-0 mb-3"
-      >
+      <v-row v-if="currentPrinciple && isStarted" justify="center" class="ma-0 mb-3">
         <v-col cols="12" class="pa-0">
-          <v-chip color="primary" text-color="white" large>
-            <v-icon left>{{ getPrincipleIcon(currentPrinciple.title) }}</v-icon>
+          <v-chip color="primary" size="large">
+            <v-icon start>{{ getPrincipleIcon(currentPrinciple.title) }}</v-icon>
             Testing: {{ currentPrinciple.title }}
           </v-chip>
         </v-col>
       </v-row>
 
       <!-- Conformance level selection -->
-      <v-row justify="center" v-if="!isStarted" class="ma-0">
+      <v-row v-if="!isStarted" justify="center" class="ma-0">
         <v-col cols="12" class="pa-0">
           <v-card class="selection-card" elevation="3">
-            <v-card-title
-              class="justify-center text-h5 primary white--text py-4"
-            >
+            <v-card-title class="justify-center text-h5 bg-primary text-white py-4">
               Select Conformance Level
             </v-card-title>
-
             <v-card-text class="pa-6">
-              <p class="text-body-1 mb-5 grey--text text--darken-1 text-center">
+              <p class="text-body-1 mb-5 text-grey-darken-1 text-center">
                 Choose the WCAG conformance level you want to evaluate against:
               </p>
-
               <v-radio-group v-model="selectedConformanceLevel" class="mt-4">
-                <v-radio
-                  label="Level A (Minimum level of conformance)"
-                  value="A"
-                ></v-radio>
-                <v-radio
-                  label="Level AA (Addresses the major barriers)"
-                  value="AA"
-                ></v-radio>
-                <v-radio
-                  label="Level AAA (Highest level of conformance)"
-                  value="AAA"
-                ></v-radio>
+                <v-radio label="Level A (Minimum level of conformance)" value="A" />
+                <v-radio label="Level AA (Addresses the major barriers)" value="AA" />
+                <v-radio label="Level AAA (Highest level of conformance)" value="AAA" />
               </v-radio-group>
-
               <div class="d-flex justify-center mt-6">
                 <v-btn
                   color="primary"
-                  x-large
+                  size="large"
                   min-width="200"
-                  @click="startAssessment"
                   elevation="2"
+                  @click="startAssessment"
                 >
                   Start Assessment
                 </v-btn>
@@ -113,36 +96,27 @@
         </v-col>
       </v-row>
 
-      <v-row justify="center" v-if="isStarted" class="ma-0">
+      <v-row v-if="isStarted" justify="center" class="ma-0">
         <v-col cols="12" class="pa-0">
           <v-card class="quiz-card" elevation="3">
-            <v-card-title
-              class="justify-center text-h5 primary white--text py-4"
-            >
+            <v-card-title class="justify-center text-h5 bg-primary text-white py-4">
               <span v-if="!isComplete">
-                {{
-                  currentPrinciple ? currentPrinciple.title : 'All Principles'
-                }}
+                {{ currentPrinciple ? currentPrinciple.title : 'All Principles' }}
                 Accessibility Assessment (Level {{ selectedConformanceLevel }})
               </span>
               <span v-else>Assessment Complete!</span>
             </v-card-title>
-
             <v-card-text class="pa-6">
               <!-- Quiz in progress -->
               <div v-if="!isComplete" class="quiz-content">
                 <h2 class="text-h5 font-weight-bold mb-4 text-center">
                   {{ currentQuestion.title }}
                 </h2>
-                <p
-                  class="text-body-1 mb-5 grey--text text--darken-1 text-center"
-                >
+                <p class="text-body-1 mb-5 text-grey-darken-1 text-center">
                   {{ currentQuestion.description }}
                 </p>
-
-                <v-card outlined class="pa-5 mb-8 criterion-card primary--text">
+                <v-card border class="pa-5 mb-8 criterion-card text-primary">
                   <p class="text-body-1">{{ currentCriterion }}</p>
-                  
                   <!-- Evidence Upload Section -->
                   <v-file-input
                     v-model="currentEvidence"
@@ -150,9 +124,8 @@
                     label="Upload Screenshot Evidence"
                     prepend-icon="mdi-camera"
                     class="mt-4"
-                    @change="handleEvidenceUpload"
+                    @update:model-value="handleEvidenceUpload"
                   ></v-file-input>
-                  
                   <!-- Appraiser Notes -->
                   <v-textarea
                     v-model="currentNotes"
@@ -162,43 +135,38 @@
                     class="mt-4"
                   ></v-textarea>
                 </v-card>
-
-                <div
-                  class="button-container d-flex align-center justify-center flex-wrap"
-                >
+                <div class="button-container d-flex align-center justify-center flex-wrap">
                   <v-btn
                     color="success"
                     class="ma-2 answer-btn"
-                    x-large
+                    size="large"
                     min-width="120"
-                    @click="answerQuestion('yes')"
                     elevation="2"
+                    @click="answerQuestion('yes')"
                   >
-                    <v-icon left>mdi-check</v-icon>
+                    <v-icon start>mdi-check</v-icon>
                     Yes
                   </v-btn>
-
                   <v-btn
                     color="error"
                     class="ma-2 answer-btn"
-                    x-large
+                    size="large"
                     min-width="120"
-                    @click="answerQuestion('no')"
                     elevation="2"
+                    @click="answerQuestion('no')"
                   >
-                    <v-icon left>mdi-close</v-icon>
+                    <v-icon start>mdi-close</v-icon>
                     No
                   </v-btn>
-
                   <v-btn
                     color="grey"
                     class="ma-2 answer-btn"
-                    x-large
+                    size="large"
                     min-width="120"
-                    @click="answerQuestion('na')"
                     elevation="2"
+                    @click="answerQuestion('na')"
                   >
-                    <v-icon left>mdi-minus</v-icon>
+                    <v-icon start>mdi-minus</v-icon>
                     N/A
                   </v-btn>
                 </div>
@@ -206,42 +174,37 @@
 
               <!-- Quiz results -->
               <div v-else>
-                <v-tabs
-                  v-model="activeTab"
-                  background-color="primary"
-                  color="white"
-                  grow
-                >
+                <v-tabs v-model="activeTab" bg-color="primary" color="white" grow>
                   <v-tab>
-                    <v-icon left>mdi-check-circle</v-icon>
+                    <v-icon start>mdi-check-circle</v-icon>
                     Conformance Assessment
                   </v-tab>
                   <v-tab>
-                    <v-icon left>mdi-chart-bar</v-icon>
+                    <v-icon start>mdi-chart-bar</v-icon>
                     Level Results
                   </v-tab>
                   <v-tab>
-                    <v-icon left>mdi-file-document</v-icon>
+                    <v-icon start>mdi-file-document</v-icon>
                     Detailed Report
                   </v-tab>
                 </v-tabs>
-
                 <v-tabs-items v-model="activeTab">
                   <!-- Tab 1: Conformance Assessment -->
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
                         <!-- Conformance Grade -->
-                        <v-card outlined class="mb-6 pa-4 text-center" elevation="1">
-                          <v-card-title class="justify-center text-h5">Conformance Assessment</v-card-title>
+                        <v-card border class="mb-6 pa-4 text-center" elevation="1">
+                          <v-card-title class="justify-center text-h5">
+                            Conformance Assessment
+                          </v-card-title>
                           <v-card-text>
                             <v-row>
                               <v-col cols="12">
                                 <v-chip
                                   :color="getGradeColor(conformanceGrade.grade)"
-                                  text-color="white"
                                   class="ma-2 pa-4 text-h5"
-                                  x-large
+                                  size="large"
                                 >
                                   {{ conformanceGrade.grade }}
                                 </v-chip>
@@ -252,50 +215,41 @@
                             </v-row>
                           </v-card-text>
                         </v-card>
-
                         <!-- Summary -->
-                        <v-card outlined class="mb-6 pa-4" elevation="1">
+                        <v-card border class="mb-6 pa-4" elevation="1">
                           <v-card-text>
                             <v-row>
                               <v-col cols="12" md="6" class="text-center">
-                                <v-sheet color="primary" dark rounded class="pa-4 mb-2">
+                                <v-sheet color="primary" rounded class="pa-4 mb-2">
                                   <div class="text-h3">{{ totalAnswered }}</div>
-                                  <div class="subtitle-1">Total Criteria Checked</div>
+                                  <div class="text-subtitle-1">Total Criteria Checked</div>
                                 </v-sheet>
                               </v-col>
                               <v-col cols="12" md="6">
-                                <v-list dense>
+                                <v-list density="compact">
                                   <v-list-item>
-                                    <v-list-item-icon>
+                                    <template #prepend>
                                       <v-icon color="success" size="28">mdi-check-circle</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-content>
-                                      <v-list-item-title class="text-subtitle-1">
-                                        Passing Criteria: {{ passCount }}
-                                      </v-list-item-title>
-                                    </v-list-item-content>
+                                    </template>
+                                    <v-list-item-title class="text-subtitle-1">
+                                      Passing Criteria: {{ passCount }}
+                                    </v-list-item-title>
                                   </v-list-item>
-
                                   <v-list-item>
-                                    <v-list-item-icon>
+                                    <template #prepend>
                                       <v-icon color="error" size="28">mdi-alert-circle</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-content>
-                                      <v-list-item-title class="text-subtitle-1">
-                                        Failed Criteria: {{ failCount }}
-                                      </v-list-item-title>
-                                    </v-list-item-content>
+                                    </template>
+                                    <v-list-item-title class="text-subtitle-1">
+                                      Failed Criteria: {{ failCount }}
+                                    </v-list-item-title>
                                   </v-list-item>
-
                                   <v-list-item>
-                                    <v-list-item-icon>
+                                    <template #prepend>
                                       <v-icon color="grey" size="28">mdi-minus-circle</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-content>
-                                      <v-list-item-title class="text-subtitle-1">
-                                        Not Applicable: {{ naCount }}
-                                      </v-list-item-title>
-                                    </v-list-item-content>
+                                    </template>
+                                    <v-list-item-title class="text-subtitle-1">
+                                      Not Applicable: {{ naCount }}
+                                    </v-list-item-title>
                                   </v-list-item>
                                 </v-list>
                               </v-col>
@@ -305,57 +259,53 @@
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
-
                   <!-- Tab 2: Level-specific results -->
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <v-simple-table>
-                          <template v-slot:default>
-                            <thead>
-                              <tr>
-                                <th scope="col">Level</th>
-                                <th scope="col">Pass</th>
-                                <th scope="col">Fail</th>
-                                <th scope="col">N/A</th>
-                                <th scope="col">Pass Rate</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>A</td>
-                                <td>{{ levelResults.A.pass }}</td>
-                                <td>{{ levelResults.A.fail }}</td>
-                                <td>{{ levelResults.A.na }}</td>
-                                <td>{{ levelResults.A.passRate }}%</td>
-                              </tr>
-                              <tr v-if="selectedConformanceLevel === 'AA' || selectedConformanceLevel === 'AAA'">
-                                <td>AA</td>
-                                <td>{{ levelResults.AA.pass }}</td>
-                                <td>{{ levelResults.AA.fail }}</td>
-                                <td>{{ levelResults.AA.na }}</td>
-                                <td>{{ levelResults.AA.passRate }}%</td>
-                              </tr>
-                              <tr v-if="selectedConformanceLevel === 'AAA'">
-                                <td>AAA</td>
-                                <td>{{ levelResults.AAA.pass }}</td>
-                                <td>{{ levelResults.AAA.fail }}</td>
-                                <td>{{ levelResults.AAA.na }}</td>
-                                <td>{{ levelResults.AAA.passRate }}%</td>
-                              </tr>
-                            </tbody>
-                          </template>
-                        </v-simple-table>
+                        <v-table>
+                          <thead>
+                            <tr>
+                              <th>Level</th>
+                              <th>Pass</th>
+                              <th>Fail</th>
+                              <th>N/A</th>
+                              <th>Pass Rate</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>A</td>
+                              <td>{{ levelResults.A.pass }}</td>
+                              <td>{{ levelResults.A.fail }}</td>
+                              <td>{{ levelResults.A.na }}</td>
+                              <td>{{ levelResults.A.passRate }}%</td>
+                            </tr>
+                            <tr v-if="selectedConformanceLevel === 'AA' || selectedConformanceLevel === 'AAA'">
+                              <td>AA</td>
+                              <td>{{ levelResults.AA.pass }}</td>
+                              <td>{{ levelResults.AA.fail }}</td>
+                              <td>{{ levelResults.AA.na }}</td>
+                              <td>{{ levelResults.AA.passRate }}%</td>
+                            </tr>
+                            <tr v-if="selectedConformanceLevel === 'AAA'">
+                              <td>AAA</td>
+                              <td>{{ levelResults.AAA.pass }}</td>
+                              <td>{{ levelResults.AAA.fail }}</td>
+                              <td>{{ levelResults.AAA.na }}</td>
+                              <td>{{ levelResults.AAA.passRate }}%</td>
+                            </tr>
+                          </tbody>
+                        </v-table>
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
-
                   <!-- Tab 3: Detailed Report -->
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
                         <!-- View Options -->
-                        <v-card outlined class="mb-6 pa-4" elevation="1">
+                        <v-card border class="mb-6 pa-4" elevation="1">
                           <v-card-title>View Options</v-card-title>
                           <v-card-text>
                             <v-radio-group v-model="viewMode" row>
@@ -364,30 +314,25 @@
                             </v-radio-group>
                           </v-card-text>
                         </v-card>
-
                         <!-- Download Report Button -->
                         <v-btn
                           color="success"
                           class="mb-6"
-                          large
+                          size="large"
                           min-width="150"
-                          @click="downloadReport"
                           elevation="2"
+                          @click="downloadReport"
                         >
-                          <v-icon left>mdi-download</v-icon>
+                          <v-icon start>mdi-download</v-icon>
                           Download Report
                         </v-btn>
-
                         <!-- Detailed Report Content -->
                         <v-expansion-panels v-if="viewMode === 'single'">
-                          <v-expansion-panel
-                            v-for="(section, index) in detailedReport"
-                            :key="index"
-                          >
-                            <v-expansion-panel-header class="text-subtitle-1 font-weight-medium">
+                          <v-expansion-panel v-for="(section, index) in detailedReport" :key="index">
+                            <v-expansion-panel-title class="text-subtitle-1 font-weight-medium">
                               {{ section.title }}
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
                               <v-list>
                                 <v-list-item v-for="(item, itemIndex) in section.criteria" :key="itemIndex">
                                   <v-list-item-content>
@@ -405,19 +350,18 @@
                                     ></v-img>
                                   </v-list-item-content>
                                   <v-list-item-action>
-                                    <v-chip :color="getAnswerColor(item.answer)" text-color="white" small>
+                                    <v-chip :color="getAnswerColor(item.answer)" size="small">
                                       {{ getAnswerLabel(item.answer) }}
                                     </v-chip>
                                   </v-list-item-action>
                                 </v-list-item>
                               </v-list>
-                            </v-expansion-panel-content>
+                            </v-expansion-panel-text>
                           </v-expansion-panel>
                         </v-expansion-panels>
-
                         <!-- All Results View -->
                         <div v-else>
-                          <v-card v-for="(section, index) in detailedReport" :key="index" class="mb-4" outlined>
+                          <v-card v-for="(section, index) in detailedReport" :key="index" class="mb-4" border>
                             <v-card-title>{{ section.title }}</v-card-title>
                             <v-card-text>
                               <v-list>
@@ -437,7 +381,7 @@
                                     ></v-img>
                                   </v-list-item-content>
                                   <v-list-item-action>
-                                    <v-chip :color="getAnswerColor(item.answer)" text-color="white" small>
+                                    <v-chip :color="getAnswerColor(item.answer)" size="small">
                                       {{ getAnswerLabel(item.answer) }}
                                     </v-chip>
                                   </v-list-item-action>
@@ -450,32 +394,41 @@
                     </v-card>
                   </v-tab-item>
                 </v-tabs-items>
-
                 <!-- Action Buttons -->
                 <v-row class="mt-8" justify="center">
                   <v-col cols="auto">
                     <v-btn
                       color="primary"
                       class="ma-2"
-                      large
+                      size="large"
                       min-width="150"
-                      @click="restartQuiz"
                       elevation="2"
+                      @click="restartQuiz"
                     >
-                      <v-icon left>mdi-refresh</v-icon>
+                      <v-icon start>mdi-refresh</v-icon>
                       Start Over
                     </v-btn>
-
                     <v-btn
                       color="primary"
                       class="ma-2"
-                      large
+                      size="large"
                       min-width="150"
-                      @click="returnToSelection"
                       elevation="2"
+                      @click="returnToSelection"
                     >
-                      <v-icon left>mdi-arrow-left</v-icon>
+                      <v-icon start>mdi-arrow-left</v-icon>
                       Select Another Principle
+                    </v-btn>
+                    <v-btn
+                      color="success"
+                      class="ma-2"
+                      size="large"
+                      min-width="150"
+                      elevation="2"
+                      @click="downloadReport"
+                    >
+                      <v-icon start>mdi-download</v-icon>
+                      Download Report
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -521,10 +474,6 @@ export default {
       viewMode: 'single',
       activeTab: 0,
     }
-  },
-  created() {
-    this.initializeQuestions()
-    this.initializePrinciples()
   },
   computed: {
     progress() {
@@ -613,6 +562,10 @@ export default {
 
       return report
     },
+  },
+  created() {
+    this.initializeQuestions()
+    this.initializePrinciples()
   },
   methods: {
     initializeQuestions() {

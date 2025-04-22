@@ -1,33 +1,60 @@
 <template>
   <div class="controls">
-    <button class="control-buttons" @click="makeBold()">
+    <button
+      class="control-buttons"
+      @click="makeBold()"
+    >
       <span class="mdi mdi-format-bold md-14" />
     </button>
-    <button class="control-buttons" @click="makeItalic()">
+    <button
+      class="control-buttons"
+      @click="makeItalic()"
+    >
       <span class="mdi mdi-format-italic" />
     </button>
-    <button class="control-buttons" @click="makeHighlight()">
+    <button
+      class="control-buttons"
+      @click="makeHighlight()"
+    >
       <span class="mdi mdi-format-underline" />
     </button>
     <!-- <button class="control-buttons" @click="outDent()">
       <span class="mdi mdi-format-list-bulleted"></span>
     </button> -->
-    <button class="control-buttons" @click="copyAll()">
+    <button
+      class="control-buttons"
+      @click="copyAll()"
+    >
       <span class="mdi mdi-content-copy" />
     </button>
-    <button class="control-buttons" @click="left()">
+    <button
+      class="control-buttons"
+      @click="left()"
+    >
       <span class="mdi mdi-format-align-left" />
     </button>
-    <button class="control-buttons" @click="center()">
+    <button
+      class="control-buttons"
+      @click="center()"
+    >
       <span class="mdi mdi-format-align-center" />
     </button>
-    <button class="control-buttons" @click="right()">
+    <button
+      class="control-buttons"
+      @click="right()"
+    >
       <span class="mdi mdi-format-align-right" />
     </button>
-    <button class="control-buttons" @click="justify()">
+    <button
+      class="control-buttons"
+      @click="justify()"
+    >
       <span class="mdi mdi-format-align-justify" />
     </button>
-    <button class="control-buttons" @click="remove()">
+    <button
+      class="control-buttons"
+      @click="remove()"
+    >
       <span class="mdi mdi-playlist-remove" />
     </button>
   </div>

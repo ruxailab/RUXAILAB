@@ -6,8 +6,8 @@
     :main="$t('descriptions.intro.analytics')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
-    @linkClicked="goToCoops()"
-    @callFunc="callFunc"
+    @link-clicked="goToCoops()"
+    @call-func="callFunc"
   />
 </template>
 
@@ -19,6 +19,7 @@ export default {
   components: {
     IntroComp,
   },
+  emits: ['goToCoops'],
   data: () => ({}),
   computed: {
     items() {

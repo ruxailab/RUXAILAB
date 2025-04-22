@@ -1,30 +1,39 @@
 <template>
-  <v-col cols="1" md="2">
+  <v-col
+    cols="1"
+    md="2"
+  >
     <!-- Desktop -->
     <v-select
-      :value="lang"
-      @input="updateLang"
-      class="pt-7 hidden-sm-and-down hindi-fix"
+      :model-value="lang" 
+      class="pt-7 hidden-sm-and-down" 
       prepend-inner-icon="mdi-translate"
       :items="languages"
-      item-text="label"
+      item-title="label"
       item-value="value"
       :label="$t('language')"
-      solo
+      variant="solo"
       flat
-      dense
-      light
-      background-color="grey lighten-4"
+      density="compact"
+      @update:model-value="updateLang"
     />
     <!-- Mobile -->
     <div
       class="hidden-md-and-up mr-1"
       style="display: flex; justify-content: center"
     >
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" small color="primary" icon v-on="on">
-            <v-icon size="20" color="white">
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            size="small"
+            color="primary"
+            icon
+            v-bind="props"
+          >
+            <v-icon
+              size="20"
+              color="white"
+            >
               mdi-translate
             </v-icon>
           </v-btn>
@@ -84,7 +93,13 @@ export default {
       ],
     }
   },
-  computed: { ...mapGetters('Language', ['lang']) },
+
+  computed: {
+    ...mapGetters('Language', ['lang']),
+  },
+  mounted() {
+    this.$i18n.locale = this.lang;
+  },
   methods: {
     ...mapActions('Language', ['setLang']),
     updateLang(newLang) {
@@ -92,8 +107,5 @@ export default {
       this.$i18n.locale = newLang
     },
   },
-  mounted() {
-    this.$i18n.locale = this.lang
-  },
-}
+};
 </script>

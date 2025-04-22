@@ -1,20 +1,38 @@
 <template>
-  <v-dialog :value="dialog" width="70%" persistent @input="$emit('update:dialog', $event)">
+  <v-dialog
+    :model-value="dialog"
+    width="70%"
+    persistent
+    @update:model-value="$emit('update:dialog', $event)"
+  >
     <v-card class="dataCard">
       <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
         New task
       </p>
       <v-divider />
       <v-card-text>
-        <FormTask ref="form" :task="task" @validate="submit" />
+        <FormTask
+          ref="form"
+          :task="task"
+          @update:task="$emit('update:task', $event)"
+          @validate="submit"
+        />
       </v-card-text>
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red lighten-1 white--text" text @click="$emit('closeDialog'), reset()">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="$emit('update:dialog', false), reset()"
+        >
           {{ $t('buttons.cancel') }}
         </v-btn>
-        <v-btn color="#f9a826" class="white--text" @click="validate()">
+        <v-btn
+          color="#f9a826"
+          class="text-white"
+          @click="validate()"
+        >
           {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>
@@ -23,7 +41,7 @@
 </template>
 
 <script>
-import FormTask from '../atoms/FormTask'
+import FormTask from '../atoms/FormTask';
 
 export default {
   components: {
@@ -34,28 +52,38 @@ export default {
       type: Boolean,
       default: false,
     },
-    // eslint-disable-next-line vue/require-default-prop
     task: {
       type: Object,
+      default: () => ({
+        taskName: '',
+        taskDescription: '',
+        taskTip: '',
+        taskType: null,
+        postQuestion: '',
+        hasScreenRecord: false,
+        hasCamRecord: false,
+        hasAudioRecord: false,
+      }),
     },
   },
+  emits: ['update:dialog', 'update:task', 'addTask'],
   data: () => ({}),
   methods: {
     validate() {
-      this.$refs.form.validate()
+      this.$refs.form.valida();
     },
     submit(valid) {
       if (valid) {
-        this.$emit('addTask')
-        this.$emit('closeDialog')
-        this.reset()
+        this.$emit('addTask', this.task);
+        this.$emit('update:dialog', false); // Close dialog
+        this.reset();
       }
     },
     reset() {
-      this.$refs.form.resetVal()
+      this.$refs.form.resetVal();
     },
   },
-}
+};
 </script>
 
 <style scoped>

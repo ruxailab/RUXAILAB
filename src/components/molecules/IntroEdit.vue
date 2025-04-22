@@ -7,8 +7,8 @@
       :main="$t('descriptions.intro.edit')"
       :link="$t('descriptions.intro.start')"
       :items="items"
-      @linkClicked="closeIntro()"
-      @callFunc="callFunc"
+      @link-clicked="closeIntro()"
+      @call-func="callFunc"
     />
   </div>
 </template>
@@ -21,9 +21,11 @@ export default {
   components: {
     IntroComp,
   },
- data() {
-    return {
-      items: [
+  emits: ['closeIntro'],
+  data: () => ({}),
+  computed: {
+    items() {
+      return [
         {
           iconColor: '#D128C9',
           icon: 'mdi-file-document',

@@ -25,6 +25,9 @@ export default defineConfig({
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "vue/multi-word-component-names": "off", 
+    "vue/no-required-prop-with-default": "off",
+    "vue/require-default-prop": "off",
     // "semi": "off",
     // "no-unused-vars": "warn",
   },

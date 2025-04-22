@@ -3,9 +3,16 @@
     <SnackBar />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="600" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           Are you sure you want to delete this template?
         </v-card-title>
 
@@ -15,13 +22,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogDel = false"
+          >
             Cancel
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loading"
-            text
+            variant="text"
             @click="deleteTemplate(object), (loading = true), (change = false)"
           >
             Delete
@@ -31,9 +42,16 @@
     </v-dialog>
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialogAlert" width="600" persistent>
+    <v-dialog
+      v-model="dialogAlert"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error-accent-4 text-white"
+          primary-title
+        >
           Are you sure you want to leave?
         </v-card-title>
 
@@ -45,12 +63,16 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogAlert = false"
+          >
             Stay
           </v-btn>
           <v-btn
-            class="error accent-4 white--text ml-1"
-            text
+            class="bg-error-accent-4 text-white ml-1"
+            variant="text"
             @click=";(change = false), $router.push(go)"
           >
             Leave
@@ -60,124 +82,133 @@
     </v-dialog>
 
     <ShowInfo title="Template">
-      <v-alert
-        v-if="!test.template.upToDate"
-        slot="warning"
-        type="warning"
-        dense
-      >
-        Your template is not up to date with your test.
-      </v-alert>
-      <div slot="content">
-        <v-card style="background: #f5f7ff">
-          <v-col class="mb-1 pa-4 pb-1">
-            <p class="subtitleView">
-              Settings
-            </p>
-          </v-col>
-          <v-divider />
-          <v-form ref="tempform" class="px-5">
-            <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="template.header.title"
-                  label="Title"
-                  :rules="titleRequired"
-                  counter="100"
-                  outlined
-                  dense
-                  @input="change = true"
-                />
-
-                <v-textarea
-                  v-model="template.header.description"
-                  label="Description"
-                  outlined
-                  dense
-                  @input="change = true"
-                />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="template.header.date"
-                  label="Last Update"
-                  outlined
-                  dense
-                  disabled
-                />
-                <v-text-field
-                  v-model="template.header.version"
-                  label="Version"
-                  outlined
-                  dense
-                  @keypress="isNumber(event)"
-                  @input="change = true"
-                />
-                <v-checkbox
-                  v-model="template.header.isPublic"
-                  label="Make template public to all users"
-                  class="ma-0"
-                  color="#F9A826"
-                  @change="change = true"
-                />
-                <v-row class="mx-1">
-                  <v-btn outlined @click="dialogDetails = true">
-                    Detailed information
-                  </v-btn>
-                  <v-spacer />
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        v-bind="attrs"
-                        outlined
-                        @click="updateTemplate(), (change = true)"
-                        v-on="on"
-                      >
-                        Update
-                      </v-btn>
-                    </template>
-                    <span
-                      >Click to update your local template, click save to submit
-                      it.</span
-                    >
-                  </v-tooltip>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-form>
-          <v-divider />
-          <v-row justify="center">
-            <v-btn
-              color="#f26363"
-              class="white--text my-4"
-              style="justify-self: center"
-              @click="dialogDel = true"
-            >
-              <v-icon left>
-                mdi-trash-can-outline </v-icon
-              >Delete template
-            </v-btn>
-          </v-row>
-        </v-card>
-      </div>
-    </ShowInfo>
-    <v-tooltip v-if="change" left>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          v-bind="attrs"
-          v-if="change"
-          large
-          dark
-          fab
-          fixed
-          bottom
-          right
-          color="#F9A826"
-          @click="update()"
-          v-on="on"
+      <template #warning>
+        <v-alert
+          v-if="!test.template.upToDate"
+        
+          type="warning"
+          density="compact"
         >
-          <v-icon large>
+          Your template is not up to date with your test.
+        </v-alert>
+      </template>
+      <template #content>
+        <div>
+          <v-card style="background: #f5f7ff">
+            <v-col class="mb-1 pa-4 pb-1">
+              <p class="subtitleView">
+                Settings
+              </p>
+            </v-col>
+            <v-divider />
+            <v-form
+              ref="tempform"
+              class="px-5"
+            >
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="template.header.title"
+                    label="Title"
+                    :rules="titleRequired"
+                    counter="100"
+                    variant="outlined"
+                    density="compact"
+                    @update:model-value="change = true"
+                  />
+
+                  <v-textarea
+                    v-model="template.header.description"
+                    label="Description"
+                    variant="outlined"
+                    density="compact"
+                    @update:model-value="change = true"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="template.header.date"
+                    label="Last Update"
+                    variant="outlined"
+                    density="compact"
+                    disabled
+                  />
+                  <v-text-field
+                    v-model="template.header.version"
+                    label="Version"
+                    variant="outlined"
+                    density="compact"
+                    @keypress="isNumber(event)"
+                    @update:model-value="change = true"
+                  />
+                  <v-checkbox
+                    v-model="template.header.isPublic"
+                    label="Make template public to all users"
+                    class="ma-0"
+                    color="#F9A826"
+                    @update:model-value="change = true"
+                  />
+                  <v-row class="mx-1">
+                    <v-btn
+                      variant="outlined"
+                      @click="dialogDetails = true"
+                    >
+                      Detailed information
+                    </v-btn>
+                    <v-spacer />
+
+                    <v-tooltip location="bottom">
+                      <template #activator="{ props }">
+                        <v-btn
+                       
+                          variant="outlined"
+                          v-bind="props"
+                          @click="updateTemplate(), (change = true)"
+                        >
+                          Update
+                        </v-btn>
+                      </template>
+                      <span>Click to update your local template, click save to submit
+                        it.</span>
+                    </v-tooltip>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-form>
+            <v-divider />
+            <v-row justify="center">
+              <v-btn
+                color="#f26363"
+                class="text-white my-4"
+                style="justify-self: center"
+                @click="dialogDel = true"
+              >
+                <v-icon start>
+                  mdi-trash-can-outline
+                </v-icon>Delete template
+              </v-btn>
+            </v-row>
+          </v-card>
+        </div>
+      </template>
+    </ShowInfo>
+    <v-tooltip
+      v-if="change"
+      location="left"
+    >
+      <template #activator="{ props }">
+        <v-btn
+          v-if="change"
+          size="large"
+          icon
+          fixed
+          location="bottom right"
+          
+          color="#F9A826"
+          v-bind="props"
+          @click="update()"
+        >
+          <v-icon size="large">
             mdi-content-save
           </v-icon>
         </v-btn>
@@ -195,6 +226,14 @@ export default {
   components: {
     ShowInfo,
     SnackBar,
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.change) {
+      this.dialogAlert = true
+      this.go = to.path
+    } else {
+      next()
+    }
   },
   props: { id: { type: String, default: '' } },
   data: () => ({
@@ -248,7 +287,7 @@ export default {
   beforeMount() {
     window.addEventListener('beforeunload', this.preventNav)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('beforeunload', this.preventNav)
   },
   methods: {
@@ -405,14 +444,6 @@ export default {
         return true
       }
     },
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialogAlert = true
-      this.go = to.path
-    } else {
-      next()
-    }
   },
 }
 </script>

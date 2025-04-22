@@ -2,36 +2,43 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip bottom v-if="!isCapturing">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="!isCapturing"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-               v-bind="attrs"
-              @click="captureScreen"
+              
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
-              v-on="on"
+              v-bind="props"
+              @click="captureScreen"
             >
               <v-icon>mdi-monitor-screenshot</v-icon>
             </v-btn>
           </template>
           <span>Capture Screen</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isCapturing">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="isCapturing"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              v-bind="attrs"
-              @click="recordScreen"
+             
               class="ml-4 my-2 mr-auto"
               :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
-              :dark="isRecording"
               elevation="0"
               icon
-              v-on="on"
+              v-bind="props"
+              @click="recordScreen"
             >
-              <v-icon>{{
-                isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
-              }}</v-icon>
+              <v-icon>
+                {{
+                  isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
+                }}
+              </v-icon>
             </v-btn>
           </template>
           <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
@@ -48,6 +55,7 @@ export default {
     testId: String,
     taskIndex: Number,
   },
+  emits: ['showLoading', 'stopShowLoading'],
   data() {
     return {
       isCapturing: false,
