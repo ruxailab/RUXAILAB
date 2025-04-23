@@ -720,8 +720,8 @@ export default {
   methods: {
     generateFaqItems() {
       const createFaqItem = (keyPrefix, category, gif) => ({
-        title: i18n.t(`help.${keyPrefix}`),
-        content: i18n.t(`help.${keyPrefix}answer`),
+        title: i18n.global.t(`help.${keyPrefix}`),
+        content: i18n.global.t(`help.${keyPrefix}answer`),
         gif: `${gif}.mp4`,
         isCollapsed: true,
         category

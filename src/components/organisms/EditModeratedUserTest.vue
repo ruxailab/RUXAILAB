@@ -22,7 +22,7 @@
       cols="12"
     >
       <!-- Desktop Layout -->
-      <v-row v-if="$vuetify.breakpoint.lgAndUp">
+      <v-row v-if="isDesktop">
         <!-- PRE-TEST -->
         <v-col
           v-if="index == 0"
@@ -366,13 +366,19 @@
 </template>
 
 <script>
+import { useDisplay } from 'vuetify'
 import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTasks from '../atoms/ModeratedTasks.vue'
 import UserConsent from '../atoms/UserConsent.vue'
 
 export default {
-  components: { UserVariables, FormPostTest, ModeratedTasks, UserConsent },
+  components: { 
+    FormPostTest, 
+    UserVariables, 
+    ModeratedTasks, 
+    UserConsent 
+  },
   props: {
     type: {
       type: String,
@@ -384,10 +390,16 @@ export default {
     },
     object: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   emits: ['tabClicked'],
+  setup() {
+    const { lgAndUp } = useDisplay()
+    return {
+      isDesktop: lgAndUp
+    }
+  },
   data() {
     return {
       formData: {
@@ -408,7 +420,7 @@ export default {
       return this.$store.getters.test
     },
     testStructure() {
-      return this.$store.state.Tests.Test.testStructure
+      return this.$store.state.Tests.Test.testStructure || {}
     },
     welcomeMessageStore() {
       return this.$store.getters.welcomeMessage
