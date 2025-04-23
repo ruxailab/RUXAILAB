@@ -127,7 +127,7 @@ export default {
   },
   emits: ['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change'],
   data: () => ({
-    textRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.textRequired')],
+    textRequired: [(v) => !!v || i18n.global.t('HeuristicsTable.validation.textRequired')],
     localOption: { text: '', value: null, description: '' },
     localHasValue: true,
   }),
@@ -144,7 +144,7 @@ export default {
         return [
           (v) =>
             (v !== '' && v !== null && v >= 0) ||
-            i18n.t('HeuristicsTable.validation.textRequired'),
+            i18n.global.t('HeuristicsTable.validation.textRequired'),
         ];
       }
       return [];

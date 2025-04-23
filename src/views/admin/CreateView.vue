@@ -40,10 +40,10 @@
                 class="card-text"
               >
                 <div class="card-title">
-                  {{ $t('pages.createTest.blankTitle') }}
+                  {{ $t('pages.createTest.blanckTitle') }}
                 </div>
                 <div>
-                  {{ $t('pages.createTest.blankSubtitle') }}
+                  {{ $t('pages.createTest.blanckSubtitle') }}
                 </div>
               </v-col>
             </v-row>
