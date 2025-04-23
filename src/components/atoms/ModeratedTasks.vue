@@ -7,10 +7,7 @@
       class="cards mt-2"
     >
       <v-row justify="center">
-        <v-col
-          cols="12"
-          class="pa-5"
-        >
+        <v-col cols="12" class="pa-5">
           <span class="cardsTitle ml-5">Tasks</span>
           <br>
           <span class="cardsSubtitle ml-5 mb-1">Create tasks for your evaluators</span>
@@ -40,53 +37,48 @@
       @start="drag = true"
       @end="drag = false"
     >
-      <v-card
-        v-for="(task, index) in tasks"
-        :key="index"
-        style="background: #f5f7ff"
-        flat
-        class="cards mb-5"
-      >
-        <v-col
-          cols="12"
-          class="pb-0 px-5 pt-4"
+      <template #item="{ element: task, index }">
+        <v-card
+          :key="index"
+          style="background: #f5f7ff"
+          flat
+          class="cards mb-5"
         >
-          <v-icon style="cursor: pointer;">
-            mdi-drag
-          </v-icon>
-          <span class="cardsTitle ml-3">{{ task.taskName }}</span>
-          <br>
-          <span class="cardsSubtitle ml-9">Task Description</span>
-          <v-icon
-            class="delete-icon"
-            @click="deleteTask(index)"
-          >
-            mdi-delete
-          </v-icon>
-        </v-col>
-        <v-textarea
-          v-model="task.taskDescription"
-          draggable="false"
-          rows="3"
-          variant="outlined"
-          color="orange"
-          class="mx-14 mt-3"
-          placeholder="Write what you want to task..."
-        />
-        <v-row justify="center">
-          <v-btn
-            icon
-            variant="flat"
-            color="rgb(249, 168, 38)"
-            style="margin-bottom: -30px; z-index: 3;"
-            @click="openAddTaskModal(index)"
-          >
-            <v-icon size="35">
-              mdi-plus
+          <v-col cols="12" class="pb-0 px-5 pt-4">
+            <v-icon style="cursor: pointer;">
+              mdi-drag
             </v-icon>
-          </v-btn>
-        </v-row>
-      </v-card>
+            <span class="cardsTitle ml-3">{{ task.taskName }}</span>
+            <br>
+            <span class="cardsSubtitle ml-9">Task Description</span>
+            <v-icon class="delete-icon" @click="deleteTask(index)">
+              mdi-delete
+            </v-icon>
+          </v-col>
+          <v-textarea
+            v-model="task.taskDescription"
+            draggable="false"
+            rows="3"
+            variant="outlined"
+            color="orange"
+            class="mx-14 mt-3"
+            placeholder="Write what you want to task..."
+          />
+          <v-row justify="center">
+            <v-btn
+              icon
+              variant="flat"
+              color="rgb(249, 168, 38)"
+              style="margin-bottom: -30px; z-index: 3;"
+              @click="openAddTaskModal(index)"
+            >
+              <v-icon size="35">
+                mdi-plus
+              </v-icon>
+            </v-btn>
+          </v-row>
+        </v-card>
+      </template>
     </draggable>
 
     <!-- Modal for adding a new task -->
@@ -98,10 +90,7 @@
       <v-card class="cards">
         <v-col />
         <v-card-text>
-          <v-form
-            ref="form"
-            v-modal="valid"
-          >
+          <v-form ref="form" v-model="valid">
             <v-text-field
               v-model="newTask.taskName"
               variant="outlined"
@@ -122,21 +111,11 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            color="red"
-            @click="closeAddTaskModal"
-          >
-            <v-icon class="mr-1">
-              mdi-close
-            </v-icon>Cancel
+          <v-btn color="red" @click="closeAddTaskModal">
+            <v-icon class="mr-1">mdi-close</v-icon>Cancel
           </v-btn>
-          <v-btn
-            color="orange"
-            @click="addTask"
-          >
-            <v-icon class="mr-1">
-              mdi-content-save
-            </v-icon>Save
+          <v-btn color="orange" @click="addTask">
+            <v-icon class="mr-1">mdi-content-save</v-icon>Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -145,7 +124,7 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+import draggable from 'vuedraggable';
 
 export default {
   components: { draggable },
@@ -164,38 +143,41 @@ export default {
 
   computed: {
     tasksStore() {
-      return this.$store.getters.tasks
+      return this.$store.getters.tasks || [];
     },
     testStructure() {
-      return this.$store.state.Tests.Test.testStructure
+      return this.$store.state.Tests?.Test?.testStructure || { userTasks: [] };
     },
   },
+
   watch: {
     tasks: {
       handler() {
-        this.saveTasks()
+        this.saveTasks();
       },
       deep: true,
     },
   },
 
   mounted() {
-    this.getTasks()
+    this.getTasks();
   },
 
   methods: {
     openAddTaskModal(taskIndex) {
-      this.taskIndex = taskIndex
-      this.addTaskModal = true
+      this.taskIndex = taskIndex;
+      this.addTaskModal = true;
     },
     closeAddTaskModal() {
-      this.taskIndex = null
-      this.addTaskModal = false
-      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' }
-      this.resetForm()
+      this.taskIndex = null;
+      this.addTaskModal = false;
+      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' };
+      this.resetForm();
     },
     resetForm() {
-      this.$refs.form.resetValidation()
+      if (this.$refs.form) {
+        this.$refs.form.resetValidation();
+      }
     },
     addTask() {
       if (
@@ -203,42 +185,42 @@ export default {
         this.newTask.taskDescription.trim() !== ''
       ) {
         const insertIndex =
-          this.taskIndex !== null ? this.taskIndex + 1 : this.tasks.length
+          this.taskIndex !== null ? this.taskIndex + 1 : this.tasks.length;
 
         this.tasks.splice(insertIndex, 0, {
           taskName: this.newTask.taskName,
           taskDescription: this.newTask.taskDescription,
           taskStatus: 'closed',
-        })
-        this.closeAddTaskModal()
-        this.resetForm()
-      } else if (
-        this.newTask.taskDescription.trim() == '' ||
-        this.newTask.taskName.trim() == ''
-      ) {
-        this.$refs.form.validate()
+        });
+        this.closeAddTaskModal();
+      } else {
+        this.$refs.form.validate();
       }
     },
 
     getTasks() {
-      if (this.testStructure.userTasks) {
-        this.$store.dispatch('setTasks', this.testStructure.userTasks)
-        this.tasks = this.testStructure.userTasks
+      if (this.testStructure?.userTasks) {
+        this.$store.dispatch('setTasks', this.testStructure.userTasks);
+        this.tasks = this.testStructure.userTasks;
       } else if (this.tasksStore) {
-        this.tasks = this.tasksStore
+        this.tasks = this.tasksStore;
+      } else {
+        this.tasks = [];
       }
     },
 
     saveTasks() {
-      this.$store.dispatch('setTasks', this.tasks)
-      this.test.testStructure.userTasks = this.tasks
+      this.$store.dispatch('setTasks', this.tasks);
+      if (this.$store.state.Tests?.Test?.testStructure) {
+        this.$store.state.Tests.Test.testStructure.userTasks = this.tasks;
+      }
     },
 
     deleteTask(index) {
-      this.tasks.splice(index, 1)
+      this.tasks.splice(index, 1);
     },
   },
-}
+};
 </script>
 
 <style scoped>
