@@ -370,11 +370,10 @@ export default {
       return this.$store.getters.user
     },
     users() {
-      return this.$store.state.Users.users
+      return this.$store.state.Users.users || []
     },
     cooperatorsEdit() {
-      if (this.test.cooperators) return [...this.test.cooperators]
-      return []
+      return this.test?.cooperators ? [...this.test.cooperators] : [];
     },
     loading() {
       return this.$store.getters.loading

@@ -719,17 +719,17 @@ export default {
       },
       countries,
       usernameRules: [
-        (v) => !!v || i18n.t('PROFILE.usernameRequired'),
-        (v) => (v && v.length >= 3) || i18n.t('PROFILE.usernameMinLength'),
+        (v) => !!v || i18n.global.t('PROFILE.usernameRequired'),
+        (v) => (v && v.length >= 3) || i18n.global.t('PROFILE.usernameMinLength'),
       ],
-      countryRules: [(v) => !!v || i18n.t('PROFILE.countryRequired')],
+      countryRules: [(v) => !!v || i18n.global.t('PROFILE.countryRequired')],
       contactRules: [
-        (v) => !!v || i18n.t('PROFILE.contactNumberRequired'),
-        (v) => /^\d{9,15}$/.test(v) || i18n.t('PROFILE.enterValidPhoneNumber'),
+        (v) => !!v || i18n.global.t('PROFILE.contactNumberRequired'),
+        (v) => /^\d{9,15}$/.test(v) || i18n.global.t('PROFILE.enterValidPhoneNumber'),
       ],
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      displayMissingInfo: i18n.t('PROFILE.infoMissing'),
+      displayMissingInfo: i18n.global.t('PROFILE.infoMissing'),
       loading: true,
       valid: false,
       showPassword: false,
@@ -737,14 +737,14 @@ export default {
       newPassword: '',
       confirmPassword: '',
       passwordRules: [
-        (v) => !!v || i18n.t('PROFILE.passwordRequired'),
-        (v) => v.length >= 8 || i18n.t('PROFILE.passwordMinLength'),
-        (v) => /[A-Z]/.test(v) || i18n.t('PROFILE.passwordUppercase'),
-        (v) => this.hasSpecialChar(v) || i18n.t('PROFILE.passwordSymbol'),
+        (v) => !!v || i18n.global.t('PROFILE.passwordRequired'),
+        (v) => v.length >= 8 || i18n.global.t('PROFILE.passwordMinLength'),
+        (v) => /[A-Z]/.test(v) || i18n.global.t('PROFILE.passwordUppercase'),
+        (v) => this.hasSpecialChar(v) || i18n.global.t('PROFILE.passwordSymbol'),
       ],
       confirmPasswordRules: [
-        (v) => !!v || i18n.t('PROFILE.confirmPasswordRequired'),
-        (v) => v === this.newPassword || i18n.t('PROFILE.passwordsMatch'),
+        (v) => !!v || i18n.global.t('PROFILE.confirmPasswordRequired'),
+        (v) => v === this.newPassword || i18n.global.t('PROFILE.passwordsMatch'),
       ],
       editProfileDialog: false,
       deleteAccountDialog: false,
@@ -773,22 +773,22 @@ export default {
     profileItems() {
       return [
         {
-          label: i18n.t('PROFILE.username'),
+          label: i18n.global.t('PROFILE.username'),
           value: this.userprofile.username,
           icon: 'mdi-account',
         },
         {
-          label: i18n.t('PROFILE.email'),
+          label: i18n.global.t('PROFILE.email'),
           value: this.user.email,
           icon: 'mdi-email',
         },
         {
-          label: i18n.t('PROFILE.contact'),
+          label: i18n.global.t('PROFILE.contact'),
           value: this.userprofile.contactNo,
           icon: 'mdi-phone',
         },
         {
-          label: i18n.t('PROFILE.country'),
+          label: i18n.global.t('PROFILE.country'),
           value: this.userprofile.country,
           icon: 'mdi-map-marker',
         },
@@ -818,7 +818,7 @@ export default {
       try {
         const auth = getAuth();
         const user = auth.currentUser;
-        if (!user) throw new Error(i18n.t('PROFILE.noUserSignedIn'));
+        if (!user) throw new Error(i18n.global.t('PROFILE.noUserSignedIn'));
 
         const storage = getStorage();
         const storageRef = ref(storage, `profileImages/${user.uid}`);
@@ -832,10 +832,10 @@ export default {
 
         this.userprofile.profileImage = downloadURL;
         this.editProfileData.profileImage = downloadURL;
-        this.$toast.success(i18n.t('PROFILE.profileImageUpdatedSuccess'));
+        this.$toast.success(i18n.global.t('PROFILE.profileImageUpdatedSuccess'));
       } catch (error) {
         console.error('Error uploading image:', error);
-        this.$toast.error(i18n.t('PROFILE.profileImageUploadFailed'));
+        this.$toast.error(i18n.global.t('PROFILE.profileImageUploadFailed'));
       }
     },
     checkScreenSize() {
@@ -862,7 +862,7 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
-        this.$toast.error(i18n.t('PROFILE.profileLoadFailed'));
+        this.$toast.error(i18n.global.t('PROFILE.profileLoadFailed'));
       } finally {
         this.loading = false;
       }
@@ -900,12 +900,12 @@ export default {
             country: this.editProfileData.country,
           };
 
-          this.$toast.success(i18n.t('PROFILE.profileUpdatedSuccess'));
+          this.$toast.success(i18n.global.t('PROFILE.profileUpdatedSuccess'));
           this.editProfileDialog = false;
         }
       } catch (error) {
         console.error('Error updating profile:', error);
-        this.$toast.error(i18n.t('PROFILE.profileUpdateFailed'));
+        this.$toast.error(i18n.global.t('PROFILE.profileUpdateFailed'));
       }
     },
     async changePassword() {
@@ -916,20 +916,20 @@ export default {
 
           if (user) {
             await updatePassword(user, this.newPassword);
-            this.$toast.success(i18n.t('PROFILE.passwordChangedSuccess'));
+            this.$toast.success(i18n.global.t('PROFILE.passwordChangedSuccess'));
             this.newPassword = '';
             this.confirmPassword = '';
             this.$refs.passwordForm.reset();
           }
         } catch (error) {
           console.error('Error changing password:', error);
-          this.$toast.error(i18n.t('PROFILE.passwordChangeFailed'));
+          this.$toast.error(i18n.global.t('PROFILE.passwordChangeFailed'));
         }
       }
     },
     async deleteAccount() {
       if (!this.userPassword) {
-        this.$toast.error(i18n.t('PROFILE.passwordRequired'));
+        this.$toast.error(i18n.global.t('PROFILE.passwordRequired'));
         return;
       }
 
@@ -970,17 +970,17 @@ export default {
           await deleteDoc(userDocRef);
 
           await user.delete();
-          this.$toast.success(i18n.t('PROFILE.accountDeletedSuccess'));
+          this.$toast.success(i18n.global.t('PROFILE.accountDeletedSuccess'));
           this.deleteAccountDialog = false;
           this.signOut();
         } catch (error) {
           console.error('Error during account deletion:', error);
-          this.$toast.error(i18n.t('PROFILE.accountDeletionFailed'));
+          this.$toast.error(i18n.global.t('PROFILE.accountDeletionFailed'));
         } finally {
           this.isDeleting = false;
         }
       } else {
-        this.$toast.error(i18n.t('PROFILE.noUserSignedIn'));
+        this.$toast.error(i18n.global.t('PROFILE.noUserSignedIn'));
       }
     },
     closeDeleteDialog() {
