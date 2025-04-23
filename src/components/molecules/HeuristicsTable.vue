@@ -712,10 +712,10 @@ export default {
     dialogQuestion: false,
     editIndex: -1,
     nameRequired: [
-      (v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired'),
+      (v) => !!v || i18n.global.t('HeuristicsTable.validation.nameRequired'),
     ],
     questionRequired: [
-      (v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired'),
+      (v) => !!v || i18n.global.t('HeuristicsTable.validation.questionRequired'),
     ],
     hoveredItem: null,
   }),
