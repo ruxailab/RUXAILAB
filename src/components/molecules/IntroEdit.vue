@@ -29,18 +29,18 @@ export default {
         {
           iconColor: '#D128C9',
           icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
-          subtitle: i18n.t('pages.intros.docSubtitle') + i18n.t('titles.test'),
+          title: i18n.global.t('pages.intros.docTitle'),
+          subtitle: i18n.global.t('pages.intros.docSubtitle') + i18n.global.t('titles.test'),
           func: 'goToDoc',
         },
         {
           iconColor: '#D128C9',
           icon: 'mdi-emoticon-happy',
-          title: i18n.t('pages.intros.discTitle'),
-          subtitle: i18n.t('pages.intros.discSubtitle'),
+          title: i18n.global.t('pages.intros.discTitle'),
+          subtitle: i18n.global.t('pages.intros.discSubtitle'),
           func: 'goToDisc',
         },
-      ],
+      ]
     },
   },
   methods: {
