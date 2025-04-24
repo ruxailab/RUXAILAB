@@ -143,9 +143,7 @@
                       color="black"
                       class="text-white"
                     >
-                      {{
-                        getCategoryItemCount(category.id)
-                      }}
+                      {{ getCategoryItemCount(category.id) }}
                     </v-chip>
                   </v-list-item-action>
                 </v-list-item>
@@ -224,7 +222,7 @@
                     </p>
                     <div class="video-container position-relative">
                       <video
-                        ref="videoPlayer"
+                        :ref="(el) => setVideoRef(el, index)"
                         :src="require(`@/assets/faqs/${item.gif}`)"
                         class="rounded-lg"
                         width="100%"
@@ -235,8 +233,8 @@
                         muted
                         aria-label="FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
                         style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
-                        @play="updatePlayState()"
-                        @pause="updatePlayState()"
+                        @play="updatePlayState(item)"
+                        @pause="updatePlayState(item)"
                       />
                       <div
                         class="custom-controls d-flex justify-center align-center"
@@ -248,7 +246,7 @@
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
                           :class="{ 'button-hover': true }"
-                          @click="skipBackward(item)"
+                          @click="skipBackward(item, index)"
                         >
                           <v-icon>mdi-rewind-10</v-icon>
                         </v-btn>
@@ -258,7 +256,7 @@
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
                           :class="{ 'button-hover': true }"
-                          @click="togglePlay(item)"
+                          @click="togglePlay(item, index)"
                         >
                           <v-icon>{{ isPlaying(item) ? 'mdi-pause' : 'mdi-play' }}</v-icon>
                         </v-btn>
@@ -268,7 +266,7 @@
                           class="custom-control-btn mx-2"
                           style="background-color: rgba(0,0,0,0.5);"
                           :class="{ 'button-hover': true }"
-                          @click="skipForward(item)"
+                          @click="skipForward(item, index)"
                         >
                           <v-icon>mdi-fast-forward-10</v-icon>
                         </v-btn>
@@ -613,292 +611,238 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useDisplay } from 'vuetify';
+import { useI18n } from 'vue-i18n'
 
-export default {
-  props: {
-    showAllOnLoad: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  showAllOnLoad: {
+    type: Boolean,
+    default: false,
   },
-  
-  data() {
-    return {
-      currentYear: new Date().getFullYear(),
-      searchQuery: '',
-      activeCategory: null,
-      selectedCategory: null,
-      page: 1,
-      itemsPerPage: 5,
-      searchActive: false,
-      isSearching: false,
-      searchTimeout: null,
-      isHovered: false,
-      showAllArticlesModal: false,
-      isLoadingModal: false,
-      categories: [
-        {
-          id: 'test-creation',
-          name: 'Test Creation',
-          icon: 'mdi-file-document-edit',
-        },
-        { id: 'templates', name: 'Templates', icon: 'mdi-file-table-outline' },
-        { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
-        { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
-      ],
-      items: this.generateFaqItems(),
-    }
-  },
+});
 
-  computed: {
-    // Add this computed property to safely handle xsOnly
-    isXsOnly() {
-      return this.$vuetify?.breakpoint?.xsOnly || false;
-    },
+const router = useRouter();
+const route = useRoute();
+const { t: i18n} = useI18n();
+const { xs } = useDisplay();
 
-    filteredItems() {
-      let items = this.items
+const currentYear = ref(new Date().getFullYear());
+const searchQuery = ref('');
+const activeCategory = ref(null);
+const selectedCategory = ref(null);
+const page = ref(1);
+const itemsPerPage = ref(5);
+const searchActive = ref(false);
+const isSearching = ref(false);
+const searchTimeout = ref(null);
+const isHovered = ref(false);
+const showAllArticlesModal = ref(false);
+const isLoadingModal = ref(false);
+const videoRefs = ref([]);
+const modalVideoPlayer = ref(null);
 
-      if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase()
-        items = items.filter(
-          (item) =>
-            item.title.toLowerCase().includes(query) ||
-            item.content.toLowerCase().includes(query),
-        )
-      }
+// Categories
+const categories = ref([
+  { id: 'test-creation', name: 'Test Creation', icon: 'mdi-file-document-edit' },
+  { id: 'templates', name: 'Templates', icon: 'mdi-file-table-outline' },
+  { id: 'cooperators', name: 'Cooperators', icon: 'mdi-account-group' },
+  { id: 'analytics', name: 'Analytics', icon: 'mdi-chart-bar' },
+]);
 
-      if (this.selectedCategory) {
-        items = items.filter((item) => item.category === this.selectedCategory)
-      }
+// FAQ Items
+const generateFaqItems = () => {
+  const createFaqItem = (keyPrefix, category, gif) => ({
+    title: i18n(`help.${keyPrefix}`),
+    content: i18n(`help.${keyPrefix}answer`),
+    gif: `${gif}.mp4`,
+    isCollapsed: true,
+    category,
+    isPlaying: false, // Track play state per item
+  });
 
-      return items
-    },
+  return [
+    createFaqItem('createtest', 'test-creation', 'create_test'),
+    createFaqItem('heuristictest', 'test-creation', 'hsetup'),
+    createFaqItem('deletetest', 'test-creation', 'del_test'),
+    createFaqItem('createtemplate', 'templates', 'create-temp'),
+    createFaqItem('usetemplate', 'templates', 'use-temp'),
+    createFaqItem('previewtest', 'test-creation', 'preview_test'),
+    createFaqItem('importcsv', 'test-creation', 'csv'),
+    createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
+    createFaqItem('analyseresults', 'analytics', 'analytics'),
+    createFaqItem('sendmessage', 'cooperators', 'send_message'),
+  ];
+};
 
-    pageCount() {
-      return Math.ceil(this.filteredItems.length / this.itemsPerPage)
-    },
+const items = ref(generateFaqItems());
 
-    paginatedItems() {
-      const start = (this.page - 1) * this.itemsPerPage
-      const end = start + this.itemsPerPage
-      return this.filteredItems.slice(start, end)
-    },
+const isXsOnly = computed(() => xs.value);
 
-    displayedCategories() {
-      if (this.selectedCategory) {
-        return this.categories.filter((cat) => cat.id === this.selectedCategory)
-      }
-      return this.categories
-    },
-  },
-  
-  watch: {
-    showAllArticlesModal(val) {
-      if (!val && this.$route.name === 'AllArticles') {
-        // When modal is closed, go back to the help page
-        this.$router.push({ name: 'Help' }).catch(err => {
-          if (err.name !== 'NavigationDuplicated') {
-            throw err;
-          }
-        });
-      }
-    }
-  },
+const filteredItems = computed(() => {
+  let filtered = items.value;
 
-  mounted() {
-    // If showAllOnLoad is true, open the modal when the component is mounted
-    if (this.showAllOnLoad) {
-      this.$nextTick(() => {
-        this.openAllArticlesModal();
-      });
-    }
-  },
-
-  methods: {
-    generateFaqItems() {
-      const createFaqItem = (keyPrefix, category, gif) => ({
-        title: i18n.global.t(`help.${keyPrefix}`),
-        content: i18n.global.t(`help.${keyPrefix}answer`),
-        gif: `${gif}.mp4`,
-        isCollapsed: true,
-        category
-      });
-  
-      return [
-        createFaqItem('createtest', 'test-creation', 'create_test'),
-        createFaqItem('heuristictest', 'test-creation', 'hsetup'),
-        createFaqItem('deletetest', 'test-creation', 'del_test'),
-        createFaqItem('createtemplate', 'templates', 'create-temp'),
-        createFaqItem('usetemplate', 'templates', 'use-temp'),
-        createFaqItem('previewtest', 'test-creation', 'preview_test'),
-        createFaqItem('importcsv', 'test-creation', 'csv'),
-        createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
-        createFaqItem('analyseresults', 'analytics', 'analytics'),
-        createFaqItem('sendmessage', 'cooperators', 'send_message'),
-      ];
-    },
-
-    toggleCollapse(index) {
-      if (index !== -1) {
-        this.items.forEach((item, i) => {
-          if (i !== index) {
-            item.isCollapsed = true
-          }
-        })
-
-        this.items[index].isCollapsed = !this.items[index].isCollapsed
-      }
-    },
-
-    searchArticles() {
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout)
-      }
-
-      this.isSearching = true
-
-      this.searchTimeout = setTimeout(() => {
-        this.page = 1
-        this.isSearching = false
-      }, 300)
-    },
-
-    filterByCategory(categoryId) {
-      if (categoryId === 'all') {
-        // Show all articles in the modal
-        this.openAllArticlesModal();
-        return;
-      }
-      
-      this.selectedCategory = categoryId;
-      this.page = 1;
-    },
-
-    handlePageChange() {
-      const contentEl = document.querySelector('.content-area')
-      if (contentEl) {
-        contentEl.scrollIntoView({ behavior: 'smooth' })
-      }
-    },
-
-    getItemsByCategory(categoryId) {
-      if (!categoryId) return this.paginatedItems
-
-      return this.paginatedItems.filter((item) => item.category === categoryId)
-    },
-
-    getCategoryItemCount(categoryId) {
-      return this.items.filter((item) => item.category === categoryId).length
-    },
-
-    getItemIndex(item) {
-      return this.items.findIndex((i) => i.title === item.title)
-    },
-
-    skipBackward(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
-      if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
-      } else {
-        video = videos;
-      }
-  
-      if (video) {
-        video.currentTime = Math.max(0, video.currentTime - 10);
-      }
-    },
-
-    skipForward(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
-      if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
-      } else {
-        video = videos;
-      }
-  
-      if (video) {
-        video.currentTime = Math.min(video.duration, video.currentTime + 10);
-      }
-    },
-
-    togglePlay(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
-      if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
-      } else {
-        video = videos;
-      }
-  
-      if (video) {
-        if (video.paused) {
-          video.play();
-        } else {
-          video.pause();
-        }
-      }
-    },
-
-    isPlaying(item) {
-      const videos = this.$refs.videoPlayer;
-      let video;
-  
-      if (Array.isArray(videos)) {
-        const index = this.filteredItems.findIndex(i => i.title === item.title);
-        video = videos[index];
-      } else {
-        video = videos;
-      }
-  
-      return video ? !video.paused : false;
-    },
-
-    updatePlayState() {
-      this.$forceUpdate(); 
-    },
-
-    openAllArticlesModal() {
-      this.isLoadingModal = true;
-      this.showAllArticlesModal = true;
-      
-      // Simulate loading time (can be removed in production)
-      setTimeout(() => {
-        this.isLoadingModal = false;
-      }, 500);
-      
-      // Update the URL without refreshing the page
-      if (this.$route.name !== 'AllArticles') {
-        this.$router.push({ 
-          name: 'AllArticles' 
-        }).catch(err => {
-          if (err.name !== 'NavigationDuplicated') {
-            throw err;
-          }
-        });
-      }
-    },
-    
-    openInNewPage() {
-      // Close the modal
-      this.showAllArticlesModal = false;
-      
-      // Open the all articles page in a new tab
-      const newPageUrl = this.$router.resolve({ name: 'AllArticles' }).href;
-      window.open(newPageUrl, '_blank');
-    },
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.content.toLowerCase().includes(query),
+    );
   }
-}
+
+  if (selectedCategory.value) {
+    filtered = filtered.filter((item) => item.category === selectedCategory.value);
+  }
+
+  return filtered;
+});
+
+const pageCount = computed(() => {
+  return Math.ceil(filteredItems.value.length / itemsPerPage.value);
+});
+
+const paginatedItems = computed(() => {
+  const start = (page.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredItems.value.slice(start, end);
+});
+
+const displayedCategories = computed(() => {
+  if (selectedCategory.value) {
+    return categories.value.filter((cat) => cat.id === selectedCategory.value);
+  }
+  return categories.value;
+});
+
+const setVideoRef = (el, index) => {
+  if (el) {
+    videoRefs.value[index] = el;
+  }
+};
+
+const searchArticles = () => {
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value);
+  }
+
+  isSearching.value = true;
+
+  searchTimeout.value = setTimeout(() => {
+    page.value = 1;
+    isSearching.value = false;
+  }, 300);
+};
+
+const filterByCategory = (categoryId) => {
+  if (categoryId === 'all') {
+    openAllArticlesModal();
+    return;
+  }
+
+  selectedCategory.value = categoryId;
+  page.value = 1;
+};
+
+const handlePageChange = () => {
+  const contentEl = document.querySelector('.content-area');
+  if (contentEl) {
+    contentEl.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+const getItemsByCategory = (categoryId) => {
+  if (!categoryId) return paginatedItems.value;
+  return paginatedItems.value.filter((item) => item.category === categoryId);
+};
+
+const getCategoryItemCount = (categoryId) => {
+  return items.value.filter((item) => item.category === categoryId).length;
+};
+
+const skipBackward = (item, index) => {
+  const video = videoRefs.value[index];
+  if (video) {
+    video.currentTime = Math.max(0, video.currentTime - 10);
+  }
+};
+
+const skipForward = (item, index) => {
+  const video = videoRefs.value[index];
+  if (video) {
+    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+  }
+};
+
+const togglePlay = (item, index) => {
+  const video = videoRefs.value[index];
+  if (video) {
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
+};
+
+const isPlaying = (item) => {
+  return item.isPlaying;
+};
+
+const updatePlayState = (item) => {
+  const index = items.value.findIndex((i) => i.title === item.title);
+  if (index !== -1) {
+    const video = videoRefs.value[index];
+    if (video) {
+      items.value[index].isPlaying = !video.paused;
+    }
+  }
+};
+
+const openAllArticlesModal = () => {
+  isLoadingModal.value = true;
+  showAllArticlesModal.value = true;
+
+  setTimeout(() => {
+    isLoadingModal.value = false;
+  }, 500);
+
+  if (route.name !== 'AllArticles') {
+    router.push({ name: 'AllArticles' }).catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+        throw err;
+      }
+    });
+  }
+};
+
+const openInNewPage = () => {
+  showAllArticlesModal.value = false;
+  const resolvedRoute = router.resolve({ name: 'AllArticles' });
+  if (resolvedRoute.href) {
+    window.open(resolvedRoute.href, '_blank');
+  }
+};
+
+watch(showAllArticlesModal, (val) => {
+  if (!val && route.name === 'AllArticles') {
+    router.push({ name: 'Help' }).catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+        throw err;
+      }
+    });
+  }
+});
+
+onMounted(() => {
+  if (props.showAllOnLoad) {
+    nextTick(() => {
+      openAllArticlesModal();
+    });
+  }
+});
 </script>
 
 <style>

@@ -6,19 +6,9 @@
       class="background background-img pa-0 ma-0"
       align="center"
     >
-      <v-col
-        cols="6"
-        class="ml-5"
-      >
-        <h1 class="titleView pb-1">
-          {{ test.testTitle }}
-        </h1>
-        <p
-          align="justify"
-          class="description"
-        >
-          {{ test.testDescription }}
-        </p>
+      <v-col cols="6" class="ml-5">
+        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
+        <p align="justify" class="description">{{ test.testDescription }}</p>
         <v-row justify="center">
           <v-col cols="12">
             <span
@@ -42,38 +32,13 @@
       </v-col>
     </v-row>
 
-    <v-row
-      v-else
-      class="nav pa-0 ma-0"
-      style="background-color: #e8eaf2;"
-      dense
-    >
-      <v-navigation-drawer
-        v-model="drawer"
-        :rail="mini"
-        permanent
-        color="#3F3D56"
-      >
-        <!-- Removed clipped prop -->
-        <div
-          v-if="!mini"
-          class="header"
-        >
+    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2;" dense>
+      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
+        <div v-if="!mini" class="header">
           <v-list-item>
-            <v-row
-              dense
-              align="center"
-              justify="space-around"
-            >
-              <v-col
-                class="pa-0 ma-0"
-                cols="8"
-              >
-                <v-clamp
-                  class="titleText"
-                  autoresize
-                  :max-lines="2"
-                >
+            <v-row dense align="center" justify="space-around">
+              <v-col class="pa-0 ma-0" cols="8">
+                <v-clamp class="titleText" autoresize :max-lines="2">
                   {{ test.testTitle }}
                 </v-clamp>
               </v-col>
@@ -98,13 +63,7 @@
           max-height="85%"
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
         >
-          <!-- Removed flat prop -->
-          <div
-            v-for="(item, itemIndex) in items"
-            :key="itemIndex"
-          >
-            <!-- Renamed index to itemIndex -->
-            <!-- Pre Test -->
+          <div v-for="(item, itemIndex) in items" :key="itemIndex">
             <v-list-item
               v-if="item.id == 0"
               :disabled="!isAdmin && bothConnected"
@@ -118,9 +77,7 @@
                   {{ item.icon }}
                 </v-icon>
               </template>
-              <v-list-item-title
-                :style="index == item.id ? 'color: white' : 'color:#fca326'"
-              >
+              <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
@@ -137,9 +94,7 @@
                   {{ item.icon }}
                 </v-icon>
               </template>
-              <v-list-item-title
-                :style="index == item.id ? 'color: white' : 'color:#fca326'"
-              >
+              <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
@@ -154,9 +109,7 @@
                   {{ item.icon }}
                 </v-icon>
               </template>
-              <v-list-item-title
-                :style="index == item.id ? 'color: white' : 'color:#fca326'"
-              >
+              <v-list-item-title :style="index == item.id ? 'color: white' : 'color:#fca326'">
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
@@ -165,55 +118,25 @@
 
         <div class="footer">
           <v-spacer />
-          <v-btn
-            icon
-            class="mr-2"
-            @click.stop="mini = !mini"
-          >
-            <v-icon
-              v-if="mini"
-              color="white"
-            >
-              mdi-chevron-right
-            </v-icon>
-            <v-icon
-              v-else
-              color="white"
-            >
-              mdi-chevron-left
-            </v-icon>
+          <v-btn icon class="mr-2" @click.stop="mini = !mini">
+            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
+            <v-icon v-else color="white">mdi-chevron-left</v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
+
       <!-- Moderator View -->
       <v-col
         v-if="index == 0 && isAdmin && !postTestFinished"
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
       >
-        <v-card
-          v-if="!conectionStatus"
-          color="white"
-          class="cards"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card v-if="!connectionStatus" color="white" class="cards">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Confirm you are ready</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-0"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
@@ -222,30 +145,22 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
+          <v-row justify="center" class="mt-4">
             <VideoCall
-              ref="VideoCall"
+              ref="videoCall"
               :index="index"
               :is-admin="isAdmin"
               @emit-confirm="confirmConnect(), (index = 1)"
             />
           </v-row>
         </v-card>
-        <!-- Moderator expansion panels view -->
-        <v-col
-          v-else-if="moderatorStatus && !evaluatorStatus"
-          class="my-12"
-        >
+        <v-col v-else-if="moderatorStatus && !evaluatorStatus" class="my-12">
           <span class="cardsTitle text-center d-block">
             Waiting the evaluator connection ...
           </span>
           <div class="dot-flashing mx-auto mt-4" />
         </v-col>
         <v-expansion-panels variant="accordion">
-          <!-- Removed flat prop -->
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
@@ -286,17 +201,9 @@
                 v-for="(item, preTestIdx) in test.testStructure.preTest"
                 :key="preTestIdx"
               >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
-                  <p class="cardsTitle">
-                    {{ item.title }}
-                  </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -343,19 +250,9 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col
-                  cols="12"
-                  class="mb-0"
-                >
-                  <span
-                    class="ml-4"
-                    style="color: #455a64"
-                  >
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
@@ -404,18 +301,9 @@
                 v-for="(item, postTestIndex) in test.testStructure.postTest"
                 :key="postTestIndex"
               >
-                <!-- Renamed index to postTestIndex -->
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
-                  <p class="cardsTitle">
-                    {{ item.title }}
-                  </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -423,28 +311,17 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        <!-- Finish button -->
       </v-col>
       <v-col
         v-if="index == 0 && postTestFinished && isAdmin"
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
       >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Evaluator concluded the test!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Here you can finalize the test, or you can keep talking with your
                 evaluator until you finish!
@@ -457,7 +334,6 @@
                 block
                 @click="stopRecording(), finishTest()"
               >
-                <!-- Removed dark prop -->
                 Finish Test
               </v-btn>
             </v-col>
@@ -469,39 +345,21 @@
         ref="rightView"
         class="mx-10 mt-2 right-view backgroundTest"
       >
-        <FeedbackView
-          :index="index"
-          :is-admin="isAdmin"
-        />
+        <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
+
       <!-- Evaluator View -->
       <v-col
         v-if="index == 0 && taskIndex == 0 && !isAdmin"
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
       >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Welcome!</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-2 mb-5"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
                     {{ test.testStructure.welcomeMessage }}
                   </span>
@@ -510,28 +368,12 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">We need your consent!</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-2 mb-5"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-2 mb-5">
                   <span class="cardsSubtitle">
                     The information you give is used for lorem ipsum dolor sit
                     amet consectetur
@@ -561,28 +403,12 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Connect with your moderator</span>
-              <v-row
-                justify="center"
-                class="mt-1"
-              >
-                <v-col
-                  cols="11"
-                  class="pt-0"
-                >
+              <v-row justify="center" class="mt-1">
+                <v-col cols="11" class="pt-0">
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your moderator so that, when ready, they can start the test.
@@ -598,13 +424,9 @@
                   </span>
                   <div class="dot-flashing mx-auto mt-4" />
                 </v-col>
-                <v-col
-                  v-else
-                  cols="12"
-                  class="mr-8"
-                >
+                <v-col v-else cols="12" class="mr-8">
                   <VideoCall
-                    ref="VideoCall"
+                    ref="videoCall"
                     :index="index"
                     :is-admin="isAdmin"
                     :consent-completed="consentCompleted"
@@ -616,6 +438,7 @@
           </v-row>
         </v-card>
       </v-col>
+
       <!-- Evaluator Pre-Test view -->
       <v-col
         v-if="index == 1 && !isAdmin && !postTestFinished"
@@ -623,7 +446,6 @@
         class="mx-10 mt-6 right-view backgroundTest"
       >
         <v-expansion-panels variant="accordion">
-          <!-- Removed flat prop -->
           <v-expansion-panel
             style="border: solid 1px #71717182 !important; border-radius: 30px"
             class="mb-3"
@@ -665,17 +487,9 @@
                 v-for="(item, preTestIdx) in test.testStructure.preTest"
                 :key="preTestIdx"
               >
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
-                  <p class="cardsTitle">
-                    {{ item.title }}
-                  </p>
-                  <p
-                    v-if="item.description"
-                    class="cardsSubtitle"
-                  >
+                <v-col cols="5" class="mx-auto py-0">
+                  <p class="cardsTitle">{{ item.title }}</p>
+                  <p v-if="item.description" class="cardsSubtitle">
                     {{ item.description }}
                   </p>
                   <v-textarea
@@ -704,10 +518,7 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col
-                  cols="10"
-                  class="mx-4"
-                >
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     v-if="userTestStatus.preTestStatus != 'done'"
                     block
@@ -717,7 +528,6 @@
                     :disabled="test.userTestStatus.preTestStatus == 'closed'"
                     @click="changeStatus(taskIndex, 'preTest', 'done')"
                   >
-                    <!-- Removed dark prop -->
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -765,26 +575,13 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col
-                  cols="12"
-                  class="mb-0"
-                >
-                  <span
-                    class="ml-4"
-                    style="color: #455a64"
-                  >
+              <v-row class="fill-height" align="center" justify="center">
+                <v-col cols="12" class="mb-0">
+                  <span class="ml-4" style="color: #455a64">
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
-                <v-col
-                  cols="9"
-                  class="mb-0 pb-0"
-                >
+                <v-col cols="9" class="mb-0 pb-0">
                   <v-textarea
                     :id="'id-' + test.testStructure.userTasks[taskIdx].taskName"
                     v-model="
@@ -794,10 +591,7 @@
                     label="observation (optional)"
                   />
                 </v-col>
-                <v-col
-                  cols="2"
-                  class="mx-4"
-                >
+                <v-col cols="2" class="mx-4">
                   <v-btn
                     v-if="tasksStatus[taskIdx] != 'done'"
                     block
@@ -855,15 +649,9 @@
                 v-for="(item, postTestIndex) in test.testStructure.postTest"
                 :key="postTestIndex"
               >
-                <!-- Renamed index to postTestIndex -->
-                <v-col
-                  cols="5"
-                  class="mx-auto py-0"
-                >
+                <v-col cols="5" class="mx-auto py-0">
                   <p>{{ item.title }}</p>
-                  <p v-if="item.description">
-                    {{ item.description }}
-                  </p>
+                  <p v-if="item.description">{{ item.description }}</p>
                   <v-textarea
                     v-if="item.textField"
                     v-model="
@@ -879,7 +667,6 @@
                       currentUserTestAnswer.postTestAnswer[postTestIndex].answer
                     "
                   >
-                    <!-- Removed column prop -->
                     <v-row
                       v-for="(selection, selectionIndex) in item.selectionFields"
                       :key="selectionIndex"
@@ -895,19 +682,16 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col
-                  cols="10"
-                  class="mx-4"
-                >
+                <v-col cols="10" class="mx-4">
                   <v-btn
                     v-if="userTestStatus.postTestStatus != 'done'"
+ alibi
                     block
                     style="border-radius: 10px"
                     color="orange-lighten-1"
                     variant="flat"
                     @click="changeStatus(0, 'postTest', 'done')"
                   >
-                    <!-- Removed dark prop -->
                     {{ $t('UserTestView.buttons.done') }}
                   </v-btn>
                 </v-col>
@@ -921,53 +705,33 @@
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
       >
-        <v-card
-          color="white"
-          class="cards mb-6"
-        >
-          <!-- Removed flat prop -->
-          <v-row
-            justify="center"
-            class="mt-4"
-          >
-            <v-col
-              cols="11"
-              class="mt-3"
-            >
+        <v-card color="white" class="cards mb-6">
+          <v-row justify="center" class="mt-4">
+            <v-col cols="11" class="mt-3">
               <span class="cardsTitle">Final Message!</span>
-              <br>
+              <br />
               <span class="cardsSubtitle">
                 Congratulations, you finished this test. Here you can continue
                 talking with your moderator or leave the test.
               </span>
-              <v-row
-                justify="center"
-                class="mt-3"
-              >
+              <v-row justify="center" class="mt-3">
                 <v-col cols="4">
                   <img
                     draggable="false"
                     src="../../../public/finalMessage.svg"
                     alt="Final test svg"
-                  >
+                  />
                 </v-col>
-                <v-col
-                  cols="6"
-                  class="pt-2 my-8"
-                >
+                <v-col cols="6" class="pt-2 my-8">
                   <span class="cardsSubtitle">
                     {{ test.testStructure.finalMessage }}
                   </span>
-                  <v-col
-                    class="mt-4"
-                    align="end"
-                  >
+                  <v-col class="mt-4" align="end">
                     <v-btn
                       color="orange"
                       variant="flat"
                       @click="saveAnswer(), stopRecording()"
                     >
-                      <!-- Removed dark prop -->
                       Save & Exit
                     </v-btn>
                   </v-col>
@@ -984,22 +748,13 @@
         ref="rightView"
         class="mx-10 mt-2 right-view backgroundTest"
       >
-        <FeedbackView
-          :index="index"
-          :is-admin="isAdmin"
-        />
+        <FeedbackView :index="index" :is-admin="isAdmin" />
       </v-col>
     </v-row>
+
     <!-- Loading Overlay -->
-    <v-overlay
-      v-model="isLoading"
-      class="text-center"
-    >
-      <v-card
-        class="pa-4"
-        rounded="xl"
-        color="grey-darken-4"
-      >
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-card class="pa-4" rounded="xl" color="grey-darken-4">
         <v-progress-linear
           style="border-radius: 20px; width: 20wv;"
           :model-value="uploadProgress"
@@ -1011,49 +766,26 @@
             <span>{{ Math.ceil(value) }}%</span>
           </template>
         </v-progress-linear>
-        <div class="white-text mx-16">
-          Saving Your Answer...
-        </div>
+        <div class="white-text mx-16">Saving Your Answer...</div>
       </v-card>
     </v-overlay>
 
-    <v-dialog
-      :model-value="!noExistUser && !logined"
-      width="500"
-      persistent
-    >
+    <v-dialog :model-value="!noExistUser && !logined" width="500" persistent>
       <v-card v-if="user">
-        <v-row
-          class="ma-0 pa-0 pt-5"
-          justify="center"
-        >
-          <v-avatar
-            class="justify-center"
-            color="orange-lighten-4"
-            size="150"
-          >
-            <v-icon size="120">
-              mdi-account
-            </v-icon>
-            <!-- Removed dark prop -->
+        <v-row class="ma-0 pa-0 pt-5" justify="center">
+          <v-avatar class="justify-center" color="orange-lighten-4" size="150">
+            <v-icon size="120">mdi-account</v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn
-            color="#F9A826"
-            class="text-white"
-            @click="setTest()"
-          >
+          <v-btn color="#F9A826" class="text-white" @click="setTest()">
             Continue as {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a
-              style="color: #f9a826"
-              @click="signOut()"
-            >Change account</a>
+            <a style="color: #f9a826" @click="signOut()">Change account</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -1064,625 +796,580 @@
       autoplay
       playsinline
       style="display: none;"
-    />
+    ></video>
   </div>
 </template>
 
-<script>
-import VideoCall from '@/components/molecules/VideoCall.vue'
-import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue'
-import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore'
+<script setup>
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import { onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import {
   getStorage,
-  ref,
+  ref as storageRef,
   uploadBytesResumable,
   getDownloadURL,
-} from 'firebase/storage'
-import { db } from '@/firebase'
-import FeedbackView from '@/components/molecules/FeedbackView.vue'
+} from 'firebase/storage';
+import { db } from '@/firebase';
+import VideoCall from '@/components/molecules/VideoCall.vue';
+import DisconnectedCard from '@/components/atoms/DisconnectedCard.vue';
+import FeedbackView from '@/components/molecules/FeedbackView.vue';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
 
-export default {
-  components: {
-    VideoCall,
-    FeedbackView,
-    DisconnectedCard,
-  },
-  props: { token: { type: String, default: null } },
-  data: () => ({
-    conectionStatus: false,
-    isAdmin: false,
-    logined: null,
-    selected: true,
-    fromlink: null,
-    drawer: true,
-    start: true,
-    mini: false,
-    index: 0,
-    noExistUser: true,
-    taskIndex: 0,
-    preTestIndex: null,
-    items: [],
-    taskAnswers: {},
-    dialog: false,
-    moderatorStatus: null,
-    evaluatorStatus: null,
-    tasksStatus: [],
-    userTestStatus: {},
-    postTestFinished: false,
-    bothConnected: false,
-    recording: false,
-    recordedChunksEvaluator: [],
-    recordedChunksModerator: [],
-    recordedVideoEvaluator: '',
-    recordedVideoModerator: '',
-    videoStream: null,
-    mediaRecorderEvaluator: null,
-    mediaRecorderModerator: null,
-    isLoading: false,
-    consentCompleted: false,
-    sessionCooperator: null,
-    testDate: null,
-    saved: false,
-    uploadProgress: 0,
-    backupInterval: null,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      if (this.$store.getters.user) this.setExistUser()
-      return this.$store.getters.user
-    },
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-    cooperators() {
-      return this.$store.getters.cooperators
-    },
-    tasks() {
-      return this.$store.getters.tasks
-    },
-    roomTestId() {
-      return this.$store.getters.test.id
-    },
-    localCameraStream() {
-      return this.$store.getters.localCameraStream
-    },
-    remoteCameraStream() {
-      return this.$store.getters.remoteCameraStream
-    },
-    isTestAvailable() {
-      return new Date() > new Date(this.testDate)
-    },
-    isDisconnected() {
-      return this.$store.getters.isDisconnected
-    },
-  },
-  watch: {
-    taskIndex() {
-      this.$refs.rightView.scrollTop = 0
-    },
-    start() {
-      if (this.start) {
-        window.onbeforeunload = function() {
-          return 'handle your events or msgs here'
-        }
-      }
-      // save first to exit
-    },
-    async user() {
-      if (this.user) {
-        this.noExistUser = false
-        if (this.logined) this.setTest()
-      }
-    },
-    async localCameraStream(value) {
-      if (value && !this.isAdmin) {
-        this.startRecordingEvaluator()
-      } else if (value && this.isAdmin) {
-        this.startRecordingModerator()
-      }
-    },
-    async remoteCameraStream(value) {
-      this.setRemoteAudio()
-    },
-    'userTestStatus.preTestStatus': function(newValue) {
-      if (newValue === 'done') {
-        if (!this.isAdmin) {
-          window.open(this.test.testStructure.landingPage)
-        }
-      }
-    },
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+const { t: i18n } = useI18n();
+const toast = useToast();
 
-    'userTestStatus.postTestStatus': function(newValue) {
-      if (newValue === 'done') {
-        this.postTestFinished = true
+const connectionStatus = ref(false);
+const isAdmin = ref(false);
+const logined = ref(null);
+const selected = ref(true);
+const fromlink = ref(null);
+const drawer = ref(true);
+const start = ref(true);
+const mini = ref(false);
+const index = ref(0);
+const noExistUser = ref(true);
+const taskIndex = ref(0);
+const preTestIndex = ref(null);
+const items = ref([]);
+const taskAnswers = ref({});
+const dialog = ref(false);
+const moderatorStatus = ref(null);
+const evaluatorStatus = ref(null);
+const tasksStatus = ref([]);
+const userTestStatus = ref({});
+const postTestFinished = ref(false);
+const bothConnected = ref(false);
+const recording = ref(false);
+const recordedChunksEvaluator = ref([]);
+const recordedChunksModerator = ref([]);
+const recordedVideoEvaluator = ref('');
+const recordedVideoModerator = ref('');
+const videoStream = ref(null);
+const mediaRecorderEvaluator = ref(null);
+const mediaRecorderModerator = ref(null);
+const isLoading = ref(false);
+const consentCompleted = ref(false);
+const sessionCooperator = ref(null);
+const testDate = ref(null);
+const saved = ref(false);
+const uploadProgress = ref(0);
+const backupInterval = ref(null);
+
+// DOM refs
+const rightView = ref(null);
+const videoCall = ref(null);
+const remoteAudio = ref(null);
+
+const test = computed(() => store.getters.test);
+const user = computed(() => {
+  if (store.getters.user) setExistUser();
+  return store.getters.user;
+});
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
+const cooperators = computed(() => store.getters.cooperators);
+const tasks = computed(() => store.getters.tasks);
+const roomTestId = computed(() => store.getters.test.id);
+const localCameraStream = computed(() => store.getters.localCameraStream);
+const remoteCameraStream = computed(() => store.getters.remoteCameraStream);
+const isTestAvailable = computed(() => new Date() > new Date(testDate.value));
+const isDisconnected = computed(() => store.getters.isDisconnected);
+
+const isSaved = () => saved.value;
+const isTestNotStarted = () => start.value;
+
+const saveAnswer = async () => {
+  currentUserTestAnswer.value.submitted = true;
+  await store.dispatch('saveTestAnswer', {
+    data: currentUserTestAnswer.value,
+    answerDocId: test.value.answersDocId,
+    testType: test.value.testType,
+  });
+};
+
+const setTaskIndex = (idx) => {
+  taskIndex.value = idx;
+};
+
+const openTask = (id) => {
+  const testRef = doc(db, 'tests', roomTestId.value);
+  getDoc(testRef).then((doc) => {
+    if (doc.exists()) {
+      const testStructure = doc.data().testStructure;
+      testStructure.userTasks[id].taskStatus = 'open';
+      updateDoc(testRef, { testStructure }).catch((error) => {
+        console.error('Error updating task status:', error);
+      });
+      test.value.testStructure.userTasks[id].taskStatus = 'open';
+    } else {
+      console.error('Test document not found');
+    }
+  });
+};
+
+const setInProgress = (id, type) => {
+  const statusToUpdate = 'inProgress';
+  const testRef = doc(db, 'tests', roomTestId.value);
+  getDoc(testRef).then((doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      if (type === 'tasks' && tasksStatus.value[id] === 'open') {
+        data.testStructure.userTasks[id].taskStatus = statusToUpdate;
+      } else if (type === 'postTest' && userTestStatus.value.postTestStatus === 'open') {
+        data.userTestStatus.postTestStatus = statusToUpdate;
+      } else if (type === 'preTest' && userTestStatus.value.preTestStatus === 'open') {
+        data.userTestStatus.preTestStatus = statusToUpdate;
+      }
+      updateDoc(testRef, data).catch((error) => {
+        console.error(`Error updating ${type} status:`, error);
+      });
+      if (type === 'tasks') {
+        test.value.testStructure.userTasks[id].taskStatus = statusToUpdate;
       } else {
-        this.postTestFinished = false
-      }
-    },
-    evaluatorStatus(newValue) {
-      if (newValue === true && this.moderatorStatus === true) {
-        this.bothConnected = true
-      }
-    },
-  },
-  async created() {
-    await this.verifyAdmin()
-    if (this.token != null) {
-      if (this.token == this.test.id) {
-        this.$toast.info('Use a session link to access your moderated test!')
-        this.$router.push('/managerview/' + this.test.id)
-      }
-      this.sessionCooperator = this.test.cooperators.find(
-        (user) => user.userDocId === this.token,
-      )
-      if (this.user.id != this.token && !this.isAdmin) {
-        this.$toast.error(i18n.t(errors.globalError))
-        this.$router.push('/testslist')
-      }
-      if (this.sessionCooperator.testDate) {
-        this.testDate = this.sessionCooperator.testDate
-      } else {
-        this.$toast.warning(`Your session don't have a scheduled date`)
-        this.$router.push('/managerview/' + this.test.id)
+        test.value.userTestStatus[`${type}Status`] = statusToUpdate;
       }
     } else {
-      this.$toast.info('Use a session your session link to the test')
-      this.$router.push('/managerview/' + this.test.id)
+      console.error('Test document not found');
     }
+  });
+};
 
-    if (!this.isAdmin) {
-      await this.$store.dispatch('acceptTestCollaboration', {
-        test: this.test,
-        cooperator: this.user,
-      })
-    }
+const setExistUser = () => {
+  noExistUser.value = false;
+};
 
-    await this.mappingSteps()
-    this.consentCompleted = this.currentUserTestAnswer.consentCompleted
-    const ref = doc(db, 'tests/', this.roomTestId)
-    getDoc(ref).then((doc) => {
+const changeStatus = (id, type, newStatus) => {
+  const testRef = doc(db, 'tests', roomTestId.value);
+  getDoc(testRef)
+    .then((doc) => {
       if (doc.exists()) {
-        const data = doc.data()
-        data.userTestStatus.postTestStatus = 'closed'
-        data.userTestStatus.preTestStatus = 'closed'
-        data.userTestStatus.consentStatus = 'closed'
-        for (let i = 0; i < this.test.testStructure.userTasks.length; i++) {
-          data.testStructure.userTasks[i].taskStatus = 'closed'
+        const data = doc.data();
+        if (type === 'tasks') {
+          data.testStructure.userTasks[id].taskStatus = newStatus;
+          if (newStatus === 'done') currentUserTestAnswer.value.tasks[id].completed = true;
+        } else if (type === 'postTest') {
+          data.userTestStatus.postTestStatus = newStatus;
+          if (newStatus === 'done') currentUserTestAnswer.value.postTestCompleted = true;
+        } else if (type === 'preTest') {
+          data.userTestStatus.preTestStatus = newStatus;
+          if (newStatus === 'done') currentUserTestAnswer.value.preTestCompleted = true;
+        } else if (type === 'consent') {
+          data.userTestStatus.consentStatus = newStatus;
+          if (newStatus === 'done') currentUserTestAnswer.value.consentCompleted = true;
         }
-        return updateDoc(ref, data)
+        return updateDoc(testRef, data);
       }
+      throw new Error('Test document not found');
     })
-    onSnapshot(ref, (snapshot) => {
-      this.moderatorStatus = snapshot.data().userTestStatus.moderator
-      this.evaluatorStatus = snapshot.data().userTestStatus.user
-      this.userTestStatus = snapshot.data().userTestStatus
-
-      const tasks = snapshot.data().testStructure.userTasks
-
-      const newTasksStatus = []
-
-      tasks.forEach((task) => {
-        newTasksStatus.push(task.taskStatus)
-      })
-      this.tasksStatus = newTasksStatus
+    .then(() => {
+      calculateProgress();
     })
-  },
-  async beforeUnmount() {
-    if (this.isAdmin) {
-      this.disconnect()
-      this.stopRecording()
-      window.onbeforeunload = null
-      await this.$store.dispatch('hangUp', this.roomTestId)
+    .catch((error) => {
+      console.error('Error updating status:', error);
+    });
+};
+
+const setRemoteAudio = async () => {
+  if (remoteAudio.value) {
+    remoteAudio.value.srcObject = remoteCameraStream.value;
+  }
+};
+
+const uploadVideo = async (recordedChunks, storagePath) => {
+  const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+  const storage = getStorage();
+  const ref = storageRef(storage, storagePath);
+  const uploadTask = uploadBytesResumable(ref, videoBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        uploadProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        console.error('Upload failed:', error);
+        isLoading.value = false;
+        reject(error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(ref);
+        resolve(downloadURL);
+      },
+    );
+  });
+};
+
+const startRecordingEvaluator = async () => {
+  recording.value = true;
+  recordedChunksEvaluator.value = [];
+  const evaluatorCamera = await navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true,
+  });
+  mediaRecorderEvaluator.value = new MediaRecorder(evaluatorCamera);
+
+  mediaRecorderEvaluator.value.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunksEvaluator.value.push(event.data);
+    }
+  };
+
+  mediaRecorderEvaluator.value.onstop = async () => {
+    isLoading.value = true;
+    const storagePath = `tests/${roomTestId.value}/${route.params.token}/${currentUserTestAnswer.value.userDocId}/video/${recordedVideoEvaluator.value}`;
+    try {
+      recordedVideoEvaluator.value = await uploadVideo(recordedChunksEvaluator.value, storagePath);
+      currentUserTestAnswer.value.cameraUrlEvaluator = recordedVideoEvaluator.value;
+      isLoading.value = false;
+      saved.value = true;
+      window.onbeforeunload = null;
+      router.push('/testslist');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      isLoading.value = false;
+    }
+  };
+
+  mediaRecorderEvaluator.value.start();
+  backupInterval.value = setInterval(async () => {
+    if (recording.value) {
+      await uploadVideo(recordedChunksEvaluator.value, storagePath);
+    }
+  }, 300000);
+};
+
+const startRecordingModerator = async () => {
+  recording.value = true;
+  recordedChunksModerator.value = [];
+  const storagePath = `tests/${roomTestId.value}/${route.params.token}/moderator/video/${recordedVideoModerator.value}`;
+  const moderatorCamera = await navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true,
+  });
+  mediaRecorderModerator.value = new MediaRecorder(moderatorCamera);
+
+  mediaRecorderModerator.value.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunksModerator.value.push(event.data);
+    }
+  };
+
+  mediaRecorderModerator.value.onstop = async () => {
+    isLoading.value = true;
+    try {
+      recordedVideoModerator.value = await uploadVideo(recordedChunksModerator.value, storagePath);
+      currentUserTestAnswer.value.cameraUrlModerator = recordedVideoModerator.value;
+      isLoading.value = false;
+      saved.value = true;
+      window.onbeforeunload = null;
+      router.push('/testslist');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      isLoading.value = false;
+    }
+  };
+
+  mediaRecorderModerator.value.start();
+  backupInterval.value = setInterval(async () => {
+    if (recording.value) {
+      await uploadVideo(recordedChunksModerator.value, storagePath);
+    }
+  }, 300000);
+};
+
+const stopRecording = () => {
+  if (mediaRecorderEvaluator.value) {
+    mediaRecorderEvaluator.value.stop();
+    localCameraStream.value?.stop();
+    clearInterval(backupInterval.value);
+    recording.value = false;
+  }
+  if (mediaRecorderModerator.value) {
+    mediaRecorderModerator.value.stop();
+    localCameraStream.value?.stop();
+    clearInterval(backupInterval.value);
+    recording.value = false;
+  }
+};
+
+const confirmConnect = async () => {
+  const ref = doc(db, 'tests', roomTestId.value);
+  try {
+    if (isAdmin.value) {
+      await updateDoc(ref, {
+        userTestStatus: {
+          moderator: true,
+          user: false,
+          consentStatus: 'open',
+          preTestStatus: 'closed',
+          postTestStatus: 'closed',
+        },
+      });
     } else {
-      this.stopRecording()
+      await updateDoc(ref, {
+        userTestStatus: {
+          user: true,
+          moderator: true,
+          consentStatus: 'open',
+          preTestStatus: 'closed',
+          postTestStatus: 'closed',
+        },
+      });
+    }
+    connectionStatus.value = true;
+  } catch (e) {
+    console.error('Error in connect:', e);
+  }
+};
+
+const disconnect = async () => {
+  const ref = doc(db, 'tests', roomTestId.value);
+  try {
+    await updateDoc(ref, {
+      userTestStatus: {
+        moderator: false,
+        user: false,
+        consentStatus: 'open',
+        preTestStatus: 'closed',
+        postTestStatus: 'closed',
+      },
+    });
+  } catch (e) {
+    console.error('Error in disconnect:', e);
+  }
+};
+
+const submitAnswer = async () => {
+  currentUserTestAnswer.value.submitted = true;
+  await saveAnswer();
+};
+
+const startTest = () => {
+  if (test.value.testStructure.length === 0) {
+    toast.info("This test doesn't have any tasks");
+    router.push('/managerview/' + test.value.id);
+  }
+  start.value = !start.value;
+};
+
+const calculateProgress = () => {
+  const totalSteps = 3;
+  let completedSteps = 0;
+  if (currentUserTestAnswer.value.preTestCompleted) completedSteps++;
+  if (currentUserTestAnswer.value.consentCompleted) completedSteps++;
+  if (currentUserTestAnswer.value.postTestCompleted) completedSteps++;
+  const progressPercentage = (completedSteps / totalSteps) * 100;
+  currentUserTestAnswer.value.progress = progressPercentage;
+  return progressPercentage;
+};
+
+const setTest = async () => {
+  logined.value = true;
+  await store.dispatch('getCurrentTestAnswerDoc');
+};
+
+const verifyAdmin = async () => {
+  if (test.value.testAdmin.email === user.value.email) {
+    isAdmin.value = true;
+  }
+};
+
+const mappingSteps = async () => {
+  if (isAdmin.value) {
+    if (validate(test.value.testStructure.preTest)) {
+      items.value.push({
+        title: 'Moderator view',
+        icon: 'mdi-security',
+        value: test.value.testStructure.postTest,
+        id: 0,
+      });
+    }
+    if (validate(test.value.testStructure.preTest)) {
+      if (items.value.length) {
+        items.value.push({
+          title: 'Feedback',
+          icon: 'mdi-monitor-account',
+          value: test.value.testStructure.postTest,
+          id: 2,
+        });
+      }
+    }
+  } else {
+    if (validate(test.value.testStructure.preTest)) {
+      items.value.push({
+        title: 'Welcome Page',
+        icon: 'mdi-human-greeting',
+        id: 0,
+      });
+    }
+    if (validate(test.value.testStructure.userTasks)) {
+      items.value.push({
+        title: 'Tasks',
+        icon: 'mdi-checkbox-marked-circle-auto-outline',
+        id: 1,
+      });
+    }
+    if (validate(test.value.testStructure.postTest)) {
+      items.value.push({
+        title: 'Feedback',
+        icon: 'mdi-monitor-account',
+        id: 2,
+      });
+    }
+  }
+};
+
+const finishTest = async () => {
+  await store.dispatch('hangUp', roomTestId.value);
+  saved.value = true;
+  window.onbeforeunload = null;
+};
+
+const validate = (object) => {
+  return object !== null && object !== undefined && object !== '';
+};
+
+const signOut = async () => {
+  await store.dispatch('signOut');
+  router.push('/signin');
+};
+
+// Lifecycle hooks
+onMounted(async () => {
+  if (!user.value) {
+    toast.error('Login to your RUXAILAB account first to access the test!');
+    router.push('/signin');
+    return;
+  }
+
+  await verifyAdmin();
+  if (route.params.token) {
+    if (route.params.token === test.value.id) {
+      toast.info('Use a session link to access your moderated test!');
+      router.push('/managerview/' + test.value.id);
+      return;
+    }
+    sessionCooperator.value = test.value.cooperators.find(
+      (user) => user.userDocId === route.params.token,
+    );
+    if (user.value.id !== route.params.token && !isAdmin.value) {
+      toast.error(i18n('errors.globalError'));
+      router.push('/testslist');
+      return;
+    }
+    if (sessionCooperator.value.testDate) {
+      testDate.value = sessionCooperator.value.testDate;
+    } else {
+      toast.warning("Your session doesn't have a scheduled date");
+      router.push('/managerview/' + test.value.id);
+      return;
+    }
+  } else {
+    toast.info('Use a session link to access the test');
+    router.push('/managerview/' + test.value.id);
+    return;
+  }
+
+  if (!isAdmin.value) {
+    await store.dispatch('acceptTestCollaboration', {
+      test: test.value,
+      cooperator: user.value,
+    });
+  }
+
+  await mappingSteps();
+  consentCompleted.value = currentUserTestAnswer.value.consentCompleted;
+  const ref = doc(db, 'tests/', roomTestId.value);
+  await getDoc(ref).then((doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      data.userTestStatus.postTestStatus = 'closed';
+      data.userTestStatus.preTestStatus = 'closed';
+      data.userTestStatus.consentStatus = 'closed';
+      for (let i = 0; i < test.value.testStructure.userTasks.length; i++) {
+        data.testStructure.userTasks[i].taskStatus = 'closed';
+      }
+      return updateDoc(ref, data);
+    }
+  });
+  onSnapshot(ref, (snapshot) => {
+    moderatorStatus.value = snapshot.data().userTestStatus.moderator;
+    evaluatorStatus.value = snapshot.data().userTestStatus.user;
+    userTestStatus.value = snapshot.data().userTestStatus;
+    const tasks = snapshot.data().testStructure.userTasks;
+    tasksStatus.value = tasks.map((task) => task.taskStatus);
+  });
+});
+
+onBeforeUnmount(async () => {
+  if (isAdmin.value) {
+    await disconnect();
+    stopRecording();
+    window.onbeforeunload = null;
+    await store.dispatch('hangUp', roomTestId.value);
+  } else {
+    stopRecording();
+  }
+});
+
+watch(taskIndex, () => {
+  if (rightView.value) {
+    rightView.value.scrollTop = 0;
+  }
+});
+
+watch(start, (newVal) => {
+  if (newVal) {
+    window.onbeforeunload = () => 'handle your events or msgs here';
+  }
+});
+
+watch(user, async () => {
+  if (user.value) {
+    noExistUser.value = false;
+    if (logined.value) await setTest();
+  }
+});
+
+watch(localCameraStream, async (value) => {
+  if (value && !isAdmin.value) {
+    await startRecordingEvaluator();
+  } else if (value && isAdmin.value) {
+    await startRecordingModerator();
+  }
+});
+
+watch(remoteCameraStream, async () => {
+  await setRemoteAudio();
+});
+
+watch(
+  () => userTestStatus.value.preTestStatus,
+  (newValue) => {
+    if (newValue === 'done' && !isAdmin.value) {
+      window.open(test.value.testStructure.landingPage);
     }
   },
-  mounted() {
-    if (this.user == null) {
-      this.$toast.error(
-        'Login to your RUXAILAB account first to access the test!',
-      )
-      this.$router.push('/signin')
-    }
+);
+
+watch(
+  () => userTestStatus.value.postTestStatus,
+  (newValue) => {
+    postTestFinished.value = newValue === 'done';
   },
-  methods: {
-    isSaved() {
-      return this.saved
-    },
-    isTestNotStarted() {
-      return this.start
-    },
-    async saveAnswer() {
-      this.currentUserTestAnswer.submitted = true
-      await this.$store.dispatch('saveTestAnswer', {
-        data: this.currentUserTestAnswer,
-        answerDocId: this.test.answersDocId,
-        testType: this.test.testType,
-      })
-    },
-    setTaskIndex(index) {
-      this.taskIndex = index
-    },
-    openTask(id) {
-      const testRef = doc(db, 'tests', this.roomTestId)
+);
 
-      getDoc(testRef).then((doc) => {
-        if (doc.exists()) {
-          const testStructure = doc.data().testStructure
-          testStructure.userTasks[id].taskStatus = 'open'
-
-          updateDoc(testRef, { testStructure })
-            .then(() => {})
-            .catch((error) => {
-              console.error('Erro ao atualizar o status da tarefa:', error)
-            })
-
-          this.test.testStructure.userTasks[id].taskStatus = 'open'
-        } else {
-          console.error('Documento do teste não encontrado')
-        }
-      })
-    },
-
-    setInProgress(id, type) {
-      const statusToUpdate = 'inProgress'
-      const testRef = doc(db, 'tests', this.roomTestId)
-
-      getDoc(testRef).then((doc) => {
-        if (doc.exists()) {
-          const data = doc.data()
-          if (type === 'tasks') {
-            if (this.tasksStatus[id] == 'open') {
-              data.testStructure.userTasks[id].taskStatus = statusToUpdate
-            }
-          } else if (type === 'postTest') {
-            if (this.userTestStatus.postTestStatus == 'open') {
-              data.userTestStatus.postTestStatus = statusToUpdate
-            }
-          } else if (type === 'preTest') {
-            if (this.userTestStatus.preTestStatus == 'open') {
-              data.userTestStatus.preTestStatus = statusToUpdate
-            }
-          }
-          updateDoc(testRef, data)
-            .then(() => {})
-            .catch((error) => {
-              console.error(`Erro ao atualizar o status da ${type}:`, error)
-            })
-          if (type === 'tasks') {
-            this.test.testStructure.userTasks[id].taskStatus = statusToUpdate
-          } else {
-            this.test.userTestStatus[`${type}Status`] = statusToUpdate
-          }
-        } else {
-          console.error('Documento do teste não encontrado')
-        }
-      })
-    },
-    setExistUser() {
-      this.noExistUser = false
-    },
-
-    changeStatus(id, type, newStatus) {
-      const testRef = doc(db, 'tests', this.roomTestId)
-
-      getDoc(testRef)
-        .then((doc) => {
-          if (doc.exists()) {
-            const data = doc.data()
-            if (type === 'tasks') {
-              data.testStructure.userTasks[id].taskStatus = newStatus
-              if (newStatus == 'done')
-                this.currentUserTestAnswer.tasks[id].completed = true
-            } else if (type === 'postTest') {
-              data.userTestStatus.postTestStatus = newStatus
-              if (newStatus == 'done')
-                this.currentUserTestAnswer.postTestCompleted = true
-            } else if (type === 'preTest') {
-              data.userTestStatus.preTestStatus = newStatus
-              if (newStatus == 'done')
-                this.currentUserTestAnswer.preTestCompleted = true
-            } else if (type === 'consent') {
-              data.userTestStatus.consentStatus = newStatus
-              if (newStatus == 'done')
-                this.currentUserTestAnswer.consentCompleted = true
-            }
-            return updateDoc(testRef, data)
-          } else {
-            console.error('Documento do teste não encontrado')
-            throw new Error('Documento do teste não encontrado')
-          }
-        })
-        .then(() => {
-          this.calculateProgress()
-        })
-        .catch((error) => {
-          console.error('Erro ao atualizar o status:', error)
-        })
-    },
-    async setRemoteAudio() {
-      this.$refs.remoteAudio.srcObject = this.remoteCameraStream
-    },
-    async uploadVideo(recordedChunks, storagePath) {
-      const videoBlob = new Blob(recordedChunks, { type: 'video/webm' })
-      const storage = getStorage()
-      const storageRef = ref(storage, storagePath)
-
-      const uploadTask = uploadBytesResumable(storageRef, videoBlob)
-
-      return new Promise((resolve, reject) => {
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            this.uploadProgress = progress
-          },
-          (error) => {
-            console.error('Upload failed:', error)
-            this.isLoading = false
-          },
-          async () => {
-            const downloadURL = await getDownloadURL(storageRef)
-            resolve(downloadURL)
-          },
-        )
-      })
-    },
-
-    async startRecordingEvaluator() {
-      this.recording = true
-      this.recordedChunksEvaluator = []
-      let evaluatorCamera = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      })
-      this.mediaRecorderEvaluator = new MediaRecorder(evaluatorCamera)
-
-      this.mediaRecorderEvaluator.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          this.recordedChunksEvaluator.push(event.data)
-        }
-      }
-
-      this.mediaRecorderEvaluator.onstop = async () => {
-        this.isLoading = true
-        const storagePath = `tests/${this.roomTestId}/${this.token}/${this.currentUserTestAnswer.userDocId}/video/${this.recordedVideoEvaluator}`
-        try {
-          this.recordedVideoEvaluator = await this.uploadVideo(
-            this.recordedChunksEvaluator,
-            storagePath,
-          )
-          this.currentUserTestAnswer.cameraUrlEvaluator = this.recordedVideoEvaluator
-          this.isLoading = false
-          this.saved = true
-          window.onbeforeunload = null
-          this.$router.push('/testslist')
-        } catch (error) {
-          console.error('Upload failed:', error)
-          this.isLoading = false
-        }
-      }
-
-      this.mediaRecorderEvaluator.start()
-
-      // Set up periodic backups
-      this.backupInterval = setInterval(async () => {
-        if (this.recording) {
-          await this.uploadVideo(this.recordedChunksEvaluator, storagePath)
-        }
-      }, 300000) // 5 minutes
-    },
-
-    async startRecordingModerator() {
-      this.recording = true
-      this.recordedChunksModerator = []
-      const storagePath = `tests/${this.roomTestId}/${this.token}/moderator/video/${this.recordedVideoModerator}`
-      let moderatorCamera = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      })
-      this.mediaRecorderModerator = new MediaRecorder(moderatorCamera)
-
-      this.mediaRecorderModerator.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          this.recordedChunksModerator.push(event.data)
-        }
-      }
-
-      this.mediaRecorderModerator.onstop = async () => {
-        this.isLoading = true
-        try {
-          this.recordedVideoModerator = await this.uploadVideo(
-            this.recordedChunksModerator,
-            storagePath,
-          )
-          this.currentUserTestAnswer.cameraUrlModerator = this.recordedVideoModerator
-          this.isLoading = false
-          this.saved = true
-          window.onbeforeunload = null
-          this.$router.push('/testslist')
-        } catch (error) {
-          console.error('Upload failed:', error)
-          this.isLoading = false
-        }
-      }
-
-      this.mediaRecorderModerator.start()
-
-      this.backupInterval = setInterval(async () => {
-        if (this.recording) {
-          await this.uploadVideo(this.recordedChunksModerator, storagePath)
-        }
-      }, 300000) // 5 minutes
-    },
-
-    async stopRecording() {
-      if (this.mediaRecorderEvaluator) {
-        this.mediaRecorderEvaluator.stop()
-        this.localCameraStream.stop()
-        clearInterval(this.backupInterval)
-        this.recording = false
-      }
-      if (this.mediaRecorderModerator) {
-        this.mediaRecorderModerator.stop()
-        this.localCameraStream.stop()
-        clearInterval(this.backupInterval)
-        this.recording = false
-      }
-    },
-    async confirmConnect() {
-      const ref = doc(db, 'tests', this.roomTestId)
-      if (this.isAdmin) {
-        try {
-          await updateDoc(ref, {
-            userTestStatus: {
-              moderator: true,
-              user: false,
-              consentStatus: 'open',
-              preTestStatus: 'closed',
-              postTestStatus: 'closed',
-            },
-          })
-          this.conectionStatus = true
-        } catch (e) {
-          console.error('Error in connect:', e)
-        }
-      } else {
-        try {
-          await updateDoc(ref, {
-            userTestStatus: {
-              user: true,
-              moderator: true,
-              consentStatus: 'open',
-              preTestStatus: 'closed',
-              postTestStatus: 'closed',
-            },
-          })
-          this.conectionStatus = true
-        } catch (e) {
-          console.error('Error in connect:', e)
-        }
-      }
-    },
-    async disconnect() {
-      const ref = doc(db, 'tests', this.roomTestId)
-      try {
-        await updateDoc(ref, {
-          userTestStatus: {
-            moderator: false,
-            user: false,
-            consentStatus: 'open',
-            preTestStatus: 'closed',
-            postTestStatus: 'closed',
-          },
-        })
-      } catch (e) {
-        console.error('Error in connect:', e)
-      }
-    },
-    async submitAnswer() {
-      this.currentUserTestAnswer.submitted = true
-      await this.saveAnswer()
-    },
-    startTest() {
-      if (this.test.testStructure.length == 0) {
-        this.$toast.info("This test don't have any task")
-        this.$router.push('/managerview/' + this.test.id)
-      }
-      this.start = !this.start
-    },
-    calculateProgress() {
-      const totalSteps = 3
-
-      let completedSteps = 0
-
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.consentCompleted) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        completedSteps++
-      }
-
-      const progressPercentage = (completedSteps / totalSteps) * 100
-      this.currentUserTestAnswer.progress = progressPercentage
-      return progressPercentage
-    },
-    async setTest() {
-      this.logined = true
-      await this.$store.dispatch('getCurrentTestAnswerDoc')
-    },
-    async verifyAdmin() {
-      if (this.test.testAdmin.email == this.user.email) {
-        this.isAdmin = true
-      }
-    },
-    async mappingSteps() {
-      if (this.isAdmin) {
-        if (this.validate(this.test.testStructure.preTest)) {
-          this.items.push({
-            title: 'Moderator view',
-            icon: 'mdi-security',
-            value: this.test.testStructure.postTest,
-            id: 0,
-          })
-        }
-
-        if (this.validate(this.test.testStructure.preTest)) {
-          if (this.items.length) {
-            this.items.push({
-              title: 'Feedback',
-              icon: 'mdi-monitor-account',
-              value: this.test.testStructure.postTest,
-              id: 2,
-            })
-          }
-        }
-      } else {
-        //PreTest
-        if (this.validate(this.test.testStructure.preTest)) {
-          this.items.push({
-            title: 'Welcome Page',
-            icon: 'mdi-human-greeting',
-            id: 0,
-          })
-        }
-
-        //Tasks
-        if (this.validate(this.test.testStructure.userTasks))
-          this.items.push({
-            title: 'Tasks',
-            icon: 'mdi-checkbox-marked-circle-auto-outline',
-            id: 1,
-          })
-
-        //PostTest
-        if (this.validate(this.test.testStructure.postTest))
-          this.items.push({
-            title: 'Feedback',
-            icon: 'mdi-monitor-account',
-            id: 2,
-          })
-      }
-    },
-    async finishTest() {
-      await this.$store.dispatch('hangUp', this.roomTestId)
-      this.saved = true
-      window.onbeforeunload = null
-    },
-    validate(object) {
-      return object !== null && object !== undefined && object !== ''
-    },
-  },
-}
+watch(evaluatorStatus, (newValue) => {
+  if (newValue === true && moderatorStatus.value === true) {
+    bothConnected.value = true;
+  }
+});
 </script>
 
 <style scoped>
@@ -1692,45 +1379,31 @@ export default {
   margin: 0;
   overflow-y: auto;
 }
-
-/* Estilo para a lista de navegação */
 .nav-list {
   max-height: 85%;
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 100px;
 }
-
-/* Estilo para os cartões de conteúdo */
 .cards {
   margin-top: 16px;
 }
-
-/* Estilo para os campos de entrada de texto */
 .text-field {
   margin-bottom: 16px;
 }
-
-/* Estilo para os botões */
 .btn-done {
   border-radius: 10px;
 }
-
-/* Right side scroll bar */
-/* width */
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
-/* Track */
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
-/* Handle */
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
-/* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
@@ -1759,9 +1432,8 @@ export default {
   pointer-events: none;
   background-color: grey;
 }
-
 body {
-  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+  overflow-y: 100vh;
 }
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
@@ -1770,7 +1442,6 @@ body {
   height: 100vh;
   overflow: hidden;
 }
-
 .backgroundTest {
   background-color: #e8eaf2;
   height: 94%;
@@ -1814,7 +1485,7 @@ body {
   overflow: hidden;
 }
 .v-navigation-drawer {
-  margin-top: 64px; /* Adjust based on your app bar height */
+  margin-top: 64px;
 }
 .subtitleView {
   font-style: normal;
@@ -1835,50 +1506,32 @@ body {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
 }
-/* Right side scroll bar */
-/* width */
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
-/* Track */
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
-/* Handle */
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd8694;
   border-radius: 2px;
 }
-/* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fda1207a;
 }
-/* Nav bar list scroll bar */
-/* width */
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
-/* Track */
 .nav-list::-webkit-scrollbar-track {
   background: none;
 }
-/* Handle */
 .nav-list::-webkit-scrollbar-thumb {
   background: #c09c6b;
   border-radius: 4px;
 }
-/* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #eba555;
-  /* background: #515069; */
 }
 .card-title {
   font-style: normal;
@@ -1898,7 +1551,6 @@ body {
   animation: dot-flashing 1s infinite linear alternate;
   animation-delay: 0.5s;
 }
-
 .dot-flashing::before,
 .dot-flashing::after {
   content: '';
@@ -1906,7 +1558,6 @@ body {
   position: absolute;
   top: 0;
 }
-
 .dot-flashing::before {
   left: -25px;
   width: 15px;
@@ -1917,7 +1568,6 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 0s;
 }
-
 .dot-flashing::after {
   left: 25px;
   width: 15px;
@@ -1928,7 +1578,6 @@ body {
   animation: dot-flashing 1s infinite alternate;
   animation-delay: 1s;
 }
-
 @keyframes dot-flashing {
   0% {
     background-color: #fca326;

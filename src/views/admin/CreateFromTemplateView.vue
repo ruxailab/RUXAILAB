@@ -1,14 +1,8 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col
-        cols="10"
-        class="pt-16"
-      >
-        <v-row
-          v-if="!searching"
-          align="center"
-        >
+      <v-col cols="10" class="pt-16">
+        <v-row v-if="!searching" align="center">
           <span class="titleText ml-3 mb-2">{{
             $t('pages.createTest.templateTitle')
           }}</span>
@@ -59,65 +53,50 @@
   </div>
 </template>
 
-<script>
-import List from '@/components/atoms/ListComponent'
-import TempDialog from '@/components/molecules/TemplateInfoDialog'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import List from '@/components/atoms/ListComponent.vue'
+import TempDialog from '@/components/molecules/TemplateInfoDialog.vue'
 
-export default {
-  components: {
-    List,
-    TempDialog,
-  },
+const store = useStore()
+const { t } = useI18n()
 
-  data: () => ({
-    temp: {},
-    dialog: false,
-    searching: false,
-    search: '',
-  }),
+const temp = ref({})
+const dialog = ref(false)
+const searching = ref(false)
+const search = ref('')
 
-  computed: {
-    templates() {
-      return this.$store.state.Templates.templates
-    },
+const templates = computed(() => store.state.Templates.templates)
 
-    filteredTemplates() {
-      if (this.templates !== null) {
-        return this.templates.filter((temp) => {
-          return temp.header.templateTitle
-            .toLowerCase()
-            .includes(this.search.toLowerCase())
-        })
-      }
+const filteredTemplates = computed(() => {
+  if (templates.value !== null) {
+    return templates.value.filter((temp) =>
+      temp.header.templateTitle
+        .toLowerCase()
+        .includes(search.value.toLowerCase())
+    )
+  }
+  return []
+})
 
-      return []
-    },
+const user = computed(() => store.getters.user)
 
-    user() {
-      return this.$store.getters.user
-    },
-  },
+watch(dialog, (newVal) => {
+  if (!newVal) {
+    temp.value = {}
+  }
+})
 
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.temp = {}
-        this.selectTemplate = null
-      }
-    },
-  },
-
-  async created() {
-    await this.$store.dispatch('getCurrentUserAndPublicTemplates')
-  },
-
-  methods: {
-    openTemp(item) {
-      this.temp = JSON.parse(JSON.stringify(item)) //deep copy
-      this.dialog = true
-    },
-  },
+const openTemp = (item) => {
+  temp.value = JSON.parse(JSON.stringify(item)) // Deep copy
+  dialog.value = true
 }
+
+onMounted(async () => {
+  await store.dispatch('getCurrentUserAndPublicTemplates')
+})
 </script>
 
 <style scoped>
