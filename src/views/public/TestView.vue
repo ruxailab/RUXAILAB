@@ -616,7 +616,7 @@ const props = defineProps({
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
-const {t: i18n} = useI18n()
+const { t } = useI18n()
 const toast = useToast()
 
 const logined = ref(null)
@@ -662,7 +662,7 @@ const startTest = () => {
   if (test.value.testStructure.length == 0) {
     store.commit('setError', {
       errorCode: 400,
-      message: i18n('HeuristicsTestView.messages.noHeuristics'),
+      message: t('HeuristicsTestView.messages.noHeuristics'),
     })
     router.push('/managerview/' + test.value.id)
   }
@@ -746,7 +746,7 @@ const saveAnswer = async () => {
 const submitAnswer = async () => {
   currentUserTestAnswer.value.submitted = true
   await saveAnswer()
-  toast.success(i18n('alerts.genericSuccess'))
+  toast.success(t('alerts.genericSuccess'))
   router.push('/testslist')
 }
 

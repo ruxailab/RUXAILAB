@@ -101,7 +101,7 @@ import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
 import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
 
-const { t: i18n } = useI18n()
+const { t } = useI18n()
 const store = useStore()
 const router = useRouter()
 
@@ -111,12 +111,12 @@ const email = ref('')
 const password = ref('')
 
 const emailRules = [
-  (v) => !!v || i18n('errors.emailIsRequired'),
-  (v) => /.+@.+\..+/.test(v) || i18n('errors.invalidEmail'),
+  (v) => !!v || t('errors.emailIsRequired'),
+  (v) => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
 ]
 
 const rules = {
-  required: (v) => !!v || i18n('PROFILE.passwordRequired'),
+  required: (v) => !!v || t('PROFILE.passwordRequired'),
 }
 
 const loading = computed(() => store.getters.loading)
