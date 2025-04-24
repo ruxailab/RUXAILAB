@@ -26,7 +26,6 @@ export default class TestController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
   async duplicateTest(payload) {
-    console.log(payload.answer)
     // Duplicate answers doc for another test
     const answerDoc = await answerController.createAnswer(payload.answer)
     payload.test.answersDocId = answerDoc.id
@@ -40,18 +39,14 @@ export default class TestController extends Controller {
   // }
   async deleteTest(payload) {
     try {
-      console.log('Inicio do delete test')
       const testToDelete = await super.readOne(COLLECTION, payload.id)
-      console.log('teste para deletar', testToDelete)
       if (!testToDelete.exists()) {
-        console.log('Test not found.')
         return null
       }
 
       const collaborators = await testToDelete.data()
       const cooperators = collaborators.cooperators
       if (cooperators) {
-        console.log(cooperators)
         const promises = []
 
         for (const cooperator of cooperators) {
@@ -68,7 +63,6 @@ export default class TestController extends Controller {
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
       await super.delete(COLLECTION, payload.id)
     } catch (error) {
-      console.error('Error deleting test:', error)
       throw error
     }
   }
@@ -77,7 +71,6 @@ export default class TestController extends Controller {
     try {
       return await super.update(COLLECTION, payload.id, payload.toFirestore())
     } catch (e) {
-      console.error(e)
       throw e
     }
   }
@@ -141,7 +134,6 @@ export default class TestController extends Controller {
       const res = response.map(Test.toTest)
       return res
     } catch (err) {
-      console.log('TestController error: ', err)
       throw err
     }
   }
