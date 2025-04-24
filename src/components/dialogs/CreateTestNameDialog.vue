@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-dialog v-model="isOpen" fullscreen persistent transition="dialog-bottom-transition">
+    <v-dialog
+      :value="isOpen"
+      @input="$emit('update:isOpen', $event)"
+      fullscreen
+      persistent
+      transition="dialog-bottom-transition"
+    >
       <v-card color="#f9f5f0">
         <ButtonBack @click="$emit('close')" />
 
