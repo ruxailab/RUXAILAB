@@ -1,38 +1,18 @@
 <template>
   <div class="background-grey">
     <Snackbar />
-    <v-row
-      justify="center"
-      style="height: 90%"
-      align="center"
-    >
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <v-card
-          color="#f5f7ff"
-          rounded="xl"
-          flat
-        >
+    <v-row justify="center" style="height: 90%" align="center">
+      <v-col cols="12" md="8">
+        <v-card color="#f5f7ff" rounded="xl" flat>
           <v-row>
-            <v-col
-              cols="10"
-              md="5"
-              align-self="center"
-              class="ma-8"
-            >
+            <v-col cols="10" md="5" align-self="center" class="ma-8">
               <div class="card-title">
                 {{ $t('SIGNIN.sign-in') }}
               </div>
 
               <div class="divider" />
 
-              <v-form
-                ref="form"
-                class="mx-3"
-                @keyup.enter="onSignIn()"
-              >
+              <v-form ref="form" class="mx-3" @keyup.enter="onSignIn">
                 <v-text-field
                   v-model="email"
                   :label="$t('SIGNIN.email')"
@@ -51,10 +31,10 @@
                   :type="showPassword ? 'text' : 'password'"
                   density="compact"
                   :rules="[rules.required]"
-                  @click:append-inner="showPassword = !showPassword"
+                  @click:append-inner="toggleShowPassword"
                 />
               </v-form>
-              
+
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   data-testid="sign-in-button"
@@ -62,18 +42,18 @@
                   class="text-white"
                   style="background-color: #F9A826;"
                   :loading="loading"
-                  @click="onSignIn()"
+                  @click="onSignIn"
                 >
                   {{ $t('SIGNIN.sign-in') }}
                 </v-btn>
               </v-card-actions>
-              
+
               <div class="text-center my-3">
                 <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
               </div>
-              
+
               <div class="mx-3">
-                <google-sign-in-button 
+                <google-sign-in-button
                   :button-text="$t('SIGNIN.continueWithGoogle')"
                   :loading="loading"
                   @google-sign-in-start="onGoogleSignInStart"
@@ -81,7 +61,7 @@
                   @google-sign-in-error="onGoogleSignInError"
                 />
               </div>
-              
+
               <v-card-actions class="justify-center mt-1">
                 <p style="margin-right: 10px;">
                   <a
@@ -102,11 +82,7 @@
               </v-card-actions>
             </v-col>
 
-            <v-col
-              cols="6"
-              class="d-none d-sm-flex"
-              align-self="center"
-            >
+            <v-col cols="6" class="d-none d-sm-flex" align-self="center">
               <v-img :src="require('@/assets/signIn.svg')" />
             </v-col>
           </v-row>
@@ -116,75 +92,79 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
 import Snackbar from '@/components/atoms/Snackbar'
 import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
-import i18n from '@/i18n'
-export default {
-  components: {
-    Snackbar,
-    GoogleSignInButton
-  },
-  data: () => ({
-    showPassword: false,
-    email: '',
-    password: '',
-    emailRules: [
-      (v) => !!v || i18n.global.t('errors.emailIsRequired'),
-      (v) => /.+@.+\..+/.test(v) || i18n.global.t('errors.invalidEmail'),
-    ],
-    rules: {
-      required: (value) => !!value || i18n.global.t('PROFILE.passwordRequired'),
-    },
-  }),
-  computed: {
-    loading() {
-      return this.$store.getters.loading
-    },
-    user() {
-      return this.$store.getters.user
-    },
-  },
-  methods: {
-    checkForm() {
-      return this.$refs.form.validate()
-    },
-    async onSignIn() {
-      const result = this.checkForm()
-      if (result) {
-        try {
-          await this.$store.dispatch('signin', {
-            email: this.email,
-            password: this.password,
-          })
-          if (this.$store.getters.user) {
-            this.$router.push('/testslist').catch(() => {})
-          }
-        } catch (error) {
-          console.error('Erro de autenticação:', error)
-        }
+
+const { t: i18n } = useI18n()
+const store = useStore()
+const router = useRouter()
+
+const form = ref(null)
+const showPassword = ref(false)
+const email = ref('')
+const password = ref('')
+
+const emailRules = [
+  (v) => !!v || i18n('errors.emailIsRequired'),
+  (v) => /.+@.+\..+/.test(v) || i18n('errors.invalidEmail'),
+]
+
+const rules = {
+  required: (v) => !!v || i18n('PROFILE.passwordRequired'),
+}
+
+const loading = computed(() => store.getters.loading)
+const user = computed(() => store.getters.user)
+
+const checkForm = () => form.value.validate()
+
+const onSignIn = async () => {
+  const isValid = checkForm()
+  if (isValid) {
+    try {
+      await store.dispatch('signin', {
+        email: email.value,
+        password: password.value,
+      })
+      if (store.getters.user) {
+        router.push('/testslist').catch(() => {})
       }
-    },
-    redirectToSignup() {
-      this.$router.push('/signup')
-    },
-    onGoogleSignInStart() {
-      // Event when Google sign-in starts
-    },
-    async onGoogleSignInSuccess() {
-      // Event when Google sign-in is successful
-      if (this.$store.getters.user) {
-        this.$router.push('/testslist').catch(() => {})
-      }
-    },
-    onGoogleSignInError(error) {
-      // Event when Google sign-in fails
-      console.error('Google sign-in error:', error)
-      },
-    redirectToForgotPassword() {
-      this.$router.push('/forgot-password')
+    } catch (error) {
+      console.error('Erro de autenticação:', error)
     }
-  },
+  }
+}
+
+const toggleShowPassword = () => {
+  showPassword.value = !showPassword.value
+}
+
+const redirectToSignup = () => {
+  router.push('/signup')
+}
+
+const redirectToForgotPassword = () => {
+  router.push('/forgot-password')
+}
+
+const onGoogleSignInStart = () => {
+  // Placeholder for Google sign-in start
+}
+
+const onGoogleSignInSuccess = async () => {
+  if (store.getters.user) {
+    router.push('/testslist').catch(() => {})
+  }
+}
+
+const onGoogleSignInError = (error) => {
+  console.error('Google sign-in error:', error)
 }
 </script>
 

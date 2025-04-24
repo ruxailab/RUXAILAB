@@ -250,24 +250,19 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  name: 'RuxailabSidebar',
-  data() {
-    return {
-      stylesEnabled: true,
-      activeTab: 0,
-      tabs: [
-        { name: 'Summary', icon: 'mdi-home' },
-        { name: 'Details', icon: 'mdi-format-list-bulleted' },
-        { name: 'Reference', icon: 'mdi-information' },
-        { name: 'Order', icon: 'mdi-format-list-numbered' },
-        { name: 'Structure', icon: 'mdi-sitemap' },
-        { name: 'Contrast', icon: 'mdi-contrast-circle' },
-      ],
-    }
-  },
-}
+<script setup>
+import { ref } from 'vue';
+
+const stylesEnabled = ref(true);
+const activeTab = ref(0);
+const tabs = ref([
+  { name: 'Summary', icon: 'mdi-home' },
+  { name: 'Details', icon: 'mdi-format-list-bulleted' },
+  { name: 'Reference', icon: 'mdi-information' },
+  { name: 'Order', icon: 'mdi-format-list-numbered' },
+  { name: 'Structure', icon: 'mdi-sitemap' },
+  { name: 'Contrast', icon: 'mdi-contrast-circle' },
+]);
 </script>
 
 <style>

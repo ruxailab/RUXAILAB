@@ -71,27 +71,20 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import CardTypeTest from '@/components/atoms/CardTypeTest'
 import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  components: {
-    CardTypeTest,
-    CreateTestNameDialog,
-  },
+const router = useRouter()
 
-  data: () => ({
-    nameDialog: false,
-    testType: '',
-  }),
+const nameDialog = ref(false)
+const testType = ref('')
 
-  methods: {
-    navigateToTest(type) {
-      this.testType = type;
-      this.$router.push(`/${type}`); // Navigates to /inspection, /inquiry, or /testing
-    },
-  },
+const navigateToTest = (type) => {
+  testType.value = type;
+  router.push(`/${type}`);  // Navigates to /inspection, /inquiry, or /testing
 }
 </script>
 

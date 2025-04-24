@@ -6,15 +6,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import AccessibilityQuiz from '@/components/AccessibilityQuiz.vue'
-
-export default {
-    name: 'Sample',
-    components: {
-        AccessibilityQuiz
-    }
-}
 </script>
 
 <style scoped>

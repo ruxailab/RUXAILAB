@@ -2,15 +2,8 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col
-        cols="12"
-        md="4"
-        lg="3"
-      >
-        <v-card
-          border
-          class="rounded-lg h-100"
-        >
+      <v-col cols="12" md="4" lg="3">
+        <v-card border class="rounded-lg h-100">
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ isHovered }">
@@ -85,15 +78,8 @@
       </v-col>
 
       <!-- Right Section: Tabs and Content -->
-      <v-col
-        cols="12"
-        md="8"
-        lg="9"
-      >
-        <v-card
-          flat
-          class="w-100"
-        >
+      <v-col cols="12" md="8" lg="9">
+        <v-card flat class="w-100">
           <!-- Tabs Section -->
           <v-tabs
             v-if="!isSmallScreen"
@@ -104,29 +90,16 @@
             grow
           >
             <v-tab class="text-subtitle-1 font-weight-medium px-4">
-              <v-icon
-                size="small"
-                class="mr-2"
-              >
-                mdi-account
-              </v-icon>
+              <v-icon size="small" class="mr-2">mdi-account</v-icon>
               {{ $t('PROFILE.account') }}
             </v-tab>
             <v-tab class="text-subtitle-1 font-weight-medium px-4">
-              <v-icon
-                size="small"
-                class="mr-2"
-              >
-                mdi-shield-lock
-              </v-icon>
+              <v-icon size="small" class="mr-2">mdi-shield-lock</v-icon>
               {{ $t('PROFILE.security') }}
             </v-tab>
           </v-tabs>
 
-          <v-window
-            v-model="activeTab"
-            class="mt-3"
-          >
+          <v-window v-model="activeTab" class="mt-3">
             <v-window-item transition="fade-transition">
               <!-- Account Tab Content -->
               <v-hover v-slot="{ isHovered }">
@@ -137,21 +110,13 @@
                   :class="{ 'transform-card': isHovered }"
                 >
                   <v-card-title class="mb-4 bg-grey-lighten-4">
-                    <v-icon
-                      start
-                      color="primary"
-                    >
-                      mdi-account-details
-                    </v-icon>
+                    <v-icon start color="primary">mdi-account-details</v-icon>
                     {{ $t('PROFILE.personalInfo') }}
                   </v-card-title>
                   <v-card-text>
                     <v-form>
                       <v-row>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.username"
                             :label="$t('PROFILE.username')"
@@ -162,10 +127,7 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="user.email"
                             :label="$t('PROFILE.email')"
@@ -176,10 +138,7 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.contactNo"
                             :label="$t('PROFILE.contact')"
@@ -190,10 +149,7 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="userprofile.country"
                             :label="$t('PROFILE.country')"
@@ -215,9 +171,7 @@
                         :class="{ 'transform-button': isHoveredBtn }"
                         @click="openEditProfileDialog"
                       >
-                        <v-icon start>
-                          mdi-pencil
-                        </v-icon>
+                        <v-icon start>mdi-pencil</v-icon>
                         {{ $t('PROFILE.editDetails') }}
                       </v-btn>
                     </v-hover>
@@ -236,12 +190,7 @@
                   :class="{ 'transform-card': isHovered }"
                 >
                   <v-card-title class="mb-4 bg-grey-lighten-4">
-                    <v-icon
-                      start
-                      color="primary"
-                    >
-                      mdi-lock
-                    </v-icon>
+                    <v-icon start color="primary">mdi-lock</v-icon>
                     {{ $t('PROFILE.changePassword') }}
                   </v-card-title>
                   <v-card-text>
@@ -299,15 +248,9 @@
                       </div>
                     </v-alert>
 
-                    <v-form
-                      ref="passwordForm"
-                      v-model="valid"
-                    >
+                    <v-form ref="passwordForm" v-model="valid">
                       <v-row dense>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="newPassword"
                             :rules="passwordRules"
@@ -322,10 +265,7 @@
                             @click:append="showPassword = !showPassword"
                           />
                         </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
+                        <v-col cols="12" md="6">
                           <v-text-field
                             v-model="confirmPassword"
                             :rules="confirmPasswordRules"
@@ -335,9 +275,13 @@
                             density="compact"
                             required
                             prepend-inner-icon="mdi-lock-check"
-                            :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                            :append-icon="
+                              showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'
+                            "
                             class="input-field-hover"
-                            @click:append="showConfirmPassword = !showConfirmPassword"
+                            @click:append="
+                              showConfirmPassword = !showConfirmPassword
+                            "
                           />
                         </v-col>
                       </v-row>
@@ -352,9 +296,7 @@
                             :class="{ 'transform-button': isHoveredBtn }"
                             @click="changePassword"
                           >
-                            <v-icon start>
-                              mdi-key
-                            </v-icon>
+                            <v-icon start>mdi-key</v-icon>
                             {{ $t('PROFILE.changePassword') }}
                           </v-btn>
                         </v-hover>
@@ -373,12 +315,7 @@
                   :class="{ 'danger-card-hover': isHovered }"
                 >
                   <v-card-title class="bg-error-lighten-5">
-                    <v-icon
-                      start
-                      color="error"
-                    >
-                      mdi-alert-circle
-                    </v-icon>
+                    <v-icon start color="error">mdi-alert-circle</v-icon>
                     {{ $t('PROFILE.deleteAccountTitle') }}
                   </v-card-title>
                   <v-card-text>
@@ -395,9 +332,7 @@
                         :elevation="isHoveredBtn ? 2 : 0"
                         @click="deleteAccountDialog = true"
                       >
-                        <v-icon start>
-                          mdi-delete
-                        </v-icon>
+                        <v-icon start>mdi-delete</v-icon>
                         <span>{{ $t('PROFILE.deleteAccount') }}</span>
                       </v-btn>
                     </v-hover>
@@ -418,12 +353,7 @@
     >
       <v-card class="rounded-lg elevation-12">
         <v-card-title class="bg-grey-lighten-4">
-          <v-icon
-            start
-            color="primary"
-          >
-            mdi-account-edit
-          </v-icon>
+          <v-icon start color="primary">mdi-account-edit</v-icon>
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
@@ -432,13 +362,9 @@
               <img
                 :src="editProfileData.profileImage || defaultImage"
                 alt="Profile Image"
-              >
+              />
             </v-avatar>
-            <v-btn
-              icon
-              class="ml-2"
-              @click="selectImage"
-            >
+            <v-btn icon class="ml-2" @click="selectImage">
               <v-icon>mdi-camera</v-icon>
             </v-btn>
             <input
@@ -447,12 +373,9 @@
               accept="image/*"
               style="display: none"
               @change="uploadProfileImage"
-            >
+            />
           </div>
-          <v-form
-            ref="editProfileForm"
-            v-model="editProfileValid"
-          >
+          <v-form ref="editProfileForm" v-model="editProfileValid">
             <v-text-field
               v-model="editProfileData.username"
               :label="$t('PROFILE.username')"
@@ -522,9 +445,7 @@
               :class="{ 'transform-button': isHovered }"
               @click="saveProfile"
             >
-              <v-icon start>
-                mdi-content-save
-              </v-icon>
+              <v-icon start>mdi-content-save</v-icon>
               {{ $t('PROFILE.saveChanges') }}
             </v-btn>
           </v-hover>
@@ -541,19 +462,10 @@
     >
       <v-card class="rounded-lg elevation-12">
         <v-card-title class="bg-error-lighten-5">
-          <v-icon
-            start
-            color="error"
-          >
-            mdi-alert-circle
-          </v-icon>
+          <v-icon start color="error">mdi-alert-circle</v-icon>
           {{ $t('PROFILE.deleteAccountTitle') }}
           <v-spacer />
-          <v-btn
-            icon
-            :disabled="isDeleting"
-            @click="closeDeleteDialog"
-          >
+          <v-btn icon :disabled="isDeleting" @click="closeDeleteDialog">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -561,11 +473,7 @@
         <!-- Step 1: Initial Confirmation -->
         <div v-if="deleteStep === 1">
           <v-card-text>
-            <v-alert
-              type="error"
-              class="mb-4"
-              variant="outlined"
-            >
+            <v-alert type="error" class="mb-4" variant="outlined">
               {{ $t('PROFILE.deleteAccountConfirm') }}
             </v-alert>
             <p class="text-body-1 mb-4">
@@ -582,7 +490,11 @@
                 density="compact"
                 hide-details
                 class="mt-2 input-field-hover"
-                :rules="[(v) => v === 'DELETE' || $t('PROFILE.pleaseTypeDeleteToConfirm')]"
+                :rules="[
+                  (v) =>
+                    v === 'DELETE' ||
+                    $t('PROFILE.pleaseTypeDeleteToConfirm'),
+                ]"
               />
             </div>
           </v-card-text>
@@ -604,8 +516,12 @@
                 class="mx-2"
                 min-width="120"
                 :disabled="deleteConfirmText !== 'DELETE'"
-                :elevation="isHovered && deleteConfirmText === 'DELETE' ? 4 : 2"
-                :class="{ 'transform-button': isHovered && deleteConfirmText === 'DELETE' }"
+                :elevation="
+                  isHovered && deleteConfirmText === 'DELETE' ? 4 : 2
+                "
+                :class="{
+                  'transform-button': isHovered && deleteConfirmText === 'DELETE',
+                }"
                 @click="deleteStep = 2"
               >
                 {{ $t('PROFILE.proceed') }}
@@ -617,11 +533,7 @@
         <!-- Step 2: Enter password -->
         <div v-else>
           <v-card-text>
-            <v-alert
-              type="error"
-              class="mb-4"
-              variant="outlined"
-            >
+            <v-alert type="error" class="mb-4" variant="outlined">
               {{ $t('PROFILE.finalStepVerifyIdentity') }}
             </v-alert>
 
@@ -637,7 +549,9 @@
                 density="compact"
                 prepend-inner-icon="mdi-lock"
                 :disabled="isDeleting"
-                :rules="[(v) => !!v || $t('PROFILE.passwordRequired')]"
+                :rules="[
+                  (v) => !!v || $t('PROFILE.passwordRequired'),
+                ]"
                 class="input-field-hover"
               />
             </div>
@@ -662,13 +576,15 @@
                 :loading="isDeleting"
                 :disabled="!userPassword || isDeleting"
                 min-width="120"
-                :elevation="isHovered && userPassword && !isDeleting ? 4 : 2"
-                :class="{ 'transform-button': isHovered && userPassword && !isDeleting }"
+                :elevation="
+                  isHovered && userPassword && !isDeleting ? 4 : 2
+                "
+                :class="{
+                  'transform-button': isHovered && userPassword && !isDeleting,
+                }"
                 @click="deleteAccount"
               >
-                <v-icon start>
-                  mdi-delete
-                </v-icon>
+                <v-icon start>mdi-delete</v-icon>
                 {{ $t('PROFILE.deleteForever') }}
               </v-btn>
             </v-hover>
@@ -679,7 +595,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
 import {
   getAuth,
   reauthenticateWithCredential,
@@ -697,314 +617,324 @@ import {
   getDoc,
   updateDoc,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { countries } from '@/utils/countries';
-import i18n from '@/i18n';
 
-export default {
-  name: 'ProfileView',
-  data() {
-    return {
-      userprofile: {
-        profileImage: '',
-        username: null,
-        contactNo: null,
-        country: null,
-      },
-      editProfileData: {
-        username: null,
-        contactNo: null,
-        country: null,
-        profileImage: null,
-      },
-      countries,
-      usernameRules: [
-        (v) => !!v || i18n.global.t('PROFILE.usernameRequired'),
-        (v) => (v && v.length >= 3) || i18n.global.t('PROFILE.usernameMinLength'),
-      ],
-      countryRules: [(v) => !!v || i18n.global.t('PROFILE.countryRequired')],
-      contactRules: [
-        (v) => !!v || i18n.global.t('PROFILE.contactNumberRequired'),
-        (v) => /^\d{9,15}$/.test(v) || i18n.global.t('PROFILE.enterValidPhoneNumber'),
-      ],
-      defaultImage:
-        'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      displayMissingInfo: i18n.global.t('PROFILE.infoMissing'),
-      loading: true,
-      valid: false,
-      showPassword: false,
-      showConfirmPassword: false,
-      newPassword: '',
-      confirmPassword: '',
-      passwordRules: [
-        (v) => !!v || i18n.global.t('PROFILE.passwordRequired'),
-        (v) => v.length >= 8 || i18n.global.t('PROFILE.passwordMinLength'),
-        (v) => /[A-Z]/.test(v) || i18n.global.t('PROFILE.passwordUppercase'),
-        (v) => this.hasSpecialChar(v) || i18n.global.t('PROFILE.passwordSymbol'),
-      ],
-      confirmPasswordRules: [
-        (v) => !!v || i18n.global.t('PROFILE.confirmPasswordRequired'),
-        (v) => v === this.newPassword || i18n.global.t('PROFILE.passwordsMatch'),
-      ],
-      editProfileDialog: false,
-      deleteAccountDialog: false,
-      activeTab: 0,
-      userPassword: '',
-      isDeleting: false,
-      deleteStep: 1,
-      deleteConfirmText: '',
-      countrySearch: null,
-      isSmallScreen: false,
-      editProfileValid: false,
-    };
+const store = useStore();
+const user = computed(() => store.getters.user || { email: '' });
+
+const { t: i18n } = useI18n();
+const toast = useToast();
+
+const userprofile = ref({
+  profileImage: '',
+  username: null,
+  contactNo: null,
+  country: null,
+});
+const editProfileData = ref({
+  username: null,
+  contactNo: null,
+  country: null,
+  profileImage: null,
+});
+const defaultImage = ref(
+  'https://static.vecteezy.com/system/resources/previews/024rically/983/914/large_2x/simple-user-default-icon-free-png.png'
+);
+const loading = ref(true);
+const valid = ref(false);
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+const newPassword = ref('');
+const confirmPassword = ref('');
+const editProfileDialog = ref(false);
+const deleteAccountDialog = ref(false);
+const activeTab = ref(0);
+const userPassword = ref('');
+const isDeleting = ref(false);
+const deleteStep = ref(1);
+const deleteConfirmText = ref('');
+const isSmallScreen = ref(false);
+const editProfileValid = ref(false);
+
+const passwordForm = ref(null);
+const editProfileForm = ref(null);
+const fileInput = ref(null);
+
+// Validation rules
+const usernameRules = [
+  (v) => !!v || i18n('PROFILE.usernameRequired'),
+  (v) => (v && v.length >= 3) || i18n('PROFILE.usernameMinLength'),
+];
+const countryRules = [(v) => !!v || i18n('PROFILE.countryRequired')];
+const contactRules = [
+  (v) => !!v || i18n('PROFILE.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || i18n('PROFILE.enterValidPhoneNumber'),
+];
+const passwordRules = [
+  (v) => !!v || i18n('PROFILE.passwordRequired'),
+  (v) => v.length >= 8 || i18n('PROFILE.passwordMinLength'),
+  (v) => /[A-Z]/.test(v) || i18n('PROFILE.passwordUppercase'),
+  (v) => hasSpecialChar(v) || i18n('PROFILE.passwordSymbol'),
+];
+const confirmPasswordRules = [
+  (v) => !!v || i18n('PROFILE.confirmPasswordRequired'),
+  (v) => v === newPassword.value || i18n('PROFILE.passwordsMatch'),
+];
+
+const specialCharColor = computed(() =>
+  hasSpecialChar(newPassword.value) ? 'success' : 'grey'
+);
+const specialCharIcon = computed(() =>
+  hasSpecialChar(newPassword.value) ? 'mdi-check-circle' : 'mdi-circle-outline'
+);
+const profileItems = computed(() => [
+  {
+    label: i18n('PROFILE.username'),
+    value: userprofile.value.username,
+    icon: 'mdi-account',
   },
-  computed: {
-    user() {
-      return this.$store.getters.user || { email: '' };
-    },
-    specialCharColor() {
-      return this.hasSpecialChar(this.newPassword) ? 'success' : 'grey';
-    },
-    specialCharIcon() {
-      return this.hasSpecialChar(this.newPassword)
-        ? 'mdi-check-circle'
-        : 'mdi-circle-outline';
-    },
-    profileItems() {
-      return [
-        {
-          label: i18n.global.t('PROFILE.username'),
-          value: this.userprofile.username,
-          icon: 'mdi-account',
-        },
-        {
-          label: i18n.global.t('PROFILE.email'),
-          value: this.user.email,
-          icon: 'mdi-email',
-        },
-        {
-          label: i18n.global.t('PROFILE.contact'),
-          value: this.userprofile.contactNo,
-          icon: 'mdi-phone',
-        },
-        {
-          label: i18n.global.t('PROFILE.country'),
-          value: this.userprofile.country,
-          icon: 'mdi-map-marker',
-        },
-      ];
-    },
+  {
+    label: i18n('PROFILE.email'),
+    value: user.value.email,
+    icon: 'mdi-email',
   },
-  async created() {
-    this.fetchUserProfile();
-    this.checkScreenSize();
-    window.addEventListener('resize', this.checkScreenSize);
+  {
+    label: i18n('PROFILE.contact'),
+    value: userprofile.value.contactNo,
+    icon: 'mdi-phone',
   },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.checkScreenSize);
+  {
+    label: i18n('PROFILE.country'),
+    value: userprofile.value.country,
+    icon: 'mdi-map-marker',
   },
-  methods: {
-    hasSpecialChar(str) {
-      const specialChars = /[!@#$%^&*(),.{}|<>]/;
-      return specialChars.test(str);
-    },
-    selectImage() {
-      this.$refs.fileInput.click();
-    },
-    async uploadProfileImage(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+]);
 
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (!user) throw new Error(i18n.global.t('PROFILE.noUserSignedIn'));
+const hasSpecialChar = (str) => {
+  const specialChars = /[!@#$%^&*(),.{}|<>]/;
+  return specialChars.test(str);
+};
 
-        const storage = getStorage();
-        const storageRef = ref(storage, `profileImages/${user.uid}`);
+const selectImage = () => {
+  fileInput.value.click();
+};
 
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
+const uploadProfileImage = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-        const db = getFirestore();
-        const userDocRef = doc(db, 'users', user.uid);
-        await updateDoc(userDocRef, { profileImage: downloadURL });
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error(i18n('PROFILE.noUserSignedIn'));
 
-        this.userprofile.profileImage = downloadURL;
-        this.editProfileData.profileImage = downloadURL;
-        this.$toast.success(i18n.global.t('PROFILE.profileImageUpdatedSuccess'));
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        this.$toast.error(i18n.global.t('PROFILE.profileImageUploadFailed'));
+    const storage = getStorage();
+    const storageReference = storageRef(storage, `profileImages/${user.uid}`);
+
+    const snapshot = await uploadBytes(storageReference, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    const db = getFirestore();
+    const userDocRef = doc(db, 'users', user.uid);
+    await updateDoc(userDocRef, { profileImage: downloadURL });
+
+    userprofile.value.profileImage = downloadURL;
+    editProfileData.value.profileImage = downloadURL;
+    toast.success(i18n('PROFILE.profileImageUpdatedSuccess'));
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error(i18n('PROFILE.profileImageUploadFailed'));
+  }
+};
+
+const checkScreenSize = () => {
+  isSmallScreen.value = window.innerWidth < 960;
+};
+
+const fetchUserProfile = async () => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        userprofile.value = {
+          profileImage: data.profileImage || '',
+          username: data.username || null,
+          contactNo: data.contactNo || null,
+          country: data.country || null,
+        };
       }
-    },
-    checkScreenSize() {
-      this.isSmallScreen = window.innerWidth < 960;
-    },
-    async fetchUserProfile() {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+    }
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    toast.error(i18n('PROFILE.profileLoadFailed'));
+  } finally {
+    loading.value = false;
+  }
+};
 
-        if (user) {
-          const db = getFirestore();
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
+const openEditProfileDialog = () => {
+  editProfileData.value = {
+    username: userprofile.value.username,
+    contactNo: userprofile.value.contactNo,
+    country: userprofile.value.country,
+    profileImage: userprofile.value.profileImage,
+  };
+  editProfileDialog.value = true;
+};
 
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            this.userprofile = {
-              profileImage: data.profileImage || '',
-              username: data.username || null,
-              contactNo: data.contactNo || null,
-              country: data.country || null,
-            };
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        this.$toast.error(i18n.global.t('PROFILE.profileLoadFailed'));
-      } finally {
-        this.loading = false;
-      }
-    },
-    openEditProfileDialog() {
-      this.editProfileData = {
-        username: this.userprofile.username,
-        contactNo: this.userprofile.contactNo,
-        country: this.userprofile.country,
-        profileImage: this.userprofile.profileImage,
+const saveProfile = async () => {
+  if (!editProfileForm.value.validate()) return;
+
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const db = getFirestore();
+      const userDocRef = doc(db, 'users', user.uid);
+
+      await updateDoc(userDocRef, {
+        username: editProfileData.value.username,
+        contactNo: editProfileData.value.contactNo,
+        country: editProfileData.value.country,
+      });
+
+      userprofile.value = {
+        ...userprofile.value,
+        username: editProfileData.value.username,
+        contactNo: editProfileData.value.contactNo,
+        country: editProfileData.value.country,
       };
-      this.editProfileDialog = true;
-    },
-    async saveProfile() {
-      if (!this.$refs.editProfileForm.validate()) return;
 
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+      toast.success(i18n('PROFILE.profileUpdatedSuccess'));
+      editProfileDialog.value = false;
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    toast.error(i18n('PROFILE.profileUpdateFailed'));
+  }
+};
 
-        if (user) {
-          const db = getFirestore();
-          const userDocRef = doc(db, 'users', user.uid);
-
-          await updateDoc(userDocRef, {
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country,
-          });
-
-          this.userprofile = {
-            ...this.userprofile,
-            username: this.editProfileData.username,
-            contactNo: this.editProfileData.contactNo,
-            country: this.editProfileData.country,
-          };
-
-          this.$toast.success(i18n.global.t('PROFILE.profileUpdatedSuccess'));
-          this.editProfileDialog = false;
-        }
-      } catch (error) {
-        console.error('Error updating profile:', error);
-        this.$toast.error(i18n.global.t('PROFILE.profileUpdateFailed'));
-      }
-    },
-    async changePassword() {
-      if (this.$refs.passwordForm.validate()) {
-        try {
-          const auth = getAuth();
-          const user = auth.currentUser;
-
-          if (user) {
-            await updatePassword(user, this.newPassword);
-            this.$toast.success(i18n.global.t('PROFILE.passwordChangedSuccess'));
-            this.newPassword = '';
-            this.confirmPassword = '';
-            this.$refs.passwordForm.reset();
-          }
-        } catch (error) {
-          console.error('Error changing password:', error);
-          this.$toast.error(i18n.global.t('PROFILE.passwordChangeFailed'));
-        }
-      }
-    },
-    async deleteAccount() {
-      if (!this.userPassword) {
-        this.$toast.error(i18n.global.t('PROFILE.passwordRequired'));
-        return;
-      }
-
+const changePassword = async () => {
+  if (passwordForm.value.validate()) {
+    try {
       const auth = getAuth();
       const user = auth.currentUser;
 
       if (user) {
-        try {
-          this.isDeleting = true;
-          const email = user.email;
-          const credential = EmailAuthProvider.credential(email, this.userPassword);
+        await updatePassword(user, newPassword.value);
+        toast.success(i18n('PROFILE.passwordChangedSuccess'));
+        newPassword.value = '';
+        confirmPassword.value = '';
+        passwordForm.value.reset();
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      toast.error(i18n('PROFILE.passwordChangeFailed'));
+    }
+  }
+};
 
-          await reauthenticateWithCredential(user, credential);
+const deleteAccount = async () => {
+  if (!userPassword.value) {
+    toast.error(i18n('PROFILE.passwordRequired'));
+    return;
+  }
 
-          const db = getFirestore();
-          const userDocId = user.uid;
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-          const testsCollectionRef = collection(db, 'tests');
-          const testsQuery = query(testsCollectionRef, where('testAdmin.userDocId', '==', userDocId));
-          const testsSnapshot = await getDocs(testsQuery);
+  if (user) {
+    try {
+      isDeleting.value = true;
+      const email = user.email;
+      const credential = EmailAuthProvider.credential(email, userPassword.value);
 
-          if (!testsSnapshot.empty) {
-            for (const testDoc of testsSnapshot.docs) {
-              const testData = testDoc.data();
-              const answersDocId = testData.answersDocId;
+      await reauthenticateWithCredential(user, credential);
 
-              if (answersDocId) {
-                const answersDocRef = doc(db, 'answers', answersDocId);
-                await deleteDoc(answersDocRef);
-              }
+      const db = getFirestore();
+      const userDocId = user.uid;
 
-              const testDocRef = doc(db, 'tests', testDoc.id);
-              await deleteDoc(testDocRef);
-            }
+      const testsCollectionRef = collection(db, 'tests');
+      const testsQuery = query(
+        testsCollectionRef,
+        where('testAdmin.userDocId', '==', userDocId)
+      );
+      const testsSnapshot = await getDocs(testsQuery);
+
+      if (!testsSnapshot.empty) {
+        for (const testDoc of testsSnapshot.docs) {
+          const testData = testDoc.data();
+          const answersDocId = testData.answersDocId;
+
+          if (answersDocId) {
+            const answersDocRef = doc(db, 'answers', answersDocId);
+            await deleteDoc(answersDocRef);
           }
 
-          const userDocRef = doc(db, 'users', userDocId);
-          await deleteDoc(userDocRef);
-
-          await user.delete();
-          this.$toast.success(i18n.global.t('PROFILE.accountDeletedSuccess'));
-          this.deleteAccountDialog = false;
-          this.signOut();
-        } catch (error) {
-          console.error('Error during account deletion:', error);
-          this.$toast.error(i18n.global.t('PROFILE.accountDeletionFailed'));
-        } finally {
-          this.isDeleting = false;
+          const testDocRef = doc(db, 'tests', testDoc.id);
+          await deleteDoc(testDocRef);
         }
-      } else {
-        this.$toast.error(i18n.global.t('PROFILE.noUserSignedIn'));
       }
-    },
-    closeDeleteDialog() {
-      this.deleteAccountDialog = false;
-      this.userPassword = '';
-      this.deleteConfirmText = '';
-      this.deleteStep = 1;
-    },
-    async signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.$router.push('/').catch((error) => {
-          console.log(error);
-        });
-      });
-    },
-    countryFilter(item, queryText) {
-      if (!queryText) return true;
 
-      const searchText = queryText.toLowerCase();
-      const countryName = item.name.toLowerCase();
-      return countryName.includes(searchText);
-    },
-  },
+      const userDocRef = doc(db, 'users', userDocId);
+      await deleteDoc(userDocRef);
+
+      await user.delete();
+      toast.success(i18n('PROFILE.accountDeletedSuccess'));
+      deleteAccountDialog.value = false;
+      signOut();
+    } catch (error) {
+      console.error('Error during account deletion:', error);
+      toast.error(i18n('PROFILE.accountDeletionFailed'));
+    } finally {
+      isDeleting.value = false;
+    }
+  } else {
+    toast.error(i18n('PROFILE.noUserSignedIn'));
+  }
 };
+
+const closeDeleteDialog = () => {
+  deleteAccountDialog.value = false;
+  userPassword.value = '';
+  deleteConfirmText.value = '';
+  deleteStep.value = 1;
+};
+
+const signOut = async () => {
+  try {
+    await store.dispatch('logout');
+    window.location.href = '/';
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const countryFilter = (item, queryText) => {
+  if (!queryText) return true;
+
+  const searchText = queryText.toLowerCase();
+  const countryName = item.name.toLowerCase();
+  return countryName.includes(searchText);
+};
+
+onMounted(() => {
+  fetchUserProfile();
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize);
+});
 </script>
 
 <style scoped>

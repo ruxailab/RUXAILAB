@@ -1,19 +1,13 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col
-        cols="12"
-        md="10"
-      >
-        <v-card
-          class="rounded-xxl"
-          border
-        >
+      <v-col cols="12" md="10">
+        <v-card class="rounded-xxl" border>
           <v-card-title class="text-h5">
             {{ $t('common.notifications') }}
             <v-spacer />
             <v-btn
-              v-if="activeTab=='unread'"
+              v-if="activeTab === 'unread'"
               color="primary"
               :disabled="allRead"
               @click="markAllAsRead"
@@ -22,10 +16,7 @@
             </v-btn>
           </v-card-title>
 
-          <v-tabs
-            v-model="activeTab"
-            bg-color="#f3a426"
-          >
+          <v-tabs v-model="activeTab" bg-color="#f3a426">
             <v-tab href="#unread">
               {{ $t('common.unread') }}
             </v-tab>
@@ -44,19 +35,14 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert
-                  type="info"
-                  variant="outlined"
-                >
+                <v-alert type="info" variant="outlined">
                   {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
             </v-window-item>
 
             <v-window-item value="inbox">
-              <v-card-text
-                v-if="user.inbox && user.inbox.length > 0"
-              >
+              <v-card-text v-if="user.inbox && user.inbox.length > 0">
                 <notification-list
                   :notifications="user.inbox"
                   @mark-as-read="markAsRead"
@@ -64,10 +50,7 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert
-                  type="info"
-                  variant="outlined"
-                >
+                <v-alert type="info" variant="outlined">
                   {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
@@ -76,11 +59,7 @@
 
           <v-card-actions>
             <v-spacer />
-            <v-btn
-              color="secondary"
-              variant="text"
-              @click="goBack"
-            >
+            <v-btn color="secondary" variant="text" @click="goBack">
               {{ $t('buttons.back') }}
             </v-btn>
           </v-card-actions>
@@ -90,59 +69,54 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import NotificationList from '@/components/molecules/NotificationList.vue'
 
-export default {
-  name: 'NotificationPage',
-  components: {
-    NotificationList,
-  },
-  data() {
-    return {
-      activeTab: 'unread',
-    }
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    allRead() {
-      return this.user.notifications.every((notification) => notification.read)
-    },
-    unreadNotifications() {
-      return this.user.notifications.filter(
-        (notification) => !notification.read,
-      )
-    },
-  },
-  methods: {
-    async goToNotificationRedirect(notification) {
-      if (!notification.read) {
-        await this.markAsRead(notification)
-      }
-      window.open(`/${notification.redirectsTo}`)
-    },
-    async markAsRead(notification) {
-      console.log(notification);
-      await this.$store.dispatch('markNotificationAsRead', {
-        notification: notification,
-        user: this.user,
-      })
-    },
-    async markAllAsRead() {
-      const unreadNotifications = this.user.notifications.filter((n) => !n.read)
-      for (const notification of unreadNotifications) {
-        await this.markAsRead(notification)
-      }
-    },
-    goBack() {
-      this.$router.go(-1)
-    },
-    conall(){
-        console.log(this.user.inbox[0])
+const store = useStore()
+const router = useRouter()
 
-    },
-  },
+const activeTab = ref('unread')
+
+const user = computed(() => store.getters.user)
+
+const allRead = computed(() =>
+  user.value.notifications.every((notification) => notification.read)
+)
+
+const unreadNotifications = computed(() =>
+  user.value.notifications.filter((notification) => !notification.read)
+)
+
+const goToNotificationRedirect = async (notification) => {
+  if (!notification.read) {
+    await markAsRead(notification)
+  }
+  window.open(`/${notification.redirectsTo}`)
+}
+
+const markAsRead = async (notification) => {
+  console.log(notification)
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value
+  })
+}
+
+const markAllAsRead = async () => {
+  const unread = user.value.notifications.filter((n) => !n.read)
+  for (const notification of unread) {
+    await markAsRead(notification)
+  }
+}
+
+const goBack = () => {
+  router.go(-1)
+}
+
+const conall = () => {
+  console.log(user.value.inbox[0])
 }
 </script>

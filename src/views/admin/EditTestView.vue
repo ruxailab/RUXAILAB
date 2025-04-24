@@ -145,165 +145,159 @@
   </v-container>
 </template>
 
-<script>
-import Snackbar from '@/components/atoms/Snackbar'
-import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest'
-import EditUserTest from '@/components/organisms/EditUserTest'
-import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest'
+<script setup>
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
+import Snackbar from '@/components/atoms/Snackbar.vue';
+import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
+import EditUserTest from '@/components/organisms/EditUserTest.vue';
+import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
 
-export default {
-  name: 'EditTestView',
-  components: {
-    Snackbar,
-    EditHeuristicsTest,
-    EditUserTest,
-    EditModeratedUserTest,
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+
+defineProps({
+  id: {
+    type: [String, Number],
+    required: true,
   },
+});
 
-  beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialog = true
-      this.go = to.path
-    } else {
-      next()
-    }
+const index = ref(0);
+const object = ref({});
+const valids = ref([true, true]);
+const change = ref(false);
+const dialog = ref(false);
+const go = ref('');
+
+const accessLevel = computed(() => {
+  const user = store.getters.user;
+  if (!user) return 1;
+  if (user.accessLevel === 0) return 0;
+  const test = store.getters.test;
+  if (test.testAdmin?.userDocId === user.id) return 0;
+  const coopsInfo = test.cooperators?.find(
+    (coops) => coops.userDocId === user.id
+  );
+  return coopsInfo?.accessLevel ?? 1;
+});
+
+const testAnswerDocLength = computed(() => {
+  return Object.keys(store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length;
+});
+
+const loading = computed(() => {
+  return store.getters.loading;
+});
+
+const user = computed(() => {
+  return store.getters.user;
+});
+
+const test = computed(() => {
+  return store.getters.test;
+});
+
+const answers = computed(() => {
+  return store.getters.answers ?? [];
+});
+
+const totalQuestions = computed(() => {
+  const items = object.value?.heuristics ?? object.value?.tasks ?? [];
+  return items.reduce((sum, h) => sum + (h.total || 0), 0);
+});
+
+const setIntro = async () => {
+  object.value = { ...test.value };
+};
+
+const submit = async () => {
+  object.value.testStructure = store.state.Tests.Test.testStructure;
+  if (test.value.testType === 'User') {
+    object.value.testStructure = {
+      welcomeMessage: store.getters.welcomeMessage,
+      landingPage: store.getters.landingPage,
+      participantCamera: store.getters.participantCamera,
+      consent: store.getters.consent,
+      userTasks: store.getters.tasks,
+      preTest: store.getters.preTest,
+      postTest: store.getters.postTest,
+      finalMessage: store.getters.finalMessage,
+    };
+  }
+  await store.dispatch('updateTest', { ...test.value, ...object.value });
+};
+
+const validate = (valid, idx) => {
+  valids.value[idx] = valid;
+};
+
+const validateAll = async () => {
+  await submit();
+  change.value = false;
+};
+
+const preventNav = (event) => {
+  if (change.value) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+};
+
+const setIndex = (ind) => {
+  index.value = ind;
+};
+
+const closeDialog = () => {
+  dialog.value = false;
+  go.value = '';
+};
+
+const leave = () => {
+  change.value = false;
+  router.push(go.value);
+};
+
+watch(
+  test,
+  (newTest) => {
+    if (newTest) setIntro();
   },
+  { immediate: true }
+);
 
-  props: {
-    id: {
-      type: [String, Number],
-      required: true,
-    },
-  },
+onBeforeMount(() => {
+  window.addEventListener('beforeunload', preventNav);
+});
 
-  data: () => ({
-    index: 0,
-    object: {},
-    valids: [true, true],
-    change: false,
-    dialog: false,
-    go: '',
-  }),
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', preventNav);
+});
 
-  computed: {
-    accessLevel() {
-      if (!this.user) return 1
-      if (this.user.accessLevel === 0) return 0
-      if (this.test.testAdmin?.userDocId === this.user.id) return 0
-      const coopsInfo = this.test.cooperators?.find(
-        (coops) => coops.userDocId === this.user.id
-      )
-      return coopsInfo?.accessLevel ?? 1
-    },
+const init = async () => {
+  try {
+    await Promise.all([
+      store.dispatch('getTest', { id: route.params.id }),
+      store.dispatch('getCurrentTestAnswerDoc'),
+    ]);
+  } catch (error) {
+    console.error('Failed to load test data:', error);
+    // Optionally show a toast or redirect
+  }
+};
+init();
 
-    testAnswerDocLength() {
-      return Object.keys(this.$store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length
-    },
-
-    loading() {
-      return this.$store.getters.loading
-    },
-
-    user() {
-      return this.$store.getters.user
-    },
-
-    test() {
-      return this.$store.getters.test
-    },
-
-    answers() {
-      return this.$store.getters.answers ?? []
-    },
-
-    totalQuestions() {
-      const items = this.object?.heuristics ?? this.object?.tasks ?? []
-      return items.reduce((sum, h) => sum + (h.total || 0), 0)
-    },
-  },
-
-  watch: {
-    test: {
-      handler(newTest) {
-        if (newTest) this.setIntro()
-      },
-      immediate: true,
-    },
-  },
-
-  async created() {
-    try {
-      await Promise.all([
-        this.$store.dispatch('getTest', { id: this.id }),
-        this.$store.dispatch('getCurrentTestAnswerDoc'),
-      ])
-    } catch (error) {
-      console.error('Failed to load test data:', error)
-      // Optionally show a snackbar or redirect
-    }
-  },
-
-  beforeMount() {
-    window.addEventListener('beforeunload', this.preventNav)
-  },
-
-  beforeUnmount() {
-    window.removeEventListener('beforeunload', this.preventNav)
-  },
-
-  methods: {
-    async submit() {
-      this.object.testStructure = this.$store.state.Tests.Test.testStructure
-      if (this.test.testType === 'User') {
-        this.object.testStructure = {
-          welcomeMessage: this.$store.getters.welcomeMessage,
-          landingPage: this.$store.getters.landingPage,
-          participantCamera: this.$store.getters.participantCamera,
-          consent: this.$store.getters.consent,
-          userTasks: this.$store.getters.tasks,
-          preTest: this.$store.getters.preTest,
-          postTest: this.$store.getters.postTest,
-          finalMessage: this.$store.getters.finalMessage,
-        }
-      }
-      await this.$store.dispatch('updateTest', { ...this.test, ...this.object })
-    },
-
-    validate(valid, index) {
-      this.valids[index] = valid
-    },
-
-    async validateAll() {
-      await this.submit()
-      this.change = false
-    },
-
-    preventNav(event) {
-      if (this.change) {
-        event.preventDefault()
-        event.returnValue = ''
-      }
-    },
-
-    async setIntro() {
-      this.object = { ...this.test }
-    },
-
-    setIndex(ind) {
-      this.index = ind
-    },
-
-    closeDialog() {
-      this.dialog = false
-      this.go = ''
-    },
-
-    leave() {
-      this.change = false
-      this.$router.push(this.go)
-    },
-  },
-}
+// Route guard
+onBeforeRouteLeave((to, from) => {
+  if (change.value) {
+    dialog.value = true;
+    go.value = to.path;
+    return false;
+  }
+  return true;
+});
 </script>
 
 <style scoped>

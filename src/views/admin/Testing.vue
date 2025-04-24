@@ -106,27 +106,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import CardTypeTest from '@/components/atoms/CardTypeTest'
 import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
 
-export default {
-  components: {
-    CardTypeTest,
-    CreateTestNameDialog,
-  },
+const nameDialog = ref(false)
+const testType = ref('')
 
-  data: () => ({
-    nameDialog: false,
-    testType: '',
-  }),
-
-  methods: {
-    setTestType(type) {
-      this.testType = type
-      this.nameDialog = true
-    },
-  },
+const setTestType = (type) => {
+  testType.value = type
+  nameDialog.value = true
 }
 </script>
 
