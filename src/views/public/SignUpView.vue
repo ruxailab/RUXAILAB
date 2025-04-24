@@ -30,7 +30,7 @@
                 ref="form"
                 v-model="valid"
                 class="mx-3"
-                @keyup.enter="onSignUp()"
+                @keyup.enter="onSignUp"
               >
                 <v-text-field
                   v-model="email"
@@ -71,7 +71,7 @@
                   class="text-white"
                   style="background-color: #F9A826;"
                   :loading="loading"
-                  @click="onSignUp()"
+                  @click="onSignUp"
                 >
                   Sign-up
                 </v-btn>
@@ -100,79 +100,75 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Snackbar from '@/components/atoms/Snackbar'
-// import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
-import i18n from '@/i18n'
 
-export default {
-  components: {
-    Snackbar,
-    // GoogleSignInButton
-  },
-  data: () => ({
-    email: '',
-    password: '',
-    confirmpassword: '',
-    showPassword: false,
-    showConfirmPassword: false,
-    valid: true,
-  }),
-  computed: {
-    emailRules() {
-      return [
-        (v) => !!v || this.$t('errors.emailIsRequired'),
-        (v) => /.+@.+\..+/.test(v) || this.$t('errors.invalidEmail'),
-      ]
-    },
-    passwordRules() {
-      return [
-        (v) => !!v || this.$t('errors.passwordRequired'),
-        (v) => v.length >= 8 || this.$t('errors.passwordValidate'),
-        (v) => /[A-Z]/.test(v) || this.$t('errors.passwordUppercase'),
-        (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || this.$t('errors.passwordSymbol'),
-      ]
-    },
-    comparePassword() {
-      return (v) => (v === this.password && v !== '') || this.$t('errors.differentPasswords')
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-  },
-  methods: {
-    async onSignUp() {
-      const isValid = await this.$refs.form.validate()
-      if (isValid) {
-        try {
-          await this.$store.dispatch('signup', {
-            email: this.email,
-            password: this.password,
-          })
-          await this.$router.push('/')
-        } catch (error) {
-          console.error('Signup failed:', error)
-        }
-      }
-    },
-    redirectToSignin() {
-      this.$router.push('/signin')
-    },
-    onGoogleSignInStart() {
-      // Event when Google sign-in starts
-    },
-    async onGoogleSignInSuccess() {
-      // Event when Google sign-in is successful
-      await this.$router.push('/')
-    },
-    onGoogleSignInError(error) {
-      // Event when Google sign-in fails
-      console.error('Google sign-in error:', error)
+const email = ref('')
+const password = ref('')
+const confirmpassword = ref('')
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+const valid = ref(true)
+const form = ref(null)
+
+const store = useStore()
+const router = useRouter()
+const { t: i18n } = useI18n()
+
+const emailRules = computed(() => [
+  v => !!v || i18n('errors.emailIsRequired'),
+  v => /.+@.+\..+/.test(v) || i18n('errors.invalidEmail'),
+])
+
+const passwordRules = computed(() => [
+  v => !!v || i18n('errors.passwordRequired'),
+  v => v.length >= 8 || i18n('errors.passwordValidate'),
+  v => /[A-Z]/.test(v) || i18n('errors.passwordUppercase'),
+  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n('errors.passwordSymbol'),
+])
+
+const comparePassword = computed(() => 
+  v => (v === password.value && v !== '') || i18n('errors.differentPasswords')
+)
+
+const user = computed(() => store.getters.user)
+const loading = computed(() => store.getters.loading)
+
+const onSignUp = async () => {
+  const { valid: isValid } = await form.value.validate()
+  if (isValid) {
+    try {
+      await store.dispatch('signup', {
+        email: email.value,
+        password: password.value,
+      })
+      await router.push('/')
+    } catch (error) {
+      console.error('Signup failed:', error)
     }
-  },
+  }
+}
+
+const redirectToSignin = () => {
+  router.push('/signin')
+}
+
+const onGoogleSignInStart = () => {
+  // Event when Google sign-in starts
+}
+
+const onGoogleSignInSuccess = async () => {
+  // Event when Google sign-in is successful
+  await router.push('/')
+}
+
+const onGoogleSignInError = (error) => {
+  // Event when Google sign-in fails
+  console.error('Google sign-in error:', error)
 }
 </script>
 

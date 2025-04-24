@@ -5,7 +5,7 @@
         cols="12"
         md="5"
       >
-        <v-img src="@/assets/pageNotFound.svg" />
+        <v-img :src="require('@/assets/pageNotFound.svg')" />
         <div
           class="text-center"
           style="font-size:50px; color: grey"
@@ -33,29 +33,29 @@
   </div>
 </template>
 
-<script>
-export default {
+<script setup>
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+const prevRoute = ref(null)
+
+const sendHome = () => {
+  if (prevRoute.value !== null) {
+    router.push(prevRoute.value.path).catch(() => {})
+  } else {
+    router.push('/').catch(() => {})
+  }
+}
+
+defineOptions({
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.prevRoute = from
     })
-  },
-  data: () => ({
-    prevRoute: null,
-  }),
-  methods: {
-    sendHome() {
-      const fallbackRoute = '/';
-      const prevPath = this.prevRoute?.path;
-
-      if (typeof prevPath === 'string' && prevPath.trim() !== '') {
-        this.$router.push(prevPath).catch(() => {});
-      } else {
-        this.$router.push(fallbackRoute).catch(() => {});
-      }
-    },
-  },
-}
+  }
+})
 </script>
 
 <style scoped>

@@ -87,7 +87,6 @@
           </v-card-actions>
           <v-card-actions class="justify-center mt-4">
             <p>
-              <!-- Not {{ user.email }}? -->
               {{
                 $t('HeuristicsTestView.actions.notMail', {
                   userEmail: user.email,
@@ -146,7 +145,7 @@
           cols="6"
           md="5"
           sm="6"
-          xs="6"
+          xs="6 imposible"
           class="d-flex justify-center"
         >
           <v-img
@@ -342,7 +341,6 @@
                           </v-icon>
                         </template>
 
-                        
                         <v-list-item-title
                           :style="
                             heurisIndex == i
@@ -390,7 +388,6 @@
                       </v-icon>
                     </template>
 
-                    
                     <v-list-item-title
                       :style="
                         heurisIndex == i ? 'color: white' : 'color:#fca326'
@@ -429,7 +426,6 @@
                   </v-icon>
                 </template>
 
-                
                 <v-list-item-title
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
                 >
@@ -508,7 +504,6 @@
                       <template #answer>
                         <v-select
                           v-if="currentUserTestAnswer !== undefined"
-                        
                           v-model="
                             currentUserTestAnswer.heuristicQuestions[heurisIndex]
                               .heuristicQuestions[i].heuristicAnswer
@@ -590,288 +585,301 @@
     </div>
     <div v-if="test.testType === 'User' && test.userTestType === 'moderated'">
       <ModeratedTestView
-        ref="ModeratedTestView.vue"
+        ref="moderatedTestViewRef"
         :token="token"
       />
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onBeforeMount } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useToast } from "vue-toastification"
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import AddCommentBtn from '@/components/atoms/AddCommentBtn'
-import HelpBtn from '@/components/atoms/QuestionHelpBtn'
+import AddCommentBtn from '@/components/atoms/AddCommentBtn.vue'
+import HelpBtn from '@/components/atoms/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
-import Snackbar from '@/components/atoms/Snackbar'
+import Snackbar from '@/components/atoms/Snackbar.vue'
 import HeuristicQuestionAnswer from '@/models/HeuristicQuestionAnswer'
 import Heuristic from '@/models/Heuristic'
 import UserTestView from './UserTestView.vue'
 import ModeratedTestView from './ModeratedTestView.vue'
-export default {
-  components: {
-    ShowInfo,
-    AddCommentBtn,
-    HelpBtn,
-    TextClamp,
-    Snackbar,
-    UserTestView,
-    ModeratedTestView,
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.test && this.test.userTestType === 'moderated') {
-      let isSaved = this.$refs.ModeratedTestView.isSaved()
-      let isTestNotStarted = this.$refs.ModeratedTestView.isTestNotStarted()
-      if (!isSaved && !isTestNotStarted) {
-        if (!window.confirm('Leave without saving?')) {
-          return
-        }
-        next()
-      } else next()
-    }
-    next()
-  },
-  beforeRouteEnter(to, from, next) {
-    if (to.params.token)
-      next((vm) => {
-        vm.fromlink = true
-      })
-    next()
-  },
-  props: {
-    id: { type: String, default: '' },
-    token: { type: String, default: null },
-  },
-  data: () => ({
-    logined: null,
-    selected: true,
-    fromlink: null,
-    drawer: true,
-    start: true, //change to true
-    mini: false,
-    index: null,
-    noExistUser: true,
-    heurisIndex: 0,
-    preTestIndex: null,
-    items: [],
-    idx: 0,
-    fab: false,
-    res: 0,
-    dialog: false,
-    calculatedProgress: 0,
-    review: true,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      if (this.$store.getters.user) this.setExistUser()
-      return this.$store.getters.user
-    },
-    currentUserTestAnswer() {
-      if (this.test.testType === 'HEURISTICS') {
-        return this.$store.getters.currentUserTestAnswer
-      }
-      return {}
-    },
-    showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
-    },
-    cooperators() {
-      return this.$store.getters.cooperators
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
-    },
-  },
-  watch: {
-    test: async function() {
-      this.mappingSteps()
-    },
-    items() {
-      if (this.items.length) {
-        this.index = this.items[0].id
-        if (this.items.find((obj) => obj.id == 0)) {
-          //se tiver preTest mexe no preTestIndex
-          this.preTestIndex = this.items[0].value[0].id
-        }
-      }
-    },
-    heurisIndex() {
-      this.$refs.rightView.scrollTop = 0 //faz scroll pra cima qnd muda a heuristica
-      this.$forceUpdate()
-    },
-    async user() {
-      if (this.user) {
-        this.noExistUser = false
-        if (this.logined) this.setTest()
-      }
-    },
-    calculatedProgress(newVal) {
-      if (newVal == 100) {
-        this.review = false
-      }
-    },
-  },
 
-  async created() {
-    await this.$store.dispatch('getTest', { id: this.id })
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-    this.populateWithHeuristicQuestions()
-    this.calculateProgress()
-  },
-  methods: {
-    startTest() {
-      if (this.test.testStructure.length == 0) {
-        this.$store.commit('setError', {
-          errorCode: 400,
-          message: this.$t('HeuristicsTestView.messages.noHeuristics'),
-        })
-        this.$router.push('/managerview/' + this.test.id)
-      }
-      this.start = !this.start
-    },
-    updateComment(comment, heurisIndex, answerIndex) {
-      if (comment != '' && comment != undefined) {
-        this.currentUserTestAnswer.heuristicQuestions[
-          heurisIndex
-        ].heuristicQuestions[answerIndex].heuristicComment = comment
-      } else {
-        this.currentUserTestAnswer.heuristicQuestions[
-          heurisIndex
-        ].heuristicQuestions[answerIndex].answerImageUrl = this.currentImageUrl
-      }
-    },
-    mappingSteps() {
-      //Heuristics
-      if (
-        this.validate(this.test.testStructure) &&
-        this.test.testStructure.length !== 0 &&
-        this.test.testType == 'HEURISTICS'
-      )
-        this.items.push({
-          title: 'HEURISTICS',
-          icon: 'mdi-checkbox-marked-circle-outline',
-          value: this.test.testStructure.map((option) => {
-            return {
-              title: option.title,
-              icon: 'mdi-checkbox-marked-circle-outline',
-              done: false,
-              total: option.total,
-              id: option.id,
-            }
-          }),
-          id: 1,
-        })
-    },
-    validate(object) {
-      return object !== null && object !== undefined && object !== ''
-    },
-    calculateProgress() {
-      if (this.test.testType === 'HEURISTICS') {
-        const total = this.currentUserTestAnswer.total
-        let x = 0
-        this.currentUserTestAnswer.heuristicQuestions.forEach((heuQ) => {
-          heuQ.heuristicQuestions.forEach((question) => {
-            if (
-              question.heuristicAnswer !== '' &&
-              Object.values(question.heuristicAnswer).length > 0
-            ) {
-              x++
-            }
-          })
-        })
-        const percent = ((100 * x) / total).toFixed(1)
-        this.calculatedProgress = percent
-        if (isNaN(this.calculatedProgress)) {
-          this.calculatedProgress = 0
-        }
-      }
-      this.$forceUpdate()
-    },
-    perHeuristicProgress(item) {
-      const value =
-        (item.heuristicQuestions.filter(
-          (q) =>
-            q.heuristicAnswer !== '' &&
-            Object.values(q.heuristicAnswer).length > 0,
-        ).length *
-          100) /
-        item.heuristicTotal
-      return value.toFixed(1)
-    },
-    async saveAnswer() {
-      this.currentUserTestAnswer.progress = this.calculatedProgress
-      await this.$store.dispatch('saveTestAnswer', {
-        data: this.currentUserTestAnswer,
-        answerDocId: this.test.answersDocId,
-        testType: this.test.testType,
-      })
-    },
-    async submitAnswer() {
-      this.currentUserTestAnswer.submitted = true
-      await this.saveAnswer()
-      this.$toast.success(i18n.$t('alerts.genericSuccess'))
-      this.$router.push('/testslist')
-    },
-    setExistUser() {
-      this.noExistUser = false
-    },
-    signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.noExistUser = true
-      })
-    },
-    populateWithHeuristicQuestions() {
-      if (this.test.testType === 'HEURISTICS') {
-        let totalQuestions = 0
-        if (this.currentUserTestAnswer.heuristicQuestions.length <= 0) {
-          this.test.testStructure.forEach((heu) => {
-            this.currentUserTestAnswer.heuristicQuestions.push(
-              new Heuristic({
-                heuristicTitle: heu.title,
-                heuristicId: heu.id,
-                heuristicQuestions: heu.questions.map(
-                  (h) =>
-                    new HeuristicQuestionAnswer({
-                      heuristicId: h.id,
-                      heuristicAnswer: null,
-                      heuristicComment: '',
-                      answerImageUrl: '',
-                    }),
-                ),
-                heuristicTotal: heu.total,
-              }),
-            )
-            totalQuestions += heu.questions.length ?? 0
-          })
-          this.currentUserTestAnswer.total = totalQuestions
-        }
-      }
-    },
-    async setTest() {
-      this.logined = true
-      await this.$store.dispatch('getCurrentTestAnswerDoc')
-      this.populateWithHeuristicQuestions()
-    },
-    setReviewTrue() {
-      console.log('click done')
-      this.review = true
-    },
-  },
-  handleHeurisClick(i) {
-    this.heurisIndex = i;
-    this.setReviewTrue();
-  },
+const props = defineProps({
+  id: { type: String, default: '' },
+  token: { type: String, default: null },
+})
+
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+const {t: i18n} = useI18n()
+const toast = useToast()
+
+const logined = ref(null)
+const selected = ref(true)
+const fromlink = ref(null)
+const drawer = ref(true)
+const start = ref(true)
+const mini = ref(false)
+const index = ref(null)
+const noExistUser = ref(true)
+const heurisIndex = ref(0)
+const preTestIndex = ref(null)
+const items = ref([])
+const idx = ref(0)
+const fab = ref(false)
+const res = ref(0)
+const dialog = ref(false)
+const calculatedProgress = ref(0)
+const review = ref(true)
+const rightView = ref(null)
+const moderatedTestViewRef = ref(null)
+
+const test = computed(() => store.getters.test)
+const user = computed(() => {
+  if (store.getters.user) setExistUser()
+  return store.getters.user
+})
+const currentUserTestAnswer = computed(() => {
+  if (test.value.testType === 'HEURISTICS') {
+    return store.getters.currentUserTestAnswer
+  }
+  return {}
+})
+const showSaveBtn = computed(() => {
+  if (currentUserTestAnswer.value.submitted) return false
+  return true
+})
+const cooperators = computed(() => store.getters.cooperators)
+const loading = computed(() => store.getters.loading)
+const currentImageUrl = computed(() => store.state.Tests.currentImageUrl)
+
+const startTest = () => {
+  if (test.value.testStructure.length == 0) {
+    store.commit('setError', {
+      errorCode: 400,
+      message: i18n('HeuristicsTestView.messages.noHeuristics'),
+    })
+    router.push('/managerview/' + test.value.id)
+  }
+  start.value = !start.value
 }
+
+const updateComment = (comment, heurisIndex, answerIndex) => {
+  if (comment != '' && comment != undefined) {
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].heuristicComment = comment
+  } else {
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex].heuristicQuestions[answerIndex].answerImageUrl = currentImageUrl.value
+  }
+}
+
+const mappingSteps = () => {
+  if (
+    validate(test.value.testStructure) &&
+    test.value.testStructure.length !== 0 &&
+    test.value.testType == 'HEURISTICS'
+  ) {
+    items.value.push({
+      title: 'HEURISTICS',
+      icon: 'mdi-checkbox-marked-circle-outline',
+      value: test.value.testStructure.map((option) => ({
+        title: option.title,
+        icon: 'mdi-checkbox-marked-circle-outline',
+        done: false,
+        total: option.total,
+        id: option.id,
+      })),
+      id: 1,
+    })
+  }
+}
+
+const validate = (object) => {
+  return object !== null && object !== undefined && object !== ''
+}
+
+const calculateProgress = () => {
+  if (test.value.testType === 'HEURISTICS') {
+    const total = currentUserTestAnswer.value.total
+    let x = 0
+    currentUserTestAnswer.value.heuristicQuestions.forEach((heuQ) => {
+      heuQ.heuristicQuestions.forEach((question) => {
+        if (
+          question.heuristicAnswer !== '' &&
+          Object.values(question.heuristicAnswer).length > 0
+        ) {
+          x++
+        }
+      })
+    })
+    const percent = ((100 * x) / total).toFixed(1)
+    calculatedProgress.value = percent
+    if (isNaN(calculatedProgress.value)) {
+      calculatedProgress.value = 0
+    }
+  }
+}
+
+const perHeuristicProgress = (item) => {
+  const value =
+    (item.heuristicQuestions.filter(
+      (q) =>
+        q.heuristicAnswer !== '' &&
+        Object.values(q.heuristicAnswer).length > 0,
+    ).length * 100) / item.heuristicTotal
+  return value.toFixed(1)
+}
+
+const saveAnswer = async () => {
+  currentUserTestAnswer.value.progress = calculatedProgress.value
+  await store.dispatch('saveTestAnswer', {
+    data: currentUserTestAnswer.value,
+    answerDocId: test.value.answersDocId,
+    testType: test.value.testType,
+  })
+}
+
+const submitAnswer = async () => {
+  currentUserTestAnswer.value.submitted = true
+  await saveAnswer()
+  toast.success(i18n('alerts.genericSuccess'))
+  router.push('/testslist')
+}
+
+const setExistUser = () => {
+  noExistUser.value = false
+}
+
+const signOut = () => {
+  store.dispatch('logout').then(() => {
+    noExistUser.value = true
+  })
+}
+
+const populateWithHeuristicQuestions = () => {
+  if (test.value.testType === 'HEURISTICS') {
+    let totalQuestions = 0
+    if (currentUserTestAnswer.value.heuristicQuestions.length <= 0) {
+      test.value.testStructure.forEach((heu) => {
+        currentUserTestAnswer.value.heuristicQuestions.push(
+          new Heuristic({
+            heuristicTitle: heu.title,
+            heuristicId: heu.id,
+            heuristicQuestions: heu.questions.map(
+              (h) =>
+                new HeuristicQuestionAnswer({
+                  heuristicId: h.id,
+                  heuristicAnswer: null,
+                  heuristicComment: '',
+                  answerImageUrl: '',
+                }),
+            ),
+            heuristicTotal: heu.total,
+          }),
+        )
+        totalQuestions += heu.questions.length ?? 0
+      })
+      currentUserTestAnswer.value.total = totalQuestions
+    }
+  }
+}
+
+const setTest = async () => {
+  logined.value = true
+  await store.dispatch('getCurrentTestAnswerDoc')
+  populateWithHeuristicQuestions()
+}
+
+const setReviewTrue = () => {
+  review.value = true
+}
+
+const handleHeurisClick = (i) => {
+  heurisIndex.value = i
+  setReviewTrue()
+}
+
+watch(test, async () => {
+  mappingSteps()
+}, { deep: true })
+
+watch(items, () => {
+  if (items.value.length) {
+    index.value = items.value[0].id
+    if (items.value.find((obj) => obj.id == 0)) {
+      preTestIndex.value = items.value[0].value[0].id
+    }
+  }
+}, { deep: true })
+
+watch(heurisIndex, () => {
+  if (rightView.value) {
+    rightView.value.scrollTop = 0
+  }
+})
+
+watch(user, async () => {
+  if (user.value) {
+    noExistUser.value = false
+    if (logined.value) setTest()
+  }
+}, { deep: true })
+
+watch(calculatedProgress, (newVal) => {
+  if (newVal == 100) {
+    review.value = false
+  }
+})
+
+onBeforeMount(async () => {
+  if (route.params.token) {
+    fromlink.value = true
+  }
+
+  await store.dispatch('getTest', { id: props.id })
+  await store.dispatch('getCurrentTestAnswerDoc')
+  populateWithHeuristicQuestions()
+  calculateProgress()
+})
+
+// Route guards
+const beforeRouteEnter = (to, from, next) => {
+  if (to.params.token) {
+    next((vm) => {
+      vm.fromlink = true
+    })
+  }
+  next()
+}
+
+const beforeRouteLeave = (to, from, next) => {
+  if (test.value && test.value.userTestType === 'moderated') {
+    let isSaved = moderatedTestViewRef.value.isSaved() // Updated to use renamed ref
+    let isTestNotStarted = moderatedTestViewRef.value.isTestNotStarted() // Updated to use renamed ref
+    if (!isSaved && !isTestNotStarted) {
+      if (!window.confirm('Leave without saving?')) {
+        return
+      }
+      next()
+    } else next()
+  }
+  next()
+}
+
+// Expose for route guards if needed
+defineExpose({
+  beforeRouteEnter,
+  beforeRouteLeave,
+})
 </script>
+
 <style scoped>
 body {
-  overflow-y: 100vh; /* Adiciona uma barra de rolagem vertical quando necessário */
+  overflow-y: 100vh;
 }
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
@@ -907,7 +915,6 @@ body {
   align-items: center;
   color: #ffffff;
   word-wrap: break-word;
-
 }
 .description {
   font-style: normal;
@@ -949,53 +956,35 @@ body {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
 }
-/* Right side scroll bar */
-/* width */
 .right-view {
-  transition: filter 0.3s ease; /* Smooth transition for the blur effect */
+  transition: filter 0.3s ease;
 }
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
-/* Track */
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
-/* Handle */
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
-/* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
-/* Nav bar list scroll bar */
-/* width */
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
-/* Track */
 .nav-list::-webkit-scrollbar-track {
   background: none;
 }
-/* Handle */
 .nav-list::-webkit-scrollbar-thumb {
   background: #777596;
   border-radius: 4px;
 }
-/* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
-  /* background: #515069; */
 }
 .card-title {
   font-style: normal;
@@ -1013,7 +1002,7 @@ body {
     transform: scale(0.875);
   }
   .right-view.mini {
-    filter: blur(15px); /* Apply blur effect */
+    filter: blur(15px);
     width: 100%;
     z-index: -100;
   }
