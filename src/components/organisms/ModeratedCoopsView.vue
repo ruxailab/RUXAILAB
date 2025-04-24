@@ -167,7 +167,6 @@
                     <v-tooltip location="bottom">
                       <template #activator="{ props }">
                         <v-btn
-                       
                           v-if="item"
                           v-bind="props"
                           class="ml-1"
@@ -196,7 +195,7 @@
                       <v-list>
                         <v-list-item
                           link
-                          @click=";(messageModel = true), (selectedUser = item)"
+                          @click="messageModel = true; selectedUser = item"
                         >
                           <v-list-item-title>Send a message</v-list-item-title>
                         </v-list-item>
@@ -386,7 +385,6 @@
                       >
                         <template #activator="{ props }">
                           <v-text-field
-                         
                             v-model="hour"
                             prepend-icon="mdi-clock-time-four-outline"
                             density="compact"
@@ -461,280 +459,258 @@
   </div>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import Snackbar from '@/components/atoms/Snackbar'
-import Intro from '@/components/molecules/IntroCoops'
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
-import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
-import { roleOptionsItems } from '@/utils/items'
-import Notification from '@/models/Notification'
-export default {
-  components: {
-    ShowInfo,
-    Snackbar,
-    Intro,
-    AccessNotAllowed,
-    LeaveAlert,
-  },
-  props: { id: { type: String, default: '' } },
-  data: () => ({
-    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .substr(0, 10),
-    showTimePicker: false,
-    hour: null,
-    object: null,
-    headers: [
-      { text: 'Email', value: 'email' },
-      { text: 'Test Date', value: 'testDate' },
-      { text: 'Starts at', value: 'testHour' },
-      { text: 'Invited', value: 'invited', justify: 'center' },
-      { text: 'Accepted', value: 'accepted', justify: 'center' },
-      { text: 'Session', value: 'session', justify: 'center' },
-      { text: 'More', value: 'more', sortable: false },
-    ],
-    roleOptions: roleOptionsItems,
-    intro: null,
-    email: '',
-    selectedCoops: [],
-    comboboxModel: [],
-    comboboxKey: 0,
-    selectedRole: 1,
-    showCoops: false,
-    verified: false,
-    dataTableKey: 0,
-    messageModel: false,
-    selectedUser: [],
-    messageTitle: '',
-    inviteMessage: '',
-    messageContent: '',
-    inviteModal: false,
-    valid:false,
-  }),
-  computed: {
-    dialog() {
-      return this.$store.state.dialog
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    users() {
-      return this.$store.state.Users.users || []
-    },
-    cooperatorsEdit() {
-      return this.test.cooperators ? [...this.test.cooperators] : []
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    minTime() {
-      const currentDate = new Date()
-      currentDate.setDate(currentDate.getDate() - 1)
-      const selectedDate = new Date(this.date)
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import Snackbar from '@/components/atoms/Snackbar.vue';
+import Intro from '@/components/molecules/IntroCoops.vue';
+import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue';
+import LeaveAlert from '@/components/atoms/LeaveAlert.vue';
+import { roleOptionsItems } from '@/utils/items';
+import Notification from '@/models/Notification';
 
-      if (
-        selectedDate.toLocaleDateString() ===
-          currentDate.toLocaleDateString() &&
-        selectedDate.getMonth() === currentDate.getMonth() &&
-        selectedDate.getFullYear() === currentDate.getFullYear()
-      ) {
-        return currentDate.getHours() + ':' + currentDate.getMinutes()
-      } else {
-        return '00:00'
-      }
-    },
-  },
-  watch: {
-    loading() {
-      if (!this.loading) {
-        if (this.cooperatorsEdit.length == 0) this.intro = true
-        else this.intro = false
-      }
-    },
-  },
-  created() {
-    this.$store.dispatch('getAllUsers')
-  },
-  methods: {
-    async saveInvitation() {
-      const isValid = this.$refs.inviteForm.validate()
-      if (!isValid) return
-      const cooperator = this.comboboxModel
-      const dateTimeString = this.date + 'T' + this.hour + ':00'
-      const dateTime = new Date(dateTimeString)
-      const timestamp = dateTime.toISOString()
-      this.cooperatorsEdit.push({
-        userDocId: cooperator.id || null,
-        email: cooperator.email,
-        invited: true,
-        accepted: false,
+
+const props = defineProps({
+  id: { type: String, default: '' },
+});
+
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+const toast = useToast();
+
+const date = ref(
+  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .substr(0, 10)
+);
+const hour = ref(null);
+const headers = ref([
+  { text: 'Email', value: 'email' },
+  { text: 'Test Date', value: 'testDate' },
+  { text: 'Starts at', value: 'testHour' },
+  { text: 'Invited', value: 'invited', justify: 'center' },
+  { text: 'Accepted', value: 'accepted', justify: 'center' },
+  { text: 'Session', value: 'session', justify: 'center' },
+  { text: 'More', value: 'more', sortable: false },
+]);
+const roleOptions = ref(roleOptionsItems);
+const intro = ref(null);
+const comboboxModel = ref({});
+const comboboxKey = ref(0);
+const selectedRole = ref(1);
+const showCoops = ref(false);
+const verified = ref(false);
+const messageModel = ref(false);
+const selectedUser = ref({});
+const messageTitle = ref('');
+const inviteMessage = ref('');
+const messageContent = ref('');
+const inviteModal = ref(false);
+const valid = ref(false);
+const combobox = ref(null);
+const inviteForm = ref(null);
+
+const dialog = computed(() => store.state.dialog);
+const test = computed(() => store.getters.test);
+const user = computed(() => store.getters.user);
+const users = computed(() => store.state.Users.users || []);
+const cooperatorsEdit = computed(() =>
+  test.value.cooperators ? [...test.value.cooperators] : []
+);
+const loading = computed(() => store.getters.loading);
+const minTime = computed(() => {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - 1);
+  const selectedDate = new Date(date.value);
+
+  if (
+    selectedDate.toLocaleDateString() === currentDate.toLocaleDateString() &&
+    selectedDate.getMonth() === currentDate.getMonth() &&
+    selectedDate.getFullYear() === currentDate.getFullYear()
+  ) {
+    return `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  } else {
+    return '00:00';
+  }
+});
+
+const saveInvitation = async () => {
+  const isValid = await inviteForm.value.validate();
+  if (!isValid) return;
+
+  const cooperator = comboboxModel.value;
+  const dateTimeString = `${date.value}T${hour.value}:00`;
+  const dateTime = new Date(dateTimeString);
+  const timestamp = dateTime.toISOString();
+
+  cooperatorsEdit.value.push({
+    userDocId: cooperator.id || null,
+    email: cooperator.email,
+    invited: true,
+    accepted: false,
+    accessLevel: 1,
+    testDate: timestamp,
+    inviteMessage: inviteMessage.value,
+    updateDate: test.value.updateDate,
+    testAuthorEmail: test.value.testAdmin.email,
+  });
+
+  await submit();
+};
+
+const verifyEmail = () => {
+  const alreadyInvited = cooperatorsEdit.value.find(
+    (cooperator) => cooperator.email === comboboxModel.value.email
+  );
+  if (alreadyInvited) {
+    toast.warning(`${comboboxModel.value.email} has already been invited`);
+    comboboxModel.value = {};
+  }
+};
+
+const submit = async () => {
+  test.value.cooperators = [...cooperatorsEdit.value];
+  await store.dispatch('updateTest', test.value);
+  cooperatorsEdit.value.forEach((guest) => {
+    if (!guest.accepted) {
+      notifyCooperator(guest);
+    }
+  });
+  inviteModal.value = false;
+  inviteForm.value.resetValidation();
+  hour.value = null;
+  inviteMessage.value = '';
+  comboboxModel.value = {};
+  combobox.value.blur();
+};
+
+const goToSession = (coopId) => {
+  router.push(`/testview/${test.value.id}/${coopId}`);
+};
+
+const notifyCooperator = (guest) => {
+  if (guest.userDocId) {
+    const path = 'testview';
+    store.dispatch('addNotification', {
+      userId: guest.userDocId,
+      notification: new Notification({
         accessLevel: 1,
-        testDate: timestamp,
-        inviteMessage: this.inviteMessage,
-        updateDate: this.test.updateDate,
-        testAuthorEmail: this.test.testAdmin.email,
-      })
+        title: `You have been invited to test ${test.value.testTitle}!`,
+        description: inviteMessage.value,
+        redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
+        author: test.value.testAdmin.email,
+        read: false,
+        testId: test.value.id,
+      }),
+    });
+  }
+  sendInvitationMail(guest);
+};
 
-      this.submit()
-    },
+const sendMessage = (guest, title, content) => {
+  messageModel.value = false;
+  if (guest.userDocId) {
+    const path = guest.accessLevel >= 2 ? 'managerview' : 'testview';
+    store.dispatch('addNotification', {
+      userId: guest.userDocId,
+      notification: new Notification({
+        title,
+        description: content,
+        redirectsTo: '/',
+        read: false,
+        author: test.value.testAdmin.email,
+        testId: test.value.id,
+      }),
+    });
+  }
+};
 
-    verifyEmail() {
-      const alreadyInvited = this.cooperatorsEdit.find(
-        (cooperator) => cooperator.email === this.comboboxModel.email,
-      )
-      if (alreadyInvited) {
-        this.$toast.warning(
-          this.comboboxModel.email + ' has already been invited',
-        )
-        this.comboboxModel = ''
-        return
-      }
-    },
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 
-    async submit() {
-      this.test.cooperators = [...this.cooperatorsEdit]
-      await this.$store.dispatch('updateTest', this.test)
-      this.cooperatorsEdit.forEach((guest) => {
-        if (!guest.accepted) {
-          this.notifyCooperator(guest)
-        }
-      })
-      this.inviteModal = false
-      this.$refs.inviteForm.resetValidation()
-      this.hour = null
-      // The date is being automatically generated by the Date picker so we don't need to reset it
-      this.inviteMessage = ''
-      this.comboboxModel = []
-      this.$refs.combobox.blur()
-    },
-    goToSession(coopId) {
-      this.$router.push(`/testview/${this.test.id}/${coopId}`)
-    },
-    notifyCooperator(guest) {
-      // Notify user on the platform in case it is already registered
-      if (guest.userDocId) {
-        let path = 'testview'
-        this.$store.dispatch('addNotification', {
-          userId: guest.userDocId,
-          notification: new Notification({
-            accessLevel: 1,
-            title: `You have been invited to test ${this.test.testTitle}!`,
-            description: this.inviteMessage,
-            redirectsTo: `${path}/${this.test.id}/${guest.userDocId}`,
-            author: `${this.test.testAdmin.email}`,
-            read: false,
-            testId: this.test.id,
-          }),
-        })
-      }
-      this.sendInvitationMail(guest)
-    },
-    sendMessage(guest, messageTitle, messageContent) {
-      this.messageModel = false
-      if (guest.userDocId) {
-        let path = ''
-        if (guest.accessLevel.value >= 2) {
-          path = 'testview'
-        } else {
-          path = 'managerview'
-        }
-        this.$store.dispatch('addNotification', {
-          userId: guest.userDocId,
-          notification: new Notification({
-            title: `${messageTitle}`,
-            description: `${messageContent}`,
-            redirectsTo: '/',
-            read: false,
-            author: `${this.test.testAdmin.email}`,
-            testId: this.test.id,
-          }),
-        })
-      }
-    },
-    formatDate(timestamp) {
-      const date = new Date(timestamp)
-      const day = date.getDate()
-      const month = date.getMonth() + 1
-      const year = date.getFullYear()
+const formatTime = (timestamp) => {
+  const date = new Date(timestamp);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+};
 
-      return `${day}/${month}/${year}`
-    },
-    formatTime(timestamp) {
-      const date = new Date(timestamp)
-      const hours = date.getHours()
-      const minutes = date.getMinutes()
+const reinvite = (guest) => {
+  notifyCooperator(guest);
+};
 
-      return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
-    },
-    reinvite(guest) {
-      this.notifyCooperator(guest)
-    },
-    openInvitationModal() {
-      this.inviteModal = true
-    },
-    async removeCoop(coop) {
-      const ok = confirm(
-        `Are you sure you want to remove ${coop.email} from your cooperators?`,
-      )
-      if (ok) {
-        // Remove from test
-        const index = this.cooperatorsEdit.indexOf(coop)
-        this.cooperatorsEdit.splice(index, 1)
-        this.test.cooperators = this.cooperatorsEdit
-        this.test.numberColaborators = this.test.numberColaborators - 1
-        await this.$store.dispatch('updateTest', this.test)
-        // Remove from cooperator
-        await this.$store.dispatch('removeTestFromCooperator', {
-          test: this.test,
-          cooperator: coop,
-        })
-      }
-    },
-    removeFromList(coop) {
-      const index = this.cooperatorsEdit.indexOf(coop)
-      this.cooperatorsEdit.splice(index, 1)
-    },
-    async sendInvitationMail(guest) {
-      console.log(guest)
-      let domain = window.location.href
-      domain = domain.replace(window.location.pathname, '')
-      let email = {
-        testId: this.test.id,
-        from: this.user.email,
-        testTitle: this.test.testTitle,
-        guest: guest,
-        domain: domain,
-      }
-      if (guest.accessLevel === 1) {
-        email = Object.assign(email, {
-          path: 'testview',
-          token: guest.userDocId,
-        })
-      } else {
-        email = Object.assign(email, {
-          path: 'managerview',
-          token: guest.userDocId,
-        })
-      }
-      await this.$store.dispatch('sendModeratedEmailInvitation', email)
-    },
-    async cancelInvitation(guest) {
-      const ok = confirm(
-        `Are you sure you want to cancel ${guest.email} from your cooperators?`,
-      )
-      if (ok) {
-        const index = this.cooperatorsEdit.indexOf(guest)
-        this.cooperatorsEdit.splice(index, 1)
-        this.test.cooperators = this.cooperatorsEdit
-        await this.$store.dispatch('updateTest', this.test)
-      }
-    },
-  },
-}
+const openInvitationModal = () => {
+  inviteModal.value = true;
+};
+
+const removeCoop = async (coop) => {
+  const ok = confirm(`Are you sure you want to remove ${coop.email} from your cooperators?`);
+  if (ok) {
+    const index = cooperatorsEdit.value.indexOf(coop);
+    cooperatorsEdit.value.splice(index, 1);
+    test.value.cooperators = cooperatorsEdit.value;
+    test.value.numberColaborators -= 1;
+    await store.dispatch('updateTest', test.value);
+    await store.dispatch('removeTestFromCooperator', {
+      test: test.value,
+      cooperator: coop,
+    });
+  }
+};
+
+const sendInvitationMail = async (guest) => {
+  let domain = window.location.href;
+  domain = domain.replace(window.location.pathname, '');
+  let email = {
+    testId: test.value.id,
+    from: user.value.email,
+    testTitle: test.value.testTitle,
+    guest,
+    domain,
+  };
+  if (guest.accessLevel === 1) {
+    email = Object.assign(email, {
+      path: 'testview',
+      token: guest.userDocId,
+    });
+  } else {
+    email = Object.assign(email, {
+      path: 'managerview',
+      token: guest.userDocId,
+    });
+  }
+  await store.dispatch('sendModeratedEmailInvitation', email);
+};
+
+const cancelInvitation = async (guest) => {
+  const ok = confirm(`Are you sure you want to cancel ${guest.email} from your cooperators?`);
+  if (ok) {
+    const index = cooperatorsEdit.value.indexOf(guest);
+    cooperatorsEdit.value.splice(index, 1);
+    test.value.cooperators = cooperatorsEdit.value;
+    await store.dispatch('updateTest', test.value);
+  }
+};
+
+watch(loading, (newVal) => {
+  if (!newVal) {
+    intro.value = cooperatorsEdit.value.length === 0;
+  }
+});
+
+onMounted(() => {
+  store.dispatch('getAllUsers');
+});
 </script>
 
 <style scoped>

@@ -96,29 +96,25 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  props: {
-    regions: {
-      type: Array,
-      default: () => [],
-    },
-    playSegment: {
-      type: Function,
-      default: () => {},
-    },
-    deleteRegion: {
-      type: Function,
-      default: () => {},
-    },
+<script setup>
+import { ref } from 'vue';
+
+const props = defineProps({
+  regions: {
+    type: Array,
+    default: () => [],
   },
+  playSegment: {
+    type: Function,
+    default: () => {},
+  },
+  deleteRegion: {
+    type: Function,
+    default: () => {},
+  },
+});
 
-  data: () => ({
-    selected: [],
-  }),
-
-  methods: {},
-}
+const selected = ref([]);
 </script>
 
 <style scoped>

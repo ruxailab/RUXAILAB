@@ -54,72 +54,67 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import ShowInfo from '@/components/organisms/ShowInfo';
 import IntroAnswer from '@/components/molecules/IntroAnswer';
 import AnalyticsView from '@/views/admin/AnalyticsView.vue';
 import GeneralAnalytics from '@/components/organisms/GeneralAnalytics.vue';
 import SentimentAnalysisView from '@/views/admin/SentimentAnalysisView.vue';
-
 import { standardDeviation, finalResult, statistics } from '@/utils/statistics';
 
-export default {
-  components: {
-    ShowInfo,
-    IntroAnswer,
-    AnalyticsView,
-    GeneralAnalytics,
-    SentimentAnalysisView,
-  },
-  props: { id: { type: String, default: '' } },
-  emits: ['goToCoops'],
-  data: () => ({
-    tab: 0,
-    ind: 0,
-    resultEvaluator: statistics(),
-    intro: null,
-  }),
-  computed: {
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument;
-    },
-    answers() {
-      return this.testAnswerDocument
-        ? Object.values(this.$store.state.Answer.testAnswerDocument)
-        : [];
-    },
-    hasAnswers() {
-      return (
-        this.testAnswerDocument &&
-        Object.keys(this.testAnswerDocument.taskAnswers).length > 0
-      );
-    },
-    loading() {
-      return this.$store.getters.loading;
-    },
-  },
-  watch: {
-    hasAnswers() {
-      if (this.hasAnswers) {
-        statistics();
-        this.intro = false;
-      } else {
-        this.intro = true;
-      }
-    },
-    index() {
-      this.ind = 0;
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc');
-  },
-  methods: {
-    goToCoops() {
-      this.$emit('goToCoops');
-    },
-  },
+defineProps({
+  id: {
+    type: String,
+    default: ''
+  }
+});
+
+const emit = defineEmits(['goToCoops']);
+
+const store = useStore();
+
+const tab = ref(0);
+const ind = ref(0);
+const intro = ref(null);
+const resultEvaluator = statistics();
+
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+
+const answers = computed(() => 
+  testAnswerDocument.value
+    ? Object.values(testAnswerDocument.value)
+    : []
+);
+
+const hasAnswers = computed(() => 
+  testAnswerDocument.value &&
+  Object.keys(testAnswerDocument.value.taskAnswers).length > 0
+);
+
+const loading = computed(() => store.getters.loading);
+
+const goToCoops = () => {
+  emit('goToCoops');
 };
+
+watch(hasAnswers, (newValue) => {
+  if (newValue) {
+    statistics();
+    intro.value = false;
+  } else {
+    intro.value = true;
+  }
+});
+
+watch(() => ind.value, () => {
+  ind.value = 0;
+});
+
+onMounted(async () => {
+  await store.dispatch('getCurrentTestAnswerDoc');
+});
 </script>
 
 <style scoped>

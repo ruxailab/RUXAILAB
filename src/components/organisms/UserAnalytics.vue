@@ -300,97 +300,85 @@
   </div>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
 
-export default {
-  components: {
-    ShowInfo,
+const store = useStore();
+
+const emit = defineEmits(['goToCoops']);
+
+const showDialog = ref(false);
+const dialogItem = ref(null);
+const search = ref('');
+const taskSelect = ref(0);
+const testTasks = ref([]);
+const taskAnswers = ref([]);
+const intro = ref(null);
+const dataHeaders = ref([
+  {
+    text: 'Email',
+    value: 'userDocId',
   },
-  emits: ['goToCoops'],
-  data: () => ({
-    showDialog: false,
-    dialogItem: null,
-    search: '',
-    taskSelect: 0,
-    testTasks: [],
-    taskAnswers: [],
-    intro: null,
-    dataHeaders: [
-      {
-        text: 'Email',
-        value: 'userDocId',
-      },
-      {
-        text: 'Actions',
-        sortable: false,
-        value: 'actions',
-      },
-    ],
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    testStructure() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-    tasksAnswer() {
-      return this.$store.getters.testAnswerDocument
-    },
-    answers() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return []
+  {
+    text: 'Actions',
+    sortable: false,
+    value: 'actions',
+  },
+]);
+
+const test = computed(() => store.getters.test);
+const testStructure = computed(() => store.state.Tests.Test.testStructure);
+const tasksAnswer = computed(() => store.getters.testAnswerDocument);
+const answers = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return [];
+  }
+  return store.getters.testAnswerDocument.taskAnswers;
+});
+const loading = computed(() => !Object.values(answers.value).length);
+
+const formatTime = (time) => {
+  const seconds = Math.floor(time / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+};
+
+const goToCoops = () => {
+  emit('goToCoops');
+};
+
+const getCooperatorEmail = (userDocId) => {
+  let cooperatorEmail = null;
+  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
+    for (const element of test.value.cooperators) {
+      if (element && element.email && element.userDocId === userDocId) {
+        cooperatorEmail = element.email;
       }
-      return this.$store.getters.testAnswerDocument.taskAnswers
-    },
-    loading() {
-      return !Object.values(this.answers).length
-    },
-  },
-  created() {
-    let i = 0
-    this.testStructure.userTasks.forEach((task) => {
-      this.testTasks[i] = task.taskName
-      i++
-    })
-    let c = 0
-    for (const key in this.answers) {
-      this.taskAnswers[c] = this.answers[key]
-      c++
     }
-  },
-  methods: {
-    formatTime(time) {
-      var seconds = Math.floor(time / 1000)
+  }
+  return cooperatorEmail;
+};
 
-      var minutes = Math.floor(seconds / 60)
-      var remainingSeconds = seconds % 60
+const viewAnswers = (item) => {
+  dialogItem.value = item;
+  showDialog.value = true;
+};
 
-      return (
-        minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds
-      )
-    },
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-    getCooperatorEmail(userDocId) {
-      let cooperatorEmail = null
-      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
-        for (const element of this.test.cooperators) {
-          if (element && element.email && element.userDocId === userDocId) {
-            cooperatorEmail = element.email
-          }
-        }
-      }
-      return cooperatorEmail
-    },
-    viewAnswers(item) {
-      this.dialogItem = item
-      this.showDialog = true
-    },
-  },
-}
+onMounted(() => {
+  let i = 0;
+  testStructure.value.userTasks.forEach((task) => {
+    testTasks.value[i] = task.taskName;
+    i++;
+  });
+  let c = 0;
+  for (const key in answers.value) {
+    taskAnswers.value[c] = answers.value[key];
+    c++;
+  }
+});
 </script>
 
 <style scoped>

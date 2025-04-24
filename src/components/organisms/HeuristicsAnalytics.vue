@@ -1,8 +1,8 @@
 <template>
   <div v-if="answers">
     <IntroAnalytics
-      v-if="answers != null && intro == true"
-      @go-to-coops="goToCoops()"
+      v-if="answers != null && intro"
+      @go-to-coops="goToCoops"
     />
 
     <ShowInfo
@@ -286,126 +286,128 @@
   </div>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import BarChart from '@/components/atoms/BarChart.vue'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import BarChart from '@/components/atoms/BarChart.vue';
 
-export default {
-  components: {
-    ShowInfo,
-    BarChart,
-  },
-  emits: ['goToCoops'],
-  data: () => ({
-    search: '',
-    ind: 0,
-    resultHeuristics: [],
-    heuristicSelect: null,
-    questionSelect: null,
-    intro: null,
-  }),
-  computed: {
-    headersHeuristic() {
-      const header = [
-        {
-          text: 'Evalutator',
-          align: 'start',
-          value: 'uid',
-        },
-      ]
-      if (this.heuristicSelect !== null) {
-        this.test.testStructure[this.heuristicSelect].questions.forEach(
-          (question) => {
-            header.push({
-              text: `Q${question.id + 1}`,
-              align: 'center',
-              value: question.id,
-            })
-          },
-        )
-      }
+const store = useStore();
+const route = useRoute();
 
-      return header
-    },
-    itemsHeuristic() {
-      const items = []
-      if (this.heuristicSelect !== null) {
-        Object.values(this.answers).forEach((answer) => {
-          items.push({
-            uid: { uid: answer.userDocId },
-            ...answer.heuristicQuestions[this.heuristicSelect]
-              .heuristicQuestions,
-          })
-        })
-      }
-      return items
-    },
-    questionGraph() {
-      const { testOptions: options } = this.test
+const emit = defineEmits(['goToCoops']);
 
-      const graph = {
-        label: [...options.map((op) => op.text)],
-        data: [...options.map(() => 0)],
-      }
+const search = ref('');
+const ind = ref(0);
+const resultHeuristics = ref([]);
+const heuristicSelect = ref(null);
+const questionSelect = ref(null);
+const intro = ref(null);
 
-      if (this.heuristicSelect !== null && this.questionSelect !== null) {
-        Object.values(this.answers).forEach((userAnswer) => {
-          const question =
-            userAnswer.heuristicQuestions[this.heuristicSelect]
-              .heuristicQuestions[this.questionSelect]
+const test = computed(() => store.getters.test);
 
-          const optionSelect = options.find(
-            (op) => op.text === question.heuristicAnswer.text,
-          )
-          if (optionSelect) {
-            const optionIndex = graph.label.indexOf(optionSelect.text)
-            graph.data[optionIndex] += 1
-          }
-        })
-      }
-      return graph
-    },
-    answers() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return {}
-      }
+const answers = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return {};
+  }
+  return store.getters.testAnswerDocument.heuristicAnswers;
+});
 
-      return this.$store.getters.testAnswerDocument.heuristicAnswers
+const loading = computed(() => !Object.values(answers.value).length);
+
+const headersHeuristic = computed(() => {
+  const header = [
+    {
+      text: 'Evaluator',
+      align: 'start',
+      value: 'uid',
     },
-    loading() {
-      return !Object.values(this.answers).length
-    },
-    test() {
-      return this.$store.getters.test
-    },
-  },
-  watch: {
-    answers() {
-      if (Object.values(this.answers)) {
-        this.intro = !Object.values(this.answers).length
+  ];
+  if (heuristicSelect.value !== null) {
+    test.value.testStructure[heuristicSelect.value].questions.forEach(
+      (question) => {
+        header.push({
+          text: `Q${question.id + 1}`,
+          align: 'center',
+          value: question.id,
+        });
+      },
+    );
+  }
+  return header;
+});
+
+const itemsHeuristic = computed(() => {
+  const items = [];
+  if (heuristicSelect.value !== null) {
+    Object.values(answers.value).forEach((answer) => {
+      items.push({
+        uid: { uid: answer.userDocId },
+        ...answer.heuristicQuestions[heuristicSelect.value].heuristicQuestions,
+      });
+    });
+  }
+  return items;
+});
+
+const questionGraph = computed(() => {
+  const { testOptions: options } = test.value;
+
+  const graph = {
+    label: [...options.map((op) => op.text)],
+    data: [...options.map(() => 0)],
+  };
+
+  if (heuristicSelect.value !== null && questionSelect.value !== null) {
+    Object.values(answers.value).forEach((userAnswer) => {
+      const question =
+        userAnswer.heuristicQuestions[heuristicSelect.value].heuristicQuestions[
+          questionSelect.value
+        ];
+
+      const optionSelect = options.find(
+        (op) => op.text === question.heuristicAnswer.text,
+      );
+      if (optionSelect) {
+        const optionIndex = graph.label.indexOf(optionSelect.text);
+        graph.data[optionIndex] += 1;
       }
-    },
-    heuristicSelect() {
-      this.questionSelect = -1
-    },
-    questionSelect() {
-      this.ind = 0
-    },
-  },
-  updated() {
-    if (this.heuristic) {
-      this.heuristicSelect = Number(this.heuristic)
+    });
+  }
+  return graph;
+});
+
+watch(
+  answers,
+  () => {
+    if (Object.values(answers.value)) {
+      intro.value = !Object.values(answers.value).length;
     }
   },
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-  },
-  methods: {
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-  },
-}
+  { deep: true },
+);
+
+watch(heuristicSelect, () => {
+  questionSelect.value = -1;
+});
+
+watch(questionSelect, () => {
+  ind.value = 0;
+});
+
+onMounted(async () => {
+  await store.dispatch('getCurrentTestAnswerDoc');
+  // Handle heuristic query param if present
+  if (route.query.heuristic) {
+    heuristicSelect.value = Number(route.query.heuristic);
+  }
+});
+
+const goToCoops = () => {
+  emit('goToCoops');
+};
+
 </script>
 
 <style scoped>
@@ -434,6 +436,5 @@ export default {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
-  /* background: #515069; */
 }
 </style>

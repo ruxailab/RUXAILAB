@@ -18,28 +18,31 @@
       <v-divider />
 
       <v-card-text class="text-white">
-        {{ new Date().getFullYear() }} —
+        {{ currentYear }} —
         <strong>RUXAILAB</strong>
       </v-card-text>
     </v-card>
   </v-footer>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    icons: [
-      { icon: 'mdi-facebook', linkTo: 'https://www.facebook.com' },
-      { icon: 'mdi-twitter', linkTo: 'https://www.twitter.com' },
-      { icon: 'mdi-instagram', linkTo: 'https://www.instagram.com/lgfacens/' },
-    ],
-  }),
-  methods: {
-    sendTo(link) {
-      window.open(link)
-    },
-  },
-}
+<script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
+// Social media icons data
+const icons = [
+  { icon: 'mdi-facebook', linkTo: 'https://www.facebook.com' },
+  { icon: 'mdi-twitter', linkTo: 'https://www.twitter.com' },
+  { icon: 'mdi-instagram', linkTo: 'https://www.instagram.com/lgfacens/' },
+];
+
+const currentYear = computed(() => new Date().getFullYear());
+
+const sendTo = (link) => {
+  window.open(link);
+};
 </script>
 
 <style></style>
