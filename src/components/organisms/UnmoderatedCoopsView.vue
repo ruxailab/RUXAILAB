@@ -212,7 +212,7 @@
                     <v-list>
                       <v-list-item
                         link
-                        @click=";(messageModel = true), (selectedUser = item)"
+                        @click="messageModel = true; selectedUser = item"
                       >
                         <v-list-item-title>
                           {{ $t('HeuristicsCooperators.actions.send_message') }}
@@ -233,9 +233,7 @@
                         @click="removeCoop(item)"
                       >
                         <v-list-item-title>
-                          {{
-                            $t('HeuristicsCooperators.actions.remove_cooperator')
-                          }}
+                          {{ $t('HeuristicsCooperators.actions.remove_cooperator') }}
                         </v-list-item-title>
                       </v-list-item>
 
@@ -244,9 +242,7 @@
                         @click="cancelInvitation(item)"
                       >
                         <v-list-item-title>
-                          {{
-                            $t('HeuristicsCooperators.actions.cancel_invitation')
-                          }}
+                          {{ $t('HeuristicsCooperators.actions.cancel_invitation') }}
                         </v-list-item-title>
                       </v-list-item>
                     </v-list>
@@ -322,335 +318,274 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import Snackbar from '@/components/atoms/Snackbar'
-import Intro from '@/components/molecules/IntroCoops'
-import AccessNotAllowed from '@/components/atoms/AccessNotAllowed'
+import Snackbar from '@/components/atoms/Snackbar.vue'
+import Intro from '@/components/molecules/IntroCoops.vue'
+import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue'
 import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
-// import { cooperatorsHeaders } from '@/utils/headers'
-// import { roleOptionsItems } from '@/utils/items'
 import Notification from '@/models/Notification'
-const UIDGenerator = require('uid-generator')
-export default {
-  components: {
-    ShowInfo,
-    Snackbar,
-    Intro,
-    AccessNotAllowed,
-    LeaveAlert,
-  },
-  props: { id: { type: String, default: '' } },
-  data: () => ({
-    object: null,
-    // headers: headers,
-    // roleOptions: roleOptionsItems,
-    intro: null,
-    email: '',
-    selectedCoops: [],
-    comboboxModel: [],
-    comboboxKey: 0,
-    selectedRole: 1,
-    showCoops: false,
-    verified: false,
-    dataTableKey: 0,
-    messageModel: false,
-    selectedUser: [],
-    messageTitle: '',
-    messageContent: '',
-  }),
-  computed: {
-    dialog() {
-      return this.$store.state.dialog
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    users() {
-      return this.$store.state.Users.users || []
-    },
-    cooperatorsEdit() {
-      return this.test?.cooperators ? [...this.test.cooperators] : [];
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    headers() {
-      return [
-        {
-          text: this.$t('HeuristicsCooperators.headers.email'),
-          value: 'email',
-        },
-        {
-          text: this.$t('HeuristicsCooperators.headers.role'),
-          value: 'accessLevel',
-        },
-        {
-          text: this.$t('HeuristicsCooperators.headers.invited'),
-          value: 'invited',
-          justify: 'center',
-        },
-        {
-          text: this.$t('HeuristicsCooperators.headers.accepted'),
-          value: 'accepted',
-          justify: 'center',
-        },
-        {
-          text: this.$t('HeuristicsCooperators.headers.more'),
-          value: 'more',
-          sortable: false,
-        },
-      ]
-    },
-    roleOptions() {
-      return [
-        {
-          text: this.$t('HeuristicsCooperators.roles.administrator'),
-          value: 0,
-        },
-        { text: this.$t('HeuristicsCooperators.roles.evaluator'), value: 1 },
-        { text: this.$t('HeuristicsCooperators.roles.guest'), value: 2 },
-      ]
-    },
-  },
-  watch: {
-    loading() {
-      if (!this.loading) {
-        if (this.cooperatorsEdit.length == 0) this.intro = true
-        else this.intro = false
-      }
-    },
-  },
-  created() {
-    this.$store.dispatch('getAllUsers')
-  },
-  methods: {
-    removeSelectedCoops(index) {
-      this.selectedCoops.splice(index, 1)
-    },
-    async changeRole(item, newValue) {
-      const index = this.cooperatorsEdit.indexOf(item);
-      const newCoop = Object.assign({}, item);
-      newCoop.accessLevel = newValue; // newValue is the role value (0, 1, or 2)
-      
-      const currentAccessLevelText = this.roleOptions.find(
-        (r) => r.value === item.accessLevel
-      ).text;
-      const newAccessLevelText = this.roleOptions.find(
-        (r) => r.value === newValue
-      ).text;
+import { UIDGenerator } from 'uid-generator'
 
-      if (item.accessLevel !== newValue) {
-        const ok = confirm(
-          this.$t('HeuristicsCooperators.messages.change_role', {
-            email: item.email,
-            old: currentAccessLevelText,
-            new: newAccessLevelText,
-          })
-        );
-        if (ok) {
-          // UPDATE TEST WITH NEW COLLABORATOR ROLE
-          this.test.cooperators[index] = newCoop;
-          await this.$store.dispatch('updateTest', this.test);
-          // UPDATE COOPERATOR ARRAY 'MYANSWERS' TO HAVE NEW ACCESSROLE
-          await this.$store.dispatch('updateUserAnswer', {
-            testDocId: this.test.id,
-            cooperatorId: newCoop.userDocId,
-            data: { accessLevel: newCoop.accessLevel },
-          });
-        } else {
-          this.dataTableKey++; // Force data table re-render without changing user role
-        }
-      }
-    },
-    async submit() {
-      this.test.cooperators = [...this.cooperatorsEdit]
-      await this.$store.dispatch('updateTest', this.test)
-      // Notify users
-      this.cooperatorsEdit.forEach((guest) => {
-        if (!guest.accepted) {
-          this.notifyCooperator(guest)
-        }
+const uidgen = new UIDGenerator()
+
+const props = defineProps({
+  id: {
+    type: String,
+    default: ''
+  }
+})
+
+const store = useStore()
+const { t } = useI18n()
+const toast = useToast()
+
+const object = ref(null)
+const intro = ref(null)
+const email = ref('')
+const selectedCoops = ref([])
+const comboboxModel = ref([])
+const comboboxKey = ref(0)
+const selectedRole = ref(1)
+const showCoops = ref(false)
+const verified = ref(false)
+const dataTableKey = ref(0)
+const messageModel = ref(false)
+const selectedUser = ref([])
+const messageTitle = ref('')
+const messageContent = ref('')
+const combobox = ref(null)
+
+const dialog = computed(() => store.state.dialog)
+const test = computed(() => store.getters.test)
+const user = computed(() => store.getters.user)
+const users = computed(() => store.state.Users?.users || [])
+const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.cooperators] : [])
+const loading = computed(() => store.getters.loading)
+
+const headers = computed(() => [
+  { text: t('HeuristicsCooperators.headers.email'), value: 'email' },
+  { text: t('HeuristicsCooperators.headers.role'), value: 'accessLevel' },
+  { text: t('HeuristicsCooperators.headers.invited'), value: 'invited', justify: 'center' },
+  { text: t('HeuristicsCooperators.headers.accepted'), value: 'accepted', justify: 'center' },
+  { text: t('HeuristicsCooperators.headers.more'), value: 'more', sortable: false }
+])
+
+const roleOptions = computed(() => [
+  { text: t('HeuristicsCooperators.roles.administrator'), value: 0 },
+  { text: t('HeuristicsCooperators.roles.evaluator'), value: 1 },
+  { text: t('HeuristicsCooperators.roles.guest'), value: 2 }
+])
+
+const removeSelectedCoops = (index) => {
+  selectedCoops.value.splice(index, 1)
+}
+
+const changeRole = async (item, newValue) => {
+  const index = cooperatorsEdit.value.indexOf(item)
+  const newCoop = { ...item, accessLevel: newValue }
+  
+  const currentAccessLevelText = roleOptions.value.find(r => r.value === item.accessLevel).text
+  const newAccessLevelText = roleOptions.value.find(r => r.value === newValue).text
+
+  if (item.accessLevel !== newValue) {
+    const ok = confirm(
+      t('HeuristicsCooperators.messages.change_role', {
+        email: item.email,
+        old: currentAccessLevelText,
+        new: newAccessLevelText
       })
-      this.selectedCoops = []
-      this.$refs.combobox.blur()
-    },
-    notifyCooperator(guest) {
-      // Notify user on the platform in case it is already registered
-      if (guest.userDocId) {
-        let path = ''
-        if (guest.accessLevel.value >= 2) {
-          path = 'testview'
-        } else {
-          path = 'managerview'
-        }
-        this.$store.dispatch('addNotification', {
-          userId: guest.userDocId,
-          notification: new Notification({
-            title: 'Cooperation Invite!',
-            description: `You have been invited to test ${this.test.testTitle}!`,
-            redirectsTo: `${path}/${this.test.id}/${guest.token}`,
-            author: `${this.test.testAdmin.email}`,
-            read: false,
-            testId: this.test.id,
-            accessLevel: this.roleOptions[this.selectedRole].value,
-          }),
-        })
-      }
-  if (guest.userDocId) {
-    let path = ''
-    if (guest.accessLevel.value >= 2) {
-      path = 'testview'
+    )
+    if (ok) {
+      test.value.cooperators[index] = newCoop
+      await store.dispatch('updateTest', test.value)
+      await store.dispatch('updateUserAnswer', {
+        testDocId: test.value.id,
+        cooperatorId: newCoop.userDocId,
+        data: { accessLevel: newCoop.accessLevel }
+      })
     } else {
-      path = 'managerview'
+      dataTableKey.value++
     }
-    this.$store.dispatch('addNotification', {
+  }
+}
+
+const submit = async () => {
+  test.value.cooperators = [...cooperatorsEdit.value]
+  await store.dispatch('updateTest', test.value)
+  cooperatorsEdit.value.forEach((guest) => {
+    if (!guest.accepted) {
+      notifyCooperator(guest)
+    }
+  })
+  selectedCoops.value = []
+  combobox.value?.blur()
+}
+
+const notifyCooperator = (guest) => {
+  if (guest.userDocId) {
+    const path = guest.accessLevel.value >= 2 ? 'testview' : 'managerview'
+    store.dispatch('addNotification', {
       userId: guest.userDocId,
       notification: new Notification({
-        title: `${messageTitle}`,
-        description: `${messageContent}`,
+        title: 'Cooperation Invite!',
+        description: `You have been invited to test ${test.value.testTitle}!`,
+        redirectsTo: `${path}/${test.value.id}/${guest.token}`,
+        author: test.value.testAdmin.email,
+        read: false,
+        testId: test.value.id,
+        accessLevel: roleOptions.value[selectedRole.value].value
+      })
+    })
+  }
+}
+
+const sendMessage = (user, title, content) => {
+  if (user.userDocId) {
+    const path = user.accessLevel.value >= 2 ? 'testview' : 'managerview'
+    store.dispatch('addNotification', {
+      userId: user.userDocId,
+      notification: new Notification({
+        title: title,
+        description: content,
         redirectsTo: '/',
         read: false,
-        author: `${this.test.testAdmin.email}`,
-        testId: this.test.id,
-          }),
-        })
-      }
-    },
-    reinvite(guest) {
-      this.notifyCooperator(guest)
-    },
-    saveInvitations() {
-      const uidgen = new UIDGenerator()
-      const tokens = {}
-
-      this.selectedCoops.forEach((coop) => {
-        const token = uidgen.generateSync()
-        if (!coop.id) {
-          this.cooperatorsEdit.push({
-            userDocId: null,
-            email: coop,
-            invited: true,
-            accepted: false,
-            accessLevel: this.roleOptions[this.selectedRole].value,
-            token: token,
-            progress: 0,
-            updateDate: this.test.updateDate,
-            testAuthorEmail: this.test.testAdmin.email,
-          })
-        } else {
-          this.cooperatorsEdit.push({
-            userDocId: coop.id,
-            email: coop.email,
-            invited: true,
-            accepted: false,
-            accessLevel: this.roleOptions[this.selectedRole].value,
-            token: token, // Atribua o token gerado para este colaborador
-            progress: 0,
-            updateDate: this.test.updateDate,
-            testAuthorEmail: this.test.testAdmin.email,
-          })
-        }
-        tokens[coop.id || coop] = token
+        author: test.value.testAdmin.email,
+        testId: test.value.id
       })
-      this.submit()
-    },
-    validateEmail() {
-      this.email = this.comboboxModel.pop()
-      this.comboboxKey++
-      if (typeof this.email !== 'object' && this.email !== undefined) {
-        //if is object then no need to validate
-        if (this.email.length) {
-          if (!this.email.includes('@') || !this.email.includes('.')) {
-            this.$toast.error(i18n.t(errors.globalError))
-          }
-          if (!this.users.find((user) => user.email === this.email)) {
-            this.$toast.error(
-              this.email + ' is not a valid email or does not exist',
-            )
-            return
-          } else if (!this.selectedCoops.includes(this.email)) {
-            this.selectedCoops.push(this.email)
-          }
-        }
-      } else if (!this.selectedCoops.includes(this.email)) {
-        const alreadyInvited = this.cooperatorsEdit.find(
-          (cooperator) => cooperator.email === this.email.email,
-        )
-        if (alreadyInvited) {
-          this.$toast.warning(this.email.email + ' has already been invited')
-          return
-        } else {
-          this.selectedCoops.push(this.email)
-        }
-      }
-    },
-    async removeCoop(coop) {
-      const ok = confirm(
-        this.$t('HeuristicsCooperators.messages.remove_cooperator', {
-          email: coop.email,
-        }),
-      )
-      if (ok) {
-        // Remove from test
-        const index = this.cooperatorsEdit.indexOf(coop)
-        this.cooperatorsEdit.splice(index, 1)
-        this.test.cooperators = this.cooperatorsEdit
-        this.test.numberColaborators = this.test.numberColaborators - 1
-        await this.$store.dispatch('updateTest', this.test)
-        // Remove from cooperator
-        await this.$store.dispatch('removeTestFromCooperator', {
-          test: this.test,
-          cooperator: coop,
-        })
-      }
-    },
-    removeFromList(coop) {
-      const index = this.cooperatorsEdit.indexOf(coop)
-      this.cooperatorsEdit.splice(index, 1)
-    },
-    async sendInvitationMail(guest) {
-      let domain = window.location.href
-      domain = domain.replace(window.location.pathname, '')
-      let email = {
-        testId: this.test.id,
-        from: this.user.email,
-        testTitle: this.test.testTitle,
-        guest: guest,
-        domain: domain,
-      }
-      if (guest.accessLevel === 1) {
-        email = Object.assign(email, {
-          path: 'testview',
-          token: guest.token,
-        })
-      } else {
-        email = Object.assign(email, {
-          path: 'managerview',
-          token: guest.token,
-        })
-      }
-      await this.$store.dispatch('sendEmailInvitation', email)
-    },
-    async cancelInvitation(guest) {
-      const ok = confirm(
-        this.$t('HeuristicsCooperators.messages.cancel_invitation', {
-          email: guest.email,
-        }),
-      )
-      if (ok) {
-        const index = this.cooperatorsEdit.indexOf(guest)
-        this.cooperatorsEdit.splice(index, 1)
-        this.test.cooperators = this.cooperatorsEdit
-        await this.$store.dispatch('updateTest', this.test)
-      }
-    },
-    
-  },
+    })
+  }
+  messageModel.value = false
+  messageTitle.value = ''
+  messageContent.value = ''
 }
+
+const reinvite = (guest) => {
+  notifyCooperator(guest)
+}
+
+const saveInvitations = () => {
+  const tokens = {}
+  selectedCoops.value.forEach((coop) => {
+    const token = uidgen.generateSync()
+    if (!coop.id) {
+      cooperatorsEdit.value.push({
+        userDocId: null,
+        email: coop,
+        invited: true,
+        accepted: false,
+        accessLevel: roleOptions.value[selectedRole.value].value,
+        token,
+        progress: 0,
+        updateDate: test.value.updateDate,
+        testAuthorEmail: test.value.testAdmin.email
+      })
+    } else {
+      cooperatorsEdit.value.push({
+        userDocId: coop.id,
+        email: coop.email,
+        invited: true,
+        accepted: false,
+        accessLevel: roleOptions.value[selectedRole.value].value,
+        token,
+        progress: 0,
+        updateDate: test.value.updateDate,
+        testAuthorEmail: test.value.testAdmin.email
+      })
+    }
+    tokens[coop.id || coop] = token
+  })
+  submit()
+}
+
+const validateEmail = () => {
+  email.value = comboboxModel.value.pop()
+  comboboxKey.value++
+  if (typeof email.value !== 'object' && email.value !== undefined) {
+    if (email.value.length) {
+      if (!email.value.includes('@') || !email.value.includes('.')) {
+        toast.error(t('errors.globalError'))
+      }
+      if (!users.value.find(user => user.email === email.value)) {
+        toast.error(`${email.value} is not a valid email or does not exist`)
+        return
+      } else if (!selectedCoops.value.includes(email.value)) {
+        selectedCoops.value.push(email.value)
+      }
+    }
+  } else if (!selectedCoops.value.includes(email.value)) {
+    const alreadyInvited = cooperatorsEdit.value.find(
+      cooperator => cooperator.email === email.value.email
+    )
+    if (alreadyInvited) {
+      toast.warning(`${email.value.email} has already been invited`)
+      return
+    } else {
+      selectedCoops.value.push(email.value)
+    }
+  }
+}
+
+const removeCoop = async (coop) => {
+  const ok = confirm(
+    t('HeuristicsCooperators.messages.remove_cooperator', { email: coop.email })
+  )
+  if (ok) {
+    const index = cooperatorsEdit.value.indexOf(coop)
+    cooperatorsEdit.value.splice(index, 1)
+    test.value.cooperators = cooperatorsEdit.value
+    test.value.numberColaborators = test.value.numberColaborators - 1
+    await store.dispatch('updateTest', test.value)
+    await store.dispatch('removeTestFromCooperator', {
+      test: test.value,
+      cooperator: coop
+    })
+  }
+}
+
+const sendInvitationMail = async (guest) => {
+  let domain = window.location.href
+  domain = domain.replace(window.location.pathname, '')
+  let email = {
+    testId: test.value.id,
+    from: user.value.email,
+    testTitle: test.value.testTitle,
+    guest,
+    domain
+  }
+  if (guest.accessLevel === 1) {
+    email = { ...email, path: 'testview', token: guest.token }
+  } else {
+    email = { ...email, path: 'managerview', token: guest.token }
+  }
+  await store.dispatch('sendEmailInvitation', email)
+}
+
+const cancelInvitation = async (guest) => {
+  const ok = confirm(
+    t('HeuristicsCooperators.messages.cancel_invitation', { email: guest.email })
+  )
+  if (ok) {
+    const index = cooperatorsEdit.value.indexOf(guest)
+    cooperatorsEdit.value.splice(index, 1)
+    test.value.cooperators = cooperatorsEdit.value
+    await store.dispatch('updateTest', test.value)
+  }
+}
+
+watch(loading, (newVal) => {
+  if (!newVal) {
+    intro.value = cooperatorsEdit.value.length === 0
+  }
+})
+
+onMounted(() => {
+  store.dispatch('getAllUsers')
+})
 </script>
 
 <style scoped>

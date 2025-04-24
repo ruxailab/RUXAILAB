@@ -80,56 +80,47 @@
   </div>
 </template>
 
-<script>
-import Heuristic from '@/components/molecules/HeuristicsTable'
-import OptionsTable from '@/components/molecules/OptionsTable'
-import Settings from '@/components/molecules/HeuristicsSenttings.vue'
-import WeightTable from '@/components/molecules/WeightTable.vue'
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import Heuristic from '@/components/molecules/HeuristicsTable.vue';
+import OptionsTable from '@/components/molecules/OptionsTable.vue';
+import Settings from '@/components/molecules/HeuristicsSenttings.vue';
+import WeightTable from '@/components/molecules/WeightTable.vue';
 
-export default {
-  components: {
-    Heuristic,
-    OptionsTable,
-    Settings,
-    WeightTable,
+defineProps({
+  type: {
+    type: String,
+    required: true,
   },
-  props: {
-    type: {
-      type: String,
-      required: true,
-    },
+  object: {
+    type: Object,
+    default: () => ({}),
+  },
+  index: {
+    type: Number,
+    default: 0,
+  },
+});
 
-    object: {
-      type: Object,
-      default: () => {},
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-  },
-  emits: ['tabClicked', 'change'],
-  computed: {
-    currentTest() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-  },
-  methods: {
-    tabClicked(index) {
-      this.$emit('tabClicked', index)
-    },
-    change(){
-      this.$emit('change')
-    }
-  },
-  
-}
+const emit = defineEmits(['tabClicked', 'change']);
+
+const store = useStore();
+
+const currentTest = computed(() => store.state.Tests.Test.testStructure);
+
+const tabClicked = (index) => {
+  emit('tabClicked', index);
+};
+
+const change = () => {
+  emit('change');
+};
 </script>
 
 <style scoped>
 /* Mobile-responsive styles */
 @media (max-width: 960px) {
-
   .responsive-tabs {
     margin-top: 16px;
     padding: 6px;
@@ -178,14 +169,14 @@ export default {
   }
 
   .mt-responsive {
-  margin-top: 16px;
+    margin-top: 16px;
   }
 }
 
 /* Desktop-responsive styles */
 @media (min-width: 960px) {
-    .tab-icon {
-      display: none; /* Hide icon on larger screens */
-    }
+  .tab-icon {
+    display: none; /* Hide icon on larger screens */
   }
+}
 </style>
