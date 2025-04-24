@@ -10,10 +10,10 @@
       <v-container fluid>
         <v-row no-gutters>
           <v-col class="text-center cardSubtitle">
-            <span
-              >Infelizmente ocorreu uma desconexão. Você precisará realizar a
-              conexão novamente!</span
-            >
+            <span>
+              Infelizmente ocorreu uma desconexão. Você precisará realizar a
+              conexão novamente!
+            </span>
           </v-col>
           <v-col class="text-center">
             <v-img
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       dialog: true,
-      dialogMaxWidth: '40vw', // Define o valor inicial para desktop
+      dialogMaxWidth: '40vw', // Default width for desktop
     }
   },
   methods: {
@@ -54,25 +54,21 @@ export default {
       location.reload()
     },
     updateDialogMaxWidth() {
-      // Atualiza o valor máximo do diálogo com base no tamanho da viewport
+      // Use mutually exclusive conditions for proper responsiveness
       if (window.innerWidth <= 600) {
-        this.dialogMaxWidth = '80vw' // Define o valor para telas menores que 600px de largura
-      }
-      if (window.innerWidth <= 900) {
-        this.dialogMaxWidth = '60vw' // Define o valor para telas menores que 600px de largura
+        this.dialogMaxWidth = '80vw' // phones
+      } else if (window.innerWidth <= 900) {
+        this.dialogMaxWidth = '60vw' // tablets
       } else {
-        this.dialogMaxWidth = '40vw' // Define o valor para telas maiores que 600px de largura
+        this.dialogMaxWidth = '40vw' // desktops
       }
     },
   },
   mounted() {
-    // Chama a função para definir o valor inicial de dialogMaxWidth
     this.updateDialogMaxWidth()
-    // Adiciona um listener para ajustar o dialogMaxWidth quando a tela for redimensionada
     window.addEventListener('resize', this.updateDialogMaxWidth)
   },
   beforeDestroy() {
-    // Remove o listener do evento resize para evitar vazamentos de memória
     window.removeEventListener('resize', this.updateDialogMaxWidth)
   },
 }
