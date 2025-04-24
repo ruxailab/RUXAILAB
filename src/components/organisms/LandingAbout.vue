@@ -116,17 +116,12 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  methods: {
-    goToGithub() {
-      window.open(
-        'https://github.com/uramakilab/remote-usability-lab',
-        '_blank'
-      );
-    },
-  },
-};
+<script setup>
+const goToGithub = () => {
+  window.open(
+    'https://github.com/uramakilab/remote-usability-lab',
+    '_blank'
+  )}
 </script>
 
 <style scoped>
