@@ -138,7 +138,7 @@ import Intro from '@/components/molecules/IntroReports.vue';
 import Snackbar from '@/components/atoms/Snackbar.vue';
 
 const store = useStore();
-const { t: i18n } = useI18n();
+const { t } = useI18n();
 const toast = useToast()
 
 const props = defineProps({
@@ -154,24 +154,24 @@ const report = ref(null);
 
 const headers = computed(() => [
   {
-    text: i18n('HeuristicsReport.headers.evaluator'),
+    text: t('HeuristicsReport.headers.evaluator'),
     value: 'userDocId',
   },
   {
-    text: i18n('HeuristicsReport.headers.last_update'),
+    text: t('HeuristicsReport.headers.last_update'),
     value: 'lastUpdate',
   },
   {
-    text: i18n('HeuristicsReport.headers.progress'),
+    text: t('HeuristicsReport.headers.progress'),
     value: 'progress',
     justify: 'center',
   },
   {
-    text: i18n('HeuristicsReport.headers.status'),
+    text: t('HeuristicsReport.headers.status'),
     value: 'submitted',
   },
   {
-    text: i18n('HeuristicsReport.headers.more'),
+    text: t('HeuristicsReport.headers.more'),
     value: 'more',
     justify: 'end',
   },
@@ -212,7 +212,7 @@ const user = computed(() => store.getters.user);
 const test = computed(() => store.getters.test);
 const answers = computed(() => store.getters.answers || {});
 const dialogText = computed(() =>
-  i18n('HeuristicsReport.messages.sure_to_delete', {
+  t('HeuristicsReport.messages.sure_to_delete', {
     user: report.value !== null ? report.value.email : '',
   })
 );
@@ -223,8 +223,8 @@ watch(reports, () => {
 
 const checkIfIsSubmitted = (status) => {
   return status
-    ? i18n('HeuristicsReport.status.submitted')
-    : i18n('HeuristicsReport.status.in_progress');
+    ? t('HeuristicsReport.status.submitted')
+    : t('HeuristicsReport.status.in_progress');
 };
 
 const getCurrentAnswer = async () => {
@@ -268,7 +268,7 @@ const removeReport = async (report) => {
   await getCurrentAnswer();
   loadingBtn.value = false;
   dialog.value = false;
-  toast?.success(i18n('alerts.genericSuccess'));
+  toast?.success(t('alerts.genericSuccess'));
 };
 
 const formatDate = (timestamp) => {
@@ -292,13 +292,13 @@ const formatDate = (timestamp) => {
   } else if (minuteDiff > 0) {
     return formatTimeAgo(minuteDiff, 'minutes');
   } else {
-    return i18n('common.timeAgo.now');
+    return t('common.timeAgo.now');
   }
 };
 
 const formatTimeAgo = (timeDiff, unit) => {
   const translationKey = `common.timeAgo.${unit}`;
-  const translatedText = i18n(translationKey, { count: timeDiff });
+  const translatedText = t(translationKey, { count: timeDiff });
   return translatedText;
 };
 

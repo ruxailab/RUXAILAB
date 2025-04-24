@@ -626,7 +626,7 @@ const props = defineProps({
 
 const router = useRouter();
 const route = useRoute();
-const { t: i18n} = useI18n();
+const { t } = useI18n();
 const { xs } = useDisplay();
 
 const currentYear = ref(new Date().getFullYear());
@@ -655,8 +655,8 @@ const categories = ref([
 // FAQ Items
 const generateFaqItems = () => {
   const createFaqItem = (keyPrefix, category, gif) => ({
-    title: i18n(`help.${keyPrefix}`),
-    content: i18n(`help.${keyPrefix}answer`),
+    title: t(`help.${keyPrefix}`),
+    content: t(`help.${keyPrefix}answer`),
     gif: `${gif}.mp4`,
     isCollapsed: true,
     category,

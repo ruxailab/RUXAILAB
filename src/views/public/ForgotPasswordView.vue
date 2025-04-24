@@ -88,7 +88,7 @@ import { useI18n } from 'vue-i18n'
 
 const store = useStore();
 const router = useRouter();
-const { t: i18n} = useI18n();
+const { t } = useI18n();
 
 const valid = ref(false);
 const email = ref('');
@@ -96,8 +96,8 @@ const form = ref(null);
 
 // Email validation rules
 const emailRules = [
-  (v) => !!v || i18n('errors.emailIsRequired'),
-  (v) => /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || i18n('errors.invalidEmail'),
+  (v) => !!v || t('errors.emailIsRequired'),
+  (v) => /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) || t('errors.invalidEmail'),
 ];
 
 const loading = computed(() => store.getters.loading);
