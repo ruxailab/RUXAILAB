@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-tabs
-      v-if="type == 'tabs'"
+      v-if="type === 'tabs'"
       bg-color="transparent"
       color="#FCA326"
       class="pb-0 mb-0"
@@ -18,14 +18,14 @@
     </v-tabs>
 
     <v-col
-      v-else-if="type == 'content'"
+      v-else-if="type === 'content'"
       cols="12"
     >
       <!-- Desktop Layout -->
       <v-row v-if="isDesktop">
         <!-- PRE-TEST -->
         <v-col
-          v-if="index == 0"
+          v-if="index === 0"
           cols="8"
         >
           <v-card
@@ -47,7 +47,7 @@
           </v-card>
         </v-col>
         <v-col
-          v-if="index == 0"
+          v-if="index === 0"
           cols="4"
           class="pl-0"
           style="height: 19vh;"
@@ -71,7 +71,7 @@
               color="orange"
               class="mx-6 mt-3"
               :placeholder="$t('ModeratedTest.welcomeMessage')"
-              @change="saveWelcomeState()"
+              @change="saveWelcomeState"
             />
             <v-col
               cols="12"
@@ -87,7 +87,7 @@
                 :placeholder="$t('ModeratedTest.url')"
                 variant="outlined"
                 color="orange"
-                @change="saveLandingPage()"
+                @change="saveLandingPage"
               />
             </v-col>
             <v-col
@@ -98,7 +98,7 @@
               <v-radio-group
                 v-model="participantCamera"
                 class="pt-0"
-                @update:model-value="saveParticipantCamera()"
+                @update:model-value="saveParticipantCamera"
               >
                 <v-radio
                   :label="$t('ModeratedTest.cameraOptions.optional')"
@@ -120,7 +120,7 @@
           </v-card>
         </v-col>
         <v-col
-          v-if="index == 0"
+          v-if="index === 0"
           cols="8"
           class="pt-0 pb-0"
         >
@@ -140,7 +140,7 @@
         
         <!-- Tasks -->
         <v-col
-          v-if="index == 1"
+          v-if="index === 1"
           cols="12"
         >
           <ModeratedTasks />
@@ -148,7 +148,7 @@
         
         <!-- Post Test -->
         <v-col
-          v-if="index == 2"
+          v-if="index === 2"
           cols="12"
         >
           <v-card
@@ -168,7 +168,7 @@
           </v-card>
         </v-col>
         <v-col
-          v-if="index == 2"
+          v-if="index === 2"
           cols="12"
           class="pt-0"
         >
@@ -192,7 +192,7 @@
               color="orange"
               class="mx-6 mt-3"
               :placeholder="$t('ModeratedTest.finalMessagePlaceholder')"
-              @change="saveFinalMessage()"
+              @change="saveFinalMessage"
             />
           </v-card>
         </v-col>
@@ -202,7 +202,7 @@
       <v-row v-else>
         <!-- PRE-TEST Mobile -->
         <v-col
-          v-if="index == 0"
+          v-if="index === 0"
           cols="12"
         >
           <v-card
@@ -239,7 +239,7 @@
                 color="orange"
                 class="mt-3"
                 :placeholder="$t('ModeratedTest.welcomeMessagePlaceholder')"
-                @change="saveWelcomeState()"
+                @change="saveWelcomeState"
               />
             </v-col>
 
@@ -257,7 +257,7 @@
                 :placeholder="$t('ModeratedTest.landingPagePlaceholder')"
                 variant="outlined"
                 color="orange"
-                @change="saveLandingPage()"
+                @change="saveLandingPage"
               />
             </v-col>
 
@@ -269,7 +269,7 @@
               <v-radio-group
                 v-model="participantCamera"
                 class="pt-0"
-                @update:model-value="saveParticipantCamera()"
+                @update:model-value="saveParticipantCamera"
               >
                 <v-radio
                   :label="$t('ModeratedTest.cameraOptions.optional')"
@@ -306,7 +306,7 @@
 
         <!-- Tasks Mobile -->
         <v-col
-          v-if="index == 1"
+          v-if="index === 1"
           cols="12"
         >
           <ModeratedTasks />
@@ -314,7 +314,7 @@
 
         <!-- Post Test Mobile -->
         <v-col
-          v-if="index == 2"
+          v-if="index === 2"
           cols="12"
         >
           <v-card
@@ -330,7 +330,7 @@
               <br>
               <span class="cardsSubtitle">{{ $t('ModeratedTest.postFormDescription') }}</span>
               <FormPostTest
-                :class="{'mobile-post-form': !$vuetify.breakpoint.lgAndUp}"
+                :class="{ 'mobile-post-form': !$vuetify.breakpoint.lgAndUp }"
                 @input="updateData"
               />
             </v-col>
@@ -355,7 +355,7 @@
                 color="orange"
                 class="mt-3"
                 :placeholder="$t('ModeratedTest.finalMessagePlaceholder')"
-                @change="saveFinalMessage()"
+                @change="saveFinalMessage"
               />
             </v-col>
           </v-card>
@@ -365,169 +365,144 @@
   </div>
 </template>
 
-<script>
-import { useDisplay } from 'vuetify'
-import FormPostTest from '../atoms/FormPostTest.vue'
-import UserVariables from '../atoms/UserVariables.vue'
-import ModeratedTasks from '../atoms/ModeratedTasks.vue'
-import UserConsent from '../atoms/UserConsent.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useDisplay } from 'vuetify';
+import FormPostTest from '../atoms/FormPostTest.vue';
+import UserVariables from '../atoms/UserVariables.vue';
+import ModeratedTasks from '../atoms/ModeratedTasks.vue';
+import UserConsent from '../atoms/UserConsent.vue';
 
-export default {
-  components: { 
-    FormPostTest, 
-    UserVariables, 
-    ModeratedTasks, 
-    UserConsent 
+defineProps({
+  type: {
+    type: String,
+    required: true,
   },
-  props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-    object: {
-      type: Object,
-      default: () => ({}),
-    },
+  index: {
+    type: Number,
+    default: 0,
   },
-  emits: ['tabClicked'],
-  setup() {
-    const { lgAndUp } = useDisplay()
-    return {
-      isDesktop: lgAndUp
-    }
+  object: {
+    type: Object,
+    default: () => ({}),
   },
-  data() {
-    return {
-      formData: {
-        preTest: [],
-        postTest: [],
-      },
-      welcomeMessage: '',
-      landingPage: '',
-      participantCamera: '',
-      finalMessage: '',
-    }
-  },
-  computed: {
-    consentStore() {
-      return this.$store.getters.consent
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    testStructure() {
-      return this.$store.state.Tests.Test.testStructure || {}
-    },
-    welcomeMessageStore() {
-      return this.$store.getters.welcomeMessage
-    },
-    landingPageStore() {
-      return this.$store.getters.landingPage
-    },
-    participantCameraStore() {
-      return this.$store.getters.participantCamera
-    },
-    finalMessageStore() {
-      return this.$store.getters.finalMessage
-    },
-  },
+});
 
-  mounted() {
-    this.getWelcome()
-    this.getLandingPage()
-    this.getParticipantCamera()
-    this.getFinalMessage()
+const emit = defineEmits(['tabClicked']);
 
-    if (this.type !== 'content' && this.type != 'tabs') {
-      console.error(this.type + ' type in EditUserTest.vue is not valid.')
-    }
-    if (this.testStructure.postTest) {
-      this.$store.dispatch('setPostTest', this.testStructure.postTest)
-    }
-    if (this.testStructure.preTest) {
-      this.$store.dispatch('setPreTest', this.testStructure.preTest)
-    }
-    if (this.testStructure.consent) {
-      this.$store.dispatch('setConsent', this.testStructure.consent)
-    }
-  },
+const { lgAndUp } = useDisplay();
+const isDesktop = lgAndUp;
 
-  methods: {
-    updateData(data) {
-      if (this.index == 0) {
-        this.$store.dispatch('setPreTest', data)
-      }
-      if (this.index == 2) {
-        this.$store.dispatch('setPostTest', data)
-      }
-    },
-    tabClicked(index) {
-      this.$emit('tabClicked', index)
-    },
-    getWelcome() {
-      if (this.testStructure.welcomeMessage) {
-        this.$store.dispatch(
-          'setWelcomeMessage',
-          this.testStructure.welcomeMessage,
-        )
-        this.welcomeMessage = this.testStructure.welcomeMessage
-      } else if (this.welcomeMessageStore) {
-        this.welcomeMessage = this.welcomeMessageStore
-      }
-    },
+const store = useStore();
+const { t } = useI18n();
 
-    getLandingPage() {
-      if (this.testStructure.landingPage) {
-        this.$store.dispatch('setLandingPage', this.testStructure.landingPage)
-        this.landingPage = this.testStructure.landingPage
-      } else if (this.landingPageStore) {
-        this.landingPage = this.landingPageStore
-      }
-    },
+const formData = ref({
+  preTest: [],
+  postTest: [],
+});
+const welcomeMessage = ref('');
+const landingPage = ref('');
+const participantCamera = ref('');
+const finalMessage = ref('');
 
-    getParticipantCamera() {
-      if (this.testStructure.participantCamera) {
-        this.$store.dispatch(
-          'setParticipantCamera',
-          this.testStructure.participantCamera,
-        )
-        this.participantCamera = this.testStructure.participantCamera
-      } else if (this.participantCameraStore) {
-        this.participantCamera = this.participantCameraStore
-      }
-    },
+const consentStore = computed(() => store.getters.consent);
+const test = computed(() => store.getters.test);
+const testStructure = computed(() => store.state.Tests.Test.testStructure || {});
+const welcomeMessageStore = computed(() => store.getters.welcomeMessage);
+const landingPageStore = computed(() => store.getters.landingPage);
+const participantCameraStore = computed(() => store.getters.participantCamera);
+const finalMessageStore = computed(() => store.getters.finalMessage);
 
-    getFinalMessage() {
-      if (this.testStructure.finalMessage) {
-        this.$store.dispatch('setFinalMessage', this.testStructure.finalMessage)
-        this.finalMessage = this.testStructure.finalMessage
-      } else if (this.finalMessageStore) {
-        this.finalMessage = this.finalMessageStore
-      }
-    },
+const updateData = (data) => {
+  if (index === 0) {
+    store.dispatch('setPreTest', data);
+  }
+  if (index === 2) {
+    store.dispatch('setPostTest', data);
+  }
+};
 
-    saveWelcomeState() {
-      this.$store.dispatch('setWelcomeMessage', this.welcomeMessage)
-      this.test.testStructure.welcomeMessage = this.welcomeMessage
-    },
-    saveLandingPage() {
-      this.$store.dispatch('setLandingPage', this.landingPage)
-      this.test.testStructure.landingPage = this.landingPage
-    },
-    saveParticipantCamera() {
-      this.$store.dispatch('setParticipantCamera', this.participantCamera)
-      this.test.testStructure.participantCamera = this.participantCamera
-    },
-    saveFinalMessage() {
-      this.$store.dispatch('setFinalMessage', this.finalMessage)
-      this.test.testStructure.finalMessage = this.finalMessage
-    },
-  },
-}
+const tabClicked = (index) => {
+  emit('tabClicked', index);
+};
+
+const getWelcome = () => {
+  if (testStructure.value.welcomeMessage) {
+    store.dispatch('setWelcomeMessage', testStructure.value.welcomeMessage);
+    welcomeMessage.value = testStructure.value.welcomeMessage;
+  } else if (welcomeMessageStore.value) {
+    welcomeMessage.value = welcomeMessageStore.value;
+  }
+};
+
+const getLandingPage = () => {
+  if (testStructure.value.landingPage) {
+    store.dispatch('setLandingPage', testStructure.value.landingPage);
+    landingPage.value = testStructure.value.landingPage;
+  } else if (landingPageStore.value) {
+    landingPage.value = landingPageStore.value;
+  }
+};
+
+const getParticipantCamera = () => {
+  if (testStructure.value.participantCamera) {
+    store.dispatch('setParticipantCamera', testStructure.value.participantCamera);
+    participantCamera.value = testStructure.value.participantCamera;
+  } else if (participantCameraStore.value) {
+    participantCamera.value = participantCameraStore.value;
+  }
+};
+
+const getFinalMessage = () => {
+  if (testStructure.value.finalMessage) {
+    store.dispatch('setFinalMessage', testStructure.value.finalMessage);
+    finalMessage.value = testStructure.value.finalMessage;
+  } else if (finalMessageStore.value) {
+    finalMessage.value = finalMessageStore.value;
+  }
+};
+
+const saveWelcomeState = () => {
+  store.dispatch('setWelcomeMessage', welcomeMessage.value);
+  test.value.testStructure.welcomeMessage = welcomeMessage.value;
+};
+
+const saveLandingPage = () => {
+  store.dispatch('setLandingPage', landingPage.value);
+  test.value.testStructure.landingPage = landingPage.value;
+};
+
+const saveParticipantCamera = () => {
+  store.dispatch('setParticipantCamera', participantCamera.value);
+  test.value.testStructure.participantCamera = participantCamera.value;
+};
+
+const saveFinalMessage = () => {
+  store.dispatch('setFinalMessage', finalMessage.value);
+  test.value.testStructure.finalMessage = finalMessage.value;
+};
+
+onMounted(() => {
+  getWelcome();
+  getLandingPage();
+  getParticipantCamera();
+  getFinalMessage();
+
+  if (type !== 'content' && type !== 'tabs') {
+    console.error(`${type} type in EditUserTest.vue is not valid.`);
+  }
+  if (testStructure.value.postTest) {
+    store.dispatch('setPostTest', testStructure.value.postTest);
+  }
+  if (testStructure.value.preTest) {
+    store.dispatch('setPreTest', testStructure.value.preTest);
+  }
+  if (testStructure.value.consent) {
+    store.dispatch('setConsent', testStructure.value.consent);
+  }
+});
 </script>
 
 <style scoped>

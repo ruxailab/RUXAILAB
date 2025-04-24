@@ -1,6 +1,6 @@
 <template>
   <v-tabs
-    v-if="type == 'tabs'"
+    v-if="type === 'tabs'"
     bg-color="transparent"
     color="#FCA326"
     class="pb-0 mb-0"
@@ -20,11 +20,11 @@
   </v-tabs>
 
   <v-col
-    v-else-if="type == 'content'"
+    v-else-if="type === 'content'"
     cols="12"
   >
     <v-card
-      v-if="index == 0"
+      v-if="index === 0"
       rounded="xxl"
       style="background: #f5f7ff"
     >
@@ -41,7 +41,7 @@
     </v-card>
 
     <v-card
-      v-if="index == 1"
+      v-if="index === 1"
       rounded="xxl"
       style="background: #f5f7ff"
     >
@@ -57,10 +57,14 @@
       </v-row>
     </v-card>
 
-    <ListTasks v-if="index == 2" :tasks="object.itemsTasks" @input="updateData" />
+    <ListTasks
+      v-if="index === 2"
+      :tasks="object.itemsTasks"
+      @input="updateData"
+    />
 
     <v-card
-      v-if="index == 3"
+      v-if="index === 3"
       rounded="xxl"
       style="background: #f5f7ff"
     >
@@ -78,76 +82,67 @@
   </v-col>
 </template>
 
-<script>
-import ListTasks from '@/components/molecules/ListTasks'
-import FormPostTest from '@/components/atoms/FormPostTest'
-import UserVariables from '@/components/atoms/UserVariables'
-import UserConsent from '@/components/atoms/UserConsent'
+<script setup>
+import { defineProps, defineEmits, computed, onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import ListTasks from '@/components/molecules/ListTasks.vue';
+import FormPostTest from '@/components/atoms/FormPostTest.vue';
+import UserVariables from '@/components/atoms/UserVariables.vue';
+import UserConsent from '@/components/atoms/UserConsent.vue';
 
-export default {
-  components: {
-    ListTasks,
-    UserVariables,
-    UserConsent,
-    FormPostTest,
+const props = defineProps({
+  type: {
+    type: String,
+    required: true,
   },
-  props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-    object: {
-      type: Object,
-      default: () => { },
-    },
+  index: {
+    type: Number,
+    default: 0,
   },
-  emits: ['tabClicked'],
-  data() {
-    return {
-      formData: {
-        preTest: [],
-        postTest: [],
-      },
-    }
+  object: {
+    type: Object,
+    default: () => ({}),
   },
-  computed: {
-    testStructure() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-  },
-  mounted() {
-    if (this.type !== 'content' && this.type != 'tabs') {
-      console.error(this.type + ' type in EditUserTest.vue is not valid.')
-    }
-    if (this.testStructure.postTest) {
-      this.$store.dispatch('setPostTest', this.testStructure.postTest)
-    }
-    if (this.testStructure.preTest) {
-      this.$store.dispatch('setPreTest', this.testStructure.preTest)
-    }
-    if (this.testStructure.consent) {
-      this.$store.dispatch('setConsent', this.testStructure.consent)
-    }
-  },
+});
 
-  methods: {
-    tabClicked(index) {
-      this.$emit('tabClicked', index)
-    },
-    updateData(data) {
-      if (this.index == 0) {
-        this.$store.dispatch('setPreTest', data)
-      }
-      if (this.index == 2) {
-        this.$store.dispatch('setPostTest', data)
-      }
-    },
-  },
-}
+const emit = defineEmits(['tabClicked']);
+
+const store = useStore();
+
+const formData = ref({
+  preTest: [],
+  postTest: [],
+});
+
+const testStructure = computed(() => store.state.Tests.Test.testStructure);
+
+onMounted(() => {
+  if (props.type !== 'content' && props.type !== 'tabs') {
+    console.error(`${props.type} type in EditUserTest.vue is not valid.`);
+  }
+  if (testStructure.value.postTest) {
+    store.dispatch('setPostTest', testStructure.value.postTest);
+  }
+  if (testStructure.value.preTest) {
+    store.dispatch('setPreTest', testStructure.value.preTest);
+  }
+  if (testStructure.value.consent) {
+    store.dispatch('setConsent', testStructure.value.consent);
+  }
+});
+
+const tabClicked = (index) => {
+  emit('tabClicked', index);
+};
+
+const updateData = (data) => {
+  if (props.index === 0) {
+    store.dispatch('setPreTest', data);
+  }
+  if (props.index === 2) {
+    store.dispatch('setPostTest', data);
+  }
+};
 </script>
 
 <style scoped>
