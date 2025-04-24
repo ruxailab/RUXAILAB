@@ -117,22 +117,22 @@ const form = ref(null)
 
 const store = useStore()
 const router = useRouter()
-const { t: i18n } = useI18n()
+const { t } = useI18n()
 
 const emailRules = computed(() => [
-  v => !!v || i18n('errors.emailIsRequired'),
-  v => /.+@.+\..+/.test(v) || i18n('errors.invalidEmail'),
+  v => !!v || t('errors.emailIsRequired'),
+  v => /.+@.+\..+/.test(v) || t('errors.invalidEmail'),
 ])
 
 const passwordRules = computed(() => [
-  v => !!v || i18n('errors.passwordRequired'),
-  v => v.length >= 8 || i18n('errors.passwordValidate'),
-  v => /[A-Z]/.test(v) || i18n('errors.passwordUppercase'),
-  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n('errors.passwordSymbol'),
+  v => !!v || t('errors.passwordRequired'),
+  v => v.length >= 8 || t('errors.passwordValidate'),
+  v => /[A-Z]/.test(v) || t('errors.passwordUppercase'),
+  v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || t('errors.passwordSymbol'),
 ])
 
 const comparePassword = computed(() => 
-  v => (v === password.value && v !== '') || i18n('errors.differentPasswords')
+  v => (v === password.value && v !== '') || t('errors.differentPasswords')
 )
 
 const user = computed(() => store.getters.user)

@@ -623,7 +623,7 @@ import { countries } from '@/utils/countries';
 const store = useStore();
 const user = computed(() => store.getters.user || { email: '' });
 
-const { t: i18n } = useI18n();
+const { t } = useI18n();
 const toast = useToast();
 
 const userprofile = ref({
@@ -663,23 +663,23 @@ const fileInput = ref(null);
 
 // Validation rules
 const usernameRules = [
-  (v) => !!v || i18n('PROFILE.usernameRequired'),
-  (v) => (v && v.length >= 3) || i18n('PROFILE.usernameMinLength'),
+  (v) => !!v || t('PROFILE.usernameRequired'),
+  (v) => (v && v.length >= 3) || t('PROFILE.usernameMinLength'),
 ];
-const countryRules = [(v) => !!v || i18n('PROFILE.countryRequired')];
+const countryRules = [(v) => !!v || t('PROFILE.countryRequired')];
 const contactRules = [
-  (v) => !!v || i18n('PROFILE.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || i18n('PROFILE.enterValidPhoneNumber'),
+  (v) => !!v || t('PROFILE.contactNumberRequired'),
+  (v) => /^\d{9,15}$/.test(v) || t('PROFILE.enterValidPhoneNumber'),
 ];
 const passwordRules = [
-  (v) => !!v || i18n('PROFILE.passwordRequired'),
-  (v) => v.length >= 8 || i18n('PROFILE.passwordMinLength'),
-  (v) => /[A-Z]/.test(v) || i18n('PROFILE.passwordUppercase'),
-  (v) => hasSpecialChar(v) || i18n('PROFILE.passwordSymbol'),
+  (v) => !!v || t('PROFILE.passwordRequired'),
+  (v) => v.length >= 8 || t('PROFILE.passwordMinLength'),
+  (v) => /[A-Z]/.test(v) || t('PROFILE.passwordUppercase'),
+  (v) => hasSpecialChar(v) || t('PROFILE.passwordSymbol'),
 ];
 const confirmPasswordRules = [
-  (v) => !!v || i18n('PROFILE.confirmPasswordRequired'),
-  (v) => v === newPassword.value || i18n('PROFILE.passwordsMatch'),
+  (v) => !!v || t('PROFILE.confirmPasswordRequired'),
+  (v) => v === newPassword.value || t('PROFILE.passwordsMatch'),
 ];
 
 const specialCharColor = computed(() =>
@@ -690,22 +690,22 @@ const specialCharIcon = computed(() =>
 );
 const profileItems = computed(() => [
   {
-    label: i18n('PROFILE.username'),
+    label: t('PROFILE.username'),
     value: userprofile.value.username,
     icon: 'mdi-account',
   },
   {
-    label: i18n('PROFILE.email'),
+    label: t('PROFILE.email'),
     value: user.value.email,
     icon: 'mdi-email',
   },
   {
-    label: i18n('PROFILE.contact'),
+    label: t('PROFILE.contact'),
     value: userprofile.value.contactNo,
     icon: 'mdi-phone',
   },
   {
-    label: i18n('PROFILE.country'),
+    label: t('PROFILE.country'),
     value: userprofile.value.country,
     icon: 'mdi-map-marker',
   },
@@ -727,7 +727,7 @@ const uploadProfileImage = async (event) => {
   try {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (!user) throw new Error(i18n('PROFILE.noUserSignedIn'));
+    if (!user) throw new Error(t('PROFILE.noUserSignedIn'));
 
     const storage = getStorage();
     const storageReference = storageRef(storage, `profileImages/${user.uid}`);
@@ -741,10 +741,10 @@ const uploadProfileImage = async (event) => {
 
     userprofile.value.profileImage = downloadURL;
     editProfileData.value.profileImage = downloadURL;
-    toast.success(i18n('PROFILE.profileImageUpdatedSuccess'));
+    toast.success(t('PROFILE.profileImageUpdatedSuccess'));
   } catch (error) {
     console.error('Error uploading image:', error);
-    toast.error(i18n('PROFILE.profileImageUploadFailed'));
+    toast.error(t('PROFILE.profileImageUploadFailed'));
   }
 };
 
@@ -773,7 +773,7 @@ const fetchUserProfile = async () => {
     }
   } catch (error) {
     console.error('Error fetching profile:', error);
-    toast.error(i18n('PROFILE.profileLoadFailed'));
+    toast.error(t('PROFILE.profileLoadFailed'));
   } finally {
     loading.value = false;
   }
@@ -813,12 +813,12 @@ const saveProfile = async () => {
         country: editProfileData.value.country,
       };
 
-      toast.success(i18n('PROFILE.profileUpdatedSuccess'));
+      toast.success(t('PROFILE.profileUpdatedSuccess'));
       editProfileDialog.value = false;
     }
   } catch (error) {
     console.error('Error updating profile:', error);
-    toast.error(i18n('PROFILE.profileUpdateFailed'));
+    toast.error(t('PROFILE.profileUpdateFailed'));
   }
 };
 
@@ -830,21 +830,21 @@ const changePassword = async () => {
 
       if (user) {
         await updatePassword(user, newPassword.value);
-        toast.success(i18n('PROFILE.passwordChangedSuccess'));
+        toast.success(t('PROFILE.passwordChangedSuccess'));
         newPassword.value = '';
         confirmPassword.value = '';
         passwordForm.value.reset();
       }
     } catch (error) {
       console.error('Error changing password:', error);
-      toast.error(i18n('PROFILE.passwordChangeFailed'));
+      toast.error(t('PROFILE.passwordChangeFailed'));
     }
   }
 };
 
 const deleteAccount = async () => {
   if (!userPassword.value) {
-    toast.error(i18n('PROFILE.passwordRequired'));
+    toast.error(t('PROFILE.passwordRequired'));
     return;
   }
 
@@ -888,17 +888,17 @@ const deleteAccount = async () => {
       await deleteDoc(userDocRef);
 
       await user.delete();
-      toast.success(i18n('PROFILE.accountDeletedSuccess'));
+      toast.success(t('PROFILE.accountDeletedSuccess'));
       deleteAccountDialog.value = false;
       signOut();
     } catch (error) {
       console.error('Error during account deletion:', error);
-      toast.error(i18n('PROFILE.accountDeletionFailed'));
+      toast.error(t('PROFILE.accountDeletionFailed'));
     } finally {
       isDeleting.value = false;
     }
   } else {
-    toast.error(i18n('PROFILE.noUserSignedIn'));
+    toast.error(t('PROFILE.noUserSignedIn'));
   }
 };
 

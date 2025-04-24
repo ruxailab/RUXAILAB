@@ -229,7 +229,7 @@ import TempDialog from '@/components/molecules/TemplateInfoDialog.vue';
 
 const store = useStore();
 const router = useRouter();
-const { t: i18n } = useI18n();
+const { t } = useI18n();
 
 const search = ref('');
 const mainIndex = ref(0);
