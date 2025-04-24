@@ -178,7 +178,7 @@ import { useToast } from "vue-toastification"
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-const { t: i18n} = useI18n();
+const { t } = useI18n();
 const toast = useToast()
 
 const props = defineProps(['id']);
@@ -202,7 +202,7 @@ const form1 = ref(null);
 const tempform = ref(null);
 
 const titleRequired = [
-  v => !!v || i18n('errors.fieldRequired'),
+  v => !!v || t('errors.fieldRequired'),
   v => v.length <= 200 || 'Max 200 characters',
 ];
 
@@ -294,7 +294,7 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     await store.dispatch('updateTest', new Test(object.value));
     localChanges.value = false;
-    toast.success(i18n('alerts.savedChanges'));
+    toast.success(t('alerts.savedChanges'));
   } else if (title.length >= 200) {
     toast.warning('Title must not exceed 200 characters.');
   } else {

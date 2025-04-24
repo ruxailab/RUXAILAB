@@ -821,7 +821,7 @@ import { useToast } from 'vue-toastification';
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-const { t: i18n } = useI18n();
+const { t } = useI18n();
 const toast = useToast();
 
 const connectionStatus = ref(false);
@@ -1259,7 +1259,7 @@ onMounted(async () => {
       (user) => user.userDocId === route.params.token,
     );
     if (user.value.id !== route.params.token && !isAdmin.value) {
-      toast.error(i18n('errors.globalError'));
+      toast.error(t('errors.globalError'));
       router.push('/testslist');
       return;
     }
