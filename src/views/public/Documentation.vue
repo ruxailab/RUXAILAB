@@ -1,10 +1,7 @@
 <template>
   <v-container class="container-max-width">
     <v-row justify="center">
-      <v-col
-        cols="12"
-        class="text-center mb-6"
-      >
+      <v-col cols="12" class="text-center mb-6">
         <h1 class="text-h4 font-weight-bold text-primary">
           WCAG Accessibility Guidelines
         </h1>
@@ -73,10 +70,7 @@
                       >
                         <v-card-title class="py-3">
                           <v-row align="center">
-                            <v-col
-                              cols="12"
-                              sm="8"
-                            >
+                            <v-col cols="12" sm="8">
                               <div class="d-flex align-center">
                                 <div class="rule-id mr-2">
                                   {{ rule.id }}
@@ -86,11 +80,7 @@
                                 </div>
                               </div>
                             </v-col>
-                            <v-col
-                              cols="12"
-                              sm="4"
-                              class="text-sm-right"
-                            >
+                            <v-col cols="12" sm="4" class="text-sm-right">
                               <v-chip
                                 :color="getLevelColor(rule.level)"
                                 size="small"
@@ -112,10 +102,7 @@
                         <v-divider />
 
                         <v-card-text class="pa-4">
-                          <v-list
-                            density="compact"
-                            class="bg-transparent"
-                          >
+                          <v-list density="compact" class="bg-transparent">
                             <v-list-item
                               v-for="(criterion, i) in rule.criteria"
                               :key="i"
@@ -145,40 +132,26 @@
   </v-container>
 </template>
 
-<script>
-import { reactive } from 'vue';
+<script setup>
+import { ref } from 'vue';
 import wcagData from '@/assets/WacgAxe.json';
 
-export default {
-  name: 'WcagDocumentation',
-  setup() {
-    // Define reactive state
-    const state = reactive({
-      wcagData,
-      openPrinciple: [],
-      openGuidelines: {},
-    });
+const openPrinciple = ref([]);
+const openGuidelines = ref({});
+const stateWcagData = ref(wcagData);
 
-    // Initialize openGuidelines for each wcagData entry
-    state.wcagData.forEach((_, index) => {
-      state.openGuidelines[index] = [];
-    });
+// Initialize openGuidelines for each wcagData entry
+stateWcagData.value.forEach((_, index) => {
+  openGuidelines.value[index] = [];
+});
 
-    // Method to get color based on level
-    const getLevelColor = (level) => {
-      const colors = {
-        A: 'error',
-        AA: 'warning darken-1',
-        AAA: 'success darken-1',
-      };
-      return colors[level] || 'primary';
-    };
-
-    return {
-      ...state,
-      getLevelColor,
-    };
-  },
+const getLevelColor = (level) => {
+  const colors = {
+    A: 'error',
+    AA: 'warning darken-1',
+    AAA: 'success darken-1',
+  };
+  return colors[level] || 'primary';
 };
 </script>
 

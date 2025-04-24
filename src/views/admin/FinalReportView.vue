@@ -1,6 +1,6 @@
 <template>
   <div class="finalReportView">
-    <v-container v-if="test.testType == 'HEURISTICS'">
+    <v-container v-if="test.testType === 'HEURISTICS'">
       <ShowInfo
         style="padding: 0!important;"
         :title="$t('titles.drawer.Final Report')"
@@ -60,7 +60,7 @@
                 align="right"
                 color="orange"
                 elevation="0"
-                @click="step++, update()"
+                @click="handleNext"
               >
                 {{ $t('buttons.next') }}
               </v-btn>
@@ -77,7 +77,7 @@
     </v-container>
 
     <v-container
-      v-else-if="test.testType == 'User'"
+      v-else-if="test.testType === 'User'"
       fluid
       fill-height
       class="mt-10"
@@ -103,51 +103,44 @@
   </div>
 </template>
 
-<script>
-import TextControls from '@/components/atoms/FinalReportControls.vue'
-import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue'
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import TextControls from '@/components/atoms/FinalReportControls.vue';
+import FinalReportSelectionBox from '@/components/atoms/FinalReportSelectionBox.vue';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
 
-export default {
-  components: {
-    TextControls,
-    FinalReportSelectionBox,
-    ShowInfo,
-  },
+const store = useStore();
 
-  data: () => ({
-    title: 'Final report',
-    object: {},
-    step: 1,
-  }),
+const step = ref(1);
+const object = ref({});
 
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-  },
+const test = computed(() => store.getters.test);
 
-  mounted() {
-    this.setInnerHtml()
-  },
+const setInnerHtml = () => {
+  const textarea = document.getElementById('myTextarea');
+  if (textarea) {
+    textarea.innerHTML = test.value.finalReport || '';
+  }
+};
 
-  methods: {
-    setInnerHtml() {
-      const textarea = document.getElementById('myTextarea')
-      if (textarea) {
-        textarea.innerHTML = this.test.finalReport
-      }
-    },
-    async update() {
-      const contenteditable = document.getElementById('myTextarea'),
-        text = contenteditable.innerHTML
+const update = async () => {
+  const contenteditable = document.getElementById('myTextarea');
+  const text = contenteditable.innerHTML;
 
-      this.object.finalReport = text
-      const auxT = Object.assign(this.test, this.object)
-      this.$store.dispatch('updateTest', auxT)
-    },
-  },
-}
+  object.value.finalReport = text;
+  const updatedTest = { ...test.value, ...object.value };
+  await store.dispatch('updateTest', updatedTest);
+};
+
+const handleNext = async () => {
+  step.value++;
+  await update();
+};
+
+onMounted(() => {
+  setInnerHtml();
+});
 </script>
 
 <style scoped>

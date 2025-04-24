@@ -85,7 +85,6 @@
       <template #warning>
         <v-alert
           v-if="!test.template.upToDate"
-        
           type="warning"
           density="compact"
         >
@@ -138,7 +137,7 @@
                     label="Version"
                     variant="outlined"
                     density="compact"
-                    @keypress="isNumber(event)"
+                    @keypress="isNumber"
                     @update:model-value="change = true"
                   />
                   <v-checkbox
@@ -160,7 +159,6 @@
                     <v-tooltip location="bottom">
                       <template #activator="{ props }">
                         <v-btn
-                       
                           variant="outlined"
                           v-bind="props"
                           @click="updateTemplate(), (change = true)"
@@ -203,10 +201,9 @@
           icon
           fixed
           location="bottom right"
-          
           color="#F9A826"
           v-bind="props"
-          @click="update()"
+          @click="update"
         >
           <v-icon size="large">
             mdi-content-save
@@ -218,234 +215,253 @@
   </v-container>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo'
-import SnackBar from '@/components/atoms/Snackbar'
+<script setup>
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount, getCurrentInstance } from 'vue';
+import { useStore } from 'vuex';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import SnackBar from '@/components/atoms/Snackbar.vue';
 
-export default {
-  components: {
-    ShowInfo,
-    SnackBar,
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialogAlert = true
-      this.go = to.path
-    } else {
-      next()
-    }
-  },
-  props: { id: { type: String, default: '' } },
-  data: () => ({
-    change: false,
-    dialogDel: false,
-    dialogAlert: false,
-    dialogDetails: false,
-    loading: false,
-    object: null,
-    template: null,
-    titleRequired: [
-      (v) => !!v || 'Field Required',
-      (v) => v.length <= 100 || 'Max 100 characters',
-    ],
-    updated: false,
-  }),
-  computed: {
-    templateStore() {
-      if (this.$store.getters.template) this.setTemplate()
-      return this.$store.getters.template
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    dialogText() {
-      if (this.object)
-        return "Are you sure you want to delete your template ? This action can't be undone"
+// const { proxy } = getCurrentInstance();
+const store = useStore();
+const router = useRouter();
 
-      return "Are you sure you want to delete this template? This action can't be undone" //in case object isnt loaded
-    },
+const props = defineProps({
+  id: {
+    type: String,
+    default: '',
   },
-  watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.object = await Object.assign({}, this.test)
-      }
-    },
-    templateStore: async function() {
-      if (this.templateStore !== null && this.templateStore !== undefined) {
-        this.template = await Object.assign({}, this.templateStore)
-      }
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getTemplate', { id: this.id })
+});
 
-    await this.$store.dispatch('getTest', {
-      id: this.template.testId,
+const change = ref(false);
+const dialogDel = ref(false);
+const dialogAlert = ref(false);
+const dialogDetails = ref(false);
+const loading = ref(false);
+const object = ref(null);
+const template = ref(null);
+const updated = ref(false);
+const go = ref('');
+const tempform = ref(null);
+
+// Rules for form validation
+const titleRequired = [
+  (v) => !!v || 'Field Required',
+  (v) => v.length <= 100 || 'Max 100 characters',
+];
+
+const templateStore = computed(() => {
+  if (store.getters.template) setTemplate();
+  return store.getters.template;
+});
+
+const test = computed(() => store.getters.test);
+
+const dialogText = computed(() => {
+  if (object.value) {
+    return "Are you sure you want to delete your template ? This action can't be undone";
+  }
+  return "Are you sure you want to delete this template? This action can't be undone";
+});
+
+watch(test, async () => {
+  if (test.value !== null && test.value !== undefined) {
+    object.value = await Object.assign({}, test.value);
+  }
+});
+
+watch(templateStore, async () => {
+  if (templateStore.value !== null && templateStore.value !== undefined) {
+    template.value = await Object.assign({}, templateStore.value);
+  }
+});
+
+const update = () => {
+  template.value.header.date = new Date().toDateString();
+
+  store
+    .dispatch('updateTemplate', {
+      docId: props.id,
+      data: template.value,
     })
-  },
-  beforeMount() {
-    window.addEventListener('beforeunload', this.preventNav)
-  },
-  beforeUnmount() {
-    window.removeEventListener('beforeunload', this.preventNav)
-  },
-  methods: {
-    update() {
-      this.template.header.date = new Date().toDateString()
-
-      this.$store
-        .dispatch('updateTemplate', {
-          docId: this.id,
-          data: this.template,
-        })
-        .then(() => {
-          this.change = false
-          if (this.updated)
-            this.$store.dispatch('setUpToDate', {
-              docId: this.test.id,
-              data: true,
-            })
-
-          this.$store
-            .dispatch('updateMyTemps', {
-              docId: this.template.header.author.id,
-              element: Object.assign(this.template.header, {
-                type: this.template.body.type,
-                id: this.id,
-              }),
-            })
-            .then(() =>
-              this.$store.commit('setSuccess', 'Template succesfully updated'),
-            )
-        })
-        .catch((err) =>
-          this.$store.commit('setError', {
-            errorCode: 'templateError',
-            message: err,
-          }),
-        )
-    },
-    deleteTemplate() {
-      this.$store
-        .dispatch('deteleTemplate', {
-          id: this.id,
-        })
-        .then(() => {
-          this.$store
-            .dispatch('removeMyTemps', {
-              docId: this.template.header.author.id,
-              element: {
-                id: this.id,
-                title: this.template.header.title,
-                type: this.template.body.type,
-              },
-              param: 'myTemps',
-            })
-            .then(() => {
-              delete this.object.template
-              this.submit()
-              this.loading = false
-              this.dialogDel = false
-              this.$router
-                .push(`/managerview/${this.object.id}`)
-                .catch(() => {})
-            })
-        })
-    },
-    async submit() {
-      await this.$store.dispatch('getAnswers', { id: this.test.answers })
-      await this.$store.dispatch('getReports', { id: this.test.reports })
-
-      this.$store
-        .dispatch('updateTest', {
-          docId: this.object.id,
-          data: this.object,
-        })
-        .then(() => {
-          this.$store.dispatch('updateMyTest', {
-            docId: this.object.admin.id,
-            element: {
-              id: this.object.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              cooperators: this.object.cooperators,
-              template: this.object.template,
-              accessLevel: 0,
-            },
-          })
-
-          this.cooperators.cooperators.forEach((coop) => {
-            this.$store.dispatch('updateMyCoops', {
-              docId: coop.id,
-              element: {
-                id: this.object.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                cooperators: this.object.cooperators,
-                template: this.object.template,
-                accessLevel: coop.accessLevel,
-              },
-            })
-          })
-
-          this.answers.test.title = this.object.title
-          this.reports.test.title = this.object.title
-          this.cooperators.test.title = this.object.title
-
-          this.$store.dispatch('updateTestAnswer', {
-            docId: this.test.answers,
-            data: this.answers,
-          })
-
-          this.$store.dispatch('updateTestReport', {
-            docId: this.test.reports,
-            data: this.reports,
-          })
-
-          this.$store.dispatch('updateTestCooperators', {
-            docId: this.test.cooperators,
-            data: this.cooperators,
-          })
-
-          this.$store.commit('setSuccess', 'Template succesfully deleted')
-        })
-        .catch((err) => {
-          this.$store.commit('setError', {
-            errorCode: 'templateError',
-            message: err,
-          })
-        })
-    },
-    setTemplate() {
-      this.template = this.$store.getters.template
-    },
-    updateTemplate() {
-      this.updated = true
-
-      Object.keys(this.template.body).forEach((key) => {
-        this.template.body[key] = this.test[key]
-      })
-    },
-    isNumber: function(evt) {
-      evt = evt ? evt : window.event
-      var charCode = evt.which ? evt.which : evt.keyCode
-      if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
-      ) {
-        evt.preventDefault()
-      } else {
-        return true
+    .then(() => {
+      change.value = false;
+      if (updated.value) {
+        store.dispatch('setUpToDate', {
+          docId: test.value.id,
+          data: true,
+        });
       }
-    },
-  },
-}
+
+      store
+        .dispatch('updateMyTemps', {
+          docId: template.value.header.author.id,
+          element: Object.assign(template.value.header, {
+            type: template.value.body.type,
+            id: props.id,
+          }),
+        })
+        .then(() => store.commit('setSuccess', 'Template successfully updated'));
+    })
+    .catch((err) =>
+      store.commit('setError', {
+        errorCode: 'templateError',
+        message: err,
+      })
+    );
+};
+
+const deleteTemplate = () => {
+  store
+    .dispatch('deleteTemplate', {
+      id: props.id,
+    })
+    .then(() => {
+      store
+        .dispatch('removeMyTemps', {
+          docId: template.value.header.author.id,
+          element: {
+            id: props.id,
+            title: template.value.header.title,
+            type: template.value.body.type,
+          },
+          param: 'myTemps',
+        })
+        .then(() => {
+          delete object.value.template;
+          submit();
+          loading.value = false;
+          dialogDel.value = false;
+          router.push(`/managerview/${object.value.id}`).catch(() => {});
+        });
+    });
+};
+
+const submit = async () => {
+  await store.dispatch('getAnswers', { id: test.value.answers });
+  await store.dispatch('getReports', { id: test.value.reports });
+
+  store
+    .dispatch('updateTest', {
+      docId: object.value.id,
+      data: object.value,
+    })
+    .then(() => {
+      store.dispatch('updateMyTest', {
+        docId: object.value.admin.id,
+        element: {
+          id: object.value.id,
+          title: object.value.title,
+          type: object.value.type,
+          reports: object.value.reports,
+          answers: object.value.answers,
+          cooperators: object.value.cooperators,
+          template: object.value.template,
+          accessLevel: 0,
+        },
+      });
+
+      object.value.cooperators.cooperators.forEach((coop) => {
+        store.dispatch('updateMyCoops', {
+          docId: coop.id,
+          element: {
+            id: object.value.id,
+            title: object.value.title,
+            type: object.value.type,
+            reports: object.value.reports,
+            answers: object.value.answers,
+            cooperators: object.value.cooperators,
+            template: object.value.template,
+            accessLevel: coop.accessLevel,
+          },
+        });
+      });
+
+      const answers = store.getters.answers;
+      const reports = store.getters.reports;
+      const cooperators = store.getters.cooperators;
+
+      answers.test.title = object.value.title;
+      reports.test.title = object.value.title;
+      cooperators.test.title = object.value.title;
+
+      store.dispatch('updateTestAnswer', {
+        docId: test.value.answers,
+        data: answers,
+      });
+
+      store.dispatch('updateTestReport', {
+        docId: test.value.reports,
+        data: reports,
+      });
+
+      store.dispatch('updateTestCooperators', {
+        docId: test.value.cooperators,
+        data: cooperators,
+      });
+
+      store.commit('setSuccess', 'Template successfully deleted');
+    })
+    .catch((err) => {
+      store.commit('setError', {
+        errorCode: 'templateError',
+        message: err,
+      });
+    });
+};
+
+const setTemplate = () => {
+  template.value = store.getters.template;
+};
+
+const updateTemplate = () => {
+  updated.value = true;
+  Object.keys(template.value.body).forEach((key) => {
+    template.value.body[key] = test.value[key];
+  });
+};
+
+const isNumber = (evt) => {
+  evt = evt ? evt : window.event;
+  const charCode = evt.which ? evt.which : evt.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+    evt.preventDefault();
+  } else {
+    return true;
+  }
+};
+
+onBeforeMount(() => {
+  window.addEventListener('beforeunload', preventNav);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', preventNav);
+});
+
+// Navigation guard
+onBeforeRouteLeave((to, from) => {
+  if (change.value) {
+    dialogAlert.value = true;
+    go.value = to.path;
+    return false;
+  }
+  return true;
+});
+
+const initialize = async () => {
+  await store.dispatch('getTemplate', { id: props.id });
+  await store.dispatch('getTest', { id: template.value?.testId });
+};
+initialize();
+
+// Prevent navigation
+const preventNav = (event) => {
+  if (change.value) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+};
 </script>
 
 <style scoped>
@@ -495,6 +511,5 @@ export default {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
-  /* background: #515069; */
 }
 </style>
