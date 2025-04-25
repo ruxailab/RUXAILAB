@@ -137,7 +137,6 @@
     "incorrectPassword": "Contraseña incorrecta.",
     "incorrectCredential": "Usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias."
-    
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -467,8 +466,8 @@
     },
     "createTest": {
       "title": "Crear una nueva prueba",
-      "blanckTitle": "Crear una prueba en blanco",
-      "blanckSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
+      "blankTitle": "Crear una prueba en blanco",
+      "blankSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
       "templateTitle": "Crear a partir de plantilla",
       "templateSubtitle": "Crea una prueba basada en una plantilla creada por uno de nuestros usuarios.",
       "create": "Crear prueba",
