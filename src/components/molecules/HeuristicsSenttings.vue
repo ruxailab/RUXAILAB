@@ -34,11 +34,11 @@
             show-size
             truncate-length="15"
             :placeholder="$t('HeuristicsSettings.placeHolders.importCsv')"
-            :disabled="testAnswerDocLength > 0 ? true : false"
+            :disabled="testAnswerDocLength > 0"
           />
           <v-btn
             :loading="loadingUpdate"
-            :disabled="loadingUpdate || testAnswerDocLength > 0 ? true : false"
+            :disabled="loadingUpdate || testAnswerDocLength > 0"
             color="blue-grey"
             class="ma-3 text-white"
             @click="changeToJSON"
@@ -64,188 +64,159 @@
   </div>
 </template>
 
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
+import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
 
-<script>
-import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+const store = useStore();
+const toast = useToast();
+const { t } = useI18n();
 
+const loading = ref(false);
+const loader = ref(null);
+const csvFile = ref(null);
+const heuristicForm = ref(null);
+const myFile = ref(null); // Ref for the file input
+const loadingUpdate = ref(false);
+const errorMessage = ref('');
 
-export default {
-  data() {
-    return {
-      loading: false,
-      loader: null,
-      csvFile: null,
-      heuristicForm: null,
-      refs: this.$refs,
-      loadingUpdate: false,
-      errorMessage: "",
-    };
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    user() {
-      return this.$store.getters.user
-    },
-    csvHeuristics() {
-      return this.$store.state.Tests.currentTest
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+const test = computed(() => store.getters.test);
+const user = computed(() => store.getters.user);
+const csvHeuristics = computed(() => store.state.Tests.currentTest);
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return 0;
+  }
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
 
+watch(loader, (newLoader) => {
+  if (newLoader) {
+    loading.value = !loading.value;
+    if (csvFile.value) {
+      setTimeout(() => {
+        loading.value = false;
+        csvFile.value = null;
+      }, 3000);
+      loader.value = null;
+    } else {
+      setTimeout(() => {
+        loading.value = false;
+      }, 3000);
+      toast.warning(t('HeuristicsSettings.messages.noCsvFileSelected'));
+      loader.value = null;
+    }
+  }
+});
 
-      return heuristicAnswersCount
-    },
-  },
-  watch: {
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
-      // const alertFunc = alert("Your file has been uploaded!");
-      if (this.csvFile != null) {
-        setTimeout(() => (this[l] = false), 3000)
-        setTimeout(() => (this.csvFile = null), 3000)
-        // setTimeout(alertFunc, 3000);
-        this.loader = null
-      } else {
-        setTimeout(() => (this[l] = false), 3000)
-        this.$toast.warning(
-          this.$t('HeuristicsSettings.messages.noCsvFileSelected'),
-        )
-        this.loader = null
-      }
-    },
-  },
+const changeToJSON = async () => {
+  if (!csvFile.value) {
+    errorMessage.value = t('HeuristicsSettings.messages.noCsvFileSelected');
+    return;
+  }
 
+  if (!csvFile.value.name.toLowerCase().endsWith('.csv')) {
+    errorMessage.value = t('HeuristicsSettings.messages.invalidFileType');
+    return;
+  }
 
-  methods: {
-    async changeToJSON() {
+  loadingUpdate.value = true;
+  errorMessage.value = '';
 
-      if (!this.csvFile) {
-        this.errorMessage = this.$t('HeuristicsSettings.messages.noCsvFileSelected');
-        return;
-      }
+  try {
+    const confirmationText = t('HeuristicsSettings.messages.acceptCsv');
+    if (confirm(confirmationText)) {
+      const reader = new FileReader();
+      reader.readAsText(csvFile.value, 'UTF-8');
+      reader.onload = async () => {
+        const csv = reader.result.trim();
 
-      if (!this.csvFile.name.toLowerCase().endsWith(".csv")){
-        this.errorMessage = this.$t('HeuristicsSettings.messages.invalidFileType');
-        return;
-      }
-      
-      this.loadingUpdate = true;
-      this.errorMessage = "";
-      try {
-        const confirmationText = this.$t(
-          'HeuristicsSettings.messages.acceptCsv',
-        )
-        if (confirm(confirmationText)) {
-          const reader = new FileReader()
-          reader.readAsText(this.csvFile, 'UTF-8') // Use readAsText with UTF-8 encoding
-          reader.onload = async () => {
-            const csv = reader.result.trim()
-
-            if (!csv) {
-              this.errorMessage = this.$t('HeuristicsSettings.messages.emptyCsvFile');
-              this.loadingUpdate = false;
-              return;
-            }
-            
-            const lines = csv.split('\r\n') // Split lines using '\r\n' for cross-platform compatibility
-            const headers = lines[0].split(';').map((header) => header.trim()) // Trim headers
-            const heuristicMap = new Map()
-
-
-            for (let i = 1; i < lines.length; i++) {
-              const currentline = lines[i]
-              if (!currentline) continue
-
-
-              const currentFields = currentline.split(';')
-
-
-              const heuristicId = currentFields[0]
-              const heuristicTitle = currentFields[1]
-              const questionId = currentFields[2]
-              const questionText = currentFields[3]
-
-
-              if (!heuristicMap.has(heuristicId)) {
-                heuristicMap.set(heuristicId, {
-                  id: parseInt(heuristicId) - 1,
-                  title: heuristicTitle,
-                  questions: [],
-                  total: 0, // Inicializa o total com 0
-                })
-              }
-
-
-              const heuristicEntry = heuristicMap.get(heuristicId)
-              heuristicEntry.questions.push({
-                id: parseInt(questionId) - 1,
-                title: questionText,
-                descriptions: questionText,
-                text: questionText,
-                answerImageUrl: '',
-              })
-
-
-              // Atualize o valor total da heurística se o valor atual for maior
-              heuristicEntry.total = Math.max(
-                heuristicEntry.total,
-                parseInt(questionId),
-              )
-            }
-
-
-            const heuristicTest = Array.from(heuristicMap.values())
-
-
-            this.$store.state.Tests.Test.testStructure = heuristicTest
-            this.$store.dispatch('updateTest', this.test)
-          }
+        if (!csv) {
+          errorMessage.value = t('HeuristicsSettings.messages.emptyCsvFile');
+          loadingUpdate.value = false;
+          return;
         }
-      } catch (error) {
-        // Handle errors here if necessary
-        console.error('Update action failed:', error)
-      } finally {
-        this.loadingUpdate = false
-      }
-    },
 
+        const lines = csv.split('\r\n');
+        const headers = lines[0].split(';').map((header) => header.trim());
+        const heuristicMap = new Map();
 
-    async downloadTemplate() {
-      const storage = getStorage()
-      const starsRef = ref(storage, 'template-csv/heuristic-template.csv')
-      getDownloadURL(starsRef)
-        .then((url) => {
-          window.open(url, '_blank')
-        })
-        .catch((error) => {
-          switch (error.code) {
-            case 'storage/object-not-found':
-              // File doesn't exist
-              break
-            case 'storage/unauthorized':
-              // User doesn't have permission to access the object
-              break
-            case 'storage/canceled':
-              // User canceled the upload
-              break
-            case 'storage/unknown':
-              // Unknown error occurred, inspect the server response
-              break
+        for (let i = 1; i < lines.length; i++) {
+          const currentLine = lines[i];
+          if (!currentLine) continue;
+
+          const currentFields = currentLine.split(';');
+
+          const heuristicId = currentFields[0];
+          const heuristicTitle = currentFields[1];
+          const questionId = currentFields[2];
+          const questionText = currentFields[3];
+
+          if (!heuristicMap.has(heuristicId)) {
+            heuristicMap.set(heuristicId, {
+              id: parseInt(heuristicId) - 1,
+              title: heuristicTitle,
+              questions: [],
+              total: 0,
+            });
           }
-        })
-    },
-  },
-}
-</script>
 
+          const heuristicEntry = heuristicMap.get(heuristicId);
+          heuristicEntry.questions.push({
+            id: parseInt(questionId) - 1,
+            title: questionText,
+            descriptions: questionText,
+            text: questionText,
+            answerImageUrl: '',
+          });
+
+          heuristicEntry.total = Math.max(
+            heuristicEntry.total,
+            parseInt(questionId)
+          );
+        }
+
+        const heuristicTest = Array.from(heuristicMap.values());
+
+        store.state.Tests.Test.testStructure = heuristicTest;
+        await store.dispatch('updateTest', test.value);
+      };
+    }
+  } catch (error) {
+    console.error('Update action failed:', error);
+  } finally {
+    loadingUpdate.value = false;
+  }
+};
+
+const downloadTemplate = async () => {
+  const storage = getStorage();
+  const starsRef = storageRef(storage, 'template-csv/heuristic-template.csv');
+  try {
+    const url = await getDownloadURL(starsRef);
+    window.open(url, '_blank');
+  } catch (error) {
+    switch (error.code) {
+      case 'storage/object-not-found':
+        // File doesn't exist
+        break;
+      case 'storage/unauthorized':
+        // User doesn't have permission to access the object
+        break;
+      case 'storage/canceled':
+        // User canceled the upload
+        break;
+      case 'storage/unknown':
+        // Unknown error occurred, inspect the server response
+        break;
+    }
+  }
+};
+</script>
 
 <style scoped>
 .csv-box {

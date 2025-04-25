@@ -47,11 +47,11 @@
                 <div class="text-caption ma-0">
                   {{ $t('pages.listTests.createdBy') }} {{ author }}
                   {{
-                    template.header.templateVersion == '1.0.0'
+                    template.header.templateVersion === '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                        template.header.updateDate,
-                      )}`
+                          template.header.updateDate
+                        )}`
                   }}
                   ({{
                     $t('pages.listTests.version') +
@@ -81,17 +81,15 @@
                 color="error"
                 variant="outlined"
                 style="position: absolute; left: 24px"
-                @click="deleteTemplate()"
+                @click="deleteTemplate"
               >
                 {{ $t('buttons.delete') }}
-                <v-icon end>
-                  mdi-delete
-                </v-icon>
+                <v-icon end>mdi-delete</v-icon>
               </v-btn>
 
               <v-btn
                 class="bg-error mr-2"
-                @click="reset()"
+                @click="reset"
               >
                 {{ $t('buttons.close') }}
               </v-btn>
@@ -113,7 +111,7 @@
             </p>
             <v-divider class="my-2" />
             <FormTestDescription
-              ref="form"
+              ref="formRef"
               style="margin: 0px 0px 20px 0px"
               :test="localTest"
               :lock="true"
@@ -134,14 +132,14 @@
 
               <v-btn
                 class="bg-error mr-2"
-                @click="reset()"
+                @click="reset"
               >
                 {{ $t('buttons.cancel') }}
               </v-btn>
               <v-btn
                 class="bg-success"
                 color="primary"
-                @click="validate()"
+                @click="validate"
               >
                 {{ $t('buttons.create') }}
               </v-btn>
@@ -153,132 +151,138 @@
   </div>
 </template>
 
-<script>
-import Test from '@/models/Test'
-import TestAdmin from '@/models/TestAdmin'
-import FormTestDescription from '@/components/atoms/FormTestDescription'
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import FormTestDescription from '@/components/atoms/FormTestDescription.vue';
+import Test from '@/models/Test';
+import TestAdmin from '@/models/TestAdmin';
 
-export default {
-  components: {
-    FormTestDescription,
+const props = defineProps({
+  dialog: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
-
-  props: {
-    dialog: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-
-    template: {
-      type: Object,
-      required: true,
-      default: () => ({}),
-    },
-
-    allowCreate: {
-      type: Boolean,
-      default: false,
-    },
+  template: {
+    type: Object,
+    required: true,
+    default: () => ({}),
   },
-  emits: ['update:dialog', 'close'],
-  data: () => ({
-    step: 1,
-    isMyTemplate: false,
-    localTest: null,
-  }),
-
-  computed: {
-    mountTest() {
-      // Defensive check for template.body
-      if (!this.template?.body) {
-        console.warn('Template body is undefined:', this.template);
-        return {};
-      }
-
-      const test = { ...this.template.body };
-      if (!test.testType && this.template.body.testType) {
-        test.testType = this.template.body.testType;
-      }
-      return test;
-    },
-
-    author() {
-      return this.template?.header?.templateAuthor?.userEmail || '';
-    },
-
-    title() {
-      return this.template?.header?.templateTitle || '';
-    },
-
-    user() {
-      return this.$store.state.Auth.user;
-    },
+  allowCreate: {
+    type: Boolean,
+    default: false,
   },
+});
 
-  watch: {
-    template: {
-      handler() {
-        this.isMyTemplate =
-          this.template?.header?.templateAuthor?.userDocId === this.user?.id;
-        // Only set localTest if mountTest is valid
-        this.localTest = this.mountTest ? { ...this.mountTest } : null;
-      },
-      immediate: true,
-    },
+const emit = defineEmits(['update:dialog', 'close']);
+
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+
+const step = ref(1);
+const isMyTemplate = ref(false);
+const localTest = ref(null);
+const formRef = ref(null);
+const formValid = ref(false);
+
+const mountTest = computed(() => {
+  if (!props.template?.body) {
+    console.warn('Template body is undefined:', props.template);
+    return {};
+  }
+
+  const test = { ...props.template.body };
+  if (!test.testType && props.template.body.testType) {
+    test.testType = props.template.body.testType;
+  }
+  return test;
+});
+
+const author = computed(() => {
+  return props.template?.header?.templateAuthor?.userEmail || '';
+});
+
+const title = computed(() => {
+  return props.template?.header?.templateTitle || '';
+});
+
+const user = computed(() => {
+  return store.state.Auth.user;
+});
+
+watch(
+  () => props.template,
+  (newTemplate) => {
+    isMyTemplate.value =
+      newTemplate?.header?.templateAuthor?.userDocId === user.value?.id;
+    localTest.value = mountTest.value ? { ...mountTest.value } : null;
   },
+  { immediate: true, deep: true }
+);
 
-  methods: {
-    async deleteTemplate() {
-      if (!confirm('Are you sure you want to delete the template?')) return;
+const deleteTemplate = async () => {
+  if (!window.confirm('Are you sure you want to delete the template?')) return;
 
-      await this.$store.dispatch('deleteTemplate', this.template.id);
-      this.reset();
-    },
+  try {
+    await store.dispatch('deleteTemplate', props.template.id);
+    reset();
+  } catch (error) {
+    console.error('Error deleting template:', error);
+  }
+};
 
-    reset() {
-      this.$emit('close');
-      this.$refs.form?.resetVal();
-      this.step = 1;
-      this.localTest = null;
-    },
+const reset = () => {
+  emit('close');
+  if (formRef.value?.resetVal) {
+    formRef.value.resetVal();
+  }
+  step.value = 1;
+  localTest.value = null;
+};
 
-    updateLocalTest(newTest) {
-      this.localTest = { ...newTest }; // Update local state with changes
-    },
+const updateLocalTest = (newTest) => {
+  localTest.value = { ...newTest };
+};
 
-    handleValForm(valid) {
-      // Handle valForm event if needed (e.g., store validation state)
-      this.formValid = valid;
-    },
+const handleValForm = (valid) => {
+  formValid.value = valid;
+};
 
-    async validate() {
-      if (!this.$refs.form?.valida()) return;
+const validate = async () => {
+  if (!formRef.value?.valida()) {
+    return;
+  }
 
-      if (!this.localTest) {
-        console.error('localTest is not initialized');
-        return;
-      }
+  if (!localTest.value) {
+    console.error('localTest is not initialized');
+    return;
+  }
 
-      const test = new Test({
-        ...this.localTest, // Use localTest for latest changes
-        id: null,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
-        templateDoc: this.template.id,
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      });
+  try {
+    const test = new Test({
+      ...localTest.value,
+      id: null,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      templateDoc: props.template.id,
+      creationDate: Date.now(),
+      updateDate: Date.now(),
+    });
 
-      const testId = await this.$store.dispatch('createNewTest', test);
-      this.$router.push(`/managerview/${testId}`).catch(() => {});
-    },
+    const testId = await store.dispatch('createNewTest', test);
+    await router.push(`/managerview/${testId}`);
+  } catch (error) {
+    console.error('Error creating test:', error);
+  }
+};
 
-    getFormattedDate(date) {
-      return new Date(date).toLocaleString();
-    },
-  },
-}
+const getFormattedDate = (date) => {
+  return new Date(date).toLocaleString();
+};
 </script>

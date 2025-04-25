@@ -9,50 +9,38 @@
           color="orange"
           class="mx-6 mt-3"
           placeholder="Consent Form..."
-          @change="saveState()"
+          @change="saveState"
         />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
-import { VueEditor } from "vue2-editor";
-export default {
-  data: () => ({
-    consent: '',
-  }),
-  components: {
-    VueEditor
-  },
-  computed: {
-    consentStore() {
-      return this.$store.getters.consent
-    },
-    test() {
-      return this.$store.getters.test
-    },
-  },
-  mounted() {
-    this.getConsent()
-  },
-  methods: {
-    saveState() {
-      this.$store.dispatch('setConsent', this.consent)
-      this.test.testStructure.consent = this.consent
-    },
-    getConsent() {
-      if (this.test.testStructure.consent) {
-        this.consent = this.test.testStructure.consent
-      }
-    },
-  },
-  watch: {
-    consent() {
-      this.saveState()
-    }
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const consent = ref('');
+
+const consentStore = computed(() => store.getters.consent);
+const test = computed(() => store.getters.test);
+
+const saveState = () => {
+  store.dispatch('setConsent', consent.value);
+  test.value.testStructure.consent = consent.value;
+};
+
+const getConsent = () => {
+  if (test.value.testStructure.consent) {
+    consent.value = test.value.testStructure.consent;
   }
-}
+};
+
+onMounted(() => {
+  getConsent();
+});
 </script>
 
 <style scoped>

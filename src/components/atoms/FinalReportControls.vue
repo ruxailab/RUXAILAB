@@ -2,113 +2,124 @@
   <div class="controls">
     <button
       class="control-buttons"
-      @click="makeBold()"
+      @click="makeBold"
     >
       <span class="mdi mdi-format-bold md-14" />
     </button>
     <button
       class="control-buttons"
-      @click="makeItalic()"
+      @click="makeItalic"
     >
       <span class="mdi mdi-format-italic" />
     </button>
     <button
       class="control-buttons"
-      @click="makeHighlight()"
+      @click="makeHighlight"
     >
       <span class="mdi mdi-format-underline" />
     </button>
-    <!-- <button class="control-buttons" @click="outDent()">
+    <!-- <button class="control-buttons" @click="outDent">
       <span class="mdi mdi-format-list-bulleted"></span>
     </button> -->
     <button
       class="control-buttons"
-      @click="copyAll()"
+      @click="copyAll"
     >
       <span class="mdi mdi-content-copy" />
     </button>
     <button
       class="control-buttons"
-      @click="left()"
+      @click="left"
     >
       <span class="mdi mdi-format-align-left" />
     </button>
     <button
       class="control-buttons"
-      @click="center()"
+      @click="center"
     >
       <span class="mdi mdi-format-align-center" />
     </button>
     <button
       class="control-buttons"
-      @click="right()"
+      @click="right"
     >
       <span class="mdi mdi-format-align-right" />
     </button>
     <button
       class="control-buttons"
-      @click="justify()"
+      @click="justify"
     >
       <span class="mdi mdi-format-align-justify" />
     </button>
     <button
       class="control-buttons"
-      @click="remove()"
+      @click="remove"
     >
       <span class="mdi mdi-playlist-remove" />
     </button>
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-export default {
-  data: () => ({ title: 'Enter your text here:', inputText: '' }),
-  computed: {},
-  watch: {},
+<script setup>
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 
-  methods: {
-    makeBold() {
-      document.execCommand('bold', false, null)
-    },
-    makeItalic() {
-      document.execCommand('italic', false, null)
-    },
-    makeHighlight() {
-      document.execCommand('underline', false, null)
-    },
-    copyAll() {
-      // fix Firefox losing focus when button is clicked
-      document.getElementById('myTextarea').focus()
-      // catch any unforeseen errors
-      try {
-        document.execCommand('selectAll', false, null)
-        const success = document.execCommand('copy')
-        // output whether or not copy was successful
-        success ? this.$toast.info(i18n.t('alerts.copy')) : this.$toast.error(i18n.t('alerts.noCopy'))
-      } catch (e) {
-        this.$toast.error(i18n.t('alerts.errorOccurred'))
-      }
-    },
-    center() {
-      document.execCommand('justifyCenter', false, null)
-    },
-    justify() {
-      document.execCommand('justifyFull', false, null)
-    },
-    left() {
-      document.execCommand('justifyLeft', false, null)
-    },
-    right() {
-      document.execCommand('justifyRight', false, null)
-    },
-    remove() {
-      document.execCommand('removeFormat', false, null)
-    },
-    // outDent() {
-    //   document.execCommand('insertUnorderedList', false, null)
-    // },
-  },
+// Initialize i18n
+const { t } = useI18n()
+
+// Initialize toast
+const toast = useToast()
+
+// Reactive state
+const title = ref('Enter your text here:')
+const inputText = ref('')
+
+// Methods
+const makeBold = () => {
+  document.execCommand('bold', false, null)
+}
+
+const makeItalic = () => {
+  document.execCommand('italic', false, null)
+}
+
+const makeHighlight = () => {
+  document.execCommand('underline', false, null)
+}
+
+const copyAll = () => {
+  // Fix Firefox losing focus when button is clicked
+  document.getElementById('myTextarea').focus()
+  // Catch any unforeseen errors
+  try {
+    document.execCommand('selectAll', false, null)
+    const success = document.execCommand('copy')
+    // Output whether or not copy was successful
+    success ? toast.info(t('alerts.copy')) : toast.error(t('alerts.noCopy'))
+  } catch (e) {
+    toast.error(t('alerts.errorOccurred'))
+  }
+}
+
+const center = () => {
+  document.execCommand('justifyCenter', false, null)
+}
+
+const justify = () => {
+  document.execCommand('justifyFull', false, null)
+}
+
+const left = () => {
+  document.execCommand('justifyLeft', false, null)
+}
+
+const right = () => {
+  document.execCommand('justifyRight', false, null)
+}
+
+const remove = () => {
+  document.execCommand('removeFormat', false, null)
 }
 </script>
 

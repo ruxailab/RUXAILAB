@@ -47,49 +47,18 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'TipButton',
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-    task: {
-      type: Object,
-      default: () => ({
-        taskName: 'Task',
-        taskTip: 'No tip available',
-      }),
-      validator: (task) => {
-        return typeof task.taskName === 'string' &&
-          typeof task.taskTip === 'string'
-      }
-    },
-  },
+<script setup>
+import { ref } from 'vue'
 
-  data() {
-    return {
-      internalDialog: this.value,
-    }
+const props = defineProps({
+  task: {
+    type: Object,
+    default: () => ({
+      taskName: '',
+      taskTip: '',
+    }),
   },
+})
 
-  watch: {
-    value: {
-      immediate: true,
-      handler(val) {
-        this.internalDialog = val
-      }
-    },
-    internalDialog(val) {
-      this.$emit('input', val)
-    }
-  },
-
-  methods: {
-    closeDialog() {
-      this.internalDialog = false
-    }
-  }
-}
+const dialog = ref(false)
 </script>
