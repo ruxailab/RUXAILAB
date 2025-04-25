@@ -468,8 +468,8 @@
     },
     "createTest": {
       "title": "Criar um novo teste",
-      "blanckTitle": "Criar um teste em branco",
-      "blanckSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
+      "blankTitle": "Criar um teste em branco",
+      "blankSubtitle": "Crie um teste em branco para começar com um modelo completamente novo e atualizado.",
       "templateTitle": "Criar a partir do modelo",
       "templateSubtitle": "Crie um teste baseado em um modelo criado por um de nossos usuários.",
       "create": "Criar teste",
