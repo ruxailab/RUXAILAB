@@ -201,7 +201,7 @@
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                           dense
                         >
-                          <template v-for="header in heuristicsEvaluator.header" #[`item.${header.value}`]="{ item }" :key="header.value">
+                          <template v-for="header in heuristicsEvaluator.header" :key="header.value" #[`item.${header.value}`]="{ item }">
                             <v-chip
                               v-if="header.value != 'heuristic'"
                               :color="getColor(item[header.value], item.max, item.min)"
@@ -364,26 +364,20 @@ const array_scores = ref([]);
 
 const showFinalResult = computed(() => finalResult());
 
-const evaluatorStatistics = computed(() => store.state.Answer.evaluatorStatistics);
+const evaluatorStatistics = computed(() => store.state.Answer.evaluatorStatistics || { header: [], items: [] });
 
-const testWeights = computed(() => store.state.Tests.Test.testWeights);
+const testWeights = computed(() => store.state.Tests.Test.testWeights || []);
 
 const heuristicsEvaluator = computed(() => {
   const table = {
-    header: [],
+    header: [{ text: 'HEURISTICS', align: 'start', value: 'heuristic' }],
     items: [],
   };
-  const options = test.value.testOptions.map((op) => op.value);
-  const max = Math.max(...options);
-  const min = Math.min(...options);
+  const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
+  const max = options.length > 0 ? Math.max(...options) : 0;
+  const min = options.length > 0 ? Math.min(...options) : 0;
 
-  table.header.push({
-    text: 'HEURISTICS',
-    align: 'start',
-    value: 'heuristic',
-  });
-
-  if (resultEvaluator.value) {
+  if (resultEvaluator.value && Array.isArray(resultEvaluator.value)) {
     let evaluatorIndex = 1;
     resultEvaluator.value.forEach((evaluator) => {
       evaluator.id = `Ev${evaluatorIndex}`;
@@ -395,21 +389,23 @@ const heuristicsEvaluator = computed(() => {
           value: evaluator.id,
         });
       }
-      evaluator.heuristics.forEach((heuristic) => {
-        const item = table.items.find((i) => i.heuristic === heuristic.id);
-        if (item) {
-          Object.assign(item, {
-            [evaluator.id]: heuristic.result,
-          });
-        } else {
-          table.items.push({
-            heuristic: heuristic.id,
-            max: max * heuristic.totalQuestions,
-            min: min * heuristic.totalQuestions,
-            [evaluator.id]: heuristic.result,
-          });
-        }
-      });
+      if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
+        evaluator.heuristics.forEach((heuristic) => {
+          const item = table.items.find((i) => i.heuristic === heuristic.id);
+          if (item) {
+            Object.assign(item, {
+              [evaluator.id]: heuristic.result,
+            });
+          } else {
+            table.items.push({
+              heuristic: heuristic.id,
+              max: max * (heuristic.totalQuestions || 0),
+              min: min * (heuristic.totalQuestions || 0),
+              [evaluator.id]: heuristic.result,
+            });
+          }
+        });
+      }
       evaluatorIndex++;
     });
   }
@@ -429,33 +425,37 @@ const heuristicsStatistics = computed(() => {
     items: [],
   };
 
-  if (heuristicsEvaluator.value.items) {
-    heuristicsEvaluator.value.items.forEach((item) => {
-      const results = Object.entries(item)
-        .filter(([key]) => key.includes('Ev'))
-        .map(([, value]) => value);
-      const valueToConvert = results
-        .reduce((total, value) => total + value / results.length, 0)
-        .toFixed(2);
-      const convertedValue = ((valueToConvert - item.min) / (item.max - item.min)) * 100;
-      table.items.push({
-        name: item.heuristic,
-        max: Math.max(item.max).toFixed(2),
-        min: Math.min(item.min).toFixed(2),
-        percentage: convertedValue.toFixed(2),
-        sd: standardDeviation(results).toFixed(2),
-        average: results
-          .reduce((total, value) => total + value / results.length, 0)
-          .toFixed(2),
-      });
-    });
+  if (!heuristicsEvaluator.value || !heuristicsEvaluator.value.items) {
+    return table;
   }
+
+  heuristicsEvaluator.value.items.forEach((item) => {
+    const results = Object.entries(item)
+      .filter(([key]) => key.includes('Ev'))
+      .map(([, value]) => value)
+      .filter((value) => value !== undefined && value !== null);
+    const valueToConvert = results.length
+      ? results.reduce((total, value) => total + value / results.length, 0).toFixed(2)
+      : '0.00';
+    const convertedValue = item.max && item.min && item.max !== item.min
+      ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
+      : 0;
+    table.items.push({
+      name: item.heuristic || 'Unknown',
+      max: item.max ? Number(item.max).toFixed(2) : '0.00',
+      min: item.min ? Number(item.min).toFixed(2) : '0.00',
+      percentage: convertedValue.toFixed(2),
+      sd: results.length ? standardDeviation(results).toFixed(2) : '0.00',
+      average: valueToConvert,
+    });
+  });
+
   return table;
 });
 
-const heuristics = computed(() => test.value.testStructure || []);
+const heuristics = computed(() => test.value && test.value.testStructure ? test.value.testStructure : []);
 
-const heuristicsLength = computed(() => relative.value ? relative.value.length : 0);
+const heuristicsLength = computed(() => (relative.value ? relative.value.length : 0));
 
 const weightsStatistics = computed(() => {
   const tableWeights = {
@@ -473,7 +473,7 @@ const weightsStatistics = computed(() => {
     for (let i = 0; i < relativeLength; i++) {
       tableWeights.items.push({
         name: `H${i + 1} - ${heuristics.value[i] ? heuristics.value[i].title : ''}`,
-        percentage: store.state.Tests.scoresPercentage[i],
+        percentage: store.state.Tests.scoresPercentage[i] || '0.00',
         rw: relative.value[i].toFixed(4),
       });
     }
@@ -481,7 +481,7 @@ const weightsStatistics = computed(() => {
   return tableWeights;
 });
 
-const usabilityTotalFix = computed(() => parseFloat(usability_total.value).toFixed(2));
+const usabilityTotalFix = computed(() => parseFloat(usability_total.value || 0).toFixed(2));
 
 const maxValue = computed(() => {
   const relativeArray = relative.value || [];
@@ -497,18 +497,21 @@ const maxValue = computed(() => {
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
 
 const answers = computed(() => {
-  if (testAnswerDocument.value) {
+  if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {
     return Object.values(testAnswerDocument.value.heuristicAnswers);
   }
   return [];
 });
 
 const test = computed(() => {
+  const percentages = heuristicsStatistics.value && heuristicsStatistics.value.items
+    ? heuristicsStatistics.value.items.map((item) => item.percentage)
+    : [];
   store.dispatch('processStatistics', {
     resultEvaluator: statistics(),
-    percentage: heuristicsStatistics.value.items.map((item) => item.percentage),
+    percentage: percentages,
   });
-  return store.getters.test;
+  return store.getters.test || {};
 });
 
 const checkIfNan = (value) => {
@@ -516,9 +519,9 @@ const checkIfNan = (value) => {
 };
 
 const getColor = (value, max, min) => {
-  max = Number(max);
-  min = Number(min);
-  const h = (max - min) / max;
+  max = Number(max) || 0;
+  min = Number(min) || 0;
+  const h = max ? (max - min) / max : 0;
 
   if (value == null) return 'grey';
   else if (value === 0) return 'red';
@@ -529,6 +532,7 @@ const getColor = (value, max, min) => {
 };
 
 const getColorPorcentage = (value) => {
+  value = Number(value) || 0;
   if (value <= 20) return 'red';
   else if (value <= 40) return 'ambar';
   else if (value <= 60) return 'orange lighten-1';
@@ -537,12 +541,16 @@ const getColorPorcentage = (value) => {
 };
 
 const goToDataHeuristic = (item) => {
-  const selectHeuristic = heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item);
-  router.push(`/analyticsview/${props.id}/${selectHeuristic}`).catch((err) => {
-    if (err.name !== 'NavigationDuplicated') {
-      console.error('Navigation error:', err);
-    }
-  });
+  const selectHeuristic = heuristicsEvaluator.value && heuristicsEvaluator.value.items
+    ? heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item)
+    : -1;
+  if (selectHeuristic >= 0) {
+    router.push(`/analyticsview/${props.id}/${selectHeuristic}`).catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+        console.error('Navigation error:', err);
+      }
+    });
+  }
 };
 
 const goToCoops = () => {
@@ -552,8 +560,10 @@ const goToCoops = () => {
 const usuability_percentage_array = () => {
   const teste = heuristicsStatistics.value;
   const scores = [];
-  for (let i = 0; i < teste.items.length; i++) {
-    scores.push(teste.items[i].percentage);
+  if (teste && teste.items && Array.isArray(teste.items)) {
+    for (let i = 0; i < teste.items.length; i++) {
+      scores.push(teste.items[i].percentage || '0.00');
+    }
   }
   store.dispatch('setScoresPercentage', scores);
   array_scores.value = scores;
@@ -561,9 +571,9 @@ const usuability_percentage_array = () => {
 };
 
 const pythonFunction = async () => {
-  const caminhoTestStructure = store.state.Tests.Test.testStructure;
-  const caminhoTestWeights = store.state.Tests.Test.testWeights;
-  const caminhoTestScore = store.state.Tests.scoresPercentage;
+  const caminhoTestStructure = store.state.Tests.Test.testStructure || [];
+  const caminhoTestWeights = store.state.Tests.Test.testWeights || [];
+  const caminhoTestScore = store.state.Tests.scoresPercentage || [];
 
   try {
     const response = await axios.post(process.env.VUE_APP_FIREBASE_PYTHON_FUNCTION, {
@@ -586,7 +596,7 @@ const DownloadEvaluatorCsv = () => {
   loading.value = true;
   const headers = evaluatorStatistics.value.header.map((header) => header.text).join(',');
   const rows = evaluatorStatistics.value.items
-    .map((item) => evaluatorStatistics.value.header.map((header) => item[header.value]).join(','))
+    .map((item) => evaluatorStatistics.value.header.map((header) => item[header.value] || '').join(','))
     .join('\n');
   const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`;
   const encodedUri = encodeURI(csvContent);
@@ -613,13 +623,28 @@ watch(answers, () => {
   }
 });
 
+// Watch testAnswerDocument to trigger usuability_percentage_array when dependencies are ready
+watch(
+  () => [testAnswerDocument.value, test.value, evaluatorStatistics.value],
+  ([newTestAnswerDoc, newTest, newEvaluatorStats]) => {
+    if (
+      newTestAnswerDoc &&
+      newTest &&
+      newTest.testOptions &&
+      newEvaluatorStats &&
+      Array.isArray(newEvaluatorStats.items)
+    ) {
+      usuability_percentage_array();
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 onBeforeMount(async () => {
   await store.dispatch('getCurrentTestAnswerDoc');
-  usuability_percentage_array();
 });
 
 onMounted(() => {
-  array_scores.value = usuability_percentage_array();
   pythonFunction();
 });
 </script>

@@ -329,7 +329,7 @@ import Intro from '@/components/molecules/IntroCoops.vue'
 import AccessNotAllowed from '@/components/atoms/AccessNotAllowed.vue'
 import LeaveAlert from '../../components/atoms/LeaveAlert.vue'
 import Notification from '@/models/Notification'
-import { UIDGenerator } from 'uid-generator'
+import UIDGenerator from 'uid-generator'
 
 const uidgen = new UIDGenerator()
 
