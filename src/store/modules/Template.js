@@ -18,6 +18,7 @@ export default {
   getters: {},
   mutations: {
     SET_TEMPLATES(state, payload) {
+      console.log(payload)
       state.templates = payload
     },
   },
