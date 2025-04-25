@@ -84,273 +84,249 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios'
-import { finalResult, statistics } from '@/utils/statistics'
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import axios from 'axios';
+import { finalResult, statistics } from '@/utils/statistics';
 
-export default {
-  emits: ['return-step'],
-  data: () => ({
-    preview: new Object(),
-    formattedDate: '',
-    statistics: '',
-    currentHeuristicIndex: 0,
-    showSlider: false,
-    sliderValue: 0,
-    isLoading: false,
-    selectedHeuristics: [],
-    cooperatorsEmail: [],
-  }),
-  computed: {
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
-    },
-    answers() {
-      if (this.testAnswerDocument) {
-        return this.testAnswerDocument.type === 'HEURISTICS'
-          ? Object.values(this.testAnswerDocument.heuristicAnswers)
-          : Object.values(this.testAnswerDocument.taskAnswers)
-      }
-      return []
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    heuristics() {
-      return this.test.testStructure
-    },
-    options() {
-      return [
-        {
-          id: 'options',
-          name: 'options',
-          label: i18n.global.t('pages.finalReport.options.options'),
-        },
-        {
-          id: 'comments',
-          name: 'comments',
-          label: i18n.global.t('pages.finalReport.options.comments'),
-        },
-        {
-          id: 'results',
-          name: 'results',
-          label: i18n.global.t('pages.finalReport.options.statistics'),
-        },
-        {
-          id: 'evaluators-results',
-          name: 'evaluators-results',
-          label: i18n.global.t('pages.finalReport.options.answersByEvaluator'),
-        },
-        {
-          id: 'finalReport',
-          name: 'finalReport',
-          label: i18n.global.t('pages.finalReport.options.finalReport'),
-        },
-      ]
-    },
+// Vuex store
+const store = useStore();
+
+// Vue I18n
+const { t } = useI18n();
+
+// Emits
+const emit = defineEmits(['return-step']);
+
+// Reactive state
+const preview = ref({});
+const formattedDate = ref('');
+const statisticsData = ref('');
+const currentHeuristicIndex = ref(0);
+const showSlider = ref(false);
+const sliderValue = ref(0);
+const isLoading = ref(false);
+const selectedHeuristics = ref([]);
+const cooperatorsEmail = ref([]);
+
+// Computed properties
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+
+const answers = computed(() => {
+  if (testAnswerDocument.value) {
+    return testAnswerDocument.value.type === 'HEURISTICS'
+      ? Object.values(testAnswerDocument.value.heuristicAnswers)
+      : Object.values(testAnswerDocument.value.taskAnswers);
+  }
+  return [];
+});
+
+const test = computed(() => store.getters.test);
+
+const heuristics = computed(() => test.value.testStructure);
+
+const options = computed(() => [
+  {
+    id: 'options',
+    name: 'options',
+    label: t('pages.finalReport.options.options'),
   },
-  methods: {
-    heuristicsEvaluator() {
-      const table = {
-        header: [],
-        items: [],
+  {
+    id: 'comments',
+    name: 'comments',
+    label: t('pages.finalReport.options.comments'),
+  },
+  {
+    id: 'results',
+    name: 'results',
+    label: t('pages.finalReport.options.statistics'),
+  },
+  {
+    id: 'evaluators-results',
+    name: 'evaluators-results',
+    label: t('pages.finalReport.options.answersByEvaluator'),
+  },
+  {
+    id: 'finalReport',
+    name: 'finalReport',
+    label: t('pages.finalReport.options.finalReport'),
+  },
+]);
+
+// Methods
+const heuristicsEvaluator = () => {
+  const table = {
+    header: [],
+    items: [],
+  };
+
+  const testOptions = test.value.testOptions;
+  const resultEvaluator = statistics();
+
+  const options = testOptions.map((op) => op.value);
+  const max = Math.max(...options);
+  const min = Math.min(...options);
+
+  table.header.push({
+    text: 'HEURISTICS',
+    value: 'heuristic',
+  });
+
+  if (resultEvaluator) {
+    resultEvaluator.forEach((evaluator) => {
+      const header = table.header.find((h) => h.text === evaluator.id);
+      if (!header) {
+        table.header.push({
+          text: evaluator.id,
+          value: evaluator.id,
+        });
       }
-
-      const testOptions = this.test.testOptions
-      const resultEvaluator = statistics()
-
-      const options = testOptions.map((op) => op.value)
-      const max = Math.max(...options)
-      const min = Math.min(...options)
-
-      table.header.push({
-        text: 'HEURISTICS',
-        value: 'heuristic',
-      })
-
-      if (resultEvaluator) {
-        resultEvaluator.forEach((evaluator) => {
-          const header = table.header.find((h) => h.text === evaluator.id)
-          if (!header) {
-            table.header.push({
-              text: evaluator.id,
-              value: evaluator.id,
-            })
-          }
-          evaluator.heuristics.forEach((heuristic) => {
-            const item = table.items.find((i) => i.heuristic === heuristic.id)
-            if (item) {
-              Object.assign(item, {
-                [evaluator.id]: heuristic.result,
-              })
-            } else {
-              table.items.push({
-                heuristic: heuristic.id,
-                max: max * heuristic.totalQuestions,
-                min: min * heuristic.totalQuestions,
-                [evaluator.id]: heuristic.result,
-              })
-            }
-          })
-        })
-      }
-
-      return table
-    },
-
-    checkHeuristicsSlider() {
-      const containerWidth = this.$el.querySelector('.column').offsetWidth
-      const heuristicWidth = 200
-      this.showSlider = this.heuristics.length
-    },
-
-    async genPreview() {
-      const options = document.getElementById('options')
-      const comments = document.getElementById('comments')
-      const results = document.getElementById('results')
-      const finalReport = document.getElementById('finalReport')
-      const evaluatorsResults = document.getElementById('evaluators-results')
-
-      if (options.checked == true) {
-        this.preview.testOptions = this.test.testOptions
-      } else this.preview.testOptions = ''
-
-      if (comments.checked == true) {
-        this.preview.testComments = true
-      } else this.preview.testComments = false
-
-      if (results.checked == true) {
-        const answersDocId = this.test.answersDocId
-        this.preview.results = answersDocId
-      } else this.preview.results = ''
-
-      if (evaluatorsResults.checked == true) {
-        this.preview.statistics = true
-      } else this.preview.statistics = false
-
-      if (finalReport.checked) {
-        this.preview.finalReport = this.test.finalReport
-      }
-    },
-
-    finalResult,
-
-    async submitPdf() {
-      this.isLoading = true
-
-      try {
-        await this.genPreview()
-        const date = new Date()
-        const dayOfMonth = date.getDate()
-        const monthNames = [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
-        ]
-        const monthName = monthNames[date.getMonth()]
-        const year = date.getFullYear()
-
-        let dayOfMonthStr
-        switch (dayOfMonth) {
-          case 1:
-          case 21:
-          case 31:
-            dayOfMonthStr = dayOfMonth + 'st'
-            break
-          case 2:
-          case 22:
-            dayOfMonthStr = dayOfMonth + 'nd'
-            break
-          case 3:
-          case 23:
-            dayOfMonthStr = dayOfMonth + 'rd'
-            break
-          default:
-            dayOfMonthStr = dayOfMonth + 'th'
-        }
-
-        this.formattedDate = `${dayOfMonthStr} ${monthName}, ${year}`
-        this.statistics = finalResult()
-
-        if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
-          if (this.test.cooperators.length > 0) {
-            this.test.cooperators.forEach((element) => {
-              if (element && element.email) {
-                this.cooperatorsEmail.push(element.email)
-              }
-            })
-
-            this.preview.cooperatorsEmail = this.cooperatorsEmail
-            this.cooperatorsEmail = []
-          } else {
-            console.log('cooperators email not empty')
-          }
+      evaluator.heuristics.forEach((heuristic) => {
+        const item = table.items.find((i) => i.heuristic === heuristic.id);
+        if (item) {
+          Object.assign(item, {
+            [evaluator.id]: heuristic.result,
+          });
         } else {
-          this.preview.cooperatorsEmail = ''
+          table.items.push({
+            heuristic: heuristic.id,
+            max: max * heuristic.totalQuestions,
+            min: min * heuristic.totalQuestions,
+            [evaluator.id]: heuristic.result,
+          });
         }
+      });
+    });
+  }
 
-        this.answers.forEach((answer) => {
-          answer.heuristicQuestions.forEach((heuristic) => {
-            heuristic.heuristicQuestions.forEach((question) => {
-              question.answerImageUrl = ''
-            })
-          })
-        })
+  return table;
+};
 
-        await axios
-          .post(
-            'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
-            {
-              items: [
-                {
-                  title: this.test.testTitle,
-                  date: this.formattedDate,
-                  creationDate: this.test.creationDate,
-                  testDescription: this.test.testDescription,
-                  cooperatorsEmail: this.preview.cooperatorsEmail,
-                  creatorEmail: this.test.testAdmin.email,
-                  finalReport: this.preview.finalReport,
-                  allOptions: this.preview.testOptions,
-                  allAnswers: this.answers,
-                  testStructure: this.test.testStructure,
-                  selectedHeuristics: this.selectedHeuristics,
-                  statistics: this.preview.statistics,
-                  gstatistics: this.statistics,
-                  statisticstable: this.$store.state.Answer.evaluatorStatistics,
-                  heuristicStatistics: this.preview.heuristicEvaluator,
-                  testComments: this.preview.testComments,
-                },
-              ],
-            },
-            { responseType: 'blob' },
-          )
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]))
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', 'heuristic-test.pdf')
-            document.body.appendChild(link)
-            link.click()
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.isLoading = false
+const checkHeuristicsSlider = () => {
+  const container = document.querySelector('.column');
+  if (container) {
+    const containerWidth = container.offsetWidth;
+    const heuristicWidth = 200;
+    showSlider.value = heuristics.value.length * heuristicWidth > containerWidth;
+  }
+};
+
+const genPreview = async () => {
+  const options = document.getElementById('options');
+  const comments = document.getElementById('comments');
+  const results = document.getElementById('results');
+  const finalReport = document.getElementById('finalReport');
+  const evaluatorsResults = document.getElementById('evaluators-results');
+
+  preview.value.testOptions = options.checked ? test.value.testOptions : '';
+  preview.value.testComments = comments.checked;
+  preview.value.results = results.checked ? test.value.answersDocId : '';
+  preview.value.statistics = evaluatorsResults.checked;
+  preview.value.finalReport = finalReport.checked ? test.value.finalReport : undefined;
+};
+
+const submitPdf = async () => {
+  isLoading.value = true;
+
+  try {
+    await genPreview();
+    const date = new Date();
+    const dayOfMonth = date.getDate();
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+    const monthName = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    let dayOfMonthStr;
+    switch (dayOfMonth) {
+      case 1:
+      case 21:
+      case 31:
+        dayOfMonthStr = dayOfMonth + 'st';
+        break;
+      case 2:
+      case 22:
+        dayOfMonthStr = dayOfMonth + 'nd';
+        break;
+      case 3:
+      case 23:
+        dayOfMonthStr = dayOfMonth + 'rd';
+        break;
+      default:
+        dayOfMonthStr = dayOfMonth + 'th';
+    }
+
+    formattedDate.value = `${dayOfMonthStr} ${monthName}, ${year}`;
+    statisticsData.value = finalResult();
+
+    if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
+      if (test.value.cooperators.length > 0) {
+        cooperatorsEmail.value = test.value.cooperators
+          .filter((element) => element && element.email)
+          .map((element) => element.email);
+        preview.value.cooperatorsEmail = cooperatorsEmail.value;
+        cooperatorsEmail.value = [];
+      } else {
+        console.log('cooperators email not empty');
       }
-    },
-  },
-}
+    } else {
+      preview.value.cooperatorsEmail = '';
+    }
+
+    answers.value.forEach((answer) => {
+      answer.heuristicQuestions.forEach((heuristic) => {
+        heuristic.heuristicQuestions.forEach((question) => {
+          question.answerImageUrl = '';
+        });
+      });
+    });
+
+    const response = await axios.post(
+      'https://laravel-uslfpdl4eq-ue.a.run.app/api/endpoint',
+      {
+        items: [
+          {
+            title: test.value.testTitle,
+            date: formattedDate.value,
+            creationDate: test.value.creationDate,
+            testDescription: test.value.testDescription,
+            cooperatorsEmail: preview.value.cooperatorsEmail,
+            creatorEmail: test.value.testAdmin.email,
+            finalReport: preview.value.finalReport,
+            allOptions: preview.value.testOptions,
+            allAnswers: answers.value,
+            testStructure: test.value.testStructure,
+            selectedHeuristics: selectedHeuristics.value,
+            statistics: preview.value.statistics,
+            gstatistics: statisticsData.value,
+            statisticstable: store.state.Answer.evaluatorStatistics,
+            heuristicStatistics: preview.value.heuristicEvaluator,
+            testComments: preview.value.testComments,
+          },
+        ],
+      },
+      { responseType: 'blob' }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'heuristic-test.pdf');
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  checkHeuristicsSlider();
+});
 </script>

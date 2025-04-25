@@ -33,7 +33,7 @@
                     :key="index"
                     v-model="items[i].selectionFields[index]"
                     :label="$t('UserTestTable.inputs.selection')"
-                    @change="saveState()"
+                    @change="saveState"
                   >
                     <template #append>
                       <v-icon @click="newSelection(i)">
@@ -153,7 +153,7 @@
           </v-btn>
           <v-btn
             color="orange"
-            @click="saveNewItem(), saveState()"
+            @click="saveNewItem"
           >
             <v-icon class="mr-1">
               mdi-content-save
@@ -166,98 +166,105 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    newItem: '',
-    items: [],
-    show: false,
-    valid: false,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    preTest() {
-      return this.$store.getters.preTest
-    },
-  },
-  mounted() {
-    this.getVariables()
-  },
-  methods: {
-    log() {
-      console.log('adicionar + 1')
-    },
-    showModal() {
-      this.show = true
-    },
-    closeModal() {
-      this.show = false
-      this.$refs.form.resetValidation()
-    },
-    selectField(i) {
-      if (
-        this.items[i].selectionFields.length == 0 &&
-        this.items[i].selectionField
-      ) {
-        this.items[i].selectionFields.push('')
-      }
-      if (this.items[i].selectionField == false) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].textField = false
-    },
-    selectText(i) {
-      if (this.items[i].selectionFields.length > 0) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].selectionField = false
-    },
-    deleteItem(i) {
-      this.items.splice(i, 1)
-    },
-    saveNewItem() {
-      if (this.newItem.trim() !== '') {
-        this.items.push({
-          answer: '',
-          title: this.newItem,
-          description: '',
-          selectionFields: [],
-          selectionField: false,
-          textField: true,
-        })
-        this.newItem = ''
-        this.show = false
-        this.$refs.form.resetValidation()
-      } else {
-        this.$refs.form.validate()
-      }
-    },
-    newSelection(index) {
-      this.items[index] = {
-        ...this.items[index],
-        selectionFields: [...this.items[index].selectionFields, ''],
-      }
-    },
-    deleteSelection(index) {
-      this.items[index].selectionFields.splice(
-        this.items[index].selectionFields.length - 1,
-        1,
-      )
-    },
-    saveState() {
-      this.$store.dispatch('setPreTest', this.items)
-    },
-    getVariables() {
-      if (this.test.testStructure.preTest) {
-        this.items = this.test.testStructure.preTest
-      } else if (this.preTest) {
-        this.items = this.preTest
-      }
-    },
-  },
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
+const store = useStore()
+const { t } = useI18n()
+
+const newItem = ref('')
+const items = ref([])
+const show = ref(false)
+const valid = ref(false)
+const form = ref(null)
+
+const test = computed(() => store.getters.test)
+const preTest = computed(() => store.getters.preTest)
+
+const log = () => {
+  console.log('adicionar + 1')
 }
+
+const showModal = () => {
+  show.value = true
+}
+
+const closeModal = () => {
+  show.value = false
+  form.value?.resetValidation()
+}
+
+const selectField = (i) => {
+  if (items.value[i].selectionFields.length === 0 && items.value[i].selectionField) {
+    items.value[i].selectionFields.push('')
+  }
+  if (!items.value[i].selectionField) {
+    items.value[i].selectionFields = []
+  }
+  items.value[i].textField = false
+}
+
+const selectText = (i) => {
+  if (items.value[i].selectionFields.length > 0) {
+    items.value[i].selectionFields = []
+  }
+  items.value[i].selectionField = false
+}
+
+const deleteItem = (i) => {
+  items.value.splice(i, 1)
+}
+
+const saveNewItem = () => {
+  if (newItem.value.trim() !== '') {
+    items.value.push({
+      answer: '',
+      title: newItem.value,
+      description: '',
+      selectionFields: [],
+      selectionField: false,
+      textField: true,
+    })
+    newItem.value = ''
+    show.value = false
+    form.value?.resetValidation()
+    saveState()
+  } else {
+    form.value?.validate()
+  }
+}
+
+const newSelection = (index) => {
+  items.value[index] = {
+    ...items.value[index],
+    selectionFields: [...items.value[index].selectionFields, ''],
+  }
+}
+
+const deleteSelection = (index) => {
+  items.value[index].selectionFields.splice(
+    items.value[index].selectionFields.length - 1,
+    1
+  )
+}
+
+const saveState = () => {
+  store.dispatch('setPreTest', items.value)
+}
+
+const getVariables = () => {
+  if (test.value.testStructure.preTest) {
+    items.value = test.value.testStructure.preTest
+  } else if (preTest.value) {
+    items.value = preTest.value
+  }
+}
+
+onMounted(() => {
+  getVariables()
+})
 </script>
 
 <style scoped>

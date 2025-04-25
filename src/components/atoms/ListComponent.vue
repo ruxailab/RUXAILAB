@@ -48,7 +48,6 @@
             </v-avatar>
           </v-avatar>
 
-          
           <!-- Title -->
           <v-list-item-title
             v-if="type === 'myTemplates' || type === 'publicTemplates'"
@@ -109,7 +108,6 @@
               }}
             </strong>
           </v-list-item-subtitle>
-          
 
           <!-- Actions -->
           <v-list-item-action class="hidden-sm-and-down">
@@ -228,80 +226,86 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    items: {
-      type: Array,
-      required: true,
-      default: function() {
-        return []
-      },
-    },
-    type: {
-      type: String,
-      required: true,
-    },
-    hasPagination: {
-      type: Boolean,
-      default: false,
-    },
-    disableNext: {
-      type: Boolean,
-    },
-    disablePrevious: {
-      type: Boolean,
-    },
-  },
-  emits: ['clicked', 'nextPage', 'previousPage'],
-  data: () => ({}),
-  computed: {
-    // Compute the sorted items based on the updateDate property in descending order
-    sortedItems() {
-      return this.items.slice().sort((a, b) => {
-        // Parse the update dates as Date objects
-        const dateA = new Date(a.updateDate)
-        const dateB = new Date(b.updateDate)
+<script setup>
+import { computed, defineProps, defineEmits, onBeforeUpdate } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-        // Sort in descending order
-        return dateB - dateA
-      })
-    },
+// Props definition
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    default: () => [],
   },
-  beforeUpdate() {
-    const availableTypes = [
-      'myTests',
-      'publicTests',
-      'sharedWithMe',
-      'myTemplates',
-      'publicTemplates',
-      'sessions',
-    ]
+  type: {
+    type: String,
+    required: true,
+  },
+  hasPagination: {
+    type: Boolean,
+    default: false,
+  },
+  disableNext: {
+    type: Boolean,
+    default: false,
+  },
+  disablePrevious: {
+    type: Boolean,
+    default: false,
+  },
+})
 
-    if (!availableTypes.includes(this.type)) {
-      console.error(this.type + ' type in listTests.vue is not valid.')
-    }
-  },
-  methods: {
-    getFormattedDate(date) {
-      const d = new Date(date)
-      return d.toLocaleString()
-    },
-    generateColor() {
-      const hue = Math.floor(Math.random() * 360)
-      const color = 'hsl(' + hue + ', 80%, 80%)'
+// Emits definition
+const emit = defineEmits(['clicked', 'nextPage', 'previousPage'])
 
-      return color
-    },
-    emitClick(item) {
-      this.$emit('clicked', item)
-    },
-    emitNextPage() {
-      this.$emit('nextPage')
-    },
-    emitPreviousPage() {
-      this.$emit('previousPage')
-    },
-  },
+// Use vue-i18n
+const { t } = useI18n()
+
+// Computed properties
+const sortedItems = computed(() => {
+  return props.items.slice().sort((a, b) => {
+    const dateA = new Date(a.updateDate)
+    const dateB = new Date(b.updateDate)
+    return dateB - dateA
+  })
+})
+
+// Lifecycle hooks
+onBeforeUpdate(() => {
+  const availableTypes = [
+    'myTests',
+    'publicTests',
+    'sharedWithMe',
+    'myTemplates',
+    'publicTemplates',
+    'sessions',
+  ]
+
+  if (!availableTypes.includes(props.type)) {
+    console.error(props.type + ' type in ListTests.vue is not valid.')
+  }
+})
+
+// Methods
+const getFormattedDate = (date) => {
+  const d = new Date(date)
+  return d.toLocaleString()
+}
+
+const generateColor = () => {
+  const hue = Math.floor(Math.random() * 360)
+  return `hsl(${hue}, 80%, 80%)`
+}
+
+const emitClick = (item) => {
+  emit('clicked', item)
+}
+
+const emitNextPage = () => {
+  emit('nextPage')
+}
+
+const emitPreviousPage = () => {
+  emit('previousPage')
 }
 </script>

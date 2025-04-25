@@ -8,7 +8,6 @@
         >
           <template #activator="{ props }">
             <v-btn
-             
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
@@ -26,7 +25,6 @@
         >
           <template #activator="{ props }">
             <v-btn
-             
               class="ml-4 my-2 mr-auto"
               color="red"
               icon
@@ -45,87 +43,90 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-export default {
-  props: {
-    testId: String,
-    taskIndex: Number,
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+const props = defineProps({
+  testId: {
+    type: String
   },
-  emits: ['showLoading', 'stopShowLoading'],
-  data() {
-    return {
-      recording: false,
-      videoStream: null,
-      recordedChunks: [],
-      mediaRecorder: null,
-      recordedVideo: '',
+  taskIndex: {
+    type: Number
+  },
+})
+
+const emit = defineEmits(['showLoading', 'stopShowLoading'])
+
+const store = useStore()
+const { t } = useI18n()
+const toast = useToast()
+
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+
+const recording = ref(false)
+const videoStream = ref(null)
+const recordedChunks = ref([])
+const mediaRecorder = ref(null)
+const recordedVideo = ref('')
+
+const startRecording = async () => {
+  recording.value = true
+  try {
+    videoStream.value = await navigator.mediaDevices.getUserMedia({
+      video: true,
+    })
+
+    recordedChunks.value = []
+    mediaRecorder.value = new MediaRecorder(videoStream.value)
+
+    mediaRecorder.value.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.value.push(event.data)
+      }
     }
-  },
-  computed: {
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-  },
-  methods: {
-    async startRecording() {
-      this.recording = true
-      try {
-        this.videoStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-        })
+  } catch (e) {
+    recording.value = false
+    toast.error(t('errors.globalError'))
+  }
 
-        this.recordedChunks = []
-        this.mediaRecorder = new MediaRecorder(this.videoStream)
+  try {
+    mediaRecorder.value.onstop = async () => {
+      emit('showLoading')
+      const videoBlob = new Blob(recordedChunks.value, {
+        type: 'video/webm',
+      })
+      const storage = getStorage()
+      const storageReference = storageRef(
+        storage,
+        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}/video/${recordedVideo.value}`,
+      )
+      await uploadBytes(storageReference, videoBlob)
 
-        this.mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            this.recordedChunks.push(event.data)
-          }
-        }
-      } catch (e) {
-        this.recording = false
-        this.$toast.error(i18n.t(errors.globalError))
-      }
+      recordedVideo.value = await getDownloadURL(storageReference)
 
-      try {
-        this.mediaRecorder.onstop = async () => {
-          this.$emit('showLoading')
-          const videoBlob = new Blob(this.recordedChunks, {
-            type: 'video/webm',
-          })
-          const storage = getStorage()
-          const storageRef = ref(
-            storage,
-            `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/video/${this.recordedVideo}`,
-          )
-          await uploadBytes(storageRef, videoBlob)
+      currentUserTestAnswer.value.tasks[props.taskIndex].webcamRecordURL = recordedVideo.value
 
-          this.recordedVideo = await getDownloadURL(storageRef)
+      videoStream.value.getTracks().forEach((track) => track.stop())
+      recording.value = false
 
-          this.currentUserTestAnswer.tasks[
-            this.taskIndex
-          ].webcamRecordURL = this.recordedVideo
+      emit('stopShowLoading')
+      toast.success(t('alerts.genericSuccess'))
+    }
 
-          this.videoStream.getTracks().forEach((track) => track.stop())
-          this.recording = false
+    mediaRecorder.value.start()
+  } catch (e) {
+    toast.error(t('errors.globalError'))
+  }
+}
 
-          this.$emit('stopShowLoading')
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
-        }
-
-        this.mediaRecorder.start()
-      } catch (e) {
-        this.$toast.error(i18n.t(errors.globalError))
-      }
-    },
-    stopRecording() {
-      if (this.mediaRecorder) {
-        this.mediaRecorder.stop()
-      }
-    },
-  },
+const stopRecording = () => {
+  if (mediaRecorder.value) {
+    mediaRecorder.value.stop()
+  }
 }
 </script>
 

@@ -37,24 +37,17 @@
   </v-card>
 </template>
   
-<script>
-
-  
-  // Components
-  
-  export default {
-    components: {},
-    props: {
-        moderator: {
-            type: Object,
-            required: true,
-        },
-        evaluator: {
-            type: Object,
-            required: true,
-        }
-    }
-}
+<script setup>
+const props = defineProps({
+  moderator: {
+    type: Object,
+    required: true,
+  },
+  evaluator: {
+    type: Object,
+    required: true,
+  }
+})
 </script>
   
 <style scoped>

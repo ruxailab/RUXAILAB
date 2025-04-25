@@ -1,54 +1,71 @@
-<script>
-import { Radar } from 'vue-chartjs'
+<template>
+  <div>
+    <Radar :chart-data="chartData" :options="chartOptions" />
+  </div>
+</template>
 
-export default {
-  extends: Radar,
-  props: {
-    labels: {
-      type: Array,
-      required: true,
-      default: function() {
-        return []
-      },
+<script setup>
+import { Radar } from 'vue-chartjs'
+import { ref, computed, watch, onMounted } from 'vue'
+
+const props = defineProps({
+  labels: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+  data: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+})
+
+const chartData = computed(() => ({
+  labels: props.labels,
+  datasets: [
+    {
+      label: 'Usability Percentage ',
+      backgroundColor: 'rgba(249, 152, 38, 0.24)',
+      borderColor: 'rgba(255, 81, 47, 1)',
+      pointBackgroundColor: 'rgba(255, 81, 47, 1)',
+      data: props.data,
     },
-    data: {
-      type: Array,
-      required: true,
-      default: function() {
-        return []
-      },
+  ],
+}))
+
+const chartOptions = ref({
+  responsive: true,
+  maintainAspectRatio: false,
+  scale: {
+    ticks: {
+      suggestedMin: 0,
+      suggestedMax: 100,
     },
   },
-  watch: {
-    data() {
-      this.$data._chart.update()
-    },
-  },
-  mounted() {
-    this.renderChart(
-      {
-        labels: this.labels,
-        datasets: [
-          {
-            label: 'Usability Percentage ',
-            backgroundColor: 'rgba(249, 152, 38,0.24)',
-            borderColor: 'rgba(255, 81, 47,1)',
-            pointBackgroundColor: 'rgba(255, 81, 47,1)',
-            data: this.data,
-          },
-        ],
-      },
-      {
-        responsive: true,
-        maintainAspectRatio: false,
-        scale: {
-          ticks: {
-            suggestedMin: 0,
-            suggestedMax: 100,
-          },
-        },
-      },
-    )
-  },
+})
+
+const chartInstance = ref(null)
+
+const getChartInstance = (chart) => {
+  chartInstance.value = chart
 }
+
+watch(
+  () => props.data,
+  () => {
+    if (chartInstance.value) {
+      chartInstance.value.update()
+    }
+  },
+  { deep: true }
+)
+
+// onMounted(() => {
+//   // The Radar component handles rendering internally
+// })
 </script>
+
+<style scoped>
+/* Add any component-specific styles here */
+</style>

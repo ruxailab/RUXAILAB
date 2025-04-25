@@ -1,30 +1,13 @@
 <template>
   <div>
-    <v-row
-      justify="start"
-      align="center"
-    >
-      <v-col
-        cols="10"
-        sm="11"
-        class="py-0"
-      >
+    <v-row justify="start" align="center">
+      <v-col cols="10" sm="11" class="py-0">
         <slot name="answer" />
       </v-col>
-      <v-col
-        cols="1"
-        class="mb-6 py-0"
-      >
-        <v-tooltip
-          v-if="!show"
-          location="bottom"
-        >
+      <v-col cols="1" class="mb-6 py-0">
+        <v-tooltip v-if="!show" location="bottom">
           <template #activator="{ props }">
-            <v-btn
-              icon
-              v-bind="props"
-              @click="show = !show"
-            >
+            <v-btn icon v-bind="props" @click="show = !show">
               <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -37,16 +20,9 @@
             $t('HeuristicsTable.AddCommentBtn.addComment')
           }}</span>
         </v-tooltip>
-        <v-tooltip
-          v-else
-          location="bottom"
-        >
+        <v-tooltip v-else location="bottom">
           <template #activator="{ props }">
-            <v-btn
-              icon
-              v-bind="props"
-              @click="show = !show"
-            >
+            <v-btn icon v-bind="props" @click="show = !show">
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
@@ -54,10 +30,7 @@
         </v-tooltip>
       </v-col>
 
-      <v-col
-        cols="12"
-        class="py-0"
-      >
+      <v-col cols="12" class="py-0">
         <v-textarea
           v-if="show"
           v-model="localComment"
@@ -73,7 +46,7 @@
           v-if="show"
           :heuristic-id="test.testStructure[heurisIndex]"
           :question-id="answerHeu.heuristicId"
-          :test-id="$store.getters.test.id"
+          :test-id="store.getters.test.id"
           @image-uploaded="handleImageUploaded"
         />
       </v-col>
@@ -81,67 +54,81 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import ImageImport from '@/components/atoms/ImportImage.vue'
 
-export default {
-  components: { ImageImport },
-  props: {
-    answerHeu: {
-      type: Object,
-      default: () => ({}),
-      required: true,
-    },
-    heurisIndex: {
-      type: Number,
-      default: 0,
-    },
+// Props
+defineProps({
+  answerHeu: {
+    type: Object,
+    default: () => ({}),
+    required: true,
   },
-  emits: ['updateComment'], 
-  data: () => ({
-    show: false,
-    localComment: '', // Local state for the textarea
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    hasContent() {
-      return this.answerHeu.heuristicComment || this.answerHeu.answerImageUrl
-    },
+  heurisIndex: {
+    type: Number,
+    default: 0,
   },
-  watch: {
-    heurisIndex() {
-      this.show = false 
-      this.localComment = this.answerHeu.heuristicComment || '' // Sync local state
-    },
-    'answerHeu.heuristicComment'() {
-      this.localComment = this.answerHeu.heuristicComment || '' // Update local state if prop changes
-    },
-    'answerHeu.heuristicComment'(newVal) {
-      if (newVal && !this.show) {
-        this.show = true
-      }
-    },
-    'answerHeu.answerImageUrl'(newVal) {
-      if (newVal && !this.show) {
-        this.show = true
-      }
-    },
-  },
-  mounted() {
-    if (this.hasContent) {
-      this.show = true
+})
+
+// Emits
+const emit = defineEmits(['updateComment'])
+
+// Vuex store
+const store = useStore()
+
+// Reactive state
+const show = ref(false)
+const localComment = ref('')
+
+// Computed properties
+const test = computed(() => store.getters.test)
+const hasContent = computed(
+  () => answerHeu.value.heuristicComment || answerHeu.value.answerImageUrl
+)
+
+// Watchers
+watch(
+  () => heurisIndex.value,
+  () => {
+    show.value = false
+    localComment.value = answerHeu.value.heuristicComment || ''
+  }
+)
+
+watch(
+  () => answerHeu.value.heuristicComment,
+  (newVal) => {
+    localComment.value = newVal || ''
+    if (newVal && !show.value) {
+      show.value = true
     }
-  },
-  methods: {
-    updateComment(input) {
-      this.$emit('updateComment', input)
-    },
-    handleImageUploaded() {
-      // Handle the image URL from the event emitted by ImportImage
-      this.updateComment('')
-    },
-  },
+  }
+)
+
+watch(
+  () => answerHeu.value.answerImageUrl,
+  (newVal) => {
+    if (newVal && !show.value) {
+      show.value = true
+    }
+  }
+)
+
+// Lifecycle hooks
+onMounted(() => {
+  if (hasContent.value) {
+    show.value = true
+  }
+})
+
+// Methods
+const updateComment = (input) => {
+  emit('updateComment', input)
+}
+
+const handleImageUploaded = () => {
+  updateComment('')
 }
 </script>

@@ -15,7 +15,7 @@
       </v-btn>
 
       <v-toolbar-title
-        v-if="$route.path != '/help'"
+        v-if="$route.path !== '/help'"
         style="cursor: pointer"
         @click="goTo('/testslist')"
       >
@@ -293,233 +293,234 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import { useDisplay } from 'vuetify';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
+import { getAuth } from 'firebase/auth';
 import LocaleChanger from '@/components/atoms/LocaleChanger.vue';
 import NotificationBtn from '../atoms/NotificationButton.vue';
 import HelpButton from '../atoms/HelpButton.vue';
 import UserController from '@/controllers/UserController';
-import { getAuth } from 'firebase/auth';
-import { useDisplay } from 'vuetify/lib/framework.mjs';
-import i18n from '@/i18n';
 
-export default {
-  name: 'Toolbar',
-  components: {
-    NotificationBtn,
-    LocaleChanger,
-    HelpButton,
-  },
-  data() {
-    return {
-      drawer: false,
-      menu: false,
-      isManager: false,
-      username: null,
-      profileImage: null,
-      defaultImage: 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      display: useDisplay(),
-    };
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-    test() {
-      return this.$store.state.Tests.Test;
-    },
-    items() {
-      let items = [];
-      if (this.test) {
-        items = [
+const drawer = ref(false);
+const menu = ref(false);
+const isManager = ref(false);
+const username = ref(null);
+const profileImage = ref(null);
+const defaultImage = 'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png';
+
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+const { smAndDown } = useDisplay();
+const { t } = useI18n();
+const toast = useToast();
+
+const user = computed(() => store.getters.user);
+const test = computed(() => store.state.Tests.Test);
+
+const items = computed(() => {
+  let items = [];
+  if (test.value) {
+    items = [
+      {
+        title: 'Manager',
+        icon: 'mdi-home',
+        path: `/managerview/${test.value.id}`,
+        id: 0,
+      },
+    ];
+
+    if (accessLevel.value <= 2) {
+      if (accessLevel.value === 0) {
+        items.push(
           {
-            title: 'Manager',
-            icon: 'mdi-home',
-            path: `/managerview/${this.test.id}`,
-            id: 0,
+            title: 'Test',
+            icon: 'mdi-file-document-edit',
+            path: `/edittest/${test.value.id}`,
+            id: 1,
           },
-        ];
-
-        if (this.accessLevel <= 2) {
-          if (this.accessLevel == 0) {
-            items.push(
-              {
-                title: 'Test',
-                icon: 'mdi-file-document-edit',
-                path: `/edittest/${this.test.id}`,
-                id: 1,
-              },
-              {
-                title: 'Preview',
-                icon: 'mdi-file-eye',
-                path: `/testview/${this.test.id}`,
-                id: 2,
-              },
-            );
-          } else if (this.accessLevel == 1) {
-            items.push({
-              title: 'Answer Test',
-              icon: 'mdi-file-document',
-              path: `/testview/${this.test.id}`,
-              id: 1,
-            });
-          }
-        }
-        if (this.accessLevel == 0) {
-          items.push(
-            {
-              title: 'Reports',
-              icon: 'mdi-book-multiple',
-              path: `/reportview/${this.test.id}`,
-              id: 3,
-            },
-            {
-              title: 'Answers',
-              icon: 'mdi-order-bool-ascending-variant',
-              path: `/answerview/${this.test.id}`,
-              id: 4,
-            },
-            {
-              title: 'Final Report',
-              icon: 'mdi-file-document',
-              path: `/finalreportview/${this.test.id}`,
-              id: 5,
-            },
-            {
-              title: 'Cooperators',
-              icon: 'mdi-account-group',
-              path: `/cooperators/${this.test.id}`,
-              id: 6,
-            },
-          );
-        } else if (this.accessLevel == 1) {
-          items.push(
-            {
-              title: 'Reports',
-              icon: 'mdi-book-multiple',
-              path: `/reportview/${this.test.id}`,
-              id: 2,
-            },
-            {
-              title: 'Answers',
-              icon: 'mdi-order-bool-ascending-variant',
-              path: `/answerview/${this.test.id}`,
-              id: 3,
-            },
-          );
-        }
-        if (this.test.template) {
-          items.push({
-            title: 'Template',
-            icon: 'mdi-file-compare',
-            path: `/templateview/${this.test.template.id}`,
-            id: 7,
-          });
-        }
-      }
-      return items;
-    },
-    accessLevel() {
-      if (this.user) {
-        if (this.user.accessLevel == 0) return 0;
-        const isTestOwner = this.test.testAdmin?.userDocId === this.user.id;
-        if (isTestOwner) return 0;
-        const answers = [];
-        const answersEntries = Object.entries(this.user.myAnswers);
-        answersEntries.forEach((answer) => {
-          answers.push(answer[1]);
+          {
+            title: 'Preview',
+            icon: 'mdi-file-eye',
+            path: `/testview/${test.value.id}`,
+            id: 2,
+          },
+        );
+      } else if (accessLevel.value === 1) {
+        items.push({
+          title: 'Answer Test',
+          icon: 'mdi-file-document',
+          path: `/testview/${test.value.id}`,
+          id: 1,
         });
-        if (this.test.cooperators) {
-          const coopsInfo = this.test.cooperators.find(
-            (coops) => coops.userDocId === this.user.id,
-          );
-          if (coopsInfo) {
-            return coopsInfo.accessLevel;
-          }
-        }
-        if (this.test.isPublic) return 1;
-        else return 2;
       }
-      return 1;
+    }
+    if (accessLevel.value === 0) {
+      items.push(
+        {
+          title: 'Reports',
+          icon: 'mdi-book-multiple',
+          path: `/reportview/${test.value.id}`,
+          id: 3,
+        },
+        {
+          title: 'Answers',
+          icon: 'mdi-order-bool-ascending-variant',
+          path: `/answerview/${test.value.id}`,
+          id: 4,
+        },
+        {
+          title: 'Final Report',
+          icon: 'mdi-file-document',
+          path: `/finalreportview/${test.value.id}`,
+          id: 5,
+        },
+        {
+          title: 'Cooperators',
+          icon: 'mdi-account-group',
+          path: `/cooperators/${test.value.id}`,
+          id: 6,
+        },
+      );
+    } else if (accessLevel.value === 1) {
+  items.push(
+    {
+      title: 'Reports',
+      icon: 'mdi-book-multiple',
+      path: `/reportview/${test.value.id}`,
+      id: 2,
     },
-    userInitial() {
-      if (this.username) {
-        return this.username.charAt(0).toUpperCase();
+    {
+      title: 'Answers',
+      icon: 'mdi-order-bool-ascending-variant',
+      path: `/answerview/${test.value.id}`,
+      id: 3,
+    },
+  );
+}
+
+    if (test.value.template) {
+      items.push({
+        title: 'Template',
+        icon: 'mdi-file-compare',
+        path: `/templateview/${test.value.template.id}`,
+        id: 7,
+      });
+    }
+  }
+  return items;
+});
+
+const accessLevel = computed(() => {
+  if (user.value) {
+    if (user.value.accessLevel === 0) return 0;
+    const isTestOwner = test.value.testAdmin?.userDocId === user.value.id;
+    if (isTestOwner) return 0;
+    const answers = [];
+    const answersEntries = Object.entries(user.value.myAnswers || {});
+    answersEntries.forEach((answer) => {
+      answers.push(answer[1]);
+    });
+    if (test.value.cooperators) {
+      const coopsInfo = test.value.cooperators.find(
+        (coops) => coops.userDocId === user.value.id,
+      );
+      if (coopsInfo) {
+        return coopsInfo.accessLevel;
       }
-      return 'U';
-    },
-    smAndDown() {
-      return this.display.smAndDown.value;
-    },
-    iconSize() {
-      return this.$vuetify?.breakpoint?.xsOnly ? '18' : '20';
-    },
-  },
-  watch: {
-    $route: {
-      immediate: true,
-      handler(to) {
-        const parentRoute = to.matched[0];
-        if (parentRoute) {
-          if (parentRoute.name === 'ManagerView') this.isManager = true;
-          else this.isManager = false;
-        }
-      },
-    },
-    user: {
-      immediate: true,
-      handler(newUser) {
-        if (newUser) {
-          this.fetchUsername();
-        } else {
-          this.username = null;
-        }
-      },
-    },
-  },
-  mounted() {
-    if (this.user) {
-      this.fetchUsername();
+    }
+    if (test.value.isPublic) return 1;
+    else return 2;
+  }
+  return 1;
+});
+
+const userInitial = computed(() => {
+  if (username.value) {
+    return username.value.charAt(0).toUpperCase();
+  }
+  return 'U';
+});
+
+const iconSize = computed(() => {
+  return smAndDown.value ? '18' : '20';
+});
+
+const fetchUsername = async () => {
+  try {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      const userController = new UserController();
+      const userDoc = await userController.getById(currentUser.uid);
+      if (userDoc) {
+        username.value = userDoc.username || null;
+        profileImage.value = userDoc.profileImage || null;
+      } else {
+        console.error('User document not found in Firestore');
+      }
+    } else {
+      console.error('No user is currently signed in');
+    }
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    toast.error(t('errors.globalError'));
+  }
+};
+
+const goTo = (path) => {
+  if (path.includes('/testview')) {
+    window.open(path);
+  } else {
+    router.push(path).catch(() => {});
+  }
+};
+
+const signOut = async () => {
+  await store.dispatch('logout');
+  router.push('/').catch(() => {});
+};
+
+const goToProfile = () => {
+  if (route.path !== '/profile') {
+    router.push('/profile').catch(() => {});
+  }
+};
+
+watch(
+  () => route,
+  (to) => {
+    const parentRoute = to.matched[0];
+    if (parentRoute) {
+      isManager.value = parentRoute.name === 'ManagerView';
     }
   },
-  methods: {
-    async fetchUsername() {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (user) {
-          const userController = new UserController();
-          const userDoc = await userController.getById(user.uid);
-          if (userDoc) {
-            this.username = userDoc.username || null;
-            this.profileImage = userDoc.profileImage || null;
-          } else {
-            console.error('User document not found in Firestore');
-          }
-        } else {
-          console.error('No user is currently signed in');
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        this.$toast.error(i18n.t('errors.globalError'));
-      }
-    },
-    goTo(route) {
-      if (route.includes('/testview')) window.open(route);
-      else {
-        this.$router.push(route).catch(() => {});
-      }
-    },
-    async signOut() {
-      await this.$store.dispatch('logout');
-      this.$router.push('/').catch(() => {});
-    },
-    goToProfile() {
-      if (this.$route.path !== '/profile') {
-        this.$router.push('/profile').catch(() => { });
-      }
-    },
+  { immediate: true, deep: true },
+);
+
+watch(
+  user,
+  (newUser) => {
+    if (newUser) {
+      fetchUsername();
+    } else {
+      username.value = null;
+      profileImage.value = null;
+    }
   },
-};
+  { immediate: true },
+);
+
+onMounted(() => {
+  if (user.value) {
+    fetchUsername();
+  }
+});
 </script>
 
 <style scoped>

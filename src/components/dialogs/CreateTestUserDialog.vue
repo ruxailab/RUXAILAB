@@ -55,45 +55,37 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { defineProps, defineEmits } from 'vue'
 import ButtonBack from '@/components/atoms/ButtonBack.vue'
 import CardTypeTestImage from '@/components/atoms/CardTypeTestImage.vue'
 
-export default {
-  components: {
-    ButtonBack,
-    CardTypeTestImage,
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
+})
 
-  props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-      required: true, 
-    },
-  },
+const emit = defineEmits(['update:isOpen', 'close', 'setUser'])
 
-  emits: ['update:isOpen', 'close', 'setUser'],
+const setType = (type) => {
+  const normalizedType = type.toLowerCase()
+  const test = {}
+  if (normalizedType === 'unmoderated') test.userTestType = normalizedType
+  if (normalizedType === 'moderated') {
+    test.userTestType = normalizedType
+    test.userTestStatus = {
+      user: false,
+      moderator: false,
+      consentStatus: 'open',
+      preTestStatus: 'closed',
+      postTestStatus: 'closed',
+    }
+  }
 
-  methods: {
-    setType(type) {
-      const normalizedType = type.toLowerCase()
-      const test = {}
-      if (normalizedType === 'unmoderated') test.userTestType = normalizedType
-      if (normalizedType === 'moderated') {
-        test.userTestType = normalizedType
-        test.userTestStatus = {
-          user: false,
-          moderator: false,
-          consentStatus: 'open',
-          preTestStatus: 'closed',
-          postTestStatus: 'closed',
-        }
-      }
-
-      this.$emit('setUser', test)
-    },
-  },
+  emit('setUser', test)
 }
 </script>
 

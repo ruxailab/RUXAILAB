@@ -103,84 +103,99 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
+<script setup>
+import { ref, watch, defineProps, defineEmits } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import { cloneDeep } from 'lodash'
 
-export default {
-  props: {
-    heuris: {
-      type: Object,
-      required: true,
-    },
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps({
+  heuris: {
+    type: Object,
+    required: true,
   },
-  emits: ['openDialog', 'update:dialog', 'addHeuris', 'change'],
-  data: () => ({
-    id: 0,
-    localDialog: false,
-    localHeuris: { title: '', questions: [], total: 0 },
-    nameRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired')],
-    questionRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired')],
-  }),
-  watch: {
-    dialog(newVal) {
-      this.localDialog = newVal
-      if (newVal) {
-        this.localHeuris = cloneDeep(this.heuris)
-      }
-    },
-    heuris: {
-      handler(newVal) {
-        if (!this.localDialog) {
-          this.localHeuris = cloneDeep(newVal)
-        }
-      },
-      deep: true,
-    },
+  dialog: {
+    type: Boolean,
+    default: false,
   },
-  methods: {
-    addQuestion() {
-      if (this.localHeuris.questions.length > 0) {
-        this.id = this.localHeuris.questions[this.localHeuris.questions.length - 1].id + 1
-      } else {
-        this.id = 0
-      }
-      this.localHeuris.questions.push({ id: this.id, text: '' })
-      this.localHeuris.total = this.localHeuris.questions.length
-    },
-    removeQuestion(i) {
-      this.localHeuris.questions.splice(i, 1)
-      this.localHeuris.total = this.localHeuris.questions.length
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        if (this.localHeuris.questions.length === 0) {
-          this.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
-        } else {
-          this.$emit('update:dialog', false)
-          this.$emit('addHeuris', cloneDeep(this.localHeuris))
-          this.$emit('change')
-          this.resetVal()
-        }
-      }
-    },
-    resetVal() {
-      this.localHeuris = { title: '', questions: [], total: 0 }
-      this.$refs.form.resetValidation()
-    },
-    updateDialog(value) {
-      this.localDialog = value
-      this.$emit('update:dialog', value)
-    },
-    closeDialog() {
-      this.$emit('update:dialog', false)
-      this.resetVal()
-    },
+})
+
+const emit = defineEmits(['openDialog', 'update:dialog', 'addHeuris', 'change'])
+
+const { t } = useI18n()
+const toast = useToast()
+
+const id = ref(0)
+const localDialog = ref(false)
+const localHeuris = ref({ title: '', questions: [], total: 0 })
+const form = ref(null)
+const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')])
+const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')])
+
+// Watchers
+watch(
+  () => props.dialog,
+  (newVal) => {
+    localDialog.value = newVal
+    if (newVal) {
+      localHeuris.value = cloneDeep(props.heuris)
+    }
+  }
+)
+
+watch(
+  () => props.heuris,
+  (newVal) => {
+    if (!localDialog.value) {
+      localHeuris.value = cloneDeep(newVal)
+    }
   },
+  { deep: true }
+)
+
+// Methods
+const addQuestion = () => {
+  if (localHeuris.value.questions.length > 0) {
+    id.value = localHeuris.value.questions[localHeuris.value.questions.length - 1].id + 1
+  } else {
+    id.value = 0
+  }
+  localHeuris.value.questions.push({ id: id.value, text: '' })
+  localHeuris.value.total = localHeuris.value.questions.length
+}
+
+const removeQuestion = (index) => {
+  localHeuris.value.questions.splice(index, 1)
+  localHeuris.value.total = localHeuris.value.questions.length
+}
+
+const validate = async () => {
+  const { valid } = await form.value.validate()
+  if (valid) {
+    if (localHeuris.value.questions.length === 0) {
+      toast.info(t('HeuristicsTable.validation.addQuestion'))
+    } else {
+      emit('update:dialog', false)
+      emit('addHeuris', cloneDeep(localHeuris.value))
+      emit('change')
+      resetVal()
+    }
+  }
+}
+
+const resetVal = () => {
+  localHeuris.value = { title: '', questions: [], total: 0 }
+  form.value.resetValidation()
+}
+
+const updateDialog = (value) => {
+  localDialog.value = value
+  emit('update:dialog', value)
+}
+
+const closeDialog = () => {
+  emit('update:dialog', false)
+  resetVal()
 }
 </script>
 

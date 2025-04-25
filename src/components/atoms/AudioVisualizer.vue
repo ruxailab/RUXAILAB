@@ -25,61 +25,59 @@
     </v-row>
   </v-container>
 </template>
-  
-  <script>
-    export default {
-      data() {
-        return {
-          audioContext: null,
-          analyser: null,
-          dataArray: null,
-          activeBars: 0,
-          animationId: null,
-        }
-      },
-      mounted() {
-        this.initAudio()
-      },
-      beforeUnmount() {
-        this.cleanup()
-      },
-      methods: {
-        async initAudio() {
-          const AudioContext = window.AudioContext || window.webkitAudioContext
-          this.audioContext = new AudioContext()
-          this.analyser = this.audioContext.createAnalyser()
-          this.analyser.fftSize = 32
-  
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-              audio: true,
-            })
-            const source = this.audioContext.createMediaStreamSource(stream)
-            source.connect(this.analyser)
-  
-            this.dataArray = new Uint8Array(this.analyser.frequencyBinCount)
-            this.animate()
-          } catch (error) {
-            console.error('Error accessing the microphone', error)
-          }
-        },
-        animate() {
-          this.analyser.getByteFrequencyData(this.dataArray)
-          const sum = this.dataArray.reduce((a, b) => a + b, 0)
-          const average = sum / this.dataArray.length
-          this.activeBars = Math.min(Math.floor(average / 20), 15) // Adjust sensitivity here
-  
-          this.animationId = requestAnimationFrame(this.animate)
-        },
-        cleanup() {
-          if (this.audioContext) {
-            this.audioContext.close()
-          }
-          if (this.animationId) {
-            cancelAnimationFrame(this.animationId)
-          }
-        },
-      },
-    }
-  </script>
-  
+
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+const audioContext = ref(null)
+const analyser = ref(null)
+const dataArray = ref(null)
+const activeBars = ref(0)
+const animationId = ref(null)
+
+const initAudio = async () => {
+  const AudioContext = window.AudioContext || window.webkitAudioContext
+  audioContext.value = new AudioContext()
+  analyser.value = audioContext.value.createAnalyser()
+  analyser.value.fftSize = 32
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    })
+    const source = audioContext.value.createMediaStreamSource(stream)
+    source.connect(analyser.value)
+
+    dataArray.value = new Uint8Array(analyser.value.frequencyBinCount)
+    animate()
+  } catch (error) {
+    console.error('Error accessing the microphone', error)
+  }
+}
+
+const animate = () => {
+  analyser.value.getByteFrequencyData(dataArray.value)
+  const sum = dataArray.value.reduce((a, b) => a + b, 0)
+  const average = sum / dataArray.value.length
+  activeBars.value = Math.min(Math.floor(average / 20), 15) // Adjust sensitivity here
+
+  animationId.value = requestAnimationFrame(animate)
+}
+
+const cleanup = () => {
+  if (audioContext.value) {
+    audioContext.value.close()
+  }
+  if (animationId.value) {
+    cancelAnimationFrame(animationId.value)
+  }
+}
+
+onMounted(() => {
+  initAudio()
+})
+
+onBeforeUnmount(() => {
+  cleanup()
+})
+</script>
