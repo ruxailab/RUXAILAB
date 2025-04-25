@@ -375,7 +375,7 @@ import UserVariables from '../atoms/UserVariables.vue';
 import ModeratedTasks from '../atoms/ModeratedTasks.vue';
 import UserConsent from '../atoms/UserConsent.vue';
 
-defineProps({
+const props = defineProps({
   type: {
     type: String,
     required: true,
@@ -416,10 +416,10 @@ const participantCameraStore = computed(() => store.getters.participantCamera);
 const finalMessageStore = computed(() => store.getters.finalMessage);
 
 const updateData = (data) => {
-  if (index === 0) {
+  if (props.index === 0) {
     store.dispatch('setPreTest', data);
   }
-  if (index === 2) {
+  if (props.index === 2) {
     store.dispatch('setPostTest', data);
   }
 };
@@ -490,8 +490,8 @@ onMounted(() => {
   getParticipantCamera();
   getFinalMessage();
 
-  if (type !== 'content' && type !== 'tabs') {
-    console.error(`${type} type in EditUserTest.vue is not valid.`);
+  if (props.type !== 'content' && props.type !== 'tabs') {
+    console.error(`${props.type} type in EditUserTest.vue is not valid.`);
   }
   if (testStructure.value.postTest) {
     store.dispatch('setPostTest', testStructure.value.postTest);
