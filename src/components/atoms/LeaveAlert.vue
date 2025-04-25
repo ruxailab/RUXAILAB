@@ -43,30 +43,35 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'LeaveAlert',
-  emits: ['save-and-leave'],
-  computed: {
-    dialogLeaveStatus() {
-      return this.$store.getters.getDialogLeaveStatus;
-    }
-  },
-  methods: {
-    setDialog() {
-      this.$store.commit('SET_DIALOG_LEAVE', false);
-    },
-    handleLeave() {
-      this.discardChanges();
-      this.$router.push({ name: this.$store.state.pathTo });
-    },
-    discardChanges() {
-      this.$store.commit('SET_LOCAL_CHANGES', false);
-      console.log(this.$store.state.pathTo);
-    },
-    submit() {
-      this.$emit('save-and-leave');
-    }
-  }
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+defineEmits(['save-and-leave']);
+
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+
+const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus);
+
+const setDialog = () => {
+  store.commit('SET_DIALOG_LEAVE', false);
+};
+
+const discardChanges = () => {
+  store.commit('SET_LOCAL_CHANGES', false);
+  console.log(store.state.pathTo);
+};
+
+const handleLeave = () => {
+  discardChanges();
+  router.push({ name: store.state.pathTo });
+};
+
+const submit = () => {
+  emit('save-and-leave');
 };
 </script>

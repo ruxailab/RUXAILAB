@@ -108,32 +108,36 @@
   </div>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    x: 'right',
-    y: 'top',
-  }),
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-  },
-  methods: {
-    async goToNotificationRedirect(notification) {
-      await this.$store.dispatch('markNotificationAsRead', {
-        notification,
-        user: this.user,
-      });
-      window.open(`/${notification.redirectsTo}`, '_blank');
-    },
-    checkIfHasNewNotifications() {
-      return this.user.notifications.filter((n) => !n.read).length;
-    },
-    goToNotificationPage() {
-      this.$router.push('/notifications');
-    },
-  },
+<script setup>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+// Initialize store, router, and i18n
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+
+const x = ref('right');
+const y = ref('top');
+
+const user = computed(() => store.getters.user);
+
+const checkIfHasNewNotifications = () => {
+  return user.value.notifications.filter((n) => !n.read).length;
+};
+
+const goToNotificationRedirect = async (notification) => {
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value,
+  });
+  window.open(`/${notification.redirectsTo}`, '_blank');
+};
+
+const goToNotificationPage = () => {
+  router.push('/notifications');
 };
 </script>
 

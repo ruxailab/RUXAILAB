@@ -9,6 +9,8 @@
       <v-row justify="center">
         <v-col cols="12" class="pa-5">
           <span class="cardsTitle ml-5">Tasks</span>
+         Got error generating code: Unexpected reserved word 'import'
+
           <br>
           <span class="cardsSubtitle ml-5 mb-1">Create tasks for your evaluators</span>
           <v-row justify="center">
@@ -123,104 +125,106 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import draggable from 'vuedraggable';
 
-export default {
-  components: { draggable },
-  data: () => ({
-    tasks: [],
-    drag: false,
-    addTaskModal: false,
-    taskIndex: null,
-    valid: false,
-    newTask: {
-      taskName: '',
-      taskDescription: '',
-      taskStatus: 'closed',
-    },
-  }),
+// Initialize store
+const store = useStore();
 
-  computed: {
-    tasksStore() {
-      return this.$store.getters.tasks || [];
-    },
-    testStructure() {
-      return this.$store.state.Tests?.Test?.testStructure || { userTasks: [] };
-    },
+// Reactive state
+const tasks = ref([]);
+const drag = ref(false);
+const addTaskModal = ref(false);
+const taskIndex = ref(null);
+const valid = ref(false);
+const newTask = ref({
+  taskName: '',
+  taskDescription: '',
+  taskStatus: 'closed',
+});
+const form = ref(null);
+
+// Computed properties
+const tasksStore = computed(() => store.getters.tasks || []);
+const testStructure = computed(
+  () => store.state.Tests?.Test?.testStructure || { userTasks: [] }
+);
+
+// Watch tasks for changes
+watch(
+  tasks,
+  () => {
+    saveTasks();
   },
+  { deep: true }
+);
 
-  watch: {
-    tasks: {
-      handler() {
-        this.saveTasks();
-      },
-      deep: true,
-    },
-  },
-
-  mounted() {
-    this.getTasks();
-  },
-
-  methods: {
-    openAddTaskModal(taskIndex) {
-      this.taskIndex = taskIndex;
-      this.addTaskModal = true;
-    },
-    closeAddTaskModal() {
-      this.taskIndex = null;
-      this.addTaskModal = false;
-      this.newTask = { taskName: '', taskDescription: '', taskStatus: 'closed' };
-      this.resetForm();
-    },
-    resetForm() {
-      if (this.$refs.form) {
-        this.$refs.form.resetValidation();
-      }
-    },
-    addTask() {
-      if (
-        this.newTask.taskName.trim() !== '' &&
-        this.newTask.taskDescription.trim() !== ''
-      ) {
-        const insertIndex =
-          this.taskIndex !== null ? this.taskIndex + 1 : this.tasks.length;
-
-        this.tasks.splice(insertIndex, 0, {
-          taskName: this.newTask.taskName,
-          taskDescription: this.newTask.taskDescription,
-          taskStatus: 'closed',
-        });
-        this.closeAddTaskModal();
-      } else {
-        this.$refs.form.validate();
-      }
-    },
-
-    getTasks() {
-      if (this.testStructure?.userTasks) {
-        this.$store.dispatch('setTasks', this.testStructure.userTasks);
-        this.tasks = this.testStructure.userTasks;
-      } else if (this.tasksStore) {
-        this.tasks = this.tasksStore;
-      } else {
-        this.tasks = [];
-      }
-    },
-
-    saveTasks() {
-      this.$store.dispatch('setTasks', this.tasks);
-      if (this.$store.state.Tests?.Test?.testStructure) {
-        this.$store.state.Tests.Test.testStructure.userTasks = this.tasks;
-      }
-    },
-
-    deleteTask(index) {
-      this.tasks.splice(index, 1);
-    },
-  },
+// Methods
+const openAddTaskModal = (index = null) => {
+  taskIndex.value = index;
+  addTaskModal.value = true;
 };
+
+const closeAddTaskModal = () => {
+  taskIndex.value = null;
+  addTaskModal.value = false;
+  newTask.value = { taskName: '', taskDescription: '', taskStatus: 'closed' };
+  resetForm();
+};
+
+const resetForm = () => {
+  if (form.value) {
+    form.value.resetValidation();
+  }
+};
+
+const addTask = () => {
+  if (
+    newTask.value.taskName.trim() !== '' &&
+    newTask.value.taskDescription.trim() !== ''
+  ) {
+    const insertIndex =
+      taskIndex.value !== null ? taskIndex.value + 1 : tasks.value.length;
+
+    tasks.value.splice(insertIndex, 0, {
+      taskName: newTask.value.taskName,
+      taskDescription: newTask.value.taskDescription,
+      taskStatus: 'closed',
+    });
+    closeAddTaskModal();
+  } else {
+    form.value.validate();
+  }
+};
+
+const getTasks = () => {
+  if (testStructure.value?.userTasks) {
+    store.dispatch('setTasks', testStructure.value.userTasks);
+    tasks.value = testStructure.value.userTasks;
+  } else if (tasksStore.value) {
+    tasks.value = tasksStore.value;
+  } else {
+    tasks.value = [];
+  }
+};
+
+const saveTasks = () => {
+  store.dispatch('setTasks', tasks.value);
+  if (store.state.Tests?.Test?.testStructure) {
+    store.state.Tests.Test.testStructure.userTasks = tasks.value;
+  }
+};
+
+const deleteTask = (index) => {
+  tasks.value.splice(index, 1);
+};
+
+// Lifecycle hook
+onMounted(() => {
+  getTasks();
+});
 </script>
 
 <style scoped>

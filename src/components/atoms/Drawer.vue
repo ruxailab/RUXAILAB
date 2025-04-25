@@ -48,8 +48,6 @@
                   {{ item.icon }}
                 </v-icon>
               </template>
-
-              
               <v-list-item-title
                 :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
               >
@@ -72,8 +70,6 @@
               {{ item.icon }}
             </v-icon>
           </template>
-
-          
           <v-list-item-title
             :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
           >
@@ -118,57 +114,71 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-export default {
-  props: {
-    items: {
-      type: Array,
-      default: () => [],
-    },
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+// Props
+const props = defineProps({
+  items: {
+    type: Array,
+    default: () => [],
   },
+});
 
-  data: () => ({
-    mini: true,
-    tests: [],
-  }),
+// Vuex store
+const store = useStore();
 
-  computed: {
-    test() {
-      return this.$store.state.Tests.Test
-    },
+// Vue Router
+const router = useRouter();
+const route = useRoute();
 
-    testsList() {
-      return this.tests 
-    },
-  },
+// Vue I18n
+const { t } = useI18n();
 
-  async created() {
-    await this.fetchTests() 
-  },
+// Reactive state
+const mini = ref(true);
+const tests = ref([]);
 
-  methods: {
-    async fetchTests() {
-      try {
-        await this.$store.dispatch('getTestsAdminByUser'); 
-        this.tests = this.$store.state.Tests.tests; 
-      } catch (error) {
-        console.error('Error fetching tests:', error);
-      }
-    },
+// Computed properties
+const test = computed(() => store.state.Tests.Test);
+const testsList = computed(() => tests.value);
 
-    async changeTest(testName) {
-      const testId = this.testsList.find(
-        (t) => t.testTitle === testName,
-      )?.testDocId;
-      await this.$store.dispatch('getTest', { id: testId });
-      this.$router.replace({ name: 'ManagerView', params: { id: testId } });
-    },
+// Methods
+const fetchTests = async () => {
+  try {
+    await store.dispatch('getTestsAdminByUser');
+    tests.value = store.state.Tests.tests;
+  } catch (error) {
+    console.error('Error fetching tests:', error);
+  }
+};
 
-    go(item) {
-      if (this.$route.path === item.path) return;
-      if (item.path === `/testview/${this.test.id}`) return window.open(item.path);
-      return this.$router.push(item.path);
-    },
-  },
-}
+const changeTest = async (testName) => {
+  const testId = testsList.value.find((t) => t.testTitle === testName)?.testDocId;
+  await store.dispatch('getTest', { id: testId });
+  router.replace({ name: 'ManagerView', params: { id: testId } });
+};
+
+const go = (item) => {
+  if (route.path === item.path) return;
+  if (item.path === `/testview/${test.value.id}`) return window.open(item.path);
+  router.push(item.path);
+};
+
+// Lifecycle hook
+onMounted(async () => {
+  await fetchTests();
+});
 </script>
+
+<style scoped>
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+}
+</style>

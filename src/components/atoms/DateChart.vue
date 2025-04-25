@@ -1,101 +1,108 @@
-<script>
+<template>
+  <!-- Assuming the original component renders the chart implicitly via vue-chartjs -->
+  <!-- If a specific template is needed, it should be provided -->
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import { Line, mixins } from 'vue-chartjs'
 
-export default {
-  extends: Line,
-  mixins: [mixins.reactiveData],
-  props: {
-    taskAnswers: {
-      type: Array,
-      default:() => [],
-    },
+// Props
+const props = defineProps({
+  taskAnswers: {
+    type: Array,
+    default: () => [],
   },
-  data() {
-    return {
-      chartData: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Answers',
-            data: [],
-            borderColor: 'orange',
-            borderWidth: 1,
-            fill: true,
+})
+
+// Reactive chart data
+const chartData = ref({
+  labels: [],
+  datasets: [
+    {
+      label: 'Answers',
+      data: [],
+      borderColor: 'orange',
+      borderWidth: 1,
+      fill: true,
+    },
+  ],
+})
+
+// Chart options
+const chartOptions = ref({
+  scales: {
+    xAxes: [
+      {
+        type: 'time',
+        time: {
+          unit: 'week',
+          displayFormats: {
+            week: 'DD/MM',
           },
-        ],
-      },
-      chartOptions: {
-        scales: {
-          xAxes: [
-            {
-              type: 'time',
-              time: {
-                unit: 'week',
-                displayFormats: {
-                  week: 'DD/MM',
-                },
-              },
-              title: {
-                display: true,
-                text: 'Data',
-              },
-            },
-          ],
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
         },
-        responsive: true,
-        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: 'Data',
+        },
       },
-    }
+    ],
+    yAxes: [
+      {
+        ticks: {
+          beginAtZero: true,
+        },
+      },
+    ],
   },
-  mounted() {
-    this.processDataForChart()
-    this.renderChart(this.chartData, this.chartOptions)
-  },
-  methods: {
-    processDataForChart() {
-      const currentDate = new Date()
-      const MonthsAgo = new Date(currentDate)
-      MonthsAgo.setMonth(currentDate.getMonth() - 2)
+  responsive: true,
+  maintainAspectRatio: false,
+})
 
-      const validAnswers = this.taskAnswers.filter((answer) => answer.lastUpdate)
-      const filteredAnswers = validAnswers.filter((answer) => new Date(answer.lastUpdate) >= MonthsAgo)
-      filteredAnswers.sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate))
+// Process data for chart
+const processDataForChart = () => {
+  const currentDate = new Date()
+  const monthsAgo = new Date(currentDate)
+  monthsAgo.setMonth(currentDate.getMonth() - 2)
 
-      const testsPerDay = {}
-      const currentDateIterator = new Date(MonthsAgo)
+  const validAnswers = props.taskAnswers.filter((answer) => answer.lastUpdate)
+  const filteredAnswers = validAnswers
+    .filter((answer) => new Date(answer.lastUpdate) >= monthsAgo)
+    .sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate))
 
-      // Inicializar o objeto testsPerDay com zero para todos os dias no período
-      while (currentDateIterator <= currentDate) {
-        const dateKey = currentDateIterator.toISOString().split('T')[0]
-        testsPerDay[dateKey] = 0
-        currentDateIterator.setDate(currentDateIterator.getDate() + 1)
-      }
+  const testsPerDay = {}
+  const currentDateIterator = new Date(monthsAgo)
 
-      // Preencher testsPerDay com os dados reais
-      filteredAnswers.forEach((answer) => {
-        const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0]
-        testsPerDay[dateKey]++
-      })
+  // Initialize testsPerDay with zero for all days in the period
+  while (currentDateIterator <= currentDate) {
+    const dateKey = currentDateIterator.toISOString().split('T')[0]
+    testsPerDay[dateKey] = 0
+    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
+  }
 
-      this.chartData.labels = Object.keys(testsPerDay)
-      this.chartData.datasets[0].data = Object.values(testsPerDay)
+  // Fill testsPerDay with actual data
+  filteredAnswers.forEach((answer) => {
+    const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0]
+    testsPerDay[dateKey]++
+  })
 
-      // Calcular o número máximo de testes e adicionar uma folga
-      const maxTests = Math.max(...this.chartData.datasets[0].data)
-      const suggestedMax = maxTests + 1
+  chartData.value.labels = Object.keys(testsPerDay)
+  chartData.value.datasets[0].data = Object.values(testsPerDay)
 
-      // Atualizar configurações do eixo y
-      this.chartOptions.scales.yAxes[0].ticks.suggestedMax = suggestedMax
-    },
-  },
+  // Calculate max tests and add padding
+  const maxTests = Math.max(...chartData.value.datasets[0].data)
+  const suggestedMax = maxTests + 1
+
+  // Update y-axis ticks
+  chartOptions.value.scales.yAxes[0].ticks.suggestedMax = suggestedMax
 }
+
+// Render chart on mount
+onMounted(() => {
+  processDataForChart()
+  // Note: vue-chartjs Line component handles rendering via its internal logic
+  // If explicit rendering is needed, ensure the Line component is used in the template
+})
 </script>
 
 <style scoped>

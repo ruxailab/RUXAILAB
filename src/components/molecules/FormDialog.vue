@@ -40,49 +40,52 @@
   </v-dialog>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import FormTask from '../atoms/FormTask';
 
-export default {
-  components: {
-    FormTask,
+// Define props
+const props = defineProps({
+  dialog: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    task: {
-      type: Object,
-      default: () => ({
-        taskName: '',
-        taskDescription: '',
-        taskTip: '',
-        taskType: null,
-        postQuestion: '',
-        hasScreenRecord: false,
-        hasCamRecord: false,
-        hasAudioRecord: false,
-      }),
-    },
+  task: {
+    type: Object,
+    default: () => ({
+      taskName: '',
+      taskDescription: '',
+      taskTip: '',
+      taskType: null,
+      postQuestion: '',
+      hasScreenRecord: false,
+      hasCamRecord: false,
+      hasAudioRecord: false,
+    }),
   },
-  emits: ['update:dialog', 'update:task', 'addTask'],
-  data: () => ({}),
-  methods: {
-    validate() {
-      this.$refs.form.valida();
-    },
-    submit(valid) {
-      if (valid) {
-        this.$emit('addTask', this.task);
-        this.$emit('update:dialog', false); // Close dialog
-        this.reset();
-      }
-    },
-    reset() {
-      this.$refs.form.resetVal();
-    },
-  },
+});
+
+// Define emits
+const emit = defineEmits(['update:dialog', 'update:task', 'addTask']);
+
+// Form reference
+const form = ref(null);
+
+// Methods
+const validate = () => {
+  form.value.valida();
+};
+
+const submit = (valid) => {
+  if (valid) {
+    emit('addTask', props.task);
+    emit('update:dialog', false); // Close dialog
+    reset();
+  }
+};
+
+const reset = () => {
+  form.value.resetVal();
 };
 </script>
 

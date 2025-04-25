@@ -1,7 +1,7 @@
 <template>
   <div class="input">
     <v-file-input
-      :id="`${heuristicId.id}${questionId}`"
+      :id="`${heuristicId}${questionId}`"
       class="ml-2"
       name="my-image"
       accept="image/gif, image/jpeg, image/png"
@@ -9,7 +9,7 @@
         ? $t('common.inputImage')
         : url
       "
-      @change="uploadFile()"
+      @change="uploadFile"
     />
     <!-- Add the image field to display the inputted image -->
     <v-row justify="center">
@@ -23,71 +23,70 @@
   </div>
 </template>
 
-<script>
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
-export default {
-  props: {
-    heuristicId: { type: String, default: '', required: true },
-    questionId: { type: String, default: '', required: true },
-    testId: { type: String, default: '', required: true },
+const props = defineProps({
+  heuristicId: {
+    type: String,
+    default: '',
+    required: true
   },
-  emits: ['imageUploaded'],
-  data: () => ({
-    url: '',
-    object: {},
-    imageUploaded: false,
-  }),
-  computed: {
-    test() {
-      return this.$store.state.Tests.Test
-    },
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-    hasExistingImage() {
-      return this.currentUserTestAnswer?.heuristicQuestions?.[this.heuristicId.id]?.heuristicQuestions?.[this.questionId]?.answerImageUrl
-    },
+  questionId: {
+    type: String,
+    default: '',
+    required: true
   },
+  testId: {
+    type: String,
+    default: '',
+    required: true
+  }
+})
 
-  mounted() {
-    if (this.hasExistingImage) {
-      this.url = this.hasExistingImage
-      this.imageUploaded = true
-    }
-  },
-  methods: {
-    async uploadFile() {
-      const fileInput = document.getElementById(
-        `${this.heuristicId.id}${this.questionId}`,
-      )
+const emit = defineEmits(['imageUploaded'])
 
-      const storage = getStorage()
+const store = useStore()
 
-      const file = fileInput.files[0]
+const url = ref('')
+const object = ref({})
+const imageUploaded = ref(false)
 
-      const storageRef = ref(
-        storage,
-        'tests/' +
-        this.testId +
-        '/' +
-        'heuristic_' +
-        this.heuristicId.id +
-        '/' +
-        this.questionId +
-        '/' +
-        file.name,
-      )
+const test = computed(() => store.state.Tests.Test)
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+const hasExistingImage = computed(() => 
+  currentUserTestAnswer.value?.heuristicQuestions?.[props.heuristicId]?.heuristicQuestions?.[props.questionId]?.answerImageUrl
+)
 
-      await uploadBytes(storageRef, file)
+onMounted(() => {
+  if (hasExistingImage.value) {
+    url.value = hasExistingImage.value
+    imageUploaded.value = true
+  }
+})
 
-      this.url = await getDownloadURL(storageRef)
-      this.$store.commit('updateCurrentImageUrl', this.url)
+const uploadFile = async () => {
+  const fileInput = document.getElementById(
+    `${props.heuristicId}${props.questionId}`
+  )
 
-      this.imageUploaded = true
-      this.$emit('imageUploaded')
-    },
-  },
+  const storage = getStorage()
+  const file = fileInput.files[0]
+
+  const storageReference = storageRef(
+    storage,
+    `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
+  )
+
+  await uploadBytes(storageReference, file)
+  url.value = await getDownloadURL(storageReference)
+  
+  store.commit('updateCurrentImageUrl', url.value)
+  
+  imageUploaded.value = true
+  emit('imageUploaded')
 }
 </script>
 

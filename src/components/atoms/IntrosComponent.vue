@@ -31,7 +31,7 @@
           </div>
           <button
             class="edit-btn rounded-lg text-white"
-            @click="emitClick()"
+            @click="emitClick"
           >
             {{ $t('pages.intros.click') }}
           </button>
@@ -104,55 +104,54 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    image: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    main: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    link: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    items: {
-      type: Array,
-      default: () => [],
-      required: true,
-    },
-    colors: {
-      type: Array,
-      default: () => [],
-      required: true,
-    },
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+    required: true,
   },
-  emits: ['linkClicked', 'callFunc'],
-  data: () => ({}),
-  computed: {
-    backgroundImage() {
-      return `background-image: radial-gradient(circle at top right, ${this.colors[0]}, ${this.colors[1]});`
-    },
+  image: {
+    type: String,
+    default: '',
+    required: true,
   },
-  methods: {
-    emitClick() {
-      this.$emit('linkClicked')
-    },
-    emitCallFunc(func) {
-      this.$emit('callFunc', func)
-    },
+  main: {
+    type: String,
+    default: '',
+    required: true,
   },
+  link: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  items: {
+    type: Array,
+    default: () => [],
+    required: true,
+  },
+  colors: {
+    type: Array,
+    default: () => [],
+    required: true,
+  },
+})
+
+const emit = defineEmits(['linkClicked', 'callFunc'])
+
+const backgroundImage = computed(() => {
+  return `background-image: radial-gradient(circle at top right, ${props.colors[0]}, ${props.colors[1]});`
+})
+
+const emitClick = () => {
+  emit('linkClicked')
+}
+
+const emitCallFunc = (func) => {
+  emit('callFunc', func)
 }
 </script>
 

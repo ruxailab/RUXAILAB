@@ -22,9 +22,7 @@
           </v-chip>
         </v-list-item-title>
         <v-list-item-subtitle>
-          {{
-            notification.description
-          }}
+          {{ notification.description }}
         </v-list-item-subtitle>
         <v-list-item-subtitle>
           Sent by {{ notification.author }}
@@ -49,9 +47,7 @@
             @click.stop="$emit('mark-as-read', notification)"
           >
             <v-icon>
-              {{
-                notification.read ? 'mdi-email-open' : 'mdi-email'
-              }}
+              {{ notification.read ? 'mdi-email-open' : 'mdi-email' }}
             </v-icon>
           </v-btn>
         </v-list-item-action>
@@ -64,23 +60,21 @@
   </v-list>
 </template>
 
-<script>
-export default {
-  name: 'NotificationList',
-  props: {
-    notifications: {
-      type: Array,
-      required: true,
-    },
+<script setup>
+
+const props = defineProps({
+  notifications: {
+    type: Array,
+    required: true,
   },
-  emits: ['go-to-redirect', 'mark-as-read'],
-  methods: {
-    formatFrontendDate(timestamp) {
-      const date = new Date(timestamp)
-      return date.toLocaleString() // Format the date in a human-readable way
-    },
-  },
-}
+});
+
+const emit = defineEmits(['go-to-redirect', 'mark-as-read']);
+
+const formatFrontendDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // Format the date in a human-readable way
+};
 </script>
 
 <style scoped>

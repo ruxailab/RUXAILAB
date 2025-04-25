@@ -2,13 +2,9 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip
-          v-if="!isCapturing"
-          location="bottom"
-        >
+        <v-tooltip v-if="!isCapturing" location="bottom">
           <template #activator="{ props }">
             <v-btn
-              
               class="ml-4 my-2 mr-auto"
               elevation="0"
               icon
@@ -20,13 +16,9 @@
           </template>
           <span>Capture Screen</span>
         </v-tooltip>
-        <v-tooltip
-          v-if="isCapturing"
-          location="bottom"
-        >
+        <v-tooltip v-if="isCapturing" location="bottom">
           <template #activator="{ props }">
             <v-btn
-             
               class="ml-4 my-2 mr-auto"
               :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
               elevation="0"
@@ -35,9 +27,7 @@
               @click="recordScreen"
             >
               <v-icon>
-                {{
-                  isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot'
-                }}
+                {{ isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot' }}
               </v-icon>
             </v-btn>
           </template>
@@ -48,79 +38,81 @@
   </div>
 </template>
 
-<script>
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-export default {
-  props: {
-    testId: String,
-    taskIndex: Number,
-  },
-  emits: ['showLoading', 'stopShowLoading'],
-  data() {
-    return {
-      isCapturing: false,
-      isRecording: false,
-      videoUrl: '',
-      videoStream: null,
-      mediaRecorder: null,
-      chunks: [],
-    }
-  },
-  computed: {
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-  },
-  methods: {
-    async captureScreen() {
-      try {
-        this.videoStream = await navigator.mediaDevices.getDisplayMedia({
-          cursor: true,
-        })
-        this.isCapturing = true
-        this.recordScreen()
-      } catch (err) {
-        console.error(err)
-      }
-    },
-    recordScreen() {
-      if (!this.isRecording) {
-        this.chunks = []
-        this.mediaRecorder = new MediaRecorder(this.videoStream)
-        this.mediaRecorder.start()
-        this.mediaRecorder.ondataavailable = (e) => {
-          this.chunks.push(e.data)
-        }
+<script setup>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { useToast } from 'vue-toastification';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-        this.mediaRecorder.onstop = async () => {
-          this.$emit('showLoading')
-          const videoBlob = new Blob(this.chunks, { type: 'video/webm' })
-          const storage = getStorage()
-          const storageRef = ref(
-            storage,
-            `tests/${this.testId}/${this.currentUserTestAnswer.userDocId}/task_${this.taskIndex}/screen_record/${this.videoUrl}`,
-          )
-          await uploadBytes(storageRef, videoBlob)
+const props = defineProps({
+  testId: String,
+  taskIndex: Number,
+});
 
-          this.videoUrl = await getDownloadURL(storageRef)
+const emit = defineEmits(['showLoading', 'stopShowLoading']);
 
-          this.currentUserTestAnswer.tasks[
-            this.taskIndex
-          ].screenRecordURL = this.videoUrl
-          this.isRecording = false
-          this.videoStream.getTracks().forEach((track) => track.stop())
-          this.isRecording = false
-          this.isCapturing = false
-          this.$emit('stopShowLoading')
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
-        }
-        this.isRecording = true
-      } else {
-        this.mediaRecorder.stop()
-      }
-    },
-  },
-}
+const store = useStore();
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
+
+const { t } = useI18n();
+const toast = useToast();
+
+const isCapturing = ref(false);
+const isRecording = ref(false);
+const videoUrl = ref('');
+const videoStream = ref(null);
+const mediaRecorder = ref(null);
+const chunks = ref([]);
+
+const captureScreen = async () => {
+  try {
+    videoStream.value = await navigator.mediaDevices.getDisplayMedia({
+      cursor: true,
+    });
+    isCapturing.value = true;
+    recordScreen();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const recordScreen = async () => {
+  if (!isRecording.value) {
+    chunks.value = [];
+    mediaRecorder.value = new MediaRecorder(videoStream.value);
+    mediaRecorder.value.start();
+
+    mediaRecorder.value.ondataavailable = (e) => {
+      chunks.value.push(e.data);
+    };
+
+    mediaRecorder.value.onstop = async () => {
+      emit('showLoading');
+      const videoBlob = new Blob(chunks.value, { type: 'video/webm' });
+      const storage = getStorage();
+      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}/screen_record/${videoUrl.value}`;
+      const storageReference = storageRef(storage, storagePath);
+
+      await uploadBytes(storageReference, videoBlob);
+      videoUrl.value = await getDownloadURL(storageReference);
+
+      currentUserTestAnswer.value.tasks[props.taskIndex].screenRecordURL = videoUrl.value;
+
+      // Stop all tracks
+      videoStream.value.getTracks().forEach((track) => track.stop());
+      isRecording.value = false;
+      isCapturing.value = false;
+
+      emit('stopShowLoading');
+      toast.success(t('alerts.genericSuccess'));
+    };
+
+    isRecording.value = true;
+  } else {
+    mediaRecorder.value.stop();
+  }
+};
 </script>
 
 <style scoped></style>

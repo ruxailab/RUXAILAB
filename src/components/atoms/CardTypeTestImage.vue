@@ -37,35 +37,35 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      default: '',
-      require: true,
-    },
+<script setup>
+import { defineProps, defineEmits } from 'vue'
 
-    type: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    img: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    texts: {
-      type: Array,
-      default: () => ([]),
-      require: true,
-    },
+// Define props with the same structure as in Options API
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+    required: true
   },
-  emits: ['click'],
-}
+  type: {
+    type: String,
+    default: '',
+    required: true
+  },
+  img: {
+    type: String,
+    default: '',
+    required: true
+  },
+  texts: {
+    type: Array,
+    default: () => [],
+    required: true
+  }
+})
+
+// Define emits
+defineEmits(['click'])
 </script>
 
 <style scoped>

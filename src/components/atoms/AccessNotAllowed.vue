@@ -3,7 +3,7 @@
     <v-row
       justify="center"
       align="center"
-      style="height:100%"
+      style="height: 100%"
     >
       <v-col
         cols="12"
@@ -34,7 +34,7 @@
             style="color: #f9a826"
             variant="outlined"
             rounded
-            @click="goBack()"
+            @click="goBack"
           >
             {{ $t('AccessNotAllowed.goHome') }}
           </v-btn>
@@ -44,12 +44,18 @@
   </div>
 </template>
 
-<script>
-export default {
-  methods: {
-    goBack() {
-      this.$router.push('/testslist')
-    },
-  },
-}
+<script setup>
+import { useRouter } from 'vue-router';
+
+// Initialize router
+const router = useRouter();
+
+// Define goBack function
+const goBack = () => {
+  router.push('/testslist');
+};
 </script>
+
+<style scoped>
+/* No additional styles needed as the original code uses inline styles */
+</style>
