@@ -39,42 +39,42 @@
         <v-divider class="mb-4" />
       </template>
       <!-- Checkbox Columns -->
-      <template #[`item.hasEye`]="{ item }">
+      <template #["item.hasEye"]="{ item }">
         <v-checkbox-btn
           v-model="item.hasEye"
           disabled
         />
       </template>
-      <template #[`item.hasCamRecord`]="{ item }">
+      <template #["item.hasCamRecord"]="{ item }">
         <v-checkbox-btn
           v-model="item.hasCamRecord"
           disabled
         />
       </template>
-      <template #[`item.hasAudioRecord`]="{ item }">
+      <template #["item.hasAudioRecord"]="{ item }">
         <v-checkbox-btn
           v-model="item.hasAudioRecord"
           disabled
         />
       </template>
-      <template #[`item.hasScreenRecord`]="{ item }">
+      <template #["item.hasScreenRecord"]="{ item }">
         <v-checkbox-btn
           v-model="item.hasScreenRecord"
           disabled
         />
       </template>
       <!-- Text Columns -->
-      <template #[`item.taskDescription`]="{ item }">
+      <template #["item.taskDescription"]="{ item }">
         {{ item.taskDescription || '-' }}
       </template>
-      <template #[`item.taskTip`]="{ item }">
+      <template #["item.taskTip"]="{ item }">
         {{ item.taskTip || '-' }}
       </template>
-      <template #[`item.postQuestion`]="{ item }">
+      <template #["item.postQuestion"]="{ item }">
         {{ item.postQuestion || '-' }}
       </template>
       <!-- Edit and Delete Icons -->
-      <template #[`item.actions`]="{ item }">
+      <template #["item.actions"]="{ item }">
         <v-icon
           size="small"
           @click="deleteItem(item)"
@@ -86,111 +86,110 @@
   </div>
 </template>
 
-<script>
-import FormDialog from './FormDialog'
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { useStore } from 'vuex';
+import FormDialog from './FormDialog.vue';
 
-export default {
-  components: {
-    FormDialog,
+const props = defineProps({
+  tasks: {
+    type: Array,
+    required: true,
+    default: () => [],
   },
-  props: {
-    tasks: {
-      type: Array,
-      required: true,
-      default: function() {
-        return []
-      },
-    },
+});
+
+const emit = defineEmits(['change']);
+
+const store = useStore();
+
+const dialog = ref(false);
+const allTasks = ref([]);
+const itemsTasks = ref([]);
+const editedIndex = ref(-1);
+const task = ref({
+  taskName: '',
+  taskDescription: null,
+  taskTip: null,
+  postQuestion: null,
+  taskType: null,
+  hasAudioRecord: false,
+  hasScreenRecord: false,
+  hasCamRecord: false,
+});
+
+const headers = ref([
+  {
+    text: 'Name',
+    align: 'start',
+    sortable: false,
+    value: 'taskName',
   },
-  emits: ['change'],
-  data: () => ({
-    dialog: false,
-    itemsTasks: [],
-    allTasks: [],
-    editedItem: -1,
-    //set headers properties
-    headers: [
-      {
-        text: 'Name',
-        align: 'start',
-        sortable: false,
-        value: 'taskName',
-      },
-      { text: 'Description', value: 'taskDescription' },
-      { text: 'Tip', value: 'taskTip' },
-      { text: 'Post question', value: 'postQuestion' },
-      { text: 'Screen Record', value: 'hasScreenRecord' },
-      { text: 'Camera', value: 'hasCamRecord' },
-      { text: 'Eye Tracker', value: 'hasEye' },
-      { text: 'Audio Record', value: 'hasAudioRecord' },
-      { text: 'Actions', value: 'actions', sortable: false },
-    ],
-    // initialize task properties
-    task: {
-      taskName: '',
-      taskDescription: null,
-      taskTip: null,
-      taskLink: null,
-      postQuestion: null,
-      postForm: null,
-      taskType: null,
-      hasAudioRecord: false,
-      hasScreenRecord: false,
-      hasCamRecord: false,
-    },
-  }),
-  watch: {
-    tasks() {
-      this.$emit('change')
-    },
+  { text: 'Description', value: 'taskDescription' },
+  { text: 'Tip', value: 'taskTip' },
+  { text: 'Post question', value: 'postQuestion' },
+  { text: 'Screen Record', value: 'hasScreenRecord' },
+  { text: 'Camera', value: 'hasCamRecord' },
+  { text: 'Eye Tracker', value: 'hasEye' },
+  { text: 'Audio Record', value: 'hasAudioRecord' },
+  { text: 'Actions', value: 'actions', sortable: false },
+]);
+
+const editItem = (item) => {
+  editedIndex.value = props.tasks.indexOf(item);
+  task.value = { ...item };
+  dialog.value = true;
+};
+
+const deleteItem = (item) => {
+  const index = allTasks.value.indexOf(item);
+  if (confirm('Are you sure you want to delete this task?')) {
+    allTasks.value.splice(index, 1);
+  }
+};
+
+const addTask = (newTask) => {
+  if (editedIndex.value > -1) {
+    Object.assign(props.tasks[editedIndex.value], newTask);
+    emit('change');
+  } else {
+    store.dispatch('addItemsTasks', newTask).then(() => {});
+    allTasks.value = Object.assign(
+      store.getters.tasks,
+      store.state.Tests.Test.testStructure.userTasks
+    );
+  }
+  task.value = {
+    taskName: '',
+    taskDescription: null,
+    taskTip: null,
+    postQuestion: null,
+    taskType: null,
+    hasAudioRecord: false,
+    hasScreenRecord: false,
+    hasCamRecord: false,
+  };
+};
+
+const setAllTasks = () => {
+  allTasks.value = Object.assign(
+    store.getters.tasks,
+    store.state.Tests.Test.testStructure.userTasks
+  );
+  itemsTasks.value = [...props.tasks];
+};
+
+watch(
+  () => props.tasks,
+  () => {
+    emit('change');
   },
-  mounted() {
-    this.setAllTasks()
-  },
-  methods: {
-    editItem(item) {
-      this.editedIndex = this.allTasks.indexOf(item)
-      this.task = Object.assign({}, item)
-      this.dialog = true
-    },
-    deleteItem(item) {
-      const index = this.allTasks.indexOf(item)
-      if (confirm('Are you sure you want to delete this task?')) {
-        this.allTasks.splice(index, 1)
-      }
-    },
-    addTask(newTask) {
-      if (this.editedIndex > -1) {
-        Object.assign(this.tasks[this.editedIndex], newTask)
-        this.$emit('change')
-      } else {
-        this.$store.dispatch('addItemsTasks', newTask).then(() => {})
-        this.allTasks = Object.assign(
-          this.$store.getters.tasks,
-          this.$store.state.Tests.Test.testStructure.userTasks,
-        )
-      }
-      this.task = {
-        taskName: '',
-        taskDescription: null,
-        taskTip: null,
-        postQuestion: null,
-        taskType: null,
-        hasAudioRecord: false,
-        hasScreenRecord: false,
-        hasCamRecord: false,
-      }
-      this.dialog = false
-    },
-    setAllTasks() {
-      this.allTasks = Object.assign(
-        this.$store.getters.tasks,
-        this.$store.state.Tests.Test.testStructure.userTasks,
-      )
-      this.itemsTasks = [...this.tasks]
-    },
-  },
-}
+  { deep: true }
+);
+
+onMounted(() => {
+  setAllTasks();
+});
 </script>
 
 <style scoped>

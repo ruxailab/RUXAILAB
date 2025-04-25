@@ -24,7 +24,7 @@
                     :key="index"
                     v-model="items[i].selectionFields[index]"
                     :label="$t('UserTestTable.inputs.selection')"
-                    @change="saveState()"
+                    @change="saveState"
                   >
                     <template #append>
                       <v-icon @click="newSelection(i)">
@@ -104,7 +104,7 @@
     >
       <v-card>
         <v-card-title class="text-h6 mb-2">
-          {{ $t('UserTestTable.titles.writeNewPost') }}
+          {{ $t('UserTestTable.titles.editNewPost') }}
         </v-card-title>
         <v-card-text>
           <v-form
@@ -114,9 +114,9 @@
             <v-text-field
               v-model="newItem"
               variant="filled"
-              :rules="[(newItem) => !!newItem || 'This field is required']"
+              :rules="[(value) => !!value || 'This field is required']"
               color="orange"
-              :label="$t('UserTestTable.inputs.writeQuestion')"
+              :label="$t('UserTestTable.inputs.editQuestion')"
               @change="saveState"
             />
           </v-form>
@@ -133,7 +133,7 @@
           </v-btn>
           <v-btn
             color="orange"
-            @click="saveNewItem(), saveState()"
+            @click="saveNewItem"
           >
             <v-icon class="mr-1">
               mdi-content-save
@@ -145,105 +145,113 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    newItem: '',
-    items: [],
-    show: false,
-    valid: false,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    postTest() {
-      return this.$store.getters.postTest
-    },
-  },
-  mounted() {
-    this.getPostTest()
-  },
-  methods: {
-    log() {
-      console.log('adicionar + 1')
-    },
-    showModal() {
-      this.show = true
-    },
-    closeModal() {
-      this.show = false
-      this.$refs.form.resetValidation()
-    },
-    selectField(i) {
-      if (
-        this.items[i].selectionFields.length == 0 &&
-        this.items[i].selectionField
-      ) {
-        this.items[i].selectionFields.push('')
-      }
-      if (this.items[i].selectionField == false) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].textField = false
-    },
-    selectText(i) {
-      if (this.items[i].selectionFields.length > 0) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].selectionField = false
-    },
-    deleteItem(i) {
-      this.items.splice(i, 1)
-    },
-    duplicateItem(i) {
-      const duplicate = JSON.parse(JSON.stringify(this.items[i]))
-      duplicate.title = `${duplicate.title} (copy)`
-      this.items.splice(i + 1, 0, duplicate)
-      this.saveState()
-    },
-    saveNewItem() {
-      if (this.newItem.trim() !== '') {
-        this.items.push({
-          answer: '',
-          title: this.newItem,
-          description: '',
-          selectionFields: [],
-          selectionField: false,
-          textField: true,
-        })
-        this.newItem = ''
-        this.show = false
-        this.$refs.form.resetValidation()
-      } else {
-        this.$refs.form.validate()
-      }
-    },
-    newSelection(index) {
-      this.items[index] = {
-        ...this.items[index],
-        selectionFields: [...this.items[index].selectionFields, ''],
-      }
-    },
-    deleteSelection(index) {
-      this.items[index].selectionFields.splice(
-        this.items[index].selectionFields.length - 1,
-        1,
-      )
-    },
-    saveState() {
-      this.$store.dispatch('setPostTest', this.items)
-    },
-    getPostTest() {
-      if (this.test.testStructure.postTest) {
-        this.items = this.test.testStructure.postTest
-        this.$store.dispatch('setPostTest', this.items)
-      } else if (this.postTest) {
-        this.items = this.postTest
-      }
-    },
-  },
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
+// Data
+const newItem = ref('')
+const items = ref([])
+const show = ref(false)
+const valid = ref(false)
+const form = ref(null)
+
+// Vuex store
+const store = useStore()
+
+// Vue I18n
+const { t } = useI18n()
+
+// Computed properties
+const test = computed(() => store.getters.test)
+const postTest = computed(() => store.getters.postTest)
+
+// Methods
+const log = () => {
+  console.log('adicionar + 1')
 }
+
+const showModal = () => {
+  show.value = true
+}
+
+const closeModal = () => {
+  show.value = false
+  form.value?.resetValidation()
+}
+
+const selectField = (index) => {
+  if (items.value[index].selectionFields.length === 0 && items.value[index].selectionField) {
+    items.value[index].selectionFields.push('')
+  }
+  if (!items.value[index].selectionField) {
+    items.value[index].selectionFields = []
+  }
+  items.value[index].textField = false
+}
+
+const selectText = (index) => {
+  if (items.value[index].selectionFields.length > 0) {
+    items.value[index].selectionFields = []
+  }
+  items.value[index].selectionField = false
+}
+
+const deleteItem = (index) => {
+  items.value.splice(index, 1)
+}
+
+const saveNewItem = () => {
+  if (newItem.value.trim() !== '') {
+    items.value.push({
+      answer: '',
+      title: newItem.value,
+      description: '',
+      selectionFields: [],
+      selectionField: false,
+      textField: true,
+    })
+    newItem.value = ''
+    show.value = false
+    form.value?.resetValidation()
+    saveState()
+  } else {
+    form.value?.validate()
+  }
+}
+
+const newSelection = (index) => {
+  items.value[index] = {
+    ...items.value[index],
+    selectionFields: [...items.value[index].selectionFields, '']
+  }
+}
+
+const deleteSelection = (index) => {
+  items.value[index].selectionFields.splice(
+    items.value[index].selectionFields.length - 1,
+    1
+  )
+}
+
+const saveState = () => {
+  store.dispatch('setPostTest', items.value)
+}
+
+const getPostTest = () => {
+  if (test.value.testStructure.postTest) {
+    items.value = test.value.testStructure.postTest
+    store.dispatch('setPostTest', items.value)
+  } else if (postTest.value) {
+    items.value = postTest.value
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  getPostTest()
+})
 </script>
 
 <style scoped>

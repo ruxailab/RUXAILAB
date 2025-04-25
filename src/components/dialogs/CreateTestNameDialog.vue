@@ -57,7 +57,7 @@
                   :label="testName"
                   variant="outlined"
                   color="orange"
-                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                  @change="store.commit('SET_LOCAL_CHANGES', true)"
                 />
 
                 <p class="cardInternTitles">
@@ -69,7 +69,7 @@
                   color="orange"
                   class="mt-3"
                   :label="testDescription"
-                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
+                  @change="store.commit('SET_LOCAL_CHANGES', true)"
                 />
 
                 <v-row
@@ -107,7 +107,6 @@
             </v-card>
           </v-col>
 
-          <!-- ✅ Updated this line -->
           <v-col
             v-if="!isMobile"
             cols="5"
@@ -125,146 +124,152 @@
 
     <CreateTestUserDialog
       :is-open="userDialog"
-      @set-user="; (test = { ...test, ...$event}), (userDialog = false), submit()"
+      @set-user="handleSetUser($event)"
       @close="userDialog = false"
     />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
 import { useDisplay } from 'vuetify';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 import Test from '@/models/Test';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
 
-export default {
-  name: 'CreateTestNameDialog',
-
-  components: {
-    ButtonBack,
-    CreateTestUserDialog,
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
-
-  props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-    testType: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    heading: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    subHeading: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    testName: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    testDescription: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    testLabel: {
-      type: String,
-      default: '',
-      required: true,
-    },
+  testType: {
+    type: String,
+    default: '',
+    required: true,
   },
-
-  emits: ['update:isOpen', 'close'],
-
-  data: () => ({
-    userDialog: false,
-    test: {
-      title: '',
-      description: '',
-      isPublic: false,
-      userTestType: '',
-      userTestStatus: {},
-      display: useDisplay()
-    },
-  }),
-
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-    isMobile() {
-      return this.$vuetify.display.mdAndDown;
-    },
+  heading: {
+    type: String,
+    default: '',
+    required: true,
   },
-
-  watch: {
-    isOpen(val) {
-      if (!val) {
-        this.test = {
-          title: '',
-          description: '',
-          isPublic: false,
-          userTestType: '',
-          userTestStatus: {},
-        };
-      }
-    },
+  subHeading: {
+    type: String,
+    default: '',
+    required: true,
   },
-
-  methods: {
-    validate() {
-      if (this.test.title.length === 0)
-        return this.$toast.warning('Enter a Title');
-      if (this.test.title.length > 200)
-        return this.$toast.warning('Title cannot exceed 200 characters');
-      if (this.test.description.length > 600)
-        return this.$toast.warning('Description cannot exceed 600 characters');
-
-      this.handleTestType();
-    },
-
-    handleTestType() {
-      if (this.testType === 'User') return (this.userDialog = true);
-      if (['HEURISTICS', 'Accessibility'].includes(this.testType))
-        return this.submit();
-    },
-
-    async submit() {
-      const test = new Test({
-        id: null,
-        testTitle: this.test.title,
-        testDescription: this.test.description,
-        testType: this.testType,
-        isPublic: this.test.isPublic,
-        userTestType: this.test.userTestType,
-        userTestStatus: this.test.userTestStatus,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      });
-
-      const testId = await this.$store.dispatch('createNewTest', test);
-
-      if (this.testType === 'Accessibility') {
-        this.$router.push(`/sample`);
-      } else {
-        this.$router.push(`/managerview/${testId}`);
-      }
-    },
+  testName: {
+    type: String,
+    default: '',
+    required: true,
   },
+  testDescription: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  testLabel: {
+    type: String,
+    default: '',
+    required: true,
+  },
+});
+
+defineEmits(['update:isOpen', 'close']);
+
+const { mdAndDown } = useDisplay();
+const store = useStore();
+const router = useRouter();
+const toast = useToast();
+
+const userDialog = ref(false);
+const test = ref({
+  title: '',
+  description: '',
+  isPublic: false,
+  userTestType: '',
+  userTestStatus: {},
+});
+
+const user = computed(() => store.getters.user);
+const isMobile = computed(() => mdAndDown.value);
+
+watch(
+  () => props.isOpen,
+  (val) => {
+    if (!val) {
+      test.value = {
+        title: '',
+        description: '',
+        isPublic: false,
+        userTestType: '',
+        userTestStatus: {},
+      };
+    }
+  }
+);
+
+const validate = () => {
+  if (test.value.title.length === 0) {
+    toast.warning('Enter a Title');
+    return;
+  }
+  if (test.value.title.length > 200) {
+    toast.warning('Title cannot exceed 200 characters');
+    return;
+  }
+  if (test.value.description.length > 600) {
+    toast.warning('Description cannot exceed 600 characters');
+    return;
+  }
+
+  handleTestType();
+};
+
+const handleTestType = () => {
+  if (props.testType === 'User') {
+    userDialog.value = true;
+    return;
+  }
+  if (['HEURISTICS', 'Accessibility'].includes(props.testType)) {
+    submit();
+  }
+};
+
+const handleSetUser = (event) => {
+  test.value = { ...test.value, ...event };
+  userDialog.value = false;
+  submit();
+};
+
+const submit = async () => {
+  const newTest = new Test({
+    id: null,
+    testTitle: test.value.title,
+    testDescription: test.value.description,
+    testType: props.testType,
+    isPublic: test.value.isPublic,
+    userTestType: test.value.userTestType,
+    userTestStatus: test.value.userTestStatus,
+    testAdmin: new TestAdmin({
+      userDocId: user.value.id,
+      email: user.value.email,
+    }),
+    creationDate: Date.now(),
+    updateDate: Date.now(),
+  });
+
+  const testId = await store.dispatch('createNewTest', newTest);
+
+  if (props.testType === 'Accessibility') {
+    router.push('/sample');
+  } else {
+    router.push(`/managerview/${testId}`);
+  }
 };
 </script>
 

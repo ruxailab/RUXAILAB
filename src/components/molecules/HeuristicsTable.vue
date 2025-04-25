@@ -17,8 +17,8 @@
         <v-row class="ma-0">
           <v-col cols="10">
             <v-form
-              ref="formEdit"
-              @submit.prevent="validateEdit()"
+              ref="formEditRef"
+              @submit.prevent="validateEdit"
             >
               <v-text-field
                 v-model="itemEdit.titleEdit"
@@ -40,14 +40,14 @@
           <v-spacer />
           <v-btn
             variant="text"
-            @click=";(dialogEdit = false), (itemEdit = null)"
+            @click="dialogEdit = false; itemEdit = null"
           >
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
           <v-btn
             class="text-white"
             color="#fca326"
-            @click="validateEdit()"
+            @click="validateEdit"
           >
             {{ $t('HeuristicsTable.titles.ok') }}
           </v-btn>
@@ -71,8 +71,8 @@
         <v-row class="ma-0">
           <v-col cols="10">
             <v-form
-              ref="formQuestion"
-              @submit.prevent="addQuestion()"
+              ref="formQuestionRef"
+              @submit.prevent="addQuestion"
             >
               <v-text-field
                 v-model="newQuestion.title"
@@ -97,7 +97,7 @@
           <v-btn
             class="text-white"
             color="#fca326"
-            @click="addQuestion()"
+            @click="addQuestion"
           >
             {{ $t('HeuristicsTable.titles.add') }}
           </v-btn>
@@ -126,8 +126,8 @@
           <v-col cols="10">
             <v-form
               v-if="heuristicForm"
-              ref="formHeuris"
-              @keyup.enter="addHeuris()"
+              ref="formHeurisRef"
+              @keyup.enter="addHeuris"
             >
               <v-text-field
                 v-model="heuristicForm.title"
@@ -162,7 +162,7 @@
           <v-btn
             class="text-white"
             color="#fca326"
-            @click="addHeuris()"
+            @click="addHeuris"
           >
             {{ $t('HeuristicsTable.titles.add') }}
           </v-btn>
@@ -203,7 +203,7 @@
               density="compact"
             >
               <v-list-item
-                :disabled="testAnswerDocLength > 0 ? true : false"
+                :disabled="testAnswerDocLength > 0"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
                 @click="dialogHeuris = true"
               >
@@ -415,7 +415,7 @@
                     <v-btn
                       icon
                       v-bind="props"
-                      @click="HandleNotEditable"
+                      @click="handleNotEditable"
                     >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
@@ -454,7 +454,7 @@
               <v-list-item
                 :disabled="testAnswerDocLength > 0 ? true : false"
                 :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-                @click="setupQuestion()"
+                @click="setupQuestion"
               >
                 <template #prepend>
                   <v-icon
@@ -531,7 +531,7 @@
                     <v-btn
                       icon
                       v-bind="props"
-                      @click="HandleNotEditable"
+                      @click="handleNotEditable"
                     >
                       <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
@@ -676,373 +676,355 @@
   </v-row>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import AddDescBtn from '@/components/atoms/AddDescBtn'
 import TextClamp from 'vue3-text-clamp'
-import i18n from '@/i18n'
 
-export default {
-  components: {
-    AddDescBtn,
-    TextClamp,
+const emit = defineEmits(['change'])
+const store = useStore()
+const { t } = useI18n()
+const toast = useToast()
+
+const menuHeuristics = ref(false)
+const menuQuestions = ref(false)
+const itemSelect = ref(null)
+const questionSelect = ref(null)
+const itemEdit = ref(null)
+const newQuestion = ref(null)
+const comparisonSelect = ref(null)
+const heuristicForm = ref(null)
+const search = ref('')
+const searchBar = ref(false)
+const dialog = ref(false)
+const dialogEdit = ref(false)
+const dialogHeuris = ref(false)
+const dialogQuestion = ref(false)
+const editIndex = ref(-1)
+const hoveredItem = ref(null)
+const formEditRef = ref(null)
+const formQuestionRef = ref(null)
+const formHeurisRef = ref(null)
+const descBtn = ref(null)
+
+const headers = ref([
+  {
+    text: 'Title',
+    align: 'start',
+    value: 'title',
   },
-  emits: ['change'],
-  data: () => ({
-    menuHeuristics: false,
-    menuQuestions: false,
-    itemSelect: null,
-    questionSelect: null,
-    itemEdit: null,
-    newQuestion: null,
-    comparisonSelect: null,
-    heuristicForm: null,
-    search: '',
-    searchBar: false,
-    headers: [
-      {
-        text: 'Title',
-        align: 'start',
-        value: 'title',
-      },
-      { text: 'Actions', value: 'actions', align: 'end', sortable: false },
-    ],
-    dialog: false,
-    dialogEdit: false,
-    dialogHeuris: false,
-    dialogQuestion: false,
-    editIndex: -1,
-    nameRequired: [
-      (v) => !!v || i18n.global.t('HeuristicsTable.validation.nameRequired'),
-    ],
-    questionRequired: [
-      (v) => !!v || i18n.global.t('HeuristicsTable.validation.questionRequired'),
-    ],
-    hoveredItem: null,
-  }),
-  computed: {
-    csvHeuristics() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-    filteredHeuristics() {
-      if (this.search === '') {
-        return this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
+  { text: 'Actions', value: 'actions', align: 'end', sortable: false },
+])
 
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      } else {
-        return this.heuristics.filter((item) => {
-          const searchLower = this.search.toLowerCase()
-          const idString = item.id.toString()
+const nameRequired = ref([
+  (v) => !!v || t('HeuristicsTable.validation.nameRequired'),
+])
+const questionRequired = ref([
+  (v) => !!v || t('HeuristicsTable.validation.questionRequired'),
+])
 
-          return (
-            item.title.toLowerCase().includes(searchLower) ||
-            idString.includes(searchLower) ||
-            idString === searchLower
-          )
-        })
-      }
-    },
-    heuristics() {
-      return this.$store.state.Tests.Test.testStructure
-        ? this.$store.state.Tests.Test.testStructure
-        : []
-    },
-    arrayQuestions() {
-      const aux = []
-      const array = Array.from(this.heuristics[this.itemSelect].questions)
-      array.forEach((el) => {
-        aux.push(Object.assign({}, { id: el.id, res: '', com: '' }))
-      })
-      return []
-    },
-    totalQuestions() {
-      let result = 0
-      this.heuristics.forEach((h) => {
-        result += h.total
-      })
-      return result
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+const csvHeuristics = computed(() => store.state.Tests.Test.testStructure)
 
-      return heuristicAnswersCount
-    },
-  },
-  watch: {
-    dialogHeuris() {
-      if (!this.dialogHeuris && this.heuristics.length > 0 && !this.itemEdit) {
-        this.heuristicForm = {
-          id: this.heuristics[this.heuristics.length - 1].id + 1,
+const filteredHeuristics = computed(() => {
+  const searchLower = search.value.toLowerCase()
+  return heuristics.value.filter((item) => {
+    const idString = item.id.toString()
+    return (
+      item.title.toLowerCase().includes(searchLower) ||
+      idString.includes(searchLower) ||
+      idString === searchLower
+    )
+  })
+})
+
+const heuristics = computed(() =>
+  store.state.Tests.Test.testStructure ? store.state.Tests.Test.testStructure : []
+)
+
+const arrayQuestions = computed(() => {
+  const aux = []
+  if (itemSelect.value !== null) {
+    const array = Array.from(heuristics.value[itemSelect.value].questions)
+    array.forEach((el) => {
+      aux.push(Object.assign({}, { id: el.id, res: '', com: '' }))
+    })
+  }
+  return aux
+})
+
+const totalQuestions = computed(() => {
+  return heuristics.value.reduce((sum, h) => sum + h.total, 0)
+})
+
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return 0
+  }
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
+  return Object.keys(heuristicAnswers).length
+})
+
+watch(dialogHeuris, (newVal) => {
+  if (!newVal && heuristics.value.length > 0 && !itemEdit.value) {
+    heuristicForm.value = {
+      id: heuristics.value[heuristics.value.length - 1].id + 1,
+      title: '',
+      total: 0,
+      questions: [
+        {
+          id: 0,
           title: '',
-          total: 0,
-          questions: [
-            {
-              id: 0,
-              title: '',
-              comparison: [],
-              descriptions: [],
-            },
-          ],
-        }
-        this.heuristicForm.total = this.heuristicForm.questions.length
-      }
-      if (this.dialogHeuris) {
-        //when dialog opens everything is reset
-        if (this.$refs.formHeuris) {
-          this.$refs.formHeuris.resetValidation()
-          this.$refs.formHeuris.reset()
-        }
-      }
-    },
-    itemSelect() {
-      if (this.itemSelect !== null) this.questionSelect = null
-      else this.itemSelect = null
-    },
-    loader() {
-      const l = this.loader
-      this[l] = !this[l]
-
-      if (this.csvFile !== null) {
-        setTimeout(() => (this[l] = false), 3000)
-        setTimeout(() => (this.csvFile = null), 3000)
-        this.loader = null
-      } else {
-        setTimeout(() => (this[l] = false), 3000)
-        this.$toast.warning(
-          'No csv file selected. \nPlease select one before procede.',
-        )
-        this.loader = null
-      }
-    },
-  },
-  async created() {
-    if (this.heuristics.length) {
-      this.heuristicForm = {
-        id: this.heuristics[this.heuristics.length - 1].id + 1,
-        total: 0,
-        title: '',
-        questions: [
-          {
-            id: 0,
-            title: '',
-            descriptions: [],
-            comparison: [],
-          },
-        ],
-      }
-    } else {
-      this.heuristicForm = {
-        id: 0,
-        total: 0,
-        title: '',
-        questions: [
-          {
-            id: 0,
-            title: '',
-            descriptions: [],
-            comparison: [],
-          },
-        ],
-      }
+          comparison: [],
+          descriptions: [],
+        },
+      ],
     }
-    this.heuristicForm.total = this.heuristicForm.questions.length
-  },
-  methods: {
-    moveItemUp(index) {
-      if (index > 0) {
-        const itemToMove = this.filteredHeuristics[index]
-        const itemAbove = this.filteredHeuristics[index - 1]
+    heuristicForm.value.total = heuristicForm.value.questions.length
+  }
+  if (newVal && formHeurisRef.value) {
+    formHeurisRef.value.resetValidation()
+    formHeurisRef.value.reset()
+  }
+})
 
-        this.filteredHeuristics[index] = itemAbove
-        this.filteredHeuristics[index - 1] = itemToMove
+watch(itemSelect, (newVal) => {
+  if (newVal !== null) {
+    questionSelect.value = null
+  } else {
+    itemSelect.value = null
+  }
+})
 
-        itemToMove.id = index - 1
-        itemAbove.id = index
+onMounted(() => {
+  if (heuristics.value.length) {
+    heuristicForm.value = {
+      id: heuristics.value[heuristics.value.length - 1].id + 1,
+      total: 0,
+      title: '',
+      questions: [
+        {
+          id: 0,
+          title: '',
+          descriptions: [],
+          comparison: [],
+        },
+      ],
+    }
+  } else {
+    heuristicForm.value = {
+      id: 0,
+      total: 0,
+      title: '',
+      questions: [
+        {
+          id: 0,
+          title: '',
+          descriptions: [],
+          comparison: [],
+        },
+      ],
+    }
+  }
+  heuristicForm.value.total = heuristicForm.value.questions.length
+})
 
-        this.heuristics[index] = itemAbove
-        this.heuristics[index - 1] = itemToMove
+const moveItemUp = (index) => {
+  if (index > 0) {
+    const itemToMove = filteredHeuristics.value[index]
+    const itemAbove = filteredHeuristics.value[index - 1]
 
-        itemToMove.id = index - 1
-        itemAbove.id = index
+    filteredHeuristics.value[index] = itemAbove
+    filteredHeuristics.value[index - 1] = itemToMove
 
-        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
-      }
-    },
-    moveItemDown(index) {
-      if (index < this.filteredHeuristics.length - 1) {
-        const itemToMove = this.filteredHeuristics[index]
-        const itemBelow = this.filteredHeuristics[index + 1]
+    itemToMove.id = index - 1
+    itemAbove.id = index
 
-        this.filteredHeuristics[index] = itemBelow
-        this.filteredHeuristics[index + 1] = itemToMove
+    heuristics.value[index] = itemAbove
+    heuristics.value[index - 1] = itemToMove
 
-        itemToMove.id = index + 1
-        itemBelow.id = index
+    itemToMove.id = index - 1
+    itemAbove.id = index
 
-        this.heuristics[index] = itemBelow
-        this.heuristics[index + 1] = itemToMove
+    toast.warning(t('HeuristicsTable.messages.changeWeights'))
+  }
+}
 
-        itemToMove.id = index + 1
-        itemBelow.id = index
+const moveItemDown = (index) => {
+  if (index < filteredHeuristics.value.length - 1) {
+    const itemToMove = filteredHeuristics.value[index]
+    const itemBelow = filteredHeuristics.value[index + 1]
 
-        this.$toast.warning(i18n.t('HeuristicsTable.messages.changeWeights'))
-      }
-    },
-    deleteHeuristic(item) {
-      const config = confirm(
-        `${i18n.t('alerts.deleteHeuristic')} ${this.heuristics[item].title}?`,
-      )
+    filteredHeuristics.value[index] = itemBelow
+    filteredHeuristics.value[index + 1] = itemToMove
 
-      if (config) {
-        this.$store.commit('removeHeuristic', item)
-        this.itemSelect = null
-        this.questionSelect = null
-      }
-      this.menuQuestions = false
-      this.menuHeuristics = false
-    },
-    deleteQuestion(item) {
-      if (this.heuristics[this.itemSelect].questions.length > 1) {
-        const config = confirm(
-          `Are you sure delete the Question ${
-            this.heuristics[this.itemSelect].questions[item].title
-          }?`,
-        )
+    itemToMove.id = index + 1
+    itemBelow.id = index
 
-        if (config) {
-          this.heuristics[this.itemSelect].questions.splice(item, 1)
-          this.questionSelect = null
+    heuristics.value[index] = itemBelow
+    heuristics.value[index + 1] = itemToMove
 
-          this.heuristics[this.itemSelect].total = this.heuristics[
-            this.itemSelect
-          ].questions.length
-        }
-      } else {
-        this.$toast.warning(
-          'Sorry, but you can\'t delete all heuristics questions',
-        )
-      }
+    itemToMove.id = index + 1
+    itemBelow.id = index
 
-      this.menuQuestions = false
-      this.menuHeuristics = false
-    },
-    editHeuris(item) {
-      this.itemEdit = {
-        title: 'Edit Heuristic',
-        titleEdit: item.title,
-        rule: this.nameRequired,
-        id: item.id,
-      }
-      this.dialogEdit = true
-    },
-    editQuestions(item) {
-      this.itemEdit = {
-        title: 'Edit Question',
-        titleEdit: item.title,
-        rule: this.questionRequired,
-      }
-      this.dialogEdit = true
-    },
-    editDescription(desc) {
-      const ind = this.heuristics[this.itemSelect].questions[
-        this.questionSelect
-      ].descriptions.indexOf(desc)
-      this.$refs.descBtn.editSetup(ind)
-    },
-    setupQuestion() {
-      this.newQuestion = {
-        id:
-          this.heuristics[this.itemSelect].questions[
-            this.heuristics[this.itemSelect].questions.length - 1
-          ].id + 1,
-        title: '',
-        descriptions: [],
-      }
-      this.dialogQuestion = true
-    },
-    deleteItem(item) {
-      this.heuristics[this.itemSelect].questions[
-        this.questionSelect
-      ].descriptions.splice(
-        this.heuristics[this.itemSelect].questions[
-          this.questionSelect
-        ].descriptions.indexOf(item),
-        1,
-      )
-    },
-    addHeuris() {
-      if (this.$refs.formHeuris.validate()) {
-        this.dialogHeuris = false
+    toast.warning(t('HeuristicsTable.messages.changeWeights'))
+  }
+}
 
-        this.heuristics.push(Object.assign({}, this.heuristicForm))
-        this.itemSelect = this.heuristics.length - 1
+const deleteHeuristic = (item) => {
+  const config = confirm(
+    `${t('alerts.deleteHeuristic')} ${heuristics.value[item].title}?`
+  )
 
-        this.heuristics.total = this.totalQuestions
+  if (config) {
+    store.commit('removeHeuristic', item)
+    itemSelect.value = null
+    questionSelect.value = null
+  }
+  menuQuestions.value = false
+  menuHeuristics.value = false
+}
 
-        this.$refs.formHeuris.resetValidation()
+const deleteQuestion = (item) => {
+  if (heuristics.value[itemSelect.value].questions.length > 1) {
+    const config = confirm(
+      `Are you sure delete the Question ${
+        heuristics.value[itemSelect.value].questions[item].title
+      }?`
+    )
 
-        this.$emit('change')
-      }
-    },
-    closeDialog(dialogName) {
-      this[dialogName] = false
+    if (config) {
+      heuristics.value[itemSelect.value].questions.splice(item, 1)
+      questionSelect.value = null
+      heuristics.value[itemSelect.value].total =
+        heuristics.value[itemSelect.value].questions.length
+    }
+  } else {
+    toast.warning("Sorry, but you can't delete all heuristics questions")
+  }
 
-      if (this.$refs.formHeuris) {
-        this.$refs.formHeuris.resetValidation()
-        this.$refs.formHeuris.reset()
-      }
-      if (this.$refs.formQuestion) {
-        this.$refs.formQuestion.resetValidation()
-        this.$refs.formQuestion.reset()
-        this.newQuestion = null
-      }
-    },
-    addQuestion() {
-      if (this.$refs.formQuestion.validate()) {
-        this.dialogQuestion = false
+  menuQuestions.value = false
+  menuHeuristics.value = false
+}
 
-        this.heuristics[this.itemSelect].questions.push(this.newQuestion)
-        this.newQuestion = null
+const editHeuris = (item) => {
+  itemEdit.value = {
+    title: 'Edit Heuristic',
+    titleEdit: item.title,
+    rule: nameRequired.value,
+    id: item.id,
+  }
+  dialogEdit.value = true
+}
 
-        this.heuristics[this.itemSelect].total = this.heuristics[
-          this.itemSelect
-        ].questions.length
+const editQuestions = (item) => {
+  itemEdit.value = {
+    title: 'Edit Question',
+    titleEdit: item.title,
+    rule: questionRequired.value,
+  }
+  dialogEdit.value = true
+}
 
-        this.$refs.formQuestion.resetValidation()
-        this.$emit('change')
-      }
-    },
-    validateEdit() {
-      if (this.$refs.formEdit.validate()) {
-        this.dialogEdit = false
+const editDescription = (desc) => {
+  const ind = heuristics.value[itemSelect.value].questions[
+    questionSelect.value
+  ].descriptions.indexOf(desc)
+  descBtn.value.editSetup(ind)
+}
 
-        if (this.itemEdit.title === 'Edit Heuristic') {
-          this.heuristics[this.itemSelect].title = this.itemEdit.titleEdit
-        } else {
-          this.heuristics[this.itemSelect].questions[
-            this.questionSelect
-          ].title = this.itemEdit.titleEdit
-        }
-      }
-    },
-    HandleNotEditable() {
-      console.log('not editable')
-      // if (this.testAnswerDocLength > 0) {
-      //   this.$toast.error(i18n.t(errors.globalError))
-      // }
-    },
-  },
+const setupQuestion = () => {
+  newQuestion.value = {
+    id:
+      heuristics.value[itemSelect.value].questions[
+        heuristics.value[itemSelect.value].questions.length - 1
+      ].id + 1,
+    title: '',
+    descriptions: [],
+  }
+  dialogQuestion.value = true
+}
+
+const deleteItem = (item) => {
+  heuristics.value[itemSelect.value].questions[
+    questionSelect.value
+  ].descriptions.splice(
+    heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(
+      item
+    ),
+    1
+  )
+}
+
+const addHeuris = () => {
+  if (formHeurisRef.value.validate()) {
+    dialogHeuris.value = false
+    heuristics.value.push({ ...heuristicForm.value })
+    itemSelect.value = heuristics.value.length - 1
+    heuristics.value.total = totalQuestions.value
+    formHeurisRef.value.resetValidation()
+    emit('change')
+  }
+}
+
+const closeDialog = (dialogName) => {
+  if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
+    formHeurisRef.value.resetValidation()
+    formHeurisRef.value.reset()
+  }
+  if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
+    formQuestionRef.value.resetValidation()
+    formQuestionRef.value.reset()
+    newQuestion.value = null
+  }
+  if (dialogName === 'dialogEdit' && formEditRef.value) {
+    formEditRef.value.resetValidation()
+    formEditRef.value.reset()
+    itemEdit.value = null
+  }
+
+  if (dialogName === 'dialogHeuris') dialogHeuris.value = false
+  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false
+  else if (dialogName === 'dialogEdit') dialogEdit.value = false
+  else if (dialogName === 'dialog') dialog.value = false
+}
+
+const addQuestion = () => {
+  if (formQuestionRef.value.validate()) {
+    dialogQuestion.value = false
+    heuristics.value[itemSelect.value].questions.push(newQuestion.value)
+    newQuestion.value = null
+    heuristics.value[itemSelect.value].total =
+      heuristics.value[itemSelect.value].questions.length
+    formQuestionRef.value.resetValidation()
+    emit('change')
+  }
+}
+
+const validateEdit = () => {
+  if (formEditRef.value.validate()) {
+    dialogEdit.value = false
+    if (itemEdit.value.title === 'Edit Heuristic') {
+      heuristics.value[itemSelect.value].title = itemEdit.value.titleEdit
+    } else {
+      heuristics.value[itemSelect.value].questions[questionSelect.value].title =
+        itemEdit.value.titleEdit
+    }
+    itemEdit.value = null
+  }
+}
+
+const handleNotEditable = () => {
+  console.log('not editable')
+  // if (testAnswerDocLength.value > 0) {
+  //   toast.error(t('errors.globalError'))
+  // }
+}
+
+const updateDescription = () => {
+  // Assuming this is handled by AddDescBtn component
 }
 </script>
 
@@ -1085,15 +1067,12 @@ export default {
 .csv-btn {
   position: absolute;
   right: 10px;
-
   z-index: 0;
   width: 10vw;
   height: 4vh;
   border-radius: 0px 0px 20px 20px;
-
   box-shadow: 0px 2px 5px black;
   background-color: #fca326;
-
   transition: 0.5s;
 }
 
@@ -1107,10 +1086,8 @@ export default {
   top: 40%;
   right: 32%;
   z-index: 50;
-
   width: 40%;
   height: 42%;
-
   background-color: #dbdde4;
   justify-content: center;
   align-items: center;

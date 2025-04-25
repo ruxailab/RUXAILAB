@@ -51,55 +51,79 @@
   </v-form>
 </template>
 
-<script>
-import i18n from '@/i18n'
+<script setup>
+import { ref } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
-export default {
-  props: {
-    test: {
-      type: Object,
-      required: true,
-    },
-    lock: {
-      type: Boolean,
-      default: false,
-    },
+// Props
+defineProps({
+  test: {
+    type: Object,
+    required: true,
   },
-  emits: ['update:test', 'valForm'],
-  data: () => ({
-    titleRequired: [
-      (v) => !!v || i18n.global.t('errors.fieldRequired'),
-      (v) => (v && v.length <= 200) || 'Max 200 characters',
-    ],
-    typeRequired: [(v) => !!v || i18n.global.t('errors.fieldRequired')],
-    types: [
-      { text: 'Usability User Test', value: 'User' },
-      { text: i18n.global.t('titles.heuristic'), value: 'HEURISTICS' },
-    ],
-  }),
-  methods: {
-    validate() {
-      const valid = this.$refs.form.validate()
-      this.$emit('valForm', valid, 0)
-      return valid
-    },
-    resetVal() {
-      this.$refs.form.resetValidation()
-    },
-    updateTestTitle(value) {
-      this.$emit('update:test', { ...this.test, testTitle: value })
-      this.$store.commit('SET_LOCAL_CHANGES', true)
-    },
-    updateTestDescription(value) {
-      this.$emit('update:test', { ...this.test, testDescription: value })
-      this.$store.commit('SET_LOCAL_CHANGES', true)
-    },
-    updateTestPublic(value) {
-      this.$emit('update:test', { ...this.test, isPublic: value })
-      this.$store.commit('SET_LOCAL_CHANGES', true)
-    },
+  lock: {
+    type: Boolean,
+    default: false,
   },
+})
+
+// Emits
+const emit = defineEmits(['update:test', 'valForm'])
+
+// Store
+const store = useStore()
+
+// i18n
+const { t } = useI18n()
+
+// Form reference
+const form = ref(null)
+
+// Validation rules
+const titleRequired = [
+  (v) => !!v || t('errors.fieldRequired'),
+  (v) => (v && v.length <= 200) || 'Max 200 characters',
+]
+const typeRequired = [(v) => !!v || t('errors.fieldRequired')]
+
+// Select options
+const types = [
+  { text: 'Usability User Test', value: 'User' },
+  { text: t('titles.heuristic'), value: 'HEURISTICS' },
+]
+
+// Methods
+const valida = async () => {
+  const { valid } = await form.value.validate()
+  emit('valForm', valid, 0)
+  return valid
 }
+
+const resetVal = () => {
+  form.value.resetValidation()
+}
+
+const updateTestTitle = (value) => {
+  emit('update:test', { ...test, testTitle: value })
+  store.commit('SET_LOCAL_CHANGES', true)
+}
+
+const updateTestDescription = (value) => {
+  emit('update:test', { ...test, testDescription: value })
+  store.commit('SET_LOCAL_CHANGES', true)
+}
+
+const updateTestPublic = (value) => {
+  emit('update:test', { ...test, isPublic: value })
+  store.commit('SET_LOCAL_CHANGES', true)
+}
+
+// Expose methods for external use
+defineExpose({
+  valida,
+  resetVal,
+})
 </script>
 
 <style></style>

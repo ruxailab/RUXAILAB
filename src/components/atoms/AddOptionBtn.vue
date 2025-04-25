@@ -106,91 +106,108 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n';
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default {
-  props: {
-    option: {
-      type: Object,
-      required: true,
-    },
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    hasValue: {
-      type: Boolean,
-      required: true,
-      default: true, 
-    },
+const props = defineProps({
+  option: {
+    type: Object,
+    required: true,
   },
-  emits: ['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change'],
-  data: () => ({
-    textRequired: [(v) => !!v || i18n.global.t('HeuristicsTable.validation.textRequired')],
-    localOption: { text: '', value: null, description: '' },
-    localHasValue: true,
-  }),
-  computed: {
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0;
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument.heuristicAnswers;
-      return Object.keys(heuristicAnswers).length;
-    },
-    valueRequired() {
-      if (this.localHasValue || (this.localOption.value !== null && this.localOption.value >= 0)) {
-        return [
-          (v) =>
-            (v !== '' && v !== null && v >= 0) ||
-            i18n.global.t('HeuristicsTable.validation.textRequired'),
-        ];
-      }
-      return [];
-    },
+  dialog: {
+    type: Boolean,
+    default: false,
   },
-  watch: {
-    option: {
-      handler(newOption) {
-        this.localOption = { ...newOption };
-      },
-      deep: true,
-      immediate: true,
-    },
-    hasValue: {
-      handler(newValue) {
-        this.localHasValue = newValue;
-      },
-      immediate: true,
-    },
-    localHasValue(newValue) {
-      this.$emit('changeHasValue', newValue);
-    },
-    dialog(newValue) {
-      if (!newValue) {
-        this.localHasValue = true;
-      }
-    },
+  hasValue: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
-  methods: {
-    validate() {
-      if (this.$refs.form.validate()) {
-        if (!this.localHasValue) {
-          this.localOption.value = null;
-        }
-        this.$emit('addOption', { ...this.localOption });
-        this.$emit('change');
-        this.$emit('update:dialog', false);
-        this.resetVal();
-      }
-    },
-    resetVal() {
-      this.localOption = { text: '', value: null, description: '' };
-      this.localHasValue = true;
-      this.$refs.form.resetValidation();
-    },
+});
+
+const emit = defineEmits(['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change']);
+
+const { t } = useI18n();
+const store = useStore();
+const form = ref(null);
+
+const textRequired = [
+  (v) => !!v || t('HeuristicsTable.validation.textRequired'),
+];
+
+const localOption = ref({ text: '', value: null, description: '' });
+const localHasValue = ref(true);
+
+// Computed properties
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return 0;
+  }
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
+
+const valueRequired = computed(() => {
+  if (localHasValue.value || (localOption.value.value !== null && localOption.value.value >= 0)) {
+    return [
+      (v) =>
+        (v !== '' && v !== null && v >= 0) ||
+        t('HeuristicsTable.validation.textRequired'),
+    ];
+  }
+  return [];
+});
+
+// Watchers
+watch(
+  () => props.option,
+  (newOption) => {
+    localOption.value = { ...newOption };
   },
+  { deep: true, immediate: true }
+);
+
+watch(
+  () => props.hasValue,
+  (newValue) => {
+    localHasValue.value = newValue;
+  },
+  { immediate: true }
+);
+
+watch(localHasValue, (newValue) => {
+  emit('changeHasValue', newValue);
+});
+
+watch(
+  () => props.dialog,
+  (newValue) => {
+    if (!newValue) {
+      localHasValue.value = true;
+    }
+  }
+);
+
+// Methods
+const validate = async () => {
+  const { valid } = await form.value.validate();
+  if (valid) {
+    if (!localHasValue.value) {
+      localOption.value.value = null;
+    }
+    emit('addOption', { ...localOption.value });
+    emit('change');
+    emit('update:dialog', false);
+    resetVal();
+  }
+};
+
+const resetVal = () => {
+  localOption.value = { text: '', value: null, description: '' };
+  localHasValue.value = true;
+  form.value.resetValidation();
 };
 </script>
 

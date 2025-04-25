@@ -9,14 +9,14 @@
     >
       <template #[`item.actions`]="{ item }">
         <v-icon
-          :disabled="testAnswerDocLength > 0 ? true : false"
+          :disabled="testAnswerDocLength > 0"
           size="small"
           @click="editItem(item)"
         >
           mdi-pencil
         </v-icon>
         <v-icon
-          :disabled="testAnswerDocLength > 0 ? true : false"
+          :disabled="testAnswerDocLength > 0"
           size="small"
           @click="deleteItem(item)"
         >
@@ -43,7 +43,7 @@
               @change-has-value="hasValue = !hasValue"
               @add-option="updateOptions"
               @dialog="changeDialog"
-              @change="emitChange()"
+              @change="emitChange"
             />
           </v-row>
         </v-row>
@@ -53,124 +53,123 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import AddOptionBtn from '../atoms/AddOptionBtn'
 
-export default {
-  components: {
-    AddOptionBtn,
+const store = useStore()
+const { t } = useI18n()
+
+const emit = defineEmits(['change'])
+
+const headers = ref([
+  {
+    text: t('common.text'),
+    align: 'start',
+    value: 'text',
   },
-  emits: ['change'],
-  data: () => ({
-    headers: [
-      {
-        text: i18n.global.t('common.text'),
-        align: 'start',
-        value: 'text',
-      },
-      {
-        text: i18n.global.t('common.description'),
-        align: 'end',
-        value: 'description',
-      },
-      { text: i18n.global.t('common.value'), align: 'end', value: 'value' },
-      {
-        text: i18n.global.t('common.editDelete'),
-        value: 'actions',
-        align: 'end',
-        sortable: false,
-      },
-    ],
-    option: {
+  {
+    text: t('common.description'),
+    align: 'end',
+    value: 'description',
+  },
+  {
+    text: t('common.value'),
+    align: 'end',
+    value: 'value',
+  },
+  {
+    text: t('common.editDelete'),
+    value: 'actions',
+    align: 'end',
+    sortable: false,
+  },
+])
+
+const option = ref({
+  text: '',
+  description: '',
+  value: null,
+})
+
+const dialog = ref(false)
+const editIndex = ref(-1)
+const hasValue = ref(true)
+
+const options = computed(() => store.state.Tests.Test.testOptions)
+
+const optionsWithFormattedValue = computed(() =>
+  options.value.map((opt) => ({
+    ...opt,
+    value: opt.value === null ? 'No value' : opt.value,
+  })),
+)
+
+const testAnswerDocLength = computed(() => {
+  const testAnswerDocument = store.getters.testAnswerDocument
+  if (!testAnswerDocument) return 0
+  const heuristicAnswers = testAnswerDocument.heuristicAnswers
+  return Object.keys(heuristicAnswers).length
+})
+
+watch(dialog, (newVal) => {
+  if (!newVal) {
+    option.value = {
       text: '',
-      description: '',
       value: null,
-    },
-    dialog: false,
-    editIndex: -1,
-    hasValue: true,
-  }),
-  computed: {
-    options() {
-      return this.$store.state.Tests.Test.testOptions
-    },
-    optionsWithFormattedValue() {
-      return this.options.map((option) => {
-        if (option.value === null) {
-          return { ...option, value: 'No value' }
-        } else {
-          return option
-        }
-      })
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+    }
+    hasValue.value = true
+  }
+})
 
-      return heuristicAnswersCount
-    },
-  },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.option = {
-          text: '',
-          value: null,
-        }
-        this.hasValue = true
-      }
-    },
-    options() {
-      this.$emit('change')
-    },
-  },
-  methods: {
-    changeDialog(payload) {
-      this.dialog = payload
-    },
-    updateOptions() {
-      if (this.editIndex == -1) {
-        this.option.timestamp = Date.now() // using the current timestamp as a unique identifier
-        this.options.push(this.option)
-      } else {
-        Object.assign(this.options[this.editIndex], this.option)
-        this.editIndex = -1
-      }
+watch(options, () => {
+  emit('change')
+})
 
-      this.option = {
-        text: '',
-        value: null,
-      }
-      this.hasValue = true
-    },
-    deleteItem(item) {
-      const index = this.options.findIndex(
-        (option) => option.timestamp === item.timestamp,
-      )
-      if (index !== -1) {
-        this.options.splice(index, 1)
-      }
-    },
-    editItem(item) {
-      this.editIndex = this.options.findIndex(
-        (option) => option.timestamp === item.timestamp,
-      )
-      this.option.text = this.options[this.editIndex].text
-      this.option.value = this.options[this.editIndex].value
+const changeDialog = (payload) => {
+  dialog.value = payload
+}
 
-      if (this.option.value === null) this.hasValue = false
-      else this.hasValue = true
-      this.dialog = true
-    },
-    emitChange() {
-      this.$emit('change')
-    },
-  },
+const updateOptions = () => {
+  if (editIndex.value === -1) {
+    option.value.timestamp = Date.now() // Using timestamp as unique identifier
+    options.value.push(option.value)
+  } else {
+    Object.assign(options.value[editIndex.value], option.value)
+    editIndex.value = -1
+  }
+
+  option.value = {
+    text: '',
+    value: null,
+  }
+  hasValue.value = true
+}
+
+const deleteItem = (item) => {
+  const index = options.value.findIndex(
+    (opt) => opt.timestamp === item.timestamp,
+  )
+  if (index !== -1) {
+    options.value.splice(index, 1)
+  }
+}
+
+const editItem = (item) => {
+  editIndex.value = options.value.findIndex(
+    (opt) => opt.timestamp === item.timestamp,
+  )
+  option.value.text = options.value[editIndex.value].text
+  option.value.value = options.value[editIndex.value].value
+
+  hasValue.value = option.value.value !== null
+  dialog.value = true
+}
+
+const emitChange = () => {
+  emit('change')
 }
 </script>
 

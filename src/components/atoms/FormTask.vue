@@ -78,52 +78,56 @@
     </v-row>
   </v-form>
 </template>
-<script>
-export default {
-  props: {
-    task: {
-      type: Object,
-      required: true,
-    },
+
+<script setup>
+import { ref, watch, defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+  task: {
+    type: Object,
+    required: true,
   },
-  emits: ['validate', 'update:task'],
-  data() {
-    return {
-      requiredRule: [(v) => !!v || 'Field Required'],
-      localTask: { ...this.task }, // Local copy of the task prop
-    };
+});
+
+const emit = defineEmits(['validate', 'update:task']);
+
+const form = ref(null);
+const requiredRule = [(v) => !!v || 'Field Required'];
+const localTask = ref({ ...props.task });
+
+// Watch for changes in the task prop
+watch(
+  () => props.task,
+  (newTask) => {
+    localTask.value = { ...newTask };
   },
-  watch: {
-    task: {
-      handler(newTask) {
-        this.localTask = { ...newTask };
-      },
-      deep: true,
-    },
-    localTask: {
-      handler(newLocalTask) {
-        this.$emit('update:task', { ...newLocalTask });
-      },
-      deep: true,
-    },
+  { deep: true }
+);
+
+// Watch for changes in localTask and emit update
+watch(
+  localTask,
+  (newLocalTask) => {
+    emit('update:task', { ...newLocalTask });
   },
-  watch: {
-    'task.taskType'(newValue) {
-      if (newValue !== 'form') {
-        this.task.postQuestion = ''
-      }
-    },
-  },
-  methods: {
-    valida() {
-      const valid = this.$refs.form.validate();
-      this.$emit('validate', valid);
-    },
-    resetVal() {
-      this.$refs.form.resetValidation();
-    },
-  },
+  { deep: true }
+);
+
+// Methods
+const valida = () => {
+  const valid = form.value.validate();
+  emit('validate', valid);
 };
+
+const resetVal = () => {
+  form.value.resetValidation();
+};
+
+// Expose methods to parent if needed
+defineExpose({
+  valida,
+  resetVal,
+});
 </script>
 
 <style></style>

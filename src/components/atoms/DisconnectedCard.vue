@@ -16,7 +16,7 @@
               conexão novamente!</span>
           </v-col>
           <v-col class="text-center">
-            <v-img
+ piel            <v-img
               draggable="false"
               src="../../../public/Disconnected.svg"
               alt="Disconnected image"
@@ -41,41 +41,37 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      dialog: true,
-      dialogMaxWidth: '40vw', // Define o valor inicial para desktop
-    }
-  },
-  mounted() {
-    // Chama a função para definir o valor inicial de dialogMaxWidth
-    this.updateDialogMaxWidth()
-    // Adiciona um listener para ajustar o dialogMaxWidth quando a tela for redimensionada
-    window.addEventListener('resize', this.updateDialogMaxWidth)
-  },
-  beforeUnmount() {
-    // Remove o listener do evento resize para evitar vazamentos de memória
-    window.removeEventListener('resize', this.updateDialogMaxWidth)
-  },
-  methods: {
-    reconnect() {
-      location.reload()
-    },
-    updateDialogMaxWidth() {
-      // Atualiza o valor máximo do diálogo com base no tamanho da viewport
-      if (window.innerWidth <= 600) {
-        this.dialogMaxWidth = '80vw' // Define o valor para telas menores que 600px de largura
-      }
-      if (window.innerWidth <= 900) {
-        this.dialogMaxWidth = '60vw' // Define o valor para telas menores que 600px de largura
-      } else {
-        this.dialogMaxWidth = '40vw' // Define o valor para telas maiores que 600px de largura
-      }
-    },
-  },
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+// Reactive state
+const dialog = ref(true)
+const dialogMaxWidth = ref('40vw')
+
+// Methods
+const reconnect = () => {
+  location.reload()
 }
+
+const updateDialogMaxWidth = () => {
+  if (window.innerWidth <= 600) {
+    dialogMaxWidth.value = '80vw'
+  } else if (window.innerWidth <= 900) {
+    dialogMaxWidth.value = '60vw'
+  } else {
+    dialogMaxWidth.value = '40vw'
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  updateDialogMaxWidth()
+  window.addEventListener('resize', updateDialogMaxWidth)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateDialogMaxWidth)
+})
 </script>
 
 <style scoped>

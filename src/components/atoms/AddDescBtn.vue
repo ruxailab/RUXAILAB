@@ -5,23 +5,22 @@
       color="#f9a826"
       class="text-white"
       size="small"
-      :disabled="testAnswerDocLength > 0 ? true : false"
-      :class="{
-        disabledBtnBackground: testAnswerDocLength > 0,
-      }"
-      @click=";(dialog = true), resetIndex()"
+      :disabled="testAnswerDocLength > 0"
+      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+      @click="$emit('dialog', true)"
     >
-      {{ $t('HeuristicsTable.titles.addNewDescription') }}
+      {{ $t('HeuristicsTable.titles.addOption') }}
     </v-btn>
 
     <v-dialog
-      v-model="dialog"
-      width="700"
+      :model-value="dialog"
+      width="500"
       persistent
+      @update:model-value="$emit('update:dialog', $event)"
     >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
-          {{ $t('HeuristicsTable.titles.addNewDescription') }}
+          {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
         <v-row
@@ -29,27 +28,54 @@
           class="ma-0"
         >
           <v-col cols="11">
-            <v-form
-              ref="form"
-              @submit.prevent="validate()"
-            >
-              <v-row justify="center">
-                <v-col cols="12">
+            <v-form ref="form">
+              <v-row
+                justify="center"
+                align="center"
+              >
+                <v-col cols="6">
                   <v-text-field
-                    v-model="desc.title"
-                    :rules="rule"
-                    density="compact"
-                    variant="outlined"
-                    :label="$t('common.title')"
-                  />
-
-                  <div>{{ $t('common.description') }}:</div>
-                  <TextBox
-                    ref="textbox"
-                    @mounted="setDescriptionText"
-                    @update-html="updateText"
+                    v-model="localOption.text"
+                    max-length="100"
+                    counter="100"
+                    :label="$t('common.text')"
+                    :rules="textRequired"
                   />
                 </v-col>
+
+                <v-col cols="6">
+                  <v-text-field
+                    v-model.number="localOption.value"
+                    :label="$t('common.value')"
+                    :disabled="!localHasValue"
+                    type="number"
+                    placeholder="Ex. 0.5"
+                    :rules="valueRequired"
+                    :step="0.5"
+                  />
+                </v-col>
+              </v-row>
+
+              <!-- New row for Option description -->
+              <v-row
+                justify="center"
+                align="center"
+              >
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="localOption.description"
+                    max-length="250"
+                    counter="250"
+                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
+                  />
+                </v-col>
+              </v-row>
+
+              <v-row justify="center">
+                <v-checkbox
+                  v-model="localHasValue"
+                  :label="$t('HeuristicsTable.titles.hasValue')"
+                />
               </v-row>
             </v-form>
           </v-col>
@@ -61,28 +87,18 @@
             size="small"
             variant="text"
             color="red-lighten-1"
-            @click="reset()"
+            @click="$emit('update:dialog', false), resetVal()"
           >
-            {{ $t('common.cancel') }}
+            {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
 
           <v-btn
-            v-if="editIndex !== null"
-            size="small"
-            color="#f9a826"
-            class="text-white"
-            @click="submitEdit()"
-          >
-            {{ $t('common.confirm') }}
-          </v-btn>
-          <v-btn
-            v-else
             size="small"
             color="#f9a826"
             class="text-white"
             @click="validate()"
           >
-            {{ $t('common.add') }}
+            {{ $t('common.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -90,111 +106,114 @@
   </div>
 </template>
 
-<script>
-import TextBox from '@/components/atoms/TextBox'
-import i18n from '@/i18n'
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-export default {
-  components: {
-    TextBox,
+// Define props
+const props = defineProps({
+  option: {
+    type: Object,
+    required: true,
   },
-  props: {
-    questionIndex: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    heuristicIndex: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+  dialog: {
+    type: Boolean,
+    default: false,
   },
-  emits: ['update-description'], 
-  data: () => ({
-    dialog: false,
-    desc: {
-      title: '',
-      text: '',
-    },
-    rule: [(v) => !!v || i18n.t('errors.fieldRequired')],
-    editIndex: null,
-    isMounted: false,
-  }),
-  computed: {
-    question() {
-      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex]
-        .questions[this.questionIndex]
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+  hasValue: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+});
 
-      return heuristicAnswersCount
-    },
-  },
-  methods: {
-    validate() {
-      const valid = this.$refs.form.validate()
-      if (valid && this.desc.text.length > 0) {
-        this.$store.commit('setupHeuristicQuestionDescription', {
-          heuristic: this.heuristicIndex,
-          question: this.questionIndex,
-          description: this.desc,
-          editIndex: this.editIndex,
-        })
+// Define emits
+const emit = defineEmits(['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change']);
 
-        this.reset()
-      } else if (valid && this.desc.text.length == 0) {
-        this.$toast.info(i18n.t('alerts.addDescription'))
-      }
-    },
-    reset() {
-      this.dialog = false
-      this.$refs.form.resetValidation()
-      this.$refs.textbox.resetContent()
-      this.desc = {
-        title: '',
-        text: '',
-      }
-      this.resetIndex()
-    },
-    resetIndex() {
-      this.editIndex = null
-    },
-    updateText(html) {
-      this.desc.text = html
-    },
-    editSetup(i) {
-      //used when edit clicked
-      this.dialog = true
-      this.editIndex = i
-      this.desc = Object.assign({}, this.question.descriptions[this.editIndex])
-      if (this.isMounted) {
-        this.setDescriptionText()
-      }
-    },
-    setDescriptionText() {
-      this.isMounted = true
-      this.$refs.textbox.setContent(this.desc.text)
-    },
-    submitEdit(){
-      const valid = this.$refs.form.validate()
-      console.log('submitEdit',this.desc.text)
-      const strippedText = this.desc.text.replace(/<\/?[^>]+(>|$)/g, "").trim();
-      if(valid && strippedText.length > 0){
-        this.$emit('update-description', { index: this.editIndex, description: this.desc });
-        this.reset();
-      }else if (valid && strippedText.length == 0) {
-        this.$toast.info(i18n.t('alerts.addDescription'))
-      }
-    },
+// Initialize i18n and store
+const { t } = useI18n();
+const store = useStore();
+
+// Refs
+const form = ref(null);
+const localOption = ref({ text: '', value: null, description: '' });
+const localHasValue = ref(true);
+
+// Validation rules
+const textRequired = [
+  (v) => !!v || t('HeuristicsTable.validation.textRequired'),
+];
+
+const valueRequired = computed(() => {
+  if (localHasValue.value || (localOption.value.value !== null && localOption.value.value >= 0)) {
+    return [
+      (v) =>
+        (v !== '' && v !== null && v >= 0) ||
+        t('HeuristicsTable.validation.textRequired'),
+    ];
+  }
+  return [];
+});
+
+// Computed properties
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return 0;
+  }
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
+
+// Watchers
+watch(
+  () => props.option,
+  (newOption) => {
+    localOption.value = { ...newOption };
   },
-}
+  { deep: true, immediate: true }
+);
+
+watch(
+  () => props.hasValue,
+  (newValue) => {
+    localHasValue.value = newValue;
+  },
+  { immediate: true }
+);
+
+watch(localHasValue, (newValue) => {
+  emit('changeHasValue', newValue);
+});
+
+watch(
+  () => props.dialog,
+  (newValue) => {
+    if (!newValue) {
+      localHasValue.value = true;
+    }
+  }
+);
+
+// Methods
+const validate = async () => {
+  const { valid } = await form.value.validate();
+  if (valid) {
+    if (!localHasValue.value) {
+      localOption.value.value = null;
+    }
+    emit('addOption', { ...localOption.value });
+    emit('change');
+    emit('update:dialog', false);
+    resetVal();
+  }
+};
+
+const resetVal = () => {
+  localOption.value = { text: '', value: null, description: '' };
+  localHasValue.value = true;
+  form.value.resetValidation();
+};
 </script>
 
 <style scoped>
@@ -213,6 +232,7 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
+
 .dataCard {
   background: #f5f7ff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);

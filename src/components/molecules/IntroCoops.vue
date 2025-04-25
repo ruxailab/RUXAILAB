@@ -6,56 +6,53 @@
     :main="$t('descriptions.intro.cooperators')"
     :link="$t('descriptions.intro.start')"
     :items="items"
-    @link-clicked="closeIntro()"
+    @link-clicked="closeIntro"
     @call-func="callFunc"
   />
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import IntroComp from '@/components/atoms/IntrosComponent'
-import i18n from '@/i18n'
 
-export default {
-  components: {
-    IntroComp,
-  },
-  emits: ['closeIntro'],
-  data: () => ({}),
-  computed: {
-    items() {
-      return [
-        {
-          iconColor: '#daf01a',
-          icon: 'mdi-file-document',
-          title: i18n.global.t('pages.intros.docTitle'),
-          subtitle:
-            i18n.global.t('pages.intros.docSubtitle') + i18n.global.t('titles.cooperators'),
-          func: 'goToDoc',
-        },
+const router = useRouter()
+const { t } = useI18n()
 
-        {
-          iconColor: '#daf01a',
-          icon: 'mdi-emoticon-happy',
-          title: i18n.global.t('pages.intros.discTitle'),
-          subtitle: i18n.global.t('pages.intros.discSubtitle'),
-          func: 'goToDisc',
-        },
-      ]
-    },
+const emit = defineEmits(['closeIntro'])
+
+const items = computed(() => [
+  {
+    iconColor: '#daf01a',
+    icon: 'mdi-file-document',
+    title: t('pages.intros.docTitle'),
+    subtitle: t('pages.intros.docSubtitle') + t('titles.cooperators'),
+    func: 'goToDoc',
   },
-  methods: {
-    goToDoc() {
-      this.$router.push('/cooperators/documentation').catch(() => {})
-    },
-    goToDisc() {
-      window.open('https://discord.gg/MFWNpwTq9q')
-    },
-    closeIntro() {
-      this.$emit('closeIntro')
-    },
-    callFunc(func) {
-      this[func]()
-    },
+  {
+    iconColor: '#daf01a',
+    icon: 'mdi-emoticon-happy',
+    title: t('pages.intros.discTitle'),
+    subtitle: t('pages.intros.discSubtitle'),
+    func: 'goToDisc',
   },
+])
+
+const goToDoc = () => {
+  router.push('/cooperators/documentation').catch(() => {})
+}
+
+const goToDisc = () => {
+  window.open('https://discord.gg/MFWNpwTq9q')
+}
+
+const closeIntro = () => {
+  emit('closeIntro')
+}
+
+const callFunc = (func) => {
+  if (func === 'goToDoc') goToDoc()
+  if (func === 'goToDisc') goToDisc()
 }
 </script>

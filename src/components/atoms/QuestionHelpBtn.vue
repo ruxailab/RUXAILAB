@@ -58,24 +58,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import TextBox from '@/components/atoms/TextBox'
 
-export default {
-  components: {
-    TextBox,
+defineProps({
+  question: {
+    type: Object,
+    required: true,
   },
-  props: {
-    question: {
-      type: Object,
-      required: true,
-    },
-  },
-  data: () => ({
-    dialog: false,
-  }),
-  methods: {},
-}
+})
+
+const dialog = ref(false)
 </script>
 
 <style scoped>

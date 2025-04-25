@@ -6,7 +6,6 @@
           class="ml-4 mr-2 my-4"
           style="cursor: pointer"
           v-bind="props"
-         
           @click="toggleTimer"
         >
           {{ timerRunning ? 'mdi-clock' : 'mdi-clock-outline' }}
@@ -18,51 +17,54 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    taskIndex: {
-      type: Number,
-      required: true,
-    },
+<script setup>
+import { ref, onBeforeMount } from 'vue'
+
+const props = defineProps({
+  taskIndex: {
+    type: Number,
+    required: true,
   },
-  emits: ['timerStopped'],
-  data() {
-    return {
-      timerRunning: false,
-      timerVisible: false,
-      startTime: null,
-      elapsedTime: 0,
-    }
-  },
-  beforeMount() {
-    this.startTimer()
-  },
-  methods: {
-    startTimer() {
-      this.startTime = new Date()
-      this.timerInterval = setInterval(() => {
-        this.elapsedTime = new Date() - this.startTime
-      }, 1000)
-    },
-    stopTimer() {
-      clearInterval(this.timerInterval)
-      this.timerRunning = false
-      this.$emit('timerStopped', this.elapsedTime, this.taskIndex)
-    },
-    toggleTimer() {
-      if (!this.timerVisible) {
-        this.timerVisible = true
-      } else {
-        this.timerVisible = !this.timerVisible
-      }
-    },
-    formatTime(time) {
-      const seconds = Math.floor(time / 1000)
-      const minutes = Math.floor(seconds / 60)
-      const remainingSeconds = seconds % 60
-      return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
-    },
-  },
+})
+
+const emit = defineEmits(['timerStopped'])
+
+const timerRunning = ref(false)
+const timerVisible = ref(false)
+const startTime = ref(null)
+const elapsedTime = ref(0)
+let timerInterval = null // Non-reactive interval reference
+
+const startTimer = () => {
+  startTime.value = new Date()
+  timerInterval = setInterval(() => {
+    elapsedTime.value = new Date() - startTime.value
+  }, 1000)
+  timerRunning.value = true
 }
+
+const stopTimer = () => {
+  clearInterval(timerInterval)
+  timerRunning.value = false
+  emit('timerStopped', elapsedTime.value, props.taskIndex)
+}
+
+const toggleTimer = () => {
+  if (!timerVisible.value) {
+    timerVisible.value = true
+  } else {
+    timerVisible.value = !timerVisible.value
+  }
+}
+
+const formatTime = (time) => {
+  const seconds = Math.floor(time / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
+}
+
+onBeforeMount(() => {
+  startTimer()
+})
 </script>

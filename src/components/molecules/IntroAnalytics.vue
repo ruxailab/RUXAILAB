@@ -6,56 +6,53 @@
     :main="$t('descriptions.intro.analytics')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
-    @link-clicked="goToCoops()"
+    @link-clicked="goToCoops"
     @call-func="callFunc"
   />
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import IntroComp from '@/components/atoms/IntrosComponent'
-import i18n from '@/i18n'
 
-export default {
-  components: {
-    IntroComp,
-  },
-  emits: ['goToCoops'],
-  data: () => ({}),
-  computed: {
-    items() {
-      return [
-        {
-          iconColor: '#59b9d4',
-          icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
-          subtitle:
-          i18n.t('pages.intros.docSubtitle') + i18n.t('titles.analytics'),
-          func: 'goToDoc',
-        },
+const router = useRouter()
+const { t } = useI18n()
 
-        {
-          iconColor: '#59b9d4',
-          icon: 'mdi-emoticon-happy',
-          title: i18n.t('pages.intros.discTitle'),
-          subtitle: i18n.t('pages.intros.discSubtitle'),
-          func: 'goToDisc',
-        },
-      ]
-    },
+const emit = defineEmits(['goToCoops'])
+
+const items = computed(() => [
+  {
+    iconColor: '#59b9d4',
+    icon: 'mdi-file-document',
+    title: t('pages.intros.docTitle'),
+    subtitle: t('pages.intros.docSubtitle') + t('titles.analytics'),
+    func: 'goToDoc',
   },
-  methods: {
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-    goToDoc() {
-      this.$router.push('/analytics/documentation').catch(() => {})
-    },
-    goToDisc() {
-      window.open('https://discord.gg/MFWNpwTq9q')
-    },
-    callFunc(func) {
-      this[func]()
-    },
+  {
+    iconColor: '#59b9d4',
+    icon: 'mdi-emoticon-happy',
+    title: t('pages.intros.discTitle'),
+    subtitle: t('pages.intros.discSubtitle'),
+    func: 'goToDisc',
   },
+])
+
+const goToCoops = () => {
+  emit('goToCoops')
+}
+
+const goToDoc = () => {
+  router.push('/analytics/documentation').catch(() => {})
+}
+
+const goToDisc = () => {
+  window.open('https://discord.gg/MFWNpwTq9q')
+}
+
+const callFunc = (func) => {
+  if (func === 'goToDoc') goToDoc()
+  if (func === 'goToDisc') goToDisc()
 }
 </script>

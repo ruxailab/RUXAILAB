@@ -39,7 +39,6 @@
                 icon
                 variant="flat"
                 v-bind="props"
-               
                 @click="toggleMicrophone"
               >
                 <v-icon v-if="!isMicrophoneMuted">
@@ -83,7 +82,7 @@
                 variant="flat"
                 icon
                 v-bind="props"
-                @click="redirect()"
+                @click="redirect"
               >
                 <v-icon>
                   mdi-link
@@ -98,107 +97,128 @@
   </v-row>
 </template>
 
-<script>
-export default {
-  props: {
-    isAdmin: {
-      type: Boolean,
-    },
-    index: {
-      default: 0,
-      type: Number,
-    },
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import { useI18n } from 'vue-i18n';
+
+// Props
+defineProps({
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
-  data() {
-    return {
-      hide: true,
-      isMicrophoneMuted: false,
-      isSharingScreen: false,
-      usingCamera: true,
+  index: {
+    type: Number,
+    default: 0,
+  },
+});
+
+// Vuex store
+const store = useStore();
+
+// Vue Router
+const router = useRouter();
+
+// Vue Toastification
+const toast = useToast();
+
+// Vue I18n
+const { t } = useI18n();
+
+// Refs for reactive state
+const hide = ref(true);
+const isMicrophoneMuted = ref(false);
+const isSharingScreen = ref(false);
+const usingCamera = ref(true);
+
+// Refs for DOM elements
+const localMedia = ref(null);
+const remoteMedia = ref(null);
+
+// Computed properties (mapped from Vuex getters)
+const test = computed(() => store.getters.test);
+const localCameraStream = computed(() => store.getters.localCameraStream);
+const remoteCameraStream = computed(() => store.getters.remoteCameraStream);
+const roomTestId = computed(() => store.getters.test.id);
+const peerConnection = computed(() => store.getters.peerConnection);
+
+// Methods
+const redirect = () => {
+  if (test.value.testStructure.landingPage.trim() === '') {
+    toast.error(t('errors.globalError'));
+    return;
+  }
+  console.log(test.value.testStructure.landingPage);
+  window.open(test.value.testStructure.landingPage);
+};
+
+const setupStreams = () => {
+  console.log('setupStreams');
+  if (localMedia.value) {
+    localMedia.value.srcObject = localCameraStream.value;
+  }
+  if (remoteMedia.value) {
+    remoteMedia.value.srcObject = remoteCameraStream.value;
+  }
+};
+
+const toggleMicrophone = () => {
+  if (
+    localCameraStream.value &&
+    localCameraStream.value.getAudioTracks().length > 0
+  ) {
+    const audioTrack = localCameraStream.value
+      .getTracks()
+      .find((track) => track.kind === 'audio');
+    audioTrack.enabled = !audioTrack.enabled;
+    isMicrophoneMuted.value = !audioTrack.enabled;
+  }
+};
+
+const toggleCameraScreen = async () => {
+  try {
+    let stream;
+
+    if (usingCamera.value) {
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
+    } else {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
     }
-  },
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    localCameraStream() {
-      return this.$store.getters.localCameraStream
-    },
-    remoteCameraStream() {
-      return this.$store.getters.remoteCameraStream
-    },
-    roomTestId() {
-      return this.$store.getters.test.id
-    },
-    peerConnection() {
-      return this.$store.getters.peerConnection
-    },
-  },
-  watch: {
-    localCameraStream(newVal) {
-      this.setupStreams()
-    },
-    remoteCameraStream(newVal) {
-      this.setupStreams()
-    },
-  },
-  mounted() {
-    this.setupStreams()
-  },
-  methods: {
-    redirect() {
-      if(this.test.testStructure.landingPage.trim() == '') {
-        this.$toast.error(i18n.t(errors.globalError))
-        return
-      }
-      console.log(this.test.testStructure.landingPage)
-      window.open(this.test.testStructure.landingPage)
-    },
-    setupStreams() {
-      console.log('setupStreams')
-      this.$refs.localMedia.srcObject = this.localCameraStream
-      this.$refs.remoteMedia.srcObject = this.remoteCameraStream
-    },
-    toggleMicrophone() {
-      if (
-        this.localCameraStream &&
-        this.localCameraStream.getAudioTracks().length > 0
-      ) {
-        const audioTrack = this.localCameraStream
-          .getTracks()
-          .find((track) => track.kind == 'audio')
-        audioTrack.enabled = !audioTrack.enabled
-        this.isMicrophoneMuted = !audioTrack.enabled
-      }
-    },
-    async toggleCameraScreen() {
-      try {
-        let stream
 
-        if (this.usingCamera) {
-          stream = await navigator.mediaDevices.getDisplayMedia({
-            video: true,
-          })
-        } else {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-          })
-        }
+    if (stream) {
+      await store.dispatch('changeTrack', stream);
+      isSharingScreen.value = !isSharingScreen.value;
+      usingCamera.value = !usingCamera.value;
+    }
+  } catch (e) {
+    toast.error(t('errors.globalError'));
+  }
+};
 
-        if (stream) {
-          await this.$store.dispatch('changeTrack', stream)
-          this.isSharingScreen = !this.isSharingScreen
-          this.usingCamera = !this.usingCamera
-        }
-      } catch (e) {
-        this.$toast.error(i18n.t(errors.globalError))
-      }
-    },
-    hangUp() {
-      this.$router.push('/testslist')
-    },
-  },
-}
+const hangUp = () => {
+  router.push('/testslist');
+};
+
+// Watchers
+watch(localCameraStream, () => {
+  setupStreams();
+});
+
+watch(remoteCameraStream, () => {
+  setupStreams();
+});
+
+// Lifecycle hook
+onMounted(() => {
+  setupStreams();
+});
 </script>
 
 <style scoped>
