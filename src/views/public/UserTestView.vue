@@ -610,588 +610,273 @@
                       </v-col>
                       <v-col
                         cols="1"
-                        v-if="
-                          test.testStructure.userTasks[taskIndex]
-                            .hasScreenRecord !== false
-                        "
-                      >
-                        <ScreenRecorder
-                          @showLoading="isLoading = true"
-                          @stopShowLoading="isLoading = false"
-                          :testId="testId"
-                          :taskIndex="taskIndex"
-                        ></ScreenRecorder>
-                      </v-col>
-                      <v-col cols="4">
-                        <Timer
-                          ref="timerComponent"
-                          :taskIndex="taskIndex"
-                          @timerStopped="handleTimerStopped"
-                        />
-                      </v-col>
-                    </v-row>
-                  </div>
+                        v-if<template>
+  <div v-if="test">
+    <v-overlay v-model="isLoading" class="text-center">
+      <v-progress-circular indeterminate color="#fca326" size="50" />
+      <div class="white-text mt-3">
+        Saving...
+      </div>
+    </v-overlay>
+    <Snackbar />
 
-                  <v-spacer />
-                  <v-row class="paragraph" justify="space-around">
-                    <v-col
-                      class="mb-0 pb-0"
-                      v-if="
-                        test.testStructure.userTasks[taskIndex].taskType ===
-                          'textArea'
-                      "
-                    >
-                      <v-textarea
-                        :id="
-                          'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
-                        "
-                        v-model="
-                          currentUserTestAnswer.tasks[taskIndex].taskAnswer
-                        "
-                        outlined
-                        label="answer"
-                      />
-                    </v-col>
-                    <v-col class="mb-0 pb-0">
-                      <v-textarea
-                        :id="
-                          'id-' +
-                            test.testStructure.userTasks[taskIndex].taskName
-                        "
-                        v-model="
-                          currentUserTestAnswer.tasks[taskIndex]
-                            .taskObservations
-                        "
-                        outlined
-                        label="observation (optional)"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-              <v-row
-                v-if="test.testStructure.userTasks[taskIndex].postQuestion"
-                class="fill-height"
-                align="center"
-                justify="center"
-              >
-                <v-col class="text-center">
-                  <p class="text-h5">
-                    {{ test.testStructure.userTasks[taskIndex].postQuestion }}
-                  </p>
+    <!-- Submit Alert Dialog -->
+    <v-dialog v-model="dialog" width="600" persistent>
+      <v-card>
+        <v-card-title class="headline error white--text" primary-title>
+          {{$t('HeuristicsTestView.messages.submitTest')}}
+        </v-card-title>
 
-                  <v-text-field
-                    v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer"
-                    class="mx-2"
-                    :placeholder="
-                      test.testStructure.userTasks[taskIndex].postQuestion
-                    "
-                    outlined
-                  />
-                </v-col>
-              </v-row>
-              <video
-                v-if="videoUrl == ''"
-                id="vpreview"
-                class="preview"
-                style="max-width: 0px"
-                autoplay
-              />
-              <div class="pa-2 text-end">
-                <v-btn
-                  block
-                  dark
-                  color="orange lighten-1"
-                  @click="completeStep(taskIndex, 'tasks'), callTimerSave()"
-                >
-                  {{ $t('UserTestView.buttons.done') }}
-                </v-btn>
-              </div>
-            </v-container>
-          </div>
-        </ShowInfo>
+        <v-card-text class="mt-5">
+          {{$t('HeuristicsTestView.messages.submitOnce')}}
+        </v-card-text>
 
-        <!-- Post Test -->
-        <ShowInfo
-          v-if="
-            (index == 2 && !currentUserTestAnswer.postTestCompleted) ||
-              (index == 2 && currentUserTestAnswer.submitted)
-          "
-          title="Post Test"
-        >
-          <div slot="content" class="ma-0 pa-0">
-            <v-row class="fill-height" align="center" justify="center">
-              <v-col cols="12">
-                <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
-                    {{ test.testTitle }} -
-                    {{ $t('UserTestView.titles.postTest') }}
-                  </h1>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-divider class="my-8" />
+        <v-divider />
 
-            <v-row
-              v-for="(item, index) in test.testStructure.postTest"
-              :key="index"
-            >
-              <v-col cols="5" class="mx-auto py-0">
-                <span class="cardsTitle">{{ item.title }}</span>
-                <br />
-                <span class="cardsSubtitle" v-if="item.description">{{
-                  item.description
-                }}</span>
-                <v-text-field
-                  v-if="item.textField"
-                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.postTestCompleted"
-                  :placeholder="item.title"
-                  outlined
-                />
-                <v-radio-group
-                  v-if="item.selectionField"
-                  v-model="currentUserTestAnswer.postTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.postTestCompleted"
-                  column
-                >
-                  <v-row
-                    v-for="(selection, selectionIndex) in item.selectionFields"
-                    :key="selectionIndex"
-                  >
-                    <v-radio
-                      :disabled="currentUserTestAnswer.postTestCompleted"
-                      class="ml-3 mb-1"
-                      :label="selection"
-                      :value="selection"
-                    />
-                  </v-row>
-                  <v-row justify="end" />
-                </v-radio-group>
-              </v-col>
-            </v-row>
-            <v-col cols="12">
-              <v-row justify="center">
-                <v-col class="mx-10">
-                  <v-btn
-                    block
-                    :dark="!currentUserTestAnswer.postTestCompleted"
-                    color="orange lighten-1"
-                    class="mt-3"
-                    :disabled="currentUserTestAnswer.postTestCompleted"
-                    @click="
-                      completeStep(taskIndex, 'postTest'), (taskIndex = 3)
-                    "
-                  >
-                    {{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </div>
-        </ShowInfo>
-        <ShowInfo
-          v-else-if="index == 2 && currentUserTestAnswer.postTestCompleted"
-          :title="$t('finishTest.title')"
-        >
-          <div slot="content" class="ma-0 pa-0">
-            <v-row justify="center" class="ma-4">
-              <v-col cols="11" class="mt-3">
-                <span class="cardsTitle">{{$t('finishTest.finalMessage')}}!</span>
-                <br />
-                <span class="cardsSubtitle">
-                  {{ $t('finishTest.congratulations') }}
-                </span>
-                <v-row justify="center" class="mt-3">
-                  <v-col cols="4">
-                    <img
-                      draggable="false"
-                      src="../../../public/finalMessage.svg"
-                      alt="Final test svg"
-                    />
-                  </v-col>
-                  <v-col cols="4" class="pt-2 my-8">
-                    <span class="cardsSubtitle"
-                      >{{ $t('finishTest.submitMessage') }}</span
-                    >
-                    <v-col class="mt-2">
-                      <v-btn
-                        @click="dialog = true"
-                        color="orange"
-                        depressed
-                        dark
-                        ><v-icon class="ma-2">mdi-send</v-icon>{{ $t('buttons.submit') }}</v-btn
-                      >
-                    </v-col>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </div>
-        </ShowInfo>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn class="grey lighten-3" text @click="dialog = false">
+            {{ $t('buttons.cancel') }}
+          </v-btn>
+          <v-btn
+            class="red white--text ml-1"
+            text
+            @click="submitAnswer(), (dialog = false)"
+          >
+            {{ $t('buttons.submit') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Start Screen -->
+    <v-row
+      v-if="test && !started"
+      class="background background-img pa-0 ma-0"
+      align="center"
+    >
+      <v-col cols="6" class="ml-5">
+        <h1 class="titleView pb-1">
+          {{ test.testTitle }}
+        </h1>
+        <p align="justify" class="description">
+          {{ test.testDescription }}
+        </p>
+        <v-row justify="center">
+          <v-btn color="white" outlined rounded @click="startTest()">
+            Start Test
+          </v-btn>
+        </v-row>
       </v-col>
     </v-row>
+
+    <!-- Test Sections -->
+    <div v-else>
+      <!-- Pre-Test Section -->
+      <div v-if="currentSection === 'preTest'">
+        <v-row class="fill-height" align="center" justify="center">
+          <v-col cols="12">
+            <v-row justify="center">
+              <h1 style="color: #455a64;" class="mt-6">
+                {{ test.testTitle }} - Pre-Test
+              </h1>
+            </v-row>
+          </v-col>
+        </v-row>
+        
+        <v-divider class="my-8" />
+
+        <v-row>
+          <v-col cols="5" class="mx-auto py-0">
+            <v-checkbox
+              v-model="currentUserTestAnswer.consentCompleted"
+              label="I agree to participate in this test"
+              @change="handleConsentComplete"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row v-if="currentUserTestAnswer.consentCompleted">
+          <v-col cols="5" class="mx-auto py-0">
+            <span class="cardsTitle">Pre-Test Questions</span>
+            <!-- Add your pre-test questions here -->
+            <v-btn 
+              color="orange lighten-1"
+              @click="completePreTest"
+            >
+              Complete Pre-Test
+            </v-btn>
+          </v-col>
+        </v-row>
+      </div>
+
+      <!-- Tasks Section -->
+      <div v-else-if="currentSection === 'tasks'">
+        <h2>Task {{ currentTaskIndex + 1 }} of {{ test.testStructure.userTasks.length }}</h2>
+        <p>{{ test.testStructure.userTasks[currentTaskIndex].taskDescription }}</p>
+        
+        <v-textarea
+          v-model="currentUserTestAnswer.tasks[currentTaskIndex].taskAnswer"
+          outlined
+          label="Your answer"
+        />
+
+        <v-btn 
+          color="orange lighten-1"
+          @click="completeCurrentTask"
+        >
+          {{ isLastTask ? 'Complete All Tasks' : 'Next Task' }}
+        </v-btn>
+      </div>
+
+      <!-- Post-Test Section -->
+      <div v-else-if="currentSection === 'postTest'">
+        <h2>Post-Test Questions</h2>
+        <!-- Add your post-test questions here -->
+        <v-btn 
+          color="orange lighten-1"
+          @click="completePostTest"
+        >
+          Complete Post-Test
+        </v-btn>
+      </div>
+
+      <!-- Completion Screen -->
+      <div v-else-if="currentSection === 'complete'">
+        <v-row justify="center" class="ma-4">
+          <v-col cols="11" class="mt-3">
+            <span class="cardsTitle">Test Completed!</span>
+            <v-row justify="center" class="mt-3">
+              <v-col cols="4">
+                <img
+                  draggable="false"
+                  src="../../../public/finalMessage.svg"
+                  alt="Final test svg"
+                />
+              </v-col>
+              <v-col cols="4" class="pt-2 my-8">
+                <v-btn
+                  @click="dialog = true"
+                  color="orange"
+                  depressed
+                  dark
+                >
+                  <v-icon class="ma-2">mdi-send</v-icon>Submit Test
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import VClamp from 'vue-clamp'
 import Snackbar from '@/components/atoms/Snackbar'
-import TipButton from '@/components/atoms/TipButton'
-import Timer from '@/components/atoms/Timer'
-import AudioRecorder from '@/components/atoms/AudioRecorder'
-import AudioVisualizer from '@/components/atoms/AudioVisualizer'
-import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
-import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
-
 
 export default {
   components: {
-    VideoRecorder,
-    ShowInfo,
-    VClamp,
-    Snackbar,
-    TipButton,
-    Timer,
-    AudioRecorder,
-    AudioVisualizer,
-    ScreenRecorder,
-
+    Snackbar
   },
-  data: () => ({
-    videoUrl: '',
-    logined: null,
-    selected: true,
-    fromlink: null,
-    drawer: true,
-    start: true,
-    mini: false,
-    index: null,
-    noExistUser: true,
-    taskIndex: 0,
-    preTestIndex: null,
-    items: [],
-    fab: false,
-    dialog: false,
-    allTasksCompleted: false,
-    isLoading: false,
-    isVisualizerVisible:false,
-  }),
+  data() {
+    return {
+      isLoading: false,
+      dialog: false,
+      started: false,
+      currentSection: null,
+      currentTaskIndex: 0,
+      currentUserTestAnswer: {
+        consentCompleted: false,
+        preTestCompleted: false,
+        postTestCompleted: false,
+        submitted: false,
+        tasks: []
+      }
+    }
+  },
   computed: {
     test() {
       return this.$store.getters.test
     },
-    testId() {
-      return this.$store.getters.test.id
-    },
-    user() {
-      if (this.$store.getters.user) this.setExistUser()
-      return this.$store.getters.user
-    },
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-    showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
-    },
-    cooperators() {
-      return this.$store.getters.cooperators
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
-    },
-    tasks() {
-      return this.$store.getters.tasks
-    },
-  },
-  watch: {
-    test: async function() {
-      this.mappingSteps()
-    },
-    items() {
-      if (this.items.length) {
-        this.index = this.items[0].id
-        if (this.items.find((obj) => obj.id == 0)) {
-          this.preTestIndex = this.items[0].value[0].id
-        }
-      }
-    },
-    taskIndex() {
-      this.$refs.rightView.scrollTop = 0
-    },
-    async user() {
-      if (this.user) {
-        this.noExistUser = false
-        if (this.logined) this.setTest()
-      }
-    },
-  },
-  async created() {
-    await this.mappingSteps()
-  },
-  async mounted() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    this.autoComplete()
-    this.calculateProgress()
-  },
-  beforeDestroy() {
-  if(this.$refs.videoRecorder) {
-      this.$refs.videoRecorder.stopRecording();
+    isLastTask() {
+      return this.currentTaskIndex === this.test.testStructure.userTasks.length - 1
     }
   },
   methods: {
-    isTaskDisabled(taskIndex) {
-      for (let i = 0; i < taskIndex; i++) {
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          return true
-        }
+    startTest() {
+      if (!this.test.testStructure?.userTasks?.length) {
+        this.$toast.error("This test doesn't have any tasks")
+        return
       }
-      return false
+
+      // Initialize task structure
+      this.currentUserTestAnswer.tasks = this.test.testStructure.userTasks.map(() => ({
+        completed: false,
+        taskAnswer: '',
+        taskObservations: ''
+      }))
+
+      this.started = true
+      this.currentSection = 'preTest'
+    },
+    handleConsentComplete() {
+      if (this.currentUserTestAnswer.consentCompleted) {
+        // You could auto-advance or let user click a button
+      }
+    },
+    completePreTest() {
+      this.currentUserTestAnswer.preTestCompleted = true
+      this.currentSection = 'tasks'
+      this.currentTaskIndex = 0
+    },
+    completeCurrentTask() {
+      // Mark current task as completed
+      this.currentUserTestAnswer.tasks[this.currentTaskIndex].completed = true
+
+      if (this.isLastTask) {
+        this.currentSection = 'postTest'
+      } else {
+        this.currentTaskIndex++
+      }
+    },
+    completePostTest() {
+      this.currentUserTestAnswer.postTestCompleted = true
+      this.currentSection = 'complete'
     },
     async saveAnswer() {
-      await this.$store.dispatch('saveTestAnswer', {
-        data: this.currentUserTestAnswer,
-        answerDocId: this.test.answersDocId,
-        testType: this.test.testType,
-      })
-      this.$router.push('/testslist')
+      this.isLoading = true
+      try {
+        await this.$store.dispatch('saveTestAnswer', {
+          data: this.currentUserTestAnswer,
+          answerDocId: this.test.answersDocId,
+          testType: this.test.testType
+        })
+        this.$toast.success('Progress saved!')
+      } catch (error) {
+        this.$toast.error('Failed to save progress')
+      } finally {
+        this.isLoading = false
+      }
     },
     async submitAnswer() {
-      this.currentUserTestAnswer.submitted = true
-      await this.saveAnswer()
-    },
-    startTest() {
-      if (this.test.testStructure.length == 0) {
-        this.$toast.info("This test don't have any task")
-        this.$router.push('/managerview/' + this.test.id)
+      this.isLoading = true
+      try {
+        this.currentUserTestAnswer.submitted = true
+        await this.saveAnswer()
+        this.$toast.success('Test submitted successfully!')
+        this.$router.push('/testslist')
+      } catch (error) {
+        this.$toast.error('Failed to submit test')
+      } finally {
+        this.isLoading = false
       }
-      this.start = !this.start
-    },
-    callTimerSave() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.stopTimer()
-    },
-    startTimer() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.startTimer()
-    },
-    handleTimerStopped(elapsedTime, taskIndex) {
-      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
-    },
-    completeStep(id, type) {
-      if (type === 'tasks') {
-        this.currentUserTestAnswer.tasks[id].completed = true
-        this.items[1].value[id].icon = 'mdi-check-circle-outline'
-        this.allTasksCompleted = true
-        this.$forceUpdate()
-
-        for (let i = 0; i < this.items[1].value.length; i++) {
-          if (!this.currentUserTestAnswer.tasks[i].completed) {
-            this.allTasksCompleted = false
-            break
-          }
-        }
-        if (this.allTasksCompleted) {
-          this.items[1].icon = 'mdi-check-circle-outline'
-        }
-        if (
-          this.taskIndex <
-          Object.keys(this.currentUserTestAnswer.tasks).length - 1
-        ) {
-          this.taskIndex++
-        } else if (
-          this.taskIndex >=
-          Object.keys(this.currentUserTestAnswer.tasks).length - 1
-        ) {
-          this.index++
-        }
-      }
-      if (type === 'postTest') {
-        this.currentUserTestAnswer.postTestCompleted = true
-        this.items[2].icon = 'mdi-check-circle-outline'
-      }
-      if (type === 'preTest') {
-        this.currentUserTestAnswer.preTestCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
-        }
-      }
-      if (type === 'consent') {
-        this.currentUserTestAnswer.consentCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
-        }
-      }
-      this.calculateProgress()
-    },
-
-    async autoComplete() {
-      // PRE-TEST
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        this.items[0].value[1].icon = 'mdi-check-circle-outline'
-      }
-      if (this.currentUserTestAnswer.consentCompleted) {
-        this.items[0].value[0].icon = 'mdi-check-circle-outline'
-      }
-      if (
-        this.currentUserTestAnswer.preTestCompleted &&
-        this.currentUserTestAnswer.consentCompleted
-      ) {
-        this.items[0].icon = 'mdi-check-circle-outline'
-      }
-      // TASKS
-      let allTasksCompleted = true
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          this.items[1].value[i].icon = 'mdi-check-circle-outline'
-        }
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          allTasksCompleted = false
-          break
-        }
-      }
-      if (allTasksCompleted) {
-        this.items[1].icon = 'mdi-check-circle-outline'
-      }
-      // POST-TEST
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        this.items[2].icon = 'mdi-check-circle-outline'
-      }
-    },
-    calculateProgress() {
-      const totalSteps = 4
-
-      let completedSteps = 0
-
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.consentCompleted) {
-        completedSteps++
-      }
-
-      let tasksCompleted = 0
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          tasksCompleted++
-        }
-      }
-
-      if (tasksCompleted === this.items[1].value.length) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        completedSteps++
-      }
-
-      // Calcular a porcentagem de conclusão
-      const progressPercentage = (completedSteps / totalSteps) * 100
-      this.currentUserTestAnswer.progress = progressPercentage
-      return progressPercentage
-    },
-    async setTest() {
-      this.logined = true
-      await this.$store.dispatch('getCurrentTestAnswerDoc')
-      this.populateWithHeuristicQuestions()
-    },
-    setExistUser() {
-      this.noExistUser = false
-    },
-    async mappingSteps() {
-      //PreTest
-      if (this.validate(this.test.testStructure.preTest)) {
-        this.items.push({
-          title: 'Pre-test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: [
-            {
-              title: 'Consent',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 0,
-            },
-          ],
-          id: 0,
-        })
-      }
-
-      if (this.validate(this.test.testStructure.preTest)) {
-        if (this.items.length) {
-          this.items[0].value.push({
-            title: 'Form',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            id: 0,
-          })
-        } else {
-          this.items.push({
-            title: 'Pre Test',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: [
-              {
-                title: 'Form',
-                icon: 'mdi-checkbox-blank-circle-outline',
-                id: 0,
-              },
-            ],
-            id: 0,
-          })
-        }
-      }
-
-      //Tasks
-      if (this.validate(this.test.testStructure.userTasks))
-        this.items.push({
-          title: 'Tasks',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.userTasks.map((i) => {
-            return {
-              title: i.taskName,
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 2,
-            }
-          }),
-          id: 1,
-        })
-
-      //PostTest
-      if (this.validate(this.test.testStructure.postTest))
-        this.items.push({
-          title: 'Post Test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.postTest,
-          id: 2,
-        })
-    },
-    validate(object) {
-      return object !== null && object !== undefined && object !== ''
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style scoped>
-.disabled-group {
-  pointer-events: none;
-  background-color: grey;
-}
-
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -1200,25 +885,6 @@ export default {
   overflow: hidden;
 }
 
-.backgroundTest {
-  background-color: #e8eaf2;
-  height: 94%;
-  overflow: scroll;
-}
-.background:before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-image: url(../../assets/BackgroundTestView.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right 0px top -20px;
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
 .titleView {
   font-style: normal;
   font-weight: 300;
@@ -1228,6 +894,7 @@ export default {
   align-items: center;
   color: #ffffff;
 }
+
 .description {
   font-style: normal;
   font-weight: 200;
@@ -1236,93 +903,12 @@ export default {
   align-items: flex-end;
   color: #ffffff;
 }
-.nav {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-.subtitleView {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-}
-.btn-fix:focus::before {
-  opacity: 0 !important;
-}
-.titleText {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  margin-left: 15px;
-  padding: 10px;
-  padding-left: 0px;
-  padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
-}
-/* Right side scroll bar */
-/* width */
-.right-view::-webkit-scrollbar {
-  width: 9px;
-}
-/* Track */
-.right-view::-webkit-scrollbar-track {
-  background: none;
-}
-/* Handle */
-.right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
-}
-/* Handle on hover */
-.right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
-}
-/* Nav bar list scroll bar */
-/* width */
-.nav-list::-webkit-scrollbar {
-  width: 7px;
-}
-/* Track */
-.nav-list::-webkit-scrollbar-track {
-  background: none;
-}
-/* Handle */
-.nav-list::-webkit-scrollbar-thumb {
-  background: #777596;
-  border-radius: 4px;
-}
-/* Handle on hover */
-.nav-list::-webkit-scrollbar-thumb:hover {
-  background: #64618a;
-  /* background: #515069; */
-}
-.cards {
-  border-radius: 20px;
-}
+
 .cardsTitle {
   color: #455a64;
-
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
-}
-.cardsSubtitle {
-  color: #455a64;
-
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 400;
   line-height: normal;
 }
 </style>
