@@ -236,6 +236,7 @@ import FormPostTest from '../atoms/FormPostTest.vue'
 import UserVariables from '../atoms/UserVariables.vue'
 import ModeratedTasks from '../atoms/ModeratedTasks.vue'
 import UserConsent from '../atoms/UserConsent.vue'
+
 export default {
   components: { UserVariables, FormPostTest, ModeratedTasks, UserConsent },
   props: {
