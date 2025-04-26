@@ -227,7 +227,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits, onBeforeUpdate } from 'vue'
+import { computed, onBeforeUpdate } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // Props definition
