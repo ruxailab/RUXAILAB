@@ -451,8 +451,8 @@
     },
     "createTest": {
       "title": "新しいテストを作成",
-      "blanckTitle": "空白のテストを作成",
-      "blanckSubtitle": "完全に新しいテンプレートで始めるために空白のテストを作成します。",
+      "blankTitle": "空白のテストを作成",
+      "blankSubtitle": "完全に新しいテンプレートで始めるために空白のテストを作成します。",
       "templateTitle": "テンプレートから作成",
       "templateSubtitle": "ユーザーが作成したテンプレートに基づいてテストを作成します。",
       "create": "テストを作成",
