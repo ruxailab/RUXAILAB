@@ -38,9 +38,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 
-// Define props with the same structure as in Options API
 const props = defineProps({
   title: {
     type: String,

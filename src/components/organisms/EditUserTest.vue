@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import ListTasks from '@/components/molecules/ListTasks.vue';
 import FormPostTest from '@/components/atoms/FormPostTest.vue';
