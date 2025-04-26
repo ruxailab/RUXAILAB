@@ -25,24 +25,28 @@
       </template>
 
       <template #top>
-        <v-row
-          class="ma-0"
-          align="center"
-        >
+        <v-row class="ma-0" align="center">
           <v-card-title class="subtitleView">
             {{ $t('HeuristicsOptionsTable.titles.options') }}
           </v-card-title>
-          <v-row
-            justify="end"
-            class="ma-0 pa-0 mr-4"
-          >
+          <v-row justify="end" class="ma-0 pa-0 mr-4">
+            <v-btn
+              rounded
+              color="#f9a826"
+              class="text-white"
+              size="small"
+              :disabled="testAnswerDocLength > 0"
+              :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+              @click="dialog = true"
+            >
+              {{ $t('HeuristicsTable.titles.addOption') }}
+            </v-btn>
             <AddOptionBtn
               :option="option"
-              :dialog="dialog"
+              v-model:dialog="dialog"
               :has-value="hasValue"
-              @change-has-value="hasValue = !hasValue"
+              @change-has-value="updateHasValue"
               @add-option="updateOptions"
-              @dialog="changeDialog"
               @change="emitChange"
             />
           </v-row>
@@ -54,15 +58,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import AddOptionBtn from '../atoms/AddOptionBtn'
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import AddOptionBtn from '../atoms/AddOptionBtn';
 
-const store = useStore()
-const { t } = useI18n()
+const store = useStore();
+const { t } = useI18n();
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change']);
 
 const headers = ref([
   {
@@ -86,91 +90,89 @@ const headers = ref([
     align: 'end',
     sortable: false,
   },
-])
+]);
 
 const option = ref({
   text: '',
   description: '',
   value: null,
-})
+  timestamp: null,
+});
 
-const dialog = ref(false)
-const editIndex = ref(-1)
-const hasValue = ref(true)
+const dialog = ref(false);
+const editIndex = ref(-1);
+const hasValue = ref(true);
 
-const options = computed(() => store.state.Tests.Test.testOptions)
+const localOptions = ref([]);
 
 const optionsWithFormattedValue = computed(() =>
-  options.value.map((opt) => ({
+  localOptions.value.map((opt) => ({
     ...opt,
     value: opt.value === null ? 'No value' : opt.value,
   })),
-)
+);
 
 const testAnswerDocLength = computed(() => {
-  const testAnswerDocument = store.getters.testAnswerDocument
-  if (!testAnswerDocument) return 0
-  const heuristicAnswers = testAnswerDocument.heuristicAnswers
-  return Object.keys(heuristicAnswers).length
-})
+  const testAnswerDocument = store.getters.testAnswerDocument;
+  if (!testAnswerDocument) return 0;
+  const heuristicAnswers = testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
 
 watch(dialog, (newVal) => {
   if (!newVal) {
-    option.value = {
-      text: '',
-      value: null,
-    }
-    hasValue.value = true
+    resetForm();
   }
-})
+});
 
-watch(options, () => {
-  emit('change')
-})
+watch(localOptions, () => {
+  emit('change');
+});
 
-const changeDialog = (payload) => {
-  dialog.value = payload
-}
+const updateHasValue = (newValue) => {
+  hasValue.value = newValue;
+};
 
-const updateOptions = () => {
+const updateOptions = (newOption) => {
+  console.log('Received newOption:', newOption);
   if (editIndex.value === -1) {
-    option.value.timestamp = Date.now() // Using timestamp as unique identifier
-    options.value.push(option.value)
+    localOptions.value.push({
+      ...newOption,
+      timestamp: Date.now(),
+    });
   } else {
-    Object.assign(options.value[editIndex.value], option.value)
-    editIndex.value = -1
+    localOptions.value[editIndex.value] = {
+      ...newOption,
+      timestamp: localOptions.value[editIndex.value].timestamp,
+    };
+    editIndex.value = -1;
   }
-
-  option.value = {
-    text: '',
-    value: null,
-  }
-  hasValue.value = true
-}
+  resetForm();
+};
 
 const deleteItem = (item) => {
-  const index = options.value.findIndex(
-    (opt) => opt.timestamp === item.timestamp,
-  )
+  const index = localOptions.value.findIndex((opt) => opt.timestamp === item.timestamp);
   if (index !== -1) {
-    options.value.splice(index, 1)
+    localOptions.value.splice(index, 1);
   }
-}
+};
 
 const editItem = (item) => {
-  editIndex.value = options.value.findIndex(
-    (opt) => opt.timestamp === item.timestamp,
-  )
-  option.value.text = options.value[editIndex.value].text
-  option.value.value = options.value[editIndex.value].value
-
-  hasValue.value = option.value.value !== null
-  dialog.value = true
-}
+  editIndex.value = localOptions.value.findIndex((opt) => opt.timestamp === item.timestamp);
+  option.value = { ...localOptions.value[editIndex.value] };
+  hasValue.value = option.value.value !== null;
+  dialog.value = true;
+};
 
 const emitChange = () => {
-  emit('change')
-}
+  emit('change');
+};
+
+const resetForm = () => {
+  option.value = { text: '', value: null, description: '', timestamp: null };
+  hasValue.value = true;
+  editIndex.value = -1;
+};
 </script>
 
 <style scoped>
@@ -182,5 +184,8 @@ const emitChange = () => {
   color: #000000;
   margin-bottom: 4px;
   padding-bottom: 2px;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308);
 }
 </style>
