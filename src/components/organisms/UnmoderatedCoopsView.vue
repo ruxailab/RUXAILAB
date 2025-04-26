@@ -253,6 +253,7 @@
               color="orange"
               dark
               class="rounded-lg"
+              :disabled="!messageTitle.trim() || !messageContent.trim()"
               @click="sendMessage(selectedUser, messageTitle, messageContent)"
             >
               {{ $t('HeuristicsCooperators.actions.send') }}
@@ -438,26 +439,22 @@ export default {
           }),
         })
       }
-      this.sendInvitationMail(guest)
-    },
-    sendMessage(guest, messageTitle, messageContent) {
-      this.messageModel = false
-      if (guest.userDocId) {
-        let path = ''
-        if (guest.accessLevel.value >= 2) {
-          path = 'testview'
-        } else {
-          path = 'managerview'
-        }
-        this.$store.dispatch('addNotification', {
-          userId: guest.userDocId,
-          notification: new Notification({
-            title: `${messageTitle}`,
-            description: `${messageContent}`,
-            redirectsTo: '/',
-            read: false,
-            author: `${this.test.testAdmin.email}`,
-            testId: this.test.id,
+  if (guest.userDocId) {
+    let path = ''
+    if (guest.accessLevel.value >= 2) {
+      path = 'testview'
+    } else {
+      path = 'managerview'
+    }
+    this.$store.dispatch('addNotification', {
+      userId: guest.userDocId,
+      notification: new Notification({
+        title: `${messageTitle}`,
+        description: `${messageContent}`,
+        redirectsTo: '/',
+        read: false,
+        author: `${this.test.testAdmin.email}`,
+        testId: this.test.id,
           }),
         })
       }
@@ -507,7 +504,7 @@ export default {
         //if is object then no need to validate
         if (this.email.length) {
           if (!this.email.includes('@') || !this.email.includes('.')) {
-            this.$toast.error(this.email + ' is not a valid email')
+            this.$toast.error(i18n.t(errors.globalError))
           }
           if (!this.users.find((user) => user.email === this.email)) {
             this.$toast.error(
@@ -590,6 +587,7 @@ export default {
         await this.$store.dispatch('updateTest', this.test)
       }
     },
+    
   },
 }
 </script>

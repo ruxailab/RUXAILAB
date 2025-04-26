@@ -39,7 +39,7 @@
       <v-col class="background pa-0 ma-0">
         <div v-if="this.$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row align="center" justify="center" style="height: 100%">
+            <v-row align="center" justify="center" class="manager-bg">
               <v-col class="text-div">
                 <div v-if="accessLevel == 0" class="white--text">
                   <p class="mobile-center" style="font-size: 58px; font-weight: 500">
@@ -379,12 +379,21 @@ export default {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
+.manager-bg{
+  height:100%;
+  margin: 0 !important;
+}
+
 .text-div {
   max-width: 45%;
 }
 
 .card-container {
-  width: 70%;
+  width: 80%;
+}
+
+.bottom-cards{
+  margin: 0;
 }
 
 @media screen and (max-width: 960px) {

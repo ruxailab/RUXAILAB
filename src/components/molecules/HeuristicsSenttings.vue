@@ -41,14 +41,18 @@
               mdi-cloud-upload
             </v-icon>
           </v-btn>
-        </v-row>
+        </v-row>  
       </v-row>
+      <v-alert v-if="errorMessage" type="error" dense class="ma-2"> {{ errorMessage }}
+      </v-alert>  
     </v-col>
   </div>
 </template>
 
+
 <script>
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+
 
 export default {
   data() {
@@ -59,7 +63,8 @@ export default {
       heuristicForm: null,
       refs: this.$refs,
       loadingUpdate: false,
-    }
+      errorMessage: "",
+    };
   },
   computed: {
     test() {
@@ -78,6 +83,7 @@ export default {
       const heuristicAnswers = this.$store.getters.testAnswerDocument
         .heuristicAnswers
       const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
 
       return heuristicAnswersCount
     },
@@ -102,9 +108,22 @@ export default {
     },
   },
 
+
   methods: {
     async changeToJSON() {
-      this.loadingUpdate = true
+
+      if (!this.csvFile) {
+        this.errorMessage = this.$t('HeuristicsSettings.messages.noCsvFileSelected');
+        return;
+      }
+
+      if (!this.csvFile.name.toLowerCase().endsWith(".csv")){
+        this.errorMessage = this.$t('HeuristicsSettings.messages.invalidFileType');
+        return;
+      }
+      
+      this.loadingUpdate = true;
+      this.errorMessage = "";
       try {
         const confirmationText = this.$t(
           'HeuristicsSettings.messages.acceptCsv',
@@ -113,21 +132,32 @@ export default {
           const reader = new FileReader()
           reader.readAsText(this.csvFile, 'UTF-8') // Use readAsText with UTF-8 encoding
           reader.onload = async () => {
-            const csv = reader.result
+            const csv = reader.result.trim()
+
+            if (!csv) {
+              this.errorMessage = this.$t('HeuristicsSettings.messages.emptyCsvFile');
+              this.loadingUpdate = false;
+              return;
+            }
+            
             const lines = csv.split('\r\n') // Split lines using '\r\n' for cross-platform compatibility
             const headers = lines[0].split(';').map((header) => header.trim()) // Trim headers
             const heuristicMap = new Map()
+
 
             for (let i = 1; i < lines.length; i++) {
               const currentline = lines[i]
               if (!currentline) continue
 
+
               const currentFields = currentline.split(';')
+
 
               const heuristicId = currentFields[0]
               const heuristicTitle = currentFields[1]
               const questionId = currentFields[2]
               const questionText = currentFields[3]
+
 
               if (!heuristicMap.has(heuristicId)) {
                 heuristicMap.set(heuristicId, {
@@ -138,6 +168,7 @@ export default {
                 })
               }
 
+
               const heuristicEntry = heuristicMap.get(heuristicId)
               heuristicEntry.questions.push({
                 id: parseInt(questionId) - 1,
@@ -147,6 +178,7 @@ export default {
                 answerImageUrl: '',
               })
 
+
               // Atualize o valor total da heurística se o valor atual for maior
               heuristicEntry.total = Math.max(
                 heuristicEntry.total,
@@ -154,7 +186,9 @@ export default {
               )
             }
 
+
             const heuristicTest = Array.from(heuristicMap.values())
+
 
             this.$store.state.Tests.Test.testStructure = heuristicTest
             this.$store.dispatch('updateTest', this.test)
@@ -167,6 +201,7 @@ export default {
         this.loadingUpdate = false
       }
     },
+
 
     async downloadTemplate() {
       const storage = getStorage()
@@ -195,6 +230,7 @@ export default {
   },
 }
 </script>
+
 
 <style scoped>
 .csv-box {

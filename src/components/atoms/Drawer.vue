@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer clipped :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down">
+  <v-navigation-drawer clipped :mini-variant="mini" permanent color="#3F3D56" class="hidden-sm-and-down pt-3">
     <!-- Navigation header -->
     <div v-if="!mini">
       <!--- CHANGE CURRENT TEST SELECTOR -->
@@ -12,7 +12,8 @@
               dense
               item-text="testTitle"
               :items="testsList"
-              :label="test.testTitle"
+              :value="test.testTitle"
+              :label="test.testTitle || 'Select a Test'"
               background-color="#343344"
               style="max-width: 240px"
               @change="changeTest"
@@ -35,7 +36,9 @@
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+                <v-list-item-title
+                  :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+                >
                   {{ $t(`titles.drawer.${item.title}`) }}
                 </v-list-item-title>
               </v-list-item-content>
@@ -54,7 +57,9 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'">
+            <v-list-item-title
+              :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+            >
               {{ $t(`titles.drawer.${item.title}`) }}
             </v-list-item-title>
           </v-list-item-content>
@@ -82,6 +87,7 @@
     </div>
   </v-navigation-drawer>
 </template>
+
 <script>
 export default {
   props: {
@@ -93,6 +99,7 @@ export default {
 
   data: () => ({
     mini: true,
+    tests: [],
   }),
 
   computed: {
@@ -101,23 +108,36 @@ export default {
     },
 
     testsList() {
-      return Object.values(this.$store.getters.user.myTests)
+      return this.tests 
     },
   },
 
+  async created() {
+    await this.fetchTests() 
+  },
+
   methods: {
+    async fetchTests() {
+      try {
+        await this.$store.dispatch('getTestsAdminByUser'); 
+        this.tests = this.$store.state.Tests.tests; 
+      } catch (error) {
+        console.error('Error fetching tests:', error);
+      }
+    },
+
     async changeTest(testName) {
       const testId = this.testsList.find(
         (t) => t.testTitle === testName,
-      )?.testDocId
-      await this.$store.dispatch('getTest', { id: testId })
-      this.$router.replace({ name: 'ManagerView', params: { id: testId } })
+      )?.testDocId;
+      await this.$store.dispatch('getTest', { id: testId });
+      this.$router.replace({ name: 'ManagerView', params: { id: testId } });
     },
 
     go(item) {
-      if (this.$route.path === item.path) return
-      if (item.path === `/testview/${this.test.id}`) return window.open(item.path)
-      return this.$router.push(item.path)
+      if (this.$route.path === item.path) return;
+      if (item.path === `/testview/${this.test.id}`) return window.open(item.path);
+      return this.$router.push(item.path);
     },
   },
 }

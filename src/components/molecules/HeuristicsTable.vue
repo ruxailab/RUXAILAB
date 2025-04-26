@@ -430,10 +430,11 @@
             md="4"
           >
             <v-card height="560px" elevation="0" class="pa-0 ma-0">
-              <v-subheader class="px-2 pt-0 ma-0 " style="font-size: 12px; height: 40px">
-                {{ heuristics[itemSelect].questions[questionSelect].title }}
-                <v-spacer />
-                <v-menu v-model="menuQuestions" offset-x>
+              <v-subheader class="px-2 pt-0 ma-0" style="font-size: 12px; height: 40px; display: flex; align-items: center;">
+                <div class="custom-scrollbar" style="flex: 1; overflow-y: auto; max-height: 40px; padding-right: 8px;">
+                  {{ heuristics[itemSelect].questions[questionSelect].title }}
+                </div>
+                <v-menu v-model="menuQuestions" offset-x style="flex-shrink: 0;">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       icon
@@ -930,7 +931,7 @@ export default {
     HandleNotEditable() {
       console.log('not editable')
       // if (this.testAnswerDocLength > 0) {
-      //   this.$toast.error('Not Editable : this test already has answers')
+      //   this.$toast.error(i18n.t(errors.globalError))
       // }
     },
   },
@@ -1061,5 +1062,22 @@ export default {
   .questionsContent {
     margin-top: 0px;
   }
+}
+
+.custom-scrollbar {
+  overflow: auto;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: none;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bdbdbd;
 }
 </style>

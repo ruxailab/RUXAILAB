@@ -8,9 +8,13 @@
             <v-avatar tile :color="generateColor()" style="color: #545454">
               <span v-if="type === 'myTemplates' || type === 'publicTemplates'">
                 {{
-                  item.header
+                  item.header &&
+                  item.header.templateTitle &&
+                  item.header.templateTitle[0]
                     ? item.header.templateTitle[0].toUpperCase()
-                    : item.testTitle[0].toUpperCase()
+                    : item.testTitle && item.testTitle[0]
+                    ? item.testTitle[0].toUpperCase()
+                    : ''
                 }}
               </span>
               <span v-else-if="type === 'sessions'">
@@ -64,8 +68,8 @@
                   item.testAdmin
                     ? item.testAdmin.email
                     : item.header
-                      ? item.header.templateAuthor.userEmail
-                      : item.testAuthorEmail
+                    ? item.header.templateAuthor.userEmail
+                    : item.testAuthorEmail
                 }}
               </strong>
             </v-list-item-subtitle>
@@ -104,9 +108,7 @@
                   <v-tooltip v-else-if="type === 'sharedWithMe'" top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-row class="mr-3" v-bind="attrs" v-on="on">
-                        <div class="caption">
-                          {{ item.progress }}%
-                        </div>
+                        <div class="caption">{{ item.progress }}%</div>
                         <v-progress-circular
                           rotate="-90"
                           :value="item.progress"

@@ -40,11 +40,16 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 export default {
   props: {
     testId: String,
     taskIndex: Number,
+    showVisualizer: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -64,6 +69,7 @@ export default {
     async startAudioRecording() {
       this.recordingAudio = true
 
+      this.$emit('recordingStarted', true)
       try {
         this.audioStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
@@ -110,9 +116,10 @@ export default {
           this.audioStream.getTracks().forEach((track) => track.stop())
           this.audioStream = null
           this.recordingAudio = false
+          this.$emit('recordingStarted', false)
 
           this.$emit('stopShowLoading')
-          this.$toast.success('Audio record saved!')
+          this.$toast.success(i18n.$t('alerts.genericSuccess'))
           this.recordingAudio = false
         }
 

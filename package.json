@@ -13,8 +13,9 @@
     "cypress:open": "cypress open",
     "deploy-dev": "firebase use dev && firebase deploy --only hosting:ruxailab-dev",
     "deploy-prod": "firebase use prod && firebase deploy --only hosting:ruxailab-prod",
-    "test-playwright": "playwright test --browser=all",
-    "test-html-report": "playwright test --browser=all --reporter=html",
+    "test-playwright": "playwright test",
+    "test-playwright-ui": "playwright test --ui",
+    "test-html-report": "playwright test --reporter=html",
     "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
   },
   "dependencies": {
@@ -47,6 +48,7 @@
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.7.1",
     "vuex": "^3.6.2",
+    "wavesurfer.js": "^7.9.4",
     "webpack": "^4.47.0"
   },
   "devDependencies": {
