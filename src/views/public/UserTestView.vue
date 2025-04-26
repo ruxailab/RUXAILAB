@@ -377,6 +377,14 @@
                         "
                       >
                         {{ task.title }}
+                        <v-chip 
+                          v-if="currentUserTestAnswer.tasks?.[i]?.completed" 
+                          small 
+                          color="success" 
+                          class="ml-2"
+                        >
+                          Completed
+                        </v-chip>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -430,7 +438,6 @@
 
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
-
         <ShowInfo
           v-if="index === 0 && taskIndex === 0"
           :title="$t('UserTestView.titles.preTestConsent')"
@@ -876,6 +883,7 @@ export default {
     allTasksCompleted: false,
     isLoading: false,
     isVisualizerVisible: false,
+    cleanupFunctions: [],
   }),
   computed: {
     test() {
@@ -894,22 +902,13 @@ export default {
     showSaveBtn() {
       return !this.currentUserTestAnswer.submitted;
     },
-    cooperators() {
-      return this.$store.getters.cooperators;
-    },
-    loading() {
-      return this.$store.getters.loading;
-    },
-    currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl;
-    },
-    tasks() {
-      return this.$store.getters.tasks;
-    },
   },
   watch: {
-    test: async function () {
-      this.initializeState();
+    test: {
+      immediate: true,
+      async handler() {
+        await this.initializeState();
+      }
     },
     items() {
       if (this.items.length) {
@@ -920,12 +919,17 @@ export default {
       }
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0;
+      if (this.$refs.rightView) {
+        this.$refs.rightView.scrollTop = 0;
+      }
     },
-    user: async function () {
-      if (this.user) {
-        this.noExistUser = false;
-        if (this.logined) this.setTest();
+    user: {
+      immediate: true,
+      async handler() {
+        if (this.user) {
+          this.noExistUser = false;
+          if (this.logined) await this.setTest();
+        }
       }
     },
   },
@@ -938,32 +942,55 @@ export default {
     this.calculateProgress();
   },
   beforeDestroy() {
+    // Execute all cleanup functions
+    this.cleanupFunctions.forEach(fn => fn());
+    this.cleanupFunctions = [];
+    
     if (this.$refs.videoRecorder) {
       this.$refs.videoRecorder.stopRecording();
+    }
+    
+    // Clear timers and intervals
+    if (this.$refs.timerComponent) {
+      this.$refs.timerComponent.cleanup();
     }
   },
   methods: {
     async initializeState() {
       try {
-        // Check if test and user data are available
-        if (!this.test || !this.currentUserTestAnswer) {
-          throw new Error('Test or User data is missing.');
+        // Clear previous state
+        this.items = [];
+        this.allTasksCompleted = false;
+        
+        // Check if test exists
+        if (!this.test) {
+          this.$router.push('/testslist');
+          return;
         }
 
         // Initialize test tasks and structure
         await this.mappingSteps();
         this.autoComplete();
 
-        // Ensure proper task navigation setup
+        // Set initial index if items exist
         if (this.items.length) {
           this.index = this.items[0].id;
         }
+        
+        // Add cleanup function
+        this.cleanupFunctions.push(() => {
+          this.$store.commit('CLEAR_CURRENT_TEST_ANSWER');
+        });
       } catch (error) {
         console.error('Error initializing state:', error.message);
         this.$toast.error('Failed to initialize test data. Please try again.');
+        this.$router.push('/testslist');
       }
     },
+    
     isTaskDisabled(taskIndex) {
+      if (!this.currentUserTestAnswer.tasks) return true;
+      
       for (let i = 0; i < taskIndex; i++) {
         if (!this.currentUserTestAnswer.tasks[i]?.completed) {
           return true;
@@ -971,113 +998,175 @@ export default {
       }
       return false;
     },
+    
     async saveAnswer() {
       try {
+        if (!this.test?.answersDocId) {
+          throw new Error('Test answer document ID is missing');
+        }
+        
+        this.isLoading = true;
         await this.$store.dispatch('saveTestAnswer', {
           data: this.currentUserTestAnswer,
           answerDocId: this.test.answersDocId,
           testType: this.test.testType,
         });
-        this.$router.push('/testslist');
+        
+        this.$toast.success('Test progress saved successfully');
       } catch (error) {
         console.error('Error saving answer:', error.message);
         this.$toast.error('Failed to save the answer. Please try again.');
+      } finally {
+        this.isLoading = false;
       }
     },
+    
     async submitAnswer() {
       try {
+        if (!this.currentUserTestAnswer) {
+          throw new Error('No test answer data to submit');
+        }
+        
         this.currentUserTestAnswer.submitted = true;
         await this.saveAnswer();
+        
+        // Clear test data after submission
+        this.$store.commit('CLEAR_CURRENT_TEST_ANSWER');
+        this.$store.commit('CLEAR_TEST');
+        
+        this.$router.push('/testslist');
       } catch (error) {
         console.error('Error submitting answer:', error.message);
         this.$toast.error('Failed to submit the answer. Please try again.');
       }
     },
+    
     startTest() {
-      if (!this.test.testStructure || this.test.testStructure.length === 0) {
+      if (!this.test?.testStructure || this.test.testStructure.length === 0) {
         this.$toast.info("This test doesn't have any tasks.");
         this.$router.push('/managerview/' + this.test.id);
         return;
       }
       this.start = !this.start;
     },
+    
     callTimerSave() {
       const timerComponent = this.$refs.timerComponent;
       if (timerComponent) timerComponent.stopTimer();
     },
+    
     startTimer() {
       const timerComponent = this.$refs.timerComponent;
       if (timerComponent) timerComponent.startTimer();
     },
+    
     handleTimerStopped(elapsedTime, taskIndex) {
-      if (this.currentUserTestAnswer.tasks[taskIndex]) {
+      if (this.currentUserTestAnswer.tasks && this.currentUserTestAnswer.tasks[taskIndex]) {
         this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
       }
     },
+    
     completeStep(id, type) {
       try {
+        if (!this.currentUserTestAnswer) return;
+        
         if (type === 'tasks') {
+          if (!this.currentUserTestAnswer.tasks[id]) return;
+          
           this.currentUserTestAnswer.tasks[id].completed = true;
-          this.items[1].value[id].icon = 'mdi-check-circle-outline';
-          this.allTasksCompleted = this.items[1].value.every(
+          if (this.items[1]?.value?.[id]) {
+            this.items[1].value[id].icon = 'mdi-check-circle-outline';
+          }
+          
+          this.allTasksCompleted = this.items[1]?.value?.every(
             (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
-          );
-          if (this.allTasksCompleted) {
+          ) || false;
+          
+          if (this.allTasksCompleted && this.items[1]) {
             this.items[1].icon = 'mdi-check-circle-outline';
           }
-          if (this.taskIndex < this.items[1].value.length - 1) {
+          
+          if (this.taskIndex < this.items[1]?.value?.length - 1) {
             this.taskIndex++;
           } else {
             this.index++;
           }
+          
+          // Show completion notification
+          this.$toast.success(`Task "${this.items[1].value[id].title}" completed!`);
         }
+        
         if (type === 'postTest') {
           this.currentUserTestAnswer.postTestCompleted = true;
-          this.items[2].icon = 'mdi-check-circle-outline';
+          if (this.items[2]) {
+            this.items[2].icon = 'mdi-check-circle-outline';
+          }
         }
+        
         if (type === 'preTest') {
           this.currentUserTestAnswer.preTestCompleted = true;
-          this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          if (this.items[0]?.value?.[id]) {
+            this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          }
           if (
             this.currentUserTestAnswer.preTestCompleted &&
-            this.currentUserTestAnswer.consentCompleted
+            this.currentUserTestAnswer.consentCompleted &&
+            this.items[0]
           ) {
             this.items[0].icon = 'mdi-check-circle-outline';
           }
         }
+        
         if (type === 'consent') {
           this.currentUserTestAnswer.consentCompleted = true;
-          this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          if (this.items[0]?.value?.[id]) {
+            this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          }
           if (
             this.currentUserTestAnswer.preTestCompleted &&
-            this.currentUserTestAnswer.consentCompleted
+            this.currentUserTestAnswer.consentCompleted &&
+            this.items[0]
           ) {
             this.items[0].icon = 'mdi-check-circle-outline';
           }
         }
+        
         this.calculateProgress();
       } catch (error) {
         console.error('Error completing step:', error.message);
+        this.$toast.error('Failed to complete step. Please try again.');
       }
     },
+    
     calculateProgress() {
+      if (!this.currentUserTestAnswer) return 0;
+      
       const totalSteps = 4;
       let completedSteps = 0;
 
       if (this.currentUserTestAnswer.preTestCompleted) completedSteps++;
       if (this.currentUserTestAnswer.consentCompleted) completedSteps++;
+      
       const tasksCompleted = this.items[1]?.value?.filter(
-        (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
-      ).length;
+        (task) => this.currentUserTestAnswer.tasks?.[task.id]?.completed
+      ).length || 0;
+      
       if (tasksCompleted === this.items[1]?.value?.length) completedSteps++;
       if (this.currentUserTestAnswer.postTestCompleted) completedSteps++;
 
       const progressPercentage = (completedSteps / totalSteps) * 100;
-      this.currentUserTestAnswer.progress = progressPercentage;
+      if (this.currentUserTestAnswer) {
+        this.currentUserTestAnswer.progress = progressPercentage;
+      }
       return progressPercentage;
     },
+    
     async setTest() {
       try {
+        if (!this.testId) {
+          throw new Error('Test ID is missing');
+        }
+        
         this.logined = true;
         await this.$store.dispatch('getCurrentTestAnswerDoc');
         this.populateWithHeuristicQuestions();
@@ -1086,16 +1175,21 @@ export default {
         this.$toast.error('Failed to load test data. Please try again.');
       }
     },
+    
     populateWithHeuristicQuestions() {
-      // Add logic for populating heuristic questions if needed
+      // Implementation remains the same
     },
+    
     setExistUser() {
       this.noExistUser = false;
     },
+    
     async mappingSteps() {
       try {
         this.items = [];
-        if (this.validate(this.test.testStructure?.preTest)) {
+        if (!this.test?.testStructure) return;
+        
+        if (this.validate(this.test.testStructure.preTest)) {
           this.items.push({
             title: 'Pre-test',
             icon: 'mdi-checkbox-blank-circle-outline',
@@ -1106,7 +1200,8 @@ export default {
             id: 0,
           });
         }
-        if (this.validate(this.test.testStructure?.userTasks)) {
+        
+        if (this.validate(this.test.testStructure.userTasks)) {
           this.items.push({
             title: 'Tasks',
             icon: 'mdi-checkbox-blank-circle-outline',
@@ -1118,7 +1213,8 @@ export default {
             id: 1,
           });
         }
-        if (this.validate(this.test.testStructure?.postTest)) {
+        
+        if (this.validate(this.test.testStructure.postTest)) {
           this.items.push({
             title: 'Post Test',
             icon: 'mdi-checkbox-blank-circle-outline',
@@ -1130,9 +1226,45 @@ export default {
         console.error('Error mapping steps:', error.message);
       }
     },
+    
     validate(object) {
       return object !== null && object !== undefined && object !== '';
     },
+    
+    autoComplete() {
+      // Check if test is already completed
+      if (this.currentUserTestAnswer.submitted) {
+        this.allTasksCompleted = true;
+        
+        // Update icons to show completion
+        if (this.items[0]) {
+          this.items[0].icon = 'mdi-check-circle-outline';
+          if (this.items[0].value) {
+            this.items[0].value.forEach(item => {
+              item.icon = 'mdi-check-circle-outline';
+            });
+          }
+        }
+        
+        if (this.items[1]) {
+          this.items[1].icon = 'mdi-check-circle-outline';
+          if (this.items[1].value) {
+            this.items[1].value.forEach(item => {
+              item.icon = 'mdi-check-circle-outline';
+            });
+          }
+        }
+        
+        if (this.items[2]) {
+          this.items[2].icon = 'mdi-check-circle-outline';
+        }
+      }
+    },
+    
+    signOut() {
+      this.$store.dispatch('signOut');
+      this.$router.push('/');
+    }
   },
 };
 </script>
@@ -1212,13 +1344,6 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
 }
 /* Right side scroll bar */
 /* width */
@@ -1255,14 +1380,12 @@ export default {
 /* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
-  /* background: #515069; */
 }
 .cards {
   border-radius: 20px;
 }
 .cardsTitle {
   color: #455a64;
-
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1270,7 +1393,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
