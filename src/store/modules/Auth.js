@@ -70,6 +70,7 @@ export default {
         commit('SET_USER', dbUser)
       } catch (err) {
         commit('setError', { errorCode: 'FIREBASE', message: err.code })
+        throw err // Rethrow the error so the caller knows signup failed
       } finally {
         commit('setLoading', false)
       }
@@ -100,6 +101,50 @@ export default {
             message: i18n.t('errors.incorrectCredential'),
           })
         }
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    /**
+ * Handle Google Authentication
+ * @action signInWithGoogle
+ * @returns {void}
+ */
+    async signInWithGoogle({ commit }) {
+      commit('setLoading', true)
+      try {
+        const { user } = await authController.signInWithGoogle()
+
+        // Check if user already exists in database
+        let dbUser = null
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch (error) {
+          // User doesn't exist in DB, will be created below
+          console.log('User not found in database, creating new profile')
+        }
+
+        // Create user if they don't exist yet
+        if (!dbUser) {
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+            displayName: user.displayName || '',
+            createdAt: new Date().toISOString(),
+            authProvider: 'google',
+          })
+          dbUser = await userController.getById(user.uid)
+        }
+
+        commit('SET_USER', dbUser)
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'FIREBASE',
+          message: err.code || 'Error during Google sign in'
+        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -111,6 +156,7 @@ export default {
         commit('SET_USER', null)
       } catch (err) {
         console.error(err)
+        commit('setError', { errorCode: 'FIREBASE', message: err.code || 'Error during logout' })
       } finally {
         commit('setLoading', false)
       }
@@ -124,7 +170,24 @@ export default {
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
-        console.error(err)
+        console.error(e)
+        commit('setError', { errorCode: 'FIREBASE', message: e.code || 'Error during auto sign in' })
+      }
+    },
+
+    async resetPassword({ commit }, payload) {
+      commit('setLoading', true)
+      try {
+        await authController.resetPassword(payload.email)
+        //console.log("If this email is registered, you'll receive a reset link")
+      } catch (err) {
+        if (err.code === 'auth/invalid-email') {
+          console.error('Error: Invalid email format')
+        } else {
+          console.error('Error sending password reset email:', err.message)
+        }
+      } finally {
+        commit('setLoading', false)
       }
     },
   },

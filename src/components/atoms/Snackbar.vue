@@ -27,12 +27,12 @@ export default {
       return this.$store.getters.snackColor
     },
   },
-  watch: {
-    snackMessage() {
-      if (this.snackMessage) this.snackbar = true
+watch: {
+    snackMessage(newVal) {
+      if (newVal) this.snackbar = true;
     },
-    snackbar() {
-      if (!this.snackbar) this.$store.commit('resetSnack')
+    snackbar(newVal) {
+      if (!newVal) this.$store.commit('resetSnack');
     },
   },
 }

@@ -28,6 +28,18 @@ export default {
     SET_USERS(state, payload) {
       state.users = payload
     },
+    REMOVE_USER(state, userId) {
+      state.users = state.users.filter(user => user.id !== userId)
+    },
+    setSuccess(state, message) {
+      state.successMessage = message
+    },
+    setError(state, error) {
+      state.error = error
+    },
+    setLoading(state, loading) {
+      state.loading = loading
+    }
   },
 
   actions: {
@@ -61,5 +73,19 @@ export default {
         console.error(e)
       }
     },
+
+    async updateLevel({ commit }, { data }) {
+      commit('setLoading', true)
+      try {
+        await userController.updateLevel(data.uid, data.customClaims.accessLevel)
+        const updatedUsers = await userController.readAll()
+        commit('SET_USERS', updatedUsers)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
   },
 }

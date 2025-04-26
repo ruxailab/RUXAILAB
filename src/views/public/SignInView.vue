@@ -12,17 +12,18 @@
 
               <div class="divider" />
 
-              <v-form class="mx-3" @keyup.native.enter="onSignIn()">
+              <v-form class="mx-3" @keyup.native.enter="onSignIn()" ref="form">
                 <v-text-field
                   v-model="email"
                   :label="$t('SIGNIN.email')"
                   outlined
                   prepend-inner-icon="mdi-account-circle"
                   dense
+                  :rules="emailRules"
                 />
 
                 <v-text-field
-                  v-model="password"
+                  v-model.trim="password"
                   :label="$t('SIGNIN.password')"
                   prepend-inner-icon="mdi-lock"
                   outlined
@@ -30,8 +31,10 @@
                   :type="showPassword ? 'text' : 'password'"
                   dense
                   @click:append="showPassword = !showPassword"
+                  :rules="[rules.required]"
                 />
               </v-form>
+              
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   data-testid="sign-in-button"
@@ -44,13 +47,36 @@
                   {{ $t('SIGNIN.sign-in') }}
                 </v-btn>
               </v-card-actions>
+              
+              <div class="text-center my-3">
+                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
+              </div>
+              
+              <div class="mx-3">
+                <google-sign-in-button 
+                  :button-text="$t('SIGNIN.continueWithGoogle')"
+                  :loading="loading"
+                  @google-sign-in-start="onGoogleSignInStart"
+                  @google-sign-in-success="onGoogleSignInSuccess"
+                  @google-sign-in-error="onGoogleSignInError"
+                />
+              </div>
+              
               <v-card-actions class="justify-center mt-1">
-                <p>
+                <p style="margin-right: 10px;">
                   <a
                     style="color: #F9A826 ;text-decoration: underline;"
                     @click="redirectToSignup"
                   >
                     {{ $t('SIGNIN.dont-have-account') }}
+                  </a>
+                </p>
+                <p>
+                  <a
+                    style="color: #F9A826; text-decoration: underline;"
+                    @click="redirectToForgotPassword"
+                  >
+                    {{ $t('SIGNIN.forgot-password') }}
                   </a>
                 </p>
               </v-card-actions>
@@ -68,15 +94,24 @@
 
 <script>
 import Snackbar from '@/components/atoms/Snackbar'
-
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+import i18n from '@/i18n'
 export default {
   components: {
     Snackbar,
+    GoogleSignInButton
   },
   data: () => ({
     showPassword: false,
     email: '',
     password: '',
+    emailRules: [
+      (v) => !!v || i18n.t('errors.emailIsRequired'),
+      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
+    ],
+    rules: {
+      required: (value) => !!value || i18n.t('PROFILE.passwordRequired'),
+    },
   }),
   computed: {
     loading() {
@@ -87,8 +122,14 @@ export default {
     },
   },
   methods: {
+    checkForm() {
+      const isValid = this.$refs.form.validate()
+      return isValid
+    },
     async onSignIn() {
-      try {
+      const result = this.checkForm()
+      if (result) {
+        try {
         await this.$store.dispatch('signin', {
           email: this.email,
           password: this.password,
@@ -99,10 +140,28 @@ export default {
       } catch (error) {
         console.error('Erro de autenticação:', error)
       }
+      }
+     
     },
     redirectToSignup() {
       this.$router.push('/signup')
     },
+    onGoogleSignInStart() {
+      // Event when Google sign-in starts
+    },
+    async onGoogleSignInSuccess() {
+      // Event when Google sign-in is successful
+      if (this.$store.getters.user) {
+        this.$router.push('/testslist').catch(() => {})
+      }
+    },
+    onGoogleSignInError(error) {
+      // Event when Google sign-in fails
+      console.error('Google sign-in error:', error)
+      },
+    redirectToForgotPassword() {
+      this.$router.push('/forgot-password')
+    }
   },
 }
 </script>
@@ -130,5 +189,27 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
+}
+.or-divider {
+  position: relative;
+  color: #757575;
+  font-size: 14px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background-color: #c4c4c4;
+}
+.or-divider::before {
+  left: 0;
+  margin-left: 16px;
+}
+.or-divider::after {
+  right: 0;
+  margin-right: 16px;
 }
 </style>

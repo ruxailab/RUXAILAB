@@ -56,7 +56,13 @@
           <v-divider class="mb-1" />
 
           <!-- Desktop Main Tabs -->
-          <v-tabs v-model="mainIndex" background-color="transparent" color="black" class="hidden-sm-and-down mt-4">
+          <v-tabs
+            v-model="mainIndex"
+            background-color="transparent"
+            color="black"
+            class="hidden-sm-and-down mt-4"
+            active-class="active-tab"
+          >
             <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
 
@@ -82,11 +88,12 @@
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
+            active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.myTests') }}</v-tab>
             <v-tab>{{ $t('Dashboard.sharedWithMe') }}</v-tab>
             <v-tab>{{ $t('Dashboard.publicTests') }}</v-tab>
-            <v-tab>Sessions</v-tab>
+            <v-tab>{{ $t('Dashboard.sessions') }}</v-tab>
 
             <v-spacer />
           </v-tabs>
@@ -99,6 +106,7 @@
             background-color="transparent"
             color="black"
             class="hidden-sm-and-down"
+            active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.personal') }}</v-tab>
             <v-tab>{{ $t('Dashboard.explore') }}</v-tab>
@@ -376,5 +384,12 @@ export default {
 .titleText {
   font-size: 40px;
   font-weight: 300;
+}
+
+.active-tab {
+  background-color: rgba(249, 168, 38, 0.2) !important; 
+  border-radius: 4px; 
+  color: #000000 !important; 
+  font-weight: bold;
 }
 </style>

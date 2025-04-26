@@ -3,17 +3,18 @@
  * @module Test
  */
 
-// import TestController
 import { collection, doc, getDoc, deleteDoc, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase'
 import TestController from '@/controllers/TestController'
+import UserController from '@/controllers/UserController'
+import { getAuth } from 'firebase/auth'
 
 const testController = new TestController()
 
 export default {
   state: {
     Test: null,
-    tests: null,
+    tests: [],
     testStructure: null,
     answersId: null,
     module: 'test',
@@ -203,12 +204,13 @@ export default {
         commit('SET_TEST', res.id)
         return res.id
       } catch (err) {
-        commit('set Error', true)
+        commit('setError', true)
         return null
       } finally {
         commit('setLoading', false)
       }
     },
+
     async duplicateTest({ commit }, payload) {
       commit('setLoading', true)
 
@@ -216,7 +218,7 @@ export default {
         await testController.duplicateTest(payload)
         commit('ADD_TASKS', payload.test)
       } catch (err) {
-        commit('set Error', true)
+        commit('setError', true)
         return null
       } finally {
         commit('setLoading', false)
@@ -234,8 +236,8 @@ export default {
       try {
         const res = await testController.deleteTest(payload)
         commit('SET_TESTS', res)
-      } catch {
-        commit('set Error', true)
+      } catch (e) {
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -254,6 +256,7 @@ export default {
         await testController.updateTest(payload)
       } catch (e) {
         console.error('Error in updateTest', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -265,6 +268,7 @@ export default {
         await testController.acceptTestCollaboration(payload)
       } catch (e) {
         console.error('Error accept test collaboration', e)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -286,8 +290,8 @@ export default {
         const res = await testController.getTest(payload)
         commit('SET_TEST', res)
         return res
-      } catch {
-        commit('set Error', true)
+      } catch (e) {
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -298,8 +302,8 @@ export default {
         commit('setLoading', true)
         const res = await testController.getAllTests()
         commit('SET_TESTS', res)
-      } catch {
-        commit('set Error', true)
+      } catch (e) {
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -317,7 +321,7 @@ export default {
         })
         commit('SET_TESTS', tests)
       } catch (e) {
-        commit('set Error', true)
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -328,8 +332,8 @@ export default {
         commit('setLoading', true)
         const res = await testController.getPublicTests()
         commit('SET_TESTS', res)
-      } catch {
-        commit('set Error', true)
+      } catch (e) {
+        commit('setError', true)
       } finally {
         commit('setLoading', false)
       }
@@ -337,14 +341,24 @@ export default {
 
     async getTestsAdminByUser({ commit, rootState }) {
       try {
-        commit('setLoading', true)
-        const tests = []
+        commit('setLoading', true);
 
-        const testsEntries = Object.entries(rootState.Auth.user.myTests)
-        testsEntries.forEach((a) => {
-          tests.push(a[1])
-        })
-        commit('SET_TESTS', tests)
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          const userController = new UserController()
+          const userDoc = await userController.getById(user.uid)
+
+          if (userDoc && userDoc.myTests) {
+            const tests = Object.values(userDoc.myTests)
+            commit('SET_TESTS', tests)
+          } else {
+            console.error('User document or myTests field not found in Firestore')
+          }
+        } else {
+          console.error('No user is currently signed in')
+        }
       } catch (e) {
         console.error('Error in get tests by admin', e)
         commit('setError', true)
@@ -357,7 +371,7 @@ export default {
       try {
         commit('setLoading', true)
         commit('ADD_TASKS', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       } finally {
         commit('setLoading', false)
@@ -366,7 +380,7 @@ export default {
     setTasks({ commit }, payload) {
       try {
         commit('SET_TASKS', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
@@ -376,56 +390,56 @@ export default {
     setPostTest({ commit }, payload) {
       try {
         commit('SET_POST_TEST', payload)
-      } catch {
+      } catch (e)  {
         commit('setError', true)
       }
     },
     setPreTest({ commit }, payload) {
       try {
         commit('SET_PRE_TEST', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     setConsent({ commit }, payload) {
       try {
         commit('SET_CONSENT', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     setScoresPercentage({ commit }, payload) {
       try {
         commit('SET_SCORES_PERCENTAGE', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     async setWelcomeMessage({ commit }, payload) {
       try {
         commit('SET_WELCOME', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     async setLandingPage({ commit }, payload) {
       try {
         commit('SET_LANDING', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     async setParticipantCamera({ commit }, payload) {
       try {
         commit('SET_PARTICIPANT_CAMERA', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
     async setFinalMessage({ commit }, payload) {
       try {
         commit('SET_FINAL_MESSAGE', payload)
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
@@ -438,7 +452,7 @@ export default {
     cleanTest({ commit }) {
       try {
         commit('CLEAN_TEST')
-      } catch {
+      } catch (e) {
         commit('setError', true)
       }
     },
@@ -476,16 +490,32 @@ export default {
         return peerConnection
       } catch (error) {
         console.error('Error creating peer connection:', error)
-      }
-    },
-    async closePeerConnection({ commit, state }) {
-      if (state.peerConnection) {
-        state.peerConnection.close()
-        commit('SET_PEER_CONNECTION', null)
-      }
-    },
-    async changeTrack({ commit, state }, stream) {
-      const newTrack = stream.getVideoTracks()[0]
+    }
+},
+async closePeerConnection({ commit, state }) {
+    try {
+        if (state.localCameraStream) {
+            state.localCameraStream.getTracks().forEach(track => track.stop())
+            commit('SET_LOCAL_STREAM', null)
+        }
+
+        if (state.remoteCameraStream) {
+            state.remoteCameraStream.getTracks().forEach(track => track.stop())
+            commit('SET_REMOTE_STREAM', null)
+        }
+
+        if (state.peerConnection) {
+            state.peerConnection.close()
+            commit('SET_PEER_CONNECTION', null)
+        }
+
+        commit('SET_DISCONNECTED', true)
+    } catch (error) {
+        console.error('Error closing connection:', error)
+    }
+},
+async changeTrack({ commit, state }, stream) {
+    const newTrack = stream.getVideoTracks()[0]
 
       if (state.peerConnection) {
         const senders = state.peerConnection.getSenders()

@@ -7,7 +7,7 @@
         <v-col cols="12">
           <v-row justify="center">
             <span class="titles mt-8 mb-8">
-              What type of test are you looking to start?
+              {{ $t('Createblank.title') }}
             </span>
           </v-row>
         </v-col>
@@ -15,21 +15,21 @@
         <v-col cols="12">
           <v-row class="cardsContainer">
             <v-col cols="12" md="4" sm="10" class="card">
-              <CardTypeTestImage 
-                title="SelfTest"
-                type="UNMODERATED"
+              <CardTypeTestImage
+                :title="$t('Createblank.UsabilityUser.SelfTest.title')"
+                :type="$t('Createblank.UsabilityUser.SelfTest.type')"
                 :img="require('../../../public/SelfTest.svg')"
-                :texts="['Answer on free time', 'Enhanced answer analysis', 'Task Customization']"
+                :texts="$t('Createblank.UsabilityUser.SelfTest.text')"
                 @click="setType"
               />
             </v-col>
 
             <v-col cols="12" md="4" sm="10" class="card">
-              <CardTypeTestImage 
-                title="LiveTest"
-                type="MODERATED"
+              <CardTypeTestImage
+                :title="$t('Createblank.UsabilityUser.LiveTest.title')"
+                :type="$t('Createblank.UsabilityUser.LiveTest.type')"
                 :img="require('../../../public/LiveTest.svg')"
-                :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated live test']"
+                :texts="$t('Createblank.UsabilityUser.LiveTest.text')"
                 @click="setType"
               />
             </v-col>
@@ -60,10 +60,11 @@ export default {
 
   methods: {
     setType(type) {
+      const normalizedType = type.toLowerCase()
       const test = {}
-      if (type === 'UNMODERATED') test.userTestType = type.toLowerCase()
-      if (type === 'MODERATED') {
-        test.userTestType = 'moderated'
+      if (normalizedType === 'unmoderated') test.userTestType = normalizedType
+      if (normalizedType === 'moderated') {
+        test.userTestType = normalizedType
         test.userTestStatus = {
           user: false,
           moderator: false,
@@ -72,10 +73,10 @@ export default {
           postTestStatus: 'closed',
         }
       }
-      
+
       this.$emit('setUser', test)
-    }
-  }
+    },
+  },
 }
 </script>
 
