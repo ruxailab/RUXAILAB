@@ -1,94 +1,65 @@
 <template>
   <div>
-    <v-dialog v-model="isOpen" fullscreen persistent transition="dialog-bottom-transition">
+    <v-dialog
+      :value="isOpen"
+      @input="$emit('update:isOpen', $event)"
+      fullscreen
+      persistent
+      transition="dialog-bottom-transition"
+    >
       <v-card color="#f9f5f0">
         <ButtonBack @click="$emit('close')" />
 
         <v-col lg="9" md="8" sm="12" class="ml-auto mr-auto pt-10">
           <p class="titles ml-5">
-            Test Creation
+            {{ heading }}
           </p>
           <p class="cardSubtitle ml-5">
-            Add a name to your test!
+            {{ subHeading }}
           </p>
         </v-col>
 
         <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
           <v-col class="ml-auto mr-auto" sm="10" md="8" lg="4">
-            <v-card
-              color="white"
-              class="pb-5"
-              style="border-radius: 20px !important"
-            >
+            <v-card color="white" class="pb-5" style="border-radius: 20px !important">
               <v-col cols="11" class="ml-6">
                 <p class="cardInternTitles mt-4">
-                  Test Name
+                  {{ testName }}
                 </p>
-                <v-text-field
-                  v-model="test.title"
-                  class="mt-3"
-                  label="Test Name"
-                  outlined
-                  color="orange"
-                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
-                />
+                <v-text-field v-model="test.title" class="mt-3" :label="testName" outlined color="orange"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)" />
 
                 <p class="cardInternTitles">
-                  Test Description
+                  {{ testDescription }}
                 </p>
-                <v-textarea
-                  v-model="test.description"
-                  outlined
-                  color="orange"
-                  class="mt-3"
-                  label="Test Description"
-                  @change="$store.commit('SET_LOCAL_CHANGES', true)"
-                />
+                <v-textarea v-model="test.description" outlined color="orange" class="mt-3" :label="testDescription"
+                  @change="$store.commit('SET_LOCAL_CHANGES', true)" />
 
-                <v-row>
-                  <v-checkbox
-                    v-model="test.isPublic"
-                    class="ml-4 mt-4"
-                    color="orange"
-                    label="Test public to all users"
-                  />
-                  <v-btn
-                    dark
-                    fab
-                    depressed
-                    color="orange"
-                    class="ml-auto mr-2 circleOrange"
-                    @click="validate"
-                  >
-                    <v-icon x-large>
-                      mdi-arrow-right
-                    </v-icon>
-                  </v-btn>
+                <v-row class="d-flex align-center" no-gutters>
+                  <v-col cols="9" class="d-flex align-center">
+                    <v-checkbox v-model="test.isPublic" class="ml-2" color="orange" :label="testLabel" />
+                  </v-col>
+                  <v-col cols="3" class="d-flex justify-end">
+                    <v-btn dark fab depressed color="orange" class="mr-2 circleOrange" @click="validate">
+                      <v-icon x-large>
+                        mdi-arrow-right
+                      </v-icon>
+                    </v-btn>
+                  </v-col>
                 </v-row>
               </v-col>
             </v-card>
           </v-col>
 
-          <v-col
-            v-if="!$vuetify.breakpoint.mdAndDown"
-            cols="5"
-            class="imageColumn"
-          >
-            <img
-              height="500"
-              src="../../../public/createSVG.svg"
-              alt="Test Creation image"
-            />
+          <v-col v-if="!$vuetify.breakpoint.mdAndDown" cols="5" class="imageColumn">
+            <img height="500" src="../../../public/createSVG.svg" alt="Test Creation image" />
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
 
-    <CreateTestUserDialog 
-      :is-open="userDialog"
-      @setUser="; (test = { ...test, ...$event}), (userDialog = false), submit()"
-      @close="userDialog = false"
-    />
+    <CreateTestUserDialog :is-open="userDialog"
+      @setUser="; (test = { ...test, ...$event }), (userDialog = false), submit()" @close="userDialog = false" />
   </div>
 </template>
 
@@ -116,6 +87,36 @@ export default {
       default: '',
       require: true,
     },
+
+    heading: {
+      type: String,
+      default: '',
+      require: true,
+    },
+
+    subHeading: {
+      type: String,
+      default: '',
+      require: true,
+    },
+
+    testName: {
+      type: String,
+      default: '',
+      require: true,
+    },
+
+    testDescription: {
+      type: String,
+      default: '',
+      require: true,
+    },
+
+    testLabel: {
+      type: String,
+      default: '',
+      require: true,
+    }
   },
 
   data: () => ({
@@ -166,8 +167,26 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      this.$router.push(`/managerview/${testId}`)
+      
+      if (this.testType === 'Accessibility') {
+        this.$router.push(`/sample`)
+      } else {
+        this.$router.push(`/managerview/${testId}`)
+      }
     },
+  },
+  watch: {
+    isOpen(val) {
+      if (!val) {
+        this.test = {
+          title: '',
+          description: '',
+          isPublic: false,
+          userTestType: '',
+          userTestStatus: {}
+        }
+      }
+    }
   },
 }
 </script>
@@ -209,7 +228,8 @@ export default {
 
 @media (max-width: 600px) {
   .titles {
-    font-size: 28px; /* Adjust font size for smaller screens */
+    font-size: 28px;
+    /* Adjust font size for smaller screens */
   }
 
   .cardSubtitle {
@@ -233,7 +253,8 @@ export default {
 
 @media (min-width: 601px) and (max-width: 1160px) {
   .titles {
-    font-size: 32px; /* Adjust font size for medium screens */
+    font-size: 32px;
+    /* Adjust font size for medium screens */
   }
 
   .cardRow {
@@ -244,7 +265,8 @@ export default {
 
 @media (min-width: 1160px) {
   .titles {
-    font-size: 38px; /* Adjust font size for larger screens */
+    font-size: 38px;
+    /* Adjust font size for larger screens */
   }
 }
 </style>

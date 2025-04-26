@@ -3,11 +3,21 @@
   "SIGNIN": {
     "sign-in": "Iniciar sesión",
     "email": "Correo electrónico",
+    "username": "Nombre de usuario",
     "password": "Contraseña",
     "dont-have-account": "¿No tienes una cuenta? Regístrate",
+    "forgot-password": "Olvidé mi contraseña",
     "sign-up": "Inscribirse",
+    "contact": "Número de contacto",
     "confirmPassword": "Confirmar Contraseña",
     "alreadyHaveAnAccount": "¿Ya tienes una cuenta? Iniciar sesión"
+  },
+  "FORGOT_PASSWORD": {
+    "reset_password": "Restablecer contraseña",
+    "email": "Correo electrónico",
+    "instructions": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
+    "reset_button": "Enviar enlace de restablecimiento",
+    "back_to_signin": "Volver a iniciar sesión"
   },
   "common": {
     "loading": "Cargando prueba",
@@ -30,6 +40,9 @@
     "editDelete": "Editar/Borrar",
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
+    "notifications": "notificaciones",
+    "unread": "no leído",
+    "inbox": "Bandeja de entrada",
     "timeAgo": {
       "years": "Hace {count} año{count !== 1 ? 's' : ''}",
       "months": "Hace {count} mes{count !== 1 ? 'es' : ''}",
@@ -37,7 +50,34 @@
       "hours": "Hace {count} hora{count !== 1 ? 's' : ''}",
       "minutes": "Hace {count} minuto{count !== 1 ? 's' : ''}",
       "now": "Ahora"
-    }
+    },
+    "viewAll": "Ver todo",
+    "sentBy": "Enviado por",
+    "new": "NUEVO"
+  },
+  "PROFILE": {
+    "title": "Perfil",
+    "editProfile": "Editar perfil",
+    "account": "Cuenta",
+    "admin": "Administrador",
+    "changePassword": "Cambiar contraseña",
+    "passwordRequirements": "Asegúrese de cumplir estos requisitos",
+    "passwordMinimumRequirements": "Mínimo 8 caracteres, mayúscula y símbolo",
+    "newPassword": "Nueva contraseña",
+    "confirmNewPassword": "Confirmar nueva contraseña",
+    "editDetails": "Editar detalles",
+    "saveChanges": "Guardar cambios",
+    "country": "País",
+    "missingInfo": "Información faltante",
+    "deleteAccountTitle": "Eliminar cuenta",
+    "deleteAccountConfirm": "¿Está absolutamente seguro? Esta acción no se puede deshacer.",
+    "deleteAccountWarning": "Esto eliminará permanentemente su cuenta y sus datos de nuestros servidores.",
+    "passwordRequired": "Se requiere contraseña",
+    "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+    "passwordUppercase": "Debe contener una letra mayúscula",
+    "passwordSymbol": "Debe contener un símbolo",
+    "confirmPasswordRequired": "Se requiere confirmar la contraseña",
+    "passwordsMatch": "Las contraseñas deben coincidir"
   },
   "titles": {
     "manager": "Gerente",
@@ -88,12 +128,15 @@
     "emailIsRequired": "E-mail é obrigatório",
     "invalidEmail": "Email inválido",
     "passwordRequired": "Se requiere contraseña",
-    "passwordValidate": "La contraseña debe tener al menos 6 caracteres",
+    "passwordValidate": "La contraseña debe tener al menos 8 caracteres",
     "differentPasswords": "Diferentes contraseñas",
     "fieldRequired": "Campo requerido",
+    "passwordUppercase": "Debe contener una letra mayúscula",
+    "passwordSymbol": "Debe contener un símbolo",
     "userNotExist": "Este usuario no existe.",
     "incorrectPassword": "Contraseña incorrecta.",
-    "incorrectCredential": "Usuario o contraseña incorrectos."
+    "incorrectCredential": "Usuario o contraseña incorrectos.",
+    "globalError": "Ha ocurrido un error, disculpa las molestias."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -109,6 +152,7 @@
     "myTests": "Mis exámenes",
     "sharedWithMe": "Compartido conmigo",
     "publicTests": "Exámenes públicos",
+    "sessions": "sesiones",
     "personal": "Personal",
     "explore": "Explorar"
   },
@@ -166,7 +210,7 @@
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "[TODO]"
+      "options": "Opciones"
     },
     "messages": {},
     "placeHolders": {},
@@ -186,142 +230,150 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "[TODO]"
+      "settings": "Configuración"
     },
     "messages": {
-      "acceptCsv": "[TODO]",
-      "noCsvFileSelected": "[TODO]"
+      "acceptCsv": "Aceptar archivo CSV",
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV"
     },
     "placeHolders": {
-      "importCsv": "[TODO]"
+      "importCsv": "Importar CSV"
     },
     "actions": {
-      "downloadCsvTemplate": "[TODO]",
-      "update": "[TODO]"
+      "downloadCsvTemplate": "Descargar plantilla CSV",
+      "update": "Actualizar"
     }
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "[TODO]",
-      "submitOnce": "[TODO]",
-      "noHeuristics": "[TODO]"
+      "submitTest": "Enviar prueba",
+      "submitOnce": "Solo puede enviar una vez",
+      "noHeuristics": "No hay heurísticas disponibles"
     },
     "actions": {
-      "cancel": "[TODO]",
-      "submit": "[TODO]",
-      "save": "[TODO]",
-      "continueAs": "[TODO]",
-      "notMail": "[TODO]",
-      "changeAccount": "[TODO]",
-      "startTest": "[TODO]"
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "save": "Guardar",
+      "continueAs": "Continuar como",
+      "notMail": "¿No es tu correo?",
+      "changeAccount": "Cambiar cuenta",
+      "startTest": "Comenzar prueba"
     }
   },
   "HeuristicsEditTest": {
     "titles": {
-      "heuristics": "[TODO]",
-      "options": "[TODO]",
-      "weights": "[TODO]",
-      "settings": "[TODO]"
+      "heuristics": "Heurísticas",
+      "options": "Opciones",
+      "weights": "Pesos",
+      "settings": "Configuración"
     }
   },
   "HeuristicsTestAnswer": {
     "titles": {
-      "answers": "[TODO]",
-      "statistics": "[TODO]",
-      "evaluators": "[TODO]",
-      "heuristics": "[TODO]",
-      "analytics": "[TODO]"
+      "answers": "Respuestas",
+      "statistics": "Estadísticas",
+      "evaluators": "Evaluadores",
+      "heuristics": "Heurísticas",
+      "analytics": "Análisis"
     },
     "statistics": {
-      "usabilityPercentage": "[TODO]",
-      "max": "[TODO]",
-      "min": "[TODO]",
-      "std": "[TODO]"
+      "usabilityPercentage": "Porcentaje de usabilidad",
+      "max": "Máximo",
+      "min": "Mínimo",
+      "std": "Desviación estándar"
     },
     "evaluators": {
       "headers": {
-        "table": "[TODO]",
-        "graphic": "[TODO]"
+        "table": "Tabla",
+        "graphic": "Gráfico"
       },
       "messages": {
-        "graphForMoreThan3": "[TODO]"
+        "graphForMoreThan3": "El gráfico está disponible para más de 3 evaluadores"
       }
     },
     "heuristics": {
       "headers": {
-        "heuristicsData": "[TODO]",
-        "answersByEvaluator": "[TODO]",
-        "answersByHeuristics": "[TODO]",
-        "graphic": "[TODO]",
-        "weights": "[TODO]"
+        "heuristicsData": "Datos heurísticos",
+        "answersByEvaluator": "Respuestas por evaluador",
+        "answersByHeuristics": "Respuestas por heurísticas",
+        "graphic": "Gráfico",
+        "weights": "Pesos"
       },
       "messages": {
-        "needMoreThan1Answer": "[TODO]",
-        "runWeightFunction": "[TODO]"
+        "needMoreThan1Answer": "Necesita más de una respuesta",
+        "runWeightFunction": "Ejecutar función de peso"
       }
-    },
-    "analytics": {}
+    }
   },
   "HeuristicsReport": {
     "titles": {
-      "reports": "[TODO]",
-      "last_updated": "[TODO]"
+      "reports": "Informes",
+      "last_updated": "Última actualización"
     },
     "headers": {
-      "evaluator": "[TODO]",
-      "last_update": "[TODO]",
-      "progress": "[TODO]",
-      "status": "[TODO]",
-      "more": "[TODO]"
+      "evaluator": "Evaluador",
+      "last_update": "Última actualización",
+      "progress": "Progreso",
+      "status": "Estado",
+      "more": "Más"
     },
     "messages": {
-      "confirm_delete_report": "[TODO]",
-      "reports_loading": "[TODO]",
-      "remove_report": "[TODO]",
-      "sure_to_delete": "[TODO] {user}",
-      "report_deleted": "[TODO]"
+      "confirm_delete_report": "Confirmar eliminación del informe",
+      "reports_loading": "Cargando informes",
+      "remove_report": "Eliminar informe",
+      "sure_to_delete": "¿Está seguro de eliminar el informe de {user}?",
+      "report_deleted": "Informe eliminado"
     },
     "status": {
-      "submitted": "[TODO]",
-      "in_progress": "[TODO]"
+      "submitted": "Enviado",
+      "in_progress": "En progreso"
     }
+  },
+  "UsabilityCooperators": {
+    "inviteEvaluator": "Invitar Evaluador a la Prueba",
+    "email": "Correo Electrónico",
+    "scheduledAt": "Programado para",
+    "inviteMessage": "Mensaje de invitación",
+    "placeholderMessage": "Hola, hagamos una prueba...",
+    "inviteInfo": "La invitación con el enlace de prueba se enviará al correo del evaluador en el horario programado",
+    "send": "Enviar"
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "[TODO]"
+      "cooperators": "Cooperadores"
     },
     "headers": {
-      "email": "[TODO]",
-      "role": "[TODO]",
-      "invited": "[TODO]",
-      "accepted": "[TODO]",
-      "more": "[TODO]",
-      "title": "[TODO]",
-      "content": "[TODO]"
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "invited": "Invitado",
+      "accepted": "Aceptado",
+      "more": "Más",
+      "title": "Título",
+      "content": "Contenido"
     },
     "actions": {
-      "send_invitation": "[TODO]",
-      "send_message": "[TODO]",
-      "reinvite": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "cancel": "[TODO]",
-      "send": "[TODO]",
-      "select_cooperator": "[TODO]"
+      "send_invitation": "Enviar invitación",
+      "send_message": "Enviar mensaje",
+      "reinvite": "Reinvitar",
+      "remove_cooperator": "Eliminar cooperador",
+      "cancel_invitation": "Cancelar invitación",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "select_cooperator": "Seleccionar cooperador"
     },
     "roles": {
-      "administrator": "[TODO]",
-      "evaluator": "[TODO]",
-      "guest": "[TODO]"
+      "administrator": "Administrador",
+      "evaluator": "Evaluador",
+      "guest": "Invitado"
     },
     "messages": {
-      "cooperators_loading": "[TODO]",
-      "no_users": "[TODO]",
-      "remove_cooperator": "[TODO]",
-      "cancel_invitation": "[TODO]",
-      "change_role": "[TODO]",
-      "message_title_hint": "[TODO]",
-      "message_content_hint": "[TODO]"
+      "cooperators_loading": "Cargando cooperadores...",
+      "no_users": "¿Estás seguro de que deseas eliminar a este cooperador?",
+      "remove_cooperator": "¿Estás seguro de que deseas cancelar esta invitación?",
+      "cancel_invitation": "¿Estás seguro de que deseas cancelar esta invitación?",
+      "change_role": "¿Cambiar el rol de {email} de {old} a {new}?",
+      "message_title_hint": "Ingresa el título del mensaje",
+      "message_content_hint": "Ingresa el contenido del mensaje"
     }
   },
   "UserTestTable": {
@@ -414,8 +466,8 @@
     },
     "createTest": {
       "title": "Crear una nueva prueba",
-      "blanckTitle": "Crear una prueba en blanco",
-      "blanckSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
+      "blankTitle": "Crear una prueba en blanco",
+      "blankSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva y fresca.",
       "templateTitle": "Crear a partir de plantilla",
       "templateSubtitle": "Crea una prueba basada en una plantilla creada por uno de nuestros usuarios.",
       "create": "Crear prueba",
@@ -441,7 +493,9 @@
     "leave": "¿Estás seguro de que quieres irte?",
     "sureLeave": "¿Estás seguro de que quieres salir? Todos tus cambios serán descartados",
     "imageURL": "Escriba la URL de la imagen:",
-    "deleteHeuristic": "¿Estás seguro de eliminar el heurístico "
+    "deleteHeuristic": "¿Estás seguro de eliminar el heurístico ",
+    "deleteAccount": "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.",
+    "genericSuccess": "Operación exitosa"
   },
   "buttons": {
     "next": "Siguiente",
@@ -450,6 +504,7 @@
     "username": "Nombre de usuario",
     "goToConsole": "Ir a la consola",
     "signout": "Desconectar",
+    "profile": "Perfil",
     "returnToConsole": "Volver a la consola",
     "tip": "Consejo",
     "create": "Crear",
@@ -458,7 +513,10 @@
     "leave": "Dejar",
     "stay": "Quédate",
     "help": "Ayuda",
-    "delete": "Borrar"
+    "delete": "Borrar",
+    "deleteAccount": "Eliminar cuenta",
+    "back": "Atrás",
+    "duplicateTest": "Duplicar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -474,5 +532,97 @@
     "consentForm": "Formulario de Consentimiento",
     "preForm": "Formulario Previo",
     "postForm": "Formulario Posterior"
-  }
+  },
+  "Createblank": {
+    "title": "¿Qué tipo de prueba estás buscando iniciar?",
+    "test": "Prueba",
+    "testType_1": {
+      "testTitle": "Heurística de Usabilidad",
+      "text": [
+        "Porcentaje de Usabilidad",
+        "Informe Final en PDF",
+        "Invita a especialistas a evaluar tu aplicación"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "Usuario de Usabilidad",
+      "text": [
+        "Grabación de webcam, audio y pantalla",
+        "Análisis mejorado de respuestas",
+        "Pruebas moderadas o no moderadas"
+      ]
+    },
+    "UsabilityUser": {
+      "SelfTest": {
+        "title": "Prueba de Usuario",
+        "type": "no moderado",
+        "text": [
+          "Responder en tiempo libre",
+          "Análisis mejorado de respuestas",
+          "Personalización de tareas"
+        ]
+      },
+      "LiveTest": {
+        "title": "Prueba en Vivo",
+        "type": "moderado",
+        "text": [
+          "Grabación de webcam, audio y pantalla",
+          "Análisis mejorado de respuestas",
+          "Prueba en vivo moderada"
+        ]
+      }
+    }
+  },
+  "TestDialog": {
+    "heading": "Creación de Prueba",
+    "sub-heading": "¡Añade un nombre a tu prueba!",
+    "test-name": "Nombre de la Prueba",
+    "test-description": "Descripción de la Prueba",
+    "test-label": "Prueba pública para todos los usuarios"
+  },
+  "help": {
+    "createtest": "¿Cómo creo una prueba?",
+    "createtestanswer": "Para crear una prueba, comienza haciendo clic en el ícono de más y selecciona Prueba Heurística. Luego, especifica los detalles de tu proyecto. Finalmente, dirígete a la página del administrador dedicada.",
+    "heuristictest": "¿Cómo configuro mi prueba heurística?",
+    "heuristictestanswer": "Para configurar tu prueba heurística, accede a la opción 'Editar Prueba'. Luego, haz clic en el botón de más para agregar un título y la pregunta a tu heurística. A continuación, ve a la sección de opciones para crear las opciones de respuesta y sus respectivos valores. Finalmente, guarda los cambios.",
+    "deletetest": "¿Cómo elimino mi prueba?",
+    "deletetestanswer": "Para eliminar tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona el botón 'ELIMINAR PRUEBA'.",
+    "createtemplate": "¿Cómo crear una plantilla?",
+    "createtemplateanswer": "Para crear una plantilla para tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona la opción 'CREAR PLANTILLA'.",
+    "usetemplate": "¿Cómo utilizar una plantilla?",
+    "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Pruebas. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
+    "previewtest": "¿Cómo previsualizar mi prueba?",
+    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia la prueba respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
+    "importcsv": "¿Cómo importar mi archivo CSV?",
+    "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Prueba' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
+    "invitecooperators": "¿Cómo invitar a colaboradores?",
+    "invitecooperatorsanswer": "Para invitar a colaboradores, ve a la página de administración de tu prueba. Desde allí, selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en 'Seleccionar colaborador' e ingresa el correo electrónico de tu colaborador. Elige el rol del colaborador y luego envía la invitación haciendo clic en el botón de la esquina inferior derecha.",
+    "analyseresults": "¿Cómo analizar los resultados?",
+    "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
+    "sendmessage": "¿Cómo enviar un mensaje a mis colaboradores?",
+    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
+    "testCreation": "Creación de Pruebas",
+    "templates": "Plantillas",
+    "cooperators": "Colaboradores",
+    "analytics": "Análisis",
+    "help_center": "Centro de Ayuda",
+    "howCanWeHelp": "¿Cómo podemos ayudar?"
+  },
+  "user": "USUARIO",
+  "account": "Cuenta",
+  "security": "Seguridad",
+  "personalInfo": "Información personal",
+  "contact": "Contacto",
+  "country": "País",
+  "editDetails": "Editar detalles",
+  "typeDeleteToConfirm": "Escriba \"DELETE\" para confirmar",
+  "pleaseTypeDeleteToConfirm": "Por favor escriba DELETE para confirmar",
+  "finalStepVerifyIdentity": "Paso final: Verifique su identidad",
+  "enterPasswordForAccountDeletion": "Ingrese su contraseña para proceder con la eliminación de la cuenta",
+  "yourPassword": "Su contraseña",
+  "usernameRequired": "Nombre de usuario es requerido",
+  "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+  "countryRequired": "País es requerido",
+  "contactNumberRequired": "Número de contacto es requerido",
+  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)"
 }

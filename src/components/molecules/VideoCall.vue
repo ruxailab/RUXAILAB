@@ -260,7 +260,7 @@ export default {
           }
         }
       } catch (e) {
-        this.$toast.error('Error in capturing your media device:' + e.message)
+        this.$toast.error(i18n.t(errors.globalError))
       }
     },
 

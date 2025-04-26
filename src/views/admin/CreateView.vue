@@ -15,7 +15,7 @@
             hover
             class="card"
             :ripple="false"
-            @click="$router.push('/createBlank')"
+            @click="$router.push('/choose')"
           >
             <v-row align="center">
               <v-col cols="12" md="5">
@@ -27,10 +27,10 @@
               </v-col>
               <v-col cols="12" md="6" class="card-text">
                 <div class="card-title">
-                  {{ $t('pages.createTest.blanckTitle') }}
+                  {{ $t('pages.createTest.blankTitle') }}
                 </div>
                 <div>
-                  {{ $t('pages.createTest.blanckSubtitle') }}
+                  {{ $t('pages.createTest.blankSubtitle') }}
                 </div>
               </v-col>
             </v-row>

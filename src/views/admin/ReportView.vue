@@ -263,7 +263,7 @@ export default {
       await this.getCurrentAnswer()
       this.loadingBtn = false
       this.dialog = false
-      this.$toast.success(this.$t('HeuristicsReport.messages.report_deleted'))
+      this.$toast.success(i18n.$t('alerts.genericSuccess'))
     },
 
     formatDate(timestamp) {
