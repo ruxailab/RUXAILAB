@@ -715,40 +715,51 @@ const completeStep = (id, type) => {
 };
 
 const autoComplete = async () => {
+  if (!currentUserTestAnswer.value || !items.value) return;
+
   // PRE-TEST
-  if (currentUserTestAnswer.value.preTestCompleted) {
-    items.value[0].value[1].icon = 'mdi-check-circle-outline';
+  if (items.value[0]?.value) {
+    if (currentUserTestAnswer.value.consentCompleted) {
+      items.value[0].value[0].icon = 'mdi-check-circle-outline';
+    }
+    if (currentUserTestAnswer.value.preTestCompleted && items.value[0].value[1]) {
+      items.value[0].value[1].icon = 'mdi-check-circle-outline';
+    }
+    if (
+      currentUserTestAnswer.value.preTestCompleted &&
+      currentUserTestAnswer.value.consentCompleted
+    ) {
+      items.value[0].icon = 'mdi-check-circle-outline';
+    }
   }
-  if (currentUserTestAnswer.value.consentCompleted) {
-    items.value[0].value[0].icon = 'mdi-check-circle-outline';
-  }
-  if (
-    currentUserTestAnswer.value.preTestCompleted &&
-    currentUserTestAnswer.value.consentCompleted
-  ) {
-    items.value[0].icon = 'mdi-check-circle-outline';
-  }
+
   // TASKS
-  let allTasksCompletedLocal = true;
-  for (let i = 0; i < items.value[1].value.length; i++) {
-    if (currentUserTestAnswer.value.tasks[i].completed) {
-      items.value[1].value[i].icon = 'mdi-check-circle-outline';
+  if (items.value[1]?.value) {
+    let allTasksCompletedLocal = true;
+    for (let i = 0; i < items.value[1].value.length; i++) {
+      if (currentUserTestAnswer.value.tasks[i]?.completed) {
+        items.value[1].value[i].icon = 'mdi-check-circle-outline';
+      }
+      if (!currentUserTestAnswer.value.tasks[i]?.completed) {
+        allTasksCompletedLocal = false;
+      }
     }
-    if (!currentUserTestAnswer.value.tasks[i].completed) {
-      allTasksCompletedLocal = false;
-      break;
+    if (allTasksCompletedLocal) {
+      items.value[1].icon = 'mdi-check-circle-outline';
     }
   }
-  if (allTasksCompletedLocal) {
-    items.value[1].icon = 'mdi-check-circle-outline';
-  }
+
   // POST-TEST
-  if (currentUserTestAnswer.value.postTestCompleted) {
+  if (items.value[2] && currentUserTestAnswer.value.postTestCompleted) {
     items.value[2].icon = 'mdi-check-circle-outline';
   }
 };
 
 const calculateProgress = () => {
+  if (!currentUserTestAnswer.value) {
+    return 0;
+  }
+
   const totalSteps = 4;
   let completedSteps = 0;
 
@@ -760,14 +771,17 @@ const calculateProgress = () => {
   }
 
   let tasksCompleted = 0;
-  for (let i = 0; i < items.value[1].value.length; i++) {
-    if (currentUserTestAnswer.value.tasks[i].completed) {
-      tasksCompleted++;
+  if (items.value[1]?.value) {
+    for (let i = 0; i < items.value[1].value.length; i++) {
+      if (currentUserTestAnswer.value.tasks[i]?.completed) {
+        tasksCompleted++;
+      }
+    }
+    if (tasksCompleted === items.value[1].value.length) {
+      completedSteps++;
     }
   }
-  if (tasksCompleted === items.value[1].value.length) {
-    completedSteps++;
-  }
+
   if (currentUserTestAnswer.value.postTestCompleted) {
     completedSteps++;
   }
@@ -795,8 +809,10 @@ const signOut = () => {
 };
 
 const mappingSteps = async () => {
+  items.value = []; // Reset items to avoid stale data
+
   // PreTest
-  if (validate(test.value.testStructure.preTest)) {
+  if (validate(test.value?.testStructure?.preTest)) {
     items.value.push({
       title: 'Pre-test',
       icon: 'mdi-checkbox-blank-circle-outline',
@@ -806,36 +822,18 @@ const mappingSteps = async () => {
           icon: 'mdi-checkbox-blank-circle-outline',
           id: 0,
         },
+        {
+          title: 'Form',
+          icon: 'mdi-checkbox-blank-circle-outline',
+          id: 0,
+        },
       ],
       id: 0,
     });
   }
 
-  if (validate(test.value.testStructure.preTest)) {
-    if (items.value.length) {
-      items.value[0].value.push({
-        title: 'Form',
-        icon: 'mdi-checkbox-blank-circle-outline',
-        id: 0,
-      });
-    } else {
-      items.value.push({
-        title: 'Pre Test',
-        icon: 'mdi-checkbox-blank-circle-outline',
-        value: [
-          {
-            title: 'Form',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            id: 0,
-          },
-        ],
-        id: 0,
-      });
-    }
-  }
-
   // Tasks
-  if (validate(test.value.testStructure.userTasks)) {
+  if (validate(test.value?.testStructure?.userTasks)) {
     items.value.push({
       title: 'Tasks',
       icon: 'mdi-checkbox-blank-circle-outline',
@@ -849,7 +847,7 @@ const mappingSteps = async () => {
   }
 
   // PostTest
-  if (validate(test.value.testStructure.postTest)) {
+  if (validate(test.value?.testStructure?.postTest)) {
     items.value.push({
       title: 'Post Test',
       icon: 'mdi-checkbox-blank-circle-outline',
@@ -860,7 +858,7 @@ const mappingSteps = async () => {
 };
 
 const validate = (object) => {
-  return object !== null && object !== undefined && object !== '';
+  return object !== null && object !== undefined && object !== '' && Array.isArray(object) && object.length > 0;
 };
 
 watch(
@@ -905,10 +903,11 @@ watch(
 onMounted(async () => {
   await mappingSteps();
   await nextTick();
-  setTimeout(() => {
-    autoComplete();
+  if (user.value) {
+    await setTest();
+    await autoComplete(); // Call after mappingSteps and setTest
     calculateProgress();
-  }, 2000);
+  }
 });
 
 onBeforeUnmount(() => {
