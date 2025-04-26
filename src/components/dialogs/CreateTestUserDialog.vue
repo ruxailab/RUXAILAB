@@ -56,7 +56,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import ButtonBack from '@/components/atoms/ButtonBack.vue'
 import CardTypeTestImage from '@/components/atoms/CardTypeTestImage.vue'
 

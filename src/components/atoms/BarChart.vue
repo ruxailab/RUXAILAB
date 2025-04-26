@@ -1,6 +1,6 @@
 <script setup>
 import { Bar } from 'vue-chartjs'
-import { computed, defineProps, watch, onMounted, ref } from 'vue'
+import { computed, watch, onMounted, ref } from 'vue'
 
 // Define props with the same structure as in the Options API
 const props = defineProps({
