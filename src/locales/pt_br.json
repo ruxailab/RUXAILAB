@@ -637,6 +637,7 @@
     "welcomeMessageDescription": "Esta mensagem será a primeira coisa que os participantes verão antes da sessão começar.",
     "landingPage": "Página Inicial",
     "landingPageDescription": "Este URL será carregado automaticamente quando o participante iniciar a sessão.",
+    "url": "URL da sua página de destino",
     "participantCamera": "Câmera do participante",
     "cameraOptions": {
       "optional": "Opcional",
@@ -648,6 +649,7 @@
     "postForm": "Pós-Formulário",
     "postFormDescription": "Este é um questionário posterior para coletar dados dos participantes.",
     "finalMessage": "Mensagem final",
-    "finalMessageDescription": "Esta é uma mensagem final que você deixa para o participante ao concluir o teste."
+    "finalMessageDescription": "Esta é uma mensagem final que você deixa para o participante ao concluir o teste.",
+    "finalMessagePlaceholder": "Digite a mensagem final"
   }
 }
