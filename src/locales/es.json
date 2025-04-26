@@ -515,7 +515,8 @@
     "help": "Ayuda",
     "delete": "Borrar",
     "deleteAccount": "Eliminar cuenta",
-    "back": "Atrás"
+    "back": "Atrás",
+    "duplicateTest": "Duplicar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
