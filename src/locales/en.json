@@ -642,6 +642,7 @@
     "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
     "landingPage": "Landing Page",
     "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "url": "Your Landing Page URL",
     "participantCamera": "Participant camera",
     "cameraOptions": {
       "optional": "Optional",
@@ -653,6 +654,7 @@
     "postForm": "Post Form",
     "postFormDescription": "This is a post-questionnaire to collect participant data.",
     "finalMessage": "Final message",
-    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
+    "finalMessagePlaceholder": "Enter Final message"
   }
 }
