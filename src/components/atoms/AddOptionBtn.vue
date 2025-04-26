@@ -1,17 +1,5 @@
 <template>
   <div>
-    <v-btn
-      rounded
-      color="#f9a826"
-      class="text-white"
-      size="small"
-      :disabled="testAnswerDocLength > 0"
-      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-      @click="$emit('dialog', true)"
-    >
-      {{ $t('HeuristicsTable.titles.addOption') }}
-    </v-btn>
-
     <v-dialog
       :model-value="dialog"
       width="500"
@@ -23,16 +11,10 @@
           {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
-        <v-row
-          justify="center"
-          class="ma-0"
-        >
+        <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form">
-              <v-row
-                justify="center"
-                align="center"
-              >
+              <v-row justify="center" align="center">
                 <v-col cols="6">
                   <v-text-field
                     v-model="localOption.text"
@@ -51,16 +33,12 @@
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
-                    :step="0.5"
+                    step="0.5"
                   />
                 </v-col>
               </v-row>
 
-              <!-- New row for Option description -->
-              <v-row
-                justify="center"
-                align="center"
-              >
+              <v-row justify="center" align="center">
                 <v-col cols="12">
                   <v-text-field
                     v-model="localOption.description"
@@ -87,7 +65,7 @@
             size="small"
             variant="text"
             color="red-lighten-1"
-            @click="$emit('update:dialog', false), resetVal()"
+            @click="cancel"
           >
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
@@ -96,7 +74,7 @@
             size="small"
             color="#f9a826"
             class="text-white"
-            @click="validate()"
+            @click="validate"
           >
             {{ $t('common.save') }}
           </v-btn>
@@ -112,55 +90,34 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
-  option: {
-    type: Object,
-    required: true,
-  },
-  dialog: {
-    type: Boolean,
-    default: false,
-  },
-  hasValue: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
+  option: { type: Object, required: true },
+  dialog: { type: Boolean, default: false },
+  hasValue: { type: Boolean, required: true, default: true },
 });
 
-const emit = defineEmits(['dialog', 'update:dialog', 'changeHasValue', 'addOption', 'change']);
+const emit = defineEmits(['update:dialog', 'changeHasValue', 'addOption', 'change']);
 
 const { t } = useI18n();
 const store = useStore();
 const form = ref(null);
 
-const textRequired = [
-  (v) => !!v || t('HeuristicsTable.validation.textRequired'),
-];
-
+const textRequired = [(v) => !!v || t('HeuristicsTable.validation.textRequired')];
 const localOption = ref({ text: '', value: null, description: '' });
 const localHasValue = ref(true);
 
-// Computed properties
 const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) {
-    return 0;
-  }
+  if (!store.getters.testAnswerDocument) return 0;
   const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
   return Object.keys(heuristicAnswers).length;
 });
 
 const valueRequired = computed(() => {
-  if (localHasValue.value || (localOption.value.value !== null && localOption.value.value >= 0)) {
-    return [
-      (v) =>
-        (v !== '' && v !== null && v >= 0) ||
-        t('HeuristicsTable.validation.textRequired'),
-    ];
-  }
-  return [];
+  if (!localHasValue.value) return [];
+  return [
+    (v) => (v !== null && v !== '' && v >= 0) || t('HeuristicsTable.validation.textRequired'),
+  ];
 });
 
-// Watchers
 watch(
   () => props.option,
   (newOption) => {
@@ -178,30 +135,28 @@ watch(
 );
 
 watch(localHasValue, (newValue) => {
+  if (!newValue) localOption.value.value = null;
   emit('changeHasValue', newValue);
 });
 
-watch(
-  () => props.dialog,
-  (newValue) => {
-    if (!newValue) {
-      localHasValue.value = true;
-    }
-  }
-);
-
-// Methods
 const validate = async () => {
   const { valid } = await form.value.validate();
   if (valid) {
-    if (!localHasValue.value) {
-      localOption.value.value = null;
-    }
-    emit('addOption', { ...localOption.value });
+    const optionToSave = { ...localOption.value };
+    if (!localHasValue.value) optionToSave.value = null;
+    console.log('Emitting addOption:', optionToSave);
+    emit('addOption', optionToSave);
     emit('change');
     emit('update:dialog', false);
     resetVal();
+  } else {
+    console.log('Form validation failed');
   }
+};
+
+const cancel = () => {
+  emit('update:dialog', false);
+  resetVal();
 };
 
 const resetVal = () => {
