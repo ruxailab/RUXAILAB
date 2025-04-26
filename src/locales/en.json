@@ -470,8 +470,8 @@
     },
     "createTest": {
       "title": "Create a new test",
-      "blanckTitle": "Create a blank test",
-      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "blankTitle": "Create a blank test",
+      "blankSubtitle": "Create a blank test to begin with a completely new and fresh template.",
       "templateTitle": "Create from template",
       "templateSubtitle": "Create a test based on a template created by one of our users.",
       "create": "Create test",
