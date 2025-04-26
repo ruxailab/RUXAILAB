@@ -127,16 +127,39 @@
                     {{ $t('personalInfo') }}
                   </v-card-title>
                   <v-card-text>
-                    <v-form>
+                    <!-- View Mode -->
+                    <div v-if="!editMode" class="profile-view-mode">
+                      <v-row>
+                        <v-col cols="12" md="6" class="profile-field">
+                          <div class="profile-field-label">{{ $t('username') }}</div>
+                          <div class="profile-field-value">{{ userprofile.username }}</div>
+                        </v-col>
+                        <v-col cols="12" md="6" class="profile-field">
+                          <div class="profile-field-label">{{ $t('SIGNIN.email') }}</div>
+                          <div class="profile-field-value">{{ user.email }}</div>
+                        </v-col>
+                        <v-col cols="12" md="6" class="profile-field">
+                          <div class="profile-field-label">{{ $t('contact') }}</div>
+                          <div class="profile-field-value">{{ userprofile.contactNo || $t('PROFILE.missingInfo') }}</div>
+                        </v-col>
+                        <v-col cols="12" md="6" class="profile-field">
+                          <div class="profile-field-label">{{ $t('country') }}</div>
+                          <div class="profile-field-value">{{ userprofile.country || $t('PROFILE.missingInfo') }}</div>
+                        </v-col>
+                      </v-row>
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <v-form v-else ref="editProfileForm" v-model="editProfileValid">
                       <v-row>
                         <v-col cols="12" md="6">
                           <v-text-field
-                            v-model="userprofile.username"
+                            v-model="editProfileData.username"
                             :label="$t('username')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-account"
-                            readonly
+                            :rules="usernameRules"
                             class="input-field-hover"
                           />
                         </v-col>
@@ -153,48 +176,100 @@
                         </v-col>
                         <v-col cols="12" md="6">
                           <v-text-field
-                            v-model="userprofile.contactNo"
+                            v-model="editProfileData.contactNo"
                             :label="$t('contact')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-phone"
-                            readonly
+                            :rules="contactRules"
+                            :hint="$t('enterValidPhoneNumber')"
+                            persistent-hint
                             class="input-field-hover"
                           />
                         </v-col>
                         <v-col cols="12" md="6">
-                          <v-text-field
-                            v-model="userprofile.country"
-                            :label="$t('country')"
+                          <v-autocomplete
+                            v-model="editProfileData.country"
+                            :label="$t('PROFILE.country')"
                             outlined
                             dense
                             prepend-inner-icon="mdi-map-marker"
-                            readonly
-                            class="input-field-hover"
-                          />
+                            :rules="countryRules"
+                            :items="countries"
+                            item-text="name"
+                            item-value="name"
+                            :filter="countryFilter"
+                            clearable
+                            :menu-props="{
+                              maxHeight: '400px',
+                              closeOnClick: true,
+                              closeOnContentClick: true,
+                            }"
+                          >
+                            <template v-slot:selection="{ item }">
+                              {{ item.emoji }} {{ item.name }}
+                            </template>
+                            <template v-slot:item="{ item }">
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  {{ item.emoji }} {{ item.name }}
+                                </v-list-item-title>
+                              </v-list-item-content>
+                            </template>
+                          </v-autocomplete>
                         </v-col>
                       </v-row>
                     </v-form>
 
-                    <v-hover v-slot="{ hover }">
-                      <v-btn
-                        color="primary"
-                        class="mt-4 text-none font-weight-medium transition-swing"
-                        :elevation="hover ? 6 : 2"
-                        @click="openEditProfileDialog"
-                        :class="{ 'transform-button': hover }"
-                      >
-                        <v-icon left>
-                          mdi-pencil
-                        </v-icon>
-                        {{ $t('editDetails') }}
-                      </v-btn>
-                    </v-hover>
+                    <div class="d-flex mt-4">
+                      <v-hover v-slot="{ hover }" v-if="!editMode">
+                        <v-btn
+                          color="primary"
+                          class="text-none font-weight-medium transition-swing"
+                          :elevation="hover ? 6 : 2"
+                          @click="enableEditMode"
+                          :class="{ 'transform-button': hover }"
+                        >
+                          <v-icon left>
+                            mdi-pencil
+                          </v-icon>
+                          {{ $t('editDetails') }}
+                        </v-btn>
+                      </v-hover>
+                      <template v-else>
+                        <v-hover v-slot="{ hover }">
+                          <v-btn
+                            text
+                            class="mr-2 text-none font-weight-medium transition-swing"
+                            @click="cancelEdit"
+                            :class="{ 'scale-button': hover }"
+                          >
+                            {{ $t('cancel') }}
+                          </v-btn>
+                        </v-hover>
+                        <v-hover v-slot="{ hover }">
+                          <v-btn
+                            color="primary"
+                            class="text-none font-weight-medium transition-swing"
+                            :elevation="hover ? 6 : 2"
+                            @click="saveProfile"
+                            :disabled="!editProfileValid"
+                            :class="{ 'transform-button': hover }"
+                          >
+                            <v-icon left>
+                              mdi-content-save
+                            </v-icon>
+                            {{ $t('PROFILE.saveChanges') }}
+                          </v-btn>
+                        </v-hover>
+                      </template>
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-hover>
             </v-tab-item>
 
+            <!-- Rest of the security tab content remains the same -->
             <v-tab-item transition="fade-transition">
               <!-- Security Tab Content -->
               <v-hover v-slot="{ hover }">
@@ -374,104 +449,6 @@
       </v-col>
     </v-row>
 
-    <!-- Edit Details Dialog -->
-    <v-dialog
-      v-model="editProfileDialog"
-      max-width="600"
-      transition="dialog-bottom-transition"
-    >
-      <v-card class="rounded-lg elevation-12">
-        <v-card-title class="grey lighten-4">
-          <v-icon left color="primary">
-            mdi-account-edit
-          </v-icon>
-          {{ $t('PROFILE.editProfile') }}
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="editProfileForm" v-model="editProfileValid">
-            <v-text-field
-              v-model="editProfileData.username"
-              :label="$t('username')"
-              outlined
-              dense
-              prepend-inner-icon="mdi-account"
-              :rules="usernameRules"
-              class="mt-4 input-field-hover"
-            />
-            <v-text-field
-              v-model="editProfileData.contactNo"
-              :label="$t('SIGNIN.contact')"
-              outlined
-              dense
-              prepend-inner-icon="mdi-phone"
-              :rules="contactRules"
-              :hint="$t('enterValidPhoneNumber')"
-              persistent-hint
-              class="input-field-hover"
-            />
-            <v-autocomplete
-              v-model="editProfileData.country"
-              :label="$t('PROFILE.country')"
-              outlined
-              dense
-              prepend-inner-icon="mdi-map-marker"
-              :rules="countryRules"
-              :items="countries"
-              item-text="name"
-              item-value="name"
-              :filter="countryFilter"
-              clearable
-              :menu-props="{
-                maxHeight: '400px',
-                closeOnClick: true,
-                closeOnContentClick: true,
-              }"
-            >
-              <template v-slot:selection="{ item }">
-                {{ item.emoji }} {{ item.name }}
-              </template>
-              <template v-slot:item="{ item }">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ item.emoji }} {{ item.name }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </template>
-            </v-autocomplete>
-          </v-form>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-hover v-slot="{ hover }">
-            <v-btn
-              text
-              @click="editProfileDialog = false"
-              :class="{ 'scale-button': hover }"
-              class="transition-swing"
-            >
-              {{ $t('cancel') }}
-            </v-btn>
-          </v-hover>
-          <v-hover v-slot="{ hover }">
-            <v-btn
-              color="primary"
-              @click="saveProfile"
-              :disabled="!editProfileValid"
-              :elevation="hover ? 4 : 2"
-              :class="{ 'transform-button': hover }"
-              class="transition-swing"
-            >
-              <v-icon left>
-                mdi-content-save
-              </v-icon>
-              {{ $t('PROFILE.saveChanges') }}
-            </v-btn>
-          </v-hover>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- Delete Account Dialog -->
     <v-dialog
       v-model="deleteAccountDialog"
@@ -644,8 +621,9 @@ export default {
       editProfileData: {
         username: null,
         contactNo: null,
-        country: null, // This will now store just the country name
+        country: null,
       },
+      editMode: false,
       countries: countries,
       usernameRules: [
         (v) => !!v || $t('usernameRequired'),
@@ -675,7 +653,6 @@ export default {
         (v) => !!v || this.$t('PROFILE.confirmPasswordRequired'),
         (v) => v === this.newPassword || this.$t('PROFILE.passwordsMatch'),
       ],
-      editProfileDialog: false,
       deleteAccountDialog: false,
       activeTab: 0,
       userPassword: '',
@@ -743,7 +720,7 @@ export default {
     },
 
     checkScreenSize() {
-      this.isSmallScreen = window.innerWidth < 960 // Adjust breakpoint as needed
+      this.isSmallScreen = window.innerWidth < 960
     },
 
     async fetchUserProfile() {
@@ -773,14 +750,17 @@ export default {
       }
     },
 
-    openEditProfileDialog() {
-      // Simplified country handling
+    enableEditMode() {
       this.editProfileData = {
         username: this.userprofile.username,
         contactNo: this.userprofile.contactNo,
-        country: this.userprofile.country, // Store just the country name
+        country: this.userprofile.country,
       }
-      this.editProfileDialog = true
+      this.editMode = true
+    },
+
+    cancelEdit() {
+      this.editMode = false
     },
 
     async saveProfile() {
@@ -808,7 +788,7 @@ export default {
           }
 
           this.$toast.success(i18n.$t('alerts.genericSuccess'))
-          this.editProfileDialog = false
+          this.editMode = false
         }
       } catch (error) {
         console.error('Error updating profile:', error)
@@ -928,14 +908,40 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+/* Profile field styling */
+.profile-field {
+  margin-bottom: 16px;
+}
+
+.profile-field-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+  letter-spacing: 0.03333em;
+}
+
+.profile-field-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* View/edit mode transitions */
+.profile-view-mode {
+  transition: all 0.3s ease;
+}
+
 /* Basic transitions */
 .transition-swing {
   transition: all 0.3s ease;
 }
 
 /* Simple card hover effect */
-.profile-card-hover:hover {
+.transform-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
 }
@@ -943,6 +949,10 @@ export default {
 /* Simple button hover effect */
 .transform-button:hover {
   transform: translateY(-2px);
+}
+
+.scale-button:hover {
+  transform: scale(1.05);
 }
 
 /* Basic avatar hover effect */
@@ -960,17 +970,16 @@ export default {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Simple dialog transition */
-.dialog-bottom-transition-enter-active,
-.dialog-bottom-transition-leave-active {
-  transition: transform 0.3s ease-in-out;
+/* Danger card hover */
+.danger-card-hover {
+  border-color: var(--v-error-base) !important;
 }
 
 /* Media query for mobile */
 @media (max-width: 600px) {
   .transform-button:hover,
   .transform-avatar:hover,
-  .profile-card-hover:hover {
+  .transform-card:hover {
     transform: none;
   }
 }
