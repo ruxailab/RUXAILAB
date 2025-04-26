@@ -631,5 +631,28 @@
   "contactNumberRequired": "Contact number is required",
   "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
   "email": "Email",
-  "username": "Username"
+  "username": "Username",
+  "ModeratedTest": {
+    "preTest": "PRE-TEST",
+    "tasks": "TASKS",
+    "postTest": "POST-TEST",
+    "consentForm": "Consent Form",
+    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
+    "landingPage": "Landing Page",
+    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "participantCamera": "Participant camera",
+    "cameraOptions": {
+      "optional": "Optional",
+      "required": "Required",
+      "disabled": "Disabled"
+    },
+    "preForm": "Pre-Form",
+    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
+    "postForm": "Post Form",
+    "postFormDescription": "This is a post-questionnaire to collect participant data.",
+    "finalMessage": "Final message",
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test."
+  }
 }
