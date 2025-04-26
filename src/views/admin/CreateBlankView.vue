@@ -3,14 +3,14 @@
     <v-col cols="12">
       <v-row justify="center">
         <p class="titles ma-16">
-          What kind of test are you looking to start?
+          {{ $t('Createblank.title') }}
         </p>
       </v-row>
     </v-col>
 
     <v-col cols="12" class="mt-6">
       <v-row>
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col cols="12" md="4" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/cardSorting.png')"
             title="Card Sorting"
@@ -24,30 +24,46 @@
         <v-col cols="10" md="4" sm="10" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
-            title="Usability Heuristic"
-            type="Test"
+            :title="$t('Createblank.testType_1.testTitle')"
+            :type="$t('Createblank.test')"
             segund-type="HEURISTICS"
-            :texts="['Usability Percentage', 'Final Report PDF', 'Invite specialists to evaluate your application']"
+            :texts="$t('Createblank.testType_1.text')"
+            @click="setTestType"
+          />
+        </v-col>
+        <v-col cols="12" md="5" sm="10" class="card">
+          <CardTypeTest
+            :img="require('../../../public/user.png')"
+            :title="$t('Createblank.testType_2.testTitle')"
+            :type="$t('Createblank.test')"
+            segund-type="User"
+            :texts="$t('Createblank.testType_2.text')"
+            @click="setTestType"
+          />
+        </v-col>
+        <v-col cols="12" md="5" sm="10" class="card">
+          <CardTypeTest
+            :img="require('../../../public/user.png')"
+            title="Accessibility Test"
+            :type="$t('Createblank.test')"
+            segund-type="Accessibility"
+            :texts="$t('Createblank.testType_2.text')"
             @click="setTestType"
           />
         </v-col>
 
-        <v-col cols="12" md="4" sm="10" class="card">
-          <CardTypeTest
-            :img="require('../../../public/user.png')"
-            title="Usability User"
-            type="Test"
-            segund-type="User"
-            :texts="['Webcam, audio & screen record', 'Enhanced answer analysis', 'Moderated or non moderated tests']"
-            @click="setTestType"
-          />
-        </v-col>
       </v-row>
     </v-col>
 
+    <!-- Move the dialog outside the grid structure -->
     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
+      :heading="$t('TestDialog.heading')"
+      :subHeading="$t('TestDialog.sub-heading')"
+      :testName="$t('TestDialog.test-name')"
+      :testDescription="$t('TestDialog.test-description')"
+      :testLabel="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>
@@ -79,7 +95,7 @@ export default {
 
 <style scoped>
 .outermost {
-  height: 93vh;
+  height: 100%;
   background-color: #f9f5f0;
 }
 

@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build-dev
 
 # Etapa 2: Producción y Pruebas
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 

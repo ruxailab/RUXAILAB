@@ -11,6 +11,12 @@ import CreateView from '@/views/admin/CreateView.vue'
 import CreateBlankView from '@/views/admin/CreateBlankView'
 import CreateFromTemplate from '@/views/admin/CreateFromTemplateView.vue'
 import FinalReportView from '@/views/admin/FinalReportView'
+import Profile from '@/views/admin/ProfileView.vue'
+import Notification from '@/views/admin/NotificationPage.vue'
+import Choose from '@/views/admin/Choose.vue'
+import Inspection from '@/views/admin/Inspection.vue'
+import Testing from '@/views/admin/Testing.vue'
+
 
 export default [
   {
@@ -18,6 +24,24 @@ export default [
     name: 'TestList',
     meta: { authorize: [1] },
     component: TestList,
+  },
+  {
+    path:'/choose',
+    name:'Choose',
+    meta: { authorize: [1] },
+    component:Choose,
+  },
+  {
+    path:'/profile',
+    name:'Profile',
+    meta: { authorize: [1] },
+    component:Profile,
+  },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    meta: { authorize: [1] },
+    component: Notification,
   },
   {
     path: '/managerview/:id/:token?',
@@ -95,6 +119,18 @@ export default [
     name: 'Create Blank View',
     meta: { authorize: [1] },
     component: CreateBlankView,
+  },
+  {
+    path: '/inspection',
+    name: 'Inspection',
+    meta: { authorize: [1] },
+    component: Inspection,
+  },
+  {
+    path: '/testing',
+    name: 'Testing',
+    meta: { authorize: [1] },
+    component: Testing,
   },
   {
     path: '/fromtemplate',
