@@ -136,7 +136,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-account"
-                            readonly
+                            :disabled="!isEditingProfile"
                             class="input-field-hover"
                           />
                         </v-col>
@@ -147,7 +147,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-email"
-                            readonly
+                            :disabled="!isEditingProfile"
                             class="input-field-hover"
                           />
                         </v-col>
@@ -158,7 +158,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-phone"
-                            readonly
+                            :disabled="!isEditingProfile"
                             class="input-field-hover"
                           />
                         </v-col>
@@ -169,7 +169,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-map-marker"
-                            readonly
+                            :disabled="!isEditingProfile"
                             class="input-field-hover"
                           />
                         </v-col>
@@ -388,7 +388,11 @@
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
-          <v-form ref="editProfileForm" v-model="editProfileValid">
+          <v-form
+            ref="editProfileForm"
+            v-model="editProfileValid"
+            lazy-validation
+          >
             <v-text-field
               v-model="editProfileData.username"
               :label="$t('username')"
@@ -629,6 +633,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { countries } from '@/utils/countries'
+import i18n from '@/i18n'
 
 export default {
   name: 'ProfileView',
@@ -648,13 +653,13 @@ export default {
       },
       countries: countries,
       usernameRules: [
-        (v) => !!v || $t('usernameRequired'),
-        (v) => (v && v.length >= 3) || $t('usernameMinLength'),
+        (v) => !!v || this.$t('usernameRequired'),
+        (v) => (v && v.length >= 3) || this.$t('usernameMinLength'),
       ],
-      countryRules: [(v) => !!v || $t('countryRequired')],
+      countryRules: [(v) => !!v || this.$t('countryRequired')],
       contactRules: [
-        (v) => !!v || $t('contactNumberRequired'),
-        (v) => /^\d{9,15}$/.test(v) || $t('enterValidPhoneNumber'),
+        (v) => !!v || this.$t('contactNumberRequired'),
+        (v) => /^\d{9,15}$/.test(v) || this.$t('enterValidPhoneNumber'),
       ],
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
@@ -685,6 +690,7 @@ export default {
       countrySearch: null,
       isSmallScreen: false,
       editProfileValid: false,
+      isEditingProfile: false,
     }
   },
 
@@ -781,10 +787,18 @@ export default {
         country: this.userprofile.country, // Store just the country name
       }
       this.editProfileDialog = true
+      this.isEditingProfile = true
     },
 
     async saveProfile() {
-      if (!this.$refs.editProfileForm.validate()) return
+      // if (!this.$refs.editProfileForm.validate()) return
+
+      const result = this.$refs.editProfileForm.validate()
+
+      if (!result) {
+        this.$toast.error(this.$t('alerts.fillFormCorrectly'))
+        return
+      }
 
       try {
         const auth = getAuth()
@@ -807,12 +821,12 @@ export default {
             country: this.editProfileData.country,
           }
 
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
+          this.$toast.success(i18n.t('alerts.genericSuccess'))
           this.editProfileDialog = false
         }
       } catch (error) {
         console.error('Error updating profile:', error)
-        this.$toast.error(i18n.t(errors.globalError))
+        this.$toast.error(this.$t('alerts.globalError'))
       }
     },
 
