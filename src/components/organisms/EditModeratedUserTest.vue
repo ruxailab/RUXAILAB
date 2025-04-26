@@ -45,7 +45,7 @@
               outlined
               color="orange"
               class="mx-6 mt-3"
-              :placeholder="$t('ModeratedTest.welcomeMessagePlaceholder')"
+              :placeholder="$t('ModeratedTest.welcomeMessage')"
               @change="saveWelcomeState()"
             />
             <v-col cols="12" class="pb-0 px-8">
@@ -56,7 +56,7 @@
                 v-model="landingPage"
                 class="mt-3"
                 style="border-radius: 20px;"
-                :placeholder="$t('ModeratedTest.landingPagePlaceholder')"
+                :placeholder="$t('ModeratedTest.url')"
                 outlined
                 color="orange"
                 @change="saveLandingPage()"
