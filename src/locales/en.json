@@ -470,8 +470,8 @@
     },
     "createTest": {
       "title": "Create a new test",
-      "blanckTitle": "Create a blank test",
-      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "blankTitle": "Create a blank test",
+      "blankSubtitle": "Create a blank test to begin with a completely new and fresh template.",
       "templateTitle": "Create from template",
       "templateSubtitle": "Create a test based on a template created by one of our users.",
       "create": "Create test",
@@ -499,7 +499,7 @@
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "genericSuccess": "Operation successful" 
+    "genericSuccess": "Operation successful"
   },
   "buttons": {
     "next": "Next",
@@ -611,7 +611,6 @@
     "analytics": "Analytics",
     "help_center": "Help Center",
     "howCanWeHelp": "How can we help?"
-    
   },
   "user": "USER",
   "account": "Account",
