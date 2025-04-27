@@ -266,6 +266,9 @@
                         (currentUserTestAnswer.preTestCompleted &&
                           i == 1 &&
                           !currentUserTestAnswer.submitted),
+                      'completed-task': 
+                        (i == 0 && currentUserTestAnswer.consentCompleted) ||
+                        (i == 1 && currentUserTestAnswer.preTestCompleted)
                     }"
                   >
                     <v-list-item-icon>
@@ -292,6 +295,15 @@
                         "
                       >
                         {{ task.title }}
+                        <v-icon 
+                          v-if="(i == 0 && currentUserTestAnswer.consentCompleted) ||
+                                (i == 1 && currentUserTestAnswer.preTestCompleted)"
+                          color="green"
+                          small
+                          class="ml-2"
+                        >
+                          mdi-check-circle
+                        </v-icon>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -344,6 +356,14 @@
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
                 >
                   {{ item.title }}
+                  <v-icon 
+                    v-if="allTasksCompleted"
+                    color="green"
+                    small
+                    class="ml-2"
+                  >
+                    mdi-check-circle
+                  </v-icon>
                 </v-list-item-title>
               </template>
               <v-tooltip v-for="(task, i) in item.value" :key="i" right>
@@ -359,6 +379,8 @@
                     :class="{
                       'disabled-group':
                         isTaskDisabled(i) && !currentUserTestAnswer.submitted,
+                      'completed-task': 
+                        currentUserTestAnswer.tasks[i]?.completed
                     }"
                   >
                     <v-list-item-icon>
@@ -377,6 +399,14 @@
                         "
                       >
                         {{ task.title }}
+                        <v-icon 
+                          v-if="currentUserTestAnswer.tasks[i]?.completed"
+                          color="green"
+                          small
+                          class="ml-2"
+                        >
+                          mdi-check-circle
+                        </v-icon>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -392,6 +422,8 @@
               :class="{
                 'disabled-group':
                   !allTasksCompleted && !currentUserTestAnswer.submitted,
+                'completed-task': 
+                  currentUserTestAnswer.postTestCompleted
               }"
             >
               <v-list-item-icon>
@@ -409,6 +441,14 @@
                   :style="index == item.id ? 'color: white' : 'color:#fca326'"
                 >
                   {{ item.title }}
+                  <v-icon 
+                    v-if="currentUserTestAnswer.postTestCompleted"
+                    color="green"
+                    small
+                    class="ml-2"
+                  >
+                    mdi-check-circle
+                  </v-icon>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -549,6 +589,14 @@
                   <v-row justify="center">
                     <h1 style="color: #455a64;" class="mt-2">
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
+                      <v-icon 
+                        v-if="currentUserTestAnswer.tasks[taskIndex]?.completed"
+                        color="green"
+                        large
+                        class="ml-2"
+                      >
+                        mdi-check-circle
+                      </v-icon>
                     </h1>
                   </v-row>
                   <v-spacer />
@@ -727,6 +775,14 @@
                   <h1 style="color: #455a64;" class="mt-6">
                     {{ test.testTitle }} -
                     {{ $t('UserTestView.titles.postTest') }}
+                    <v-icon 
+                      v-if="currentUserTestAnswer.postTestCompleted"
+                      color="green"
+                      large
+                      class="ml-2"
+                    >
+                      mdi-check-circle
+                    </v-icon>
                   </h1>
                 </v-row>
               </v-col>
@@ -1143,6 +1199,10 @@ export default {
   background-color: grey;
 }
 
+.completed-task {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
 .background {
   background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
   position: fixed;
@@ -1212,13 +1272,6 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
 }
 /* Right side scroll bar */
 /* width */
@@ -1255,14 +1308,12 @@ export default {
 /* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
-  /* background: #515069; */
 }
 .cards {
   border-radius: 20px;
 }
 .cardsTitle {
   color: #455a64;
-
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1270,7 +1321,6 @@ export default {
 }
 .cardsSubtitle {
   color: #455a64;
-
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
