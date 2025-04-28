@@ -129,7 +129,6 @@
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
     "globalError": "发生错误，给您带来不便，敬请谅解。"
-    
   },
   "Introduction": {
     "title": "UX远程实验室",
@@ -585,5 +584,7 @@
   "usernameMinLength": "用户名必须至少包含3个字符",
   "countryRequired": "国家为必填项",
   "contactNumberRequired": "联系电话为必填项",
-  "enterValidPhoneNumber": "请输入有效的电话号码（仅9-15位数字）"
+  "enterValidPhoneNumber": "请输入有效的电话号码（仅9-15位数字）",
+  "deleteForever": "永久删除",
+  "deleteAccount": "删除账户"
 }

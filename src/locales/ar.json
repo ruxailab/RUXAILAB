@@ -592,5 +592,7 @@
   "usernameMinLength": "يجب أن يحتوي اسم المستخدم على الأقل 3 أحرف",
   "countryRequired": "البلد مطلوب",
   "contactNumberRequired": "رقم الاتصال مطلوب",
-  "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)"
+  "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
+  "deleteForever": "حذف نهائيًا",
+  "deleteAccount": "حذف الحساب"
 }

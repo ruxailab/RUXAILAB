@@ -137,7 +137,6 @@
     "incorrectPassword": "Senha incorreta.",
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe pelo transtorno."
-    
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -608,7 +607,6 @@
     "analytics": "Análises",
     "help_center": "Central de Ajuda",
     "howCanWeHelp": "Como podemos ajudar?"
-
   },
   "user": "USUÁRIO",
   "account": "Conta",
@@ -626,5 +624,7 @@
   "usernameMinLength": "O nome de usuário deve ter pelo menos 3 caracteres",
   "countryRequired": "País é obrigatório",
   "contactNumberRequired": "Número de contato é obrigatório",
-  "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)"
+  "enterValidPhoneNumber": "Por favor, digite um número de telefone válido (apenas 9-15 dígitos)",
+  "deleteForever": "Excluir para sempre",
+  "deleteAccount": "Excluir conta"
 }

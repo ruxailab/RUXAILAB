@@ -229,11 +229,13 @@
                             small
                             class="mr-2 transition-swing"
                             :color="
-                              newPassword.length >= 8 ? 'success' : 'grey'
+                              newPassword && newPassword.length >= 8
+                                ? 'success'
+                                : 'grey'
                             "
                           >
                             {{
-                              newPassword.length >= 8
+                              newPassword && newPassword.length >= 8
                                 ? 'mdi-check-circle'
                                 : 'mdi-circle-outline'
                             }}
@@ -245,11 +247,13 @@
                             small
                             class="mr-2 transition-swing"
                             :color="
-                              /[A-Z]/.test(newPassword) ? 'success' : 'grey'
+                              newPassword && /[A-Z]/.test(newPassword)
+                                ? 'success'
+                                : 'grey'
                             "
                           >
                             {{
-                              /[A-Z]/.test(newPassword)
+                              newPassword && /[A-Z]/.test(newPassword)
                                 ? 'mdi-check-circle'
                                 : 'mdi-circle-outline'
                             }}
@@ -284,8 +288,8 @@
                             :append-icon="
                               showPassword ? 'mdi-eye' : 'mdi-eye-off'
                             "
-                            @click:append="showPassword = !showPassword"
                             class="input-field-hover"
+                            @click:append="showPassword = !showPassword"
                           />
                         </v-col>
                         <v-col cols="12" md="6">
@@ -301,10 +305,10 @@
                             :append-icon="
                               showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'
                             "
+                            class="input-field-hover"
                             @click:append="
                               showConfirmPassword = !showConfirmPassword
                             "
-                            class="input-field-hover"
                           />
                         </v-col>
                       </v-row>
@@ -354,10 +358,10 @@
                         color="error"
                         class="text-none font-weight-medium transition-swing"
                         :block="isSmallScreen"
-                        @click="deleteAccountDialog = true"
-                        :outlined="!hover"
                         :class="{ 'transform-button': hover }"
+                        :outlined="!hover"
                         :elevation="hover ? 2 : 0"
+                        @click="deleteAccountDialog = true"
                       >
                         <v-icon left>
                           mdi-delete
@@ -460,11 +464,11 @@
           <v-hover v-slot="{ hover }">
             <v-btn
               color="primary"
-              @click="saveProfile"
               :disabled="!editProfileValid"
               :elevation="hover ? 4 : 2"
               :class="{ 'transform-button': hover }"
               class="transition-swing"
+              @click="saveProfile"
             >
               <v-icon left>
                 mdi-content-save
@@ -663,7 +667,7 @@ export default {
       ],
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
-      displayMissingInfo: this.$t('PROFILE.infoMissing'),
+      displayMissingInfo: this.$t('PROFILE.missingInfo'),
       loading: true,
       valid: false,
       showPassword: false,
@@ -672,9 +676,10 @@ export default {
       confirmPassword: '',
       passwordRules: [
         (v) => !!v || this.$t('PROFILE.passwordRequired'),
-        (v) => v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
-        (v) => /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
-        (v) => this.hasSpecialChar(v) || this.$t('PROFILE.passwordSymbol'),
+        (v) => !v || v.length >= 8 || this.$t('PROFILE.passwordMinLength'),
+        (v) => !v || /[A-Z]/.test(v) || this.$t('PROFILE.passwordUppercase'),
+        (v) =>
+          !v || this.hasSpecialChar(v) || this.$t('PROFILE.passwordSymbol'),
       ],
       confirmPasswordRules: [
         (v) => !!v || this.$t('PROFILE.confirmPasswordRequired'),
@@ -773,7 +778,7 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching profile:', error)
-        this.$toast.error(i18n.t(errors.globalError))
+        this.$toast.error(i18n.t('error.globalError'))
       } finally {
         this.loading = false
       }
@@ -791,8 +796,6 @@ export default {
     },
 
     async saveProfile() {
-      // if (!this.$refs.editProfileForm.validate()) return
-
       const result = this.$refs.editProfileForm.validate()
 
       if (!result) {
@@ -823,10 +826,11 @@ export default {
 
           this.$toast.success(i18n.t('alerts.genericSuccess'))
           this.editProfileDialog = false
+          this.isEditingProfile = false
         }
       } catch (error) {
         console.error('Error updating profile:', error)
-        this.$toast.error(this.$t('alerts.globalError'))
+        this.$toast.error(this.$t('errors.globalError'))
       }
     },
 
@@ -838,20 +842,22 @@ export default {
 
           if (user) {
             await updatePassword(user, this.newPassword)
-            this.$toast.success(i18n.$t('alerts.genericSuccess'))
+            this.$toast.success(this.$t('alerts.genericSuccess'))
             this.newPassword = ''
             this.confirmPassword = ''
             this.$refs.passwordForm.reset()
           }
         } catch (error) {
-          this.$toast.error(i18n.t(errors.globalError))
+          console.error('Error changing password:', error)
+          const errorMessage = this.$t('errors.globalError')
+          this.$toast.error(errorMessage)
         }
       }
     },
 
     async deleteAccount() {
       if (!this.userPassword) {
-        this.$toast.error(i18n.t(errors.globalError))
+        this.$toast.error(this.$t('errors.globalError'))
         return
       }
 
@@ -902,17 +908,17 @@ export default {
 
           // Delete the Firebase Auth user
           await user.delete()
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
+          this.$toast.success(this.$t('alerts.genericSuccess'))
           this.deleteAccountDialog = false
           this.signOut()
         } catch (error) {
           console.error('Error during account deletion:', error)
-          this.$toast.error(i18n.t(errors.globalError))
+          this.$toast.error(this.$t('error.globalError'))
         } finally {
           this.isDeleting = false
         }
       } else {
-        this.$toast.error(i18n.t(errors.globalError))
+        this.$toast.error(this.$t('errors.globalError'))
       }
     },
 

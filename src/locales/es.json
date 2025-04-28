@@ -623,5 +623,7 @@
   "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
   "countryRequired": "País es requerido",
   "contactNumberRequired": "Número de contacto es requerido",
-  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)"
+  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)",
+  "deleteForever": "Eliminar para siempre",
+  "deleteAccount": "Eliminar cuenta"
 }

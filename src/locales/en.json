@@ -499,7 +499,7 @@
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "genericSuccess": "Operation successful" 
+    "genericSuccess": "Operation successful"
   },
   "buttons": {
     "next": "Next",
@@ -611,7 +611,6 @@
     "analytics": "Analytics",
     "help_center": "Help Center",
     "howCanWeHelp": "How can we help?"
-    
   },
   "user": "USER",
   "account": "Account",
@@ -631,5 +630,7 @@
   "contactNumberRequired": "Contact number is required",
   "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
   "email": "Email",
-  "username": "Username"
+  "username": "Username",
+  "deleteForever": "Delete Forever",
+  "deleteAccount": "Delete Account"
 }

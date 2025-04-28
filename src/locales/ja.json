@@ -129,7 +129,6 @@
     "incorrectPassword": "パスワードが間違っています",
     "incorrectCredential": "ユーザー名またはパスワードが間違っています。",
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。"
-    
   },
   "Introduction": {
     "title": "UXリモートラボ",
@@ -572,7 +571,6 @@
     "analytics": "分析",
     "help_center": "ヘルプセンター",
     "howCanWeHelp": "どのようにお手伝いできますか？"
-
   },
   "user": "ユーザー",
   "account": "アカウント",
@@ -590,5 +588,7 @@
   "usernameMinLength": "ユーザー名は少なくとも3文字必要です",
   "countryRequired": "国は必須です",
   "contactNumberRequired": "連絡先番号は必須です",
-  "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）"
+  "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）",
+  "deleteForever": "永遠に削除する",
+  "deleteAccount": "アカウントを削除"
 }

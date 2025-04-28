@@ -129,7 +129,6 @@
     "incorrectPassword": "Mot de passe incorrect",
     "incorrectCredential": "Nom d'utilisateur ou mot de passe incorrect.",
     "globalError": "Une erreur est survenue, désolé pour le désagrément."
-    
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -589,5 +588,7 @@
   "usernameMinLength": "Le nom d'utilisateur doit comporter au moins 3 caractères",
   "countryRequired": "Pays requis",
   "contactNumberRequired": "Numéro de contact requis",
-  "enterValidPhoneNumber": "Veuillez entrer un numéro de téléphone valide (9-15 chiffres uniquement)"
+  "enterValidPhoneNumber": "Veuillez entrer un numéro de téléphone valide (9-15 chiffres uniquement)",
+  "deleteForever": "Supprimer définitivement",
+  "deleteAccount": "Supprimer le compte"
 }
