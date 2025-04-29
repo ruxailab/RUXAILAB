@@ -624,5 +624,30 @@
   "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
   "countryRequired": "País es requerido",
   "contactNumberRequired": "Número de contacto es requerido",
-  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)"
+  "enterValidPhoneNumber": "Por favor ingrese un número de teléfono válido (solo 9-15 dígitos)",
+  "ModeratedTest": {
+    "preTest": "PRE-PRUEBA",
+    "tasks": "TAREAS",
+    "postTest": "POST-PRUEBA",
+    "consentForm": "Formulario de consentimiento",
+    "consentDescription": "Este es un cuadro de consentimiento con un texto para confirmar el consentimiento.",
+    "welcomeMessage": "Mensaje de bienvenida",
+    "welcomeMessageDescription": "Este mensaje será lo primero que los participantes verán antes de que comience la sesión.",
+    "landingPage": "Página de inicio",
+    "landingPageDescription": "Esta URL se cargará automáticamente cuando el participante inicie la sesión.",
+    "url": "La URL de su página de destino",
+    "participantCamera": "Cámara del participante",
+    "cameraOptions": {
+      "optional": "Opcional",
+      "required": "Requerido",
+      "disabled": "Deshabilitado"
+    },
+    "preForm": "Pre-Formulario",
+    "preFormDescription": "Este es un cuestionario previo para recopilar datos de los participantes.",
+    "postForm": "Post-Formulario",
+    "postFormDescription": "Este es un cuestionario posterior para recopilar datos de los participantes.",
+    "finalMessage": "Mensaje final",
+    "finalMessageDescription": "Este es un mensaje final que dejas para el participante al finalizar la prueba.",
+    "finalMessagePlaceholder": "Ingresar mensaje final"
+  }
 }
