@@ -59,8 +59,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import ImageImport from '@/components/atoms/ImportImage.vue'
 
-// Props
-defineProps({
+const props = defineProps({
   answerHeu: {
     type: Object,
     default: () => ({}),
@@ -72,33 +71,28 @@ defineProps({
   },
 })
 
-// Emits
 const emit = defineEmits(['updateComment'])
 
-// Vuex store
 const store = useStore()
 
-// Reactive state
 const show = ref(false)
 const localComment = ref('')
 
-// Computed properties
 const test = computed(() => store.getters.test)
 const hasContent = computed(
-  () => answerHeu.value.heuristicComment || answerHeu.value.answerImageUrl
+  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl
 )
 
-// Watchers
 watch(
-  () => heurisIndex.value,
+  () => props.heurisIndex,
   () => {
     show.value = false
-    localComment.value = answerHeu.value.heuristicComment || ''
+    localComment.value = props.answerHeu.heuristicComment || ''
   }
 )
 
 watch(
-  () => answerHeu.value.heuristicComment,
+  () => props.answerHeu.heuristicComment,
   (newVal) => {
     localComment.value = newVal || ''
     if (newVal && !show.value) {
@@ -108,7 +102,7 @@ watch(
 )
 
 watch(
-  () => answerHeu.value.answerImageUrl,
+  () => props.answerHeu.answerImageUrl,
   (newVal) => {
     if (newVal && !show.value) {
       show.value = true
@@ -116,14 +110,12 @@ watch(
   }
 )
 
-// Lifecycle hooks
 onMounted(() => {
   if (hasContent.value) {
     show.value = true
   }
 })
 
-// Methods
 const updateComment = (input) => {
   emit('updateComment', input)
 }
