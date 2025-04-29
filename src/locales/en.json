@@ -46,11 +46,11 @@
     "unread": "unread",
     "inbox": "inbox",
     "timeAgo": {
-      "years": "{count} year{count !== 1 ? 's' : ''} ago",
-      "months": "{count} month{count !== 1 ? 's' : ''} ago",
-      "days": "{count} day{count !== 1 ? 's' : ''} ago",
-      "hours": "{count} hour{count !== 1 ? 's' : ''} ago",
-      "minutes": "{count} minute{count !== 1 ? 's' : ''} ago",
+      "years": "{count} year | {count} years",
+      "months": "{count} month | {count} months",
+      "days": "{count} day | {count} days",
+      "hours": "{count} hour | {count} hours",
+      "minutes": "{count} minute | {count} minutes",
       "now": "Now"
     },
     "viewAll": "View all",

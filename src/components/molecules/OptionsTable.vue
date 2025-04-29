@@ -103,10 +103,8 @@ const dialog = ref(false);
 const editIndex = ref(-1);
 const hasValue = ref(true);
 
-const localOptions = ref([]);
-
 const optionsWithFormattedValue = computed(() =>
-  localOptions.value.map((opt) => ({
+  store.state.Tests.Test.testOptions.map((opt) => ({
     ...opt,
     value: opt.value === null ? 'No value' : opt.value,
   })),
@@ -125,9 +123,6 @@ watch(dialog, (newVal) => {
   }
 });
 
-watch(localOptions, () => {
-  emit('change');
-});
 
 const updateHasValue = (newValue) => {
   hasValue.value = newValue;
@@ -136,30 +131,32 @@ const updateHasValue = (newValue) => {
 const updateOptions = (newOption) => {
   console.log('Received newOption:', newOption);
   if (editIndex.value === -1) {
-    localOptions.value.push({
+    store.state.Tests.Test.testOptions.push({
       ...newOption,
       timestamp: Date.now(),
     });
   } else {
-    localOptions.value[editIndex.value] = {
+    store.state.Tests.Test.testOptions[editIndex.value] = {
       ...newOption,
-      timestamp: localOptions.value[editIndex.value].timestamp,
+      timestamp: store.state.Tests.Test.testOptions[editIndex.value].timestamp,
     };
     editIndex.value = -1;
   }
   resetForm();
+  emitChange();
 };
 
 const deleteItem = (item) => {
-  const index = localOptions.value.findIndex((opt) => opt.timestamp === item.timestamp);
+  const index = store.state.Tests.Test.testOptions.findIndex((opt) => opt.timestamp === item.timestamp);
   if (index !== -1) {
-    localOptions.value.splice(index, 1);
+    store.state.Tests.Test.testOptions.splice(index, 1);
   }
+  emitChange();
 };
 
 const editItem = (item) => {
-  editIndex.value = localOptions.value.findIndex((opt) => opt.timestamp === item.timestamp);
-  option.value = { ...localOptions.value[editIndex.value] };
+  editIndex.value = store.state.Tests.Test.testOptions.findIndex((opt) => opt.timestamp === item.timestamp);
+  option.value = { ...store.state.Tests.Test.testOptions[editIndex.value] };
   hasValue.value = option.value.value !== null;
   dialog.value = true;
 };

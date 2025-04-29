@@ -177,6 +177,12 @@ const headers = computed(() => [
   },
 ]);
 
+const checkIfIsSubmitted = (status) => {
+  return status
+    ? t('HeuristicsReport.status.submitted')
+    : t('HeuristicsReport.status.in_progress');
+};
+
 const reports = computed(() => {
   const testAnswerDocument = store.getters.testAnswerDocument;
 
@@ -221,11 +227,6 @@ watch(reports, () => {
   if (Object.values(reports.value)) loading.value = false;
 });
 
-const checkIfIsSubmitted = (status) => {
-  return status
-    ? t('HeuristicsReport.status.submitted')
-    : t('HeuristicsReport.status.in_progress');
-};
 
 const getCurrentAnswer = async () => {
   await store.dispatch('getCurrentTestAnswerDoc');
@@ -320,7 +321,16 @@ const getCooperatorEmail = (userDocId) => {
 };
 
 onMounted(async () => {
-  await store.dispatch('getCurrentTestAnswerDoc');
+  const timeout = setTimeout(() => {
+    loading.value = false;
+  }, 10000);
+  try {
+    await store.dispatch('getCurrentTestAnswerDoc');
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    clearTimeout(timeout);
+  }
 });
 </script>
 
