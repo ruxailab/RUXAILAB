@@ -66,7 +66,7 @@
     <v-row v-else class="nav pa-0 ma-0" dense>
       <!-- Floating Action Button -->
       <v-speed-dial
-        v-if="showSaveBtn"
+        v-if="showSaveBtn && currentUserTestAnswer"
         v-model="fab"
         fixed
         class="mr-3"
@@ -794,22 +794,14 @@ const calculateProgress = () => {
 const setTest = async () => {
   logined.value = true;
   await store.dispatch('getCurrentTestAnswerDoc');
-  // Assuming populateWithHeuristicQuestions is defined elsewhere
-  // If not, you may need to implement or remove this
-  // populateWithHeuristicQuestions();
 };
 
 const setExistUser = () => {
   noExistUser.value = false;
 };
 
-const signOut = () => {
-  // Assuming signOut is defined elsewhere or needs to be implemented
-  store.dispatch('signOut');
-};
-
 const mappingSteps = async () => {
-  items.value = []; // Reset items to avoid stale data
+  items.value = [];
 
   // PreTest
   if (validate(test.value?.testStructure?.preTest)) {
@@ -905,7 +897,7 @@ onMounted(async () => {
   await nextTick();
   if (user.value) {
     await setTest();
-    await autoComplete(); // Call after mappingSteps and setTest
+    await autoComplete();
     calculateProgress();
   }
 });

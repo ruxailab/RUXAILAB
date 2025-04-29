@@ -270,6 +270,7 @@
                     :key="i"
                     class="pb-0 pt-0"
                     small
+                    @click="itemSelect = i"
                     @mouseenter="hoveredItem = i"
                     @mouseleave="hoveredItem = null"
                   >
@@ -483,17 +484,13 @@
                 <v-list-item
                   v-for="(item, i) in heuristics[itemSelect].questions"
                   :key="i"
+                  @click="questionSelect = i"
                 >
                   <v-list-item-title class="py-3">
                     {{ item.title }}
                   </v-list-item-title>
-                  <template
-                    v-if="i == questionSelect"
-                    #prepend
-                  >
-                    <v-icon class="pt-4">
-                      mdi-chevron-right
-                    </v-icon>
+                  <template v-if="i == questionSelect" #prepend>
+                    <v-icon class="pt-4">mdi-chevron-right</v-icon>
                   </template>
                 </v-list-item>
               </v-list>

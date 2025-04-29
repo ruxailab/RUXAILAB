@@ -153,6 +153,7 @@ import Snackbar from '@/components/atoms/Snackbar.vue';
 import EditHeuristicsTest from '@/components/organisms/EditHeuristicsTest.vue';
 import EditUserTest from '@/components/organisms/EditUserTest.vue';
 import EditModeratedUserTest from '@/components/organisms/EditModeratedUserTest.vue';
+import Test from '@/models/Test';
 
 const store = useStore();
 const router = useRouter();
@@ -227,7 +228,9 @@ const submit = async () => {
       finalMessage: store.getters.finalMessage,
     };
   }
-  await store.dispatch('updateTest', { ...test.value, ...object.value });
+
+  const updatedTest = new Test({ ...test.value, ...object.value });
+  await store.dispatch('updateTest', updatedTest);
 };
 
 const validate = (valid, idx) => {
