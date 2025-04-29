@@ -9,7 +9,7 @@
     </v-col>
 
     <v-col cols="12" class="mt-6">
-      <v-row class="cards-container">
+      <v-row class="cards-container" justify="center">
         <!-- Active Card: User Testing -->
         <v-col cols="12" sm="6" md="3" lg="3" class="card">
           <CardTypeTest
@@ -122,15 +122,12 @@ export default {
 .cards-container {
   display: flex;
   justify-content: center;
-  flex-wrap: nowrap; /* Ensures all cards stay in one row */
+  flex-wrap: wrap;
   max-width: 100%;
 }
 
 .card {
-  flex: 1 1 23%; /* Ensures four cards in a row */
-  display: flex;
-  flex-direction: column;
-  padding: 0.1rem; 
+  padding: 0.5rem;
   overflow: hidden;
   word-wrap: break-word;
 }
@@ -147,29 +144,4 @@ export default {
   width: 100%;
   max-width: 90%;
 }
-
-/* Adjust for smaller screens */
-@media (max-width: 1264px) {
-  .card {
-    flex: 1 1 32%;
-    margin-bottom: 1rem;
-  }
-}
-
-@media (max-width: 1360px) {
-  .cards-container {
-    flex-wrap: wrap; 
-  }
-  
-  .card {
-    flex: 1 1 45%;
-  }
-}
-
-@media (max-width: 1000px) {
-  .card {
-    flex: 1 1 100%;
-  }
-}
-
 </style>

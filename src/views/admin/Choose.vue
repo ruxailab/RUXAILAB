@@ -2,17 +2,15 @@
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
-        <p class="titles ma-16">What kind of test are you looking to start?</p>
+        <p class="titles ma-16 ma-md-10 ma-sm-6">
+          What kind of test are you looking to start?
+        </p>
       </v-row>
     </v-col>
 
     <v-col cols="12" class="mt-6">
       <v-row>
-        
-
-        
-
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col cols="12" md="4" sm="12" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Testing"
@@ -23,7 +21,7 @@
           />
         </v-col>
 
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col cols="12" md="4" sm="12" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Inspection"
@@ -34,7 +32,7 @@
           />
         </v-col>
 
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col cols="12" md="4" sm="12" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Inquiry"
@@ -54,7 +52,6 @@
     />
   </div>
 </template>
-
 
 <script>
 import CardTypeTest from '@/components/atoms/CardTypeTest'
@@ -82,7 +79,7 @@ export default {
 
 <style scoped>
 .outermost {
-  height: 93vh;
+  height: auto; /* Allows container to grow with content */
   background-color: #f9f5f0;
 }
 
@@ -97,22 +94,22 @@ export default {
   margin: auto;
 }
 
+/* Adjustments for small screens (up to 600px) */
 @media (max-width: 600px) {
   .titles {
-    font-size: 28px;
+    font-size: 28px; /* Reduces font size */
+    margin: 16px !important; /* Overrides margin for small screens */
   }
 }
 
+/* Adjustments for medium screens (601px to 1160px) */
 @media (min-width: 601px) and (max-width: 1160px) {
-  .outermost {
-    height: auto;
-  }
-
   .titles {
     font-size: 32px;
   }
 }
 
+/* Adjustments for large screens (above 1160px) */
 @media (min-width: 1160px) {
   .titles {
     font-size: 38px;
