@@ -37,7 +37,12 @@ export default {
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
-        return {}
+        return {};
+      }
+
+      // Guard against undefined rootState.test or rootState.test.testStructure
+      if (!rootState.test || !rootState.test.testStructure) {
+        return {};
       }
       if (!rootState.user) {
         return {}
@@ -46,64 +51,60 @@ export default {
       if (state.testAnswerDocument.type === 'HEURISTICS') {
         return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
           ? HeuristicAnswer.toHeuristicAnswer(
-            state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
-            rootState.test.testOptions,
-          )
+              state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`],
+              rootState.test.testOptions,
+            )
           : new HeuristicAnswer({
-            userDocId: rootState.user.id,
-          })
+              userDocId: rootState.user.id,
+            });
       }
 
       if (state.testAnswerDocument.type === 'User') {
         return state.testAnswerDocument.taskAnswers[`${rootState.user.id}`]
           ? TaskAnswer.toTaskAnswer(
-            state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
-          )
+              state.testAnswerDocument.taskAnswers[`${rootState.user.id}`],
+            )
           : new TaskAnswer({
-            userDocId: rootState.user.id,
-            preTestAnswer: (() => {
-              const preTestAnswer = []
-              for (
-                let i = 0;
-                i < rootState.test.testStructure.preTest.length;
-                i++
-              ) {
-                preTestAnswer[i] = {
-                  preTestAnswerId: i,
-                  answer: '',
+              userDocId: rootState.user.id,
+              preTestAnswer: (() => {
+                const preTestAnswer = [];
+                const preTestLength = rootState.test.testStructure.preTest?.length || 0;
+                for (let i = 0; i < preTestLength; i++) {
+                  preTestAnswer[i] = {
+                    preTestAnswerId: i,
+                    answer: '',
+                  };
                 }
-              }
-              return preTestAnswer
-            })(),
-            consent: rootState.test.testStructure.consent,
-            postTestAnswer: rootState.test.testStructure.postTest,
-            preTestCompleted: false,
-            consentCompleted: false,
-            fullName: '',
-            postTestCompleted: false,
-            tasks: (() => {
-              const tasks = {}
-              for (
-                let i = 0;
-                i < rootState.test.testStructure.userTasks.length;
-                i++
-              ) {
-                tasks[i] = new UserTask({
-                  taskId: i,
-                  taskAnswer: '',
-                  taskObservations: '',
-                  taskTime: null,
-                  completed: null,
-                  audioRecordURL: '',
-                  screenRecordURL: '',
-                  webcamRecordURL: '',
-                  postAnswer: '',
-                })
-              }
-              return tasks
-            })(),
-          })
+                return preTestAnswer;
+              })(),
+              consent: rootState.test.testStructure.consent || false,
+              postTestAnswer: rootState.test.testStructure.postTest || [],
+              preTestCompleted: false,
+              consentCompleted: false,
+              postTestCompleted: false,
+              tasks: (() => {
+                const tasks = {};
+                // Ensure userTasks exists before accessing its length
+                const userTasksLength = rootState.test.testStructure.userTasks?.length || 0;
+                for (let i = 0; i < userTasksLength; i++) {
+                  tasks[i] = new UserTask({
+                    taskId: i,
+                    taskAnswer: '',
+                    taskObservations: '',
+                    taskTime: null,
+                    completed: false,
+                    audioRecordURL: '',
+                    screenRecordURL: '',
+                    webcamRecordURL: '',
+                    postAnswer: '',
+                  });
+                }
+                return tasks;
+              })(),
+            });
       }
+
+      return {};
     },
   },
   mutations: {

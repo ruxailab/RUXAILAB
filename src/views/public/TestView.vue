@@ -725,6 +725,9 @@ const calculateProgress = () => {
 }
 
 const perHeuristicProgress = (item) => {
+  if (!item || !item.heuristicQuestions || !Array.isArray(item.heuristicQuestions)) {
+    return 0
+  }
   const value =
     (item.heuristicQuestions.filter(
       (q) =>
