@@ -35,20 +35,17 @@ export default {
 
     type: {
       type: String,
-      default: 'textArea',
-      require: false
+      default: 'textArea'
     },
 
     label: {
       type: String,
-      default: '',
-      require: false,
+      default: ''
     },
 
     rows: {
       type: Number,
-      default: 1,
-      require: false,
+      default: 1
     },
   },
 
