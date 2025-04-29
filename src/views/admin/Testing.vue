@@ -108,7 +108,8 @@ export default {
   min-height: 93vh;
   height: auto;
   background-color: #f9f5f0;
-  padding-bottom: 2rem;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .titles {
@@ -143,5 +144,56 @@ export default {
   white-space: normal;
   width: 100%;
   max-width: 90%;
+}
+
+/* Media Queries para Responsividade */
+
+/* Telas pequenas (≤ 600px) */
+@media (max-width: 600px) {
+  .outermost {
+    padding: 0.5rem;
+  }
+
+  .titles {
+    font-size: clamp(20px, 5vw, 28px);
+    margin: 1rem 0;
+  }
+
+  .card {
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Tablets (601px - 960px) */
+@media (min-width: 601px) and (max-width: 960px) {
+  .outermost {
+    padding: 1rem;
+  }
+
+  .titles {
+    font-size: clamp(24px, 5vw, 32px);
+  }
+
+  .card {
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Desktop (961px e acima) */
+@media (min-width: 961px) {
+  .outermost {
+    padding: 2rem;
+  }
+
+  .titles {
+    font-size: clamp(32px, 5vw, 38px);
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
 }
 </style>
