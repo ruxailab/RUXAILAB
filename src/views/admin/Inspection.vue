@@ -9,8 +9,8 @@
     </v-col>
 
     <v-col cols="12" class="mt-6">
-      <v-row>
-        <v-col cols="10" md="5" sm="10" class="card">
+      <v-row justify="center">
+        <v-col cols="12" sm="10" md="5" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             title="Usability Heuristic"
@@ -21,7 +21,7 @@
           />
         </v-col>
 
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" sm="10" md="5" class="card">
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/user.png')"
@@ -34,7 +34,7 @@
           </div>
         </v-col>
 
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" sm="10" md="5" class="card">
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/specialist.png')"
@@ -47,7 +47,7 @@
           </div>
         </v-col>
 
-        <v-col cols="10" md="5" sm="10" class="card">
+        <v-col cols="12" sm="10" md="5" class="card">
           <div class="inactive-card">
             <CardTypeTest
               :img="require('../../../public/user.png')"
@@ -62,7 +62,7 @@
       </v-row>
     </v-col>
 
-     <CreateTestNameDialog
+    <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
       :heading="$t('TestDialog.heading')"
@@ -115,58 +115,34 @@ export default {
   margin: 0 auto;
 }
 
-.cards-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap; /* Ensures all cards stay in one row */
-  max-width: 100%;
-}
-
 .card {
-  flex: 1 1 23%; /* Ensures four cards in a row */
-  display: flex;
-  flex-direction: column;
-  padding: 0.1rem; 
-  overflow: hidden;
-  word-wrap: break-word;
+  padding: 1rem;
 }
 
-.card-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.card-content p {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  font-size: 10px;
-  width: 100%;
-  max-width: 90%;
-}
-
-/* Adjust for smaller screens */
-@media (max-width: 1264px) {
+/* Ajustes para telas pequenas (até 600px) */
+@media (max-width: 600px) {
+  .outermost {
+    padding-bottom: 1rem;
+  }
+  .titles {
+    margin: 16px !important; /* Mantém a margem, mas sobrescreve em telas pequenas */
+  }
   .card {
-    flex: 1 1 32%;
-    margin-bottom: 1rem;
+    padding: 0.5rem;
   }
 }
 
-@media (max-width: 1360px) {
-  .cards-container {
-    flex-wrap: wrap; 
-  }
-  
+/* Ajustes para telas médias (601px a 960px) */
+@media (min-width: 601px) and (max-width: 960px) {
   .card {
-    flex: 1 1 45%;
+    padding: 0.75rem;
   }
 }
 
-@media (max-width: 1000px) {
+/* Ajustes para telas grandes (acima de 960px) */
+@media (min-width: 961px) {
   .card {
-    flex: 1 1 100%;
+    padding: 1rem;
   }
 }
-
 </style>
