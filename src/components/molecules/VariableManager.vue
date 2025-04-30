@@ -2,7 +2,7 @@
   <v-container>
     <!-- Create Dialog -->
     <CreateVariable 
-      :dialog="dialog"
+      v-model:dialog="dialog"
       :title="$t('UserTestTable.buttons.createNewVariable')"
       @close="dialog = false"
       @save="saveNewItem"
