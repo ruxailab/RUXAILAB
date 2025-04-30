@@ -1,7 +1,7 @@
 import store from '@/store'
 
-//final Statistic
-//final Result
+// Final Statistic
+// Final Result
 const testData = {
   average: null,
   max: null,
@@ -30,8 +30,16 @@ function calcFinalResult(array) {
   let result = 0
   let qtdQuestion = 0
   let qtdNoAplication = 0
+
+  // Check if test and testOptions exist
+  const test = store.getters.test
+  if (!test || !Array.isArray(test.testOptions)) {
+    console.warn('calcFinalResult: test or testOptions is not available', test)
+    return '0.00' // Return a default value to prevent errors
+  }
+
   const maxOption = Math.max(
-    ...store.getters.test.testOptions.map((item) => item.value),
+    ...test.testOptions.map((item) => item.value),
   )
 
   array.forEach((res) => {
@@ -46,7 +54,7 @@ function calcFinalResult(array) {
   })
 
   const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
-  return ((result * 100) / perfectResult).toFixed(2)
+  return perfectResult === 0 ? '0.00' : ((result * 100) / perfectResult).toFixed(2)
 }
 
 function answers() {
@@ -58,8 +66,7 @@ function answers() {
   return []
 }
 
-//final statistics
-
+// Final statistics
 function created(resultEvaluator) {
   store.dispatch('processStatistics', {
     resultEvaluator: resultEvaluator,
@@ -67,10 +74,18 @@ function created(resultEvaluator) {
 }
 
 function statistics() {
-  if (store.getters.testAnswerDocument?.type === 'HEURISTICS') {
+  // Check if test and testAnswerDocument exist
+  const test = store.getters.test
+  const testAnswerDocument = store.getters.testAnswerDocument
+  if (!test || !testAnswerDocument) {
+    console.warn('statistics: test or testAnswerDocument is not available', { test, testAnswerDocument })
+    return []
+  }
+
+  if (testAnswerDocument.type === 'HEURISTICS') {
     const resultEvaluator = []
 
-    //Get Evaluator answers
+    // Get Evaluator answers
     answers().forEach((evaluator) => {
       let SelectEvaluator = resultEvaluator.find(
         (e) => e.userDocId == evaluator.userDocId,
@@ -90,7 +105,7 @@ function statistics() {
         SelectEvaluator.lastUpdate = evaluator.lastUpdate
       }
 
-      //Get Heuristics for evaluators
+      // Get Heuristics for evaluators
       let heurisIndex = 1
       evaluator.heuristicQuestions.forEach((heuristic) => {
         let noAplication = 0
@@ -133,6 +148,7 @@ function statistics() {
 
     return resultEvaluator
   }
+  return []
 }
 
 function finalResult() {
@@ -167,7 +183,6 @@ function finalResult() {
   return testData
 }
 
-// this.$store.getters.test
 export {
   percentage,
   standardDeviation,

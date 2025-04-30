@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600">
+  <v-dialog :value="dialog" @update:modelValue="$emit('update:dialog', $event)" persistent max-width="600">
     <v-card>
       <v-card-title class="text-h6 mb-2">
         {{ title }}
@@ -55,14 +55,14 @@ export default {
   props: {
     title: {
       type: String,
-      defualt: false,
-      require: true,
+      default: '', // Fixed typo: 'defualt' to 'default' and provided a default value
+      required: true, // Fixed typo: 'require' to 'required'
     },
 
     dialog: {
       type: Boolean,
       default: false,
-      require: true,
+      required: true, // Fixed typo: 'require' to 'required'
     },
   },
 
