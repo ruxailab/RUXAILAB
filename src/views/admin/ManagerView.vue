@@ -121,12 +121,14 @@ const logined = ref(false)
 const token = ref('')
 
 const test = computed(() => {
+  const testData = store.getters.test
+  if (!testData) return null
   store.dispatch('processStatistics', {
     resultEvaluator: statistics(),
     percentage: store.getters.percentage,
     answers: store.getters.testAnswerDocument,
   })
-  return store.getters.test
+  return testData
 })
 
 const user = computed(() => {
@@ -140,39 +142,43 @@ const loading = computed(() => store.getters.loading)
 const accessLevel = computed(() => {
   if (!user.value) return 1
   if (user.value.accessLevel === 0) return 0
-  const isTestOwner = test.value.testAdmin?.userDocId === user.value.id
+  const isTestOwner = test.value?.testAdmin?.userDocId === user.value.id
   if (isTestOwner) return 0
-  const coopsInfo = test.value.cooperators?.find(
+  const coopsInfo = test.value?.cooperators?.find(
     (coops) => coops.userDocId === user.value.id
   )
   if (coopsInfo) return coopsInfo.accessLevel
-  return test.value.isPublic ? 1 : 2
+  return test.value?.isPublic ? 1 : 2
 })
 
-const topCards = computed(() => [
-  {
-    image: 'IntroEdit.svg',
-    title: 'test',
-    imageStyle: 'transform: rotateY(180deg);',
-    bottom: '#000',
-    description: 'edit',
-    cardStyle:
-      'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
-    path: `/edittest/${test.value.id}`,
-  },
-  {
-    image: 'IntroCoops.svg',
-    title: 'cooperators',
-    imageStyle: '',
-    bottom: '#000',
-    description: 'cooperators',
-    cardStyle:
-      'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
-    path: `/cooperators/${test.value.cooperators}`,
-  },
-])
+const topCards = computed(() => {
+  if (!test.value) return []
+  return [
+    {
+      image: 'IntroEdit.svg',
+      title: 'test',
+      imageStyle: 'transform: rotateY(180deg);',
+      bottom: '#000',
+      description: 'edit',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #d128c9, #9a1aab); overflow: hidden',
+      path: `/edittest/${test.value.id}`,
+    },
+    {
+      image: 'IntroCoops.svg',
+      title: 'cooperators',
+      imageStyle: '',
+      bottom: '#000',
+      description: 'cooperators',
+      cardStyle:
+        'background-image: radial-gradient(circle at top right, #eff31a, #eecf22); overflow: hidden',
+      path: `/cooperators/${test.value.cooperators}`,
+    },
+  ]
+})
 
 const bottomCards = computed(() => {
+  if (!test.value) return []
   const cards = [
     {
       image: 'IntroReports.svg',

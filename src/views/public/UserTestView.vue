@@ -655,11 +655,17 @@ const startTest = () => {
 };
 
 const callTimerSave = () => {
-  timerComponent.value?.stopTimer();
+  if (timerComponent.value && typeof timerComponent.value.stopTimer === 'function') {
+    timerComponent.value.stopTimer();
+  } else {
+    console.warn('Timer component or stopTimer method is not available');
+  }
 };
 
 const startTimer = () => {
-  timerComponent.value?.startTimer();
+  if (timerComponent.value && typeof timerComponent.value.startTimer === 'function') {
+    timerComponent.value.startTimer();
+  }
 };
 
 const handleTimerStopped = (elapsedTime, taskIndex) => {
