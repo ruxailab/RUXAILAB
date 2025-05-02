@@ -37,7 +37,7 @@
     <!-- Create Template Dialog -->
     <v-dialog v-model="tempDialog" max-width="80%">
       <v-card>
-        <p class="dialog-title ma-2 pa-2">
+        <p class="ma-2 pa-2">
           Create Template
         </p>
         <v-divider />
@@ -45,7 +45,7 @@
           <v-row justify="space-around" class="pa-2">
             <v-col cols="12">
               <v-text-field
-                v-model="template.templateTitle"
+                v-model="template.title"
                 autofocus
                 label="Title"
                 :rules="titleRequired"
@@ -56,7 +56,7 @@
               />
 
               <v-textarea
-                v-model="template.templateDescription"
+                v-model="template.description"
                 label="Description"
                 outlined
                 dense
@@ -64,7 +64,7 @@
               />
 
               <v-checkbox
-                v-model="template.isTemplatePublic"
+                v-model="template.isPublic"
                 label="Make template public to all users"
                 color="#F9A826"
               />
@@ -93,7 +93,7 @@
       <div slot="content">
         <v-card style="background: #f5f7ff">
           <v-col class="mb-1 pa-4 pb-1">
-            <p class="subtitleView">
+            <p class="mb-0">
               {{ $t('pages.settings.currentTest') }}
             </p>
           </v-col>
@@ -120,7 +120,12 @@
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
 
-            <v-btn style="margin-right: 40px" outlined color="green" @click="duplicateTest()">
+            <v-btn
+              style="margin-right: 40px"
+              outlined
+              color="green"
+              @click="duplicateTest()"
+            >
               {{ $t('buttons.duplicateTest') }}
             </v-btn>
           </v-row>
@@ -167,12 +172,14 @@
       </div>
     </ShowInfo>
   </v-container>
+
   <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
     <v-progress-circular indeterminate color="#fca326" size="50" />
     <div class="white-text mt-3">
       Loading Settings
     </div>
   </v-overlay>
+
   <AccessNotAllowed v-else />
 </template>
 
@@ -188,7 +195,6 @@ import TemplateAuthor from '@/models/TemplateAuthor'
 import TemplateBody from '@/models/TemplateBody'
 import Template from '@/models/Template'
 import i18n from '@/i18n'
-import TestAdmin from '@/models/TestAdmin'
 
 export default {
   components: {
@@ -198,8 +204,10 @@ export default {
     LeaveAlert,
     AccessNotAllowed,
   },
+
   // eslint-disable-next-line vue/require-prop-types
   props: ['id'],
+
   data: () => ({
     template: {
       title: '',
@@ -208,80 +216,69 @@ export default {
     },
     object: null,
     valids: [false, true, true],
-    dialogAlert: false,
     dialogDel: false,
     loading: false,
     loadingPage: true,
-    templateTitle: '',
-    templateDescription: '',
     tempDialog: false,
     titleRequired: [
-      (v) => !!v || i18n.t('errors.fieldRequired'),
+      (v) => !!v.trim() || i18n.t('errors.fieldRequired'),
       (v) => v.length <= 200 || 'Max 200 characters',
     ],
-    showSettings: false,
-    publicTemplate: true,
   }),
+
   computed: {
     change() {
       return this.$store.state.localChanges
     },
+
     test() {
       return this.$store.getters.test
     },
+
     user() {
       return this.$store.getters.user
     },
     answers() {
       return this.$store.getters.answers || []
     },
-    testandorespostas() {
-      return this.$store.state.answer(this.test.answersDocId)
-    },
+
     testAnswerDocument() {
       return this.$store.state.Answer.testAnswerDocument
     },
-    answersNew() {
-      if (this.testAnswerDocument) {
-        return Object.values(this.testAnswerDocument.heuristicAnswers)
-      }
-      return []
-    },
+
     reports() {
       return this.$store.getters.reports || []
     },
+
     cooperators() {
       return this.$store.getters.cooperators || {}
     },
+
     dialogText() {
-      if (this.test)
-        return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
-
-      return "Are you sure you want to delete this test? This action can't be undone" //in case object isnt loaded
+      if (this.test) return `Are you sure you want to delete your test "${this.test.testTitle}"? This action can't be undone.`
+      return 'Are you sure you want to delete this test? This action can\'t be undone' //in case object isnt loaded
     },
+
     hasTemplate() {
-      if (this.object)
-        if ('template' in this.object) {
-          if (this.object.template !== null) return true
-        }
-
-      return false
+      return this.object?.template !== null
     },
-    myObject() {
-      if (this.user) {
-        let myObject
-        myObject = this.user.myTests.find((test) => test.id === this.id) //look for myTest
 
-        if (!myObject)
-          //if not found
-          myObject = this.user.myCoops.find((test) => test.id === this.id) //look for my coop
+    // myObject() {
+    //   if (this.user) {
+    //     let myObject
+    //     myObject = this.user.myTests.find((test) => test.id === this.id) //look for myTest
 
-        return myObject
-      }
+    //     if (!myObject)
+    //       //if not found
+    //       myObject = this.user.myCoops.find((test) => test.id === this.id) //look for my coop
 
-      return null
-    },
+    //     return myObject
+    //   }
+
+    //   return null
+    // },
   },
+
   watch: {
     test: async function() {
       if (this.test !== null && this.test !== undefined) {
@@ -289,38 +286,38 @@ export default {
       }
     },
   },
+
   async created() {
     if (!this.$store.test && this.id !== null && this.id !== undefined) {
       await this.$store.dispatch('getTest', { id: this.id })
     }
   },
+
   beforeMount() {
     window.addEventListener('beforeunload', this.preventNav)
   },
+
   beforeDestroy() {
     window.removeEventListener('beforeunload', this.preventNav)
   },
+
   methods: {
     validate(valid, index) {
       this.valids[index] = valid
     },
     async onSubmit() {
-        await this.submit();
-        this.$store.commit('SET_LOCAL_CHANGES', false);
-        this.$router.push({ name: this.$store.state.pathTo });
+      await this.submit()
+      this.$store.commit('SET_LOCAL_CHANGES', false)
+      this.$router.push({ name: this.$store.state.pathTo })
     },
     async submit() {
       const element = this.object.testTitle
-      if (element.length > 0 && element.length < 200) {
-        await this.$store.dispatch('updateTest', new Test(this.object))
-        this.$store.commit('SET_LOCAL_CHANGES', false)
-        console.log('changes Saved')
-        this.$toast.success(i18n.$t('alerts.genericSuccess'))
-      } else if (element.length >= 200) {
-        this.$toast.warning('Title must not exceed 200 characters.')
-      } else {
-        this.$toast.warning('Test must contain a title.')
-      }
+      if (element.length >= 200) return this.$toast.warning('Title must not exceed 200 characters.')
+      if (element.length < 0) return this.$toast.warning('Test must contain a title.')
+
+      await this.$store.dispatch('updateTest', new Test(this.object))
+      this.$store.commit('SET_LOCAL_CHANGES', false)
+      this.$toast.success('Changes Saved')
 
       // await this.$store.dispatch("getAnswers", { id: this.test.answers });
       // await this.$store.dispatch("getReports", { id: this.test.reports });
@@ -418,29 +415,28 @@ export default {
       //     this.$store.commit("setError", err);
       //   });
     },
+
     preventNav(event) {
       if (!this.change) return
       event.preventDefault()
       event.returnValue = ''
     },
+
     async deleteTest(item) {
-      this.auxUser = { ...this.user } // Create a copy of user object
+      const auxUser = { ...this.user } // Create a copy of user object
+      delete auxUser.myTests[item.id] // Remove the test with the given ID from auxUser.myTests
 
-      // Remove the test with the given ID from auxUser.myTests
-      delete this.auxUser.myTests[item.id]
-
-      item.auxUser = this.auxUser
-      await this.$store.dispatch('deleteTest', item)
-
-      this.$router.push({ name: 'TestList' })
+      await this.$store.dispatch('deleteTest', { ...item, auxUser })
+      this.$router.push('/testslist')
     },
+
     async createTemplate() {
       const tempHeader = new TemplateHeader({
         creationDate: Date.now(),
         updateDate: Date.now(),
-        isTemplatePublic: this.template.isTemplatePublic,
-        templateDescription: this.template.templateDescription,
-        templateTitle: this.template.templateTitle,
+        isTemplatePublic: this.template.isPublic,
+        templateDescription: this.template.description,
+        templateTitle: this.template.title,
         templateType: this.test.testType,
         templateVersion: '1.0.0',
         templateAuthor: new TemplateAuthor({
@@ -449,43 +445,30 @@ export default {
         }),
       })
 
-      const tempBody = new TemplateBody(this.test)
       const template = new Template({
         id: null,
         header: tempHeader,
-        body: tempBody,
+        body: new TemplateBody(this.test),
       })
-      if (this.template.templateTitle.trim() !== '') {
-        await this.$store.dispatch('createTemplate', template)
-        this.closeDialog()
-      } else {
-        this.$refs.tempform.validate()
-      }
+
+      await this.$store.dispatch('createTemplate', template)
+      this.closeDialog()
     },
+
     closeDialog() {
       this.tempDialog = false
       this.$refs.tempform.resetValidation()
-      this.template.templateTitle = ''
-      this.template.templateDescription = ''
-    },
-    setLeavingAlert() {
-      this.$store.commit('SET_DIALOG_LEAVE', true)
+      this.template.title = ''
+      this.template.description = ''
     },
 
     async duplicateTest() {
       const test = new Test({
+        ...this.test,
+        id: null,
         testTitle: 'Copy of ' + this.test.testTitle,
-        testDescription: this.test.testDescription,
-        testType: this.test.testType,
-        userTestType: this.test.userTestType,
-        testStructure: this.test.testStructure,
-        testOptions: this.test.testOptions,
         userTestStatus: {},
         id: null,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
         creationDate: Date.now(),
         updateDate: Date.now(),
       })
@@ -500,51 +483,10 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.$store.getters.localChanges) {
-      this.$store.commit('SET_DIALOG_LEAVE', true)
-      this.$store.commit('SET_PATH_TO', to.name)
-    } else {
-      next()
-    }
+    if (!this.$store.getters.localChanges) return next()
+
+    this.$store.commit('SET_DIALOG_LEAVE', true)
+    this.$store.commit('SET_PATH_TO', to.name)
   },
 }
 </script>
-
-<style scoped>
-.titleView {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
-.subtitleView {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 18.1818px;
-  line-height: 21px;
-  align-items: flex-end;
-  color: #000000;
-  margin-bottom: 0px;
-  padding-bottom: 0px;
-}
-.dialog-title {
-  font-style: normal;
-  font-weight: 300;
-  font-size: 40px;
-  line-height: 70px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
-
-@media screen and (max-width: 960px) {
-  .dialog-title {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-}
-</style>

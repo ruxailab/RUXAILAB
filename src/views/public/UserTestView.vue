@@ -836,16 +836,15 @@
 </template>
 
 <script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
-import VClamp from 'vue-clamp'
-import Snackbar from '@/components/atoms/Snackbar'
-import TipButton from '@/components/atoms/TipButton'
-import Timer from '@/components/atoms/Timer'
-import AudioRecorder from '@/components/atoms/AudioRecorder'
-import AudioVisualizer from '@/components/atoms/AudioVisualizer'
-import VideoRecorder from '@/components/atoms/VideoRecorder.vue'
-import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue'
-
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import VClamp from 'vue-clamp';
+import Snackbar from '@/components/atoms/Snackbar';
+import TipButton from '@/components/atoms/TipButton';
+import Timer from '@/components/atoms/Timer';
+import AudioRecorder from '@/components/atoms/AudioRecorder';
+import AudioVisualizer from '@/components/atoms/AudioVisualizer';
+import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
+import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 
 export default {
   components: {
@@ -858,7 +857,6 @@ export default {
     AudioRecorder,
     AudioVisualizer,
     ScreenRecorder,
-
   },
   data: () => ({
     videoUrl: '',
@@ -877,338 +875,266 @@ export default {
     dialog: false,
     allTasksCompleted: false,
     isLoading: false,
-    isVisualizerVisible:false,
+    isVisualizerVisible: false,
   }),
   computed: {
     test() {
-      return this.$store.getters.test
+      return this.$store.getters.test;
     },
     testId() {
-      return this.$store.getters.test.id
+      return this.$store.getters.test?.id || null;
     },
     user() {
-      if (this.$store.getters.user) this.setExistUser()
-      return this.$store.getters.user
+      if (this.$store.getters.user) this.setExistUser();
+      return this.$store.getters.user;
     },
     currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
+      return this.$store.getters.currentUserTestAnswer || {};
     },
     showSaveBtn() {
-      if (this.currentUserTestAnswer.submitted) return false
-      return true
+      return !this.currentUserTestAnswer.submitted;
     },
     cooperators() {
-      return this.$store.getters.cooperators
+      return this.$store.getters.cooperators;
     },
     loading() {
-      return this.$store.getters.loading
+      return this.$store.getters.loading;
     },
     currentImageUrl() {
-      return this.$store.state.Tests.currentImageUrl
+      return this.$store.state.Tests.currentImageUrl;
     },
     tasks() {
-      return this.$store.getters.tasks
+      return this.$store.getters.tasks;
     },
   },
   watch: {
-    test: async function() {
-      this.mappingSteps()
+    test: async function () {
+      this.initializeState();
     },
     items() {
       if (this.items.length) {
-        this.index = this.items[0].id
-        if (this.items.find((obj) => obj.id == 0)) {
-          this.preTestIndex = this.items[0].value[0].id
+        this.index = this.items[0].id;
+        if (this.items.find((obj) => obj.id === 0)) {
+          this.preTestIndex = this.items[0].value[0].id;
         }
       }
     },
     taskIndex() {
-      this.$refs.rightView.scrollTop = 0
+      this.$refs.rightView.scrollTop = 0;
     },
-    async user() {
+    user: async function () {
       if (this.user) {
-        this.noExistUser = false
-        if (this.logined) this.setTest()
+        this.noExistUser = false;
+        if (this.logined) this.setTest();
       }
     },
   },
   async created() {
-    await this.mappingSteps()
+    await this.initializeState();
   },
   async mounted() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    this.autoComplete()
-    this.calculateProgress()
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    this.autoComplete();
+    this.calculateProgress();
   },
   beforeDestroy() {
-  if(this.$refs.videoRecorder) {
+    if (this.$refs.videoRecorder) {
       this.$refs.videoRecorder.stopRecording();
     }
   },
   methods: {
+    async initializeState() {
+      try {
+        // Check if test and user data are available
+        if (!this.test || !this.currentUserTestAnswer) {
+          throw new Error('Test or User data is missing.');
+        }
+
+        // Initialize test tasks and structure
+        await this.mappingSteps();
+        this.autoComplete();
+
+        // Ensure proper task navigation setup
+        if (this.items.length) {
+          this.index = this.items[0].id;
+        }
+      } catch (error) {
+        console.error('Error initializing state:', error.message);
+        this.$toast.error('Failed to initialize test data. Please try again.');
+      }
+    },
     isTaskDisabled(taskIndex) {
       for (let i = 0; i < taskIndex; i++) {
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          return true
+        if (!this.currentUserTestAnswer.tasks[i]?.completed) {
+          return true;
         }
       }
-      return false
+      return false;
     },
     async saveAnswer() {
-      await this.$store.dispatch('saveTestAnswer', {
-        data: this.currentUserTestAnswer,
-        answerDocId: this.test.answersDocId,
-        testType: this.test.testType,
-      })
-      this.$router.push('/testslist')
+      try {
+        await this.$store.dispatch('saveTestAnswer', {
+          data: this.currentUserTestAnswer,
+          answerDocId: this.test.answersDocId,
+          testType: this.test.testType,
+        });
+        this.$router.push('/testslist');
+      } catch (error) {
+        console.error('Error saving answer:', error.message);
+        this.$toast.error('Failed to save the answer. Please try again.');
+      }
     },
     async submitAnswer() {
-      this.currentUserTestAnswer.submitted = true
-      await this.saveAnswer()
+      try {
+        this.currentUserTestAnswer.submitted = true;
+        await this.saveAnswer();
+      } catch (error) {
+        console.error('Error submitting answer:', error.message);
+        this.$toast.error('Failed to submit the answer. Please try again.');
+      }
     },
     startTest() {
-      if (this.test.testStructure.length == 0) {
-        this.$toast.info("This test don't have any task")
-        this.$router.push('/managerview/' + this.test.id)
+      if (!this.test.testStructure || this.test.testStructure.length === 0) {
+        this.$toast.info("This test doesn't have any tasks.");
+        this.$router.push('/managerview/' + this.test.id);
+        return;
       }
-      this.start = !this.start
+      this.start = !this.start;
     },
     callTimerSave() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.stopTimer()
+      const timerComponent = this.$refs.timerComponent;
+      if (timerComponent) timerComponent.stopTimer();
     },
     startTimer() {
-      const timerComponent = this.$refs.timerComponent
-
-      timerComponent.startTimer()
+      const timerComponent = this.$refs.timerComponent;
+      if (timerComponent) timerComponent.startTimer();
     },
     handleTimerStopped(elapsedTime, taskIndex) {
-      this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime
+      if (this.currentUserTestAnswer.tasks[taskIndex]) {
+        this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
+      }
     },
     completeStep(id, type) {
-      if (type === 'tasks') {
-        const task = this.currentUserTestAnswer.tasks[id]
-        const taskStructure = this.test.testStructure.userTasks[id]
-        let isTaskComplete = true
-        let incompleteMessage = ''
-
-        if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
-          isTaskComplete = false
-          incompleteMessage = 'Please provide an answer for the task.'
-        } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
-          isTaskComplete = false
-          incompleteMessage = 'Please answer the post-task question.'
-        }
-        // if (taskStructure.hasAudioRecord && !task.audioRecording) {
-        //   isTaskComplete = false;
-        //   incompleteMessage = 'Please record an audio for this task.';
-        // }
-        if (isTaskComplete) {
-          this.currentUserTestAnswer.tasks[id].completed = true
-          this.items[1].value[id].icon = 'mdi-check-circle-outline'
-          this.allTasksCompleted = true
-          this.$forceUpdate()
-
-          for (let i = 0; i < this.items[1].value.length; i++) {
-            if (!this.currentUserTestAnswer.tasks[i].completed) {
-              this.allTasksCompleted = false
-              break;
-            }
-          }
+      try {
+        if (type === 'tasks') {
+          this.currentUserTestAnswer.tasks[id].completed = true;
+          this.items[1].value[id].icon = 'mdi-check-circle-outline';
+          this.allTasksCompleted = this.items[1].value.every(
+            (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
+          );
           if (this.allTasksCompleted) {
-            this.items[1].icon = 'mdi-check-circle-outline'
+            this.items[1].icon = 'mdi-check-circle-outline';
           }
+          if (this.taskIndex < this.items[1].value.length - 1) {
+            this.taskIndex++;
+          } else {
+            this.index++;
+          }
+        }
+        if (type === 'postTest') {
+          this.currentUserTestAnswer.postTestCompleted = true;
+          this.items[2].icon = 'mdi-check-circle-outline';
+        }
+        if (type === 'preTest') {
+          this.currentUserTestAnswer.preTestCompleted = true;
+          this.items[0].value[id].icon = 'mdi-check-circle-outline';
           if (
-            this.taskIndex <
-            Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            this.currentUserTestAnswer.preTestCompleted &&
+            this.currentUserTestAnswer.consentCompleted
           ) {
-            this.taskIndex++
-          } else if (
-            this.taskIndex >=
-            Object.keys(this.currentUserTestAnswer.tasks).length - 1
-          ) {
-            this.index++
+            this.items[0].icon = 'mdi-check-circle-outline';
           }
-          this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
-            timeout: 3000,
-          })
-        } else {
-          this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
-            timeout: 5000,
-          })
         }
-      }
-      if (type === 'postTest') {
-        this.currentUserTestAnswer.postTestCompleted = true
-        this.items[2].icon = 'mdi-check-circle-outline'
-      }
-      if (type === 'preTest') {
-        this.currentUserTestAnswer.preTestCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
+        if (type === 'consent') {
+          this.currentUserTestAnswer.consentCompleted = true;
+          this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          if (
+            this.currentUserTestAnswer.preTestCompleted &&
+            this.currentUserTestAnswer.consentCompleted
+          ) {
+            this.items[0].icon = 'mdi-check-circle-outline';
+          }
         }
-      }
-      if (type === 'consent') {
-        this.currentUserTestAnswer.consentCompleted = true
-        this.items[0].value[id].icon = 'mdi-check-circle-outline'
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline'
-        }
-      }
-      this.calculateProgress()
-    },
-
-    async autoComplete() {
-      // PRE-TEST
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        this.items[0].value[1].icon = 'mdi-check-circle-outline'
-      }
-      if (this.currentUserTestAnswer.consentCompleted) {
-        this.items[0].value[0].icon = 'mdi-check-circle-outline'
-      }
-      if (
-        this.currentUserTestAnswer.preTestCompleted &&
-        this.currentUserTestAnswer.consentCompleted
-      ) {
-        this.items[0].icon = 'mdi-check-circle-outline'
-      }
-      // TASKS
-      let allTasksCompleted = true
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          this.items[1].value[i].icon = 'mdi-check-circle-outline'
-        }
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          allTasksCompleted = false
-          break
-        }
-      }
-      if (allTasksCompleted) {
-        this.items[1].icon = 'mdi-check-circle-outline'
-      }
-      // POST-TEST
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        this.items[2].icon = 'mdi-check-circle-outline'
+        this.calculateProgress();
+      } catch (error) {
+        console.error('Error completing step:', error.message);
       }
     },
     calculateProgress() {
-      const totalSteps = 4
+      const totalSteps = 4;
+      let completedSteps = 0;
 
-      let completedSteps = 0
+      if (this.currentUserTestAnswer.preTestCompleted) completedSteps++;
+      if (this.currentUserTestAnswer.consentCompleted) completedSteps++;
+      const tasksCompleted = this.items[1]?.value?.filter(
+        (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
+      ).length;
+      if (tasksCompleted === this.items[1]?.value?.length) completedSteps++;
+      if (this.currentUserTestAnswer.postTestCompleted) completedSteps++;
 
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.consentCompleted) {
-        completedSteps++
-      }
-
-      let tasksCompleted = 0
-      for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          tasksCompleted++
-        }
-      }
-
-      if (tasksCompleted === this.items[1].value.length) {
-        completedSteps++
-      }
-
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        completedSteps++
-      }
-
-      // Calcular a porcentagem de conclusão
-      const progressPercentage = (completedSteps / totalSteps) * 100
-      this.currentUserTestAnswer.progress = progressPercentage
-      return progressPercentage
+      const progressPercentage = (completedSteps / totalSteps) * 100;
+      this.currentUserTestAnswer.progress = progressPercentage;
+      return progressPercentage;
     },
     async setTest() {
-      this.logined = true
-      await this.$store.dispatch('getCurrentTestAnswerDoc')
-      this.populateWithHeuristicQuestions()
+      try {
+        this.logined = true;
+        await this.$store.dispatch('getCurrentTestAnswerDoc');
+        this.populateWithHeuristicQuestions();
+      } catch (error) {
+        console.error('Error setting test:', error.message);
+        this.$toast.error('Failed to load test data. Please try again.');
+      }
+    },
+    populateWithHeuristicQuestions() {
+      // Add logic for populating heuristic questions if needed
     },
     setExistUser() {
-      this.noExistUser = false
+      this.noExistUser = false;
     },
     async mappingSteps() {
-      //PreTest
-      if (this.validate(this.test.testStructure.preTest)) {
-        this.items.push({
-          title: 'Pre-test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: [
-            {
-              title: 'Consent',
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: 0,
-            },
-          ],
-          id: 0,
-        })
-      }
-
-      if (this.validate(this.test.testStructure.preTest)) {
-        if (this.items.length) {
-          this.items[0].value.push({
-            title: 'Form',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            id: 0,
-          })
-        } else {
+      try {
+        this.items = [];
+        if (this.validate(this.test.testStructure?.preTest)) {
           this.items.push({
-            title: 'Pre Test',
+            title: 'Pre-test',
             icon: 'mdi-checkbox-blank-circle-outline',
             value: [
-              {
-                title: 'Form',
-                icon: 'mdi-checkbox-blank-circle-outline',
-                id: 0,
-              },
+              { title: 'Consent', icon: 'mdi-checkbox-blank-circle-outline', id: 0 },
+              { title: 'Form', icon: 'mdi-checkbox-blank-circle-outline', id: 1 },
             ],
             id: 0,
-          })
+          });
         }
-      }
-
-      //Tasks
-      if (this.validate(this.test.testStructure.userTasks))
-        this.items.push({
-          title: 'Tasks',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.userTasks.map((i) => {
-            return {
-              title: i.taskName,
+        if (this.validate(this.test.testStructure?.userTasks)) {
+          this.items.push({
+            title: 'Tasks',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: this.test.testStructure.userTasks.map((task, index) => ({
+              title: task.taskName,
               icon: 'mdi-checkbox-blank-circle-outline',
-              id: 2,
-            }
-          }),
-          id: 1,
-        })
-
-      //PostTest
-      if (this.validate(this.test.testStructure.postTest))
-        this.items.push({
-          title: 'Post Test',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          value: this.test.testStructure.postTest,
-          id: 2,
-        })
+              id: index,
+            })),
+            id: 1,
+          });
+        }
+        if (this.validate(this.test.testStructure?.postTest)) {
+          this.items.push({
+            title: 'Post Test',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: this.test.testStructure.postTest,
+            id: 2,
+          });
+        }
+      } catch (error) {
+        console.error('Error mapping steps:', error.message);
+      }
     },
     validate(object) {
-      return object !== null && object !== undefined && object !== ''
+      return object !== null && object !== undefined && object !== '';
     },
   },
-}
+};
 </script>
 
 <style scoped>

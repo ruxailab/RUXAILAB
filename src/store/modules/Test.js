@@ -43,6 +43,9 @@ export default {
     tasks(state) {
       return state.tasks
     },
+    testStructure(state) {
+      return state.testStructure
+    },
     heuristicsTest(state) {
       return state.Test.HeuristicsTest
     },
@@ -89,6 +92,17 @@ export default {
     },
     SET_TESTS(state, payload) {
       state.tests = payload
+    },
+    SET_TEST_STRUCTURE(state, payload) {
+      state.testStructure = { ...state.testStructure, ...payload }
+    },
+    SET_CATEGORIES_TEST_STRUCTURE(state, payload) {
+      state.testStructure.cardSorting = state.testStructure.cardSorting || {}
+      state.testStructure.cardSorting.categories = payload
+    },
+    SET_CARD_TEST_STRUCTURE(state, payload) {
+      state.testStructure.cardSorting = state.testStructure.cardSorting || {}
+      state.testStructure.cardSorting.cards = payload
     },
     ADD_TASKS(state, payload) {
       state.tasks = [...state.tasks, payload]
@@ -202,6 +216,7 @@ export default {
 
       try {
         await testController.duplicateTest(payload)
+        commit('ADD_TASKS', payload.test)
       } catch (err) {
         commit('setError', true)
         return null
