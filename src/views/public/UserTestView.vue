@@ -1015,83 +1015,87 @@ export default {
       }
     },
     completeStep(id, type) {
-      if (type === 'tasks') {
-        const task = this.currentUserTestAnswer.tasks[id]
-        const taskStructure = this.test.testStructure.userTasks[id]
-        let isTaskComplete = true
-        let incompleteMessage = ''
+      try {
+        if (type === 'tasks') {
+          const task = this.currentUserTestAnswer.tasks[id]
+          const taskStructure = this.test.testStructure.userTasks[id]
+          let isTaskComplete = true
+          let incompleteMessage = ''
 
-        if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
-          isTaskComplete = false
-          incompleteMessage = 'Please provide an answer for the task.'
-        } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
-          isTaskComplete = false
-          incompleteMessage = 'Please answer the post-task question.'
-        }
-        // if (taskStructure.hasAudioRecord && !task.audioRecording) {
-        //   isTaskComplete = false;
-        //   incompleteMessage = 'Please record an audio for this task.';
-        // }
-        if (isTaskComplete) {
-          this.currentUserTestAnswer.tasks[id].completed = true
-          this.items[1].value[id].icon = 'mdi-check-circle-outline'
-          this.allTasksCompleted = true
-          this.$forceUpdate()
+          if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
+            isTaskComplete = false
+            incompleteMessage = 'Please provide an answer for the task.'
+          } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
+            isTaskComplete = false
+            incompleteMessage = 'Please answer the post-task question.'
+          }
+          // if (taskStructure.hasAudioRecord && !task.audioRecording) {
+          //   isTaskComplete = false;
+          //   incompleteMessage = 'Please record an audio for this task.';
+          // }
+          if (isTaskComplete) {
+            this.currentUserTestAnswer.tasks[id].completed = true
+            this.items[1].value[id].icon = 'mdi-check-circle-outline'
+            this.allTasksCompleted = true
+            this.$forceUpdate()
 
-          for (let i = 0; i < this.items[1].value.length; i++) {
-            if (!this.currentUserTestAnswer.tasks[i].completed) {
-              this.allTasksCompleted = false
-              break;
+            for (let i = 0; i < this.items[1].value.length; i++) {
+              if (!this.currentUserTestAnswer.tasks[i].completed) {
+                this.allTasksCompleted = false
+                break;
+              }
             }
+            if (this.allTasksCompleted) {
+              this.items[1].icon = 'mdi-check-circle-outline'
+            }
+            if (
+              this.taskIndex <
+              Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            ) {
+              this.taskIndex++
+            } else if (
+              this.taskIndex >=
+              Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            ) {
+              this.index++
+            }
+            this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
+              timeout: 3000,
+            })
+          } else {
+            this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
+              timeout: 5000,
+            })
           }
-          if (this.allTasksCompleted) {
-            this.items[1].icon = 'mdi-check-circle-outline'
-          }
+        }
+        if (type === 'postTest') {
+          this.currentUserTestAnswer.postTestCompleted = true;
+          this.items[2].icon = 'mdi-check-circle-outline';
+        }
+        if (type === 'preTest') {
+          this.currentUserTestAnswer.preTestCompleted = true;
+          this.items[0].value[id].icon = 'mdi-check-circle-outline';
           if (
-            this.taskIndex <
-            Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            this.currentUserTestAnswer.preTestCompleted &&
+            this.currentUserTestAnswer.consentCompleted
           ) {
-            this.taskIndex++
-          } else if (
-            this.taskIndex >=
-            Object.keys(this.currentUserTestAnswer.tasks).length - 1
-          ) {
-            this.index++
+            this.items[0].icon = 'mdi-check-circle-outline';
           }
-          this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
-            timeout: 3000,
-          })
-        } else {
-          this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
-            timeout: 5000,
-          })
         }
-      }
-      if (type === 'postTest') {
-        this.currentUserTestAnswer.postTestCompleted = true;
-        this.items[2].icon = 'mdi-check-circle-outline';
-      }
-      if (type === 'preTest') {
-        this.currentUserTestAnswer.preTestCompleted = true;
-        this.items[0].value[id].icon = 'mdi-check-circle-outline';
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline';
+        if (type === 'consent') {
+          this.currentUserTestAnswer.consentCompleted = true;
+          this.items[0].value[id].icon = 'mdi-check-circle-outline';
+          if (
+            this.currentUserTestAnswer.preTestCompleted &&
+            this.currentUserTestAnswer.consentCompleted
+          ) {
+            this.items[0].icon = 'mdi-check-circle-outline';
+          }
         }
+        this.calculateProgress();
+      } catch (error) {
+        console.error('Error completing step:', error.message);
       }
-      if (type === 'consent') {
-        this.currentUserTestAnswer.consentCompleted = true;
-        this.items[0].value[id].icon = 'mdi-check-circle-outline';
-        if (
-          this.currentUserTestAnswer.preTestCompleted &&
-          this.currentUserTestAnswer.consentCompleted
-        ) {
-          this.items[0].icon = 'mdi-check-circle-outline';
-        }
-      }
-      this.calculateProgress();
     },
     calculateProgress() {
       const totalSteps = 4;
