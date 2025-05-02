@@ -451,8 +451,8 @@
     },
     "createTest": {
       "title": "创建新测试",
-      "blanckTitle": "创建空白测试",
-      "blanckSubtitle": "创建一个空白测试以开始一个全新的模板。",
+      "blankTitle": "创建空白测试",
+      "blankSubtitle": "创建一个空白测试以开始一个全新的模板。",
       "templateTitle": "从模板创建",
       "templateSubtitle": "基于我们用户创建的模板创建测试。",
       "create": "创建测试",

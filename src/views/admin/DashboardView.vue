@@ -64,7 +64,6 @@
             active-class="active-tab"
           >
             <v-tab>{{ $t('Dashboard.tests') }}</v-tab>
-            <!-- <v-tab>Answers</v-tab>-->
             <v-tab>{{ $t('Dashboard.templates') }}</v-tab>
 
             <v-spacer />
@@ -116,13 +115,7 @@
           </v-tabs>
           <v-divider class="hidden-sm-and-down" />
           <!-- Mobile Main Button -->
-          <v-select
-            v-model="mainIndex"
-            dense
-            outlined
-            class="hidden-md-and-up mx-2 mt-4"
-            :items="buttonItems"
-          />
+          <v-select v-model="mainIndex" dense outlined class="hidden-md-and-up mx-2 mt-4" :items="buttonItems" />
 
           <!-- Mobile Sub Buttons -->
           <v-select
@@ -133,30 +126,13 @@
             class="hidden-md-and-up mx-2"
             :items="templateButtonItems"
           />
-          <v-select
-            v-else
-            v-model="subIndex"
-            dense
-            outlined
-            class="hidden-md-and-up mx-2"
-            :items="testButtonItems"
-          />
+          <v-select v-else v-model="subIndex" dense outlined class="hidden-md-and-up mx-2" :items="testButtonItems" />
 
           <!-- Tests -> Personal  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 0"
-            :items="filteredTests"
-            type="myTests"
-            @clicked="goTo"
-          />
+          <List v-if="mainIndex == 0 && subIndex == 0" :items="filteredTests" type="myTests" @clicked="goTo" />
 
           <!-- Tests -> Others  -->
-          <List
-            v-if="mainIndex == 0 && subIndex == 1"
-            :items="filteredTests"
-            type="sharedWithMe"
-            @clicked="goTo"
-          />
+          <List v-if="mainIndex == 0 && subIndex == 1" :items="filteredTests" type="sharedWithMe" @clicked="goTo" />
 
           <!-- Tests -> Public Tests -->
           <List
@@ -168,21 +144,13 @@
 
           <!-- Tests -> Sessions -->
           <List
-            v-if="
-              filteredModeratedSessions.length > 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
+            v-if="filteredModeratedSessions.length > 0 && mainIndex == 0 && subIndex == 3"
             :items="filteredModeratedSessions"
             type="sessions"
             @clicked="goTo"
           />
           <v-col
-            v-if="
-              filteredModeratedSessions.length == 0 &&
-                mainIndex == 0 &&
-                subIndex == 3
-            "
+            v-if="filteredModeratedSessions.length == 0 && mainIndex == 0 && subIndex == 3"
             align="center"
             class="my-5"
           >
@@ -213,12 +181,7 @@
         </v-col>
       </v-row>
 
-      <TempDialog
-        :dialog="tempDialog"
-        :template="temp"
-        :allow-create="true"
-        @close="tempDialog = false"
-      />
+      <TempDialog :dialog="tempDialog" :template="temp" :allow-create="true" @close="tempDialog = false" />
     </div>
   </v-container>
 </template>
@@ -276,7 +239,7 @@ export default {
     },
 
     filteredTests() {
-      return this.tests?.filter(test => {
+      return this.tests?.filter((test) => {
         return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
       }) ?? this.tests
     },
@@ -286,7 +249,7 @@ export default {
     },
 
     filteredTemplates() {
-      return this.templates.filter(temp => {
+      return this.templates.filter((temp) => {
         return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
       })
     },
@@ -338,7 +301,7 @@ export default {
     async cleanTestStore() {
       await this.$store.dispatch('cleanTest')
     },
-    
+
     async getMyPersonalTests() {
       await this.$store.dispatch('getTestsAdminByUser')
     },
@@ -395,35 +358,18 @@ export default {
     },
 
     goTo(test) {
-      if (this.mainIndex === 0) {
-        if (this.subIndex === 0) {
-          this.$router.push({
-            name: 'ManagerView',
-            params: { id: test.testDocId },
-          })
-        }
-        // if it is the shared with me tests
-        else if (this.subIndex === 1) {
-          if (test.accessLevel >= 2) {
-            this.$router.push({
-              name: 'TestView',
-              params: { id: test.testDocId },
-            })
-          } else {
-            this.$router.push({
-              name: 'ManagerView',
-              params: { id: test.testDocId },
-            })
-          }
-        } else if (this.subIndex === 2) {
-          this.$router.push({
-            name: 'ManagerView',
-            params: { id: test.id },
-          })
-        } else if (this.subIndex === 3) {
-          this.$router.push(`testview/${test.id}/${this.user.id}`)
-        }
+      if (this.mainIndex !== 0) return
+
+      const route = { name: 'ManagerView', params: { id: test.testDocId }}
+      if (test.testType === 'CardSorting') route.name = 'CardSortingManagerView'
+
+      if (this.subIndex === 1 && test.accessLevel >= 2) route.name = 'TestView'
+      else if (this.subIndex === 2) route.params.id = test.id
+      else if (this.subIndex === 3) {
+        return this.$router.push(`testview/${test.id}/${this.user.id}`)
       }
+
+      this.$router.push(route)
     },
 
     setupTempDialog(temp) {

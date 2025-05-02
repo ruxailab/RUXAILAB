@@ -470,8 +470,8 @@
     },
     "createTest": {
       "title": "Create a new test",
-      "blanckTitle": "Create a blank test",
-      "blanckSubtitle": "Create a blank test to begin with a completely new and fresh template.",
+      "blankTitle": "Create a blank test",
+      "blankSubtitle": "Create a blank test to begin with a completely new and fresh template.",
       "templateTitle": "Create from template",
       "templateSubtitle": "Create a test based on a template created by one of our users.",
       "create": "Create test",
@@ -499,7 +499,7 @@
     "imageURL": "Type the image URL:",
     "deleteHeuristic": "Are you sure delete the heuristic ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "genericSuccess": "Operation successful" 
+    "genericSuccess": "Operation successful"
   },
   "buttons": {
     "next": "Next",
@@ -611,7 +611,6 @@
     "analytics": "Analytics",
     "help_center": "Help Center",
     "howCanWeHelp": "How can we help?"
-    
   },
   "user": "USER",
   "account": "Account",
@@ -631,5 +630,30 @@
   "contactNumberRequired": "Contact number is required",
   "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
   "email": "Email",
-  "username": "Username"
+  "username": "Username",
+  "ModeratedTest": {
+    "preTest": "PRE-TEST",
+    "tasks": "TASKS",
+    "postTest": "POST-TEST",
+    "consentForm": "Consent Form",
+    "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
+    "welcomeMessage": "Welcome message",
+    "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
+    "landingPage": "Landing Page",
+    "landingPageDescription": "This URL will automatically load when the participant starts the session.",
+    "url": "Your Landing Page URL",
+    "participantCamera": "Participant camera",
+    "cameraOptions": {
+      "optional": "Optional",
+      "required": "Required",
+      "disabled": "Disabled"
+    },
+    "preForm": "Pre-Form",
+    "preFormDescription": "This is a pre-questionnaire to collect participant data.",
+    "postForm": "Post Form",
+    "postFormDescription": "This is a post-questionnaire to collect participant data.",
+    "finalMessage": "Final message",
+    "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
+    "finalMessagePlaceholder": "Enter Final message"
+  }
 }
