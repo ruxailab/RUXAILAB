@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-dialog v-model="isOpen" fullscreen persistent transition="dialog-bottom-transition">
+    <v-dialog
+      :value="isOpen"
+      @input="$emit('update:isOpen', $event)"
+      fullscreen
+      persistent
+      transition="dialog-bottom-transition"
+    >
       <v-card color="#f9f5f0">
         <ButtonBack @click="$emit('close')" />
 
@@ -135,14 +141,12 @@ export default {
       if (this.test.title.length === 0) return this.$toast.warning('Enter a Title')
       if (this.test.title.length > 200) return this.$toast.warning('Title cannot exceed 200 characters')
       if (this.test.description.length > 600) return this.$toast.warning('Description cannot exceed 600 characters')
-
       this.handleTestType()
     },
 
     handleTestType() {
       if (this.testType === 'User') return this.userDialog = true
-      if (this.testType === 'HEURISTICS') return this.submit()
-      if (this.testType === 'Accessibility') return this.submit()
+      return this.submit()
     },
 
     async submit() {
