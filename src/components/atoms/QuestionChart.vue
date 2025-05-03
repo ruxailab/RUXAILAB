@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Bar :data="chartData" :options="chartOptions" />
+    <Bar
+      :data="chartData"
+      :options="chartOptions"
+    />
   </div>
 </template>
 

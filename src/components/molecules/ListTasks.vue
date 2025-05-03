@@ -39,42 +39,42 @@
         <v-divider class="mb-4" />
       </template>
       <!-- Checkbox Columns -->
-      <template #["item.hasEye"]="{ item }">
+      <template #item.hasEye="{ item }">
         <v-checkbox-btn
           v-model="item.hasEye"
           disabled
         />
       </template>
-      <template #["item.hasCamRecord"]="{ item }">
+      <template #item.hasCamRecord="{ item }">
         <v-checkbox-btn
           v-model="item.hasCamRecord"
           disabled
         />
       </template>
-      <template #["item.hasAudioRecord"]="{ item }">
+      <template #item.hasAudioRecord="{ item }">
         <v-checkbox-btn
           v-model="item.hasAudioRecord"
           disabled
         />
       </template>
-      <template #["item.hasScreenRecord"]="{ item }">
+      <template #item.hasScreenRecord="{ item }">
         <v-checkbox-btn
           v-model="item.hasScreenRecord"
           disabled
         />
       </template>
       <!-- Text Columns -->
-      <template #["item.taskDescription"]="{ item }">
+      <template #item.taskDescription="{ item }">
         {{ item.taskDescription || '-' }}
       </template>
-      <template #["item.taskTip"]="{ item }">
+      <template #item.taskTip="{ item }">
         {{ item.taskTip || '-' }}
       </template>
-      <template #["item.postQuestion"]="{ item }">
+      <template #item.postQuestion="{ item }">
         {{ item.postQuestion || '-' }}
       </template>
       <!-- Edit and Delete Icons -->
-      <template #["item.actions"]="{ item }">
+      <template #item.actions="{ item }">
         <v-icon
           size="small"
           @click="deleteItem(item)"

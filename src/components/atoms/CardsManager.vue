@@ -1,6 +1,14 @@
 <template>
-  <v-row justify="center" justify-md="space-around">
-    <v-col v-for="(item, n) in cards" :key="n" cols="12" :md="12 / perRow">
+  <v-row
+    justify="center"
+    justify-md="space-around"
+  >
+    <v-col
+      v-for="(item, n) in cards"
+      :key="n"
+      cols="12"
+      :md="12 / perRow"
+    >
       <v-card
         class="rounded-xl cards-animation"
         height="270px"
@@ -9,17 +17,21 @@
         color="#F2F3F4"
         @click="$emit('click', item.path)"
       >
-        <v-row style="height: 200px" justify="center" align="center">
+        <v-row
+          style="height: 200px"
+          justify="center"
+          align="center"
+        >
           <v-img
             max-height="150"
             :style="item.imageStyle"
-            contain
+            cover
             :src="require('../../assets/manager/' + item.image)"
           />
         </v-row>
 
         <div
-          class="white--text pl-4 footer"
+          class="text-white pl-4 footer"
           :style="{ 'background-color': item.bottom }"
         >
           <h2>{{ $t(`titles.${item.title}`) }}</h2>
@@ -48,6 +60,8 @@ export default {
       require: true,
     },
   },
+
+  emits: ['click'],
 }
 </script>
 

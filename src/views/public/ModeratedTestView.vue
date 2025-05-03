@@ -6,9 +6,19 @@
       class="background background-img pa-0 ma-0"
       align="center"
     >
-      <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
-        <p align="justify" class="description">{{ test.testDescription }}</p>
+      <v-col
+        cols="6"
+        class="ml-5"
+      >
+        <h1 class="titleView pb-1">
+          {{ test.testTitle }}
+        </h1>
+        <p
+          align="justify"
+          class="description"
+        >
+          {{ test.testDescription }}
+        </p>
         <v-row justify="center">
           <v-col cols="12">
             <span
@@ -32,13 +42,37 @@
       </v-col>
     </v-row>
 
-    <v-row v-else class="nav pa-0 ma-0" style="background-color: #e8eaf2;" dense>
-      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
-        <div v-if="!mini" class="header">
+    <v-row
+      v-else
+      class="nav pa-0 ma-0"
+      style="background-color: #e8eaf2;"
+      dense
+    >
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="mini"
+        permanent
+        color="#3F3D56"
+      >
+        <div
+          v-if="!mini"
+          class="header"
+        >
           <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <v-clamp class="titleText" autoresize :max-lines="2">
+            <v-row
+              dense
+              align="center"
+              justify="space-around"
+            >
+              <v-col
+                class="pa-0 ma-0"
+                cols="8"
+              >
+                <v-clamp
+                  class="titleText"
+                  autoresize
+                  :max-lines="2"
+                >
                   {{ test.testTitle }}
                 </v-clamp>
               </v-col>
@@ -63,7 +97,10 @@
           max-height="85%"
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
         >
-          <div v-for="(item, itemIndex) in items" :key="itemIndex">
+          <div
+            v-for="(item, itemIndex) in items"
+            :key="itemIndex"
+          >
             <v-list-item
               v-if="item.id == 0"
               :disabled="!isAdmin && bothConnected"
@@ -118,9 +155,23 @@
 
         <div class="footer">
           <v-spacer />
-          <v-btn icon class="mr-2" @click.stop="mini = !mini">
-            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
-            <v-icon v-else color="white">mdi-chevron-left</v-icon>
+          <v-btn
+            icon
+            class="mr-2"
+            @click.stop="mini = !mini"
+          >
+            <v-icon
+              v-if="mini"
+              color="white"
+            >
+              mdi-chevron-right
+            </v-icon>
+            <v-icon
+              v-else
+              color="white"
+            >
+              mdi-chevron-left
+            </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
@@ -131,12 +182,28 @@
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
       >
-        <v-card v-if="!connectionStatus" color="white" class="cards">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          v-if="!connectionStatus"
+          color="white"
+          class="cards"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">Confirm you are ready</span>
-              <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-0">
+              <v-row
+                justify="center"
+                class="mt-1"
+              >
+                <v-col
+                  cols="11"
+                  class="pt-0"
+                >
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your evaluator so that, when ready, they can start the test.
@@ -145,7 +212,10 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row justify="center" class="mt-4">
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
             <VideoCall
               ref="videoCall"
               :index="index"
@@ -154,7 +224,10 @@
             />
           </v-row>
         </v-card>
-        <v-col v-else-if="moderatorStatus && !evaluatorStatus" class="my-12">
+        <v-col
+          v-else-if="moderatorStatus && !evaluatorStatus"
+          class="my-12"
+        >
           <span class="cardsTitle text-center d-block">
             Waiting the evaluator connection ...
           </span>
@@ -201,9 +274,17 @@
                 v-for="(item, preTestIdx) in test.testStructure.preTest"
                 :key="preTestIdx"
               >
-                <v-col cols="5" class="mx-auto py-0">
-                  <p class="cardsTitle">{{ item.title }}</p>
-                  <p v-if="item.description" class="cardsSubtitle">
+                <v-col
+                  cols="5"
+                  class="mx-auto py-0"
+                >
+                  <p class="cardsTitle">
+                    {{ item.title }}
+                  </p>
+                  <p
+                    v-if="item.description"
+                    class="cardsSubtitle"
+                  >
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -250,9 +331,19 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row class="fill-height" align="center" justify="center">
-                <v-col cols="12" class="mb-0">
-                  <span class="ml-4" style="color: #455a64">
+              <v-row
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <v-col
+                  cols="12"
+                  class="mb-0"
+                >
+                  <span
+                    class="ml-4"
+                    style="color: #455a64"
+                  >
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
@@ -301,9 +392,17 @@
                 v-for="(item, postTestIndex) in test.testStructure.postTest"
                 :key="postTestIndex"
               >
-                <v-col cols="5" class="mx-auto py-0">
-                  <p class="cardsTitle">{{ item.title }}</p>
-                  <p v-if="item.description" class="cardsSubtitle">
+                <v-col
+                  cols="5"
+                  class="mx-auto py-0"
+                >
+                  <p class="cardsTitle">
+                    {{ item.title }}
+                  </p>
+                  <p
+                    v-if="item.description"
+                    class="cardsSubtitle"
+                  >
                     {{ item.description }}
                   </p>
                 </v-col>
@@ -317,11 +416,20 @@
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
       >
-        <v-card color="white" class="cards mb-6">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          color="white"
+          class="cards mb-6"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">Evaluator concluded the test!</span>
-              <br />
+              <br>
               <span class="cardsSubtitle">
                 Here you can finalize the test, or you can keep talking with your
                 evaluator until you finish!
@@ -345,7 +453,10 @@
         ref="rightView"
         class="mx-10 mt-2 right-view backgroundTest"
       >
-        <FeedbackView :index="index" :is-admin="isAdmin" />
+        <FeedbackView
+          :index="index"
+          :is-admin="isAdmin"
+        />
       </v-col>
 
       <!-- Evaluator View -->
@@ -354,12 +465,27 @@
         ref="rightView"
         class="mx-15 mt-4 right-view backgroundTest"
       >
-        <v-card color="white" class="cards mb-6">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          color="white"
+          class="cards mb-6"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">Welcome!</span>
-              <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-2 mb-5">
+              <v-row
+                justify="center"
+                class="mt-1"
+              >
+                <v-col
+                  cols="11"
+                  class="pt-2 mb-5"
+                >
                   <span class="cardsSubtitle">
                     {{ test.testStructure.welcomeMessage }}
                   </span>
@@ -368,12 +494,27 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card color="white" class="cards mb-6">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          color="white"
+          class="cards mb-6"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">We need your consent!</span>
-              <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-2 mb-5">
+              <v-row
+                justify="center"
+                class="mt-1"
+              >
+                <v-col
+                  cols="11"
+                  class="pt-2 mb-5"
+                >
                   <span class="cardsSubtitle">
                     The information you give is used for lorem ipsum dolor sit
                     amet consectetur
@@ -403,12 +544,27 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card color="white" class="cards mb-6">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          color="white"
+          class="cards mb-6"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">Connect with your moderator</span>
-              <v-row justify="center" class="mt-1">
-                <v-col cols="11" class="pt-0">
+              <v-row
+                justify="center"
+                class="mt-1"
+              >
+                <v-col
+                  cols="11"
+                  class="pt-0"
+                >
                   <span class="cardsSubtitle">
                     This area enables you to connect via voice and camera with
                     your moderator so that, when ready, they can start the test.
@@ -424,7 +580,11 @@
                   </span>
                   <div class="dot-flashing mx-auto mt-4" />
                 </v-col>
-                <v-col v-else cols="12" class="mr-8">
+                <v-col
+                  v-else
+                  cols="12"
+                  class="mr-8"
+                >
                   <VideoCall
                     ref="videoCall"
                     :index="index"
@@ -487,9 +647,17 @@
                 v-for="(item, preTestIdx) in test.testStructure.preTest"
                 :key="preTestIdx"
               >
-                <v-col cols="5" class="mx-auto py-0">
-                  <p class="cardsTitle">{{ item.title }}</p>
-                  <p v-if="item.description" class="cardsSubtitle">
+                <v-col
+                  cols="5"
+                  class="mx-auto py-0"
+                >
+                  <p class="cardsTitle">
+                    {{ item.title }}
+                  </p>
+                  <p
+                    v-if="item.description"
+                    class="cardsSubtitle"
+                  >
                     {{ item.description }}
                   </p>
                   <v-textarea
@@ -518,7 +686,10 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col cols="10" class="mx-4">
+                <v-col
+                  cols="10"
+                  class="mx-4"
+                >
                   <v-btn
                     v-if="userTestStatus.preTestStatus != 'done'"
                     block
@@ -575,13 +746,26 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-divider class="mb-6" />
-              <v-row class="fill-height" align="center" justify="center">
-                <v-col cols="12" class="mb-0">
-                  <span class="ml-4" style="color: #455a64">
+              <v-row
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <v-col
+                  cols="12"
+                  class="mb-0"
+                >
+                  <span
+                    class="ml-4"
+                    style="color: #455a64"
+                  >
                     {{ test.testStructure.userTasks[taskIdx].taskDescription }}
                   </span>
                 </v-col>
-                <v-col cols="9" class="mb-0 pb-0">
+                <v-col
+                  cols="9"
+                  class="mb-0 pb-0"
+                >
                   <v-textarea
                     :id="'id-' + test.testStructure.userTasks[taskIdx].taskName"
                     v-model="
@@ -591,7 +775,10 @@
                     label="observation (optional)"
                   />
                 </v-col>
-                <v-col cols="2" class="mx-4">
+                <v-col
+                  cols="2"
+                  class="mx-4"
+                >
                   <v-btn
                     v-if="tasksStatus[taskIdx] != 'done'"
                     block
@@ -649,9 +836,14 @@
                 v-for="(item, postTestIndex) in test.testStructure.postTest"
                 :key="postTestIndex"
               >
-                <v-col cols="5" class="mx-auto py-0">
+                <v-col
+                  cols="5"
+                  class="mx-auto py-0"
+                >
                   <p>{{ item.title }}</p>
-                  <p v-if="item.description">{{ item.description }}</p>
+                  <p v-if="item.description">
+                    {{ item.description }}
+                  </p>
                   <v-textarea
                     v-if="item.textField"
                     v-model="
@@ -682,10 +874,13 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col cols="10" class="mx-4">
+                <v-col
+                  cols="10"
+                  class="mx-4"
+                >
                   <v-btn
                     v-if="userTestStatus.postTestStatus != 'done'"
- alibi
+                    alibi
                     block
                     style="border-radius: 10px"
                     color="orange-lighten-1"
@@ -705,28 +900,46 @@
         ref="rightView"
         class="mx-10 mt-6 right-view backgroundTest"
       >
-        <v-card color="white" class="cards mb-6">
-          <v-row justify="center" class="mt-4">
-            <v-col cols="11" class="mt-3">
+        <v-card
+          color="white"
+          class="cards mb-6"
+        >
+          <v-row
+            justify="center"
+            class="mt-4"
+          >
+            <v-col
+              cols="11"
+              class="mt-3"
+            >
               <span class="cardsTitle">Final Message!</span>
-              <br />
+              <br>
               <span class="cardsSubtitle">
                 Congratulations, you finished this test. Here you can continue
                 talking with your moderator or leave the test.
               </span>
-              <v-row justify="center" class="mt-3">
+              <v-row
+                justify="center"
+                class="mt-3"
+              >
                 <v-col cols="4">
                   <img
                     draggable="false"
                     src="../../../public/finalMessage.svg"
                     alt="Final test svg"
-                  />
+                  >
                 </v-col>
-                <v-col cols="6" class="pt-2 my-8">
+                <v-col
+                  cols="6"
+                  class="pt-2 my-8"
+                >
                   <span class="cardsSubtitle">
                     {{ test.testStructure.finalMessage }}
                   </span>
-                  <v-col class="mt-4" align="end">
+                  <v-col
+                    class="mt-4"
+                    align="end"
+                  >
                     <v-btn
                       color="orange"
                       variant="flat"
@@ -748,13 +961,23 @@
         ref="rightView"
         class="mx-10 mt-2 right-view backgroundTest"
       >
-        <FeedbackView :index="index" :is-admin="isAdmin" />
+        <FeedbackView
+          :index="index"
+          :is-admin="isAdmin"
+        />
       </v-col>
     </v-row>
 
     <!-- Loading Overlay -->
-    <v-overlay v-model="isLoading" class="text-center">
-      <v-card class="pa-4" rounded="xl" color="grey-darken-4">
+    <v-overlay
+      v-model="isLoading"
+      class="text-center"
+    >
+      <v-card
+        class="pa-4"
+        rounded="xl"
+        color="grey-darken-4"
+      >
         <v-progress-linear
           style="border-radius: 20px; width: 20wv;"
           :model-value="uploadProgress"
@@ -766,26 +989,48 @@
             <span>{{ Math.ceil(value) }}%</span>
           </template>
         </v-progress-linear>
-        <div class="white-text mx-16">Saving Your Answer...</div>
+        <div class="white-text mx-16">
+          Saving Your Answer...
+        </div>
       </v-card>
     </v-overlay>
 
-    <v-dialog :model-value="!noExistUser && !logined" width="500" persistent>
+    <v-dialog
+      :model-value="!noExistUser && !logined"
+      width="500"
+      persistent
+    >
       <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange-lighten-4" size="150">
-            <v-icon size="120">mdi-account</v-icon>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon size="120">
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="text-white" @click="setTest()">
+          <v-btn
+            color="#F9A826"
+            class="text-white"
+            @click="setTest()"
+          >
             Continue as {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut()">Change account</a>
+            <a
+              style="color: #f9a826"
+              @click="signOut()"
+            >Change account</a>
           </p>
         </v-card-actions>
       </v-card>
@@ -796,7 +1041,7 @@
       autoplay
       playsinline
       style="display: none;"
-    ></video>
+    />
   </div>
 </template>
 

@@ -2,7 +2,10 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip v-if="!isCapturing" location="bottom">
+        <v-tooltip
+          v-if="!isCapturing"
+          location="bottom"
+        >
           <template #activator="{ props }">
             <v-btn
               class="ml-4 my-2 mr-auto"
@@ -16,7 +19,10 @@
           </template>
           <span>Capture Screen</span>
         </v-tooltip>
-        <v-tooltip v-if="isCapturing" location="bottom">
+        <v-tooltip
+          v-if="isCapturing"
+          location="bottom"
+        >
           <template #activator="{ props }">
             <v-btn
               class="ml-4 my-2 mr-auto"

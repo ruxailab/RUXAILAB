@@ -50,13 +50,13 @@
                     template.header.templateVersion === '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                          template.header.updateDate
-                        )}`
+                        template.header.updateDate
+                      )}`
                   }}
                   ({{
                     $t('pages.listTests.version') +
-                    ' ' +
-                    template.header.templateVersion
+                      ' ' +
+                      template.header.templateVersion
                   }})
                 </div>
               </v-col>
@@ -84,7 +84,9 @@
                 @click="deleteTemplate"
               >
                 {{ $t('buttons.delete') }}
-                <v-icon end>mdi-delete</v-icon>
+                <v-icon end>
+                  mdi-delete
+                </v-icon>
               </v-btn>
 
               <v-btn

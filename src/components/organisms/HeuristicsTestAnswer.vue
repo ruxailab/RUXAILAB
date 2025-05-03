@@ -1,14 +1,29 @@
 <template>
   <div v-if="answers">
     <v-overlay :model-value="loading">
-      <v-progress-circular indeterminate size="64" />
+      <v-progress-circular
+        indeterminate
+        size="64"
+      />
     </v-overlay>
-    <IntroAnswer v-if="answers != null && intro == true" @go-to-coops="goToCoops" />
-    <v-row v-else-if="answers != null && intro == false" justify="center" class="ma-0 mt-4">
+    <IntroAnswer
+      v-if="answers != null && intro == true"
+      @go-to-coops="goToCoops"
+    />
+    <v-row
+      v-else-if="answers != null && intro == false"
+      justify="center"
+      class="ma-0 mt-4"
+    >
       <ShowInfo :title="$t('HeuristicsTestAnswer.titles.answers')">
         <!-- Main Tabs -->
         <template #top>
-          <v-tabs v-model="tab" bg-color="transparent" color="#FCA326" class="ml-4">
+          <v-tabs
+            v-model="tab"
+            bg-color="transparent"
+            color="#FCA326"
+            class="ml-4"
+          >
             <v-tab @click="setTab(0)">
               {{ $t('HeuristicsTestAnswer.titles.statistics') }}
             </v-tab>
@@ -28,23 +43,45 @@
         <template #content>
           <div class="ma-0 pa-0">
             <!-- Tab 1 - Statistics -->
-            <v-card v-if="tab == 0" flat rounded="xl" style="background: #f5f7ff">
+            <v-card
+              v-if="tab == 0"
+              flat
+              rounded="xl"
+              style="background: #f5f7ff"
+            >
               <v-card-title class="subtitleView">
                 {{ $t('HeuristicsTestAnswer.titles.statistics') }}
               </v-card-title>
               <v-divider />
-              <v-row justify="space-around" class="ma-0">
+              <v-row
+                justify="space-around"
+                class="ma-0"
+              >
                 <v-col cols="10">
-                  <v-card class="cardStyle my-6" flat>
-                    <v-row justify="space-around" class="ma-0">
+                  <v-card
+                    class="cardStyle my-6"
+                    flat
+                  >
+                    <v-row
+                      justify="space-around"
+                      class="ma-0"
+                    >
                       <v-col cols="4">
-                        <v-row justify="center" class="ma-0">
+                        <v-row
+                          justify="center"
+                          class="ma-0"
+                        >
                           <v-card-title class="mt-4">
                             {{ $t('HeuristicsTestAnswer.statistics.usabilityPercentage') }}
                           </v-card-title>
                           <v-card-text>
-                            <v-row align="center" justify="center">
-                              <p class="text-h2">{{ showFinalResult.average }}</p>
+                            <v-row
+                              align="center"
+                              justify="center"
+                            >
+                              <p class="text-h2">
+                                {{ showFinalResult.average }}
+                              </p>
                             </v-row>
                           </v-card-text>
                         </v-row>
@@ -94,21 +131,42 @@
             </v-card>
 
             <!-- Tab 2 - Evaluators -->
-            <v-card v-if="tab == 1" flat rounded="xl" style="background: #f5f7ff">
+            <v-card
+              v-if="tab == 1"
+              flat
+              rounded="xl"
+              style="background: #f5f7ff"
+            >
               <v-card-title class="subtitleView">
                 {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
               </v-card-title>
               <v-divider />
-              <v-tabs bg-color="transparent" color="grey-darken-2" class="mt-2" align-tabs="center">
-                <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
+              <v-tabs
+                bg-color="transparent"
+                color="grey-darken-2"
+                class="mt-2"
+                align-tabs="center"
+              >
+                <v-tab
+                  class="tab-text"
+                  style="text-transform: none !important"
+                  @click="ind = 0"
+                >
                   {{ $t('HeuristicsTestAnswer.evaluators.headers.table') }}
                 </v-tab>
-                <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
+                <v-tab
+                  class="tab-text"
+                  style="text-transform: none !important"
+                  @click="ind = 1"
+                >
                   {{ $t('HeuristicsTestAnswer.evaluators.headers.graphic') }}
                 </v-tab>
               </v-tabs>
               <v-row justify="center">
-                <v-col v-if="ind == 0" cols="10">
+                <v-col
+                  v-if="ind == 0"
+                  cols="10"
+                >
                   <v-data-table
                     dense
                     :headers="evaluatorStatistics.header"
@@ -117,10 +175,16 @@
                     class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                   >
                     <template #item.result="{ item }">
-                      <v-chip v-if="isNaN(item.result)" :color="getColorPorcentage(item.result)">
+                      <v-chip
+                        v-if="isNaN(item.result)"
+                        :color="getColorPorcentage(item.result)"
+                      >
                         0.0%
                       </v-chip>
-                      <v-chip v-else :color="getColorPorcentage(item.result)">
+                      <v-chip
+                        v-else
+                        :color="getColorPorcentage(item.result)"
+                      >
                         {{ item.result }}%
                       </v-chip>
                     </template>
@@ -137,10 +201,15 @@
                     @click="DownloadEvaluatorCsv"
                   >
                     Export as CSV
-                    <v-icon end>mdi-download</v-icon>
+                    <v-icon end>
+                      mdi-download
+                    </v-icon>
                   </v-btn>
                 </v-col>
-                <v-col v-if="ind == 1" cols="10">
+                <v-col
+                  v-if="ind == 1"
+                  cols="10"
+                >
                   <RadarChart
                     v-if="evaluatorStatistics.items.length >= 3"
                     :labels="evaluatorStatistics.items.map((item) => `${item.evaluator} - ${item.result}%`)"
@@ -160,7 +229,13 @@
             </v-card>
 
             <!-- Tab 3 - Heuristics -->
-            <v-card v-if="tab == 2" rounded="xl" flat class="mb-6 py-2" style="background: #f5f7ff">
+            <v-card
+              v-if="tab == 2"
+              rounded="xl"
+              flat
+              class="mb-6 py-2"
+              style="background: #f5f7ff"
+            >
               <v-card
                 v-if="evaluatorStatistics.items.length <= 1"
                 key="heuristics-insufficient"
@@ -170,22 +245,46 @@
               >
                 {{ $t('HeuristicsTestAnswer.heuristics.messages.needMoreThan1Answer') }}
               </v-card>
-              <div v-else key="heuristics-data">
+              <div
+                v-else
+                key="heuristics-data"
+              >
                 <v-card-title class="subtitleView">
                   {{ $t('HeuristicsTestAnswer.heuristics.headers.heuristicsData') }}
                 </v-card-title>
                 <v-divider />
-                <v-tabs bg-color="transparent" color="grey-darken-2" class="mt-2" align-tabs="center">
-                  <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 0">
+                <v-tabs
+                  bg-color="transparent"
+                  color="grey-darken-2"
+                  class="mt-2"
+                  align-tabs="center"
+                >
+                  <v-tab
+                    class="tab-text"
+                    style="text-transform: none !important"
+                    @click="ind = 0"
+                  >
                     {{ $t('HeuristicsTestAnswer.heuristics.headers.answersByEvaluator') }}
                   </v-tab>
-                  <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 1">
+                  <v-tab
+                    class="tab-text"
+                    style="text-transform: none !important"
+                    @click="ind = 1"
+                  >
                     {{ $t('HeuristicsTestAnswer.heuristics.headers.answersByHeuristics') }}
                   </v-tab>
-                  <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 2">
+                  <v-tab
+                    class="tab-text"
+                    style="text-transform: none !important"
+                    @click="ind = 2"
+                  >
                     {{ $t('HeuristicsTestAnswer.heuristics.headers.graphic') }}
                   </v-tab>
-                  <v-tab class="tab-text" style="text-transform: none !important" @click="ind = 3">
+                  <v-tab
+                    class="tab-text"
+                    style="text-transform: none !important"
+                    @click="ind = 3"
+                  >
                     {{ $t('HeuristicsTestAnswer.heuristics.headers.weights') }}
                   </v-tab>
                 </v-tabs>
@@ -193,7 +292,10 @@
                   <v-col cols="10">
                     <v-row>
                       <!-- Bottom Tab 1 -->
-                      <v-col v-if="ind == 0" cols="12">
+                      <v-col
+                        v-if="ind == 0"
+                        cols="12"
+                      >
                         <v-data-table
                           :headers="heuristicsEvaluator.header"
                           :items="heuristicsEvaluator.items"
@@ -201,7 +303,11 @@
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
                           dense
                         >
-                          <template v-for="header in heuristicsEvaluator.header" :key="header.value" #[`item.${header.value}`]="{ item }">
+                          <template
+                            v-for="header in heuristicsEvaluator.header"
+                            :key="header.value"
+                            #[`item.${header.value}`]="{ item }"
+                          >
                             <v-chip
                               v-if="header.value != 'heuristic'"
                               :color="getColor(item[header.value], item.max, item.min)"
@@ -220,7 +326,10 @@
                         </v-data-table>
                       </v-col>
                       <!-- Bottom Tab 2 -->
-                      <v-col v-if="ind == 1" cols="12">
+                      <v-col
+                        v-if="ind == 1"
+                        cols="12"
+                      >
                         <v-data-table
                           :headers="heuristicsStatistics.header"
                           :items="heuristicsStatistics.items"
@@ -230,7 +339,10 @@
                         >
                           <template #item.percentage="{ item }">
                             <div style="padding-top: 2px; padding-bottom: 2px">
-                              <v-chip style="width: 35%" :color="getColor(item.average, item.max, item.min)">
+                              <v-chip
+                                style="width: 35%"
+                                :color="getColor(item.average, item.max, item.min)"
+                              >
                                 {{ checkIfNan(item.percentage) }}
                               </v-chip>
                             </div>
@@ -244,7 +356,10 @@
                         </v-data-table>
                       </v-col>
                       <!-- Bottom Tab 3 -->
-                      <v-col v-if="ind == 2" cols="12">
+                      <v-col
+                        v-if="ind == 2"
+                        cols="12"
+                      >
                         <BarChart
                           class="mx-2 mt-3 mb-6"
                           :labels="heuristicsStatistics.items.map((item) => item.name)"
@@ -253,7 +368,11 @@
                         />
                       </v-col>
                       <!-- Bottom Tab 4 -->
-                      <v-col v-if="ind == 3" cols="12" align="center">
+                      <v-col
+                        v-if="ind == 3"
+                        cols="12"
+                        align="center"
+                      >
                         <v-card
                           v-if="relative === null"
                           class="mx-auto mt-10 mb-10 py-6 if-card"
@@ -263,27 +382,45 @@
                           {{ $t('HeuristicsTestAnswer.heuristics.messages.runWeightFunction') }}
                         </v-card>
                         <div v-else>
-                          <v-row align="center" justify="space-around">
-                            <v-col md="4" sm="8">
+                          <v-row
+                            align="center"
+                            justify="space-around"
+                          >
+                            <v-col
+                              md="4"
+                              sm="8"
+                            >
                               <v-card
                                 align="center"
                                 class="elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
                                 width="950px"
                               >
                                 <v-card-title class="mt-4 mb-4 font-weight-bold">
-                                  <v-row align="center" justify="center">
-                                    Usability Percentage <br />
+                                  <v-row
+                                    align="center"
+                                    justify="center"
+                                  >
+                                    Usability Percentage <br>
                                     With Weights
                                   </v-row>
                                 </v-card-title>
                                 <v-card-text>
-                                  <v-row align="center" justify="center mt-2 mb-2">
-                                    <p class="text-h2">{{ usabilityTotalFix }}</p>
+                                  <v-row
+                                    align="center"
+                                    justify="center mt-2 mb-2"
+                                  >
+                                    <p class="text-h2">
+                                      {{ usabilityTotalFix }}
+                                    </p>
                                   </v-row>
                                 </v-card-text>
                               </v-card>
                             </v-col>
-                            <v-col cols="12" sm="6" md="8">
+                            <v-col
+                              cols="12"
+                              sm="6"
+                              md="8"
+                            >
                               <v-card
                                 align="center"
                                 class="elevation-4 weightsStatisticsStyle mt-6 py-4 px-4 mb-6 mx-auto"
@@ -297,7 +434,10 @@
                               </v-card>
                             </v-col>
                           </v-row>
-                          <v-row align="center" justify="space-around">
+                          <v-row
+                            align="center"
+                            justify="space-around"
+                          >
                             <v-data-table
                               :headers="weightsStatistics.header"
                               :items="weightsStatistics.items"
