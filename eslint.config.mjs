@@ -28,6 +28,7 @@ export default defineConfig({
     "vue/multi-word-component-names": "off", 
     "vue/no-required-prop-with-default": "off",
     "vue/require-default-prop": "off",
+    "vue/no-template-shadow": "off"
     // "semi": "off",
     // "no-unused-vars": "warn",
   },

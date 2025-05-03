@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="editable" class="main-box">
+    <div
+      v-if="editable"
+      class="main-box"
+    >
       <!-- Custom Toolbar -->
       <div class="bg-grey-lighten-3 editor-bar">
         <v-btn
@@ -9,7 +12,9 @@
           color="#FCA326"
           @click="editor.chain().focus().undo().run()"
         >
-          <v-icon color="grey-darken-1"> mdi-undo </v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-undo
+          </v-icon>
         </v-btn>
 
         <v-btn
@@ -18,7 +23,9 @@
           color="#FCA326"
           @click="editor.chain().focus().redo().run()"
         >
-          <v-icon color="grey-darken-1"> mdi-redo </v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-redo
+          </v-icon>
         </v-btn>
 
         <v-btn
@@ -115,7 +122,9 @@
           color="#FCA326"
           @click="loadImage()"
         >
-          <v-icon color="grey-darken-1"> mdi-image </v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-image
+          </v-icon>
         </v-btn>
 
         <v-btn
@@ -131,7 +140,10 @@
       </div>
 
       <v-divider />
-      <editor-content class="text-box pa-1" :editor="editor" />
+      <editor-content
+        class="text-box pa-1"
+        :editor="editor"
+      />
     </div>
     <!-- Read only -->
     <editor-content

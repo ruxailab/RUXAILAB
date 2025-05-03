@@ -1,13 +1,7 @@
-<template>
-  <!-- Assuming the original component renders the chart implicitly via vue-chartjs -->
-  <!-- If a specific template is needed, it should be provided -->
-</template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Line, mixins } from 'vue-chartjs'
 
-// Props
 const props = defineProps({
   taskAnswers: {
     type: Array,
@@ -15,7 +9,6 @@ const props = defineProps({
   },
 })
 
-// Reactive chart data
 const chartData = ref({
   labels: [],
   datasets: [

@@ -12,7 +12,10 @@
         >
           Page Not Found
         </div>
-        <div class="text-center" style="font-size:15px; color: grey">
+        <div
+          class="text-center"
+          style="font-size:15px; color: grey"
+        >
           We weren't able to find the page you were looking for.
         </div>
         <v-row

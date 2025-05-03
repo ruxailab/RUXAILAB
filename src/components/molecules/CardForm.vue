@@ -1,12 +1,13 @@
 <template>
   <v-card class="cards">
     <v-col cols="12">
-      <!-- Display the title and subtitle passed via props -->
-      <p class="cardsTitle ml-3">{{ title }}</p>
-      <p class="cardsSubtitle ml-3">{{ subtitle }}</p>
-
-      <!-- Slot for custom content inside the card -->
-      <slot></slot>
+      <p class="cardsTitle ml-3">
+        {{ title }}
+      </p>
+      <p class="cardsSubtitle ml-3">
+        {{ subtitle }}
+      </p>
+      <slot />
     </v-col>
   </v-card>
 </template>

@@ -7,9 +7,12 @@
       class="cards mt-2"
     >
       <v-row justify="center">
-        <v-col cols="12" class="pa-5">
+        <v-col
+          cols="12"
+          class="pa-5"
+        >
           <span class="cardsTitle ml-5">Tasks</span>
-         Got error generating code: Unexpected reserved word 'import'
+          Got error generating code: Unexpected reserved word 'import'
 
           <br>
           <span class="cardsSubtitle ml-5 mb-1">Create tasks for your evaluators</span>
@@ -46,14 +49,20 @@
           flat
           class="cards mb-5"
         >
-          <v-col cols="12" class="pb-0 px-5 pt-4">
+          <v-col
+            cols="12"
+            class="pb-0 px-5 pt-4"
+          >
             <v-icon style="cursor: pointer;">
               mdi-drag
             </v-icon>
             <span class="cardsTitle ml-3">{{ task.taskName }}</span>
             <br>
             <span class="cardsSubtitle ml-9">Task Description</span>
-            <v-icon class="delete-icon" @click="deleteTask(index)">
+            <v-icon
+              class="delete-icon"
+              @click="deleteTask(index)"
+            >
               mdi-delete
             </v-icon>
           </v-col>
@@ -92,7 +101,10 @@
       <v-card class="cards">
         <v-col />
         <v-card-text>
-          <v-form ref="form" v-model="valid">
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-text-field
               v-model="newTask.taskName"
               variant="outlined"
@@ -113,11 +125,21 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="red" @click="closeAddTaskModal">
-            <v-icon class="mr-1">mdi-close</v-icon>Cancel
+          <v-btn
+            color="red"
+            @click="closeAddTaskModal"
+          >
+            <v-icon class="mr-1">
+              mdi-close
+            </v-icon>Cancel
           </v-btn>
-          <v-btn color="orange" @click="addTask">
-            <v-icon class="mr-1">mdi-content-save</v-icon>Save
+          <v-btn
+            color="orange"
+            @click="addTask"
+          >
+            <v-icon class="mr-1">
+              mdi-content-save
+            </v-icon>Save
           </v-btn>
         </v-card-actions>
       </v-card>

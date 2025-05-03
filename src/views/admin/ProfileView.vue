@@ -2,8 +2,15 @@
   <div class="container px-4 py-8">
     <v-row>
       <!-- Left Section: Profile Details -->
-      <v-col cols="12" md="4" lg="3">
-        <v-card border class="rounded-lg h-100">
+      <v-col
+        cols="12"
+        md="4"
+        lg="3"
+      >
+        <v-card
+          border
+          class="rounded-lg h-100"
+        >
           <v-card-text class="text-center">
             <div class="d-flex justify-center position-relative my-4">
               <v-hover v-slot="{ isHovered }">
@@ -78,8 +85,15 @@
       </v-col>
 
       <!-- Right Section: Tabs and Content -->
-      <v-col cols="12" md="8" lg="9">
-        <v-card flat class="w-100">
+      <v-col
+        cols="12"
+        md="8"
+        lg="9"
+      >
+        <v-card
+          flat
+          class="w-100"
+        >
           <!-- Tabs Section -->
           <v-tabs
             v-if="!isSmallScreen"
@@ -90,16 +104,29 @@
             grow
           >
             <v-tab class="text-subtitle-1 font-weight-medium px-4">
-              <v-icon size="small" class="mr-2">mdi-account</v-icon>
+              <v-icon
+                size="small"
+                class="mr-2"
+              >
+                mdi-account
+              </v-icon>
               {{ $t('PROFILE.account') }}
             </v-tab>
             <v-tab class="text-subtitle-1 font-weight-medium px-4">
-              <v-icon size="small" class="mr-2">mdi-shield-lock</v-icon>
+              <v-icon
+                size="small"
+                class="mr-2"
+              >
+                mdi-shield-lock
+              </v-icon>
               {{ $t('PROFILE.security') }}
             </v-tab>
           </v-tabs>
 
-          <v-window v-model="activeTab" class="mt-3">
+          <v-window
+            v-model="activeTab"
+            class="mt-3"
+          >
             <v-window-item transition="fade-transition">
               <!-- Account Tab Content -->
               <v-hover v-slot="{ isHovered }">
@@ -110,13 +137,21 @@
                   :class="{ 'transform-card': isHovered }"
                 >
                   <v-card-title class="mb-4 bg-grey-lighten-4">
-                    <v-icon start color="primary">mdi-account-details</v-icon>
+                    <v-icon
+                      start
+                      color="primary"
+                    >
+                      mdi-account-details
+                    </v-icon>
                     {{ $t('PROFILE.personalInfo') }}
                   </v-card-title>
                   <v-card-text>
                     <v-form>
                       <v-row>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.username"
                             :label="$t('PROFILE.username')"
@@ -127,7 +162,10 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="user.email"
                             :label="$t('PROFILE.email')"
@@ -138,7 +176,10 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.contactNo"
                             :label="$t('PROFILE.contact')"
@@ -149,7 +190,10 @@
                             class="input-field-hover"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="userprofile.country"
                             :label="$t('PROFILE.country')"
@@ -171,7 +215,9 @@
                         :class="{ 'transform-button': isHoveredBtn }"
                         @click="openEditProfileDialog"
                       >
-                        <v-icon start>mdi-pencil</v-icon>
+                        <v-icon start>
+                          mdi-pencil
+                        </v-icon>
                         {{ $t('PROFILE.editDetails') }}
                       </v-btn>
                     </v-hover>
@@ -190,7 +236,12 @@
                   :class="{ 'transform-card': isHovered }"
                 >
                   <v-card-title class="mb-4 bg-grey-lighten-4">
-                    <v-icon start color="primary">mdi-lock</v-icon>
+                    <v-icon
+                      start
+                      color="primary"
+                    >
+                      mdi-lock
+                    </v-icon>
                     {{ $t('PROFILE.changePassword') }}
                   </v-card-title>
                   <v-card-text>
@@ -248,9 +299,15 @@
                       </div>
                     </v-alert>
 
-                    <v-form ref="passwordForm" v-model="valid">
+                    <v-form
+                      ref="passwordForm"
+                      v-model="valid"
+                    >
                       <v-row dense>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="newPassword"
                             :rules="passwordRules"
@@ -265,7 +322,10 @@
                             @click:append="showPassword = !showPassword"
                           />
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
                           <v-text-field
                             v-model="confirmPassword"
                             :rules="confirmPasswordRules"
@@ -296,7 +356,9 @@
                             :class="{ 'transform-button': isHoveredBtn }"
                             @click="changePassword"
                           >
-                            <v-icon start>mdi-key</v-icon>
+                            <v-icon start>
+                              mdi-key
+                            </v-icon>
                             {{ $t('PROFILE.changePassword') }}
                           </v-btn>
                         </v-hover>
@@ -315,7 +377,12 @@
                   :class="{ 'danger-card-hover': isHovered }"
                 >
                   <v-card-title class="bg-error-lighten-5">
-                    <v-icon start color="error">mdi-alert-circle</v-icon>
+                    <v-icon
+                      start
+                      color="error"
+                    >
+                      mdi-alert-circle
+                    </v-icon>
                     {{ $t('PROFILE.deleteAccountTitle') }}
                   </v-card-title>
                   <v-card-text>
@@ -332,7 +399,9 @@
                         :elevation="isHoveredBtn ? 2 : 0"
                         @click="deleteAccountDialog = true"
                       >
-                        <v-icon start>mdi-delete</v-icon>
+                        <v-icon start>
+                          mdi-delete
+                        </v-icon>
                         <span>{{ $t('PROFILE.deleteAccount') }}</span>
                       </v-btn>
                     </v-hover>
@@ -353,7 +422,12 @@
     >
       <v-card class="rounded-lg elevation-12">
         <v-card-title class="bg-grey-lighten-4">
-          <v-icon start color="primary">mdi-account-edit</v-icon>
+          <v-icon
+            start
+            color="primary"
+          >
+            mdi-account-edit
+          </v-icon>
           {{ $t('PROFILE.editProfile') }}
         </v-card-title>
         <v-card-text>
@@ -362,9 +436,13 @@
               <img
                 :src="editProfileData.profileImage || defaultImage"
                 alt="Profile Image"
-              />
+              >
             </v-avatar>
-            <v-btn icon class="ml-2" @click="selectImage">
+            <v-btn
+              icon
+              class="ml-2"
+              @click="selectImage"
+            >
               <v-icon>mdi-camera</v-icon>
             </v-btn>
             <input
@@ -373,9 +451,12 @@
               accept="image/*"
               style="display: none"
               @change="uploadProfileImage"
-            />
+            >
           </div>
-          <v-form ref="editProfileForm" v-model="editProfileValid">
+          <v-form
+            ref="editProfileForm"
+            v-model="editProfileValid"
+          >
             <v-text-field
               v-model="editProfileData.username"
               :label="$t('PROFILE.username')"
@@ -445,7 +526,9 @@
               :class="{ 'transform-button': isHovered }"
               @click="saveProfile"
             >
-              <v-icon start>mdi-content-save</v-icon>
+              <v-icon start>
+                mdi-content-save
+              </v-icon>
               {{ $t('PROFILE.saveChanges') }}
             </v-btn>
           </v-hover>
@@ -462,10 +545,19 @@
     >
       <v-card class="rounded-lg elevation-12">
         <v-card-title class="bg-error-lighten-5">
-          <v-icon start color="error">mdi-alert-circle</v-icon>
+          <v-icon
+            start
+            color="error"
+          >
+            mdi-alert-circle
+          </v-icon>
           {{ $t('PROFILE.deleteAccountTitle') }}
           <v-spacer />
-          <v-btn icon :disabled="isDeleting" @click="closeDeleteDialog">
+          <v-btn
+            icon
+            :disabled="isDeleting"
+            @click="closeDeleteDialog"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -473,7 +565,11 @@
         <!-- Step 1: Initial Confirmation -->
         <div v-if="deleteStep === 1">
           <v-card-text>
-            <v-alert type="error" class="mb-4" variant="outlined">
+            <v-alert
+              type="error"
+              class="mb-4"
+              variant="outlined"
+            >
               {{ $t('PROFILE.deleteAccountConfirm') }}
             </v-alert>
             <p class="text-body-1 mb-4">
@@ -533,7 +629,11 @@
         <!-- Step 2: Enter password -->
         <div v-else>
           <v-card-text>
-            <v-alert type="error" class="mb-4" variant="outlined">
+            <v-alert
+              type="error"
+              class="mb-4"
+              variant="outlined"
+            >
               {{ $t('PROFILE.finalStepVerifyIdentity') }}
             </v-alert>
 
@@ -584,7 +684,9 @@
                 }"
                 @click="deleteAccount"
               >
-                <v-icon start>mdi-delete</v-icon>
+                <v-icon start>
+                  mdi-delete
+                </v-icon>
                 {{ $t('PROFILE.deleteForever') }}
               </v-btn>
             </v-hover>
