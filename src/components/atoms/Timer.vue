@@ -67,4 +67,9 @@ const formatTime = (time) => {
 onBeforeMount(() => {
   startTimer()
 })
+
+defineExpose({
+  startTimer,
+  stopTimer
+})
 </script>
