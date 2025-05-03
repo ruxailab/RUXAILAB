@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <v-row class="mb-2" justify="center">
+    <v-row
+      class="mb-2"
+      justify="center"
+    >
       <v-col cols="10">
         <v-btn
           v-if="index === 0"

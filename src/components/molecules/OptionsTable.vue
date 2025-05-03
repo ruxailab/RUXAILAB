@@ -25,11 +25,17 @@
       </template>
 
       <template #top>
-        <v-row class="ma-0" align="center">
+        <v-row
+          class="ma-0"
+          align="center"
+        >
           <v-card-title class="subtitleView">
             {{ $t('HeuristicsOptionsTable.titles.options') }}
           </v-card-title>
-          <v-row justify="end" class="ma-0 pa-0 mr-4">
+          <v-row
+            justify="end"
+            class="ma-0 pa-0 mr-4"
+          >
             <v-btn
               rounded
               color="#f9a826"
@@ -42,8 +48,8 @@
               {{ $t('HeuristicsTable.titles.addOption') }}
             </v-btn>
             <AddOptionBtn
-              :option="option"
               v-model:dialog="dialog"
+              :option="option"
               :has-value="hasValue"
               @change-has-value="updateHasValue"
               @add-option="updateOptions"

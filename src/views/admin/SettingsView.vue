@@ -7,9 +7,16 @@
     <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="600" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="text-h5 bg-error text-white" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
@@ -19,10 +26,19 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="bg-grey-lighten-3" variant="text" @click="dialogDel = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogDel = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn class="bg-red text-white ml-1" :loading="loading" variant="text" @click="deleteTest(object)">
+          <v-btn
+            class="bg-red text-white ml-1"
+            :loading="loading"
+            variant="text"
+            @click="deleteTest(object)"
+          >
             {{ $t('buttons.delete') }}
           </v-btn>
         </v-card-actions>
@@ -30,12 +46,23 @@
     </v-dialog>
 
     <!-- Create Template Dialog -->
-    <v-dialog v-model="tempDialog" max-width="80%">
+    <v-dialog
+      v-model="tempDialog"
+      max-width="80%"
+    >
       <v-card>
-        <p class="dialog-title ma-2 pa-2">Create Template</p>
+        <p class="dialog-title ma-2 pa-2">
+          Create Template
+        </p>
         <v-divider />
-        <v-form ref="tempform" class="px-5">
-          <v-row justify="space-around" class="pa-2">
+        <v-form
+          ref="tempform"
+          class="px-5"
+        >
+          <v-row
+            justify="space-around"
+            class="pa-2"
+          >
             <v-col cols="12">
               <v-text-field
                 :model-value="template.templateTitle"
@@ -67,10 +94,18 @@
           <v-divider />
           <v-card-actions>
             <v-spacer />
-            <v-btn class="bg-error" @click="closeDialog()">
+            <v-btn
+              class="bg-error"
+              @click="closeDialog()"
+            >
               {{ $t('buttons.cancel') }}
             </v-btn>
-            <v-btn variant="text" :disabled="hasTemplate ? true : false" class="bg-success" @click="createTemplate()">
+            <v-btn
+              variant="text"
+              :disabled="hasTemplate ? true : false"
+              class="bg-success"
+              @click="createTemplate()"
+            >
               {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
@@ -83,7 +118,9 @@
         <div>
           <v-card style="background: #f5f7ff">
             <v-col class="mb-1 pa-4 pb-1">
-              <p class="subtitleView">{{ $t('pages.settings.currentTest') }}</p>
+              <p class="subtitleView">
+                {{ $t('pages.settings.currentTest') }}
+              </p>
             </v-col>
 
             <v-divider />
@@ -96,7 +133,10 @@
               @update:test="updateObject"
             />
 
-            <v-row justify="space-around" class="mx-4 mb-3">
+            <v-row
+              justify="space-around"
+              class="mx-4 mb-3"
+            >
               <v-spacer />
               <v-btn
                 style="margin-right: 25px"
@@ -108,27 +148,40 @@
                 {{ $t('pages.settings.createTemplate') }}
               </v-btn>
 
-              <v-btn style="margin-right: 40px" variant="outlined" color="green" @click="duplicateTest()">
+              <v-btn
+                style="margin-right: 40px"
+                variant="outlined"
+                color="green"
+                @click="duplicateTest()"
+              >
                 {{ $t('buttons.duplicateTest') }}
               </v-btn>
             </v-row>
 
             <v-divider class="my-3 mx-2" />
 
-            <v-row justify="center" class="mt-3">
+            <v-row
+              justify="center"
+              class="mt-3"
+            >
               <v-btn
                 color="#f26363"
                 class="text-white mb-4"
                 style="justify-self: center"
                 @click="dialogDel = true"
               >
-                <v-icon start>mdi-trash-can-outline</v-icon>
+                <v-icon start>
+                  mdi-trash-can-outline
+                </v-icon>
                 {{ $t('pages.settings.deleteTest') }}
               </v-btn>
             </v-row>
           </v-card>
 
-          <v-tooltip v-if="localChanges" location="left">
+          <v-tooltip
+            v-if="localChanges"
+            location="left"
+          >
             <template #activator="{ props }">
               <v-btn
                 v-if="localChanges"
@@ -140,7 +193,9 @@
                 v-bind="props"
                 @click="submit()"
               >
-                <v-icon size="large">mdi-content-save</v-icon>
+                <v-icon size="large">
+                  mdi-content-save
+                </v-icon>
               </v-btn>
             </template>
             <span>{{ $t('buttons.save') }}</span>
@@ -149,9 +204,19 @@
       </template>
     </ShowInfo>
   </v-container>
-  <v-overlay v-else-if="loadingPage" v-model="loadingPage" class="text-center">
-    <v-progress-circular indeterminate color="#fca326" size="50" />
-    <div class="white-text mt-3">Loading Settings</div>
+  <v-overlay
+    v-else-if="loadingPage"
+    v-model="loadingPage"
+    class="text-center"
+  >
+    <v-progress-circular
+      indeterminate
+      color="#fca326"
+      size="50"
+    />
+    <div class="white-text mt-3">
+      Loading Settings
+    </div>
   </v-overlay>
 
   <AccessNotAllowed v-else />

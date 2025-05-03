@@ -1,8 +1,14 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col cols="10" class="pt-16">
-        <v-row v-if="!searching" align="center">
+      <v-col
+        cols="10"
+        class="pt-16"
+      >
+        <v-row
+          v-if="!searching"
+          align="center"
+        >
           <span class="titleText ml-3 mb-2">{{
             $t('pages.createTest.templateTitle')
           }}</span>

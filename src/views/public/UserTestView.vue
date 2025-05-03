@@ -1,14 +1,27 @@
 <template>
   <div v-if="test">
     <!-- Loading Overlay -->
-    <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">Saving...</div>
+    <v-overlay
+      v-model="isLoading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
+      <div class="white-text mt-3">
+        Saving...
+      </div>
     </v-overlay>
     <Snackbar />
 
     <!-- Submit Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="600"
+      persistent
+    >
       <v-card>
         <v-card-title class="text-h5 bg-error text-white">
           {{ $t('HeuristicsTestView.messages.submitTest') }}
@@ -19,10 +32,18 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn class="bg-grey-lighten-3" variant="text" @click="dialog = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialog = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
-          <v-btn class="bg-red text-white ml-1" variant="text" @click="handleSubmit">
+          <v-btn
+            class="bg-red text-white ml-1"
+            variant="text"
+            @click="handleSubmit"
+          >
             {{ $t('buttons.submit') }}
           </v-btn>
         </v-card-actions>
@@ -30,40 +51,85 @@
     </v-dialog>
 
     <!-- User Login Dialog -->
-    <v-dialog :model-value="fromlink && !noExistUser && !logined" width="500" persistent>
+    <v-dialog
+      :model-value="fromlink && !noExistUser && !logined"
+      width="500"
+      persistent
+    >
       <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange-lighten-4" size="150">
-            <v-icon size="120">mdi-account</v-icon>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon size="120">
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="text-white" @click="setTest">
+          <v-btn
+            color="#F9A826"
+            class="text-white"
+            @click="setTest"
+          >
             Continue as {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             Not {{ user.email }}?
-            <a style="color: #f9a826" @click="signOut">Change account</a>
+            <a
+              style="color: #f9a826"
+              @click="signOut"
+            >Change account</a>
           </p>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Start Screen -->
-    <v-row v-if="test && start" class="background background-img pa-0 ma-0" align="center">
-      <v-col cols="6" class="ml-5">
-        <h1 class="titleView pb-1">{{ test.testTitle }}</h1>
-        <p align="justify" class="description">{{ test.testDescription }}</p>
+    <v-row
+      v-if="test && start"
+      class="background background-img pa-0 ma-0"
+      align="center"
+    >
+      <v-col
+        cols="6"
+        class="ml-5"
+      >
+        <h1 class="titleView pb-1">
+          {{ test.testTitle }}
+        </h1>
+        <p
+          align="justify"
+          class="description"
+        >
+          {{ test.testDescription }}
+        </p>
         <v-row justify="center">
-          <v-btn color="white" variant="outlined" rounded @click="startTest">Start Test</v-btn>
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            @click="startTest"
+          >
+            Start Test
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
 
     <!-- Main Test Interface -->
-    <v-row v-else class="nav pa-0 ma-0" dense>
+    <v-row
+      v-else
+      class="nav pa-0 ma-0"
+      dense
+    >
       <!-- Floating Action Button -->
       <v-speed-dial
         v-if="showSaveBtn && localTestAnswer"
@@ -75,14 +141,33 @@
         open-on-hover
       >
         <template #activator>
-          <v-btn v-model="fab" size="large" color="#F9A826" icon class="btn-fix">
-            <v-icon v-if="fab">mdi-close</v-icon>
-            <v-icon v-else size="large">mdi-hammer-screwdriver</v-icon>
+          <v-btn
+            v-model="fab"
+            size="large"
+            color="#F9A826"
+            icon
+            class="btn-fix"
+          >
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon
+              v-else
+              size="large"
+            >
+              mdi-hammer-screwdriver
+            </v-icon>
           </v-btn>
         </template>
         <v-tooltip location="left">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon size="small" color="#F9A826" @click="saveAnswer">
+            <v-btn
+              v-bind="props"
+              icon
+              size="small"
+              color="#F9A826"
+              @click="saveAnswer"
+            >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
@@ -107,12 +192,31 @@
       </v-speed-dial>
 
       <!-- Navigation Drawer -->
-      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
-        <div v-if="!mini" class="header">
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="mini"
+        permanent
+        color="#3F3D56"
+      >
+        <div
+          v-if="!mini"
+          class="header"
+        >
           <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <text-clamp class="titleText" :text="test.testTitle" :max-lines="2" />
+            <v-row
+              dense
+              align="center"
+              justify="space-around"
+            >
+              <v-col
+                class="pa-0 ma-0"
+                cols="8"
+              >
+                <text-clamp
+                  class="titleText"
+                  :text="test.testTitle"
+                  :max-lines="2"
+                />
               </v-col>
               <v-col>
                 <v-progress-circular
@@ -135,7 +239,10 @@
           max-height="85%"
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
         >
-          <div v-for="item in items" :key="item.id">
+          <div
+            v-for="item in items"
+            :key="item.id"
+          >
             <!-- Pre Test -->
             <v-list-group
               v-if="item.id === 0"
@@ -144,7 +251,9 @@
               @click="index = item.id"
             >
               <template #appendIcon>
-                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
+                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                  mdi-chevron-down
+                </v-icon>
               </template>
               <template #activator="{ props }">
                 <v-list-item v-bind="props">
@@ -158,7 +267,11 @@
                   </v-list-item-title>
                 </v-list-item>
               </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" location="right">
+              <v-tooltip
+                v-for="(task, i) in item.value"
+                :key="i"
+                location="right"
+              >
                 <template #activator="{ props }">
                   <v-list-item
                     v-bind="props"
@@ -188,7 +301,9 @@
               @click="index = item.id"
             >
               <template #appendIcon>
-                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">mdi-chevron-down</v-icon>
+                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
+                  mdi-chevron-down
+                </v-icon>
               </template>
               <template #activator="{ props }">
                 <v-list-item v-bind="props">
@@ -202,7 +317,11 @@
                   </v-list-item-title>
                 </v-list-item>
               </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" location="right">
+              <v-tooltip
+                v-for="(task, i) in item.value"
+                :key="i"
+                location="right"
+              >
                 <template #activator="{ props }">
                   <v-list-item
                     v-bind="props"
@@ -225,7 +344,11 @@
             </v-list-group>
 
             <!-- Post Test -->
-            <v-list-item v-if="item.id === 2" :disabled="!allTasksCompleted" @click="index = item.id">
+            <v-list-item
+              v-if="item.id === 2"
+              :disabled="!allTasksCompleted"
+              @click="index = item.id"
+            >
               <template #prepend>
                 <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
                   {{ !allTasksCompleted ? 'mdi-lock' : item.icon }}
@@ -240,25 +363,49 @@
 
         <div class="footer">
           <v-spacer />
-          <v-btn icon class="mr-2" @click.stop="mini = !mini">
-            <v-icon v-if="mini" color="white">mdi-chevron-right</v-icon>
-            <v-icon v-else color="white">mdi-chevron-left</v-icon>
+          <v-btn
+            icon
+            class="mr-2"
+            @click.stop="mini = !mini"
+          >
+            <v-icon
+              v-if="mini"
+              color="white"
+            >
+              mdi-chevron-right
+            </v-icon>
+            <v-icon
+              v-else
+              color="white"
+            >
+              mdi-chevron-left
+            </v-icon>
           </v-btn>
         </div>
       </v-navigation-drawer>
 
       <!-- Right View -->
-      <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
+      <v-col
+        ref="rightView"
+        class="backgroundTest pa-0 ma-0 right-view"
+      >
         <!-- Consent -->
         <ShowInfo
           v-if="index === 0 && taskIndex === 0"
           :title="$t('UserTestView.titles.preTestConsent')"
         >
           <template #content>
-            <v-row class="fill-height" align="center" justify="center">
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
                     {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
                   </h1>
                 </v-row>
@@ -266,7 +413,10 @@
             </v-row>
             <v-divider class="my-8" />
             <v-row>
-              <v-col cols="5" class="mx-auto py-0">
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
                 <v-checkbox
                   v-model="localTestAnswer.consentCompleted"
                   :label="localTestAnswer.consent"
@@ -284,21 +434,37 @@
           :title="$t('UserTestView.titles.preTestForm')"
         >
           <template #content>
-            <v-row class="fill-height" align="center" justify="center">
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
                     {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
                   </h1>
                 </v-row>
               </v-col>
             </v-row>
             <v-divider class="my-8" />
-            <v-row v-for="(item, i) in test.testStructure.preTest" :key="i">
-              <v-col cols="5" class="mx-auto py-0">
+            <v-row
+              v-for="(item, i) in test.testStructure.preTest"
+              :key="i"
+            >
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
                 <span class="cardsTitle">{{ item.title }}</span>
-                <br />
-                <span v-if="item.description" class="cardsSubtitle">{{ item.description }}</span>
+                <br>
+                <span
+                  v-if="item.description"
+                  class="cardsSubtitle"
+                >{{ item.description }}</span>
                 <v-text-field
                   v-if="item.textField"
                   v-model="localTestAnswer.preTestAnswer[i].answer"
@@ -346,15 +512,28 @@
           <template #content>
             <v-divider class="mb-5" />
             <v-container>
-              <v-row class="fill-height" align="center" justify="center">
-                <v-col cols="12" class="mb-0 pb-0">
+              <v-row
+                class="fill-height"
+                align="center"
+                justify="center"
+              >
+                <v-col
+                  cols="12"
+                  class="mb-0 pb-0"
+                >
                   <v-row justify="center">
-                    <h1 style="color: #455a64;" class="mt-2">
+                    <h1
+                      style="color: #455a64;"
+                      class="mt-2"
+                    >
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
                   </v-row>
                   <v-row justify="center">
-                    <p class="paragraph" style="color: #455a64;">
+                    <p
+                      class="paragraph"
+                      style="color: #455a64;"
+                    >
                       {{ test.testStructure.userTasks[taskIndex].taskDescription }}
                     </p>
                   </v-row>
@@ -379,7 +558,10 @@
                           @recording-started="isVisualizerVisible = $event"
                         />
                       </v-col>
-                      <v-col v-if="isVisualizerVisible" cols="1">
+                      <v-col
+                        v-if="isVisualizerVisible"
+                        cols="1"
+                      >
                         <AudioVisualizer />
                       </v-col>
                       <v-col
@@ -414,7 +596,10 @@
                       </v-col>
                     </v-row>
                   </div>
-                  <v-row class="paragraph" justify="space-around">
+                  <v-row
+                    class="paragraph"
+                    justify="space-around"
+                  >
                     <v-col
                       v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'"
                       class="mb-0 pb-0"
@@ -440,7 +625,9 @@
               <v-row v-if="test.testStructure.userTasks[taskIndex].postQuestion" class="fill-height" align="center"
                 justify="center">
                 <v-col class="text-center">
-                  <p class="text-h5">{{ test.testStructure.userTasks[taskIndex].postQuestion }}</p>
+                  <p class="text-h5">
+                    {{ test.testStructure.userTasks[taskIndex].postQuestion }}
+                  </p>
                   <v-text-field
                     v-model="localTestAnswer.tasks[taskIndex].postAnswer"
                     class="mx-2"
@@ -468,21 +655,37 @@
           title="Post Test"
         >
           <template #content>
-            <v-row class="fill-height" align="center" justify="center">
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
               <v-col cols="12">
                 <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
+                  <h1
+                    style="color: #455a64;"
+                    class="mt-6"
+                  >
                     {{ test.testTitle }} - {{ $t('UserTestView.titles.postTest') }}
                   </h1>
                 </v-row>
               </v-col>
             </v-row>
             <v-divider class="my-8" />
-            <v-row v-for="(item, i) in test.testStructure.postTest" :key="i">
-              <v-col cols="5" class="mx-auto py-0">
+            <v-row
+              v-for="(item, i) in test.testStructure.postTest"
+              :key="i"
+            >
+              <v-col
+                cols="5"
+                class="mx-auto py-0"
+              >
                 <span class="cardsTitle">{{ item.title }}</span>
-                <br />
-                <span v-if="item.description" class="cardsSubtitle">{{ item.description }}</span>
+                <br>
+                <span
+                  v-if="item.description"
+                  class="cardsSubtitle"
+                >{{ item.description }}</span>
                 <v-text-field
                   v-if="item.textField"
                   v-model="localTestAnswer.postTestAnswer[i].answer"
@@ -529,24 +732,42 @@
           :title="$t('finishTest.title')"
         >
           <template #content>
-            <v-row justify="center" class="ma-4">
-              <v-col cols="11" class="mt-3">
+            <v-row
+              justify="center"
+              class="ma-4"
+            >
+              <v-col
+                cols="11"
+                class="mt-3"
+              >
                 <span class="cardsTitle">{{ $t('finishTest.finalMessage') }}!</span>
-                <br />
+                <br>
                 <span class="cardsSubtitle">{{ $t('finishTest.congratulations') }}</span>
-                <v-row justify="center" class="mt-3">
+                <v-row
+                  justify="center"
+                  class="mt-3"
+                >
                   <v-col cols="4">
                     <img
                       draggable="false"
                       src="../../../public/finalMessage.svg"
                       alt="Final test svg"
-                    />
+                    >
                   </v-col>
-                  <v-col cols="4" class="pt-2 my-8">
+                  <v-col
+                    cols="4"
+                    class="pt-2 my-8"
+                  >
                     <span class="cardsSubtitle">{{ $t('finishTest.submitMessage') }}</span>
                     <v-col class="mt-2">
-                      <v-btn color="orange" variant="flat" @click="dialog = true">
-                        <v-icon class="ma-2">mdi-send</v-icon>{{ $t('buttons.submit') }}
+                      <v-btn
+                        color="orange"
+                        variant="flat"
+                        @click="dialog = true"
+                      >
+                        <v-icon class="ma-2">
+                          mdi-send
+                        </v-icon>{{ $t('buttons.submit') }}
                       </v-btn>
                     </v-col>
                   </v-col>

@@ -1,8 +1,8 @@
 <template>
   <v-card
-    outlined
+    border
     rounded="xl"
-    color="grey lighten-2"
+    color="grey-lighten-2"
     @click="$emit('click')"
   >
     <p class="text-center ma-2">
@@ -26,6 +26,8 @@ export default {
       default: '',
       require: true,
     }
-  }
+  },
+
+  emits: ['click'],
 }
 </script>

@@ -11,10 +11,16 @@
           {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
             <v-form ref="form">
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="6">
                   <v-text-field
                     v-model="localOption.text"
@@ -38,7 +44,10 @@
                 </v-col>
               </v-row>
 
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="12">
                   <v-text-field
                     v-model="localOption.description"
