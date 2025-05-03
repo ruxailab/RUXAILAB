@@ -16,7 +16,7 @@
               conexão novamente!</span>
           </v-col>
           <v-col class="text-center">
- piel            <v-img
+            piel            <v-img
               draggable="false"
               src="../../../public/Disconnected.svg"
               alt="Disconnected image"

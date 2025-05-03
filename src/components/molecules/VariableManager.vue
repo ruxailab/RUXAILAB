@@ -20,11 +20,11 @@
             class="mb-1"
             style="border-radius: 20px;"
           >
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               {{ item.title }}
-            </v-expansion-panel-header>
+            </v-expansion-panel-title>
 
-            <v-expansion-panel-content>
+            <v-expansion-panel-text>
               <v-form>
                 <v-text-field
                   v-model="item.description"
@@ -38,7 +38,7 @@
                     v-model="item.selectionFields[index]"
                     :label="$t('UserTestTable.inputs.selection')"
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <v-icon @click="deleteSelection(item, index)">
                         mdi-trash-can
                       </v-icon>
@@ -69,12 +69,16 @@
                 </v-col>
 
                 <v-col cols="6">
-                  <v-btn class="mt-4" icon @click="deleteItem(i)">
+                  <v-btn
+                    class="mt-4"
+                    icon
+                    @click="deleteItem(i)"
+                  >
                     <v-icon>mdi-trash-can</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
 
@@ -127,10 +131,7 @@ export default {
     },
 
     newSelection(index) {
-      this.$set(this.items, index, {
-        ...this.items[index],
-        selectionFields: [...this.items[index].selectionFields, ''],
-      })
+      this.items[index].selectionFields.push('')
     },
 
     deleteSelection(item, selectionIndex) {

@@ -11,12 +11,12 @@
       </p>
       <v-divider />
       <v-card-text>
-      <FormTask
-        ref="form"
-        :task="localTask"
-        @update:task="Object.assign(localTask, $event)"
-        @validate="submit"
-      />
+        <FormTask
+          ref="form"
+          :task="localTask"
+          @update:task="Object.assign(localTask, $event)"
+          @validate="submit"
+        />
       </v-card-text>
       <v-divider />
       <v-card-actions>

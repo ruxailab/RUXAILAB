@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Radar :chart-data="chartData" :options="chartOptions" />
+    <Radar
+      :chart-data="chartData"
+      :options="chartOptions"
+    />
   </div>
 </template>
 

@@ -1,28 +1,59 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
-    <v-overlay v-if="$route.path.includes('manager')" v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
+    <v-overlay
+      v-if="$route.path.includes('manager')"
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         {{ $t('common.loading') }}
       </div>
     </v-overlay>
 
-    <v-dialog :model-value="flagToken && flagUser && !logined" width="500" persistent>
+    <v-dialog
+      :model-value="flagToken && flagUser && !logined"
+      width="500"
+      persistent
+    >
       <v-card v-if="user">
-        <v-row class="ma-0 pa-0 pt-5" justify="center">
-          <v-avatar class="justify-center" color="orange-lighten-4" size="150">
-            <v-icon size="120">mdi-account</v-icon>
+        <v-row
+          class="ma-0 pa-0 pt-5"
+          justify="center"
+        >
+          <v-avatar
+            class="justify-center"
+            color="orange-lighten-4"
+            size="150"
+          >
+            <v-icon size="120">
+              mdi-account
+            </v-icon>
           </v-avatar>
         </v-row>
         <v-card-actions class="justify-center mt-4">
-          <v-btn color="#F9A826" class="text-white" @click="setTest">
+          <v-btn
+            color="#F9A826"
+            class="text-white"
+            @click="setTest"
+          >
             {{ $t('common.continueAs') }} {{ user.email }}
           </v-btn>
         </v-card-actions>
         <v-card-actions class="justify-center mt-4">
           <p>
             {{ $t('common.notUser', { userEmail: user.email }) }}
-            <a style="color: #f9a826" @click="signOut">{{
+            <a
+              style="color: #f9a826"
+              @click="signOut"
+            >{{
               $t('common.changeAccount')
             }}</a>
           </p>
@@ -30,20 +61,37 @@
       </v-card>
     </v-dialog>
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row
+      v-if="test"
+      class="nav pa-0 ma-0"
+      dense
+    >
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
         <div v-if="$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row align="center" justify="center" class="manager-bg">
+            <v-row
+              align="center"
+              justify="center"
+              class="manager-bg"
+            >
               <v-col class="text-div">
-                <div v-if="accessLevel === 0" class="text-white">
-                  <p class="mobile-center" style="font-size: 58px; font-weight: 500">
+                <div
+                  v-if="accessLevel === 0"
+                  class="text-white"
+                >
+                  <p
+                    class="mobile-center"
+                    style="font-size: 58px; font-weight: 500"
+                  >
                     {{ $t('titles.manager') }}
                   </p>
-                  <p style="font-size: 22px" class="mobile-center">
+                  <p
+                    style="font-size: 22px"
+                    class="mobile-center"
+                  >
                     {{ test.testTitle }}
                   </p>
                 </div>
@@ -78,7 +126,11 @@
                 </div>
 
                 <!-- Top Cards -->
-                <CardsManager :cards="topCards" :per-row="2" @click="go" />
+                <CardsManager
+                  :cards="topCards"
+                  :per-row="2"
+                  @click="go"
+                />
               </div>
 
               <div v-if="accessLevel == 0">
@@ -87,7 +139,11 @@
                 </div>
 
                 <!-- Bottom Cards -->
-                <CardsManager :cards="bottomCards" :per-row="3" @click="go" />
+                <CardsManager
+                  :cards="bottomCards"
+                  :per-row="3"
+                  @click="go"
+                />
               </div>
             </v-container>
           </div>

@@ -27,12 +27,12 @@
               <span v-if="type === 'myTemplates' || type === 'publicTemplates'">
                 {{
                   item.header &&
-                  item.header.templateTitle &&
-                  item.header.templateTitle[0]
+                    item.header.templateTitle &&
+                    item.header.templateTitle[0]
                     ? item.header.templateTitle[0].toUpperCase()
                     : item.testTitle && item.testTitle[0]
-                    ? item.testTitle[0].toUpperCase()
-                    : ''
+                      ? item.testTitle[0].toUpperCase()
+                      : ''
                 }}
               </span>
               <span v-else-if="type === 'sessions'">

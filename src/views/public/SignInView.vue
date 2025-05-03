@@ -1,18 +1,38 @@
 <template>
   <div class="background-grey">
     <Snackbar />
-    <v-row justify="center" style="height: 90%" align="center">
-      <v-col cols="12" md="8">
-        <v-card color="#f5f7ff" rounded="xl" flat>
+    <v-row
+      justify="center"
+      style="height: 90%"
+      align="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <v-card
+          color="#f5f7ff"
+          rounded="xl"
+          flat
+        >
           <v-row>
-            <v-col cols="10" md="5" align-self="center" class="ma-8">
+            <v-col
+              cols="10"
+              md="5"
+              align-self="center"
+              class="ma-8"
+            >
               <div class="card-title">
                 {{ $t('SIGNIN.sign-in') }}
               </div>
 
               <div class="divider" />
 
-              <v-form ref="form" class="mx-3" @keyup.enter="onSignIn">
+              <v-form
+                ref="form"
+                class="mx-3"
+                @keyup.enter="onSignIn"
+              >
                 <v-text-field
                   v-model="email"
                   :label="$t('SIGNIN.email')"
@@ -82,7 +102,11 @@
               </v-card-actions>
             </v-col>
 
-            <v-col cols="6" class="d-none d-sm-flex" align-self="center">
+            <v-col
+              cols="6"
+              class="d-none d-sm-flex"
+              align-self="center"
+            >
               <v-img :src="require('@/assets/signIn.svg')" />
             </v-col>
           </v-row>

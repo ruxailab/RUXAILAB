@@ -1,7 +1,10 @@
 <template>
   <v-container class="container-max-width">
     <v-row justify="center">
-      <v-col cols="12" class="text-center mb-6">
+      <v-col
+        cols="12"
+        class="text-center mb-6"
+      >
         <h1 class="text-h4 font-weight-bold text-primary">
           WCAG Accessibility Guidelines
         </h1>
@@ -12,7 +15,10 @@
 
       <v-col cols="12">
         <v-card class="elevation-2 mb-12">
-          <v-expansion-panels v-model="openPrinciple" multiple>
+          <v-expansion-panels
+            v-model="openPrinciple"
+            multiple
+          >
             <v-expansion-panel
               v-for="(principle, index) in flattenedWcagData"
               :key="index"
@@ -70,7 +76,10 @@
                       >
                         <v-card-title class="py-3">
                           <v-row align="center">
-                            <v-col cols="12" sm="8">
+                            <v-col
+                              cols="12"
+                              sm="8"
+                            >
                               <div class="d-flex align-center">
                                 <div class="rule-id mr-2">
                                   {{ rule.id }}
@@ -80,7 +89,11 @@
                                 </div>
                               </div>
                             </v-col>
-                            <v-col cols="12" sm="4" class="text-sm-right">
+                            <v-col
+                              cols="12"
+                              sm="4"
+                              class="text-sm-right"
+                            >
                               <v-chip
                                 :color="getLevelColor(rule.level)"
                                 size="small"
@@ -102,7 +115,10 @@
                         <v-divider />
 
                         <v-card-text class="pa-4">
-                          <v-list density="compact" class="bg-transparent">
+                          <v-list
+                            density="compact"
+                            class="bg-transparent"
+                          >
                             <v-list-item
                               v-for="(criterion, i) in rule.criteria"
                               :key="i"

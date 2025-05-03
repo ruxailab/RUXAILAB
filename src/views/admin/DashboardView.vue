@@ -152,10 +152,20 @@
           />
 
           <!-- Tests -> Personal  -->
-          <List v-if="mainIndex == 0 && subIndex == 0" :items="filteredTests" type="myTests" @clicked="goTo" />
+          <List
+            v-if="mainIndex == 0 && subIndex == 0"
+            :items="filteredTests"
+            type="myTests"
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Others  -->
-          <List v-if="mainIndex == 0 && subIndex == 1" :items="filteredTests" type="sharedWithMe" @clicked="goTo" />
+          <List
+            v-if="mainIndex == 0 && subIndex == 1"
+            :items="filteredTests"
+            type="sharedWithMe"
+            @clicked="goTo"
+          />
 
           <!-- Tests -> Public Tests -->
           <List

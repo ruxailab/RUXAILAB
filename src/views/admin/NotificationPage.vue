@@ -1,8 +1,14 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="10">
-        <v-card class="rounded-xxl" border>
+      <v-col
+        cols="12"
+        md="10"
+      >
+        <v-card
+          class="rounded-xxl"
+          border
+        >
           <v-card-title class="text-h5">
             {{ $t('common.notifications') }}
             <v-spacer />
@@ -16,7 +22,10 @@
             </v-btn>
           </v-card-title>
 
-          <v-tabs v-model="activeTab" bg-color="#f3a426">
+          <v-tabs
+            v-model="activeTab"
+            bg-color="#f3a426"
+          >
             <v-tab href="#unread">
               {{ $t('common.unread') }}
             </v-tab>
@@ -35,7 +44,10 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert type="info" variant="outlined">
+                <v-alert
+                  type="info"
+                  variant="outlined"
+                >
                   {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
@@ -50,7 +62,10 @@
                 />
               </v-card-text>
               <v-card-text v-else>
-                <v-alert type="info" variant="outlined">
+                <v-alert
+                  type="info"
+                  variant="outlined"
+                >
                   {{ $t('common.noNotifications') }}
                 </v-alert>
               </v-card-text>
@@ -59,7 +74,11 @@
 
           <v-card-actions>
             <v-spacer />
-            <v-btn color="secondary" variant="text" @click="goBack">
+            <v-btn
+              color="secondary"
+              variant="text"
+              @click="goBack"
+            >
               {{ $t('buttons.back') }}
             </v-btn>
           </v-card-actions>
