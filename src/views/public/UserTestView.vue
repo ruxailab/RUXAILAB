@@ -1017,18 +1017,55 @@ export default {
     completeStep(id, type) {
       try {
         if (type === 'tasks') {
-          this.currentUserTestAnswer.tasks[id].completed = true;
-          this.items[1].value[id].icon = 'mdi-check-circle-outline';
-          this.allTasksCompleted = this.items[1].value.every(
-            (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
-          );
-          if (this.allTasksCompleted) {
-            this.items[1].icon = 'mdi-check-circle-outline';
+          const task = this.currentUserTestAnswer.tasks[id]
+          const taskStructure = this.test.testStructure.userTasks[id]
+          let isTaskComplete = true
+          let incompleteMessage = ''
+
+          if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
+            isTaskComplete = false
+            incompleteMessage = 'Please provide an answer for the task.'
+          } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
+            isTaskComplete = false
+            incompleteMessage = 'Please answer the post-task question.'
           }
-          if (this.taskIndex < this.items[1].value.length - 1) {
-            this.taskIndex++;
+          // if (taskStructure.hasAudioRecord && !task.audioRecording) {
+          //   isTaskComplete = false;
+          //   incompleteMessage = 'Please record an audio for this task.';
+          // }
+          if (isTaskComplete) {
+            this.currentUserTestAnswer.tasks[id].completed = true
+            this.items[1].value[id].icon = 'mdi-check-circle-outline'
+            this.allTasksCompleted = true
+            this.$forceUpdate()
+
+            for (let i = 0; i < this.items[1].value.length; i++) {
+              if (!this.currentUserTestAnswer.tasks[i].completed) {
+                this.allTasksCompleted = false
+                break;
+              }
+            }
+            if (this.allTasksCompleted) {
+              this.items[1].icon = 'mdi-check-circle-outline'
+            }
+            if (
+              this.taskIndex <
+              Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            ) {
+              this.taskIndex++
+            } else if (
+              this.taskIndex >=
+              Object.keys(this.currentUserTestAnswer.tasks).length - 1
+            ) {
+              this.index++
+            }
+            this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
+              timeout: 3000,
+            })
           } else {
-            this.index++;
+            this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
+              timeout: 5000,
+            })
           }
         }
         if (type === 'postTest') {
