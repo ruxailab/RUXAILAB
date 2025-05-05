@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="500">
+  <v-dialog v-model="internalDialog" width="500">
     <template v-slot:activator="{ on }">
       <v-btn
         color="green"
@@ -30,7 +30,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="orange" text @click="dialog = false">
+        <v-btn color="orange" text @click="closeDialog">
           Ok
         </v-btn>
       </v-card-actions>
@@ -40,19 +40,47 @@
 
 <script>
 export default {
-  // Fix default prop handling in task object
+  name: 'TipButton',
   props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
     task: {
       type: Object,
       default: () => ({
-        taskName: '',
-        taskTip: '',
+        taskName: 'Task',
+        taskTip: 'No tip available',
       }),
+      validator: (task) => {
+        return typeof task.taskName === 'string' && 
+               typeof task.taskTip === 'string'
+      }
     },
   },
 
-  data: () => ({
-    dialog: false,
-  }),
+  data() {
+    return {
+      internalDialog: this.value,
+    }
+  },
+
+  watch: {
+    value: {
+      immediate: true,
+      handler(val) {
+        this.internalDialog = val
+      }
+    },
+    internalDialog(val) {
+      this.$emit('input', val)
+    }
+  },
+
+  methods: {
+    closeDialog() {
+      this.internalDialog = false
+    }
+  }
 }
 </script>
