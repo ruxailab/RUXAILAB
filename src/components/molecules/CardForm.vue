@@ -1,8 +1,11 @@
 <template>
   <v-card class="cards">
     <v-col cols="12">
+      <!-- Display the title and subtitle passed via props -->
       <p class="cardsTitle ml-3">{{ title }}</p>
       <p class="cardsSubtitle ml-3">{{ subtitle }}</p>
+
+      <!-- Slot for custom content inside the card -->
       <slot></slot>
     </v-col>
   </v-card>
@@ -13,14 +16,13 @@ export default {
   props: {
     title: {
       type: String,
-      defualt: '',
-      require: true,
+      default: '',     // ✅ Corrected from 'defualt'
+      required: true,  // ✅ Corrected from 'require'
     },
-
     subtitle: {
       type: String,
-      defualt: '',
-      require: false ,
+      default: '',     // ✅ Corrected from 'defualt'
+      required: false, // ✅ Corrected from 'require'
     },
   },
 }
