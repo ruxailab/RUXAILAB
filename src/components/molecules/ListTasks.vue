@@ -120,19 +120,19 @@ const task = ref({
 
 const headers = ref([
   {
-    text: 'Name',
+    title: 'Name',
     align: 'start',
     sortable: false,
-    value: 'taskName',
+    key: 'taskName',
   },
-  { text: 'Description', value: 'taskDescription' },
-  { text: 'Tip', value: 'taskTip' },
-  { text: 'Post question', value: 'postQuestion' },
-  { text: 'Screen Record', value: 'hasScreenRecord' },
-  { text: 'Camera', value: 'hasCamRecord' },
-  { text: 'Eye Tracker', value: 'hasEye' },
-  { text: 'Audio Record', value: 'hasAudioRecord' },
-  { text: 'Actions', value: 'actions', sortable: false },
+  { title: 'Description', key: 'taskDescription' },
+  { title: 'Tip', key: 'taskTip' },
+  { title: 'Post question', key: 'postQuestion' },
+  { title: 'Screen Record', key: 'hasScreenRecord' },
+  { title: 'Camera', key: 'hasCamRecord' },
+  { title: 'Eye Tracker', key: 'hasEye' },
+  { title: 'Audio Record', key: 'hasAudioRecord' },
+  { title: 'Actions', key: 'actions', sortable: false },
 ]);
 
 const editItem = (item) => {

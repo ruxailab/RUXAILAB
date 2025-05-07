@@ -60,97 +60,66 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-row
-      v-if="test"
-      class="nav pa-0 ma-0"
-      dense
-    >
-      <Drawer :items="navigator" />
-
-      <!-- View -->
-      <v-col class="background pa-0 ma-0">
-        <div v-if="$route.path.includes('manager')">
-          <div class="back-gradient">
-            <v-row
-              align="center"
-              justify="center"
-              class="manager-bg"
-            >
-              <v-col class="text-div">
-                <div
-                  v-if="accessLevel === 0"
-                  class="text-white"
-                >
-                  <p
-                    class="mobile-center"
-                    style="font-size: 58px; font-weight: 500"
-                  >
-                    {{ $t('titles.manager') }}
-                  </p>
-                  <p
-                    style="font-size: 22px"
-                    class="mobile-center"
-                  >
-                    {{ test.testTitle }}
-                  </p>
-                </div>
-                <div
-                  v-else
-                  class="text-white mobile-center"
-                  style="font-size: 58px; font-weight: 500"
-                >
+    <template v-if="test">
+      <Drawer v-if="mdAndUp" :items="navigator" />
+      <v-container
+        fluid
+        :class="['background pa-0 ma-0', { 'pl-drawer': mdAndUp }]"
+        style="min-height: 100vh; overflow-y: auto"
+      >
+        <template v-if="$route.path.includes('manager')">
+          <v-row
+            align="center"
+            justify="center"
+            class="manager-bg back-gradient pa-6"
+          >
+            <!-- Text Column -->
+            <v-col cols="12" md="6" class="text-white text-center text-md-left">
+              <div v-if="accessLevel === 0">
+                <p class="font-weight-medium text-h4 text-md-h2">
+                  {{ $t('titles.manager') }}
+                </p>
+                <p class="text-subtitle-1 text-md-subtitle-1">
                   {{ test.testTitle }}
-                </div>
-                <v-img
-                  class="hidden-md-and-up"
-                  style="max-height: 40vh"
-                  cover
-                  src="@/assets/manager/IntroManager.svg"
-                />
-              </v-col>
+                </p>
+              </div>
+              <div v-else>
+                <p class="font-weight-medium text-h4 text-md-h2">
+                  {{ test.testTitle }}
+                </p>
+              </div>
+            </v-col>
+
+            <!-- Image Column -->
+            <v-col cols="12" md="6" class="d-flex justify-center">
               <v-img
-                class="hidden-sm-and-down"
-                cover
-                max-width="40%"
-                max-height="85%"
-                src="@/assets/manager/IntroManager.svg"
+                :src="require('@/assets/manager/IntroManager.svg')"
+                max-height="300"
+                max-width="100%"
               />
-            </v-row>
-          </div>
-          <div>
-            <v-container class="card-container">
-              <div v-if="accessLevel == 0">
-                <div class="presentation-text">
-                  {{ $t('common.editAndInvite') }}
-                </div>
+            </v-col>
+          </v-row>
 
-                <!-- Top Cards -->
-                <CardsManager
-                  :cards="topCards"
-                  :per-row="2"
-                  @click="go"
-                />
-              </div>
+          <!-- Cards Section -->
+          <v-container class="card-container pt-6 pb-10">
+            <div v-if="accessLevel == 0">
+              <p class="presentation-text text-center text-md-left mb-4">
+                {{ $t('common.editAndInvite') }}
+              </p>
+              <CardsManager :cards="topCards" :per-row="mdAndUp ? 2 : 1" @click="go" />
+            </div>
 
-              <div v-if="accessLevel == 0">
-                <div class="presentation-text mt-5">
-                  {{ $t('common.analyzeProject') }}
-                </div>
-
-                <!-- Bottom Cards -->
-                <CardsManager
-                  :cards="bottomCards"
-                  :per-row="3"
-                  @click="go"
-                />
-              </div>
-            </v-container>
-          </div>
-        </div>
+            <div class="mt-10">
+              <p class="presentation-text text-center text-md-left mb-4">
+                {{ $t('common.analyzeProject') }}
+              </p>
+              <CardsManager :cards="bottomCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+            </div>
+          </v-container>
+        </template>
         <router-view v-else />
-      </v-col>
-    </v-row>
+      </v-container>
+    </template>
   </v-container>
 </template>
 
@@ -160,8 +129,9 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toastification'
-import Drawer from '@/components/atoms/Drawer.vue'
 import { statistics } from '@/utils/statistics'
+import { useDisplay } from 'vuetify'
+import Drawer from '@/components/atoms/Drawer.vue'
 import CardsManager from '@/components/atoms/CardsManager'
 
 const store = useStore()
@@ -169,6 +139,7 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const toast = useToast()
+const { mdAndUp } = useDisplay()
 
 const flagUser = ref(false)
 const flagToken = ref(false)

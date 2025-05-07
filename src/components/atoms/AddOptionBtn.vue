@@ -27,6 +27,7 @@
                     max-length="100"
                     counter="100"
                     :label="$t('common.text')"
+                    variant="outlined"
                     :rules="textRequired"
                   />
                 </v-col>
@@ -39,6 +40,7 @@
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
+                    variant="outlined"
                     step="0.5"
                   />
                 </v-col>
@@ -50,6 +52,7 @@
               >
                 <v-col cols="12">
                   <v-text-field
+                    variant="outlined"
                     v-model="localOption.description"
                     max-length="250"
                     counter="250"
@@ -81,8 +84,7 @@
 
           <v-btn
             size="small"
-            color="#f9a826"
-            class="text-white"
+            class="text-white bg-orange"
             @click="validate"
           >
             {{ $t('common.save') }}
