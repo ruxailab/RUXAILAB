@@ -187,7 +187,7 @@
                 v-if="localChanges"
                 size="large"
                 icon
-                fixed
+                position='fixed'
                 location="bottom right"
                 color="#F9A826"
                 v-bind="props"

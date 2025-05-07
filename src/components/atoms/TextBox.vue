@@ -1,7 +1,8 @@
 <template>
   <div>
+    <!-- Editable toolbar only shows when editor is initialized -->
     <div
-      v-if="editable"
+      v-if="editable && editor"
       class="main-box"
     >
       <!-- Custom Toolbar -->
@@ -12,9 +13,7 @@
           color="#FCA326"
           @click="editor.chain().focus().undo().run()"
         >
-          <v-icon color="grey-darken-1">
-            mdi-undo
-          </v-icon>
+          <v-icon color="grey-darken-1">mdi-undo</v-icon>
         </v-btn>
 
         <v-btn
@@ -23,9 +22,7 @@
           color="#FCA326"
           @click="editor.chain().focus().redo().run()"
         >
-          <v-icon color="grey-darken-1">
-            mdi-redo
-          </v-icon>
+          <v-icon color="grey-darken-1">mdi-redo</v-icon>
         </v-btn>
 
         <v-btn
@@ -122,9 +119,7 @@
           color="#FCA326"
           @click="loadImage()"
         >
-          <v-icon color="grey-darken-1">
-            mdi-image
-          </v-icon>
+          <v-icon color="grey-darken-1">mdi-image</v-icon>
         </v-btn>
 
         <v-btn
@@ -145,9 +140,10 @@
         :editor="editor"
       />
     </div>
-    <!-- Read only -->
+
+    <!-- Read-only display when not editable -->
     <editor-content
-      v-else
+      v-else-if="editor"
       style="outline-color: none !important;"
       :editor="editor"
     />
@@ -156,12 +152,11 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent } from '@tiptap/vue-3';
+import { Editor, EditorContent } from '@tiptap/vue-3';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
@@ -252,12 +247,23 @@ const getHtml = () => {
 };
 
 const setContent = (text) => {
-  editor.value.commands.setContent(text);
+  if (editor.value) {
+      editor.value.commands.setContent(text);
+    }
 };
 
 const resetContent = () => {
   editor.value.commands.clearContent();
 };
+
+defineExpose({
+  setContent,
+  getHtml: () => {
+    return editor.value?.getHTML() || '';
+  },
+  resetContent,
+  getJson,
+});
 </script>
 
 <style scoped>
