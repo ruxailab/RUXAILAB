@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-card-title
-        class="text-h5 bg-error-accent-4 text-white"
+        class="text-h5 bg-red text-white"
         primary-title
       >
         {{ $t('alerts.leave') }}
@@ -25,7 +25,7 @@
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
-          class="bg-error-accent-4 text-white ml-1"
+          class="bg-red text-white ml-1"
           variant="text"
           @click="handleLeave"
         >
@@ -49,7 +49,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
-defineEmits(['save-and-leave']);
+const emit = defineEmits(['submit']);
 
 const store = useStore();
 const router = useRouter();
@@ -72,6 +72,6 @@ const handleLeave = () => {
 };
 
 const submit = () => {
-  emit('save-and-leave');
+  emit('submit');
 };
 </script>

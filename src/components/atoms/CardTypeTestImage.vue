@@ -62,7 +62,6 @@ const props = defineProps({
   }
 })
 
-// Define emits
 defineEmits(['click'])
 </script>
 

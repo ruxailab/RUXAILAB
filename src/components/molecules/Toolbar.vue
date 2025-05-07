@@ -99,7 +99,7 @@
         <v-menu
           v-if="user"
           v-model="menu"
-          :offset="{ y: 8 }"
+          :offset="[0, 8]"
           min-width="300"
           transition="slide-y-transition"
           :close-on-content-click="false"

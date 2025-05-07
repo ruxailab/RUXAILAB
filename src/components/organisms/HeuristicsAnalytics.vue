@@ -34,7 +34,6 @@
                   <v-list-subheader>Heuristics</v-list-subheader>
                   <v-divider />
                   <v-list
-                    v-model="heuristicSelect"
                     color="#fca326"
                     density="compact"
                     height="470px"
@@ -43,19 +42,16 @@
                     <v-list-item
                       v-for="(item, i) in test.testStructure"
                       :key="i"
+                      :value="i"
+                      @click="heuristicSelect = i"
+                      :active="i === heuristicSelect"
                     >
-                      <v-list-item-title>
-                        {{
-                          `H${item.id + 1} - ${item.title}`
-                        }}
-                      </v-list-item-title>
-                        
-                      <template
-                        v-if="i == heuristicSelect"
-                        #prepend
-                      >
+                      <template #prepend v-if="i === heuristicSelect">
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
+                      <v-list-item-title>
+                        {{ `H${item.id + 1} - ${item.title}` }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-list>
@@ -83,40 +79,35 @@
                   </v-list-subheader>
                   <v-divider />
                   <v-list
-                    v-model="questionSelect"
                     density="compact"
                     height="470px"
                     color="#fca326"
                     class="list-scroll"
                   >
-                    <v-list-item :value="-1">
-                      <v-list-item-title>Data Table</v-list-item-title>
-                      
-                      <template
-                        v-if="questionSelect == -1"
-                        #prepend
-                      >
+                    <v-list-item
+                      :value="-1"
+                      @click="questionSelect = -1"
+                      :active="questionSelect === -1"
+                    >
+                      <template #prepend v-if="questionSelect === -1">
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
+                      <v-list-item-title>Data Table</v-list-item-title>
                     </v-list-item>
+
                     <v-list-item
-                      v-for="(item, i) in test.testStructure[heuristicSelect]
-                        .questions"
+                      v-for="(item, i) in test.testStructure[heuristicSelect].questions"
                       :key="i"
                       :value="i"
+                      @click="questionSelect = i"
+                      :active="i === questionSelect"
                     >
-                      <v-list-item-title>
-                        {{
-                          `Q${item.id + 1} - ${item.title}`
-                        }}
-                      </v-list-item-title>
-                      
-                      <template
-                        v-if="i == questionSelect"
-                        #prepend
-                      >
+                      <template #prepend v-if="i === questionSelect">
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
+                      <v-list-item-title>
+                        {{ `Q${item.id + 1} - ${item.title}` }}
+                      </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-list>

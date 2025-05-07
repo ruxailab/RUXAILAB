@@ -76,22 +76,22 @@ const emit = defineEmits(['change']);
 
 const headers = ref([
   {
-    text: t('common.text'),
+    title: t('commoitle'),
     align: 'start',
     value: 'text',
   },
   {
-    text: t('common.description'),
+    title: t('common.description'),
     align: 'end',
     value: 'description',
   },
   {
-    text: t('common.value'),
+    title: t('common.value'),
     align: 'end',
     value: 'value',
   },
   {
-    text: t('common.editDelete'),
+    title: t('common.editDelete'),
     value: 'actions',
     align: 'end',
     sortable: false,
