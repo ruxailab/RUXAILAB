@@ -16,30 +16,30 @@
           style="background-color: #F5F7FF;"
           class="pt-2"
         >
-          <v-stepper-step
-            :complete="step > 1"
-            step="1"
+          <v-stepper-item
+            :complete="value > 1"
+            value="1"
             color="orange"
           >
             Conclusion
-          </v-stepper-step>
+          </v-stepper-item>
           <v-divider />
-          <v-stepper-step
-            :complete="step > 2"
-            step="2"
+          <v-stepper-item
+            :complete="value > 2"
+            value="2"
             color="orange"
           >
             Elements
-          </v-stepper-step>
+          </v-stepper-item>
         </v-stepper-header>
 
-        <v-stepper-items
+        <v-stepper-window
           style="background-color:#F5F7FF"
           class="mt-0"
         >
-          <v-stepper-content
-            step="1"
-            class="align-mid pt-2"
+          <v-stepper-window-item
+            value="1"
+            class="align-mid pt-5"
           >
             <div class="container">
               <div class="row">
@@ -65,14 +65,14 @@
                 {{ $t('buttons.next') }}
               </v-btn>
             </div>
-          </v-stepper-content>
+          </v-stepper-window-item>
 
-          <v-stepper-content step="2">
-            <div>
+          <v-stepper-window-item value="2">
+            <div class="pt-10">
               <FinalReportSelectionBox @return-step="step--" />
             </div>
-          </v-stepper-content>
-        </v-stepper-items>
+          </v-stepper-window-item>
+        </v-stepper-window>
       </v-stepper>
     </v-container>
 

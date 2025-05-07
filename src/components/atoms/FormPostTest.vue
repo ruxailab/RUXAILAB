@@ -104,7 +104,7 @@
     >
       <v-card>
         <v-card-title class="text-h6 mb-2">
-          {{ $t('UserTestTable.titles.editNewPost') }}
+          {{ $t('UserTestTable.titles.writeNewPost') }}
         </v-card-title>
         <v-card-text>
           <v-form
@@ -116,7 +116,7 @@
               variant="filled"
               :rules="[(value) => !!value || 'This field is required']"
               color="orange"
-              :label="$t('UserTestTable.inputs.editQuestion')"
+              :label="$t('UserTestTable.inputs.writeQuestion')"
               @change="saveState"
             />
           </v-form>

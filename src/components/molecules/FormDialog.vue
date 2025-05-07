@@ -29,8 +29,7 @@
           {{ $t('buttons.cancel') }}
         </v-btn>
         <v-btn
-          color="#f9a826"
-          class="text-white"
+          class="text-white bg-orange"
           @click="validate"
         >
           {{ $t('common.save') }}

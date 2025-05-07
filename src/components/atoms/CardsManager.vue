@@ -24,8 +24,7 @@
         >
           <v-img
             max-height="150"
-            :style="item.imageStyle"
-            cover
+            :style="item.imageStyle"  
             :src="require('../../assets/manager/' + item.image)"
           />
         </v-row>
