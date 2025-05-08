@@ -149,7 +149,7 @@
           class="d-flex justify-center"
         >
           <v-img
-            src="../../assets/BackgroundTestView.png"
+            :src="require('../../assets/BackgroundTestView.png')"
             cover
             class="mx-auto"
             max-width="100%"
@@ -160,93 +160,10 @@
 
       <v-row
         v-else
+        justify="center"
         class="nav pa-0 ma-0"
         dense
       >
-        <v-speed-dial
-          v-if="showSaveBtn"
-          v-model="fab"
-          fixed
-          class="mr-3"
-          bottom
-          right
-          open-on-hover
-        >
-          <template #activator>
-            <v-btn
-              v-model="fab"
-              size="large"
-              color="#F9A826"
-              icon
-              class="btn-fix"
-            >
-              <v-icon v-if="fab">
-                mdi-close
-              </v-icon>
-              <v-icon
-                v-else
-                size="large"
-              >
-                mdi-hammer-screwdriver
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <v-tooltip location="left">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                icon
-                size="small"
-                color="#F9A826"
-                @click="saveAnswer()"
-              >
-                <v-icon>mdi-content-save</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
-          </v-tooltip>
-
-          <v-tooltip
-            v-if="currentUserTestAnswer"
-            location="left"
-          >
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :disabled="calculatedProgress < 100"
-                class="text-white"
-                icon
-                size="small"
-                color="#F9A826"
-                @click="dialog = true"
-              >
-                <v-icon>mdi-file-move</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
-          </v-tooltip>
-
-          <v-tooltip
-            v-else
-            location="left"
-          >
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                class="text-white"
-                icon
-                size="small"
-                color="#F9A826"
-                @click="dialog = true"
-              >
-                <v-icon>mdi-file-move</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
-          </v-tooltip>
-        </v-speed-dial>
-
         <v-navigation-drawer
           v-model="drawer"
           :rail="mini"
@@ -439,21 +356,19 @@
             <v-spacer />
             <v-btn
               icon
-              class="mr-2"
+              class="mr-2 bg-orange"
               @click.stop="mini = !mini"
             >
               <v-icon
                 v-if="mini"
                 color="white"
-              >
-                mdi-chevron-right
-              </v-icon>
+                icon="mdi-chevron-right"
+              />
               <v-icon
                 v-else
                 color="white"
-              >
-                mdi-chevron-left
-              </v-icon>
+                icon="mdi-chevron-left"
+              />
             </v-btn>
           </div>
         </v-navigation-drawer>
@@ -504,15 +419,12 @@
                       <template #answer>
                         <v-select
                           v-if="currentUserTestAnswer !== undefined"
-                          v-model="
-                            currentUserTestAnswer.heuristicQuestions[heurisIndex]
-                              .heuristicQuestions[i].heuristicAnswer
-                          "
+                          v-model="currentUserTestAnswer.heuristicQuestions[heurisIndex].heuristicQuestions[i].heuristicAnswer"
                           class="optionSelect"
                           return-object
                           :items="test.testOptions"
-                          item-title="text"
-                          item-value=""
+                          :item-title="item => item?.text || 'Select an Option'"
+                          item-value="value"
                           label="Respuestas/Answers"
                           variant="outlined"
                           density="compact"
@@ -549,7 +461,7 @@
                         <v-col cols="4">
                           <img
                             draggable="false"
-                            src="../../../public/finalMessage.svg"
+                            :src="require('../../../public/finalMessage.svg')"
                             alt="Final test svg"
                           >
                         </v-col>
@@ -579,6 +491,69 @@
           </div>
         </v-col>
       </v-row>
+      <v-btn
+        v-if="showSaveBtn && !start"
+        position="fixed"
+        location="bottom right"
+        icon
+        class="mb-10 mr-5"
+      >
+        <v-speed-dial
+          v-model="fab"
+          class="mr-3"
+          open-on-hover
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              size="large"
+              color="#F9A826"
+              icon
+              class="btn-fix"
+            >
+              <v-icon v-if="fab">
+                mdi-close
+              </v-icon>
+              <v-icon
+                v-else
+                size="large"
+              >
+                mdi-hammer-screwdriver
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-tooltip location="left">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                icon
+                size="small"
+                color="#F9A826"
+                @click="saveAnswer"
+              >
+                <v-icon>mdi-content-save</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
+          </v-tooltip>
+          <v-tooltip location="left">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :disabled="calculateProgress < 100"
+                class="text-white"
+                icon
+                size="small"
+                color="#F9A826"
+                @click="dialog = true"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
+          </v-tooltip>
+        </v-speed-dial>
+      </v-btn>
     </div>
     <div v-if="test.testType == 'User' && test.userTestType === 'unmoderated'">
       <UserTestView />
@@ -847,36 +822,6 @@ onBeforeMount(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
   populateWithHeuristicQuestions()
   calculateProgress()
-})
-
-// Route guards
-const beforeRouteEnter = (to, from, next) => {
-  if (to.params.token) {
-    next((vm) => {
-      vm.fromlink = true
-    })
-  }
-  next()
-}
-
-const beforeRouteLeave = (to, from, next) => {
-  if (test.value && test.value.userTestType === 'moderated') {
-    let isSaved = moderatedTestViewRef.value.isSaved() // Updated to use renamed ref
-    let isTestNotStarted = moderatedTestViewRef.value.isTestNotStarted() // Updated to use renamed ref
-    if (!isSaved && !isTestNotStarted) {
-      if (!window.confirm('Leave without saving?')) {
-        return
-      }
-      next()
-    } else next()
-  }
-  next()
-}
-
-// Expose for route guards if needed
-defineExpose({
-  beforeRouteEnter,
-  beforeRouteLeave,
 })
 </script>
 
