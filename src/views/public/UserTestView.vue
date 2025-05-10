@@ -1170,6 +1170,45 @@ export default {
     validate(object) {
       return object !== null && object !== undefined && object !== '';
     },
+    autoComplete() {
+      // Check if tasks have been completed and update the UI accordingly
+      if (this.items && this.items.length > 0 && this.currentUserTestAnswer) {
+        // Auto-complete consent if it exists
+        if (this.currentUserTestAnswer.consentCompleted && this.items[0] && this.items[0].value) {
+          this.items[0].value[0].icon = 'mdi-check-circle-outline';
+        }
+        
+        // Auto-complete pre-test if it exists
+        if (this.currentUserTestAnswer.preTestCompleted && this.items[0] && this.items[0].value) {
+          this.items[0].value[1].icon = 'mdi-check-circle-outline';
+          if (this.currentUserTestAnswer.preTestCompleted && this.currentUserTestAnswer.consentCompleted) {
+            this.items[0].icon = 'mdi-check-circle-outline';
+          }
+        }
+        
+        // Auto-complete tasks
+        if (this.items[1] && this.items[1].value && this.currentUserTestAnswer.tasks) {
+          let allTasksComplete = true;
+          for (let i = 0; i < this.items[1].value.length; i++) {
+            if (this.currentUserTestAnswer.tasks[i]?.completed) {
+              this.items[1].value[i].icon = 'mdi-check-circle-outline';
+            } else {
+              allTasksComplete = false;
+            }
+          }
+          
+          if (allTasksComplete && this.items[1].value.length > 0) {
+            this.allTasksCompleted = true;
+            this.items[1].icon = 'mdi-check-circle-outline';
+          }
+        }
+        
+        // Auto-complete post-test if it exists
+        if (this.currentUserTestAnswer.postTestCompleted && this.items[2]) {
+          this.items[2].icon = 'mdi-check-circle-outline';
+        }
+      }
+    },
   },
 };
 </script>
