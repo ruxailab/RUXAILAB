@@ -32,7 +32,7 @@
             accept=".csv"
             show-size
             truncate-length="15"
-            placeholder="$t('HeuristicsSettings.placeHolders.importCsv')"
+            :label="$t('HeuristicsSettings.placeHolders.importCsv')"
             :disabled="testAnswerDocLength > 0"
           />
           <v-btn
