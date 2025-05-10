@@ -49,7 +49,7 @@
     >
       <v-card>
         <v-card-title
-          class="text-h5 bg-error-accent-4 text-white"
+          class="text-h5 bg-red text-white"
           primary-title
         >
           Are you sure you want to leave?
@@ -71,7 +71,7 @@
             Stay
           </v-btn>
           <v-btn
-            class="bg-error-accent-4 text-white ml-1"
+            class="bg-red text-white ml-1"
             variant="text"
             @click=";(change = false), $router.push(go)"
           >

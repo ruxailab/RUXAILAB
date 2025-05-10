@@ -65,8 +65,7 @@
           <v-btn
             v-if="editIndex !== null"
             size="small"
-            color="#f9a826"
-            class="text-white"
+            class="text-white bg-orange"
             @click="submitEdit"
           >
             {{ $t('common.confirm') }}
@@ -74,8 +73,7 @@
           <v-btn
             v-else
             size="small"
-            color="#f9a826"
-            class="text-white"
+            class="text-white bg-orange"
             @click="validate"
           >
             {{ $t('common.add') }}
@@ -112,7 +110,6 @@ const store = useStore()
 const { t } = useI18n()
 const toast = useToast()
 
-// Reactive state
 const dialog = ref(false)
 const desc = ref({
   title: '',
@@ -196,6 +193,10 @@ const submitEdit = async () => {
     toast.info(t('alerts.addDescription'))
   }
 }
+
+defineExpose({
+  editSetup
+})
 </script>
 
 <style scoped>
