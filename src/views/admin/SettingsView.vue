@@ -271,8 +271,10 @@ const titleRequired = [
   v => v.length <= 200 || 'Max 200 characters',
 ];
 
-// Computed properties
-const test = computed(() => store.getters.test);
+const test = computed({
+  get: () => store.getters.test,
+  set: val => store.commit('SET_TEST', val),
+});
 const user = computed(() => store.getters.user);
 const answers = computed(() => store.getters.answers || []);
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
@@ -307,7 +309,6 @@ const myObject = computed(() => {
   return null;
 });
 
-// Watch
 watch(
   test,
   newTest => {
@@ -318,7 +319,6 @@ watch(
   { immediate: true }
 );
 
-// Lifecycle hooks
 onMounted(async () => {
   if (!store.getters.test && props.id) {
     await store.dispatch('getTest', { id: props.id });
@@ -334,7 +334,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', preventNav);
 });
 
-// Navigation guard
 onBeforeRouteLeave((to, from) => {
   if (localChanges.value) {
     store.commit('SET_DIALOG_LEAVE', true);
@@ -358,6 +357,7 @@ const submit = async () => {
   const title = object.value.testTitle;
   if (title.length > 0 && title.length < 200) {
     await store.dispatch('updateTest', new Test(object.value));
+    await store.dispatch('getTest', { id: props.id });
     localChanges.value = false;
     toast.success(t('alerts.savedChanges'));
   } else if (title.length >= 200) {
