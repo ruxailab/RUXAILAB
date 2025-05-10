@@ -56,8 +56,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
-// Props
-defineProps({
+const props = defineProps({
   test: {
     type: Object,
     required: true,
@@ -68,32 +67,24 @@ defineProps({
   },
 })
 
-// Emits
 const emit = defineEmits(['update:test', 'valForm'])
 
-// Store
 const store = useStore()
-
-// i18n
 const { t } = useI18n()
 
-// Form reference
 const form = ref(null)
 
-// Validation rules
 const titleRequired = [
   (v) => !!v || t('errors.fieldRequired'),
   (v) => (v && v.length <= 200) || 'Max 200 characters',
 ]
 const typeRequired = [(v) => !!v || t('errors.fieldRequired')]
 
-// Select options
 const types = [
-  { text: 'Usability User Test', value: 'User' },
-  { text: t('titles.heuristic'), value: 'HEURISTICS' },
+  { title: 'Usability User Test', key: 'User' },
+  { title: t('titles.heuristic'), key: 'HEURISTICS' },
 ]
 
-// Methods
 const valida = async () => {
   const { valid } = await form.value.validate()
   emit('valForm', valid, 0)
@@ -105,21 +96,20 @@ const resetVal = () => {
 }
 
 const updateTestTitle = (value) => {
-  emit('update:test', { ...test, testTitle: value })
+  emit('update:test', { ...props.test, testTitle: value })
   store.commit('SET_LOCAL_CHANGES', true)
 }
 
 const updateTestDescription = (value) => {
-  emit('update:test', { ...test, testDescription: value })
+  emit('update:test', { ...props.test, testDescription: value })
   store.commit('SET_LOCAL_CHANGES', true)
 }
 
 const updateTestPublic = (value) => {
-  emit('update:test', { ...test, isPublic: value })
+  emit('update:test', { ...props.test, isPublic: value })
   store.commit('SET_LOCAL_CHANGES', true)
 }
 
-// Expose methods for external use
 defineExpose({
   valida,
   resetVal,
