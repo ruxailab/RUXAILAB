@@ -45,8 +45,7 @@
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
           <v-btn
-            class="text-white"
-            color="#fca326"
+            class="text-white bg-orange"
             @click="validateEdit"
           >
             {{ $t('HeuristicsTable.titles.ok') }}
@@ -63,7 +62,7 @@
     >
       <v-card v-if="newQuestion">
         <v-card-title
-          class="text-h5 text-white"
+          class="text-h5 text-white bg-orange"
           primary-title
         >
           {{ $t('HeuristicsTable.titles.newQuestion') }}

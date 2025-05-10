@@ -129,22 +129,22 @@ const change = () => {
     border-radius: 4px;
   }
   
-  .responsive-tabs >>> .v-tabs-slider {
+  .responsive-tabs :deep(.v-tabs-slider) {
     display: none;
   }
 
-  .responsive-tabs >>> .v-tabs-bar {
+  .responsive-tabs :deep(.v-tabs-bar) {
     height: auto;
     flex-direction: column;
   }
 
-  .responsive-tabs >>> .v-tabs-bar__content {
+  .responsive-tabs :deep(.v-tabs-bar__content) {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
   }
 
-  .responsive-tabs >>> .v-tab {
+  .responsive-tabs :deep(.v-tab) {
     min-width: 100%;
     justify-content: space-between;
     padding-left: 0;
@@ -164,7 +164,7 @@ const change = () => {
     display: block;
   }
 
-  .responsive-tabs >>> .v-slide-group__wrapper {
+  .responsive-tabs :deep(.v-slide-group__wrapper) {
     overflow: visible;
   }
 
