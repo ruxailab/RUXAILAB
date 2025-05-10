@@ -273,7 +273,7 @@ onMounted(() => {
   right: 25px;
   cursor: pointer;
 }
-.v-text-field--outlined >>> fieldset {
+.v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
