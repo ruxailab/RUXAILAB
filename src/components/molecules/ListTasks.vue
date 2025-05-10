@@ -146,29 +146,9 @@ export default {
         
         // Remove from local array
         this.allTasks.splice(index, 1)
-        // Update the store
-        this.$store.dispatch('setTasks', this.allTasks)
-        // Update the test structure
-        this.$store.commit('SET_TEST_STRUCTURE', { userTasks: this.allTasks })
-        // Save changes to database - get current test and update it
-        const currentTest = this.$store.getters.test
-        if (currentTest) {
-          // Update test structure with modified tasks
-          currentTest.testStructure = {
-            ...currentTest.testStructure,
-            userTasks: this.allTasks
-          }
-          // Update the test's updateDate
-          currentTest.updateDate = Date.now()
-          // Save to database
-          this.$store.dispatch('updateTest', currentTest)
-            .then(() => {
-              this.$toast.success('Task deleted successfully!', { timeout: 3000 })
-            })
-            .catch(error => {
-              this.$toast.error('Error deleting task: ' + error.message, { timeout: 5000 })
-            })
-        }
+        
+        // Save changes
+        this.saveTaskChanges('Task deleted successfully!')
       }
     },
     addTask() {
@@ -184,59 +164,24 @@ export default {
         updatedTasks[this.editedIndex] = JSON.parse(JSON.stringify(this.task))
         // Update the allTasks array
         this.allTasks = updatedTasks
-        // Update store
-        this.$store.dispatch('setTasks', this.allTasks)
-        // Update the test structure
-        this.$store.commit('SET_TEST_STRUCTURE', { userTasks: this.allTasks })
-        // Save changes to database - get current test and update it
-        const currentTest = this.$store.getters.test
-        if (currentTest) {
-          // Update test structure with modified tasks
-          currentTest.testStructure = {
-            ...currentTest.testStructure,
-            userTasks: this.allTasks
-          }
-          // Update the test's updateDate
-          currentTest.updateDate = Date.now()
-          // Save to database
-          this.$store.dispatch('updateTest', currentTest)
-            .then(() => {
-              this.$toast.success('Task updated successfully!', { timeout: 3000 })
-            })
-            .catch(error => {
-              this.$toast.error('Error updating task: ' + error.message, { timeout: 5000 })
-            })
-        }
+        
+        // Save changes
+        this.saveTaskChanges('Task updated successfully!')
       } else {
         // Add new task
         const newTask = JSON.parse(JSON.stringify(this.task))
         this.allTasks.push(newTask)
         // Update store
         this.$store.dispatch('addItemsTasks', newTask)
-        // Update the test structure
-        this.$store.commit('SET_TEST_STRUCTURE', { userTasks: this.allTasks })
-        // Save changes to database - get current test and update it
-        const currentTest = this.$store.getters.test
-        if (currentTest) {
-          // Update test structure with modified tasks
-          currentTest.testStructure = {
-            ...currentTest.testStructure,
-            userTasks: this.allTasks
-          }
-          // Update the test's updateDate
-          currentTest.updateDate = Date.now()
-          // Save to database
-          this.$store.dispatch('updateTest', currentTest)
-            .then(() => {
-              this.$toast.success('Task added successfully!', { timeout: 3000 })
-            })
-            .catch(error => {
-              this.$toast.error('Error adding task: ' + error.message, { timeout: 5000 })
-            })
-        }
+        
+        // Save changes
+        this.saveTaskChanges('Task added successfully!')
       }
       
       // Reset form
+      this.resetForm()
+    },
+    resetForm() {
       this.task = {
         taskName: '',
         taskDescription: null,
@@ -250,6 +195,34 @@ export default {
       }
       this.editedIndex = -1
       this.dialog = false
+    },
+    saveTaskChanges(successMessage) {
+      // Update the store
+      this.$store.dispatch('setTasks', this.allTasks)
+      
+      // Update the test structure
+      this.$store.commit('SET_TEST_STRUCTURE', { userTasks: this.allTasks })
+      
+      // Save changes to database - get current test and update it
+      const currentTest = this.$store.getters.test
+      if (currentTest) {
+        // Update test structure with modified tasks
+        currentTest.testStructure = {
+          ...currentTest.testStructure,
+          userTasks: this.allTasks
+        }
+        // Update the test's updateDate
+        currentTest.updateDate = Date.now()
+        
+        // Save to database
+        this.$store.dispatch('updateTest', currentTest)
+          .then(() => {
+            this.$toast.success(successMessage, { timeout: 3000 })
+          })
+          .catch(error => {
+            this.$toast.error(`Error: ${error.message}`, { timeout: 5000 })
+          })
+      }
     },
     setAllTasks() {
       this.allTasks = Object.assign(
