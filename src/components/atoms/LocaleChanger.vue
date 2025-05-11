@@ -2,9 +2,9 @@
   <v-col cols="1" md="2">
     <!-- Desktop -->
     <v-select
-      :value="lang" 
-      @input="updateLang" 
-      class="pt-7 hidden-sm-and-down"
+      :value="lang"
+      @input="updateLang"
+      class="pt-7 hidden-sm-and-down hindi-fix"
       prepend-inner-icon="mdi-translate"
       :items="languages"
       item-text="label"
@@ -16,15 +16,15 @@
       light
       background-color="grey lighten-4"
     />
-
     <!-- Mobile -->
-    <div class="hidden-md-and-up mr-1" style="display: flex; justify-content: center">
+    <div
+      class="hidden-md-and-up mr-1"
+      style="display: flex; justify-content: center"
+    >
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn small color="primary" v-bind="attrs" icon v-on="on">
-            <v-icon size="20" color="white">
-              mdi-translate
-            </v-icon>
+            <v-icon size="20" color="white"> mdi-translate </v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -32,26 +32,39 @@
             v-for="(item, index) in languages"
             :key="index"
             link
-            @click="updateLang(item.value)" 
+            @click="updateLang(item.value)"
           >
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
+            <v-list-item-title class="hindi-fix">{{
+              item.label
+            }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </div>
   </v-col>
 </template>
+<style>
 
-<style >
 .v-select.v-input--dense .v-select__selection,
 .v-select__selection {
   padding-bottom: 4px !important;
+  padding-top: 6px !important; 
+  line-height: 1.4 !important; 
+}
+
+.hindi-fix .v-select__selection {
+  padding-top: 8px !important;
+  min-height: 24px !important;
+}
+
+.v-list-item-title.hindi-fix {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  min-height: 24px;
 }
 </style>
-
 <script>
-import { mapActions, mapGetters } from 'vuex';
-
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -59,33 +72,26 @@ export default {
         { label: 'English', value: 'en' },
         { label: 'Español', value: 'es' },
         { label: 'Português', value: 'pt_br' },
-        { label: 'हिन्दी', value: 'hi'},
-        { label: 'Deutsch' , value:'de'},
+        { label: 'हिन्दी', value: 'hi' },
+        { label: 'Deutsch', value: 'de' },
         { label: 'Français', value: 'fr' },
         { label: '中文', value: 'zh' },
         { label: 'العربية', value: 'ar' },
         { label: 'Русский', value: 'ru' },
-        { label: '日本語', value: 'ja' }
+        { label: '日本語', value: 'ja' },
       ],
-    };
+    }
   },
-
-  computed: {
-    ...mapGetters('Language', ['lang']),
-  },
-  
+  computed: { ...mapGetters('Language', ['lang']) },
   methods: {
-
-    ...mapActions('Language', ['setLang']), 
-
+    ...mapActions('Language', ['setLang']),
     updateLang(newLang) {
-      this.setLang(newLang);
-      this.$i18n.locale = newLang; 
+      this.setLang(newLang)
+      this.$i18n.locale = newLang
     },
   },
-
   mounted() {
-    this.$i18n.locale = this.lang;
+    this.$i18n.locale = this.lang
   },
-};
+}
 </script>
