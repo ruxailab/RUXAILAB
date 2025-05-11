@@ -63,9 +63,9 @@
       </template>
       <!-- Edit and Delete icons -->
       <template v-slot:[`item.actions`]="{ item }">
-        <!-- <v-icon small class="mr-2" @click="editItem(item)">
+        <v-icon small class="mr-2" @click="editItem(item)">
           mdi-pencil
-        </v-icon> -->
+        </v-icon>
         <v-icon small @click="deleteItem(item)">
           mdi-delete
         </v-icon>
@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     editItem(item) {
-      this.editedIndex = this.tasks.indexOf(item)
+      this.editedIndex = this.allTasks.indexOf(item)
       this.task = Object.assign({}, item)
       this.dialog = true
     },
@@ -146,10 +146,10 @@ export default {
     },
     addTask() {
       if (this.editedIndex > -1) {
-        Object.assign(this.tasks[this.editedIndex], this.task)
-        this.$emit('change')
+        Object.assign(this.allTasks[this.editedIndex], this.task)
+        this.editedIndex = -1
       } else {
-        this.$store.dispatch('addItemsTasks', this.task).then(() => {})
+        this.$store.dispatch('addItemsTasks', this.task)
         this.allTasks = Object.assign(
           this.$store.getters.tasks,
           this.$store.state.Tests.Test.testStructure.userTasks,
@@ -165,6 +165,7 @@ export default {
         hasScreenRecord: false,
         hasCamRecord: false,
       }
+      this.dialog = false
     },
     setAllTasks() {
       this.allTasks = Object.assign(
