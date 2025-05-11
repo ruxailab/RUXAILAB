@@ -490,13 +490,13 @@ const date = ref(
 );
 const hour = ref(null);
 const headers = ref([
-  { text: 'Email', value: 'email' },
-  { text: 'Test Date', value: 'testDate' },
-  { text: 'Starts at', value: 'testHour' },
-  { text: 'Invited', value: 'invited', justify: 'center' },
-  { text: 'Accepted', value: 'accepted', justify: 'center' },
-  { text: 'Session', value: 'session', justify: 'center' },
-  { text: 'More', value: 'more', sortable: false },
+  { title: 'Email', value: 'email' },
+  { title: 'Test Date', value: 'testDate' },
+  { title: 'Starts at', value: 'testHour' },
+  { title: 'Invited', value: 'invited', justify: 'center' },
+  { title: 'Accepted', value: 'accepted', justify: 'center' },
+  { title: 'Session', value: 'session', justify: 'center' },
+  { title: 'More', value: 'more', sortable: false },
 ]);
 const roleOptions = ref(roleOptionsItems);
 const intro = ref(null);

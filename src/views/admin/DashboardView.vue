@@ -256,17 +256,17 @@ const disableNext = ref(false);
 const disablePrevious = ref(true);
 
 const buttonItems = ref([
-  { text: 'Tests', value: 0 },
-  { text: 'Templates', value: 1 },
+  { title: 'Tests', value: 0 },
+  { title: 'Templates', value: 1 },
 ]);
 const testButtonItems = ref([
-  { text: 'My Tests', value: 0 },
-  { text: 'Shared With Me', value: 1 },
-  { text: 'Public Tests', value: 2 },
+  { title: 'My Tests', value: 0 },
+  { title: 'Shared With Me', value: 1 },
+  { title: 'Public Tests', value: 2 },
 ]);
 const templateButtonItems = ref([
-  { text: 'Personal', value: 0 },
-  { text: 'Explore', value: 1 },
+  { title: 'Personal', value: 0 },
+  { title: 'Explore', value: 1 },
 ]);
 
 const user = computed(() => store.getters.user);
