@@ -555,12 +555,12 @@ const heuristicsEvaluator = computed(() => {
 const heuristicsStatistics = computed(() => {
   const table = {
     header: [
-      { text: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { text: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
-      { text: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
-      { text: 'Average', value: 'average', align: 'center', sortable: false },
-      { text: 'Max', value: 'max', align: 'center', sortable: false },
-      { text: 'Min', value: 'min', align: 'center', sortable: false },
+      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
+      { title: 'Percentage (%)', value: 'percentage', align: 'center', sortable: false },
+      { title: 'Standard deviation', value: 'sd', align: 'center', sortable: false },
+      { title: 'Average', value: 'average', align: 'center', sortable: false },
+      { title: 'Max', value: 'max', align: 'center', sortable: false },
+      { title: 'Min', value: 'min', align: 'center', sortable: false },
     ],
     items: [],
   };
@@ -600,9 +600,9 @@ const heuristicsLength = computed(() => (relative.value ? relative.value.length 
 const weightsStatistics = computed(() => {
   const tableWeights = {
     header: [
-      { text: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
-      { text: 'Usability Score (%)', value: 'percentage', align: 'center', sortable: true },
-      { text: 'Relative Weights', value: 'rw', align: 'center', sortable: true },
+      { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
+      { title: 'Usability Score (%)', value: 'percentage', align: 'center', sortable: true },
+      { title: 'Relative Weights', value: 'rw', align: 'center', sortable: true },
     ],
     items: [],
   };

@@ -238,23 +238,23 @@ const tests = computed(() => store.getters.tests ?? [])
 const loading = computed(() => store.getters.loading)
 
 const usersHeaders = computed(() => [
-  { text: t('titles.id'), align: 'start', value: 'id' },
-  { text: t('SIGNIN.email'), value: 'email', align: 'center' },
-  { text: t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
-  { text: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+  { title: t('titles.id'), align: 'start', value: 'id' },
+  { title: t('SIGNIN.email'), value: 'email', align: 'center' },
+  { title: t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
+  { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
 const testsHeaders = computed(() => [
-  { text: t('common.title'), align: 'start', value: 'testTitle' },
-  { text: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
-  { text: t('pages.listTests.updated'), value: 'creationDate' },
-  { text: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+  { title: t('common.title'), align: 'start', value: 'testTitle' },
+  { title: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
+  { title: t('pages.listTests.updated'), value: 'creationDate' },
+  { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
 ])
 
 const accessLevels = computed(() => [
-  { text: t('PROFILE.superAdmin'), level: 0 },
-  { text: t('PROFILE.admin'), level: 1 },
-  { text: t('common.user'), level: 2 },
+  { title: t('PROFILE.superAdmin'), level: 0 },
+  { title: t('PROFILE.admin'), level: 1 },
+  { title: t('common.user'), level: 2 },
 ])
 
 const dialogText = computed(() =>
