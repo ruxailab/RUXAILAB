@@ -1,16 +1,44 @@
+<template>
+  <div style="height: 400px;">
+    <Line :data="chartData" :options="chartOptions" />
+  </div>
+</template>
+
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { Line, mixins } from 'vue-chartjs'
+import { ref, watch } from 'vue';
+import { Line } from 'vue-chartjs';
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  TimeScale
+} from 'chart.js';
+import 'chartjs-adapter-date-fns';
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  TimeScale
+);
 
 const props = defineProps({
   taskAnswers: {
     type: Array,
     default: () => [],
   },
-})
+});
 
 const chartData = ref({
-  labels: [],
   datasets: [
     {
       label: 'Answers',
@@ -18,86 +46,82 @@ const chartData = ref({
       borderColor: 'orange',
       borderWidth: 1,
       fill: true,
+      tension: 0.2,
+      pointRadius: 3,
     },
   ],
-})
+});
 
-// Chart options
 const chartOptions = ref({
   scales: {
-    xAxes: [
-      {
-        type: 'time',
-        time: {
-          unit: 'week',
-          displayFormats: {
-            week: 'DD/MM',
-          },
-        },
-        title: {
-          display: true,
-          text: 'Data',
+    x: {
+      type: 'time',
+      time: {
+        unit: 'week',
+        displayFormats: {
+          week: 'dd/MM',
         },
       },
-    ],
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-        },
+      title: {
+        display: true,
+        text: 'Date',
       },
-    ],
+    },
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 0.2,
+      },
+    },
   },
   responsive: true,
   maintainAspectRatio: false,
-})
+});
 
-// Process data for chart
 const processDataForChart = () => {
-  const currentDate = new Date()
-  const monthsAgo = new Date(currentDate)
-  monthsAgo.setMonth(currentDate.getMonth() - 2)
+  const currentDate = new Date();
+  const twoMonthsAgo = new Date(currentDate);
+  twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
 
-  const validAnswers = props.taskAnswers.filter((answer) => answer.lastUpdate)
-  const filteredAnswers = validAnswers
-    .filter((answer) => new Date(answer.lastUpdate) >= monthsAgo)
-    .sort((a, b) => new Date(a.lastUpdate) - new Date(b.lastUpdate))
+  const filtered = props.taskAnswers.filter(a => a.lastUpdate);
+  const validAnswers = filtered.filter(a => {
+    const date = new Date(a.lastUpdate);
+    return date >= twoMonthsAgo && date <= currentDate;
+  });
 
-  const testsPerDay = {}
-  const currentDateIterator = new Date(monthsAgo)
-
-  // Initialize testsPerDay with zero for all days in the period
-  while (currentDateIterator <= currentDate) {
-    const dateKey = currentDateIterator.toISOString().split('T')[0]
-    testsPerDay[dateKey] = 0
-    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
+  const testsPerDay = {};
+  const iterator = new Date(twoMonthsAgo);
+  while (iterator <= currentDate) {
+    const dateStr = iterator.toISOString().split('T')[0];
+    testsPerDay[dateStr] = 0;
+    iterator.setDate(iterator.getDate() + 1);
   }
 
-  // Fill testsPerDay with actual data
-  filteredAnswers.forEach((answer) => {
-    const dateKey = new Date(answer.lastUpdate).toISOString().split('T')[0]
-    testsPerDay[dateKey]++
-  })
+  validAnswers.forEach(a => {
+    const dateStr = new Date(a.lastUpdate).toISOString().split('T')[0];
+    if (testsPerDay[dateStr] !== undefined) {
+      testsPerDay[dateStr]++;
+    }
+  });
 
-  chartData.value.labels = Object.keys(testsPerDay)
-  chartData.value.datasets[0].data = Object.values(testsPerDay)
+  chartData.value.datasets[0].data = Object.entries(testsPerDay).map(([date, count]) => ({
+    x: new Date(date),
+    y: count,
+  }));
 
-  // Calculate max tests and add padding
-  const maxTests = Math.max(...chartData.value.datasets[0].data)
-  const suggestedMax = maxTests + 1
+  const max = Math.max(...Object.values(testsPerDay));
+  chartOptions.value.scales.y.suggestedMax = max + 1;
+};
 
-  // Update y-axis ticks
-  chartOptions.value.scales.yAxes[0].ticks.suggestedMax = suggestedMax
-}
-
-// Render chart on mount
-onMounted(() => {
-  processDataForChart()
-  // Note: vue-chartjs Line component handles rendering via its internal logic
-  // If explicit rendering is needed, ensure the Line component is used in the template
-})
+watch(
+  () => props.taskAnswers,
+  () => {
+    processDataForChart();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
-/* Adicione estilos específicos do componente aqui se necessário */
+/* Add component-specific styles here if needed */
 </style>

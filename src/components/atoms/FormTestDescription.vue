@@ -81,8 +81,8 @@ const titleRequired = [
 const typeRequired = [(v) => !!v || t('errors.fieldRequired')]
 
 const types = [
-  { title: 'Usability User Test', key: 'User' },
-  { title: t('titles.heuristic'), key: 'HEURISTICS' },
+  { title: 'Usability User Test', value: 'User' },
+  { title: t('titles.heuristic'), value: 'HEURISTICS' },
 ]
 
 const valida = async () => {

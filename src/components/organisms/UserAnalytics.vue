@@ -17,7 +17,7 @@
             <v-row class="ma-0 pa-0">
               <!-- Tasks List -->
               <v-col
-                class="ma-0 pa-0 task-list"
+                class="ma-0 pa-0"
                 cols="3"
               >
                 <v-list
@@ -26,7 +26,7 @@
                   class="list-scroll"
                   color="#fca326"
                 >
-                  <v-list-subheader>Tasks</v-list-subheader>
+                  <v-list-subheader class="py-3 text-black">Tasks</v-list-subheader>
                   <v-divider />
                   <v-list-item
                     v-for="(item, i) in testTasks"
@@ -43,12 +43,13 @@
 
               <!-- Answer List -->
               <v-col
-                class="ma-0 pa-1 answer-list"
+                class="ma-0 pa-0"
                 cols="9"
               >
                 <v-data-table
                   :headers="dataHeaders"
                   :items="taskAnswers"
+                  class="pa-0"
                 >
                   <template #item.userDocId="{ item }">
                     <span>{{ getCooperatorEmail(item.userDocId) }}</span>
@@ -79,7 +80,7 @@
         <v-card>
           <v-toolbar
             color="orange"
-            dark
+            class="pl-3"
           >
             <span class="text-h5">Answer and Observation</span>
             <v-btn
@@ -105,7 +106,7 @@
                 >Variables</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <span
@@ -131,7 +132,7 @@
                 >Task Time</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <p class="text-h6">
@@ -151,7 +152,7 @@
                 >Post-Test Answer</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <span
@@ -181,7 +182,7 @@
                 >Answer</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <span>
@@ -201,7 +202,7 @@
                 >Post Question</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <strong>{{
@@ -227,7 +228,7 @@
                 >Observation</span>
                 <v-card
                   border
-                  rounded="xxl"
+                  rounded="xl"
                 >
                   <div class="ma-6">
                     <span>
@@ -318,11 +319,11 @@ const taskAnswers = ref([]);
 const intro = ref(null);
 const dataHeaders = ref([
   {
-    text: 'Email',
+    title: 'Email',
     value: 'userDocId',
   },
   {
-    text: 'Actions',
+    title: 'Actions',
     sortable: false,
     value: 'actions',
   },

@@ -368,17 +368,17 @@ const cooperatorsEdit = computed(() => test.value?.cooperators ? [...test.value.
 const loading = computed(() => store.getters.loading)
 
 const headers = computed(() => [
-  { text: t('HeuristicsCooperators.headers.email'), value: 'email' },
-  { text: t('HeuristicsCooperators.headers.role'), value: 'accessLevel' },
-  { text: t('HeuristicsCooperators.headers.invited'), value: 'invited', justify: 'center' },
-  { text: t('HeuristicsCooperators.headers.accepted'), value: 'accepted', justify: 'center' },
-  { text: t('HeuristicsCooperators.headers.more'), value: 'more', sortable: false }
+  { title: t('HeuristicsCooperators.headers.email'), value: 'email' },
+  { title: t('HeuristicsCooperators.headers.role'), value: 'accessLevel' },
+  { title: t('HeuristicsCooperators.headers.invited'), value: 'invited', justify: 'center' },
+  { title: t('HeuristicsCooperators.headers.accepted'), value: 'accepted', justify: 'center' },
+  { title: t('HeuristicsCooperators.headers.more'), value: 'more', sortable: false }
 ])
 
 const roleOptions = computed(() => [
-  { text: t('HeuristicsCooperators.roles.administrator'), value: 0 },
-  { text: t('HeuristicsCooperators.roles.evaluator'), value: 1 },
-  { text: t('HeuristicsCooperators.roles.guest'), value: 2 }
+  { title: t('HeuristicsCooperators.roles.administrator'), value: 0 },
+  { title: t('HeuristicsCooperators.roles.evaluator'), value: 1 },
+  { title: t('HeuristicsCooperators.roles.guest'), value: 2 }
 ])
 
 const removeSelectedCoops = (index) => {
