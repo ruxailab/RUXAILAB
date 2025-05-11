@@ -50,7 +50,7 @@
         color="#fca326"
         size="50"
       />
-      <div class="white-text mt-3">
+      <div class="text-white mt-3">
         {{ $t('HeuristicsReport.messages.reports_loading') }}
       </div>
     </v-overlay>
@@ -89,12 +89,11 @@
             <template #item.more="{ item }">
               <v-menu :offset="[0, 4]">
                 <template #activator="{ props }">
-                  <v-btn
-                    icon
+                  <v-icon
+                    icon="mdi-dots-vertical"
                     v-bind="props"
                   >
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
+                  </v-icon>
                 </template>
                 <v-list v-if="test.testAdmin.email == user.email">
                   <v-list-item @click="dialog = true; report = item">
@@ -154,24 +153,24 @@ const report = ref(null);
 
 const headers = computed(() => [
   {
-    text: t('HeuristicsReport.headers.evaluator'),
+    title: t('HeuristicsReport.headers.evaluator'),
     value: 'userDocId',
   },
   {
-    text: t('HeuristicsReport.headers.last_update'),
+    title: t('HeuristicsReport.headers.last_update'),
     value: 'lastUpdate',
   },
   {
-    text: t('HeuristicsReport.headers.progress'),
+    title: t('HeuristicsReport.headers.progress'),
     value: 'progress',
     justify: 'center',
   },
   {
-    text: t('HeuristicsReport.headers.status'),
+    title: t('HeuristicsReport.headers.status'),
     value: 'submitted',
   },
   {
-    text: t('HeuristicsReport.headers.more'),
+    title: t('HeuristicsReport.headers.more'),
     value: 'more',
     justify: 'end',
   },

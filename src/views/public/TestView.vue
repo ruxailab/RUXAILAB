@@ -875,12 +875,6 @@ body {
   padding-top: 3%;
   padding-bottom: 3%;
 }
-.nav {
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
 .questions {
   display: flex;
   justify-content: space-around;
