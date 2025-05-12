@@ -31,25 +31,6 @@
           <LeaveAlert />
         </v-dialog>
 
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn
-              size="large"
-              icon
-              fixed
-              location="bottom right"
-              color="#F9A826"
-              v-bind="props"
-              @click="saveInvitations()"
-            >
-              <v-icon size="large">
-                mdi-email
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('HeuristicsCooperators.actions.send_invitation') }}</span>
-        </v-tooltip>
-
         <ShowInfo :title="$t('HeuristicsCooperators.title.cooperators')">
           <template #content>
             <div
@@ -101,22 +82,15 @@
                   cols="12"
                   md="2"
                 >
-                  <template #item.accessLevel="{ item }">
-                    <v-select
-                      :ref="'select' + cooperatorsEdit.indexOf(item)"
-                      :key="dataTableKey"
-                      v-model="item.accessLevel"
-                      color="#fca326"
-                      style="max-width: 200px"
-                      :items="roleOptions"
-                      item-title="text"
-                      item-value="value"
-                      density="compact"
-                      :disabled="!item.invited || item.accepted ? false : true"
-                      class="mt-3"
-                      @update:model-value="changeRole(item, $event)"
-                    />
-                  </template>
+                  <v-select
+                    v-model="selectedRole"
+                    class="mx-2"
+                    :label="$t('HeuristicsCooperators.headers.role')"
+                    color="#fca326"
+                    variant="outlined"
+                    density="compact"
+                    :items="roleOptions"
+                  />
                 </v-col>
               </v-row>
               <v-data-table
@@ -201,12 +175,11 @@
                 <template #item.more="{ item }">
                   <v-menu>
                     <template #activator="{ props }">
-                      <v-btn
-                        icon
+                      <v-icon
+                        icon="mdi-dots-vertical"
                         v-bind="props"
                       >
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
+                      </v-icon>
                     </template>
 
                     <v-list>
@@ -253,6 +226,25 @@
           </template>
         </ShowInfo>
       </v-container>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn
+            size="large"
+            icon
+            class="mr-5 mb-5"
+            position="fixed"
+            location="bottom right"
+            color="#F9A826"
+            v-bind="props"
+            @click="saveInvitations()"
+          >
+            <v-icon size="large">
+              mdi-email
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('HeuristicsCooperators.actions.send_invitation') }}</span>
+      </v-tooltip>
     </v-row>
     <AccessNotAllowed v-if="!loading && verified" />
     <div class="text-center">
