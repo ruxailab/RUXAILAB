@@ -2,14 +2,14 @@
   <v-dialog v-model="internalDialog" width="500">
     <template v-slot:activator="{ on }">
       <v-btn
-        color="green"
+        color="blue"
         class="ml-4 my-2 mr-auto white--text"
         variant="tonal"
         depressed
         icon
         v-on="on"
       >
-        <v-icon>mdi-chat-question</v-icon>
+        <v-icon>mdi-information</v-icon>
       </v-btn>
     </template>
 

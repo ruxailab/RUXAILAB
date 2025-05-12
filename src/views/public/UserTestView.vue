@@ -546,19 +546,19 @@
             <v-container>
               <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12" class="mb-0 pb-0">
-                  <v-row justify="center">
+                  <!-- <v-row justify="center">
                     <h1 style="color: #455a64;" class="mt-2">
                       {{ test.testStructure.userTasks[taskIndex].taskName }}
                     </h1>
-                  </v-row>
+                  </v-row> -->
                   <v-spacer />
-                  <v-row justify="center">
+                  <!-- <v-row justify="center">
                     <p class="paragraph" style="color: #455a64;">
                       {{
                         test.testStructure.userTasks[taskIndex].taskDescription
                       }}
                     </p>
-                  </v-row>
+                  </v-row> -->
                   <div v-if="!currentUserTestAnswer.submitted">
                     <v-row>
                       <v-col
@@ -627,6 +627,7 @@
                           ref="timerComponent"
                           :taskIndex="taskIndex"
                           @timerStopped="handleTimerStopped"
+                          style="pointer-events:none;"
                         />
                       </v-col>
                     </v-row>
