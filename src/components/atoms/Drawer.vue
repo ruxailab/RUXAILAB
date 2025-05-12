@@ -86,30 +86,31 @@
     >
       <v-btn
         icon
-        class="mr-2"
+        class="mr-2 bg-orange"
         @click.stop="mini = !mini"
       >
-        <v-icon color="white">
-          mdi-chevron-left
+        <v-icon 
+          color="white"
+          icon="mdi-chevron-left"
+        >
         </v-icon>
       </v-btn>
     </div>
-
     <div
       v-else
       class="footer"
     >
-      <v-col>
-        <v-btn
-          icon
-          class="mt-2"
-          @click.stop="mini = !mini"
+      <v-btn
+        icon
+        class="mr-2 bg-orange"
+        @click.stop="mini = !mini"
+      >
+        <v-icon 
+        color="white"
+        icon="mdi-chevron-right"
         >
-          <v-icon color="white">
-            mdi-chevron-right
-          </v-icon>
-        </v-btn>
-      </v-col>
+        </v-icon>
+      </v-btn>
     </div>
   </v-navigation-drawer>
 </template>
@@ -120,7 +121,6 @@ import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
-// Props
 const props = defineProps({
   items: {
     type: Array,
@@ -128,25 +128,17 @@ const props = defineProps({
   },
 });
 
-// Vuex store
 const store = useStore();
-
-// Vue Router
 const router = useRouter();
 const route = useRoute();
-
-// Vue I18n
 const { t } = useI18n();
 
-// Reactive state
 const mini = ref(true);
 const tests = ref([]);
 
-// Computed properties
 const test = computed(() => store.state.Tests.Test);
 const testsList = computed(() => tests.value);
 
-// Methods
 const fetchTests = async () => {
   try {
     await store.dispatch('getTestsAdminByUser');
@@ -168,7 +160,6 @@ const go = (item) => {
   router.push(item.path);
 };
 
-// Lifecycle hook
 onMounted(async () => {
   await fetchTests();
 });
