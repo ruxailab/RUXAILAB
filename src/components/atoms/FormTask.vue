@@ -61,7 +61,6 @@
     </v-row>
   </v-form>
 </template>
-
 <script>
 export default {
   props: {
@@ -73,10 +72,23 @@ export default {
   data() {
     return {
       requiredRule: [(v) => !!v || 'Field Required'],
+      postQuestionRule: [
+        () =>
+          this.task.taskType !== 'form' ||
+          !!this.task.postQuestion ||
+          'Post Question is required for this answer type',
+      ],
     }
   },
+  watch: {
+    'task.taskType'(newValue) {
+      if (newValue !== 'form') {
+        this.task.postQuestion = ''
+      }
+    },
+  },
   methods: {
-    valida() {
+    validate() {
       const valid = this.$refs.form.validate()
       this.$emit('validate', valid)
     },
@@ -85,6 +97,5 @@ export default {
     },
   },
 }
-</script>
 
-<style></style>
+</script>
