@@ -1,7 +1,8 @@
 <template>
-  <div style="height: 400px;">
-    <Line :data="chartData" :options="chartOptions" />
+  <div v-if="isDataReady" style="height: 400px;">
+    <Line :key="chartKey" :data="chartData" :options="chartOptions" />
   </div>
+  <div v-else>Loading...</div>
 </template>
 
 <script setup>
@@ -16,18 +17,18 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
-  TimeScale
+  TimeScale,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
 ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
+  Title, 
+  Tooltip, 
+  Legend, 
+  LineElement, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
   TimeScale
 );
 
@@ -37,6 +38,9 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const isDataReady = ref(false);
+const chartKey = ref(0); // To force chart re-render
 
 const chartData = ref({
   datasets: [
@@ -79,11 +83,19 @@ const chartOptions = ref({
 });
 
 const processDataForChart = () => {
+  if (!props.taskAnswers || props.taskAnswers.length === 0) {
+    console.warn('taskAnswers is empty or undefined');
+    chartData.value.datasets[0].data = [];
+    chartOptions.value.scales.y.suggestedMax = 1;
+    isDataReady.value = false;
+    return;
+  }
+
   const currentDate = new Date();
   const twoMonthsAgo = new Date(currentDate);
   twoMonthsAgo.setMonth(currentDate.getMonth() - 2);
 
-  const filtered = props.taskAnswers.filter(a => a.lastUpdate);
+  const filtered = props.taskAnswers.filter(a => a.lastUpdate && !isNaN(new Date(a.lastUpdate).getTime()));
   const validAnswers = filtered.filter(a => {
     const date = new Date(a.lastUpdate);
     return date >= twoMonthsAgo && date <= currentDate;
@@ -111,14 +123,17 @@ const processDataForChart = () => {
 
   const max = Math.max(...Object.values(testsPerDay));
   chartOptions.value.scales.y.suggestedMax = max + 1;
+  isDataReady.value = true;
+  chartKey.value++; // Force chart re-render
 };
 
 watch(
   () => props.taskAnswers,
-  () => {
+  (newValue) => {
+    console.log('taskAnswers updated:', newValue);
     processDataForChart();
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 </script>
 
