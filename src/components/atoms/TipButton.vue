@@ -2,14 +2,15 @@
   <v-dialog v-model="internalDialog" width="500">
     <template v-slot:activator="{ on }">
       <v-btn
-        color="blue"
+        color="info"
         class="ml-4 my-2 mr-auto white--text"
         variant="tonal"
         depressed
-        icon
         v-on="on"
       >
-        <v-icon>mdi-information</v-icon>
+        Tip
+        <v-icon right dark >mdi-information</v-icon>
+        
       </v-btn>
     </template>
 
