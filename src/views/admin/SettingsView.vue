@@ -3,7 +3,6 @@
     <Snackbar />
 
     <!-- Leave Alert Dialog -->
-    <LeaveAlert />
     <LeaveAlert @submit="onSubmit" />
 
     <!-- Delete Alert Dialog -->
@@ -255,22 +254,22 @@ const template = ref({
 });
 const object = ref(null);
 const valids = ref([false, true, true]);
-const dialogAlert = ref(false);
 const dialogDel = ref(false);
 const loading = ref(false);
 const loadingPage = ref(true);
 const tempDialog = ref(false);
-const showSettings = ref(false);
-const localChanges = ref(false);
-const auxUser = ref(null);
 const form1 = ref(null);
 const tempform = ref(null);
 
 const titleRequired = [
-  v => !!v || t('errors.fieldRequired'),
+  v => !!v.trim() || t('errors.fieldRequired'),
   v => v.length <= 200 || 'Max 200 characters',
 ];
 
+const localChanges = computed({
+  get: () => store.state.localChanges,
+  set: value => store.commit('SET_LOCAL_CHANGES', value),
+});
 const test = computed({
   get: () => store.getters.test,
   set: val => store.commit('SET_TEST', val),
@@ -327,6 +326,8 @@ onMounted(async () => {
 });
 
 onBeforeMount(() => {
+  store.commit('SET_LOCAL_CHANGES', false);
+  store.commit('SET_DIALOG_LEAVE', false);
   window.addEventListener('beforeunload', preventNav);
 });
 
@@ -349,7 +350,7 @@ const validate = (valid, index) => {
 
 const onSubmit = async () => {
   await submit();
-  localChanges.value = false;
+  store.commit('SET_LOCAL_CHANGES', false);
   router.push({ name: store.state.pathTo });
 };
 
@@ -358,7 +359,7 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     await store.dispatch('updateTest', new Test(object.value));
     await store.dispatch('getTest', { id: props.id });
-    localChanges.value = false;
+    store.commit('SET_LOCAL_CHANGES', false);
     toast.success(t('alerts.savedChanges'));
   } else if (title.length >= 200) {
     toast.warning('Title must not exceed 200 characters.');
@@ -374,9 +375,9 @@ const preventNav = event => {
 };
 
 const deleteTest = async item => {
-  auxUser.value = { ...user.value };
-  delete auxUser.value.myTests[item.id];
-  item.auxUser = auxUser.value;
+  const auxUser = { ...user.value };
+  delete auxUser.myTests[item.id];
+  item.auxUser = auxUser;
   await store.dispatch('deleteTest', item);
   router.push({ name: 'TestList' });
 };
@@ -427,17 +428,17 @@ const updateTemplate = updates => {
 
 const updateTemplateTitle = value => {
   updateTemplate({ templateTitle: value });
-  localChanges.value = true;
+  store.commit('SET_LOCAL_CHANGES', true);
 };
 
 const updateTemplateDescription = value => {
   updateTemplate({ templateDescription: value });
-  localChanges.value = true;
+  store.commit('SET_LOCAL_CHANGES', true);
 };
 
 const updateObject = newObject => {
   object.value = { ...newObject };
-  localChanges.value = true;
+  store.commit('SET_LOCAL_CHANGES', true);
 };
 
 const duplicateTest = async () => {
