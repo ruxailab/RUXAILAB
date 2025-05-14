@@ -43,10 +43,13 @@
                       v-for="(item, i) in test.testStructure"
                       :key="i"
                       :value="i"
-                      @click="heuristicSelect = i"
                       :active="i === heuristicSelect"
+                      @click="heuristicSelect = i"
                     >
-                      <template #prepend v-if="i === heuristicSelect">
+                      <template
+                        v-if="i === heuristicSelect"
+                        #prepend
+                      >
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
                       <v-list-item-title>
@@ -86,10 +89,13 @@
                   >
                     <v-list-item
                       :value="-1"
-                      @click="questionSelect = -1"
                       :active="questionSelect === -1"
+                      @click="questionSelect = -1"
                     >
-                      <template #prepend v-if="questionSelect === -1">
+                      <template
+                        v-if="questionSelect === -1"
+                        #prepend
+                      >
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
                       <v-list-item-title>Data Table</v-list-item-title>
@@ -99,10 +105,13 @@
                       v-for="(item, i) in test.testStructure[heuristicSelect].questions"
                       :key="i"
                       :value="i"
-                      @click="questionSelect = i"
                       :active="i === questionSelect"
+                      @click="questionSelect = i"
                     >
-                      <template #prepend v-if="i === questionSelect">
+                      <template
+                        v-if="i === questionSelect"
+                        #prepend
+                      >
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
                       <v-list-item-title>

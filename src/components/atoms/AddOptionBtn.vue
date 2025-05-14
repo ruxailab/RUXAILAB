@@ -52,8 +52,8 @@
               >
                 <v-col cols="12">
                   <v-text-field
-                    variant="outlined"
                     v-model="localOption.description"
+                    variant="outlined"
                     max-length="250"
                     counter="250"
                     :label="$t('HeuristicsTable.placeholders.optionDescription')"

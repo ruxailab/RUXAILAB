@@ -22,7 +22,10 @@
           {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
             <v-form
               ref="form"

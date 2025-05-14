@@ -92,8 +92,7 @@
         <v-icon 
           color="white"
           icon="mdi-chevron-left"
-        >
-        </v-icon>
+        />
       </v-btn>
     </div>
     <div
@@ -106,10 +105,9 @@
         @click.stop="mini = !mini"
       >
         <v-icon 
-        color="white"
-        icon="mdi-chevron-right"
-        >
-        </v-icon>
+          color="white"
+          icon="mdi-chevron-right"
+        />
       </v-btn>
     </div>
   </v-navigation-drawer>

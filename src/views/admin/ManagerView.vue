@@ -61,7 +61,10 @@
       </v-card>
     </v-dialog>
     <template v-if="test">
-      <Drawer v-if="mdAndUp" :items="navigator" />
+      <Drawer
+        v-if="mdAndUp"
+        :items="navigator"
+      />
       <v-container
         fluid
         :class="['background pa-0 ma-0', { 'pl-drawer': mdAndUp }]"
@@ -74,7 +77,11 @@
             class="manager-bg back-gradient pa-6"
           >
             <!-- Text Column -->
-            <v-col cols="12" md="6" class="text-white text-center text-md-left">
+            <v-col
+              cols="12"
+              md="6"
+              class="text-white text-center text-md-left"
+            >
               <div v-if="accessLevel === 0">
                 <p class="font-weight-medium text-h4 text-md-h2">
                   {{ $t('titles.manager') }}
@@ -91,7 +98,11 @@
             </v-col>
 
             <!-- Image Column -->
-            <v-col cols="12" md="6" class="d-flex justify-center">
+            <v-col
+              cols="12"
+              md="6"
+              class="d-flex justify-center"
+            >
               <v-img
                 :src="require('@/assets/manager/IntroManager.svg')"
                 max-height="300"
@@ -106,14 +117,22 @@
               <p class="presentation-text text-center text-md-left mb-4">
                 {{ $t('common.editAndInvite') }}
               </p>
-              <CardsManager :cards="topCards" :per-row="mdAndUp ? 2 : 1" @click="go" />
+              <CardsManager
+                :cards="topCards"
+                :per-row="mdAndUp ? 2 : 1"
+                @click="go"
+              />
             </div>
 
             <div class="mt-10">
               <p class="presentation-text text-center text-md-left mb-4">
                 {{ $t('common.analyzeProject') }}
               </p>
-              <CardsManager :cards="bottomCards" :per-row="mdAndUp ? 3 : 1" @click="go" />
+              <CardsManager
+                :cards="bottomCards"
+                :per-row="mdAndUp ? 3 : 1"
+                @click="go"
+              />
             </div>
           </v-container>
         </template>
@@ -158,10 +177,7 @@ const test = computed(() => {
   return testData
 })
 
-const user = computed(() => {
-  if (store.getters.user) flagUser.value = true
-  return store.getters.user
-})
+const user = computed(() => store.getters.user)
 
 const cooperators = computed(() => store.getters.cooperators)
 const loading = computed(() => store.getters.loading)
