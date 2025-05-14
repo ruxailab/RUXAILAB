@@ -270,8 +270,15 @@
                     @mouseenter="hoveredItem = i"
                     @mouseleave="hoveredItem = null"
                   >
-                    <v-row justify="space-between" align="center" class="ma-0 py-0">
-                      <v-col cols="11" class="ma-0 pa-0">
+                    <v-row
+                      justify="space-between"
+                      align="center"
+                      class="ma-0 py-0"
+                    >
+                      <v-col
+                        cols="11"
+                        class="ma-0 pa-0"
+                      >
                         <v-list-item-title
                           style="
                             margin-top: 8px !important;
@@ -283,7 +290,10 @@
                           {{ item.id + 1 }} - {{ item.title }}
                         </v-list-item-title>
                       </v-col>
-                      <v-col cols="1" class="ma-0 pa-0">
+                      <v-col
+                        cols="1"
+                        class="ma-0 pa-0"
+                      >
                         <v-list-item-action
                           v-if="hoveredItem === i && i != itemSelect"
                           style="
@@ -342,9 +352,20 @@
               class="ma-0 pa-0"
             >
               <v-list-subheader class="ma-0">
-                <v-list-item width="380" height="auto" class="ma-0 pa-0">
-                  <v-row justify="space-between" align="center" class="ma-0">
-                    <v-col cols="8" class="pa-0">
+                <v-list-item
+                  width="380"
+                  height="auto"
+                  class="ma-0 pa-0"
+                >
+                  <v-row
+                    justify="space-between"
+                    align="center"
+                    class="ma-0"
+                  >
+                    <v-col
+                      cols="8"
+                      class="pa-0"
+                    >
                       <text-clamp
                         :text="heuristics[itemSelect].title + ' - ' + $t('HeuristicsTable.titles.questions')"
                         :max-lines="2"
@@ -372,7 +393,10 @@
                       </v-row>
                     </template>
                     <v-spacer />
-                    <v-col cols="4" class="pa-0 text-right">
+                    <v-col
+                      cols="4"
+                      class="pa-0 text-right"
+                    >
                       <v-menu
                         v-model="menuHeuristics"
                         :offset="[8, 0]"
@@ -382,8 +406,7 @@
                             icon="mdi-dots-vertical"
                             v-bind="props"
                             @click="handleNotEditable"
-                          >
-                          </v-icon>
+                          />
                         </template>
                         <v-list
                           density="compact"
@@ -486,9 +509,19 @@
                 class="px-2 pt-0 ma-0"
                 style="font-size: 12px; height: 40px; display: flex; align-items: center;"
               >
-                <v-list-item width="500" height="auto" class="ma-0 pa-0">
-                  <v-row justify="space-between" class="ma-0">
-                    <v-col cols="11" class="pa-0">
+                <v-list-item
+                  width="500"
+                  height="auto"
+                  class="ma-0 pa-0"
+                >
+                  <v-row
+                    justify="space-between"
+                    class="ma-0"
+                  >
+                    <v-col
+                      cols="11"
+                      class="pa-0"
+                    >
                       <div
                         class="custom-scrollbar"
                         style="flex: 1; overflow-y: auto; max-height: 40px; padding-right: 8px;"
@@ -496,7 +529,10 @@
                         {{ heuristics[itemSelect].questions[questionSelect].title }}
                       </div>
                     </v-col>
-                    <v-col cols="1" class="pa-0">
+                    <v-col
+                      cols="1"
+                      class="pa-0"
+                    >
                       <v-menu
                         v-model="menuQuestions"
                         :offset="[8, 0]"
@@ -507,8 +543,7 @@
                             size="20"
                             v-bind="props"
                             @click="handleNotEditable"
-                          >
-                          </v-icon>
+                          />
                         </template>
                         <v-list
                           density="compact"
@@ -640,8 +675,7 @@
                 size="100"
                 color="grey"
                 @click="dialogHeuris = true"
-              >
-              </v-icon>
+              />
             </v-row>
           </v-col>
         </v-row>

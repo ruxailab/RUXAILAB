@@ -104,7 +104,12 @@
       </v-dialog>
 
       <!-- Start Screen -->
-      <v-container class="ma-0 pa-0" width="auto" height="100vh" style="background-color: #e8eaf2;">
+      <v-container
+        class="ma-0 pa-0"
+        width="auto"
+        height="100vh"
+        style="background-color: #e8eaf2;"
+      >
         <v-row
           v-if="test && start"
           class="background background-img pa-0 ma-0"

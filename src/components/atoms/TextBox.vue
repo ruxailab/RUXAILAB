@@ -13,7 +13,9 @@
           color="#FCA326"
           @click="editor.chain().focus().undo().run()"
         >
-          <v-icon color="grey-darken-1">mdi-undo</v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-undo
+          </v-icon>
         </v-btn>
 
         <v-btn
@@ -22,7 +24,9 @@
           color="#FCA326"
           @click="editor.chain().focus().redo().run()"
         >
-          <v-icon color="grey-darken-1">mdi-redo</v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-redo
+          </v-icon>
         </v-btn>
 
         <v-btn
@@ -119,7 +123,9 @@
           color="#FCA326"
           @click="loadImage()"
         >
-          <v-icon color="grey-darken-1">mdi-image</v-icon>
+          <v-icon color="grey-darken-1">
+            mdi-image
+          </v-icon>
         </v-btn>
 
         <v-btn
