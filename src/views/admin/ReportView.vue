@@ -92,8 +92,7 @@
                   <v-icon
                     icon="mdi-dots-vertical"
                     v-bind="props"
-                  >
-                  </v-icon>
+                  />
                 </template>
                 <v-list v-if="test.testAdmin.email == user.email">
                   <v-list-item @click="dialog = true; report = item">
