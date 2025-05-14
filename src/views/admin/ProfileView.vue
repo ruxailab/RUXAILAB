@@ -137,7 +137,10 @@
                             dense
                             prepend-inner-icon="mdi-account"
                             readonly
-                            class="input-field-hover"
+                            disabled
+                            filled
+                            background-color="grey lighten-2"
+                            class="readonly-field"
                           />
                         </v-col>
                         <v-col cols="12" md="6">
@@ -148,7 +151,10 @@
                             dense
                             prepend-inner-icon="mdi-email"
                             readonly
-                            class="input-field-hover"
+                            disabled
+                            filled
+                            background-color="grey lighten-2"
+                            class="readonly-field"
                           />
                         </v-col>
                         <v-col cols="12" md="6">
@@ -159,7 +165,10 @@
                             dense
                             prepend-inner-icon="mdi-phone"
                             readonly
-                            class="input-field-hover"
+                            disabled
+                            filled
+                            background-color="grey lighten-2"
+                            class="readonly-field"
                           />
                         </v-col>
                         <v-col cols="12" md="6">
@@ -170,7 +179,10 @@
                             dense
                             prepend-inner-icon="mdi-map-marker"
                             readonly
-                            class="input-field-hover"
+                            disabled
+                            filled
+                            background-color="grey lighten-2"
+                            class="readonly-field"
                           />
                         </v-col>
                       </v-row>
@@ -629,6 +641,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { countries } from '@/utils/countries'
+import i18n from '@/i18n'
 
 export default {
   name: 'ProfileView',
@@ -647,15 +660,7 @@ export default {
         country: null, // This will now store just the country name
       },
       countries: countries,
-      usernameRules: [
-        (v) => !!v || $t('usernameRequired'),
-        (v) => (v && v.length >= 3) || $t('usernameMinLength'),
-      ],
-      countryRules: [(v) => !!v || $t('countryRequired')],
-      contactRules: [
-        (v) => !!v || $t('contactNumberRequired'),
-        (v) => /^\d{9,15}$/.test(v) || $t('enterValidPhoneNumber'),
-      ],
+
       defaultImage:
         'https://static.vecteezy.com/system/resources/previews/024/983/914/large_2x/simple-user-default-icon-free-png.png',
       displayMissingInfo: this.$t('PROFILE.infoMissing'),
@@ -722,6 +727,22 @@ export default {
           value: this.userprofile.country,
           icon: 'mdi-map-marker',
         },
+      ]
+    },
+
+    usernameRules() {
+      return [
+        (v) => !!v || $t('usernameRequired'),
+        (v) => (v && v.length >= 3) || $t('usernameMinLength'),
+      ]
+    },
+    countryRules() {
+      return [(v) => !!v || $t('countryRequired')]
+    },
+    contactRules() {
+      return [
+        (v) => !!v || $t('contactNumberRequired'),
+        (v) => /^\d{9,15}$/.test(v) || $t('enterValidPhoneNumber'),
       ]
     },
   },
@@ -807,12 +828,12 @@ export default {
             country: this.editProfileData.country,
           }
 
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
+          this.$toast.success(i18n.t('alerts.genericSuccess'))
           this.editProfileDialog = false
         }
       } catch (error) {
         console.error('Error updating profile:', error)
-        this.$toast.error(i18n.t(errors.globalError))
+        this.$toast.error(i18n.t('errors.globalError'))
       }
     },
 
@@ -973,5 +994,13 @@ export default {
   .profile-card-hover:hover {
     transform: none;
   }
+}
+
+.readonly-field .v-input__slot {
+  cursor: not-allowed !important;
+  background-color: #f5f5f5 !important;
+}
+.readonly-field input {
+  color: #616161 !important; /* Grey text to imply disabled state */
 }
 </style>
