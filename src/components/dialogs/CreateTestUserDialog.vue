@@ -12,7 +12,10 @@
           align="center" 
           class="cardRow ma-0 pa-0"
         >
-          <v-col cols="11" class="mr-8">
+          <v-col
+            cols="11"
+            class="mr-8"
+          >
             <v-row justify="center">
               <span class="titles mt-4 mb-8">
                 {{ $t('Createblank.title') }}

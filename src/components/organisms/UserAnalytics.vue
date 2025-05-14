@@ -26,7 +26,9 @@
                   class="list-scroll"
                   color="#fca326"
                 >
-                  <v-list-subheader class="py-3 text-black">Tasks</v-list-subheader>
+                  <v-list-subheader class="py-3 text-black">
+                    Tasks
+                  </v-list-subheader>
                   <v-divider />
                   <v-list-item
                     v-for="(item, i) in testTasks"

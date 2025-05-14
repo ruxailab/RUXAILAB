@@ -178,8 +178,7 @@
                       <v-icon
                         icon="mdi-dots-vertical"
                         v-bind="props"
-                      >
-                      </v-icon>
+                      />
                     </template>
 
                     <v-list>

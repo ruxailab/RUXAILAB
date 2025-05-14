@@ -1,8 +1,17 @@
 <template>
-  <div v-if="isDataReady" style="height: 400px;">
-    <Line :key="chartKey" :data="chartData" :options="chartOptions" />
+  <div
+    v-if="isDataReady"
+    style="height: 400px;"
+  >
+    <Line
+      :key="chartKey"
+      :data="chartData"
+      :options="chartOptions"
+    />
   </div>
-  <div v-else>Loading...</div>
+  <div v-else>
+    Loading...
+  </div>
 </template>
 
 <script setup>
