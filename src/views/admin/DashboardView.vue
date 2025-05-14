@@ -113,9 +113,9 @@
 
             <v-spacer />
           </v-tabs>
-          <v-divider class="hidden-sm-and-down" />
+          <v-divider class="hidden-sm-and-down" />         
           <!-- Mobile Main Button -->
-          <v-select v-model="mainIndex" dense outlined class="hidden-md-and-up mx-2 mt-4" :items="buttonItems" />
+          <v-select v-model="mainIndex" dense outlined class="hidden-md-and-up mx-2 mt-4" :items="localizedButtonItems" />
 
           <!-- Mobile Sub Buttons -->
           <v-select
@@ -124,9 +124,9 @@
             dense
             outlined
             class="hidden-md-and-up mx-2"
-            :items="templateButtonItems"
+            :items="localizedTemplateButtonItems"
           />
-          <v-select v-else v-model="subIndex" dense outlined class="hidden-md-and-up mx-2" :items="testButtonItems" />
+          <v-select v-else v-model="subIndex" dense outlined class="hidden-md-and-up mx-2" :items="localizedTestButtonItems" />
 
           <!-- Tests -> Personal  -->
           <List v-if="mainIndex == 0 && subIndex == 0" :items="filteredTests" type="myTests" @clicked="goTo" />
@@ -226,42 +226,60 @@ export default {
     temp: {},
     filteredModeratedSessions: [],
   }),
-
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    tests() {
-      return this.$store.state.Tests.tests
-    },
-
-    filteredTests() {
-      return this.tests?.filter((test) => {
-        return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
-      }) ?? this.tests
-    },
-
-    templates() {
-      return this.$store.state.Templates.templates || []
-    },
-
-    filteredTemplates() {
-      return this.templates.filter((temp) => {
-        return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
-      })
-    },
-
-    loading() {
-      return this.$store.getters.loading
-    },
-
-    showTempDetails() {
-      return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
-    },
+computed: {
+  user() {
+    return this.$store.getters.user
   },
+  test() {
+    return this.$store.getters.test
+  },
+  tests() {
+    return this.$store.state.Tests.tests
+  },
+
+  filteredTests() {
+    return this.tests?.filter((test) => {
+      return test.testTitle.toLowerCase().includes(this.search.toLowerCase())
+    }) ?? this.tests
+  },
+
+  templates() {
+    return this.$store.state.Templates.templates || []
+  },
+
+  filteredTemplates() {
+    return this.templates.filter((temp) => {
+      return temp.header.templateTitle.toLowerCase().includes(this.search.toLowerCase())
+    })
+  },
+
+  loading() {
+    return this.$store.getters.loading
+  },
+
+  showTempDetails() {
+    return !(this.mainIndex == 2 && this.subIndex == 0) //dont show on this tab
+  },
+  localizedButtonItems() {
+    return [
+      { text: this.$t('Dashboard.tests'), value: 0 },
+      { text: this.$t('Dashboard.templates'), value: 1 },
+    ];
+  },
+  localizedTestButtonItems() {
+    return [
+      { text: this.$t('Dashboard.myTests'), value: 0 },
+      { text: this.$t('Dashboard.sharedWithMe'), value: 1 },
+      { text: this.$t('Dashboard.publicTests'), value: 2 },
+    ];
+  },
+  localizedTemplateButtonItems() {
+    return [
+      { text: this.$t('Dashboard.personal'), value: 0 },
+      { text: this.$t('Dashboard.explore'), value: 1 },
+    ];
+  },
+},
   watch: {
     async mainIndex(val) {
       this.subIndex = 0 //reset subIndex when main index change
