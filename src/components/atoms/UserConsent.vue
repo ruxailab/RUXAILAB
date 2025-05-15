@@ -2,25 +2,21 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <v-textarea
-          v-model="consent"
-          rows="3"
-          outlined
-          color="orange"
-          class="mx-6 mt-3"
-          placeholder="Consent Form..."
-          @change="saveState()"
-        />
+        <VueEditor v-model="consent" rows="3" outlined color="orange" class="mx-6 mt-3" placeholder="Consent Form..." />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
 export default {
   data: () => ({
     consent: '',
   }),
+  components: {
+    VueEditor
+  },
   computed: {
     consentStore() {
       return this.$store.getters.consent
@@ -43,11 +39,16 @@ export default {
       }
     },
   },
+  watch: {
+    consent() {
+      this.saveState()
+    }
+  }
 }
 </script>
 
 <style scoped>
-.v-text-field--outlined >>> fieldset {
+.v-text-field--outlined>>>fieldset {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
