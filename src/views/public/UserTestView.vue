@@ -348,12 +348,11 @@
 
             <v-row>
               <v-col cols="6" class="mx-auto">
-                <!-- Accept / Decline Checkboxes -->
-                <v-checkbox :disabled="fullName == ''" v-model="consentCompleted"
-                  :label="'I accept the consent terms'" />
-
-                <v-checkbox @click="declineConsent()" :label="'I do not accept the consent terms'"
-                  :disabled="consentCompleted" />
+                <!-- Accept / Decline Checkboxes in a Group -->
+                <v-radio-group v-model="consentCompleted">
+                  <v-radio :label="'I accept the consent terms'" :disabled="fullName == ''" :value="true" />
+                  <v-radio :label="'I do not accept the consent terms'" :value="false" />
+                </v-radio-group>
               </v-col>
             </v-row>
 
