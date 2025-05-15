@@ -11,11 +11,7 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="red lighten-1 white--text"
-          text
-          @click="$emit('closeDialog'), reset()"
-        >
+        <v-btn color="red lighten-1 white--text" text @click="$emit('closeDialog'), reset()">
           {{ $t('buttons.cancel') }}
         </v-btn>
         <v-btn color="#f9a826" class="white--text" @click="validate()">
@@ -46,7 +42,7 @@ export default {
   data: () => ({}),
   methods: {
     validate() {
-      this.$refs.form.valida()
+      this.$refs.form.validate()
     },
     submit(valid) {
       if (valid) {
