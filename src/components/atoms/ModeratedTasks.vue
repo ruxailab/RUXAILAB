@@ -80,10 +80,11 @@
               icon
               variant="flat"
               color="rgb(249, 168, 38)"
-              style="margin-bottom: -30px; z-index: 3;"
+              size="50"
+              style="margin-bottom: 20px; z-index: 3;"
               @click="openAddTaskModal(index)"
             >
-              <v-icon size="35">
+              <v-icon size="40">
                 mdi-plus
               </v-icon>
             </v-btn>
@@ -152,10 +153,8 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import draggable from 'vuedraggable';
 
-// Initialize store
 const store = useStore();
 
-// Reactive state
 const tasks = ref([]);
 const drag = ref(false);
 const addTaskModal = ref(false);
@@ -168,13 +167,11 @@ const newTask = ref({
 });
 const form = ref(null);
 
-// Computed properties
 const tasksStore = computed(() => store.getters.tasks || []);
 const testStructure = computed(
   () => store.state.Tests?.Test?.testStructure || { userTasks: [] }
 );
 
-// Watch tasks for changes
 watch(
   tasks,
   () => {
@@ -183,7 +180,6 @@ watch(
   { deep: true }
 );
 
-// Methods
 const openAddTaskModal = (index = null) => {
   taskIndex.value = index;
   addTaskModal.value = true;
@@ -243,7 +239,6 @@ const deleteTask = (index) => {
   tasks.value.splice(index, 1);
 };
 
-// Lifecycle hook
 onMounted(() => {
   getTasks();
 });

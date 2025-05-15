@@ -31,26 +31,6 @@
           <LeaveAlert />
         </v-dialog>
 
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn
-              size="large"
-              icon
-              fixed
-              location="bottom right"
-              color="#F9A826"
-              :disabled="!comboboxModel.email"
-              v-bind="props"
-              @click="openInvitationModal()"
-            >
-              <v-icon size="large">
-                mdi-email
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Send invitations</span>
-        </v-tooltip>
-
         <ShowInfo title="Cooperators">
           <template #content>
             <div
@@ -73,7 +53,7 @@
                     :autofocus="comboboxKey == 0 ? false : true"
                     style="background: #f5f7ff;"
                     :items="users"
-                    item-title="email"
+                    :item-title="item => item?.email || 'Select an Email'"
                     label="Select cooperator"
                     variant="outlined"
                     rounded
@@ -229,6 +209,26 @@
           </template>
         </ShowInfo>
       </v-container>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn
+            size="large"
+            icon
+            class="mr-5 mb-5"
+            position="fixed"
+            location="bottom right"
+            color="#F9A826"
+            :disabled="!comboboxModel.email"
+            v-bind="props"
+            @click="openInvitationModal()"
+          >
+            <v-icon size="large">
+              mdi-email
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Send invitations</span>
+      </v-tooltip>
     </v-row>
     <AccessNotAllowed v-if="!loading && verified" />
     <div class="text-center">
