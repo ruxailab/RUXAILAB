@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-dialog
-      v-if="template.header"
-      v-model="dialog"
-      max-width="80%"
-      persistent
-    >
+    <v-dialog v-if="template.header" v-model="dialog" max-width="80%" persistent>
       <v-stepper v-model="step" style="background-color: #e8eaf2">
         <v-stepper-header>
           <v-stepper-step color="#F9A826" :complete="step > 1" step="1">
@@ -32,13 +27,13 @@
                     template.header.templateVersion == '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
                       : ` - Last updated: ${getFormattedDate(
-                          template.header.updateDate,
-                        )}`
+                        template.header.updateDate,
+                      )}`
                   }}
                   ({{
                     $t('pages.listTests.version') +
-                      ' ' +
-                      template.header.templateVersion
+                    ' ' +
+                    template.header.templateVersion
                   }})
                 </div>
               </v-col>
@@ -55,13 +50,8 @@
             </div>
 
             <v-row justify="end" class="ma-0 pa-0">
-              <v-btn
-                v-if="isMyTemplate"
-                color="error"
-                outlined
-                style="position: absolute; left: 24px"
-                @click="deleteTemplate()"
-              >
+              <v-btn v-if="isMyTemplate" color="error" outlined style="position: absolute; left: 24px"
+                @click="deleteTemplate()">
                 {{ $t('buttons.delete') }}
                 <v-icon right>
                   mdi-delete
@@ -72,12 +62,7 @@
                 {{ $t('buttons.close') }}
               </v-btn>
 
-              <v-btn
-                v-if="allowCreate"
-                class="success"
-                color="primary"
-                @click="step = 2"
-              >
+              <v-btn v-if="allowCreate" class="success" color="primary" @click="step = 2">
                 {{ $t('buttons.next') }}
               </v-btn>
             </v-row>
@@ -89,18 +74,9 @@
             </p>
             <v-divider class="my-2" />
             <!-- TODO: CHECK HERE -->
-            <FormTestDescription
-              ref="form"
-              style="margin: 0px 0px 20px 0px"
-              :test="mountTest"
-              :lock="true"
-            />
+            <FormTestDescription ref="form" style="margin: 0px 0px 20px 0px" :test="mountTest" :lock="true" />
             <v-row justify="end" class="ma-0 pa-0">
-              <v-btn
-                class="warning"
-                style="position: absolute; left: 24px"
-                @click="step = 1"
-              >
+              <v-btn class="warning" style="position: absolute; left: 24px" @click="step = 1">
                 {{ $t('buttons.previous') }}
               </v-btn>
 
@@ -138,7 +114,7 @@ export default {
     template: {
       type: Object,
       required: true,
-      default: () => {},
+      default: () => { },
     },
 
     allowCreate: {
@@ -198,7 +174,7 @@ export default {
     },
 
     async validate() {
-      if (!this.$refs.form.valida()) return
+      if (!this.$refs.form.validate()) return
 
       const test = new Test({
         ...this.template.body,
@@ -213,7 +189,7 @@ export default {
       })
 
       const testId = await this.$store.dispatch('createNewTest', test)
-      this.$router.push(`/managerview/${testId}`).catch(() => {})
+      this.$router.push(`/managerview/${testId}`).catch(() => { })
     },
 
     getFormattedDate(date) {

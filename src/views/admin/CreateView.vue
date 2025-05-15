@@ -1,29 +1,17 @@
 <template>
   <div class="page-container">
     <v-col cols="12" />
-    <span
-      class="Title mb-14 mt-8"
-      style="display: flex; justify-content: center;"
-    >
+    <span class="Title mb-14 mt-8" style="display: flex; justify-content: center;">
       {{ $t('pages.createTest.title') }}
     </span>
 
     <v-row justify="center" class="responsive-row">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card
-            hover
-            class="card"
-            :ripple="false"
-            @click="$router.push('/choose')"
-          >
+          <v-card hover class="card" :ripple="false" @click="$router.push('/choose')">
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img
-                  contain
-                  src="@/assets/createView/blankCanvas.svg"
-                  max-height="200"
-                />
+                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200" />
               </v-col>
               <v-col cols="12" md="6" class="card-text">
                 <div class="card-title">
@@ -37,19 +25,10 @@
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
-          <v-card
-            hover
-            class="card"
-            :ripple="false"
-            @click="pushToFromTemplate()"
-          >
+          <v-card hover class="card" :ripple="false" @click="pushToFromTemplate()">
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img
-                  contain
-                  src="@/assets/createView/createFromTemplate.svg"
-                  max-height="200"
-                />
+                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200" />
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
                 <div class="card-title">
@@ -126,7 +105,7 @@ export default {
       this.$router.push(`/managerview/${id}`)
     },
     validate() {
-      if (this.$refs.form.valida()) {
+      if (this.$refs.form.validate()) {
         this.submit()
       }
     },
@@ -137,7 +116,8 @@ export default {
 <style scoped>
 .page-container {
   height: 93vh;
-  background-color: #f9f5f0; /* fundo padrão para desktop/tablet */
+  background-color: #f9f5f0;
+  /* fundo padrão para desktop/tablet */
 }
 
 dialog-title {
@@ -149,6 +129,7 @@ dialog-title {
   align-items: center;
   color: #000000;
 }
+
 .Title {
   font-size: 38px;
   font-style: normal;
@@ -160,19 +141,23 @@ dialog-title {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .responsive-row {
   padding: 0px 30px;
 }
+
 .card {
   border-radius: 20px;
   padding: 30px;
   height: 250px;
 }
+
 .card-title {
   font-size: 25px;
   color: #f9a826;
   margin: 0 0 10px 0;
 }
+
 .card-text-box {
   margin: 0 0 0 30px;
 }
@@ -183,9 +168,11 @@ dialog-title {
     text-align: center;
     justify-content: center;
   }
+
   .card-text-box {
     margin: 20px 0 0 0;
   }
+
   .card {
     height: auto;
   }
@@ -194,21 +181,26 @@ dialog-title {
 /* Responsividade para dispositivos móveis (até 600px) */
 @media screen and (max-width: 600px) {
   .page-container {
-    background-color: #ffffff; 
+    background-color: #ffffff;
   }
+
   .responsive-row {
     padding: 0px 10px !important;
   }
+
   .Title {
     font-size: 28px;
   }
+
   .card {
     padding: 20px;
     height: auto;
   }
+
   .card-title {
     font-size: 20px;
   }
+
   .card-text-box {
     margin: 10px 0 0 0;
   }
