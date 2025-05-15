@@ -73,8 +73,7 @@
         </v-row>
         <v-card-actions class="justify-center mt-4">
           <v-btn
-            color="#F9A826"
-            class="text-white"
+            class="text-white bg-orange"
             @click="setTest"
           >
             Continue as {{ user.email }}
