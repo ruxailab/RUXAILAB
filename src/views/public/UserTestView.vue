@@ -420,22 +420,23 @@
         <ShowInfo v-if="index == 1 && test.testType === 'User'"
           :title="test.testStructure.userTasks[taskIndex].taskName">
           <div slot="content" class="ma-0 pa-0">
-            <v-divider class="mb-5" />
             <v-container>
               <v-row class="fill-height" align="center" justify="center">
                 <v-col cols="12" class="mb-0 pb-0">
-                  <v-row justify="center">
-                    <h1 style="color: #455a64;" class="mt-2">
-                      {{ test.testStructure.userTasks[taskIndex].taskName }}
-                    </h1>
-                  </v-row>
                   <v-spacer />
                   <v-row justify="center">
-                    <p class="paragraph" style="color: #455a64;">
+                    <p class="paragraph mt-5" style="color: #455a64;">
                       {{
                         test.testStructure.userTasks[taskIndex].taskDescription
                       }}
                     </p>
+                  </v-row>
+                  <v-row justify="center" v-if="test.testStructure.userTasks[taskIndex].taskLink">
+                    <a :href="test.testStructure.userTasks[taskIndex].taskLink" target="_blank"
+                      v-if="test.testStructure.userTasks[taskIndex].taskLink">
+                      <span style="color: #455a64; cursor: pointer;">{{ test.testStructure.userTasks[taskIndex].taskLink
+                      }}</span>
+                    </a>
                   </v-row>
                   <div v-if="!currentUserTestAnswer.submitted">
                     <v-row>
@@ -471,9 +472,6 @@
                       ">
                         <ScreenRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
                           :testId="testId" :taskIndex="taskIndex"></ScreenRecorder>
-                      </v-col>
-                      <v-col cols="4">
-                        <Timer ref="timerComponent" :taskIndex="taskIndex" @timerStopped="handleTimerStopped" />
                       </v-col>
                     </v-row>
                   </div>
@@ -607,7 +605,6 @@ import ShowInfo from '@/components/organisms/ShowInfo.vue';
 import VClamp from 'vue-clamp';
 import Snackbar from '@/components/atoms/Snackbar';
 import TipButton from '@/components/atoms/TipButton';
-import Timer from '@/components/atoms/Timer';
 import AudioRecorder from '@/components/atoms/AudioRecorder';
 import AudioVisualizer from '@/components/atoms/AudioVisualizer';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
@@ -620,7 +617,6 @@ export default {
     VClamp,
     Snackbar,
     TipButton,
-    Timer,
     AudioRecorder,
     AudioVisualizer,
     ScreenRecorder,
