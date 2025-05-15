@@ -1,24 +1,14 @@
 <template>
   <v-dialog v-model="internalDialog" width="500">
     <template v-slot:activator="{ on }">
-      <v-btn
-        color="green"
-        class="ml-4 my-2 mr-auto white--text"
-        variant="tonal"
-        depressed
-        icon
-        v-on="on"
-      >
-        <v-icon>mdi-chat-question</v-icon>
+      <v-btn color="green" class="ml-4 my-2 mr-auto white--text" depressed v-on="on">
+        <v-icon left>mdi-chat-question</v-icon>
+        Tip
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title
-        class="headline orange lighten-1 text-center"
-        style="color: white;"
-        primary-title
-      >
+      <v-card-title class="headline orange lighten-1 text-center" style="color: white;" primary-title>
         {{ task.taskName }} - TIP
       </v-card-title>
 
@@ -53,8 +43,8 @@ export default {
         taskTip: 'No tip available',
       }),
       validator: (task) => {
-        return typeof task.taskName === 'string' && 
-               typeof task.taskTip === 'string'
+        return typeof task.taskName === 'string' &&
+          typeof task.taskTip === 'string'
       }
     },
   },
