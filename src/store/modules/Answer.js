@@ -76,6 +76,7 @@ export default {
             postTestAnswer: rootState.test.testStructure.postTest,
             preTestCompleted: false,
             consentCompleted: false,
+            fullName: '',
             postTestCompleted: false,
             tasks: (() => {
               const tasks = {}
