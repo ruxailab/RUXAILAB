@@ -29,7 +29,6 @@
     "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/vue-3": "^2.11.5",
     "@vue/babel-plugin-jsx": "^1.4.0",
-    "@vue/compat": "^3.5.13",
     "axios": "^1.5.0",
     "bluebird": "^3.7.2",
     "buffer": "^6.0.3",
@@ -63,8 +62,7 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.7.18",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.9.4",
-    "webpack": "^5.98.0"
+    "wavesurfer.js": "^7.9.4"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
