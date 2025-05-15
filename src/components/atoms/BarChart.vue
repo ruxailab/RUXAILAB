@@ -1,8 +1,29 @@
-<script setup>
-import { Bar } from 'vue-chartjs'
-import { computed, watch, onMounted, ref } from 'vue'
+<template>
+  <Bar :data="chartData" :options="chartOptions" style="height: 400px;" />
+</template>
 
-// Define props with the same structure as in the Options API
+<script setup>
+import { computed } from 'vue'
+import { Bar } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+
+ChartJS.register(
+  Title, 
+  Tooltip, 
+  Legend, 
+  BarElement, 
+  CategoryScale, 
+  LinearScale
+)
+
 const props = defineProps({
   labels: {
     type: String,
@@ -18,7 +39,6 @@ const props = defineProps({
   }
 })
 
-// Computed property for chart data
 const chartData = computed(() => ({
   labels: props.labels,
   datasets: [
@@ -30,33 +50,8 @@ const chartData = computed(() => ({
   ]
 }))
 
-// Chart options
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false
 }
-
-// Reference to the Bar component instance
-const barChart = ref(null)
-
-// Function to render the chart
-const renderChart = () => {
-  if (barChart.value) {
-    barChart.value.renderChart(chartData.value, chartOptions)
-  }
-}
-
-// Watch for changes in data prop and re-render chart
-watch(
-  () => props.data,
-  () => {
-    renderChart()
-  },
-  { deep: true } // Deep watch to handle array changes
-)
-
-// Render chart on mount
-onMounted(() => {
-  renderChart()
-})
 </script>

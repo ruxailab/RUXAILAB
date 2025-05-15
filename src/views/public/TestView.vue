@@ -74,8 +74,7 @@
           </v-row>
           <v-card-actions class="justify-center mt-4">
             <v-btn
-              color="#F9A826"
-              class="text-white"
+              class="text-white bg-orange"
               @click="setTest()"
             >
               {{
@@ -390,7 +389,7 @@
               :title="test.testStructure[heurisIndex].title"
             >
               <template #content>
-                <div class="ma-0 pa-0">
+                <div class="ma-0 pa-0 pb-7">
                   <v-card-title class="subtitleView">
                     {{ test.testStructure[heurisIndex].title }}
                   </v-card-title>

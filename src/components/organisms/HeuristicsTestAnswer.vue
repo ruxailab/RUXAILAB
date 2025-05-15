@@ -136,6 +136,7 @@
               flat
               rounded="xl"
               style="background: #f5f7ff"
+              class="pb-3"
             >
               <v-card-title class="subtitleView">
                 {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
@@ -510,7 +511,7 @@ const testWeights = computed(() => store.state.Tests.Test.testWeights || []);
 
 const heuristicsEvaluator = computed(() => {
   const table = {
-    header: [{ text: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
     items: [],
   };
   const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
