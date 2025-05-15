@@ -5,6 +5,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import Toast from 'vue-toastification'
+import Vue2Editor from "vue2-editor";
 import 'vue-toastification/dist/index.css'
 
 Vue.config.productionTip = false
@@ -24,6 +25,6 @@ new Vue({
   store,
   vuetify,
   i18n,
-
+  Vue2Editor,
   render: (h) => h(App),
 }).$mount('#app')
