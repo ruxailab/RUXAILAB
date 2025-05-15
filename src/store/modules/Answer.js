@@ -29,7 +29,6 @@ export default {
             })
           }
         }
-
       }
 
       return state.testAnswerDocument
@@ -183,32 +182,32 @@ export default {
 
       table.header = [
         {
-          text: 'Evaluator',
+          title: 'Evaluator',
           align: 'start',
           sortable: false,
           value: 'evaluator',
         },
         {
-          text: 'Usability Percentage',
+          title: 'Usability Percentage',
           value: 'result',
           align: 'center',
         },
         {
-          text: 'Applicable Question(s)',
+          title: 'Applicable Question(s)',
           value: 'aplication',
           align: 'center',
         },
         {
-          text: 'No Applicable Question(s)',
+          title: 'No Applicable Question(s)',
           value: 'noAplication',
           align: 'center',
         },
         {
-          text: 'Conclusion Percentage',
+          title: 'Conclusion Percentage',
           value: 'answered',
           align: 'center',
         },
-        { text: 'Last Update', value: 'lastUpdate', align: 'center' },
+        { title: 'Last Update', value: 'lastUpdate', align: 'center' },
       ]
 
       if (payload.resultEvaluator) {

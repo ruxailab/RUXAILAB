@@ -7,7 +7,7 @@
       />
 
       <v-stepper
-        v-model="step"
+        :model-value="step"
         style="background-color:#F5F7FF"
         class="final-report-box rounded pt-0 mb-4"
         elevation="0"
@@ -112,7 +112,7 @@ import ShowInfo from '@/components/organisms/ShowInfo.vue';
 
 const store = useStore();
 
-const step = ref(1);
+const step = ref(0);
 const object = ref({});
 
 const test = computed(() => store.getters.test);

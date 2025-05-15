@@ -23,7 +23,7 @@
       width="500"
       persistent
     >
-      <v-card v-if="user">
+      <v-card>
         <v-row
           class="ma-0 pa-0 pt-5"
           justify="center"
@@ -40,8 +40,7 @@
         </v-row>
         <v-card-actions class="justify-center mt-4">
           <v-btn
-            color="#F9A826"
-            class="text-white"
+            class="text-white bg-orange"
             @click="setTest"
           >
             {{ $t('common.continueAs') }} {{ user.email }}
@@ -221,7 +220,9 @@ const topCards = computed(() => {
 })
 
 const bottomCards = computed(() => {
-  if (!test.value) return []
+  const tVal = test.value
+  if (!tVal || !tVal.answersDocId) return []
+
   const cards = [
     {
       image: 'IntroReports.svg',
@@ -231,7 +232,7 @@ const bottomCards = computed(() => {
       description: 'reports',
       cardStyle:
         'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
-      path: `/reportview/${test.value.answersDocId}`,
+      path: `/reportview/${tVal.answersDocId}`,
     },
     {
       image: 'IntroAnswer.svg',
@@ -241,9 +242,10 @@ const bottomCards = computed(() => {
       description: 'answers',
       cardStyle:
         'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
-      path: `/answerview/${test.value.answersDocId}`,
+      path: `/answerview/${tVal.answersDocId}`,
     },
   ]
+
   if (accessLevel.value === 0) {
     cards.push({
       image: 'FinalReport.png',
@@ -253,9 +255,10 @@ const bottomCards = computed(() => {
       description: 'finalReport',
       cardStyle:
         'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
-      path: `/finalreportview/${test.value.id}`,
+      path: `/finalreportview/${tVal.id}`,
     })
   }
+
   return cards
 })
 
@@ -334,6 +337,7 @@ const setTest = async () => {
             cooperator: user.value,
           })
           flagToken.value = false
+          logined.value = true
         } else {
           store.commit('setError', {
             errorCode: 'inviteError',
@@ -360,8 +364,21 @@ onBeforeMount(async () => {
     flagToken.value = true
     token.value = route.params.token
   }
+
+  if (user.value) {
+    flagUser.value = true
+  }
+
   await store.dispatch('getTest', { id: route.params.id })
+
+  if (!store.getters.test) {
+    toast.error('Test data could not be loaded.')
+    router.push('/testslist')
+    return
+  }
+
   await store.dispatch('getCurrentTestAnswerDoc')
+
   if (accessLevel.value === 2) {
     toast.warning("You don't have permission to access this test!")
     router.push('/testslist')
@@ -371,10 +388,9 @@ onBeforeMount(async () => {
 watch(user, () => {
   if (user.value) {
     flagUser.value = true
-  }
-  if (user.value.myCoops && flagNewUser.value) {
-    setTest()
-    flagNewUser.value = false
+    if (flagToken.value && !logined.value) {
+      setTest()
+    }
   }
 })
 </script>
