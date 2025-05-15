@@ -13,7 +13,7 @@
                     <span class="cardTitle">Conclusion percentage</span>
                   </v-col>
                   <span class="conclusionPercentage mx-auto mb-1">{{ parseFloat(getConclusionAverage()).toFixed(2)
-                  }}%</span>
+                    }}%</span>
                   <v-col cols="8" class="mx-auto">
                     <v-progress-linear rounded height="6" color="orange" :value="getConclusionAverage()" />
                   </v-col>
@@ -22,7 +22,7 @@
                   </v-col>
                   <span class="conclusionPercentage mx-auto mb-1">{{
                     getTestsInProgress().totalInProgress
-                  }}</span>
+                    }}</span>
                 </v-row>
               </v-col>
 
