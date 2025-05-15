@@ -120,7 +120,7 @@
                   :src="profileImage"
                   alt="User Profile"
                 />
-                <v-icon v-else>
+                <v-icon v-else color="white" size="24">
                   mdi-account-circle
                 </v-icon>
               </v-avatar>

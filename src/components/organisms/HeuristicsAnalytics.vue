@@ -187,9 +187,7 @@
                             :key="item[header.value].heuristicAnswer.value"
                           >
                             <div
-                              v-if="
-                                item[header.value].heuristicAnswer.value == null
-                              "
+                              v-if="item[header.value].heuristicAnswer.value == null"
                             >
                               -
                             </div>
@@ -205,76 +203,78 @@
                     v-else
                     class="ma-0 pa-0"
                   >
-                    <v-tabs
-                      v-model="ind"
-                      bg-color="transparent"
-                      color="grey-darken-2"
-                      class="mt-2"
-                      align-tabs="center"
-                    >
-                      <v-tab
-                        class="tab-text"
-                        style="text-transform: none !important"
-                        @click="ind = 0"
+                    <v-card width="100%" height="100%">
+                      <v-tabs
+                        v-model="ind"
+                        bg-color="transparent"
+                        color="grey-darken-2"
+                        class="mt-2"
+                        align-tabs="center"
                       >
-                        Comments
-                      </v-tab>
-                      <v-tab
-                        class="tab-text"
-                        style="text-transform: none !important"
-                        @click="ind = 1"
-                      >
-                        Chart
-                      </v-tab>
-                    </v-tabs>
-                    <v-col v-if="ind == 1">
-                      <v-row justify="center">
-                        <v-col cols="10">
-                          <BarChart
-                            v-if="questionGraph"
-                            :labels="questionGraph.label"
-                            :data="questionGraph.data"
-                            legend="Quantity"
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col v-if="ind == 0">
-                      <v-row
-                        class="list-scroll"
-                        style="height: 430px"
-                        justify="center"
-                      >
-                        <v-col cols="10">
-                          <v-timeline density="compact">
-                            <div
-                              v-for="(result, index) in itemsHeuristic"
-                              :key="index"
-                            >
-                              <v-timeline-item
-                                v-if="result[questionSelect].heuristicComment"
-                                fill-dot
-                                dot-color="#fca326"
-                                icon="mdi-message-reply-text"
+                        <v-tab
+                          class="tab-text"
+                          style="text-transform: none !important"
+                          @click="ind = 0"
+                        >
+                          Comments
+                        </v-tab>
+                        <v-tab
+                          class="tab-text"
+                          style="text-transform: none !important"
+                          @click="ind = 1"
+                        >
+                          Chart
+                        </v-tab>
+                      </v-tabs>
+                      <v-col v-if="ind == 1">
+                        <v-row justify="center">
+                          <v-col cols="10">
+                            <BarChart
+                              v-if="questionGraph"
+                              :labels="questionGraph.label"
+                              :data="questionGraph.data"
+                              legend="Quantity"
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                      <v-col v-if="ind == 0">
+                        <v-row
+                          class="list-scroll"
+                          style="height: 430px"
+                          justify="center"
+                        >
+                          <v-col cols="10">
+                            <v-timeline density="compact">
+                              <div
+                                v-for="(result, index) in itemsHeuristic"
+                                :key="index"
                               >
-                                <v-card class="elevation-2">
-                                  <v-card-text>
-                                    {{
-                                      result[questionSelect].heuristicComment
-                                    }}
-                                  </v-card-text>
-                                  <img
-                                    v-if="result[questionSelect].answerImageUrl"
-                                    height="200"
-                                    :src="result[questionSelect].answerImageUrl"
-                                  >
-                                </v-card>
-                              </v-timeline-item>
-                            </div>
-                          </v-timeline>
-                        </v-col>
-                      </v-row>
-                    </v-col>
+                                <v-timeline-item
+                                  v-if="result[questionSelect].heuristicComment"
+                                  fill-dot
+                                  dot-color="#fca326"
+                                  icon="mdi-message-reply-text"
+                                >
+                                  <v-card class="elevation-2">
+                                    <v-card-text>
+                                      {{
+                                        result[questionSelect].heuristicComment
+                                      }}
+                                    </v-card-text>
+                                    <img
+                                      v-if="result[questionSelect].answerImageUrl"
+                                      height="200"
+                                      :src="result[questionSelect].answerImageUrl"
+                                    >
+                                  </v-card>
+                                </v-timeline-item>
+                              </div>
+                            </v-timeline>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-card>
                   </v-row>
                 </v-card>
               </v-col>
@@ -319,7 +319,7 @@ const loading = computed(() => !Object.values(answers.value).length);
 const headersHeuristic = computed(() => {
   const header = [
     {
-      text: 'Evaluator',
+      title: 'Evaluator',
       align: 'start',
       value: 'uid',
     },
@@ -328,9 +328,9 @@ const headersHeuristic = computed(() => {
     test.value.testStructure[heuristicSelect.value].questions.forEach(
       (question) => {
         header.push({
-          text: `Q${question.id + 1}`,
+          title: `Q${question.id + 1}`,
           align: 'center',
-          value: question.id,
+          value: question.id.toString(),
         });
       },
     );
@@ -344,7 +344,10 @@ const itemsHeuristic = computed(() => {
     Object.values(answers.value).forEach((answer) => {
       items.push({
         uid: { uid: answer.userDocId },
-        ...answer.heuristicQuestions[heuristicSelect.value].heuristicQuestions,
+        ...Object.fromEntries(
+          Object.entries(answer.heuristicQuestions[heuristicSelect.value].heuristicQuestions)
+            .map(([id, val]) => [id.toString(), val])
+        ),
       });
     });
   }
