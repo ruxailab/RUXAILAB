@@ -12,190 +12,101 @@
           v-if="item"
           :ripple="false"
           @click="emitClick(item)"
+          class="py-3 px-4"
         >
-          <!-- Avatar -->
-          <v-avatar
-            tile
-            style="border-radius: 5px"
-            size="40"
-          >
+          <template #prepend>
             <v-avatar
               tile
+              size="40"
               :color="generateColor()"
-              style="color: #545454"
+              style="border-radius: 5px; color: #545454"
             >
-              <span v-if="type === 'myTemplates' || type === 'publicTemplates'">
+              <span class="font-weight-bold text-body-1">
                 {{
-                  item.header &&
-                    item.header.templateTitle &&
-                    item.header.templateTitle[0]
-                    ? item.header.templateTitle[0].toUpperCase()
-                    : item.testTitle && item.testTitle[0]
-                      ? item.testTitle[0].toUpperCase()
-                      : ''
-                }}
-              </span>
-              <span v-else-if="type === 'sessions'">
-                {{ item.email[0].toUpperCase() }}
-              </span>
-              <span v-else>
-                {{
-                  item.testTitle
-                    ? item.testTitle[0].toUpperCase()
-                    : item.email[0].toUpperCase()
+                  (item.header?.templateTitle ??
+                    item.testTitle ??
+                    item.email ??
+                    '')[0]?.toUpperCase()
                 }}
               </span>
             </v-avatar>
-          </v-avatar>
+          </template>
 
-          <!-- Title -->
-          <v-list-item-title
-            v-if="type === 'myTemplates' || type === 'publicTemplates'"
-          >
-            {{ item.header ? item.header.templateTitle : item.testTitle }}
-            <v-chip
-              label
-              variant="outlined"
-              style="color: grey"
-              size="small"
-              class="ml-1"
-            >
-              {{ item.header ? item.header.templateType : item.testType }}
-            </v-chip>
-          </v-list-item-title>
-          <v-list-item-title v-else-if="type === 'sessions'">
-            {{ item.testTitle }}
-            <v-chip
-              label
-              variant="outlined"
-              style="color: grey"
-              size="small"
-              class="ml-1"
-            >
-              Session
-            </v-chip>
-          </v-list-item-title>
-          <v-list-item-title v-else>
-            {{ item.testTitle ? item.testTitle : item.email }}
-            <!-- Chip for Test Type -->
-            <v-chip
-              label
-              variant="outlined"
-              style="color: grey"
-              size="small"
-              class="ml-1"
-            >
-              {{ item.testType ? item.testType : 'User' }}
-            </v-chip>
-          </v-list-item-title>
-
-          <!-- Subtitle -->
-          <v-list-item-subtitle>
-            {{ $t('pages.listTests.createdBy') }}
-            <strong v-if="type === 'myTests' || type === 'myTemplates'">
-              {{ $t('pages.listTests.me') }}
-            </strong>
-            <strong v-else-if="type === 'sessions'">
-              {{ item.testAdmin.email }}
-            </strong>
-            <strong v-else>
-              {{
-                item.testAdmin
-                  ? item.testAdmin.email
-                  : item.header
-                    ? item.header.templateAuthor.userEmail
-                    : item.testAuthorEmail
-              }}
-            </strong>
-          </v-list-item-subtitle>
-
-          <!-- Actions -->
-          <v-list-item-action class="hidden-sm-and-down">
-            <v-list-item-action-text
-              v-if="item.accessLevel != null && item.accessLevel != undefined"
-            />
-            <v-list-item-action-text
-              v-if="item.updateDate && type != 'sessions'"
-            >
-              <v-row
-                class="ma-0"
-                align="center"
-              >
-                <div class="hidden-sm-and-down">
-                  <v-tooltip
-                    v-if="type === 'myTests'"
-                    location="top"
-                  >
-                    <template #activator="{ props }">
-                      <v-row
-                        v-bind="props"
-                        class="ma-0 pa-0 mr-4"
-                        align="center"
-                      >
-                        {{
-                          item.numberColaborators >= 0
-                            ? item.numberColaborators
-                            : '-'
-                        }}
-                        <v-icon class="ml-1">
-                          mdi-account-multiple
-                        </v-icon>
-                      </v-row>
-                    </template>
-                    <span>{{ $t('titles.cooperators') }}</span>
-                  </v-tooltip>
-                  <v-tooltip
-                    v-else-if="type === 'sharedWithMe'"
-                    location="top"
-                  >
-                    <template #activator="{ props }">
-                      <v-row
-                        v-bind="props"
-                        class="mr-3"
-                      >
-                        <div class="text-caption">
-                          {{ item.progress }}%
-                        </div>
-                        <v-progress-circular
-                          rotate="-90"
-                          :model-value="item.progress"
-                          color="grey-darken-1"
-                          :size="20"
-                          class="ml-1"
-                        />
-                      </v-row>
-                    </template>
-                    <span>{{ $t('pages.listTests.progress') }}</span>
-                  </v-tooltip>
-                </div>
-                <div>
-                  {{ $t('pages.listTests.updated') }}
-                  {{ getFormattedDate(item.updateDate) }}
-                </div>
-              </v-row>
-            </v-list-item-action-text>
-            <v-list-item-action-text v-if="type === 'sessions'">
+          <!-- Main content and chip -->
+          <div class="d-flex flex-column flex-grow-1">
+            <div class="d-flex align-center">
+              <div class="text-body-1 font-weight-medium">
+                {{ item.header?.templateTitle ?? item.testTitle ?? item.email }}
+              </div>
               <v-chip
+                v-if="type !== 'sessions'"
+                label
                 variant="outlined"
-                class="mb-1 mr-6"
+                class="ml-2"
+                size="small"
+                style="color: grey"
               >
-                <span>Scheduled for {{ getFormattedDate(item.testDate) }}</span>
+                {{ item.header?.templateType ?? item.testType ?? 'User' }}
               </v-chip>
-            </v-list-item-action-text>
-            <v-list-item-action-text
-              v-if="type === 'myTemplates' || type === 'publicTemplates'"
-            >
+            </div>
+
+            <div class="text-caption mt-1">
+              {{ $t('pages.listTests.createdBy') }}
+              <strong class="ml-1">
+                {{
+                  type === 'myTests' || type === 'myTemplates'
+                    ? $t('pages.listTests.me')
+                    : item.testAdmin?.email ??
+                      item.header?.templateAuthor?.userEmail ??
+                      item.testAuthorEmail
+                }}
+              </strong>
+            </div>
+          </div>
+
+          <template #append>
+            <div class="d-flex flex-column align-end justify-center text-caption mr-2">
+              <v-tooltip v-if="type === 'myTests'" location="top">
+                <template #activator="{ props }">
+                  <v-row
+                    v-bind="props"
+                    class="ma-0 pa-0"
+                    align="center"
+                    dense
+                  >
+                    {{ item.numberColaborators ?? '-' }}
+                    <v-icon class="ml-1" size="16">mdi-account-multiple</v-icon>
+                  </v-row>
+                </template>
+                <span>{{ $t('titles.cooperators') }}</span>
+              </v-tooltip>
+
+              <div class="mt-1" v-if="item.updateDate && type !== 'sessions'">
+                {{ $t('pages.listTests.updated') }}
+                {{ getFormattedDate(item.updateDate) }}
+              </div>
+
               <v-chip
+                v-if="type === 'sessions'"
                 variant="outlined"
                 size="small"
-                class="ml-1"
+                class="mt-1"
+              >
+                Scheduled for {{ getFormattedDate(item.testDate) }}
+              </v-chip>
+
+              <v-chip
+                v-if="type === 'myTemplates' || type === 'publicTemplates'"
+                variant="outlined"
+                size="small"
+                class="mt-1"
                 label
               >
                 {{ $t('pages.listTests.version') }}
-                {{ item.header ? item.header.templateVersion : '-' }}
+                {{ item.header?.templateVersion ?? '-' }}
               </v-chip>
-            </v-list-item-action-text>
-          </v-list-item-action>
+            </div>
+          </template>
         </v-list-item>
         <v-divider v-if="n !== items.length - 1" />
       </div>
