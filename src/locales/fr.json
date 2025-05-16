@@ -501,7 +501,8 @@
     "help": "Aide",
     "delete": "Supprimer",
     "deleteAccount": "Supprimer le compte",
-    "back": "Retour"
+    "back": "Retour",
+    "submit": "Soumettre"
   },
   "switches": {
     "noAnswer": "Pas de réponse",
