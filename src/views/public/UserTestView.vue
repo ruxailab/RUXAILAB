@@ -472,6 +472,9 @@
                         <ScreenRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
                           :testId="testId" :taskIndex="taskIndex"></ScreenRecorder>
                       </v-col>
+                      <v-col cols="4">
+                        <Timer ref="timerComponent" :taskIndex="taskIndex" @timerStopped="handleTimerStopped" />
+                      </v-col>
                     </v-row>
                   </div>
 
@@ -608,11 +611,13 @@ import AudioRecorder from '@/components/atoms/AudioRecorder';
 import AudioVisualizer from '@/components/atoms/AudioVisualizer';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
+import Timer from '@/components/atoms/Timer.vue';
 
 export default {
   components: {
     VideoRecorder,
     ShowInfo,
+    Timer,
     VClamp,
     Snackbar,
     TipButton,
