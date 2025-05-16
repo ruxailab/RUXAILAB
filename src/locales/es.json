@@ -516,7 +516,8 @@
     "delete": "Borrar",
     "deleteAccount": "Eliminar cuenta",
     "back": "Atrás",
-    "duplicateTest": "Duplicar"
+    "duplicateTest": "Duplicar",
+    "submit": "Enviar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
