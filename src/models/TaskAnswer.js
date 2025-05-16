@@ -7,6 +7,7 @@ export default class TaskAnswer {
     postTestAnswer,
     preTestCompleted,
     consentCompleted,
+    fullName,
     postTestCompleted,
     tasks,
     progress,
@@ -22,6 +23,7 @@ export default class TaskAnswer {
     this.postTestAnswer = postTestAnswer ?? []
     this.preTestCompleted = preTestCompleted ?? false
     this.consentCompleted = consentCompleted ?? false
+    this.fullName = fullName ?? ''
     this.postTestCompleted = postTestCompleted ?? false
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
@@ -50,6 +52,7 @@ export default class TaskAnswer {
       postTestAnswer: this.postTestAnswer,
       preTestCompleted: this.preTestCompleted,
       consentCompleted: this.consentCompleted,
+      fullName: this.fullName,
       postTestCompleted: this.postTestCompleted,
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [

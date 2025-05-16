@@ -1,13 +1,7 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table
-      height="420"
-      style="background: #f5f7ff; border-radius: 20px;"
-      :headers="headers"
-      :items="allTasks"
-      :items-per-page="5"
-      class="elevation-1"
-    >
+    <v-data-table height="420" style="background: #f5f7ff; border-radius: 20px;" :headers="headers" :items="allTasks"
+      :items-per-page="5" class="elevation-1">
       <!-- Table Header -->
       <template v-slot:top>
         <v-row align="center" class="ma-0">
@@ -18,22 +12,10 @@
           </v-col>
           <v-col>
             <v-row justify="end" class="mx-0">
-              <v-btn
-                depressed
-                rounded
-                color="#f9a826"
-                class="white--text"
-                small
-                @click="dialog = true"
-              >
+              <v-btn depressed rounded color="#f9a826" class="white--text" small @click="dialog = true">
                 Add new task
               </v-btn>
-              <FormDialog
-                :task="task"
-                :dialog="dialog"
-                @closeDialog="dialog = false"
-                @addTask="addTask()"
-              />
+              <FormDialog :task="task" :dialog="dialog" @closeDialog="dialog = false" @addTask="addTask()" />
             </v-row>
           </v-col>
         </v-row>
@@ -88,7 +70,7 @@ export default {
     tasks: {
       type: Array,
       requeired: true,
-      default: function() {
+      default: function () {
         return []
       },
     },

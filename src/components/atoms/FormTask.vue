@@ -29,24 +29,20 @@
           dense
         />
       </v-col>
+        <v-text-field v-model="task.taskName" :label="$t('common.name')" :rules="requiredRule" outlined dense />
+        <v-textarea v-model="task.taskDescription" :label="$t('common.description')" :rules="requiredRule" outlined
+          dense />
+        <v-text-field v-model="task.taskTip" :label="$t('buttons.tip')" outlined dense />
+        <v-text-field v-model="task.taskLink" label="Link" outlined dense /> </v-col>
       <v-col cols="5">
-        <v-radio-group
-          v-model="task.taskType"
-          :label="$t('titles.answerType')"
-          :mandatory="false"
-          :rules="requiredRule"
-        >
+        <v-radio-group v-model="task.taskType" :label="$t('titles.answerType')" :mandatory="false"
+          :rules="requiredRule">
           <v-radio :label="$t('switches.noAnswer')" value="null" />
           <v-radio :label="$t('switches.textArea')" value="textArea" />
           <v-radio :label="$t('switches.postTest')" value="form" />
         </v-radio-group>
-        <v-text-field
-          v-if="task.taskType === 'form'"
-          v-model="task.postQuestion"
-          :label="$t('switches.postTest')"
-          outlined
-          dense
-        />
+        <v-text-field v-if="task.taskType === 'form'" v-model="task.postQuestion" :label="$t('switches.postTest')"
+          outlined dense />
         <v-row align="center">
           {{ $t('switches.screenRecord') }}
           <v-switch v-model="task.hasScreenRecord" class="ml-2" />
