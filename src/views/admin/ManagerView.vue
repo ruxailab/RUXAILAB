@@ -52,20 +52,11 @@
                 <div v-else class="white--text mobile-center" style="font-size: 58px; font-weight: 500">
                   {{ test.testTitle }}
                 </div>
-                <v-img
-                  class="hidden-md-and-up"
-                  style="max-height: 40vh"
-                  contain
-                  src="@/assets/manager/IntroManager.svg"
-                />
+                <v-img class="hidden-md-and-up" style="max-height: 40vh" contain
+                  src="@/assets/manager/IntroManager.svg" />
               </v-col>
-              <v-img
-                class="hidden-sm-and-down"
-                contain
-                max-width="40%"
-                max-height="85%"
-                src="@/assets/manager/IntroManager.svg"
-              />
+              <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="85%"
+                src="@/assets/manager/IntroManager.svg" />
             </v-row>
           </div>
           <div>
@@ -79,7 +70,7 @@
                 <CardsManager :cards="topCards" :per-row="2" @click="go" />
               </div>
 
-              <div>
+              <div v-if="accessLevel == 0">
                 <div class="presentation-text mt-5">
                   {{ $t('common.analyzeProject') }}
                 </div>
@@ -151,39 +142,39 @@ export default {
     },
 
     bottomCards() {
-      const bottomCards = [
-        {
-          image: 'IntroReports.svg',
-          title: 'reports',
-          imageStyle: 'height: 250px',
-          bottom: '#000',
-          description: 'reports',
-          cardStyle:
-            'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
-          path: `/reportview/${this.test.answersDocId}`,
-        },
-        {
-          image: 'IntroAnswer.svg',
-          title: 'answers',
-          imageStyle: 'height: 250px',
-          bottom: '#000',
-          description: 'answers',
-          cardStyle:
-            'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
-          path: `/answerview/${this.test.answersDocId}`,
-        },
-      ]
+      let bottomCards = []
       if (this.accessLevel == 0) {
-        bottomCards.push({
-          image: 'FinalReport.png',
-          title: 'finalReport',
-          imageStyle: 'height: 250px',
-          bottom: '#000',
-          description: 'finalReport',
-          cardStyle:
-            'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
-          path: `/finalreportview/${this.test.id}`,
-        })
+        bottomCards = [
+          {
+            image: 'IntroReports.svg',
+            title: 'reports',
+            imageStyle: 'height: 250px',
+            bottom: '#000',
+            description: 'reports',
+            cardStyle:
+              'background-image: radial-gradient(circle at top right, #FF3C00, #FF0000); overflow: hidden',
+            path: `/reportview/${this.test.answersDocId}`,
+          },
+          {
+            image: 'IntroAnswer.svg',
+            title: 'answers',
+            imageStyle: 'height: 250px',
+            bottom: '#000',
+            description: 'answers',
+            cardStyle:
+              'background-image: radial-gradient(circle at top right, #9ac94f, #7eb543); overflow: hidden',
+            path: `/answerview/${this.test.answersDocId}`,
+          },
+          {
+            image: 'FinalReport.png',
+            title: 'finalReport',
+            imageStyle: 'height: 250px',
+            bottom: '#000',
+            description: 'finalReport',
+            cardStyle:
+              'background-image: radial-gradient(circle at top left,  #ec6618, #f54e42); overflow: hidden',
+            path: `/finalreportview/${this.test.id}`,
+          }]
       }
       return bottomCards
     },
@@ -231,8 +222,8 @@ export default {
       if (this.accessLevel == 1) {
         items.push(
           { title: 'Answer Test', icon: 'mdi-file-document', path: `/testview/${this.test.id}` },
-          { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
-          { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
+          // { title: 'Reports', icon: 'mdi-book-multiple', path: `/reportview/${this.test.id}` },
+          // { title: 'Answers', icon: 'mdi-order-bool-ascending-variant', path: `/answerview/${this.test.id}` },
         )
       }
 
@@ -379,8 +370,8 @@ export default {
   background-image: radial-gradient(circle at top right, #f6cd3d, #fca326);
 }
 
-.manager-bg{
-  height:100%;
+.manager-bg {
+  height: 100%;
   margin: 0 !important;
 }
 
@@ -392,7 +383,7 @@ export default {
   width: 80%;
 }
 
-.bottom-cards{
+.bottom-cards {
   margin: 0;
 }
 
