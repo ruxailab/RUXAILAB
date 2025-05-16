@@ -169,7 +169,7 @@
                         :headers="headersHeuristic"
                         :items="itemsHeuristic"
                         :search="search"
-                        height="360px"
+                        height="375px"
                         dense
                       >
                         <template
@@ -203,7 +203,7 @@
                     v-else
                     class="ma-0 pa-0"
                   >
-                    <v-card width="100%" height="100%">
+                    <v-card width="100%" height="560px">
                       <v-tabs
                         v-model="ind"
                         bg-color="transparent"
@@ -245,31 +245,27 @@
                           justify="center"
                         >
                           <v-col cols="10">
-                            <v-timeline density="compact">
-                              <div
+                            <v-timeline density="compact" align="start">
+                              <v-timeline-item
                                 v-for="(result, index) in itemsHeuristic"
                                 :key="index"
+                                fill-dot
+                                dot-color="#fca326"
+                                icon="mdi-message-reply-text"
                               >
-                                <v-timeline-item
-                                  v-if="result[questionSelect].heuristicComment"
-                                  fill-dot
-                                  dot-color="#fca326"
-                                  icon="mdi-message-reply-text"
-                                >
-                                  <v-card class="elevation-2">
-                                    <v-card-text>
-                                      {{
-                                        result[questionSelect].heuristicComment
-                                      }}
-                                    </v-card-text>
-                                    <img
-                                      v-if="result[questionSelect].answerImageUrl"
-                                      height="200"
-                                      :src="result[questionSelect].answerImageUrl"
-                                    >
-                                  </v-card>
-                                </v-timeline-item>
-                              </div>
+                                <v-card v-if="result[questionSelect].heuristicComment" class="elevation-2">
+                                  <v-card-text>
+                                    {{
+                                      result[questionSelect].heuristicComment
+                                    }}
+                                  </v-card-text>
+                                  <img
+                                    v-if="result[questionSelect].answerImageUrl"
+                                    height="200"
+                                    :src="result[questionSelect].answerImageUrl"
+                                  >
+                                </v-card>
+                              </v-timeline-item>
                             </v-timeline>
                           </v-col>
                         </v-row>
