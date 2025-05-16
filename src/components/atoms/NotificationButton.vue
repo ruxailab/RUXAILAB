@@ -26,53 +26,36 @@
         </v-badge>
       </template>
 
-      <v-card>
-        <!-- Top bar -->
-        <v-app-bar
-          color="orange"
-          dense
-        >
-          <v-toolbar-title>{{ $t('common.notifications') }}</v-toolbar-title>
-          <v-spacer />
+      <v-card class="pa-0" max-width="500" style="overflow: hidden;">
+        <!-- Fixed header -->
+        <div style="background: orange; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: bold; font-size: 16px; color: white;">
+            {{ $t('common.notifications') }}
+          </span>
           <v-btn
             variant="text"
+            size="small"
+            style="color: white; text-transform: uppercase; font-weight: 500;"
             @click="goToNotificationPage"
           >
             {{ $t('common.viewAll') }}
           </v-btn>
-        </v-app-bar>
+        </div>
 
-        <v-card-text>
-          <div
-            v-if="user.notifications.length > 0"
-            style="max-height: 50vh; overflow-y: auto;"
-          >
-            <v-list
-              density="compact"
-              class="ma-0 py-1"
-            >
+        <v-divider />
+
+        <!-- Notifications content -->
+        <v-card-text style="padding: 0;">
+          <div v-if="user.notifications.length > 0" style="max-height: 50vh; overflow-y: auto;">
+            <v-list density="compact" class="py-1">
               <v-list-item
                 v-for="(notification, i) in user.notifications"
                 :key="i"
-                class="px-2"
-                style="font-size: 14px; font-family: Roboto;"
+                class="px-3"
                 :disabled="notification.read"
                 @click="goToNotificationRedirect(notification)"
               >
-                <v-list-item-title style="font-weight: bold">
-                  {{ notification.title }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ notification.description }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle>
-                  {{ $t('common.sentBy') }} {{ notification.author }}
-                </v-list-item-subtitle>
-
-                <template
-                  v-if="!notification.read"
-                  #prepend
-                >
+                <template #prepend v-if="!notification.read">
                   <v-chip
                     size="x-small"
                     color="success"
@@ -82,25 +65,26 @@
                     {{ $t('common.new') }}!
                   </v-chip>
                 </template>
-              </v-list-item>
 
-              <v-divider />
+                <v-list-item-title style="font-weight: bold;">
+                  {{ notification.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ notification.description }}</v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{ $t('common.sentBy') }} {{ notification.author }}
+                </v-list-item-subtitle>
+              </v-list-item>
             </v-list>
           </div>
 
-          <div v-else>
-            <v-list>
-              <v-list-item>
-                <v-list-item-title class="text-center text-grey">
-                  <strong>{{ $t('common.noNotifications') }}</strong>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item-subtitle class="text-center">
-                <v-icon class="mt-2 mb-3">
-                  mdi-bell-off
-                </v-icon>
-              </v-list-item-subtitle>
-            </v-list>
+          <!-- No notifications -->
+          <div v-else class="text-center py-6">
+            <v-icon size="36" class="mb-2" color="grey">
+              mdi-bell-off
+            </v-icon>
+            <div class="text-grey text-subtitle-2">
+              <strong>{{ $t('common.noNotifications') }}</strong>
+            </div>
           </div>
         </v-card-text>
       </v-card>
