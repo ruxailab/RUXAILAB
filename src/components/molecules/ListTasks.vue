@@ -58,6 +58,9 @@
       <template v-slot:[`item.taskTip`]="{ item }">
         <v-checkbox v-model="item.taskTip" disabled />
       </template>
+      <template v-slot:[`item.taskLink`]="{ item }">
+        <v-checkbox v-model="item.taskLink" disabled />
+      </template>
       <template v-slot:[`item.taskDescription`]="{ item }">
         <v-checkbox v-model="item.taskDescription" disabled />
       </template>
@@ -105,6 +108,7 @@ export default {
       },
       { text: 'Description', value: 'taskDescription' },
       { text: 'Tip', value: 'taskTip' },
+      { text: 'Link', value: 'taskLink' },
       { text: 'Post question', value: 'postQuestion' },
       { text: 'Screen Record', value: 'hasScreenRecord' },
       { text: 'Camera', value: 'hasCamRecord' },
@@ -117,6 +121,7 @@ export default {
       taskName: '',
       taskDescription: null,
       taskTip: null,
+      taskLink: null,
       postQuestion: null,
       taskType: null,
       hasAudioRecord: false,
@@ -159,6 +164,7 @@ export default {
         taskName: '',
         taskDescription: null,
         taskTip: null,
+        taskLink: null,
         postQuestion: null,
         taskType: null,
         hasAudioRecord: false,

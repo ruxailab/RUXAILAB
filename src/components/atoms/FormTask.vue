@@ -22,6 +22,12 @@
           outlined
           dense
         />
+        <v-text-field
+          v-model="task.taskLink"
+          :label="$t('buttons.link')"
+          outlined
+          dense
+        />
       </v-col>
       <v-col cols="5">
         <v-radio-group
