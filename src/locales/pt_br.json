@@ -517,7 +517,8 @@
     "help": "Ajuda",
     "delete": "Deletar",
     "deleteAccount": "Excluir conta",
-    "back": "Trás"
+    "back": "Trás",
+    "submit": "Enviar"
   },
   "switches": {
     "noAnswer": "Sem resposta",
