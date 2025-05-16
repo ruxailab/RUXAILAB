@@ -520,7 +520,9 @@
     "help": "Help",
     "delete": "Delete",
     "deleteAccount": "Delete Account",
-    "back": "Back"
+    "back": "Back",
+    "duplicateTest": "Duplicate Test",
+    "submit": "Submit"
   },
   "switches": {
     "noAnswer": "No answer",
