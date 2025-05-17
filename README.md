@@ -43,10 +43,10 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 20.18.1
-- Vue.js version: 2.6.12
+- Node.js version: ≤ 22.15.1
+- Vue.js version: 3.5.13
 - Vue CLI version: 5.0.8
-- Vuetify version: 2.7.1
+- Vuetify version: 3.7.18
 - Python version: 3.11.8
 
 ## Video Guide
