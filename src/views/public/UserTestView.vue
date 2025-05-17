@@ -723,7 +723,6 @@ export default {
 
         // Initialize test tasks and structure
         await this.mappingSteps();
-        this.autoComplete();
 
         // Ensure proper task navigation setup
         if (this.items.length) {
@@ -868,6 +867,39 @@ export default {
         this.calculateProgress();
       } catch (error) {
         console.error('Error completing step:', error.message);
+      }
+    },
+    async autoComplete() {
+      // PRE-TEST
+      if (this.currentUserTestAnswer.preTestCompleted) {
+        this.items[0].value[1].icon = 'mdi-check-circle-outline'
+      }
+      if (this.currentUserTestAnswer.consentCompleted) {
+        this.items[0].value[0].icon = 'mdi-check-circle-outline'
+      }
+      if (
+        this.currentUserTestAnswer.preTestCompleted &&
+        this.currentUserTestAnswer.consentCompleted
+      ) {
+        this.items[0].icon = 'mdi-check-circle-outline'
+      }
+      // TASKS
+      let allTasksCompleted = true
+      for (let i = 0; i < this.items[1].value.length; i++) {
+        if (this.currentUserTestAnswer.tasks[i].completed) {
+          this.items[1].value[i].icon = 'mdi-check-circle-outline'
+        }
+        if (!this.currentUserTestAnswer.tasks[i].completed) {
+          allTasksCompleted = false
+          break
+        }
+      }
+      if (allTasksCompleted) {
+        this.items[1].icon = 'mdi-check-circle-outline'
+      }
+      // POST-TEST
+      if (this.currentUserTestAnswer.postTestCompleted) {
+        this.items[2].icon = 'mdi-check-circle-outline'
       }
     },
     calculateProgress() {
