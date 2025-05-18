@@ -22,7 +22,6 @@ const renderWithVuetify = (component, options, callback) => {
     component,
     {
       container: document.body.appendChild(root),
-      // for Vuetify components that use the $vuetify instance property
       vuetify: new Vuetify(),
       ...options,
     },
@@ -39,16 +38,37 @@ const i18n = new VueI18n({
   },
 })
 
-export function render (component, options, { customStore } = {}) {
+export function render(component, options = {}, { customStore } = {}) {
   return renderWithVuetify(component, options, (vue) => {
     vue.use(VueRouter)
     vue.use(VueI18n)
     vue.use(Vuex)
     vue.use(Vuetify)
+
     return {
       router,
       i18n,
       store: customStore || store,
     }
   })
+}
+
+// ✅ For Vue 2 + Vuex 3
+export function renderWithMockStore(component, options = {}) {
+  const signin = jest.fn(() => Promise.resolve())
+
+  const customStore = new Vuex.Store({
+    actions: {
+      signin,
+    },
+    getters: {
+      loading: () => false,
+      user: () => ({ email: 'mock@example.com' }),
+    },
+  })
+
+  return {
+    ...render(component, options, { customStore }),
+    signin,
+  }
 }
