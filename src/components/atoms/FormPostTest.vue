@@ -2,33 +2,20 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="10">
-        <v-expansion-panels
-          v-if="items.length > 0"
-          style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);"
-        >
-          <v-expansion-panel
-            v-for="(item, i) in items"
-            :key="i"
-            style="border-radius: 20px;"
-          >
+        <v-expansion-panels v-if="items.length > 0"
+          style="z-index: auto; border-radius: 20px; border: 1px solid rgba(249, 152, 38, 0.49);">
+          <v-expansion-panel v-for="(item, i) in items" :key="i" style="border-radius: 20px;">
             <v-expansion-panel-header>
               {{ items[i].title }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-form>
-                <v-text-field
-                  v-model="items[i].description"
-                  :label="$t('UserTestTable.inputs.description')"
-                  @click:append="log"
-                />
+                <v-text-field v-model="items[i].description" :label="$t('UserTestTable.inputs.description')"
+                  @click:append="log" />
                 <div>
-                  <v-text-field
-                    v-for="(field, index) in items[i].selectionFields"
-                    :key="index"
-                    v-model="items[i].selectionFields[index]"
-                    :label="$t('UserTestTable.inputs.selection')"
-                    @change="saveState()"
-                  >
+                  <v-text-field v-for="(field, index) in items[i].selectionFields" :key="index"
+                    v-model="items[i].selectionFields[index]" :label="$t('UserTestTable.inputs.selection')"
+                    @change="saveState()">
                     <template v-slot:append>
                       <v-icon @click="newSelection(i)">
                         mdi-plus
@@ -38,17 +25,12 @@
                       </v-icon>
                     </template>
                   </v-text-field>
-                  <div
-                    v-if="
-                      items[i].selectionField &&
-                        items[i].selectionFields.length === 0
-                    "
-                  >
+                  <div v-if="
+                    items[i].selectionField &&
+                    items[i].selectionFields.length === 0
+                  ">
                     <p>
-                      Add first option<v-icon
-                        class="ml-1"
-                        @click="newSelection(i)"
-                      >
+                      Add first option<v-icon class="ml-1" @click="newSelection(i)">
                         mdi-plus
                       </v-icon>
                     </p>
@@ -57,21 +39,17 @@
               </v-form>
               <v-row>
                 <v-col :cols="6" class="checkbox-container">
-                  <v-checkbox
-                    v-model="items[i].selectionField"
-                    :label="$t('UserTestTable.checkboxes.selectionAnswer')"
-                    @change="saveState"
-                    @click="selectField(i)"
-                  />
+                  <v-checkbox v-model="items[i].selectionField" :label="$t('UserTestTable.checkboxes.selectionAnswer')"
+                    @change="saveState" @click="selectField(i)" />
                 </v-col>
                 <v-col :cols="5" class="checkbox-container">
-                  <v-checkbox
-                    v-model="items[i].textField"
-                    :label="$t('UserTestTable.checkboxes.textAnswer')"
-                    @click="selectText(i)"
-                  />
+                  <v-checkbox v-model="items[i].textField" :label="$t('UserTestTable.checkboxes.textAnswer')"
+                    @click="selectText(i)" />
                 </v-col>
                 <v-col>
+                  <v-btn class="mt-5 mr-2" icon @click="duplicateItem(i)" title="Duplicate">
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
                   <v-btn class="mt-5" icon @click="deleteItem(i)">
                     <v-icon>mdi-trash-can</v-icon>
                   </v-btn>
@@ -80,14 +58,7 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-card
-          class="mt-2"
-          rounded="xl"
-          outlined
-          elevation="0"
-          color="grey lighten-2"
-          @click="showModal"
-        >
+        <v-card class="mt-2" rounded="xl" outlined elevation="0" color="grey lighten-2" @click="showModal">
           <p class="text-subtitle-1 text-center ma-2">
             <v-icon>mdi-plus-circle</v-icon>
             {{ $t('UserTestTable.buttons.createNewPost') }}
@@ -102,14 +73,8 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid">
-            <v-text-field
-              v-model="newItem"
-              filled
-              :rules="[(newItem) => !!newItem || 'This field is required']"
-              color="orange"
-              :label="$t('UserTestTable.inputs.writeQuestion')"
-              @change="saveState"
-            />
+            <v-text-field v-model="newItem" filled :rules="[(newItem) => !!newItem || 'This field is required']"
+              color="orange" :label="$t('UserTestTable.inputs.writeQuestion')" @change="saveState" />
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -117,8 +82,7 @@
             <v-icon class="mr-1"> mdi-close </v-icon>{{ $t('buttons.close') }}
           </v-btn>
           <v-btn color="orange" dark @click="saveNewItem(), saveState()">
-            <v-icon class="mr-1"> mdi-content-save </v-icon
-            >{{ $t('buttons.save') }}
+            <v-icon class="mr-1"> mdi-content-save </v-icon>{{ $t('buttons.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -177,6 +141,12 @@ export default {
     deleteItem(i) {
       this.items.splice(i, 1)
     },
+    duplicateItem(i) {
+      const duplicate = JSON.parse(JSON.stringify(this.items[i]))
+      duplicate.title = `${duplicate.title} (copy)`
+      this.items.splice(i + 1, 0, duplicate)
+      this.saveState()
+    },
     saveNewItem() {
       if (this.newItem.trim() !== '') {
         this.items.push({
@@ -228,9 +198,11 @@ export default {
     max-width: 100%;
     flex: 0 0 100%;
   }
+
   .v-row {
     flex-direction: column;
   }
+
   .v-btn.mt-5 {
     margin-top: 0 !important;
   }
