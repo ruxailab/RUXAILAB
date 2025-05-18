@@ -18,9 +18,15 @@
             <v-expansion-panel-content>
               <v-form>
                 <v-text-field
+                  v-model="items[i].title"
+                  label="Title"
+                  @change="saveState()"
+                />
+                <v-text-field
                   v-model="items[i].description"
                   label="Description"
                   @click:append="log"
+                  @change="saveState()"
                 />
                 <div>
                   <v-text-field
