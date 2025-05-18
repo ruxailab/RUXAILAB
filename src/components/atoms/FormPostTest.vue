@@ -10,6 +10,8 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-form>
+               <v-text-field v-model="items[i].title" :label="$t('Title')"
+                  @click:append="log" />
                 <v-text-field v-model="items[i].description" :label="$t('UserTestTable.inputs.description')"
                   @click:append="log" />
                 <div>
