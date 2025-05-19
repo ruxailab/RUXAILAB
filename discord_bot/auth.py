@@ -9,6 +9,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 load_dotenv()
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+# Force disable any Cloud Run environment variables (from previous failed runs)
+if 'CLOUD_RUN' in os.environ:
+    del os.environ['CLOUD_RUN']
+if 'MANUAL_AUTH_URL' in os.environ:
+    del os.environ['MANUAL_AUTH_URL']
+
 github_username_result = {"username": None}
 username_event = threading.Event()
 
@@ -20,7 +26,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 github_blueprint = make_github_blueprint(
     client_id=os.getenv("GITHUB_CLIENT_ID"),
     client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
-    redirect_url="https://ruxauth.ngrok.io/callback"  # ✅ custom callback route
+    redirect_url="https://ruxauth.ngrok.io/callback"  # Always use ngrok URL
 )
 app.register_blueprint(github_blueprint, url_prefix="/login")
 
@@ -64,6 +70,7 @@ def get_github_username():
     flask_thread.daemon = True
     flask_thread.start()
 
+    # Always use ngrok, ignore any Cloud Run environment variables
     public_url = start_ngrok()
     print(f"Ngrok URL: {public_url}/login/github")
 

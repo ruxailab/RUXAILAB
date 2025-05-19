@@ -5,4 +5,4 @@ audioop-lts
 Flask 
 Flask-Dance 
 requests
-pyngrok
+pyngrok==6.0.0
