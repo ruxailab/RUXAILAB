@@ -321,7 +321,7 @@
             <v-divider class="my-8" />
 
             <v-row>
-              <v-col cols="5" class="mx-auto py-0">
+              <v-col cols="8" class="mx-auto py-0">
                 <div v-html="localTestAnswer.consent" class="rich-text mb-6" />
               </v-col>
             </v-row>
@@ -475,11 +475,36 @@
                     :placeholder="test.testStructure.userTasks[taskIndex].postQuestion" outlined />
                 </v-col>
               </v-row>
+
+              <v-row v-if="test.testStructure.userTasks[taskIndex].postForm" class="fill-height" align="center"
+                justify="center">
+                <v-col cols=12>
+                  <p class="text-h5">
+                    Post Form
+                  </p>
+                </v-col>
+                <iframe v-if="test.testStructure.userTasks[taskIndex].postForm"
+                  :src="test.testStructure.userTasks[taskIndex].postForm" width="100%" height="500" frameborder="0"
+                  marginheight="0" marginwidth="0">Loading...</iframe>
+              </v-row>
+
               <video v-if="videoUrl == ''" id="vpreview" class="preview" style="max-width: 0px" autoplay />
               <div class="pa-2 text-end">
-                <v-btn block dark color="orange lighten-1" @click="completeStep(taskIndex, 'tasks'), callTimerSave()">
-                  {{ $t('UserTestView.buttons.done') }}
-                </v-btn>
+                <v-row>
+                  <v-col cols="6">
+                    <v-btn block dark color="red lighten-1"
+                      @click="completeStep(taskIndex, 'tasks', false), callTimerSave()">
+                      {{ $t('buttons.couldNotFinish') }}
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-btn block dark color="orange lighten-1"
+                      @click="completeStep(taskIndex, 'tasks', true), callTimerSave()">
+                      {{ $t('UserTestView.buttons.done') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
               </div>
             </v-container>
           </div>
@@ -801,47 +826,31 @@ export default {
         this.localTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
       }
     },
-    completeStep(id, type) {
+    completeStep(id, type, userCompleted = true) {
       try {
         if (type === 'tasks') {
-          const task = this.localTestAnswer.tasks[id];
-          const taskStructure = this.test.testStructure.userTasks[id];
-          let isTaskComplete = true;
-          let incompleteMessage = '';
+          this.localTestAnswer.tasks[id].completed = userCompleted;
+          this.items[1].value[id].icon = 'mdi-check-circle-outline';
+          this.allTasksCompleted = true;
+          this.$forceUpdate();
 
-          if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
-            isTaskComplete = false;
-            incompleteMessage = 'Please provide an answer for the task.';
-          } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
-            isTaskComplete = false;
-            incompleteMessage = 'Please answer the post-task question.';
+          for (let i = 0; i < this.items[1].value.length; i++) {
+            if (this.localTestAnswer.tasks[i].completed == null) {
+              this.allTasksCompleted = false;
+              break;
+            }
           }
-          if (isTaskComplete) {
-            this.localTestAnswer.tasks[id].completed = true;
-            this.items[1].value[id].icon = 'mdi-check-circle-outline';
-            this.allTasksCompleted = true;
-            this.$forceUpdate();
-
-            for (let i = 0; i < this.items[1].value.length; i++) {
-              if (!this.localTestAnswer.tasks[i].completed) {
-                this.allTasksCompleted = false;
-                break;
-              }
-            }
-            if (this.allTasksCompleted) {
-              this.items[1].icon = 'mdi-check-circle-outline';
-            }
-            if (this.taskIndex < this.localTestAnswer.tasks.length - 1) {
-              this.taskIndex++;
-            } else if (this.taskIndex >= this.localTestAnswer.tasks.length - 1) {
-              this.index++;
-            }
+          if (this.allTasksCompleted) {
+            this.items[1].icon = 'mdi-check-circle-outline';
+          }
+          if (this.taskIndex < this.localTestAnswer.tasks.length - 1) {
+            this.taskIndex++;
+          } else if (this.taskIndex >= this.localTestAnswer.tasks.length - 1) {
+            this.index++;
+          }
+          if (userCompleted) {
             this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
               timeout: 3000,
-            });
-          } else {
-            this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
-              timeout: 5000,
             });
           }
         }
@@ -880,10 +889,10 @@ export default {
       }
       let allTasksCompleted = true;
       for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.localTestAnswer.tasks[i].completed) {
+        if (this.localTestAnswer.tasks[i].completed != null) {
           this.items[1].value[i].icon = 'mdi-check-circle-outline';
         }
-        if (!this.localTestAnswer.tasks[i].completed) {
+        if (this.localTestAnswer.tasks[i].completed == null) {
           allTasksCompleted = false;
           break;
         }

@@ -101,6 +101,7 @@ export default {
       taskTip: null,
       taskLink: null,
       postQuestion: null,
+      postForm: null,
       taskType: null,
       hasAudioRecord: false,
       hasScreenRecord: false,

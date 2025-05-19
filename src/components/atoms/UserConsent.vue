@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <VueEditor v-model="consent" rows="3" outlined color="orange" class="mx-6 mt-3" placeholder="Consent Form..." />
+        <VueEditor v-model="consent" rows="3" outlined color="orange" class=" mt-3" placeholder="Consent Form..." />
       </v-col>
     </v-row>
   </v-container>

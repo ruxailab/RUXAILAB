@@ -13,9 +13,12 @@
           <v-radio :label="$t('switches.noAnswer')" value="null" />
           <v-radio :label="$t('switches.textArea')" value="textArea" />
           <v-radio :label="$t('switches.postTest')" value="form" />
+          <v-radio :label="$t('switches.postForm')" value="postForm" />
         </v-radio-group>
         <v-text-field v-if="task.taskType === 'form'" v-model="task.postQuestion" :label="$t('switches.postTest')"
           outlined dense />
+        <v-text-field v-if="task.taskType === 'postForm'" v-model="task.postForm" :label="$t('switches.postForm')"
+          outlined dense :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
         <v-row align="center">
           {{ $t('switches.screenRecord') }}
           <v-switch v-model="task.hasScreenRecord" class="ml-2" />
