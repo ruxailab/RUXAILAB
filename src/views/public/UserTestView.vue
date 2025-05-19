@@ -674,7 +674,6 @@ export default {
     await this.mappingSteps();
   },
   async mounted() {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     if (this.user) {
       await this.setTest();
       await this.autoComplete();
@@ -741,6 +740,7 @@ export default {
           }
         }
       } catch (error) {
+        this.$toast.error('Failed to initialize test data. Please try again.');
         console.error('Error mapping steps:', error.message);
       }
     },
