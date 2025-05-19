@@ -95,19 +95,10 @@
           <span>Save</span>
         </v-tooltip>
 
-        <v-tooltip v-if="currentUserTestAnswer" left>
+        <v-tooltip left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn :disabled="!currentUserTestAnswer.postTestCompleted" class="white--text" fab small color="#F9A826"
+            <v-btn :disabled="!localTestAnswer.postTestCompleted" class="white--text" fab small color="#F9A826"
               v-bind="attrs" @click="dialog = true" v-on="on">
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-
-        <v-tooltip v-else left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn class="white--text" fab small color="#F9A826" v-bind="attrs" @click="dialog = true" v-on="on">
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
@@ -137,14 +128,14 @@
           style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
           <div v-for="(item, n) in items" :key="n">
             <!--Pre Test-->
-            <v-list-group v-if="item.id == 0" :disabled="currentUserTestAnswer.consentCompleted &&
-              currentUserTestAnswer.preTestCompleted &&
-              !currentUserTestAnswer.submitted
+            <v-list-group v-if="item.id == 0" :disabled="localTestAnswer.consentCompleted &&
+              localTestAnswer.preTestCompleted &&
+              !localTestAnswer.submitted
               " :class="{
                 'disabled-group':
-                  currentUserTestAnswer.consentCompleted &&
-                  currentUserTestAnswer.preTestCompleted &&
-                  !currentUserTestAnswer.submitted,
+                  localTestAnswer.consentCompleted &&
+                  localTestAnswer.preTestCompleted &&
+                  !localTestAnswer.submitted,
               }" :value="index == 0 ? true : false" no-action @click="index = item.id">
               <v-icon slot="appendIcon" :color="index == item.id ? '#ffffff' : '#fca326'">
                 mdi-chevron-down
@@ -153,9 +144,9 @@
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                     {{
-                      currentUserTestAnswer.consentCompleted &&
-                        currentUserTestAnswer.preTestCompleted &&
-                        !currentUserTestAnswer.submitted
+                      localTestAnswer.consentCompleted &&
+                        localTestAnswer.preTestCompleted &&
+                        !localTestAnswer.submitted
                         ? 'mdi-lock'
                         : item.icon
                     }}
@@ -167,47 +158,46 @@
               </template>
               <v-tooltip v-for="(task, i) in item.value" :key="i" right>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-list-item link v-bind="attrs" :disabled="(currentUserTestAnswer.consentCompleted &&
+                  <v-list-item link v-bind="attrs" :disabled="(localTestAnswer.consentCompleted &&
                     i == 0 &&
-                    !currentUserTestAnswer.submitted) ||
-                    (!currentUserTestAnswer.consentCompleted &&
+                    !localTestAnswer.submitted) ||
+                    (!localTestAnswer.consentCompleted &&
                       i == 1 &&
-                      !currentUserTestAnswer.submitted) ||
-                    (currentUserTestAnswer.preTestCompleted &&
+                      !localTestAnswer.submitted) ||
+                    (localTestAnswer.preTestCompleted &&
                       i == 1 &&
-                      !currentUserTestAnswer.submitted)
+                      !localTestAnswer.submitted)
                     " :class="{
                       'disabled-group':
-                        (currentUserTestAnswer.consentCompleted &&
+                        (localTestAnswer.consentCompleted &&
                           i == 0 &&
-                          !currentUserTestAnswer.submitted) ||
-                        (!currentUserTestAnswer.consentCompleted &&
+                          !localTestAnswer.submitted) ||
+                        (!localTestAnswer.consentCompleted &&
                           i == 1 &&
-                          !currentUserTestAnswer.submitted) ||
-                        (currentUserTestAnswer.preTestCompleted &&
+                          !localTestAnswer.submitted) ||
+                        (localTestAnswer.preTestCompleted &&
                           i == 1 &&
-                          !currentUserTestAnswer.submitted),
-                    }">
+                          !localTestAnswer.submitted),
+                    }" @click="taskIndex = i">
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
                         {{
-                          (currentUserTestAnswer.consentCompleted &&
+                          (localTestAnswer.consentCompleted &&
                             i == 0 &&
-                            !currentUserTestAnswer.submitted) ||
-                            (!currentUserTestAnswer.consentCompleted &&
+                            !localTestAnswer.submitted) ||
+                            (!localTestAnswer.consentCompleted &&
                               i == 1 &&
-                              !currentUserTestAnswer.submitted) ||
-                            (currentUserTestAnswer.preTestCompleted &&
+                              !localTestAnswer.submitted) ||
+                            (localTestAnswer.preTestCompleted &&
                               i == 1 &&
-                              !currentUserTestAnswer.submitted)
+                              !localTestAnswer.submitted)
                             ? 'mdi-lock'
                             : task.icon
                         }}
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'
-                        ">
+                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'">
                         {{ task.title }}
                       </v-list-item-title>
                     </v-list-item-content>
@@ -217,17 +207,17 @@
               </v-tooltip>
             </v-list-group>
             <!--Tasks--->
-            <v-list-group v-if="item.id == 1" :disabled="(!currentUserTestAnswer.consentCompleted &&
-              !currentUserTestAnswer.submitted) ||
-              (!currentUserTestAnswer.preTestCompleted &&
-                !currentUserTestAnswer.submitted)
+            <v-list-group v-if="item.id == 1" :disabled="(!localTestAnswer.consentCompleted &&
+              !localTestAnswer.submitted) ||
+              (!localTestAnswer.preTestCompleted &&
+                !localTestAnswer.submitted)
               " :class="{
                 'disabled-group':
-                  (!currentUserTestAnswer.consentCompleted &&
-                    !currentUserTestAnswer.submitted) ||
-                  (!currentUserTestAnswer.preTestCompleted &&
-                    !currentUserTestAnswer.submitted) ||
-                  (allTasksCompleted && !currentUserTestAnswer.submitted),
+                  (!localTestAnswer.consentCompleted &&
+                    !localTestAnswer.submitted) ||
+                  (!localTestAnswer.preTestCompleted &&
+                    !localTestAnswer.submitted) ||
+                  (allTasksCompleted && !localTestAnswer.submitted),
               }" :value="index == 1 ? true : false" no-action @click="index = item.id">
               <v-icon slot="appendIcon" :color="index == item.id ? '#ffffff' : '#fca326'">
                 mdi-chevron-down
@@ -236,11 +226,11 @@
                 <v-list-item-icon>
                   <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                     {{
-                      (!currentUserTestAnswer.consentCompleted &&
-                        !currentUserTestAnswer.submitted) ||
-                        (!currentUserTestAnswer.preTestCompleted &&
-                          !currentUserTestAnswer.submitted) ||
-                        (allTasksCompleted && !currentUserTestAnswer.submitted)
+                      (!localTestAnswer.consentCompleted &&
+                        !localTestAnswer.submitted) ||
+                        (!localTestAnswer.preTestCompleted &&
+                          !localTestAnswer.submitted) ||
+                        (allTasksCompleted && !localTestAnswer.submitted)
                         ? 'mdi-lock'
                         : item.icon
                     }}
@@ -252,23 +242,22 @@
               </template>
               <v-tooltip v-for="(task, i) in item.value" :key="i" right>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-list-item link v-bind="attrs" @click="; (taskIndex = i), startTimer()" v-on="on" :disabled="isTaskDisabled(i) && !currentUserTestAnswer.submitted
+                  <v-list-item link v-bind="attrs" @click="; (taskIndex = i), startTimer()" v-on="on" :disabled="isTaskDisabled(i) && !localTestAnswer.submitted
                     " :class="{
                       'disabled-group':
-                        isTaskDisabled(i) && !currentUserTestAnswer.submitted,
+                        isTaskDisabled(i) && !localTestAnswer.submitted,
                     }">
                     <v-list-item-icon>
                       <v-icon :color="taskIndex == i ? '#ffffff' : '#fca326'">
                         {{
-                          isTaskDisabled(i) && !currentUserTestAnswer.submitted
+                          isTaskDisabled(i) && !localTestAnswer.submitted
                             ? 'mdi-lock'
                             : items[1].value[i].icon
                         }}
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'
-                        ">
+                      <v-list-item-title :style="taskIndex == i ? 'color: white' : 'color:#fca326'">
                         {{ task.title }}
                       </v-list-item-title>
                     </v-list-item-content>
@@ -279,14 +268,14 @@
             </v-list-group>
             <!--Post Test-->
             <v-list-item v-else-if="item.id == 2" @click="index = item.id"
-              :disabled="!allTasksCompleted && !currentUserTestAnswer.submitted" :class="{
+              :disabled="!allTasksCompleted && !localTestAnswer.submitted" :class="{
                 'disabled-group':
-                  !allTasksCompleted && !currentUserTestAnswer.submitted,
+                  !allTasksCompleted && !localTestAnswer.submitted,
               }">
               <v-list-item-icon>
                 <v-icon :color="index == item.id ? '#ffffff' : '#fca326'">
                   {{
-                    !allTasksCompleted && !currentUserTestAnswer.submitted
+                    !allTasksCompleted && !localTestAnswer.submitted
                       ? 'mdi-lock'
                       : item.icon
                   }}
@@ -317,7 +306,6 @@
 
       <v-col ref="rightView" class="backgroundTest pa-0 ma-0 right-view">
         <!-- Consent - Pre Test -->
-
         <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
           <div slot="content" class="ma-0 pa-0">
             <v-row class="fill-height" align="center" justify="center">
@@ -334,7 +322,7 @@
 
             <v-row>
               <v-col cols="5" class="mx-auto py-0">
-                <div v-html="currentUserTestAnswer.consent" class="rich-text mb-6" />
+                <div v-html="localTestAnswer.consent" class="rich-text mb-6" />
               </v-col>
             </v-row>
 
@@ -349,7 +337,7 @@
             <v-row>
               <v-col cols="6" class="mx-auto">
                 <!-- Accept / Decline Checkboxes in a Group -->
-                <v-radio-group v-model="consentCompleted">
+                <v-radio-group v-model="localTestAnswer.consentCompleted">
                   <v-radio :label="'I accept the consent terms'" :disabled="fullName == ''" :value="true" />
                   <v-radio :label="'I do not accept the consent terms'" :value="false" />
                 </v-radio-group>
@@ -358,7 +346,7 @@
 
             <v-row>
               <v-col cols="6" class="mx-auto text-center">
-                <v-btn color="primary" :disabled="!consentCompleted || fullName == ''"
+                <v-btn color="primary" :disabled="!localTestAnswer.consentCompleted || fullName == ''"
                   @click="completeStep(taskIndex, 'consent'), (taskIndex = 1)">
                   Continue
                 </v-btn>
@@ -386,15 +374,13 @@
               <v-col cols="5" class="mx-auto py-0">
                 <span class="cardsTitle">{{ item.title }}</span>
                 <br />
-                <span class="cardsSubtitle" v-if="item.description">{{
-                  item.description
-                }}</span>
-                <v-text-field v-if="item.textField" v-model="currentUserTestAnswer.preTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.preTestCompleted" :placeholder="item.title" outlined />
-                <v-radio-group v-if="item.selectionField" v-model="currentUserTestAnswer.preTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.preTestCompleted" column>
+                <span class="cardsSubtitle" v-if="item.description">{{ item.description }}</span>
+                <v-text-field v-if="item.textField" v-model="localTestAnswer.preTestAnswer[index].answer"
+                  :disabled="localTestAnswer.preTestCompleted" :placeholder="item.title" outlined />
+                <v-radio-group v-if="item.selectionField" v-model="localTestAnswer.preTestAnswer[index].answer"
+                  :disabled="localTestAnswer.preTestCompleted" column>
                   <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
-                    <v-radio :disabled="currentUserTestAnswer.preTestCompleted" class="ml-3 mb-1" :label="selection"
+                    <v-radio :disabled="localTestAnswer.preTestCompleted" class="ml-3 mb-1" :label="selection"
                       :value="selection" />
                   </v-row>
                   <v-row justify="end" />
@@ -404,8 +390,8 @@
 
             <v-row justify="center">
               <v-col class="mx-10">
-                <v-btn block :dark="!currentUserTestAnswer.preTestCompleted" color="orange lighten-1"
-                  :disabled="currentUserTestAnswer.preTestCompleted" @click="
+                <v-btn block :dark="!localTestAnswer.preTestCompleted" color="orange lighten-1"
+                  :disabled="localTestAnswer.preTestCompleted" @click="
                     completeStep(taskIndex, 'preTest'),
                     (index = 1),
                     (taskIndex = 0)
@@ -425,9 +411,7 @@
                   <v-spacer />
                   <v-row justify="center">
                     <p class="paragraph mt-5" style="color: #455a64;">
-                      {{
-                        test.testStructure.userTasks[taskIndex].taskDescription
-                      }}
+                      {{ test.testStructure.userTasks[taskIndex].taskDescription }}
                     </p>
                   </v-row>
                   <v-row justify="center" v-if="test.testStructure.userTasks[taskIndex].taskLink">
@@ -437,19 +421,13 @@
                       }}</span>
                     </a>
                   </v-row>
-                  <div v-if="!currentUserTestAnswer.submitted">
+                  <div v-if="!localTestAnswer.submitted">
                     <v-row>
-                      <v-col cols="1" v-if="
-                        test.testStructure.userTasks[taskIndex].taskTip !==
-                        null
-                      " justify="end">
+                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].taskTip !== null" justify="end">
                         <TipButton :task="test.testStructure.userTasks[taskIndex]" />
                       </v-col>
 
-                      <v-col cols="1" v-if="
-                        test.testStructure.userTasks[taskIndex]
-                          .hasAudioRecord !== false
-                      ">
+                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasAudioRecord !== false">
                         <AudioRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
                           @recordingStarted="isVisualizerVisible = $event" :testId="testId" :taskIndex="taskIndex">
                         </AudioRecorder>
@@ -458,17 +436,11 @@
                       <v-col cols="1" v-if="isVisualizerVisible">
                         <AudioVisualizer />
                       </v-col>
-                      <v-col cols="1" v-if="
-                        test.testStructure.userTasks[taskIndex]
-                          .hasCamRecord !== false
-                      ">
+                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasCamRecord !== false">
                         <VideoRecorder ref="videoRecorder" @showLoading="isLoading = true"
                           @stopShowLoading="isLoading = false" :testId="testId" :taskIndex="taskIndex"></VideoRecorder>
                       </v-col>
-                      <v-col cols="1" v-if="
-                        test.testStructure.userTasks[taskIndex]
-                          .hasScreenRecord !== false
-                      ">
+                      <v-col cols="1" v-if="test.testStructure.userTasks[taskIndex].hasScreenRecord !== false">
                         <ScreenRecorder @showLoading="isLoading = true" @stopShowLoading="isLoading = false"
                           :testId="testId" :taskIndex="taskIndex"></ScreenRecorder>
                       </v-col>
@@ -480,21 +452,14 @@
 
                   <v-spacer />
                   <v-row class="paragraph" justify="space-around">
-                    <v-col class="mb-0 pb-0" v-if="
-                      test.testStructure.userTasks[taskIndex].taskType ===
-                      'textArea'
-                    ">
-                      <v-textarea :id="'id-' +
-                        test.testStructure.userTasks[taskIndex].taskName
-                        " v-model="currentUserTestAnswer.tasks[taskIndex].taskAnswer
-                          " outlined label="answer" />
+                    <v-col class="mb-0 pb-0" v-if="test.testStructure.userTasks[taskIndex].taskType === 'textArea'">
+                      <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                        v-model="localTestAnswer.tasks[taskIndex].taskAnswer" outlined label="answer" />
                     </v-col>
                     <v-col class="mb-0 pb-0">
-                      <v-textarea :id="'id-' +
-                        test.testStructure.userTasks[taskIndex].taskName
-                        " v-model="currentUserTestAnswer.tasks[taskIndex]
-                          .taskObservations
-                          " outlined label="observation (optional)" />
+                      <v-textarea :id="'id-' + test.testStructure.userTasks[taskIndex].taskName"
+                        v-model="localTestAnswer.tasks[taskIndex].taskObservations" outlined
+                        label="observation (optional)" />
                     </v-col>
                   </v-row>
                 </v-col>
@@ -506,8 +471,8 @@
                     {{ test.testStructure.userTasks[taskIndex].postQuestion }}
                   </p>
 
-                  <v-text-field v-model="currentUserTestAnswer.tasks[taskIndex].postAnswer" class="mx-2" :placeholder="test.testStructure.userTasks[taskIndex].postQuestion
-                    " outlined />
+                  <v-text-field v-model="localTestAnswer.tasks[taskIndex].postAnswer" class="mx-2"
+                    :placeholder="test.testStructure.userTasks[taskIndex].postQuestion" outlined />
                 </v-col>
               </v-row>
               <video v-if="videoUrl == ''" id="vpreview" class="preview" style="max-width: 0px" autoplay />
@@ -521,10 +486,8 @@
         </ShowInfo>
 
         <!-- Post Test -->
-        <ShowInfo v-if="
-          (index == 2 && !currentUserTestAnswer.postTestCompleted) ||
-          (index == 2 && currentUserTestAnswer.submitted)
-        " title="Post Test">
+        <ShowInfo v-if="(index == 2 && !localTestAnswer.postTestCompleted) || (index == 2 && localTestAnswer.submitted)"
+          title="Post Test">
           <div slot="content" class="ma-0 pa-0">
             <v-row class="fill-height" align="center" justify="center">
               <v-col cols="12">
@@ -542,15 +505,13 @@
               <v-col cols="5" class="mx-auto py-0">
                 <span class="cardsTitle">{{ item.title }}</span>
                 <br />
-                <span class="cardsSubtitle" v-if="item.description">{{
-                  item.description
-                }}</span>
-                <v-text-field v-if="item.textField" v-model="currentUserTestAnswer.postTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.postTestCompleted" :placeholder="item.title" outlined />
-                <v-radio-group v-if="item.selectionField" v-model="currentUserTestAnswer.postTestAnswer[index].answer"
-                  :disabled="currentUserTestAnswer.postTestCompleted" column>
+                <span class="cardsSubtitle" v-if="item.description">{{ item.description }}</span>
+                <v-text-field v-if="item.textField" v-model="localTestAnswer.postTestAnswer[index].answer"
+                  :disabled="localTestAnswer.postTestCompleted" :placeholder="item.title" outlined />
+                <v-radio-group v-if="item.selectionField" v-model="localTestAnswer.postTestAnswer[index].answer"
+                  :disabled="localTestAnswer.postTestCompleted" column>
                   <v-row v-for="(selection, selectionIndex) in item.selectionFields" :key="selectionIndex">
-                    <v-radio :disabled="currentUserTestAnswer.postTestCompleted" class="ml-3 mb-1" :label="selection"
+                    <v-radio :disabled="localTestAnswer.postTestCompleted" class="ml-3 mb-1" :label="selection"
                       :value="selection" />
                   </v-row>
                   <v-row justify="end" />
@@ -560,8 +521,8 @@
             <v-col cols="12">
               <v-row justify="center">
                 <v-col class="mx-10">
-                  <v-btn block :dark="!currentUserTestAnswer.postTestCompleted" color="orange lighten-1" class="mt-3"
-                    :disabled="currentUserTestAnswer.postTestCompleted" @click="
+                  <v-btn block :dark="!localTestAnswer.postTestCompleted" color="orange lighten-1" class="mt-3"
+                    :disabled="localTestAnswer.postTestCompleted" @click="
                       completeStep(taskIndex, 'postTest'), (taskIndex = 3)
                       ">
                     {{ $t('UserTestView.buttons.done') }}
@@ -571,7 +532,7 @@
             </v-col>
           </div>
         </ShowInfo>
-        <ShowInfo v-else-if="index == 2 && currentUserTestAnswer.postTestCompleted" :title="$t('finishTest.title')">
+        <ShowInfo v-else-if="index == 2 && localTestAnswer.postTestCompleted" :title="$t('finishTest.title')">
           <div slot="content" class="ma-0 pa-0">
             <v-row justify="center" class="ma-4">
               <v-col cols="11" class="mt-3">
@@ -628,7 +589,6 @@ export default {
   data: () => ({
     videoUrl: '',
     fullName: '',
-    consentCompleted: false,
     logined: null,
     selected: true,
     fromlink: null,
@@ -645,6 +605,18 @@ export default {
     allTasksCompleted: false,
     isLoading: false,
     isVisualizerVisible: false,
+    localTestAnswer: {
+      consent: '',
+      consentCompleted: false,
+      preTestCompleted: false,
+      preTestAnswer: [],
+      tasks: [],
+      postTestCompleted: false,
+      postTestAnswer: [],
+      submitted: false,
+      progress: 0,
+      fullName: '',
+    },
   }),
   computed: {
     test() {
@@ -661,7 +633,7 @@ export default {
       return this.$store.getters.currentUserTestAnswer || {};
     },
     showSaveBtn() {
-      return !this.currentUserTestAnswer.submitted;
+      return !this.localTestAnswer.submitted;
     },
     cooperators() {
       return this.$store.getters.cooperators;
@@ -678,7 +650,7 @@ export default {
   },
   watch: {
     test: async function () {
-      this.initializeState();
+      await this.mappingSteps();
     },
     items() {
       if (this.items.length) {
@@ -694,19 +666,20 @@ export default {
     user: async function () {
       if (this.user) {
         this.noExistUser = false;
-        if (this.logined) this.setTest();
+        if (this.logined) await this.setTest();
       }
-    }
+    },
   },
   async created() {
-    await this.initializeState();
+    await this.mappingSteps();
   },
   async mounted() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    this.fullName = this.currentUserTestAnswer.fullName
-    this.consentCompleted = this.currentUserTestAnswer.consentCompleted
-    this.autoComplete();
-    this.calculateProgress();
+    if (this.user) {
+      await this.setTest();
+      await this.autoComplete();
+      this.calculateProgress();
+    }
   },
   beforeDestroy() {
     if (this.$refs.videoRecorder) {
@@ -714,28 +687,69 @@ export default {
     }
   },
   methods: {
-    async initializeState() {
+    async mappingSteps() {
       try {
-        // Check if test and user data are available
-        if (!this.test || !this.currentUserTestAnswer) {
-          throw new Error('Test or User data is missing.');
+        this.items = [];
+        if (this.validate(this.test.testStructure?.preTest)) {
+          this.items.push({
+            title: 'Pre-test',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: [
+              { title: 'Consent', icon: 'mdi-checkbox-blank-circle-outline', id: 0 },
+              { title: 'Form', icon: 'mdi-checkbox-blank-circle-outline', id: 1 },
+            ],
+            id: 0,
+          });
+          if (!this.localTestAnswer.preTestAnswer.length && this.test.testStructure.preTest) {
+            this.localTestAnswer.preTestAnswer = this.test.testStructure.preTest.map(() => ({
+              answer: '',
+            }));
+          }
         }
-
-        // Initialize test tasks and structure
-        await this.mappingSteps();
-
-        // Ensure proper task navigation setup
-        if (this.items.length) {
-          this.index = this.items[0].id;
+        if (this.validate(this.test.testStructure?.userTasks)) {
+          this.items.push({
+            title: 'Tasks',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: this.test.testStructure.userTasks.map((task, index) => ({
+              title: task.taskName,
+              icon: 'mdi-checkbox-blank-circle-outline',
+              id: index,
+            })),
+            id: 1,
+          });
+          if (!this.localTestAnswer.tasks.length && this.test.testStructure.userTasks) {
+            this.localTestAnswer.tasks = this.test.testStructure.userTasks.map(() => ({
+              taskAnswer: '',
+              taskObservations: '',
+              postAnswer: '',
+              taskTime: 0,
+              completed: false,
+            }));
+          }
+        }
+        if (this.validate(this.test.testStructure?.postTest)) {
+          this.items.push({
+            title: 'Post Test',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            value: this.test.testStructure.postTest,
+            id: 2,
+          });
+          if (!this.localTestAnswer.postTestAnswer.length && this.test.testStructure.postTest) {
+            this.localTestAnswer.postTestAnswer = this.test.testStructure.postTest.map(() => ({
+              answer: '',
+            }));
+          }
         }
       } catch (error) {
-        console.error('Error initializing state:', error.message);
-        this.$toast.error('Failed to initialize test data. Please try again.');
+        console.error('Error mapping steps:', error.message);
       }
+    },
+    validate(object) {
+      return object !== null && object !== undefined && object !== '' && Array.isArray(object) && object.length > 0;
     },
     isTaskDisabled(taskIndex) {
       for (let i = 0; i < taskIndex; i++) {
-        if (!this.currentUserTestAnswer.tasks[i]?.completed) {
+        if (!this.localTestAnswer.tasks[i]?.completed) {
           return true;
         }
       }
@@ -743,8 +757,8 @@ export default {
     },
     async saveAnswer() {
       try {
-        this.currentUserTestAnswer.fullName = this.fullName;
-        this.currentUserTestAnswer.consentCompleted = this.consentCompleted;
+        this.localTestAnswer.fullName = this.fullName;
+        Object.assign(this.currentUserTestAnswer, this.localTestAnswer);
         await this.$store.dispatch('saveTestAnswer', {
           data: this.currentUserTestAnswer,
           answerDocId: this.test.answersDocId,
@@ -758,7 +772,8 @@ export default {
     },
     async submitAnswer() {
       try {
-        this.currentUserTestAnswer.submitted = true;
+        this.localTestAnswer.submitted = true;
+        Object.assign(this.currentUserTestAnswer, this.localTestAnswer);
         await this.saveAnswer();
       } catch (error) {
         console.error('Error submitting answer:', error.message);
@@ -782,85 +797,69 @@ export default {
       if (timerComponent) timerComponent.startTimer();
     },
     handleTimerStopped(elapsedTime, taskIndex) {
-      if (this.currentUserTestAnswer.tasks[taskIndex]) {
-        this.currentUserTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
+      if (this.localTestAnswer.tasks[taskIndex]) {
+        this.localTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
       }
     },
     completeStep(id, type) {
       try {
         if (type === 'tasks') {
-          const task = this.currentUserTestAnswer.tasks[id]
-          const taskStructure = this.test.testStructure.userTasks[id]
-          let isTaskComplete = true
-          let incompleteMessage = ''
+          const task = this.localTestAnswer.tasks[id];
+          const taskStructure = this.test.testStructure.userTasks[id];
+          let isTaskComplete = true;
+          let incompleteMessage = '';
 
           if (taskStructure.taskType === 'textArea' && (!task.taskAnswer || task.taskAnswer.trim() === '')) {
-            isTaskComplete = false
-            incompleteMessage = 'Please provide an answer for the task.'
+            isTaskComplete = false;
+            incompleteMessage = 'Please provide an answer for the task.';
           } else if (taskStructure.postQuestion && (!task.postAnswer || task.postAnswer.trim() === '')) {
-            isTaskComplete = false
-            incompleteMessage = 'Please answer the post-task question.'
+            isTaskComplete = false;
+            incompleteMessage = 'Please answer the post-task question.';
           }
-          // if (taskStructure.hasAudioRecord && !task.audioRecording) {
-          //   isTaskComplete = false;
-          //   incompleteMessage = 'Please record an audio for this task.';
-          // }
           if (isTaskComplete) {
-            this.currentUserTestAnswer.tasks[id].completed = true
-            this.items[1].value[id].icon = 'mdi-check-circle-outline'
-            this.allTasksCompleted = true
-            this.$forceUpdate()
+            this.localTestAnswer.tasks[id].completed = true;
+            this.items[1].value[id].icon = 'mdi-check-circle-outline';
+            this.allTasksCompleted = true;
+            this.$forceUpdate();
 
             for (let i = 0; i < this.items[1].value.length; i++) {
-              if (!this.currentUserTestAnswer.tasks[i].completed) {
-                this.allTasksCompleted = false
+              if (!this.localTestAnswer.tasks[i].completed) {
+                this.allTasksCompleted = false;
                 break;
               }
             }
             if (this.allTasksCompleted) {
-              this.items[1].icon = 'mdi-check-circle-outline'
+              this.items[1].icon = 'mdi-check-circle-outline';
             }
-            if (
-              this.taskIndex <
-              Object.keys(this.currentUserTestAnswer.tasks).length - 1
-            ) {
-              this.taskIndex++
-            } else if (
-              this.taskIndex >=
-              Object.keys(this.currentUserTestAnswer.tasks).length - 1
-            ) {
-              this.index++
+            if (this.taskIndex < this.localTestAnswer.tasks.length - 1) {
+              this.taskIndex++;
+            } else if (this.taskIndex >= this.localTestAnswer.tasks.length - 1) {
+              this.index++;
             }
             this.$toast.success(`Task "${this.test.testStructure.userTasks[id].taskName}" completed successfully!`, {
               timeout: 3000,
-            })
+            });
           } else {
             this.$toast.error(incompleteMessage || `Task "${this.test.testStructure.userTasks[id].taskName}" is incomplete. Please complete all required fields.`, {
               timeout: 5000,
-            })
+            });
           }
         }
         if (type === 'postTest') {
-          this.currentUserTestAnswer.postTestCompleted = true;
+          this.localTestAnswer.postTestCompleted = true;
           this.items[2].icon = 'mdi-check-circle-outline';
         }
         if (type === 'preTest') {
-          this.currentUserTestAnswer.preTestCompleted = true;
+          this.localTestAnswer.preTestCompleted = true;
           this.items[0].value[id].icon = 'mdi-check-circle-outline';
-          if (
-            this.currentUserTestAnswer.preTestCompleted &&
-            this.currentUserTestAnswer.consentCompleted
-          ) {
+          if (this.localTestAnswer.preTestCompleted && this.localTestAnswer.consentCompleted) {
             this.items[0].icon = 'mdi-check-circle-outline';
           }
         }
         if (type === 'consent') {
-          this.currentUserTestAnswer.consentCompleted = true;
+          this.localTestAnswer.consentCompleted = true;
           this.items[0].value[id].icon = 'mdi-check-circle-outline';
-          if (
-            this.currentUserTestAnswer.preTestCompleted &&
-            this.currentUserTestAnswer.consentCompleted
-          ) {
+          if (this.localTestAnswer.preTestCompleted && this.localTestAnswer.consentCompleted) {
             this.items[0].icon = 'mdi-check-circle-outline';
           }
         }
@@ -870,59 +869,73 @@ export default {
       }
     },
     async autoComplete() {
-      // PRE-TEST
-      if (this.currentUserTestAnswer.preTestCompleted) {
-        this.items[0].value[1].icon = 'mdi-check-circle-outline'
+      if (this.localTestAnswer.preTestCompleted) {
+        this.items[0].value[1].icon = 'mdi-check-circle-outline';
       }
-      if (this.currentUserTestAnswer.consentCompleted) {
-        this.items[0].value[0].icon = 'mdi-check-circle-outline'
+      if (this.localTestAnswer.consentCompleted) {
+        this.items[0].value[0].icon = 'mdi-check-circle-outline';
       }
-      if (
-        this.currentUserTestAnswer.preTestCompleted &&
-        this.currentUserTestAnswer.consentCompleted
-      ) {
-        this.items[0].icon = 'mdi-check-circle-outline'
+      if (this.localTestAnswer.preTestCompleted && this.localTestAnswer.consentCompleted) {
+        this.items[0].icon = 'mdi-check-circle-outline';
       }
-      // TASKS
-      let allTasksCompleted = true
+      let allTasksCompleted = true;
       for (let i = 0; i < this.items[1].value.length; i++) {
-        if (this.currentUserTestAnswer.tasks[i].completed) {
-          this.items[1].value[i].icon = 'mdi-check-circle-outline'
+        if (this.localTestAnswer.tasks[i].completed) {
+          this.items[1].value[i].icon = 'mdi-check-circle-outline';
         }
-        if (!this.currentUserTestAnswer.tasks[i].completed) {
-          allTasksCompleted = false
-          break
+        if (!this.localTestAnswer.tasks[i].completed) {
+          allTasksCompleted = false;
+          break;
         }
       }
       if (allTasksCompleted) {
-        this.items[1].icon = 'mdi-check-circle-outline'
+        this.items[1].icon = 'mdi-check-circle-outline';
       }
-      // POST-TEST
-      if (this.currentUserTestAnswer.postTestCompleted) {
-        this.items[2].icon = 'mdi-check-circle-outline'
+      if (this.localTestAnswer.postTestCompleted) {
+        this.items[2].icon = 'mdi-check-circle-outline';
       }
     },
     calculateProgress() {
       const totalSteps = 4;
       let completedSteps = 0;
 
-      if (this.currentUserTestAnswer.preTestCompleted) completedSteps++;
-      if (this.currentUserTestAnswer.consentCompleted) completedSteps++;
+      if (this.localTestAnswer.preTestCompleted) completedSteps++;
+      if (this.localTestAnswer.consentCompleted) completedSteps++;
       const tasksCompleted = this.items[1]?.value?.filter(
-        (task) => this.currentUserTestAnswer.tasks[task.id]?.completed
+        (task) => this.localTestAnswer.tasks[task.id]?.completed
       ).length;
       if (tasksCompleted === this.items[1]?.value?.length) completedSteps++;
-      if (this.currentUserTestAnswer.postTestCompleted) completedSteps++;
+      if (this.localTestAnswer.postTestCompleted) completedSteps++;
 
       const progressPercentage = (completedSteps / totalSteps) * 100;
-      this.currentUserTestAnswer.progress = progressPercentage;
+      this.localTestAnswer.progress = progressPercentage;
       return progressPercentage;
     },
     async setTest() {
       try {
         this.logined = true;
         await this.$store.dispatch('getCurrentTestAnswerDoc');
-        this.populateWithHeuristicQuestions();
+        let tasksArray = [];
+        if (this.currentUserTestAnswer.tasks) {
+          if (Array.isArray(this.currentUserTestAnswer.tasks)) {
+            tasksArray = this.currentUserTestAnswer.tasks;
+          } else if (typeof this.currentUserTestAnswer.tasks === 'object') {
+            tasksArray = Object.values(this.currentUserTestAnswer.tasks);
+          }
+        }
+        Object.assign(this.localTestAnswer, {
+          consent: this.currentUserTestAnswer.consent || '',
+          consentCompleted: this.currentUserTestAnswer.consentCompleted || false,
+          preTestCompleted: this.currentUserTestAnswer.preTestCompleted || false,
+          preTestAnswer: this.currentUserTestAnswer.preTestAnswer || [],
+          tasks: tasksArray,
+          postTestCompleted: this.currentUserTestAnswer.postTestCompleted || false,
+          postTestAnswer: this.currentUserTestAnswer.postTestAnswer || [],
+          submitted: this.currentUserTestAnswer.submitted || false,
+          progress: this.currentUserTestAnswer.progress || 0,
+          fullName: this.currentUserTestAnswer.fullName || '',
+        });
+        this.fullName = this.localTestAnswer.fullName;
       } catch (error) {
         console.error('Error setting test:', error.message);
         this.$toast.error('Failed to load test data. Please try again.');
@@ -933,47 +946,6 @@ export default {
     },
     setExistUser() {
       this.noExistUser = false;
-    },
-    async mappingSteps() {
-      try {
-        this.items = [];
-        if (this.validate(this.test.testStructure?.preTest)) {
-          this.items.push({
-            title: 'Pre-test',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: [
-              { title: 'Consent', icon: 'mdi-checkbox-blank-circle-outline', id: 0 },
-              { title: 'Form', icon: 'mdi-checkbox-blank-circle-outline', id: 1 },
-            ],
-            id: 0,
-          });
-        }
-        if (this.validate(this.test.testStructure?.userTasks)) {
-          this.items.push({
-            title: 'Tasks',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: this.test.testStructure.userTasks.map((task, index) => ({
-              title: task.taskName,
-              icon: 'mdi-checkbox-blank-circle-outline',
-              id: index,
-            })),
-            id: 1,
-          });
-        }
-        if (this.validate(this.test.testStructure?.postTest)) {
-          this.items.push({
-            title: 'Post Test',
-            icon: 'mdi-checkbox-blank-circle-outline',
-            value: this.test.testStructure.postTest,
-            id: 2,
-          });
-        }
-      } catch (error) {
-        console.error('Error mapping steps:', error.message);
-      }
-    },
-    validate(object) {
-      return object !== null && object !== undefined && object !== '';
     },
   },
 };
@@ -1061,58 +1033,40 @@ export default {
   padding: 10px;
   padding-left: 0px;
   padding-top: 0px;
-  /*
-  height: 2.9em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; */
 }
 
-/* Right side scroll bar */
-/* width */
 .right-view::-webkit-scrollbar {
   width: 9px;
 }
 
-/* Track */
 .right-view::-webkit-scrollbar-track {
   background: none;
 }
 
-/* Handle */
 .right-view::-webkit-scrollbar-thumb {
   background: #ffcd86;
   border-radius: 2px;
 }
 
-/* Handle on hover */
 .right-view::-webkit-scrollbar-thumb:hover {
   background: #fca326;
 }
 
-/* Nav bar list scroll bar */
-/* width */
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
 
-/* Track */
 .nav-list::-webkit-scrollbar-track {
   background: none;
 }
 
-/* Handle */
 .nav-list::-webkit-scrollbar-thumb {
   background: #777596;
   border-radius: 4px;
 }
 
-/* Handle on hover */
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #64618a;
-  /* background: #515069; */
 }
 
 .cards {
@@ -1121,7 +1075,6 @@ export default {
 
 .cardsTitle {
   color: #455a64;
-
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -1130,7 +1083,6 @@ export default {
 
 .cardsSubtitle {
   color: #455a64;
-
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
