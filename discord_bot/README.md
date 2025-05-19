@@ -94,6 +94,15 @@ The bot uses GitHub OAuth for authentication:
    - Has a public HTTPS endpoint
    - Uses a custom domain if configured
 
+7. To remove deployed resources (if needed):
+   ```bash
+   # Delete the Cloud Run service
+   gcloud run services delete discord-bot --region=us-central1
+   
+   # Delete the container images
+   gcloud container images delete gcr.io/finaltest-b0895/discord-bot --force-delete-tags
+   ```
+
 ## Important Notes
 
 ### Environment Configuration
