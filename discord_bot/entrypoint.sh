@@ -33,12 +33,16 @@ ls -la
 touch discord_bot_status.log
 echo "Startup timestamp: $(date)" > discord_bot_status.log
 
-# Add simple HTTP server for health checks
-python -c "
-import threading
+# Create health check server
+PORT=${PORT:-8080}
+echo "Creating health check server on port $PORT..."
+
+cat > health_server.py << 'EOF'
 import http.server
 import socketserver
 import os
+
+PORT = int(os.environ.get('PORT', 8080))
 
 class HealthHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -48,22 +52,28 @@ class HealthHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(b'Discord bot is running')
         
     def log_message(self, format, *args):
-        # Suppress log messages
         return
 
-def start_health_server():
-    PORT = int(os.environ.get('PORT', 8080))
-    with socketserver.TCPServer(('', PORT), HealthHandler) as httpd:
-        print(f'Health check server started at port {PORT}')
-        httpd.serve_forever()
+print(f"Health check server started at port {PORT}")
+httpd = socketserver.TCPServer(("", PORT), HealthHandler)
+httpd.serve_forever()
+EOF
 
-health_thread = threading.Thread(target=start_health_server)
-health_thread.daemon = True
-health_thread.start()
-" &
+# Start the health check server in the background and save its PID
+python health_server.py &
+HEALTH_PID=$!
 
-# Wait for health server to start
-sleep 2
+# Make sure the health server is running before continuing
+echo "Waiting for health check server to start..."
+sleep 5
+
+# Check if the health server process is still running
+if kill -0 $HEALTH_PID 2>/dev/null; then
+  echo "✅ Health check server running on port $PORT"
+else
+  echo "❌ Health check server failed to start!"
+  exit 1
+fi
 
 # Run the Discord bot with output to log file
 echo "===== STARTING DISCORD BOT NOW! =====" >> discord_bot_status.log
