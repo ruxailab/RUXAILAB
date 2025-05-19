@@ -522,7 +522,8 @@
     "deleteAccount": "Delete Account",
     "back": "Back",
     "duplicateTest": "Duplicate Test",
-    "submit": "Submit"
+    "submit": "Submit",
+    "couldNotFinish": "Could not finish"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -532,7 +533,8 @@
     "screenRecord": "Screen Record",
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
-    "audioRecord": "Audio Record"
+    "audioRecord": "Audio Record",
+    "postForm": "Post Form"
   },
   "inputs": {
     "consentForm": "Consent Form",
