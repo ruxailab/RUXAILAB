@@ -90,7 +90,7 @@ export default {
                   taskAnswer: '',
                   taskObservations: '',
                   taskTime: null,
-                  completed: false,
+                  completed: null,
                   audioRecordURL: '',
                   screenRecordURL: '',
                   webcamRecordURL: '',

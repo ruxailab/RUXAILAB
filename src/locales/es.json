@@ -517,7 +517,8 @@
     "deleteAccount": "Eliminar cuenta",
     "back": "Atrás",
     "duplicateTest": "Duplicar",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "couldNotFinish": "No pude completar"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -527,7 +528,8 @@
     "screenRecord": "Registro de pantalla",
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
-    "audioRecord": "Grabación de audio"
+    "audioRecord": "Grabación de audio",
+    "postForm": "Formulario Posterior"
   },
   "inputs": {
     "consentForm": "Formulario de Consentimiento",

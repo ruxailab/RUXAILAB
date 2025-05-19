@@ -1,10 +1,5 @@
 <template>
-  <v-tabs
-    v-if="type == 'tabs'"
-    background-color="transparent"
-    color="#FCA326"
-    class="pb-0 mb-0"
-  >
+  <v-tabs v-if="type == 'tabs'" background-color="transparent" color="#FCA326" class="pb-0 mb-0">
     <v-tab @click="tabClicked(0)">
       Consent
     </v-tab>
@@ -27,7 +22,7 @@
 
       <v-divider />
       <v-row justify="space-around">
-        <v-col cols="8">
+        <v-col cols="10">
           <UserConsent @input="updateData" />
         </v-col>
       </v-row>
@@ -46,11 +41,7 @@
       </v-row>
     </v-card>
 
-    <ListTasks
-      v-if="index == 2"
-      :tasks="object.itemsTasks"
-      @input="updateData"
-    />
+    <ListTasks v-if="index == 2" :tasks="object.itemsTasks" @input="updateData" />
 
     <v-card rounded="xxl" v-if="index == 3" style="background: #f5f7ff">
       <v-card-title class="subtitleView">
@@ -91,7 +82,7 @@ export default {
     },
     object: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
   },
   data() {
@@ -148,7 +139,8 @@ export default {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-.v-text-field--outlined >>> fieldset {
+
+.v-text-field--outlined>>>fieldset {
   border-radius: 25px;
   border: 1px solid #ffceb2;
 }
