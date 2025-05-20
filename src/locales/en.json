@@ -1,4 +1,20 @@
 {
+"choose": {
+  "title": "What kind of test are you looking to start?",
+  "testing": "Testing",
+  "inspection": "Inspection",
+  "inquiry": "Inquiry",
+  "userTesting": "User Testing",
+  "abTesting": "A/B Testing",
+  "eyeTracking": "Eye-Tracking",
+  "heuristic": "Heuristic Evaluation",
+  "cognitive": "Cognitive Walkthrough",
+  "automated": "Automated Evaluations",
+  "interviews": "Interviews",
+  "focusGroups": "Focus Groups",
+  "surveys": "Surveys & Questionnaires"
+},
+  "category": "Category",
   "language": "Language",
   "SIGNIN": {
     "sign-in": "Sign in",

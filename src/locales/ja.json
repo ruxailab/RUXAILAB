@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "どの種類のテストを開始しますか？",
+  "testing": "テスト",
+  "inspection": "インスペクション",
+  "inquiry": "調査",
+  "userTesting": "ユーザーテスト",
+  "abTesting": "A/Bテスト",
+  "eyeTracking": "アイトラッキング",
+  "heuristic": "ヒューリスティック評価",
+  "cognitive": "認知ウォークスルー",
+  "automated": "自動評価",
+  "interviews": "インタビュー",
+  "focusGroups": "フォーカスグループ",
+  "surveys": "アンケート・調査"
+},
+  "category": "カテゴリ",
   "language": "言語",
   "SIGNIN": {
     "sign-in": "ログイン",

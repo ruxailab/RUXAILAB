@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "您想开始哪种类型的测试？",
+  "testing": "测试",
+  "inspection": "检查",
+  "inquiry": "调查",
+  "userTesting": "用户测试",
+  "abTesting": "A/B 测试",
+  "eyeTracking": "眼动追踪",
+  "heuristic": "启发式评估",
+  "cognitive": "认知漫步",
+  "automated": "自动化评估",
+  "interviews": "访谈",
+  "focusGroups": "焦点小组",
+  "surveys": "调查与问卷"
+},
+  "category": "类别",
   "language": "语言",
   "SIGNIN": {
     "sign-in": "登录",

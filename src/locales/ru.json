@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "Какой тип теста вы хотите начать?",
+  "testing": "Тестирование",
+  "inspection": "Инспекция",
+  "inquiry": "Опрос",
+  "userTesting": "Пользовательское тестирование",
+  "abTesting": "A/B тестирование",
+  "eyeTracking": "Отслеживание взгляда",
+  "heuristic": "Эвристическая оценка",
+  "cognitive": "Когнитивный walkthrough",
+  "automated": "Автоматизированные оценки",
+  "interviews": "Интервью",
+  "focusGroups": "Фокус-группы",
+  "surveys": "Опросы и анкеты"
+},
+  "category": "Категория",
   "language": "Язык",
   "SIGNIN": {
     "sign-in": "Войти",
