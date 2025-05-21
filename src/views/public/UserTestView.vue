@@ -598,6 +598,8 @@ import AudioVisualizer from '@/components/atoms/AudioVisualizer';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
 import Timer from '@/components/atoms/Timer.vue';
+import TaskAnswer from '@/models/TaskAnswer';
+import UserTask from '@/models/UserTask';
 
 export default {
   components: {
@@ -630,18 +632,7 @@ export default {
     allTasksCompleted: false,
     isLoading: false,
     isVisualizerVisible: false,
-    localTestAnswer: {
-      consent: '',
-      consentCompleted: false,
-      preTestCompleted: false,
-      preTestAnswer: [],
-      tasks: [],
-      postTestCompleted: false,
-      postTestAnswer: [],
-      submitted: false,
-      progress: 0,
-      fullName: '',
-    },
+    localTestAnswer: new TaskAnswer(),
   }),
   computed: {
     test() {
@@ -742,13 +733,15 @@ export default {
             id: 1,
           });
           if (!this.localTestAnswer.tasks.length && this.test.testStructure.userTasks) {
-            this.localTestAnswer.tasks = this.test.testStructure.userTasks.map(() => ({
-              taskAnswer: '',
-              taskObservations: '',
-              postAnswer: '',
-              taskTime: 0,
-              completed: false,
-            }));
+            this.localTestAnswer.tasks = this.test.testStructure.userTasks.map(() =>
+              new UserTask({
+                taskAnswer: '',
+                taskObservations: '',
+                postAnswer: '',
+                taskTime: 0,
+                completed: false,
+              })
+            );
           }
         }
         if (this.validate(this.test.testStructure?.postTest)) {
@@ -783,12 +776,25 @@ export default {
     async saveAnswer() {
       try {
         this.localTestAnswer.fullName = this.fullName;
-        Object.assign(this.currentUserTestAnswer, this.localTestAnswer);
-        await this.$store.dispatch('saveTestAnswer', {
-          data: this.currentUserTestAnswer,
-          answerDocId: this.test.answersDocId,
-          testType: this.test.testType,
-        });
+        if (!this.user) {
+
+          console.log(this.localTestAnswer);
+
+          await this.$store.dispatch('saveTestAnswer', {
+            data: this.localTestAnswer,
+            answerDocId: this.test.answersDocId,
+            testType: this.test.testType,
+          });
+        } else {
+          Object.assign(this.currentUserTestAnswer, this.localTestAnswer);
+
+          await this.$store.dispatch('saveTestAnswer', {
+            data: this.currentUserTestAnswer,
+            answerDocId: this.test.answersDocId,
+            testType: this.test.testType,
+          });
+        }
+
         this.$router.push('/testslist');
       } catch (error) {
         console.error('Error saving answer:', error.message);
@@ -798,7 +804,6 @@ export default {
     async submitAnswer() {
       try {
         this.localTestAnswer.submitted = true;
-        Object.assign(this.currentUserTestAnswer, this.localTestAnswer);
         await this.saveAnswer();
       } catch (error) {
         console.error('Error submitting answer:', error.message);
@@ -976,7 +981,7 @@ export default {
 
 .backgroundTest {
   background-color: #e8eaf2;
-  height: 94%;
+  height: 100%;
   overflow: scroll;
 }
 

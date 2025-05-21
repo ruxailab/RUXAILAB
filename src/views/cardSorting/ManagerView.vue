@@ -32,20 +32,11 @@
                   {{ test.testTitle }}
                 </div>
 
-                <v-img
-                  class="hidden-md-and-up"
-                  style="max-height: 40vh"
-                  contain
-                  src="@/assets/manager/IntroManager.svg"
-                />
+                <v-img class="hidden-md-and-up" style="max-height: 40vh" contain
+                  src="@/assets/manager/IntroManager.svg" />
               </v-col>
-              <v-img
-                class="hidden-sm-and-down"
-                contain
-                max-width="40%"
-                max-height="85%"
-                src="@/assets/manager/IntroManager.svg"
-              />
+              <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="85%"
+                src="@/assets/manager/IntroManager.svg" />
             </v-row>
           </div>
           <div>
@@ -234,7 +225,7 @@ export default {
 <style scoped>
 .background {
   background-color: #e8eaf2;
-  height: 94%;
+  height: 100%;
   overflow: scroll;
 }
 

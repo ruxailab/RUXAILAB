@@ -332,7 +332,7 @@ export default {
 <style>
 .background {
   background-color: #e8eaf2;
-  height: 94%;
+  height: 100%;
   overflow: scroll;
 }
 
