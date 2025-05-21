@@ -55,9 +55,6 @@ export default class AnswerController extends Controller {
   async saveTestAnswer(payload, answerDocId, testType) {
     payload.lastUpdate = Date.now()
 
-    console.log(payload);
-    console.log(answerDocId);
-    console.log(testType);
 
     const fieldToUpdate = {}
 
@@ -67,8 +64,20 @@ export default class AnswerController extends Controller {
       ] = payload.toFirestore()
 
     } else if (testType === 'User') {
-      fieldToUpdate[`taskAnswers.${payload.userDocId}`] = payload.toFirestore()
+      if (!payload.userDocId) {
+
+        const taskAnswer = (await this.getAnswerById(answerDocId)).taskAnswers; // get taskAnswers
+
+        const taskAnswerCount = Object.keys(taskAnswer || {}).length; // get number of taskAnswers 
+
+        fieldToUpdate[`taskAnswers.Ev${taskAnswerCount + 1}`] = payload.toFirestore(); // add new taskAnswer with EV prefix for anonymous answers
+
+      } else {
+        fieldToUpdate[`taskAnswers.${payload.userDocId}`] = payload.toFirestore()
+      }
     }
+    console.log("fieldToUpdate ->", fieldToUpdate);
+
     await super.update(COLLECTION, answerDocId, fieldToUpdate)
   }
 }
