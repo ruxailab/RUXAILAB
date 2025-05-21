@@ -588,6 +588,13 @@
     "test-description": "Test Description",
     "test-label": "Test public to all users"
   },
+  "finishTest": {
+    "title": "Finish Test",
+    "finalMessage": "Final Message",
+    "congratulations": "Congratulations! You have completed the test, now you can submit your answers.",
+    "submitMessage": "Click here to submit your answers. After submitting, you will not be able to change your answers!",
+    "submitButton": "Submit"
+  },
   "help": {
     "createtest": "How do I create a test?",
     "createtestanswer": "To create a test, begin by clicking on the plus icon, selecting Heuristic Test. Then, specify the particulars of your project. Finally, proceed to the dedicated manager page.",
