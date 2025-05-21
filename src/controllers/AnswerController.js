@@ -55,6 +55,10 @@ export default class AnswerController extends Controller {
   async saveTestAnswer(payload, answerDocId, testType) {
     payload.lastUpdate = Date.now()
 
+    console.log(payload);
+    console.log(answerDocId);
+    console.log(testType);
+
     const fieldToUpdate = {}
 
     if (testType === 'HEURISTICS') {
