@@ -39,6 +39,9 @@ export default {
       if (!state.testAnswerDocument) {
         return {}
       }
+      if (!rootState.user) {
+        return {}
+      }
 
       if (state.testAnswerDocument.type === 'HEURISTICS') {
         return state.testAnswerDocument.heuristicAnswers[`${rootState.user.id}`]
