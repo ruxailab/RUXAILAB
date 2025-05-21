@@ -322,7 +322,7 @@
 
             <v-row>
               <v-col cols="8" class="mx-auto py-0">
-                <div v-html="localTestAnswer.consent" class="rich-text mb-6" />
+                <div v-html="test.testStructure.consent" class="rich-text mb-6" />
               </v-col>
             </v-row>
 
