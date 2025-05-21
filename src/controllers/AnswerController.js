@@ -65,6 +65,7 @@ export default class AnswerController extends Controller {
       fieldToUpdate[
         `heuristicAnswers.${payload.userDocId}`
       ] = payload.toFirestore()
+
     } else if (testType === 'User') {
       fieldToUpdate[`taskAnswers.${payload.userDocId}`] = payload.toFirestore()
     }
