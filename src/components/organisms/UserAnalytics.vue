@@ -25,7 +25,7 @@
             <v-col class="ma-0 pa-1 answer-list" cols="9">
               <v-data-table :headers="dataHeaders" :items="taskAnswers">
                 <template v-slot:item.userDocId="{ item }">
-                  <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                  <span>{{ item.fullName }}</span>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn color="orange" text @click="viewAnswers(item)">
@@ -39,12 +39,7 @@
       </div>
     </ShowInfo>
     <template>
-      <v-dialog
-        v-model="showDialog"
-        max-width="600"
-        fullscreen
-        transition="dialog-bottom-transition"
-      >
+      <v-dialog v-model="showDialog" max-width="600" fullscreen transition="dialog-bottom-transition">
         <v-card>
           <v-toolbar color="orange" dark>
             <span class="headline">Answer and Observation</span>
@@ -54,40 +49,21 @@
           </v-toolbar>
           <v-card-text style="background-color: #E8EAF2;">
             <v-row v-if="dialogItem">
-              <v-col
-                v-if="dialogItem.preTestAnswer.length > 0"
-                :cols="
-                  dialogItem.tasks[taskSelect].taskTime != '' ? '10' : '12'
-                "
-                class="pt-8"
-              >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Variables</span
-                >
+              <v-col v-if="dialogItem.preTestAnswer.length > 0" :cols="dialogItem.tasks[taskSelect].taskTime != '' ? '10' : '12'
+                " class="pt-8">
+                <span class="cardsTitle ma-3" style="color: #252525">Variables</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
-                    <span
-                      v-for="(question, index) in testStructure.preTest"
-                      :key="index"
-                      class="ma-1 text-subtitle-1"
-                      style="color: #252525"
-                    >
+                    <span v-for="(question, index) in testStructure.preTest" :key="index" class="ma-1 text-subtitle-1"
+                      style="color: #252525">
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.preTestAnswer[index].answer }}
                     </span>
                   </div>
                 </v-card>
               </v-col>
-              <v-col
-                v-if="dialogItem.tasks[taskSelect].taskTime != null"
-                cols="2"
-                class="pt-8"
-              >
-                <span
-                  class="t-5 font-weight-bold text-h6"
-                  style="color: #252525"
-                  >Task Time</span
-                >
+              <v-col v-if="dialogItem.tasks[taskSelect].taskTime != null" cols="2" class="pt-8">
+                <span class="t-5 font-weight-bold text-h6" style="color: #252525">Task Time</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <p class="text-h6">
@@ -96,40 +72,23 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col
-                v-if="dialogItem.postTestAnswer.length > 0"
-                cols="12"
-                class="pt-8"
-              >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post-Test Answer</span
-                >
+              <v-col v-if="dialogItem.postTestAnswer.length > 0" cols="12" class="pt-8">
+                <span class="cardsTitle ma-3" style="color: #252525">Post-Test Answer</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
-                    <span
-                      v-for="(question, index) in testStructure.postTest"
-                      :key="index"
-                      class="ma-1 text-subtitle-1"
-                      style="color: #252525"
-                    >
+                    <span v-for="(question, index) in testStructure.postTest" :key="index" class="ma-1 text-subtitle-1"
+                      style="color: #252525">
                       <strong>{{ question.title }}</strong> :
                       {{ dialogItem.postTestAnswer[index].answer }}
                     </span>
                   </div>
                 </v-card>
               </v-col>
-              <v-col
-                v-if="dialogItem.tasks[taskSelect].taskAnswer != ''"
-                :cols="
-                  dialogItem.tasks[taskSelect].taskObservations != ''
-                    ? '6'
-                    : '12'
-                "
-                class="mt-4"
-              >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Answer</span
-                >
+              <v-col v-if="dialogItem.tasks[taskSelect].taskAnswer != ''" :cols="dialogItem.tasks[taskSelect].taskObservations != ''
+                ? '6'
+                : '12'
+                " class="mt-4">
+                <span class="cardsTitle ma-3" style="color: #252525">Answer</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
@@ -138,14 +97,8 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col
-                v-if="dialogItem.tasks[taskSelect].postAnswer != ''"
-                cols="12"
-                class="mt-4"
-              >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post Question</span
-                >
+              <v-col v-if="dialogItem.tasks[taskSelect].postAnswer != ''" cols="12" class="mt-4">
+                <span class="cardsTitle ma-3" style="color: #252525">Post Question</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <strong>{{
@@ -158,16 +111,9 @@
                   </div>
                 </v-card>
               </v-col>
-              <v-col
-                v-if="dialogItem.tasks[taskSelect].taskObservations != ''"
-                :cols="
-                  dialogItem.tasks[taskSelect].taskAnswer != '' ? '6' : '12'
-                "
-                class="mt-4"
-              >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Observation</span
-                >
+              <v-col v-if="dialogItem.tasks[taskSelect].taskObservations != ''" :cols="dialogItem.tasks[taskSelect].taskAnswer != '' ? '6' : '12'
+                " class="mt-4">
+                <span class="cardsTitle ma-3" style="color: #252525">Observation</span>
                 <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
@@ -177,54 +123,27 @@
                 </v-card>
               </v-col>
               <div v-if="dialogItem">
-                <v-col
-                  v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
-                  cols="12"
-                  class="d-flex align-center justify-center flex-column"
-                >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Web Cam Record</span
-                  >
-                  <video
-                    v-if="dialogItem"
-                    class="my-3"
-                    :src="dialogItem.tasks[taskSelect].webcamRecordURL"
-                    controls
-                    height="260"
-                  />
+                <v-col v-if="dialogItem.tasks[taskSelect].webcamRecordURL" cols="12"
+                  class="d-flex align-center justify-center flex-column">
+                  <span class="cardsTitle ma-3" style="color: #252525">Web Cam Record</span>
+                  <video v-if="dialogItem" class="my-3" :src="dialogItem.tasks[taskSelect].webcamRecordURL" controls
+                    height="260" />
                 </v-col>
               </div>
               <div v-if="dialogItem">
-                <v-col
-                  v-if="dialogItem.tasks[taskSelect].screenRecordURL"
-                  cols="12"
-                  class="d-flex align-center justify-center flex-column"
-                >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Screen Record</span
-                  >
-                  <video
-                    class="my-3"
-                    :src="dialogItem.tasks[taskSelect].screenRecordURL"
-                    controls
-                    height="260"
-                  />
+                <v-col v-if="dialogItem.tasks[taskSelect].screenRecordURL" cols="12"
+                  class="d-flex align-center justify-center flex-column">
+                  <span class="cardsTitle ma-3" style="color: #252525">Screen Record</span>
+                  <video class="my-3" :src="dialogItem.tasks[taskSelect].screenRecordURL" controls height="260" />
                 </v-col>
               </div>
               <div v-if="dialogItem">
-                <v-col
-                  v-if="dialogItem.tasks[taskSelect].audioRecordURL"
-                  cols="12"
-                  class="d-flex align-center justify-center flex-column"
-                >
+                <v-col v-if="dialogItem.tasks[taskSelect].audioRecordURL" cols="12"
+                  class="d-flex align-center justify-center flex-column">
                   <span class="cardsTitle ma-3" style="color: #252525">
                     Audio Record
                   </span>
-                  <audio
-                    class="mx-auto my-3"
-                    :src="dialogItem.tasks[taskSelect].audioRecordURL"
-                    controls
-                  ></audio>
+                  <audio class="mx-auto my-3" :src="dialogItem.tasks[taskSelect].audioRecordURL" controls></audio>
                 </v-col>
               </div>
             </v-row>
@@ -252,7 +171,7 @@ export default {
     intro: null,
     dataHeaders: [
       {
-        text: 'Email',
+        text: 'Full Name',
         value: 'userDocId',
       },
       {
@@ -308,19 +227,10 @@ export default {
     goToCoops() {
       this.$emit('goToCoops')
     },
-    getCooperatorEmail(userDocId) {
-      let cooperatorEmail = null
-      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
-        for (const element of this.test.cooperators) {
-          if (element && element.email && element.userDocId === userDocId) {
-            cooperatorEmail = element.email
-          }
-        }
-      }
-      return cooperatorEmail
-    },
     viewAnswers(item) {
       this.dialogItem = item
+      console.log(this.dialogItem);
+
       this.showDialog = true
     },
   },
@@ -335,6 +245,7 @@ export default {
   font-weight: 600;
   line-height: normal;
 }
+
 .list-scroll {
   height: 508px;
   overflow: auto;
