@@ -850,6 +850,7 @@ export default {
           }
           if (this.taskIndex < this.localTestAnswer.tasks.length - 1) {
             this.taskIndex++;
+            this.startTimer() // start timer for the next task - jvJUCA
           } else if (this.taskIndex >= this.localTestAnswer.tasks.length - 1) {
             this.index++;
           }
