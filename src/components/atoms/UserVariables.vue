@@ -11,16 +11,21 @@
             :key="i"
             style="border-radius: 20px;"
           >
-            <v-expansion-panel-header>
+            <v-expansion-panel-title>
               {{ items[i].title }}
-            </v-expansion-panel-header>
-            
-            <v-expansion-panel-content>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-form>
+                <v-text-field
+                  v-model="items[i].title"
+                  label="Title"
+                  @change="saveState()"
+                />
                 <v-text-field
                   v-model="items[i].description"
                   label="Description"
                   @click:append="log"
+                  @change="saveState()"
                 />
                 <div>
                   <v-text-field
@@ -28,9 +33,9 @@
                     :key="index"
                     v-model="items[i].selectionFields[index]"
                     :label="$t('UserTestTable.inputs.selection')"
-                    @change="saveState()"
+                    @change="saveState"
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <v-icon @click="newSelection(i)">
                         mdi-plus
                       </v-icon>
@@ -57,15 +62,21 @@
                 </div>
               </v-form>
               <v-row>
-                <v-col :cols="6" class="checkbox-container">
+                <v-col
+                  :cols="6"
+                  class="checkbox-container"
+                >
                   <v-checkbox
                     v-model="items[i].selectionField"
                     :label="$t('UserTestTable.checkboxes.selectionField')"
-                    @change="saveState"
+                    @update:model-value="saveState"
                     @click="selectField(i)"
                   />
                 </v-col>
-                <v-col :cols="5" class="checkbox-container">
+                <v-col
+                  :cols="5"
+                  class="checkbox-container"
+                >
                   <v-checkbox
                     v-model="items[i].textField"
                     :label="$t('UserTestTable.checkboxes.textField')"
@@ -73,21 +84,25 @@
                   />
                 </v-col>
                 <v-col>
-                  <v-btn class="mt-5" icon @click="deleteItem(i)">
+                  <v-btn
+                    class="mt-5"
+                    icon
+                    @click="deleteItem(i)"
+                  >
                     <v-icon>mdi-trash-can</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
         
         <v-card
           class="mt-2"
           rounded="xl"
-          outlined
+          border
           elevation="0"
-          color="grey lighten-2"
+          color="grey-lighten-2"
           @click="showModal"
         >
           <p class="text-subtitle-1 text-center ma-2">
@@ -97,8 +112,11 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="show" max-width="600" persistent>
+    <v-dialog
+      v-model="show"
+      max-width="600"
+      persistent
+    >
       <v-card>
         <v-card-title class="text-h6 mb-2">
           {{
@@ -107,10 +125,13 @@
         </v-card-title>
         
         <v-card-text>
-          <v-form ref="form" v-model="valid">
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-text-field
               v-model="newItem"
-              filled
+              variant="filled"
               :rules="[(newItem) => !!newItem || 'This Name field is required']"
               color="orange"
               :label="$t('UserTestTable.inputs.variableName')"
@@ -120,13 +141,20 @@
         </v-card-text>
         
         <v-card-actions>
-          <v-btn color="red" class="ml-auto" dark @click="closeModal">
+          <v-btn
+            color="red"
+            class="ml-auto"
+            @click="closeModal"
+          >
             <v-icon class="mr-1">
               mdi-close
             </v-icon>
             {{ $t('buttons.close') }}
           </v-btn>
-          <v-btn color="orange" dark @click="saveNewItem(), saveState()">
+          <v-btn
+            color="orange"
+            @click="saveNewItem"
+          >
             <v-icon class="mr-1">
               mdi-content-save
             </v-icon>
@@ -138,98 +166,106 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    newItem: '',
-    items: [],
-    show: false,
-    valid: false,
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    preTest() {
-      return this.$store.getters.preTest
-    },
-  },
-  mounted() {
-    this.getVariables()
-  },
-  methods: {
-    log() {
-      console.log('adicionar + 1')
-    },
-    showModal() {
-      this.show = true
-    },
-    closeModal() {
-      this.show = false
-      this.$refs.form.resetValidation()
-    },
-    selectField(i) {
-      if (
-        this.items[i].selectionFields.length == 0 &&
-        this.items[i].selectionField
-      ) {
-        this.items[i].selectionFields.push('')
-      }
-      if (this.items[i].selectionField == false) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].textField = false
-    },
-    selectText(i) {
-      if (this.items[i].selectionFields.length > 0) {
-        this.items[i].selectionFields = []
-      }
-      this.items[i].selectionField = false
-    },
-    deleteItem(i) {
-      this.items.splice(i, 1)
-    },
-    saveNewItem() {
-      if (this.newItem.trim() !== '') {
-        this.items.push({
-          answer: '',
-          title: this.newItem,
-          description: '',
-          selectionFields: [],
-          selectionField: false,
-          textField: true,
-        })
-        this.newItem = ''
-        this.show = false
-        this.$refs.form.resetValidation()
-      } else {
-        this.$refs.form.validate()
-      }
-    },
-    newSelection(index) {
-      this.$set(this.items, index, {
-        ...this.items[index],
-        selectionFields: [...this.items[index].selectionFields, ''],
-      })
-    },
-    deleteSelection(index) {
-      this.items[index].selectionFields.splice(
-        this.items[index].selectionFields.length - 1,
-        1,
-      )
-    },
-    saveState() {
-      this.$store.dispatch('setPreTest', this.items)
-    },
-    getVariables() {
-      if (this.test.testStructure.preTest) {
-        this.items = this.test.testStructure.preTest
-      } else if (this.preTest) {
-        this.items = this.preTest
-      }
-    },
-  },
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
+const store = useStore()
+const { t } = useI18n()
+
+const newItem = ref('')
+const items = ref([])
+const show = ref(false)
+const valid = ref(false)
+const form = ref(null)
+
+const test = computed(() => store.getters.test)
+const preTest = computed(() => store.getters.preTest)
+
+const log = () => {
+  console.log('adicionar + 1')
 }
+
+const showModal = () => {
+  show.value = true
+}
+
+const closeModal = () => {
+  show.value = false
+  form.value?.resetValidation()
+}
+
+const selectField = (i) => {
+  if (items.value[i].selectionFields.length === 0 && items.value[i].selectionField) {
+    items.value[i].selectionFields.push('')
+  }
+  if (!items.value[i].selectionField) {
+    items.value[i].selectionFields = []
+  }
+  items.value[i].textField = false
+}
+
+const selectText = (i) => {
+  if (items.value[i].selectionFields.length > 0) {
+    items.value[i].selectionFields = []
+  }
+  items.value[i].selectionField = false
+}
+
+const deleteItem = (i) => {
+  items.value.splice(i, 1)
+}
+
+const saveNewItem = () => {
+  if (!Array.isArray(items.value)) {
+    items.value = []
+  }
+
+  if (newItem.value.trim() !== '') {
+    items.value.push({
+      answer: '',
+      title: newItem.value,
+      description: '',
+      selectionFields: [],
+      selectionField: false,
+      textField: true,
+    })
+    newItem.value = ''
+    show.value = false
+    form.value?.resetValidation()
+    saveState()
+  } else {
+    form.value?.validate()
+  }
+}
+
+const newSelection = (index) => {
+  items.value[index] = {
+    ...items.value[index],
+    selectionFields: [...items.value[index].selectionFields, ''],
+  }
+}
+
+const deleteSelection = (index) => {
+  items.value[index].selectionFields.splice(
+    items.value[index].selectionFields.length - 1,
+    1
+  )
+}
+
+const saveState = () => {
+  store.dispatch('setPreTest', items.value)
+}
+
+const getVariables = () => {
+  const data = test.value?.testStructure?.preTest || preTest.value || []
+  items.value = Array.isArray(data) ? [...data] : []
+}
+
+onMounted(() => {
+  getVariables()
+})
 </script>
 
 <style scoped>

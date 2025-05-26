@@ -1,42 +1,76 @@
 <template>
   <div v-if="answers">
-    <IntroAnalytics v-if="answers != null && intro" @goToCoops="goToCoops" />
-    <ShowInfo v-if="answers != null && !intro" title="Analytics">
-      <div slot="content">
-        <v-card flat class="task-container">
-          <v-row class="ma-0 pa-0">
-            <!-- Tasks List -->
-            <v-col class="ma-0 pa-0 task-list" cols="3">
-              <v-list dense class="list-scroll">
-                <v-subheader>Tasks</v-subheader>
-                <v-divider />
-                <v-list-item-group v-model="taskSelect" color="#fca326">
-                  <v-list-item v-for="(item, i) in testTasks" :key="i">
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item }}</v-list-item-title>
-                    </v-list-item-content>
+    <IntroAnalytics
+      v-if="answers != null && intro"
+      @go-to-coops="goToCoops"
+    />
+    <ShowInfo
+      v-if="answers != null && !intro"
+      title="Analytics"
+    >
+      <template #content>
+        <div>
+          <v-card
+            flat
+            class="task-container"
+          >
+            <v-row class="ma-0 pa-0">
+              <!-- Tasks List -->
+              <v-col
+                class="ma-0 pa-0"
+                cols="3"
+              >
+                <v-list
+                  v-model="taskSelect"
+                  density="compact"
+                  class="list-scroll"
+                  color="#fca326"
+                >
+                  <v-list-subheader class="py-3 text-black">
+                    Tasks
+                  </v-list-subheader>
+                  <v-divider />
+                  <v-list-item
+                    v-for="(item, i) in testTasks"
+                    :key="i"
+                  >
+                    <v-list-item-title>{{ item }}</v-list-item-title>
                   </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-col>
-            <v-divider vertical inset />
+                </v-list>
+              </v-col>
+              <v-divider
+                vertical
+                inset
+              />
 
-            <!-- Answer List -->
-            <v-col class="ma-0 pa-1 answer-list" cols="9">
-              <v-data-table :headers="dataHeaders" :items="taskAnswers">
-                <template v-slot:item.userDocId="{ item }">
-                  <span>{{ getCooperatorEmail(item.userDocId) }}</span>
-                </template>
-                <template v-slot:item.actions="{ item }">
-                  <v-btn color="orange" text @click="viewAnswers(item)">
-                    Show Answers
-                  </v-btn>
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row>
-        </v-card>
-      </div>
+              <!-- Answer List -->
+              <v-col
+                class="ma-0 pa-0"
+                cols="9"
+              >
+                <v-data-table
+                  :headers="dataHeaders"
+                  :items="taskAnswers"
+                  class="pa-0"
+                >
+                  <template #item.userDocId="{ item }">
+                    <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                  </template>
+                  <template #item.actions="{ item }">
+                    <v-btn
+                      color="orange"
+                      variant="text"
+                      @click="viewAnswers(item)"
+                    >
+                      Show Answers
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+      </template>
     </ShowInfo>
     <template>
       <v-dialog
@@ -46,9 +80,16 @@
         transition="dialog-bottom-transition"
       >
         <v-card>
-          <v-toolbar color="orange" dark>
-            <span class="headline">Answer and Observation</span>
-            <v-btn class="ml-auto" icon @click="showDialog = false">
+          <v-toolbar
+            color="orange"
+            class="pl-3"
+          >
+            <span class="text-h5">Answer and Observation</span>
+            <v-btn
+              class="ml-auto"
+              icon
+              @click="showDialog = false"
+            >
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
@@ -61,10 +102,14 @@
                 "
                 class="pt-8"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Variables</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Variables</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       v-for="(question, index) in testStructure.preTest"
@@ -86,9 +131,11 @@
                 <span
                   class="t-5 font-weight-bold text-h6"
                   style="color: #252525"
-                  >Task Time</span
+                >Task Time</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <p class="text-h6">
                       {{ formatTime(dialogItem.tasks[taskSelect].taskTime) }}
@@ -101,10 +148,14 @@
                 cols="12"
                 class="pt-8"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post-Test Answer</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Post-Test Answer</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span
                       v-for="(question, index) in testStructure.postTest"
@@ -127,10 +178,14 @@
                 "
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Answer</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Answer</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskAnswer }}
@@ -143,10 +198,14 @@
                 cols="12"
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Post Question</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Post Question</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <strong>{{
                       testStructure.userTasks[taskSelect].postQuestion
@@ -165,10 +224,14 @@
                 "
                 class="mt-4"
               >
-                <span class="cardsTitle ma-3" style="color: #252525"
-                  >Observation</span
+                <span
+                  class="cardsTitle ma-3"
+                  style="color: #252525"
+                >Observation</span>
+                <v-card
+                  border
+                  rounded="xl"
                 >
-                <v-card outlined rounded="xxl">
                   <div class="ma-6">
                     <span>
                       {{ dialogItem.tasks[taskSelect].taskObservations }}
@@ -182,9 +245,10 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Web Cam Record</span
-                  >
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >Web Cam Record</span>
                   <video
                     v-if="dialogItem"
                     class="my-3"
@@ -200,9 +264,10 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525"
-                    >Screen Record</span
-                  >
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >Screen Record</span>
                   <video
                     class="my-3"
                     :src="dialogItem.tasks[taskSelect].screenRecordURL"
@@ -217,14 +282,17 @@
                   cols="12"
                   class="d-flex align-center justify-center flex-column"
                 >
-                  <span class="cardsTitle ma-3" style="color: #252525">
+                  <span
+                    class="cardsTitle ma-3"
+                    style="color: #252525"
+                  >
                     Audio Record
                   </span>
                   <audio
                     class="mx-auto my-3"
                     :src="dialogItem.tasks[taskSelect].audioRecordURL"
                     controls
-                  ></audio>
+                  />
                 </v-col>
               </div>
             </v-row>
@@ -235,96 +303,85 @@
   </div>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo.vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
 
-export default {
-  components: {
-    ShowInfo,
+const store = useStore();
+
+const emit = defineEmits(['goToCoops']);
+
+const showDialog = ref(false);
+const dialogItem = ref(null);
+const search = ref('');
+const taskSelect = ref(0);
+const testTasks = ref([]);
+const taskAnswers = ref([]);
+const intro = ref(null);
+const dataHeaders = ref([
+  {
+    title: 'Email',
+    value: 'userDocId',
   },
-  data: () => ({
-    showDialog: false,
-    dialogItem: null,
-    search: '',
-    taskSelect: 0,
-    testTasks: [],
-    taskAnswers: [],
-    intro: null,
-    dataHeaders: [
-      {
-        text: 'Email',
-        value: 'userDocId',
-      },
-      {
-        text: 'Actions',
-        sortable: false,
-        value: 'actions',
-      },
-    ],
-  }),
-  computed: {
-    test() {
-      return this.$store.getters.test
-    },
-    testStructure() {
-      return this.$store.state.Tests.Test.testStructure
-    },
-    tasksAnswer() {
-      return this.$store.getters.testAnswerDocument
-    },
-    answers() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return []
+  {
+    title: 'Actions',
+    sortable: false,
+    value: 'actions',
+  },
+]);
+
+const test = computed(() => store.getters.test);
+const testStructure = computed(() => store.state.Tests.Test.testStructure);
+const tasksAnswer = computed(() => store.getters.testAnswerDocument);
+const answers = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return [];
+  }
+  return store.getters.testAnswerDocument.taskAnswers;
+});
+const loading = computed(() => !Object.values(answers.value).length);
+
+const formatTime = (time) => {
+  const seconds = Math.floor(time / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+};
+
+const goToCoops = () => {
+  emit('goToCoops');
+};
+
+const getCooperatorEmail = (userDocId) => {
+  let cooperatorEmail = null;
+  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
+    for (const element of test.value.cooperators) {
+      if (element && element.email && element.userDocId === userDocId) {
+        cooperatorEmail = element.email;
       }
-      return this.$store.getters.testAnswerDocument.taskAnswers
-    },
-    loading() {
-      return !Object.values(this.answers).length
-    },
-  },
-  created() {
-    let i = 0
-    this.testStructure.userTasks.forEach((task) => {
-      this.testTasks[i] = task.taskName
-      i++
-    })
-    let c = 0
-    for (const key in this.answers) {
-      this.taskAnswers[c] = this.answers[key]
-      c++
     }
-  },
-  methods: {
-    formatTime(time) {
-      var seconds = Math.floor(time / 1000)
+  }
+  return cooperatorEmail;
+};
 
-      var minutes = Math.floor(seconds / 60)
-      var remainingSeconds = seconds % 60
+const viewAnswers = (item) => {
+  dialogItem.value = item;
+  showDialog.value = true;
+};
 
-      return (
-        minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds
-      )
-    },
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-    getCooperatorEmail(userDocId) {
-      let cooperatorEmail = null
-      if (this.test.cooperators && Array.isArray(this.test.cooperators)) {
-        for (const element of this.test.cooperators) {
-          if (element && element.email && element.userDocId === userDocId) {
-            cooperatorEmail = element.email
-          }
-        }
-      }
-      return cooperatorEmail
-    },
-    viewAnswers(item) {
-      this.dialogItem = item
-      this.showDialog = true
-    },
-  },
-}
+onMounted(() => {
+  let i = 0;
+  testStructure.value.userTasks.forEach((task) => {
+    testTasks.value[i] = task.taskName;
+    i++;
+  });
+  let c = 0;
+  for (const key in answers.value) {
+    taskAnswers.value[c] = answers.value[key];
+    c++;
+  }
+});
 </script>
 
 <style scoped>
