@@ -3,22 +3,23 @@
     <!-- Leave Alert Dialog -->
     <LeaveAlert />
 
-    <v-tooltip v-if="visible" left>
-      <template v-slot:activator="{ on, attrs }">
+    <v-tooltip
+      v-if="visible"
+      location="left"
+    >
+      <template #activator="{ props }">
         <v-btn
-          large
-          dark
-          fab
+          size="large"
+          icon
           fixed
-          bottom
-          right
+          location="bottom right"
           color="#F9A826"
           :disabled="disabled"
-          v-bind="attrs"
+         
+          v-bind="props"
           @click="$emit('click')"
-          v-on="on"
         >
-          <v-icon large>
+          <v-icon size="large">
             mdi-content-save
           </v-icon>
         </v-btn>
@@ -51,11 +52,13 @@ export default {
     },
   },
 
+  emits: ['click'],
+
   beforeMount() {
     window.addEventListener('beforeunload', this.preventNav)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('beforeunload', this.preventNav)
   },
 

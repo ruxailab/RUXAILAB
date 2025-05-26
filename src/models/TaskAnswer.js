@@ -31,7 +31,7 @@ export default class TaskAnswer {
     this.cameraUrlEvaluator = cameraUrlEvaluator ?? ''
     this.total = total ?? 0
     this.submitted = submitted ?? false
-    this.userDocId = userDocId ?? ''
+    this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
   }
   static toTaskAnswer(data) {

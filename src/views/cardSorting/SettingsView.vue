@@ -1,9 +1,15 @@
 <template>
   <v-container>
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="80%">
+    <v-dialog
+      v-model="dialogDel"
+      width="80%"
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           {{ $t('alerts.deleteTest') }}
         </v-card-title>
 
@@ -14,12 +20,16 @@
         <v-card-actions>
           <v-spacer />
 
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogDel = false"
+          >
             {{ $t('buttons.cancel') }}
           </v-btn>
 
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loading"
             @click="deleteTest(object)"
           >
@@ -30,7 +40,10 @@
     </v-dialog>
 
     <!-- Create Template Dialog -->
-    <v-dialog v-model="tempDialog" max-width="80%">
+    <v-dialog
+      v-model="tempDialog"
+      max-width="80%"
+    >
       <v-card>
         <p class="pa-2">
           Create Template
@@ -38,8 +51,14 @@
 
         <v-divider />
 
-        <v-form ref="tempform" class="px-5">
-          <v-row justify="space-around" class="pa-2">
+        <v-form
+          ref="tempform"
+          class="px-5"
+        >
+          <v-row
+            justify="space-around"
+            class="pa-2"
+          >
             <v-col cols="12">
               <v-text-field
                 v-model="template.title"
@@ -47,17 +66,17 @@
                 label="Title"
                 :rules="titleRequired"
                 counter="200"
-                outlined
-                dense
-                @input="$emit('change')"
+                variant="outlined"
+                density="compact"
+                @update:model-value="$emit('change')"
               />
 
               <v-textarea
                 v-model="template.description"
                 label="Description"
-                outlined
-                dense
-                @input="$emit('change')"
+                variant="outlined"
+                density="compact"
+                @update:model-value="$emit('change')"
               />
 
               <v-checkbox
@@ -73,13 +92,16 @@
           <v-card-actions>
             <v-spacer />
 
-            <v-btn class="error" @click="closeTemplateDialog">
+            <v-btn
+              class="bg-error"
+              @click="closeTemplateDialog"
+            >
               {{ $t('buttons.cancel') }}
             </v-btn>
 
             <v-btn
               :disabled="hasTemplate ? true : false"
-              class="success"
+              class="bg-success"
               @click="createTemplate"
             >
               {{ $t('buttons.create') }}
@@ -90,64 +112,77 @@
     </v-dialog>
 
     <ShowInfo :title="$t('pages.settings.title')">
-      <div slot="content">
-        <v-card>
-          <v-col class="mb-1 pa-4 pb-1">
-            <p class="mb-0">
-              {{ $t('pages.settings.currentTest') }}
-            </p>
-          </v-col>
+      <template #content>
+        <div>
+          <v-card>
+            <v-col class="mb-1 pa-4 pb-1">
+              <p class="mb-0">
+                {{ $t('pages.settings.currentTest') }}
+              </p>
+            </v-col>
 
-          <v-divider />
+            <v-divider />
 
-          <FormTestDescription
-            v-if="object"
-            :test="object"
-            :lock="true"
-            @valForm="validate"
-            @change="change = true"
+            <FormTestDescription
+              v-if="object"
+              :test="object"
+              :lock="true"
+              @val-form="validate"
+              @change="change = true"
+            />
+
+            <v-row
+              justify="space-around"
+              class="mx-4 mb-3"
+            >
+              <v-spacer />
+
+              <v-btn
+                style="margin-right: 25px"
+                variant="outlined"
+                color="green"
+                :disabled="hasTemplate"
+                @click="tempDialog = true"
+              >
+                {{ $t('pages.settings.createTemplate') }}
+              </v-btn>
+
+              <v-btn
+                class="mr-5"
+                variant="outlined"
+                color="green"
+                @click="duplicateTest"
+              >
+                Duplicate test
+              </v-btn>
+            </v-row>
+
+            <v-divider class="my-3 mx-2" />
+
+            <v-row
+              justify="center"
+              class="mt-3"
+            >
+              <v-btn
+                color="#f26363"
+                class="text-white mb-4"
+                style="justify-self: center"
+                @click="dialogDel = true"
+              >
+                <v-icon start>
+                  mdi-trash-can-outline
+                </v-icon>
+                {{ $t('pages.settings.deleteTest') }}
+              </v-btn>
+            </v-row>
+          </v-card>
+
+          <ButtonSave
+            :visible="change"
+            @click="save"
           />
-
-          <v-row justify="space-around" class="mx-4 mb-3">
-            <v-spacer />
-
-            <v-btn
-              style="margin-right: 25px"
-              outlined
-              color="green"
-              :disabled="hasTemplate"
-              @click="tempDialog = true"
-            >
-              {{ $t('pages.settings.createTemplate') }}
-            </v-btn>
-
-            <v-btn class="mr-5" outlined color="green" @click="duplicateTest">
-              Duplicate test
-            </v-btn>
-          </v-row>
-
-          <v-divider class="my-3 mx-2" />
-
-          <v-row justify="center" class="mt-3">
-            <v-btn
-              color="#f26363"
-              class="white--text mb-4"
-              style="justify-self: center"
-              @click="dialogDel = true"
-            >
-              <v-icon left>
-                mdi-trash-can-outline
-              </v-icon>
-              {{ $t('pages.settings.deleteTest') }}
-            </v-btn>
-          </v-row>
-        </v-card>
-
-        <ButtonSave
-          :visible="change"
-          @click="save"
-        />
-      </div>
+        </div>
+      </template>
     </ShowInfo>
   </v-container>
 </template>
@@ -169,6 +204,15 @@ export default {
     ShowInfo,
     FormTestDescription,
   },
+
+  beforeRouteLeave(to, from, next) {
+    if (!this.$store.getters.localChanges) return next()
+    
+    this.$store.commit('SET_DIALOG_LEAVE', true)
+    this.$store.commit('SET_PATH_TO', to.name)
+  },
+  
+  emits: ['change'],
 
   data: () => ({
     template: {
@@ -291,13 +335,6 @@ export default {
       this.template.title = ''
       this.template.description = ''
     },
-  },
-
-  beforeRouteLeave(to, from, next) {
-    if (!this.$store.getters.localChanges) return next()
-
-    this.$store.commit('SET_DIALOG_LEAVE', true)
-    this.$store.commit('SET_PATH_TO', to.name)
   },
 }
 </script>

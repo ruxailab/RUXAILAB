@@ -1,211 +1,275 @@
 <template>
-  <!-- https://github.com/ueberdosis/tiptap -->
   <div>
-    <div v-if="editable" class="main-box">
-      <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
-        <div class="grey lighten-3 editor-bar">
-          <v-btn text small color="#FCA326" @click="commands.undo">
-            <v-icon color="grey darken-1">
-              mdi-undo
-            </v-icon>
-          </v-btn>
+    <!-- Editable toolbar only shows when editor is initialized -->
+    <div
+      v-if="editable && editor"
+      class="main-box"
+    >
+      <!-- Custom Toolbar -->
+      <div class="bg-grey-lighten-3 editor-bar">
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().undo().run()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-undo
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.redo">
-            <v-icon color="grey darken-1">
-              mdi-redo
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().redo().run()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-redo
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.bold">
-            <v-icon :color="isActive.bold() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-bold
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleBold().run()"
+        >
+          <v-icon :color="editor.isActive('bold') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-bold
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.italic">
-            <v-icon :color="isActive.italic() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-italic
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleItalic().run()"
+        >
+          <v-icon :color="editor.isActive('italic') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-italic
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.underline">
-            <v-icon :color="isActive.underline() ? '#FCA326' : 'grey darken-1'">
-              mdi-format-underline
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleUnderline().run()"
+        >
+          <v-icon :color="editor.isActive('underline') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-underline
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 1 })">
-            <v-icon
-              :color="isActive.heading({ level: 1 }) ? '#FCA326' : 'grey darken-1'"
-            >
-              mdi-format-header-1
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        >
+          <v-icon :color="editor.isActive('heading', { level: 1 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-1
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 2 })">
-            <v-icon
-              :color="isActive.heading({ level: 2 }) ? '#FCA326' : 'grey darken-1'"
-            >
-              mdi-format-header-2
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        >
+          <v-icon :color="editor.isActive('heading', { level: 2 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-2
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.heading({ level: 3 })">
-            <v-icon
-              :color="isActive.heading({ level: 3 }) ? '#FCA326' : 'grey darken-1'"
-            >
-              mdi-format-header-3
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+        >
+          <v-icon :color="editor.isActive('heading', { level: 3 }) ? '#FCA326' : 'grey darken-1'">
+            mdi-format-header-3
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.bullet_list">
-            <v-icon
-              :color="isActive.bullet_list() ? '#FCA326' : 'grey darken-1'"
-            >
-              mdi-format-list-bulleted
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleBulletList().run()"
+        >
+          <v-icon :color="editor.isActive('bulletList') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-list-bulleted
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="commands.ordered_list">
-            <v-icon
-              :color="isActive.ordered_list() ? '#FCA326' : 'grey darken-1'"
-            >
-              mdi-format-list-numbered
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="editor.chain().focus().toggleOrderedList().run()"
+        >
+          <v-icon :color="editor.isActive('orderedList') ? '#FCA326' : 'grey darken-1'">
+            mdi-format-list-numbered
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="loadImage(commands.image)">
-            <v-icon color="grey darken-1">
-              mdi-image
-            </v-icon>
-          </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="loadImage()"
+        >
+          <v-icon color="grey-darken-1">
+            mdi-image
+          </v-icon>
+        </v-btn>
 
-          <v-btn text small color="#FCA326" @click="setLink(commands.link)">
-            <v-icon :color="isActive.link() ? '#FCA326' : 'grey darken-1'">
-              mdi-link-variant-plus
-            </v-icon>
-          </v-btn>
-        </div>
-      </editor-menu-bar>
+        <v-btn
+          variant="text"
+          size="small"
+          color="#FCA326"
+          @click="setLink()"
+        >
+          <v-icon :color="editor.isActive('link') ? '#FCA326' : 'grey darken-1'">
+            mdi-link-variant-plus
+          </v-icon>
+        </v-btn>
+      </div>
 
       <v-divider />
-      <editor-content class="text-box pa-1" :editor="editor" />
+      <editor-content
+        class="text-box pa-1"
+        :editor="editor"
+      />
     </div>
-    <!-- Read only -->
-    <editor-content v-else style="outline-color: none !important;" :editor="editor" />
+
+    <!-- Read-only display when not editable -->
+    <editor-content
+      v-else-if="editor"
+      style="outline-color: none !important;"
+      :editor="editor"
+    />
   </div>
 </template>
 
-<script>
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-import {
-  Heading,
-  OrderedList,
-  BulletList,
-  ListItem,
-  Bold,
-  Italic,
-  Link,
-  Underline,
-  History,
-  Strike,
-  Image,
-} from 'tiptap-extensions'
-import i18n from '@/i18n'
+<script setup>
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import Underline from '@tiptap/extension-underline';
+import { Editor, EditorContent } from '@tiptap/vue-3';
+import { useI18n } from 'vue-i18n';
 
-export default {
-  components: {
-    EditorContent,
-    EditorMenuBar,
+const props = defineProps({
+  editable: {
+    type: Boolean,
+    default: true,
   },
-  props: {
-    editable: {
-      type: Boolean,
-      default: true,
-    },
-    text: {
-      type: String,
-      default: '',
-    },
+  text: {
+    type: String,
+    default: '',
   },
-  data() {
-    return {
-      editor: new Editor({
-        extensions: [
-          new BulletList(),
-          new Heading({ levels: [1, 2, 3] }),
-          new ListItem(),
-          new OrderedList(),
-          new Link(),
-          new Bold(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new History(),
-          new Image(),
-        ],
-        content: '',
-        editable: this.editable,
-        onUpdate: ({ getJSON, getHTML }) => {
-          this.json = getJSON()
-          this.html = getHTML()
-        },
+});
+
+const emit = defineEmits(['updateJson', 'updateHtml', 'mounted']);
+
+const { t } = useI18n();
+
+const editor = ref(null);
+const json = ref(null);
+const html = ref(null);
+
+onMounted(() => {
+  editor.value = new Editor({
+    content: props.text || '',
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
       }),
-      json: null,
-      html: null,
+      Link.configure({
+        openOnClick: false,
+      }),
+      Image,
+      Underline,
+    ],
+    editable: props.editable,
+    onUpdate: ({ editor }) => {
+      json.value = editor.getJSON();
+      html.value = editor.getHTML();
+    },
+  });
+  emit('mounted');
+});
+
+onBeforeUnmount(() => {
+  if (editor.value) {
+    editor.value.destroy();
+  }
+});
+
+watch(json, (newJson) => {
+  emit('updateJson', newJson);
+});
+
+watch(html, (newHtml) => {
+  emit('updateHtml', newHtml);
+});
+
+watch(
+  () => props.text,
+  (newText) => {
+    editor.value.commands.setContent(newText);
+  }
+);
+
+const loadImage = () => {
+  const url = prompt(t('alerts.imageURL'));
+  if (url) {
+    editor.value.chain().focus().setImage({ src: url }).run();
+  }
+};
+
+const setLink = () => {
+  let link = prompt('Link: ');
+  if (link) {
+    if (!link.startsWith('http://') && !link.startsWith('https://')) {
+      link = 'http://' + link;
     }
-  },
-  watch: {
-    json() {
-      this.$emit('updateJson', this.json)
-    },
-    html() {
-      this.$emit('updateHtml', this.html)
-    },
-    text() {
-      this.editor.setContent(this.text)
-    },
-  },
-  beforeDestroy() {
-    this.editor.destroy()
-  },
-  mounted() {
-    this.$emit('mounted')
-    if(this.text.length > 0) this.editor.setContent(this.text)
-  },
-  methods: {
-    loadImage(command) {
-      const url = prompt(i18n.t('alerts.imageURL'))
-      if (url)
-        command({
-          src: url,
-        })
-    },
-    getJson() {
-      return this.json
-    },
-    getHtml() {
-      return this.html
-    },
-    setLink(command) {
-      let link = prompt('Link: ')
+    editor.value.chain().focus().setLink({ href: link }).run();
+  }
+};
 
-      if (link) {
-        if (link.indexOf('http://') !== 0 && link.indexOf('https://') !== 0) {
-          link = 'http://'.concat(link)
-        }
+const getJson = () => {
+  return json.value;
+};
 
-        command({ href: link })
-      }
-    },
-    setContent(text) {
-      this.editor.setContent(text)
-    },
-    resetContent() {
-      this.editor.clearContent()
-    },
+const getHtml = () => {
+  return html.value;
+};
+
+const setContent = (text) => {
+  if (editor.value) {
+      editor.value.commands.setContent(text);
+    }
+};
+
+const resetContent = () => {
+  editor.value.commands.clearContent();
+};
+
+defineExpose({
+  setContent,
+  getHtml: () => {
+    return editor.value?.getHTML() || '';
   },
-}
+  resetContent,
+  getJson,
+});
 </script>
 
 <style scoped>
@@ -220,10 +284,6 @@ export default {
   caret-color: #fca326;
   line-height: 1.3em;
   outline-color: none !important;
-
-  /* overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word; */
 }
 .main-box {
   border: 1px solid #3f3d56;
