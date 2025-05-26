@@ -25,6 +25,8 @@
           variant="outlined"
           density="compact"
         />
+        <v-text-field v-model="localTask.taskLink" label="Link" variant="outlined"
+          density="compact" />
       </v-col>
       <v-col cols="5">
         <v-radio-group
@@ -45,6 +47,7 @@
             :label="$t('switches.postTest')"
             value="form"
           />
+          <v-radio :label="$t('switches.postForm')" value="postForm" />
         </v-radio-group>
         <v-text-field
           v-if="localTask.taskType === 'form'"
@@ -53,6 +56,8 @@
           variant="outlined"
           density="compact"
         />
+        <v-text-field v-if="task.taskType === 'postForm'" v-model="localTask.postForm" :label="$t('switches.postForm')"
+          variant="outlined" density="compact" :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
         <v-row align="center">
           {{ $t('switches.screenRecord') }}
           <v-switch

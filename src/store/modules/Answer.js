@@ -80,6 +80,7 @@ export default {
               postTestAnswer: rootState.test.testStructure.postTest || [],
               preTestCompleted: false,
               consentCompleted: false,
+              fullName: '',
               postTestCompleted: false,
               tasks: (() => {
                 const tasks = {};
@@ -91,7 +92,7 @@ export default {
                     taskAnswer: '',
                     taskObservations: '',
                     taskTime: null,
-                    completed: false,
+                    completed: null,
                     audioRecordURL: '',
                     screenRecordURL: '',
                     webcamRecordURL: '',

@@ -151,7 +151,7 @@ const sendManager = (id) => {
 };
 
 const validate = () => {
-  if (form.value?.valida()) {
+  if (form.value?.validate()) {
     submit();
   }
 };

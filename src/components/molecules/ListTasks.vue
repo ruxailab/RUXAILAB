@@ -75,6 +75,9 @@
       </template>
       <!-- Edit and Delete Icons -->
       <template #item.actions="{ item }">
+        <v-icon size="small" class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
         <v-icon
           size="small"
           @click="deleteItem(item)"
@@ -111,7 +114,9 @@ const task = ref({
   taskName: '',
   taskDescription: null,
   taskTip: null,
+  taskLink: null,
   postQuestion: null,
+  postForm: null,
   taskType: null,
   hasAudioRecord: false,
   hasScreenRecord: false,
@@ -136,7 +141,7 @@ const headers = ref([
 ]);
 
 const editItem = (item) => {
-  editedIndex.value = props.tasks.indexOf(item);
+  editedIndex.value = allTasks.value.indexOf(item);
   task.value = { ...item };
   dialog.value = true;
 };
@@ -151,6 +156,7 @@ const deleteItem = (item) => {
 const addTask = (newTask) => {
   if (editedIndex.value > -1) {
     Object.assign(props.tasks[editedIndex.value], newTask);
+    editedIndex.value = -1
     emit('change');
   } else {
     store.dispatch('addItemsTasks', newTask).then(() => {});
