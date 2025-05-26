@@ -91,7 +91,12 @@
       </v-card>
     </v-dialog>
 
-    <v-container class="ma-0 pa-0" width="auto" height="100vh" style="background-color: #e8eaf2;">
+    <v-container
+      class="ma-0 pa-0"
+      width="auto"
+      height="100vh"
+      style="background-color: #e8eaf2;"
+    >
       <!-- Start Screen -->
       <v-row
         v-if="test && start"
@@ -314,12 +319,12 @@
                 v-if="mini"
                 color="white"
                 icon="mdi-chevron-right"
-              ></v-icon>
+              />
               <v-icon
                 v-else
                 color="white"
                 icon="mdi-chevron-left"
-              ></v-icon>
+              />
             </v-btn>
           </div>
         </v-navigation-drawer>
@@ -358,8 +363,8 @@
                   class="mx-auto py-0"
                 >
                   <div
-                    v-html="test.testStructure.consent"
                     class="rich-text mb-6"
+                    v-html="test.testStructure.consent"
                   />
                 </v-col>
               </v-row>
@@ -447,7 +452,7 @@
                   class="mx-auto py-0"
                 >
                   <span class="cardsTitle">{{ item.title }}</span>
-                  <br />
+                  <br>
                   <span
                     v-if="item.description"
                     class="cardsSubtitle"
@@ -476,7 +481,10 @@
                   </v-radio-group>
                 </v-col>
               </v-row>
-              <v-row justify="center" class="pb-4">
+              <v-row
+                justify="center"
+                class="pb-4"
+              >
                 <v-col class="mx-10">
                   <v-btn
                     block
@@ -724,7 +732,7 @@
                   class="mx-auto py-0"
                 >
                   <span class="cardsTitle">{{ item.title }}</span>
-                  <br />
+                  <br>
                   <span
                     v-if="item.description"
                     class="cardsSubtitle"
@@ -753,7 +761,10 @@
                   </v-radio-group>
                 </v-col>
               </v-row>
-              <v-row justify="center" class="pb-4">
+              <v-row
+                justify="center"
+                class="pb-4"
+              >
                 <v-col class="mx-10">
                   <v-btn
                     block
@@ -784,7 +795,7 @@
                   class="mt-3"
                 >
                   <span class="cardsTitle">{{ $t('finishTest.finalMessage') }}!</span>
-                  <br />
+                  <br>
                   <span class="cardsSubtitle">{{ $t('finishTest.congratulations') }}</span>
                   <v-row
                     justify="center"
@@ -795,7 +806,7 @@
                         draggable="false"
                         src="../../../public/finalMessage.svg"
                         alt="Final test svg"
-                      />
+                      >
                     </v-col>
                     <v-col
                       cols="4"

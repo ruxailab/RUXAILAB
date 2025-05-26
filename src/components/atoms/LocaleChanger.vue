@@ -45,9 +45,11 @@
             link
             @click="updateLang(item.value)"
           >
-            <v-list-item-title class="hindi-fix">{{
-              item.label
-            }}</v-list-item-title>
+            <v-list-item-title class="hindi-fix">
+              {{
+                item.label
+              }}
+            </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

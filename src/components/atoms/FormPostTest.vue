@@ -16,8 +16,11 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-form>
-                <v-text-field v-model="items[i].description" :label="$t('UserTestTable.inputs.description')"
-                  @click:append="log" />
+                <v-text-field
+                  v-model="items[i].description"
+                  :label="$t('UserTestTable.inputs.description')"
+                  @click:append="log"
+                />
                 <div>
                   <v-text-field
                     v-for="(field, index) in items[i].selectionFields"
@@ -35,12 +38,17 @@
                       </v-icon>
                     </template>
                   </v-text-field>
-                  <div v-if="
-                    items[i].selectionField &&
-                    items[i].selectionFields.length === 0
-                  ">
+                  <div
+                    v-if="
+                      items[i].selectionField &&
+                        items[i].selectionFields.length === 0
+                    "
+                  >
                     <p>
-                      Add first option<v-icon class="ml-1" @click="newSelection(i)">
+                      Add first option<v-icon
+                        class="ml-1"
+                        @click="newSelection(i)"
+                      >
                         mdi-plus
                       </v-icon>
                     </p>

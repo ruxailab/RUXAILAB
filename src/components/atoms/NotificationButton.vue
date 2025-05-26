@@ -26,7 +26,11 @@
         </v-badge>
       </template>
 
-      <v-card class="pa-0" max-width="500" style="overflow: hidden;">
+      <v-card
+        class="pa-0"
+        max-width="500"
+        style="overflow: hidden;"
+      >
         <!-- Fixed header -->
         <div style="background: orange; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
           <span style="font-weight: bold; font-size: 16px; color: white;">
@@ -46,8 +50,14 @@
 
         <!-- Notifications content -->
         <v-card-text style="padding: 0;">
-          <div v-if="user.notifications.length > 0" style="max-height: 50vh; overflow-y: auto;">
-            <v-list density="compact" class="py-1">
+          <div
+            v-if="user.notifications.length > 0"
+            style="max-height: 50vh; overflow-y: auto;"
+          >
+            <v-list
+              density="compact"
+              class="py-1"
+            >
               <v-list-item
                 v-for="(notification, i) in user.notifications"
                 :key="i"
@@ -55,7 +65,10 @@
                 :disabled="notification.read"
                 @click="goToNotificationRedirect(notification)"
               >
-                <template #prepend v-if="!notification.read">
+                <template
+                  v-if="!notification.read"
+                  #prepend
+                >
                   <v-chip
                     size="x-small"
                     color="success"
@@ -78,8 +91,15 @@
           </div>
 
           <!-- No notifications -->
-          <div v-else class="text-center py-6">
-            <v-icon size="36" class="mb-2" color="grey">
+          <div
+            v-else
+            class="text-center py-6"
+          >
+            <v-icon
+              size="36"
+              class="mb-2"
+              color="grey"
+            >
               mdi-bell-off
             </v-icon>
             <div class="text-grey text-subtitle-2">
