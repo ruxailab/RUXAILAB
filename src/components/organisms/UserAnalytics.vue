@@ -54,7 +54,7 @@
                   class="pa-0"
                 >
                   <template #item.userDocId="{ item }">
-                    <span>{{ getCooperatorEmail(item.userDocId) }}</span>
+                    <span>{{ item.fullName }}</span>
                   </template>
                   <template #item.actions="{ item }">
                     <v-btn
@@ -308,7 +308,7 @@ const taskAnswers = ref([]);
 const intro = ref(null);
 const dataHeaders = ref([
   {
-    title: 'Email',
+    title: 'Full Name',
     value: 'userDocId',
   },
   {
@@ -338,18 +338,6 @@ const formatTime = (time) => {
 
 const goToCoops = () => {
   emit('goToCoops');
-};
-
-const getCooperatorEmail = (userDocId) => {
-  let cooperatorEmail = null;
-  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
-    for (const element of test.value.cooperators) {
-      if (element && element.email && element.userDocId === userDocId) {
-        cooperatorEmail = element.email;
-      }
-    }
-  }
-  return cooperatorEmail;
 };
 
 const viewAnswers = (item) => {
