@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom'
-import { fireEvent, render, screen } from '../test-utils'
+import { fireEvent, screen, render, renderWithMockStore } from '../test-utils'
+
 import SignInView from '@/views/public/SignInView.vue'
+
+jest.mock('firebase/auth', () => ({
+  getAuth: jest.fn(() => ({})),
+  signInWithEmailAndPassword: jest.fn(),
+}))
 import { signInWithEmailAndPassword } from 'firebase/auth'
 
 global.console.error = jest.fn()
@@ -10,7 +16,7 @@ describe('SignIn', () => {
 
   it('should display email input', async () => {
     render(SignInView)
-    expect(screen.getByLabelText(/E-mail/i, { selector: 'input' })).toBeInTheDocument()
+    expect(screen.getByLabelText(/Email/i, { selector: 'input' })).toBeInTheDocument()
   })
   it('should display password input', async () => {
     render(SignInView)
@@ -19,24 +25,28 @@ describe('SignIn', () => {
 
   it('should display sign-in button', async () => {
     render(SignInView)
-    expect(screen.getByRole('button', { name: /Sign-in/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Sign\s+in/i })).toBeInTheDocument()
   })
 
   describe('when user type valid credentials', () => {
     it('should sign in', async () => {
-      render(SignInView)
+      const { signin } = renderWithMockStore(SignInView)
 
-      signInWithEmailAndPassword.mockImplementation(() => {
-        return Promise.resolve()
-      })
+      const emailInput = screen.getByLabelText(/^Email$/i)
+      await fireEvent.update(emailInput, 'test@example.com')
 
-      const emailInput = screen.getByLabelText(/E-mail/i)
-      await fireEvent.update(emailInput, 'valid-email')
-      const passwordInput = screen.getByLabelText(/Password/i, { selector: 'input' })
-      await fireEvent.update(passwordInput, 'valid-password')
-      const submitButton = screen.getByRole('button', { name: /Sign-in/i })
+      const passwordInput = screen.getByLabelText(/^Password$/i)
+      await fireEvent.update(passwordInput, 'mypassword')
+
+      const submitButton = screen.getByTestId('sign-in-button')
       await fireEvent.click(submitButton)
-      expect(signInWithEmailAndPassword).toHaveBeenCalled()
+
+      expect(signin).toHaveBeenCalled()
+      expect(signin).toHaveBeenCalledWith(expect.anything(), {
+        email: 'test@example.com',
+        password: 'mypassword',
+      })
     })
+
   })
 })

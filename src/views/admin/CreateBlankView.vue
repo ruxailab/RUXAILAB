@@ -8,9 +8,17 @@
       </v-row>
     </v-col>
 
-    <v-col cols="12" class="mt-6">
+    <v-col
+      cols="12"
+      class="mt-6"
+    >
       <v-row>
-        <v-col cols="12" md="4" sm="10" class="card">
+        <v-col
+          cols="12"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/cardSorting.png')"
             title="Card Sorting"
@@ -21,7 +29,12 @@
           />
         </v-col>
 
-        <v-col cols="10" md="4" sm="10" class="card">
+        <v-col
+          cols="10"
+          md="4"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
             :title="$t('Createblank.testType_1.testTitle')"
@@ -31,7 +44,12 @@
             @click="setTestType"
           />
         </v-col>
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col
+          cols="12"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/user.png')"
             :title="$t('Createblank.testType_2.testTitle')"
@@ -41,7 +59,12 @@
             @click="setTestType"
           />
         </v-col>
-        <v-col cols="12" md="5" sm="10" class="card">
+        <v-col
+          cols="12"
+          md="5"
+          sm="10"
+          class="card"
+        >
           <CardTypeTest
             :img="require('../../../public/user.png')"
             title="Accessibility Test"
@@ -51,46 +74,34 @@
             @click="setTestType"
           />
         </v-col>
-
       </v-row>
     </v-col>
 
-    <!-- Move the dialog outside the grid structure -->
     <CreateTestNameDialog
       :is-open="nameDialog"
       :test-type="testType"
       :heading="$t('TestDialog.heading')"
-      :subHeading="$t('TestDialog.sub-heading')"
-      :testName="$t('TestDialog.test-name')"
-      :testDescription="$t('TestDialog.test-description')"
-      :testLabel="$t('TestDialog.test-label')"
+      :sub-heading="$t('TestDialog.sub-heading')"
+      :test-name="$t('TestDialog.test-name')"
+      :test-description="$t('TestDialog.test-description')"
+      :test-label="$t('TestDialog.test-label')"
       @close="nameDialog = false"
     />
   </div>
 </template>
 
-<script>
-import CardTypeTest from '@/components/atoms/CardTypeTest'
-import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue'
+<script setup>
+import { ref } from 'vue';
+import CardTypeTest from '@/components/atoms/CardTypeTest';
+import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue';
 
-export default {
-  components: {
-    CardTypeTest,
-    CreateTestNameDialog,
-  },
+const nameDialog = ref(false);
+const testType = ref('');
 
-  data: () => ({
-    nameDialog: false,
-    testType: '',
-  }),
-
-  methods: {
-    setTestType(type) {
-      this.testType = type
-      this.nameDialog = true
-    },
-  },
-}
+const setTestType = (type) => {
+  testType.value = type;
+  nameDialog.value = true;
+};
 </script>
 
 <style scoped>
@@ -112,7 +123,7 @@ export default {
 
 @media (max-width: 600px) {
   .titles {
-    font-size: 28px; /* Adjust font size for smaller screens */
+    font-size: 28px;
   }
 }
 
@@ -122,13 +133,13 @@ export default {
   }
 
   .titles {
-    font-size: 32px; /* Adjust font size for medium screens */
+    font-size: 32px;
   }
 }
 
 @media (min-width: 1160px) {
   .titles {
-    font-size: 38px; /* Adjust font size for larger screens */
+    font-size: 38px;
   }
 }
 </style>

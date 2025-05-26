@@ -11,7 +11,9 @@
 
     <h2>2. How do I get started with the Project?</h2>
     <p>
-      To get started, visit our https://github.com/ruxailab/RUXAILAB to download the source code. Check out the documentation for installation instructions and examples. You can also visit our <router-link to="/help">Help</router-link> page for more resources.
+      To get started, visit our https://github.com/ruxailab/RUXAILAB to download the source code. Check out the documentation for installation instructions and examples. You can also visit our <router-link to="/help">
+        Help
+      </router-link> page for more resources.
     </p>
 
     <h2>3. Can I contribute to the Project?</h2>
@@ -36,7 +38,9 @@
 
     <h2>7. How is my data handled?</h2>
     <p>
-      We take your privacy seriously. Please see our <router-link to="/privacy-policy">Privacy Policy</router-link> for details on how we collect and use your information.
+      We take your privacy seriously. Please see our <router-link to="/privacy-policy">
+        Privacy Policy
+      </router-link> for details on how we collect and use your information.
     </p>
 
     <h2>8. Who maintains the Project?</h2>

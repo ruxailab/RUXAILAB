@@ -10,21 +10,15 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import HeuristicsTestAnswer from '@/components/organisms/HeuristicsTestAnswer.vue'
 import UserTestAnswer from '@/components/organisms/UserTestAnswer.vue'
-export default {
-  components: {
-    HeuristicsTestAnswer,
-    UserTestAnswer,
-  },
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-  computed: {
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument|| {};
-    },
-  },
-}
+const store = useStore()
+
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument || {})
 </script>
 
 <style></style>

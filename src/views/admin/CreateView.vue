@@ -1,19 +1,47 @@
 <template>
-  <div class="page-container">
+  <div style="height: 93vh; background-color: #f9f5f0;">
     <v-col cols="12" />
-    <span class="Title mb-14 mt-8" style="display: flex; justify-content: center;">
+    <span
+      class="Title mb-14 mt-8"
+      style="display: flex; justify-content: center;"
+    >
       {{ $t('pages.createTest.title') }}
     </span>
 
-    <v-row justify="center" class="responsive-row">
-      <v-row style="max-width: 90%" justify="center">
-        <v-col cols="12" md="6">
-          <v-card hover class="card" :ripple="false" @click="$router.push('/choose')">
+    <v-row
+      justify="center"
+      style="padding: 0px 30px;"
+    >
+      <v-row
+        style="max-width: 90%"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card
+            hover
+            class="card"
+            :ripple="false"
+            @click="$router.push('/choose')"
+          >
             <v-row align="center">
-              <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200" />
+              <v-col
+                cols="12"
+                md="5"
+              >
+                <v-img
+                  cover
+                  :src="require('@/assets/createView/blankCanvas.svg')"
+                  max-height="200"
+                />
               </v-col>
-              <v-col cols="12" md="6" class="card-text">
+              <v-col
+                cols="12"
+                md="6"
+                class="card-text"
+              >
                 <div class="card-title">
                   {{ $t('pages.createTest.blankTitle') }}
                 </div>
@@ -24,13 +52,32 @@
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12" md="6">
-          <v-card hover class="card" :ripple="false" @click="pushToFromTemplate()">
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card
+            hover
+            class="card"
+            :ripple="false"
+            @click="pushToFromTemplate"
+          >
             <v-row align="center">
-              <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200" />
+              <v-col
+                cols="12"
+                md="5"
+              >
+                <v-img
+                  cover
+                  :src="require('@/assets/createView/createFromTemplate.svg')"
+                  max-height="200"
+                />
               </v-col>
-              <v-col cols="12" md="6" class="card-text-box">
+              <v-col
+                cols="12"
+                md="6"
+                class="card-text-box"
+              >
                 <div class="card-title">
                   {{ $t('pages.createTest.templateTitle') }}
                 </div>
@@ -46,71 +93,71 @@
   </div>
 </template>
 
-<script>
-import TestAdmin from '@/models/TestAdmin'
-import Test from '@/models/Test'
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import TestAdmin from '@/models/TestAdmin';
+import Test from '@/models/Test';
 
-export default {
-  data: () => ({
-    dialog: false,
-    object: {},
-    test: {
-      title: '',
-      description: '',
-      type: '',
-    },
-    testID: null,
-  }),
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-  },
-  watch: {
-    dialog() {
-      this.test = {
-        title: '',
-        description: '',
-        type: '',
-      }
-      this.object = {}
+const store = useStore();
+const router = useRouter();
 
-      if (!this.dialog) {
-        this.$refs.form.resetVal()
-        this.dialog = false
-      }
-    },
-  },
-  methods: {
-    pushToFromTemplate() {
-      this.$router.push('/fromtemplate')
-    },
-    async submit() {
-      const test = new Test({
-        ...this.test,
-        id: null,
-        testAdmin: new TestAdmin({
-          userDocId: this.user.id,
-          email: this.user.email,
-        }),
-        creationDate: Date.now(),
-        updateDate: Date.now(),
-      })
+const dialog = ref(false);
+const object = ref({});
+const test = ref({
+  title: '',
+  description: '',
+  type: '',
+});
+const testID = ref(null);
+const form = ref(null); // Reference to the form component
 
-      const testId = await this.$store.dispatch('createNewTest', test)
+const user = computed(() => store.getters.user);
 
-      this.sendManager(testId)
-    },
-    sendManager(id) {
-      this.$router.push(`/managerview/${id}`)
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.submit()
-      }
-    },
-  },
-}
+watch(dialog, (newVal) => {
+  test.value = {
+    title: '',
+    description: '',
+    type: '',
+  };
+  object.value = {};
+
+  if (!newVal && form.value) {
+    form.value.resetVal();
+    dialog.value = false;
+  }
+});
+
+const pushToFromTemplate = () => {
+  router.push('/fromtemplate');
+};
+
+const submit = async () => {
+  const newTest = new Test({
+    ...test.value,
+    id: null,
+    testAdmin: new TestAdmin({
+      userDocId: user.value.id,
+      email: user.value.email,
+    }),
+    creationDate: Date.now(),
+    updateDate: Date.now(),
+  });
+
+  const testId = await store.dispatch('createNewTest', newTest);
+  sendManager(testId);
+};
+
+const sendManager = (id) => {
+  router.push(`/managerview/${id}`);
+};
+
+const validate = () => {
+  if (form.value?.validate()) {
+    submit();
+  }
+};
 </script>
 
 <style scoped>
@@ -175,34 +222,6 @@ dialog-title {
 
   .card {
     height: auto;
-  }
-}
-
-/* Responsividade para dispositivos móveis (até 600px) */
-@media screen and (max-width: 600px) {
-  .page-container {
-    background-color: #ffffff;
-  }
-
-  .responsive-row {
-    padding: 0px 10px !important;
-  }
-
-  .Title {
-    font-size: 28px;
-  }
-
-  .card {
-    padding: 20px;
-    height: auto;
-  }
-
-  .card-title {
-    font-size: 20px;
-  }
-
-  .card-text-box {
-    margin: 10px 0 0 0;
   }
 }
 </style>

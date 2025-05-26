@@ -2,28 +2,32 @@
   <v-main class="pt-4">
     <Snackbar />
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="600" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           {{ $t('alerts.deleteUser') }}
         </v-card-title>
-
         <v-card-text>{{ dialogText }}</v-card-text>
-
         <v-divider />
-
         <v-card-actions>
           <v-spacer />
           <v-btn
-            class="grey lighten-3"
-            text
-            @click=";(dialogDel = false), (userClicked = null)"
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="closeDelete"
           >
             {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
-            text
+            class="bg-red text-white ml-1"
+            variant="text"
             @click="deleteUser(userClicked)"
           >
             {{ $t('buttons.delete') }}
@@ -35,7 +39,11 @@
     <h1 style="margin-left: 8%; font-weight: 300">
       {{ $t('PROFILE.superAdmin') }}
     </h1>
-    <v-row align="center" justify="center">
+
+    <v-row
+      align="center"
+      justify="center"
+    >
       <v-col cols="10">
         <v-tabs v-model="tab">
           <v-tab>{{ $t('titles.users') }}</v-tab>
@@ -45,9 +53,9 @@
       </v-col>
 
       <v-col cols="10">
-        <v-tabs-items v-model="tab">
+        <v-window v-model="tab">
           <!-- Users tab -->
-          <v-tab-item>
+          <v-window-item>
             <v-data-table
               :search="search"
               :headers="usersHeaders"
@@ -55,48 +63,55 @@
               class="elevation-1"
               :loading="loading"
             >
-              <template v-slot:top>
-                <v-toolbar flat color="white">
+              <template #top>
+                <v-toolbar
+                  flat
+                  color="white"
+                >
                   <v-toolbar-title>{{ $t('titles.users') }}</v-toolbar-title>
                 </v-toolbar>
                 <v-text-field
                   v-model="search"
-                  outlined
+                  variant="outlined"
                   prepend-inner-icon="mdi-magnify"
                   class="mx-3"
-                  dense
+                  density="compact"
                   :label="$t('Dashboard.search')"
                 />
               </template>
-              <template v-slot:[`item.accessLevel`]="{ item }">
+              <template #[`item.accessLevel`]="{ item }">
                 <v-chip
                   :color="getAccessLevelColor(item.accessLevel)"
-                  text-color="white"
-                  small
+                  size="small"
                 >
                   {{ level(item.accessLevel) }}
                 </v-chip>
               </template>
-
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-icon small class="mr-2" @click="editUser(item)">
+              <template #[`item.actions`]="{ item }">
+                <v-icon
+                  size="small"
+                  class="mr-2"
+                  @click="editUser(item)"
+                >
                   mdi-pencil
                 </v-icon>
-
                 <v-icon
                   color="red"
-                  small
-                  click
-                  @click=";(dialogDel = true), (userClicked = item)"
+                  size="small"
+                  @click="confirmDelete(item)"
                 >
                   mdi-delete
                 </v-icon>
               </template>
             </v-data-table>
-            <v-dialog v-model="dialog" max-width="500px">
+
+            <v-dialog
+              v-model="dialog"
+              max-width="500px"
+            >
               <v-card>
                 <v-card-title>
-                  <span class="headline">{{ $t('PROFILE.editProfile') }}</span>
+                  <span class="text-h5">{{ $t('PROFILE.editProfile') }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
@@ -104,47 +119,56 @@
                       <v-col cols="12">
                         <v-text-field
                           label="Id"
-                          :value="editedUser.id"
+                          :model-value="editedUser.id"
                           disabled
-                          outlined
+                          variant="outlined"
                         />
                       </v-col>
                       <v-col cols="12">
                         <v-text-field
                           label="E-mail"
-                          :value="editedUser.email"
+                          :model-value="editedUser.email"
                           disabled
-                          outlined
+                          variant="outlined"
                         />
                       </v-col>
                       <v-col cols="12">
                         <p>Access Level</p>
-                        <v-overflow-btn
+                        <v-select
                           v-model="editedUser.accessLevel"
                           class="my-2"
                           :items="accessLevels"
                           item-value="level"
+                          item-title="text"
+                          variant="outlined"
                         />
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
-
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn color="blue darken-1" text @click="close">
+                  <v-btn
+                    color="blue-darken-1"
+                    variant="text"
+                    @click="close"
+                  >
                     Cancel
                   </v-btn>
-                  <v-btn color="blue darken-1" text @click="save(editedUser)">
+                  <v-btn
+                    color="blue-darken-1"
+                    variant="text"
+                    @click="save(editedUser)"
+                  >
                     Save
                   </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
-          </v-tab-item>
+          </v-window-item>
 
           <!-- Tests Tab -->
-          <v-tab-item>
+          <v-window-item>
             <v-data-table
               :search="search"
               :headers="testsHeaders"
@@ -152,184 +176,164 @@
               class="elevation-1"
               :loading="loading"
             >
-              <template v-slot:top>
-                <v-toolbar flat color="white">
+              <template #top>
+                <v-toolbar
+                  flat
+                  color="white"
+                >
                   <v-toolbar-title>Tests</v-toolbar-title>
                 </v-toolbar>
                 <v-text-field
                   v-model="search"
-                  outlined
+                  variant="outlined"
                   prepend-inner-icon="mdi-magnify"
                   class="mx-3"
-                  dense
+                  density="compact"
                   label="Search"
                 />
               </template>
-
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-icon small class="mr-2" @click="openManager(item)">
+              <template #[`item.actions`]="{ item }">
+                <v-icon
+                  size="small"
+                  class="mr-2"
+                  @click="openManager(item)"
+                >
                   mdi-eye
                 </v-icon>
               </template>
-
-              <template v-slot:[`item.creationDate`]="{ item }">
+              <template #[`item.creationDate`]="{ item }">
                 {{ new Date(item.creationDate).toLocaleString() }}
               </template>
             </v-data-table>
-          </v-tab-item>
-        </v-tabs-items>
+          </v-window-item>
+        </v-window>
       </v-col>
     </v-row>
     <v-card />
   </v-main>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import Snackbar from '@/components/atoms/Snackbar.vue'
+import { useI18n } from 'vue-i18n'
 
-export default {
-  components: {
-    Snackbar,
-  },
-  data: () => ({
-    dialog: false,
-    dialogDel: false,
-    userClicked: null,
-    search: '',
-    editedIndex: -1,
-    editedUser: {
-      uid: '',
-      email: '',
-      accessLevel: 0,
-    },
-    defaultUser: {
-      uid: '',
-      email: '',
-      accessLevel: 0,
-    },
-    tab: 0,
-  }),
-  computed: {
-    users() {
-      return this.$store.getters.users ?? []
-    },
-    tests() {
-      return this.$store.getters.tests ?? []
-    },
-    loading() {
-      return this.$store.getters.loading
-    },
-    dialogText() {
-      return `${this.$t('alerts.deleteUser')} ${
-        this.userClicked !== null ? this.userClicked.email : ''
-      }`
-    },
-    usersHeaders() {
-      return [
-        {
-          text: this.$t('titles.id'),
-          align: 'start',
-          value: 'id',
-        },
-        { text: this.$t('SIGNIN.email'), value: 'email', align: 'center' },
-        { text: this.$t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
-        { text: this.$t('titles.actions'), value: 'actions', align: 'end', sortable: false },
-      ]
-    },
-    testsHeaders() {
-      return [
-        {
-          text: this.$t('common.title'),
-          align: 'start',
-          value: 'testTitle',
-        },
-        { text: this.$t('pages.listTests.createdBy'), value: 'testAdmin.email' },
-        { text: this.$t('pages.listTests.updated'), value: 'creationDate' },
-        { text: this.$t('titles.actions'), value: 'actions', align: 'end', sortable: false },
-      ]
-    },
-    accessLevels() {
-      return [
-        { text: this.$t('PROFILE.superAdmin'), level: 0 },
-        { text: this.$t('PROFILE.admin'), level: 1 },
-        { text: this.$t('common.user'), level: 2 },
-      ]
-    },
-  },
-  watch: {
-    dialog(val) {
-      if (val) {
-        return
-      }
+const { t } = useI18n()
+const store = useStore()
+const router = useRouter()
 
-      this.close()
-    },
-    tab() {
-      this.search = ''
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getAllUsers')
-    await this.$store.dispatch('getAllTests')
-  },
-  methods: {
-    getAccessLevelColor(level) {
-      switch (level) {
-        case 0:
-          return 'red darken-2' // Super Admin
-        case 1:
-          return 'blue darken-2' // Admin
-        case 2:
-          return 'green darken-1' // User
-        default:
-          return 'grey' // Unknown level
-      }
-    },
-    editUser(item) {
-      this.editedIndex = this.users.indexOf(item)
-      this.editedUser = { ...item }
-      this.dialog = true
-    },
+const dialog = ref(false)
+const dialogDel = ref(false)
+const userClicked = ref(null)
+const search = ref('')
+const editedIndex = ref(-1)
+const editedUser = ref({ uid: '', email: '', accessLevel: 0 })
+const defaultUser = { uid: '', email: '', accessLevel: 0 }
+const tab = ref(0)
 
-    close() {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedUser = { ...this.defaultUser }
-        this.editedIndex = -1
-      })
-    },
+const users = computed(() => store.getters.users ?? [])
+const tests = computed(() => store.getters.tests ?? [])
+const loading = computed(() => store.getters.loading)
 
-    save(user) {
-      const payload = {
-        uid: user.id,
-        customClaims: {
-          accessLevel: user.accessLevel,
-        },
-      }
-      this.$store.dispatch('updateLevel', { data: payload })
-      this.close()
-    },
-    level(lv) {
-      let text
-      this.accessLevels.forEach((item) => {
-        if (item.level === lv) {
-          text = item.text
-        }
-      })
-      return text
-    },
-    deleteUser(user) {
-      this.dialogDel = false
-      this.$store
-        .dispatch('deleteUser', user)
-        .then(() => {
-          this.userClicked = null
-        })
-        .catch(() => {}) // Errors are handled in the store
-    },
-    openManager(test) {
-      this.$router.push(`managerview/${test.id}`)
-    },
-  },
+const usersHeaders = computed(() => [
+  { title: t('titles.id'), align: 'start', value: 'id' },
+  { title: t('SIGNIN.email'), value: 'email', align: 'center' },
+  { title: t('titles.accessLevel'), value: 'accessLevel', align: 'center' },
+  { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+])
+
+const testsHeaders = computed(() => [
+  { title: t('common.title'), align: 'start', value: 'testTitle' },
+  { title: t('pages.listTests.createdBy'), value: 'testAdmin.email' },
+  { title: t('pages.listTests.updated'), value: 'creationDate' },
+  { title: t('titles.actions'), value: 'actions', align: 'end', sortable: false },
+])
+
+const accessLevels = computed(() => [
+  { title: t('PROFILE.superAdmin'), level: 0 },
+  { title: t('PROFILE.admin'), level: 1 },
+  { title: t('common.user'), level: 2 },
+])
+
+const dialogText = computed(() =>
+  `${t('alerts.deleteUser')} ${userClicked.value ? userClicked.value.email : ''}`
+)
+
+const getAccessLevelColor = (level) => {
+  switch (level) {
+    case 0:
+      return 'red darken-2'
+    case 1:
+      return 'blue darken-2'
+    case 2:
+      return 'green darken-1'
+    default:
+      return 'grey'
+  }
 }
+
+const editUser = (item) => {
+  editedIndex.value = users.value.indexOf(item)
+  editedUser.value = { ...item }
+  dialog.value = true
+}
+
+const close = () => {
+  dialog.value = false
+  nextTick(() => {
+    editedUser.value = { ...defaultUser }
+    editedIndex.value = -1
+  })
+}
+
+const save = (user) => {
+  const payload = {
+    uid: user.id,
+    customClaims: {
+      accessLevel: user.accessLevel,
+    },
+  }
+  store.dispatch('updateLevel', { data: payload })
+  close()
+}
+
+const level = (lv) => {
+  return accessLevels.value.find((item) => item.level === lv)?.text
+}
+
+const confirmDelete = (item) => {
+  dialogDel.value = true
+  userClicked.value = item
+}
+
+const closeDelete = () => {
+  dialogDel.value = false
+  userClicked.value = null
+}
+
+const deleteUser = (user) => {
+  dialogDel.value = false
+  store.dispatch('deleteUser', user).then(() => {
+    userClicked.value = null
+  })
+}
+
+const openManager = (test) => {
+  router.push(`managerview/${test.id}`)
+}
+
+watch(dialog, (val) => {
+  if (!val) close()
+})
+
+watch(tab, () => {
+  search.value = ''
+})
+
+onMounted(async () => {
+  await store.dispatch('getAllUsers')
+  await store.dispatch('getAllTests')
+})
 </script>
