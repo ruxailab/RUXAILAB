@@ -2,14 +2,8 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <v-textarea
-          v-model="consent"
-          rows="3"
-          variant="outlined"
-          color="orange"
-          class="mx-6 mt-3"
-          placeholder="Consent Form..."
-          @change="saveState"
+        <quill-editor 
+          v-model:value="consent"
         />
       </v-col>
     </v-row>
@@ -17,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
@@ -38,14 +32,16 @@ const getConsent = () => {
   }
 };
 
+watch( consent, () => saveState())
+
 onMounted(() => {
   getConsent();
 });
 </script>
 
 <style scoped>
-.v-text-field--outlined :deep(fieldset) {
-  border-radius: 25px;
-  border: 1px solid #ffceb2;
+.ql-container {
+  height: 150px;
+  padding: 10px;
 }
 </style>

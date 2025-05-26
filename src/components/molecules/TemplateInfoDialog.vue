@@ -255,7 +255,7 @@ const handleValForm = (valid) => {
 };
 
 const validate = async () => {
-  if (!formRef.value?.valida()) {
+  if (!formRef.value?.validate()) {
     return;
   }
 

@@ -85,7 +85,7 @@ const types = [
   { title: t('titles.heuristic'), value: 'HEURISTICS' },
 ]
 
-const valida = async () => {
+const validate = async () => {
   const { valid } = await form.value.validate()
   emit('valForm', valid, 0)
   return valid
@@ -111,7 +111,7 @@ const updateTestPublic = (value) => {
 }
 
 defineExpose({
-  valida,
+  validate,
   resetVal,
 })
 </script>
