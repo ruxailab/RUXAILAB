@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify';
 import i18n from './i18n';
 import Toast, { useToast } from 'vue-toastification';
 import TextClamp from 'vue3-text-clamp';
+import { quillEditor } from 'vue3-quill'
 import 'vue-toastification/dist/index.css';
 
 const app = createApp(App);
@@ -26,6 +27,7 @@ app.use(vuetify);
 app.use(i18n);
 app.use(Toast, options);
 app.use(TextClamp);
+app.use(quillEditor)
 
 app.config.globalProperties.$toast = useToast();
 
