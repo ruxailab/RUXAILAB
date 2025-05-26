@@ -1,82 +1,106 @@
 <template>
   <div v-if="user.notifications">
-    <v-badge
-      color="red"
-      bottom
-      overlap
-      :content="user.notifications.length"
-      :value="user.notifications.length"
-    >
-      <v-btn
-        v-if="user.notifications.length == 0"
-        small
-        icon
-        @click="openDropdown"
-        class="mr-1"
-      >
-        <v-icon size="20">mdi-bell-outline</v-icon>
-      </v-btn>
-
-      <v-btn v-else small icon @click="openDropdown" class="mr-1">
-        <v-icon size="20">mdi-bell-ring</v-icon>
-      </v-btn>
-    </v-badge>
-
-    <v-menu
-      v-model="showMenu"
-      :position-x="x"
-      :position-y="y"
-      absolute
-      max-width="300px"
-      offset-y
-    >
-      <v-list v-if="user.notifications.length > 0" class="menu-scroll">
-        <v-list-item
-          @click="nothing()"
-          v-for="(notification, n) in user.notifications"
-          :key="n"
-          style="cursor: default"
+    <v-menu :position-x="x" :position-y="y" absolute offset-y min-width="300">
+      <template v-slot:activator="{ on, attrs }">
+        <v-badge
+          color="red"
+          bottom
+          overlap
+          :content="checkIfHasNewNotifications()"
+          :value="checkIfHasNewNotifications()"
         >
-          <v-row justify="center" class="mb-2">
-            <v-col cols="12">
-              <v-list-item-title
-                v-if="notification.to.accessLevel != 2"
-                class="text-wrap text-center"
-                >{{ notification.from.email }} has invited you to colaborate on
-                his test: "{{ notification.test.title }}"</v-list-item-title
-              >
-              <v-list-item-title v-else class="text-wrap text-center"
-                >{{ notification.from.email }} has invited you to reply test:
-                "{{ notification.test.title }}"</v-list-item-title
-              >
-            </v-col>
-
-            <v-btn
-              small
-              color="success"
-              @click="acceptNotification(notification)"
-              >Accept</v-btn
-            >
-            <v-btn
-              small
-              class="ml-2"
-              color="error"
-              @click="
-                removeNotification(notification), denyNotification(notification)
-              "
-              >Deny</v-btn
-            >
-          </v-row>
-        </v-list-item>
-      </v-list>
-
-      <v-list v-else>
-        <v-list-item>
-          <v-list-item-title class="caption"
-            >You don't have any notifications yet</v-list-item-title
+          <v-btn
+            v-if="checkIfHasNewNotifications() === 0"
+            small
+            icon
+            class="mr-1"
+            v-bind="attrs"
+            v-on="on"
           >
-        </v-list-item>
-      </v-list>
+            <v-icon size="20">
+              mdi-bell-outline
+            </v-icon>
+          </v-btn>
+
+          <v-btn v-else small icon v-bind="attrs" class="mr-1" v-on="on">
+            <v-icon size="20">
+              mdi-bell-ring
+            </v-icon>
+          </v-btn>
+        </v-badge>
+      </template>
+      
+      <!--  navigation bar -->
+      <v-card>
+        <v-app-bar
+          color="orange"
+          dark
+          dense
+        >
+          <v-toolbar-title> {{ $t('common.notifications') }}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="goToNotificationPage"
+          >
+            {{ $t('common.viewAll') }}
+          </v-btn>
+        </v-app-bar>
+
+        <v-card-text>
+          <div
+            v-if="user.notifications.length > 0"
+            style="max-height: 50vh; overflow-y: auto;"
+          >
+            <v-list
+              v-for="(notification, i) in user.notifications"
+              :key="i"
+              dense
+              class="ma-0 py-1"
+            >
+              <v-list-item
+                dense
+                style="font-size: 14px; font-family: Roboto;"
+                class="px-2"
+                :disabled="notification.read"
+                @click="goToNotificationRedirect(notification)"
+              >
+                <v-list-item-content>
+                  <v-list-item-title style="font-weight: bold">
+                    {{ notification.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ notification.description }}
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle>
+                    {{ $t('common.sentBy') }} {{ notification.author }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-icon v-if="!notification.read">
+                  <v-chip x-small color="success" outlined label>
+                    {{ $t('common.new') }}!
+                  </v-chip>
+                </v-list-item-icon>
+              </v-list-item>
+              <v-divider></v-divider>
+            </v-list>
+          </div>
+          <v-list v-else>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-center grey--text">
+                  <strong>{{ $t('common.noNotifications') }}</strong>
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-center">
+                  <v-icon class="mt-2 mb-3">
+                    mdi-bell-off
+                  </v-icon>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
     </v-menu>
   </div>
 </template>
@@ -84,129 +108,37 @@
 <script>
 export default {
   data: () => ({
-    showMenu: false,
     x: 0,
-    y: 0
+    y: 50,
   }),
-  methods: {
-    openDropdown(e) {
-      e.preventDefault();
-      this.showMenu = false;
-      this.x = e.clientX;
-      this.y = e.clientY;
-      this.$nextTick(() => {
-        this.showMenu = true;
-      });
-    },
-    async acceptNotification(item) {
-      this.$store.dispatch("removeNotification", {
-        docId: this.user.uid,
-        element: item
-      });
-      if (item.to.accessLevel < 2) {
-        // joinTest
-        this.$store.dispatch("pushMyCoops", {
-          docId: this.user.uid,
-          element: Object.assign(item.test, {
-            accessLevel: item.to.accessLevel,
-            date: new Date().toDateString()
-          })
-        });
-      } else {
-        //answer
-        await this.$store.dispatch("getTest", { id: item.test.id });
-        this.$store.dispatch("pushMyAnswers", {
-          docId: this.user.uid,
-          element: Object.assign(item.test, {
-            answersSheet: Object.assign(this.test.answersSheet ? this.test.answersSheet : {}, {
-              submitted: false
-            }),
-            accessLevel: {
-              text: "Evaluator",
-              value: 2
-            },
-            date: new Date().toDateString()
-          })
-        });
-
-        //update log
-        var log = {
-          date: new Date().toLocaleString("en-US"),
-          progress: 0,
-          status: "In progress"
-        };
-        this.$store.dispatch("updateLog", {
-          docId: item.test.reports,
-          elementId: this.user.uid,
-          element: log
-        });
-      }
-      this.$store.dispatch("updateCooperator", {
-        docId: item.test.cooperators,
-        elementId: item.to.id,
-        element: true,
-        param: "accepted"
-      });
-    },
-    denyNotification(item) {
-      if (item.to.accessLevel >= 2) {
-        var log = {
-          date: new Date().toLocaleString("en-US"),
-          progress: 0,
-          status: "Denied"
-        };
-        this.$store.dispatch("updateLog", {
-          docId: item.test.reports,
-          elementId: this.user.uid,
-          element: log
-        });
-      }
-      this.$store.dispatch("updateCooperator", {
-        docId: item.test.cooperators,
-        elementId: item.to.id,
-        element: false,
-        param: "accepted"
-      });
-    },
-    removeNotification(notif) {
-      this.$store.dispatch("removeNotification", {
-        docId: this.user.uid,
-        element: notif
-      });
-    },
-    nothing() {} //this function is here for menu styling only
-  },
   computed: {
     user() {
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     test() {
-      return this.$store.getters.test;
-    }
-  }
-};
+      return this.$store.getters.test
+    },
+  },
+  methods: {
+    async goToNotificationRedirect(notification) {
+      await this.$store.dispatch('markNotificationAsRead', {
+        notification: notification,
+        user: this.user,
+      })
+      window.open(`/${notification.redirectsTo}`)
+    },
+    checkIfHasNewNotifications() {
+      const newNot = this.user.notifications.filter((n) => n.read === false)
+      return newNot.length ?? 0
+    },
+    goToNotificationPage() {
+      this.$router.push('/notifications')
+      console.log("Navigating to notifications page")
+    },
+  },
+}
 </script>
 
 <style scoped>
-.menu-scroll {
-  max-height: 400px;
-  overflow: auto;
-}
-/* width */
-.menu-scroll::-webkit-scrollbar {
-  width: 9px;
-}
-/* Track */
-.menu-scroll::-webkit-scrollbar-track {
-  background: none;
-}
-/* Handle */
-.menu-scroll::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
-}
-/* Handle on hover */
-.menu-scroll::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
-}
+/* You can remove this style block as we're using Vuetify's built-in dividers now */
 </style>

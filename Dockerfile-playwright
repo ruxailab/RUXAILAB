@@ -1,0 +1,38 @@
+# Etapa 1: Construcción
+FROM node:lts AS build-stage
+
+WORKDIR /app
+
+# Copiar y instalar dependencias
+COPY package*.json ./
+RUN npm install
+
+# Copiar el resto de la aplicación y construir
+COPY . .
+RUN npm run build-dev
+
+# Etapa 2: Producción y Pruebas
+FROM node:20
+
+WORKDIR /app
+
+# Instalar 'serve' y 'wait-on' para servir la aplicación y esperar a que esté lista
+RUN npm install -g serve wait-on
+
+# Copiar la aplicación construida desde la etapa de construcción
+COPY --from=build-stage /app/dist /app
+
+# Copiar y instalar dependencias necesarias para Playwright
+COPY package*.json ./
+RUN npx playwright install --with-deps
+RUN npm install @playwright/test -D
+
+# Copiar la configuración de Playwright y el resto de la aplicación
+COPY playwright.config.js .
+COPY . .
+
+# Exponer el puerto en el que se servirá la aplicación
+EXPOSE 5000
+
+# Ejecutar la aplicación y esperar a que esté disponible antes de ejecutar las pruebas
+CMD ["sh", "-c", "serve -s . -l 5000 & wait-on http://localhost:5000 && npx playwright test"]

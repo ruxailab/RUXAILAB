@@ -1,17 +1,18 @@
 <template>
-  <v-container style="overflow: scrol; justify-content: center">
-    <v-row justify="space-around">
-      <v-col cols="12"
-        ><h1>{{ title }}</h1></v-col
-      >
-      <slot name="top"></slot>
-    </v-row>
-    <v-divider></v-divider>
-    <slot name="warning"></slot>
-    <v-row justify="center">
+  <v-container>
+    <v-row class="ma-0">
       <v-col cols="12">
-        <v-card class="dataCard ma-0 pa-0">
-          <slot name="content"></slot>
+        <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
+        <h1>{{ title }}</h1>
+        <v-divider />
+      </v-col>
+      <slot name="top" />
+    </v-row>
+    <slot name="warning" />
+    <v-row justify="center" class="ma-0">
+      <v-col cols="12">
+        <v-card flat rounded="xl" class="dataCard ma-0 pa-0">
+          <slot name="content" />
         </v-card>
       </v-col>
     </v-row>
@@ -22,15 +23,15 @@
 export default {
   props: {
     title: {
-      type:String
-    }
-  }
-};
+      type: String,
+      default: '',
+    },
+  },
+}
 </script>
 
 <style scoped>
 h1 {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   display: flex;
@@ -38,7 +39,6 @@ h1 {
   color: #000000;
 }
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;
@@ -49,6 +49,8 @@ h1 {
 }
 .dataCard {
   background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.v-sheet.v-card:not(.v-sheet--outlined) {
+  box-shadow: none !important;
 }
 </style>

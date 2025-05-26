@@ -5,35 +5,70 @@
       color="#f9a826"
       class="white--text"
       small
-      @click="dialog = true, resetIndex()"
-    >Add a new Description</v-btn>
+      :disabled="testAnswerDocLength > 0 ? true : false"
+      :class="{
+        disabledBtnBackground: testAnswerDocLength > 0,
+      }"
+      @click=";(dialog = true), resetIndex()"
+    >
+      {{ $t('HeuristicsTable.titles.addNewDescription') }}
+    </v-btn>
 
-    <v-dialog width="700" v-model="dialog" persistent>
+    <v-dialog v-model="dialog" width="700" persistent>
       <v-card class="dataCard">
-
-        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add a new Description</p>
-        <v-divider></v-divider>
+        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
+          {{ $t('HeuristicsTable.titles.addNewDescription') }}
+        </p>
+        <v-divider />
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form" @submit.prevent="validate()">
               <v-row justify="center">
                 <v-col cols="12">
-                  <v-text-field :rules="rule" v-model="desc.title" dense outlined label="Title"></v-text-field>
+                  <v-text-field
+                    v-model="desc.title"
+                    :rules="rule"
+                    dense
+                    outlined
+                    :label="$t('common.title')"
+                  />
 
-                  <div>Description:</div>
-                  <TextBox @mounted="setDescriptionText" @updateHtml="updateText" ref="textbox" />
+                  <div>{{ $t('common.description') }}:</div>
+                  <TextBox
+                    ref="textbox"
+                    @mounted="setDescriptionText"
+                    @updateHtml="updateText"
+                  />
                 </v-col>
               </v-row>
             </v-form>
           </v-col>
         </v-row>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="reset()" small text color="red lighten-1 white--text">Cancel</v-btn>
+          <v-spacer />
+          <v-btn small text color="red lighten-1 white--text" @click="reset()">
+            {{ $t('common.cancel') }}
+          </v-btn>
 
-          <v-btn v-if="editIndex !== null" @click="validate()" small color="#f9a826" class="white--text">Confirm</v-btn>
-          <v-btn v-else @click="validate()" small color="#f9a826" class="white--text">Add</v-btn>
+          <v-btn
+            v-if="editIndex !== null"
+            small
+            color="#f9a826"
+            class="white--text"
+            @click="submitEdit()"
+          >
+            {{ $t('common.confirm') }}
+          </v-btn>
+          <v-btn
+            v-else
+            small
+            color="#f9a826"
+            class="white--text"
+            @click="validate()"
+          >
+            {{ $t('common.add') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -41,78 +76,119 @@
 </template>
 
 <script>
-import TextBox from "@/components/atoms/TextBox";
+import TextBox from '@/components/atoms/TextBox'
+import i18n from '@/i18n'
 
 export default {
-  props: {
-    question:{
-      type:Object,
-      required:true
-    }
-  },
   components: {
     TextBox,
+  },
+  props: {
+    questionIndex: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    heuristicIndex: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   data: () => ({
     dialog: false,
     desc: {
-      title: "",
-      text: "",
+      title: '',
+      text: '',
     },
-    rule: [(v) => !!v || "Title Required"],
+    rule: [(v) => !!v || i18n.t('errors.fieldRequired')],
     editIndex: null,
-    isMounted: false
+    isMounted: false,
   }),
+  computed: {
+    question() {
+      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex]
+        .questions[this.questionIndex]
+    },
+    testAnswerDocLength() {
+      if (!this.$store.getters.testAnswerDocument) {
+        return 0
+      }
+      const heuristicAnswers = this.$store.getters.testAnswerDocument
+        .heuristicAnswers
+      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+
+      return heuristicAnswersCount
+    },
+  },
   methods: {
     validate() {
-      let valid = this.$refs.form.validate();
+      const valid = this.$refs.form.validate()
       if (valid && this.desc.text.length > 0) {
-        if (this.editIndex == null) this.question.descriptions.push(this.desc);
-        else
-          // this.question.descriptions[this.editIndex] = Object.assign({}, this.desc);
-          this.$set(this.question.descriptions, this.editIndex, Object.assign({}, this.desc))
+        this.$store.commit('setupHeuristicQuestionDescription', {
+          heuristic: this.heuristicIndex,
+          question: this.questionIndex,
+          description: this.desc,
+          editIndex: this.editIndex,
+        })
 
-        this.reset();
-        this.$emit("change");
+        this.reset()
       } else if (valid && this.desc.text.length == 0) {
-        alert("Please add a descritpion");
+        this.$toast.info(i18n.t('alerts.addDescription'))
       }
     },
     reset() {
-      this.dialog = false;
-      this.$refs.form.resetValidation();
-      this.$refs.textbox.resetContent();
+      this.dialog = false
+      this.$refs.form.resetValidation()
+      this.$refs.textbox.resetContent()
       this.desc = {
-        title: "",
-        text: "",
-      };
-      this.resetIndex();
+        title: '',
+        text: '',
+      }
+      this.resetIndex()
     },
     resetIndex() {
-      this.editIndex = null;
+      this.editIndex = null
     },
     updateText(html) {
-      this.desc.text = html;
+      this.desc.text = html
     },
-    editSetup(i) { //used when edit clicked
-      this.dialog = true;
-      this.editIndex = i;
-      this.desc = Object.assign({}, this.question.descriptions[this.editIndex]);
-      if(this.isMounted) {
-        this.setDescriptionText();
+    editSetup(i) {
+      //used when edit clicked
+      this.dialog = true
+      this.editIndex = i
+      this.desc = Object.assign({}, this.question.descriptions[this.editIndex])
+      if (this.isMounted) {
+        this.setDescriptionText()
       }
     },
     setDescriptionText() {
-      this.isMounted = true;
-      this.$refs.textbox.setContent(this.desc.text);
-    }
-  }
-};
+      this.isMounted = true
+      this.$refs.textbox.setContent(this.desc.text)
+    },
+    submitEdit(){
+      const valid = this.$refs.form.validate()
+      console.log('submitEdit',this.desc.text)
+      const strippedText = this.desc.text.replace(/<\/?[^>]+(>|$)/g, "").trim();
+      if(valid && strippedText.length > 0){
+        this.$emit('update-description', { index: this.editIndex, description: this.desc });
+        this.reset();
+      }else if (valid && strippedText.length == 0) {
+        this.$toast.info(i18n.t('alerts.addDescription'))
+      }
+    },
+  },
+}
 </script>
 
 <style scoped>
+.disabledBtn {
+  color: rgba(134, 125, 125, 0.438) !important;
+}
+.disabledBtnBackground {
+  background-color: rgba(185, 185, 185, 0.308);
+}
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

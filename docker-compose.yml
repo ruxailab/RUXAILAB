@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  uxremotelab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5000"
+    depends_on:
+      - firebase-emulator
+
+  firebase-emulator:
+    build:
+      context: ./firebase-emulator
+    ports:
+      - "9099:9099"
+      - "5001:5001"
+      - "8081:8081"
+      - "5002:5002"
+      - "9199:9199"
+      - "4000:4000"
+      - "4400:4400"
+      - "4500:4500"
+      - "9150:9150"
+      - "5007:5007"
+    volumes:
+      - ./firebase-emulator:/app
+    environment:
+      - FIREBASE_PROJECT_ID=retlab-dev
+      # Agrega cualquier otra variable de entorno necesaria para el emulador de Firebase

@@ -5,24 +5,31 @@
       style="display:contents; background-color:#f4b700; height:300px"
       class="hidden-sm-and-down"
     >
-      <v-img src="@/assets/landing/introductionDesktop.svg">
+      <v-img
+        v-if="desktopImagePreloaded"
+        src="@/assets/landing/introductionDesktop.svg"
+      >
         <v-container>
           <v-row align="center" class="mb-10">
             <v-col class="text-left" cols="12" md="6">
-              <h1 class="display-3 font-weight-regular mb-4 white--text">UX Remote LAB</h1>
-              <h4 class="display-1 white--text mb-4">What about doing Usability Tests in remote?</h4>
-              <p
-                class="white--text mb-4"
-                style="width: 80%"
-                align="justify"
-              >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
+              <h1 class="display-3 font-weight-regular mb-4 mt-16 white--text">
+                {{ $t('Introduction.title') }}
+              </h1>
+              <h4 class="display-1 white--text mb-4">
+                {{ $t('Introduction.subtitle') }}
+              </h4>
+              <p class="white--text mb-4" style="width: 80%" align="justify">
+                {{ $t('Introduction.description') }}
+              </p>
               <v-btn
                 color="white"
                 outlined
                 rounded
                 class="mb-2"
                 @click="goTo('/signup')"
-              >Get started</v-btn>
+              >
+                {{ $t('Introduction.cta') }}
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -33,29 +40,50 @@
     <v-container class="hidden-md-and-up ma-0 pa-0">
       <div style="background-color: #f4b700">
         <div style="background-color: #f4b700">
-          <h1 class="display-3 font-weight-regular white--text text-center">UX Remote LAB</h1>
+          <v-col>
+            <h1
+              class="display-3 font-weight-regular white--text text-center mt-5"
+            >
+              {{ $t('Introduction.title') }}
+            </h1>
+          </v-col>
         </div>
-        <v-img src="@/assets/landing/introductionMobile.svg" class="mb-4" max-height="350" contain></v-img>
+        <v-img
+          v-if="mobileImagePreloaded"
+          src="@/assets/landing/introductionMobile.svg"
+          class="mb-4"
+          max-height="350"
+          contain
+        />
         <div style="background-color: #f4b700" class="mx-1">
-          <h4
-            class="display-1 white--text mb-4 text-center"
-          >What about doing Usability Tests in remote?</h4>
+          <h4 class="display-1 white--text mb-4 text-center">
+            {{ $t('Introduction.subtitle') }}
+          </h4>
         </div>
         <div style="background-color: #f4b700" class="mx-3">
           <v-row justify="center">
-            <p
-              class="white--text mb-4 mx-4 text-center"
-            >Join our OpenSource project and start creating your own usability LAB and share it with friends. Researching has never been easier!</p>
-            <v-btn color="white" outlined rounded class="mb-2" @click="goTo('/signup')">Get started</v-btn>
+            <p class="white--text mb-4 mx-4 text-center">
+              {{ $t('Introduction.description') }}
+            </p>
+            <v-btn
+              color="white"
+              outlined
+              rounded
+              class="mb-2"
+              @click="goTo('/signup')"
+            >
+              {{ $t('Introduction.cta') }}
+            </v-btn>
           </v-row>
         </div>
         <!-- div for margin at bottom -->
-        <div style="background-color: #f4b700; height: 40px"></div>
+        <div style="background-color: #f4b700; height: 40px" />
       </div>
 
-      <div style="height: 10px"></div>
+      <div style="height: 10px" />
     </v-container>
 
+    <!-- SVG Waves -->
     <div class="svg-border-waves text-white">
       <svg
         class="wave"
@@ -129,11 +157,50 @@ section {
 
 <script>
 export default {
-  data: () => ({}),
-  methods: {
-    goTo(path) {
-      this.$router.push(path).catch(() => {});
+  components: {},
+  data() {
+    return {
+      desktopImagePreloaded: false,
+      mobileImagePreloaded: false,
     }
-  }
-};
+  },
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+    user() {
+      return this.$store.getters.user
+    },
+    csvHeuristics() {
+      return this.$store.state.Tests.currentTest
+    },
+  },
+  mounted() {
+    this.preloadImages()
+  },
+  methods: {
+    preloadImages() {
+      const desktopImage = new Image()
+      desktopImage.onload = () => {
+        this.desktopImagePreloaded = true
+      }
+      desktopImage.onerror = () => {
+        console.error('Error loading desktop image')
+      }
+      desktopImage.src = require('@/assets/landing/introductionDesktop.svg')
+
+      const mobileImage = new Image()
+      mobileImage.onload = () => {
+        this.mobileImagePreloaded = true
+      }
+      mobileImage.onerror = () => {
+        console.error('Error loading mobile image')
+      }
+      mobileImage.src = require('@/assets/landing/introductionMobile.svg')
+    },
+    goTo(path) {
+      this.$router.push(path).catch(() => {})
+    },
+  },
+}
 </script>

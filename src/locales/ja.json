@@ -1,0 +1,594 @@
+{
+  "language": "言語",
+  "SIGNIN": {
+    "sign-in": "ログイン",
+    "email": "メールアドレス",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "dont-have-account": "アカウントをお持ちでないですか？登録",
+    "sign-up": "登録",
+    "contact": "連絡先番号",
+    "confirmPassword": "パスワードを確認",
+    "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン"
+  },
+  "common": {
+    "loading": "テストを読み込み中",
+    "continueAs": "として続行",
+    "notUser": "{userEmail}ではありませんか？",
+    "name": "名前",
+    "changeAccount": "アカウントを変更",
+    "editAndInvite": "編集してテストに人を招待",
+    "analyzeProject": "プロジェクトと評価者を分析",
+    "comment": "コメント",
+    "inputImage": "トピックに関連する画像を入力してください",
+    "title": "タイトル",
+    "description": "説明",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "add": "追加",
+    "text": "テキスト",
+    "value": "値",
+    "save": "保存",
+    "editDelete": "編集/削除",
+    "type": "タイプ",
+    "noNotifications": "まだ通知はありません",
+    "notifications": "通知",
+    "unread": "未読",
+    "inbox": "受信トレイ",
+    "timeAgo": {
+      "years": "{count}年前",
+      "months": "{count}ヶ月前",
+      "days": "{count}日前",
+      "hours": "{count}時間前",
+      "minutes": "{count}分前",
+      "now": "たった今"
+    },
+    "viewAll": "すべて表示",
+    "sentBy": "送信者",
+    "new": "新着"
+  },
+  "PROFILE": {
+    "title": "プロフィール",
+    "editProfile": "プロフィールを編集",
+    "account": "アカウント",
+    "admin": "管理者",
+    "changePassword": "パスワードを変更",
+    "passwordRequirements": "これらの要件を満たしていることを確認してください",
+    "passwordMinimumRequirements": "最低8文字、大文字、記号",
+    "newPassword": "新しいパスワード",
+    "confirmNewPassword": "新しいパスワードを確認",
+    "editDetails": "詳細を編集",
+    "saveChanges": "変更を保存",
+    "country": "国",
+    "missingInfo": "情報が不足しています",
+    "deleteAccountTitle": "アカウントを削除",
+    "deleteAccountConfirm": "本当によろしいですか？この操作は元に戻せません。",
+    "deleteAccountWarning": "これにより、アカウントが永久に削除され、データがサーバーから削除されます。",
+    "passwordRequired": "パスワードは必須です",
+    "passwordMinLength": "パスワードは8文字以上である必要があります",
+    "passwordUppercase": "大文字を含める必要があります",
+    "passwordSymbol": "記号を含める必要があります",
+    "confirmPasswordRequired": "パスワードの確認は必須です",
+    "passwordsMatch": "パスワードが一致しません"
+  },
+  "titles": {
+    "manager": "マネージャー",
+    "test": "テスト",
+    "preview": "プレビュー",
+    "reports": "レポート",
+    "answers": "回答",
+    "analytics": "分析",
+    "cooperators": "協力者",
+    "template": "テンプレート",
+    "finalReport": "最終レポート",
+    "answerType": "回答タイプ:",
+    "drawer": {
+      "Manager": "マネージャー",
+      "Test": "テスト",
+      "Preview": "プレビュー",
+      "Reports": "レポート",
+      "Answers": "回答",
+      "Analytics": "分析",
+      "Cooperators": "協力者",
+      "Template": "テンプレート",
+      "Final Report": "最終レポート",
+      "Answer Test": "テストに回答",
+      "Settings": "設定"
+    },
+    "heuristic": "ユーザビリティヒューリスティック評価"
+  },
+  "descriptions": {
+    "edit": "テストの作成と編集を開始します。",
+    "cooperators": "テストに協力する人を招待します。",
+    "reports": "評価者のパフォーマンスを確認します。",
+    "answers": "評価者があなたのプロジェクトをどのように評価しているかを確認します。",
+    "analytics": "評価者のコメントと回答を分析します。",
+    "finalReport": "テストに追加データを追加します。",
+    "intro": {
+      "reports": "評価者がテストを完了する際の進捗状況と回答ステータスを追跡します。",
+      "answers": "他のユーザーの回答データを分析して、プロジェクトに関するフィードバックを迅速に得ます。",
+      "analytics": "テストを深く掘り下げ、人々がそれについて何を言っているかを確認します。",
+      "invite": "評価者を招待してテストに回答してもらいましょう！",
+      "cooperators": "プロジェクトを改善し、研究のためのデータを収集するのを手伝ってくれる協力者を追加します。",
+      "start": "始めましょう！",
+      "edit": "研究のニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。"
+    }
+  },
+  "errors": {
+    "invalidInvitation": "無効な招待",
+    "signupWithInvitationEmail": "ユーザーは招待と同じメールアドレスで登録する必要があります。",
+    "emailIsRequired": "メールアドレスは必須です",
+    "invalidEmail": "無効なメールアドレス",
+    "passwordRequired": "パスワードは必須です",
+    "passwordValidate": "パスワードは8文字以上である必要があります",
+    "differentPasswords": "パスワードが異なります",
+    "fieldRequired": "必須フィールド",
+    "passwordUppercase": "大文字を含める必要があります",
+    "passwordSymbol": "記号を含める必要があります",
+    "userNotExist": "このユーザーは存在しません。",
+    "incorrectPassword": "パスワードが間違っています",
+    "incorrectCredential": "ユーザー名またはパスワードが間違っています。",
+    "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。"
+    
+  },
+  "Introduction": {
+    "title": "UXリモートラボ",
+    "subtitle": "リモートでユーザビリティテストを行うのはどうですか？",
+    "description": "私たちのオープンソースプロジェクトに参加して、独自のユーザビリティラボを作成し、友人と共有しましょう。研究がこれほど簡単になったことはありません！",
+    "cta": "始める"
+  },
+  "Dashboard": {
+    "createNewTest": "新しいテストを作成",
+    "tests": "テスト",
+    "templates": "テンプレート",
+    "search": "検索",
+    "myTests": "私のテスト",
+    "sharedWithMe": "共有されたテスト",
+    "publicTests": "公開テスト",
+    "personal": "個人",
+    "explore": "探す"
+  },
+  "HeuristicsTable": {
+    "titles": {
+      "editHeuristic": "ヒューリスティックを編集",
+      "editQuestion": "質問を編集",
+      "newQuestion": "新しい質問",
+      "creatingHeuristic": "ヒューリスティックを作成",
+      "currentHeuristics": "ヒューリスティック",
+      "addNewHeuristic": "新しいヒューリスティックを追加",
+      "searchHeuristics": "ヒューリスティックを検索...",
+      "noHeuristicsFound": "ヒューリスティックが見つかりません",
+      "addNewQuestion": "新しい質問を追加",
+      "questions": "質問",
+      "descriptions": "説明",
+      "actions": "アクション",
+      "titles": "タイトル",
+      "cancel": "キャンセル",
+      "ok": "OK",
+      "add": "追加",
+      "deleteHeuristic": "ヒューリスティックを削除",
+      "deleteQuestion": "質問を削除",
+      "addNewDescription": "新しい説明を追加",
+      "addOption": "新しいオプションを追加",
+      "hasValue": "値を持つ"
+    },
+    "placeholders": {
+      "titleHeuristic": "ヒューリスティックのタイトル",
+      "titleYourHeuristic": "ヒューリスティックにタイトルを付ける",
+      "titleYourQuestion": "質問にタイトルを付ける",
+      "titleQuestion": "質問のタイトル",
+      "titleNewQuestion": "新しい質問のタイトル",
+      "optionDescription": "オプションの説明"
+    },
+    "messages": {
+      "noHeuristics": "ヒューリスティックがありません。続行するには作成してください。",
+      "youMustHave": "何か間違ったことを入力したようです...",
+      "noHeuristicsDeleteAll": "申し訳ありませんが、すべてのヒューリスティック質問を削除することはできません。",
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "changeWeights": "ヒューリスティックの順序を変更しても、重みは自動的に変更されません。手動で変更する必要があります。"
+    },
+    "validation": {
+      "nameRequired": "名前は必須です",
+      "questionRequired": "質問を入力する必要があります",
+      "textRequired": "テキストは必須です",
+      "positiveValue": "値は正の数でなければなりません",
+      "addQuestion": "ヒューリスティックに少なくとも1つの質問を追加してください"
+    },
+    "AddCommentBtn": {
+      "showComment": "コメントを表示",
+      "addComment": "コメントを追加",
+      "hideTextArea": "テキストエリアを非表示"
+    }
+  },
+  "HeuristicsOptionsTable": {
+    "titles": {
+      "options": "オプション"
+    },
+    "messages": {},
+    "placeHolders": {},
+    "actions": {}
+  },
+  "HeuristicsWeightsTable": {
+    "titles": {
+      "weights": "重み",
+      "heuristics": "ヒューリスティック"
+    },
+    "messages": {
+      "atLeast2HeuristicsForWeighting": "重みを設定するには、少なくとも2つのヒューリスティックが必要です。"
+    },
+    "actions": {
+      "saveWeights": "重みの値を保存"
+    }
+  },
+  "HeuristicsSettings": {
+    "titles": {
+      "settings": "設定"
+    },
+    "messages": {
+      "acceptCsv": "同意すると、現在のヒューリスティックがCSVファイルのものに置き換えられます。",
+      "noCsvFileSelected": "CSVファイルが選択されていません。\n続行する前に選択してください。"
+    },
+    "placeHolders": {
+      "importCsv": "ここにCSVテストファイルをインポートしてください。"
+    },
+    "actions": {
+      "downloadCsvTemplate": "CSVテンプレートをダウンロード",
+      "update": "更新"
+    }
+  },
+  "HeuristicsTestView": {
+    "messages": {
+      "submitTest": "このテストを提出してもよろしいですか？",
+      "submitOnce": "テストを提出してもよろしいですか？これは一度しかできません。",
+      "noHeuristics": "このテストにはヒューリスティックがありません"
+    },
+    "actions": {
+      "cancel": "キャンセル",
+      "submit": "提出",
+      "save": "保存",
+      "continueAs": "{userEmail}として続行",
+      "notMail": "{userEmail}ではありませんか？",
+      "changeAccount": "アカウントを変更",
+      "startTest": "テストを開始"
+    }
+  },
+  "HeuristicsEditTest": {
+    "titles": {
+      "heuristics": "ヒューリスティック",
+      "options": "オプション",
+      "weights": "重み",
+      "settings": "設定"
+    }
+  },
+  "HeuristicsTestAnswer": {
+    "titles": {
+      "answers": "回答",
+      "statistics": "統計",
+      "evaluators": "評価者",
+      "heuristics": "ヒューリスティック",
+      "analytics": "分析"
+    },
+    "statistics": {
+      "usabilityPercentage": "ユーザビリティの割合",
+      "max": "最大",
+      "min": "最小",
+      "std": "標準偏差"
+    },
+    "evaluators": {
+      "headers": {
+        "table": "表",
+        "graphic": "グラフ"
+      },
+      "messages": {
+        "graphForMoreThan3": "グラフは3人以上の評価者でのみ生成できます。続行するには、研究からさらにデータを収集してください。"
+      }
+    },
+    "heuristics": {
+      "headers": {
+        "heuristicsData": "ヒューリスティックデータ",
+        "answersByEvaluator": "評価者ごとの回答",
+        "answersByHeuristics": "ヒューリスティックごとの回答",
+        "graphic": "グラフ",
+        "weights": "重み"
+      },
+      "messages": {
+        "needMoreThan1Answer": "このページを生成するには、1つ以上の回答が必要です。",
+        "runWeightFunction": "このページでは、重み関数（Python）が実行されている必要があります。エミュレータまたはデプロイモードで実行でき、作成テストページで重みが完全にマークされている必要があります。"
+      }
+    },
+    "analytics": {}
+  },
+  "HeuristicsReport": {
+    "titles": {
+      "reports": "レポート",
+      "last_updated": "最終更新"
+    },
+    "headers": {
+      "evaluator": "評価者",
+      "last_update": "最終更新",
+      "progress": "進捗",
+      "status": "ステータス",
+      "more": "詳細"
+    },
+    "messages": {
+      "confirm_delete_report": "このレポートを削除してもよろしいですか？",
+      "reports_loading": "レポートを読み込み中",
+      "remove_report": "レポートを削除",
+      "sure_to_delete": "{user}のレポートを削除してもよろしいですか？この操作は元に戻せません。",
+      "report_deleted": "レポートが正常に削除されました"
+    },
+    "status": {
+      "submitted": "提出済み",
+      "in_progress": "進行中"
+    }
+  },
+  "HeuristicsCooperators": {
+    "title": {
+      "cooperators": "協力者"
+    },
+    "headers": {
+      "email": "メールアドレス",
+      "role": "役割",
+      "invited": "招待済み",
+      "accepted": "承認済み",
+      "more": "詳細",
+      "title": "タイトル",
+      "content": "内容"
+    },
+    "actions": {
+      "send_invitation": "招待を送信",
+      "send_message": "メッセージを送信",
+      "reinvite": "再招待",
+      "remove_cooperator": "協力者を削除",
+      "cancel_invitation": "招待をキャンセル",
+      "cancel": "キャンセル",
+      "send": "送信",
+      "select_cooperator": "協力者を選択"
+    },
+    "roles": {
+      "administrator": "管理者",
+      "evaluator": "評価者",
+      "guest": "ゲスト"
+    },
+    "messages": {
+      "cooperators_loading": "協力者を読み込み中",
+      "no_users": "このメールアドレスで登録されているユーザーはいません。Enterを押して選択してください。",
+      "remove_cooperator": "{email}を協力者から削除してもよろしいですか？",
+      "cancel_invitation": "{email}の招待をキャンセルしてもよろしいですか？",
+      "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
+      "message_title_hint": "メッセージのタイトルを入力してください",
+      "message_content_hint": "メッセージの内容を入力してください"
+    }
+  },
+  "UserTestTable": {
+    "titles": {
+      "consentForm": "同意フォーム",
+      "userVariables": "ユーザー変数",
+      "currentTasks": "現在のタスク",
+      "postForm": "テスト後のフォーム",
+      "writeNewPost": "新しい質問を書く"
+    },
+    "inputs": {
+      "consent": "同意",
+      "variableName": "変数名",
+      "description": "説明",
+      "selection": "選択",
+      "writeQuestion": "質問を書く"
+    },
+    "checkboxes": {
+      "selectionField": "選択フィールド",
+      "textField": "テキストフィールド",
+      "textAnswer": "テキスト回答",
+      "selectionAnswer": "選択回答"
+    },
+    "buttons": {
+      "createNewVariable": "新しい変数を作成",
+      "createNewPost": "新しい質問を作成"
+    }
+  },
+  "UserTestView": {
+    "titles": {
+      "preTestConsent": "テスト前 - 同意",
+      "preTestForm": "テスト前 - フォーム",
+      "preTest": "テスト前",
+      "postTest": "テスト後"
+    },
+    "buttons": {
+      "done": "完了"
+    }
+  },
+  "AccessNotAllowed": {
+    "notAllowed": "アクセスが許可されていません",
+    "noAccess": "アクセスしようとしているページにアクセスする権限がありません。",
+    "goHome": "ホームに戻る"
+  },
+  "pages": {
+    "intros": {
+      "click": "ここをクリック！",
+      "learnMore": "詳細を見る",
+      "docTitle": "ドキュメントを読む",
+      "docSubtitle": "ページの使用方法に関するドキュメントにアクセスするにはクリックしてください。",
+      "discTitle": "コミュニティに参加しましょう！",
+      "discSubtitle": "Discordサーバーでサポートが見つかります。"
+    },
+    "finalReport": {
+      "select": "PDF要素を選択",
+      "heuristic": "ヒューリスティック",
+      "to": "から",
+      "createHeuristics": "ここで選択できるようにヒューリスティックを作成してください。",
+      "createUserTask": "ここで選択できるようにタスクを作成してください。",
+      "pdf": "PDFを生成",
+      "elements": "要素",
+      "options": {
+        "options": "テストオプション",
+        "comments": "回答コメント",
+        "statistics": "統計",
+        "answersByEvaluator": "評価者ごとの回答",
+        "answersByHeuristics": "ヒューリスティックごとの回答",
+        "finalReport": "最終レポート",
+        "loading": "読み込み中..."
+      },
+      "ContructionHeading": "ページは作成中です",
+      "ContructionParagraph": "私たちはサイトの改善に努めています。もうすぐ戻ってきてください！"
+    },
+    "landing": {
+      "feedbackTitle": "プロジェクトに関するフィードバックを迅速に得る",
+      "feedbackSubtitle1": "UXリモートラボは、独自のUXテストを作成し、ユーザーと実行したいUXエキスパート向けのツールセットを提供するために作成されました。",
+      "feedbackSubtitle2": "COVID-19は、実際のユーザーの物理的な存在が不可能な場合があることを世界に示しました。そのため、私たちはこの問題を解決するためにここにいます！",
+      "uxTitle": "独自のUXラボを開始",
+      "uxSubtitle1": "研究者、企業、またはUXテストを実行したいプロフェッショナルの場合、ここではさまざまなUX技術を使用してテストを分析および追跡するのに役立つツールを見つけることができます。",
+      "uxSubtitle2": "このオープンソースコミュニティの成長を支援し、GitHubで私たちに参加してください！ :)",
+      "footer": "プロジェクトの成長を支援する新しいパートナーを探しています！お気軽にお問い合わせください。"
+    },
+    "listTests": {
+      "createdBy": "作成者",
+      "me": "私",
+      "progress": "進捗",
+      "updated": "最終更新日",
+      "version": "バージョン:",
+      "noTests": "テストが見つかりません",
+      "noTemplates": "テンプレートが見つかりません"
+    },
+    "createTest": {
+      "title": "新しいテストを作成",
+      "blankTitle": "空白のテストを作成",
+      "blankSubtitle": "完全に新しいテンプレートで始めるために空白のテストを作成します。",
+      "templateTitle": "テンプレートから作成",
+      "templateSubtitle": "ユーザーが作成したテンプレートに基づいてテストを作成します。",
+      "create": "テストを作成",
+      "templateInfo": "テンプレート情報",
+      "deleteTemplate": "テンプレートを削除",
+      "noDescription": "テンプレートに説明がありません。",
+      "public": "すべてのユーザーにテストを公開（読み取り専用）"
+    },
+    "settings": {
+      "title": "設定",
+      "currentTest": "現在のテスト",
+      "createTemplate": "テンプレートを作成",
+      "deleteTest": "テストを削除"
+    }
+  },
+  "alerts": {
+    "copy": "コピーに成功しました",
+    "noCopy": "コピーに失敗しました",
+    "deleteTemplate": "このテンプレートを削除してもよろしいですか？この操作は元に戻せません！",
+    "deleteTest": "このテストを削除してもよろしいですか？",
+    "addDescription": "説明を追加してください",
+    "errorOccurred": "エラーが発生しました",
+    "leave": "本当に終了しますか？",
+    "sureLeave": "本当に終了しますか？すべての変更が破棄されます。",
+    "imageURL": "画像のURLを入力してください:",
+    "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
+    "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
+    "genericSuccess": "操作が成功しました"
+  },
+  "buttons": {
+    "next": "次へ",
+    "previous": "前へ",
+    "seeCode": "コードを見る",
+    "username": "ユーザー名",
+    "goToConsole": "コンソールに移動",
+    "signout": "ログアウト",
+    "profile": "プロフィール",
+    "returnToConsole": "コンソールに戻る",
+    "tip": "ヒント",
+    "cancel": "キャンセル",
+    "create": "作成",
+    "close": "閉じる",
+    "save": "保存",
+    "stay": "残る",
+    "leave": "終了",
+    "help": "ヘルプ",
+    "delete": "削除",
+    "deleteAccount": "アカウントを削除",
+    "back": "戻る"
+  },
+  "switches": {
+    "noAnswer": "回答なし",
+    "textArea": "テキストエリア",
+    "timer": "タイマー",
+    "postTest": "テスト後の質問",
+    "screenRecord": "画面録画",
+    "camera": "カメラ",
+    "eyeTracker": "アイトラッカー",
+    "audioRecord": "音声録音"
+  },
+  "inputs": {
+    "consentForm": "同意フォーム",
+    "preForm": "テスト前フォーム",
+    "postForm": "テスト後フォーム"
+  },
+  "Createblank": {
+    "title": "どのタイプのテストを開始しますか？",
+    "test": "テスト",
+    "testType_1": {
+      "testTitle": "ユーザビリティヒューリスティック",
+      "text": [
+        "ユーザビリティの割合",
+        "最終レポートPDF",
+        "専門家を招待してアプリケーションを評価"
+      ]
+    },
+    "testType_2": {
+      "testTitle": "ユーザーユーザビリティ",
+      "text": [
+        "ウェブカメラ、音声、画面録画",
+        "回答の高度な分析",
+        "モデレートまたは非モデレートテスト"
+      ]
+    }
+  },
+  "TestDialog": {
+    "heading": "テスト作成",
+    "sub-heading": "テストに名前を付けてください！",
+    "test-name": "テスト名",
+    "test-description": "テストの説明",
+    "test-label": "すべてのユーザーにテストを公開"
+  },
+  "help": {
+    "createtest": "テストを作成するには？",
+    "createtestanswer": "テストを作成するには、プラスアイコンをクリックし、ヒューリスティックテストを選択します。次に、プロジェクトの詳細を指定します。最後に、専用のマネージャーページに移動します。",
+    "heuristictest": "ヒューリスティックテストを設定するには？",
+    "heuristictestanswer": "ヒューリスティックテストを設定するには、「テストを編集」オプションにアクセスします。次に、プラスボタンをクリックして、ヒューリスティックにタイトルと質問を追加します。次に、オプションセクションに移動して、回答オプションとその値を作成します。最後に、変更を保存します。",
+    "deletetest": "テストを削除するには？",
+    "deletetestanswer": "テストを削除するには、左サイドバーに移動し、「設定」ボタンをクリックします。次に、「テストを削除」ボタンを選択します。",
+    "createtemplate": "テンプレートを作成するには？",
+    "createtemplateanswer": "テストのテンプレートを作成するには、左サイドバーに移動し、「設定」ボタンをクリックします。次に、「テンプレートを作成」オプションを選択します。",
+    "usetemplate": "テンプレートを使用するには？",
+    "usetemplateanswer": "テンプレートを使用するには、テストページに移動します。「テンプレートを作成」セクションで、個人用テンプレートを見つけることができます。さらに、公開テンプレートを探索できます。",
+    "previewtest": "テストをプレビューするには？",
+    "previewtestanswer": "左サイドバーで「プレビュー」オプションをクリックし、質問に答えてテストを開始し、最後に右下のボタンをクリックしてプレビューを保存および送信します。後で「回答」セクションで分析できます。",
+    "importcsv": "CSVをインポートするには？",
+    "importcsvanswer": "CSVをインポートするには、「テストを編集」セクションに移動し、「更新」ボタンをクリックします。ヒューリスティックを含むCSVファイルを選択します。",
+    "invitecooperators": "協力者を招待するには？",
+    "invitecooperatorsanswer": "協力者を招待するには、テストのマネージャーページに移動します。そこから、左サイドバーで「協力者」を選択します。「協力者を選択」をクリックし、協力者のメールアドレスを入力します。協力者の役割を選択し、右下のボタンをクリックして招待を送信します。",
+    "analyseresults": "結果を分析するには？",
+    "analyseresultsanswer": "結果を分析するには、テストのマネージャーページに移動します。そこから、左サイドバーで「回答」を選択します。ここで、統計、評価者、ヒューリスティックを視覚化できます。",
+    "sendmessage": "協力者にメッセージを送信するには？",
+    "sendmessageanswer": "メッセージを送信するには、テストのマネージャーページに移動します。左サイドバーから「協力者」を選択します。メッセージを送信したい協力者の横にある三点アイコンをクリックします。次に、「メッセージを送信」を選択し、タイトルと内容を入力してメッセージを送信します。",
+    "testCreation": "テスト作成",
+    "templates": "テンプレート",
+    "cooperators": "協力者",
+    "analytics": "分析",
+    "help_center": "ヘルプセンター",
+    "howCanWeHelp": "どのようにお手伝いできますか？"
+
+  },
+  "user": "ユーザー",
+  "account": "アカウント",
+  "security": "セキュリティ",
+  "personalInfo": "個人情報",
+  "contact": "連絡先",
+  "country": "国",
+  "editDetails": "詳細を編集",
+  "typeDeleteToConfirm": "確認のために「DELETE」と入力してください",
+  "pleaseTypeDeleteToConfirm": "確認のためにDELETEと入力してください",
+  "finalStepVerifyIdentity": "最終ステップ：本人確認",
+  "enterPasswordForAccountDeletion": "アカウント削除を進めるにはパスワードを入力してください",
+  "yourPassword": "あなたのパスワード",
+  "usernameRequired": "ユーザー名は必須です",
+  "usernameMinLength": "ユーザー名は少なくとも3文字必要です",
+  "countryRequired": "国は必須です",
+  "contactNumberRequired": "連絡先番号は必須です",
+  "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）"
+}

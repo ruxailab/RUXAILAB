@@ -6,62 +6,90 @@
         <v-card color="#f5f7ff" class="mx-2">
           <v-row>
             <v-col cols="12" md="5" align-self="center">
-              <div class="card-title">Sign-Up</div>
+              <div class="card-title">
+                {{ $t('SIGNIN.sign-up') }}
+              </div>
 
-              <div class="divider"></div>
+              <div class="divider" />
 
-              <v-form class="mx-3" v-model="valid" @keyup.native.enter="onSignUp()">
+              <v-form
+                v-model="valid"
+                class="mx-3"
+                @keyup.native.enter="onSignUp()"
+              >
                 <v-text-field
+                  v-model="email"
                   dense
                   outlined
-                  label="E-mail"
+                  :label="$t('SIGNIN.email')"
                   :rules="emailRules"
                   prepend-inner-icon="mdi-account-circle"
-                  v-model="email"
-                ></v-text-field>
+                />
 
                 <v-text-field
+                  v-model="password"
                   dense
                   outlined
-                  label="Password"
+                  :label="$t('SIGNIN.password')"
                   prepend-inner-icon="mdi-lock"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
                   :type="showPassword ? 'text' : 'password'"
                   :rules="passwordRules"
-                  v-model="password"
-                ></v-text-field>
+                  @click:append="showPassword = !showPassword"
+                />
 
                 <v-text-field
+                  v-model="confirmpassword"
                   dense
                   outlined
-                  label="Confirm Password"
+                  :label="$t('SIGNIN.confirmPassword')"
                   prepend-inner-icon="mdi-lock"
                   :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showConfirmPassword = !showConfirmPassword"
                   :type="showConfirmPassword ? 'text' : 'password'"
-                  v-model="confirmpassword"
                   :rules="[comparePassword]"
-                ></v-text-field>
+                  @click:append="showConfirmPassword = !showConfirmPassword"
+                />
               </v-form>
+              
               <v-card-actions class="justify-center mt-4">
                 <v-btn
                   color="#F9A826"
                   rounded
                   class="white--text"
-                  @click="onSignUp()"
                   :loading="loading"
-                >Sign-up</v-btn>
+                  @click="onSignUp()"
+                >
+                  Sign-up
+                </v-btn>
               </v-card-actions>
+              
+              <div class="text-center my-3">
+                <span class="or-divider">{{ $t('SIGNIN.or') }}</span>
+              </div>
+              
+              <div class="mx-3">
+                <google-sign-in-button 
+                  :button-text="$t('SIGNIN.continueWithGoogle')"
+                  :loading="loading"
+                  @google-sign-in-start="onGoogleSignInStart"
+                  @google-sign-in-success="onGoogleSignInSuccess"
+                  @google-sign-in-error="onGoogleSignInError"
+                />
+              </div>
+              
               <v-card-actions class="justify-center mt-1">
                 <p>
-                  <a style="color: #F9A826" href="/signin">Already have an account? Sign in</a>
+                  <a
+                    style="color: #F9A826; text-decoration: underline;"
+                    @click="redirectToSignin"
+                    >{{ $t('SIGNIN.alreadyHaveAnAccount') }}</a
+                  >
                 </p>
               </v-card-actions>
             </v-col>
 
             <v-col cols="7" class="hidden-sm-and-down" align-self="center">
-              <v-img src="@/assets/signUp.svg"></v-img>
+              <v-img src="@/assets/signUp.svg" />
             </v-col>
           </v-row>
         </v-card>
@@ -71,56 +99,81 @@
 </template>
 
 <script>
-import Snackbar from "@/components/atoms/Snackbar";
+import Snackbar from '@/components/atoms/Snackbar'
+import GoogleSignInButton from '@/components/atoms/GoogleSignInButton'
+import i18n from '@/i18n'
 
 export default {
+  components: {
+    Snackbar,
+    GoogleSignInButton
+  },
   data: () => ({
+    email: '',
+    password: '',
+
     valid: true,
-    email: "",
+
     emailRules: [
-      v => !!v || "Email is required",
-      v => /.+@.+\..+/.test(v) || "Invalid email"
+      (v) => !!v || i18n.t('errors.emailIsRequired'),
+      (v) => /.+@.+\..+/.test(v) || i18n.t('errors.invalidEmail'),
     ],
-    password: "",
     passwordRules: [
-      v => !!v || "Password is required",
-      v => v.length >= 6 || "Password must be at least 6 characters"
+      (v) => !!v || i18n.t('errors.passwordRequired'),
+      (v) => v.length >= 8 || i18n.t('errors.passwordValidate'),
+      (v) => /[A-Z]/.test(v) || i18n.t('errors.passwordUppercase'),
+      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v) || i18n.t('errors.passwordSymbol'),
     ],
-    confirmpassword: "",
+    confirmpassword: '',
     showPassword: false,
-    showConfirmPassword: false
+    showConfirmPassword: false,
   }),
   computed: {
     comparePassword() {
       return () =>
-        (this.confirmpassword == this.password && this.confirmpassword != "") ||
-        "Different passwords";
+        (this.confirmpassword == this.password &&
+          this.confirmpassword !== '') ||
+        i18n.t('errors.differentPasswords')
     },
     user() {
-      return this.$store.getters.user;
+      return this.$store.getters.user
     },
     loading() {
-      return this.$store.getters.loading;
-    }
+      return this.$store.getters.loading
+    },
   },
+
   methods: {
     async onSignUp() {
-      if (this.valid)
-        await this.$store.dispatch("signup", {
-          email: this.email,
-          password: this.password
-        }).then(() => {
-          this.$router.push('/testslist').catch(() => {});
-        });
-      if (this.user) {
-        this.$router.push("/").catch(() => {}).catch(() => {});
+      if (this.valid) {
+        try {
+          await this.$store.dispatch('signup', {
+            email: this.email,
+            password: this.password,
+          })
+          await this.$router.push('/')
+        } catch (error) {
+          console.error('Signup failed:', error)
+          this.errorMessage = 'Signup failed. Please check your credentials.'
+        }
       }
+    },
+    redirectToSignin() {
+      this.$router.push('/signin')
+    },
+    onGoogleSignInStart() {
+      // Event when Google sign-in starts
+    },
+    async onGoogleSignInSuccess() {
+      // Event when Google sign-in is successful
+      await this.$router.push('/')
+    },
+    onGoogleSignInError(error) {
+      // Event when Google sign-in fails
+      console.error('Google sign-in error:', error)
     }
   },
-  components: {
-    Snackbar
-  }
-};
+}
 </script>
 
 <style scoped>
@@ -130,7 +183,6 @@ export default {
   align-content: center;
 }
 .card-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 300;
   font-size: 48px;
@@ -147,5 +199,27 @@ export default {
     rgba(196, 196, 196, 0)
   ) !important;
   height: 0.5px;
+}
+.or-divider {
+  position: relative;
+  color: #757575;
+  font-size: 14px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background-color: #c4c4c4;
+}
+.or-divider::before {
+  left: 0;
+  margin-left: 16px;
+}
+.or-divider::after {
+  right: 0;
+  margin-right: 16px;
 }
 </style>
