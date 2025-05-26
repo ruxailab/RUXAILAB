@@ -5,65 +5,70 @@
       color="#f9a826"
       class="white--text"
       small
+      disabled
       @click="$emit('dialog', true)"
-      >Add new Heuristic</v-btn
     >
+      {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
+    </v-btn>
 
-    <v-dialog width="500" v-model="dialog" persistent>
+    <v-dialog v-model="dialog" width="500" persistent>
       <v-card class="dataCard">
-        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">Add new Heuristic</p>
-        <v-divider></v-divider>
+        <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
+          {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
+        </p>
+        <v-divider />
         <v-row justify="center" class="ma-0">
           <v-col cols="11">
             <v-form ref="form">
               <v-text-field
+                v-model="heuris.title"
                 label="Title"
                 class="mx-3"
-                v-model="heuris.title"
                 :rules="nameRequired"
-              ></v-text-field>
+              />
               <v-row
+                v-for="(n, i) in heuris.questions"
+                :key="i"
                 align="center"
                 justify="space-around"
                 class="mx-1"
-                v-for="(n, i) in heuris.questions"
-                :key="i"
               >
                 <v-col cols="10" class="pt-0 pb-0">
                   <v-text-field
                     v-model="heuris.questions[i].text"
                     :label="'Question ' + (i + 1)"
                     :rules="questionRequired"
-                  ></v-text-field>
+                  />
                 </v-col>
 
                 <v-col cols="1">
                   <v-btn small icon>
-                    <v-icon small @click="removeQuestion(i)">mdi-delete</v-icon>
+                    <v-icon small @click="removeQuestion(i)">
+                      mdi-delete
+                    </v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
 
-              <v-btn color="#f9a826" text class="ma-3" @click="addQuestion()"
-                >+ Add Question</v-btn
-              >
+              <v-btn color="#f9a826" text class="ma-3" @click="addQuestion()">
+                {{ $t('HeuristicsTable.titles.addNewQuestion') }}
+              </v-btn>
             </v-form>
           </v-col>
         </v-row>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
-            @click="$emit('dialog', false), resetVal()"
             small
             text
             color="red lighten-1 white--text"
-            >Cancel</v-btn
+            @click="$emit('dialog', false), resetVal()"
           >
-
-          <v-btn @click="validate()" small color="#f9a826" class="white--text"
-            >Save</v-btn
-          >
+            <v-btn small color="#f9a826" class="white--text" @click="validate()">
+              {{ $t('common.save') }}
+            </v-btn>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -71,57 +76,56 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   props: {
     heuris: {
       type: Object,
-      required: true
+      required: true,
     },
     dialog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     id: 0,
-    nameRequired: [v => !!v || "Name is required"],
-    questionRequired: [v => !!v || "Question has to be filled"]
+    nameRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired')],
+    questionRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired')],
   }),
   methods: {
     addQuestion() {
       if (this.heuris.questions.length > 0)
-        this.id =
-          this.heuris.questions[this.heuris.questions.length - 1].id + 1;
-      else this.id = 0;
-      this.heuris.questions.push({ id: this.id, text: "" });
-      this.heuris.total = this.heuris.questions.length;
+        this.id = this.heuris.questions[this.heuris.questions.length - 1].id + 1
+      else this.id = 0
+      this.heuris.questions.push({ id: this.id, text: '' })
+      this.heuris.total = this.heuris.questions.length
     },
     removeQuestion(i) {
-      this.heuris.questions.splice(i, 1);
-      this.heuris.total = this.heuris.questions.length;
+      this.heuris.questions.splice(i, 1)
+      this.heuris.total = this.heuris.questions.length
     },
     validate() {
       if (this.$refs.form.validate()) {
         if (this.heuris.questions.length == 0) {
-          alert("Please add at least one question to your heuristic");
+          this.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
         } else {
-          this.$emit("dialog", false);
-          this.$emit("addHeuris");
-          this.$emit("change");
-          this.resetVal();
+          this.$emit('dialog', false)
+          this.$emit('addHeuris')
+          this.$emit('change')
+          this.resetVal()
         }
       }
     },
     resetVal() {
-      this.$refs.form.resetValidation();
-    }
-  }
-};
+      this.$refs.form.resetValidation()
+    },
+  },
+}
 </script>
 
 <style scoped>
 .subtitleView {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 200;
   font-size: 18.1818px;

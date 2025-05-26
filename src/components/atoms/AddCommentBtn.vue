@@ -1,65 +1,113 @@
 <template>
   <div>
-    <v-row justify="center" align="center">
-      <v-col cols="11" class="py-0">
-        <slot name="answer"></slot>
+    <v-row justify="start" align="center">
+      <v-col cols="10" sm="11" class="py-0">
+        <slot name="answer" />
       </v-col>
       <v-col cols="1" class="mb-6 py-0">
-        <v-tooltip bottom v-if="!show">
+        <v-tooltip v-if="!show" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="show = !show" icon v-bind="attrs" v-on="on">
-              <v-icon :color="comment.com ? '#F9A826' : ''"
-                >mdi-comment-plus-outline</v-icon
-              >
+            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
+              <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
+                mdi-comment-plus-outline
+              </v-icon>
             </v-btn>
           </template>
-          <span v-if="comment.com">Show comment</span>
-          <span v-else>Add comment</span>
+          <span v-if="answerHeu.heuristicComment">{{
+            $t('HeuristicsTable.AddCommentBtn.showComment')
+          }}</span>
+          <span v-else>{{
+            $t('HeuristicsTable.AddCommentBtn.addComment')
+          }}</span>
         </v-tooltip>
-        <v-tooltip bottom v-else>
+        <v-tooltip v-else bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="show = !show" icon v-bind="attrs" v-on="on">
+            <v-btn icon v-bind="attrs" @click="show = !show" v-on="on">
               <v-icon>mdi-comment-processing-outline</v-icon>
             </v-btn>
           </template>
-          <span>Hide text area</span>
+          <span>{{ $t('HeuristicsTable.AddCommentBtn.hideTextArea') }}</span>
         </v-tooltip>
       </v-col>
 
       <v-col cols="12" class="py-0">
         <v-textarea
+          v-if="show"
+          v-model="answerHeu.heuristicComment"
           outlined
           dense
           auto-grow
-          v-if="show"
-          v-model="comment.com"
           clearable
           clear-icon="mdi-close"
-          label="Comment"
-        ></v-textarea>
+          :label="$t('common.comment')"
+          @change="updateComment"
+        />
+        <ImageImport
+          v-if="show"
+          :heuristic-id="test.testStructure[heurisIndex]"
+          :question-id="answerHeu.heuristicId"
+          :test-id="this.$store.getters.test.id"
+          @imageUploaded="handleImageUploaded"
+        />
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import ImageImport from '@/components/atoms/ImportImage.vue'
 export default {
+  components: { ImageImport },
   props: {
-    comment: {
+    answerHeu: {
       type: Object,
-      require: true
+      default: () => {},
+      require: true,
     },
     heurisIndex: {
-      type: Number
-    }
+      type: Number,
+      default: 0,
+    },
   },
   data: () => ({
-    show: false
+    show: false,
   }),
+  computed: {
+    test() {
+      return this.$store.getters.test
+    },
+    hasContent() {
+      return this.answerHeu.heuristicComment || this.answerHeu.answerImageUrl
+    },
+  },
   watch: {
     heurisIndex() {
-      this.show = false; //close comment when changing heuristic
+      this.show = false //close comment when changing heuristic
+    },
+    'answerHeu.heuristicComment'(newVal) {
+      if (newVal && !this.show) {
+        this.show = true
+      }
+    },
+    'answerHeu.answerImageUrl'(newVal) {
+      if (newVal && !this.show) {
+        this.show = true
+      }
+    },
+  },
+  mounted() {
+    if (this.hasContent) {
+      this.show = true
     }
-  }
-};
+  },
+  methods: {
+    updateComment(input) {
+      this.$emit('updateComment', input)
+    },
+    handleImageUploaded() {
+      // Handle the image URL from the event emitted by ImportImage
+      this.updateComment('')
+    },
+  },
+}
 </script>

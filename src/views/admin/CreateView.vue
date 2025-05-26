@@ -1,255 +1,126 @@
 <template>
-  <div>
-    <h2
-      style="font-weight: 400; display: flex; justify-content: center; margin: 30px 0px"
-    >Create a new test</h2>
+  <div class="page-container">
+    <v-col cols="12" />
+    <span class="Title mb-14 mt-8" style="display: flex; justify-content: center;">
+      {{ $t('pages.createTest.title') }}
+    </span>
 
-    <v-row justify="center" style="padding: 0px 30px;">
+    <v-row justify="center" class="responsive-row">
       <v-row style="max-width: 90%" justify="center">
         <v-col cols="12" md="6">
-          <v-card class="card" flat @click="dialog = true" :ripple="false">
+          <v-card hover class="card" :ripple="false" @click="$router.push('/choose')">
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200"></v-img>
+                <v-img contain src="@/assets/createView/blankCanvas.svg" max-height="200" />
               </v-col>
               <v-col cols="12" md="6" class="card-text">
-                <div class="card-title">Create a blank test</div>
-                <div>Create a blank test to begin with a completely new and fresh template.</div>
+                <div class="card-title">
+                  {{ $t('pages.createTest.blankTitle') }}
+                </div>
+                <div>
+                  {{ $t('pages.createTest.blankSubtitle') }}
+                </div>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
-          <v-card class="card" flat @click="pushToFromTemplate()" :ripple="false">
+          <v-card hover class="card" :ripple="false" @click="pushToFromTemplate()">
             <v-row align="center">
               <v-col cols="12" md="5">
-                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200"></v-img>
+                <v-img contain src="@/assets/createView/createFromTemplate.svg" max-height="200" />
               </v-col>
               <v-col cols="12" md="6" class="card-text-box">
-                <div class="card-title">Create from template</div>
-                <div>Create a test based on a template created by one of our users.</div>
+                <div class="card-title">
+                  {{ $t('pages.createTest.templateTitle') }}
+                </div>
+                <div>
+                  {{ $t('pages.createTest.templateSubtitle') }}
+                </div>
               </v-col>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
     </v-row>
-
-    <v-dialog v-model="dialog" max-width="80%">
-      <v-card color="#e8eaf2">
-        <v-container>
-          <p class="dialog-title ma-2 pa-2">Create Test</p>
-          <v-divider></v-divider>
-          <FormTestDescription :test="test" ref="form" :lock="false" />
-          <v-card-actions class="ma-0 pa-2">
-            <v-spacer></v-spacer>
-            <v-btn color="black" text @click="dialog = false">Cancel</v-btn>
-            <v-btn color="#F9A826" @click="validate()">Create</v-btn>
-          </v-card-actions>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import FormTestDescription from "@/components/atoms/FormTestDescription";
+import TestAdmin from '@/models/TestAdmin'
+import Test from '@/models/Test'
 
 export default {
-  components: {
-    FormTestDescription,
-  },
   data: () => ({
     dialog: false,
     object: {},
     test: {
-      title: "",
-      description: "",
-      type: "",
+      title: '',
+      description: '',
+      type: '',
     },
     testID: null,
   }),
-  methods: {
-    pushToFromTemplate() {
-        this.$router.push('/fromtemplate');
-    },
-    async submit() {
-      await this.testAssembly(); // build Test
-      let d = new Date();
-      let object = this.object;
-      let successful = true;
-      //Send db
-      await this.$store
-        .dispatch("createTest", {
-          collection: "test",
-          data: Object.assign(object, { date: d.toDateString() }),
-        })
-        .then((id) => {
-          this.testID = id;
-          this.$store
-            .dispatch("createAnswers", {
-              data: {
-                test: {
-                  id: id,
-                  title: object.title,
-                  type: object.type,
-                },
-                answers: [],
-                answersSheet: object.answersSheet,
-              },
-            })
-            .then((idAnswers) => {
-              this.$store.dispatch("setAnswerID", {
-                docId: id,
-                data: idAnswers,
-              });
-              this.$store
-                .dispatch("createReport", {
-                  data: {
-                    test: {
-                      id: id,
-                      title: object.title,
-                      type: object.type,
-                      answers: idAnswers,
-                    },
-                    reports: [],
-                  },
-                })
-                .then((idReport) => {
-                  this.$store.dispatch("setReportID", {
-                    docId: id,
-                    data: idReport,
-                  });
-                  this.$store
-                    .dispatch("createCooperators", {
-                      data: {
-                        test: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                        },
-                        cooperators: [],
-                      },
-                    })
-                    .then((idCooperators) => {
-                      this.$store.dispatch("setCooperatorsID", {
-                        docId: id,
-                        data: idCooperators,
-                      });
-                      this.$store.dispatch("pushMyTest", {
-                        docId: this.user.uid,
-                        element: {
-                          id: id,
-                          title: object.title,
-                          type: object.type,
-                          reports: idReport,
-                          answers: idAnswers,
-                          cooperators: idCooperators,
-                          accessLevel: 0,
-                          date: d.toDateString(),
-                          nCoops: 0
-                        },
-                        param: "myTests",
-                      });
-                    });
-                });
-            });
-        })
-        .catch((err) => {
-          console.error("Error", err);
-          successful = false;
-        });
-
-      if (successful) this.sendManager(this.testID);
-    },
-    testAssembly() {
-      //Make object test
-      //Assigning admin info
-
-      if (this.id === null || this.id === undefined) {
-        this.object = Object.assign(this.object, {
-          admin: {
-            id: this.user.uid,
-            email: this.user.email,
-          },
-        });
-      }
-
-      //Assigning test info
-      this.object = Object.assign(this.object, this.test);
-      this.object = Object.assign(this.object, {
-        date: new Date().toDateString(),
-      });
-
-      //assigning tasks/heuristics
-      if (this.test.type === "User") {
-        //assigning pre-test info
-        this.object = Object.assign(this.object, {
-          preTest: {
-            consent: null,
-            form: null,
-          },
-        });
-
-        this.object = Object.assign(this.object, {
-          tasks: [],
-          answersSheet: null,
-        });
-
-        //assigning post test
-        this.object = Object.assign(this.object, {
-          postTest: {
-            form: null,
-          },
-        });
-      } else if (this.test.type === "Heuristics") {
-        this.object = Object.assign(this.object, {
-          heuristics: [],
-          answersSheet: {
-            total: 0,
-            progress: 0,
-            heuristics: [],
-          },
-        });
-
-        this.object = Object.assign(this.object, { options: [] });
-      }
-    },
-    sendManager(id) {
-      this.$router.push(`/managerview/${id}`);
-    },
-    validate() {
-      if (this.$refs.form.valida()) {
-        this.submit();
-      }
+  computed: {
+    user() {
+      return this.$store.getters.user
     },
   },
   watch: {
     dialog() {
       this.test = {
-        title: "",
-        description: "",
-        type: "",
-      };
-      this.object = {};
+        title: '',
+        description: '',
+        type: '',
+      }
+      this.object = {}
 
       if (!this.dialog) {
-        this.$refs.form.resetVal();
-        this.dialog = false;
+        this.$refs.form.resetVal()
+        this.dialog = false
       }
     },
   },
-  computed: {
-    user() {
-      return this.$store.getters.user;
+  methods: {
+    pushToFromTemplate() {
+      this.$router.push('/fromtemplate')
+    },
+    async submit() {
+      const test = new Test({
+        ...this.test,
+        id: null,
+        testAdmin: new TestAdmin({
+          userDocId: this.user.id,
+          email: this.user.email,
+        }),
+        creationDate: Date.now(),
+        updateDate: Date.now(),
+      })
+
+      const testId = await this.$store.dispatch('createNewTest', test)
+
+      this.sendManager(testId)
+    },
+    sendManager(id) {
+      this.$router.push(`/managerview/${id}`)
+    },
+    validate() {
+      if (this.$refs.form.validate()) {
+        this.submit()
+      }
     },
   },
-};
+}
 </script>
 
 <style scoped>
-.dialog-title {
-  font-family: Roboto;
+.page-container {
+  height: 93vh;
+  background-color: #f9f5f0;
+  /* fundo padrão para desktop/tablet */
+}
+
+dialog-title {
   font-style: normal;
   font-weight: 300;
   font-size: 60px;
@@ -258,18 +129,37 @@ export default {
   align-items: center;
   color: #000000;
 }
+
+.Title {
+  font-size: 38px;
+  font-style: normal;
+  text-align: center;
+  font-weight: 600;
+  line-height: initial;
+  background: #f99726;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.responsive-row {
+  padding: 0px 30px;
+}
+
 .card {
-  border: 1px solid rgb(201, 201, 201);
+  border-radius: 20px;
   padding: 30px;
   height: 250px;
 }
+
 .card-title {
   font-size: 25px;
   color: #f9a826;
-  margin: 0px 0px 10px 0px;
+  margin: 0 0 10px 0;
 }
+
 .card-text-box {
-  margin: 0px 0px 0px 30px;
+  margin: 0 0 0 30px;
 }
 
 @media screen and (max-width: 960px) {
@@ -278,11 +168,41 @@ export default {
     text-align: center;
     justify-content: center;
   }
+
   .card-text-box {
-    margin: 20px 0px 0px 0px;
+    margin: 20px 0 0 0;
   }
+
   .card {
-      height: auto;
+    height: auto;
+  }
+}
+
+/* Responsividade para dispositivos móveis (até 600px) */
+@media screen and (max-width: 600px) {
+  .page-container {
+    background-color: #ffffff;
+  }
+
+  .responsive-row {
+    padding: 0px 10px !important;
+  }
+
+  .Title {
+    font-size: 28px;
+  }
+
+  .card {
+    padding: 20px;
+    height: auto;
+  }
+
+  .card-title {
+    font-size: 20px;
+  }
+
+  .card-text-box {
+    margin: 10px 0 0 0;
   }
 }
 </style>

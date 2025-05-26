@@ -1,79 +1,79 @@
 <template>
   <v-form ref="form">
     <v-row justify="space-around">
+      <v-col class="mt-4" cols="5">
+        <v-text-field v-model="task.taskName" :label="$t('common.name')" :rules="requiredRule" outlined dense />
+        <v-textarea v-model="task.taskDescription" :label="$t('common.description')" :rules="requiredRule" outlined
+          dense />
+        <v-text-field v-model="task.taskTip" :label="$t('buttons.tip')" outlined dense />
+        <v-text-field v-model="task.taskLink" label="Link" outlined dense /> </v-col>
       <v-col cols="5">
-        <v-text-field
-          label="Name"
-          v-model="task.name"
-          :rules="requiredRule"
-          outlined
-          dense
-        ></v-text-field>
-        <v-textarea
-          label="Description"
-          v-model="task.description"
-          :rules="requiredRule"
-          outlined
-          dense
-        ></v-textarea>
-        <v-text-field
-          label="Tip"
-          v-model="task.tip"
-          outlined
-          dense
-        ></v-text-field>
-      </v-col>
-      <v-col cols="5">
-        <v-radio-group
-          v-model="task.answer"
-          label="Answer type:"
-          :mandatory="false"
-          :rules="requiredRule"
-        >
-          <v-radio label="No answer" value="null"></v-radio>
-          <v-radio label="Text Area" value="textArea"></v-radio>
-          <v-radio label="Post Test" value="form"></v-radio>
+        <v-radio-group v-model="task.taskType" :label="$t('titles.answerType')" :mandatory="false"
+          :rules="requiredRule">
+          <v-radio :label="$t('switches.noAnswer')" value="null" />
+          <v-radio :label="$t('switches.textArea')" value="textArea" />
+          <v-radio :label="$t('switches.postTest')" value="form" />
+          <v-radio :label="$t('switches.postForm')" value="postForm" />
         </v-radio-group>
-        <v-text-field
-          v-if="task.answer === 'form'"
-          label="Post-test"
-          v-model="task.postTest"
-          outlined
-          dense
-        ></v-text-field>
+        <v-text-field v-if="task.taskType === 'form'" v-model="task.postQuestion" :label="$t('switches.postTest')"
+          outlined dense />
+        <v-text-field v-if="task.taskType === 'postForm'" v-model="task.postForm" :label="$t('switches.postForm')"
+          outlined dense :rules="[(v) => !!v && v.startsWith('http') || 'Field must be a valid URL']" />
         <v-row align="center">
-          Timer:
-          <v-switch class="ml-2" v-model="task.timer"></v-switch>
+          {{ $t('switches.screenRecord') }}
+          <v-switch v-model="task.hasScreenRecord" class="ml-2" />
+        </v-row>
+        <v-row align="center">
+          {{ $t('switches.camera') }}
+          <v-switch v-model="task.hasCamRecord" class="ml-2" />
+        </v-row>
+        <!-- <v-row align="center"> FUTURE WORK
+          {{ $t('switches.eyeTracker') }}
+          <v-switch v-model="task.hasEye" class="ml-2" />
+        </v-row> -->
+        <v-row align="center">
+          {{ $t('switches.audioRecord') }}
+          <v-switch v-model="task.hasAudioRecord" class="ml-2" />
         </v-row>
       </v-col>
     </v-row>
   </v-form>
 </template>
-
 <script>
 export default {
   props: {
     task: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      requiredRule: [v => !!v || "Field Required"]
-    };
+      requiredRule: [(v) => !!v || 'Field Required'],
+      postQuestionRule: [
+        () =>
+          this.task.taskType !== 'form' ||
+          !!this.task.postQuestion ||
+          'Post Question is required for this answer type',
+      ],
+    }
+  },
+  watch: {
+    'task.taskType'(newValue) {
+      if (newValue !== 'form') {
+        this.task.postQuestion = ''
+      }
+    },
   },
   methods: {
-    valida() {
-      let valid = this.$refs.form.validate();
-      this.$emit("validate", valid);
+    validate() {
+      const valid = this.$refs.form.validate()
+      this.$emit('validate', valid)
     },
     resetVal() {
-      this.$refs.form.resetValidation();
-    }
-  }
-};
-</script>
+      this.$refs.form.resetValidation()
+    },
+  },
+}
 
-<style>
-</style>
+</script>
