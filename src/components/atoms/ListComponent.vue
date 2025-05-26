@@ -11,8 +11,8 @@
         <v-list-item
           v-if="item"
           :ripple="false"
-          @click="emitClick(item)"
           class="py-3 px-4"
+          @click="emitClick(item)"
         >
           <template #prepend>
             <v-avatar
@@ -66,7 +66,10 @@
 
           <template #append>
             <div class="d-flex flex-column align-end justify-center text-caption mr-2">
-              <v-tooltip v-if="type === 'myTests'" location="top">
+              <v-tooltip
+                v-if="type === 'myTests'"
+                location="top"
+              >
                 <template #activator="{ props }">
                   <v-row
                     v-bind="props"
@@ -75,13 +78,21 @@
                     dense
                   >
                     {{ item.numberColaborators ?? '-' }}
-                    <v-icon class="ml-1" size="16">mdi-account-multiple</v-icon>
+                    <v-icon
+                      class="ml-1"
+                      size="16"
+                    >
+                      mdi-account-multiple
+                    </v-icon>
                   </v-row>
                 </template>
                 <span>{{ $t('titles.cooperators') }}</span>
               </v-tooltip>
 
-              <div class="mt-1" v-if="item.updateDate && type !== 'sessions'">
+              <div
+                v-if="item.updateDate && type !== 'sessions'"
+                class="mt-1"
+              >
                 {{ $t('pages.listTests.updated') }}
                 {{ getFormattedDate(item.updateDate) }}
               </div>

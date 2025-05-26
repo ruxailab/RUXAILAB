@@ -1,7 +1,13 @@
 <template>
   <div class="ma-0 pa-0">
-    <v-data-table height="420" style="background: #f5f7ff; border-radius: 20px;" :headers="headers" :items="allTasks"
-      :items-per-page="5" class="elevation-1">
+    <v-data-table
+      height="420"
+      style="background: #f5f7ff; border-radius: 20px;"
+      :headers="headers"
+      :items="allTasks"
+      :items-per-page="5"
+      class="elevation-1"
+    >
       <!-- Table Header -->
       <template #top>
         <v-row
@@ -75,7 +81,11 @@
       </template>
       <!-- Edit and Delete Icons -->
       <template #item.actions="{ item }">
-        <v-icon size="small" class="mr-2" @click="editItem(item)">
+        <v-icon
+          size="small"
+          class="mr-2"
+          @click="editItem(item)"
+        >
           mdi-pencil
         </v-icon>
         <v-icon
