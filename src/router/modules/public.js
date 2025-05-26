@@ -55,7 +55,7 @@ export default [
     component: LandingPage,
   },
   {
-    path: '*',
+    path: '/:catchAll(.*)',
     name: 'Page not Found',
     meta: { authorize: [] },
     component: PageNotFound,

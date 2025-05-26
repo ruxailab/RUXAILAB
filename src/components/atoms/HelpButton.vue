@@ -2,7 +2,7 @@
   <div>
     <v-btn
       v-if="!isHelp"
-      small
+      size="small"
       icon
       class="mr-1"
       @click="$router.push('/help')"
@@ -14,14 +14,14 @@
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    isHelp() {
-      return this.$route.name === 'Help'; // Use strict equality
-    },
-  },
-}
+<script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
+
+const isHelp = computed(() => route.name === 'Help') // Use strict equality
+
 </script>
 
 <style></style>

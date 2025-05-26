@@ -2,54 +2,46 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <VueEditor v-model="consent" rows="3" outlined color="orange" class="mx-6 mt-3" placeholder="Consent Form..." />
+        <quill-editor 
+          v-model:value="consent"
+        />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
-import { VueEditor } from "vue2-editor";
-export default {
-  data: () => ({
-    consent: '',
-  }),
-  components: {
-    VueEditor
-  },
-  computed: {
-    consentStore() {
-      return this.$store.getters.consent
-    },
-    test() {
-      return this.$store.getters.test
-    },
-  },
-  mounted() {
-    this.getConsent()
-  },
-  methods: {
-    saveState() {
-      this.$store.dispatch('setConsent', this.consent)
-      this.test.testStructure.consent = this.consent
-    },
-    getConsent() {
-      if (this.test.testStructure.consent) {
-        this.consent = this.test.testStructure.consent
-      }
-    },
-  },
-  watch: {
-    consent() {
-      this.saveState()
-    }
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const consent = ref('');
+
+const consentStore = computed(() => store.getters.consent);
+const test = computed(() => store.getters.test);
+
+const saveState = () => {
+  store.dispatch('setConsent', consent.value);
+  test.value.testStructure.consent = consent.value;
+};
+
+const getConsent = () => {
+  if (test.value.testStructure.consent) {
+    consent.value = test.value.testStructure.consent;
   }
-}
+};
+
+watch( consent, () => saveState())
+
+onMounted(() => {
+  getConsent();
+});
 </script>
 
 <style scoped>
-.v-text-field--outlined>>>fieldset {
-  border-radius: 25px;
-  border: 1px solid #ffceb2;
+.ql-container {
+  height: 150px;
+  padding: 10px;
 }
 </style>

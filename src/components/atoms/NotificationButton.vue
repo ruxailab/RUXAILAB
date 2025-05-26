@@ -1,144 +1,152 @@
 <template>
   <div v-if="user.notifications">
-    <v-menu :position-x="x" :position-y="y" absolute offset-y min-width="300">
-      <template v-slot:activator="{ on, attrs }">
+    <v-menu
+      :location="`${x} ${y}`"
+      absolute
+      offset="8"
+      min-width="300"
+    >
+      <template #activator="{ props }">
         <v-badge
           color="red"
-          bottom
-          overlap
+          location="bottom end"
           :content="checkIfHasNewNotifications()"
-          :value="checkIfHasNewNotifications()"
+          :model-value="checkIfHasNewNotifications() > 0"
         >
           <v-btn
-            v-if="checkIfHasNewNotifications() === 0"
-            small
+            size="small"
             icon
             class="mr-1"
-            v-bind="attrs"
-            v-on="on"
+            v-bind="props"
           >
             <v-icon size="20">
-              mdi-bell-outline
-            </v-icon>
-          </v-btn>
-
-          <v-btn v-else small icon v-bind="attrs" class="mr-1" v-on="on">
-            <v-icon size="20">
-              mdi-bell-ring
+              {{ checkIfHasNewNotifications() > 0 ? 'mdi-bell-ring' : 'mdi-bell-outline' }}
             </v-icon>
           </v-btn>
         </v-badge>
       </template>
-      
-      <!--  navigation bar -->
-      <v-card>
-        <v-app-bar
-          color="orange"
-          dark
-          dense
-        >
-          <v-toolbar-title> {{ $t('common.notifications') }}</v-toolbar-title>
-          <v-spacer></v-spacer>
+
+      <v-card
+        class="pa-0"
+        max-width="500"
+        style="overflow: hidden;"
+      >
+        <!-- Fixed header -->
+        <div style="background: orange; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: bold; font-size: 16px; color: white;">
+            {{ $t('common.notifications') }}
+          </span>
           <v-btn
-            text
+            variant="text"
+            size="small"
+            style="color: white; text-transform: uppercase; font-weight: 500;"
             @click="goToNotificationPage"
           >
             {{ $t('common.viewAll') }}
           </v-btn>
-        </v-app-bar>
+        </div>
 
-        <v-card-text>
+        <v-divider />
+
+        <!-- Notifications content -->
+        <v-card-text style="padding: 0;">
           <div
             v-if="user.notifications.length > 0"
             style="max-height: 50vh; overflow-y: auto;"
           >
             <v-list
-              v-for="(notification, i) in user.notifications"
-              :key="i"
-              dense
-              class="ma-0 py-1"
+              density="compact"
+              class="py-1"
             >
               <v-list-item
-                dense
-                style="font-size: 14px; font-family: Roboto;"
-                class="px-2"
+                v-for="(notification, i) in user.notifications"
+                :key="i"
+                class="px-3"
                 :disabled="notification.read"
                 @click="goToNotificationRedirect(notification)"
               >
-                <v-list-item-content>
-                  <v-list-item-title style="font-weight: bold">
-                    {{ notification.title }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ notification.description }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle>
-                    {{ $t('common.sentBy') }} {{ notification.author }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-icon v-if="!notification.read">
-                  <v-chip x-small color="success" outlined label>
+                <template
+                  v-if="!notification.read"
+                  #prepend
+                >
+                  <v-chip
+                    size="x-small"
+                    color="success"
+                    variant="outlined"
+                    label
+                  >
                     {{ $t('common.new') }}!
                   </v-chip>
-                </v-list-item-icon>
+                </template>
+
+                <v-list-item-title style="font-weight: bold;">
+                  {{ notification.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ notification.description }}</v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{ $t('common.sentBy') }} {{ notification.author }}
+                </v-list-item-subtitle>
               </v-list-item>
-              <v-divider></v-divider>
             </v-list>
           </div>
-          <v-list v-else>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title class="text-center grey--text">
-                  <strong>{{ $t('common.noNotifications') }}</strong>
-                </v-list-item-title>
-                <v-list-item-subtitle class="text-center">
-                  <v-icon class="mt-2 mb-3">
-                    mdi-bell-off
-                  </v-icon>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+
+          <!-- No notifications -->
+          <div
+            v-else
+            class="text-center py-6"
+          >
+            <v-icon
+              size="36"
+              class="mb-2"
+              color="grey"
+            >
+              mdi-bell-off
+            </v-icon>
+            <div class="text-grey text-subtitle-2">
+              <strong>{{ $t('common.noNotifications') }}</strong>
+            </div>
+          </div>
         </v-card-text>
       </v-card>
     </v-menu>
   </div>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    x: 0,
-    y: 50,
-  }),
-  computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    test() {
-      return this.$store.getters.test
-    },
-  },
-  methods: {
-    async goToNotificationRedirect(notification) {
-      await this.$store.dispatch('markNotificationAsRead', {
-        notification: notification,
-        user: this.user,
-      })
-      window.open(`/${notification.redirectsTo}`)
-    },
-    checkIfHasNewNotifications() {
-      const newNot = this.user.notifications.filter((n) => n.read === false)
-      return newNot.length ?? 0
-    },
-    goToNotificationPage() {
-      this.$router.push('/notifications')
-      console.log("Navigating to notifications page")
-    },
-  },
-}
+<script setup>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+// Initialize store, router, and i18n
+const store = useStore();
+const router = useRouter();
+const { t } = useI18n();
+
+const x = ref('right');
+const y = ref('top');
+
+const user = computed(() => store.getters.user);
+
+const checkIfHasNewNotifications = () => {
+  return user.value.notifications.filter((n) => !n.read).length;
+};
+
+const goToNotificationRedirect = async (notification) => {
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value,
+  });
+  window.open(`/${notification.redirectsTo}`, '_blank');
+};
+
+const goToNotificationPage = () => {
+  router.push('/notifications');
+};
 </script>
 
 <style scoped>
-/* You can remove this style block as we're using Vuetify's built-in dividers now */
+.text-grey {
+  color: #9e9e9e;
+}
 </style>
