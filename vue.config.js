@@ -1,8 +1,8 @@
 module.exports = {
-  "transpileDependencies": [
-    "vuetify",
-    "vue-clamp",
-    "resize-detector"
+  'transpileDependencies': [
+    'vuetify',
+    'vue-clamp',
+    'resize-detector',
   ],
 
   pluginOptions: {
@@ -10,7 +10,7 @@ module.exports = {
       locale: 'en',
       fallbackLocale: 'en',
       localeDir: 'locales',
-      enableInSFC: true
-    }
-  }
+      enableInSFC: true,
+    },
+  },
 }

@@ -1,16 +1,21 @@
 <template>
   <v-footer dark padless>
-    <v-card flat tile class="gray lighten-3 white--text text-center"   style="width:100%">
-      <v-card-text
-        class="white--text pt-0"
+    <v-card
+      flat
+      tile
+      class="gray lighten-3 white--text text-center"
+      style="width:100%"
+    >
+      <v-card-text class="white--text py-1">
+        {{ $t('pages.landing.footer') }}
+        <a @click="sendTo('mailto:ruxailab@gmail.com')">ruxailab@gmail.com</a>
+      </v-card-text>
 
-      > We are looking for new partners to help us to grow the project! Feel free to contact us on uxremotelab@gmail.com</v-card-text>
-
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text class="white--text">
         {{ new Date().getFullYear() }} —
-        <strong>Research Workflow</strong>
+        <strong>RUXAILAB</strong>
       </v-card-text>
     </v-card>
   </v-footer>
@@ -20,15 +25,15 @@
 export default {
   data: () => ({
     icons: [
-      { icon: "mdi-facebook", linkTo: "https://www.facebook.com" },
-      { icon: "mdi-twitter", linkTo: "https://www.twitter.com" },
-      { icon: "mdi-instagram", linkTo: "https://www.instagram.com/lgfacens/" }
-    ]
+      { icon: 'mdi-facebook', linkTo: 'https://www.facebook.com' },
+      { icon: 'mdi-twitter', linkTo: 'https://www.twitter.com' },
+      { icon: 'mdi-instagram', linkTo: 'https://www.instagram.com/lgfacens/' },
+    ],
   }),
   methods: {
     sendTo(link) {
-      window.open(link);
-    }
-  }
-};
+      window.open(link)
+    },
+  },
+}
 </script>

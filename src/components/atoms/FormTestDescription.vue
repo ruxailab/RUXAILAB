@@ -2,40 +2,23 @@
   <v-form ref="form">
     <v-row justify="space-around" class="pa-2">
       <v-col cols="12" md="5">
-        <v-text-field
-          :autofocus="lock ? false : true"
-          v-model="test.title"
-          label="Title"
-          :rules="titleRequired"
-          counter="100"
-          outlined
-          @input="$emit('change')"
-          dense
-        ></v-text-field>
-        <v-select
-          :disabled="lock"
-          :items="types"
-          v-model="test.type"
-          label="Type"
-          :rules="typeRequired"
-          dense
-          outlined
-        ></v-select>
+        <v-text-field v-model="test.testTitle" :autofocus="lock ? false : true" :label="$t('common.title')"
+          :rules="titleRequired" counter="200" outlined dense @input="$store.commit('SET_LOCAL_CHANGES', true)" />
+        <v-select v-model="test.testType" :disabled="lock" :items="types" :label="$t('common.type')"
+          :rules="typeRequired" dense outlined />
       </v-col>
       <v-col cols="12" md="5">
-        <v-textarea
-          v-model="test.description"
-          label="Description"
-          outlined
-          dense
-          @input="$emit('change')"
-        ></v-textarea>
+        <v-textarea v-model="test.testDescription" :label="$t('common.description')" outlined dense
+          @input="$store.commit('SET_LOCAL_CHANGES', true)" />
+        <v-checkbox v-model="test.isPublic" :label="$t('pages.createTest.public')" color="#F9A826"
+          @change="$store.commit('SET_LOCAL_CHANGES', true)" />
       </v-col>
     </v-row>
   </v-form>
 </template>
 
 <script>
+import i18n from '@/i18n'
 export default {
   props: {
     test: {
@@ -49,27 +32,26 @@ export default {
   },
   data: () => ({
     titleRequired: [
-      (v) => !!v || "Field Required",
-      (v) => v.length <= 100 || "Max 100 characters",
+      (v) => !!v || i18n.t('errors.fieldRequired'),
+      (v) => (v && v.length <= 200) || 'Max 200 characters',
     ],
-    typeRequired: [(v) => !!v || "Field Required"],
+    typeRequired: [(v) => !!v || i18n.t('errors.fieldRequired')],
     types: [
-      { text: "Usability User Test", value: "User" },
-      { text: "Usability Heuristic Evaluation", value: "Heuristics" },
+      { text: 'Usability User Test', value: 'User' },
+      { text: i18n.t('titles.heuristic'), value: 'HEURISTICS' },
     ],
   }),
   methods: {
-    valida() {
-      let valid = this.$refs.form.validate();
-      this.$emit("valForm", valid, 0);
-      return valid;
+    validate() {
+      const valid = this.$refs.form.validate()
+      this.$emit('valForm', valid, 0)
+      return valid
     },
     resetVal() {
-      this.$refs.form.resetValidation(); //used on emits
+      this.$refs.form.resetValidation() //used on emits
     },
   },
-};
+}
 </script>
 
-<style>
-</style>
+<style></style>
