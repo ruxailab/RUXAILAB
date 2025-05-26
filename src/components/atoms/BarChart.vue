@@ -1,32 +1,37 @@
 <script>
-import { Bar } from "vue-chartjs";
+import { Bar } from 'vue-chartjs'
 
 export default {
+  extends: Bar,
   props: {
     labels: {
-      default: "Data One"
+      type: String,
+      default: 'Data One',
     },
-    data: {},
+    data: {
+      type: Array,
+      default: () => [],
+    },
     legend: {
-      default: "Legend"
-    }
+      type: String,
+      default: 'Legend',
+    },
   },
-  extends: Bar,
   watch: {
     data() {
       this.renderChart(
-      {
-        labels: this.labels,
-        datasets: [
-          {
-            label: this.legend,
-            backgroundColor: "#f87979",
-            data: this.data,
-          },
-        ],
-      },
-      { responsive: true, maintainAspectRatio: false }
-    );
+        {
+          labels: this.labels,
+          datasets: [
+            {
+              label: this.legend,
+              backgroundColor: '#f87979',
+              data: this.data,
+            },
+          ],
+        },
+        { responsive: true, maintainAspectRatio: false },
+      )
     },
   },
   mounted() {
@@ -36,13 +41,13 @@ export default {
         datasets: [
           {
             label: this.legend,
-            backgroundColor: "#f87979",
+            backgroundColor: '#f87979',
             data: this.data,
           },
         ],
       },
-      { responsive: true, maintainAspectRatio: false }
-    );
+      { responsive: true, maintainAspectRatio: false },
+    )
   },
-};
+}
 </script>

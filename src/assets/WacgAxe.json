@@ -1,0 +1,795 @@
+[
+    {
+        "Principle 1": {
+            "title": "Perceivable",
+            "description": "Web content is made available to the senses - sight, hearing, and/or touch",
+            "Guidelines": [
+                {
+                    "id": "1.1",
+                    "title": "Text Alternatives",
+                    "description": "Provide text alternatives for any non-text content",
+                    "Rules": [
+                        {
+                            "id": "1.1.1",
+                            "title": "Non-text Content",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Images, image buttons, and image map hot spots have appropriate, equivalent alternative text.",
+                                "Images that do not convey content, are decorative, or contain content that is already conveyed in text are given empty alternative text (alt=\"\") or implemented as CSS backgrounds.",
+                                "All linked images have descriptive alternative text.",
+                                "Equivalent alternatives to complex images are provided in context or on a separate linked page.",
+                                "Form buttons have a descriptive value.",
+                                "Inputs have appropriate accessible names.",
+                                "Embedded multimedia is identified via accessible text.",
+                                "Frames and iframes are appropriately titled."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "1.2",
+                    "title": "Time-based Media",
+                    "description": "Provide alternatives for time-based media",
+                    "Note": "If the audio or video is designated as an alternative to web content (e.g., an audio or sign language version of a web page, for example), then the web content itself serves as the alternative.",
+                    "Rules": [
+                        {
+                            "id": "1.2.1",
+                            "title": "Audio-only and Video-only (Prerecorded)",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "A descriptive transcript of relevant content is provided for non-live audio-only (audio podcasts, MP3 files, etc.).",
+                                "A descriptive transcript or audio description of relevant content is provided for non-live video-only, unless the video is decorative."
+                            ]
+                        },
+                        {
+                            "id": "1.2.2",
+                            "title": "Captions (Prerecorded)",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Synchronized captions are provided for all non-live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.3",
+                            "title": "Audio Description or Media Alternative (Prerecorded)",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "An audio description of the video content is provided for non-live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.4",
+                            "title": "Captions (Live)",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Captions are provided for all live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.5",
+                            "title": "Audio Description (Prerecorded)",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "An audio description of the video content is provided for non-live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.6",
+                            "title": "Sign Language (Prerecorded)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "A sign language interpretation of the video content is provided for non-live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.7",
+                            "title": "Extended Audio Description (Prerecorded)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "When audio description cannot be added to a video due to insufficient pauses in the audio , an alternative version of the video with pauses that allow audio description is provided."
+                            ]
+                        },
+                        {
+                            "id": "1.2.8",
+                            "title": "Media Alternative (Prerecorded)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "A text alternative for time-based media is provided for non-live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        },
+                        {
+                            "id": "1.2.9",
+                            "title": "Audio Only (Live)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "A text transcript of the audio content is provided for live, multi-media content, unless the content is a decorative image or a control."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "1.3",
+                    "title": "Adaptable",
+                    "description": "Create content that can be presented in different ways (e.g., simple text, alternative text, or Braille) without losing information or structure.",
+                    "Rules": [
+                        {
+                            "id": "1.3.1",
+                            "title": "Info and Relationships",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Semantic markup is appropriately used to designate headings, regions/landmarks, lists, emphasized or special text, etc.",
+                                "Tables are used for tabular data and data cells are associated with their headers.",
+                                "Data table captions, if present, are associated to data tables.",
+                                "Text labels are associated with form inputs.",
+                                "Related form controls are grouped with fieldset/legend.",
+                                "ARIA labelling may be used when standard HTML is insufficient."
+                            ]
+                        },
+                        {
+                            "id": "1.3.2",
+                            "title": "Meaningful Sequence",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "The reading and navigation order (determined by code order) is logical and intuitive."
+                            ]
+                        },
+                        {
+                            "id": "1.3.3",
+                            "title": "Sensory Characteristics",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Instructions do not rely upon shape, size, or visual location (e.g., \"Click the square icon to continue\" or \"Instructions are in the right-hand column\").",
+                                "Instructions do not rely upon sound (e.g., \"A beeping sound indicates you may continue.\")."
+                            ]
+                        },
+                        {
+                            "id": "1.3.4",
+                            "title": "Orientation",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "Orientation of web content is not restricted to only portrait or landscape, unless a specific orientation is necessary."
+                            ]
+                        },
+                        {
+                            "id": "1.3.5",
+                            "title": "Identify Input Purpose",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "Input fields that collect certain types of user information have an appropriate autocomplete attribute defined."
+                            ]
+                        },
+                        {
+                            "id": "1.3.6",
+                            "title": "Identify Purpose",
+                            "level": "AAA",
+                            "version": "2.1",
+                            "criteria": [
+                                "Regions/landmarks are used to identify page regions.",
+                                "ARIA is used, where appropriate, to enhance HTML semantics to better identify the purpose of interface components."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "1.4",
+                    "title": "Distinguishable",
+                    "description": "Make it easier for users to see and hear content including separating foreground from background",
+                    "Rules": [
+                        {
+                            "id": "1.4.1",
+                            "title": "Use of Color",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Color is not used as the sole method of conveying content or distinguishing visual elements.",
+                                "Color alone is not used to distinguish links from surrounding text unless the contrast ratio between the link and the surrounding text is at least 3:1 and an additional distinction (e.g., it becomes underlined) is provided when the link is hovered over and receives keyboard focus."
+                            ]
+                        },
+                        {
+                            "id": "1.4.2",
+                            "title": "Audio Control",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "A mechanism is available to pause and play an audio stream, unless the purpose of the content is to listen to a time-limited audio stream."
+                            ]
+                        },
+                        {
+                            "id": "1.4.3",
+                            "title": "Contrast (Minimum)",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Text and images of text have a contrast ratio of at least 4.5:1.",
+                                "Large text - at least 18 point (typically 24px) or 14 point (typically 18.66px) and bold - has a contrast ratio of at least 3:1."
+                            ]
+                        },
+                        {
+                            "id": "1.4.4",
+                            "title": "Resize text",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "The page is readable and functional when the page is zoomed to 200%."
+                            ]
+                        },
+                        {
+                            "id": "1.4.5",
+                            "title": "Images of Text",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "If the same Visual presentation can be made using text alone , an image is not used to present that text."
+                            ]
+                        },
+                        {
+                            "id": "1.4.6",
+                            "title": "Contrast (Enhanced)",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Text and images of text have a contrast ratio of at least 7:1.",
+                                "Large text - at least 18 point (typically 24px) or 14 point (typically 18.66px) and bold - has a contrast ratio of at least 4.5:1."
+                            ]
+                        },
+                        {
+                            "id": "1.4.7",
+                            "title": "Low or No Background Audio",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Audio with speech has no or very low background noise so that the speech is clearly distinguishable."
+                            ]
+                        },
+                        {
+                            "id": "1.4.8",
+                            "title": "Visual Presentation",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Blocks of text over one sentence in length:  O  Are no more than 80 characters wide.  O  Are NOT fully justified (aligned to both the left and the right margins).  O  Have adequate line spacing (at least 1/2 the height of the text) and paragraph spacing (1.5 times line spacing).  O  Have defined or inherited foreground and background colors.  O  Do NOT require horizontal scrolling when the text size is doubled."
+                            ]
+                        },
+                        {
+                            "id": "1.4.9",
+                            "title": "Images of Text (No Exception)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Text is used within an image only for decoration (the image does not convey content) OR when the information cannot be presented with text alone."
+                            ]
+                        },
+                        {
+                            "id": "1.4.10",
+                            "title": "Reflow",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "No loss of content or functionality occurs when content is presented at a width of 320 pixels.",
+                                "Horizontal scrolling is avoided for content presented at a width of 320 pixels.",
+                                "This requires responsive design for most web sites.",
+                                "Best tested by setting the browser window to 1280 pixels wide and then zooming the page content to 400%.",
+                                "Content that requires horizontal scrolling, such as data tables, complex images (maps and charts), toolbars, etc. are exempted."
+                            ]
+                        },
+                        {
+                            "id": "1.4.11",
+                            "title": "Non-text Contrast",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "A contrast ratio of at least 3:1 is present for differentiating graphical objects (such as icons and components of charts or graphs).",
+                                "A contrast ratio of at least 3:1 is present for author-customized interface components (such as buttons, form controls, and focus indicators/outlines).",
+                                "At least 3:1 contrast is maintained in the various states (focus, hover, active, etc.) of author-customized interactive components."
+                            ]
+                        },
+                        {
+                            "id": "1.4.12",
+                            "title": "Text Spacing",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "No loss of content or functionality occurs when the user adapts paragraph spacing to 2 times the font size.",
+                                "No loss of content or functionality occurs when text line height/spacing is set to 1.5 times the font size.",
+                                "No loss of content or functionality occurs when word spacing is set to .16 times the font size.",
+                                "No loss of content or functionality occurs when letter spacing is set to .12 times the font size.",
+                                "This is best supported by avoiding pixel height definitions for elements that contain text."
+                            ]
+                        },
+                        {
+                            "id": "1.4.13",
+                            "title": "Content on Hover or Focus",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "The newly revealed content can be dismissed (generally via the Esc key) without moving the pointer or keyboard focus.",
+                                "Exception: When the content presents an input error or does not obscure or interfere with other page content.",
+                                "The pointer can be moved to the new content without the content disappearing.",
+                                "The new content must remain visible until one of the following occurs:",
+                                "- The pointer or keyboard focus is moved away from the triggering control",
+                                "- The new content is dismissed",
+                                "- The new content is no longer relevant"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "Principle 2": {
+            "title": "Operable",
+            "description": "Interface forms, controls, and navigation are operable",
+            "Guidelines": [
+                {
+                    "id": "2.1",
+                    "title": "Keyboard Accessible",
+                    "description": "Make all functionality available from a keyboard",
+                    "Rules": [
+                        {
+                            "id": "2.1.1",
+                            "title": "Keyboard",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "All page functionality is available using the keyboard, unless the functionality cannot be accomplished in any known way using a keyboard (e.g., free hand drawing).",
+                                "Page-specified shortcut keys and accesskeys (accesskey should typically be avoided) do not conflict with existing browser and screen reader shortcuts."
+                            ]
+                        },
+                        {
+                            "id": "2.1.2",
+                            "title": "No Keyboard Trap",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Keyboard focus is never locked or trapped at one particular page element. The user can navigate to and from all navigable page elements using only a keyboard."
+                            ]
+                        },
+                        {
+                            "id": "2.1.3",
+                            "title": "Keyboard (No Exception)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "All page functionality is available using the keyboard."
+                            ]
+                        },
+                        {
+                            "id": "2.1.4",
+                            "title": "Character Key Shortcuts",
+                            "level": "A",
+                            "version": "2.1",
+                            "criteria": [
+                                "If a keyboard shortcut uses printable character keys, then the user must be able to disable the key command, change the defined key to a non-printable key (Ctrl, Alt, etc.), or only activate the shortcut when an associated interface component or button is focused."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "2.2",
+                    "title": "Enough Time",
+                    "description": "Provide users enough time to read and use content",
+                    "Rules": [
+                        {
+                            "id": "2.2.1",
+                            "title": "Timing Adjustable",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "If a page or application has a time limit, the user is given options to turn off, adjust, or extend that time limit. This is not a requirement for real-time events (e.g., an auction), where the time limit is absolutely required, or if the time limit is longer than 20 hours."
+                            ]
+                        },
+                        {
+                            "id": "2.2.2",
+                            "title": "Pause, Stop, Hide",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Automatically moving, blinking, or scrolling content (such as carousels, marquees, or animations) that lasts longer than 5 seconds can be paused, stopped, or hidden by the user.",
+                                "Automatically updating content (e.g., a dynamically-updating news ticker, chat messages, etc.) can be paused, stopped, or hidden by the user or the user can manually control the timing of the updates."
+                            ]
+                        },
+                        {
+                            "id": "2.2.3",
+                            "title": "No Timing",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "The content and functionality have no time limits or constraints."
+                            ]
+                        },
+                        {
+                            "id": "2.2.4",
+                            "title": "Interruptions",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Interruptions (alerts, page updates, etc.) can be postponed or suppressed by the user."
+                            ]
+                        },
+                        {
+                            "id": "2.2.5",
+                            "title": "Re-authenticating",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "If an authentication session expires, the user can re-authenticate and continue the activity without losing any data from the current page."
+                            ]
+                        },
+                        {
+                            "id": "2.2.6",
+                            "title": "Timeouts",
+                            "level": "AAA",
+                            "version": "2.1",
+                            "criteria": [
+                                "Users must be warned of any timeout that could result in data loss, unless the data is preserved for longer than 20 hours of user inactivity."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "2.3",
+                    "title": "Seizures",
+                    "description": "Do not design content in a way that is known to cause seizures or physical reactions",
+                    "Rules": [
+                        {
+                            "id": "2.3.1",
+                            "title": "Three Flashes or Below Threshold",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "No page content flashes more than 3 times per second unless that flashing content is sufficiently small and the flashes are of low contrast and do not contain too much red. (See general flash and red flash thresholds)"
+                            ]
+                        },
+                        {
+                            "id": "2.3.2",
+                            "title": "Three Flashes",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "No page content flashes more than 3 times per second."
+                            ]
+                        },
+                        {
+                            "id": "2.3.3",
+                            "title": "Animation from Interactions",
+                            "level": "AAA",
+                            "version": "2.1",
+                            "criteria": [
+                                "Users can disable non-essential animation and movement that is triggered by user interaction."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "2.4",
+                    "title": "Navigable",
+                    "description": "Provide ways to help users navigate, find content, and determine where they are",
+                    "Rules": [
+                        {
+                            "id": "2.4.1",
+                            "title": "Bypass Blocks",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "A link is provided to skip navigation and other page elements that are repeated across web pages.",
+                                "While proper use of headings or regions/landmarks is sufficient to meet this success criterion, because keyboard navigation by headings or regions is not supported in most browsers, WebAIM recommends a \"skip\" link in addition to headings and regions."
+                            ]
+                        },
+                        {
+                            "id": "2.4.2",
+                            "title": "Page Titled",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "The web page has a descriptive and informative page title."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "2.5",
+                    "title": "Input Modalities",
+                    "description": "Make it easier for users to operate functionality through various inputs beyond keyboard",
+                    "Rules": [
+                        {
+                            "id": "2.5.1",
+                            "title": "Pointer Gestures",
+                            "level": "A",
+                            "version": "2.1",
+                            "criteria": [
+                                "If multipoint or path-based gestures (such as pinching, swiping, or dragging across the screen) are not essential to the functionality, then the functionality can also be performed with a single point activation (such as activating a button)."
+                            ]
+                        },
+                        {
+                            "id": "2.5.2",
+                            "title": "Pointer Cancellation",
+                            "level": "A",
+                            "version": "2.1",
+                            "criteria": [
+                                "To help avoid inadvertent activation of controls, avoid non-essential down-event (e.g., onmousedown) activation when clicking, tapping, or long pressing the screen. Use onclick, onmouseup, or similar instead.",
+                                "If onmouseup (or similar) is used, you must provide a mechanism to abort or undo the action performed."
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "Principle 3": {
+            "title": "Understandable",
+            "description": "Information and the operation of user interface must be understandable",
+            "Guidelines": [
+                {
+                    "id": "3.1",
+                    "title": "Readable",
+                    "description": "Make text content readable and understandable",
+                    "Rules": [
+                        {
+                            "id": "3.1.1",
+                            "title": "Language of Page",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "The language of the page is identified using the lang attribute (e.g., <html lang=\"en\">)."
+                            ]
+                        },
+                        {
+                            "id": "3.1.2",
+                            "title": "Language of Parts",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "The language of page content that is in a different language is identified using the lang attribute (e.g., <blockquote lang=\"es\">)."
+                            ]
+                        },
+                        {
+                            "id": "3.1.3",
+                            "title": "Unusual Words",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Words that may be ambiguous, unfamiliar, or used in a very specific way are defined through adjacent text, a definition list, a glossary, or other suitable method."
+                            ]
+                        },
+                        {
+                            "id": "3.1.4",
+                            "title": "Abbreviations",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "The meaning of an unfamiliar abbreviation is provided by expanding it the first time it is used, using the <abbr> element, or linking to a definition or glossary."
+                            ]
+                        },
+                        {
+                            "id": "3.1.5",
+                            "title": "Reading Level",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "A more understandable alternative is provided for content that is more advanced than can be reasonably read by a person with roughly 9 years of primary education."
+                            ]
+                        },
+                        {
+                            "id": "3.1.6",
+                            "title": "Pronunciation",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "If the pronunciation of a word is vital to understanding that word, its pronunciation is provided immediately following the word or via a link or glossary."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "3.2",
+                    "title": "Predictable",
+                    "description": "Make Web pages appear and operate in predictable ways",
+                    "Rules": [
+                        {
+                            "id": "3.2.1",
+                            "title": "On Focus",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "When a page element receives focus, it does not result in a substantial change to the page, the spawning of a pop-up window, an additional change of keyboard focus, or any other change that could confuse or disorient the user."
+                            ]
+                        },
+                        {
+                            "id": "3.2.2",
+                            "title": "On Input",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "When a user inputs information or interacts with a control, it does not result in a substantial change to the page, the spawning of a pop-up window, an additional change of keyboard focus, or any other change that could confuse or disorient the user unless the user is informed of the change ahead of time."
+                            ]
+                        },
+                        {
+                            "id": "3.2.3",
+                            "title": "Consistent Navigation",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Navigation links that are repeated on web pages do not change order when navigating through the site."
+                            ]
+                        },
+                        {
+                            "id": "3.2.4",
+                            "title": "Consistent Identification",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Elements that have the same functionality across multiple web pages are consistently identified. For example, a search box at the top of the site should always be labeled the same way."
+                            ]
+                        },
+                        {
+                            "id": "3.2.5",
+                            "title": "Change on Request",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Substantial changes to the page, the spawning of pop-up windows, uncontrolled changes of keyboard focus, or any other change that could confuse or disorient the user must be initiated by the user. Alternatively, the user is provided an option to disable such changes."
+                            ]
+                        },
+                        {
+                            "id": "3.2.6",
+                            "title": "Consistent Help",
+                            "level": "A",
+                            "version": "2.2",
+                            "criteria": [
+                                "Contact and self-help details or functionality are presented consistently when present on multiple web pages."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "3.3",
+                    "title": "Input Assistance",
+                    "description": "Help users avoid and correct mistakes",
+                    "Rules": [
+                        {
+                            "id": "3.3.1",
+                            "title": "Error Identification",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Required inputs or inputs that require a specific format, value, or length provide this information within the element's label.",
+                                "Form validation errors are efficient, intuitive, and accessible. The error is clearly identified, quick access to the problematic element is provided, and the user can easily fix the error and resubmit the form."
+                            ]
+                        },
+                        {
+                            "id": "3.3.2",
+                            "title": "Labels or Instructions",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Inputs are identified by labels or instructions that help users know what information to enter."
+                            ]
+                        },
+                        {
+                            "id": "3.3.3",
+                            "title": "Error Suggestion",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "If an input error is detected (via client-side or server-side validation), suggestions are provided for fixing the input in a timely and accessible manner."
+                            ]
+                        },
+                        {
+                            "id": "3.3.4",
+                            "title": "Error Prevention (Legal, Financial, Data)",
+                            "level": "AA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Submissions, changes, and deletions of legal, financial, or test data can be reversed, verified, or confirmed."
+                            ]
+                        },
+                        {
+                            "id": "3.3.5",
+                            "title": "Help",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "Instructions and cues are provided in context to help in form completion and submission."
+                            ]
+                        },
+                        {
+                            "id": "3.3.6",
+                            "title": "Error Prevention (All)",
+                            "level": "AAA",
+                            "version": "2.0",
+                            "criteria": [
+                                "If the user can submit information, the submission is reversible, verified, or confirmed."
+                            ]
+                        },
+                        {
+                            "id": "3.3.7",
+                            "title": "Redundant Entry",
+                            "level": "A",
+                            "version": "2.2",
+                            "criteria": [
+                                "Information that a user must re-enter to complete a single-session process must be auto-populated or available for the user to select, unless re-entering the information is essential to the functionality, the information poses security issues, or the previously-entered information is no longer valid."
+                            ]
+                        },
+                        {
+                            "id": "3.3.8",
+                            "title": "Accessible Authentication (Minimum)",
+                            "level": "AA",
+                            "version": "2.2",
+                            "criteria": [
+                                "A cognitive function test (such as remembering a password or solving a puzzle) is not required for any step in an authentication process unless the cognitive function test can be bypassed in some way, can be completed with assistance by some other mechanism, uses object recognition (such as \"click on the photo of a flower\"), or uses identification of non-text content provided by the user (such as a user-provided image)."
+                            ]
+                        },
+                        {
+                            "id": "3.3.9",
+                            "title": "Accessible Authentication (Enhanced)",
+                            "level": "AAA",
+                            "version": "2.2",
+                            "criteria": [
+                                "A cognitive function test (such as remembering a password or solving a puzzle) is not required for any step in an authentication process unless the cognitive function test can be bypassed in some way or can be completed with assistance by some other mechanism."
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },{
+        "Principle 4": {
+            "title": "Robust",
+            "description": "Content can be used reliably by a wide variety of user agents, including assistive technologies",
+            "Guidelines": [
+                {
+                    "id": "4.1",
+                    "title": "Compatible",
+                    "description": "Maximize compatibility with current and future user agents, including assistive technologies",
+                    "Rules": [
+                        {
+                            "id": "4.1.1",
+                            "title": "Parsing (Obsolete and removed)",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "NOTE: This success criterion is no longer useful and as of 2023 has been removed from WCAG. It previously required that significant HTML validation/parsing errors be avoided."
+                            ]
+                        },
+                        {
+                            "id": "4.1.2",
+                            "title": "Name, Role, Value",
+                            "level": "A",
+                            "version": "2.0",
+                            "criteria": [
+                                "Markup is used in a way that facilitates accessibility. This includes following the HTML specifications and using forms, input labels, frame titles, etc. appropriately.",
+                                "ARIA is used appropriately to enhance accessibility when HTML is not sufficient."
+                            ]
+                        },
+                        {
+                            "id": "4.1.3",
+                            "title": "Status Messages",
+                            "level": "AA",
+                            "version": "2.1",
+                            "criteria": [
+                                "If an important status message is presented and focus is not set to that message, the message must be announced to screen reader users, typically via an ARIA alert or live region."
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+]

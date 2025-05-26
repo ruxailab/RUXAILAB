@@ -1,0 +1,51 @@
+name: test🧪
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Test
+        run: npm test
+
+      - name: Comment to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: "⚠️ The tests have failed, @${{ github.actor }} Please review the proposed changes."
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send message to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        if: failure() && github.event_name == 'pull_request'
+        uses: Ilshidur/action-discord@master
+        with:
+          args: |
+            ⚠️ The GitHub event `${{ github.event_name }}` has failed.
+            **Repository**: `${{ github.repository }}`
+            **Workflow**: `${{ github.workflow }}`
+            **Actor**: `${{ github.actor }}`
+            **Pull Request**: [Link](${{ github.event.pull_request.html_url }})
+            **Action URL**: [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            Please review the proposed changes.
+

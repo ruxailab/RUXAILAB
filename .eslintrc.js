@@ -1,17 +1,43 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
   },
-  'extends': [
-    'plugin:vue/essential',
-    'eslint:recommended'
-  ],
+  extends: ['plugin:vue/recommended'],
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: 'babel-eslint',
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
-  }
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-unused-vars': 'off',
+    semi: ['warn', 'never'],
+    quotes: ['warn', 'single'],
+    'prefer-const': 'warn',
+    indent: 'off',
+    eqeqeq: 'off',
+    'no-plusplus': 'off',
+    'max-len': ['warn', {
+      'code': 200,
+      'ignoreStrings': true,
+      'ignoreComments': true,
+      'ignoreTemplateLiterals': true,
+    }],
+    'no-empty': 'warn',
+    'arrow-parens': 'warn',
+    'no-trailing-spaces': 'warn',
+    'comma-dangle': ['warn', 'always-multiline'],
+    'object-curly-newline': 'off',
+    'class-methods-use-this': 'off',
+    'no-continue': 'off',
+    'no-loop-func': 'off',
+    'linebreak-style': 'off',
+    'no-restricted-syntax': 'off',
+    'operator-linebreak': 'off',
+    'vue/max-attributes-per-line': 'off',
+
+    'vue/require-prop-types':'warn',
+    'vue/require-default-prop':'warn',
+    'vue/prop-name-casing': 'warn',
+  },
 }
