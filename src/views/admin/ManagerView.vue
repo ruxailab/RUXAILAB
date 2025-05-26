@@ -123,7 +123,7 @@
               />
             </div>
 
-            <div class="mt-10">
+            <div v-if="accessLevel == 0" class="mt-10">
               <p class="presentation-text text-center text-md-left mb-4">
                 {{ $t('common.analyzeProject') }}
               </p>

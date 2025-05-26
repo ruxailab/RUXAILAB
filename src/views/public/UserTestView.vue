@@ -216,6 +216,7 @@
                       v-bind="props"
                       link
                       :disabled="isPreTestTaskDisabled(i)"
+                      :class="{ 'disabled-group': isPreTestTaskDisabled(i) }"
                       @click="taskIndex = i"
                     >
                       <template #prepend>
@@ -235,7 +236,7 @@
               <!-- Tasks -->
               <v-list-group
                 v-if="item.id === 1"
-                :class="{ 'disabled-group': !localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted }"
+                :class="{ 'disabled-group': !localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted && !localTestAnswer.submitted) }"
                 :value="index === 1"
                 @click="index = item.id"
               >
@@ -248,7 +249,7 @@
                   <v-list-item v-bind="props">
                     <template #prepend>
                       <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                        {{ (!localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted) ? 'mdi-lock' : item.icon }}
+                        {{ (!localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted && !localTestAnswer.submitted)) ? 'mdi-lock' : item.icon }}
                       </v-icon>
                     </template>
                     <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
@@ -265,12 +266,13 @@
                     <v-list-item
                       v-bind="props"
                       link
-                      :disabled="isTaskDisabled(i)"
+                      :disabled="isTaskDisabled(i) && !localTestAnswer.submitted"
+                      :class="{ 'disabled-group': isTaskDisabled(i) && !localTestAnswer.submitted }"
                       @click="taskIndex = i; startTimer()"
                     >
                       <template #prepend>
                         <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                          {{ isTaskDisabled(i) ? 'mdi-lock' : task.icon }}
+                          {{ isTaskDisabled(i) && !localTestAnswer.submitted ? 'mdi-lock' : task.icon }}
                         </v-icon>
                       </template>
                       <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
@@ -285,12 +287,13 @@
               <!-- Post Test -->
               <v-list-item
                 v-if="item.id === 2"
-                :disabled="!allTasksCompleted"
+                :disabled="!allTasksCompleted && !localTestAnswer.submitted"
+                :class="{ 'disabled-group': !allTasksCompleted && !localTestAnswer.submitted }"
                 @click="index = item.id"
               >
                 <template #prepend>
                   <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                    {{ !allTasksCompleted ? 'mdi-lock' : item.icon }}
+                    {{ !allTasksCompleted && !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
                   </v-icon>
                 </template>
                 <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
@@ -311,14 +314,12 @@
                 v-if="mini"
                 color="white"
                 icon="mdi-chevron-right"
-              > 
-              </v-icon>
+              ></v-icon>
               <v-icon
                 v-else
                 color="white"
                 icon="mdi-chevron-left"
-              >  
-              </v-icon>
+              ></v-icon>
             </v-btn>
           </div>
         </v-navigation-drawer>
@@ -353,15 +354,62 @@
               <v-divider class="my-8" />
               <v-row>
                 <v-col
-                  cols="5"
+                  cols="8"
                   class="mx-auto py-0"
                 >
-                  <v-checkbox
-                    v-model="localTestAnswer.consentCompleted"
-                    :label="localTestAnswer.consent"
-                    :disabled="localTestAnswer.consentCompleted"
-                    @click="completeStep(taskIndex, 'consent'); taskIndex = 1"
+                  <div
+                    v-html="test.testStructure.consent"
+                    class="rich-text mb-6"
                   />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  cols="6"
+                  class="mx-auto"
+                >
+                  <v-text-field
+                    v-model="fullName"
+                    label="Full Name"
+                    variant="outlined"
+                    density="compact"
+                    :rules="[v => !!v || 'Name is required']"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  cols="6"
+                  class="mx-auto"
+                >
+                  <v-radio-group
+                    v-model="localTestAnswer.consentCompleted"
+                    direction="vertical"
+                  >
+                    <v-radio
+                      label="I accept the consent terms"
+                      :value="true"
+                      :disabled="!fullName"
+                    />
+                    <v-radio
+                      label="I do not accept the consent terms"
+                      :value="false"
+                    />
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  cols="6"
+                  class="mx-auto text-center"
+                >
+                  <v-btn
+                    color="primary"
+                    :disabled="!localTestAnswer.consentCompleted || !fullName"
+                    @click="completeStep(taskIndex, 'consent'); taskIndex = 1"
+                  >
+                    Continue
+                  </v-btn>
                 </v-col>
               </v-row>
             </template>
@@ -399,7 +447,7 @@
                   class="mx-auto py-0"
                 >
                   <span class="cardsTitle">{{ item.title }}</span>
-                  <br>
+                  <br />
                   <span
                     v-if="item.description"
                     class="cardsSubtitle"
@@ -475,6 +523,18 @@
                       >
                         {{ test.testStructure.userTasks[taskIndex].taskDescription }}
                       </p>
+                    </v-row>
+                    <v-row
+                      v-if="test.testStructure.userTasks[taskIndex].taskLink"
+                      justify="center"
+                    >
+                      <a
+                        :href="test.testStructure.userTasks[taskIndex].taskLink"
+                        target="_blank"
+                        style="color: #455a64; cursor: pointer;"
+                      >
+                        {{ test.testStructure.userTasks[taskIndex].taskLink }}
+                      </a>
                     </v-row>
                     <div v-if="!localTestAnswer.submitted">
                       <v-row>
@@ -579,15 +639,55 @@
                     />
                   </v-col>
                 </v-row>
+                <v-row
+                  v-if="test.testStructure.userTasks[taskIndex].postForm"
+                  class="fill-height"
+                  align="center"
+                  justify="center"
+                >
+                  <v-col cols="12">
+                    <p class="text-h5">
+                      Post Form
+                    </p>
+                    <iframe
+                      :src="test.testStructure.userTasks[taskIndex].postForm"
+                      width="100%"
+                      height="500"
+                      frameborder="0"
+                      marginheight="0"
+                      marginwidth="0"
+                    >Loading...</iframe>
+                  </v-col>
+                </v-row>
                 <div class="pa-2 text-end">
-                  <v-btn
-                    block
-                    color="orange-lighten-1"
-                    @click="completeStep(taskIndex, 'tasks'); callTimerSave()"
-                  >
-                    {{ $t('UserTestView.buttons.done') }}
-                  </v-btn>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-btn
+                        block
+                        color="red-lighten-1"
+                        @click="completeStep(taskIndex, 'tasks', false); callTimerSave()"
+                      >
+                        {{ $t('buttons.couldNotFinish') }}
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-btn
+                        block
+                        color="orange-lighten-1"
+                        @click="completeStep(taskIndex, 'tasks', true); callTimerSave()"
+                      >
+                        {{ $t('UserTestView.buttons.done') }}
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </div>
+                <video
+                  v-if="videoUrl === ''"
+                  id="vpreview"
+                  class="preview"
+                  style="max-width: 0px"
+                  autoplay
+                />
               </v-container>
             </template>
           </ShowInfo>
@@ -624,7 +724,7 @@
                   class="mx-auto py-0"
                 >
                   <span class="cardsTitle">{{ item.title }}</span>
-                  <br>
+                  <br />
                   <span
                     v-if="item.description"
                     class="cardsSubtitle"
@@ -684,7 +784,7 @@
                   class="mt-3"
                 >
                   <span class="cardsTitle">{{ $t('finishTest.finalMessage') }}!</span>
-                  <br>
+                  <br />
                   <span class="cardsSubtitle">{{ $t('finishTest.congratulations') }}</span>
                   <v-row
                     justify="center"
@@ -695,7 +795,7 @@
                         draggable="false"
                         src="../../../public/finalMessage.svg"
                         alt="Final test svg"
-                      >
+                      />
                     </v-col>
                     <v-col
                       cols="4"
@@ -723,7 +823,8 @@
       </v-row>
     </v-container>
     <!-- Floating Action Button -->
-    <v-btn v-if="showSaveBtn && localTestAnswer && !start"
+    <v-btn
+      v-if="showSaveBtn && localTestAnswer && !start"
       position="fixed"
       location="bottom right"
       icon
@@ -802,8 +903,11 @@ import AudioRecorder from '@/components/atoms/AudioRecorder.vue';
 import AudioVisualizer from '@/components/atoms/AudioVisualizer.vue';
 import VideoRecorder from '@/components/atoms/VideoRecorder.vue';
 import ScreenRecorder from '@/components/atoms/ScreenRecorder.vue';
+import TaskAnswer from '@/models/TaskAnswer';
+import UserTask from '@/models/UserTask';
 
 const videoUrl = ref('');
+const fullName = ref('');
 const logined = ref(null);
 const selected = ref(true);
 const fromlink = ref(null);
@@ -825,23 +929,13 @@ const rightView = ref(null);
 const videoRecorder = ref(null);
 const timerComponent = ref(null);
 
-const localTestAnswer = reactive({
-  consent: '',
-  consentCompleted: false,
-  preTestCompleted: false,
-  preTestAnswer: [],
-  tasks: [],
-  postTestCompleted: false,
-  postTestAnswer: [],
-  submitted: false,
-  progress: 0,
-});
+const localTestAnswer = reactive(new TaskAnswer());
 
 const store = useStore();
 const router = useRouter();
 
 const test = computed(() => store.getters.test);
-const testId = computed(() => store.getters.test.id);
+const testId = computed(() => store.getters.test?.id || null);
 const user = computed(() => {
   if (store.getters.user) setExistUser();
   return store.getters.user;
@@ -853,11 +947,10 @@ const loading = computed(() => store.getters.loading);
 const currentImageUrl = computed(() => store.state.Tests.currentImageUrl);
 const tasks = computed(() => store.getters.tasks);
 
-
 const isTaskDisabled = (taskIndex) => {
   if (!Array.isArray(localTestAnswer.tasks)) return true;
   for (let i = 0; i < taskIndex; i++) {
-    if (!localTestAnswer.tasks[i].completed) {
+    if (!localTestAnswer.tasks[i]?.completed) {
       return true;
     }
   }
@@ -865,25 +958,43 @@ const isTaskDisabled = (taskIndex) => {
 };
 
 const isPreTestTaskDisabled = (taskIndex) => {
-  if (taskIndex === 0) return false;
-  return !localTestAnswer.consentCompleted;
+  if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
+  return !localTestAnswer.consentCompleted || (localTestAnswer.preTestCompleted && !localTestAnswer.submitted);
 };
 
 const saveAnswer = async () => {
-  // Update currentUserTestAnswer with localTestAnswer values
-  Object.assign(currentUserTestAnswer.value, localTestAnswer);
-  await store.dispatch('saveTestAnswer', {
-    data: currentUserTestAnswer.value,
-    answerDocId: test.value.answersDocId,
-    testType: test.value.testType,
-  });
-  router.push('/testslist');
+  try {
+    localTestAnswer.fullName = fullName.value;
+    if (!user.value) {
+      console.log(localTestAnswer.value)
+      await store.dispatch('saveTestAnswer', {
+        data: localTestAnswer,
+        answerDocId: test.value.answersDocId,
+        testType: test.value.testType,
+      });
+    } else {
+      Object.assign(currentUserTestAnswer.value, localTestAnswer);
+      await store.dispatch('saveTestAnswer', {
+        data: currentUserTestAnswer.value,
+        answerDocId: test.value.answersDocId,
+        testType: test.value.testType,
+      });
+    }
+    router.push('/testslist');
+  } catch (error) {
+    console.error('Error saving answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+  }
 };
 
 const submitAnswer = async () => {
-  localTestAnswer.submitted = true;
-  Object.assign(currentUserTestAnswer.value, localTestAnswer);
-  await saveAnswer();
+  try {
+    localTestAnswer.submitted = true;
+    await saveAnswer();
+  } catch (error) {
+    console.error('Error submitting answer:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
+  }
 };
 
 const handleSubmit = () => {
@@ -892,9 +1003,10 @@ const handleSubmit = () => {
 };
 
 const startTest = () => {
-  if (test.value.testStructure.length === 0) {
-    store.commit('SET_TOAST', { type: 'info', message: "This test don't have any task" });
-    router.push(`/managerview/${test.value.id}`);
+  if (!test.value.testStructure || test.value.testStructure.length === 0) {
+    store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
+    router.push(`/missions/${test.value.id}`);
+    return;
   }
   start.value = !start.value;
 };
@@ -914,11 +1026,20 @@ const startTimer = () => {
 };
 
 const handleTimerStopped = (elapsedTime, taskIndex) => {
-  localTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
+  if (localTestAnswer.tasks?.[taskIndex]) {
+    localTestAnswer.tasks[taskIndex].taskTime = elapsedTime;
+  }
 };
 
-const completeStep = (id, type) => {
+const completeStep = (id, type, userCompleted = true) => {
   try {
+    if (type === 'consent') {
+      localTestAnswer.consentCompleted = true;
+      items.value[0].value[id].icon = 'mdi-check-circle-outline';
+      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
+        items.value[0].icon = 'mdi-check-circle-outline';
+      }
+    }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true;
       items.value[0].value[id].icon = 'mdi-check-circle-outline';
@@ -927,18 +1048,18 @@ const completeStep = (id, type) => {
       }
       index.value = 1;
       taskIndex.value = 0;
-    } 
+    }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
         console.error('localTestAnswer.tasks is not an array:', localTestAnswer.tasks);
         return;
       }
-      localTestAnswer.tasks[id].completed = true;
+      localTestAnswer.tasks[id].completed = userCompleted;
       items.value[1].value[id].icon = 'mdi-check-circle-outline';
       allTasksCompleted.value = true;
 
       for (let i = 0; i < items.value[1].value.length; i++) {
-        if (!localTestAnswer.tasks[i].completed) {
+        if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false;
           break;
         }
@@ -948,24 +1069,26 @@ const completeStep = (id, type) => {
       }
       if (id < localTestAnswer.tasks.length - 1) {
         taskIndex.value = id + 1;
+        startTimer();
       } else {
         index.value = 2;
       }
-    } 
+      if (userCompleted) {
+        store.commit('SET_TOAST', {
+          type: 'success',
+          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          timeout: 3000,
+        });
+      }
+    }
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true;
       items.value[2].icon = 'mdi-check-circle-outline';
-    } 
-    if (type === 'consent') {
-      localTestAnswer.consentCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
-      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
-        items.value[0].icon = 'mdi-check-circle-outline';
-      }
     }
     calculateProgress();
   } catch (error) {
     console.error('Error in completeStep:', error);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
   }
 };
 
@@ -1040,33 +1163,39 @@ const calculateProgress = () => {
 };
 
 const setTest = async () => {
-  logined.value = true;
-  await store.dispatch('getCurrentTestAnswerDoc');
-  if (!currentUserTestAnswer.value) {
-    currentUserTestAnswer.value = {};
-  }
-
-  // Convert tasks object to array
-  let tasksArray = [];
-  if (currentUserTestAnswer.value.tasks) {
-    if (Array.isArray(currentUserTestAnswer.value.tasks)) {
-      tasksArray = currentUserTestAnswer.value.tasks;
-    } else if (typeof currentUserTestAnswer.value.tasks === 'object') {
-      tasksArray = Object.values(currentUserTestAnswer.value.tasks);
+  try {
+    logined.value = true;
+    await store.dispatch('getCurrentTestAnswerDoc');
+    if (!currentUserTestAnswer.value) {
+      currentUserTestAnswer.value = new TaskAnswer();
     }
-  }
 
-  Object.assign(localTestAnswer, {
-    consent: currentUserTestAnswer.value.consent || '',
-    consentCompleted: currentUserTestAnswer.value.consentCompleted || false,
-    preTestCompleted: currentUserTestAnswer.value.preTestCompleted || false,
-    preTestAnswer: currentUserTestAnswer.value.preTestAnswer || [],
-    tasks: tasksArray, // Use the converted array
-    postTestCompleted: currentUserTestAnswer.value.postTestCompleted || false,
-    postTestAnswer: currentUserTestAnswer.value.postTestAnswer || [],
-    submitted: currentUserTestAnswer.value.submitted || false,
-    progress: currentUserTestAnswer.value.progress || 0,
-  });
+    let tasksArray = [];
+    if (currentUserTestAnswer.value.tasks) {
+      if (Array.isArray(currentUserTestAnswer.value.tasks)) {
+        tasksArray = currentUserTestAnswer.value.tasks.map(task => new UserTask(task));
+      } else if (typeof currentUserTestAnswer.value.tasks === 'object') {
+        tasksArray = Object.values(currentUserTestAnswer.value.tasks).map(task => new UserTask(task));
+      }
+    }
+
+    Object.assign(localTestAnswer, {
+      consent: currentUserTestAnswer.value.consent || '',
+      consentCompleted: currentUserTestAnswer.value.consentCompleted || false,
+      preTestCompleted: currentUserTestAnswer.value.preTestCompleted || false,
+      preTestAnswer: currentUserTestAnswer.value.preTestAnswer || [],
+      tasks: tasksArray,
+      postTestCompleted: currentUserTestAnswer.value.postTestCompleted || false,
+      postTestAnswer: currentUserTestAnswer.value.postTestAnswer || [],
+      submitted: currentUserTestAnswer.value.submitted || false,
+      progress: currentUserTestAnswer.value.progress || 0,
+      fullName: currentUserTestAnswer.value.fullName || '',
+    });
+    fullName.value = localTestAnswer.fullName;
+  } catch (error) {
+    console.error('Error setting test:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to load test data. Please try again.' });
+  }
 };
 
 const setExistUser = () => {
@@ -1074,71 +1203,75 @@ const setExistUser = () => {
 };
 
 const mappingSteps = async () => {
-  items.value = [];
+  try {
+    items.value = [];
 
-  // PreTest
-  if (validate(test.value?.testStructure?.preTest)) {
-    items.value.push({
-      title: 'Pre-test',
-      icon: 'mdi-checkbox-blank-circle-outline',
-      value: [
-        {
-          title: 'Consent',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          id: 0,
-        },
-        {
-          title: 'Form',
-          icon: 'mdi-checkbox-blank-circle-outline',
-          id: 0,
-        },
-      ],
-      id: 0,
-    });
-    if (!localTestAnswer.preTestAnswer.length && test.value.testStructure.preTest) {
-      localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(() => ({
-        answer: '',
-      }));
-    }
-  }
-
-  // Tasks
-  if (validate(test.value?.testStructure?.userTasks)) {
-    items.value.push({
-      title: 'Tasks',
-      icon: 'mdi-checkbox-blank-circle-outline',
-      value: test.value.testStructure.userTasks.map((i) => ({
-        title: i.taskName,
+    // PreTest
+    if (validate(test.value?.testStructure?.preTest)) {
+      items.value.push({
+        title: 'Pre-test',
         icon: 'mdi-checkbox-blank-circle-outline',
-        id: 2,
-      })),
-      id: 1,
-    });
-    // initialize tasks if it hasn't been set yet
-    if (!localTestAnswer.tasks || !Array.isArray(localTestAnswer.tasks)) {
-      localTestAnswer.tasks = test.value.testStructure.userTasks.map(() => ({
-        taskAnswer: '',
-        taskObservations: '',
-        postAnswer: '',
-        taskTime: 0,
-        completed: false,
-      }));
+        value: [
+          {
+            title: 'Consent',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            id: 0,
+          },
+          {
+            title: 'Form',
+            icon: 'mdi-checkbox-blank-circle-outline',
+            id: 1,
+          },
+        ],
+        id: 0,
+      });
+      if (!localTestAnswer.preTestAnswer.length && Array.isArray(test.value.testStructure.preTest)) {
+        localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(() => ({
+          answer: '',
+        }));
+      }
     }
-  }
 
-  // PostTest
-  if (validate(test.value?.testStructure?.postTest)) {
-    items.value.push({
-      title: 'Post Test',
-      icon: 'mdi-checkbox-blank-circle-outline',
-      value: test.value.testStructure.postTest,
-      id: 2,
-    });
-    if (!localTestAnswer.postTestAnswer.length && test.value.testStructure.postTest) {
-      localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(() => ({
-        answer: '',
-      }));
+    // Tasks
+    if (validate(test.value?.testStructure?.userTasks)) {
+      items.value.push({
+        title: 'Tasks',
+        icon: 'mdi-checkbox-blank-circle-outline',
+        value: test.value.testStructure.userTasks.map((task, index) => ({
+          title: task.taskName,
+          icon: 'mdi-checkbox-blank-circle-outline',
+          id: index,
+        })),
+        id: 1,
+      });
+      if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map(() => new UserTask({
+          taskAnswer: '',
+          taskObservations: '',
+          postAnswer: '',
+          taskTime: 0,
+          completed: false,
+        }));
+      }
     }
+
+    // PostTest
+    if (validate(test.value?.testStructure?.postTest)) {
+      items.value.push({
+        title: 'Post Test',
+        icon: 'mdi-checkbox-blank-circle-outline',
+        value: test.value.testStructure.postTest,
+        id: 2,
+      });
+      if (!localTestAnswer.postTestAnswer.length && Array.isArray(test.value.testStructure.postTest)) {
+        localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(() => ({
+          answer: '',
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Error mapping steps:', error.message);
+    store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
   }
 };
 
@@ -1156,7 +1289,8 @@ watch(
   () => test.value,
   async () => {
     await mappingSteps();
-  }
+  },
+  { deep: true }
 );
 
 watch(
@@ -1167,10 +1301,6 @@ watch(
       if (items.value.find((obj) => obj.id === 0)) {
         preTestIndex.value = items.value[0].value[0].id;
       }
-    } else if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted && index.value === 0) {
-      index.value = 1;
-    } else if (allTasksCompleted.value && index.value === 1) {
-      index.value = 2;
     }
   },
   { deep: true }
@@ -1206,7 +1336,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  if (videoRecorder.value) {
+  if (videoRecorder.value && typeof videoRecorder.value.stopRecording === 'function') {
     videoRecorder.value.stopRecording();
   }
 });
@@ -1219,17 +1349,17 @@ onBeforeUnmount(() => {
 }
 
 .background {
-  background: linear-gradient(134.16deg, #ffab25 -13.6%, #dd8800 117.67%);
+  background: linear-gradient(134.16deg, #ffab25 -13.56%, #dd8800 117.67%);
   position: fixed;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
 
-.backgroundTest {
-  background-color: #e8eaf2;
+.background-task {
+  background-color: #e8eaf6;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .background:before {
@@ -1247,9 +1377,9 @@ onBeforeUnmount(() => {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.titleView {
+.title-view {
   font-style: normal;
-  font-weight: 300;
+  font-weight: normal;
   font-size: 60px;
   line-height: 70px;
   display: flex;
@@ -1257,17 +1387,18 @@ onBeforeUnmount(() => {
   color: #ffffff;
 }
 
-.description {
+.description-view {
   font-style: normal;
-  font-weight: 200;
+  font-weight: normal;
   font-size: 18.1818px;
   line-height: 21px;
   align-items: flex-end;
   color: #ffffff;
 }
-.subtitleView {
+
+.sub-title {
   font-style: normal;
-  font-weight: 200;
+  font-weight: normal;
   font-size: 18.1818px;
   align-items: flex-end;
   color: #000000;
@@ -1275,12 +1406,12 @@ onBeforeUnmount(() => {
   padding-bottom: 2px;
 }
 
-.btn-fix:focus::before {
+.btn-fix:focus:before {
   opacity: 0 !important;
 }
 
-.titleText {
-  color: rgba(255, 255, 255, 0.7);
+.title-text {
+  color: rgba(255,255,255, 0.7);
   font-size: 16px;
   margin-left: 15px;
   padding: 10px;
@@ -1303,34 +1434,31 @@ onBeforeUnmount(() => {
 .nav-list::-webkit-scrollbar {
   width: 7px;
 }
-.nav-list::-webkit-scrollbar-track {
+.nav-list::-webkit-list-item {
   background: none;
 }
-.nav-list::-webkit-scrollbar-thumb {
+.nav-list-item::-webkit-scrollbar-thumb {
   background: #777596;
   border-radius: 4px;
 }
-.nav-list::-webkit-scrollbar-thumb:hover {
-  background: #64618a;
+.nav-list-item::-webkit-scrollbar-thumb:hover {
+  background: #66618a;
 }
-
 .cards {
   border-radius: 20px;
 }
-
-.cardsTitle {
+.cards-title {
   color: #455a64;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
 }
-
-.cardsSubtitle {
+.cards-subtitle {
   color: #455a64;
   font-size: 15px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: normal;
   line-height: normal;
 }
 </style>
