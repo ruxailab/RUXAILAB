@@ -30,11 +30,15 @@
                   </v-col>
                   <span class="conclusionPercentage mx-auto mb-1">{{
                     getTestsInProgress().totalInProgress
-                    }}</span>
+                  }}</span>
                 </v-row>
               </v-col>
 
-              <v-divider vertical class="mt-14" style="background-color: #c9c9c9" />
+              <v-divider
+                vertical
+                class="mt-14"
+                style="background-color: #c9c9c9"
+              />
 
               <v-col cols="6">
                 <v-row justify="center">
@@ -105,24 +109,29 @@
           >
             <v-row>
               <span class="bottomCardsTitle mt-6 ml-11">Answers</span>
-              <v-col cols="12" class="pb-0 pt-0 d-flex pl-0">
-                <span class="conclusionPercentage mt-2 ml-11 mr-3" style="
+              <v-col
+                cols="12"
+                class="pb-0 pt-0 d-flex pl-0"
+              >
+                <span
+                  class="conclusionPercentage mt-2 ml-11 mr-3"
+                  style="
                   min-width: 0px;
                   font-weight: 700;
                   font-size: 36px;
                   line-height: 40px;
                   text-align: start;
                 "
-              ><v-icon
-                size="38"
-                class="mr-1 mb-2"
-                color="green"
-              >
-                mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
-              <span
-                class="subtitleTime mt-6"
-                style="text-align: start; min-width: 150px"
-              >Total answers</span>
+                ><v-icon
+                  size="38"
+                  class="mr-1 mb-2"
+                  color="green"
+                >
+                  mdi-check-circle-outline</v-icon>{{ getTotalAnswers() }}</span>
+                <span
+                  class="subtitleTime mt-6"
+                  style="text-align: start; min-width: 150px"
+                >Total answers</span>
               </v-col>
               <v-col
                 class="ml-9"
@@ -158,8 +167,7 @@
                   size="42"
                   color="white"
                   icon="mdi-account-circle"
-                > 
-                </v-icon>
+                />
               </v-avatar>
               <span
                 class="subtitleTime mt-4 ml-4"
@@ -194,7 +202,11 @@
               >Answers Timeline</span>
             </v-row>
             <div class="px-6">
-              <DateChart :task-answers="taskAnswers" class="ml-6" style="max-height:300px; max-width:1200px;" />
+              <DateChart
+                :task-answers="taskAnswers"
+                class="ml-6"
+                style="max-height:300px; max-width:1200px;"
+              />
             </div>
           </v-card>
         </v-col>
@@ -228,7 +240,11 @@
                 </v-row>
               </v-col>
 
-              <v-divider vertical class="mt-10" style="background-color: #c9c9c9" />
+              <v-divider
+                vertical
+                class="mt-10"
+                style="background-color: #c9c9c9"
+              />
 
               <v-col cols="6">
                 <v-row justify="center">
@@ -310,7 +326,9 @@
           >
             <v-row>
               <span class="bottomCardsTitle mt-6 ml-11">Answers</span>
-              <span class="conclusionPercentage mt-2 ml-11 mr-3" style="
+              <span
+                class="conclusionPercentage mt-2 ml-11 mr-3"
+                style="
                   min-width: 0px;
                   font-weight: 700;
                   font-size: 36px;
@@ -361,10 +379,12 @@
                   size="42"
                   color="white"
                   icon="mdi-account-circle"
-                >
-                </v-icon>
+                />
               </v-avatar>
-              <span class="subtitleTime mt-4 ml-4" style="text-align: start; min-width: 210px; color: #696d6e">
+              <span
+                class="subtitleTime mt-4 ml-4"
+                style="text-align: start; min-width: 210px; color: #696d6e"
+              >
                 {{ getLatestResponse().cooperatorEmail }}
                 <br>
                 <div
@@ -393,7 +413,11 @@
                 style="min-width:500px"
               >Answers Timeline</span>
             </v-row>
-            <DateChart :task-answers="taskAnswers" class="ml-6" style="max-height:300px; max-width:680px;" />
+            <DateChart
+              :task-answers="taskAnswers"
+              class="ml-6"
+              style="max-height:300px; max-width:680px;"
+            />
           </v-card>
         </v-col>
       </v-row>

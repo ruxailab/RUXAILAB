@@ -203,7 +203,10 @@
                     v-else
                     class="ma-0 pa-0"
                   >
-                    <v-card width="100%" height="560px">
+                    <v-card
+                      width="100%"
+                      height="560px"
+                    >
                       <v-tabs
                         v-model="ind"
                         bg-color="transparent"
@@ -245,7 +248,10 @@
                           justify="center"
                         >
                           <v-col cols="10">
-                            <v-timeline density="compact" align="start">
+                            <v-timeline
+                              density="compact"
+                              align="start"
+                            >
                               <v-timeline-item
                                 v-for="(result, index) in itemsHeuristic"
                                 :key="index"
@@ -253,7 +259,10 @@
                                 dot-color="#fca326"
                                 icon="mdi-message-reply-text"
                               >
-                                <v-card v-if="result[questionSelect].heuristicComment" class="elevation-2">
+                                <v-card
+                                  v-if="result[questionSelect].heuristicComment"
+                                  class="elevation-2"
+                                >
                                   <v-card-text>
                                     {{
                                       result[questionSelect].heuristicComment
