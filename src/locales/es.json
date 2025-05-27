@@ -1,4 +1,20 @@
 {
+  "choose": {
+  "title": "¿Qué tipo de prueba desea comenzar?",
+  "testing": "Prueba",
+  "inspection": "Inspección",
+  "inquiry": "Consulta",
+  "userTesting": "Prueba de usuario",
+  "abTesting": "Prueba A/B",
+  "eyeTracking": "Seguimiento ocular",
+  "heuristic": "Evaluación heurística",
+  "cognitive": "Recorrido cognitivo",
+  "automated": "Evaluaciones automatizadas",
+  "interviews": "Entrevistas",
+  "focusGroups": "Grupos focales",
+  "surveys": "Encuestas y cuestionarios"
+},
+  "category": "Categoría",
   "language": "Idioma",
   "SIGNIN": {
     "sign-in": "Iniciar sesión",
