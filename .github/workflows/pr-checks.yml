@@ -1,0 +1,26 @@
+name: PR Checks
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - develop
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run basic checks
+        run: |
+          echo "Running safe checks (no secrets required)..."
+          npm run lint
