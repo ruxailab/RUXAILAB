@@ -2,9 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col>
-        <quill-editor 
-          v-model:value="consent"
-        />
+        <quill-editor v-model:value="consent" />
       </v-col>
     </v-row>
   </v-container>
@@ -32,7 +30,7 @@ const getConsent = () => {
   }
 };
 
-watch( consent, () => saveState())
+watch(consent, () => saveState())
 
 onMounted(() => {
   getConsent();
