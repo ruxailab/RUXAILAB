@@ -16,8 +16,8 @@ import Notification from '@/views/admin/NotificationPage.vue'
 import Choose from '@/views/admin/Choose.vue'
 import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
-
-
+import Accessibility from '@/views/admin/Accessibility.vue'
+import Assessment from '@/views/admin/Assessment.vue'
 export default [
   {
     path: '/testslist',
@@ -131,6 +131,18 @@ export default [
     name: 'Testing',
     meta: { authorize: [1] },
     component: Testing,
+  },
+  {
+    path: '/accessibility',
+    name: 'accessibility',
+    meta: { authorize: [1] },
+    component: Accessibility,
+  },
+  {
+    path: '/assessment',
+    name: 'assessment',
+    meta: { authorize: [1] },
+    component: Assessment,
   },
   {
     path: '/fromtemplate',
