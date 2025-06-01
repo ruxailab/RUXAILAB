@@ -2,72 +2,46 @@
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
-        <p class="titles ma-16">
-          What kind of test are you looking to start?
-        </p>
+        <p class="titles ma-16">What kind of test are you looking to start?</p>
       </v-row>
     </v-col>
 
-    <v-col
-      cols="12"
-      class="mt-6"
-    >
+    <v-col cols="12" class="mt-6">
       <v-row>
-        <v-col
-          cols="10"
-          md="4"
-          sm="10"
-          class="card"
-        >
-          <CardTypeTest
-            :img="require('../../../public/specialist.png')"
-            title="Testing"
-            type="Category"
-            segund-type="TESTING"
-            :texts="['User Testing', 'A/B Testing', 'Eye-Tracking']"
-            @click="navigateToTest('testing')"
-          />
+        <v-col cols="10" md="4" sm="10" class="card">
+          <CardTypeTest :img="require('../../../public/specialist.png')" title="Testing" type="Category"
+            segund-type="TESTING" :texts="['User Testing', 'A/B Testing', 'Eye-Tracking']"
+            @click="navigateToTest('testing')" />
         </v-col>
 
-        <v-col
-          cols="10"
-          md="4"
-          sm="10"
-          class="card"
-        >
-          <CardTypeTest
-            :img="require('../../../public/specialist.png')"
-            title="Inspection"
-            type="Category"
-            segund-type="INSPECTION"
-            :texts="['Heuristic Evaluation', 'Cognitive Walkthrough', 'Automated Evaluations']"
-            @click="navigateToTest('inspection')"
-          />
+        <v-col cols="10" md="4" sm="10" class="card">
+          <CardTypeTest :img="require('../../../public/specialist.png')" title="Inspection" type="Category"
+            segund-type="INSPECTION" :texts="[
+              'Heuristic Evaluation',
+              'Cognitive Walkthrough',
+              'Automated Evaluations',
+            ]" @click="navigateToTest('inspection')" />
         </v-col>
 
-        <v-col
-          cols="10"
-          md="4"
-          sm="10"
-          class="card"
-        >
-          <CardTypeTest
-            :img="require('../../../public/specialist.png')"
-            title="Inquiry"
-            type="Category"
-            segund-type="INQUIRY"
-            :texts="['Interviews', 'Focus Groups', 'Surveys & Questionnaires']"
-            :disabled="true"
-          />
+        <v-col cols="10" md="4" sm="10" class="card">
+          <CardTypeTest :img="require('../../../public/specialist.png')" title="Inquiry" type="Category"
+            segund-type="INQUIRY" :texts="['Interviews', 'Focus Groups', 'Surveys & Questionnaires']"
+            :disabled="true" />
+        </v-col>
+
+        <v-col cols="10" md="4" sm="10" class="card">
+          <!-- Accessibility Card with "New" badge -->
+          <div class="badge-container">
+            <span class="badge-new">New</span>
+            <CardTypeTest :img="require('../../../public/human.svg')" title="Accessibility" type="Category"
+              segund-type="ACCESSIBILITY" :texts="['Manual', 'Automatic', 'AI powered']"
+              @click="navigateToTest('accessibility')" />
+          </div>
         </v-col>
       </v-row>
     </v-col>
 
-    <CreateTestNameDialog
-      :is-open="nameDialog"
-      :test-type="testType"
-      @close="nameDialog = false"
-    />
+    <CreateTestNameDialog :is-open="nameDialog" :test-type="testType" @close="nameDialog = false" />
   </div>
 </template>
 
@@ -83,8 +57,8 @@ const nameDialog = ref(false)
 const testType = ref('')
 
 const navigateToTest = (type) => {
-  testType.value = type;
-  router.push(`/${type}`);  // Navigates to /inspection, /inquiry, or /testing
+  testType.value = type
+  router.push(`/${type}`) // Navigates to /inspection, /inquiry, or /testing
 }
 </script>
 
@@ -109,6 +83,28 @@ const navigateToTest = (type) => {
   padding: 0.5rem;
   overflow: hidden;
   word-wrap: break-word;
+}
+
+.badge-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.badge-new {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: #ff5252;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 12px;
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  letter-spacing: 1px;
+  pointer-events: none;
 }
 
 /* Media Queries para Responsividade */
