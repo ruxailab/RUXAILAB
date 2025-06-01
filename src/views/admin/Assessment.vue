@@ -1,11 +1,25 @@
 <template>
   <v-app>
-    <v-overlay v-model="isLoading" class="align-center justify-center" opacity="0.8">
-      <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+    <v-overlay
+      v-model="isLoading"
+      class="align-center justify-center"
+      opacity="0.8"
+    >
+      <v-progress-circular
+        indeterminate
+        size="64"
+        color="primary"
+      ></v-progress-circular>
       <div class="mt-4 text-h6">Loading WCAG Data...</div>
     </v-overlay>
 
-    <v-alert v-if="error" type="error" class="ma-4" closable @click:close="error = ''">
+    <v-alert
+      v-if="error"
+      type="error"
+      class="ma-4"
+      closable
+      @click:close="error = ''"
+    >
       {{ error }}
     </v-alert>
     <v-container fluid class="pa-0">
@@ -15,18 +29,35 @@
           <v-card flat class="h-100" color="grey-lighten-4">
             <v-card-title class="text-h6 pa-4">WCAG Principles</v-card-title>
             <v-list density="compact" class="pa-2" v-if="principles.length > 0">
-              <v-list-group v-for="(principle, pIdx) in principles" :key="principle.id || pIdx"
-                :value="(principle?.title || '').toLowerCase()" :prepend-icon="getPrincipleIcon(pIdx)"
-                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }" :active="selectedPrincipleIdx === pIdx">
+              <v-list-group
+                v-for="(principle, pIdx) in principles"
+                :key="principle.id || pIdx"
+                :value="(principle?.title || '').toLowerCase()"
+                :prepend-icon="getPrincipleIcon(pIdx)"
+                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }"
+                :active="selectedPrincipleIdx === pIdx"
+              >
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" :title="principle?.title || 'Untitled Principle'"
-                    @click="selectPrinciple(pIdx)" />
+                  <v-list-item
+                    v-bind="props"
+                    :title="principle?.title || 'Untitled Principle'"
+                    @click="selectPrinciple(pIdx)"
+                  />
                 </template>
-                <v-list-item v-for="(guideline, gIdx) in principle?.Guidelines || []" :key="guideline?.id || gIdx"
-                  prepend-icon="mdi-circle-outline" :title="(guideline?.id || '') + ' ' + (guideline?.title || '')"
-                  class="ml-4" :active="selectedGuidelineIdx === gIdx &&
+                <v-list-item
+                  v-for="(guideline, gIdx) in principle?.Guidelines || []"
+                  :key="guideline?.id || gIdx"
+                  prepend-icon="mdi-circle-outline"
+                  :title="
+                    (guideline?.id || '') + ' ' + (guideline?.title || '')
+                  "
+                  class="ml-4"
+                  :active="
+                    selectedGuidelineIdx === gIdx &&
                     selectedPrincipleIdx === pIdx
-                    " @click="selectGuideline(gIdx)" />
+                  "
+                  @click="selectGuideline(gIdx)"
+                />
               </v-list-group>
             </v-list>
             <v-list v-else>
@@ -71,10 +102,13 @@
               </template>
               <div>
                 <div class="font-weight-bold mb-2">
-                  Guideline: {{ currentGuideline?.title || 'No guideline selected' }}
+                  Guideline:
+                  {{ currentGuideline?.title || 'No guideline selected' }}
                 </div>
                 <div v-if="currentGuideline">
-                  {{ currentGuideline.description || 'No description available' }}
+                  {{
+                    currentGuideline.description || 'No description available'
+                  }}
                 </div>
               </div>
             </v-alert>
@@ -82,33 +116,53 @@
             <!-- Success Criterion Section -->
             <div class="mb-6">
               <h2 class="text-h5 font-weight-bold mb-4">Success Criterion</h2>
-              <v-expansion-panels variant="accordion" class="mb-2">
-                <v-expansion-panel>
-                  <v-expansion-panel-title color="success">
-                    Show Success Criteria
-                  </v-expansion-panel-title>
-                  <v-expansion-panel-text>
-                    <v-list class="pa-0" density="compact">
-                      <v-list-item v-for="(crit, cIdx) in currentRule?.criteria || []" :key="cIdx">
-                        <template v-slot:prepend>
-                          <v-checkbox v-model="selectedCriteria[cIdx]" @change="addToNotes(crit, cIdx)" />
-                        </template>
-                        <v-list-item-title>
-                          <pre class="criterion-pre">{{ crit }}</pre>
-                        </v-list-item-title>
-                        <v-divider></v-divider>
-                      </v-list-item>
-                    </v-list>
-                  </v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
+              <v-card
+                variant="outlined"
+                class="mb-2"
+                style="border: 2px solid #4caf50"
+              >
+                <v-card-text class="pa-3">
+                  <div
+                    v-if="!currentRule?.criteria?.length"
+                    class="text-caption text-grey"
+                  >
+                    No success criteria available for this rule.
+                  </div>
+                  <div v-else class="criteria-list">
+                    <div
+                      v-for="(crit, cIdx) in currentRule.criteria"
+                      :key="cIdx"
+                      class="d-flex align-center mb-2"
+                    >
+                      <v-checkbox
+                        v-model="selectedCriteria[cIdx]"
+                        @change="addToNotes(crit, cIdx)"
+                        hide-details
+                        density="compact"
+                        class="mr-2"
+                      />
+                      <pre
+                        class="criterion-pre mb-0 text-body-2"
+                        style="white-space: pre-wrap"
+                        >{{ crit }}</pre
+                      >
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
             </div>
 
             <!-- Appraiser Notes Section -->
             <div class="my-4">
               <h2 class="text-h5 font-weight-bold mb-4">Appraiser Notes</h2>
-              <v-textarea v-model="notes" outlined rows="6" placeholder="Enter your notes here..." hide-details
-                class="mb-4" />
+              <v-textarea
+                v-model="notes"
+                variant="outlined"
+                rows="6"
+                placeholder="Enter your notes here..."
+                hide-details
+                class="mb-4"
+              />
             </div>
             <!-- Severity section -->
             <div>
@@ -129,21 +183,37 @@
               </v-radio-group>
             </div>
             <div>
-              <v-btn prepend-icon="mdi-content-save" size="large" color="success" @click="saveAssessment"
-                :loading="isLoading" :disabled="!currentRule?.id">
+              <v-btn
+                prepend-icon="mdi-content-save"
+                size="large"
+                color="success"
+                @click="saveAssessment"
+                :loading="isLoading"
+                :disabled="!currentRule?.id"
+              >
                 Save Assessment
               </v-btn>
             </div>
             <v-card flat class="pa-4 mt-4" color="grey-lighten-4">
               <div class="d-flex justify-space-between align-center">
-                <v-btn variant="text" prepend-icon="mdi-chevron-left" color="grey-darken-2" @click="prevRule">
+                <v-btn
+                  variant="text"
+                  prepend-icon="mdi-chevron-left"
+                  color="grey-darken-2"
+                  @click="prevRule"
+                >
                   Previous
                 </v-btn>
                 <div class="text-body-2 text-grey-darken-1">
                   Rule {{ selectedRuleIdx + 1 }} of {{ rules?.length || 0 }}
                 </div>
-                <v-btn variant="flat" append-icon="mdi-chevron-right" color="amber" class="text-black"
-                  @click="nextRule">
+                <v-btn
+                  variant="flat"
+                  append-icon="mdi-chevron-right"
+                  color="amber"
+                  class="text-black"
+                  @click="nextRule"
+                >
                   Next
                 </v-btn>
               </div>
@@ -157,12 +227,20 @@
             <v-card-title class="text-h6 pa-4">On this page</v-card-title>
             <v-list density="compact" class="pa-2">
               <template v-if="rules && rules.length > 0">
-                <v-list-item v-for="(rule, rIdx) in rules" :key="rule.id || rIdx" prepend-icon="mdi-circle-outline"
-                  :title="(rule?.id || '') + ' ' + (rule?.title || '')" :active="selectedRuleIdx === rIdx"
-                  class="text-body-2" @click="selectRule(rIdx)" />
+                <v-list-item
+                  v-for="(rule, rIdx) in rules"
+                  :key="rule.id || rIdx"
+                  prepend-icon="mdi-circle-outline"
+                  :title="(rule?.id || '') + ' ' + (rule?.title || '')"
+                  :active="selectedRuleIdx === rIdx"
+                  class="text-body-2"
+                  @click="selectRule(rIdx)"
+                />
               </template>
               <v-list-item v-else>
-                <v-list-item-title class="text-grey">No rules available</v-list-item-title>
+                <v-list-item-title class="text-grey"
+                  >No rules available</v-list-item-title
+                >
               </v-list-item>
             </v-list>
           </v-card>
@@ -173,8 +251,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useStore } from 'vuex';
+import { ref, computed, onMounted, watch } from 'vue'
+import { useStore } from 'vuex'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
@@ -184,25 +262,33 @@ const selectedCriteria = ref([])
 
 // Computed properties from store
 const isLoading = computed(() => store.state.Assessment?.isLoading || false)
-const principles = computed(() => store.state.Assessment?.wcagData?.principles || [])
+const principles = computed(
+  () => store.state.Assessment?.wcagData?.principles || [],
+)
 const selectedPrincipleIdx = computed({
   get: () => store.state.Assessment.selectedPrincipleIdx,
-  set: (value) => store.dispatch('Assessment/selectPrinciple', value)
+  set: (value) => store.dispatch('Assessment/selectPrinciple', value),
 })
 
 const selectedGuidelineIdx = computed({
   get: () => store.state.Assessment.selectedGuidelineIdx,
-  set: (value) => store.dispatch('Assessment/selectGuideline', value)
+  set: (value) => store.dispatch('Assessment/selectGuideline', value),
 })
 
 const selectedRuleIdx = computed({
   get: () => store.state.Assessment.selectedRuleIdx,
-  set: (value) => store.dispatch('Assessment/selectRule', value)
+  set: (value) => store.dispatch('Assessment/selectRule', value),
 })
 
-const currentPrinciple = computed(() => store.getters['Assessment/currentPrinciple'] || {})
-const currentGuideline = computed(() => store.getters['Assessment/currentGuideline'] || {})
-const currentRule = computed(() => store.getters['Assessment/currentRule'] || {})
+const currentPrinciple = computed(
+  () => store.getters['Assessment/currentPrinciple'] || {},
+)
+const currentGuideline = computed(
+  () => store.getters['Assessment/currentGuideline'] || {},
+)
+const currentRule = computed(
+  () => store.getters['Assessment/currentRule'] || {},
+)
 const guidelines = computed(() => currentPrinciple.value?.Guidelines || [])
 const rules = computed(() => currentGuideline.value?.rules || [])
 
@@ -220,10 +306,14 @@ const currentAssessment = computed(() => {
 // Helper function to get principle icon
 const getPrincipleIcon = (index) => {
   switch (index) {
-    case 0: return 'mdi-eye'
-    case 1: return 'mdi-mouse'
-    case 2: return 'mdi-brain'
-    default: return 'mdi-shield-check'
+    case 0:
+      return 'mdi-eye'
+    case 1:
+      return 'mdi-mouse'
+    case 2:
+      return 'mdi-brain'
+    default:
+      return 'mdi-shield-check'
   }
 }
 
@@ -234,24 +324,30 @@ onMounted(async () => {
     await store.dispatch('Assessment/initializeAssessment')
   } catch (err) {
     console.error('Failed to initialize assessment:', err)
-    error.value = 'Failed to load assessment data. Please try refreshing the page.'
+    error.value =
+      'Failed to load assessment data. Please try refreshing the page.'
   } finally {
     isLoading.value = false
   }
 })
 
 // Watch for rule changes to update form
-watch(() => currentRule.value?.id, (newRuleId, oldRuleId) => {
-  if (newRuleId && newRuleId !== oldRuleId) {
-    const assessment = store.getters['Assessment/getRuleAssessment'](newRuleId)
-    notes.value = assessment.notes || ''
-    severity.value = assessment.severity || ''
-    status.value = assessment.status || ''
+watch(
+  () => currentRule.value?.id,
+  (newRuleId, oldRuleId) => {
+    if (newRuleId && newRuleId !== oldRuleId) {
+      const assessment =
+        store.getters['Assessment/getRuleAssessment'](newRuleId)
+      notes.value = assessment.notes || ''
+      severity.value = assessment.severity || ''
+      status.value = assessment.status || ''
 
-    // Reset selected criteria when rule changes
-    selectedCriteria.value = []
-  }
-}, { immediate: true })
+      // Reset selected criteria when rule changes
+      selectedCriteria.value = []
+    }
+  },
+  { immediate: true },
+)
 
 // Breadcrumb items
 const breadcrumbs = computed(() => {
@@ -259,18 +355,19 @@ const breadcrumbs = computed(() => {
     {
       title: 'WCAG',
       disabled: false,
-      href: '#'
+      href: '#',
     },
     {
       title: currentPrinciple.value?.title || '',
       disabled: false,
-      href: '#'
+      href: '#',
     },
     {
-      title: currentGuideline.value?.title ?
-        `${currentGuideline.value.id} ${currentGuideline.value.title}` : '',
-      disabled: true
-    }
+      title: currentGuideline.value?.title
+        ? `${currentGuideline.value.id} ${currentGuideline.value.title}`
+        : '',
+      disabled: true,
+    },
   ]
 })
 
@@ -317,7 +414,7 @@ const saveAssessment = async () => {
         ruleId,
         notes: notes.value,
         severity: severity.value,
-        status: status.value
+        status: status.value,
       })
       // Show success message
       toast.success('Assessment successfully')
@@ -330,7 +427,11 @@ const saveAssessment = async () => {
 
 // Reset assessment
 const resetAssessment = () => {
-  if (confirm('Are you sure you want to reset all assessment progress? This cannot be undone.')) {
+  if (
+    confirm(
+      'Are you sure you want to reset all assessment progress? This cannot be undone.',
+    )
+  ) {
     store.dispatch('Assessment/resetAssessment')
   }
 }
