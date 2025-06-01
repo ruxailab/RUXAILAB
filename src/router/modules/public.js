@@ -61,8 +61,8 @@ export default [
     component: PageNotFound,
   },
   {
-    path: '/sample',
-    name: 'Sample',
+    path: '/accessibility/manual',
+    name: 'Manual',
     meta: { authorize: [] },
     component: Sample,
   },
