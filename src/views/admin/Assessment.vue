@@ -247,6 +247,28 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <!-- Floating Save Button -->
+    <v-tooltip location="left">
+      <template #activator="{ props }">
+        <v-btn
+          data-testid="create-test-btn"
+          size="large"
+          icon
+          position="fixed"
+          location="bottom right"
+          color="#F9A826"
+          variant="elevated"
+          class="mr-4 mb-5 floating-save-btn"
+          rounded="circle"
+          v-bind="props"
+          @click="saveAssessment"
+        >
+          <v-icon size="large"> mdi-content-save-outline </v-icon>
+        </v-btn>
+      </template>
+      <span>Save Assessment</span>
+    </v-tooltip>
   </v-app>
 </template>
 
@@ -410,14 +432,23 @@ const saveAssessment = async () => {
   try {
     const ruleId = currentRule.value?.id
     if (ruleId) {
-      await store.dispatch('Assessment/updateRuleAssessment', {
+      const assessmentData = {
         ruleId,
         notes: notes.value,
         severity: severity.value,
         status: status.value,
+      }
+
+      console.log('Saving assessment data:', {
+        ruleId,
+        ruleTitle: currentRule.value?.title,
+        ...assessmentData,
       })
+
+      await store.dispatch('Assessment/updateRuleAssessment', assessmentData)
+
       // Show success message
-      toast.success('Assessment successfully')
+      toast.success('Assessment saved successfully')
     }
   } catch (err) {
     console.error('Failed to save assessment:', err)
@@ -495,5 +526,13 @@ const resetAssessment = () => {
   background: none;
   border: none;
   padding: 0;
+}
+
+.floating-save-btn {
+  position: fixed !important;
+  right: 32px;
+  bottom: 32px;
+  z-index: 9999;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 </style>
