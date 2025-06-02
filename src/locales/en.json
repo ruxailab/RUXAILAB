@@ -534,7 +534,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
-    "postForm": "Post Form"
+    "postForm": "Post Form",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Consent Form",
