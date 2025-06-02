@@ -121,6 +121,9 @@ export default {
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
       const currentTest = rootState.Tests.Test
+      if (!currentTest || !currentTest.answersDocId) {
+        return
+      }
       const currentAnswerDocId = currentTest.answersDocId
       commit('setLoading', true)
       try {
