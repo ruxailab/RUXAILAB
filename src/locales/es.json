@@ -529,7 +529,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Grabación de audio",
-    "postForm": "Formulario Posterior"
+    "postForm": "Formulario Posterior",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Formulario de Consentimiento",
