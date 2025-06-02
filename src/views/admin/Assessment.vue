@@ -1,25 +1,11 @@
 <template>
   <v-app>
-    <v-overlay
-      v-model="isLoading"
-      class="align-center justify-center"
-      opacity="0.8"
-    >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      ></v-progress-circular>
+    <v-overlay v-model="isLoading" class="align-center justify-center" opacity="0.8">
+      <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
       <div class="mt-4 text-h6">Loading WCAG Data...</div>
     </v-overlay>
 
-    <v-alert
-      v-if="error"
-      type="error"
-      class="ma-4"
-      closable
-      @click:close="error = ''"
-    >
+    <v-alert v-if="error" type="error" class="ma-4" closable @click:close="error = ''">
       {{ error }}
     </v-alert>
     <v-container fluid class="pa-0">
@@ -29,35 +15,18 @@
           <v-card flat class="h-100" color="grey-lighten-4">
             <v-card-title class="text-h6 pa-4">WCAG Principles</v-card-title>
             <v-list density="compact" class="pa-2" v-if="principles.length > 0">
-              <v-list-group
-                v-for="(principle, pIdx) in principles"
-                :key="principle.id || pIdx"
-                :value="(principle?.title || '').toLowerCase()"
-                :prepend-icon="getPrincipleIcon(pIdx)"
-                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }"
-                :active="selectedPrincipleIdx === pIdx"
-              >
+              <v-list-group v-for="(principle, pIdx) in principles" :key="principle.id || pIdx"
+                :value="(principle?.title || '').toLowerCase()" :prepend-icon="getPrincipleIcon(pIdx)"
+                :class="{ 'active-principle': selectedPrincipleIdx === pIdx }" :active="selectedPrincipleIdx === pIdx">
                 <template #activator="{ props }">
-                  <v-list-item
-                    v-bind="props"
-                    :title="principle?.title || 'Untitled Principle'"
-                    @click="selectPrinciple(pIdx)"
-                  />
+                  <v-list-item v-bind="props" :title="principle?.title || 'Untitled Principle'"
+                    @click="selectPrinciple(pIdx)" />
                 </template>
-                <v-list-item
-                  v-for="(guideline, gIdx) in principle?.Guidelines || []"
-                  :key="guideline?.id || gIdx"
-                  prepend-icon="mdi-circle-outline"
-                  :title="
-                    (guideline?.id || '') + ' ' + (guideline?.title || '')
-                  "
-                  class="ml-4"
-                  :active="
-                    selectedGuidelineIdx === gIdx &&
+                <v-list-item v-for="(guideline, gIdx) in principle?.Guidelines || []" :key="guideline?.id || gIdx"
+                  prepend-icon="mdi-circle-outline" :title="(guideline?.id || '') + ' ' + (guideline?.title || '')
+                    " class="ml-4" :active="selectedGuidelineIdx === gIdx &&
                     selectedPrincipleIdx === pIdx
-                  "
-                  @click="selectGuideline(gIdx)"
-                />
+                    " @click="selectGuideline(gIdx)" />
               </v-list-group>
             </v-list>
             <v-list v-else>
@@ -116,36 +85,16 @@
             <!-- Success Criterion Section -->
             <div class="mb-6">
               <h2 class="text-h5 font-weight-bold mb-4">Success Criterion</h2>
-              <v-card
-                variant="outlined"
-                class="mb-2"
-                style="border: 2px solid #4caf50"
-              >
+              <v-card variant="outlined" class="mb-2" style="border: 2px solid #4caf50">
                 <v-card-text class="pa-3">
-                  <div
-                    v-if="!currentRule?.criteria?.length"
-                    class="text-caption text-grey"
-                  >
+                  <div v-if="!currentRule?.criteria?.length" class="text-caption text-grey">
                     No success criteria available for this rule.
                   </div>
                   <div v-else class="criteria-list">
-                    <div
-                      v-for="(crit, cIdx) in currentRule.criteria"
-                      :key="cIdx"
-                      class="d-flex align-center mb-2"
-                    >
-                      <v-checkbox
-                        v-model="selectedCriteria[cIdx]"
-                        @change="addToNotes(crit, cIdx)"
-                        hide-details
-                        density="compact"
-                        class="mr-2"
-                      />
-                      <pre
-                        class="criterion-pre mb-0 text-body-2"
-                        style="white-space: pre-wrap"
-                        >{{ crit }}</pre
-                      >
+                    <div v-for="(crit, cIdx) in currentRule.criteria" :key="cIdx" class="d-flex align-center mb-2">
+                      <v-checkbox v-model="selectedCriteria[cIdx]" @change="addToNotes(crit, cIdx)" hide-details
+                        density="compact" class="mr-2" />
+                      <pre class="criterion-pre mb-0 text-body-2" style="white-space: pre-wrap">{{ crit }}</pre>
                     </div>
                   </div>
                 </v-card-text>
@@ -155,15 +104,33 @@
             <!-- Appraiser Notes Section -->
             <div class="my-4">
               <h2 class="text-h5 font-weight-bold mb-4">Appraiser Notes</h2>
-              <v-textarea
-                v-model="notes"
-                variant="outlined"
-                rows="6"
-                placeholder="Enter your notes here..."
-                hide-details
-                class="mb-4"
-              />
+              <v-tabs v-model="activeNoteTab" class="mb-2" grow>
+                <v-tab v-for="(note, idx) in notes" :key="'note-tab-' + idx" :value="idx">
+                  Note {{ idx + 1 }}
+                  <v-btn v-if="notes.length > 1" icon="mdi-close" size="x-small" variant="plain" class="ml-2"
+                    @click.stop="removeNote(idx)" />
+                </v-tab>
+                <v-tab key="add-note" @click.stop="addNote" class="add-note-tab">
+                  <v-icon>mdi-plus</v-icon>
+                </v-tab>
+              </v-tabs>
+              <v-window v-model="activeNoteTab">
+                <v-window-item v-for="(note, idx) in notes" :key="'note-window-' + idx" :value="idx">
+                  <v-textarea v-model="note.text" variant="outlined" rows="4" placeholder="Enter your notes here..."
+                    hide-details class="mb-2" />
+                  <div class="d-flex align-center mb-2">
+                    <v-file-input v-model="note.image" accept="image/*" label="Attach image" prepend-icon="mdi-image"
+                      show-size hide-details @change="onImageChange(idx)" class="mr-4" style="max-width: 300px;" />
+                    <div v-if="note.imagePreview" class="note-image-preview">
+                      <img :src="note.imagePreview" alt="Note Image"
+                        style="max-width: 120px; max-height: 80px; border-radius: 6px;" />
+                      <v-btn icon="mdi-close" size="x-small" variant="plain" @click="removeImage(idx)" />
+                    </div>
+                  </div>
+                </v-window-item>
+              </v-window>
             </div>
+
             <!-- Severity section -->
             <div>
               <h2 class="text-h5 font-weight-bold mb-4">Severity</h2>
@@ -183,37 +150,21 @@
               </v-radio-group>
             </div>
             <div>
-              <v-btn
-                prepend-icon="mdi-content-save"
-                size="large"
-                color="success"
-                @click="saveAssessment"
-                :loading="isLoading"
-                :disabled="!currentRule?.id"
-              >
+              <v-btn prepend-icon="mdi-content-save" size="large" color="success" @click="saveAssessment"
+                :loading="isLoading" :disabled="!currentRule?.id">
                 Save Assessment
               </v-btn>
             </div>
             <v-card flat class="pa-4 mt-4" color="grey-lighten-4">
               <div class="d-flex justify-space-between align-center">
-                <v-btn
-                  variant="text"
-                  prepend-icon="mdi-chevron-left"
-                  color="grey-darken-2"
-                  @click="prevRule"
-                >
+                <v-btn variant="text" prepend-icon="mdi-chevron-left" color="grey-darken-2" @click="prevRule">
                   Previous
                 </v-btn>
                 <div class="text-body-2 text-grey-darken-1">
                   Rule {{ selectedRuleIdx + 1 }} of {{ rules?.length || 0 }}
                 </div>
-                <v-btn
-                  variant="flat"
-                  append-icon="mdi-chevron-right"
-                  color="amber"
-                  class="text-black"
-                  @click="nextRule"
-                >
+                <v-btn variant="flat" append-icon="mdi-chevron-right" color="amber" class="text-black"
+                  @click="nextRule">
                   Next
                 </v-btn>
               </div>
@@ -227,20 +178,12 @@
             <v-card-title class="text-h6 pa-4">On this page</v-card-title>
             <v-list density="compact" class="pa-2">
               <template v-if="rules && rules.length > 0">
-                <v-list-item
-                  v-for="(rule, rIdx) in rules"
-                  :key="rule.id || rIdx"
-                  prepend-icon="mdi-circle-outline"
-                  :title="(rule?.id || '') + ' ' + (rule?.title || '')"
-                  :active="selectedRuleIdx === rIdx"
-                  class="text-body-2"
-                  @click="selectRule(rIdx)"
-                />
+                <v-list-item v-for="(rule, rIdx) in rules" :key="rule.id || rIdx" prepend-icon="mdi-circle-outline"
+                  :title="(rule?.id || '') + ' ' + (rule?.title || '')" :active="selectedRuleIdx === rIdx"
+                  class="text-body-2" @click="selectRule(rIdx)" />
               </template>
               <v-list-item v-else>
-                <v-list-item-title class="text-grey"
-                  >No rules available</v-list-item-title
-                >
+                <v-list-item-title class="text-grey">No rules available</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card>
@@ -251,19 +194,9 @@
     <!-- Floating Save Button -->
     <v-tooltip location="left">
       <template #activator="{ props }">
-        <v-btn
-          data-testid="create-test-btn"
-          size="large"
-          icon
-          position="fixed"
-          location="bottom right"
-          color="#F9A826"
-          variant="elevated"
-          class="mr-4 mb-5 floating-save-btn"
-          rounded="circle"
-          v-bind="props"
-          @click="saveAssessment"
-        >
+        <v-btn data-testid="create-test-btn" size="large" icon position="fixed" location="bottom right" color="#F9A826"
+          variant="elevated" class="mr-4 mb-5 floating-save-btn" rounded="circle" v-bind="props"
+          @click="saveAssessment">
           <v-icon size="large"> mdi-content-save-outline </v-icon>
         </v-btn>
       </template>
@@ -314,8 +247,11 @@ const currentRule = computed(
 const guidelines = computed(() => currentPrinciple.value?.Guidelines || [])
 const rules = computed(() => currentGuideline.value?.rules || [])
 
+// Notes as array of objects: [{ text: '', image: null, imagePreview: '' }]
+const notes = ref([{ text: '', image: null, imagePreview: '' }])
+const activeNoteTab = ref(0)
+
 // Local refs for form inputs
-const notes = ref('')
 const severity = ref('')
 const status = ref('')
 
@@ -324,6 +260,21 @@ const currentAssessment = computed(() => {
   const ruleId = currentRule.value?.id
   return ruleId ? store.getters['Assessment/getRuleAssessment'](ruleId) : {}
 })
+
+// Helper to restore notes from store (including tabs)
+function restoreNotesFromAssessment(assessment) {
+  if (assessment && Array.isArray(assessment.notes) && assessment.notes.length > 0) {
+    notes.value = assessment.notes.map(n => ({
+      text: n.text || '',
+      image: null,
+      imagePreview: n.imageName ? '' : '', // imagePreview will be set on upload only
+      imageName: n.imageName || null
+    }))
+  } else {
+    notes.value = [{ text: '', image: null, imagePreview: '', imageName: null }]
+  }
+  activeNoteTab.value = 0
+}
 
 // Helper function to get principle icon
 const getPrincipleIcon = (index) => {
@@ -353,19 +304,16 @@ onMounted(async () => {
   }
 })
 
-// Watch for rule changes to update form
+// Watch for rule changes to update form and notes
 watch(
   () => currentRule.value?.id,
   (newRuleId, oldRuleId) => {
     if (newRuleId && newRuleId !== oldRuleId) {
-      const assessment =
-        store.getters['Assessment/getRuleAssessment'](newRuleId)
-      notes.value = assessment.notes || ''
+      const assessment = store.getters['Assessment/getRuleAssessment'](newRuleId)
       severity.value = assessment.severity || ''
       status.value = assessment.status || ''
-
-      // Reset selected criteria when rule changes
       selectedCriteria.value = []
+      restoreNotesFromAssessment(assessment)
     }
   },
   { immediate: true },
@@ -427,14 +375,58 @@ const addToNotes = (criterion, index) => {
   }
 }
 
+// Add a new note tab
+const addNote = () => {
+  notes.value.push({ text: '', image: null, imagePreview: '', imageName: null })
+  activeNoteTab.value = notes.value.length - 1
+}
+
+// Remove a note tab
+const removeNote = (idx) => {
+  if (notes.value.length > 1) {
+    notes.value.splice(idx, 1)
+    if (activeNoteTab.value >= notes.value.length) {
+      activeNoteTab.value = notes.value.length - 1
+    }
+  }
+}
+
+// Handle image upload and preview
+const onImageChange = (idx) => {
+  const file = notes.value[idx].image
+  if (file && file instanceof File) {
+    notes.value[idx].imageName = file.name
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      notes.value[idx].imagePreview = e.target.result
+    }
+    reader.readAsDataURL(file)
+  } else {
+    notes.value[idx].imagePreview = ''
+    notes.value[idx].imageName = null
+  }
+}
+
+// Remove image from note
+const removeImage = (idx) => {
+  notes.value[idx].image = null
+  notes.value[idx].imagePreview = ''
+  notes.value[idx].imageName = null
+}
+
 // Save assessment
 const saveAssessment = async () => {
   try {
     const ruleId = currentRule.value?.id
     if (ruleId) {
+      // Only persist text and imageName to Vuex
+      const notesToSave = notes.value.map(({ text, imageName }) => ({
+        text,
+        imageName: imageName || null
+      }))
       const assessmentData = {
         ruleId,
-        notes: notes.value,
+        notes: notesToSave,
         severity: severity.value,
         status: status.value,
       }
@@ -447,7 +439,6 @@ const saveAssessment = async () => {
 
       await store.dispatch('Assessment/updateRuleAssessment', assessmentData)
 
-      // Show success message
       toast.success('Assessment saved successfully')
     }
   } catch (err) {
@@ -534,5 +525,18 @@ const resetAssessment = () => {
   bottom: 32px;
   z-index: 9999;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.add-note-tab {
+  min-width: 48px !important;
+  max-width: 48px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+.note-image-preview {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 </style>
