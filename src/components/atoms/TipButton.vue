@@ -5,13 +5,13 @@
   >
     <template #activator="{ props }">
       <v-btn
-        color="green"
-        class="ml-4 my-2 mr-auto text-white"
+        color="white"
+        class="bg-green ml-4 my-2 mr-auto"
         variant="tonal"
-        icon
         v-bind="props"
       >
         <v-icon>mdi-chat-question</v-icon>
+        Tip
       </v-btn>
     </template>
 
