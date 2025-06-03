@@ -65,6 +65,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import Test from '@/models/Test';
+import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
@@ -182,27 +183,45 @@ const handleSetUser = (event) => {
   userDialog.value = false;
   submit();
 };
-const submitAccessibility = async () => {
-  console.log('Submitting manual accessibility test:', test.value);
 
-  const newTest = new Test({
-    id: null,
-    testTitle: test.value.title,
-    testDescription: test.value.description,
-    testType: 'MANUAL_ACCESSIBILITY',
-    isPublic: test.value.isPublic || false,
-    status: 'DRAFT',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  });
+const submitAccessibility = async () => {
+  console.log('Creating new manual accessibility test:', test.value);
 
   try {
-    // const testId = await store.dispatch('createNewTest', newTest);
-    const testId = Math.floor(Math.random() * 1000000);
-    console.log('Test created with ID:', testId);
-    router.push(`/accessibility/manual/${testId}`);
+    // Create new manual accessibility test
+    const newTest = new ManualAccessibilityTest({
+      title: test.value.title,
+      description: test.value.description,
+      isPublic: test.value.isPublic || false,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      status: 'draft',
+      websiteUrl: '', // This can be set later when configuring the test
+      collaborators: {
+        // Add the creator as an admin collaborator
+        [user.value.id]: 'admin'
+      }
+    });
+
+    console.log('Creating test with data:', newTest);
+
+    // Use the store to create the test
+    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
+
+    console.log('Test created successfully:', createdTest);
+
+    // Navigate to the test editor
+    router.push(`/accessibility/manual/${createdTest.id}`);
+
+    // Close the dialog
+    userDialog.value = false;
   } catch (error) {
     console.error('Error creating accessibility test:', error);
+
+    console.log(error.message);
+    toast.error(error.message);
   }
 };
 
