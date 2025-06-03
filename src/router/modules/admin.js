@@ -18,6 +18,7 @@ import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
 import Accessibility from '@/views/admin/Accessibility.vue'
 import Assessment from '@/views/admin/Assessment.vue'
+import Sample from '@/views/public/Sample.vue'
 export default [
   {
     path: '/testslist',
@@ -26,16 +27,16 @@ export default [
     component: TestList,
   },
   {
-    path:'/choose',
-    name:'Choose',
+    path: '/choose',
+    name: 'Choose',
     meta: { authorize: [1] },
-    component:Choose,
+    component: Choose,
   },
   {
-    path:'/profile',
-    name:'Profile',
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
-    component:Profile,
+    component: Profile,
   },
   {
     path: '/notifications',
@@ -149,5 +150,50 @@ export default [
     name: 'Create from template',
     meta: { authorize: [1] },
     component: CreateFromTemplate,
+  },
+  {
+    path: '/accessibility/manual/:testId',
+    name: 'ManualAccessibility',
+    meta: { authorize: [1] },
+    component: Sample,
+    props: true,
+    children: [
+      {
+        path: 'edit',
+        name: 'EditAccessibilityTest',
+        component: Sample,
+        meta: { authorize: [1] }
+      },
+      {
+        path: 'preview',
+        name: 'PreviewAccessibilityTest',
+        component: Sample,
+        meta: { authorize: [1] }
+      },
+      {
+        path: 'answers',
+        name: 'AccessibilityTestAnswers',
+        component: Sample,
+        meta: { authorize: [1] }
+      },
+      {
+        path: 'report',
+        name: 'AccessibilityTestReport',
+        component: Sample,
+        meta: { authorize: [1] }
+      },
+      {
+        path: 'cooperative',
+        name: 'AccessibilityTestCooperative',
+        component: Sample,
+        meta: { authorize: [1] }
+      },
+      {
+        path: 'settings',
+        name: 'AccessibilityTestSettings',
+        component: Sample,
+        meta: { authorize: [1] }
+      }
+    ]
   },
 ]

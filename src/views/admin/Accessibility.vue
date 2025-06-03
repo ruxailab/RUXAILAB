@@ -8,65 +8,62 @@
     <v-col cols="12" class="mt-6">
       <v-row>
         <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest
-            :img="require('../../../public/human.svg')"
-            title="Manual Testing"
-            type="Accessibility"
-            segund-type="MANUAL"
-            :texts="[
+          <CardTypeTest :img="require('../../../public/human.svg')" title="Manual Testing" type="Accessibility"
+            segund-type="MANUAL" :texts="[
               'Human testers follow accessibility guidelines',
               'Use of assistive technologies',
               'Detects contextual and usability issues',
-            ]"
-            @click="navigateToTest('manual')"
-          />
+            ]" @click="setTestType('MANUAL')" />
         </v-col>
         <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest
-            :img="require('../../../public/human.svg')"
-            title="Automatic Testing"
-            type="Accessibility"
-            segund-type="AUTOMATIC"
-            :texts="[
+          <CardTypeTest :img="require('../../../public/human.svg')" title="Automatic Testing" type="Accessibility"
+            segund-type="AUTOMATIC" :texts="[
               'Automated tools scan for common issues',
               'Quick feedback and workflow integration',
               'Ideal for WCAG violations and regression',
-            ]"
-             @click="navigateToTest('automatic')"
-          />
+            ]" @click="navigateToTest('automatic')" />
         </v-col>
         <v-col cols="10" md="4" sm="10" class="card">
-          <CardTypeTest
-            :img="require('../../../public/human.svg')"
-            title="AI Powered Testing"
-            type="Accessibility"
-            segund-type="AI"
-            :texts="[
+          <CardTypeTest :img="require('../../../public/human.svg')" title="AI Powered Testing" type="Accessibility"
+            segund-type="AI" :texts="[
               'AI analyzes with machine learning',
               'Finds complex and contextual issues',
               'Intelligent remediation suggestions',
-            ]"
-             @click="navigateToTest('aipowered')"
-          />
+            ]" @click="navigateToTest('aipowered')" />
         </v-col>
       </v-row>
     </v-col>
   </div>
+
+  <CreateTestNameDialog :is-open="nameDialog" :test-type="testType" :heading="'Create Manual Accessibility Test'"
+    :sub-heading="'Please provide a name and description for your accessibility test'" :test-name="'Test Name'"
+    :test-description="'Test Description'" :test-label="'Create Test'" @close="nameDialog = false" />
 </template>
 
 <script setup>
 import CardTypeTest from '@/components/atoms/CardTypeTest';
+import CreateTestNameDialog from '@/components/dialogs/CreateTestNameDialog.vue';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue'
+import { ref } from 'vue';
+
 const router = useRouter();
+const nameDialog = ref(false);
+const testType = ref('');
 
-const testType = ref('')
-
+const setTestType = (type) => {
+  testType.value = type;
+  if (type === 'MANUAL') {
+    nameDialog.value = true;
+    console.log('Manual test type selected');
+  } else {
+    navigateToTest(type.toLowerCase());
+  }
+};
 
 const navigateToTest = (type) => {
-  testType.value = type
-  router.push(`/accessibility/${type}`) // navi to manual , automatic, ai-powered
-}
+  testType.value = type;
+  router.push(`/accessibility/${type}`);
+};
 </script>
 
 <style scoped>
