@@ -17,7 +17,7 @@
     <v-main>
       <div class="sample-page">
         <!-- <AccessibilityQuiz /> -->
-        <AccessibilityAssessment />
+        <!-- <AccessibilityAssessment /> -->
       </div>
     </v-main>
   </v-app>
