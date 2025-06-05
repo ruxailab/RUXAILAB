@@ -19,6 +19,7 @@ import Testing from '@/views/admin/Testing.vue'
 import Accessibility from '@/views/admin/Accessibility.vue'
 import Assessment from '@/views/admin/Assessment.vue'
 import Sample from '@/views/public/Sample.vue'
+import AccessibilityManagerView from '@/views/admin/AccessibilityManagerView.vue'
 export default [
   {
     path: '/testslist',
@@ -155,43 +156,55 @@ export default [
     path: '/accessibility/manual/:testId',
     name: 'ManualAccessibility',
     meta: { authorize: [1] },
-    component: Sample,
+    component: AccessibilityManagerView,
     props: true,
     children: [
       {
-        path: 'edit',
+        path: '',
+        name: 'AccessibilityHome',
+        component: () => import('@/views/admin/AccessibilityHome.vue'),
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/edit/:testId',
         name: 'EditAccessibilityTest',
-        component: Sample,
+        component: () => import('@/views/admin/AccessibilityEditTest.vue'),
+        props: true,
         meta: { authorize: [1] }
       },
       {
-        path: 'preview',
-        name: 'PreviewAccessibilityTest',
-        component: Sample,
+        path: '/preview/:testId',
+        name: 'AccessibilityPreviewTest',
+        component: () => import('@/views/admin/AccessibilityPreviewTest.vue'),
+        props: true,
         meta: { authorize: [1] }
       },
       {
-        path: 'answers',
+        path: '/answers/:testId',
         name: 'AccessibilityTestAnswers',
-        component: Sample,
+        component: () => import('@/views/admin/AccessibilityAnswer.vue'),
+        props: true,
         meta: { authorize: [1] }
       },
       {
-        path: 'report',
+        path: '/report/:testId',
         name: 'AccessibilityTestReport',
-        component: Sample,
+        component: () => import('@/views/admin/AccessibilityReport.vue'),
+        props: true,
         meta: { authorize: [1] }
       },
       {
-        path: 'cooperative',
+        path: '/cooperative/:testId',
         name: 'AccessibilityTestCooperative',
-        component: Sample,
+        component: () => import('@/views/admin/AccessibilityCooperative.vue'),
+        props: true,
         meta: { authorize: [1] }
       },
       {
-        path: 'settings',
+        path: '/settings/:testId',
         name: 'AccessibilityTestSettings',
-        component: Sample,
+        component: () => import('@/views/admin/AccessibilitySettings.vue'),
+        props: true,
         meta: { authorize: [1] }
       }
     ]
