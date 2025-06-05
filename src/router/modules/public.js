@@ -9,6 +9,8 @@ import Sample from '@/views/public/Sample.vue'
 import TermsOfService from '@/views/public/TermsOfService.vue'
 import PrivacyPolicy from '@/views/public/PrivacyPolicy.vue'
 import FAQ from '@/views/public/FAQ.vue'
+import Assessment from '@/views/admin/Assessment.vue'
+
 export default [
   {
     path: '/testview/:id/:token?',
@@ -61,10 +63,19 @@ export default [
     component: PageNotFound,
   },
   {
-    path: '/sample',
-    name: 'Sample',
+    path: '/accessibility/manual',
+    name: 'Manual',
     meta: { authorize: [] },
     component: Sample,
+    children: [
+      {
+        path: '/assessment/:testId',
+        name: 'Assessment',
+        component: FAQ,
+        props: true,
+        meta: { authorize: [] }
+      },
+    ]
   },
   {
     path: '/wacg',
