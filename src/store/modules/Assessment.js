@@ -97,6 +97,35 @@ const getters = {
     }, 0)
 
     return totalRules > 0 ? Math.round((state.completedRules.length / totalRules) * 100) : 0
+  },
+
+  // Get all assessments
+  getAllAssessments: (state, getters) => {
+    if (!state.wcagData) return {}
+
+    const allAssessments = {}
+
+    // Loop through all principles, guidelines, and rules
+    state.wcagData.principles.forEach(principle => {
+      principle.Guidelines?.forEach(guideline => {
+        guideline.rules?.forEach(rule => {
+          const assessment = getters.getRuleAssessment(rule.id)
+          if (assessment) {
+            allAssessments[rule.id] = {
+              ruleId: rule.id,
+              ruleTitle: rule.title,
+              principle: principle.title,
+              guideline: guideline.title,
+              level: rule.level,
+              version: rule.version,
+              ...assessment
+            }
+          }
+        })
+      })
+    })
+
+    return allAssessments
   }
 }
 

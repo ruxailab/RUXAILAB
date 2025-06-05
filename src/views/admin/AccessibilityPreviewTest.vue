@@ -90,13 +90,11 @@
                   <div v-if="!currentRule?.criteria?.length" class="text-caption text-grey">
                     No success criteria available for this rule.
                   </div>
-                  <div v-else class="criteria-list">
-                    <div v-for="(crit, cIdx) in currentRule.criteria" :key="cIdx" class="d-flex align-center mb-2">
-                      <v-checkbox v-model="selectedCriteria[cIdx]" @change="addToNotes(crit, cIdx)" hide-details
-                        density="compact" class="mr-2" />
+                  <ul v-else class="criteria-list pl-4">
+                    <li v-for="(crit, cIdx) in currentRule.criteria" :key="cIdx" class="mb-2">
                       <pre class="criterion-pre mb-0 text-body-2" style="white-space: pre-wrap">{{ crit }}</pre>
-                    </div>
-                  </div>
+                    </li>
+                  </ul>
                 </v-card-text>
               </v-card>
             </div>
@@ -196,12 +194,65 @@
       <template #activator="{ props }">
         <v-btn data-testid="create-test-btn" size="large" icon position="fixed" location="bottom right" color="#F9A826"
           variant="elevated" class="mr-4 mb-5 floating-save-btn" rounded="circle" v-bind="props"
-          @click="saveAssessment">
-          <v-icon size="large"> mdi-content-save-outline </v-icon>
+          @click="viewAssessmentDocument">
+          <v-icon size="large"> mdi-eye </v-icon>
         </v-btn>
       </template>
-      <span>Save Assessment</span>
+      <span>View Assessment</span>
     </v-tooltip>
+
+    <!-- Assessment Data Dialog -->
+    <v-dialog v-model="showAssessmentDialog" max-width="1200" max-height="800">
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>Assessment Data</span>
+          <v-btn icon @click="showAssessmentDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-data-table :headers="[
+            { title: 'Rule ID', key: 'ruleId' },
+            { title: 'Title', key: 'ruleTitle' },
+            { title: 'Principle', key: 'principle' },
+            { title: 'Guideline', key: 'guideline' },
+            { title: 'Level', key: 'level' },
+            { title: 'Status', key: 'status' },
+            { title: 'Severity', key: 'severity' },
+          ]" :items="Object.values(assessmentData)" :items-per-page="10" class="elevation-1" height="70vh">
+            <template v-slot:item.notes="{ item }">
+              <v-tooltip bottom max-width="400">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon small v-bind="attrs" v-on="on">
+                    <v-icon small>mdi-note-text</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <div v-for="(note, index) in item.notes" :key="index" class="mb-2">
+                    <strong>Note {{ index + 1 }}:</strong>
+                    <div>{{ note.text }}</div>
+                    <div v-if="note.imageName" class="mt-1">
+                      <v-chip small color="grey lighten-2">
+                        <v-icon left small>mdi-image</v-icon>
+                        {{ note.imageName }}
+                      </v-chip>
+                    </div>
+                  </div>
+                </div>
+              </v-tooltip>
+            </template>
+          </v-data-table>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showAssessmentDialog = false">Close</v-btn>
+          <v-btn color="primary" variant="text" @click="downloadAssessmentData">
+            <v-icon left>mdi-download</v-icon>
+            Export JSON
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -363,18 +414,6 @@ const prevRule = () => {
   store.dispatch('Assessment/prevRule')
 }
 
-// Add selected criteria to notes
-const addToNotes = (criterion, index) => {
-  const note = `[${index + 1}] ${criterion}\n`
-  if (selectedCriteria.value[index]) {
-    notes.value = notes.value ? `${notes.value}${note}` : note
-  } else {
-    // Remove the note if unchecked
-    const noteToRemove = `[${index + 1}] ${criterion}\n`
-    notes.value = notes.value.replace(noteToRemove, '')
-  }
-}
-
 // Add a new note tab
 const addNote = () => {
   notes.value.push({ text: '', image: null, imagePreview: '', imageName: null })
@@ -414,6 +453,48 @@ const removeImage = (idx) => {
   notes.value[idx].imageName = null
 }
 
+// Download assessment data as JSON file
+const downloadAssessmentData = () => {
+  try {
+    const dataStr = JSON.stringify(assessmentData.value, null, 2)
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+
+    const exportFileDefaultName = `assessment-data-${new Date().toISOString().split('T')[0]}.json`
+
+    const linkElement = document.createElement('a')
+    linkElement.setAttribute('href', dataUri)
+    linkElement.setAttribute('download', exportFileDefaultName)
+    linkElement.click()
+
+    toast.success('Assessment data exported successfully')
+  } catch (error) {
+    console.error('Error exporting assessment data:', error)
+    toast.error('Failed to export assessment data')
+  }
+}
+// View Assessment Document all rules 
+// Dialog state
+const showAssessmentDialog = ref(false)
+const assessmentData = ref({})
+
+// View all assessment data
+const viewAssessmentDocument = () => {
+  try {
+    // Get all assessments from the store
+    const allAssessments = store.getters['Assessment/getAllAssessments']
+    assessmentData.value = allAssessments
+
+    // Log to console for debugging
+    console.log('All Assessment Data:', JSON.stringify(allAssessments, null, 2))
+
+    // Show the dialog
+    showAssessmentDialog.value = true
+  } catch (error) {
+    console.error('Error fetching assessment data:', error)
+    toast.error('Failed to load assessment data')
+  }
+}
+
 // Save assessment
 const saveAssessment = async () => {
   try {
@@ -438,7 +519,7 @@ const saveAssessment = async () => {
       })
 
       await store.dispatch('Assessment/updateRuleAssessment', assessmentData)
-
+      console.log(JSON.stringify(assessmentData, null, 2))
       toast.success('Assessment saved successfully')
     }
   } catch (err) {
