@@ -25,7 +25,10 @@
       >
 
       <div class="mt-1">
-        <v-row v-for="text in texts" :key="text">
+        <v-row
+          v-for="text in texts"
+          :key="text"
+        >
           <v-sheet class="ml-10 mb-8 circle" />
           <span class="cardInternTitles ml-3">{{ text }}</span>
         </v-row>
@@ -34,34 +37,32 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      default: '',
-      require: true,
-    },
+<script setup>
 
-    type: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    img: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    texts: {
-      type: Array,
-      default: () => ([]),
-      require: true,
-    },
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+    required: true
   },
-}
+  type: {
+    type: String,
+    default: '',
+    required: true
+  },
+  img: {
+    type: String,
+    default: '',
+    required: true
+  },
+  texts: {
+    type: Array,
+    default: () => [],
+    required: true
+  }
+})
+
+defineEmits(['click'])
 </script>
 
 <style scoped>

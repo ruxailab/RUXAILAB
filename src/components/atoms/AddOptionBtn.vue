@@ -1,69 +1,69 @@
 <template>
   <div>
-    <v-btn
-      rounded
-      color="#f9a826"
-      class="white--text"
-      small
-      :disabled="testAnswerDocLength > 0 ? true : false"
-      :class="{
-        disabledBtnBackground: testAnswerDocLength > 0,
-      }"
-      @click="$emit('dialog', true)"
+    <v-dialog
+      :model-value="dialog"
+      width="500"
+      persistent
+      @update:model-value="$emit('update:dialog', $event)"
     >
-      {{ $t('HeuristicsTable.titles.addOption') }}
-    </v-btn>
-
-    <v-dialog v-model="dialog" width="500" persistent>
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addOption') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
             <v-form ref="form">
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="6">
                   <v-text-field
-                    v-model="option.text"
+                    v-model="localOption.text"
                     max-length="100"
                     counter="100"
                     :label="$t('common.text')"
+                    variant="outlined"
                     :rules="textRequired"
                   />
                 </v-col>
 
                 <v-col cols="6">
                   <v-text-field
-                    v-model.number="option.value"
+                    v-model.number="localOption.value"
                     :label="$t('common.value')"
-                    :disabled="!hasValue"
+                    :disabled="!localHasValue"
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
-                    :step="0.5"
+                    variant="outlined"
+                    step="0.5"
                   />
                 </v-col>
               </v-row>
 
-              <!-- New row for Option description -->
-              <v-row justify="center" align="center">
+              <v-row
+                justify="center"
+                align="center"
+              >
                 <v-col cols="12">
                   <v-text-field
-                    v-model="option.description"
+                    v-model="localOption.description"
+                    variant="outlined"
                     max-length="250"
                     counter="250"
-                    :label="
-                      $t('HeuristicsTable.placeholders.optionDescription')
-                    "
+                    :label="$t('HeuristicsTable.placeholders.optionDescription')"
                   />
                 </v-col>
               </v-row>
 
               <v-row justify="center">
                 <v-checkbox
-                  v-model="hasValueState"
+                  v-model="localHasValue"
                   :label="$t('HeuristicsTable.titles.hasValue')"
                 />
               </v-row>
@@ -74,15 +74,19 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            small
-            text
-            color="red lighten-1 white--text"
-            @click="$emit('dialog', false), resetVal()"
+            size="small"
+            variant="text"
+            color="red-lighten-1"
+            @click="cancel"
           >
             {{ $t('HeuristicsTable.titles.cancel') }}
           </v-btn>
 
-          <v-btn small color="#f9a826" class="white--text" @click="validate()">
+          <v-btn
+            size="small"
+            class="text-white bg-orange"
+            @click="validate"
+          >
             {{ $t('common.save') }}
           </v-btn>
         </v-card-actions>
@@ -91,87 +95,86 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-export default {
-  props: {
-    option: {
-      type: Object,
-      required: true,
-    },
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
-    hasValue: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-  },
-  data: () => ({
-    textRequired: [
-      (v) => !!v || i18n.t('HeuristicsTable.validation.textRequired'),
-    ],
-  }),
-  computed: {
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
-      return heuristicAnswersCount
-    },
-    hasValueState: {
-      get() {
-        return this.hasValue
-      },
-      set() {
-        this.$emit('changeHasValue')
-      },
-    },
-    valueRequired() {
-      if (
-        this.hasValue ||
-        (this.option.value !== null && this.option.value >= 0)
-      ) {
-        return [
-          (v) =>
-            (v !== '' && v !== null && v >= 0) ||
-            i18n.t('HeuristicsTable.validation.textRequired'),
-        ]
-      } else {
-        return []
-      }
-    },
+const props = defineProps({
+  option: { type: Object, required: true },
+  dialog: { type: Boolean, default: false },
+  hasValue: { type: Boolean, required: true, default: true },
+});
+
+const emit = defineEmits(['update:dialog', 'changeHasValue', 'addOption', 'change']);
+
+const { t } = useI18n();
+const store = useStore();
+const form = ref(null);
+
+const textRequired = [(v) => !!v || t('HeuristicsTable.validation.textRequired')];
+const localOption = ref({ text: '', value: null, description: '' });
+const localHasValue = ref(true);
+
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) return 0;
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers;
+  return Object.keys(heuristicAnswers).length;
+});
+
+const valueRequired = computed(() => {
+  if (!localHasValue.value) return [];
+  return [
+    (v) => (v !== null && v !== '' && v >= 0) || t('HeuristicsTable.validation.textRequired'),
+  ];
+});
+
+watch(
+  () => props.option,
+  (newOption) => {
+    localOption.value = { ...newOption };
   },
-  watch: {
-    dialog() {
-      if (!this.dialog) {
-        this.hasValue = true
-      }
-    },
+  { deep: true, immediate: true }
+);
+
+watch(
+  () => props.hasValue,
+  (newValue) => {
+    localHasValue.value = newValue;
   },
-  methods: {
-    validate() {
-      if (this.$refs.form.validate()) {
-        if (!this.hasValue) {
-          this.option.value = null
-        }
-        this.$emit('dialog', false)
-        this.$emit('addOption')
-        this.$emit('change')
-        this.resetVal()
-      }
-    },
-    resetVal() {
-      this.$refs.form.resetValidation()
-    },
-  },
-}
+  { immediate: true }
+);
+
+watch(localHasValue, (newValue) => {
+  if (!newValue) localOption.value.value = null;
+  emit('changeHasValue', newValue);
+});
+
+const validate = async () => {
+  const { valid } = await form.value.validate();
+  if (valid) {
+    const optionToSave = { ...localOption.value };
+    if (!localHasValue.value) optionToSave.value = null;
+    console.log('Emitting addOption:', optionToSave);
+    emit('addOption', optionToSave);
+    emit('change');
+    emit('update:dialog', false);
+    resetVal();
+  } else {
+    console.log('Form validation failed');
+  }
+};
+
+const cancel = () => {
+  emit('update:dialog', false);
+  resetVal();
+};
+
+const resetVal = () => {
+  localOption.value = { text: '', value: null, description: '' };
+  localHasValue.value = true;
+  form.value.resetValidation();
+};
 </script>
 
 <style scoped>

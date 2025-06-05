@@ -20,23 +20,14 @@
   </div>
 </template>
 
-<script>
-// Components
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import UserModeratedSentiment from '@/components/organisms/UserModeratedSentiment.vue'
 
-export default {
-  components: {
-    UserModeratedSentiment,
-  },
-  computed: {
-    testDocument() {
-      return this.$store.getters.test
-    },
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
-    },
-  },
-}
-</script>
+const store = useStore();
 
-<style></style>
+const testDocument = computed(() => store.getters.test)
+
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+</script>

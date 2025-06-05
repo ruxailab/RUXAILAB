@@ -6,43 +6,40 @@
     :main="$t('descriptions.intro.reports')"
     :link="$t('descriptions.intro.invite')"
     :items="items"
-    @linkClicked="goToCoops()"
-    @callFunc="callFunc"
+    @link-clicked="goToCoops"
+    @call-func="callFunc"
   />
 </template>
 
-<script>
-import IntroComp from '@/components/atoms/IntrosComponent'
-import i18n from '@/i18n'
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import IntroComp from '@/components/atoms/IntrosComponent.vue'
 
-export default {
-  components: {
-    IntroComp,
+const emit = defineEmits(['goToCoops'])
+const router = useRouter()
+const { t } = useI18n()
+
+const items = computed(() => [
+  {
+    iconColor: '#ff6224',
+    icon: 'mdi-file-document',
+    title: t('pages.intros.docTitle'),
+    subtitle: t('pages.intros.docSubtitle') + t('titles.reports'),
+    func: 'goToDoc',
   },
-  data: () => ({}),
-  computed: {
-    items() {
-      return [
-        {
-          iconColor: '#ff6224',
-          icon: 'mdi-file-document',
-          title: i18n.t('pages.intros.docTitle'),
-          subtitle: i18n.t('pages.intros.docSubtitle') + i18n.t('titles.reports'),
-          func: 'goToDoc',
-        },
-      ]
-    },
-  },
-  methods: {
-    goToDoc() {
-      this.$router.push('/reports/documentation').catch(() => {})
-    },
-    goToCoops() {
-      this.$emit('goToCoops')
-    },
-    callFunc(func) {
-      this[func]() //call item function
-    },
-  },
+])
+
+const goToDoc = () => {
+  router.push('/reports/documentation').catch(() => {})
+}
+
+const goToCoops = () => {
+  emit('goToCoops')
+}
+
+const callFunc = (func) => {
+  if (func === 'goToDoc') goToDoc()
 }
 </script>

@@ -1,42 +1,82 @@
 <template>
-  <v-container class="pa-0 ma-0" fluid>
+  <v-container
+    class="pa-0 ma-0"
+    fluid
+  >
     <Snackbar />
 
-    <v-overlay v-model="loading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
+    <v-overlay
+      v-model="loading"
+      class="text-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="#fca326"
+        size="50"
+      />
       <div class="white-text mt-3">
         {{ $t('common.loading') }}
       </div>
     </v-overlay>
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row
+      v-if="test"
+      class="nav pa-0 ma-0"
+      dense
+    >
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
-        <div v-if="this.$route.path.includes('manager')">
+        <div v-if="$route.path.includes('manager')">
           <div class="back-gradient">
-            <v-row align="center" justify="center" style="height: 100%">
+            <v-row
+              align="center"
+              justify="center"
+              style="height: 100%"
+            >
               <v-col class="text-div">
-                <div v-if="accessLevel == 0" class="white--text">
-                  <p class="mobile-center" style="font-size: 58px; font-weight: 500">
+                <div
+                  v-if="accessLevel == 0"
+                  class="text-white"
+                >
+                  <p
+                    class="mobile-center"
+                    style="font-size: 58px; font-weight: 500"
+                  >
                     {{ $t('titles.manager') }}
                   </p>
 
-                  <p style="font-size: 22px" class="mobile-center">
+                  <p
+                    style="font-size: 22px"
+                    class="mobile-center"
+                  >
                     {{ test.testTitle }}
                   </p>
                 </div>
 
-                <div v-else class="white--text mobile-center" style="font-size: 58px; font-weight: 500">
+                <div
+                  v-else
+                  class="text-white mobile-center"
+                  style="font-size: 58px; font-weight: 500"
+                >
                   {{ test.testTitle }}
                 </div>
 
-                <v-img class="hidden-md-and-up" style="max-height: 40vh" contain
-                  src="@/assets/manager/IntroManager.svg" />
+                <v-img
+                  class="hidden-md-and-up"
+                  style="max-height: 40vh"
+                  cover
+                  src="@/assets/manager/IntroManager.svg"
+                />
               </v-col>
-              <v-img class="hidden-sm-and-down" contain max-width="40%" max-height="85%"
-                src="@/assets/manager/IntroManager.svg" />
+              <v-img
+                class="hidden-sm-and-down"
+                cover
+                max-width="40%"
+                max-height="85%"
+                src="@/assets/manager/IntroManager.svg"
+              />
             </v-row>
           </div>
           <div>
@@ -47,7 +87,11 @@
                 </div>
 
                 <!-- Top Cards -->
-                <CardsManager :cards="topCards" :per-row="2" @click="go" />
+                <CardsManager
+                  :cards="topCards"
+                  :per-row="2"
+                  @click="go"
+                />
               </div>
 
               <div v-if="bottomCards.length">
@@ -56,7 +100,11 @@
                 </div>
 
                 <!-- Bottom Cards -->
-                <CardsManager :cards="bottomCards" :per-row="3" @click="go" />
+                <CardsManager
+                  :cards="bottomCards"
+                  :per-row="3"
+                  @click="go"
+                />
               </div>
             </v-container>
           </div>

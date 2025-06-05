@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 
 import { db } from '@/firebase'
 import {

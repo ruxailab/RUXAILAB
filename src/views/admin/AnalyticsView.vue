@@ -9,22 +9,17 @@
   </div>
 </template>
 
-<script>
-import HeuristicsAnalytics from '@/components/organisms/HeuristicsAnalytics.vue'
-import UserAnalytics from '@/components/organisms/UserAnalytics.vue'
-export default {
-  components: {
-    HeuristicsAnalytics,
-    UserAnalytics,
-  },
-  computed: {
-    testAnswerDocument() {
-      return this.$store.state.Answer.testAnswerDocument
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getCurrentTestAnswerDoc')
-  },
-}
-</script>
+<script setup>
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import HeuristicsAnalytics from '@/components/organisms/HeuristicsAnalytics.vue';
+import UserAnalytics from '@/components/organisms/UserAnalytics.vue';
 
+const store = useStore();
+
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+
+onMounted(async () => {
+  await store.dispatch('getCurrentTestAnswerDoc');
+});
+</script>

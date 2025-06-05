@@ -3,33 +3,41 @@
     <v-btn
       rounded
       color="#f9a826"
-      class="white--text"
-      small
-      :disabled="testAnswerDocLength > 0 ? true : false"
-      :class="{
-        disabledBtnBackground: testAnswerDocLength > 0,
-      }"
-      @click=";(dialog = true), resetIndex()"
+      class="text-white"
+      size="small"
+      :disabled="testAnswerDocLength > 0"
+      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+      @click="dialog = true; resetIndex()"
     >
       {{ $t('HeuristicsTable.titles.addNewDescription') }}
     </v-btn>
 
-    <v-dialog v-model="dialog" width="700" persistent>
+    <v-dialog
+      v-model="dialog"
+      width="700"
+      persistent
+    >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
-            <v-form ref="form" @submit.prevent="validate()">
+            <v-form
+              ref="form"
+              @submit.prevent="validate"
+            >
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field
                     v-model="desc.title"
-                    :rules="rule"
-                    dense
-                    outlined
+                    :rules="rules"
+                    density="compact"
+                    variant="outlined"
                     :label="$t('common.title')"
                   />
 
@@ -37,7 +45,7 @@
                   <TextBox
                     ref="textbox"
                     @mounted="setDescriptionText"
-                    @updateHtml="updateText"
+                    @update-html="updateText"
                   />
                 </v-col>
               </v-row>
@@ -47,25 +55,29 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn small text color="red lighten-1 white--text" @click="reset()">
+          <v-btn
+            size="small"
+            variant="text"
+            color="red-lighten-1"
+            class="text-white"
+            @click="reset"
+          >
             {{ $t('common.cancel') }}
           </v-btn>
 
           <v-btn
             v-if="editIndex !== null"
-            small
-            color="#f9a826"
-            class="white--text"
-            @click="submitEdit()"
+            size="small"
+            class="text-white bg-orange"
+            @click="submitEdit"
           >
             {{ $t('common.confirm') }}
           </v-btn>
           <v-btn
             v-else
-            small
-            color="#f9a826"
-            class="white--text"
-            @click="validate()"
+            size="small"
+            class="text-white bg-orange"
+            @click="validate"
           >
             {{ $t('common.add') }}
           </v-btn>
@@ -75,110 +87,119 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
 import TextBox from '@/components/atoms/TextBox'
-import i18n from '@/i18n'
 
-export default {
-  components: {
-    TextBox,
+const props = defineProps({
+  questionIndex: {
+    type: Number,
+    required: true,
+    default: 0,
   },
-  props: {
-    questionIndex: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    heuristicIndex: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+  heuristicIndex: {
+    type: Number,
+    required: true,
+    default: 0,
   },
-  data: () => ({
-    dialog: false,
-    desc: {
-      title: '',
-      text: '',
-    },
-    rule: [(v) => !!v || i18n.t('errors.fieldRequired')],
-    editIndex: null,
-    isMounted: false,
-  }),
-  computed: {
-    question() {
-      return this.$store.state.Tests.Test.testStructure[this.heuristicIndex]
-        .questions[this.questionIndex]
-    },
-    testAnswerDocLength() {
-      if (!this.$store.getters.testAnswerDocument) {
-        return 0
-      }
-      const heuristicAnswers = this.$store.getters.testAnswerDocument
-        .heuristicAnswers
-      const heuristicAnswersCount = Object.keys(heuristicAnswers).length
+})
 
-      return heuristicAnswersCount
-    },
-  },
-  methods: {
-    validate() {
-      const valid = this.$refs.form.validate()
-      if (valid && this.desc.text.length > 0) {
-        this.$store.commit('setupHeuristicQuestionDescription', {
-          heuristic: this.heuristicIndex,
-          question: this.questionIndex,
-          description: this.desc,
-          editIndex: this.editIndex,
-        })
+const emit = defineEmits(['update-description'])
 
-        this.reset()
-      } else if (valid && this.desc.text.length == 0) {
-        this.$toast.info(i18n.t('alerts.addDescription'))
-      }
-    },
-    reset() {
-      this.dialog = false
-      this.$refs.form.resetValidation()
-      this.$refs.textbox.resetContent()
-      this.desc = {
-        title: '',
-        text: '',
-      }
-      this.resetIndex()
-    },
-    resetIndex() {
-      this.editIndex = null
-    },
-    updateText(html) {
-      this.desc.text = html
-    },
-    editSetup(i) {
-      //used when edit clicked
-      this.dialog = true
-      this.editIndex = i
-      this.desc = Object.assign({}, this.question.descriptions[this.editIndex])
-      if (this.isMounted) {
-        this.setDescriptionText()
-      }
-    },
-    setDescriptionText() {
-      this.isMounted = true
-      this.$refs.textbox.setContent(this.desc.text)
-    },
-    submitEdit(){
-      const valid = this.$refs.form.validate()
-      console.log('submitEdit',this.desc.text)
-      const strippedText = this.desc.text.replace(/<\/?[^>]+(>|$)/g, "").trim();
-      if(valid && strippedText.length > 0){
-        this.$emit('update-description', { index: this.editIndex, description: this.desc });
-        this.reset();
-      }else if (valid && strippedText.length == 0) {
-        this.$toast.info(i18n.t('alerts.addDescription'))
-      }
-    },
-  },
+const store = useStore()
+const { t } = useI18n()
+const toast = useToast()
+
+const dialog = ref(false)
+const desc = ref({
+  title: '',
+  text: '',
+})
+const editIndex = ref(null)
+const isMounted = ref(false)
+const form = ref(null)
+const textbox = ref(null)
+
+// Rules for form validation
+const rules = ref([(v) => !!v || t('errors.fieldRequired')])
+
+const question = computed(() => {
+  return store.state.Tests.Test.testStructure[props.heuristicIndex]
+    .questions[props.questionIndex]
+})
+
+const testAnswerDocLength = computed(() => {
+  if (!store.getters.testAnswerDocument) {
+    return 0
+  }
+  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
+  return Object.keys(heuristicAnswers).length
+})
+const validate = async () => {
+  const { valid } = await form.value.validate()
+  if (valid && desc.value.text.length > 0) {
+    store.commit('setupHeuristicQuestionDescription', {
+      heuristic: props.heuristicIndex,
+      question: props.questionIndex,
+      description: desc.value,
+      editIndex: editIndex.value,
+    })
+    reset()
+  } else if (valid && desc.value.text.length === 0) {
+    toast.info(t('alerts.addDescription'))
+  }
 }
+
+const reset = () => {
+  dialog.value = false
+  form.value.resetValidation()
+  textbox.value?.resetContent?.()
+  desc.value = {
+    title: '',
+    text: '',
+  }
+  resetIndex()
+}
+
+const resetIndex = () => {
+  editIndex.value = null
+}
+
+const updateText = (html) => {
+  desc.value.text = html
+}
+
+const editSetup = (i) => {
+  dialog.value = true
+  editIndex.value = i
+  desc.value = { ...question.value.descriptions[editIndex.value] }
+  if (isMounted.value) {
+    setDescriptionText()
+  }
+}
+
+const setDescriptionText = () => {
+  isMounted.value = true
+  textbox.value?.setContent?.(desc.value.text)
+}
+
+const submitEdit = async () => {
+  const { valid } = await form.value.validate()
+  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  if (valid && strippedText.length > 0) {
+    emit('update-description', { index: editIndex.value, description: desc.value })
+    reset()
+  } else if (valid && strippedText.length === 0) {
+    toast.info(t('alerts.addDescription'))
+  }
+}
+
+defineExpose({
+  editSetup
+})
 </script>
 
 <style scoped>
@@ -199,7 +220,7 @@ export default {
 }
 .dataCard {
   background: #f5f7ff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px_RGBA(0, 0, 0, 0.25);
   border-radius: 4px;
 }
 </style>

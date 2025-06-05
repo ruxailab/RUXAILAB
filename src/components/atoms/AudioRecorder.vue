@@ -2,32 +2,35 @@
   <div>
     <v-col>
       <v-row>
-        <v-tooltip bottom v-if="!recordingAudio">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="!recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              @click="startAudioRecording"
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto"
-              v-bind="attrs"
-              v-on="on"
+              v-bind="props"
+              @click="startAudioRecording"
             >
               <v-icon>mdi-microphone</v-icon>
             </v-btn>
           </template>
           <span>Start Audio Record</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="recordingAudio">
-          <template v-slot:activator="{ on, attrs }">
+        <v-tooltip
+          v-if="recordingAudio"
+          location="bottom"
+        >
+          <template #activator="{ props }">
             <v-btn
-              @click="stopAudioRecording"
               color="red"
-              dark
               elevation="0"
               icon
               class="ml-4 my-2 mr-auto xl"
-              v-bind="attrs"
-              v-on="on"
+              v-bind="props"
+              @click="stopAudioRecording"
             >
               <v-icon>mdi-stop</v-icon>
             </v-btn>
@@ -39,101 +42,100 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-export default {
-  props: {
-    testId: String,
-    taskIndex: Number,
-    showVisualizer: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+const props = defineProps({
+  testId: {
+    type: String,
+    default: ''
   },
-  data() {
-    return {
-      recordingAudio: false,
-      recordedChunks: [],
-      mediaRecorder: null,
-      audioStream: null,
-      recordedAudio: '',
+  taskIndex: {
+    type: Number,
+    default: 0
+  },
+  showVisualizer: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
+
+const store = useStore()
+const toast = useToast()
+const { t } = useI18n()
+
+// Reactive state
+const recordingAudio = ref(false)
+const recordedChunks = ref([])
+const mediaRecorder = ref(null)
+const audioStream = ref(null)
+const recordedAudio = ref('')
+
+// Computed properties
+const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+
+// Methods
+const startAudioRecording = async () => {
+  recordingAudio.value = true
+  emit('recordingStarted', true)
+
+  try {
+    audioStream.value = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    })
+
+    recordedChunks.value = []
+    mediaRecorder.value = new MediaRecorder(audioStream.value, {
+      mimeType: 'audio/webm'
+    })
+
+    mediaRecorder.value.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.value.push(event.data)
+      }
     }
-  },
-  computed: {
-    currentUserTestAnswer() {
-      return this.$store.getters.currentUserTestAnswer
-    },
-  },
-  methods: {
-    async startAudioRecording() {
-      this.recordingAudio = true
 
-      this.$emit('recordingStarted', true)
-      try {
-        this.audioStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        })
+    mediaRecorder.value.onstop = async () => {
+      emit('showLoading')
+      const audioBlob = new Blob(recordedChunks.value, {
+        type: 'audio/webm'
+      })
+      const storage = getStorage()
+      const storageReference = storageRef(
+        storage,
+        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${props.taskIndex}audio/${recordedAudio.value}`
+      )
+      await uploadBytes(storageReference, audioBlob)
 
-        this.recordedChunks = []
-        this.mediaRecorder = new MediaRecorder(this.audioStream, {
-          mimeType: 'audio/webm',
-        })
+      recordedAudio.value = await getDownloadURL(storageReference)
 
-        this.mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            this.recordedChunks.push(event.data)
-          }
-        }
+      currentUserTestAnswer.value.tasks[props.taskIndex].audioRecordURL = recordedAudio.value
 
-        this.mediaRecorder.onstop = async () => {
-          this.$emit('showLoading')
-          const audioBlob = new Blob(this.recordedChunks, {
-            type: 'audio/webm',
-          })
-          const storage = getStorage()
-          const storageRef = ref(
-            storage,
-            'tests/' +
-              this.testId +
-              '/' +
-              this.currentUserTestAnswer.userDocId +
-              '/' +
-              'task_' +
-              this.taskIndex +
-              'audio' +
-              '/' +
-              this.recordedAudio,
-          )
-          await uploadBytes(storageRef, audioBlob)
+      audioStream.value.getTracks().forEach((track) => track.stop())
+      audioStream.value = null
+      recordingAudio.value = false
+      emit('recordingStarted', false)
+      emit('stopShowLoading')
+      toast.success(t('alerts.genericSuccess'))
+      recordingAudio.value = false
+    }
 
-          this.recordedAudio = await getDownloadURL(storageRef)
+    mediaRecorder.value.start()
+  } catch (error) {
+    console.error('Error accessing audio stream:', error)
+    recordingAudio.value = false
+  }
+}
 
-          this.currentUserTestAnswer.tasks[
-            this.taskIndex
-          ].audioRecordURL = this.recordedAudio
-
-          this.audioStream.getTracks().forEach((track) => track.stop())
-          this.audioStream = null
-          this.recordingAudio = false
-          this.$emit('recordingStarted', false)
-
-          this.$emit('stopShowLoading')
-          this.$toast.success(i18n.$t('alerts.genericSuccess'))
-          this.recordingAudio = false
-        }
-
-        this.mediaRecorder.start()
-      } catch (error) {
-        console.error('Error accessing audio stream:', error)
-        this.recordingAudio = false
-      }
-    },
-    stopAudioRecording() {
-      if (this.mediaRecorder) {
-        this.mediaRecorder.stop()
-      }
-    },
-  },
+const stopAudioRecording = () => {
+  if (mediaRecorder.value) {
+    mediaRecorder.value.stop()
+  }
 }
 </script>

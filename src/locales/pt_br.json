@@ -137,7 +137,6 @@
     "incorrectPassword": "Senha incorreta.",
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe pelo transtorno."
-    
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -530,7 +529,8 @@
     "camera": "Camera",
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Gravação de audio",
-    "postForm": "Pós-Formulário"
+    "postForm": "Pós-Formulário",
+    "nasa": "NASA-TLX"
   },
   "inputs": {
     "consentForm": "Formulário de consentimento",
@@ -611,7 +611,6 @@
     "analytics": "Análises",
     "help_center": "Central de Ajuda",
     "howCanWeHelp": "Como podemos ajudar?"
-
   },
   "user": "USUÁRIO",
   "account": "Conta",

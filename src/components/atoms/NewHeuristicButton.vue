@@ -3,54 +3,76 @@
     <v-btn
       rounded
       color="#f9a826"
-      class="white--text"
-      small
+      class="text-white"
+      size="small"
       disabled
-      @click="$emit('dialog', true)"
+      @click="$emit('openDialog')"
     >
       {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
     </v-btn>
 
-    <v-dialog v-model="dialog" width="500" persistent>
+    <v-dialog
+      :model-value="localDialog"
+      width="500"
+      persistent
+      @update:model-value="updateDialog"
+    >
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
         </p>
         <v-divider />
-        <v-row justify="center" class="ma-0">
+        <v-row
+          justify="center"
+          class="ma-0"
+        >
           <v-col cols="11">
             <v-form ref="form">
               <v-text-field
-                v-model="heuris.title"
+                v-model="localHeuris.title"
                 label="Title"
                 class="mx-3"
                 :rules="nameRequired"
               />
               <v-row
-                v-for="(n, i) in heuris.questions"
+                v-for="(n, i) in localHeuris.questions"
                 :key="i"
                 align="center"
                 justify="space-around"
                 class="mx-1"
               >
-                <v-col cols="10" class="pt-0 pb-0">
+                <v-col
+                  cols="10"
+                  class="pt-0 pb-0"
+                >
                   <v-text-field
-                    v-model="heuris.questions[i].text"
+                    v-model="localHeuris.questions[i].text"
                     :label="'Question ' + (i + 1)"
                     :rules="questionRequired"
                   />
                 </v-col>
 
                 <v-col cols="1">
-                  <v-btn small icon>
-                    <v-icon small @click="removeQuestion(i)">
+                  <v-btn
+                    size="small"
+                    icon
+                  >
+                    <v-icon
+                      size="small"
+                      @click="removeQuestion(i)"
+                    >
                       mdi-delete
                     </v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
 
-              <v-btn color="#f9a826" text class="ma-3" @click="addQuestion()">
+              <v-btn
+                color="#f9a826"
+                variant="text"
+                class="ma-3"
+                @click="addQuestion()"
+              >
                 {{ $t('HeuristicsTable.titles.addNewQuestion') }}
               </v-btn>
             </v-form>
@@ -60,14 +82,20 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            small
-            text
-            color="red lighten-1 white--text"
-            @click="$emit('dialog', false), resetVal()"
+            size="small"
+            variant="text"
+            color="red-lighten-1"
+            @click="closeDialog"
           >
-            <v-btn small color="#f9a826" class="white--text" @click="validate()">
-              {{ $t('common.save') }}
-            </v-btn>
+            {{ $t('common.cancel') }}
+          </v-btn>
+          <v-btn
+            size="small"
+            color="#f9a826"
+            class="text-white"
+            @click="validate"
+          >
+            {{ $t('common.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -75,52 +103,99 @@
   </div>
 </template>
 
-<script>
-import i18n from '@/i18n'
-export default {
-  props: {
-    heuris: {
-      type: Object,
-      required: true,
-    },
-    dialog: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toastification'
+import { cloneDeep } from 'lodash'
+
+const props = defineProps({
+  heuris: {
+    type: Object,
+    required: true,
   },
-  data: () => ({
-    id: 0,
-    nameRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.nameRequired')],
-    questionRequired: [(v) => !!v || i18n.t('HeuristicsTable.validation.questionRequired')],
-  }),
-  methods: {
-    addQuestion() {
-      if (this.heuris.questions.length > 0)
-        this.id = this.heuris.questions[this.heuris.questions.length - 1].id + 1
-      else this.id = 0
-      this.heuris.questions.push({ id: this.id, text: '' })
-      this.heuris.total = this.heuris.questions.length
-    },
-    removeQuestion(i) {
-      this.heuris.questions.splice(i, 1)
-      this.heuris.total = this.heuris.questions.length
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        if (this.heuris.questions.length == 0) {
-          this.$toast.info(i18n.t('HeuristicsTable.validation.addQuestion'))
-        } else {
-          this.$emit('dialog', false)
-          this.$emit('addHeuris')
-          this.$emit('change')
-          this.resetVal()
-        }
-      }
-    },
-    resetVal() {
-      this.$refs.form.resetValidation()
-    },
+  dialog: {
+    type: Boolean,
+    default: false,
   },
+})
+
+const emit = defineEmits(['openDialog', 'update:dialog', 'addHeuris', 'change'])
+
+const { t } = useI18n()
+const toast = useToast()
+
+const id = ref(0)
+const localDialog = ref(false)
+const localHeuris = ref({ title: '', questions: [], total: 0 })
+const form = ref(null)
+const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')])
+const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')])
+
+// Watchers
+watch(
+  () => props.dialog,
+  (newVal) => {
+    localDialog.value = newVal
+    if (newVal) {
+      localHeuris.value = cloneDeep(props.heuris)
+    }
+  }
+)
+
+watch(
+  () => props.heuris,
+  (newVal) => {
+    if (!localDialog.value) {
+      localHeuris.value = cloneDeep(newVal)
+    }
+  },
+  { deep: true }
+)
+
+// Methods
+const addQuestion = () => {
+  if (localHeuris.value.questions.length > 0) {
+    id.value = localHeuris.value.questions[localHeuris.value.questions.length - 1].id + 1
+  } else {
+    id.value = 0
+  }
+  localHeuris.value.questions.push({ id: id.value, text: '' })
+  localHeuris.value.total = localHeuris.value.questions.length
+}
+
+const removeQuestion = (index) => {
+  localHeuris.value.questions.splice(index, 1)
+  localHeuris.value.total = localHeuris.value.questions.length
+}
+
+const validate = async () => {
+  const { valid } = await form.value.validate()
+  if (valid) {
+    if (localHeuris.value.questions.length === 0) {
+      toast.info(t('HeuristicsTable.validation.addQuestion'))
+    } else {
+      emit('update:dialog', false)
+      emit('addHeuris', cloneDeep(localHeuris.value))
+      emit('change')
+      resetVal()
+    }
+  }
+}
+
+const resetVal = () => {
+  localHeuris.value = { title: '', questions: [], total: 0 }
+  form.value.resetValidation()
+}
+
+const updateDialog = (value) => {
+  localDialog.value = value
+  emit('update:dialog', value)
+}
+
+const closeDialog = () => {
+  emit('update:dialog', false)
+  resetVal()
 }
 </script>
 
