@@ -5,33 +5,52 @@
         <v-card>
           <v-card-title class="d-flex justify-space-between align-center">
             <span>Accessibility Assessment Results</span>
-            <v-btn color="primary" prepend-icon="mdi-download" @click="downloadAssessmentData" :loading="isLoading">
-              Export JSON
-            </v-btn>
+            <div>
+              <v-btn color="primary" prepend-icon="mdi-download" @click="downloadAssessmentData" class="mr-2"
+                :loading="isLoading">
+                Export JSON
+              </v-btn>
+              <v-btn color="secondary" @click="loadAssessmentData" :loading="isLoading" prepend-icon="mdi-refresh">
+                Refresh
+              </v-btn>
+            </div>
           </v-card-title>
+
+          <!-- Tabs for Principles -->
+          <v-tabs v-model="activeTab" grow show-arrows>
+            <v-tab v-for="(principle, index) in principles" :key="index" :value="index">
+              <v-icon start>{{ getPrincipleIcon(index) }}</v-icon>
+              {{ principle.title }}
+            </v-tab>
+          </v-tabs>
+
           <v-card-text class="pa-0">
-            <v-data-table :headers="headers" :items="Object.values(assessmentData)" :items-per-page="10"
-              :loading="isLoading" class="elevation-1" height="75vh">
-              <template v-slot:item.status="{ item }">
-                <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
-                  {{ item.status || 'Not Set' }}
-                </v-chip>
-              </template>
+            <v-window v-model="activeTab">
+              <v-window-item v-for="(principle, pIndex) in principles" :key="pIndex" :value="pIndex">
+                <v-data-table :headers="headers" :items="getRulesForPrinciple(pIndex)" :items-per-page="10"
+                  :loading="isLoading" class="elevation-1" height="65vh">
+                  <template v-slot:item.status="{ item }">
+                    <v-chip :color="getStatusColor(item.status)" class="text-uppercase" size="small">
+                      {{ item.status || 'Not Set' }}
+                    </v-chip>
+                  </template>
 
-              <template v-slot:item.severity="{ item }">
-                <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small" variant="outlined">
-                  {{ item.severity || 'Not Set' }}
-                </v-chip>
-              </template>
+                  <template v-slot:item.severity="{ item }">
+                    <v-chip :color="getSeverityColor(item.severity)" class="text-uppercase" size="small"
+                      variant="outlined">
+                      {{ item.severity || 'Not Set' }}
+                    </v-chip>
+                  </template>
 
-              <template v-slot:item.notes="{ item }">
-                <v-btn v-if="item.notes && item.notes.length > 0" icon size="small" @click="openNotesDialog(item)">
-                  <v-icon size="small">mdi-note-text-outline</v-icon>
-                </v-btn>
-                <span v-else class="text-grey">-</span>
-              </template>
-
-            </v-data-table>
+                  <template v-slot:item.notes="{ item }">
+                    <v-btn v-if="item.notes && item.notes.length > 0" icon size="small" @click="openNotesDialog(item)">
+                      <v-icon size="small">mdi-note-text-outline</v-icon>
+                    </v-btn>
+                    <span v-else class="text-grey">-</span>
+                  </template>
+                </v-data-table>
+              </v-window-item>
+            </v-window>
           </v-card-text>
         </v-card>
       </v-col>
@@ -42,7 +61,8 @@
   <v-dialog v-model="notesDialog.show" max-width="800px">
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
-        <span>Notes for {{ notesDialog.ruleId }} - {{ notesDialog.ruleTitle }}</span>
+        <span>Notes for {{ notesDialog.ruleId }} -
+          {{ notesDialog.ruleTitle }}</span>
         <v-btn icon @click="notesDialog.show = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -84,21 +104,38 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
+// Icons for principles
+const principleIcons = [
+  'mdi-eye',
+  'mdi-hand-wave',
+  'mdi-brain',
+  'mdi-dumbbell',
+]
+
 const store = useStore()
+const route = useRoute()
 const toast = useToast()
+
+// State
 const isLoading = ref(true)
+const activeTab = ref(0)
 const assessmentData = ref({})
+const wcagData = ref(null)
+const principles = ref([])
+const allRules = ref([])
+const assessmentRules = ref({})
 
 // Notes dialog state
 const notesDialog = ref({
   show: false,
   ruleId: '',
   ruleTitle: '',
-  notes: []
+  notes: [],
 })
 
 const headers = [
@@ -114,19 +151,27 @@ const headers = [
 
 const getStatusColor = (status) => {
   switch (status?.toLowerCase()) {
-    case 'pass': return 'success'
-    case 'fail': return 'error'
-    case 'na': return 'grey'
-    default: return 'grey lighten-2'
+    case 'pass':
+      return 'success'
+    case 'fail':
+      return 'error'
+    case 'na':
+      return 'grey'
+    default:
+      return 'grey lighten-2'
   }
 }
 
 const getSeverityColor = (severity) => {
   switch (severity?.toLowerCase()) {
-    case 'high': return 'error'
-    case 'medium': return 'warning'
-    case 'low': return 'success'
-    default: return 'grey lighten-2'
+    case 'high':
+      return 'error'
+    case 'medium':
+      return 'warning'
+    case 'low':
+      return 'success'
+    default:
+      return 'grey lighten-2'
   }
 }
 
@@ -135,22 +180,222 @@ const openNotesDialog = (item) => {
     show: true,
     ruleId: item.ruleId,
     ruleTitle: item.ruleTitle,
-    notes: item.notes || []
+    notes: item.notes || [],
   }
 }
 
-const loadAssessmentData = async () => {
+// Helper to find a rule by ID
+const findRuleById = (ruleId) => {
+  for (const principle of wcagData.value?.principles || []) {
+    for (const guideline of principle.guidelines || []) {
+      const rule = (guideline.rules || []).find((r) => r.id === ruleId)
+      if (rule)
+        return {
+          ...rule,
+          principle: principle.title,
+          guideline: guideline.title,
+        }
+    }
+  }
+  return null
+}
+
+// Get all rules from WCAG data
+const getAllRules = () => {
+  const rules = []
+  wcagData.value?.principles?.forEach((principle) => {
+    principle.guidelines?.forEach((guideline) => {
+      guideline.rules?.forEach((rule) => {
+        rules.push({
+          ...rule,
+          principle: principle.title,
+          guideline: guideline.title,
+        })
+      })
+    })
+  })
+  return rules
+}
+
+// Get rules for the current principle
+const getRulesForPrinciple = (principleIndex) => {
+  try {
+    const principle = principles.value?.[principleIndex]
+    if (!principle) {
+      console.error(`No principle found at index ${principleIndex}`)
+      return []
+    }
+
+    // Get all rules that belong to this principle
+    const principleRules = allRules.value.filter(
+      (rule) =>
+        rule.principleId === principle.id || rule.principle === principle.title,
+    )
+
+    // Map each rule with its assessment data
+    return principleRules.map((rule) => {
+      const assessment = assessmentRules.value[rule.id] || {
+        status: 'Not Set',
+        severity: 'Not Set',
+        notes: [],
+      }
+
+      return {
+        ruleId: rule.id,
+        ruleTitle: rule.title || rule.id,
+        principle: rule.principle,
+        guideline: rule.guideline,
+        level: rule.level || 'N/A',
+        status: assessment.status,
+        severity: assessment.severity,
+        notes: Array.isArray(assessment.notes)
+          ? assessment.notes
+          : assessment.notes
+            ? [assessment.notes]
+            : [],
+        criteria: rule.criteria || [],
+      }
+    })
+  } catch (error) {
+    console.error('Error getting rules for principle:', error)
+    return []
+  }
+}
+
+// Get principle icon
+const getPrincipleIcon = (index) => {
+  return principleIcons[index] || 'mdi-help-circle'
+}
+
+// Load WCAG data from the store
+const loadWcagData = async () => {
   try {
     isLoading.value = true
-    // Ensure WCAG data is loaded
+
+    // Ensure WCAG data is loaded in the store
     if (!store.state.Assessment.wcagData) {
       await store.dispatch('Assessment/initializeAssessment')
     }
-    // Get all assessments
-    assessmentData.value = store.getters['Assessment/getAllAssessments']
+
+    // Get WCAG data from store
+    wcagData.value = store.state.Assessment.wcagData
+
+    if (wcagData.value?.principles) {
+      // Map principles for tabs
+      principles.value = wcagData.value.principles.map((p, index) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        index,
+      }))
+
+      // Extract all rules with their hierarchy
+      allRules.value = []
+
+      wcagData.value.principles.forEach((principle) => {
+        // Check for both Guidelines and guidelines for backward compatibility
+        const guidelines = principle.Guidelines || principle.guidelines || []
+
+        guidelines.forEach((guideline) => {
+          // Check for both Rules and rules for backward compatibility
+          const rules = guideline.Rules || guideline.rules || []
+
+          rules.forEach((rule) => {
+            allRules.value.push({
+              ...rule,
+              principle: principle.title,
+              principleId: principle.id,
+              guideline: guideline.title,
+              guidelineId: guideline.id,
+            })
+          })
+        })
+      })
+    } else {
+      toast.error('Failed to load WCAG principles')
+    }
+  } catch (error) {
+    console.error('Error loading WCAG data:', error)
+    toast.error(`Failed to load WCAG data: ${error.message}`)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Load assessment data from Firestore
+const loadAssessmentData = async () => {
+  try {
+    isLoading.value = true
+
+    // Get the current user
+    const user = store.state.Auth.user
+
+    if (!user || !user.id) {
+      throw new Error('User not authenticated')
+    }
+
+    // Get the test ID from route or use a default
+    const testId = route.params.testId || 'default-test-id'
+
+    // Load WCAG data if not already loaded
+    if (!wcagData.value) {
+      await loadWcagData()
+    } else {
+    }
+
+    // Get the assessment document from Firestore
+    const { getDoc, doc } = await import('firebase/firestore')
+    const { db } = await import('@/firebase')
+
+    const docId = `${user.id}_${testId}`
+
+    const docRef = doc(db, 'assessments', docId)
+    const docSnap = await getDoc(docRef)
+
+    const assessmentLookup = {}
+
+    if (docSnap.exists()) {
+      const assessment = docSnap.data()
+
+      if (assessment?.assessmentData) {
+        assessment.assessmentData.forEach((item) => {
+          assessmentLookup[item.ruleId] = {
+            status: item.status || 'Not Set',
+            severity: item.severity || 'Not Set',
+            notes: item.notes || [],
+          }
+        })
+      }
+    } else {
+      toast.info('No assessment data found. Create an assessment first.')
+    }
+
+    // Merge with all rules
+    const mergedData = {}
+    if (allRules.value && allRules.value.length > 0) {
+      allRules.value.forEach((rule) => {
+        const assessment = assessmentLookup[rule.id] || {
+          status: 'Not Set',
+          severity: 'Not Set',
+          notes: [],
+        }
+
+        mergedData[rule.id] = {
+          ...rule,
+          ...assessment,
+        }
+      })
+    } else {
+      toast.error('Failed to load WCAG rules')
+    }
+
+    assessmentRules.value = assessmentLookup
+    assessmentData.value = mergedData
   } catch (error) {
     console.error('Error loading assessment data:', error)
-    toast.error('Failed to load assessment data')
+    toast.error(
+      `Failed to load assessment data: ${error.message || 'Unknown error'}`,
+    )
   } finally {
     isLoading.value = false
   }
@@ -159,9 +404,11 @@ const loadAssessmentData = async () => {
 const downloadAssessmentData = () => {
   try {
     const dataStr = JSON.stringify(assessmentData.value, null, 2)
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+    const dataUri =
+      'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
 
-    const exportFileDefaultName = `accessibility-assessment-${new Date().toISOString().split('T')[0]}.json`
+    const exportFileDefaultName = `accessibility-assessment-${new Date().toISOString().split('T')[0]
+      }.json`
 
     const linkElement = document.createElement('a')
     linkElement.setAttribute('href', dataUri)
@@ -175,8 +422,9 @@ const downloadAssessmentData = () => {
   }
 }
 
-onMounted(() => {
-  loadAssessmentData()
+onMounted(async () => {
+  await loadWcagData()
+  await loadAssessmentData()
 })
 </script>
 
