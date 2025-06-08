@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-main class="fill-height">
+        <v-main class="fill-height" style="background-color: #f5f5f5;">
             <v-container fluid class="fill-height pa-0 ma-0">
                 <v-row no-gutters class="fill-height">
                     <!-- Drawer Component -->
@@ -9,7 +9,7 @@
 
                     <!-- Main Content -->
                     <v-col class="pa-4 content-col" style="height: 100vh;">
-                        <v-card class="fill-height pa-4">
+                        <v-card class="fill-height pa-4" style="background-color: #ffffff;">
                             <router-view />
                         </v-card>
                     </v-col>
