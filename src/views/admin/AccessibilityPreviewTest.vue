@@ -259,13 +259,15 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const store = useStore()
+const route = useRoute()
 const error = ref('')
 const selectedCriteria = ref([])
-
+const user = computed(() => store.getters.user);
 // Computed properties from store
 const isLoading = computed(() => store.state.Assessment?.isLoading || false)
 const principles = computed(
@@ -344,14 +346,43 @@ const getPrincipleIcon = (index) => {
 // Initialize the assessment when component mounts
 onMounted(async () => {
   try {
-    isLoading.value = true
-    await store.dispatch('Assessment/initializeAssessment')
+    isLoading.value = true;
+    
+    // Initialize the assessment
+    await store.dispatch('Assessment/initializeAssessment');
+    
+    // Get the current user
+    const user = store.state.Auth.user;
+    if (!user || !user.id) {
+      throw new Error('User not authenticated');
+    }
+    
+    // Get the test ID from route or use a default
+    const testId = route.params.testId || 'default-test-id';
+    
+    // Load the assessment data from Firestore
+    const loadedAssessment = await store.dispatch('Assessment/loadAssessment', {
+      userId: user.id,
+      testId
+    });
+    
+    // If we have a loaded assessment, update the UI
+    if (loadedAssessment && loadedAssessment.assessmentData) {
+      const currentRuleId = currentRule.value?.id;
+      if (currentRuleId) {
+        const assessment = store.getters['Assessment/getRuleAssessment'](currentRuleId);
+        if (assessment) {
+          severity.value = assessment.severity || '';
+          status.value = assessment.status || '';
+          restoreNotesFromAssessment(assessment);
+        }
+      }
+    }
   } catch (err) {
-    console.error('Failed to initialize assessment:', err)
-    error.value =
-      'Failed to load assessment data. Please try refreshing the page.'
+    console.error('Failed to initialize assessment:', err);
+    error.value = 'Failed to load assessment data. Please try refreshing the page.';
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 })
 
@@ -498,33 +529,63 @@ const viewAssessmentDocument = () => {
 // Save assessment
 const saveAssessment = async () => {
   try {
-    const ruleId = currentRule.value?.id
-    if (ruleId) {
-      // Only persist text and imageName to Vuex
-      const notesToSave = notes.value.map(({ text, imageName }) => ({
+
+
+    const ruleId = currentRule.value?.id;
+    if (!ruleId) {
+      throw new Error('No rule selected');
+    }
+
+    // Get the current test ID from route or props
+    const testId = route.params.testId || 'default-test-id';
+
+    // Prepare the assessment data
+    const notesToSave = notes.value
+      .filter(note => note.text.trim() !== '') // Only save non-empty notes
+      .map(({ text, imageName }) => ({
         text,
         imageName: imageName || null
-      }))
-      const assessmentData = {
-        ruleId,
-        notes: notesToSave,
-        severity: severity.value,
-        status: status.value,
-      }
+      }));
 
-      console.log('Saving assessment data:', {
-        ruleId,
-        ruleTitle: currentRule.value?.title,
+    const assessmentData = {
+      ruleId,
+      ruleTitle: currentRule.value?.title,
+      principle: currentPrinciple.value?.title,
+      guideline: currentGuideline.value?.title,
+      level: currentRule.value?.level,
+      version: currentRule.value?.version,
+      notes: notesToSave,
+      severity: severity.value,
+      status: status.value,
+      updatedAt: new Date().toISOString()
+    };
+
+    console.log('Saving assessment data:', assessmentData);
+
+    // Save to Firestore via Vuex
+    await store.dispatch('Assessment/updateRuleAssessment', {
+      userId: user.value.id,
+      testId,
+      ruleId,
+      assessment: {
         ...assessmentData,
-      })
+        // Include any additional metadata you need
+      }
+    });
 
-      await store.dispatch('Assessment/updateRuleAssessment', assessmentData)
-      console.log(JSON.stringify(assessmentData, null, 2))
-      toast.success('Assessment saved successfully')
-    }
+
+    // Also update the local store
+    await store.dispatch('Assessment/saveAssessment', {
+      userId: user.value.id,
+      testId,
+      testType: 'manual' // or get this from props/route
+    });
+
+    toast.success('Assessment saved successfully');
   } catch (err) {
-    console.error('Failed to save assessment:', err)
-    error.value = 'Failed to save assessment. Please try again.'
+    console.error('Failed to save assessment:', err);
+    error.value = err.message || 'Failed to save assessment. Please try again.';
+    toast.error(error.value);
   }
 }
 
