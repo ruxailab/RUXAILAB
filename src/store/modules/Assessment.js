@@ -132,7 +132,17 @@ const getters = {
 const mutations = {
   // Set WCAG data
   SET_WCAG_DATA(state, data) {
-    state.wcagData = data
+    state.wcagData = data;
+  },
+  
+  // Set rule assessments (used when loading from Firestore)
+  SET_RULE_ASSESSMENTS(state, assessments) {
+    state.ruleAssessments = { ...assessments };
+  },
+  
+  // Set completed rules
+  SET_COMPLETED_RULES(state, ruleIds) {
+    state.completedRules = [...ruleIds];
   },
 
   // Navigation
@@ -235,6 +245,9 @@ const mutations = {
     state.error = error
   }
 }
+
+// Import the assessment controller
+import * as assessmentController from '../../controllers/assessmentController';
 
 const actions = {
   // Initialize the assessment with WCAG data
@@ -432,19 +445,142 @@ const actions = {
   },
 
   // Reset assessment
-  resetAssessment({ commit }) {
-    commit('RESET_ASSESSMENT')
+  async resetAssessment({ commit, rootState }, { testId }) {
+    try {
+      const userId = rootState.auth.user?.uid;
+      if (userId && testId) {
+        await assessmentController.deleteAssessment(userId, testId);
+      }
+      commit('RESET_ASSESSMENT');
+    } catch (error) {
+      console.error('Failed to reset assessment:', error);
+      throw error;
+    }
   },
 
-  // Save assessment (in a real app, this would save to a backend)
-  async saveAssessment({ state }) {
-    // In a real app, you would save the assessment data to a backend
-    return {
-      completedRules: state.completedRules,
-      notes: state.notes,
-      timestamp: new Date().toISOString()
+  // Save assessment to Firestore
+  async saveAssessment({ state }, { userId, testId, testType = 'manual' }) {
+    try {
+      if (!userId) throw new Error('User ID is required');
+      
+      // Convert rule assessments to array format
+      const assessmentData = Object.entries(state.ruleAssessments).map(([ruleId, assessment]) => ({
+        ruleId,
+        ...assessment,
+        // Add any additional fields needed from the rule data
+        ...(state.wcagData && {
+          // Include rule metadata for easier querying
+          ruleTitle: findRuleTitle(ruleId, state.wcagData),
+          principle: findPrincipleForRule(ruleId, state.wcagData),
+          guideline: findGuidelineForRule(ruleId, state.wcogData)
+        })
+      }));
+      
+      await assessmentController.saveAssessment(userId, testId, testType, assessmentData);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to save assessment:', error);
+      throw error;
+    }
+  },
+  
+  // Load assessment from Firestore
+  async loadAssessment({ commit }, { userId, testId }) {
+    try {
+      if (!userId) throw new Error('User ID is required');
+      
+      const assessment = await assessmentController.getAssessment(userId, testId);
+      if (!assessment) return null;
+      
+      // Update the store with loaded assessment data
+      const ruleAssessments = {};
+      const completedRules = [];
+      
+      assessment.assessmentData.forEach(item => {
+        const { ruleId, status, severity, notes } = item;
+        ruleAssessments[ruleId] = { status, severity, notes };
+        if (status) completedRules.push(ruleId);
+      });
+      
+      commit('SET_RULE_ASSESSMENTS', ruleAssessments);
+      commit('SET_COMPLETED_RULES', completedRules);
+      
+      return assessment;
+    } catch (error) {
+      console.error('Failed to load assessment:', error);
+      throw error;
+    }
+  },
+  
+  // Update a single rule assessment
+  async updateRuleAssessment({ commit, state }, { userId, testId, ruleId, assessment }) {
+    try {
+      if (!userId) throw new Error('User ID is required');
+      
+      // First update local state
+      commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment });
+      
+      // Then update in Firestore
+      await assessmentController.updateRuleAssessment(
+        userId, 
+        testId, 
+        { 
+          ruleId, 
+          ...assessment,
+          // Add any additional metadata
+          ...(state.wcagData && {
+            ruleTitle: findRuleTitle(ruleId, state.wcagData),
+            principle: findPrincipleForRule(ruleId, state.wcagData),
+            guideline: findGuidelineForRule(ruleId, state.wcogData)
+          })
+        }
+      );
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to update rule assessment:', error);
+      throw error;
+    }
+  },
+}
+
+// Helper function to find rule title by ID
+function findRuleTitle(ruleId, wcagData) {
+  if (!wcagData?.principles) return '';
+  
+  for (const principle of wcagData.principles) {
+    for (const guideline of principle.Guidelines || []) {
+      const rule = guideline.rules?.find(r => r.id === ruleId);
+      if (rule) return rule.title;
     }
   }
+  return '';
+}
+
+// Helper function to find principle for a rule
+function findPrincipleForRule(ruleId, wcagData) {
+  if (!wcagData?.principles) return '';
+  
+  for (const principle of wcagData.principles) {
+    for (const guideline of principle.Guidelines || []) {
+      const rule = guideline.rules?.find(r => r.id === ruleId);
+      if (rule) return principle.title;
+    }
+  }
+  return '';
+}
+
+// Helper function to find guideline for a rule
+function findGuidelineForRule(ruleId, wcagData) {
+  if (!wcagData?.principles) return '';
+  
+  for (const principle of wcagData.principles) {
+    for (const guideline of principle.Guidelines || []) {
+      const rule = guideline.rules?.find(r => r.id === ruleId);
+      if (rule) return guideline.title;
+    }
+  }
+  return '';
 }
 
 export default {
