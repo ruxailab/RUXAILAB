@@ -17,8 +17,13 @@
           </v-card-title>
 
           <!-- Tabs for Principles -->
-          <v-tabs v-model="activeTab" grow show-arrows>
-            <v-tab v-for="(principle, index) in principles" :key="index" :value="index">
+          <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
+            <v-tab 
+              v-for="(principle, index) in principles" 
+              :key="index" 
+              :value="index"
+              :class="`principle-tab principle-${index}`"
+            >
               <v-icon start>{{ getPrincipleIcon(index) }}</v-icon>
               {{ principle.title }}
             </v-tab>
@@ -435,6 +440,61 @@ onMounted(async () => {
 
 .v-data-table-header {
   background-color: #f5f5f5;
+}
+
+/* Principle Tabs Styling */
+.principle-tabs {
+  background-color: #f5f5f5;
+  border-radius: 4px 4px 0 0;
+}
+
+.principle-tab {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.principle-tab.principle-0 {
+  background-color: #e3f2fd;  /* Perceivable - Light Blue */
+  color: #0d47a1;
+}
+
+.principle-tab.principle-1 {
+  background-color: #e8f5e9;  /* Operable - Light Green */
+  color: #1b5e20;
+}
+
+.principle-tab.principle-2 {
+  background-color: #fff8e1;  /* Understandable - Light Amber */
+  color: #e65100;
+}
+
+.principle-tab.principle-3 {
+  background-color: #fce4ec;  /* Robust - Light Pink */
+  color: #880e4f;
+}
+
+.principle-tab.v-tab--selected {
+  font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.principle-0.v-tab--selected {
+  background-color: #bbdefb !important;  /* Perceivable - Blue */
+}
+
+.principle-1.v-tab--selected {
+  background-color: #c8e6c9 !important;  /* Operable - Green */
+}
+
+.principle-2.v-tab--selected {
+  background-color: #fff176 !important;  /* Understandable - Amber */
+}
+
+.principle-3.v-tab--selected {
+  background-color: #f8bbd0 !important;  /* Robust - Pink */
 }
 
 .v-data-table-header th {
