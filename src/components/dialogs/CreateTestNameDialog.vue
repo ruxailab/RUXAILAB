@@ -1,23 +1,10 @@
 <template>
   <div>
-    <v-dialog
-      :model-value="isOpen"
-      fullscreen
-      persistent
-      transition="dialog-bottom-transition"
-      @update:model-value="$emit('update:isOpen', $event)"
-    >
-      <v-card color="#f9f5f0"> 
-        <v-row
-          align="center"
-          justify="center"
-          class="cardRow ma-0 pa-0"
-        >
-          <v-col
-            md="8"
-            lg="9"
-            class="mx-auto pl-6"
-          >
+    <v-dialog :model-value="isOpen" fullscreen persistent transition="dialog-bottom-transition"
+      @update:model-value="$emit('update:isOpen', $event)">
+      <v-card color="#f9f5f0">
+        <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
+          <v-col md="8" lg="9" class="mx-auto pl-6">
             <p class="titles ml-5">
               {{ heading }}
             </p>
@@ -28,75 +15,28 @@
           <ButtonBack @click="$emit('close')" />
         </v-row>
 
-        <v-row
-          align="center"
-          justify="center"
-          class="cardRow ma-0 pa-0"
-        >
-          <v-col
-            class="ml-auto mr-auto"
-            sm="10"
-            md="8"
-            lg="4"
-          >
-            <v-card
-              color="white"
-              class="pb-5"
-              style="border-radius: 20px !important"
-            >
-              <v-col
-                cols="11"
-                class="ml-6"
-              >
+        <v-row align="center" justify="center" class="cardRow ma-0 pa-0">
+          <v-col class="ml-auto mr-auto" sm="10" md="8" lg="4">
+            <v-card color="white" class="pb-5" style="border-radius: 20px !important">
+              <v-col cols="11" class="ml-6">
                 <p class="cardInternTitles mt-4">
                   {{ testName }}
                 </p>
-                <v-text-field
-                  v-model="test.title"
-                  class="mt-3"
-                  :label="testName"
-                  variant="outlined"
-                  color="orange"
-                  @change="store.commit('SET_LOCAL_CHANGES', true)"
-                />
+                <v-text-field v-model="test.title" class="mt-3" :label="testName" variant="outlined" color="orange"
+                  @change="store.commit('SET_LOCAL_CHANGES', true)" />
 
                 <p class="cardInternTitles">
                   {{ testDescription }}
                 </p>
-                <v-textarea
-                  v-model="test.description"
-                  variant="outlined"
-                  color="orange"
-                  class="mt-3"
-                  :label="testDescription"
-                  @change="store.commit('SET_LOCAL_CHANGES', true)"
-                />
+                <v-textarea v-model="test.description" variant="outlined" color="orange" class="mt-3"
+                  :label="testDescription" @change="store.commit('SET_LOCAL_CHANGES', true)" />
 
-                <v-row
-                  class="d-flex align-center"
-                  no-gutters
-                >
-                  <v-col
-                    cols="9"
-                    class="d-flex align-center"
-                  >
-                    <v-checkbox
-                      v-model="test.isPublic"
-                      class="ml-2"
-                      color="orange"
-                      :label="testLabel"
-                    />
+                <v-row class="d-flex align-center" no-gutters>
+                  <v-col cols="9" class="d-flex align-center">
+                    <v-checkbox v-model="test.isPublic" class="ml-2" color="orange" :label="testLabel" />
                   </v-col>
-                  <v-col
-                    cols="3"
-                    class="d-flex justify-end"
-                  >
-                    <v-btn
-                      color="orange"
-                      variant="flat"
-                      class="mr-2 circleOrange"
-                      @click="validate"
-                    >
+                  <v-col cols="3" class="d-flex justify-end">
+                    <v-btn color="orange" variant="flat" class="mr-2 circleOrange" @click="validate">
                       <v-icon size="x-large">
                         mdi-arrow-right
                       </v-icon>
@@ -107,26 +47,14 @@
             </v-card>
           </v-col>
 
-          <v-col
-            v-if="!isMobile"
-            cols="5"
-            class="imageColumn"
-          >
-            <img
-              height="500"
-              src="../../../public/createSVG.svg"
-              alt="Test Creation image"
-            >
+          <v-col v-if="!isMobile" cols="5" class="imageColumn">
+            <img height="500" src="../../../public/createSVG.svg" alt="Test Creation image">
           </v-col>
         </v-row>
       </v-card>
     </v-dialog>
 
-    <CreateTestUserDialog
-      :is-open="userDialog"
-      @set-user="handleSetUser($event)"
-      @close="userDialog = false"
-    />
+    <CreateTestUserDialog :is-open="userDialog" @set-user="handleSetUser($event)" @close="userDialog = false" />
   </div>
 </template>
 
@@ -137,6 +65,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import Test from '@/models/Test';
+import ManualAccessibilityTest from '@/models/ManualAccessibilityTest';
 import TestAdmin from '@/models/TestAdmin';
 import ButtonBack from '@/components/atoms/ButtonBack.vue';
 import CreateTestUserDialog from '@/components/dialogs/CreateTestUserDialog.vue';
@@ -231,11 +160,20 @@ const validate = () => {
 };
 
 const handleTestType = () => {
+  console.log('handleTestType called with:', props.testType);
+
   if (props.testType === 'User') {
     userDialog.value = true;
     return;
   }
-  if (['HEURISTICS', 'Accessibility'].includes(props.testType)) {
+
+  if (props.testType === 'MANUAL') {
+    console.log('Manual test type detected');
+    submitAccessibility();
+    return;
+  }
+
+  if (['HEURISTICS'].includes(props.testType)) {
     submit();
   }
 };
@@ -244,6 +182,47 @@ const handleSetUser = (event) => {
   test.value = { ...test.value, ...event };
   userDialog.value = false;
   submit();
+};
+
+const submitAccessibility = async () => {
+  console.log('Creating new manual accessibility test:', test.value);
+
+  try {
+    // Create new manual accessibility test
+    const newTest = new ManualAccessibilityTest({
+      title: test.value.title,
+      description: test.value.description,
+      isPublic: test.value.isPublic || false,
+      testAdmin: new TestAdmin({
+        userDocId: user.value.id,
+        email: user.value.email,
+      }),
+      status: 'draft',
+      websiteUrl: '', // This can be set later when configuring the test
+      collaborators: {
+        // Add the creator as an admin collaborator
+        [user.value.id]: 'admin'
+      }
+    });
+
+    console.log('Creating test with data:', newTest);
+
+    // Use the store to create the test
+    const createdTest = await store.dispatch('manualAccessibility/createTest', newTest);
+
+    console.log('Test created successfully:', createdTest);
+
+    // Navigate to the test editor
+    router.push(`/accessibility/manual/${createdTest.id}`);
+
+    // Close the dialog
+    userDialog.value = false;
+  } catch (error) {
+    console.error('Error creating accessibility test:', error);
+
+    console.log(error.message);
+    toast.error(error.message);
+  }
 };
 
 const submit = async () => {
@@ -265,7 +244,7 @@ const submit = async () => {
 
   const testId = await store.dispatch('createNewTest', newTest);
 
-  if (props.testType === 'Accessibility') {
+  if (props.testType === 'asdf') {
     router.push('/sample');
   } else {
     router.push(`/managerview/${testId}`);

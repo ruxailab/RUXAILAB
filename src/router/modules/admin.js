@@ -16,8 +16,10 @@ import Notification from '@/views/admin/NotificationPage.vue'
 import Choose from '@/views/admin/Choose.vue'
 import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
-
-
+import Accessibility from '@/views/admin/Accessibility.vue'
+import Assessment from '@/views/admin/Assessment.vue'
+import Sample from '@/views/public/Sample.vue'
+import AccessibilityManagerView from '@/views/admin/AccessibilityManagerView.vue'
 export default [
   {
     path: '/testslist',
@@ -26,16 +28,16 @@ export default [
     component: TestList,
   },
   {
-    path:'/choose',
-    name:'Choose',
+    path: '/choose',
+    name: 'Choose',
     meta: { authorize: [1] },
-    component:Choose,
+    component: Choose,
   },
   {
-    path:'/profile',
-    name:'Profile',
+    path: '/profile',
+    name: 'Profile',
     meta: { authorize: [1] },
-    component:Profile,
+    component: Profile,
   },
   {
     path: '/notifications',
@@ -133,9 +135,78 @@ export default [
     component: Testing,
   },
   {
+    path: '/accessibility',
+    name: 'accessibility',
+    meta: { authorize: [1] },
+    component: Accessibility,
+  },
+  {
+    path: '/assessment',
+    name: 'assessment',
+    meta: { authorize: [1] },
+    component: Assessment,
+  },
+  {
     path: '/fromtemplate',
     name: 'Create from template',
     meta: { authorize: [1] },
     component: CreateFromTemplate,
+  },
+  {
+    path: '/accessibility/manual/:testId',
+    name: 'ManualAccessibility',
+    meta: { authorize: [1] },
+    component: AccessibilityManagerView,
+    props: true,
+    children: [
+      {
+        path: '',
+        name: 'AccessibilityHome',
+        component: () => import('@/views/admin/AccessibilityHome.vue'),
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/edit/:testId',
+        name: 'EditAccessibilityTest',
+        component: () => import('@/views/admin/AccessibilityEditTest.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/preview/:testId',
+        name: 'AccessibilityPreviewTest',
+        component: () => import('@/views/admin/AccessibilityPreviewTest.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/answers/:testId',
+        name: 'AccessibilityTestAnswers',
+        component: () => import('@/views/admin/AccessibilityAnswer.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/report/:testId',
+        name: 'AccessibilityTestReport',
+        component: () => import('@/views/admin/AccessibilityReport.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/cooperative/:testId',
+        name: 'AccessibilityTestCooperative',
+        component: () => import('@/views/admin/AccessibilityCooperative.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      },
+      {
+        path: '/settings/:testId',
+        name: 'AccessibilityTestSettings',
+        component: () => import('@/views/admin/AccessibilitySettings.vue'),
+        props: true,
+        meta: { authorize: [1] }
+      }
+    ]
   },
 ]
