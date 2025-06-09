@@ -7,58 +7,61 @@
       height="350"
       @click="$emit('click', segundType)"
     >
-    <v-card-title class="cardsTitle">
-      {{ title }}
-    </v-card-title>
-    <v-card-subtitle class="cardSubtitle">
-        {{ type }} 
-    </v-card-subtitle>
+      <v-card-title class="cardsTitle">
+        {{ title }}
+      </v-card-title>
+      <v-card-subtitle class="cardSubtitle">
+        {{ type }}
+      </v-card-subtitle>
 
       <v-divider />
       <v-card-text>
-        <v-row v-for="text in texts" :key="text" class="ml-6 mt-6 mb-6">
+        <v-row
+          v-for="text in texts"
+          :key="text"
+          class="ml-6 mt-6 mb-6"
+        >
           <p>{{ text }}</p>
         </v-row>
       </v-card-text>
-
     </v-card>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    type: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    img: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    segundType: {
-      type: String,
-      default: '',
-      require: true,
-    },
-
-    texts: {
-      type: Array,
-      default: () => ([]),
-      require: true,
-    },
+<script setup>
+// Define props with the same structure and validation as in Options API
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+    required: true,
   },
-}
+  type: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  img: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  segundType: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  texts: {
+    type: Array,
+    default: () => [],
+    required: true,
+  },
+});
+
+// Define emits
+defineEmits(['click']);
+
+// No additional logic is needed since the component only handles props and emits
 </script>
 
 <style scoped>
@@ -95,22 +98,18 @@ export default {
   font-weight: 600;
 }
 
-
 @media (max-width: 600px) {
   .cards {
     height: 250px; /* Adjust card height for smaller screens */
   }
 
   .cardsTitle {
-    font-size: 16 px;
+    font-size: 16px;
   }
 
   .cardSubtitle {
     font-size: 15px;
   }
-
-
-
 }
 
 @media (min-width: 601px) and (max-width: 1160px) {

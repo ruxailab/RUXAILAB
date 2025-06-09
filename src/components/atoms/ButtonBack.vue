@@ -2,15 +2,13 @@
   <div>
     <v-btn
       icon
-      dark
-      fab
       color="red"
       fixed
-      right
+      location="right"
       class="mt-6 mr-2"
       @click="$emit('click')"
     >
-      <v-icon x-large>
+      <v-icon size="x-large">
         mdi-arrow-u-left-bottom
       </v-icon>
     </v-btn>

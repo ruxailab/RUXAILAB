@@ -3,9 +3,16 @@
     <SnackBar />
 
     <!-- Delete Alert Dialog -->
-    <v-dialog v-model="dialogDel" width="600" persistent>
+    <v-dialog
+      v-model="dialogDel"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-error text-white"
+          primary-title
+        >
           Are you sure you want to delete this template?
         </v-card-title>
 
@@ -15,13 +22,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogDel = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogDel = false"
+          >
             Cancel
           </v-btn>
           <v-btn
-            class="red white--text ml-1"
+            class="bg-red text-white ml-1"
             :loading="loading"
-            text
+            variant="text"
             @click="deleteTemplate(object), (loading = true), (change = false)"
           >
             Delete
@@ -31,9 +42,16 @@
     </v-dialog>
 
     <!-- Leave Alert Dialog -->
-    <v-dialog v-model="dialogAlert" width="600" persistent>
+    <v-dialog
+      v-model="dialogAlert"
+      width="600"
+      persistent
+    >
       <v-card>
-        <v-card-title class="headline error accent-4 white--text" primary-title>
+        <v-card-title
+          class="text-h5 bg-red text-white"
+          primary-title
+        >
           Are you sure you want to leave?
         </v-card-title>
 
@@ -45,12 +63,16 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn class="grey lighten-3" text @click="dialogAlert = false">
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="dialogAlert = false"
+          >
             Stay
           </v-btn>
           <v-btn
-            class="error accent-4 white--text ml-1"
-            text
+            class="bg-red text-white ml-1"
+            variant="text"
             @click=";(change = false), $router.push(go)"
           >
             Leave
@@ -60,124 +82,130 @@
     </v-dialog>
 
     <ShowInfo title="Template">
-      <v-alert
-        v-if="!test.template.upToDate"
-        slot="warning"
-        type="warning"
-        dense
-      >
-        Your template is not up to date with your test.
-      </v-alert>
-      <div slot="content">
-        <v-card style="background: #f5f7ff">
-          <v-col class="mb-1 pa-4 pb-1">
-            <p class="subtitleView">
-              Settings
-            </p>
-          </v-col>
-          <v-divider />
-          <v-form ref="tempform" class="px-5">
-            <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="template.header.title"
-                  label="Title"
-                  :rules="titleRequired"
-                  counter="100"
-                  outlined
-                  dense
-                  @input="change = true"
-                />
-
-                <v-textarea
-                  v-model="template.header.description"
-                  label="Description"
-                  outlined
-                  dense
-                  @input="change = true"
-                />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="template.header.date"
-                  label="Last Update"
-                  outlined
-                  dense
-                  disabled
-                />
-                <v-text-field
-                  v-model="template.header.version"
-                  label="Version"
-                  outlined
-                  dense
-                  @keypress="isNumber(event)"
-                  @input="change = true"
-                />
-                <v-checkbox
-                  v-model="template.header.isPublic"
-                  label="Make template public to all users"
-                  class="ma-0"
-                  color="#F9A826"
-                  @change="change = true"
-                />
-                <v-row class="mx-1">
-                  <v-btn outlined @click="dialogDetails = true">
-                    Detailed information
-                  </v-btn>
-                  <v-spacer />
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        outlined
-                        v-bind="attrs"
-                        @click="updateTemplate(), (change = true)"
-                        v-on="on"
-                      >
-                        Update
-                      </v-btn>
-                    </template>
-                    <span
-                      >Click to update your local template, click save to submit
-                      it.</span
-                    >
-                  </v-tooltip>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-form>
-          <v-divider />
-          <v-row justify="center">
-            <v-btn
-              color="#f26363"
-              class="white--text my-4"
-              style="justify-self: center"
-              @click="dialogDel = true"
+      <template #warning>
+        <v-alert
+          v-if="!test.template.upToDate"
+          type="warning"
+          density="compact"
+        >
+          Your template is not up to date with your test.
+        </v-alert>
+      </template>
+      <template #content>
+        <div>
+          <v-card style="background: #f5f7ff">
+            <v-col class="mb-1 pa-4 pb-1">
+              <p class="subtitleView">
+                Settings
+              </p>
+            </v-col>
+            <v-divider />
+            <v-form
+              ref="tempform"
+              class="px-5"
             >
-              <v-icon left>
-                mdi-trash-can-outline </v-icon
-              >Delete template
-            </v-btn>
-          </v-row>
-        </v-card>
-      </div>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="template.header.title"
+                    label="Title"
+                    :rules="titleRequired"
+                    counter="100"
+                    variant="outlined"
+                    density="compact"
+                    @update:model-value="change = true"
+                  />
+
+                  <v-textarea
+                    v-model="template.header.description"
+                    label="Description"
+                    variant="outlined"
+                    density="compact"
+                    @update:model-value="change = true"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="template.header.date"
+                    label="Last Update"
+                    variant="outlined"
+                    density="compact"
+                    disabled
+                  />
+                  <v-text-field
+                    v-model="template.header.version"
+                    label="Version"
+                    variant="outlined"
+                    density="compact"
+                    @keypress="isNumber"
+                    @update:model-value="change = true"
+                  />
+                  <v-checkbox
+                    v-model="template.header.isPublic"
+                    label="Make template public to all users"
+                    class="ma-0"
+                    color="#F9A826"
+                    @update:model-value="change = true"
+                  />
+                  <v-row class="mx-1">
+                    <v-btn
+                      variant="outlined"
+                      @click="dialogDetails = true"
+                    >
+                      Detailed information
+                    </v-btn>
+                    <v-spacer />
+
+                    <v-tooltip location="bottom">
+                      <template #activator="{ props }">
+                        <v-btn
+                          variant="outlined"
+                          v-bind="props"
+                          @click="updateTemplate(), (change = true)"
+                        >
+                          Update
+                        </v-btn>
+                      </template>
+                      <span>Click to update your local template, click save to submit
+                        it.</span>
+                    </v-tooltip>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-form>
+            <v-divider />
+            <v-row justify="center">
+              <v-btn
+                color="#f26363"
+                class="text-white my-4"
+                style="justify-self: center"
+                @click="dialogDel = true"
+              >
+                <v-icon start>
+                  mdi-trash-can-outline
+                </v-icon>Delete template
+              </v-btn>
+            </v-row>
+          </v-card>
+        </div>
+      </template>
     </ShowInfo>
-    <v-tooltip v-if="change" left>
-      <template v-slot:activator="{ on, attrs }">
+    <v-tooltip
+      v-if="change"
+      location="left"
+    >
+      <template #activator="{ props }">
         <v-btn
           v-if="change"
-          large
-          dark
-          fab
+          size="large"
+          icon
           fixed
-          bottom
-          right
+          location="bottom right"
           color="#F9A826"
-          v-bind="attrs"
-          @click="update()"
-          v-on="on"
+          v-bind="props"
+          @click="update"
         >
-          <v-icon large>
+          <v-icon size="large">
             mdi-content-save
           </v-icon>
         </v-btn>
@@ -187,234 +215,253 @@
   </v-container>
 </template>
 
-<script>
-import ShowInfo from '@/components/organisms/ShowInfo'
-import SnackBar from '@/components/atoms/Snackbar'
+<script setup>
+import { ref, computed, watch, onBeforeMount, onBeforeUnmount, getCurrentInstance } from 'vue';
+import { useStore } from 'vuex';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import ShowInfo from '@/components/organisms/ShowInfo.vue';
+import SnackBar from '@/components/atoms/Snackbar.vue';
 
-export default {
-  components: {
-    ShowInfo,
-    SnackBar,
-  },
-  props: { id: { type: String, default: '' } },
-  data: () => ({
-    change: false,
-    dialogDel: false,
-    dialogAlert: false,
-    dialogDetails: false,
-    loading: false,
-    object: null,
-    template: null,
-    titleRequired: [
-      (v) => !!v || 'Field Required',
-      (v) => v.length <= 100 || 'Max 100 characters',
-    ],
-    updated: false,
-  }),
-  computed: {
-    templateStore() {
-      if (this.$store.getters.template) this.setTemplate()
-      return this.$store.getters.template
-    },
-    test() {
-      return this.$store.getters.test
-    },
-    dialogText() {
-      if (this.object)
-        return "Are you sure you want to delete your template ? This action can't be undone"
+// const { proxy } = getCurrentInstance();
+const store = useStore();
+const router = useRouter();
 
-      return "Are you sure you want to delete this template? This action can't be undone" //in case object isnt loaded
-    },
+const props = defineProps({
+  id: {
+    type: String,
+    default: '',
   },
-  watch: {
-    test: async function() {
-      if (this.test !== null && this.test !== undefined) {
-        this.object = await Object.assign({}, this.test)
-      }
-    },
-    templateStore: async function() {
-      if (this.templateStore !== null && this.templateStore !== undefined) {
-        this.template = await Object.assign({}, this.templateStore)
-      }
-    },
-  },
-  async created() {
-    await this.$store.dispatch('getTemplate', { id: this.id })
+});
 
-    await this.$store.dispatch('getTest', {
-      id: this.template.testId,
+const change = ref(false);
+const dialogDel = ref(false);
+const dialogAlert = ref(false);
+const dialogDetails = ref(false);
+const loading = ref(false);
+const object = ref(null);
+const template = ref(null);
+const updated = ref(false);
+const go = ref('');
+const tempform = ref(null);
+
+// Rules for form validation
+const titleRequired = [
+  (v) => !!v || 'Field Required',
+  (v) => v.length <= 100 || 'Max 100 characters',
+];
+
+const templateStore = computed(() => {
+  if (store.getters.template) setTemplate();
+  return store.getters.template;
+});
+
+const test = computed(() => store.getters.test);
+
+const dialogText = computed(() => {
+  if (object.value) {
+    return "Are you sure you want to delete your template ? This action can't be undone";
+  }
+  return "Are you sure you want to delete this template? This action can't be undone";
+});
+
+watch(test, async () => {
+  if (test.value !== null && test.value !== undefined) {
+    object.value = await Object.assign({}, test.value);
+  }
+});
+
+watch(templateStore, async () => {
+  if (templateStore.value !== null && templateStore.value !== undefined) {
+    template.value = await Object.assign({}, templateStore.value);
+  }
+});
+
+const update = () => {
+  template.value.header.date = new Date().toDateString();
+
+  store
+    .dispatch('updateTemplate', {
+      docId: props.id,
+      data: template.value,
     })
-  },
-  beforeMount() {
-    window.addEventListener('beforeunload', this.preventNav)
-  },
-  beforeDestroy() {
-    window.removeEventListener('beforeunload', this.preventNav)
-  },
-  methods: {
-    update() {
-      this.template.header.date = new Date().toDateString()
-
-      this.$store
-        .dispatch('updateTemplate', {
-          docId: this.id,
-          data: this.template,
-        })
-        .then(() => {
-          this.change = false
-          if (this.updated)
-            this.$store.dispatch('setUpToDate', {
-              docId: this.test.id,
-              data: true,
-            })
-
-          this.$store
-            .dispatch('updateMyTemps', {
-              docId: this.template.header.author.id,
-              element: Object.assign(this.template.header, {
-                type: this.template.body.type,
-                id: this.id,
-              }),
-            })
-            .then(() =>
-              this.$store.commit('setSuccess', 'Template succesfully updated'),
-            )
-        })
-        .catch((err) =>
-          this.$store.commit('setError', {
-            errorCode: 'templateError',
-            message: err,
-          }),
-        )
-    },
-    deleteTemplate() {
-      this.$store
-        .dispatch('deteleTemplate', {
-          id: this.id,
-        })
-        .then(() => {
-          this.$store
-            .dispatch('removeMyTemps', {
-              docId: this.template.header.author.id,
-              element: {
-                id: this.id,
-                title: this.template.header.title,
-                type: this.template.body.type,
-              },
-              param: 'myTemps',
-            })
-            .then(() => {
-              delete this.object.template
-              this.submit()
-              this.loading = false
-              this.dialogDel = false
-              this.$router
-                .push(`/managerview/${this.object.id}`)
-                .catch(() => {})
-            })
-        })
-    },
-    async submit() {
-      await this.$store.dispatch('getAnswers', { id: this.test.answers })
-      await this.$store.dispatch('getReports', { id: this.test.reports })
-
-      this.$store
-        .dispatch('updateTest', {
-          docId: this.object.id,
-          data: this.object,
-        })
-        .then(() => {
-          this.$store.dispatch('updateMyTest', {
-            docId: this.object.admin.id,
-            element: {
-              id: this.object.id,
-              title: this.object.title,
-              type: this.object.type,
-              reports: this.object.reports,
-              answers: this.object.answers,
-              cooperators: this.object.cooperators,
-              template: this.object.template,
-              accessLevel: 0,
-            },
-          })
-
-          this.cooperators.cooperators.forEach((coop) => {
-            this.$store.dispatch('updateMyCoops', {
-              docId: coop.id,
-              element: {
-                id: this.object.id,
-                title: this.object.title,
-                type: this.object.type,
-                reports: this.object.reports,
-                answers: this.object.answers,
-                cooperators: this.object.cooperators,
-                template: this.object.template,
-                accessLevel: coop.accessLevel,
-              },
-            })
-          })
-
-          this.answers.test.title = this.object.title
-          this.reports.test.title = this.object.title
-          this.cooperators.test.title = this.object.title
-
-          this.$store.dispatch('updateTestAnswer', {
-            docId: this.test.answers,
-            data: this.answers,
-          })
-
-          this.$store.dispatch('updateTestReport', {
-            docId: this.test.reports,
-            data: this.reports,
-          })
-
-          this.$store.dispatch('updateTestCooperators', {
-            docId: this.test.cooperators,
-            data: this.cooperators,
-          })
-
-          this.$store.commit('setSuccess', 'Template succesfully deleted')
-        })
-        .catch((err) => {
-          this.$store.commit('setError', {
-            errorCode: 'templateError',
-            message: err,
-          })
-        })
-    },
-    setTemplate() {
-      this.template = this.$store.getters.template
-    },
-    updateTemplate() {
-      this.updated = true
-
-      Object.keys(this.template.body).forEach((key) => {
-        this.template.body[key] = this.test[key]
-      })
-    },
-    isNumber: function(evt) {
-      evt = evt ? evt : window.event
-      var charCode = evt.which ? evt.which : evt.keyCode
-      if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
-      ) {
-        evt.preventDefault()
-      } else {
-        return true
+    .then(() => {
+      change.value = false;
+      if (updated.value) {
+        store.dispatch('setUpToDate', {
+          docId: test.value.id,
+          data: true,
+        });
       }
-    },
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.change) {
-      this.dialogAlert = true
-      this.go = to.path
-    } else {
-      next()
-    }
-  },
-}
+
+      store
+        .dispatch('updateMyTemps', {
+          docId: template.value.header.author.id,
+          element: Object.assign(template.value.header, {
+            type: template.value.body.type,
+            id: props.id,
+          }),
+        })
+        .then(() => store.commit('setSuccess', 'Template successfully updated'));
+    })
+    .catch((err) =>
+      store.commit('setError', {
+        errorCode: 'templateError',
+        message: err,
+      })
+    );
+};
+
+const deleteTemplate = () => {
+  store
+    .dispatch('deleteTemplate', {
+      id: props.id,
+    })
+    .then(() => {
+      store
+        .dispatch('removeMyTemps', {
+          docId: template.value.header.author.id,
+          element: {
+            id: props.id,
+            title: template.value.header.title,
+            type: template.value.body.type,
+          },
+          param: 'myTemps',
+        })
+        .then(() => {
+          delete object.value.template;
+          submit();
+          loading.value = false;
+          dialogDel.value = false;
+          router.push(`/managerview/${object.value.id}`).catch(() => {});
+        });
+    });
+};
+
+const submit = async () => {
+  await store.dispatch('getAnswers', { id: test.value.answers });
+  await store.dispatch('getReports', { id: test.value.reports });
+
+  store
+    .dispatch('updateTest', {
+      docId: object.value.id,
+      data: object.value,
+    })
+    .then(() => {
+      store.dispatch('updateMyTest', {
+        docId: object.value.admin.id,
+        element: {
+          id: object.value.id,
+          title: object.value.title,
+          type: object.value.type,
+          reports: object.value.reports,
+          answers: object.value.answers,
+          cooperators: object.value.cooperators,
+          template: object.value.template,
+          accessLevel: 0,
+        },
+      });
+
+      object.value.cooperators.cooperators.forEach((coop) => {
+        store.dispatch('updateMyCoops', {
+          docId: coop.id,
+          element: {
+            id: object.value.id,
+            title: object.value.title,
+            type: object.value.type,
+            reports: object.value.reports,
+            answers: object.value.answers,
+            cooperators: object.value.cooperators,
+            template: object.value.template,
+            accessLevel: coop.accessLevel,
+          },
+        });
+      });
+
+      const answers = store.getters.answers;
+      const reports = store.getters.reports;
+      const cooperators = store.getters.cooperators;
+
+      answers.test.title = object.value.title;
+      reports.test.title = object.value.title;
+      cooperators.test.title = object.value.title;
+
+      store.dispatch('updateTestAnswer', {
+        docId: test.value.answers,
+        data: answers,
+      });
+
+      store.dispatch('updateTestReport', {
+        docId: test.value.reports,
+        data: reports,
+      });
+
+      store.dispatch('updateTestCooperators', {
+        docId: test.value.cooperators,
+        data: cooperators,
+      });
+
+      store.commit('setSuccess', 'Template successfully deleted');
+    })
+    .catch((err) => {
+      store.commit('setError', {
+        errorCode: 'templateError',
+        message: err,
+      });
+    });
+};
+
+const setTemplate = () => {
+  template.value = store.getters.template;
+};
+
+const updateTemplate = () => {
+  updated.value = true;
+  Object.keys(template.value.body).forEach((key) => {
+    template.value.body[key] = test.value[key];
+  });
+};
+
+const isNumber = (evt) => {
+  evt = evt ? evt : window.event;
+  const charCode = evt.which ? evt.which : evt.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+    evt.preventDefault();
+  } else {
+    return true;
+  }
+};
+
+onBeforeMount(() => {
+  window.addEventListener('beforeunload', preventNav);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', preventNav);
+});
+
+// Navigation guard
+onBeforeRouteLeave((to, from) => {
+  if (change.value) {
+    dialogAlert.value = true;
+    go.value = to.path;
+    return false;
+  }
+  return true;
+});
+
+const initialize = async () => {
+  await store.dispatch('getTemplate', { id: props.id });
+  await store.dispatch('getTest', { id: template.value?.testId });
+};
+initialize();
+
+// Prevent navigation
+const preventNav = (event) => {
+  if (change.value) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+};
 </script>
 
 <style scoped>
@@ -464,6 +511,5 @@ export default {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
-  /* background: #515069; */
 }
 </style>

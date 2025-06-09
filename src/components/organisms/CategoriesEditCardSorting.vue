@@ -35,27 +35,35 @@
         :key="i"
         class="cards mb-5"
       >
-        <v-col cols="12" class="pb-0 px-5">
+        <v-col
+          cols="12"
+          class="pb-0 px-5"
+        >
           <v-icon style="cursor: pointer;">
             mdi-drag
           </v-icon>
           
           <span class="cardsTitle ml-3">{{ category.title }}</span>
-          <br />
+          <br>
           <span class="cardsSubtitle ml-9">{{ category.description }}</span>
           
-          <v-icon class="delete-icon" @click="deleteCategory(i)">
+          <v-icon
+            class="delete-icon"
+            @click="deleteCategory(i)"
+          >
             mdi-delete
           </v-icon>
         </v-col>
       </v-card>
     </Draggable>
 
-    <v-row justify="center" v-if="categories.length > 0">
+    <v-row
+      v-if="categories.length > 0"
+      justify="center"
+    >
       <v-btn
-        fab
-        depressed
-        dark
+        icon
+        variant="flat"
         color="rgb(249, 168, 38)"
         @click="dialog = true"
       >

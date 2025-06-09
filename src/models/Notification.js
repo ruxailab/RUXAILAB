@@ -4,8 +4,6 @@
  * @param {string} description - The description value.
  */
 
-import { read } from "fs"
-
 export default class Notification {
   constructor({
     title,
@@ -17,18 +15,19 @@ export default class Notification {
     accessLevel,
     readAt,
   } = {}) {
-    this.title = title
-    this.description = description
-    this.redirectsTo = redirectsTo
-    this.createdDate = Date.now()
-    this.author = author
-    this.read = read
-    this.testId = testId
-    this.accessLevel = accessLevel ?? null
-    this.readAt = readAt ?? null
+    this.title = title;
+    this.description = description;
+    this.redirectsTo = redirectsTo;
+    this.createdDate = Date.now();
+    this.author = author;
+    this.read = read;
+    this.testId = testId;
+    this.accessLevel = accessLevel ?? null;
+    this.readAt = readAt ?? null;
   }
+
   static toNotification(data) {
-    return new Notification(data)
+    return new Notification(data);
   }
 
   toFirestore() {
@@ -41,7 +40,7 @@ export default class Notification {
       read: this.read,
       testId: this.testId,
       accessLevel: this.accessLevel,
-      read  : this.read,
-    }
+      readAt: this.readAt, // Fixed: Added readAt and removed duplicate 'read'
+    };
   }
 }
