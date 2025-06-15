@@ -61,7 +61,13 @@ test.describe('Sign In Workflow', () => {
   test('Successful login redirects to tests list and shows active tab', async ({ page }) => {
     // 1. Perform login
     const validEmail = 'ericgc11@hotmail.com';
-    const validPassword = 'TVtjrnbyEEDMb9L!';
+    const validPassword = process.env.VALID_PASSWORD;
+
+    // Ensure password is available
+    if (!validPassword) {
+      throw new Error('VALID_PASSWORD environment variable is not set');
+    }
+
     await logIn(page, validEmail, validPassword);
 
     // 2. Wait for URL change
