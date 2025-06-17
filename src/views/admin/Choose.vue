@@ -2,7 +2,7 @@
   <div class="outermost">
     <v-col cols="12">
       <v-row justify="center">
-        <p class="titles ma-16">What kind of test are you looking to start?</p>
+        <p class="titles ma-16">{{ $t('choose.title') }}</p>
       </v-row>
     </v-col>
 
@@ -11,10 +11,10 @@
         <v-col cols="12" sm="6" md="4" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
-            title="Testing"
-            type="Category"
+            :title="$t('choose.testing')"
+            :type="$t('category')"
             segund-type="TESTING"
-            :texts="['User Testing', 'A/B Testing', 'Eye-Tracking']"
+            :texts="[$t('choose.userTesting'), $t('choose.abTesting'), $t('choose.eyeTracking')]"
             @click="navigateToTest('testing')"
           />
         </v-col>
@@ -22,10 +22,10 @@
         <v-col cols="12" sm="6" md="4" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
-            title="Inspection"
-            type="Category"
+            :title="$t('choose.inspection')"
+            :type="$t('category')"
             segund-type="INSPECTION"
-            :texts="['Heuristic Evaluation', 'Cognitive Walkthrough', 'Automated Evaluations']"
+            :texts="[$t('choose.heuristic'), $t('choose.cognitive'), $t('choose.automated')]"
             @click="navigateToTest('inspection')"
           />
         </v-col>
@@ -33,10 +33,10 @@
         <v-col cols="12" sm="6" md="4" class="card">
           <CardTypeTest
             :img="require('../../../public/specialist.png')"
-            title="Inquiry"
-            type="Category"
+            :title="$t('choose.inquiry')"
+            :type="$t('category')"
             segund-type="INQUIRY"
-            :texts="['Interviews', 'Focus Groups', 'Surveys & Questionnaires']"
+            :texts="[$t('choose.interviews'), $t('choose.focusGroups'), $t('choose.surveys')]"
             :disabled="true"
           />
         </v-col>
