@@ -16,6 +16,8 @@ import Notification from '@/views/admin/NotificationPage.vue'
 import Choose from '@/views/admin/Choose.vue'
 import Inspection from '@/views/admin/Inspection.vue'
 import Testing from '@/views/admin/Testing.vue'
+import ChooseStudyMethods from '@/views/admin/ChooseStudyMethods.vue'
+import StudyDetailsForm from '@/views/admin/StudyDetailsForm.vue'
 
 
 export default [
@@ -24,12 +26,6 @@ export default [
     name: 'TestList',
     meta: { authorize: [1] },
     component: TestList,
-  },
-  {
-    path:'/choose',
-    name:'Choose',
-    meta: { authorize: [1] },
-    component:Choose,
   },
   {
     path:'/profile',
@@ -109,10 +105,28 @@ export default [
     ],
   },
   {
+    path:'/choose',
+    name:'study-create-step1',
+    meta: { authorize: [1] },
+    component:Choose,
+  },
+  {
+    path: '/methods',
+    component: ChooseStudyMethods,
+    meta: { authorize: [1] },
+    name: 'study-create-step2'
+  },
+  {
     path: '/createtest',
-    name: 'Create View',
+    name: 'study-create-step3',
     meta: { authorize: [1] },
     component: CreateView,
+  },
+  {
+    path: '/studydetails',
+    component: StudyDetailsForm,
+    meta: { authorize: [1] },
+    name: 'study-create-step4'
   },
   {
     path: '/createBlank',
