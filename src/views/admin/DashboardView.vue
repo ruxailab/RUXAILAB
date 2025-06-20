@@ -347,7 +347,7 @@ const filterModeratedSessions = async () => {
 };
 
 const goToCreateTestRoute = () => {
-  router.push('/createtest');
+  router.push('/choose');
 };
 
 const goTo = (test) => {
